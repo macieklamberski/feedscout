@@ -303,15 +303,15 @@ describe('publicInboxHandler', () => {
       expect(publicInboxHandler.resolve(value, messageHtml)).toEqual(expected)
     })
 
-    it('should return https feeds for a lore.kernel.org page over http', () => {
+    it('should return the feeds under the page scheme for a lore.kernel.org page over http', () => {
       const value = 'http://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/t.atom',
+          uri: 'http://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/t.atom',
           hint: { key: 'public-inbox:thread', label: 'Thread' },
         },
         {
-          uri: 'https://lore.kernel.org/example/new.atom',
+          uri: 'http://lore.kernel.org/example/new.atom',
           hint: { key: 'public-inbox:messages', label: 'Messages' },
         },
       ]

@@ -1,8 +1,7 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -20,11 +19,17 @@ const fileRegex = /\.(?:html?|txt|json|xml|ico)$/i
 // The core navigation links help relative to the page, one `../` per level below the inbox root.
 const helpLinkRegex = /href="((?:\.\.\/)*)_\/text\/help\/?"/i
 
-// A self-hosted inbox can sit at any depth below its host, which no row holds, so its feeds are
-// built from the inbox URL and not claimed.
 const feeds = definePlatformFeeds([
   { key: 'public-inbox:messages', template: 'https://lore.kernel.org/{inbox}/new.atom' },
   { key: 'public-inbox:thread', template: 'https://lore.kernel.org/{inbox}/{messageId}/t.atom' },
+])
+
+// An inbox can sit at any depth below its host, so its feeds are built under the inbox URL as the
+// root. A self-hosted inbox has nothing in its URL that names the software, so these are not
+// claimed.
+const inboxFeeds = definePlatformFeeds([
+  { key: 'public-inbox:messages', template: '{root}/new.atom' },
+  { key: 'public-inbox:thread', template: '{root}/{messageId}/t.atom' },
 ])
 
 export const isPublicInboxHtml = (content: string): boolean => {
@@ -79,42 +84,22 @@ export const publicInboxHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getPublicInboxPage(url, content)
+    const pageFeeds = inboxFeeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const inboxSegments = getPathSegments(page.inboxUrl)
-
-    if (inboxSegments.length === 1 && isHostOf(page.inboxUrl, hosts)) {
-      const [inbox] = inboxSegments
-      const inboxEntry = feeds.getFeedEntry('public-inbox:messages', { inbox })
-
-      if (page.kind === 'message') {
-        const params = { inbox, messageId: page.messageId }
-
-        return [feeds.getFeedEntry('public-inbox:thread', params), inboxEntry]
-      }
-
-      return [inboxEntry]
-    }
-
-    const inboxFeed: DiscoverUriEntry = {
-      uri: `${page.inboxUrl}new.atom`,
-      hint: composeHint('public-inbox:messages'),
-    }
+    const root = page.inboxUrl
+    const inboxEntry = pageFeeds.getFeedEntry('public-inbox:messages', { root })
 
     if (page.kind === 'message') {
-      return [
-        {
-          uri: `${page.inboxUrl}${page.messageId}/t.atom`,
-          hint: composeHint('public-inbox:thread'),
-        },
-        inboxFeed,
-      ]
+      const params = { root, messageId: page.messageId }
+
+      return [pageFeeds.getFeedEntry('public-inbox:thread', params), inboxEntry]
     }
 
-    return [inboxFeed]
+    return [inboxEntry]
   },
 
   getFeedHint: feeds.getFeedHint,
