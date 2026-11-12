@@ -157,85 +157,85 @@ describe('devtoHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for a user feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a user feed', () => {
       const value = 'https://dev.to/feed/antonfrattaroli'
-      const expected = 'devto:posts'
+      const expected: DiscoverUriHint = { key: 'devto:posts', label: 'Posts' }
 
-      expect(devtoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a feed with a trailing slash', () => {
+    it('should return the posts hint for a feed with a trailing slash', () => {
       const value = 'https://dev.to/feed/barbaraulowee/'
-      const expected = 'devto:posts'
+      const expected: DiscoverUriHint = { key: 'devto:posts', label: 'Posts' }
 
-      expect(devtoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a feed on the www host', () => {
+    it('should return the posts hint for a feed on the www host', () => {
       const value = 'https://www.dev.to/feed/antonfrattaroli'
-      const expected = 'devto:posts'
+      const expected: DiscoverUriHint = { key: 'devto:posts', label: 'Posts' }
 
-      expect(devtoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a feed over http', () => {
+    it('should return the posts hint for a feed over http', () => {
       const value = 'http://dev.to/feed/antonfrattaroli'
-      const expected = 'devto:posts'
+      const expected: DiscoverUriHint = { key: 'devto:posts', label: 'Posts' }
 
-      expect(devtoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed', () => {
+    it('should return the tag hint for a tag feed', () => {
       const value = 'https://dev.to/feed/tag/log4j2'
-      const expected = 'devto:tag'
+      const expected: DiscoverUriHint = { key: 'devto:tag', label: 'Tag' }
 
-      expect(devtoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed with a capitalized route', () => {
+    it('should return the tag hint for a tag feed with a capitalized route', () => {
       const value = 'https://dev.to/Feed/Tag/hash'
-      const expected = 'devto:tag'
+      const expected: DiscoverUriHint = { key: 'devto:tag', label: 'Tag' }
 
-      expect(devtoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the latest key for the latest feed', () => {
+    it('should return the latest hint for the latest feed', () => {
       const value = 'https://dev.to/feed/latest'
-      const expected = 'devto:latest'
+      const expected: DiscoverUriHint = { key: 'devto:latest', label: 'Latest' }
 
-      expect(devtoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the community key for the community feed', () => {
+    it('should return the community hint for the community feed', () => {
       const value = 'https://dev.to/feed'
-      const expected = 'devto:community'
+      const expected: DiscoverUriHint = { key: 'devto:community', label: 'Community' }
 
-      expect(devtoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a profile page', () => {
       const value = 'https://dev.to/antonfrattaroli'
 
-      expect(devtoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(devtoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an article page', () => {
       const value = 'https://dev.to/antonfrattaroli/some-article-1n45'
 
-      expect(devtoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(devtoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a tag page', () => {
       const value = 'https://dev.to/t/log4j2'
 
-      expect(devtoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(devtoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/feed/antonfrattaroli'
 
-      expect(devtoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(devtoHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

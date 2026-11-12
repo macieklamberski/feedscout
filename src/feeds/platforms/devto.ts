@@ -86,5 +86,5 @@ export const devtoHandler: PlatformHandler = {
     return [feeds.getFeedEntry('devto:posts', { owner: parsed.owner })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
