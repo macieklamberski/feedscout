@@ -69,5 +69,5 @@ export const sportsregionsHandler: PlatformHandler = {
     ]
   },
 
-  getFeedKey: clubFeeds.getFeedKey,
+  getFeedHint: clubFeeds.getFeedHint,
 }
