@@ -164,77 +164,80 @@ describe('artstationHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the portfolio key for a portfolio feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the portfolio hint for a portfolio feed', () => {
       const value = 'https://www.artstation.com/aj3dvfx.rss'
-      const expected = 'artstation:portfolio'
+      const expected: DiscoverUriHint = { key: 'artstation:portfolio', label: 'Portfolio' }
 
-      expect(artstationHandler.getFeedKey?.(value)).toBe(expected)
+      expect(artstationHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the portfolio key for a portfolio feed without www', () => {
+    it('should return the portfolio hint for a portfolio feed without www', () => {
       const value = 'https://artstation.com/alexpernau.rss'
-      const expected = 'artstation:portfolio'
+      const expected: DiscoverUriHint = { key: 'artstation:portfolio', label: 'Portfolio' }
 
-      expect(artstationHandler.getFeedKey?.(value)).toBe(expected)
+      expect(artstationHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the portfolio key for a portfolio feed over http', () => {
+    it('should return the portfolio hint for a portfolio feed over http', () => {
       const value = 'http://www.artstation.com/alexpernau.rss'
-      const expected = 'artstation:portfolio'
+      const expected: DiscoverUriHint = { key: 'artstation:portfolio', label: 'Portfolio' }
 
-      expect(artstationHandler.getFeedKey?.(value)).toBe(expected)
+      expect(artstationHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the artwork key for the artwork feed', () => {
+    it('should return the artwork hint for the artwork feed', () => {
       const value = 'https://www.artstation.com/artwork.rss'
-      const expected = 'artstation:artwork'
+      const expected: DiscoverUriHint = { key: 'artstation:artwork', label: 'Artwork' }
 
-      expect(artstationHandler.getFeedKey?.(value)).toBe(expected)
+      expect(artstationHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the artwork key for the artwork feed with a capitalized route', () => {
+    it('should return the artwork hint for the artwork feed with a capitalized route', () => {
       const value = 'https://www.artstation.com/Artwork.rss'
-      const expected = 'artstation:artwork'
+      const expected: DiscoverUriHint = { key: 'artstation:artwork', label: 'Artwork' }
 
-      expect(artstationHandler.getFeedKey?.(value)).toBe(expected)
+      expect(artstationHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the latest key for the artwork feed sorted by latest', () => {
+    it('should return the latest hint for the artwork feed sorted by latest', () => {
       const value = 'https://www.artstation.com/artwork.rss?sorting=latest'
-      const expected = 'artstation:artwork-latest'
+      const expected: DiscoverUriHint = {
+        key: 'artstation:artwork-latest',
+        label: 'Artwork (Latest)',
+      }
 
-      expect(artstationHandler.getFeedKey?.(value)).toBe(expected)
+      expect(artstationHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a portfolio page', () => {
       const value = 'https://www.artstation.com/aj3dvfx'
 
-      expect(artstationHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(artstationHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the artwork page', () => {
       const value = 'https://www.artstation.com/artwork'
 
-      expect(artstationHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(artstationHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on a portfolio subdomain', () => {
       const value = 'https://aj3dvfx.artstation.com/aj3dvfx.rss'
 
-      expect(artstationHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(artstationHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed in a nested path', () => {
       const value = 'https://www.artstation.com/aj3dvfx/albums.rss'
 
-      expect(artstationHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(artstationHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/aj3dvfx.rss'
 
-      expect(artstationHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(artstationHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

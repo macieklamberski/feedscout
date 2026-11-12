@@ -84,5 +84,5 @@ export const artstationHandler: PlatformHandler = {
     return [feeds.getFeedEntry('artstation:portfolio', { username: parsed.username })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
