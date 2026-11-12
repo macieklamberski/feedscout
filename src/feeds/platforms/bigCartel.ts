@@ -54,11 +54,15 @@ export const bigCartelHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { protocol, host } = new URL(url)
+    const page = feeds.forUrl(url)
+
+    if (!page) {
+      return []
+    }
 
     // The linked `/products.xml` is a Google Merchant feed whose items have no title or link, so it
     // parses with no items.
-    return [feeds.getFeedEntry('big-cartel:products', { scheme: protocol.slice(0, -1), host })]
+    return [page.getFeedEntry('big-cartel:products')]
   },
 
   // The table reads any host under bigcartel.com, so the page parser refuses the apex, the www host
