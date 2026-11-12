@@ -1,7 +1,8 @@
-import { composeQuery, getQueryParam } from 'trousse'
+import { getQueryParam } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
+import { findElement, getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers category, home, search.
@@ -13,6 +14,87 @@ export type BigcommercePage =
   | { kind: 'category'; categoryId: string }
   | { kind: 'search'; query: string }
   | { kind: 'home' }
+
+const domains = ['mybigcommerce.com']
+
+// A store on a custom domain is known only by its session cookie, so its feeds are built here but
+// claimed only on BigCommerce's own domain.
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'bigcommerce:category-new-products',
+      template: '{scheme}://{host}/rss.php?categoryid={categoryId}&type=rss',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:category-new-products',
+      template: '{scheme}://{host}/rss.php?categoryid={categoryId}&type=atom',
+      format: 'atom',
+    },
+    {
+      key: 'bigcommerce:category-popular-products',
+      template: '{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}&type=rss',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:category-popular-products',
+      template:
+        '{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}&type=atom',
+      format: 'atom',
+    },
+    {
+      key: 'bigcommerce:search',
+      template: '{scheme}://{host}/rss.php?action=searchproducts&search_query={query}&type=rss',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:search',
+      template: '{scheme}://{host}/rss.php?action=searchproducts&search_query={query}&type=atom',
+      format: 'atom',
+    },
+    {
+      key: 'bigcommerce:new-products',
+      template: '{scheme}://{host}/rss.php?type=rss',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:new-products',
+      template: '{scheme}://{host}/rss.php?type=atom',
+      format: 'atom',
+    },
+    {
+      key: 'bigcommerce:popular-products',
+      template: '{scheme}://{host}/rss.php?action=popularproducts&type=rss',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:popular-products',
+      template: '{scheme}://{host}/rss.php?action=popularproducts&type=atom',
+      format: 'atom',
+    },
+    {
+      key: 'bigcommerce:featured-products',
+      template: '{scheme}://{host}/rss.php?action=featuredproducts&type=rss',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:featured-products',
+      template: '{scheme}://{host}/rss.php?action=featuredproducts&type=atom',
+      format: 'atom',
+    },
+    {
+      key: 'bigcommerce:blog',
+      template: '{scheme}://{host}/rss.php?action=newblogs&type=rss',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:blog',
+      template: '{scheme}://{host}/rss.php?action=newblogs&type=atom',
+      format: 'atom',
+    },
+  ],
+  { domains },
+)
 
 export const isBigcommerceHeaders = (headers: Headers): boolean => {
   return getCookieNames(headers).includes('SHOP_SESSION_TOKEN')
@@ -52,76 +134,48 @@ export const bigcommerceHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getBigcommercePage(url, content)
-    const feedUrl = `${new URL(url).origin}/rss.php`
+    const pageFeeds = feeds.forUrl(url)
     const uris: Array<DiscoverUriEntry> = []
 
+    if (!pageFeeds) {
+      return uris
+    }
+
+    const feedEntries = (key: string, params?: Record<string, string>) => [
+      pageFeeds.getFeedEntry(key, params, 'rss'),
+      pageFeeds.getFeedEntry(key, params, 'atom'),
+    ]
+
     if (page.kind === 'category') {
-      const { categoryId } = page
+      const params = { categoryId: page.categoryId }
 
       uris.push(
-        {
-          uri: `${feedUrl}${composeQuery({ categoryid: categoryId, type: 'rss' })}`,
-          hint: composeHint('bigcommerce:category-new-products', 'rss'),
-        },
-        {
-          uri: `${feedUrl}${composeQuery({ categoryid: categoryId, type: 'atom' })}`,
-          hint: composeHint('bigcommerce:category-new-products', 'atom'),
-        },
-        {
-          uri: `${feedUrl}${composeQuery({ action: 'popularproducts', categoryid: categoryId, type: 'rss' })}`,
-          hint: composeHint('bigcommerce:category-popular-products', 'rss'),
-        },
-        {
-          uri: `${feedUrl}${composeQuery({ action: 'popularproducts', categoryid: categoryId, type: 'atom' })}`,
-          hint: composeHint('bigcommerce:category-popular-products', 'atom'),
-        },
+        ...feedEntries('bigcommerce:category-new-products', params),
+        ...feedEntries('bigcommerce:category-popular-products', params),
       )
     }
 
     if (page.kind === 'search') {
-      const params = { action: 'searchproducts', search_query: page.query }
-
-      uris.push(
-        {
-          uri: `${feedUrl}${composeQuery({ ...params, type: 'rss' })}`,
-          hint: composeHint('bigcommerce:search', 'rss'),
-        },
-        {
-          uri: `${feedUrl}${composeQuery({ ...params, type: 'atom' })}`,
-          hint: composeHint('bigcommerce:search', 'atom'),
-        },
-      )
+      uris.push(...feedEntries('bigcommerce:search', { query: page.query }))
     }
 
     uris.push(
-      { uri: `${feedUrl}?type=rss`, hint: composeHint('bigcommerce:new-products', 'rss') },
-      { uri: `${feedUrl}?type=atom`, hint: composeHint('bigcommerce:new-products', 'atom') },
-      {
-        uri: `${feedUrl}?action=popularproducts&type=rss`,
-        hint: composeHint('bigcommerce:popular-products', 'rss'),
-      },
-      {
-        uri: `${feedUrl}?action=popularproducts&type=atom`,
-        hint: composeHint('bigcommerce:popular-products', 'atom'),
-      },
-      {
-        uri: `${feedUrl}?action=featuredproducts&type=rss`,
-        hint: composeHint('bigcommerce:featured-products', 'rss'),
-      },
-      {
-        uri: `${feedUrl}?action=featuredproducts&type=atom`,
-        hint: composeHint('bigcommerce:featured-products', 'atom'),
-      },
-      {
-        uri: `${feedUrl}?action=newblogs&type=rss`,
-        hint: composeHint('bigcommerce:blog', 'rss'),
-      },
-      {
-        uri: `${feedUrl}?action=newblogs&type=atom`,
-        hint: composeHint('bigcommerce:blog', 'atom'),
-      },
+      ...feedEntries('bigcommerce:new-products'),
+      ...feedEntries('bigcommerce:popular-products'),
+      ...feedEntries('bigcommerce:featured-products'),
+      ...feedEntries('bigcommerce:blog'),
     )
 
     return uris
+  },
+
+  // The table reads any host under the domain, so the apex and the www host, which do not resolve,
+  // are refused first.
+  getFeedHint: (url) => {
+    if (!getTenantSubdomain(url, domains)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }
