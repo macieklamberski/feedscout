@@ -9,6 +9,7 @@ import {
   parseUrl,
   stripWww,
   t,
+  trimObject,
 } from 'trousse'
 import locales from '../../../locales.json' with { type: 'json' }
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../types.js'
@@ -23,7 +24,8 @@ export type PlatformFeedTemplate = {
   format?: DiscoverUriHint['format']
 }
 
-export type PlatformFeedParams = Record<string, string>
+// A value left undefined is no value, so the row it would fill is skipped.
+export type PlatformFeedParams = Record<string, string | undefined>
 
 export type PlatformFeedTableOptions = {
   // The hosts a `{host}` placeholder stands for, with every host under `domains`.
@@ -187,7 +189,9 @@ const compileTemplate = (
   const getUrl = (params: PlatformFeedParams = {}): string => {
     const fillPlaceholders = (text: string, encode = (value: string) => value): string => {
       return text.replace(placeholderRegex, (placeholder, name: string) => {
-        return Object.hasOwn(params, name) ? encode(params[name]) : placeholder
+        const value = params[name]
+
+        return value === undefined ? placeholder : encode(value)
       })
     }
     const builtQuery = composeQuery(
@@ -278,16 +282,16 @@ export const definePlatformFeeds = (
       scheme: parsedUrl.protocol.slice(0, -1),
       host: parsedUrl.host,
       root: parsedUrl.origin,
+      domain: getPlatformDomain(parsedUrl, options.domains ?? []),
     }
-    const domain = getPlatformDomain(parsedUrl, options.domains ?? [])
-
-    if (domain) {
-      urlParams.domain = domain
+    // An undefined value the handler passes leaves the one of the page in place.
+    const withUrlParams = (params: PlatformFeedParams = {}): PlatformFeedParams => {
+      return { ...urlParams, ...trimObject(params) }
     }
 
     return {
-      getFeedUrl: (key, params, format) => getFeedUrl(key, { ...urlParams, ...params }, format),
-      getFeedEntry: (key, params, format) => getFeedEntry(key, { ...urlParams, ...params }, format),
+      getFeedUrl: (key, params, format) => getFeedUrl(key, withUrlParams(params), format),
+      getFeedEntry: (key, params, format) => getFeedEntry(key, withUrlParams(params), format),
     }
   }
 

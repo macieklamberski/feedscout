@@ -73,6 +73,11 @@ const rootFeeds = definePlatformFeeds(rootTemplates, {
 
 const selfHostedRootFeeds = definePlatformFeeds(rootTemplates)
 
+const categoryFeeds = definePlatformFeeds([
+  { key: 'example:category', template: 'https://www.example.com/c/{slug}/{id}.rss' },
+  { key: 'example:category', template: 'https://www.example.com/c/{slug}.rss' },
+])
+
 describe('definePlatformFeeds', () => {
   it('should throw for a template without an http scheme', () => {
     const throwing = () =>
@@ -198,6 +203,23 @@ describe('definePlatformFeeds', () => {
       const expected = '{root}/latest.rss'
 
       expect(rootFeeds.getFeedUrl('example:latest', value)).toBe(expected)
+    })
+
+    it('should build the row without the placeholder whose value is undefined', () => {
+      const value = {
+        slug: 'news',
+        id: undefined,
+      }
+      const expected = 'https://www.example.com/c/news.rss'
+
+      expect(categoryFeeds.getFeedUrl('example:category', value)).toBe(expected)
+    })
+
+    it('should keep a placeholder whose value is undefined', () => {
+      const value = { username: undefined }
+      const expected = 'https://www.example.com/{username}/feed.rss'
+
+      expect(feeds.getFeedUrl('example:posts', value)).toBe(expected)
     })
   })
 
@@ -707,6 +729,17 @@ describe('definePlatformFeeds', () => {
       const value = 'https://alice.example.net/'
       const params = {
         scheme: 'http',
+        blog: 'alice',
+      }
+      const expected = 'http://alice.example.net/feed'
+
+      expect(siteFeeds.forUrl(value)?.getFeedUrl('example:posts', params)).toBe(expected)
+    })
+
+    it('should keep the value of the page over an undefined value the handler passes', () => {
+      const value = 'http://alice.example.net/about'
+      const params = {
+        scheme: undefined,
         blog: 'alice',
       }
       const expected = 'http://alice.example.net/feed'
