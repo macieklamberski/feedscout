@@ -39,5 +39,5 @@ export const mataroaHandler: PlatformHandler = {
     return [feeds.getFeedEntry('mataroa:blog', { scheme, blog: parsed.blog })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
