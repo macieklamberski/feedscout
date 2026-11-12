@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import type { PostypeUrl } from './postype.js'
@@ -120,57 +120,57 @@ describe('postypeHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for the channel feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for the channel feed', () => {
       const value = 'https://www.postype.com/@example/rss'
-      const expected = 'postype:posts'
+      const expected: DiscoverUriHint = { key: 'postype:posts', label: 'Posts' }
 
-      expect(postypeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(postypeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the channel feed on the bare host', () => {
+    it('should return the posts hint for the channel feed on the bare host', () => {
       const value = 'https://postype.com/@example/rss'
-      const expected = 'postype:posts'
+      const expected: DiscoverUriHint = { key: 'postype:posts', label: 'Posts' }
 
-      expect(postypeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(postypeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the subdomain feed', () => {
+    it('should return the posts hint for the subdomain feed', () => {
       const value = 'https://example.postype.com/rss'
-      const expected = 'postype:posts'
+      const expected: DiscoverUriHint = { key: 'postype:posts', label: 'Posts' }
 
-      expect(postypeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(postypeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the subdomain feed over http', () => {
+    it('should return the posts hint for the subdomain feed over http', () => {
       const value = 'http://example.postype.com/rss'
-      const expected = 'postype:posts'
+      const expected: DiscoverUriHint = { key: 'postype:posts', label: 'Posts' }
 
-      expect(postypeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(postypeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a channel page', () => {
       const value = 'https://www.postype.com/@example'
 
-      expect(postypeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(postypeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a post page', () => {
       const value = 'https://www.postype.com/@example/post/23216701'
 
-      expect(postypeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(postypeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the main host without a channel', () => {
       const value = 'https://www.postype.com/rss'
 
-      expect(postypeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(postypeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on a nested subdomain', () => {
       const value = 'https://a.b.postype.com/rss'
 
-      expect(postypeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(postypeHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

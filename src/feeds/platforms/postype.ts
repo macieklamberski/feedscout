@@ -70,5 +70,5 @@ export const postypeHandler: PlatformHandler = {
     return [feeds.getFeedEntry('postype:posts', { channel: parsed.channel })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
