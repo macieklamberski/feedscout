@@ -7,16 +7,7 @@ import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 const domains = ['nethouse.ru', 'nethouse.me']
 
-const tenantFeeds = definePlatformFeeds(
-  [
-    { key: 'nethouse:news', template: 'https://{site}.{domain}/posts/rss' },
-    { key: 'nethouse:articles', template: 'https://{site}.{domain}/articles/rss' },
-  ],
-  { domains },
-)
-
-// A site on its own domain is known only by its markers, so its feeds are built but not claimed.
-const siteFeeds = definePlatformFeeds(
+const feeds = definePlatformFeeds(
   [
     { key: 'nethouse:news', template: '{scheme}://{host}/posts/rss' },
     { key: 'nethouse:articles', template: '{scheme}://{host}/articles/rss' },
@@ -38,25 +29,15 @@ export const nethouseHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const site = getTenantSubdomain(url, domains)
-    const tenantPage = tenantFeeds.forUrl(url)
+    const page = feeds.forUrl(url)
 
-    // A site with a section turned off answers its feed with 404.
-    if (site && tenantPage) {
-      return [
-        tenantPage.getFeedEntry('nethouse:news', { site }),
-        tenantPage.getFeedEntry('nethouse:articles', { site }),
-      ]
-    }
-
-    const sitePage = siteFeeds.forUrl(url)
-
-    if (!sitePage) {
+    if (!page) {
       return []
     }
 
-    return [sitePage.getFeedEntry('nethouse:news'), sitePage.getFeedEntry('nethouse:articles')]
+    // A site with a section turned off answers its feed with 404.
+    return [page.getFeedEntry('nethouse:news'), page.getFeedEntry('nethouse:articles')]
   },
 
-  getFeedHint: tenantFeeds.getFeedHint,
+  getFeedHint: feeds.getFeedHint,
 }

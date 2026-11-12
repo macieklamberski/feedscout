@@ -69,15 +69,15 @@ describe('nethouseHandler', () => {
       expect(nethouseHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the https feeds of a site opened over http', () => {
+    it('should return the feeds under the page scheme for a site opened over http', () => {
       const value = 'http://alice.nethouse.me/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.nethouse.me/posts/rss',
+          uri: 'http://alice.nethouse.me/posts/rss',
           hint: { key: 'nethouse:news', label: 'News' },
         },
         {
-          uri: 'https://alice.nethouse.me/articles/rss',
+          uri: 'http://alice.nethouse.me/articles/rss',
           hint: { key: 'nethouse:articles', label: 'Articles' },
         },
       ]
