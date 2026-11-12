@@ -80,5 +80,5 @@ export const flipboardHandler: PlatformHandler = {
     return [feeds.getFeedEntry('flipboard:topic', { topic: parsed.topic })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
