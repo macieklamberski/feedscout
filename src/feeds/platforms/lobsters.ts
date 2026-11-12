@@ -129,13 +129,13 @@ export const lobstersHandler: PlatformHandler = {
   },
 
   // A token feed is the reader's private feed, filtered by their settings, not the site feed.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const parsedUrl = parseUrl(url)
 
     if (!parsedUrl || hasQueryParam(parsedUrl, 'token')) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
