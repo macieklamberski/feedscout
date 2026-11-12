@@ -109,72 +109,72 @@ describe('promodjHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the podcast key for a podcast feed', () => {
       const value = 'https://promodj.com/dj.someartist/podcast.xml'
-      const expected = 'promodj:podcast'
+      const expected: DiscoverUriHint = { key: 'promodj:podcast', label: 'Podcast' }
 
-      expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
+      expect(promodjHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the content key for a content feed', () => {
       const value = 'https://promodj.com/dj.someartist/rss.xml'
-      const expected = 'promodj:content'
+      const expected: DiscoverUriHint = { key: 'promodj:content', label: 'Content' }
 
-      expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
+      expect(promodjHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the blog key for a blog feed', () => {
       const value = 'https://promodj.com/dj.someartist/blog.xml'
-      const expected = 'promodj:blog'
+      const expected: DiscoverUriHint = { key: 'promodj:blog', label: 'Blog' }
 
-      expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
+      expect(promodjHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the favorites key for a bookmarks feed', () => {
       const value = 'https://promodj.com/dj.someartist/bookmarks.xml'
-      const expected = 'promodj:favorites'
+      const expected: DiscoverUriHint = { key: 'promodj:favorites', label: 'Favorites' }
 
-      expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
+      expect(promodjHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the events key for an events feed', () => {
       const value = 'https://promodj.com/dj.someartist/avisha.xml'
-      const expected = 'promodj:events'
+      const expected: DiscoverUriHint = { key: 'promodj:events', label: 'Events' }
 
-      expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
+      expect(promodjHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the podcast key for a capitalized username on the www host', () => {
       const value = 'http://www.promodj.com/SomeArtist/podcast.xml'
-      const expected = 'promodj:podcast'
+      const expected: DiscoverUriHint = { key: 'promodj:podcast', label: 'Podcast' }
 
-      expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
+      expect(promodjHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the podcast key for an alternate podcast feed', () => {
       const value = 'https://promodj.com/dj.someartist/podcast_alt.xml'
-      const expected = 'promodj:podcast'
+      const expected: DiscoverUriHint = { key: 'promodj:podcast', label: 'Podcast' }
 
-      expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
+      expect(promodjHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a profile page', () => {
       const value = 'https://promodj.com/dj.someartist'
 
-      expect(promodjHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(promodjHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a genre feed', () => {
       const value = 'https://promodj.com/mixes/house/rss.xml'
 
-      expect(promodjHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(promodjHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/dj.someartist/podcast.xml'
 
-      expect(promodjHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(promodjHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
