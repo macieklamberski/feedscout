@@ -162,5 +162,5 @@ export const packagistHandler: PlatformHandler = {
     return siteFeeds
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

@@ -224,113 +224,161 @@ describe('packagistHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the releases key for an RSS package feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the releases hint for an RSS package feed', () => {
       const value = 'https://packagist.org/feeds/package.colorcube/rte-proc-tester.rss'
-      const expected = 'packagist:releases'
+      const expected: DiscoverUriHint = {
+        key: 'packagist:releases',
+        label: 'Releases',
+        format: 'rss',
+      }
 
-      expect(packagistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(packagistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the releases key for an Atom package feed', () => {
+    it('should return the releases hint for an Atom package feed', () => {
       const value = 'https://packagist.org/feeds/package.colorcube/rte-proc-tester.atom'
-      const expected = 'packagist:releases'
+      const expected: DiscoverUriHint = {
+        key: 'packagist:releases',
+        label: 'Releases',
+        format: 'atom',
+      }
 
-      expect(packagistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(packagistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the releases key for a package feed whose vendor has a dot', () => {
+    it('should return the releases hint for a package feed whose vendor has a dot', () => {
       const value = 'https://packagist.org/feeds/package.datatables.net/datatables.net-bs5.rss'
-      const expected = 'packagist:releases'
+      const expected: DiscoverUriHint = {
+        key: 'packagist:releases',
+        label: 'Releases',
+        format: 'rss',
+      }
 
-      expect(packagistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(packagistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the releases key for a package feed whose name has a dot', () => {
+    it('should return the releases hint for a package feed whose name has a dot', () => {
       const value = 'https://packagist.org/feeds/package.51degrees/fiftyone.devicedetection.atom'
-      const expected = 'packagist:releases'
+      const expected: DiscoverUriHint = {
+        key: 'packagist:releases',
+        label: 'Releases',
+        format: 'atom',
+      }
 
-      expect(packagistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(packagistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the vendor key for an RSS vendor feed', () => {
+    it('should return the vendor hint for an RSS vendor feed', () => {
       const value = 'https://packagist.org/feeds/vendor.gladyshev.rss'
-      const expected = 'packagist:vendor'
+      const expected: DiscoverUriHint = {
+        key: 'packagist:vendor',
+        label: 'Vendor releases',
+        format: 'rss',
+      }
 
-      expect(packagistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(packagistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the vendor key for an Atom vendor feed', () => {
+    it('should return the vendor hint for an Atom vendor feed', () => {
       const value = 'https://packagist.org/feeds/vendor.gladyshev.atom'
-      const expected = 'packagist:vendor'
+      const expected: DiscoverUriHint = {
+        key: 'packagist:vendor',
+        label: 'Vendor releases',
+        format: 'atom',
+      }
 
-      expect(packagistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(packagistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the vendor key for a vendor feed whose vendor has a dot', () => {
+    it('should return the vendor hint for a vendor feed whose vendor has a dot', () => {
       const value = 'https://packagist.org/feeds/vendor.datatables.net.rss'
-      const expected = 'packagist:vendor'
+      const expected: DiscoverUriHint = {
+        key: 'packagist:vendor',
+        label: 'Vendor releases',
+        format: 'rss',
+      }
 
-      expect(packagistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(packagistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the vendor key for a vendor named after a site-wide feed', () => {
+    it('should return the vendor hint for a vendor named after a site-wide feed', () => {
       const value = 'https://packagist.org/feeds/vendor.packages.rss'
-      const expected = 'packagist:vendor'
+      const expected: DiscoverUriHint = {
+        key: 'packagist:vendor',
+        label: 'Vendor releases',
+        format: 'rss',
+      }
 
-      expect(packagistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(packagistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the new packages key for the new packages feed', () => {
+    it('should return the new packages hint for the new packages feed', () => {
       const value = 'https://packagist.org/feeds/packages.rss'
-      const expected = 'packagist:new-packages'
+      const expected: DiscoverUriHint = {
+        key: 'packagist:new-packages',
+        label: 'New packages',
+        format: 'rss',
+      }
 
-      expect(packagistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(packagistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the new releases key for the new releases feed', () => {
+    it('should return the new releases hint for the new releases feed', () => {
       const value = 'https://packagist.org/feeds/releases.atom'
-      const expected = 'packagist:new-releases'
+      const expected: DiscoverUriHint = {
+        key: 'packagist:new-releases',
+        label: 'New releases',
+        format: 'atom',
+      }
 
-      expect(packagistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(packagistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the new extensions key for the new extensions feed', () => {
+    it('should return the new extensions hint for the new extensions feed', () => {
       const value = 'https://packagist.org/feeds/extensions.rss'
-      const expected = 'packagist:new-extensions'
+      const expected: DiscoverUriHint = {
+        key: 'packagist:new-extensions',
+        label: 'New extensions',
+        format: 'rss',
+      }
 
-      expect(packagistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(packagistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the extension releases key for the extension releases feed', () => {
+    it('should return the extension releases hint for the extension releases feed', () => {
       const value = 'https://packagist.org/feeds/extension-releases.atom'
-      const expected = 'packagist:extension-releases'
+      const expected: DiscoverUriHint = {
+        key: 'packagist:extension-releases',
+        label: 'Extension releases',
+        format: 'atom',
+      }
 
-      expect(packagistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(packagistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a package page', () => {
       const value = 'https://packagist.org/packages/colorcube/rte-proc-tester'
 
-      expect(packagistHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(packagistHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a package feed without its format', () => {
       const value = 'https://packagist.org/feeds/package.colorcube/rte-proc-tester'
 
-      expect(packagistHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(packagistHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the JSON API', () => {
       const value = 'https://packagist.org/packages/list.json'
 
-      expect(packagistHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(packagistHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/feeds/packages.rss'
 
-      expect(packagistHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(packagistHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
@@ -338,51 +386,51 @@ describe('packagistHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
         'https://packagist.org/feeds/package.colorcube/rte-proc-tester.rss',
-        { key: 'packagist:releases', label: 'Releases' },
+        { key: 'packagist:releases', label: 'Releases', format: 'rss' },
       ],
       [
         'https://packagist.org/feeds/package.colorcube/rte-proc-tester.atom',
-        { key: 'packagist:releases', label: 'Releases' },
+        { key: 'packagist:releases', label: 'Releases', format: 'atom' },
       ],
       [
         'https://packagist.org/feeds/vendor.gladyshev.rss',
-        { key: 'packagist:vendor', label: 'Vendor releases' },
+        { key: 'packagist:vendor', label: 'Vendor releases', format: 'rss' },
       ],
       [
         'https://packagist.org/feeds/vendor.gladyshev.atom',
-        { key: 'packagist:vendor', label: 'Vendor releases' },
+        { key: 'packagist:vendor', label: 'Vendor releases', format: 'atom' },
       ],
       [
         'https://packagist.org/feeds/packages.rss',
-        { key: 'packagist:new-packages', label: 'New packages' },
+        { key: 'packagist:new-packages', label: 'New packages', format: 'rss' },
       ],
       [
         'https://packagist.org/feeds/packages.atom',
-        { key: 'packagist:new-packages', label: 'New packages' },
+        { key: 'packagist:new-packages', label: 'New packages', format: 'atom' },
       ],
       [
         'https://packagist.org/feeds/releases.rss',
-        { key: 'packagist:new-releases', label: 'New releases' },
+        { key: 'packagist:new-releases', label: 'New releases', format: 'rss' },
       ],
       [
         'https://packagist.org/feeds/releases.atom',
-        { key: 'packagist:new-releases', label: 'New releases' },
+        { key: 'packagist:new-releases', label: 'New releases', format: 'atom' },
       ],
       [
         'https://packagist.org/feeds/extensions.rss',
-        { key: 'packagist:new-extensions', label: 'New extensions' },
+        { key: 'packagist:new-extensions', label: 'New extensions', format: 'rss' },
       ],
       [
         'https://packagist.org/feeds/extensions.atom',
-        { key: 'packagist:new-extensions', label: 'New extensions' },
+        { key: 'packagist:new-extensions', label: 'New extensions', format: 'atom' },
       ],
       [
         'https://packagist.org/feeds/extension-releases.rss',
-        { key: 'packagist:extension-releases', label: 'Extension releases' },
+        { key: 'packagist:extension-releases', label: 'Extension releases', format: 'rss' },
       ],
       [
         'https://packagist.org/feeds/extension-releases.atom',
-        { key: 'packagist:extension-releases', label: 'Extension releases' },
+        { key: 'packagist:extension-releases', label: 'Extension releases', format: 'atom' },
       ],
     ]
 
