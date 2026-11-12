@@ -118,35 +118,41 @@ export const tischtennisliveHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getTischtennislivePage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
     // A page is read only on an association's own subdomain, its first host label.
-    const { protocol, hostname } = new URL(url)
-    const [association] = hostname.split('.')
-    const params = { scheme: protocol.slice(0, -1), association, domain: domains[0] }
+    const [association] = new URL(url).hostname.split('.')
+    const params = { association }
 
     if (page.kind === 'group') {
       return [
-        feeds.getFeedEntry('tischtennislive:group-results', { ...params, group: page.group }),
-        feeds.getFeedEntry('tischtennislive:group-fixtures', { ...params, group: page.group }),
+        pageFeeds.getFeedEntry('tischtennislive:group-results', { ...params, group: page.group }),
+        pageFeeds.getFeedEntry('tischtennislive:group-fixtures', { ...params, group: page.group }),
       ]
     }
 
     if (page.kind === 'league') {
       return [
-        feeds.getFeedEntry('tischtennislive:league-results', { ...params, league: page.league }),
-        feeds.getFeedEntry('tischtennislive:league-fixtures', { ...params, league: page.league }),
+        pageFeeds.getFeedEntry('tischtennislive:league-results', {
+          ...params,
+          league: page.league,
+        }),
+        pageFeeds.getFeedEntry('tischtennislive:league-fixtures', {
+          ...params,
+          league: page.league,
+        }),
       ]
     }
 
     return [
-      feeds.getFeedEntry('tischtennislive:news', params),
-      feeds.getFeedEntry('tischtennislive:dates', params),
-      feeds.getFeedEntry('tischtennislive:documents', params),
-      feeds.getFeedEntry('tischtennislive:tournaments', params),
+      pageFeeds.getFeedEntry('tischtennislive:news', params),
+      pageFeeds.getFeedEntry('tischtennislive:dates', params),
+      pageFeeds.getFeedEntry('tischtennislive:documents', params),
+      pageFeeds.getFeedEntry('tischtennislive:tournaments', params),
     ]
   },
 
