@@ -1,11 +1,25 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type ParsiblogUrl = { kind: 'blog'; blog: string }
 
 const domains = ['parsiblog.com', 'parsiblog.ir']
+
+// Parsiblog serves no HTTPS, and a blog serves the same feeds on either domain and on its older
+// .aspx paths.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'parsiblog:posts', template: 'http://{blog}.{domain}/rss/', format: 'rss' },
+    { key: 'parsiblog:posts', template: 'http://{blog}.{domain}/atom/', format: 'atom' },
+    { key: 'parsiblog:posts', template: 'http://{blog}.{domain}/RSS.aspx', format: 'rss' },
+    { key: 'parsiblog:posts', template: 'http://{blog}.{domain}/ATOM.aspx', format: 'atom' },
+    { key: 'parsiblog:posts', template: 'http://{blog}.{domain}/Mag/RSS.aspx', format: 'rss' },
+  ],
+  { domains },
+)
 
 export const parseParsiblogUrl = (url: string): ParsiblogUrl | undefined => {
   const blog = getTenantSubdomain(url, domains)
@@ -29,13 +43,14 @@ export const parsiblogHandler: PlatformHandler = {
       return []
     }
 
-    // Parsiblog serves no HTTPS, and every page, on either domain, links its feeds on
-    // http://{blog}.ParsiBlog.com.
-    const origin = `http://${parsed.blog}.parsiblog.com`
+    // Every page, on either domain, links its feeds on http://{blog}.ParsiBlog.com.
+    const params = { blog: parsed.blog, domain: 'parsiblog.com' }
 
     return [
-      { uri: `${origin}/rss/`, hint: composeHint('parsiblog:posts', 'rss') },
-      { uri: `${origin}/atom/`, hint: composeHint('parsiblog:posts', 'atom') },
+      feeds.getFeedEntry('parsiblog:posts', params, 'rss'),
+      feeds.getFeedEntry('parsiblog:posts', params, 'atom'),
     ]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }

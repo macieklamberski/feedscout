@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type ParsiblogUrl, parseParsiblogUrl, parsiblogHandler } from './parsiblog.js'
 
 describe('parseParsiblogUrl', () => {
@@ -92,6 +94,82 @@ describe('parsiblogHandler', () => {
       ]
 
       expect(parsiblogHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    const feedValues: Array<string> = [
+      'http://alice.parsiblog.com/rss/',
+      'http://alice.parsiblog.com/atom/',
+      'http://alice.parsiblog.com/rss',
+      'http://alice.parsiblog.ir/rss',
+      'http://alice.parsiblog.ir/atom',
+      'http://www.alice.parsiblog.com/rss',
+      'http://alice.parsiblog.com/RSS.aspx',
+      'http://alice.parsiblog.com/rss.aspx',
+      'http://alice.parsiblog.com/ATOM.aspx',
+      'http://alice.parsiblog.com/Mag/RSS.aspx',
+      'http://alice.parsiblog.com/Mag/RSS.aspx?SID=13',
+    ]
+
+    it.each(feedValues)('should return the posts key for %s', (value) => {
+      const expected = 'parsiblog:posts'
+
+      expect(parsiblogHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'http://alice.parsiblog.com/Posts/12/'
+
+      expect(parsiblogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a portal magazine feed', () => {
+      const value = 'http://parsiblog.com/Mag/RSS.aspx?SID=13'
+
+      expect(parsiblogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on the portal', () => {
+      const value = 'http://www.parsiblog.com/rss/'
+
+      expect(parsiblogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'http://x.alice.parsiblog.com/rss/'
+
+      expect(parsiblogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'http://example.com/rss/'
+
+      expect(parsiblogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const hint: DiscoverUriHint = { key: 'parsiblog:posts', label: 'Posts' }
+    const ownFeeds: Array<string> = [
+      'http://alice.parsiblog.com/rss/',
+      'http://alice.parsiblog.com/rss',
+      'http://alice.parsiblog.ir/atom',
+      'http://www.alice.parsiblog.com/rss',
+      'http://alice.parsiblog.com/RSS.aspx',
+      'http://alice.parsiblog.com/ATOM.aspx',
+      'http://alice.parsiblog.com/Mag/RSS.aspx',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [parsiblogHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
