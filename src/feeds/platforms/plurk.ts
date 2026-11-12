@@ -69,5 +69,5 @@ export const plurkHandler: PlatformHandler = {
     return []
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
