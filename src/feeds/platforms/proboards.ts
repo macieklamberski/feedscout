@@ -58,18 +58,23 @@ export const proboardsHandler: PlatformHandler = {
       return []
     }
 
-    const { protocol, host, hostname } = new URL(url)
-
     if (parsed.kind === 'customDomain') {
-      const scheme = protocol.slice(0, -1)
+      const customDomainPage = customDomainFeeds.forUrl(url)
 
-      return [customDomainFeeds.getFeedEntry('proboards:posts', { scheme, host })]
+      if (!customDomainPage) {
+        return []
+      }
+
+      return [customDomainPage.getFeedEntry('proboards:posts')]
     }
 
-    const { forum } = parsed
-    const domain = hostname.slice(forum.length + 1)
+    const forumPage = forumFeeds.forUrl(url)
 
-    return [forumFeeds.getFeedEntry('proboards:posts', { forum, domain })]
+    if (!forumPage) {
+      return []
+    }
+
+    return [forumPage.getFeedEntry('proboards:posts', { forum: parsed.forum })]
   },
 
   getFeedHint: forumFeeds.getFeedHint,
