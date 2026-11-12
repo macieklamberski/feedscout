@@ -1,6 +1,7 @@
-import { composeQuery, includesAnyOf, isSubdomainOf } from 'trousse'
+import { getQueryParam, hasQueryParam, includesAnyOf, isSubdomainOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement } from '../../common/utils.js'
+import { digitsRegex, findElement } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -15,6 +16,15 @@ const domains = ['bubblelife.com']
 const communityRegex =
   /^\/community\/(?<community>[a-z0-9_]+)(?:\/library\/(?<libraryId>\d+))?(?:\/|$)/i
 const feedHrefRegex = /^\/rss\?c=(\d+)$/i
+
+// A community's posts feed is its first library's feed, so a feed URL reads back as a library.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'bubblelife:library', template: 'https://{host}/rss?c={id}' },
+    { key: 'bubblelife:posts', template: 'https://{host}/rss?c={id}' },
+  ],
+  { domains },
+)
 
 export const parseBubblelifeUrl = (url: string): BubblelifeUrl | undefined => {
   if (!isSubdomainOf(url, domains)) {
@@ -90,12 +100,23 @@ export const bubblelifeHandler: PlatformHandler = {
       return []
     }
 
-    const uri = `${new URL(url).origin}/rss${composeQuery({ c: page.feedId })}`
+    const params = { host: new URL(url).hostname, id: page.feedId }
 
     if (page.kind === 'library') {
-      return [{ uri, hint: composeHint('bubblelife:library') }]
+      return [feeds.getFeedEntry('bubblelife:library', params)]
     }
 
-    return [{ uri, hint: composeHint('bubblelife:posts') }]
+    return [feeds.getFeedEntry('bubblelife:posts', params)]
+  },
+
+  getFeedKey: (url) => {
+    const parsedUrl = parseUrl(url)
+
+    // A topic feed adds `t` and a news alert feed suffixes its id, and the handler builds neither.
+    if (hasQueryParam(parsedUrl, 't') || !digitsRegex.test(getQueryParam(parsedUrl, 'c') ?? '')) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }

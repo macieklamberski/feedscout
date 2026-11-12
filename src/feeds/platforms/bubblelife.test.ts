@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   type BubblelifePage,
   type BubblelifeUrl,
@@ -131,6 +133,20 @@ describe('bubblelifeHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return an https feed for an http community page', () => {
+      const value = 'http://sandysprings.bubblelife.com/community/idealplotter'
+      const content =
+        '<a href="/community/idealplotter/library/3569381092" title="News" class="blMobileItem">'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://sandysprings.bubblelife.com/rss?c=3569381092',
+          hint: { key: 'bubblelife:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(bubblelifeHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return the posts feed from the community library link', () => {
       const value = 'https://sandysprings.bubblelife.com/community/idealplotter'
       const content = `
@@ -289,6 +305,90 @@ describe('bubblelifeHandler', () => {
       ]
 
       expect(bubblelifeHandler.resolve(value, content)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the library key for a feed', () => {
+      const value = 'https://mckinney.bubblelife.com/rss?c=35660530'
+      const expected = 'bubblelife:library'
+
+      expect(bubblelifeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the library key for a feed on a tenant with underscores', () => {
+      const value = 'https://highland_park_dental.bubblelife.com/rss?c=3568411'
+      const expected = 'bubblelife:library'
+
+      expect(bubblelifeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the library key for a feed over http', () => {
+      const value = 'http://mckinney.bubblelife.com/rss?c=35660530'
+      const expected = 'bubblelife:library'
+
+      expect(bubblelifeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the library key for an uppercase feed path', () => {
+      const value = 'https://plano.bubblelife.com/RSS?C=35660940'
+      const expected = 'bubblelife:library'
+
+      expect(bubblelifeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a topic feed', () => {
+      const value = 'https://grandprairie.bubblelife.com/rss?c=35671234&t=357400'
+
+      expect(bubblelifeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a news alert feed', () => {
+      const value = 'https://plano.bubblelife.com/rss?c=35600714,nofriends'
+
+      expect(bubblelifeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path without an id', () => {
+      const value = 'https://plano.bubblelife.com/rss'
+
+      expect(bubblelifeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a community page', () => {
+      const value = 'https://sandysprings.bubblelife.com/community/idealplotter'
+
+      expect(bubblelifeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/rss?c=35660530'
+
+      expect(bubblelifeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://mckinney.bubblelife.com/rss?c=35660530',
+        { key: 'bubblelife:library', label: 'Library' },
+      ],
+      [
+        'http://mckinney.bubblelife.com/rss?c=35660530',
+        { key: 'bubblelife:library', label: 'Library' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [bubblelifeHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
