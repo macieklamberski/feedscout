@@ -1,5 +1,5 @@
 import { getPathSegments, getSubdomain, isAnyOf, isSubdomainOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
@@ -94,14 +94,14 @@ export const chambermasterHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseChambermasterUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
-    const { host, protocol } = new URL(url)
-    const scheme = isSubdomainOf(url, domains) ? 'http' : protocol.slice(0, -1)
-    const feedEntry = (key: string) => feeds.getFeedEntry(key, { scheme, host })
+    const params: PlatformFeedParams = isSubdomainOf(url, domains) ? { scheme: 'http' } : {}
+    const feedEntry = (key: string) => pageFeeds.getFeedEntry(key, params)
 
     if (parsed.kind === 'events') {
       return [
