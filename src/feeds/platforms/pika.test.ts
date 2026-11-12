@@ -173,6 +173,13 @@ describe('pikaHandler', () => {
       expect(pikaHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the posts key for the /feed posts feed', () => {
+      const value = 'https://alice.pika.page/feed'
+      const expected = 'pika:posts'
+
+      expect(pikaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the posts key for an http posts feed', () => {
       const value = 'http://alice.pika.page/posts_feed'
       const expected = 'pika:posts'
@@ -244,6 +251,7 @@ describe('pikaHandler', () => {
       ['https://alice.pika.page/posts_feed.rss', { key: 'pika:posts', label: 'Posts' }],
       ['https://alice.pika.page/posts_feed.atom', { key: 'pika:posts', label: 'Posts' }],
       ['http://alice.pika.page/posts_feed', { key: 'pika:posts', label: 'Posts' }],
+      ['https://alice.pika.page/feed', { key: 'pika:posts', label: 'Posts' }],
       ['https://alice.pika.page/tag/tech/feed', { key: 'pika:tag', label: 'Tag' }],
       ['https://alice.pika.page/tag/tech/feed.rss', { key: 'pika:tag', label: 'Tag' }],
       ['https://alice.pika.page/tag/tech/feed.atom', { key: 'pika:tag', label: 'Tag' }],
