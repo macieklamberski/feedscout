@@ -39,5 +39,5 @@ export const bloggerDeHandler: PlatformHandler = {
     return [feeds.getFeedEntry('blogger-de:posts', { blog: parsed.blog })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
