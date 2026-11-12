@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { TumblrUrl } from './tumblr.js'
 import { parseTumblrUrl, tumblrHandler } from './tumblr.js'
 
@@ -152,6 +155,140 @@ describe('tumblrHandler', () => {
       ]
 
       expect(tumblrHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the https feed URL for an http blog page', () => {
+      const value = 'http://example.tumblr.com/post/123'
+      const expected = [
+        { uri: 'https://example.tumblr.com/rss', hint: { key: 'tumblr:posts', label: 'Posts' } },
+      ]
+
+      expect(tumblrHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the https tag feed URL for an http tag page', () => {
+      const value = 'http://example.tumblr.com/tagged/updates'
+      const expected = [
+        {
+          uri: 'https://example.tumblr.com/tagged/updates/rss',
+          hint: { key: 'tumblr:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(tumblrHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for a blog feed', () => {
+      const value = 'https://example.tumblr.com/rss'
+      const expected = 'tumblr:posts'
+
+      expect(tumblrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a blog feed with a trailing slash', () => {
+      const value = 'https://example.tumblr.com/rss/'
+      const expected = 'tumblr:posts'
+
+      expect(tumblrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a blog feed on a www subdomain', () => {
+      const value = 'https://www.example.tumblr.com/rss'
+      const expected = 'tumblr:posts'
+
+      expect(tumblrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an http blog feed', () => {
+      const value = 'http://example.tumblr.com/rss'
+      const expected = 'tumblr:posts'
+
+      expect(tumblrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a tag feed', () => {
+      const value = 'https://example.tumblr.com/tagged/updates/rss'
+      const expected = 'tumblr:tag'
+
+      expect(tumblrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a percent-encoded tag feed', () => {
+      const value = 'https://example.tumblr.com/tagged/caf%C3%A9/rss'
+      const expected = 'tumblr:tag'
+
+      expect(tumblrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for the format query on the blog root', () => {
+      const value = 'https://example.tumblr.com/?format=rss'
+
+      expect(tumblrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a podcast feed', () => {
+      const value = 'https://example.tumblr.com/podcast/rss'
+
+      expect(tumblrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://example.tumblr.com/post/123'
+
+      expect(tumblrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a tag page', () => {
+      const value = 'https://example.tumblr.com/tagged/updates'
+
+      expect(tumblrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on www.tumblr.com', () => {
+      const value = 'https://www.tumblr.com/example/rss'
+
+      expect(tumblrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.example.tumblr.com/rss'
+
+      expect(tumblrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://tumblr.com/rss'
+
+      expect(tumblrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/rss'
+
+      expect(tumblrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://example.tumblr.com/rss', { key: 'tumblr:posts', label: 'Posts' }],
+      ['https://example.tumblr.com/rss/', { key: 'tumblr:posts', label: 'Posts' }],
+      ['https://www.example.tumblr.com/rss', { key: 'tumblr:posts', label: 'Posts' }],
+      ['https://example.tumblr.com/tagged/updates/rss', { key: 'tumblr:tag', label: 'Tag' }],
+      ['https://example.tumblr.com/tagged/updates/rss/', { key: 'tumblr:tag', label: 'Tag' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [tumblrHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

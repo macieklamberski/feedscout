@@ -1,6 +1,7 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
+import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, wwwBlog (html).
@@ -12,6 +13,11 @@ const hosts = ['tumblr.com', 'www.tumblr.com']
 export const domains = ['tumblr.com']
 
 const tagRegex = /^\/tagged\/([^/]+)/i
+
+const feeds = definePlatformFeeds([
+  { key: 'tumblr:tag', template: 'https://{blog}.tumblr.com/tagged/{tag}/rss' },
+  { key: 'tumblr:posts', template: 'https://{blog}.tumblr.com/rss' },
+])
 
 export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
   // www.tumblr.com/{blog} and the legacy www.tumblr.com/blog/view/{blog} show a blog, and
@@ -57,21 +63,17 @@ export const tumblrHandler: PlatformHandler = {
   resolve: (url) => {
     const parsed = parseTumblrUrl(url)
 
-    if (!parsed) {
-      return []
-    }
-
-    const { origin } = new URL(url)
-    const blogOrigin = isHostOf(url, hosts) ? getHostOrigin(`${parsed.blog}.tumblr.com`) : origin
-
-    if (!blogOrigin) {
+    // A blog name read from a www.tumblr.com path has to be one host label.
+    if (!parsed || !getHostOrigin(`${parsed.blog}.tumblr.com`)) {
       return []
     }
 
     if (parsed.kind === 'tag') {
-      return [{ uri: `${blogOrigin}/tagged/${parsed.tag}/rss`, hint: composeHint('tumblr:tag') }]
+      return [feeds.getFeedEntry('tumblr:tag', { blog: parsed.blog, tag: parsed.tag })]
     }
 
-    return [{ uri: `${blogOrigin}/rss`, hint: composeHint('tumblr:posts') }]
+    return [feeds.getFeedEntry('tumblr:posts', { blog: parsed.blog })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
