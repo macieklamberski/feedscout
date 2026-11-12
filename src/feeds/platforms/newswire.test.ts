@@ -215,77 +215,77 @@ describe('newswireHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the beat key for a beat feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the beat hint for a beat feed', () => {
       const value = 'https://flyinstyle.newswire.com/browse/rss/beat/industries-travel'
-      const expected = 'newswire:beat'
+      const expected: DiscoverUriHint = { key: 'newswire:beat', label: 'Beat' }
 
-      expect(newswireHandler.getFeedKey?.(value)).toBe(expected)
+      expect(newswireHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the press releases key for a press releases feed', () => {
+    it('should return the press releases hint for a press releases feed', () => {
       const value = 'https://zuum-transportation-inc.newswire.com/browse/rss/pr'
-      const expected = 'newswire:press-releases'
+      const expected: DiscoverUriHint = { key: 'newswire:press-releases', label: 'Press releases' }
 
-      expect(newswireHandler.getFeedKey?.(value)).toBe(expected)
+      expect(newswireHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the social key for a social wire feed', () => {
+    it('should return the social hint for a social wire feed', () => {
       const value = 'https://bhcoe.newswire.com/browse/rss/social'
-      const expected = 'newswire:social'
+      const expected: DiscoverUriHint = { key: 'newswire:social', label: 'Social wire' }
 
-      expect(newswireHandler.getFeedKey?.(value)).toBe(expected)
+      expect(newswireHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the news key for a news feed', () => {
+    it('should return the news hint for a news feed', () => {
       const value = 'https://intratec.newswire.com/browse/rss/news'
-      const expected = 'newswire:news'
+      const expected: DiscoverUriHint = { key: 'newswire:news', label: 'News' }
 
-      expect(newswireHandler.getFeedKey?.(value)).toBe(expected)
+      expect(newswireHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the newsroom key for a newsroom feed', () => {
+    it('should return the newsroom hint for a newsroom feed', () => {
       const value = 'https://connectfx.newswire.com/browse/rss'
-      const expected = 'newswire:newsroom'
+      const expected: DiscoverUriHint = { key: 'newswire:newsroom', label: 'Newsroom' }
 
-      expect(newswireHandler.getFeedKey?.(value)).toBe(expected)
+      expect(newswireHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the newsroom key for a newsroom feed over http', () => {
+    it('should return the newsroom hint for a newsroom feed over http', () => {
       const value = 'http://link.newswire.com/browse/rss'
-      const expected = 'newswire:newsroom'
+      const expected: DiscoverUriHint = { key: 'newswire:newsroom', label: 'Newsroom' }
 
-      expect(newswireHandler.getFeedKey?.(value)).toBe(expected)
+      expect(newswireHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a beat page', () => {
       const value = 'https://flyinstyle.newswire.com/browse/beat/industries-travel'
 
-      expect(newswireHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(newswireHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path with no beat', () => {
       const value = 'https://flyinstyle.newswire.com/browse/rss/beat'
 
-      expect(newswireHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(newswireHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://news.acme.newswire.com/browse/rss'
 
-      expect(newswireHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(newswireHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://newswire.com/browse/rss'
 
-      expect(newswireHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(newswireHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/browse/rss'
 
-      expect(newswireHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(newswireHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
