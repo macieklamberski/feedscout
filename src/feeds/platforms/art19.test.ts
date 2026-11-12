@@ -85,44 +85,44 @@ describe('art19Handler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the show key for a show feed under its slug', () => {
+  describe('getFeedHint', () => {
+    it('should return the show hint for a show feed under its slug', () => {
       const value = 'https://rss.art19.com/business-movers'
-      const expected = 'art19:show'
+      const expected: DiscoverUriHint = { key: 'art19:show', label: 'Show' }
 
-      expect(art19Handler.getFeedKey?.(value)).toBe(expected)
+      expect(art19Handler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the show key for a show feed under its uuid', () => {
+    it('should return the show hint for a show feed under its uuid', () => {
       const value = 'https://rss.art19.com/3399916b-c0b3-4c58-89e3-4572f197d6f1'
-      const expected = 'art19:show'
+      const expected: DiscoverUriHint = { key: 'art19:show', label: 'Show' }
 
-      expect(art19Handler.getFeedKey?.(value)).toBe(expected)
+      expect(art19Handler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the show key for a show feed with a capitalized slug', () => {
+    it('should return the show hint for a show feed with a capitalized slug', () => {
       const value = 'https://rss.art19.com/Podcast-gids-in-gezondheid'
-      const expected = 'art19:show'
+      const expected: DiscoverUriHint = { key: 'art19:show', label: 'Show' }
 
-      expect(art19Handler.getFeedKey?.(value)).toBe(expected)
+      expect(art19Handler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for the feed host root', () => {
       const value = 'https://rss.art19.com/'
 
-      expect(art19Handler.getFeedKey?.(value)).toBeUndefined()
+      expect(art19Handler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a show page', () => {
       const value = 'https://art19.com/shows/business-movers'
 
-      expect(art19Handler.getFeedKey?.(value)).toBeUndefined()
+      expect(art19Handler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/business-movers'
 
-      expect(art19Handler.getFeedKey?.(value)).toBeUndefined()
+      expect(art19Handler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

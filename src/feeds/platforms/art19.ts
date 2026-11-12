@@ -45,5 +45,5 @@ export const art19Handler: PlatformHandler = {
     return [feeds.getFeedEntry('art19:show', { slug: parsed.slug })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
