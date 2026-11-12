@@ -162,14 +162,15 @@ export const goopeHandler: PlatformHandler = {
 
     const params = { site: parsed.site, templateId: parsed.templateId }
 
-    const news = pageFeeds.getFeedEntry('goope:news', params, 'rdf')
-
     // A chamber of commerce site collects its members' news under /shokokai/member.
     if (parsed.isMemberPage) {
-      return [pageFeeds.getFeedEntry('goope:member-news', params, 'rdf'), news]
+      return [
+        pageFeeds.getFeedEntry('goope:member-news', params, 'rdf'),
+        pageFeeds.getFeedEntry('goope:news', params, 'rdf'),
+      ]
     }
 
-    return [news]
+    return [pageFeeds.getFeedEntry('goope:news', params, 'rdf')]
   },
 
   getFeedHint: freeSiteFeeds.getFeedHint,
