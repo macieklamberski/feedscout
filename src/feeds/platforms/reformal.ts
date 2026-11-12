@@ -1,18 +1,28 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type ReformalUrl = { kind: 'project' }
+export type ReformalUrl = { kind: 'project'; project: string; domain: string }
 
 const domains = ['reformal.ru', 'idea.informer.com']
 
-export const parseReformalUrl = (url: string): ReformalUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
-    return
-  }
+// A project serves the same feed with an `ia` idea id in the query, which the table reads as an
+// extra parameter.
+const feeds = definePlatformFeeds(
+  [{ key: 'reformal:feedback', template: '{scheme}://{project}.{domain}/proj/rss' }],
+  { domains },
+)
 
-  return { kind: 'project' }
+export const parseReformalUrl = (url: string): ReformalUrl | undefined => {
+  for (const domain of domains) {
+    const project = getTenantSubdomain(url, [domain])
+
+    if (project) {
+      return { kind: 'project', project, domain }
+    }
+  }
 }
 
 export const reformalHandler: PlatformHandler = {
@@ -27,8 +37,11 @@ export const reformalHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
+    const scheme = new URL(url).protocol.slice(0, -1)
+    const params = { scheme, project: parsed.project, domain: parsed.domain }
 
-    return [{ uri: `${origin}/proj/rss`, hint: composeHint('reformal:feedback') }]
+    return [feeds.getFeedEntry('reformal:feedback', params)]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }

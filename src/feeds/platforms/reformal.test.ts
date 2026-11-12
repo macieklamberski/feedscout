@@ -1,21 +1,28 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { parseReformalUrl, type ReformalUrl, reformalHandler } from './reformal.js'
 
 describe('parseReformalUrl', () => {
   it('should return the project for a reformal.ru subdomain', () => {
-    const expected: ReformalUrl = { kind: 'project' }
+    const expected: ReformalUrl = { kind: 'project', project: 'example', domain: 'reformal.ru' }
 
     expect(parseReformalUrl('https://example.reformal.ru/')).toEqual(expected)
   })
 
   it('should return the project for an idea.informer.com subdomain', () => {
-    const expected: ReformalUrl = { kind: 'project' }
+    const expected: ReformalUrl = {
+      kind: 'project',
+      project: 'example',
+      domain: 'idea.informer.com',
+    }
 
     expect(parseReformalUrl('https://example.idea.informer.com/')).toEqual(expected)
   })
 
   it('should return the project for a page inside the project', () => {
-    const expected: ReformalUrl = { kind: 'project' }
+    const expected: ReformalUrl = { kind: 'project', project: 'example', domain: 'reformal.ru' }
 
     expect(parseReformalUrl('https://example.reformal.ru/proj/?ia=123456')).toEqual(expected)
   })
@@ -93,8 +100,93 @@ describe('reformalHandler', () => {
       expect(reformalHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep the scheme of an http project page', () => {
+      const value = 'http://example.reformal.ru/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.reformal.ru/proj/rss',
+          hint: { key: 'reformal:feedback', label: 'Feedback' },
+        },
+      ]
+
+      expect(reformalHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for a URL outside Reformal', () => {
       expect(reformalHandler.resolve('https://example.com/')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    const feedUrls = [
+      'https://example.reformal.ru/proj/rss',
+      'http://example.reformal.ru/proj/rss',
+      'https://example.reformal.ru/proj/rss?ia=12345',
+      'http://example.reformal.ru/proj/rss?ia=12345',
+      'https://example.idea.informer.com/proj/rss',
+      'https://example.idea.informer.com/proj/rss?ia=12345',
+    ]
+
+    it.each(feedUrls)('should return the feedback key for %s', (value) => {
+      const expected = 'reformal:feedback'
+
+      expect(reformalHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for an idea page', () => {
+      const value = 'https://example.reformal.ru/proj/?ia=12345'
+
+      expect(reformalHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on the apex domain', () => {
+      const value = 'https://reformal.ru/proj/rss'
+
+      expect(reformalHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on the idea.informer.com host', () => {
+      const value = 'https://idea.informer.com/proj/rss'
+
+      expect(reformalHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on a nested subdomain', () => {
+      const value = 'https://ideas.example.reformal.ru/proj/rss'
+
+      expect(reformalHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another informer.com host', () => {
+      const value = 'https://example.informer.com/proj/rss'
+
+      expect(reformalHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/proj/rss'
+
+      expect(reformalHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const hint: DiscoverUriHint = { key: 'reformal:feedback', label: 'Feedback' }
+    const ownFeeds = [
+      'https://example.reformal.ru/proj/rss',
+      'http://example.reformal.ru/proj/rss?ia=12345',
+      'https://example.idea.informer.com/proj/rss?ia=12345',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [reformalHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
