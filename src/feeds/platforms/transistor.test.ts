@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   getTransistorPage,
   parseTransistorUrl,
@@ -143,6 +146,67 @@ describe('transistorHandler', () => {
 
     it('should return empty array for the bare host', () => {
       expect(transistorHandler.resolve('https://transistor.fm/')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the podcast key for a podcast feed', () => {
+      const value = 'https://feeds.transistor.fm/wearechildfree'
+      const expected = 'transistor:podcast'
+
+      expect(transistorHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a podcast feed with a dot in its slug', () => {
+      const value = 'https://feeds.transistor.fm/alice.show'
+      const expected = 'transistor:podcast'
+
+      expect(transistorHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a show page', () => {
+      const value = 'https://wearechildfree.transistor.fm/'
+
+      expect(transistorHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the feed host root', () => {
+      const value = 'https://feeds.transistor.fm/'
+
+      expect(transistorHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a nested path on the feed host', () => {
+      const value = 'https://feeds.transistor.fm/wearechildfree/episodes'
+
+      expect(transistorHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/wearechildfree'
+
+      expect(transistorHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://feeds.transistor.fm/wearechildfree',
+        { key: 'transistor:podcast', label: 'Podcast' },
+      ],
+      ['https://feeds.transistor.fm/westendgeeks', { key: 'transistor:podcast', label: 'Podcast' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [transistorHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
