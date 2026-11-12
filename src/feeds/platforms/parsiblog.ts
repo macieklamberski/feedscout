@@ -12,11 +12,11 @@ const domains = ['parsiblog.com', 'parsiblog.ir']
 // .aspx paths.
 const feeds = definePlatformFeeds(
   [
-    { key: 'parsiblog:posts', template: 'http://{blog}.{domain}/rss/', format: 'rss' },
-    { key: 'parsiblog:posts', template: 'http://{blog}.{domain}/atom/', format: 'atom' },
-    { key: 'parsiblog:posts', template: 'http://{blog}.{domain}/RSS.aspx', format: 'rss' },
-    { key: 'parsiblog:posts', template: 'http://{blog}.{domain}/ATOM.aspx', format: 'atom' },
-    { key: 'parsiblog:posts', template: 'http://{blog}.{domain}/Mag/RSS.aspx', format: 'rss' },
+    { key: 'parsiblog:posts', template: '{scheme}://{host}/rss/', format: 'rss' },
+    { key: 'parsiblog:posts', template: '{scheme}://{host}/atom/', format: 'atom' },
+    { key: 'parsiblog:posts', template: '{scheme}://{host}/RSS.aspx', format: 'rss' },
+    { key: 'parsiblog:posts', template: '{scheme}://{host}/ATOM.aspx', format: 'atom' },
+    { key: 'parsiblog:posts', template: '{scheme}://{host}/Mag/RSS.aspx', format: 'rss' },
   ],
   { domains },
 )
@@ -38,17 +38,18 @@ export const parsiblogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseParsiblogUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    // Every page, on either domain, links its feeds on http://{blog}.ParsiBlog.com.
-    const params = { blog: parsed.blog, domain: 'parsiblog.com' }
+    // Every page, on either domain, links its feeds on {blog}.ParsiBlog.com.
+    const params = { host: `${parsed.blog}.parsiblog.com` }
 
     return [
-      feeds.getFeedEntry('parsiblog:posts', params, 'rss'),
-      feeds.getFeedEntry('parsiblog:posts', params, 'atom'),
+      page.getFeedEntry('parsiblog:posts', params, 'rss'),
+      page.getFeedEntry('parsiblog:posts', params, 'atom'),
     ]
   },
 
