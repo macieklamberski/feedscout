@@ -10,6 +10,7 @@ const domains = ['travellerspoint.com']
 
 const feeds = definePlatformFeeds([
   { key: 'travellerspoint:posts', template: 'https://{blog}.travellerspoint.com/atom.xml' },
+  { key: 'travellerspoint:posts', template: 'https://{blog}.travellerspoint.com/rss.xml' },
 ])
 
 export const parseTravellerspointUrl = (url: string): TravellerspointUrl | undefined => {

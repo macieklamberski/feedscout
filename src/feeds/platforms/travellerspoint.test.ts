@@ -106,6 +106,13 @@ describe('travellerspointHandler', () => {
       expect(travellerspointHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the posts key for the rss.xml blog feed', () => {
+      const value = 'https://alicetravels.travellerspoint.com/rss.xml'
+      const expected = 'travellerspoint:posts'
+
+      expect(travellerspointHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return undefined for a blog page', () => {
       const value = 'https://alicetravels.travellerspoint.com/426/'
 
@@ -136,6 +143,7 @@ describe('travellerspointHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://alicetravels.travellerspoint.com/atom.xml', postsHint],
       ['http://alicetravels.travellerspoint.com/atom.xml', postsHint],
+      ['https://alicetravels.travellerspoint.com/rss.xml', postsHint],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
