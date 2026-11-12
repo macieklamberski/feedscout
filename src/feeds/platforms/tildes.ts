@@ -1,5 +1,5 @@
 import { getQueryParam, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
@@ -15,19 +15,19 @@ const groupRegex = /^\/~([^/]+)/
 // Tildes' feed views honour the ?tag= query (forces order=NEW server-side).
 const feeds = definePlatformFeeds([
   {
-    key: 'tildes:group',
+    key: 'tildes:group-tag',
     template: 'https://tildes.net/~{group}/topics.rss?tag={tag}',
     format: 'rss',
   },
   {
-    key: 'tildes:group',
+    key: 'tildes:group-tag',
     template: 'https://tildes.net/~{group}/topics.atom?tag={tag}',
     format: 'atom',
   },
   { key: 'tildes:group', template: 'https://tildes.net/~{group}/topics.rss', format: 'rss' },
   { key: 'tildes:group', template: 'https://tildes.net/~{group}/topics.atom', format: 'atom' },
-  { key: 'tildes:topics', template: 'https://tildes.net/topics.rss?tag={tag}', format: 'rss' },
-  { key: 'tildes:topics', template: 'https://tildes.net/topics.atom?tag={tag}', format: 'atom' },
+  { key: 'tildes:tag', template: 'https://tildes.net/topics.rss?tag={tag}', format: 'rss' },
+  { key: 'tildes:tag', template: 'https://tildes.net/topics.atom?tag={tag}', format: 'atom' },
   { key: 'tildes:topics', template: 'https://tildes.net/topics.rss', format: 'rss' },
   { key: 'tildes:topics', template: 'https://tildes.net/topics.atom', format: 'atom' },
 ])
@@ -62,20 +62,34 @@ export const tildesHandler: PlatformHandler = {
       return []
     }
 
-    const tagParams: PlatformFeedParams = parsed.tag ? { tag: parsed.tag } : {}
+    const { tag } = parsed
 
     if (parsed.kind === 'group') {
-      const params = { ...tagParams, group: parsed.group }
+      const { group } = parsed
+
+      if (tag) {
+        return [
+          feeds.getFeedEntry('tildes:group-tag', { group, tag }, 'rss'),
+          feeds.getFeedEntry('tildes:group-tag', { group, tag }, 'atom'),
+        ]
+      }
 
       return [
-        feeds.getFeedEntry('tildes:group', params, 'rss'),
-        feeds.getFeedEntry('tildes:group', params, 'atom'),
+        feeds.getFeedEntry('tildes:group', { group }, 'rss'),
+        feeds.getFeedEntry('tildes:group', { group }, 'atom'),
+      ]
+    }
+
+    if (tag) {
+      return [
+        feeds.getFeedEntry('tildes:tag', { tag }, 'rss'),
+        feeds.getFeedEntry('tildes:tag', { tag }, 'atom'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('tildes:topics', tagParams, 'rss'),
-      feeds.getFeedEntry('tildes:topics', tagParams, 'atom'),
+      feeds.getFeedEntry('tildes:topics', {}, 'rss'),
+      feeds.getFeedEntry('tildes:topics', {}, 'atom'),
     ]
   },
 

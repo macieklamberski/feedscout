@@ -105,32 +105,32 @@ describe('tildesHandler', () => {
       expect(tildesHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should pass through tag query on group feeds', () => {
+    it('should return group tag feeds for a group page with a tag', () => {
       const value = 'https://tildes.net/~tech?tag=programming'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://tildes.net/~tech/topics.rss?tag=programming',
-          hint: { key: 'tildes:group', label: 'Group', format: 'rss' },
+          hint: { key: 'tildes:group-tag', label: 'Group tag', format: 'rss' },
         },
         {
           uri: 'https://tildes.net/~tech/topics.atom?tag=programming',
-          hint: { key: 'tildes:group', label: 'Group', format: 'atom' },
+          hint: { key: 'tildes:group-tag', label: 'Group tag', format: 'atom' },
         },
       ]
 
       expect(tildesHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should pass through tag query on global topics feeds', () => {
+    it('should return tag feeds for the home page with a tag', () => {
       const value = 'https://tildes.net/?tag=programming'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://tildes.net/topics.rss?tag=programming',
-          hint: { key: 'tildes:topics', label: 'Topics', format: 'rss' },
+          hint: { key: 'tildes:tag', label: 'Tag', format: 'rss' },
         },
         {
           uri: 'https://tildes.net/topics.atom?tag=programming',
-          hint: { key: 'tildes:topics', label: 'Topics', format: 'atom' },
+          hint: { key: 'tildes:tag', label: 'Tag', format: 'atom' },
         },
       ]
 
@@ -153,9 +153,13 @@ describe('tildesHandler', () => {
       expect(tildesHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the group hint for a group feed with a tag', () => {
+    it('should return the group tag hint for a group feed with a tag', () => {
       const value = 'https://tildes.net/~example/topics.rss?tag=example'
-      const expected: DiscoverUriHint = { key: 'tildes:group', label: 'Group', format: 'rss' }
+      const expected: DiscoverUriHint = {
+        key: 'tildes:group-tag',
+        label: 'Group tag',
+        format: 'rss',
+      }
 
       expect(tildesHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -188,9 +192,9 @@ describe('tildesHandler', () => {
       expect(tildesHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the topics hint for a topics feed with a tag', () => {
+    it('should return the tag hint for a topics feed with a tag', () => {
       const value = 'https://tildes.net/topics.atom?tag=example'
-      const expected: DiscoverUriHint = { key: 'tildes:topics', label: 'Topics', format: 'atom' }
+      const expected: DiscoverUriHint = { key: 'tildes:tag', label: 'Tag', format: 'atom' }
 
       expect(tildesHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -226,7 +230,11 @@ describe('tildesHandler', () => {
       ],
       [
         'https://tildes.net/~example/topics.atom?tag=example',
-        { key: 'tildes:group', label: 'Group', format: 'atom' },
+        { key: 'tildes:group-tag', label: 'Group tag', format: 'atom' },
+      ],
+      [
+        'http://www.tildes.net/~example/topics.rss?tag=example',
+        { key: 'tildes:group-tag', label: 'Group tag', format: 'rss' },
       ],
       [
         'http://www.tildes.net/topics.rss',
@@ -238,7 +246,11 @@ describe('tildesHandler', () => {
       ],
       [
         'https://tildes.net/topics.rss?tag=example',
-        { key: 'tildes:topics', label: 'Topics', format: 'rss' },
+        { key: 'tildes:tag', label: 'Tag', format: 'rss' },
+      ],
+      [
+        'http://www.tildes.net/topics.atom?tag=example',
+        { key: 'tildes:tag', label: 'Tag', format: 'atom' },
       ],
     ]
 
