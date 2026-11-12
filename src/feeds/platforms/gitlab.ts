@@ -164,7 +164,7 @@ export const gitlabHandler: PlatformHandler = {
 
   // Only gitlab.com is claimed: a self-hosted instance is known by its page markup, which a feed
   // URL does not carry.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const parsedUrl = parseUrl(url)
 
     if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
@@ -184,7 +184,7 @@ export const gitlabHandler: PlatformHandler = {
       const [, featureSegments] = splitProjectPath(segments)
 
       if (featureSegments.length === 0 && activityFeedRegex.test(segments.at(-1) ?? '')) {
-        return 'gitlab:activity'
+        return composeHint('gitlab:activity')
       }
 
       return
@@ -199,7 +199,7 @@ export const gitlabHandler: PlatformHandler = {
     const isAtomFormat = isAnyOf(getQueryParam(parsedUrl, 'format'), 'atom')
 
     if (isAnyOf(feature, 'commits') && branch && isAtomFormat) {
-      return 'gitlab:branch-commits'
+      return composeHint('gitlab:branch-commits')
     }
 
     if (branch) {
@@ -207,9 +207,15 @@ export const gitlabHandler: PlatformHandler = {
     }
 
     if (isAnyOf(feature, 'tags') && isAtomFormat) {
-      return 'gitlab:tags'
+      return composeHint('gitlab:tags')
     }
 
-    return projectFeeds.find(({ file }) => isAnyOf(feature, file))?.key
+    const projectFeed = projectFeeds.find(({ file }) => isAnyOf(feature, file))
+
+    if (!projectFeed) {
+      return
+    }
+
+    return composeHint(projectFeed.key)
   },
 }
