@@ -8,10 +8,13 @@ export type BloggerDeUrl = { kind: 'blog'; blog: string }
 
 const domains = ['blogger.de']
 
-const feeds = definePlatformFeeds([
-  { key: 'blogger-de:posts', template: 'https://{blog}.blogger.de/rss' },
-  { key: 'blogger-de:posts', template: 'https://{blog}.blogger.de/topics/{topic}/rss' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'blogger-de:posts', template: '{scheme}://{host}/rss' },
+    { key: 'blogger-de:posts', template: '{scheme}://{host}/topics/{topic}/rss' },
+  ],
+  { domains },
+)
 
 export const parseBloggerDeUrl = (url: string): BloggerDeUrl | undefined => {
   // A nested subdomain like a.b.blogger.de fails TLS, since the certificate covers one label.
@@ -31,12 +34,13 @@ export const bloggerDeHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseBloggerDeUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    return [feeds.getFeedEntry('blogger-de:posts', { blog: parsed.blog })]
+    return [page.getFeedEntry('blogger-de:posts')]
   },
 
   getFeedHint: feeds.getFeedHint,

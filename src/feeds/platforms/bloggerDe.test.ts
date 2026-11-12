@@ -57,11 +57,11 @@ describe('bloggerDeHandler', () => {
       expect(bloggerDeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the https posts feed for an http blog page', () => {
+    it('should keep the scheme of an http blog page', () => {
       const value = 'http://alice.blogger.de/stories/2918480/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.blogger.de/rss',
+          uri: 'http://alice.blogger.de/rss',
           hint: { key: 'blogger-de:posts', label: 'Posts' },
         },
       ]
