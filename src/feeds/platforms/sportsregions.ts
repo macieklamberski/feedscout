@@ -12,25 +12,8 @@ const domains = ['sportsregions.fr']
 
 const eventsPathRegex = /^\/evenements\/?$/i
 
-const clubFeeds = definePlatformFeeds([
-  { key: 'sportsregions:news', template: 'https://{club}.sportsregions.fr/rss/news' },
-  { key: 'sportsregions:events', template: 'https://{club}.sportsregions.fr/rss/evenement' },
-  {
-    key: 'sportsregions:filtered-events',
-    template: 'https://{club}.sportsregions.fr/rss/evenement?type_id={typeId}&groupe_id={groupId}',
-  },
-  {
-    key: 'sportsregions:filtered-events',
-    template: 'https://{club}.sportsregions.fr/rss/evenement?type_id={typeId}',
-  },
-  {
-    key: 'sportsregions:filtered-events',
-    template: 'https://{club}.sportsregions.fr/rss/evenement?groupe_id={groupId}',
-  },
-])
-
 // A club on its own domain is known only by its markers, so its feeds are built but not claimed.
-const siteFeeds = definePlatformFeeds(
+const feeds = definePlatformFeeds(
   [
     { key: 'sportsregions:news', template: '{scheme}://{host}/rss/news' },
     { key: 'sportsregions:events', template: '{scheme}://{host}/rss/evenement' },
@@ -105,28 +88,23 @@ export const sportsregionsHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const club = getTenantSubdomain(url, domains)
-    const page = club ? clubFeeds.forUrl(url) : siteFeeds.forUrl(url)
+    const page = feeds.forUrl(url)
 
     if (!page) {
       return []
     }
 
-    const params: PlatformFeedParams = club ? { club } : {}
     const filters = getEventFilters(url)
     const uris: Array<DiscoverUriEntry> = []
 
     if (filters) {
-      uris.push(page.getFeedEntry('sportsregions:filtered-events', { ...params, ...filters }))
+      uris.push(page.getFeedEntry('sportsregions:filtered-events', filters))
     }
 
-    uris.push(
-      page.getFeedEntry('sportsregions:news', params),
-      page.getFeedEntry('sportsregions:events', params),
-    )
+    uris.push(page.getFeedEntry('sportsregions:news'), page.getFeedEntry('sportsregions:events'))
 
     return uris
   },
 
-  getFeedHint: clubFeeds.getFeedHint,
+  getFeedHint: feeds.getFeedHint,
 }
