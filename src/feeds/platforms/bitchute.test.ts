@@ -80,38 +80,38 @@ describe('bitchuteHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the channel key for a channel feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the channel hint for a channel feed', () => {
       const value = 'https://www.bitchute.com/feeds/rss/channel/uagSShqJKtfp/'
-      const expected = 'bitchute:channel'
+      const expected: DiscoverUriHint = { key: 'bitchute:channel', label: 'Channel' }
 
-      expect(bitchuteHandler.getFeedKey?.(value)).toBe(expected)
+      expect(bitchuteHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the channel key for a channel feed named by a slug', () => {
+    it('should return the channel hint for a channel feed named by a slug', () => {
       const value = 'https://www.bitchute.com/feeds/rss/channel/clemens/'
-      const expected = 'bitchute:channel'
+      const expected: DiscoverUriHint = { key: 'bitchute:channel', label: 'Channel' }
 
-      expect(bitchuteHandler.getFeedKey?.(value)).toBe(expected)
+      expect(bitchuteHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the channel key for a channel feed on the api host', () => {
+    it('should return the channel hint for a channel feed on the api host', () => {
       const value = 'https://api.bitchute.com/feeds/rss/channel/sean_last/'
-      const expected = 'bitchute:channel'
+      const expected: DiscoverUriHint = { key: 'bitchute:channel', label: 'Channel' }
 
-      expect(bitchuteHandler.getFeedKey?.(value)).toBe(expected)
+      expect(bitchuteHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a channel page', () => {
       const value = 'https://www.bitchute.com/channel/clemens/'
 
-      expect(bitchuteHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bitchuteHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a channel feed path on another host', () => {
       const value = 'https://example.com/feeds/rss/channel/clemens/'
 
-      expect(bitchuteHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bitchuteHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
