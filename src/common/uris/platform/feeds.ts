@@ -29,6 +29,8 @@ export type PlatformFeedTableOptions = {
   hosts?: Array<string>
   // The domains a `{domain}` placeholder stands for.
   domains?: Array<string>
+  // Whether `www` can be a tenant, so `www.example.com` matches a `{user}.example.com` row.
+  isWwwTenant?: boolean
 }
 
 export type PlatformFeedTable = {
@@ -217,11 +219,17 @@ export const definePlatformFeeds = (
       return
     }
 
-    // A host as given wins, so `www.prose.sh` is the tenant `www`, and `www.alice.tumblr.com`
-    // falls back to the host without `www`.
-    const template =
-      bySpecificity.find((candidate) => candidate.isFeedUrl(parsedUrl)) ??
-      bySpecificity.find((candidate) => candidate.isFeedUrlWithoutWww(parsedUrl))
+    // With `www` a tenant, a host as given wins, so `www.example.com` is the tenant `www` and
+    // `www.alice.example.com` falls back to the host without `www`.
+    if (options.isWwwTenant) {
+      const template = bySpecificity.find((candidate) => candidate.isFeedUrl(parsedUrl))
+
+      if (template) {
+        return composeHint(template.key, template.format)
+      }
+    }
+
+    const template = bySpecificity.find((candidate) => candidate.isFeedUrlWithoutWww(parsedUrl))
 
     if (!template) {
       return
