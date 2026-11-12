@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { LobstersUrl } from './lobsters.js'
 import { lobstersHandler, parseLobstersUrl } from './lobsters.js'
 
@@ -299,6 +302,164 @@ describe('lobstersHandler', () => {
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the tag key for a tag feed', () => {
+      const value = 'https://lobste.rs/t/kotlin.rss'
+      const expected = 'lobsters:tag'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a multiple tags feed', () => {
+      const value = 'https://lobste.rs/t/programming,security.rss'
+      const expected = 'lobsters:tag'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a tag feed over http', () => {
+      const value = 'http://lobste.rs/t/openbsd.rss'
+      const expected = 'lobsters:tag'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should read the tag feed route word in any case', () => {
+      const value = 'https://lobste.rs/T/kotlin.rss'
+      const expected = 'lobsters:tag'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the domain key for a domain feed', () => {
+      const value = 'https://lobste.rs/domains/github.com.rss'
+      const expected = 'lobsters:domain'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the stories key for a user stories feed', () => {
+      const value = 'https://lobste.rs/~steveklabnik/stories.rss'
+      const expected = 'lobsters:stories'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the stories key for the site feed', () => {
+      const value = 'https://lobste.rs/rss'
+      const expected = 'lobsters:stories'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the stories key for the site feed with a token', () => {
+      const value =
+        'https://lobste.rs/rss?token=0hovl39ZKFZbNNkhlZMBJwh43PhM7FbCque1ctVxn4yMpNCurENnjnKFpzCi'
+      const expected = 'lobsters:stories'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the top key for a top feed with its period', () => {
+      const value = 'https://lobste.rs/top/1w/rss'
+      const expected = 'lobsters:top'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the top key for a top feed at the spelling its page links', () => {
+      const value = 'https://lobste.rs/top/1w.rss'
+      const expected = 'lobsters:top'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the top key for the all-time top feed', () => {
+      const value = 'https://lobste.rs/top/rss'
+      const expected = 'lobsters:top'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the newest key for the newest feed', () => {
+      const value = 'https://lobste.rs/newest.rss'
+      const expected = 'lobsters:newest'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the comments key for the comments feed', () => {
+      const value = 'https://lobste.rs/comments.rss'
+      const expected = 'lobsters:comments'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a tag page', () => {
+      const value = 'https://lobste.rs/t/kotlin'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a user page', () => {
+      const value = 'https://lobste.rs/~steveklabnik'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a top page', () => {
+      const value = 'https://lobste.rs/top/1w'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a story page', () => {
+      const value = 'https://lobste.rs/s/abc123/some_story'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a tag feed path on another host', () => {
+      const value = 'https://example.com/t/kotlin.rss'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an invalid URL', () => {
+      const value = 'not a url'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://lobste.rs/t/kotlin.rss', { key: 'lobsters:tag', label: 'Tag' }],
+      ['https://lobste.rs/domains/github.com.rss', { key: 'lobsters:domain', label: 'Domain' }],
+      [
+        'https://lobste.rs/~steveklabnik/stories.rss',
+        { key: 'lobsters:stories', label: 'Stories' },
+      ],
+      ['https://lobste.rs/rss', { key: 'lobsters:stories', label: 'Stories' }],
+      ['https://lobste.rs/top/1w/rss', { key: 'lobsters:top', label: 'Top stories' }],
+      ['https://lobste.rs/top/1w.rss', { key: 'lobsters:top', label: 'Top stories' }],
+      ['https://lobste.rs/top/rss', { key: 'lobsters:top', label: 'Top stories' }],
+      ['https://lobste.rs/newest.rss', { key: 'lobsters:newest', label: 'Newest' }],
+      ['https://lobste.rs/comments.rss', { key: 'lobsters:comments', label: 'Comments' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [lobstersHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })
