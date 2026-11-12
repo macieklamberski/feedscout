@@ -23,11 +23,14 @@ const publicationRegex =
   /primaryPublication\\?":\{[^{}]*?\\?"subdomain\\?":\\?"(?<subdomain>[\w-]+)\\?",\\?"custom_domain\\?":(?:\\?"(?<customDomain>[^"\\]+)\\?"|null)/
 // A publication page embeds its own record, with the id its podcast feeds are named by, and the
 // podcast settings of each section that is a podcast. A publication or section without a podcast
-// answers 404 there, so only those feeds are built.
-const pubRecordRegex = /\\?"pub\\?":\{(?<record>[^{}]*)/
-const pubIdRegex = /\\?"id\\?":(?<pubId>\d+),/
-const podcastEnabledRegex = /\\?"podcast_enabled\\?":true\b/
-const sectionPodcastRegex = /\\?"podcastSettings\\?":\{\\?"section_id\\?":(\d+)/g
+// answers 404 there, so only those feeds are built. A publication that names a feed URL of its own
+// redirects its publication feed to it, so that feed is left out. The record is raw JSON, so an
+// escaped quote is text inside a string and never starts a key.
+const pubRecordRegex = /"pub":\{(?<record>[^{}]*)/
+const pubIdRegex = /"id":(?<pubId>\d+),/
+const podcastEnabledRegex = /"podcast_enabled":true\b/
+const podcastFeedUrlRegex = /"podcast_feed_url":"/
+const sectionPodcastRegex = /"podcastSettings":\{"section_id":(\d+)/g
 
 // A custom domain is read only from a profile page, so its feed is built here but not claimed.
 // The same feed answers at feed.xml and feed.rss. A podcast's section row comes first, so a section
@@ -64,7 +67,7 @@ const getPodcastFeeds = (content: string | undefined): Array<DiscoverUriEntry> =
     return feeds.getFeedEntry('substack:podcast', { pubId, sectionId })
   })
 
-  if (podcastEnabledRegex.test(record)) {
+  if (podcastEnabledRegex.test(record) && !podcastFeedUrlRegex.test(record)) {
     podcastFeeds.unshift(feeds.getFeedEntry('substack:podcast', { pubId }))
   }
 

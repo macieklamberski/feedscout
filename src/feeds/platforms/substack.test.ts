@@ -42,7 +42,9 @@ describe('parseSubstackUrl', () => {
   })
 
   it('should return undefined for the API host', () => {
-    expect(parseSubstackUrl('https://api.substack.com/feed/podcast/12345.rss')).toBeUndefined()
+    const value = 'https://api.substack.com/feed/podcast/12345.rss'
+
+    expect(parseSubstackUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -93,6 +95,12 @@ describe('getSubstackPage', () => {
 })
 
 describe('substackHandler', () => {
+  const podcastFeedUrls = [
+    'https://api.substack.com/feed/podcast/12345.rss',
+    'https://api.substack.com/feed/podcast/12345/s/678.rss',
+    'https://api.substack.com/feed/podcast/spotify/0b6c0a4e-1f2d-4e3a-9c8b-7a6d5e4f3c2b/12345.rss',
+  ]
+
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://example.substack.com'],
@@ -270,6 +278,43 @@ describe('substackHandler', () => {
       expect(substackHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should leave out the publication podcast feed when the publication names its own', () => {
+      const value = 'https://example.substack.com/podcast'
+      const content =
+        '{"pub":{"id":12345,"podcast_enabled":true,"podcast_feed_url":"https://api.substack.com/feed/podcast/12345/s/111.rss","sections":[{"id":111,"podcastSettings":{"section_id":111}}]}}'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+        {
+          uri: 'https://api.substack.com/feed/podcast/12345/s/111.rss',
+          hint: { key: 'substack:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(substackHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should read the podcast from the publication record, not from a quoted string', () => {
+      const value = 'https://example.substack.com/p/post'
+      const content =
+        '{"headline":"\\"pub\\":{\\"id\\":999,\\"podcast_enabled\\":true}"}' +
+        '{"pub":{"id":12345,"podcast_enabled":true}}'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+        {
+          uri: 'https://api.substack.com/feed/podcast/12345.rss',
+          hint: { key: 'substack:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(substackHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return the newsletter feed alone for a publication without a podcast', () => {
       const value = 'https://example.substack.com'
       const content = '{"pub":{"author_id":678,"id":12345,"podcast_enabled":false}}'
@@ -318,12 +363,6 @@ describe('substackHandler', () => {
 
       expect(substackHandler.getFeedHint?.(value)).toBeUndefined()
     })
-
-    const podcastFeedUrls = [
-      'https://api.substack.com/feed/podcast/12345.rss',
-      'https://api.substack.com/feed/podcast/12345/s/678.rss',
-      'https://api.substack.com/feed/podcast/spotify/0b6c0a4e-1f2d-4e3a-9c8b-7a6d5e4f3c2b/12345.rss',
-    ]
 
     it.each(podcastFeedUrls)('should return the podcast hint for %s', (value) => {
       const expected: DiscoverUriHint = { key: 'substack:podcast', label: 'Podcast' }
@@ -397,13 +436,7 @@ describe('substackHandler', () => {
       expect(result).toEqual(expected)
     })
 
-    const podcastFeeds = [
-      'https://api.substack.com/feed/podcast/12345.rss',
-      'https://api.substack.com/feed/podcast/12345/s/678.rss',
-      'https://api.substack.com/feed/podcast/spotify/0b6c0a4e-1f2d-4e3a-9c8b-7a6d5e4f3c2b/12345.rss',
-    ]
-
-    it.each(podcastFeeds)('should return podcast feed %s as itself', async (value) => {
+    it.each(podcastFeedUrls)('should return podcast feed %s as itself', async (value) => {
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [substackHandler],
