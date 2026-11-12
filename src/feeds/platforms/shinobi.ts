@@ -116,20 +116,16 @@ const domains = [
 // so /RSS/200/RSS is the RSS 2.0 feed too.
 const feeds = definePlatformFeeds(
   [
-    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/RSS/', format: 'rss' },
-    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/ATOM/', format: 'atom' },
-    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/RSS/200/', format: 'rss' },
-    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/RSS/RSS/', format: 'rss' },
-    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/RSS/200/RSS/', format: 'rss' },
-    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/OPML', format: 'rss' },
-    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/RSS/091/', format: 'rss' },
-    {
-      key: 'shinobi:posts',
-      template: '{scheme}://{blog}.{domain}/RSS/091/index.rdf',
-      format: 'rss',
-    },
-    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/RSS/100/', format: 'rdf' },
-    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/RSS/100/RSS/', format: 'rdf' },
+    { key: 'shinobi:posts', template: '{scheme}://{host}/RSS/', format: 'rss' },
+    { key: 'shinobi:posts', template: '{scheme}://{host}/ATOM/', format: 'atom' },
+    { key: 'shinobi:posts', template: '{scheme}://{host}/RSS/200/', format: 'rss' },
+    { key: 'shinobi:posts', template: '{scheme}://{host}/RSS/RSS/', format: 'rss' },
+    { key: 'shinobi:posts', template: '{scheme}://{host}/RSS/200/RSS/', format: 'rss' },
+    { key: 'shinobi:posts', template: '{scheme}://{host}/OPML', format: 'rss' },
+    { key: 'shinobi:posts', template: '{scheme}://{host}/RSS/091/', format: 'rss' },
+    { key: 'shinobi:posts', template: '{scheme}://{host}/RSS/091/index.rdf', format: 'rss' },
+    { key: 'shinobi:posts', template: '{scheme}://{host}/RSS/100/', format: 'rdf' },
+    { key: 'shinobi:posts', template: '{scheme}://{host}/RSS/100/RSS/', format: 'rdf' },
   ],
   { domains },
 )
@@ -150,18 +146,15 @@ export const shinobiHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsed = parseShinobiUrl(url)
     const page = feeds.forUrl(url)
 
-    if (!parsed || !page) {
+    if (!parseShinobiUrl(url) || !page) {
       return []
     }
 
-    const params = { blog: parsed.blog }
-
     return [
-      page.getFeedEntry('shinobi:posts', params, 'rss'),
-      page.getFeedEntry('shinobi:posts', params, 'atom'),
+      page.getFeedEntry('shinobi:posts', {}, 'rss'),
+      page.getFeedEntry('shinobi:posts', {}, 'atom'),
     ]
   },
 
