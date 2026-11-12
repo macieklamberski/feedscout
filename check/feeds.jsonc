@@ -1373,6 +1373,7 @@
     ]
   },
   "producthunt": {
+    "producthunt:category": "https://www.producthunt.com/feed?category=productivity",
     "producthunt:products": "https://www.producthunt.com/feed"
   },
   "promodj": {

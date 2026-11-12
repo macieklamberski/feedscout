@@ -113,12 +113,22 @@ describe('producthuntHandler', () => {
       'https://producthunt.com/feed',
       'http://www.producthunt.com/feed',
       'https://www.producthunt.com/feed/',
-      'https://www.producthunt.com/feed?category=example',
       'https://www.producthunt.com/feed?cache=12345',
     ]
 
     it.each(productsFeeds)('should return the products hint for %s', (value) => {
       const expected: DiscoverUriHint = { key: 'producthunt:products', label: 'Products' }
+
+      expect(producthuntHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    const categoryFeeds: Array<string> = [
+      'https://www.producthunt.com/feed?category=example',
+      'http://producthunt.com/feed/?category=example',
+    ]
+
+    it.each(categoryFeeds)('should return the category hint for %s', (value) => {
+      const expected: DiscoverUriHint = { key: 'producthunt:category', label: 'Category' }
 
       expect(producthuntHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -142,22 +152,22 @@ describe('producthuntHandler', () => {
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<string> = [
-      'https://www.producthunt.com/feed',
-      'http://producthunt.com/feed',
-      'https://www.producthunt.com/feed/',
-      'https://www.producthunt.com/feed?category=example',
+    const productsHint: DiscoverUriHint = { key: 'producthunt:products', label: 'Products' }
+    const categoryHint: DiscoverUriHint = { key: 'producthunt:category', label: 'Category' }
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://www.producthunt.com/feed', productsHint],
+      ['http://producthunt.com/feed', productsHint],
+      ['https://www.producthunt.com/feed/', productsHint],
+      ['https://www.producthunt.com/feed?category=example', categoryHint],
     ]
 
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [producthuntHandler],
         baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: value, hint: { key: 'producthunt:products', label: 'Products' } },
-      ]
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
       expect(result).toEqual(expected)
     })

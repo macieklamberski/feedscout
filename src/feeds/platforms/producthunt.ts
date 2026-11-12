@@ -14,8 +14,11 @@ export const hosts = ['producthunt.com', 'www.producthunt.com']
 const productRegex = /^\/products\/([^/]+)(?:\/|$)/i
 const topicRegex = /^\/topics\/([^/]+)\/?$/i
 
+// The category feed is claimed only: the category page answers plain requests with a challenge,
+// so which feed it links is unknown.
 const feeds = definePlatformFeeds([
   { key: 'producthunt:products', template: 'https://www.producthunt.com/feed' },
+  { key: 'producthunt:category', template: 'https://www.producthunt.com/feed?category={category}' },
 ])
 
 // Every page links the site-wide product feed, so any other page reads as the home page.
