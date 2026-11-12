@@ -188,6 +188,19 @@ describe('eklablogHandler', () => {
       expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the posts hint for a feed on fatalblog.com', () => {
+      const value = 'https://alice.fatalblog.com/rss'
+      const expected: DiscoverUriHint = { key: 'eklablog:posts', label: 'Posts' }
+
+      expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a feed on www.shonenblog.com', () => {
+      const value = 'https://www.shonenblog.com/rss'
+
+      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return the posts hint for a feed with a trailing slash', () => {
       const value = 'https://alice.eklablog.com/rss/'
       const expected: DiscoverUriHint = { key: 'eklablog:posts', label: 'Posts' }
@@ -239,6 +252,11 @@ describe('eklablogHandler', () => {
       ['http://alice.eklablog.fr/rss', { key: 'eklablog:posts', label: 'Posts' }],
       ['http://alice.eklablog.fr/rss/comments', { key: 'eklablog:comments', label: 'Comments' }],
       ['https://example.ek.la/rss/', { key: 'eklablog:posts', label: 'Posts' }],
+      ['https://alice.blogy.fr/rss', { key: 'eklablog:posts', label: 'Posts' }],
+      [
+        'https://alice.kilariblog.com/rss/comments',
+        { key: 'eklablog:comments', label: 'Comments' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

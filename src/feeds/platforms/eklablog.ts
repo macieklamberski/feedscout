@@ -11,18 +11,23 @@ export type EklablogUrl = { kind: 'blog' } | { kind: 'customDomain' }
 const domains = [
   'blogg.org',
   'blogueuse.fr',
+  'blogy.fr',
   'cd.st',
   'doremiblog.com',
   'ek.la',
   'eklablog.com',
   'eklablog.fr',
   'eklablog.net',
+  'fatalblog.com',
   'id.st',
   'jeblog.fr',
   'kazeo.com',
   'kif.fr',
+  'kilariblog.com',
   'lo.gs',
   'revolublog.com',
+  'shojoblog.com',
+  'shonenblog.com',
   'zic.fr',
 ]
 const connectHosts = ['connect.eklablog.com']
