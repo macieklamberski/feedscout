@@ -59,17 +59,18 @@ export const ghostHandler: PlatformHandler = {
       return []
     }
 
-    const blogFeed = page.getFeedEntry('ghost:blog')
-
     if (parsed.kind === 'tag') {
-      return [page.getFeedEntry('ghost:tag', { tag: parsed.tag }), blogFeed]
+      return [page.getFeedEntry('ghost:tag', { tag: parsed.tag }), page.getFeedEntry('ghost:blog')]
     }
 
     if (parsed.kind === 'author') {
-      return [page.getFeedEntry('ghost:author', { author: parsed.author }), blogFeed]
+      return [
+        page.getFeedEntry('ghost:author', { author: parsed.author }),
+        page.getFeedEntry('ghost:blog'),
+      ]
     }
 
-    return [blogFeed]
+    return [page.getFeedEntry('ghost:blog')]
   },
 
   getFeedHint: feeds.getFeedHint,
