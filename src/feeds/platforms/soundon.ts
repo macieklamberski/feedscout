@@ -1,6 +1,7 @@
 import { getQueryParam, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hexOrHyphenRegex } from '../../common/utils.js'
+import { hexOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -11,6 +12,10 @@ const hosts = ['player.soundon.fm']
 
 const podcastRegex = /^\/p\/([^/]+)(?:\/|$)/i
 const embedRegex = /^\/embed\/?$/i
+
+const feeds = definePlatformFeeds([
+  { key: 'soundon:podcast', template: 'https://feeds.soundon.fm/podcasts/{podcastId}.xml' },
+])
 
 export const parseSoundonUrl = (url: string): SoundonUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -43,11 +48,8 @@ export const soundonHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://feeds.soundon.fm/podcasts/${parsed.podcastId}.xml`,
-        hint: composeHint('soundon:podcast'),
-      },
-    ]
+    return [feeds.getFeedEntry('soundon:podcast', { podcastId: parsed.podcastId })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
