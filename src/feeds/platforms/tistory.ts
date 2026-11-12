@@ -8,11 +8,14 @@ export type TistoryUrl = { kind: 'blog' }
 
 const domains = ['tistory.com']
 
-const feeds = definePlatformFeeds([
-  { key: 'tistory:blog', template: '{scheme}://{blog}.tistory.com/rss' },
-  { key: 'tistory:blog', template: '{scheme}://{blog}.tistory.com/feed' },
-  { key: 'tistory:blog', template: '{scheme}://{blog}.tistory.com/index.xml' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'tistory:blog', template: '{scheme}://{host}/rss' },
+    { key: 'tistory:blog', template: '{scheme}://{host}/feed' },
+    { key: 'tistory:blog', template: '{scheme}://{host}/index.xml' },
+  ],
+  { domains },
+)
 
 export const parseTistoryUrl = (url: string): TistoryUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -28,14 +31,13 @@ export const tistoryHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const blog = getTenantSubdomain(url, domains)
     const page = feeds.forUrl(url)
 
-    if (!blog || !page) {
+    if (!parseTistoryUrl(url) || !page) {
       return []
     }
 
-    return [page.getFeedEntry('tistory:blog', { blog })]
+    return [page.getFeedEntry('tistory:blog')]
   },
 
   getFeedHint: feeds.getFeedHint,
