@@ -153,6 +153,7 @@ describe('bigCartelHandler', () => {
       'https://alice.bigcartel.com/products.rss',
       'http://alice.bigcartel.com/products.rss',
       'https://ALICE.bigcartel.com/products.rss',
+      'https://alice.bigcartel.com/products.xml',
     ]
 
     it.each(feedUrls)('should return the products hint for %s', (value) => {
@@ -163,12 +164,6 @@ describe('bigCartelHandler', () => {
 
     it('should return undefined for a store page', () => {
       const value = 'https://alice.bigcartel.com/product/a-print'
-
-      expect(bigCartelHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the Google Merchant feed', () => {
-      const value = 'https://alice.bigcartel.com/products.xml'
 
       expect(bigCartelHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -203,6 +198,7 @@ describe('bigCartelHandler', () => {
       'https://alice.bigcartel.com/products.rss',
       'http://alice.bigcartel.com/products.rss',
       'https://ALICE.bigcartel.com/products.rss',
+      'https://alice.bigcartel.com/products.xml',
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value) => {
