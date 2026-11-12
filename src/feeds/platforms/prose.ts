@@ -17,6 +17,7 @@ const feeds = definePlatformFeeds([
   { key: 'prose:discovery', template: 'https://prose.sh/rss' },
   { key: 'prose:discovery', template: 'https://prose.sh/rss.atom' },
   { key: 'prose:tag', template: 'https://{username}.prose.sh/rss?tag={tag}' },
+  { key: 'prose:tag', template: 'https://{username}.prose.sh/atom?tag={tag}' },
   { key: 'prose:blog', template: 'https://{username}.prose.sh/rss' },
   { key: 'prose:blog', template: 'https://{username}.prose.sh/atom' },
 ])

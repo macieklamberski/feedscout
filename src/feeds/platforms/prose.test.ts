@@ -157,6 +157,13 @@ describe('proseHandler', () => {
       expect(proseHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the tag key for a tag atom feed', () => {
+      const value = 'https://alice.prose.sh/atom?tag=go'
+      const expected = 'prose:tag'
+
+      expect(proseHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the discovery key for the discovery feed', () => {
       const value = 'https://prose.sh/rss'
       const expected = 'prose:discovery'
@@ -189,6 +196,7 @@ describe('discoverUrisFromPlatform', () => {
   const values: Array<[string, { key: string; label: string }]> = [
     ['https://alice.prose.sh/atom', { key: 'prose:blog', label: 'Blog' }],
     ['https://alice.prose.sh/rss/?tag=go', { key: 'prose:tag', label: 'Tag' }],
+    ['https://alice.prose.sh/atom?tag=go', { key: 'prose:tag', label: 'Tag' }],
     ['https://prose.sh/rss.atom', { key: 'prose:discovery', label: 'Discovery' }],
   ]
 
