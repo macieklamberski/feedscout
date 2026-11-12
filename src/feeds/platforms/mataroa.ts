@@ -29,14 +29,13 @@ export const mataroaHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseMataroaUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const scheme = new URL(url).protocol.slice(0, -1)
-
-    return [feeds.getFeedEntry('mataroa:blog', { scheme, blog: parsed.blog })]
+    return [page.getFeedEntry('mataroa:blog', { blog: parsed.blog })]
   },
 
   getFeedHint: feeds.getFeedHint,
