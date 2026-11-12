@@ -31,10 +31,13 @@ const feeds = definePlatformFeeds([
 ])
 
 // A table builds the first row of a key, so the subdomain feeds under the same keys get their own.
-const subdomainFeeds = definePlatformFeeds([
-  { key: 'medium:tagged', template: 'https://{subdomain}.medium.com/feed/tagged/{tag}' },
-  { key: 'medium:publication', template: 'https://{subdomain}.medium.com/feed' },
-])
+const subdomainFeeds = definePlatformFeeds(
+  [
+    { key: 'medium:tagged', template: '{scheme}://{host}/feed/tagged/{tag}' },
+    { key: 'medium:publication', template: '{scheme}://{host}/feed' },
+  ],
+  { domains },
+)
 
 export const parseMediumUrl = (url: string): MediumUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -120,13 +123,17 @@ export const mediumHandler: PlatformHandler = {
 
     // A user subdomain answers 404 at medium.com/feed/{subdomain}, and its own host serves
     // the feed.
-    if (parsed.tag) {
-      const params = { subdomain: parsed.subdomain, tag: parsed.tag }
+    const page = subdomainFeeds.forUrl(url)
 
-      return [subdomainFeeds.getFeedEntry('medium:tagged', params)]
+    if (!page) {
+      return []
     }
 
-    return [subdomainFeeds.getFeedEntry('medium:publication', { subdomain: parsed.subdomain })]
+    if (parsed.tag) {
+      return [page.getFeedEntry('medium:tagged', { tag: parsed.tag })]
+    }
+
+    return [page.getFeedEntry('medium:publication')]
   },
 
   getFeedHint: (url) => {
