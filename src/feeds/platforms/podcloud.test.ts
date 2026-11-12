@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { type PodcloudUrl, parsePodcloudUrl, podcloudHandler } from './podcloud.js'
@@ -88,44 +88,44 @@ describe('podcloudHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the podcast key for a show feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for a show feed', () => {
       const value = 'https://alice-podcast.lepodcast.fr/rss'
-      const expected = 'podcloud:podcast'
+      const expected: DiscoverUriHint = { key: 'podcloud:podcast', label: 'Podcast' }
 
-      expect(podcloudHandler.getFeedKey?.(value)).toBe(expected)
+      expect(podcloudHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a show feed over http', () => {
+    it('should return the podcast hint for a show feed over http', () => {
       const value = 'http://alice-podcast.lepodcast.fr/rss'
-      const expected = 'podcloud:podcast'
+      const expected: DiscoverUriHint = { key: 'podcloud:podcast', label: 'Podcast' }
 
-      expect(podcloudHandler.getFeedKey?.(value)).toBe(expected)
+      expect(podcloudHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for the /feed show feed', () => {
+    it('should return the podcast hint for the /feed show feed', () => {
       const value = 'https://alice-podcast.lepodcast.fr/feed'
-      const expected = 'podcloud:podcast'
+      const expected: DiscoverUriHint = { key: 'podcloud:podcast', label: 'Podcast' }
 
-      expect(podcloudHandler.getFeedKey?.(value)).toBe(expected)
+      expect(podcloudHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for an episode page', () => {
       const value = 'https://alice-podcast.lepodcast.fr/first-episode'
 
-      expect(podcloudHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(podcloudHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the site feed on the apex domain', () => {
       const value = 'https://lepodcast.fr/rss.xml'
 
-      expect(podcloudHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(podcloudHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on a nested subdomain', () => {
       const value = 'https://feeds.example.lepodcast.fr/rss'
 
-      expect(podcloudHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(podcloudHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

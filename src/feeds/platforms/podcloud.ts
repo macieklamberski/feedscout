@@ -38,5 +38,5 @@ export const podcloudHandler: PlatformHandler = {
     return [feeds.getFeedEntry('podcloud:podcast', { show: parsed.show })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
