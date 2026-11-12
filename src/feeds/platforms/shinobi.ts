@@ -151,22 +151,17 @@ export const shinobiHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseShinobiUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    // A tenant host is the blog label over one of the domains.
-    const { protocol, hostname } = new URL(url)
-    const params = {
-      scheme: protocol.slice(0, -1),
-      blog: parsed.blog,
-      domain: hostname.slice(parsed.blog.length + 1),
-    }
+    const params = { blog: parsed.blog }
 
     return [
-      feeds.getFeedEntry('shinobi:posts', params, 'rss'),
-      feeds.getFeedEntry('shinobi:posts', params, 'atom'),
+      page.getFeedEntry('shinobi:posts', params, 'rss'),
+      page.getFeedEntry('shinobi:posts', params, 'atom'),
     ]
   },
 
