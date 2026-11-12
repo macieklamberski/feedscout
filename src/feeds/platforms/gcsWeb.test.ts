@@ -145,6 +145,26 @@ describe('gcsWebHandler', () => {
 
       expect(gcsWebHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return the three feeds over http for a company subdomain', () => {
+      const value = 'http://example.gcs-web.com/news-releases'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.gcs-web.com/rss/news-releases.xml',
+          hint: { key: 'gcs-web:news-releases', label: 'News releases' },
+        },
+        {
+          uri: 'http://example.gcs-web.com/rss/sec-filings.xml',
+          hint: { key: 'gcs-web:sec-filings', label: 'SEC filings' },
+        },
+        {
+          uri: 'http://example.gcs-web.com/rss/events.xml',
+          hint: { key: 'gcs-web:events', label: 'Events' },
+        },
+      ]
+
+      expect(gcsWebHandler.resolve(value)).toEqual(expected)
+    })
   })
 
   describe('getFeedKey', () => {
