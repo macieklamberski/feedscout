@@ -1088,8 +1088,13 @@
   },
   "ning": {
     "ning:activity": "https://korsika.ning.com/activity/log/list?fmt=rss",
+    "ning:activity-member": "https://mcspartners.ning.com/activity/log/list?fmt=rss&screenName=0pur6xqjz52bu",
     "ning:blog": "https://korsika.ning.com/profiles/blog/feed?xn_auth=no",
+    "ning:blog-author": "https://mcspartners.ning.com/profiles/blog/feed?user=1ps5stse894j5&xn_auth=no",
+    "ning:blog-featured": "http://spartinos.ning.com/profiles/blog/feed?promoted=1&xn_auth=no",
+    "ning:blog-tag": "https://weebattledotcom.ning.com/profiles/blog/feed?tag=Cycling&xn_auth=no",
     "ning:forum": "https://korsika.ning.com/forum/topic/list?feed=yes&xn_auth=no",
+    "ning:forum-featured": "http://opencoffee.ning.com/forum/topic/list?featured=1&feed=yes&xn_auth=no",
     "ning:topic": "https://korsika.ning.com/forum/topics/tour-and-travel-vibrantindiatours?feed=yes&xn_auth=no"
   },
   "nodebb": {

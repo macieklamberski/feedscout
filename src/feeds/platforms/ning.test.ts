@@ -153,6 +153,26 @@ describe('ningHandler', () => {
         'http://example.ning.com/forum/topics/tour-and-travel/?xn_auth=no&feed=yes',
         { key: 'ning:topic', label: 'Topic' },
       ],
+      [
+        'https://example.ning.com/activity/log/list?fmt=rss&screenName=1abcdefghij2k',
+        { key: 'ning:activity-member', label: 'Member activity' },
+      ],
+      [
+        'https://example.ning.com/profiles/blog/feed?user=1abcdefghij2k&xn_auth=no',
+        { key: 'ning:blog-author', label: 'Author' },
+      ],
+      [
+        'https://example.ning.com/profiles/blog/feed?tag=travel&xn_auth=no',
+        { key: 'ning:blog-tag', label: 'Tag' },
+      ],
+      [
+        'https://example.ning.com/profiles/blog/feed?promoted=1&xn_auth=no',
+        { key: 'ning:blog-featured', label: 'Featured blog posts' },
+      ],
+      [
+        'https://example.ning.com/forum/topic/list?featured=1&feed=yes&xn_auth=no',
+        { key: 'ning:forum-featured', label: 'Featured topics' },
+      ],
     ]
 
     it.each(feedUrls)('should return the hint for %s', (value, expected) => {
@@ -207,6 +227,26 @@ describe('ningHandler', () => {
       [
         'http://example.ning.com/forum/topic/list?feed=yes&xn_auth=no',
         { key: 'ning:forum', label: 'Forum' },
+      ],
+      [
+        'https://example.ning.com/activity/log/list?fmt=rss&screenName=1abcdefghij2k',
+        { key: 'ning:activity-member', label: 'Member activity' },
+      ],
+      [
+        'https://example.ning.com/profiles/blog/feed?user=1abcdefghij2k&xn_auth=no',
+        { key: 'ning:blog-author', label: 'Author' },
+      ],
+      [
+        'https://example.ning.com/profiles/blog/feed?tag=travel&xn_auth=no',
+        { key: 'ning:blog-tag', label: 'Tag' },
+      ],
+      [
+        'https://example.ning.com/profiles/blog/feed?promoted=1&xn_auth=no',
+        { key: 'ning:blog-featured', label: 'Featured blog posts' },
+      ],
+      [
+        'https://example.ning.com/forum/topic/list?featured=1&feed=yes&xn_auth=no',
+        { key: 'ning:forum-featured', label: 'Featured topics' },
       ],
     ]
 

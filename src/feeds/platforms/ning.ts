@@ -15,14 +15,33 @@ const topicRegex = /^\/forum\/topics\/([^/]+)\/?$/i
 const domains = ['ning.com']
 
 // A network on its own domain is known only by its marker, so its feeds are built here but not
-// claimed.
+// claimed. A member's activity, a blog narrowed to an author, a tag or its featured posts and the
+// featured forum topics are linked from pages `resolve` does not read, so the table only claims
+// them.
 const feeds = definePlatformFeeds(
   [
     { key: 'ning:topic', template: '{scheme}://{host}/forum/topics/{topic}?feed=yes&xn_auth=no' },
     { key: 'ning:activity', template: '{scheme}://{host}/activity/log/list?fmt=rss' },
+    {
+      key: 'ning:activity-member',
+      template: '{scheme}://{host}/activity/log/list?fmt=rss&screenName={member}',
+    },
     { key: 'ning:blog', template: '{scheme}://{host}/profiles/blog/feed?xn_auth=no' },
+    {
+      key: 'ning:blog-author',
+      template: '{scheme}://{host}/profiles/blog/feed?user={user}&xn_auth=no',
+    },
+    { key: 'ning:blog-tag', template: '{scheme}://{host}/profiles/blog/feed?tag={tag}&xn_auth=no' },
+    {
+      key: 'ning:blog-featured',
+      template: '{scheme}://{host}/profiles/blog/feed?promoted=1&xn_auth=no',
+    },
     // The bare `/forum?feed=yes` answers with the forum page on some networks.
     { key: 'ning:forum', template: '{scheme}://{host}/forum/topic/list?feed=yes&xn_auth=no' },
+    {
+      key: 'ning:forum-featured',
+      template: '{scheme}://{host}/forum/topic/list?featured=1&feed=yes&xn_auth=no',
+    },
   ],
   { domains },
 )
