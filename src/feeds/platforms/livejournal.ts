@@ -1,6 +1,10 @@
 import { composeQuery, decodeSegment, isHostOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
+import {
+  definePlatformFeeds,
+  type PlatformFeedParams,
+  type PlatformFeedTable,
+} from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 
@@ -149,30 +153,36 @@ export const parseLivejournalUrl = (url: string): LivejournalUrl | undefined => 
   return { kind: 'journal', tag }
 }
 
-// A journal on its own subdomain keeps the page's scheme. A user named in the path is
-// canonicalised to its subdomain, with `_` written as `-`. A name that starts or ends with `_`
-// makes no valid host label, so it stays on users.livejournal.com.
-const getJournalParams = (
+// A journal on its own subdomain reads the page's scheme through `forUrl`. A user named in the path
+// is canonicalised to its subdomain, with `_` written as `-`, and reads the plain table: `forUrl`
+// fills `{scheme}`, so a subdomain row would win over a users host row. A name that starts or ends
+// with `_` makes no valid host label, so it stays on users.livejournal.com.
+const getJournalTable = (
   url: string,
   username: string | undefined,
-): PlatformFeedParams | undefined => {
+): { table: Pick<PlatformFeedTable, 'getFeedEntry'>; params: PlatformFeedParams } | undefined => {
   if (!username) {
-    const { protocol, hostname } = new URL(url)
+    const page = feeds.forUrl(url)
+    const journal = getTenantSubdomain(url, domains)
 
-    return { scheme: protocol.slice(0, -1), journal: hostname.split('.')[0] }
+    if (!page || !journal) {
+      return
+    }
+
+    return { table: page, params: { journal } }
   }
 
   const label = username.replaceAll('_', '-')
 
   if (label.startsWith('-') || label.endsWith('-')) {
-    return { host: 'users.livejournal.com', journal: label }
+    return { table: feeds, params: { host: 'users.livejournal.com', journal: label } }
   }
 
   if (!getHostOrigin(`${label}.livejournal.com`)) {
     return
   }
 
-  return { scheme: 'https', journal: label }
+  return { table: feeds, params: { scheme: 'https', journal: label } }
 }
 
 export const livejournalHandler: PlatformHandler = {
@@ -187,24 +197,25 @@ export const livejournalHandler: PlatformHandler = {
       return []
     }
 
-    const params = getJournalParams(url, parsed.username)
+    const journalTable = getJournalTable(url, parsed.username)
 
-    if (!params) {
+    if (!journalTable) {
       return []
     }
 
+    const { table, params } = journalTable
     const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.tag) {
       const tagParams = { ...params, tag: decodeSegment(parsed.tag) ?? parsed.tag }
 
-      uris.push(feeds.getFeedEntry('livejournal:posts-tag', tagParams, 'rss'))
-      uris.push(feeds.getFeedEntry('livejournal:posts-tag', tagParams, 'atom'))
+      uris.push(table.getFeedEntry('livejournal:posts-tag', tagParams, 'rss'))
+      uris.push(table.getFeedEntry('livejournal:posts-tag', tagParams, 'atom'))
     }
 
-    uris.push(feeds.getFeedEntry('livejournal:posts', params, 'rss'))
-    uris.push(feeds.getFeedEntry('livejournal:posts', params, 'atom'))
-    uris.push(feeds.getFeedEntry('livejournal:userpics', params, 'atom'))
+    uris.push(table.getFeedEntry('livejournal:posts', params, 'rss'))
+    uris.push(table.getFeedEntry('livejournal:posts', params, 'atom'))
+    uris.push(table.getFeedEntry('livejournal:userpics', params, 'atom'))
 
     return uris
   },
