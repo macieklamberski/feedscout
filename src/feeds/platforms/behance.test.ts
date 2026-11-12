@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import type { BehanceUrl } from './behance.js'
@@ -175,64 +175,64 @@ describe('behanceHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the portfolio key for a portfolio feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the portfolio hint for a portfolio feed', () => {
       const value = 'https://www.behance.net/feeds/user?username=almostblack'
-      const expected = 'behance:portfolio'
+      const expected: DiscoverUriHint = { key: 'behance:portfolio', label: 'Portfolio' }
 
-      expect(behanceHandler.getFeedKey?.(value)).toBe(expected)
+      expect(behanceHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the portfolio key for a portfolio feed without www', () => {
+    it('should return the portfolio hint for a portfolio feed without www', () => {
       const value = 'https://behance.net/feeds/user?username=angshnitul925b'
-      const expected = 'behance:portfolio'
+      const expected: DiscoverUriHint = { key: 'behance:portfolio', label: 'Portfolio' }
 
-      expect(behanceHandler.getFeedKey?.(value)).toBe(expected)
+      expect(behanceHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the portfolio key for a portfolio feed over http', () => {
+    it('should return the portfolio hint for a portfolio feed over http', () => {
       const value = 'http://www.behance.net/feeds/user?username=almostblack'
-      const expected = 'behance:portfolio'
+      const expected: DiscoverUriHint = { key: 'behance:portfolio', label: 'Portfolio' }
 
-      expect(behanceHandler.getFeedKey?.(value)).toBe(expected)
+      expect(behanceHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the portfolio key for a portfolio feed with another parameter', () => {
+    it('should return the portfolio hint for a portfolio feed with another parameter', () => {
       const value = 'https://www.behance.net/feeds/user?username=almostblack&content=appreciated'
-      const expected = 'behance:portfolio'
+      const expected: DiscoverUriHint = { key: 'behance:portfolio', label: 'Portfolio' }
 
-      expect(behanceHandler.getFeedKey?.(value)).toBe(expected)
+      expect(behanceHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the projects key for the projects feed', () => {
+    it('should return the projects hint for the projects feed', () => {
       const value = 'https://www.behance.net/feeds/projects'
-      const expected = 'behance:projects'
+      const expected: DiscoverUriHint = { key: 'behance:projects', label: 'Featured projects' }
 
-      expect(behanceHandler.getFeedKey?.(value)).toBe(expected)
+      expect(behanceHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a user feed without a username', () => {
       const value = 'https://www.behance.net/feeds/user'
 
-      expect(behanceHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(behanceHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the bare feeds path', () => {
       const value = 'https://www.behance.net/feeds'
 
-      expect(behanceHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(behanceHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a profile page', () => {
       const value = 'https://www.behance.net/almostblack'
 
-      expect(behanceHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(behanceHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the feed path on another host', () => {
       const value = 'https://example.com/feeds/projects'
 
-      expect(behanceHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(behanceHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 })

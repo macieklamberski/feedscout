@@ -81,5 +81,5 @@ export const behanceHandler: PlatformHandler = {
     return [feeds.getFeedEntry('behance:portfolio', { username: parsed.username })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
