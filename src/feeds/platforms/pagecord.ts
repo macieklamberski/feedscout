@@ -39,5 +39,5 @@ export const pagecordHandler: PlatformHandler = {
     return [feeds.getFeedEntry('pagecord:blog', { blog: parsed.blog })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

@@ -85,70 +85,70 @@ describe('pagecordHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the blog key for a blog feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the blog hint for a blog feed', () => {
       const value = 'https://alice.pagecord.com/feed.xml'
-      const expected = 'pagecord:blog'
+      const expected: DiscoverUriHint = { key: 'pagecord:blog', label: 'Blog' }
 
-      expect(pagecordHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pagecordHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a filtered blog feed', () => {
+    it('should return the blog hint for a filtered blog feed', () => {
       const value = 'https://alice.pagecord.com/feed.xml?tag=photography&without_tag=personal'
-      const expected = 'pagecord:blog'
+      const expected: DiscoverUriHint = { key: 'pagecord:blog', label: 'Blog' }
 
-      expect(pagecordHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pagecordHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for an http blog feed', () => {
+    it('should return the blog hint for an http blog feed', () => {
       const value = 'http://alice.pagecord.com/feed.xml'
-      const expected = 'pagecord:blog'
+      const expected: DiscoverUriHint = { key: 'pagecord:blog', label: 'Blog' }
 
-      expect(pagecordHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pagecordHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for the extensionless blog feed', () => {
+    it('should return the blog hint for the extensionless blog feed', () => {
       const value = 'https://alice.pagecord.com/feed'
-      const expected = 'pagecord:blog'
+      const expected: DiscoverUriHint = { key: 'pagecord:blog', label: 'Blog' }
 
-      expect(pagecordHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pagecordHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for the .rss blog feed', () => {
+    it('should return the blog hint for the .rss blog feed', () => {
       const value = 'https://alice.pagecord.com/feed.rss'
-      const expected = 'pagecord:blog'
+      const expected: DiscoverUriHint = { key: 'pagecord:blog', label: 'Blog' }
 
-      expect(pagecordHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pagecordHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog post', () => {
       const value = 'https://alice.pagecord.com/some-post-slug'
 
-      expect(pagecordHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(pagecordHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the apex', () => {
       const value = 'https://pagecord.com/feed.xml'
 
-      expect(pagecordHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(pagecordHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the www host', () => {
       const value = 'https://www.pagecord.com/feed.xml'
 
-      expect(pagecordHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(pagecordHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on a nested subdomain', () => {
       const value = 'https://blog.example.pagecord.com/feed.xml'
 
-      expect(pagecordHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(pagecordHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/feed.xml'
 
-      expect(pagecordHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(pagecordHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
