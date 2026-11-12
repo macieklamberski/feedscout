@@ -234,83 +234,83 @@ describe('jiraHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the project key for a project feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the project hint for a project feed', () => {
       const value = 'https://xdevsoftware.atlassian.net/plugins/servlet/streams?key=XWS'
-      const expected = 'jira:project'
+      const expected: DiscoverUriHint = { key: 'jira:project', label: 'Project' }
 
-      expect(jiraHandler.getFeedKey?.(value)).toBe(expected)
+      expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the site key for a site feed', () => {
+    it('should return the site hint for a site feed', () => {
       const value = 'https://dcosjira.atlassian.net/plugins/servlet/streams'
-      const expected = 'jira:site'
+      const expected: DiscoverUriHint = { key: 'jira:site', label: 'Site activity' }
 
-      expect(jiraHandler.getFeedKey?.(value)).toBe(expected)
+      expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the project key for a project activity feed', () => {
+    it('should return the project hint for a project activity feed', () => {
       const value = 'https://redhat.atlassian.net/activity?key=TORQUE'
-      const expected = 'jira:project'
+      const expected: DiscoverUriHint = { key: 'jira:project', label: 'Project' }
 
-      expect(jiraHandler.getFeedKey?.(value)).toBe(expected)
+      expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the site key for a site activity feed', () => {
+    it('should return the site hint for a site activity feed', () => {
       const value = 'https://alice.atlassian.net/activity'
-      const expected = 'jira:site'
+      const expected: DiscoverUriHint = { key: 'jira:site', label: 'Site activity' }
 
-      expect(jiraHandler.getFeedKey?.(value)).toBe(expected)
+      expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the project key for a project feed with a trailing slash', () => {
+    it('should return the project hint for a project feed with a trailing slash', () => {
       const value = 'https://dcosjira.atlassian.net/plugins/servlet/streams/?key=DCOS'
-      const expected = 'jira:project'
+      const expected: DiscoverUriHint = { key: 'jira:project', label: 'Project' }
 
-      expect(jiraHandler.getFeedKey?.(value)).toBe(expected)
+      expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the project key for a project feed with another parameter', () => {
+    it('should return the project hint for a project feed with another parameter', () => {
       const value = 'https://dcosjira.atlassian.net/plugins/servlet/streams?key=DCOS&maxResults=10'
-      const expected = 'jira:project'
+      const expected: DiscoverUriHint = { key: 'jira:project', label: 'Project' }
 
-      expect(jiraHandler.getFeedKey?.(value)).toBe(expected)
+      expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for an issue page', () => {
       const value = 'https://dcosjira.atlassian.net/browse/DCOS-1'
 
-      expect(jiraHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(jiraHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a Confluence feed on a Cloud site', () => {
       const value = 'https://dcosjira.atlassian.net/wiki/plugins/servlet/streams?key=DOCS'
 
-      expect(jiraHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(jiraHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a Confluence activity feed on a Cloud site', () => {
       const value = 'https://redhat.atlassian.net/wiki/activity'
 
-      expect(jiraHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(jiraHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the www host', () => {
       const value = 'https://www.atlassian.net/plugins/servlet/streams'
 
-      expect(jiraHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(jiraHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://a.dcosjira.atlassian.net/plugins/servlet/streams'
 
-      expect(jiraHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(jiraHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a Data Center feed', () => {
       const value = 'https://jira.example.org/plugins/servlet/streams?key=ABC'
 
-      expect(jiraHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(jiraHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
