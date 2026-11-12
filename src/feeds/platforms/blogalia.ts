@@ -38,17 +38,15 @@ export const blogaliaHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseBlogaliaUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { protocol, host } = new URL(url)
-    const params = { scheme: protocol.slice(0, -1), host }
-
     return [
-      feeds.getFeedEntry('blogalia:posts', params, 'rdf'),
-      feeds.getFeedEntry('blogalia:posts', params, 'rss'),
+      page.getFeedEntry('blogalia:posts', {}, 'rdf'),
+      page.getFeedEntry('blogalia:posts', {}, 'rss'),
     ]
   },
 
