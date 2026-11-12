@@ -8,13 +8,13 @@ export type SakuraBlogUrl = { kind: 'blog'; hostname: string }
 
 const domains = ['sblo.jp']
 
-// Blogs on the classic engine answer over http only, as their alternate links spell it: https fails
-// the TLS handshake with a certificate that names blog.sakura.ne.jp. Newer blogs serve https and
-// /rss.xml instead, which generic discovery finds through the page's anchor.
-const feeds = definePlatformFeeds([
-  { key: 'sakura-blog:posts', template: 'http://{blog}.sblo.jp/index20.rdf', format: 'rss' },
-  { key: 'sakura-blog:posts', template: 'http://{blog}.sblo.jp/index.rdf', format: 'rdf' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'sakura-blog:posts', template: '{scheme}://{host}/index20.rdf', format: 'rss' },
+    { key: 'sakura-blog:posts', template: '{scheme}://{host}/index.rdf', format: 'rdf' },
+  ],
+  { domains },
+)
 
 export const parseSakuraBlogUrl = (url: string): SakuraBlogUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -30,15 +30,18 @@ export const sakuraBlogHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const blog = getTenantSubdomain(url, domains)
+    const page = feeds.forUrl(url)
 
-    if (!blog) {
+    if (!parseSakuraBlogUrl(url) || !page) {
       return []
     }
 
+    // Blogs on the classic engine answer over http only, as their alternate links spell it: https
+    // fails the TLS handshake with a certificate that names blog.sakura.ne.jp. Newer blogs serve
+    // https and /rss.xml instead, which generic discovery finds through the page's anchor.
     return [
-      feeds.getFeedEntry('sakura-blog:posts', { blog }, 'rss'),
-      feeds.getFeedEntry('sakura-blog:posts', { blog }, 'rdf'),
+      page.getFeedEntry('sakura-blog:posts', { scheme: 'http' }, 'rss'),
+      page.getFeedEntry('sakura-blog:posts', { scheme: 'http' }, 'rdf'),
     ]
   },
 
