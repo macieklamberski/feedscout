@@ -1,6 +1,6 @@
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -38,13 +38,5 @@ export const jimdoHandler: PlatformHandler = {
     return [page.getFeedEntry('jimdo:blog')]
   },
 
-  // The table reads any host under jimdofree.com, so only a site's own subdomain is claimed, never
-  // the apex, www or a nested host.
-  getFeedHint: (url) => {
-    if (!getTenantSubdomain(url, domains)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
