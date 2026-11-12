@@ -3749,6 +3749,8 @@ type PlatformHandler = {
 
 `definePlatformFeeds` holds a handler's feed URLs as templates keyed by hint key: `getFeedEntry` builds a feed with its hint, `getFeedHint` reads a URL back to its hint, with the row's `format`, `{host}` stands for any host in `hosts` or under `domains`, `{domain}` for one of `domains`, and `{scheme}` for the page's scheme on a platform that runs on the site's own host.
 
+`getFeedHint` ignores a leading `www` in the URL's host. On a platform where `www` can be a tenant, set `isWwwTenant: true`: a row is then tried on the host as given first, so `www.example.com/rss` reads as the tenant `www` on a `{username}.example.com/rss` row, and the host without `www` only when no row matches.
+
 `forUrl(url)` returns the same `getFeedUrl` and `getFeedEntry` with `{scheme}` and `{host}` filled from the page URL and `{domain}` with the entry of `domains` its host is under, so a handler passes only the values the URL cannot give. A value the handler passes wins. It returns `undefined` for a URL that is not an http URL.
 
 ```typescript
