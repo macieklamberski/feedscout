@@ -153,51 +153,51 @@ describe('ivooxHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the podcast key for a podcast feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for a podcast feed', () => {
       const value = 'https://feeds.ivoox.com/feed_fg_f1317588_filtro_1.xml'
-      const expected = 'ivoox:podcast'
+      const expected: DiscoverUriHint = { key: 'ivoox:podcast', label: 'Podcast' }
 
-      expect(ivooxHandler.getFeedKey?.(value)).toBe(expected)
+      expect(ivooxHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a podcast feed under a show slug', () => {
+    it('should return the podcast hint for a podcast feed under a show slug', () => {
       const value = 'https://feeds.ivoox.com/example_fg_f12345_filtro_1.xml'
-      const expected = 'ivoox:podcast'
+      const expected: DiscoverUriHint = { key: 'ivoox:podcast', label: 'Podcast' }
 
-      expect(ivooxHandler.getFeedKey?.(value)).toBe(expected)
+      expect(ivooxHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a podcast feed on the site host', () => {
+    it('should return the podcast hint for a podcast feed on the site host', () => {
       const value = 'https://www.ivoox.com/example_fg_f12345_filtro_1.xml'
-      const expected = 'ivoox:podcast'
+      const expected: DiscoverUriHint = { key: 'ivoox:podcast', label: 'Podcast' }
 
-      expect(ivooxHandler.getFeedKey?.(value)).toBe(expected)
+      expect(ivooxHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a podcast feed under a locale prefix', () => {
+    it('should return the podcast hint for a podcast feed under a locale prefix', () => {
       const value = 'https://www.ivoox.com/en/example_fg_f12345_filtro_1.xml'
-      const expected = 'ivoox:podcast'
+      const expected: DiscoverUriHint = { key: 'ivoox:podcast', label: 'Podcast' }
 
-      expect(ivooxHandler.getFeedKey?.(value)).toBe(expected)
+      expect(ivooxHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a podcast page', () => {
       const value = 'https://www.ivoox.com/podcast-cine-en-serie_sq_f1317588_1.html'
 
-      expect(ivooxHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ivooxHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a list feed', () => {
       const value = 'https://www.ivoox.com/en/feed_fl_281_1.xml'
 
-      expect(ivooxHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ivooxHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/feed_fg_f1317588_filtro_1.xml'
 
-      expect(ivooxHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ivooxHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
