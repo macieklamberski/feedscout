@@ -1,7 +1,8 @@
 import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, blogPost, customDomainBlog, customDomainLabel, label.
@@ -12,14 +13,144 @@ export type BlogspotPage =
   | { kind: 'post'; postId?: string }
   | { kind: 'blog' }
 
-// Matches blogspot.com and Blogger's country domains like .co.uk, .com.br and .de, which still
-// serve feeds. getTenantSubdomain then refuses www and nested subdomains.
-// length: keeps any suffix but a two-letter country code out
-const blogspotDomainRegex = /\.(blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2}))$/
+// Blogger's country domains still serve every blog's feeds, checked 2026-11-12.
+const domains = [
+  'blogspot.com',
+  'blogspot.ae',
+  'blogspot.al',
+  'blogspot.am',
+  'blogspot.ba',
+  'blogspot.be',
+  'blogspot.bg',
+  'blogspot.ca',
+  'blogspot.ch',
+  'blogspot.cl',
+  'blogspot.co.at',
+  'blogspot.co.id',
+  'blogspot.co.il',
+  'blogspot.co.ke',
+  'blogspot.co.nz',
+  'blogspot.co.uk',
+  'blogspot.co.za',
+  'blogspot.com.ar',
+  'blogspot.com.au',
+  'blogspot.com.br',
+  'blogspot.com.by',
+  'blogspot.com.co',
+  'blogspot.com.cy',
+  'blogspot.com.ee',
+  'blogspot.com.eg',
+  'blogspot.com.es',
+  'blogspot.com.mt',
+  'blogspot.com.ng',
+  'blogspot.com.tr',
+  'blogspot.com.uy',
+  'blogspot.cz',
+  'blogspot.de',
+  'blogspot.dk',
+  'blogspot.fi',
+  'blogspot.fr',
+  'blogspot.gr',
+  'blogspot.hk',
+  'blogspot.hr',
+  'blogspot.hu',
+  'blogspot.ie',
+  'blogspot.in',
+  'blogspot.is',
+  'blogspot.it',
+  'blogspot.jp',
+  'blogspot.kr',
+  'blogspot.li',
+  'blogspot.lt',
+  'blogspot.lu',
+  'blogspot.md',
+  'blogspot.mk',
+  'blogspot.mx',
+  'blogspot.my',
+  'blogspot.nl',
+  'blogspot.no',
+  'blogspot.pe',
+  'blogspot.pt',
+  'blogspot.qa',
+  'blogspot.ro',
+  'blogspot.rs',
+  'blogspot.ru',
+  'blogspot.se',
+  'blogspot.sg',
+  'blogspot.si',
+  'blogspot.sk',
+  'blogspot.sn',
+  'blogspot.tw',
+  'blogspot.ug',
+]
+
 const labelRegex = /^\/search\/label\/([^/]+)/i
 const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
 const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/i
 const widgetsScriptRegex = /^(?:https?:)?\/\/www\.blogger\.com\/static\/v1\/widgets\//i
+
+// A custom domain is known only by its markup, so its feeds are built here but not claimed.
+// Blogger serves the posts feed at /feeds/posts/full and /atom.xml too, and the comments feed at
+// /feeds/comments/full.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'blogspot:posts', template: '{scheme}://{host}/feeds/posts/default', format: 'atom' },
+    {
+      key: 'blogspot:posts',
+      template: '{scheme}://{host}/feeds/posts/default?alt=rss',
+      format: 'rss',
+    },
+    { key: 'blogspot:posts', template: '{scheme}://{host}/feeds/posts/full', format: 'atom' },
+    {
+      key: 'blogspot:posts',
+      template: '{scheme}://{host}/feeds/posts/full?alt=rss',
+      format: 'rss',
+    },
+    { key: 'blogspot:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
+    {
+      key: 'blogspot:posts-summary',
+      template: '{scheme}://{host}/feeds/posts/summary',
+      format: 'atom',
+    },
+    {
+      key: 'blogspot:posts-summary',
+      template: '{scheme}://{host}/feeds/posts/summary?alt=rss',
+      format: 'rss',
+    },
+    {
+      key: 'blogspot:comments',
+      template: '{scheme}://{host}/feeds/comments/default',
+      format: 'atom',
+    },
+    {
+      key: 'blogspot:comments',
+      template: '{scheme}://{host}/feeds/comments/default?alt=rss',
+      format: 'rss',
+    },
+    { key: 'blogspot:comments', template: '{scheme}://{host}/feeds/comments/full', format: 'atom' },
+    {
+      key: 'blogspot:label',
+      template: '{scheme}://{host}/feeds/posts/default/-/{label}',
+      format: 'atom',
+    },
+    {
+      key: 'blogspot:label',
+      template: '{scheme}://{host}/feeds/posts/default/-/{label}?alt=rss',
+      format: 'rss',
+    },
+    {
+      key: 'blogspot:post-comments',
+      template: '{scheme}://{host}/feeds/{postId}/comments/default',
+      format: 'atom',
+    },
+    {
+      key: 'blogspot:post-comments',
+      template: '{scheme}://{host}/feeds/{postId}/comments/default?alt=rss',
+      format: 'rss',
+    },
+  ],
+  { domains },
+)
 
 // Blogger loads its widget script from this path on blogspot.com and custom domains alike,
 // whatever the theme. A tag, not the text: READMEs and archived copies quote the url too.
@@ -75,15 +206,7 @@ export const getBlogspotPage = (
 
 export const blogspotHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    const domain = parsedUrl.hostname.match(blogspotDomainRegex)?.[1]
-
-    if (domain && getTenantSubdomain(parsedUrl, [domain])) {
+    if (getTenantSubdomain(url, domains)) {
       return true
     }
 
@@ -97,57 +220,49 @@ export const blogspotHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
+    const { protocol, host } = new URL(url)
+    const params = { scheme: protocol.slice(0, -1), host }
     const uris: Array<DiscoverUriEntry> = []
 
     if (page.kind === 'label') {
-      uris.push({
-        uri: `${origin}/feeds/posts/default/-/${page.label}`,
-        hint: composeHint('blogspot:label', 'atom'),
-      })
-      uris.push({
-        uri: `${origin}/feeds/posts/default/-/${page.label}?alt=rss`,
-        hint: composeHint('blogspot:label', 'rss'),
-      })
+      const labelParams = { ...params, label: page.label }
+
+      uris.push(
+        feeds.getFeedEntry('blogspot:label', labelParams, 'atom'),
+        feeds.getFeedEntry('blogspot:label', labelParams, 'rss'),
+      )
     }
 
     if (page.kind === 'post' && page.postId) {
-      uris.push({
-        uri: `${origin}/feeds/${page.postId}/comments/default`,
-        hint: composeHint('blogspot:post-comments', 'atom'),
-      })
-      uris.push({
-        uri: `${origin}/feeds/${page.postId}/comments/default?alt=rss`,
-        hint: composeHint('blogspot:post-comments', 'rss'),
-      })
+      const postParams = { ...params, postId: page.postId }
+
+      uris.push(
+        feeds.getFeedEntry('blogspot:post-comments', postParams, 'atom'),
+        feeds.getFeedEntry('blogspot:post-comments', postParams, 'rss'),
+      )
     }
 
     // Always include main blog feeds.
-    uris.push({
-      uri: `${origin}/feeds/posts/default`,
-      hint: composeHint('blogspot:posts', 'atom'),
-    })
-    uris.push({
-      uri: `${origin}/feeds/posts/default?alt=rss`,
-      hint: composeHint('blogspot:posts', 'rss'),
-    })
-    uris.push({
-      uri: `${origin}/feeds/posts/summary`,
-      hint: composeHint('blogspot:posts-summary', 'atom'),
-    })
-    uris.push({
-      uri: `${origin}/feeds/posts/summary?alt=rss`,
-      hint: composeHint('blogspot:posts-summary', 'rss'),
-    })
-    uris.push({
-      uri: `${origin}/feeds/comments/default`,
-      hint: composeHint('blogspot:comments', 'atom'),
-    })
-    uris.push({
-      uri: `${origin}/feeds/comments/default?alt=rss`,
-      hint: composeHint('blogspot:comments', 'rss'),
-    })
+    uris.push(
+      feeds.getFeedEntry('blogspot:posts', params, 'atom'),
+      feeds.getFeedEntry('blogspot:posts', params, 'rss'),
+      feeds.getFeedEntry('blogspot:posts-summary', params, 'atom'),
+      feeds.getFeedEntry('blogspot:posts-summary', params, 'rss'),
+      feeds.getFeedEntry('blogspot:comments', params, 'atom'),
+      feeds.getFeedEntry('blogspot:comments', params, 'rss'),
+    )
 
     return uris
+  },
+
+  // The table reads any host under a Blogger domain, so the apex, www and a nested subdomain are
+  // refused first: blogspot.com redirects its feeds to blogger.com, and a nested host fails its
+  // TLS handshake.
+  getFeedKey: (url) => {
+    if (!getTenantSubdomain(url, domains)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
