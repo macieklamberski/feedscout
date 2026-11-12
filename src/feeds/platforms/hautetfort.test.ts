@@ -104,64 +104,64 @@ describe('hautetfortHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the category key for a category feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the category hint for a category feed', () => {
       const value = 'http://pourunefranceforteetcatholique.hautetfort.com/web/index.rss'
-      const expected = 'hautetfort:category'
+      const expected: DiscoverUriHint = { key: 'hautetfort:category', label: 'Category' }
 
-      expect(hautetfortHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hautetfortHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the category key for a category feed on blogspirit.com', () => {
+    it('should return the category hint for a category feed on blogspirit.com', () => {
       const value = 'http://actionbarbes.blogspirit.com/dans-le-18eme/index.rss'
-      const expected = 'hautetfort:category'
+      const expected: DiscoverUriHint = { key: 'hautetfort:category', label: 'Category' }
 
-      expect(hautetfortHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hautetfortHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an RSS feed', () => {
+    it('should return the posts hint for an RSS feed', () => {
       const value = 'http://vouloir.hautetfort.com/index.rss'
-      const expected = 'hautetfort:posts'
+      const expected: DiscoverUriHint = { key: 'hautetfort:posts', label: 'Posts', format: 'rss' }
 
-      expect(hautetfortHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hautetfortHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an Atom feed', () => {
+    it('should return the posts hint for an Atom feed', () => {
       const value = 'http://cfabtpduloiret.blogspirit.com/atom.xml'
-      const expected = 'hautetfort:posts'
+      const expected: DiscoverUriHint = { key: 'hautetfort:posts', label: 'Posts', format: 'atom' }
 
-      expect(hautetfortHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hautetfortHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a feed on blog.blogspirit-business.com', () => {
+    it('should return the posts hint for a feed on blog.blogspirit-business.com', () => {
       const value = 'http://institutmauricegarcon.blog.blogspirit-business.com/index.rss'
-      const expected = 'hautetfort:posts'
+      const expected: DiscoverUriHint = { key: 'hautetfort:posts', label: 'Posts', format: 'rss' }
 
-      expect(hautetfortHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hautetfortHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a category page', () => {
       const value = 'http://vouloir.hautetfort.com/histoire/'
 
-      expect(hautetfortHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hautetfortHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'http://blog.vouloir.hautetfort.com/index.rss'
 
-      expect(hautetfortHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hautetfortHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the www host', () => {
       const value = 'https://www.hautetfort.com/index.rss'
 
-      expect(hautetfortHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hautetfortHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/histoire/index.rss'
 
-      expect(hautetfortHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hautetfortHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
@@ -175,10 +175,13 @@ describe('hautetfortHandler', () => {
         'http://actionbarbes.blogspirit.com/dans-le-18eme/index.rss',
         { key: 'hautetfort:category', label: 'Category' },
       ],
-      ['http://vouloir.hautetfort.com/index.rss', { key: 'hautetfort:posts', label: 'Posts' }],
+      [
+        'http://vouloir.hautetfort.com/index.rss',
+        { key: 'hautetfort:posts', label: 'Posts', format: 'rss' },
+      ],
       [
         'http://cfabtpduloiret.blogspirit.com/atom.xml',
-        { key: 'hautetfort:posts', label: 'Posts' },
+        { key: 'hautetfort:posts', label: 'Posts', format: 'atom' },
       ],
     ]
 

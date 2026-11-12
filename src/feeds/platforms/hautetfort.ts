@@ -88,5 +88,5 @@ export const hautetfortHandler: PlatformHandler = {
     return uris
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
