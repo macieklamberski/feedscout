@@ -1,6 +1,6 @@
 import { isHostOf, isSubdomainOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -10,6 +10,10 @@ const domains = ['firstory.cc']
 // The feed is keyed by the show's cuid, and the vanity-slug form of it answers 403.
 // Show, episode and firstory.cc pages each link the show's feed.
 const feedUrlRegex = /feed\.firstory\.me\/rss\/user\/([a-z\d]+)/i
+
+const feeds = definePlatformFeeds([
+  { key: 'firstory:podcast', template: 'https://feed.firstory.me/rss/user/{cuid}' },
+])
 
 export type FirstoryPage = { kind: 'show'; cuid: string }
 
@@ -42,11 +46,8 @@ export const firstoryHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://feed.firstory.me/rss/user/${page.cuid}`,
-        hint: composeHint('firstory:podcast'),
-      },
-    ]
+    return [feeds.getFeedEntry('firstory:podcast', { cuid: page.cuid })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
