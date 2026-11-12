@@ -116,5 +116,5 @@ export const microblogHandler: PlatformHandler = {
     return uris
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

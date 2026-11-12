@@ -406,121 +406,152 @@ describe('microblogHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the posts key for an RSS feed', () => {
       const value = 'https://iamtony.micro.blog/feed.xml'
-      const expected = 'microblog:posts'
+      const expected: DiscoverUriHint = { key: 'microblog:posts', label: 'Posts', format: 'rss' }
 
-      expect(microblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts key for a JSON feed', () => {
       const value = 'https://iamtony.micro.blog/feed.json'
-      const expected = 'microblog:posts'
+      const expected: DiscoverUriHint = { key: 'microblog:posts', label: 'Posts', format: 'json' }
 
-      expect(microblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts key for a replies feed', () => {
       const value = 'https://michaelsmanley.micro.blog/replies.xml'
-      const expected = 'microblog:posts'
+      const expected: DiscoverUriHint = { key: 'microblog:posts', label: 'Posts', format: 'rss' }
 
-      expect(microblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the podcast key for an RSS podcast feed', () => {
       const value = 'https://agilelisa.micro.blog/podcast.xml'
-      const expected = 'microblog:podcast'
+      const expected: DiscoverUriHint = {
+        key: 'microblog:podcast',
+        label: 'Podcast',
+        format: 'rss',
+      }
 
-      expect(microblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the podcast key for a JSON podcast feed', () => {
       const value = 'https://agilelisa.micro.blog/podcast.json'
-      const expected = 'microblog:podcast'
+      const expected: DiscoverUriHint = {
+        key: 'microblog:podcast',
+        label: 'Podcast',
+        format: 'json',
+      }
 
-      expect(microblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the category key for an RSS category feed', () => {
       const value = 'https://mersontheperson.micro.blog/categories/public-health/feed.xml'
-      const expected = 'microblog:category'
+      const expected: DiscoverUriHint = {
+        key: 'microblog:category',
+        label: 'Category',
+        format: 'rss',
+      }
 
-      expect(microblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the category key for a JSON category feed', () => {
       const value = 'https://agilelisa.micro.blog/categories/long-covid/feed.json'
-      const expected = 'microblog:category'
+      const expected: DiscoverUriHint = {
+        key: 'microblog:category',
+        label: 'Category',
+        format: 'json',
+      }
 
-      expect(microblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the archive key for an archive feed', () => {
       const value = 'https://amandabishopp1.micro.blog/archive/index.json'
-      const expected = 'microblog:archive'
+      const expected: DiscoverUriHint = { key: 'microblog:archive', label: 'Archive' }
 
-      expect(microblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the photos key for a photos feed', () => {
       const value = 'https://hapax.micro.blog/photos/index.json'
-      const expected = 'microblog:photos'
+      const expected: DiscoverUriHint = { key: 'microblog:photos', label: 'Photos' }
 
-      expect(microblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://iamtony.micro.blog/'
 
-      expect(microblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(microblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a category page', () => {
       const value = 'https://iamtony.micro.blog/categories/books/'
 
-      expect(microblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(microblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on www.micro.blog', () => {
       const value = 'https://www.micro.blog/feed.xml'
 
-      expect(microblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(microblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://blog.example.micro.blog/feed.xml'
 
-      expect(microblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(microblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://micro.blog/feed.xml'
 
-      expect(microblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(microblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/feed.xml'
 
-      expect(microblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(microblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://iamtony.micro.blog/feed.xml', { key: 'microblog:posts', label: 'Posts' }],
-      ['https://iamtony.micro.blog/feed.json', { key: 'microblog:posts', label: 'Posts' }],
-      ['https://michaelsmanley.micro.blog/replies.xml', { key: 'microblog:posts', label: 'Posts' }],
-      ['https://agilelisa.micro.blog/podcast.xml', { key: 'microblog:podcast', label: 'Podcast' }],
-      ['https://agilelisa.micro.blog/podcast.json', { key: 'microblog:podcast', label: 'Podcast' }],
+      [
+        'https://iamtony.micro.blog/feed.xml',
+        { key: 'microblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://iamtony.micro.blog/feed.json',
+        { key: 'microblog:posts', label: 'Posts', format: 'json' },
+      ],
+      [
+        'https://michaelsmanley.micro.blog/replies.xml',
+        { key: 'microblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://agilelisa.micro.blog/podcast.xml',
+        { key: 'microblog:podcast', label: 'Podcast', format: 'rss' },
+      ],
+      [
+        'https://agilelisa.micro.blog/podcast.json',
+        { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
+      ],
       [
         'https://mersontheperson.micro.blog/categories/public-health/feed.xml',
-        { key: 'microblog:category', label: 'Category' },
+        { key: 'microblog:category', label: 'Category', format: 'rss' },
       ],
       [
         'https://agilelisa.micro.blog/categories/long-covid/feed.json',
-        { key: 'microblog:category', label: 'Category' },
+        { key: 'microblog:category', label: 'Category', format: 'json' },
       ],
       [
         'https://amandabishopp1.micro.blog/archive/index.json',
