@@ -4,6 +4,7 @@ import {
   encodePathSegment,
   escapeRegex,
   getQueryParam,
+  getSubdomain,
   isHttpUrl,
   isString,
   parseUrl,
@@ -13,7 +14,7 @@ import {
 } from 'trousse'
 import locales from '../../../locales.json' with { type: 'json' }
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../types.js'
-import { composeHint, getPlatformDomain } from '../../utils.js'
+import { composeHint } from '../../utils.js'
 
 export type PlatformFeedTemplate = {
   key: string
@@ -312,8 +313,8 @@ export const definePlatformFeeds = (
   }
 
   // The table for one page: `{scheme}`, `{host}` and `{root}` come from the page URL, and `{domain}`
-  // from the entry of `domains` its host is under. A value the handler passes wins, so a handler
-  // passes a root with the base path the page names.
+  // is its host without the subdomain under `domains`, `example.co.uk` for `alice.example.co.uk`. A
+  // value the handler passes wins, so a handler passes a root with the base path the page names.
   const forUrl: PlatformFeedTable['forUrl'] = (url) => {
     const parsedUrl = parseUrl(url)
 
@@ -321,11 +322,12 @@ export const definePlatformFeeds = (
       return
     }
 
+    const subdomain = getSubdomain(parsedUrl, options.domains ?? [])
     const urlParams: PlatformFeedParams = {
       scheme: parsedUrl.protocol.slice(0, -1),
       host: parsedUrl.host,
       root: parsedUrl.origin,
-      domain: getPlatformDomain(parsedUrl, options.domains ?? []),
+      domain: subdomain ? parsedUrl.hostname.slice(subdomain.length + 1) : undefined,
     }
     // An undefined value the handler passes leaves the one of the page in place.
     const withUrlParams = (params: PlatformFeedParams = {}): PlatformFeedParams => {
