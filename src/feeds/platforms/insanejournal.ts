@@ -131,7 +131,7 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
 
 // The InsaneJournal engine serves every journal the same feeds, plus a tag's feeds on a tag page.
 const getFeeds = (
-  table: PlatformFeedTable,
+  table: Pick<PlatformFeedTable, 'getFeedEntry'>,
   params: PlatformFeedParams,
   tag: string | undefined,
 ): Array<DiscoverUriEntry> => {
@@ -176,26 +176,28 @@ export const insanejournalHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'syndicated') {
-      const { protocol, host } = new URL(url)
+      const pageFeeds = pathFeeds.forUrl(url)
 
-      return getFeeds(
-        pathFeeds,
-        { scheme: protocol.slice(0, -1), host, journal: parsed.feed },
-        parsed.tag,
-      )
+      if (!pageFeeds) {
+        return []
+      }
+
+      return getFeeds(pageFeeds, { journal: parsed.feed }, parsed.tag)
     }
 
-    const origin = parsed.username
-      ? getHostOrigin(`${parsed.username}.insanejournal.com`)
-      : new URL(url).origin
+    const journalUrl = parsed.username ? getHostOrigin(`${parsed.username}.insanejournal.com`) : url
 
-    if (!origin) {
+    if (!journalUrl) {
       return []
     }
 
-    const { protocol, host } = new URL(origin)
+    const journalPageFeeds = journalFeeds.forUrl(journalUrl)
 
-    return getFeeds(journalFeeds, { scheme: protocol.slice(0, -1), host }, parsed.tag)
+    if (!journalPageFeeds) {
+      return []
+    }
+
+    return getFeeds(journalPageFeeds, {}, parsed.tag)
   },
 
   // A path host names the journal in the first segment, so its root `/data/rss` is no feed: the
