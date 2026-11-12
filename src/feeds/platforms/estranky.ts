@@ -16,8 +16,8 @@ const estrankyAssetRegex = /^(?:https?:)?\/\/s3[a-z]\.(?:estranky\.(?:cz|sk)|eol
 
 const assetTags = ['link', 'script']
 
-// A site keeps the scheme it picked. A site in another language serves its posts, photos and slice
-// feeds under the language segment too, as `/rss/en/slices/l/homepage/data.xml`.
+// A site keeps the scheme it picked. A site in another language serves its feeds under the language
+// segment too, as `/rss/en/slices/l/homepage/data.xml`.
 const feeds = definePlatformFeeds(
   [
     { key: 'estranky:posts', template: '{scheme}://{host}/rss/articles/data.xml' },
@@ -25,6 +25,7 @@ const feeds = definePlatformFeeds(
     { key: 'estranky:photos', template: '{scheme}://{host}/rss/photos/data.xml' },
     { key: 'estranky:photos', template: '{scheme}://{host}/rss/{language}/photos/data.xml' },
     { key: 'estranky:comments', template: '{scheme}://{host}/rss/comments/data.xml' },
+    { key: 'estranky:comments', template: '{scheme}://{host}/rss/{language}/comments/data.xml' },
     {
       key: 'estranky:homepage-slice',
       template: '{scheme}://{host}/rss/slices/l/homepage/data.xml',

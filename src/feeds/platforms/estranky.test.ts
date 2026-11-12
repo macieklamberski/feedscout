@@ -356,76 +356,83 @@ describe('estrankyHandler', () => {
 
   describe('getFeedKey', () => {
     it('should return the posts key for a posts feed', () => {
-      const value = 'https://allpossible.estranky.cz/rss/articles/data.xml'
+      const value = 'https://example.estranky.cz/rss/articles/data.xml'
       const expected = 'estranky:posts'
 
       expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the posts key for a posts feed in another language', () => {
-      const value = 'https://moeschke.estranky.sk/rss/en/articles/data.xml'
+      const value = 'https://example.estranky.sk/rss/en/articles/data.xml'
       const expected = 'estranky:posts'
 
       expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the photos key for a photos feed', () => {
-      const value = 'https://allpossible.estranky.cz/rss/photos/data.xml'
+      const value = 'https://example.estranky.cz/rss/photos/data.xml'
       const expected = 'estranky:photos'
 
       expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the photos key for a photos feed in another language', () => {
-      const value = 'https://sileni-sobi.estranky.cz/rss/en/photos/data.xml'
+      const value = 'https://example.estranky.cz/rss/en/photos/data.xml'
       const expected = 'estranky:photos'
 
       expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the comments key for a comments feed', () => {
-      const value = 'https://caritas.estranky.sk/rss/comments/data.xml'
+      const value = 'https://example.estranky.sk/rss/comments/data.xml'
+      const expected = 'estranky:comments'
+
+      expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the comments key for a comments feed in another language', () => {
+      const value = 'https://example.estranky.sk/rss/en/comments/data.xml'
       const expected = 'estranky:comments'
 
       expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the home page slice key for a home page slice feed', () => {
-      const value = 'http://www.kate-00.estranky.cz/rss/slices/l/homepage/data.xml'
+      const value = 'http://www.example.estranky.cz/rss/slices/l/homepage/data.xml'
       const expected = 'estranky:homepage-slice'
 
       expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the home page slice key for a home page slice feed in another language', () => {
-      const value = 'https://pwf.estranky.cz/rss/en/slices/l/homepage/data.xml'
+      const value = 'https://example.estranky.cz/rss/en/slices/l/homepage/data.xml'
       const expected = 'estranky:homepage-slice'
 
       expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the photo album slice key for a photo album slice feed', () => {
-      const value = 'https://kate-00.estranky.cz/rss/slices/l/photos/data.xml'
+      const value = 'https://example.estranky.cz/rss/slices/l/photos/data.xml'
       const expected = 'estranky:photos-slice'
 
       expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the photo album slice key for a photo album slice feed in another language', () => {
-      const value = 'https://hasicipolna.estranky.cz/rss/en/slices/l/photos/data.xml'
+      const value = 'https://example.estranky.cz/rss/en/slices/l/photos/data.xml'
       const expected = 'estranky:photos-slice'
 
       expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return undefined for a page', () => {
-      const value = 'https://kate-00.estranky.cz/fotoalbum/'
+      const value = 'https://example.estranky.cz/fotoalbum/'
 
       expect(estrankyHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an article slice feed', () => {
-      const value = 'https://kate-00.estranky.cz/rss/slices/a/604/data.xml'
+      const value = 'https://example.estranky.cz/rss/slices/a/604/data.xml'
 
       expect(estrankyHandler.getFeedKey?.(value)).toBeUndefined()
     })
@@ -458,39 +465,43 @@ describe('estrankyHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://allpossible.estranky.cz/rss/articles/data.xml',
+        'https://example.estranky.cz/rss/articles/data.xml',
         { key: 'estranky:posts', label: 'Posts' },
       ],
       [
-        'https://moeschke.estranky.sk/rss/en/articles/data.xml',
+        'https://example.estranky.sk/rss/en/articles/data.xml',
         { key: 'estranky:posts', label: 'Posts' },
       ],
       [
-        'https://allpossible.estranky.cz/rss/photos/data.xml',
+        'https://example.estranky.cz/rss/photos/data.xml',
         { key: 'estranky:photos', label: 'Photos' },
       ],
       [
-        'https://sileni-sobi.estranky.cz/rss/en/photos/data.xml',
+        'https://example.estranky.cz/rss/en/photos/data.xml',
         { key: 'estranky:photos', label: 'Photos' },
       ],
       [
-        'https://caritas.estranky.sk/rss/comments/data.xml',
+        'https://example.estranky.sk/rss/comments/data.xml',
         { key: 'estranky:comments', label: 'Comments' },
       ],
       [
-        'http://www.kate-00.estranky.cz/rss/slices/l/homepage/data.xml',
+        'https://example.estranky.sk/rss/en/comments/data.xml',
+        { key: 'estranky:comments', label: 'Comments' },
+      ],
+      [
+        'http://www.example.estranky.cz/rss/slices/l/homepage/data.xml',
         { key: 'estranky:homepage-slice', label: 'Home page (Web Slice)' },
       ],
       [
-        'https://pwf.estranky.cz/rss/en/slices/l/homepage/data.xml',
+        'https://example.estranky.cz/rss/en/slices/l/homepage/data.xml',
         { key: 'estranky:homepage-slice', label: 'Home page (Web Slice)' },
       ],
       [
-        'https://kate-00.estranky.cz/rss/slices/l/photos/data.xml',
+        'https://example.estranky.cz/rss/slices/l/photos/data.xml',
         { key: 'estranky:photos-slice', label: 'Photo album (Web Slice)' },
       ],
       [
-        'https://hasicipolna.estranky.cz/rss/en/slices/l/photos/data.xml',
+        'https://example.estranky.cz/rss/en/slices/l/photos/data.xml',
         { key: 'estranky:photos-slice', label: 'Photo album (Web Slice)' },
       ],
     ]
