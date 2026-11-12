@@ -196,54 +196,54 @@ describe('mailchimpHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the archive key for an archive feed', () => {
       const value =
         'https://us17.campaign-archive.com/feed?u=c2a64021f1e964b94f2727757&id=9831a9e2a1'
-      const expected = 'mailchimp:archive'
+      const expected: DiscoverUriHint = { key: 'mailchimp:archive', label: 'Archive' }
 
-      expect(mailchimpHandler.getFeedKey?.(value)).toBe(expected)
+      expect(mailchimpHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the archive key for an archive feed with the list id first', () => {
       const value =
         'https://us4.campaign-archive.com/feed?id=64134e0a27&u=9735795484d2e4c204da82a29'
-      const expected = 'mailchimp:archive'
+      const expected: DiscoverUriHint = { key: 'mailchimp:archive', label: 'Archive' }
 
-      expect(mailchimpHandler.getFeedKey?.(value)).toBe(expected)
+      expect(mailchimpHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the archive key for an archive feed over http', () => {
       const value =
         'http://us17.campaign-archive.com/feed?u=0f722c5c377abe94fae4930c2&id=7c3b50d6ec'
-      const expected = 'mailchimp:archive'
+      const expected: DiscoverUriHint = { key: 'mailchimp:archive', label: 'Archive' }
 
-      expect(mailchimpHandler.getFeedKey?.(value)).toBe(expected)
+      expect(mailchimpHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for an archive page', () => {
       const value =
         'https://us17.campaign-archive.com/home/?u=c2a64021f1e964b94f2727757&id=9831a9e2a1'
 
-      expect(mailchimpHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(mailchimpHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a campaign page', () => {
       const value = 'https://us17.campaign-archive.com/?u=c2a64021f1e964b94f2727757&id=9831a9e2a1'
 
-      expect(mailchimpHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(mailchimpHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed without the list id', () => {
       const value = 'https://us17.campaign-archive.com/feed?u=c2a64021f1e964b94f2727757'
 
-      expect(mailchimpHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(mailchimpHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/feed?u=c2a64021f1e964b94f2727757&id=9831a9e2a1'
 
-      expect(mailchimpHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(mailchimpHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

@@ -87,5 +87,5 @@ export const mailchimpHandler: PlatformHandler = {
     return [feeds.getFeedEntry('mailchimp:archive', params)]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
