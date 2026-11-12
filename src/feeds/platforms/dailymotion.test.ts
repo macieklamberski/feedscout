@@ -257,119 +257,119 @@ describe('dailymotionHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the videos key for a user feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the videos hint for a user feed', () => {
       const value = 'https://www.dailymotion.com/rss/adamtas'
-      const expected = 'dailymotion:videos'
+      const expected: DiscoverUriHint = { key: 'dailymotion:videos', label: 'Videos' }
 
-      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+      expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the videos key for a user feed with an underscore', () => {
+    it('should return the videos hint for a user feed with an underscore', () => {
       const value = 'https://www.dailymotion.com/rss/254_official'
-      const expected = 'dailymotion:videos'
+      const expected: DiscoverUriHint = { key: 'dailymotion:videos', label: 'Videos' }
 
-      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+      expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the videos key for a feed on the host without www', () => {
+    it('should return the videos hint for a feed on the host without www', () => {
       const value = 'https://dailymotion.com/rss/adamtas'
-      const expected = 'dailymotion:videos'
+      const expected: DiscoverUriHint = { key: 'dailymotion:videos', label: 'Videos' }
 
-      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+      expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the videos key for a feed over http', () => {
+    it('should return the videos hint for a feed over http', () => {
       const value = 'http://www.dailymotion.com/rss/adamtas'
-      const expected = 'dailymotion:videos'
+      const expected: DiscoverUriHint = { key: 'dailymotion:videos', label: 'Videos' }
 
-      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+      expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the videos key for a feed with a trailing slash', () => {
+    it('should return the videos hint for a feed with a trailing slash', () => {
       const value = 'https://www.dailymotion.com/rss/adamtas/'
-      const expected = 'dailymotion:videos'
+      const expected: DiscoverUriHint = { key: 'dailymotion:videos', label: 'Videos' }
 
-      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+      expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the videos key for a feed with a capitalized route', () => {
+    it('should return the videos hint for a feed with a capitalized route', () => {
       const value = 'https://www.dailymotion.com/RSS/adamtas'
-      const expected = 'dailymotion:videos'
+      const expected: DiscoverUriHint = { key: 'dailymotion:videos', label: 'Videos' }
 
-      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+      expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the videos key for a legacy user feed', () => {
+    it('should return the videos hint for a legacy user feed', () => {
       const value = 'https://www.dailymotion.com/rss/user/20Minutes'
-      const expected = 'dailymotion:videos'
+      const expected: DiscoverUriHint = { key: 'dailymotion:videos', label: 'Videos' }
 
-      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+      expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the playlist key for a playlist feed', () => {
+    it('should return the playlist hint for a playlist feed', () => {
       const value = 'https://www.dailymotion.com/rss/playlist/x5rwtk'
-      const expected = 'dailymotion:playlist'
+      const expected: DiscoverUriHint = { key: 'dailymotion:playlist', label: 'Playlist' }
 
-      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+      expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the playlist key for a playlist feed with a capitalized route', () => {
+    it('should return the playlist hint for a playlist feed with a capitalized route', () => {
       const value = 'https://www.dailymotion.com/rss/Playlist/x7buf3'
-      const expected = 'dailymotion:playlist'
+      const expected: DiscoverUriHint = { key: 'dailymotion:playlist', label: 'Playlist' }
 
-      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+      expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the search key for a search feed', () => {
+    it('should return the search hint for a search feed', () => {
       const value = 'https://www.dailymotion.com/rss/search/cats'
-      const expected = 'dailymotion:search'
+      const expected: DiscoverUriHint = { key: 'dailymotion:search', label: 'Search' }
 
-      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+      expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the channel key for a channel feed', () => {
+    it('should return the channel hint for a channel feed', () => {
       const value = 'https://www.dailymotion.com/rss/channel/news'
-      const expected = 'dailymotion:channel'
+      const expected: DiscoverUriHint = { key: 'dailymotion:channel', label: 'Channel' }
 
-      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+      expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the trending key for the trending feed', () => {
+    it('should return the trending hint for the trending feed', () => {
       const value = 'https://www.dailymotion.com/rss/trending'
-      const expected = 'dailymotion:trending'
+      const expected: DiscoverUriHint = { key: 'dailymotion:trending', label: 'Trending' }
 
-      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+      expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a user page', () => {
       const value = 'https://www.dailymotion.com/adamtas'
 
-      expect(dailymotionHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(dailymotionHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a playlist page', () => {
       const value = 'https://www.dailymotion.com/playlist/x5rwtk'
 
-      expect(dailymotionHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(dailymotionHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a video page', () => {
       const value = 'https://www.dailymotion.com/video/x8abc12'
 
-      expect(dailymotionHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(dailymotionHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the rss path alone', () => {
       const value = 'https://www.dailymotion.com/rss'
 
-      expect(dailymotionHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(dailymotionHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/rss/adamtas'
 
-      expect(dailymotionHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(dailymotionHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

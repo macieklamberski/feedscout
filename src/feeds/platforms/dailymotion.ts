@@ -107,5 +107,5 @@ export const dailymotionHandler: PlatformHandler = {
     return [feeds.getFeedEntry('dailymotion:videos', { username: parsed.username })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
