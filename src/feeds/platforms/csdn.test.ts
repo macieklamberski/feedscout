@@ -73,51 +73,51 @@ describe('csdnHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the blog key for a feed on rss.csdn.net', () => {
+  describe('getFeedHint', () => {
+    it('should return the blog hint for a feed on rss.csdn.net', () => {
       const value = 'https://rss.csdn.net/ziping_0918/rss/map'
-      const expected = 'csdn:blog'
+      const expected: DiscoverUriHint = { key: 'csdn:blog', label: 'Blog' }
 
-      expect(csdnHandler.getFeedKey?.(value)).toBe(expected)
+      expect(csdnHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a feed on blog.csdn.net', () => {
+    it('should return the blog hint for a feed on blog.csdn.net', () => {
       const value = 'https://blog.csdn.net/eastmount/rss/map'
-      const expected = 'csdn:blog'
+      const expected: DiscoverUriHint = { key: 'csdn:blog', label: 'Blog' }
 
-      expect(csdnHandler.getFeedKey?.(value)).toBe(expected)
+      expect(csdnHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a list feed on blog.csdn.net', () => {
+    it('should return the blog hint for a list feed on blog.csdn.net', () => {
       const value = 'https://blog.csdn.net/csdnnews/rss/list'
-      const expected = 'csdn:blog'
+      const expected: DiscoverUriHint = { key: 'csdn:blog', label: 'Blog' }
 
-      expect(csdnHandler.getFeedKey?.(value)).toBe(expected)
+      expect(csdnHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a feed over http', () => {
+    it('should return the blog hint for a feed over http', () => {
       const value = 'http://rss.csdn.net/eastmount/rss/map'
-      const expected = 'csdn:blog'
+      const expected: DiscoverUriHint = { key: 'csdn:blog', label: 'Blog' }
 
-      expect(csdnHandler.getFeedKey?.(value)).toBe(expected)
+      expect(csdnHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://blog.csdn.net/eastmount/article/details/12345'
 
-      expect(csdnHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(csdnHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a list path on rss.csdn.net', () => {
       const value = 'https://rss.csdn.net/eastmount/rss/list'
 
-      expect(csdnHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(csdnHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on www.csdn.net', () => {
       const value = 'https://www.csdn.net/eastmount/rss/map'
 
-      expect(csdnHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(csdnHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

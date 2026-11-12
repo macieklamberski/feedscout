@@ -53,5 +53,5 @@ export const csdnHandler: PlatformHandler = {
     return [feeds.getFeedEntry('csdn:blog', { host: 'rss.csdn.net', username })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
