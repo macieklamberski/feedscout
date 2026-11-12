@@ -363,6 +363,7 @@
     "confluence:dashboard": "Dashboard",
     "diaspora:posts": "Posts",
     "instatus:history": "Incident history",
+    "instatus:translated-history": "Translated incident history",
     "jira:project": "Project",
     "jira:site": "Site activity",
     "neocities:updates": "Site updates",

@@ -1,5 +1,5 @@
 import { getPathSegments, parseUrl } from 'trousse'
-import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain, hasMarker, letterPairsRegex } from '../../common/utils.js'
 
@@ -11,17 +11,17 @@ const pageMarkers = ['custom-html-above-header', 'custom-html-below-footer']
 const domains = ['instatus.com']
 
 // A status page on its own domain is known only by its markers, so its feeds are built here but
-// not claimed. A translation's row comes first, so a page in one builds it.
+// not claimed.
 const feeds = definePlatformFeeds(
   [
     {
-      key: 'instatus:history',
+      key: 'instatus:translated-history',
       template: '{scheme}://{host}/{language}/history.rss',
       format: 'rss',
     },
     { key: 'instatus:history', template: '{scheme}://{host}/history.rss', format: 'rss' },
     {
-      key: 'instatus:history',
+      key: 'instatus:translated-history',
       template: '{scheme}://{host}/{language}/history.atom',
       format: 'atom',
     },
@@ -72,15 +72,18 @@ export const instatusHandler: PlatformHandler = {
       return []
     }
 
-    const params: PlatformFeedParams = {}
+    const { language } = parsed
 
-    if (parsed.language) {
-      params.language = parsed.language
+    if (language) {
+      return [
+        pageFeeds.getFeedEntry('instatus:translated-history', { language }, 'rss'),
+        pageFeeds.getFeedEntry('instatus:translated-history', { language }, 'atom'),
+      ]
     }
 
     return [
-      pageFeeds.getFeedEntry('instatus:history', params, 'rss'),
-      pageFeeds.getFeedEntry('instatus:history', params, 'atom'),
+      pageFeeds.getFeedEntry('instatus:history', {}, 'rss'),
+      pageFeeds.getFeedEntry('instatus:history', {}, 'atom'),
     ]
   },
 

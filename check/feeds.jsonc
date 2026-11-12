@@ -771,6 +771,10 @@
     "instatus:history": [
       "https://status.mastodon.social/history.rss",
       "https://status.mastodon.social/history.atom"
+    ],
+    "instatus:translated-history": [
+      "https://railway.instatus.com/en-us/history.rss",
+      "https://railway.instatus.com/en-us/history.atom"
     ]
   },
   "internetArchive": {

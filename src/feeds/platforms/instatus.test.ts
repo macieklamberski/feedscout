@@ -127,11 +127,19 @@ describe('instatusHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://status.example.com/zh-tw/history.rss',
-          hint: { key: 'instatus:history', label: 'Incident history', format: 'rss' },
+          hint: {
+            key: 'instatus:translated-history',
+            label: 'Translated incident history',
+            format: 'rss',
+          },
         },
         {
           uri: 'https://status.example.com/zh-tw/history.atom',
-          hint: { key: 'instatus:history', label: 'Incident history', format: 'atom' },
+          hint: {
+            key: 'instatus:translated-history',
+            label: 'Translated incident history',
+            format: 'atom',
+          },
         },
       ]
 
@@ -151,11 +159,15 @@ describe('instatusHandler', () => {
       ],
       [
         'https://example.instatus.com/en-us/history.rss',
-        { key: 'instatus:history', label: 'Incident history', format: 'rss' },
+        { key: 'instatus:translated-history', label: 'Translated incident history', format: 'rss' },
       ],
       [
         'https://example.instatus.com/de/history.atom',
-        { key: 'instatus:history', label: 'Incident history', format: 'atom' },
+        {
+          key: 'instatus:translated-history',
+          label: 'Translated incident history',
+          format: 'atom',
+        },
       ],
     ]
 
@@ -212,11 +224,15 @@ describe('instatusHandler', () => {
       ],
       [
         'https://example.instatus.com/en-us/history.rss',
-        { key: 'instatus:history', label: 'Incident history', format: 'rss' },
+        { key: 'instatus:translated-history', label: 'Translated incident history', format: 'rss' },
       ],
       [
         'https://example.instatus.com/en-us/history.atom',
-        { key: 'instatus:history', label: 'Incident history', format: 'atom' },
+        {
+          key: 'instatus:translated-history',
+          label: 'Translated incident history',
+          format: 'atom',
+        },
       ],
     ]
 
