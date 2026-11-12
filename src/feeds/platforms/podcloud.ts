@@ -8,10 +8,13 @@ export type PodcloudUrl = { kind: 'show'; show: string }
 
 const domains = ['lepodcast.fr']
 
-const feeds = definePlatformFeeds([
-  { key: 'podcloud:podcast', template: 'https://{show}.lepodcast.fr/rss' },
-  { key: 'podcloud:podcast', template: 'https://{show}.lepodcast.fr/feed' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'podcloud:podcast', template: '{scheme}://{host}/rss' },
+    { key: 'podcloud:podcast', template: '{scheme}://{host}/feed' },
+  ],
+  { domains },
+)
 
 export const parsePodcloudUrl = (url: string): PodcloudUrl | undefined => {
   const show = getTenantSubdomain(url, domains)
@@ -30,12 +33,13 @@ export const podcloudHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePodcloudUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    return [feeds.getFeedEntry('podcloud:podcast', { show: parsed.show })]
+    return [page.getFeedEntry('podcloud:podcast')]
   },
 
   getFeedHint: feeds.getFeedHint,

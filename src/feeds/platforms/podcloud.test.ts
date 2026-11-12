@@ -75,11 +75,11 @@ describe('podcloudHandler', () => {
       expect(podcloudHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the https feed for an http page', () => {
+    it('should return the feed under the page scheme for an http show page', () => {
       const value = 'http://alice-podcast.lepodcast.fr/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice-podcast.lepodcast.fr/rss',
+          uri: 'http://alice-podcast.lepodcast.fr/rss',
           hint: { key: 'podcloud:podcast', label: 'Podcast' },
         },
       ]
