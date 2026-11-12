@@ -13,29 +13,32 @@ export type BearblogUrl = { kind: 'discover' } | { kind: 'blog'; blog: string; t
 const domains = ['bearblog.dev']
 const apexHosts = ['bearblog.dev', 'www.bearblog.dev']
 
-const feeds = definePlatformFeeds([
-  { key: 'bearblog:discover', template: 'https://bearblog.dev/discover/feed/', format: 'atom' },
-  {
-    key: 'bearblog:discover',
-    template: 'https://bearblog.dev/discover/feed/?type=rss',
-    format: 'rss',
-  },
-  { key: 'bearblog:tag', template: 'https://{blog}.bearblog.dev/feed/?q={tag}', format: 'atom' },
-  {
-    key: 'bearblog:tag',
-    template: 'https://{blog}.bearblog.dev/feed/?type=rss&q={tag}',
-    format: 'rss',
-  },
-  { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/feed/', format: 'atom' },
-  { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/feed/?type=rss', format: 'rss' },
-  // Every blog serves the same two feeds under these paths too, which the page does not link.
-  { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/atom/', format: 'atom' },
-  { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/atom.xml', format: 'atom' },
-  { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/feed.xml', format: 'atom' },
-  { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/index.xml', format: 'atom' },
-  { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/rss/', format: 'rss' },
-  { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/rss.xml', format: 'rss' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'bearblog:discover', template: 'https://bearblog.dev/discover/feed/', format: 'atom' },
+    {
+      key: 'bearblog:discover',
+      template: 'https://bearblog.dev/discover/feed/?type=rss',
+      format: 'rss',
+    },
+    { key: 'bearblog:tag', template: '{scheme}://{host}/feed/?q={tag}', format: 'atom' },
+    {
+      key: 'bearblog:tag',
+      template: '{scheme}://{host}/feed/?type=rss&q={tag}',
+      format: 'rss',
+    },
+    { key: 'bearblog:posts', template: '{scheme}://{host}/feed/', format: 'atom' },
+    { key: 'bearblog:posts', template: '{scheme}://{host}/feed/?type=rss', format: 'rss' },
+    // Every blog serves the same two feeds under these paths too, which the page does not link.
+    { key: 'bearblog:posts', template: '{scheme}://{host}/atom/', format: 'atom' },
+    { key: 'bearblog:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
+    { key: 'bearblog:posts', template: '{scheme}://{host}/feed.xml', format: 'atom' },
+    { key: 'bearblog:posts', template: '{scheme}://{host}/index.xml', format: 'atom' },
+    { key: 'bearblog:posts', template: '{scheme}://{host}/rss/', format: 'rss' },
+    { key: 'bearblog:posts', template: '{scheme}://{host}/rss.xml', format: 'rss' },
+  ],
+  { domains },
+)
 
 export const parseBearblogUrl = (url: string): BearblogUrl | undefined => {
   // Apex bearblog.dev exposes the platform-wide trending discovery feed.
@@ -62,33 +65,33 @@ export const bearblogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseBearblogUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
     if (parsed.kind === 'discover') {
       return [
-        feeds.getFeedEntry('bearblog:discover', {}, 'atom'),
-        feeds.getFeedEntry('bearblog:discover', {}, 'rss'),
+        page.getFeedEntry('bearblog:discover', {}, 'atom'),
+        page.getFeedEntry('bearblog:discover', {}, 'rss'),
       ]
     }
 
-    const { blog } = parsed
     const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.tag) {
-      const params = { blog, tag: parsed.tag }
+      const params = { tag: parsed.tag }
 
       uris.push(
-        feeds.getFeedEntry('bearblog:tag', params, 'atom'),
-        feeds.getFeedEntry('bearblog:tag', params, 'rss'),
+        page.getFeedEntry('bearblog:tag', params, 'atom'),
+        page.getFeedEntry('bearblog:tag', params, 'rss'),
       )
     }
 
     uris.push(
-      feeds.getFeedEntry('bearblog:posts', { blog }, 'atom'),
-      feeds.getFeedEntry('bearblog:posts', { blog }, 'rss'),
+      page.getFeedEntry('bearblog:posts', {}, 'atom'),
+      page.getFeedEntry('bearblog:posts', {}, 'rss'),
     )
 
     return uris
