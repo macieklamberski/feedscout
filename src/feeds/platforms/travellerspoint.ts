@@ -39,5 +39,5 @@ export const travellerspointHandler: PlatformHandler = {
     return [feeds.getFeedEntry('travellerspoint:posts', { blog: parsed.blog })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

@@ -91,50 +91,50 @@ describe('travellerspointHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for a blog feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a blog feed', () => {
       const value = 'https://alicetravels.travellerspoint.com/atom.xml'
-      const expected = 'travellerspoint:posts'
+      const expected: DiscoverUriHint = { key: 'travellerspoint:posts', label: 'Posts' }
 
-      expect(travellerspointHandler.getFeedKey?.(value)).toBe(expected)
+      expect(travellerspointHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a blog feed over http', () => {
+    it('should return the posts hint for a blog feed over http', () => {
       const value = 'http://alicetravels.travellerspoint.com/atom.xml'
-      const expected = 'travellerspoint:posts'
+      const expected: DiscoverUriHint = { key: 'travellerspoint:posts', label: 'Posts' }
 
-      expect(travellerspointHandler.getFeedKey?.(value)).toBe(expected)
+      expect(travellerspointHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the rss.xml blog feed', () => {
+    it('should return the posts hint for the rss.xml blog feed', () => {
       const value = 'https://alicetravels.travellerspoint.com/rss.xml'
-      const expected = 'travellerspoint:posts'
+      const expected: DiscoverUriHint = { key: 'travellerspoint:posts', label: 'Posts' }
 
-      expect(travellerspointHandler.getFeedKey?.(value)).toBe(expected)
+      expect(travellerspointHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://alicetravels.travellerspoint.com/426/'
 
-      expect(travellerspointHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(travellerspointHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the site host', () => {
       const value = 'https://www.travellerspoint.com/atom.xml'
 
-      expect(travellerspointHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(travellerspointHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the apex domain', () => {
       const value = 'https://travellerspoint.com/atom.xml'
 
-      expect(travellerspointHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(travellerspointHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://alicetravels.example.com/atom.xml'
 
-      expect(travellerspointHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(travellerspointHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
