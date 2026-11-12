@@ -113,6 +113,7 @@
     "pinterest:board": "Board",
     "producthunt:products": "Products",
     "soundcloud:tracks": "Tracks",
+    "soundcloud:playlist": "Playlist",
     "stackexchange:tag": "Tag",
     "stackexchange:question": "Question",
     "stackexchange:user": "User",

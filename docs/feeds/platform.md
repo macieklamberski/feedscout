@@ -410,13 +410,14 @@ Discovers RSS feeds for Behance user portfolios, plus the homepage Featured-proj
 
 ### SoundCloud
 
-Discovers RSS feeds for SoundCloud user profiles.
+Discovers RSS feeds for SoundCloud user profiles and playlists.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `soundcloud.com/{user}` | User sounds<sup>†</sup>* |
+| `soundcloud.com/{user}/sets/{playlist}` | Playlist sounds* |
 
-\* *Requires HTML content to extract user ID.*
+\* *Requires HTML content to extract the user or playlist ID.*
 
 <sup>†</sup> *Found only by the Platform method.*
 
