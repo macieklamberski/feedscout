@@ -83,50 +83,50 @@ describe('canalblogHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the posts key for the posts feed', () => {
       const value = 'https://alice.canalblog.com/rss'
-      const expected = 'canalblog:posts'
+      const expected: DiscoverUriHint = { key: 'canalblog:posts', label: 'Posts' }
 
-      expect(canalblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(canalblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts key for the HTTP posts feed', () => {
       const value = 'http://alice.canalblog.com/rss'
-      const expected = 'canalblog:posts'
+      const expected: DiscoverUriHint = { key: 'canalblog:posts', label: 'Posts' }
 
-      expect(canalblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(canalblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts key for the posts feed with a trailing slash', () => {
       const value = 'https://alice.canalblog.com/rss/'
-      const expected = 'canalblog:posts'
+      const expected: DiscoverUriHint = { key: 'canalblog:posts', label: 'Posts' }
 
-      expect(canalblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(canalblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://alice.canalblog.com/archives/2024/05/19/12345678.html'
 
-      expect(canalblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(canalblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the feed path on the www host', () => {
       const value = 'https://www.canalblog.com/rss'
 
-      expect(canalblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(canalblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the feed path on a nested subdomain', () => {
       const value = 'https://a.alice.canalblog.com/rss'
 
-      expect(canalblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(canalblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the feed path on another host', () => {
       const value = 'https://example.com/rss'
 
-      expect(canalblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(canalblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
