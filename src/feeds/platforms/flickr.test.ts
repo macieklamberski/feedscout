@@ -205,6 +205,18 @@ describe('flickrHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should keep the scheme of an http page', () => {
+      const value = 'http://flickr.com/photos/tags/rock'
+      const expected = [
+        {
+          uri: 'http://www.flickr.com/services/feeds/photos_public.gne?tags=rock',
+          hint: { key: 'flickr:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(flickrHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should keep a tag with & inside the tags query value', () => {
       const value = 'https://www.flickr.com/photos/tags/rock&roll'
       const expected = [
