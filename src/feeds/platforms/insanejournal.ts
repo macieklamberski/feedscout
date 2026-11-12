@@ -200,7 +200,7 @@ export const insanejournalHandler: PlatformHandler = {
 
   // A path host names the journal in the first segment, so its root `/data/rss` is no feed: the
   // asylums host redirects it to the asylum `data`. A dotted first segment is a file of the site.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const pathname = parseUrl(url)?.pathname
 
     if (!pathname) {
@@ -212,13 +212,13 @@ export const insanejournalHandler: PlatformHandler = {
         return
       }
 
-      return pathFeeds.getFeedKey(url)
+      return pathFeeds.getFeedHint(url)
     }
 
     if (!getTenantSubdomain(url, domains)) {
       return
     }
 
-    return journalFeeds.getFeedKey(url)
+    return journalFeeds.getFeedHint(url)
   },
 }
