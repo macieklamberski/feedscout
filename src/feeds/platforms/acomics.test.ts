@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type AcomicsUrl, acomicsHandler, parseAcomicsUrl } from './acomics.js'
+
+const feedCases: Array<[string, DiscoverUriHint]> = [
+  ['https://acomics.ru/~Oglaf/rss', { key: 'acomics:issues', label: 'Issues' }], // Comic
+  ['https://acomics.ru/-Lilim/rss', { key: 'acomics:subscriptions', label: 'Subscriptions' }], // User
+]
 
 describe('parseAcomicsUrl', () => {
   it('should return the comic for a comic page', () => {
@@ -86,6 +93,66 @@ describe('acomicsHandler', () => {
       ]
 
       expect(acomicsHandler.resolve('https://acomics.ru/-Lilim')).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the issues key for a comic feed', () => {
+      const value = 'https://acomics.ru/~Oglaf/rss'
+      const expected = 'acomics:issues'
+
+      expect(acomicsHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the subscriptions key for a user feed', () => {
+      const value = 'https://acomics.ru/-Lilim/rss'
+      const expected = 'acomics:subscriptions'
+
+      expect(acomicsHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the issues key for a comic feed on the www host', () => {
+      const value = 'http://www.acomics.ru/~Oglaf/rss/'
+      const expected = 'acomics:issues'
+
+      expect(acomicsHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a comic page', () => {
+      const value = 'https://acomics.ru/~Oglaf'
+
+      expect(acomicsHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an issue page', () => {
+      const value = 'https://acomics.ru/~Oglaf/902'
+
+      expect(acomicsHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path without a prefix', () => {
+      const value = 'https://acomics.ru/comics/rss'
+
+      expect(acomicsHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/~Oglaf/rss'
+
+      expect(acomicsHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('as a feed URL input', () => {
+    it.each(feedCases)('should return %s as given', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [acomicsHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })
