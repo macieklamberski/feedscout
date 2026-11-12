@@ -64,6 +64,10 @@ describe('atyponHandler', () => {
           uri: 'https://www.tandfonline.com/action/showFeed?type=etoc&feed=rss&jc=tprs20',
           hint: { key: 'atypon:journal', label: 'Journal' },
         },
+        {
+          uri: 'https://www.tandfonline.com/action/showFeed?type=axatoc&feed=rss&jc=tprs20',
+          hint: { key: 'atypon:ahead-of-print', label: 'Ahead of print' },
+        },
       ]
 
       expect(atyponHandler.resolve(value)).toEqual(expected)
@@ -75,6 +79,10 @@ describe('atyponHandler', () => {
         {
           uri: 'https://onlinelibrary.wiley.com/action/showFeed?type=etoc&feed=rss&jc=15406261',
           hint: { key: 'atypon:journal', label: 'Journal' },
+        },
+        {
+          uri: 'https://onlinelibrary.wiley.com/action/showFeed?type=axatoc&feed=rss&jc=15406261',
+          hint: { key: 'atypon:ahead-of-print', label: 'Ahead of print' },
         },
         {
           uri: 'https://onlinelibrary.wiley.com/feed/15406261/most-cited',
@@ -91,6 +99,10 @@ describe('atyponHandler', () => {
         {
           uri: 'http://www.tandfonline.com/action/showFeed?type=etoc&feed=rss&jc=tprs20',
           hint: { key: 'atypon:journal', label: 'Journal' },
+        },
+        {
+          uri: 'http://www.tandfonline.com/action/showFeed?type=axatoc&feed=rss&jc=tprs20',
+          hint: { key: 'atypon:ahead-of-print', label: 'Ahead of print' },
         },
       ]
 
@@ -131,23 +143,34 @@ describe('atyponHandler', () => {
         'https://onlinelibrary.wiley.com/feed/14429993/most-cited',
         { key: 'atypon:most-cited', label: 'Most cited' },
       ],
+      [
+        'https://onlinelibrary.wiley.com/action/showMostCitedArticlesFeed?journalCode=14429993',
+        { key: 'atypon:most-cited', label: 'Most cited' },
+      ],
+      [
+        'https://www.science.org/action/showFeed?feed=rss&jc=example&type=axatoc',
+        { key: 'atypon:ahead-of-print', label: 'Ahead of print' },
+      ],
+      [
+        'https://www.science.org/action/showFeed/feed?jc=example&type=axatoc',
+        { key: 'atypon:ahead-of-print', label: 'Ahead of print' },
+      ],
+      [
+        'https://dl.acm.org/action/showFeed?feed=rss&mi=abc123&query=%2526AllField%253Dexample&type=search&ui=0',
+        { key: 'atypon:search', label: 'Saved search' },
+      ],
+      [
+        'https://dl.acm.org/action/showFeed/feed?mi=abc123&query=%2526AllField%253Dexample&type=search&ui=0',
+        { key: 'atypon:search', label: 'Saved search' },
+      ],
+      [
+        'https://epubs.siam.org/action/showFeed?tagCode=topic-example&taxonomyCode=topics&type=searchTopic',
+        { key: 'atypon:topic', label: 'Topic' },
+      ],
     ]
 
     it.each(values)('should read the hint of %s', (value, expected) => {
       expect(atyponHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a search feed', () => {
-      const value =
-        'https://epubs.siam.org/action/showFeed?tagCode=topic-LI&taxonomyCode=topics&type=searchTopic'
-
-      expect(atyponHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for an ahead of print feed', () => {
-      const value = 'https://www.science.org/action/showFeed/feed?jc=science&type=axatoc'
-
-      expect(atyponHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a journal page', () => {
@@ -178,6 +201,22 @@ describe('atyponHandler', () => {
       ['https://www.tandfonline.com/feed/rss/uann20', journal],
       ['https://onlinelibrary.wiley.com/feed/16136829/most-recent', journal],
       ['https://onlinelibrary.wiley.com/feed/14429993/most-cited', mostCited],
+      [
+        'https://onlinelibrary.wiley.com/action/showMostCitedArticlesFeed?journalCode=14429993',
+        mostCited,
+      ],
+      [
+        'http://www.science.org/action/showFeed?feed=rss&jc=example&type=axatoc',
+        { key: 'atypon:ahead-of-print', label: 'Ahead of print' },
+      ],
+      [
+        'https://dl.acm.org/action/showFeed?feed=rss&mi=abc123&query=%2526AllField%253Dexample&type=search&ui=0',
+        { key: 'atypon:search', label: 'Saved search' },
+      ],
+      [
+        'https://epubs.siam.org/action/showFeed?tagCode=topic-example&taxonomyCode=topics&type=searchTopic',
+        { key: 'atypon:topic', label: 'Topic' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

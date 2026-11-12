@@ -46,6 +46,10 @@
     ]
   },
   "atypon": {
+    "atypon:ahead-of-print": [
+      "https://www.science.org/action/showFeed?type=axatoc&feed=rss&jc=science",
+      "https://pubsonline.informs.org/action/showFeed?type=axatoc&feed=rss&jc=mnsc"
+    ],
     "atypon:journal": [
       "https://ascelibrary.org/action/showFeed?type=etoc&feed=rss&jc=jsendh",
       "https://dl.acm.org/action/showFeed?type=etoc&feed=rss&jc=tog",
@@ -60,7 +64,9 @@
       "https://www.science.org/action/showFeed?type=etoc&feed=rss&jc=science",
       "https://www.tandfonline.com/action/showFeed?type=etoc&feed=rss&jc=tjis20"
     ],
-    "atypon:most-cited": "https://onlinelibrary.wiley.com/feed/15406261/most-cited"
+    "atypon:most-cited": "https://onlinelibrary.wiley.com/feed/15406261/most-cited",
+    "atypon:search": "https://dl.acm.org/action/showFeed?feed=rss&mi=io1ynz&query=%2526AllField%253Dpmu%2526content%253Dstandard%2526target%253Ddefault&type=search&ui=0",
+    "atypon:topic": "https://epubs.siam.org/action/showFeed?tagCode=topic-LI&taxonomyCode=topics&type=searchTopic"
   },
   "audioboom": {
     "audioboom:podcast": "https://audioboom.com/channels/5071123.rss"

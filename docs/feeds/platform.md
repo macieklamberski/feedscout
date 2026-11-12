@@ -2066,12 +2066,12 @@ Discovers the table of contents feed of a journal hosted on Atypon Literatum: AC
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{host}/toc/{code}/…` | Journal (RDF) |
-| `{host}/journal/{code}` | Journal (RDF) |
-| `{host}/loi/{code}` | Journal (RDF) |
-| `www.tandfonline.com/journals/{code}` | Journal (RDF) |
-| `journals.sagepub.com/home/{code}` | Journal (RDF) |
-| `onlinelibrary.wiley.com/journal/{code}` | Journal (RSS) · Most cited (RSS) |
+| `{host}/toc/{code}/…` | Journal (RDF) · ahead of print (RDF) |
+| `{host}/journal/{code}` | Journal (RDF) · ahead of print (RDF) |
+| `{host}/loi/{code}` | Journal (RDF) · ahead of print (RDF) |
+| `www.tandfonline.com/journals/{code}` | Journal (RDF) · ahead of print (RDF) |
+| `journals.sagepub.com/home/{code}` | Journal (RDF) · ahead of print (RDF) |
+| `onlinelibrary.wiley.com/journal/{code}` | Journal (RSS) · ahead of print (RDF) · Most cited (RSS) |
 
 > [!NOTE]
 > Journal pages answer a server-side fetch with a Cloudflare challenge, so the feed is derived from the URL alone. Article pages under `/doi/` name no journal and are not matched.

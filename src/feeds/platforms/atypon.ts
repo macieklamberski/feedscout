@@ -42,6 +42,33 @@ const feeds = definePlatformFeeds(
       key: 'atypon:most-cited',
       template: 'https://onlinelibrary.wiley.com/feed/{code}/most-cited',
     },
+    {
+      key: 'atypon:most-cited',
+      template:
+        'https://onlinelibrary.wiley.com/action/showMostCitedArticlesFeed?journalCode={code}',
+    },
+    {
+      key: 'atypon:ahead-of-print',
+      template: '{scheme}://{host}/action/showFeed?type=axatoc&feed=rss&jc={code}',
+    },
+    {
+      key: 'atypon:ahead-of-print',
+      template: '{scheme}://{host}/action/showFeed/feed?type=axatoc&jc={code}',
+    },
+    // A saved search or a topic feed names its query in values no page URL gives.
+    {
+      key: 'atypon:search',
+      template: '{scheme}://{host}/action/showFeed?type=search&feed=rss&query={query}',
+    },
+    {
+      key: 'atypon:search',
+      template: '{scheme}://{host}/action/showFeed/feed?type=search&query={query}',
+    },
+    {
+      key: 'atypon:topic',
+      template:
+        '{scheme}://{host}/action/showFeed?type=searchTopic&taxonomyCode={taxonomy}&tagCode={tag}',
+    },
   ],
   { hosts },
 )
@@ -77,11 +104,15 @@ export const atyponHandler: PlatformHandler = {
     if (parsed.isWiley) {
       return [
         page.getFeedEntry('atypon:journal', { code: parsed.code }),
+        page.getFeedEntry('atypon:ahead-of-print', { code: parsed.code }),
         page.getFeedEntry('atypon:most-cited', { code: parsed.code }),
       ]
     }
 
-    return [page.getFeedEntry('atypon:journal', { code: parsed.code })]
+    return [
+      page.getFeedEntry('atypon:journal', { code: parsed.code }),
+      page.getFeedEntry('atypon:ahead-of-print', { code: parsed.code }),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
