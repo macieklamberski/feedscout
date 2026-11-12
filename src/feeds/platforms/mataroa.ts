@@ -8,9 +8,9 @@ export type MataroaUrl = { kind: 'blog'; blog: string }
 
 const domains = ['mataroa.blog']
 
-const feeds = definePlatformFeeds([
-  { key: 'mataroa:blog', template: '{scheme}://{blog}.mataroa.blog/rss/' },
-])
+const feeds = definePlatformFeeds([{ key: 'mataroa:blog', template: '{scheme}://{host}/rss/' }], {
+  domains,
+})
 
 export const parseMataroaUrl = (url: string): MataroaUrl | undefined => {
   const blog = getTenantSubdomain(url, domains)
@@ -35,7 +35,7 @@ export const mataroaHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('mataroa:blog', { blog: parsed.blog })]
+    return [page.getFeedEntry('mataroa:blog')]
   },
 
   getFeedHint: feeds.getFeedHint,
