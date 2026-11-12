@@ -231,6 +231,13 @@ describe('lichessHandler', () => {
       expect(lichessHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the blog key for the official blog feed at its short path', () => {
+      const value = 'https://lichess.org/blog.atom'
+      const expected = 'lichess:blog'
+
+      expect(lichessHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the community key for a language community feed', () => {
       const value = 'https://lichess.org/blog/community.atom?lang=de'
       const expected = 'lichess:community'
@@ -288,6 +295,7 @@ describe('lichessHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://lichess.org/@/A-T_A-S/blog.atom', { key: 'lichess:blog', label: 'Blog' }],
       ['https://lichess.org/@/Lichess/blog.atom', { key: 'lichess:blog', label: 'Blog' }],
+      ['https://lichess.org/blog.atom', { key: 'lichess:blog', label: 'Blog' }],
       [
         'https://lichess.org/blog/community.atom?lang=tk',
         { key: 'lichess:community', label: 'Community blogs' },
