@@ -188,13 +188,5 @@ export const blogspotHandler: PlatformHandler = {
     return uris
   },
 
-  // The table reads a tenant after stripping www, so a www host in front of a tenant is refused
-  // first: Blogger's certificate does not cover it, and its http spelling redirects to the tenant.
-  getFeedHint: (url) => {
-    if (!getTenantSubdomain(url, domains)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
