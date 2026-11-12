@@ -510,6 +510,7 @@
     "vbulletin:site": "Site",
     "vbulletin:forum": "Forum",
     "omeka:items": "Items",
+    "omeka:item": "Item",
     "omeka:filtered-items": "Filtered items",
     "koha:search": "Search",
     "koha:list": "List",

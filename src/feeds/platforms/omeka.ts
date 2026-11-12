@@ -32,7 +32,8 @@ const domains = ['omeka.net']
 
 // A site on a custom domain is known only by its marker, so its feeds are built in resolve, under
 // the install root the page gives, and claimed only on Omeka's own domain. A browse query other
-// than the dropped parameters makes a feed the filtered items one.
+// than the dropped parameters makes a feed the filtered items one. The short `/items` route and an
+// item shown inside an exhibit serve the same feeds, so they are claimed under the same keys.
 const feeds = definePlatformFeeds(
   [
     {
@@ -43,6 +44,26 @@ const feeds = definePlatformFeeds(
     {
       key: 'omeka:items',
       template: '{scheme}://{tenant}.{domain}/items/browse?output=atom',
+      format: 'atom',
+    },
+    {
+      key: 'omeka:items',
+      template: '{scheme}://{tenant}.{domain}/items?output=rss2',
+      format: 'rss',
+    },
+    {
+      key: 'omeka:items',
+      template: '{scheme}://{tenant}.{domain}/items?output=atom',
+      format: 'atom',
+    },
+    {
+      key: 'omeka:item',
+      template: '{scheme}://{tenant}.{domain}/items/show/{id}?output=atom',
+      format: 'atom',
+    },
+    {
+      key: 'omeka:item',
+      template: '{scheme}://{tenant}.{domain}/exhibits/show/{exhibit}/item/{id}?output=atom',
       format: 'atom',
     },
   ],
@@ -153,7 +174,7 @@ export const omekaHandler: PlatformHandler = {
   getFeedHint: (url) => {
     const hint = feeds.getFeedHint(url)
 
-    if (!hint || !getBrowseQuery(new URL(url).searchParams)) {
+    if (hint?.key !== 'omeka:items' || !getBrowseQuery(new URL(url).searchParams)) {
       return hint
     }
 

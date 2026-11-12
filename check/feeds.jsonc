@@ -1151,6 +1151,7 @@
       "https://digitalsc.lib.vt.edu/items/browse?collection=10&output=rss2",
       "https://digitalsc.lib.vt.edu/items/browse?collection=10&output=atom"
     ],
+    "omeka:item": "https://digitalsc.lib.vt.edu/items/show/53238?output=atom",
     "omeka:items": [
       "https://digitalsc.lib.vt.edu/items/browse?output=rss2",
       "https://digitalsc.lib.vt.edu/items/browse?output=atom"

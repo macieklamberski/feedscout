@@ -339,6 +339,50 @@ describe('omekaHandler', () => {
       expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the items hint for an RSS feed on the short route', () => {
+      const value = 'https://alice.omeka.net/items?output=rss2'
+      const expected: DiscoverUriHint = { key: 'omeka:items', label: 'Items', format: 'rss' }
+
+      expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the filtered items hint for an Atom feed on the short route', () => {
+      const value = 'https://alice.omeka.net/items?output=atom&sort_dir=a&sort_field=added'
+      const expected: DiscoverUriHint = {
+        key: 'omeka:filtered-items',
+        label: 'Filtered items',
+        format: 'atom',
+      }
+
+      expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the item hint for an item feed', () => {
+      const value = 'https://alice.omeka.net/items/show/123?output=atom'
+      const expected: DiscoverUriHint = { key: 'omeka:item', label: 'Item', format: 'atom' }
+
+      expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the item hint for an item feed inside an exhibit', () => {
+      const value = 'https://alice.omeka.net/exhibits/show/maps/item/123?output=atom'
+      const expected: DiscoverUriHint = { key: 'omeka:item', label: 'Item', format: 'atom' }
+
+      expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for an item page', () => {
+      const value = 'https://alice.omeka.net/items/show/123'
+
+      expect(omekaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an item feed on a custom domain', () => {
+      const value = 'https://example.com/items/show/123?output=atom'
+
+      expect(omekaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a browse page', () => {
       const value = 'https://alice.omeka.net/items/browse?tags=maps'
 
@@ -381,6 +425,22 @@ describe('omekaHandler', () => {
       [
         'https://alice.omeka.net/items/browse?collection=3&output=atom',
         { key: 'omeka:filtered-items', label: 'Filtered items', format: 'atom' },
+      ],
+      [
+        'https://alice.omeka.net/items?output=atom',
+        { key: 'omeka:items', label: 'Items', format: 'atom' },
+      ],
+      [
+        'https://alice.omeka.net/items?output=rss2&tags=maps',
+        { key: 'omeka:filtered-items', label: 'Filtered items', format: 'rss' },
+      ],
+      [
+        'https://alice.omeka.net/items/show/123?output=atom',
+        { key: 'omeka:item', label: 'Item', format: 'atom' },
+      ],
+      [
+        'https://alice.omeka.net/exhibits/show/maps/item/123?output=atom',
+        { key: 'omeka:item', label: 'Item', format: 'atom' },
       ],
     ]
 
