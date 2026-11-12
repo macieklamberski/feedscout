@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'bun:test'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   type AushaPage,
   type AushaUrl,
@@ -105,6 +107,62 @@ describe('aushaHandler', () => {
       const content = '<html><body>No feed here</body></html>'
 
       expect(aushaHandler.resolve(value, content)).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the podcast key for a podcast feed', () => {
+      const value = 'https://feed.ausha.co/abc123'
+      const expected = 'ausha:podcast'
+
+      expect(aushaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a podcast feed over http', () => {
+      const value = 'http://feed.ausha.co/abc123'
+      const expected = 'ausha:podcast'
+
+      expect(aushaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a podcast feed with a trailing slash', () => {
+      const value = 'https://feed.ausha.co/abc123/'
+      const expected = 'ausha:podcast'
+
+      expect(aushaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for the feed host root', () => {
+      const value = 'https://feed.ausha.co/'
+
+      expect(aushaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a show page', () => {
+      const value = 'https://podcast.ausha.co/example-show'
+
+      expect(aushaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed id under another host', () => {
+      const value = 'https://feed.example.com/abc123'
+
+      expect(aushaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('discoverUrisFromPlatform', () => {
+    const values = ['https://feed.ausha.co/abc123', 'http://feed.ausha.co/abc123']
+
+    it.each(values)('should return %s as the podcast feed', async (value) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [aushaHandler],
+        baseUrl: value,
+      }
+      const expected = [{ uri: value, hint: { key: 'ausha:podcast', label: 'Podcast' } }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })
