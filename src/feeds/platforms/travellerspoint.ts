@@ -1,11 +1,16 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type TravellerspointUrl = { kind: 'blog'; blog: string }
 
 const domains = ['travellerspoint.com']
+
+const feeds = definePlatformFeeds([
+  { key: 'travellerspoint:posts', template: 'https://{blog}.travellerspoint.com/atom.xml' },
+])
 
 export const parseTravellerspointUrl = (url: string): TravellerspointUrl | undefined => {
   const blog = getTenantSubdomain(url, domains)
@@ -30,11 +35,8 @@ export const travellerspointHandler: PlatformHandler = {
     }
 
     // An http page redirects to https, and the page's alternate link spells the feed with https.
-    return [
-      {
-        uri: `https://${parsed.blog}.travellerspoint.com/atom.xml`,
-        hint: composeHint('travellerspoint:posts'),
-      },
-    ]
+    return [feeds.getFeedEntry('travellerspoint:posts', { blog: parsed.blog })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
