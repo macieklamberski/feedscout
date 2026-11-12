@@ -117,7 +117,7 @@ describe('reformalHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     const feedUrls = [
       'https://example.reformal.ru/proj/rss',
       'http://example.reformal.ru/proj/rss',
@@ -127,46 +127,46 @@ describe('reformalHandler', () => {
       'https://example.idea.informer.com/proj/rss?ia=12345',
     ]
 
-    it.each(feedUrls)('should return the feedback key for %s', (value) => {
-      const expected = 'reformal:feedback'
+    it.each(feedUrls)('should return the feedback hint for %s', (value) => {
+      const expected: DiscoverUriHint = { key: 'reformal:feedback', label: 'Feedback' }
 
-      expect(reformalHandler.getFeedKey?.(value)).toBe(expected)
+      expect(reformalHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for an idea page', () => {
       const value = 'https://example.reformal.ru/proj/?ia=12345'
 
-      expect(reformalHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(reformalHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the apex domain', () => {
       const value = 'https://reformal.ru/proj/rss'
 
-      expect(reformalHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(reformalHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the idea.informer.com host', () => {
       const value = 'https://idea.informer.com/proj/rss'
 
-      expect(reformalHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(reformalHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on a nested subdomain', () => {
       const value = 'https://ideas.example.reformal.ru/proj/rss'
 
-      expect(reformalHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(reformalHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another informer.com host', () => {
       const value = 'https://example.informer.com/proj/rss'
 
-      expect(reformalHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(reformalHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/proj/rss'
 
-      expect(reformalHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(reformalHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

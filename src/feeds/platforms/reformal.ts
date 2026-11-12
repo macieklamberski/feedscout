@@ -43,5 +43,5 @@ export const reformalHandler: PlatformHandler = {
     return [feeds.getFeedEntry('reformal:feedback', params)]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
