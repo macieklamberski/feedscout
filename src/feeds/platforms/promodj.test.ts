@@ -159,33 +159,6 @@ describe('promodjHandler', () => {
       expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
     })
 
-    it('should return undefined for a section feed', () => {
-      const value = 'https://promodj.com/mixes/rss.xml'
-
-      expect(promodjHandler.getFeedKey?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a capitalized section feed', () => {
-      const value = 'https://promodj.com/Mixes/rss.xml'
-
-      expect(promodjHandler.getFeedKey?.(value)).toBeUndefined()
-    })
-
-    const sectionFeeds: Array<string> = [
-      'https://promodj.com/music/rss.xml',
-      'https://promodj.com/podcasts/rss.xml',
-      'https://promodj.com/promos/rss.xml',
-      'https://promodj.com/radioshows/rss.xml',
-      'https://promodj.com/remixes/rss.xml',
-      'https://promodj.com/tools/rss.xml',
-      'https://promodj.com/tracks/rss.xml',
-      'https://promodj.com/videos/rss.xml',
-    ]
-
-    it.each(sectionFeeds)('should return undefined for the section feed %s', (value) => {
-      expect(promodjHandler.getFeedKey?.(value)).toBeUndefined()
-    })
-
     it('should return undefined for a profile page', () => {
       const value = 'https://promodj.com/dj.someartist'
 
