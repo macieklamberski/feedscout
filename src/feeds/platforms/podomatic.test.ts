@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { type PodomaticUrl, parsePodomaticUrl, podomaticHandler } from './podomatic.js'
@@ -104,44 +105,44 @@ describe('podomaticHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the show key for a show feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the show hint for a show feed', () => {
       const value = 'https://example-show.podomatic.com/rss2.xml'
-      const expected = 'podomatic:show'
+      const expected: DiscoverUriHint = { key: 'podomatic:show', label: 'Show' }
 
-      expect(podomaticHandler.getFeedKey?.(value)).toBe(expected)
+      expect(podomaticHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the show key for a show feed over http', () => {
+    it('should return the show hint for a show feed over http', () => {
       const value = 'http://example-show.podomatic.com/rss2.xml'
-      const expected = 'podomatic:show'
+      const expected: DiscoverUriHint = { key: 'podomatic:show', label: 'Show' }
 
-      expect(podomaticHandler.getFeedKey?.(value)).toBe(expected)
+      expect(podomaticHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the show key for an archive feed', () => {
+    it('should return the show hint for an archive feed', () => {
       const value = 'https://example-show.podomatic.com/archive/rss2.xml'
-      const expected = 'podomatic:show'
+      const expected: DiscoverUriHint = { key: 'podomatic:show', label: 'Show' }
 
-      expect(podomaticHandler.getFeedKey?.(value)).toBe(expected)
+      expect(podomaticHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a show page', () => {
       const value = 'https://example-show.podomatic.com/'
 
-      expect(podomaticHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(podomaticHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the main host', () => {
       const value = 'https://www.podomatic.com/rss2.xml'
 
-      expect(podomaticHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(podomaticHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on a nested subdomain', () => {
       const value = 'https://blog.example-show.podomatic.com/rss2.xml'
 
-      expect(podomaticHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(podomaticHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

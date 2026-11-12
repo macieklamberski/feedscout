@@ -64,5 +64,5 @@ export const podomaticHandler: PlatformHandler = {
     return [feeds.getFeedEntry('podomatic:show', { show })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
