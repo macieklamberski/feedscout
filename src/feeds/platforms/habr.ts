@@ -90,27 +90,34 @@ export const habrHandler: PlatformHandler = {
       return []
     }
 
-    const articles = feeds.getFeedEntry('habr:articles', { language: parsed.language })
-
     if (parsed.kind === 'hub') {
       const params = { language: parsed.language, hub: parsed.hub }
 
-      return [feeds.getFeedEntry('habr:hub', params), articles]
+      return [
+        feeds.getFeedEntry('habr:hub', params),
+        feeds.getFeedEntry('habr:articles', { language: parsed.language }),
+      ]
     }
 
     if (parsed.kind === 'user') {
       const params = { language: parsed.language, username: parsed.username }
 
-      return [feeds.getFeedEntry('habr:user', params), articles]
+      return [
+        feeds.getFeedEntry('habr:user', params),
+        feeds.getFeedEntry('habr:articles', { language: parsed.language }),
+      ]
     }
 
     if (parsed.kind === 'company') {
       const params = { language: parsed.language, company: parsed.company }
 
-      return [feeds.getFeedEntry('habr:company', params), articles]
+      return [
+        feeds.getFeedEntry('habr:company', params),
+        feeds.getFeedEntry('habr:articles', { language: parsed.language }),
+      ]
     }
 
-    return [articles]
+    return [feeds.getFeedEntry('habr:articles', { language: parsed.language })]
   },
 
   getFeedHint: feeds.getFeedHint,
