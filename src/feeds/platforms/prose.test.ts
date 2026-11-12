@@ -99,11 +99,11 @@ describe('proseHandler', () => {
       expect(proseHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return https feed URL for an http blog page', () => {
+    it('should return the feed under the page scheme for an http blog page', () => {
       const value = 'http://alice.prose.sh/'
       const expected = [
         {
-          uri: 'https://alice.prose.sh/rss',
+          uri: 'http://alice.prose.sh/rss',
           hint: { key: 'prose:blog', label: 'Blog' },
         },
       ]

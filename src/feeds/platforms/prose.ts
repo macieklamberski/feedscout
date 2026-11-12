@@ -16,18 +16,18 @@ const feeds = definePlatformFeeds(
   [
     { key: 'prose:discovery', template: 'https://prose.sh/rss' },
     { key: 'prose:discovery', template: 'https://prose.sh/rss.atom' },
-    { key: 'prose:tag', template: 'https://{username}.prose.sh/rss?tag={tag}' },
-    { key: 'prose:tag', template: 'https://{username}.prose.sh/atom?tag={tag}' },
-    { key: 'prose:tag', template: 'https://{username}.prose.sh/rss.xml?tag={tag}' },
-    { key: 'prose:tag', template: 'https://{username}.prose.sh/feed.xml?tag={tag}' },
-    { key: 'prose:tag', template: 'https://{username}.prose.sh/atom.xml?tag={tag}' },
-    { key: 'prose:blog', template: 'https://{username}.prose.sh/rss' },
-    { key: 'prose:blog', template: 'https://{username}.prose.sh/atom' },
-    { key: 'prose:blog', template: 'https://{username}.prose.sh/rss.xml' },
-    { key: 'prose:blog', template: 'https://{username}.prose.sh/feed.xml' },
-    { key: 'prose:blog', template: 'https://{username}.prose.sh/atom.xml' },
+    { key: 'prose:tag', template: '{scheme}://{host}/rss?tag={tag}' },
+    { key: 'prose:tag', template: '{scheme}://{host}/atom?tag={tag}' },
+    { key: 'prose:tag', template: '{scheme}://{host}/rss.xml?tag={tag}' },
+    { key: 'prose:tag', template: '{scheme}://{host}/feed.xml?tag={tag}' },
+    { key: 'prose:tag', template: '{scheme}://{host}/atom.xml?tag={tag}' },
+    { key: 'prose:blog', template: '{scheme}://{host}/rss' },
+    { key: 'prose:blog', template: '{scheme}://{host}/atom' },
+    { key: 'prose:blog', template: '{scheme}://{host}/rss.xml' },
+    { key: 'prose:blog', template: '{scheme}://{host}/feed.xml' },
+    { key: 'prose:blog', template: '{scheme}://{host}/atom.xml' },
   ],
-  { isWwwTenant: true },
+  { domains, isWwwTenant: true },
 )
 
 export const parseProseUrl = (url: string): ProseUrl | undefined => {
@@ -74,11 +74,17 @@ export const proseHandler: PlatformHandler = {
       return [feeds.getFeedEntry('prose:discovery')]
     }
 
-    if (parsed.kind === 'tag') {
-      return [feeds.getFeedEntry('prose:tag', { username: parsed.username, tag: parsed.tag })]
+    const page = feeds.forUrl(url)
+
+    if (!page) {
+      return []
     }
 
-    return [feeds.getFeedEntry('prose:blog', { username: parsed.username })]
+    if (parsed.kind === 'tag') {
+      return [page.getFeedEntry('prose:tag', { tag: parsed.tag })]
+    }
+
+    return [page.getFeedEntry('prose:blog')]
   },
 
   getFeedHint: feeds.getFeedHint,
