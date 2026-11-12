@@ -8,6 +8,7 @@ import type {
   FetchFn,
 } from '../../types.js'
 import { composeHint } from '../../utils.js'
+import { selectHostHandlers } from './hosts.js'
 import type { PlatformHandler, PlatformMethodOptions } from './types.js'
 
 type PlatformPage = Omit<DiscoverInputObject, 'status'>
@@ -106,7 +107,8 @@ export const discoverUrisFromPlatform = async (
   for (const page of candidatePages) {
     // Without content and headers every match is on the URL alone, and the order already holds.
     const hasMarkers = page.content !== undefined || page.headers !== undefined
-    const pageHandlers = hasMarkers ? orderHandlers(handlers, page.url) : handlers
+    const hostHandlers = selectHostHandlers(handlers, page.url)
+    const pageHandlers = hasMarkers ? orderHandlers(hostHandlers, page.url) : hostHandlers
 
     for (const handler of pageHandlers) {
       try {

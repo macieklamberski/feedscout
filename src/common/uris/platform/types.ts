@@ -2,6 +2,9 @@ import type { MaybePromise } from 'trousse'
 import type { DiscoverEnrichFn, DiscoverRef, DiscoverUriEntry, FetchFn } from '../../types.js'
 
 export type PlatformHandler = {
+  // Hostnames or domains outside which `match` is false whatever the content, each standing for
+  // itself and its subdomains. The Platform method calls `match` only for a URL inside one.
+  hosts?: Array<string>
   match: (url: string, content?: string, headers?: Headers) => boolean
   // TODO: Fold DiscoverRef into DiscoverUriEntry as an optional `ref`, as feedsweep's placeholder
   // carries its result and its ref in one item, so an entry can hold a page URL with the enriched

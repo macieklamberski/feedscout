@@ -512,6 +512,11 @@ describe('platform handler invariant', () => {
     },
   )
 
+  // A marker can sit on any host, and the Platform method skips a handler whose hosts miss it.
+  it.each(rows)('should leave $platform without hosts', ({ handler }) => {
+    expect(handler.hosts).toBeUndefined()
+  })
+
   // The Platform method tries a handler that takes the URL alone ahead of the marker ones, which
   // only holds while no handler takes a host it does not own.
   it('should match no page of an unknown host without content and headers', () => {
