@@ -82,6 +82,8 @@ const compileTemplate = (
 
   const [, scheme, host, path = '', queryText = ''] = match
   const query = [...new URLSearchParams(queryText)]
+  // A name with no `=`, such as `?rss`, is a flag, built with no value.
+  const flags = new Set(queryText.split('&').filter((pair) => pair && !pair.includes('=')))
   const hosts = (options.hosts ?? []).map((value) => escapeRegex(stripWww(value)))
   const domains = (options.domains ?? []).map(escapeRegex)
   const domainSource = `(?:${domains.join('|')})`
@@ -113,7 +115,7 @@ const compileTemplate = (
     }
 
     return queryRegexes.every(([name, regex]) => {
-      const value = getQueryParam(url, name)
+      const value = getQueryParam(url, name, { preserveEmptyValues: flags.has(name) })
 
       return value !== undefined && regex.test(value)
     })
@@ -127,7 +129,9 @@ const compileTemplate = (
       })
     }
     const builtQuery = composeQuery(
-      Object.fromEntries(query.map(([name, value]) => [name, fillPlaceholders(value)])),
+      Object.fromEntries(
+        query.map(([name, value]) => [name, flags.has(name) ? true : fillPlaceholders(value)]),
+      ),
     )
 
     return `${fillPlaceholders(scheme)}://${fillPlaceholders(host)}${fillPlaceholders(path, encodePathSegment)}${builtQuery}`

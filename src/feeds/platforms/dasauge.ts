@@ -1,7 +1,6 @@
-import { getPathSegments, isHostOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -17,6 +16,12 @@ const hosts = [
 ]
 
 const profileRegex = /^-(.+)$/
+
+// The feed is the `rss` query with no value, linked as `?rss` and stored as `?rss=` too.
+const feeds = definePlatformFeeds(
+  [{ key: 'dasauge:profile', template: 'https://{host}/-{username}/?rss' }],
+  { hosts },
+)
 
 export const parseDasaugeUrl = (url: string): DasaugeUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -40,17 +45,15 @@ export const dasaugeHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseDasaugeUrl(url)
+    const host = parseUrl(url)?.hostname
 
-    if (!parsed) {
+    if (!parsed || !host) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
-
-    // The feed answers only on the bare `?rss` query. `?rss=` and `?rss=1` serve the profile page.
-    uris.push({ uri: `${origin}/-${parsed.username}/?rss`, hint: composeHint('dasauge:profile') })
-
-    return uris
+    // The site redirects http to https.
+    return [feeds.getFeedEntry('dasauge:profile', { host, username: parsed.username })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
