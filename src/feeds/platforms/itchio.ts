@@ -63,7 +63,7 @@ const sorts = [
 // rows come after the rows whose feeds they also match.
 const feeds = definePlatformFeeds([
   { key: 'itchio:devlog', template: 'https://{creator}.itch.io/{game}/devlog.rss' },
-  { key: 'itchio:games', template: 'https://itch.io/games/by-{creator}.xml' },
+  { key: 'itchio:creator', template: 'https://itch.io/games/by-{creator}.xml' },
   { key: 'itchio:tag', template: 'https://itch.io/games/tag-{tag}.xml' },
   { key: 'itchio:platform', template: 'https://itch.io/games/platform-{platform}.xml' },
   { key: 'itchio:genre', template: 'https://itch.io/games/genre-{genre}.xml' },
@@ -183,7 +183,7 @@ export const itchioHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'creator') {
-      return [feeds.getFeedEntry('itchio:games', { creator: parsed.creator })]
+      return [feeds.getFeedEntry('itchio:creator', { creator: parsed.creator })]
     }
 
     if (parsed.kind === 'tag') {

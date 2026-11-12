@@ -201,36 +201,36 @@ describe('itchioHandler', () => {
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return games-by-creator feed for creator root', () => {
+    it('should return creator feed for creator root', () => {
       const value = 'https://alice.itch.io/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://itch.io/games/by-alice.xml',
-          hint: { key: 'itchio:games', label: 'Games' },
+          hint: { key: 'itchio:creator', label: 'Creator' },
         },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return games-by-user feed for by-username path', () => {
+    it('should return creator feed for by-username path', () => {
       const value = 'https://itch.io/games/by-alice'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://itch.io/games/by-alice.xml',
-          hint: { key: 'itchio:games', label: 'Games' },
+          hint: { key: 'itchio:creator', label: 'Creator' },
         },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return games-by-user feed for by-username path with a capitalized games segment', () => {
+    it('should return creator feed for by-username path with a capitalized games segment', () => {
       const value = 'https://itch.io/Games/by-alice'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://itch.io/games/by-alice.xml',
-          hint: { key: 'itchio:games', label: 'Games' },
+          hint: { key: 'itchio:creator', label: 'Creator' },
         },
       ]
 
@@ -578,9 +578,9 @@ describe('itchioHandler', () => {
       expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the games hint for a creator games feed', () => {
+    it('should return the creator hint for a creator games feed', () => {
       const value = 'https://itch.io/games/by-alice.xml'
-      const expected: DiscoverUriHint = { key: 'itchio:games', label: 'Games' }
+      const expected: DiscoverUriHint = { key: 'itchio:creator', label: 'Creator' }
 
       expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -772,7 +772,8 @@ describe('itchioHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://alice.itch.io/x-moon/devlog.rss', { key: 'itchio:devlog', label: 'Devlog' }],
-      ['https://itch.io/games/by-alice.xml', { key: 'itchio:games', label: 'Games' }],
+      ['https://itch.io/games/by-alice.xml', { key: 'itchio:creator', label: 'Creator' }],
+      ['http://www.itch.io/games/by-alice.xml', { key: 'itchio:creator', label: 'Creator' }],
       ['https://itch.io/games/tag-horror.xml', { key: 'itchio:tag', label: 'Tag' }],
       ['https://itch.io/games/platform-web.xml', { key: 'itchio:platform', label: 'Platform' }],
       ['https://itch.io/games/genre-puzzle.xml', { key: 'itchio:genre', label: 'Genre' }],
