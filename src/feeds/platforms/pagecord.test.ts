@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type PagecordUrl, pagecordHandler, parsePagecordUrl } from './pagecord.js'
 
 describe('parsePagecordUrl', () => {
   it('should return the blog for a subdomain', () => {
-    const expected: PagecordUrl = { kind: 'blog' }
+    const expected: PagecordUrl = { kind: 'blog', blog: 'example' }
 
     expect(parsePagecordUrl('https://example.pagecord.com/')).toEqual(expected)
   })
@@ -67,6 +70,93 @@ describe('pagecordHandler', () => {
       ]
 
       expect(pagecordHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the https feed URL for an http blog page', () => {
+      const value = 'http://alice.pagecord.com/some-post-slug'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.pagecord.com/feed.xml',
+          hint: { key: 'pagecord:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(pagecordHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the blog key for a blog feed', () => {
+      const value = 'https://alice.pagecord.com/feed.xml'
+      const expected = 'pagecord:blog'
+
+      expect(pagecordHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for a filtered blog feed', () => {
+      const value = 'https://alice.pagecord.com/feed.xml?tag=photography&without_tag=personal'
+      const expected = 'pagecord:blog'
+
+      expect(pagecordHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for an http blog feed', () => {
+      const value = 'http://alice.pagecord.com/feed.xml'
+      const expected = 'pagecord:blog'
+
+      expect(pagecordHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a blog post', () => {
+      const value = 'https://alice.pagecord.com/some-post-slug'
+
+      expect(pagecordHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on the apex', () => {
+      const value = 'https://pagecord.com/feed.xml'
+
+      expect(pagecordHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on the www host', () => {
+      const value = 'https://www.pagecord.com/feed.xml'
+
+      expect(pagecordHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on a nested subdomain', () => {
+      const value = 'https://blog.example.pagecord.com/feed.xml'
+
+      expect(pagecordHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/feed.xml'
+
+      expect(pagecordHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://alice.pagecord.com/feed.xml', { key: 'pagecord:blog', label: 'Blog' }],
+      ['http://alice.pagecord.com/feed.xml', { key: 'pagecord:blog', label: 'Blog' }],
+      [
+        'https://alice.pagecord.com/feed.xml?tag=photography',
+        { key: 'pagecord:blog', label: 'Blog' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [pagecordHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

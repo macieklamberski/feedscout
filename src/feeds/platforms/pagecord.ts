@@ -1,18 +1,25 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type PagecordUrl = { kind: 'blog' }
+export type PagecordUrl = { kind: 'blog'; blog: string }
 
 const domains = ['pagecord.com']
 
+const feeds = definePlatformFeeds([
+  { key: 'pagecord:blog', template: 'https://{blog}.pagecord.com/feed.xml' },
+])
+
 export const parsePagecordUrl = (url: string): PagecordUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  const blog = getTenantSubdomain(url, domains)
+
+  if (!blog) {
     return
   }
 
-  return { kind: 'blog' }
+  return { kind: 'blog', blog }
 }
 
 export const pagecordHandler: PlatformHandler = {
@@ -27,8 +34,8 @@ export const pagecordHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-
-    return [{ uri: `${origin}/feed.xml`, hint: composeHint('pagecord:blog') }]
+    return [feeds.getFeedEntry('pagecord:blog', { blog: parsed.blog })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
