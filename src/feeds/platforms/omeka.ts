@@ -1,4 +1,5 @@
 import { isAnyOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -26,6 +27,39 @@ const trailingSlashRegex = /\/$/
 
 // Omeka drops these from the browse query when it prints the page's feed links.
 const excludedQueryParams = ['page', 'submit_search', 'output']
+
+const domains = ['omeka.net']
+
+// A site on a custom domain is known only by its marker, so its feeds are built in resolve, under
+// the install root the page gives, and claimed only on Omeka's own domain. A browse query other
+// than the dropped parameters makes a feed the filtered items one.
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'omeka:items',
+      template: '{scheme}://{tenant}.{domain}/items/browse?output=rss2',
+      format: 'rss',
+    },
+    {
+      key: 'omeka:items',
+      template: '{scheme}://{tenant}.{domain}/items/browse?output=atom',
+      format: 'atom',
+    },
+  ],
+  { domains },
+)
+
+const getBrowseQuery = (searchParams: URLSearchParams): string => {
+  const queryParams = new URLSearchParams()
+
+  for (const [name, value] of searchParams) {
+    if (!isAnyOf(name, excludedQueryParams)) {
+      queryParams.append(name, value)
+    }
+  }
+
+  return queryParams.toString()
+}
 
 const getAssetPath = (element: Element): string => {
   if (element.name === 'link') {
@@ -70,15 +104,7 @@ export const getOmekaPage = (url: string, content: string | undefined): OmekaPag
     return { kind: 'page', rootUrl }
   }
 
-  const queryParams = new URLSearchParams()
-
-  for (const [name, value] of searchParams) {
-    if (!isAnyOf(name, excludedQueryParams)) {
-      queryParams.append(name, value)
-    }
-  }
-
-  const query = queryParams.toString()
+  const query = getBrowseQuery(searchParams)
 
   if (!query) {
     return { kind: 'page', rootUrl }
@@ -122,5 +148,15 @@ export const omekaHandler: PlatformHandler = {
       { uri: `${browseUrl}?output=rss2`, hint: composeHint('omeka:items', 'rss') },
       { uri: `${browseUrl}?output=atom`, hint: composeHint('omeka:items', 'atom') },
     ]
+  },
+
+  getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
+
+    if (!hint || !getBrowseQuery(new URL(url).searchParams)) {
+      return hint
+    }
+
+    return composeHint('omeka:filtered-items', hint.format)
   },
 }

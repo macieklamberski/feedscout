@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { getOmekaPage, isOmekaHtml, type OmekaPage, omekaHandler } from './omeka.js'
 
 const omekaHtml = `
@@ -289,6 +291,108 @@ describe('omekaHandler', () => {
       const value = 'https://example.com/blog/post'
 
       expect(omekaHandler.resolve(value, omekaSubPathHtml)).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the items hint for an RSS feed', () => {
+      const value = 'https://alice.omeka.net/items/browse?output=rss2'
+      const expected: DiscoverUriHint = { key: 'omeka:items', label: 'Items', format: 'rss' }
+
+      expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the items hint for an Atom feed', () => {
+      const value = 'https://alice.omeka.net/items/browse?output=atom'
+      const expected: DiscoverUriHint = { key: 'omeka:items', label: 'Items', format: 'atom' }
+
+      expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the items hint for a feed with only a page number', () => {
+      const value = 'https://alice.omeka.net/items/browse?output=atom&page=2'
+      const expected: DiscoverUriHint = { key: 'omeka:items', label: 'Items', format: 'atom' }
+
+      expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the filtered items hint for an RSS feed with a tag', () => {
+      const value = 'https://alice.omeka.net/items/browse?output=rss2&tags=maps'
+      const expected: DiscoverUriHint = {
+        key: 'omeka:filtered-items',
+        label: 'Filtered items',
+        format: 'rss',
+      }
+
+      expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the filtered items hint for an Atom feed with a search', () => {
+      const value =
+        'https://alice.omeka.net/items/browse?advanced%5B0%5D%5Belement_id%5D=49&advanced%5B0%5D%5Bterms%5D=maps&advanced%5B0%5D%5Btype%5D=is+exactly&output=atom&sort_dir=a&sort_field=added'
+      const expected: DiscoverUriHint = {
+        key: 'omeka:filtered-items',
+        label: 'Filtered items',
+        format: 'atom',
+      }
+
+      expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a browse page', () => {
+      const value = 'https://alice.omeka.net/items/browse?tags=maps'
+
+      expect(omekaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://omeka.net/items/browse?output=atom'
+
+      expect(omekaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www host', () => {
+      const value = 'https://www.omeka.net/items/browse?output=atom'
+
+      expect(omekaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://example.com/items/browse?output=atom'
+
+      expect(omekaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://alice.omeka.net/items/browse?output=rss2',
+        { key: 'omeka:items', label: 'Items', format: 'rss' },
+      ],
+      [
+        'https://alice.omeka.net/items/browse?output=atom',
+        { key: 'omeka:items', label: 'Items', format: 'atom' },
+      ],
+      [
+        'https://alice.omeka.net/items/browse?output=rss2&tags=maps',
+        { key: 'omeka:filtered-items', label: 'Filtered items', format: 'rss' },
+      ],
+      [
+        'https://alice.omeka.net/items/browse?collection=3&output=atom',
+        { key: 'omeka:filtered-items', label: 'Filtered items', format: 'atom' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [omekaHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
