@@ -1,6 +1,7 @@
-import { isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,6 +10,10 @@ const hosts = ['librivox.org']
 const audiobookRegex = /^\/[^/]+\/?$/
 // An audiobook page links its feed by numeric id, which the slug does not carry.
 const feedIdRegex = /href="(?:https?|itpc):\/\/librivox\.org\/rss\/(\d+)"/i
+
+const feeds = definePlatformFeeds([
+  { key: 'librivox:audiobook', template: 'https://librivox.org/rss/{audiobookId}' },
+])
 
 export type LibrivoxPage = { audiobookId: string }
 
@@ -42,11 +47,18 @@ export const librivoxHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://librivox.org/rss/${page.audiobookId}`,
-        hint: composeHint('librivox:audiobook'),
-      },
-    ]
+    return [feeds.getFeedEntry('librivox:audiobook', { audiobookId: page.audiobookId })]
+  },
+
+  getFeedKey: (url) => {
+    const key = feeds.getFeedKey(url)
+    const [, audiobookId] = getPathSegments(url)
+
+    // An audiobook id is digits, so a named feed such as rss/latest_releases is not one.
+    if (!key || !digitsRegex.test(audiobookId)) {
+      return
+    }
+
+    return key
   },
 }

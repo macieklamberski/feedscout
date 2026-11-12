@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { librivoxHandler } from './librivox.js'
 
 const audiobookHtml = `
@@ -51,6 +54,80 @@ describe('librivoxHandler', () => {
       const value = 'https://librivox.org/pride-and-prejudice-by-jane-austen/'
 
       expect(librivoxHandler.resolve(value)).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the key for an audiobook feed', () => {
+      const value = 'https://librivox.org/rss/12345'
+      const expected = 'librivox:audiobook'
+
+      expect(librivoxHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the key for an audiobook feed over http', () => {
+      const value = 'http://librivox.org/rss/12345'
+      const expected = 'librivox:audiobook'
+
+      expect(librivoxHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the key for an audiobook feed with a trailing slash', () => {
+      const value = 'https://librivox.org/rss/12345/'
+      const expected = 'librivox:audiobook'
+
+      expect(librivoxHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a named feed under rss', () => {
+      const value = 'https://librivox.org/rss/latest_releases'
+
+      expect(librivoxHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a file under rss', () => {
+      const value = 'https://librivox.org/rss/robots.txt'
+
+      expect(librivoxHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an audiobook page', () => {
+      const value = 'https://librivox.org/example-by-alice/'
+
+      expect(librivoxHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an audiobook feed on another host', () => {
+      const value = 'https://example.com/rss/12345'
+
+      expect(librivoxHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an invalid URL', () => {
+      const value = 'not a url'
+
+      expect(librivoxHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const values = [
+      'https://librivox.org/rss/12345',
+      'http://librivox.org/rss/12345',
+      'https://librivox.org/rss/12345/',
+    ]
+
+    it.each(values)('should return %s as itself', async (value) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [librivoxHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'librivox:audiobook', label: 'Audiobook' } },
+      ]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })
