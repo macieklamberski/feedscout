@@ -5,9 +5,9 @@ import type {
   DiscoverOnErrorFn,
   DiscoverRef,
   DiscoverUriEntry,
+  DiscoverUriHint,
   FetchFn,
 } from '../../types.js'
-import { composeHint } from '../../utils.js'
 import { selectHostHandlers } from './hosts.js'
 import type { PlatformHandler, PlatformMethodOptions } from './types.js'
 
@@ -47,14 +47,17 @@ const orderHandlers = (handlers: Array<PlatformHandler>, url: string): Array<Pla
   return [...urlHandlers, ...markerHandlers]
 }
 
-// The hint key of the handler feed the URL is, read as the URL arrived.
-export const getFeedKey = (handlers: Array<PlatformHandler>, url: string): string | undefined => {
+// The hint of the handler feed the URL is, read as the URL arrived.
+export const getFeedHint = (
+  handlers: Array<PlatformHandler>,
+  url: string,
+): DiscoverUriHint | undefined => {
   for (const handler of handlers) {
     try {
-      const key = handler.getFeedKey?.(url)
+      const hint = handler.getFeedHint?.(url)
 
-      if (key) {
-        return key
+      if (hint) {
+        return hint
       }
     } catch {}
   }
@@ -77,10 +80,10 @@ export const discoverUrisFromPlatform = async (
   }
 
   // A URL that is one of a handler's feeds is that feed, and no page parser reads it.
-  const ownFeedKey = getFeedKey(handlers, baseUrl)
+  const ownFeedHint = getFeedHint(handlers, baseUrl)
 
-  if (ownFeedKey) {
-    return [{ uri: baseUrl, hint: composeHint(ownFeedKey) }]
+  if (ownFeedHint) {
+    return [{ uri: baseUrl, hint: ownFeedHint }]
   }
 
   const fetchedPageUrl = readPageUrl(baseUrl)
