@@ -149,10 +149,9 @@ export const parseLivejournalUrl = (url: string): LivejournalUrl | undefined => 
   return { kind: 'journal', tag }
 }
 
-// A journal on its own subdomain keeps the page's scheme, and the parser has checked that the host
-// is one label under livejournal.com. A user named in the path is canonicalised to its subdomain,
-// with `_` written as `-`. A name that starts or ends with `_` makes no valid host label, so it
-// stays on users.livejournal.com.
+// A journal on its own subdomain keeps the page's scheme. A user named in the path is
+// canonicalised to its subdomain, with `_` written as `-`. A name that starts or ends with `_`
+// makes no valid host label, so it stays on users.livejournal.com.
 const getJournalParams = (
   url: string,
   username: string | undefined,
