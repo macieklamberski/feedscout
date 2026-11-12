@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { parseWriteasUrl, type WriteasUrl, writeasHandler } from './writeas.js'
 
 describe('parseWriteasUrl', () => {
@@ -110,6 +113,85 @@ describe('writeasHandler', () => {
       const value = 'https://write.as/'
 
       expect(writeasHandler.resolve(value)).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the blog key for a blog feed', () => {
+      const value = 'https://write.as/matt/feed/'
+      const expected = 'writeas:blog'
+
+      expect(writeasHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for a blog feed without a trailing slash', () => {
+      const value = 'https://write.as/matt/feed'
+      const expected = 'writeas:blog'
+
+      expect(writeasHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for a blog feed over http', () => {
+      const value = 'http://write.as/matt/feed/'
+      const expected = 'writeas:blog'
+
+      expect(writeasHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a tag feed', () => {
+      const value = 'https://write.as/jasonpettus/tag:mindset/feed/'
+      const expected = 'writeas:tag'
+
+      expect(writeasHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a tag feed with an encoded tag', () => {
+      const value = 'https://write.as/andreas/tag:s%C3%B6dermalm/feed/'
+      const expected = 'writeas:tag'
+
+      expect(writeasHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://write.as/matt'
+
+      expect(writeasHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a tag page', () => {
+      const value = 'https://write.as/jasonpettus/tag:mindset'
+
+      expect(writeasHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path under a dotted first segment', () => {
+      const value = 'https://write.as/z6hpeu0fqc6a7.md/feed/'
+
+      expect(writeasHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/matt/feed/'
+
+      expect(writeasHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://write.as/matt/feed/', { key: 'writeas:blog', label: 'Blog' }],
+      ['https://write.as/jasonpettus/tag:mindset/feed/', { key: 'writeas:tag', label: 'Tag' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [writeasHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

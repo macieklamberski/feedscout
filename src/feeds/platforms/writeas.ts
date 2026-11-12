@@ -1,7 +1,6 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -12,6 +11,11 @@ export type WriteasUrl =
 const hosts = ['write.as', 'www.write.as']
 
 const tagRegex = /^\/([^/]+)\/tag:([^/]+)/i
+
+const feeds = definePlatformFeeds([
+  { key: 'writeas:tag', template: 'https://write.as/{username}/tag:{tag}/feed/' },
+  { key: 'writeas:blog', template: 'https://write.as/{username}/feed/' },
+])
 
 export const parseWriteasUrl = (url: string): WriteasUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -49,20 +53,27 @@ export const writeasHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
+    const blogFeed = feeds.getFeedEntry('writeas:blog', { username: parsed.username })
 
     if (parsed.kind === 'tag') {
-      uris.push({
-        uri: `https://write.as/${parsed.username}/tag:${parsed.tag}/feed/`,
-        hint: composeHint('writeas:tag'),
+      const tagFeed = feeds.getFeedEntry('writeas:tag', {
+        username: parsed.username,
+        tag: parsed.tag,
       })
+
+      return [tagFeed, blogFeed]
     }
 
-    uris.push({
-      uri: `https://write.as/${parsed.username}/feed/`,
-      hint: composeHint('writeas:blog'),
-    })
+    return [blogFeed]
+  },
 
-    return uris
+  // The table reads any first segment as a name, so a dotted one, a file of the site, is refused
+  // by the page parser first: write.as/{post}.md/feed/ answers with an empty body.
+  getFeedKey: (url) => {
+    if (!parseWriteasUrl(url)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
