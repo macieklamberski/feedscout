@@ -124,11 +124,16 @@ describe('podhomeHandler', () => {
       expect(podhomeHandler.getFeedKey?.(value)).toBe(expected)
     })
 
-    it('should return the podcast key for a show feed with an id without hyphens', () => {
+    it('should return undefined for a show feed id without hyphens', () => {
       const value = 'https://serve.podhome.fm/rss/00000000000040008000000000000000'
-      const expected = 'podhome:podcast'
 
-      expect(podhomeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(podhomeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an all-hex word in the feed path', () => {
+      const value = 'https://serve.podhome.fm/rss/feed'
+
+      expect(podhomeHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the stylesheet a feed links', () => {

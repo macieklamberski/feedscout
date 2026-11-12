@@ -1,7 +1,7 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElements, hexOrHyphenRegex } from '../../common/utils.js'
+import { findElements, uuidRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -69,7 +69,7 @@ export const podhomeHandler: PlatformHandler = {
     const [, feedId] = getPathSegments(url)
 
     // A feed id is a GUID, so `xslsheet`, the stylesheet every feed links under /rss/, is no feed.
-    if (!feedId || !hexOrHyphenRegex.test(feedId)) {
+    if (!feedId || !uuidRegex.test(feedId)) {
       return
     }
 
