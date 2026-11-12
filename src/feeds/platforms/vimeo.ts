@@ -108,16 +108,16 @@ export const vimeoHandler: PlatformHandler = {
     return [videos]
   },
 
-  getFeedKey: (url) => {
-    const key = feeds.getFeedKey(url)
+  getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
     const page = parseVimeoUrl(url)
 
     // The feed must read as the page kind that emits its key: `/123/videos/rss` is a video's and
     // `/channels/likes/rss` a channel's, neither a user's feed.
-    if (!key || !page || feedKeys[page.kind] !== key) {
+    if (!hint || !page || feedKeys[page.kind] !== hint.key) {
       return
     }
 
-    return key
+    return hint
   },
 }

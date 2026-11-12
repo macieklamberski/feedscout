@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { parseVimeoUrl, type VimeoUrl, vimeoHandler } from './vimeo.js'
@@ -277,103 +277,103 @@ describe('vimeoHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the videos key for a user videos feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the videos hint for a user videos feed', () => {
       const value = 'https://vimeo.com/filmsupply/videos/rss'
-      const expected = 'vimeo:videos'
+      const expected: DiscoverUriHint = { key: 'vimeo:videos', label: 'Videos' }
 
-      expect(vimeoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the videos key for a user videos feed on the www host over http', () => {
+    it('should return the videos hint for a user videos feed on the www host over http', () => {
       const value = 'http://www.vimeo.com/filmsupply/videos/rss'
-      const expected = 'vimeo:videos'
+      const expected: DiscoverUriHint = { key: 'vimeo:videos', label: 'Videos' }
 
-      expect(vimeoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the videos key for a user all videos feed', () => {
+    it('should return the videos hint for a user all videos feed', () => {
       const value = 'https://vimeo.com/user5139139/videos/all/rss'
-      const expected = 'vimeo:videos'
+      const expected: DiscoverUriHint = { key: 'vimeo:videos', label: 'Videos' }
 
-      expect(vimeoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the likes key for a user likes feed', () => {
+    it('should return the likes hint for a user likes feed', () => {
       const value = 'https://vimeo.com/jaredlyon/likes/rss'
-      const expected = 'vimeo:likes'
+      const expected: DiscoverUriHint = { key: 'vimeo:likes', label: 'Likes' }
 
-      expect(vimeoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the channel key for a channel feed', () => {
+    it('should return the channel hint for a channel feed', () => {
       const value = 'https://vimeo.com/channels/staffpicks/videos/rss'
-      const expected = 'vimeo:channel'
+      const expected: DiscoverUriHint = { key: 'vimeo:channel', label: 'Channel' }
 
-      expect(vimeoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the channel key for a channel feed with a numeric channel', () => {
+    it('should return the channel hint for a channel feed with a numeric channel', () => {
       const value = 'https://vimeo.com/channels/40086/videos/rss'
-      const expected = 'vimeo:channel'
+      const expected: DiscoverUriHint = { key: 'vimeo:channel', label: 'Channel' }
 
-      expect(vimeoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the group key for a group feed', () => {
+    it('should return the group hint for a group feed', () => {
       const value = 'https://vimeo.com/groups/sweetandsoundsubmissions/videos/rss'
-      const expected = 'vimeo:group'
+      const expected: DiscoverUriHint = { key: 'vimeo:group', label: 'Group' }
 
-      expect(vimeoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the album key for an album feed', () => {
+    it('should return the album hint for an album feed', () => {
       const value = 'https://vimeo.com/album/2043624/rss'
-      const expected = 'vimeo:album'
+      const expected: DiscoverUriHint = { key: 'vimeo:album', label: 'Album' }
 
-      expect(vimeoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a numeric first segment', () => {
       const value = 'https://vimeo.com/123456/videos/rss'
 
-      expect(vimeoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a likes feed under the channels route', () => {
       const value = 'https://vimeo.com/channels/likes/rss'
 
-      expect(vimeoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an album feed with a non-numeric id', () => {
       const value = 'https://vimeo.com/album/not-a-number/rss'
 
-      expect(vimeoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a showcase feed', () => {
       const value = 'https://vimeo.com/showcase/2043624/rss'
 
-      expect(vimeoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the blog feed', () => {
       const value = 'https://vimeo.com/blog/feed.xml'
 
-      expect(vimeoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a user page', () => {
       const value = 'https://vimeo.com/filmsupply'
 
-      expect(vimeoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/filmsupply/videos/rss'
 
-      expect(vimeoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
