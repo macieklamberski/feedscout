@@ -123,15 +123,15 @@ describe('sportsregionsHandler', () => {
       expect(sportsregionsHandler.resolve('https://www.example.com/', clubHtml)).toEqual(expected)
     })
 
-    it('should return https feeds for a club subdomain opened over http', () => {
+    it('should keep the http scheme of a club subdomain opened over http', () => {
       const value = 'http://example-club.sportsregions.fr/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example-club.sportsregions.fr/rss/news',
+          uri: 'http://example-club.sportsregions.fr/rss/news',
           hint: { key: 'sportsregions:news', label: 'News' },
         },
         {
-          uri: 'https://example-club.sportsregions.fr/rss/evenement',
+          uri: 'http://example-club.sportsregions.fr/rss/evenement',
           hint: { key: 'sportsregions:events', label: 'Events' },
         },
       ]

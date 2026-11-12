@@ -9,13 +9,8 @@ export type SportsregionsUrl = { kind: 'club' }
 
 const domains = ['sportsregions.fr']
 
-const clubFeeds = definePlatformFeeds([
-  { key: 'sportsregions:news', template: 'https://{club}.sportsregions.fr/rss/news' },
-  { key: 'sportsregions:events', template: 'https://{club}.sportsregions.fr/rss/evenement' },
-])
-
 // A club on its own domain is known only by its markers, so its feeds are built but not claimed.
-const siteFeeds = definePlatformFeeds(
+const feeds = definePlatformFeeds(
   [
     { key: 'sportsregions:news', template: '{scheme}://{host}/rss/news' },
     { key: 'sportsregions:events', template: '{scheme}://{host}/rss/evenement' },
@@ -51,16 +46,7 @@ export const sportsregionsHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const club = getTenantSubdomain(url, domains)
-
-    if (club) {
-      return [
-        clubFeeds.getFeedEntry('sportsregions:news', { club }),
-        clubFeeds.getFeedEntry('sportsregions:events', { club }),
-      ]
-    }
-
-    const page = siteFeeds.forUrl(url)
+    const page = feeds.forUrl(url)
 
     if (!page) {
       return []
@@ -69,5 +55,5 @@ export const sportsregionsHandler: PlatformHandler = {
     return [page.getFeedEntry('sportsregions:news'), page.getFeedEntry('sportsregions:events')]
   },
 
-  getFeedHint: clubFeeds.getFeedHint,
+  getFeedHint: feeds.getFeedHint,
 }
