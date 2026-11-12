@@ -124,30 +124,30 @@ describe('rssComHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the podcast key for a podcast feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for a podcast feed', () => {
       const value = 'https://media.rss.com/charismanews/feed.xml'
-      const expected = 'rss-com:podcast'
+      const expected: DiscoverUriHint = { key: 'rss-com:podcast', label: 'Podcast' }
 
-      expect(rssComHandler.getFeedKey?.(value)).toBe(expected)
+      expect(rssComHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a podcast page', () => {
       const value = 'https://rss.com/podcasts/charismanews'
 
-      expect(rssComHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(rssComHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a show path on the feed host without the feed file', () => {
       const value = 'https://media.rss.com/charismanews/'
 
-      expect(rssComHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(rssComHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/charismanews/feed.xml'
 
-      expect(rssComHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(rssComHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

@@ -46,5 +46,5 @@ export const rssComHandler: PlatformHandler = {
     return [feeds.getFeedEntry('rss-com:podcast', { show: parsed.show })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
