@@ -9,10 +9,15 @@ import {
 } from './sverigesRadio.js'
 
 const programHint: DiscoverUriHint = { key: 'sveriges-radio:program', label: 'Program' }
+const programFormatHint: DiscoverUriHint = {
+  key: 'sveriges-radio:program-format',
+  label: 'Program format',
+}
 const feedCases: Array<[string, DiscoverUriHint]> = [
   ['https://api.sr.se/api/rss/program/12345', programHint],
   ['http://api.sr.se/api/rss/program/12345/', programHint],
-  ['https://api.sr.se/api/rss/program/12345?format=1', programHint],
+  ['https://api.sr.se/api/rss/program/12345?format=145', programFormatHint],
+  ['http://api.sr.se/api/rss/program/12345/?format=1', programFormatHint],
   ['https://public-api.sr.se/rss/example-program', programHint],
   ['http://public-api.sr.se/rss/example-program/', programHint],
   ['https://api.sr.se/api/rss/pod/12345', programHint],
@@ -181,9 +186,12 @@ describe('sverigesRadioHandler', () => {
       expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the program hint for a program feed with a format', () => {
-      const value = 'https://api.sr.se/api/rss/program/12345?format=1'
-      const expected: DiscoverUriHint = { key: 'sveriges-radio:program', label: 'Program' }
+    it('should return the program format hint for a program feed with a format', () => {
+      const value = 'https://api.sr.se/api/rss/program/12345?format=145'
+      const expected: DiscoverUriHint = {
+        key: 'sveriges-radio:program-format',
+        label: 'Program format',
+      }
 
       expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
     })

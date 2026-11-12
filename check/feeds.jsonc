@@ -1699,7 +1699,8 @@
     "sveriges-radio:program": [
       "https://public-api.sr.se/rss/vetenskapsradion",
       "https://api.sr.se/api/rss/program/412"
-    ]
+    ],
+    "sveriges-radio:program-format": "https://api.sr.se/api/rss/program/83?format=145"
   },
   "syosetu": {
     "syosetu:activity": "https://api.syosetu.com/writer/372556.Atom",

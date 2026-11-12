@@ -17,6 +17,11 @@ const hosts = ['sverigesradio.se', 'www.sverigesradio.se']
 // feed on public-api.sr.se, and a few serve a podcast of their own. resolve builds neither.
 const feeds = definePlatformFeeds([
   { key: 'sveriges-radio:program', template: 'https://api.sr.se/api/rss/program/{programId}' },
+  // A format id filters the program's articles to one format, and no page links it.
+  {
+    key: 'sveriges-radio:program-format',
+    template: 'https://api.sr.se/api/rss/program/{programId}?format={format}',
+  },
   { key: 'sveriges-radio:program', template: 'https://public-api.sr.se/rss/{slug}' },
   { key: 'sveriges-radio:program', template: 'https://api.sr.se/api/rss/pod/{podId}' },
   { key: 'sveriges-radio:program', template: 'https://api.sr.se/api/rss/pod/itunes/{podId}' },
