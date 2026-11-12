@@ -72,5 +72,5 @@ export const proboardsHandler: PlatformHandler = {
     return [forumFeeds.getFeedEntry('proboards:posts', { forum, domain })]
   },
 
-  getFeedKey: forumFeeds.getFeedKey,
+  getFeedHint: forumFeeds.getFeedHint,
 }

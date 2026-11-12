@@ -150,7 +150,7 @@ describe('proboardsHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     const feedValues: Array<string> = [
       'https://example.proboards.com/rss/public',
       'https://example.freeforums.net/rss/public',
@@ -160,10 +160,10 @@ describe('proboardsHandler', () => {
       'https://www.example.boards.net/rss/public',
     ]
 
-    it.each(feedValues)('should return the posts key for %s', (value) => {
-      const expected = 'proboards:posts'
+    it.each(feedValues)('should return the posts hint for %s', (value) => {
+      const expected: DiscoverUriHint = { key: 'proboards:posts', label: 'Posts' }
 
-      expect(proboardsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(proboardsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     const otherValues: Array<string> = [
@@ -177,7 +177,7 @@ describe('proboardsHandler', () => {
     ]
 
     it.each(otherValues)('should return undefined for %s', (value) => {
-      expect(proboardsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(proboardsHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
