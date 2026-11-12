@@ -583,6 +583,7 @@
   "ghost": {
     "ghost:author": "https://demo.ghost.io/author/ghost/rss/",
     "ghost:blog": "https://demo.ghost.io/rss/",
+    "ghost:collection": "https://unprecedented.ghost.io/archive/rss/",
     "ghost:tag": "https://demo.ghost.io/tag/getting-started/rss/"
   },
   "gitea": {

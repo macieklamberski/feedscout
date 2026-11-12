@@ -189,6 +189,26 @@ describe('ghostHandler', () => {
       expect(ghostHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the collection key for a collection feed', () => {
+      const value = 'https://alice.ghost.io/archive/rss/'
+      const expected: DiscoverUriHint = { key: 'ghost:collection', label: 'Collection' }
+
+      expect(ghostHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the blog key for a private site feed', () => {
+      const value = 'https://alice.ghost.io/0123456789abcdef0123456789abcd/rss/'
+      const expected: DiscoverUriHint = { key: 'ghost:blog', label: 'Blog' }
+
+      expect(ghostHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a private site feed on another host', () => {
+      const value = 'https://example.com/0123456789abcdef0123456789abcd/rss/'
+
+      expect(ghostHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a tag page', () => {
       const value = 'https://alice.ghost.io/tag/getting-started/'
 
@@ -221,6 +241,11 @@ describe('ghostHandler', () => {
       ['http://alice.ghost.io/rss/', { key: 'ghost:blog', label: 'Blog' }],
       ['https://alice.ghost.io/tag/getting-started/rss/', { key: 'ghost:tag', label: 'Tag' }],
       ['https://alice.ghost.io/author/jane/rss/', { key: 'ghost:author', label: 'Author' }],
+      ['http://alice.ghost.io/archive/rss', { key: 'ghost:collection', label: 'Collection' }],
+      [
+        'https://alice.ghost.io/0123456789abcdef0123456789abcd/rss/',
+        { key: 'ghost:blog', label: 'Blog' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
