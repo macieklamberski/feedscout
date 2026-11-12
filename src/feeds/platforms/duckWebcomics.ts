@@ -68,5 +68,5 @@ export const duckWebcomicsHandler: PlatformHandler = {
     return [feeds.getFeedEntry('duck-webcomics:comic', { host, comic: page.comic })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
