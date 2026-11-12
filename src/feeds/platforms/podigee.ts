@@ -46,5 +46,5 @@ export const podigeeHandler: PlatformHandler = {
     return [feeds.getFeedEntry('podigee:podcast', { podcast: parsed.podcast })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
