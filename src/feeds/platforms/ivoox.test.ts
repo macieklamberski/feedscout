@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   getIvooxPage,
   type IvooxPage,
@@ -147,6 +150,76 @@ describe('ivooxHandler', () => {
 
       expect(elapsed).toBeLessThan(1000)
       expect(result).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the podcast key for a podcast feed', () => {
+      const value = 'https://feeds.ivoox.com/feed_fg_f1317588_filtro_1.xml'
+      const expected = 'ivoox:podcast'
+
+      expect(ivooxHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a podcast feed under a show slug', () => {
+      const value = 'https://feeds.ivoox.com/podcast-cine-en-serie_fg_f1317588_filtro_1.xml'
+      const expected = 'ivoox:podcast'
+
+      expect(ivooxHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a podcast feed on the site host', () => {
+      const value = 'http://www.ivoox.com/podcast-cine-en-serie_fg_f1317588_filtro_1.xml'
+      const expected = 'ivoox:podcast'
+
+      expect(ivooxHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a podcast feed under a locale prefix', () => {
+      const value = 'https://www.ivoox.com/en/podcast-cine-en-serie_fg_f1317588_filtro_1.xml'
+      const expected = 'ivoox:podcast'
+
+      expect(ivooxHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a podcast page', () => {
+      const value = 'https://www.ivoox.com/podcast-cine-en-serie_sq_f1317588_1.html'
+
+      expect(ivooxHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a list feed', () => {
+      const value = 'https://www.ivoox.com/en/feed_fl_281_1.xml'
+
+      expect(ivooxHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/feed_fg_f1317588_filtro_1.xml'
+
+      expect(ivooxHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const hint: DiscoverUriHint = { key: 'ivoox:podcast', label: 'Podcast' }
+    const ownFeeds = [
+      'https://feeds.ivoox.com/feed_fg_f1317588_filtro_1.xml',
+      'https://feeds.ivoox.com/feed_fg_f1905434_filtro_1.xml',
+      'https://feeds.ivoox.com/podcast-cine-en-serie_fg_f1317588_filtro_1.xml',
+      'https://www.ivoox.com/podcast-cine-en-serie_fg_f1317588_filtro_1.xml',
+      'https://www.ivoox.com/en/podcast-cine-en-serie_fg_f1317588_filtro_1.xml',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [ivooxHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

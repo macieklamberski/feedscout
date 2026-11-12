@@ -1,6 +1,6 @@
 import { isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -14,6 +14,17 @@ const podcastRegex = /_sq_f(\d+)_\d+\.html$/i
 const episodeRegex = /_rf_\d+_\d+\.html$/i
 // An episode page names its show in the JSON-LD `partOfSeries`, among links to other shows.
 const partOfSeriesRegex = /"partOfSeries":\{[^{}]*_sq_f(\d+)_/
+
+// iVoox serves a show's feed under any slug on both hosts, and the show page links `feed_`.
+const feeds = definePlatformFeeds([
+  { key: 'ivoox:podcast', template: 'https://feeds.ivoox.com/feed_fg_f{podcastId}_filtro_1.xml' },
+  { key: 'ivoox:podcast', template: 'https://feeds.ivoox.com/{slug}_fg_f{podcastId}_filtro_1.xml' },
+  { key: 'ivoox:podcast', template: 'https://www.ivoox.com/{slug}_fg_f{podcastId}_filtro_1.xml' },
+  {
+    key: 'ivoox:podcast',
+    template: 'https://www.ivoox.com/{locale}/{slug}_fg_f{podcastId}_filtro_1.xml',
+  },
+])
 
 export const parseIvooxUrl = (url: string): IvooxUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -64,11 +75,8 @@ export const ivooxHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://feeds.ivoox.com/feed_fg_f${page.podcastId}_filtro_1.xml`,
-        hint: composeHint('ivoox:podcast'),
-      },
-    ]
+    return [feeds.getFeedEntry('ivoox:podcast', { podcastId: page.podcastId })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
