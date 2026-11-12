@@ -32,15 +32,13 @@ export const reformalHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseReformalUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
-    const scheme = new URL(url).protocol.slice(0, -1)
-    const params = { scheme, project: parsed.project, domain: parsed.domain }
-
-    return [feeds.getFeedEntry('reformal:feedback', params)]
+    return [pageFeeds.getFeedEntry('reformal:feedback', { project: parsed.project })]
   },
 
   getFeedHint: feeds.getFeedHint,
