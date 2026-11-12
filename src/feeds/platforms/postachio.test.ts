@@ -66,10 +66,22 @@ describe('postachioHandler', () => {
     })
 
     it('should return posts feed for site', () => {
-      const value = 'http://alice.postach.io/post/some-post'
+      const value = 'https://alice.postach.io/post/some-post'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://alice.postach.io/feed.xml',
+          hint: { key: 'postachio:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(postachioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the posts feed under the page scheme for an http site', () => {
+      const value = 'http://alice.postach.io/post/some-post'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://alice.postach.io/feed.xml',
           hint: { key: 'postachio:posts', label: 'Posts' },
         },
       ]

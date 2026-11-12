@@ -8,10 +8,13 @@ export type PostachioUrl = { kind: 'site'; subdomain: string }
 
 const domains = ['postach.io']
 
-const feeds = definePlatformFeeds([
-  { key: 'postachio:posts', template: 'https://{subdomain}.postach.io/feed.xml' },
-  { key: 'postachio:posts', template: 'https://{subdomain}.postach.io/feed' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'postachio:posts', template: '{scheme}://{host}/feed.xml' },
+    { key: 'postachio:posts', template: '{scheme}://{host}/feed' },
+  ],
+  { domains },
+)
 
 export const parsePostachioUrl = (url: string): PostachioUrl | undefined => {
   const subdomain = getTenantSubdomain(url, domains)
@@ -30,12 +33,13 @@ export const postachioHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePostachioUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    return [feeds.getFeedEntry('postachio:posts', { subdomain: parsed.subdomain })]
+    return [page.getFeedEntry('postachio:posts')]
   },
 
   getFeedHint: feeds.getFeedHint,
