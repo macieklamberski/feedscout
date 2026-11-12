@@ -92,6 +92,38 @@ const feeds = definePlatformFeeds(
       template: '{scheme}://{host}/rss.php?action=newblogs&type=atom',
       format: 'atom',
     },
+    // Without `type`, each feed answers its RSS twin.
+    {
+      key: 'bigcommerce:category-new-products',
+      template: '{scheme}://{host}/rss.php?categoryid={categoryId}',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:category-popular-products',
+      template: '{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:search',
+      template: '{scheme}://{host}/rss.php?action=searchproducts&search_query={query}',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:popular-products',
+      template: '{scheme}://{host}/rss.php?action=popularproducts',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:featured-products',
+      template: '{scheme}://{host}/rss.php?action=featuredproducts',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:blog',
+      template: '{scheme}://{host}/rss.php?action=newblogs',
+      format: 'rss',
+    },
+    { key: 'bigcommerce:new-products', template: '{scheme}://{host}/rss.php', format: 'rss' },
   ],
   { domains },
 )

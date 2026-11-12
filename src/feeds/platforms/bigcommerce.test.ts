@@ -319,6 +319,42 @@ describe('bigcommerceHandler', () => {
         'https://alice.mybigcommerce.com/rss.php?action=newblogs&type=atom',
         { key: 'bigcommerce:blog', label: 'Blog', format: 'atom' },
       ],
+      [
+        'https://alice.mybigcommerce.com/rss.php?categoryid=18',
+        {
+          key: 'bigcommerce:category-new-products',
+          label: 'New products in category',
+          format: 'rss',
+        },
+      ],
+      [
+        'https://alice.mybigcommerce.com/rss.php?action=popularproducts&categoryid=18',
+        {
+          key: 'bigcommerce:category-popular-products',
+          label: 'Popular products in category',
+          format: 'rss',
+        },
+      ],
+      [
+        'https://alice.mybigcommerce.com/rss.php?action=searchproducts&search_query=shoes',
+        { key: 'bigcommerce:search', label: 'Search', format: 'rss' },
+      ],
+      [
+        'https://alice.mybigcommerce.com/rss.php?action=popularproducts',
+        { key: 'bigcommerce:popular-products', label: 'Popular products', format: 'rss' },
+      ],
+      [
+        'https://alice.mybigcommerce.com/rss.php?action=featuredproducts',
+        { key: 'bigcommerce:featured-products', label: 'Featured products', format: 'rss' },
+      ],
+      [
+        'https://alice.mybigcommerce.com/rss.php?action=newblogs',
+        { key: 'bigcommerce:blog', label: 'Blog', format: 'rss' },
+      ],
+      [
+        'https://alice.mybigcommerce.com/rss.php',
+        { key: 'bigcommerce:new-products', label: 'New products', format: 'rss' },
+      ],
     ]
 
     it.each(ownFeeds)('should return the hint of %s', (value, expected) => {
@@ -345,6 +381,12 @@ describe('bigcommerceHandler', () => {
 
     it('should return undefined for a feed on a custom domain', () => {
       const value = 'https://example.com/rss.php?type=rss'
+
+      expect(bigcommerceHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed without a type on a custom domain', () => {
+      const value = 'https://example.com/rss.php'
 
       expect(bigcommerceHandler.getFeedHint?.(value)).toBeUndefined()
     })
