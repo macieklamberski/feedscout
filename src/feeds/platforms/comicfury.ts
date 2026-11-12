@@ -1,6 +1,7 @@
-import { getQueryParam, isHostOf, parseUrl } from 'trousse'
+import { getQueryParam, getRegistrableDomain, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { alphanumericOrHyphenRegex, composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { alphanumericOrHyphenRegex, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers comic, reader (guess, html).
@@ -19,6 +20,14 @@ const hosts = ['comicfury.com', 'www.comicfury.com']
 
 const profilePathRegex = /^\/comicprofile\.php$/i
 const readerPathRegex = /^\/read\/([^/]+)/i
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'comicfury:comic', template: 'https://{comic}.{domain}/rss' },
+    { key: 'comicfury:reader', template: 'https://comicfury.com/read/{comic}/rss' },
+  ],
+  { domains },
+)
 
 export const parseComicfuryUrl = (url: string): ComicfuryUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -63,24 +72,32 @@ export const comicfuryHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseComicfuryUrl(url)
+    const domain = getRegistrableDomain(url)
 
-    if (!parsed) {
+    if (!parsed || !domain) {
       return []
     }
 
     if (parsed.kind === 'comic') {
-      return [{ uri: `${new URL(url).origin}/rss`, hint: composeHint('comicfury:comic') }]
+      return [feeds.getFeedEntry('comicfury:comic', { comic: parsed.comic, domain })]
     }
 
     if (parsed.kind === 'profile') {
       // Every comic answers on thecomicseries.com, whichever of the domains it picked.
-      const uri = `https://${parsed.comic}.thecomicseries.com/rss`
+      const params = { comic: parsed.comic, domain: 'thecomicseries.com' }
 
-      return [{ uri, hint: composeHint('comicfury:comic') }]
+      return [feeds.getFeedEntry('comicfury:comic', params)]
     }
 
-    const uri = `https://comicfury.com/read/${parsed.comic}/rss`
+    return [feeds.getFeedEntry('comicfury:reader', { comic: parsed.comic })]
+  },
 
-    return [{ uri, hint: composeHint('comicfury:reader') }]
+  // The table reads any label or segment as a comic, the parser only a valid comic name.
+  getFeedKey: (url) => {
+    if (!parseComicfuryUrl(url)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
