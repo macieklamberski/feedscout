@@ -1780,6 +1780,8 @@ Discovers the RSS feeds of an FC2 blog.
 | `{user}.blog{n}.fc2.com` | Posts · comments · trackbacks (RSS) |
 | `{user}.fc2.net` | Posts · comments · trackbacks (RSS) |
 | `{user}.blog.2nt.com` | Posts · comments<sup>†</sup> · trackbacks<sup>†</sup> (RSS) |
+| `{user}.blog.fc2.com/blog-category-{n}.html` | Category · posts · comments · trackbacks (RSS) |
+| `{user}.blog.fc2.com/?tag={tag}` | Tag · posts · comments · trackbacks (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 

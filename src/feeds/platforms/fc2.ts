@@ -1,32 +1,55 @@
-import { getSubdomain, isAnyOf } from 'trousse'
+import { getQueryParam, getSubdomain, isAnyOf, parseUrl } from 'trousse'
+import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
+import { digitsRegex, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, fc2Net, numberedBlog (html), partly covers 2nt.
 
-export type Fc2Url = { kind: 'blog' }
+export type Fc2Url = { kind: 'blog'; category?: string; tag?: string }
 
 // A blog is one label under these domains.
 const domains = ['blog.2nt.com', 'fc2.net']
 
 const numberedSubdomainRegex = /^(?<blog>[^.]+)\.blog\d*$/i
+const categoryPathRegex = /^\/blog-category-(\d+)\.html$/i
 
 const feeds = definePlatformFeeds(
   [
     { key: 'fc2:posts', template: '{scheme}://{host}/?xml' },
     { key: 'fc2:comments', template: '{scheme}://{host}/?xml&comment' },
     { key: 'fc2:trackbacks', template: '{scheme}://{host}/?xml&trackback' },
+    { key: 'fc2:category', template: '{scheme}://{host}/?xml&category={category}' },
+    { key: 'fc2:tag', template: '{scheme}://{host}/?xml&utag={tag}' },
   ],
   { domains: [...domains, 'fc2.com'] },
 )
+
+// A category page, /blog-category-{n}.html or /?cat={n}, and a tag page, /?tag={tag}, link the
+// feed of that category or tag.
+const parseBlogUrl = (url: string): Fc2Url => {
+  const parsedUrl = parseUrl(url)
+  const category =
+    getQueryParam(parsedUrl, 'cat') ?? parsedUrl?.pathname.match(categoryPathRegex)?.[1]
+  const tag = getQueryParam(parsedUrl, 'tag')
+
+  if (category && digitsRegex.test(category)) {
+    return { kind: 'blog', category }
+  }
+
+  if (tag) {
+    return { kind: 'blog', tag }
+  }
+
+  return { kind: 'blog' }
+}
 
 export const parseFc2Url = (url: string): Fc2Url | undefined => {
   const blog = getTenantSubdomain(url, domains)
 
   if (blog) {
-    return { kind: 'blog' }
+    return parseBlogUrl(url)
   }
 
   // A blog on fc2.com is one label above a blog or blog{n} label.
@@ -34,7 +57,7 @@ export const parseFc2Url = (url: string): Fc2Url | undefined => {
   const numberedBlog = numberedSubdomain?.match(numberedSubdomainRegex)?.groups?.blog
 
   if (numberedBlog && !isAnyOf(numberedBlog, 'www')) {
-    return { kind: 'blog' }
+    return parseBlogUrl(url)
   }
 }
 
@@ -44,17 +67,30 @@ export const fc2Handler: PlatformHandler = {
   },
 
   resolve: (url) => {
+    const parsed = parseFc2Url(url)
     const page = feeds.forUrl(url)
 
-    if (!parseFc2Url(url) || !page) {
+    if (!parsed || !page) {
       return []
     }
 
-    return [
+    const uris: Array<DiscoverUriEntry> = []
+
+    if (parsed.category) {
+      uris.push(page.getFeedEntry('fc2:category', { category: parsed.category }))
+    }
+
+    if (parsed.tag) {
+      uris.push(page.getFeedEntry('fc2:tag', { tag: parsed.tag }))
+    }
+
+    uris.push(
       page.getFeedEntry('fc2:posts'),
       page.getFeedEntry('fc2:comments'),
       page.getFeedEntry('fc2:trackbacks'),
-    ]
+    )
+
+    return uris
   },
 
   // The table reads any host under fc2.com, such as web.fc2.com, so the page parser narrows it to

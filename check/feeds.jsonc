@@ -494,6 +494,7 @@
     ]
   },
   "fc2": {
+    "fc2:category": "http://31demyhome.blog116.fc2.com/?xml&category=5",
     "fc2:comments": [
       "https://tetsujin.blog.fc2.com/?xml&comment",
       "https://kagiana.fc2.net/?xml&comment",
@@ -504,6 +505,7 @@
       "https://kagiana.fc2.net/?xml",
       "http://tyodai.blog.2nt.com/?xml"
     ],
+    "fc2:tag": "http://inshitsunanj.blog.fc2.com/?xml&utag=baseball",
     "fc2:trackbacks": [
       "https://marsee101.blog.fc2.com/?xml&trackback",
       "http://alohakozo.fc2.net/?xml&trackback",

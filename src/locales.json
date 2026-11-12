@@ -402,6 +402,8 @@
     "fc2:posts": "Posts",
     "fc2:comments": "Comments",
     "fc2:trackbacks": "Trackbacks",
+    "fc2:category": "Category",
+    "fc2:tag": "Tag",
     "habr:articles": "Articles",
     "habr:hub": "Hub",
     "habr:user": "User",
