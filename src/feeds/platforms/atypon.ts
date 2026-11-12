@@ -74,13 +74,14 @@ export const atyponHandler: PlatformHandler = {
       return []
     }
 
-    const uris = [page.getFeedEntry('atypon:journal', { code: parsed.code })]
-
     if (parsed.isWiley) {
-      uris.push(page.getFeedEntry('atypon:most-cited', { code: parsed.code }))
+      return [
+        page.getFeedEntry('atypon:journal', { code: parsed.code }),
+        page.getFeedEntry('atypon:most-cited', { code: parsed.code }),
+      ]
     }
 
-    return uris
+    return [page.getFeedEntry('atypon:journal', { code: parsed.code })]
   },
 
   getFeedHint: feeds.getFeedHint,
