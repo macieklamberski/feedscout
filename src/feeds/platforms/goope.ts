@@ -6,7 +6,7 @@ import {
   parseUrl,
   resolveUrl,
 } from 'trousse'
-import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
 
@@ -160,15 +160,7 @@ export const goopeHandler: PlatformHandler = {
       return []
     }
 
-    const params: PlatformFeedParams = {}
-
-    if (parsed.site) {
-      params.site = parsed.site
-    }
-
-    if (parsed.templateId) {
-      params.templateId = parsed.templateId
-    }
+    const params = { site: parsed.site, templateId: parsed.templateId }
 
     const news = pageFeeds.getFeedEntry('goope:news', params, 'rdf')
 
