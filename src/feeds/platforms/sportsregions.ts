@@ -60,13 +60,13 @@ export const sportsregionsHandler: PlatformHandler = {
       ]
     }
 
-    const { protocol, host } = new URL(url)
-    const params = { scheme: protocol.slice(0, -1), host }
+    const page = siteFeeds.forUrl(url)
 
-    return [
-      siteFeeds.getFeedEntry('sportsregions:news', params),
-      siteFeeds.getFeedEntry('sportsregions:events', params),
-    ]
+    if (!page) {
+      return []
+    }
+
+    return [page.getFeedEntry('sportsregions:news'), page.getFeedEntry('sportsregions:events')]
   },
 
   getFeedHint: clubFeeds.getFeedHint,
