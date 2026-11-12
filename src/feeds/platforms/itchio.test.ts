@@ -648,6 +648,14 @@ describe('itchioHandler', () => {
       expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the games key for a listing feed with three filters', () => {
+      const value =
+        'https://itch.io/games/15-dollars-or-less/accessibility-highcontrast/genre-puzzle.xml'
+      const expected = 'itchio:games'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the games key for a listing feed with a capitalized games segment', () => {
       const value = 'https://itch.io/Games/newest/tag-horror.xml'
       const expected = 'itchio:games'
@@ -775,6 +783,10 @@ describe('itchioHandler', () => {
       ['https://itch.io/games/newest.xml', { key: 'itchio:games', label: 'Games' }],
       ['https://itch.io/games.xml', { key: 'itchio:games', label: 'Games' }],
       ['https://itch.io/games/newest/tag-horror.xml', { key: 'itchio:games', label: 'Games' }],
+      [
+        'https://itch.io/games/15-dollars-or-less/accessibility-highcontrast/genre-puzzle.xml',
+        { key: 'itchio:games', label: 'Games' },
+      ],
       ['https://itch.io/tools.xml', { key: 'itchio:section', label: 'Section' }],
       ['https://itch.io/devlogs.xml', { key: 'itchio:devlogs', label: 'Devlogs' }],
       ['https://itch.io/blog.rss', { key: 'itchio:blog', label: 'Blog' }],
