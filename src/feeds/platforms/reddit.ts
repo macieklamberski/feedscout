@@ -24,6 +24,7 @@ export type RedditUrl =
   | { kind: 'domain'; domain: string }
 
 export const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
+const mirrorHosts = ['old.reddit.com', 'new.reddit.com']
 
 const subredditsRegex = /^\/(?:subreddits|reddits)(?:\/([^/.]+))?(?:[/.]|$)/i
 // Stops at a dot, so a feed URL like /r/{sub}.rss, /user/{user}/submitted.rss or
@@ -39,46 +40,79 @@ const userPrefixes = ['u', 'user']
 // Rows with a fixed segment sit above the `{sort}` rows that would read it as a sort. Within a key,
 // a row with more placeholders sits above one with fewer, since the first row the values fill is
 // built.
-const feeds = definePlatformFeeds([
-  {
-    key: 'reddit:search',
-    template: 'https://www.reddit.com/r/{subreddit}/search.rss?q={query}&restrict_sr=on',
-  },
-  { key: 'reddit:search', template: 'https://www.reddit.com/search.rss?q={query}' },
-  { key: 'reddit:wiki', template: 'https://www.reddit.com/r/{subreddit}/wiki/index.rss' },
-  {
-    key: 'reddit:post-comments',
-    template: 'https://www.reddit.com/r/{subreddit}/comments/{postId}/.rss',
-  },
-  {
-    key: 'reddit:post-comments',
-    template: 'https://www.reddit.com/user/{username}/comments/{postId}/.rss',
-  },
-  { key: 'reddit:comments', template: 'https://www.reddit.com/r/{subreddit}/comments/.rss' },
-  {
-    key: 'reddit:multireddit',
-    template: 'https://www.reddit.com/user/{username}/m/{multireddit}/.rss',
-  },
-  {
-    key: 'reddit:user-submitted',
-    template: 'https://www.reddit.com/user/{username}/submitted/.rss',
-  },
-  { key: 'reddit:user-comments', template: 'https://www.reddit.com/user/{username}/comments/.rss' },
-  { key: 'reddit:subreddits', template: 'https://www.reddit.com/subreddits/{sort}/.rss' },
-  { key: 'reddit:subreddits', template: 'https://www.reddit.com/subreddits/.rss' },
-  {
-    key: 'reddit:posts',
-    template: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss?t={timeframe}',
-  },
-  { key: 'reddit:posts', template: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss' },
-  { key: 'reddit:posts', template: 'https://www.reddit.com/r/{subreddit}/.rss' },
-  { key: 'reddit:posts', template: 'https://www.reddit.com/r/{subreddit}.rss' },
-  { key: 'reddit:posts', template: 'https://www.reddit.com/user/{username}/.rss' },
-  { key: 'reddit:posts', template: 'https://www.reddit.com/domain/{domain}/.rss' },
-  { key: 'reddit:posts', template: 'https://www.reddit.com/{sort}/.rss?t={timeframe}' },
-  { key: 'reddit:posts', template: 'https://www.reddit.com/{sort}/.rss' },
-  { key: 'reddit:posts', template: 'https://www.reddit.com/.rss' },
-])
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'reddit:search',
+      template: 'https://www.reddit.com/r/{subreddit}/search.rss?q={query}&restrict_sr=on',
+    },
+    { key: 'reddit:search', template: 'https://www.reddit.com/search.rss?q={query}' },
+    { key: 'reddit:wiki', template: 'https://www.reddit.com/r/{subreddit}/wiki/index.rss' },
+    {
+      key: 'reddit:post-comments',
+      template: 'https://www.reddit.com/r/{subreddit}/comments/{postId}/.rss',
+    },
+    {
+      key: 'reddit:post-comments',
+      template: 'https://www.reddit.com/user/{username}/comments/{postId}/.rss',
+    },
+    { key: 'reddit:comments', template: 'https://www.reddit.com/r/{subreddit}/comments/.rss' },
+    {
+      key: 'reddit:multireddit',
+      template: 'https://www.reddit.com/user/{username}/m/{multireddit}/.rss',
+    },
+    {
+      key: 'reddit:user-submitted',
+      template: 'https://www.reddit.com/user/{username}/submitted/.rss',
+    },
+    {
+      key: 'reddit:user-comments',
+      template: 'https://www.reddit.com/user/{username}/comments/.rss',
+    },
+    { key: 'reddit:subreddits', template: 'https://www.reddit.com/subreddits/{sort}/.rss' },
+    { key: 'reddit:subreddits', template: 'https://www.reddit.com/subreddits/.rss' },
+    {
+      key: 'reddit:posts',
+      template: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss?t={timeframe}',
+    },
+    { key: 'reddit:posts', template: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss' },
+    { key: 'reddit:posts', template: 'https://www.reddit.com/r/{subreddit}/.rss' },
+    { key: 'reddit:posts', template: 'https://www.reddit.com/r/{subreddit}.rss' },
+    { key: 'reddit:posts', template: 'https://www.reddit.com/user/{username}/.rss' },
+    { key: 'reddit:posts', template: 'https://www.reddit.com/domain/{domain}/.rss' },
+    { key: 'reddit:posts', template: 'https://www.reddit.com/{sort}/.rss?t={timeframe}' },
+    { key: 'reddit:posts', template: 'https://www.reddit.com/{sort}/.rss' },
+    { key: 'reddit:posts', template: 'https://www.reddit.com/.rss' },
+    // The same feeds on old. and new., which the page parser reads as pages. They sit below every
+    // www row, so `resolve` builds on www.
+    {
+      key: 'reddit:search',
+      template: 'https://{host}/r/{subreddit}/search.rss?q={query}&restrict_sr=on',
+    },
+    { key: 'reddit:wiki', template: 'https://{host}/r/{subreddit}/wiki/index.rss' },
+    {
+      key: 'reddit:post-comments',
+      template: 'https://{host}/r/{subreddit}/comments/{postId}/.rss',
+    },
+    {
+      key: 'reddit:post-comments',
+      template: 'https://{host}/user/{username}/comments/{postId}/.rss',
+    },
+    { key: 'reddit:comments', template: 'https://{host}/r/{subreddit}/comments/.rss' },
+    { key: 'reddit:multireddit', template: 'https://{host}/user/{username}/m/{multireddit}/.rss' },
+    { key: 'reddit:user-submitted', template: 'https://{host}/user/{username}/submitted/.rss' },
+    { key: 'reddit:user-comments', template: 'https://{host}/user/{username}/comments/.rss' },
+    { key: 'reddit:subreddits', template: 'https://{host}/subreddits/{sort}/.rss' },
+    { key: 'reddit:subreddits', template: 'https://{host}/subreddits/.rss' },
+    { key: 'reddit:posts', template: 'https://{host}/r/{subreddit}/{sort}/.rss?t={timeframe}' },
+    { key: 'reddit:posts', template: 'https://{host}/r/{subreddit}/{sort}/.rss' },
+    { key: 'reddit:posts', template: 'https://{host}/r/{subreddit}/.rss' },
+    { key: 'reddit:posts', template: 'https://{host}/r/{subreddit}.rss' },
+    { key: 'reddit:posts', template: 'https://{host}/user/{username}/.rss' },
+    { key: 'reddit:posts', template: 'https://{host}/domain/{domain}/.rss' },
+  ],
+  { hosts: mirrorHosts },
+)
 
 const getTimeframe = (sort: string, searchParams: URLSearchParams): string | undefined => {
   if (!timeFilteredSorts.includes(sort)) {

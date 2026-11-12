@@ -980,6 +980,20 @@ describe('redditHandler', () => {
       expect(redditHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the comments key for a subreddit comments feed on the old host', () => {
+      const value = 'https://old.reddit.com/r/longevity/comments/.rss'
+      const expected = 'reddit:comments'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the user comments key for a user comments feed on the new host', () => {
+      const value = 'https://new.reddit.com/user/gamavalkharid/comments/.rss'
+      const expected = 'reddit:user-comments'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return undefined for a subreddit page', () => {
       const value = 'https://www.reddit.com/r/longevity/'
 
@@ -1000,6 +1014,12 @@ describe('redditHandler', () => {
 
     it('should return undefined for a site search page', () => {
       const value = 'https://www.reddit.com/search?q=typescript'
+
+      expect(redditHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the home feed on the old host', () => {
+      const value = 'https://old.reddit.com/.rss'
 
       expect(redditHandler.getFeedKey?.(value)).toBeUndefined()
     })
@@ -1064,6 +1084,14 @@ describe('redditHandler', () => {
       [
         'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss',
         { key: 'reddit:multireddit', label: 'Multireddit' },
+      ],
+      [
+        'https://old.reddit.com/r/longevity/comments/.rss',
+        { key: 'reddit:comments', label: 'Comments' },
+      ],
+      [
+        'https://new.reddit.com/user/gamavalkharid/comments/.rss',
+        { key: 'reddit:user-comments', label: 'Comments' },
       ],
     ]
 
