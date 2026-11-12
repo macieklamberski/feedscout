@@ -1,5 +1,4 @@
 import { getAnyOf, getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import type { PlatformFeedParams } from '../../common/uris/platform/feeds.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -243,7 +242,7 @@ export const redditHandler: PlatformHandler = {
     if (parsed.kind === 'siteSort') {
       const { sort, timeframe } = parsed
 
-      return [feeds.getFeedEntry('reddit:posts', timeframe ? { sort, timeframe } : { sort })]
+      return [feeds.getFeedEntry('reddit:posts', { sort, timeframe })]
     }
 
     if (parsed.kind === 'siteSearch') {
@@ -251,9 +250,7 @@ export const redditHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'subreddits') {
-      const { sort } = parsed
-
-      return [feeds.getFeedEntry('reddit:subreddits', sort ? { sort } : {})]
+      return [feeds.getFeedEntry('reddit:subreddits', { sort: parsed.sort })]
     }
 
     if (parsed.kind === 'search' && parsed.query) {
@@ -277,13 +274,10 @@ export const redditHandler: PlatformHandler = {
       const { subreddit } = parsed
       const comments = feeds.getFeedEntry('reddit:comments', { subreddit })
 
-      if (parsed.kind === 'subreddit' && parsed.sort) {
+      if (parsed.kind === 'subreddit') {
         const { sort, timeframe } = parsed
-        const params: PlatformFeedParams = timeframe
-          ? { subreddit, sort, timeframe }
-          : { subreddit, sort }
 
-        return [feeds.getFeedEntry('reddit:subreddit', params), comments]
+        return [feeds.getFeedEntry('reddit:subreddit', { subreddit, sort, timeframe }), comments]
       }
 
       return [feeds.getFeedEntry('reddit:subreddit', { subreddit }), comments]
