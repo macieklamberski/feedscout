@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   type InsanejournalUrl,
   insanejournalHandler,
@@ -94,6 +96,12 @@ describe('insanejournalHandler', () => {
   describe('resolve', () => {
     it('should return an empty array for a path username that is no host label', () => {
       const value = 'https://www.insanejournal.com/~..'
+
+      expect(insanejournalHandler.resolve(value)).toEqual([])
+    })
+
+    it('should return an empty array for an encoded path username that is no host label', () => {
+      const value = 'https://www.insanejournal.com/users/a%20b'
 
       expect(insanejournalHandler.resolve(value)).toEqual([])
     })
@@ -348,6 +356,197 @@ describe('insanejournalHandler', () => {
       ]
 
       expect(insanejournalHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the http scheme of a journal subdomain page', () => {
+      const value = 'http://alice.insanejournal.com/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://alice.insanejournal.com/data/rss',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'http://alice.insanejournal.com/data/atom',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'http://alice.insanejournal.com/data/userpics',
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for a journal RSS feed', () => {
+      const value = 'https://actuallesbian.insanejournal.com/data/rss'
+      const expected = 'insanejournal:posts'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a journal Atom feed', () => {
+      const value = 'https://a-new-dawn.insanejournal.com/data/atom'
+      const expected = 'insanejournal:posts'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the userpics key for a journal userpics feed', () => {
+      const value = 'https://alice.insanejournal.com/data/userpics'
+      const expected = 'insanejournal:userpics'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a journal tag RSS feed', () => {
+      const value = 'https://cantbehave.insanejournal.com/data/rss?tag=casey+donovan'
+      const expected = 'insanejournal:posts-tag'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a journal tag Atom feed', () => {
+      const value =
+        'https://desertworship.insanejournal.com/data/atom?tag=set+will+drink+you+under+the+table'
+      const expected = 'insanejournal:posts-tag'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an asylum RSS feed', () => {
+      const value = 'https://asylums.insanejournal.com/ainsworthu/data/rss'
+      const expected = 'insanejournal:posts'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the userpics key for an asylum userpics feed', () => {
+      const value = 'https://asylums.insanejournal.com/07refugees/data/userpics'
+      const expected = 'insanejournal:userpics'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for an asylum tag feed with an encoded tag', () => {
+      const value =
+        'https://asylums.insanejournal.com/adventdrabbles/data/atom?tag=contributor%3A+chamilet'
+      const expected = 'insanejournal:posts-tag'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a syndicated feed', () => {
+      const value = 'https://feeds.insanejournal.com/dw_code_feed/data/rss'
+      const expected = 'insanejournal:posts'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a feed on the users host', () => {
+      const value = 'https://users.insanejournal.com/_coolguy/data/rss'
+      const expected = 'insanejournal:posts'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a tag feed on the users host', () => {
+      const value = 'https://users.insanejournal.com/_jems_/data/atom?tag=dvd+sets'
+      const expected = 'insanejournal:posts-tag'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a journal page', () => {
+      const value = 'https://alice.insanejournal.com/tag/photography'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an asylum page', () => {
+      const value = 'https://asylums.insanejournal.com/squeaky'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path at the root of the asylums host', () => {
+      const value = 'https://asylums.insanejournal.com/data/rss'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path at the root of the feeds host', () => {
+      const value = 'https://feeds.insanejournal.com/data/rss'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path under a dotted users host segment', () => {
+      const value = 'https://users.insanejournal.com/robots.txt/data/rss'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://www.alice.insanejournal.com/data/rss'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://insanejournal.com/data/rss'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/data/rss'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an invalid URL', () => {
+      const value = 'not-a-url'
+
+      expect(insanejournalHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://actuallesbian.insanejournal.com/data/rss',
+        { key: 'insanejournal:posts', label: 'Posts' },
+      ],
+      [
+        'https://cantbehave.insanejournal.com/data/rss?tag=casey+donovan',
+        { key: 'insanejournal:posts-tag', label: 'Tag' },
+      ],
+      [
+        'https://asylums.insanejournal.com/07refugees/data/userpics',
+        { key: 'insanejournal:userpics', label: 'Userpics' },
+      ],
+      [
+        'https://feeds.insanejournal.com/dw_code_feed/data/atom',
+        { key: 'insanejournal:posts', label: 'Posts' },
+      ],
+      [
+        'https://users.insanejournal.com/_jems_/data/atom?tag=dvd+sets',
+        { key: 'insanejournal:posts-tag', label: 'Tag' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [insanejournalHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
