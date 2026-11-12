@@ -28,7 +28,8 @@ export type PlatformFeedTemplate = {
 export type PlatformFeedParams = Record<string, string | undefined>
 
 export type PlatformFeedTableOptions = {
-  // The hosts a `{host}` placeholder stands for, with every host under `domains`.
+  // The hosts a `{host}` placeholder stands for, with every host under `domains`. `getFeedHint`
+  // claims a host under `domains` only for a single tenant label.
   hosts?: Array<string>
   // The domains a `{domain}` placeholder stands for. A pattern stands for a family of domains, such
   // as `/^blogspot\.(?:com|com\.[a-z]{2})$/`, anchored at both ends.
@@ -143,7 +144,7 @@ const compileTemplate = (
   const toHostPathRegex = (normalize: (value: string) => string): RegExp => {
     const hostSources = [
       ...hosts.map((value) => escapeRegex(normalize(value))),
-      ...(domains.length > 0 ? [`(?:[^/]+\\.)?${domainSource}`] : []),
+      ...(domains.length > 0 ? [`[^./]+\\.${domainSource}`] : []),
     ]
     const hostSource = toRegexSource(normalize(host), '[^.]+', {
       host: `(?:${hostSources.join('|')})`,

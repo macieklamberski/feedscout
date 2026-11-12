@@ -3749,6 +3749,8 @@ type PlatformHandler = {
 
 `definePlatformFeeds` holds a handler's feed URLs as templates keyed by hint key: `getFeedEntry` builds a feed with its hint, `getFeedHint` reads a URL back to its hint, with the row's `format`, `{host}` stands for any host in `hosts` or under `domains`, `{domain}` for one of `domains`, and `{scheme}` for the page's scheme on a platform that runs on the site's own host.
 
+`getFeedHint` reads a `{host}` row under `domains` only on a tenant, one label in front of the domain, so `alice.example.com/feed` is claimed and `example.com/feed`, `www.example.com/feed` and `blog.alice.example.com/feed` are not. A platform's own host goes in `hosts`. `resolve` still builds a `{host}` row on any host.
+
 An entry of `domains` can be a pattern standing for a family of domains, anchored at both ends, such as `/^blogspot\.(?:com|com\.[a-z]{2}|[a-z]{2})$/` for `blogspot.com`, `blogspot.de` and `blogspot.com.br`. `{host}` and `{domain}` then stand for any domain the pattern matches, and `forUrl` fills `{domain}` with the one the page's host is under.
 
 A template can open with `{root}`, which stands for the scheme, the host with its port and an optional base path, as `https://example.com/forum`, written as given. `getFeedHint` reads a `{root}` row on a host in `hosts` or under `domains`, under any base path, and a table with neither builds the row without claiming it.

@@ -313,11 +313,58 @@ describe('definePlatformFeeds', () => {
       expect(feeds.getFeedHint(value)?.key).toBe(expected)
     })
 
-    it('should return the key of a feed on a host under a listed domain', () => {
+    it('should return the key of a feed on a tenant of a listed domain', () => {
       const value = 'https://meta.example.net/feeds/site'
       const expected = 'example:site'
 
       expect(feeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed on a tenant with www of a listed domain', () => {
+      const value = 'https://www.meta.example.net/feeds/site'
+      const expected = 'example:site'
+
+      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return undefined for a feed on the apex of a listed domain', () => {
+      const value = 'https://example.net/feeds/site'
+
+      expect(feeds.getFeedHint(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www of a listed domain', () => {
+      const value = 'https://www.example.net/feeds/site'
+
+      expect(feeds.getFeedHint(value)).toBeUndefined()
+    })
+
+    it('should return the key of a feed on www of a listed domain with isWwwTenant', () => {
+      const wwwTenantHostFeeds = definePlatformFeeds(
+        [{ key: 'example:site', template: 'https://{host}/feeds/site' }],
+        { domains: ['example.net'], isWwwTenant: true },
+      )
+      const value = 'https://www.example.net/feeds/site'
+      const expected = 'example:site'
+
+      expect(wwwTenantHostFeeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return undefined for a feed on a nested host of a listed domain', () => {
+      const value = 'https://blog.meta.example.net/feeds/site'
+
+      expect(feeds.getFeedHint(value)).toBeUndefined()
+    })
+
+    it('should return the key of a feed on a listed host under a listed domain', () => {
+      const hostFeeds = definePlatformFeeds(
+        [{ key: 'example:site', template: 'https://{host}/feeds/site' }],
+        { hosts: ['example.net'], domains: ['example.net'] },
+      )
+      const value = 'https://example.net/feeds/site'
+      const expected = 'example:site'
+
+      expect(hostFeeds.getFeedHint(value)?.key).toBe(expected)
     })
 
     it('should return the key of a feed on a tenant host of a listed domain', () => {
@@ -555,18 +602,23 @@ describe('definePlatformFeeds', () => {
         expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
       })
 
-      it('should return the key of a host feed on the apex', () => {
-        const value = 'https://example.co.uk/feeds/site'
+      it('should return the key of a host feed on a tenant', () => {
+        const value = 'https://alice.example.co.uk/feeds/site'
         const expected = 'example:site'
 
         expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
       })
 
-      it('should return the key of a host feed on a nested host', () => {
-        const value = 'https://blog.alice.example.co.uk/feeds/site'
-        const expected = 'example:site'
+      it('should return undefined for a host feed on the apex', () => {
+        const value = 'https://example.co.uk/feeds/site'
 
-        expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(domainPatternFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return undefined for a host feed on a nested host', () => {
+        const value = 'https://blog.alice.example.co.uk/feeds/site'
+
+        expect(domainPatternFeeds.getFeedHint(value)).toBeUndefined()
       })
 
       it('should return the key of www as a tenant', () => {
@@ -630,6 +682,12 @@ describe('definePlatformFeeds', () => {
 
       it('should return undefined for another host', () => {
         const value = 'https://example.org/forum/latest.rss'
+
+        expect(rootFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return undefined for the apex of a listed domain', () => {
+        const value = 'https://example.net/latest.rss'
 
         expect(rootFeeds.getFeedHint(value)).toBeUndefined()
       })
