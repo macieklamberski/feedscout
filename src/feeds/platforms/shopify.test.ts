@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { isShopifyHeaders, parseShopifyUrl, type ShopifyUrl, shopifyHandler } from './shopify.js'
 
 const shopifyHeaders = new Headers({ 'powered-by': 'Shopify' })
@@ -144,6 +147,75 @@ describe('shopifyHandler', () => {
 
     it('should return an empty array for the store root', () => {
       expect(shopifyHandler.resolve('https://example.com/')).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    const feedUrls: Array<[string, DiscoverUriHint]> = [
+      ['https://example.myshopify.com/blogs/news.atom', { key: 'shopify:blog', label: 'Blog' }],
+      [
+        'https://example.myshopify.com/en-us/blogs/news.atom',
+        { key: 'shopify:blog', label: 'Blog' },
+      ],
+      ['http://example.myshopify.com/blogs/journal.atom/', { key: 'shopify:blog', label: 'Blog' }],
+    ]
+
+    it.each(feedUrls)('should return the hint for %s', (value, expected) => {
+      expect(shopifyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a blog page on a store subdomain', () => {
+      const value = 'https://example.myshopify.com/blogs/news'
+
+      expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a collection feed', () => {
+      const value = 'https://example.myshopify.com/collections/all.atom'
+
+      expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://example.com/blogs/news.atom'
+
+      expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://myshopify.com/blogs/news.atom'
+
+      expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www', () => {
+      const value = 'https://www.myshopify.com/blogs/news.atom'
+
+      expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://shop.example.myshopify.com/blogs/news.atom'
+
+      expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://example.myshopify.com/blogs/news.atom', { key: 'shopify:blog', label: 'Blog' }],
+      ['http://example.myshopify.com/fr/blogs/news.atom', { key: 'shopify:blog', label: 'Blog' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [shopifyHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
