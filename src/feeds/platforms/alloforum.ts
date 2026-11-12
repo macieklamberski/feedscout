@@ -26,18 +26,21 @@ const categoryRegex = /^\/([^/]+)-c(\d+)-\d+\.html$/i
 const subcategoryRegex = /^\/([^/]+)-c(\d+)-([^/]+)-s(\d+)-\d+\.html$/i
 
 // The subcategory row comes first, since a subcategory feed also fits the category template.
-const feeds = definePlatformFeeds([
-  {
-    key: 'alloforum:subcategory',
-    template:
-      'https://{forum}.alloforum.com/derniers-sujets-{slug}-c{categoryId}-{subcategorySlug}-s{subcategoryId}.xml',
-  },
-  {
-    key: 'alloforum:category',
-    template: 'https://{forum}.alloforum.com/derniers-sujets-{slug}-c{categoryId}.xml',
-  },
-  { key: 'alloforum:latest-topics', template: 'https://{forum}.alloforum.com/derniers-sujets.xml' },
-])
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'alloforum:subcategory',
+      template:
+        '{scheme}://{host}/derniers-sujets-{slug}-c{categoryId}-{subcategorySlug}-s{subcategoryId}.xml',
+    },
+    {
+      key: 'alloforum:category',
+      template: '{scheme}://{host}/derniers-sujets-{slug}-c{categoryId}.xml',
+    },
+    { key: 'alloforum:latest-topics', template: '{scheme}://{host}/derniers-sujets.xml' },
+  ],
+  { domains },
+)
 
 export const parseAlloforumUrl = (url: string): AlloforumUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
@@ -76,23 +79,23 @@ export const alloforumHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseAlloforumUrl(url)
-    const forum = getTenantSubdomain(url, domains)
+    const page = feeds.forUrl(url)
 
-    if (!parsed || !forum) {
+    if (!parsed || !page) {
       return []
     }
 
     const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.kind === 'subcategory') {
-      uris.push(feeds.getFeedEntry('alloforum:subcategory', { forum, ...parsed }))
+      uris.push(page.getFeedEntry('alloforum:subcategory', parsed))
     }
 
     if (parsed.kind === 'category') {
-      uris.push(feeds.getFeedEntry('alloforum:category', { forum, ...parsed }))
+      uris.push(page.getFeedEntry('alloforum:category', parsed))
     }
 
-    uris.push(feeds.getFeedEntry('alloforum:latest-topics', { forum }))
+    uris.push(page.getFeedEntry('alloforum:latest-topics'))
 
     return uris
   },

@@ -105,11 +105,11 @@ describe('alloforumHandler', () => {
       expect(alloforumHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return https feeds for an http forum', () => {
+    it('should keep the scheme of an http forum', () => {
       const value = 'http://1234.alloforum.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://1234.alloforum.com/derniers-sujets.xml',
+          uri: 'http://1234.alloforum.com/derniers-sujets.xml',
           hint: { key: 'alloforum:latest-topics', label: 'Latest topics' },
         },
       ]
