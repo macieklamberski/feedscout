@@ -213,90 +213,90 @@ describe('goodreadsHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the reviews key for a review list feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the reviews hint for a review list feed', () => {
       const value = 'https://www.goodreads.com/review/list_rss/7259651'
-      const expected = 'goodreads:reviews'
+      const expected: DiscoverUriHint = { key: 'goodreads:reviews', label: 'Reviews' }
 
-      expect(goodreadsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the reviews key for a review list feed with a page parameter', () => {
+    it('should return the reviews hint for a review list feed with a page parameter', () => {
       const value = 'https://www.goodreads.com/review/list_rss/50196372?page=6'
-      const expected = 'goodreads:reviews'
+      const expected: DiscoverUriHint = { key: 'goodreads:reviews', label: 'Reviews' }
 
-      expect(goodreadsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the reviews key for a review list feed on the bare host over http', () => {
+    it('should return the reviews hint for a review list feed on the bare host over http', () => {
       const value = 'http://goodreads.com/review/list_rss/7259651'
-      const expected = 'goodreads:reviews'
+      const expected: DiscoverUriHint = { key: 'goodreads:reviews', label: 'Reviews' }
 
-      expect(goodreadsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the shelf key for a shelf feed', () => {
+    it('should return the shelf hint for a shelf feed', () => {
       const value = 'https://www.goodreads.com/review/list_rss/6585469?shelf=currently-reading'
-      const expected = 'goodreads:shelf'
+      const expected: DiscoverUriHint = { key: 'goodreads:shelf', label: 'Shelf' }
 
-      expect(goodreadsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the shelf key for a shelf feed with an encoded shelf and a page', () => {
+    it('should return the shelf hint for a shelf feed with an encoded shelf and a page', () => {
       const value = 'https://www.goodreads.com/review/list_rss/3725895?page=1&shelf=%23ALL%23'
-      const expected = 'goodreads:shelf'
+      const expected: DiscoverUriHint = { key: 'goodreads:shelf', label: 'Shelf' }
 
-      expect(goodreadsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the updates key for an updates feed', () => {
+    it('should return the updates hint for an updates feed', () => {
       const value = 'https://www.goodreads.com/user/updates_rss/4484461'
-      const expected = 'goodreads:updates'
+      const expected: DiscoverUriHint = { key: 'goodreads:updates', label: 'Updates' }
 
-      expect(goodreadsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the updates key for an updates feed with a v parameter', () => {
+    it('should return the updates hint for an updates feed with a v parameter', () => {
       const value = 'https://www.goodreads.com/user/updates_rss/6585469?v=as'
-      const expected = 'goodreads:updates'
+      const expected: DiscoverUriHint = { key: 'goodreads:updates', label: 'Updates' }
 
-      expect(goodreadsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a review list feed with a private key', () => {
       const value = 'https://www.goodreads.com/review/list_rss/1?key=abc123&shelf=read'
 
-      expect(goodreadsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(goodreadsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an updates feed with a private key', () => {
       const value = 'https://www.goodreads.com/user/updates_rss/1?key=abc123'
 
-      expect(goodreadsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(goodreadsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a review list page', () => {
       const value = 'https://www.goodreads.com/review/list/1-otis-chandler'
 
-      expect(goodreadsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(goodreadsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a quotes feed', () => {
       const value = 'https://www.goodreads.com/quotes/list_rss/319473-sean-perry'
 
-      expect(goodreadsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(goodreadsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a review list feed path on another host', () => {
       const value = 'https://example.com/review/list_rss/7259651'
 
-      expect(goodreadsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(goodreadsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an invalid URL', () => {
       const value = 'not a url'
 
-      expect(goodreadsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(goodreadsHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

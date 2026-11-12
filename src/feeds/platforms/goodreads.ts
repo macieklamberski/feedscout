@@ -81,12 +81,12 @@ export const goodreadsHandler: PlatformHandler = {
     return uris
   },
 
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     // A `key` parameter carries the account owner's private token.
     if (getQueryParam(parseUrl(url), 'key') !== undefined) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
