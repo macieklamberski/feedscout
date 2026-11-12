@@ -79,15 +79,15 @@ export const weeblyHandler: PlatformHandler = {
   resolve: (url, content) => {
     const page = getWeeblyPage(url, content)
     const site = getTenantSubdomain(url, domains)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page || !site) {
+    if (!page || !site || !pageFeeds) {
       return []
     }
 
-    const scheme = new URL(url).protocol.slice(0, -1)
     const slugs = page.kind === 'home' ? page.pages : [page.page ?? 'blog']
 
-    return slugs.map((slug) => feeds.getFeedEntry('weebly:blog', { scheme, site, page: slug }))
+    return slugs.map((slug) => pageFeeds.getFeedEntry('weebly:blog', { site, page: slug }))
   },
 
   // The table reads any first segment as a page, so a dotted one, a file of the site, is refused:
