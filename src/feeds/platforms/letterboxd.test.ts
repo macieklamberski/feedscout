@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import type { LetterboxdUrl } from './letterboxd.js'
@@ -135,38 +135,38 @@ describe('letterboxdHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the diary key for a member feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the diary hint for a member feed', () => {
       const value = 'https://letterboxd.com/alice/rss/'
-      const expected = 'letterboxd:diary'
+      const expected: DiscoverUriHint = { key: 'letterboxd:diary', label: 'Diary' }
 
-      expect(letterboxdHandler.getFeedKey?.(value)).toBe(expected)
+      expect(letterboxdHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the diary key for a member feed on the embed host', () => {
+    it('should return the diary hint for a member feed on the embed host', () => {
       const value = 'https://embed.letterboxd.com/alice/rss/'
-      const expected = 'letterboxd:diary'
+      const expected: DiscoverUriHint = { key: 'letterboxd:diary', label: 'Diary' }
 
-      expect(letterboxdHandler.getFeedKey?.(value)).toBe(expected)
+      expect(letterboxdHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the journal key for the journal feed', () => {
+    it('should return the journal hint for the journal feed', () => {
       const value = 'https://letterboxd.com/journal/rss/'
-      const expected = 'letterboxd:journal'
+      const expected: DiscoverUriHint = { key: 'letterboxd:journal', label: 'Journal' }
 
-      expect(letterboxdHandler.getFeedKey?.(value)).toBe(expected)
+      expect(letterboxdHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a member page', () => {
       const value = 'https://letterboxd.com/alice/'
 
-      expect(letterboxdHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(letterboxdHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a member feed on another host', () => {
       const value = 'https://example.com/alice/rss/'
 
-      expect(letterboxdHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(letterboxdHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 })

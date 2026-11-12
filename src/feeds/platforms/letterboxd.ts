@@ -53,5 +53,5 @@ export const letterboxdHandler: PlatformHandler = {
     return [feeds.getFeedEntry('letterboxd:diary', { username: parsed.username })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
