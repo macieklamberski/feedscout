@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf, isSameText, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, isSameText } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, wordRegex } from '../../common/utils.js'
@@ -59,13 +59,13 @@ export const duckWebcomicsHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getDuckWebcomicsPage(url, content)
-    const host = parseUrl(url)?.hostname
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page || !host) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    return [feeds.getFeedEntry('duck-webcomics:comic', { host, comic: page.comic })]
+    return [pageFeeds.getFeedEntry('duck-webcomics:comic', { comic: page.comic })]
   },
 
   getFeedHint: feeds.getFeedHint,
