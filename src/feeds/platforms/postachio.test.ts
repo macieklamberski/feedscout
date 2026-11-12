@@ -93,6 +93,13 @@ describe('postachioHandler', () => {
       expect(postachioHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the posts key for the extensionless posts feed', () => {
+      const value = 'https://alice.postach.io/feed'
+      const expected = 'postachio:posts'
+
+      expect(postachioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return undefined for a site page', () => {
       const value = 'https://alice.postach.io/'
 
@@ -128,6 +135,7 @@ describe('postachioHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://alice.postach.io/feed.xml', { key: 'postachio:posts', label: 'Posts' }],
       ['http://alice.postach.io/feed.xml', { key: 'postachio:posts', label: 'Posts' }],
+      ['https://alice.postach.io/feed', { key: 'postachio:posts', label: 'Posts' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

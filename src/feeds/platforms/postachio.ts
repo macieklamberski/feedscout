@@ -10,6 +10,7 @@ const domains = ['postach.io']
 
 const feeds = definePlatformFeeds([
   { key: 'postachio:posts', template: 'https://{subdomain}.postach.io/feed.xml' },
+  { key: 'postachio:posts', template: 'https://{subdomain}.postach.io/feed' },
 ])
 
 export const parsePostachioUrl = (url: string): PostachioUrl | undefined => {
