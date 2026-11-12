@@ -68,5 +68,5 @@ export const pchomeHandler: PlatformHandler = {
     return uris
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

@@ -121,37 +121,37 @@ describe('pchomeHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the category key for a category feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the category hint for a category feed', () => {
       const value = 'https://mypaper.pchome.com.tw/encountert/rss?cid=55'
-      const expected = 'pchome:category'
+      const expected: DiscoverUriHint = { key: 'pchome:category', label: 'Category' }
 
-      expect(pchomeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pchomeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a posts feed', () => {
+    it('should return the posts hint for a posts feed', () => {
       const value = 'https://mypaper.pchome.com.tw/zero123137/rss'
-      const expected = 'pchome:posts'
+      const expected: DiscoverUriHint = { key: 'pchome:posts', label: 'Posts' }
 
-      expect(pchomeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pchomeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a paper page', () => {
       const value = 'https://mypaper.pchome.com.tw/zero123137'
 
-      expect(pchomeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(pchomeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a category page', () => {
       const value = 'https://mypaper.pchome.com.tw/zero123137/category/31'
 
-      expect(pchomeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(pchomeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/zero123137/rss?cid=31'
 
-      expect(pchomeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(pchomeHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
