@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { parseVimeoUrl, type VimeoUrl, vimeoHandler } from './vimeo.js'
 
 describe('parseVimeoUrl', () => {
@@ -67,6 +70,18 @@ describe('vimeoHandler', () => {
 
     it('should return videos feed for user page', () => {
       const value = 'https://vimeo.com/casey'
+      const expected = [
+        {
+          uri: 'https://vimeo.com/casey/videos/rss',
+          hint: { key: 'vimeo:videos', label: 'Videos' },
+        },
+      ]
+
+      expect(vimeoHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the videos feed on the apex host over https for a www page over http', () => {
+      const value = 'http://www.vimeo.com/casey'
       const expected = [
         {
           uri: 'https://vimeo.com/casey/videos/rss',
@@ -259,6 +274,135 @@ describe('vimeoHandler', () => {
       for (const value of values) {
         expect(vimeoHandler.resolve(value)).toEqual([])
       }
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the videos key for a user videos feed', () => {
+      const value = 'https://vimeo.com/filmsupply/videos/rss'
+      const expected = 'vimeo:videos'
+
+      expect(vimeoHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the videos key for a user videos feed on the www host over http', () => {
+      const value = 'http://www.vimeo.com/filmsupply/videos/rss'
+      const expected = 'vimeo:videos'
+
+      expect(vimeoHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the videos key for a user all videos feed', () => {
+      const value = 'https://vimeo.com/user5139139/videos/all/rss'
+      const expected = 'vimeo:videos'
+
+      expect(vimeoHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the likes key for a user likes feed', () => {
+      const value = 'https://vimeo.com/jaredlyon/likes/rss'
+      const expected = 'vimeo:likes'
+
+      expect(vimeoHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the channel key for a channel feed', () => {
+      const value = 'https://vimeo.com/channels/staffpicks/videos/rss'
+      const expected = 'vimeo:channel'
+
+      expect(vimeoHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the channel key for a channel feed with a numeric channel', () => {
+      const value = 'https://vimeo.com/channels/40086/videos/rss'
+      const expected = 'vimeo:channel'
+
+      expect(vimeoHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the group key for a group feed', () => {
+      const value = 'https://vimeo.com/groups/sweetandsoundsubmissions/videos/rss'
+      const expected = 'vimeo:group'
+
+      expect(vimeoHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the album key for an album feed', () => {
+      const value = 'https://vimeo.com/album/2043624/rss'
+      const expected = 'vimeo:album'
+
+      expect(vimeoHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a numeric first segment', () => {
+      const value = 'https://vimeo.com/123456/videos/rss'
+
+      expect(vimeoHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a likes feed under the channels route', () => {
+      const value = 'https://vimeo.com/channels/likes/rss'
+
+      expect(vimeoHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an album feed with a non-numeric id', () => {
+      const value = 'https://vimeo.com/album/not-a-number/rss'
+
+      expect(vimeoHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a showcase feed', () => {
+      const value = 'https://vimeo.com/showcase/2043624/rss'
+
+      expect(vimeoHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the blog feed', () => {
+      const value = 'https://vimeo.com/blog/feed.xml'
+
+      expect(vimeoHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a user page', () => {
+      const value = 'https://vimeo.com/filmsupply'
+
+      expect(vimeoHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/filmsupply/videos/rss'
+
+      expect(vimeoHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const values: Array<[string, DiscoverUriEntry['hint']]> = [
+      ['https://vimeo.com/filmsupply/videos/rss', { key: 'vimeo:videos', label: 'Videos' }],
+      ['https://vimeo.com/user5139139/videos/all/rss', { key: 'vimeo:videos', label: 'Videos' }],
+      ['https://vimeo.com/jaredlyon/likes/rss', { key: 'vimeo:likes', label: 'Likes' }],
+      [
+        'https://vimeo.com/channels/staffpicks/videos/rss',
+        { key: 'vimeo:channel', label: 'Channel' },
+      ],
+      ['https://vimeo.com/channels/40086/videos/rss', { key: 'vimeo:channel', label: 'Channel' }],
+      [
+        'https://vimeo.com/groups/sweetandsoundsubmissions/videos/rss',
+        { key: 'vimeo:group', label: 'Group' },
+      ],
+      ['https://vimeo.com/album/2043624/rss', { key: 'vimeo:album', label: 'Album' }],
+    ]
+
+    it.each(values)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [vimeoHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
