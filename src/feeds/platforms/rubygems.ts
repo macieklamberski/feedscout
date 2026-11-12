@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers gem, version (html).
@@ -11,6 +11,16 @@ export type RubygemsUrl = { kind: 'gem'; gem: string } | { kind: 'home' }
 const hosts = ['rubygems.org', 'www.rubygems.org']
 
 const gemRegex = /^\/gems\/([\w.-]+)(?:\/|$)/i
+
+// The index and bundler hosts serve the same feeds as rubygems.org.
+const feeds = definePlatformFeeds([
+  { key: 'rubygems:versions', template: 'https://rubygems.org/gems/{gem}/versions.atom' },
+  { key: 'rubygems:versions', template: 'https://index.rubygems.org/gems/{gem}/versions.atom' },
+  { key: 'rubygems:versions', template: 'https://bundler.rubygems.org/gems/{gem}/versions.atom' },
+  { key: 'rubygems:latest-gems', template: 'https://rubygems.org/gems.atom' },
+  { key: 'rubygems:latest-gems', template: 'https://index.rubygems.org/gems.atom' },
+  { key: 'rubygems:latest-gems', template: 'https://bundler.rubygems.org/gems.atom' },
+])
 
 export const parseRubygemsUrl = (url: string): RubygemsUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -43,20 +53,12 @@ export const rubygemsHandler: PlatformHandler = {
 
     // Gem names are case-sensitive: /gems/RedCloth/versions.atom answers and /gems/redcloth 404s.
     if (parsed.kind === 'gem') {
-      return [
-        {
-          uri: `https://rubygems.org/gems/${parsed.gem}/versions.atom`,
-          hint: composeHint('rubygems:versions'),
-        },
-      ]
+      return [feeds.getFeedEntry('rubygems:versions', { gem: parsed.gem })]
     }
 
     // Every page links the FeedBurner mirror of this feed, which now serves the home page HTML.
-    return [
-      {
-        uri: 'https://rubygems.org/gems.atom',
-        hint: composeHint('rubygems:latest-gems'),
-      },
-    ]
+    return [feeds.getFeedEntry('rubygems:latest-gems')]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
