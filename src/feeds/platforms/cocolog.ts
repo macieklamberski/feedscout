@@ -26,17 +26,17 @@ const feeds = definePlatformFeeds(
   [
     {
       key: 'cocolog:posts',
-      template: '{scheme}://{account}.{domain}/{blog}/atom.xml',
+      template: '{scheme}://{host}/{blog}/atom.xml',
       format: 'atom',
     },
     {
       key: 'cocolog:posts',
-      template: '{scheme}://{account}.{domain}/{blog}/index.rdf',
+      template: '{scheme}://{host}/{blog}/index.rdf',
       format: 'rdf',
     },
     {
       key: 'cocolog:posts',
-      template: '{scheme}://{account}.{domain}/{blog}/rss.xml',
+      template: '{scheme}://{host}/{blog}/rss.xml',
       format: 'rss',
     },
   ],
@@ -87,14 +87,13 @@ export const cocologHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getCocologPage(url, content)
-    const account = getTenantSubdomain(url, domains)
     const pageFeeds = feeds.forUrl(url)
 
-    if (!page || !account || !pageFeeds) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const params = { account, blog: page.blog }
+    const params = { blog: page.blog }
 
     return [
       pageFeeds.getFeedEntry('cocolog:posts', params, 'atom'),
