@@ -1,4 +1,5 @@
 import { getPathSegments } from 'trousse'
+import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -20,10 +21,26 @@ const domains = ['sermon.net']
 // one the church owns serves a feed.
 const channelRegex = /"is_series":(?:false|true),"url":"([^"]+)"/g
 
+// A channel serves four feeds: its audio, all its media, its video, and its audio with its PDFs.
 const feeds = definePlatformFeeds([
   { key: 'sermon-net:channel', template: 'https://{tenant}.sermon.net/rss/{channel}/audio' },
+  { key: 'sermon-net:channel-media', template: 'https://{tenant}.sermon.net/rss/{channel}' },
+  { key: 'sermon-net:channel-video', template: 'https://{tenant}.sermon.net/rss/{channel}/video' },
+  {
+    key: 'sermon-net:channel-audio-pdf',
+    template: 'https://{tenant}.sermon.net/rss/{channel}/audio_pdf',
+  },
   { key: 'sermon-net:church', template: 'https://{tenant}.sermon.net/rss' },
 ])
+
+const getChannelFeeds = (tenant: string, channel: string): Array<DiscoverUriEntry> => {
+  return [
+    feeds.getFeedEntry('sermon-net:channel', { tenant, channel }),
+    feeds.getFeedEntry('sermon-net:channel-media', { tenant, channel }),
+    feeds.getFeedEntry('sermon-net:channel-video', { tenant, channel }),
+    feeds.getFeedEntry('sermon-net:channel-audio-pdf', { tenant, channel }),
+  ]
+}
 
 export const parseSermonNetUrl = (url: string): SermonNetUrl | undefined => {
   const tenant = getTenantSubdomain(url, domains)
@@ -83,13 +100,13 @@ export const sermonNetHandler: PlatformHandler = {
     const { tenant } = page
 
     if (page.kind === 'channel') {
-      return [feeds.getFeedEntry('sermon-net:channel', { tenant, channel: page.channel })]
+      return getChannelFeeds(tenant, page.channel)
     }
 
     if (page.channels.length > 0) {
       // The channel is page text, which can hold a `/`, and the table escapes it.
-      return page.channels.map((channel) => {
-        return feeds.getFeedEntry('sermon-net:channel', { tenant, channel })
+      return page.channels.flatMap((channel) => {
+        return getChannelFeeds(tenant, channel)
       })
     }
 
