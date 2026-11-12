@@ -6,14 +6,10 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type OverblogUrl = { kind: 'blog' }
 
+// Overblog's `over-blog.*` country domains, then its other domains.
+// length: keeps any suffix but a two-letter country code out
 const domains = [
-  'over-blog.com',
-  'over-blog.de',
-  'over-blog.es',
-  'over-blog.fr',
-  'over-blog.it',
-  'over-blog.net',
-  'over-blog.org',
+  /^over-blog\.(?:com|net|org|[a-z]{2})$/,
   'over.blog',
   'overblog.com',
   'overblog.fr',

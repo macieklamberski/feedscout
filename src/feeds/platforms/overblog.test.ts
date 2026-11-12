@@ -8,6 +8,7 @@ describe('parseOverblogUrl', () => {
   const blogUrls: Array<string> = [
     'https://alice.over-blog.com/',
     'https://alice.over-blog.com/2014/02/meuble-cuisine.html',
+    'https://alice.over-blog.ch/',
     'https://alice.over-blog.de/',
     'https://alice.over-blog.es/',
     'https://alice.over-blog.fr/',
@@ -31,7 +32,7 @@ describe('parseOverblogUrl', () => {
     'https://www.over-blog.com/',
     'https://www.over-blog.fr/',
     'https://www.alice.over-blog.com/',
-    'https://alice.over-blog.ch/',
+    'https://alice.over-blog.info/',
     'https://alice.kazeo.com/',
     'https://alice.eklablog.com/',
     'https://example.com/',
@@ -93,6 +94,13 @@ describe('overblogHandler', () => {
 
     it('should return the posts hint for an http posts feed', () => {
       const value = 'http://alice.over-blog.com/rss'
+      const expected: DiscoverUriHint = { key: 'overblog:posts', label: 'Posts' }
+
+      expect(overblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a feed on a country domain outside the old list', () => {
+      const value = 'https://alice.over-blog.ch/rss'
       const expected: DiscoverUriHint = { key: 'overblog:posts', label: 'Posts' }
 
       expect(overblogHandler.getFeedHint?.(value)).toEqual(expected)
