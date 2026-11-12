@@ -92,6 +92,13 @@ describe('sportsregionsHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for an invalid URL', () => {
+      const value = 'not-a-url'
+      const expected: Array<DiscoverUriEntry> = []
+
+      expect(sportsregionsHandler.resolve(value, clubHtml)).toEqual(expected)
+    })
+
     it('should return news and events feeds for a club subdomain', () => {
       const value = 'https://example-club.sportsregions.fr/saison-2026-2027/actualites-du-club'
       const expected: Array<DiscoverUriEntry> = [
