@@ -71,20 +71,18 @@ export const mailchimpHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getMailchimpPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { protocol, host } = new URL(url)
     const params = {
-      scheme: protocol.slice(0, -1),
-      host,
       userId: page.userId,
       listId: page.listId,
     }
 
-    return [feeds.getFeedEntry('mailchimp:archive', params)]
+    return [pageFeeds.getFeedEntry('mailchimp:archive', params)]
   },
 
   getFeedHint: feeds.getFeedHint,
