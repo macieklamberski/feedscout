@@ -131,15 +131,15 @@ describe('ghostHandler', () => {
       expect(ghostHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return https feeds for an http page', () => {
+    it('should keep the scheme of an http page', () => {
       const value = 'http://alice.ghost.io/tag/news/'
       const expected = [
         {
-          uri: 'https://alice.ghost.io/tag/news/rss/',
+          uri: 'http://alice.ghost.io/tag/news/rss/',
           hint: { key: 'ghost:tag', label: 'Tag' },
         },
         {
-          uri: 'https://alice.ghost.io/rss/',
+          uri: 'http://alice.ghost.io/rss/',
           hint: { key: 'ghost:blog', label: 'Blog' },
         },
       ]

@@ -14,11 +14,14 @@ const domains = ['ghost.io']
 const tagRegex = /^\/tag\/([^/]+)/i
 const authorRegex = /^\/author\/([^/]+)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'ghost:tag', template: 'https://{blog}.ghost.io/tag/{tag}/rss/' },
-  { key: 'ghost:author', template: 'https://{blog}.ghost.io/author/{author}/rss/' },
-  { key: 'ghost:blog', template: 'https://{blog}.ghost.io/rss/' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'ghost:tag', template: '{scheme}://{host}/tag/{tag}/rss/' },
+    { key: 'ghost:author', template: '{scheme}://{host}/author/{author}/rss/' },
+    { key: 'ghost:blog', template: '{scheme}://{host}/rss/' },
+  ],
+  { domains },
+)
 
 export const parseGhostUrl = (url: string): GhostUrl | undefined => {
   const blog = getTenantSubdomain(url, domains)
@@ -50,20 +53,20 @@ export const ghostHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseGhostUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const params = { blog: parsed.blog }
-    const blogFeed = feeds.getFeedEntry('ghost:blog', params)
+    const blogFeed = page.getFeedEntry('ghost:blog')
 
     if (parsed.kind === 'tag') {
-      return [feeds.getFeedEntry('ghost:tag', { ...params, tag: parsed.tag }), blogFeed]
+      return [page.getFeedEntry('ghost:tag', { tag: parsed.tag }), blogFeed]
     }
 
     if (parsed.kind === 'author') {
-      return [feeds.getFeedEntry('ghost:author', { ...params, author: parsed.author }), blogFeed]
+      return [page.getFeedEntry('ghost:author', { author: parsed.author }), blogFeed]
     }
 
     return [blogFeed]
