@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { NebulaUrl } from './nebula.js'
 import { nebulaHandler, parseNebulaUrl } from './nebula.js'
 
@@ -301,6 +304,121 @@ describe('nebulaHandler', () => {
       ]
 
       expect(nebulaHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the videos key for a channel feed', () => {
+      const value = 'https://rss.nebula.app/video/channels/royal-ocean-film-society.rss'
+      const expected = 'nebula:videos'
+
+      expect(nebulaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the videos plus key for a channel Plus feed', () => {
+      const value = 'https://rss.nebula.app/video/channels/extremities.rss?plus=true'
+      const expected = 'nebula:videos-plus'
+
+      expect(nebulaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the originals key for the Originals feed', () => {
+      const value = 'https://rss.nebula.app/video/categories/originals.rss'
+      const expected = 'nebula:originals'
+
+      expect(nebulaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the category key for a category feed', () => {
+      const value = 'https://rss.nebula.app/video/categories/technology.rss'
+      const expected = 'nebula:category'
+
+      expect(nebulaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the category plus key for a category Plus feed', () => {
+      const value = 'https://rss.nebula.app/video/categories/technology.rss?plus=true'
+      const expected = 'nebula:category-plus'
+
+      expect(nebulaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the videos all key for the all videos feed', () => {
+      const value = 'https://rss.nebula.app/video.rss'
+      const expected = 'nebula:videos-all'
+
+      expect(nebulaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the videos all plus key for the all videos Plus feed', () => {
+      const value = 'https://rss.nebula.app/video.rss?plus=true'
+      const expected = 'nebula:videos-all-plus'
+
+      expect(nebulaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the channels key for the recently added channels feed', () => {
+      const value = 'https://rss.nebula.app/video/channels.rss'
+      const expected = 'nebula:channels'
+
+      expect(nebulaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a channel page', () => {
+      const value = 'https://nebula.tv/royal-ocean-film-society'
+
+      expect(nebulaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a channel feed path on nebula.tv', () => {
+      const value = 'https://nebula.tv/video/channels/extremities.rss'
+
+      expect(nebulaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://rss.nebula.app/video/channels/royal-ocean-film-society.rss',
+        { key: 'nebula:videos', label: 'Videos' },
+      ],
+      [
+        'https://rss.nebula.app/video/channels/extremities.rss?plus=true',
+        { key: 'nebula:videos-plus', label: 'Videos (Plus)' },
+      ],
+      [
+        'https://rss.nebula.app/video/categories/originals.rss',
+        { key: 'nebula:originals', label: 'Nebula Originals' },
+      ],
+      [
+        'https://rss.nebula.app/video/categories/technology.rss',
+        { key: 'nebula:category', label: 'Category' },
+      ],
+      [
+        'https://rss.nebula.app/video/categories/technology.rss?plus=true',
+        { key: 'nebula:category-plus', label: 'Category (Plus)' },
+      ],
+      ['https://rss.nebula.app/video.rss', { key: 'nebula:videos-all', label: 'All Videos' }],
+      [
+        'https://rss.nebula.app/video.rss?plus=true',
+        { key: 'nebula:videos-all-plus', label: 'All Videos (Plus)' },
+      ],
+      [
+        'https://rss.nebula.app/video/channels.rss',
+        { key: 'nebula:channels', label: 'Recently Added Channels' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [nebulaHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
