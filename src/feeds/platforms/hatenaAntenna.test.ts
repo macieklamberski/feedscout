@@ -195,57 +195,57 @@ describe('hatenaAntennaHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the antenna key for an antenna feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the antenna hint for an antenna feed', () => {
       const value = 'https://a.hatena.ne.jp/alice/rss'
-      const expected = 'hatena-antenna:antenna'
+      const expected: DiscoverUriHint = { key: 'hatena-antenna:antenna', label: 'Antenna' }
 
-      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hatenaAntennaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the antenna key for an antenna feed over http', () => {
+    it('should return the antenna hint for an antenna feed over http', () => {
       const value = 'http://a.hatena.ne.jp/alice/rss'
-      const expected = 'hatena-antenna:antenna'
+      const expected: DiscoverUriHint = { key: 'hatena-antenna:antenna', label: 'Antenna' }
 
-      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hatenaAntennaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the group key for a group feed', () => {
+    it('should return the group hint for a group feed', () => {
       const value = 'https://a.hatena.ne.jp/alice/rss?gid=390986'
-      const expected = 'hatena-antenna:group'
+      const expected: DiscoverUriHint = { key: 'hatena-antenna:group', label: 'Group' }
 
-      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hatenaAntennaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the group key for the feed of the ungrouped pages', () => {
+    it('should return the group hint for the feed of the ungrouped pages', () => {
       const value = 'http://a.hatena.ne.jp/alice/rss?gid=null'
-      const expected = 'hatena-antenna:group'
+      const expected: DiscoverUriHint = { key: 'hatena-antenna:group', label: 'Group' }
 
-      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hatenaAntennaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for an antenna page', () => {
       const value = 'https://a.hatena.ne.jp/alice/'
 
-      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hatenaAntennaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the simple view', () => {
       const value = 'https://a.hatena.ne.jp/alice/simple'
 
-      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hatenaAntennaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an rss path under a dotted first segment', () => {
       const value = 'https://a.hatena.ne.jp/robots.txt/rss'
 
-      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hatenaAntennaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an rss path on another Hatena host', () => {
       const value = 'https://b.hatena.ne.jp/alice/rss'
 
-      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hatenaAntennaHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
