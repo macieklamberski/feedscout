@@ -1,6 +1,7 @@
 import { getSubdomain, isAnyOf, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers customDomainSite, site, skSite.
@@ -14,6 +15,32 @@ const domains = ['estranky.cz', 'estranky.sk']
 const estrankyAssetRegex = /^(?:https?:)?\/\/s3[a-z]\.(?:estranky\.(?:cz|sk)|eoldal\.hu)\//i
 
 const assetTags = ['link', 'script']
+
+// A site keeps the scheme it picked. A site in another language serves its posts, photos and slice
+// feeds under the language segment too, as `/rss/en/slices/l/homepage/data.xml`.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'estranky:posts', template: '{scheme}://{host}/rss/articles/data.xml' },
+    { key: 'estranky:posts', template: '{scheme}://{host}/rss/{language}/articles/data.xml' },
+    { key: 'estranky:photos', template: '{scheme}://{host}/rss/photos/data.xml' },
+    { key: 'estranky:photos', template: '{scheme}://{host}/rss/{language}/photos/data.xml' },
+    { key: 'estranky:comments', template: '{scheme}://{host}/rss/comments/data.xml' },
+    {
+      key: 'estranky:homepage-slice',
+      template: '{scheme}://{host}/rss/slices/l/homepage/data.xml',
+    },
+    {
+      key: 'estranky:homepage-slice',
+      template: '{scheme}://{host}/rss/{language}/slices/l/homepage/data.xml',
+    },
+    { key: 'estranky:photos-slice', template: '{scheme}://{host}/rss/slices/l/photos/data.xml' },
+    {
+      key: 'estranky:photos-slice',
+      template: '{scheme}://{host}/rss/{language}/slices/l/photos/data.xml',
+    },
+  ],
+  { domains },
+)
 
 // Every template loads its stylesheet and `ui.js` from the asset hosts, on a custom domain too.
 export const isEstrankyHtml = (content: string): boolean => {
@@ -72,19 +99,28 @@ export const estrankyHandler: PlatformHandler = {
   // 404 on a set it lacks. Its `photos.xml` and `comments.xml` links serve the posts feed.
   resolve: (url, content) => {
     const { origin, sliceOrigin } = getEstrankyPage(url, content)
+    const site = new URL(origin)
+    const slice = new URL(sliceOrigin)
+    const siteParams = { scheme: site.protocol.slice(0, -1), host: site.host }
+    const sliceParams = { scheme: slice.protocol.slice(0, -1), host: slice.host }
 
     return [
-      { uri: `${origin}/rss/articles/data.xml`, hint: composeHint('estranky:posts') },
-      { uri: `${origin}/rss/photos/data.xml`, hint: composeHint('estranky:photos') },
-      { uri: `${origin}/rss/comments/data.xml`, hint: composeHint('estranky:comments') },
-      {
-        uri: `${sliceOrigin}/rss/slices/l/homepage/data.xml`,
-        hint: composeHint('estranky:homepage-slice'),
-      },
-      {
-        uri: `${sliceOrigin}/rss/slices/l/photos/data.xml`,
-        hint: composeHint('estranky:photos-slice'),
-      },
+      feeds.getFeedEntry('estranky:posts', siteParams),
+      feeds.getFeedEntry('estranky:photos', siteParams),
+      feeds.getFeedEntry('estranky:comments', siteParams),
+      feeds.getFeedEntry('estranky:homepage-slice', sliceParams),
+      feeds.getFeedEntry('estranky:photos-slice', sliceParams),
     ]
+  },
+
+  // A custom domain is known only by its markers, so its feeds are built but not claimed. The
+  // table reads any host under the domains, so the page parser refuses the apex and www first,
+  // where Estranky runs itself and a feed path answers 500.
+  getFeedKey: (url) => {
+    if (!parseEstrankyUrl(url)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
