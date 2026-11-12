@@ -45,5 +45,5 @@ export const buzzsproutHandler: PlatformHandler = {
     return [feeds.getFeedEntry('buzzsprout:podcast', { podcastId: parsed.podcastId })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

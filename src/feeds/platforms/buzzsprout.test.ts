@@ -80,52 +80,52 @@ describe('buzzsproutHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the podcast key for a podcast feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for a podcast feed', () => {
       const value = 'https://rss.buzzsprout.com/1016149.rss'
-      const expected = 'buzzsprout:podcast'
+      const expected: DiscoverUriHint = { key: 'buzzsprout:podcast', label: 'Podcast' }
 
-      expect(buzzsproutHandler.getFeedKey?.(value)).toBe(expected)
+      expect(buzzsproutHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a podcast feed over http', () => {
+    it('should return the podcast hint for a podcast feed over http', () => {
       const value = 'http://rss.buzzsprout.com/1097498.rss'
-      const expected = 'buzzsprout:podcast'
+      const expected: DiscoverUriHint = { key: 'buzzsprout:podcast', label: 'Podcast' }
 
-      expect(buzzsproutHandler.getFeedKey?.(value)).toBe(expected)
+      expect(buzzsproutHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a podcast feed on the feeds host', () => {
+    it('should return the podcast hint for a podcast feed on the feeds host', () => {
       const value = 'https://feeds.buzzsprout.com/12345.rss'
-      const expected = 'buzzsprout:podcast'
+      const expected: DiscoverUriHint = { key: 'buzzsprout:podcast', label: 'Podcast' }
 
-      expect(buzzsproutHandler.getFeedKey?.(value)).toBe(expected)
+      expect(buzzsproutHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a podcast feed on the apex host', () => {
+    it('should return the podcast hint for a podcast feed on the apex host', () => {
       const value = 'https://buzzsprout.com/12345.rss'
-      const expected = 'buzzsprout:podcast'
+      const expected: DiscoverUriHint = { key: 'buzzsprout:podcast', label: 'Podcast' }
 
-      expect(buzzsproutHandler.getFeedKey?.(value)).toBe(expected)
+      expect(buzzsproutHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a podcast feed on the www host', () => {
+    it('should return the podcast hint for a podcast feed on the www host', () => {
       const value = 'https://www.buzzsprout.com/12345.rss'
-      const expected = 'buzzsprout:podcast'
+      const expected: DiscoverUriHint = { key: 'buzzsprout:podcast', label: 'Podcast' }
 
-      expect(buzzsproutHandler.getFeedKey?.(value)).toBe(expected)
+      expect(buzzsproutHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a podcast page', () => {
       const value = 'https://www.buzzsprout.com/1016149'
 
-      expect(buzzsproutHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(buzzsproutHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/1016149.rss'
 
-      expect(buzzsproutHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(buzzsproutHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
