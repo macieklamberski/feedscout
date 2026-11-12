@@ -256,6 +256,13 @@ describe('jiraHandler', () => {
       expect(jiraHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the site key for a site activity feed', () => {
+      const value = 'https://alice.atlassian.net/activity'
+      const expected = 'jira:site'
+
+      expect(jiraHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the project key for a project feed with a trailing slash', () => {
       const value = 'https://dcosjira.atlassian.net/plugins/servlet/streams/?key=DCOS'
       const expected = 'jira:project'
@@ -325,6 +332,7 @@ describe('jiraHandler', () => {
         'https://dcosjira.atlassian.net/plugins/servlet/streams',
         { key: 'jira:site', label: 'Site activity' },
       ],
+      ['https://alice.atlassian.net/activity', { key: 'jira:site', label: 'Site activity' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

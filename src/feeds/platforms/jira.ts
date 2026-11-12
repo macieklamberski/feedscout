@@ -30,6 +30,7 @@ const feeds = definePlatformFeeds([
   },
   { key: 'jira:project', template: 'https://{tenant}.atlassian.net/activity?key={key}' },
   { key: 'jira:site', template: 'https://{tenant}.atlassian.net/plugins/servlet/streams' },
+  { key: 'jira:site', template: 'https://{tenant}.atlassian.net/activity' },
 ])
 
 const isCloudHost = (url: string): boolean => {
