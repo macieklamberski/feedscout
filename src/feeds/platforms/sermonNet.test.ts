@@ -208,57 +208,57 @@ describe('sermonNetHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the channel key for the audio feed of a channel', () => {
+  describe('getFeedHint', () => {
+    it('should return the channel hint for the audio feed of a channel', () => {
       const value = 'https://example.sermon.net/rss/sermons/audio'
-      const expected = 'sermon-net:channel'
+      const expected: DiscoverUriHint = { key: 'sermon-net:channel', label: 'Channel podcast' }
 
-      expect(sermonNetHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sermonNetHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the channel key for a channel with an escaped slash', () => {
+    it('should return the channel hint for a channel with an escaped slash', () => {
       const value = 'https://example.sermon.net/rss/main%2Fextra/audio'
-      const expected = 'sermon-net:channel'
+      const expected: DiscoverUriHint = { key: 'sermon-net:channel', label: 'Channel podcast' }
 
-      expect(sermonNetHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sermonNetHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the church key for the church feed', () => {
+    it('should return the church hint for the church feed', () => {
       const value = 'https://example.sermon.net/rss'
-      const expected = 'sermon-net:church'
+      const expected: DiscoverUriHint = { key: 'sermon-net:church', label: 'Church' }
 
-      expect(sermonNetHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sermonNetHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the church key for the church feed over http', () => {
+    it('should return the church hint for the church feed over http', () => {
       const value = 'http://example.sermon.net/rss'
-      const expected = 'sermon-net:church'
+      const expected: DiscoverUriHint = { key: 'sermon-net:church', label: 'Church' }
 
-      expect(sermonNetHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sermonNetHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a channel page', () => {
       const value = 'https://example.sermon.net/main/sermons'
 
-      expect(sermonNetHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sermonNetHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the video feed of a channel', () => {
       const value = 'https://example.sermon.net/rss/sermons/video'
 
-      expect(sermonNetHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sermonNetHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the audio and PDF feed of a channel', () => {
       const value = 'https://example.sermon.net/rss/sermons/audio_pdf'
 
-      expect(sermonNetHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sermonNetHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the church feed path on the www host', () => {
       const value = 'https://www.sermon.net/rss'
 
-      expect(sermonNetHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sermonNetHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

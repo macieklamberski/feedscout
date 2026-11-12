@@ -97,5 +97,5 @@ export const sermonNetHandler: PlatformHandler = {
     return [feeds.getFeedEntry('sermon-net:church', { tenant })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
