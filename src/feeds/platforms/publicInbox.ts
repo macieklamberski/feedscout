@@ -1,5 +1,6 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker } from '../../common/utils.js'
 
@@ -18,6 +19,13 @@ const fileRegex = /\.(?:html?|txt|json|xml|ico)$/i
 
 // The core navigation links help relative to the page, one `../` per level below the inbox root.
 const helpLinkRegex = /href="((?:\.\.\/)*)_\/text\/help\/?"/i
+
+// A self-hosted inbox can sit at any depth below its host, which no row holds, so its feeds are
+// built from the inbox URL and not claimed.
+const feeds = definePlatformFeeds([
+  { key: 'public-inbox:messages', template: 'https://lore.kernel.org/{inbox}/new.atom' },
+  { key: 'public-inbox:thread', template: 'https://lore.kernel.org/{inbox}/{messageId}/t.atom' },
+])
 
 export const isPublicInboxHtml = (content: string): boolean => {
   return helpLinkRegex.test(content) && content.includes('_/text/color')
@@ -76,6 +84,20 @@ export const publicInboxHandler: PlatformHandler = {
       return []
     }
 
+    const [inbox] = getPathSegments(page.inboxUrl)
+
+    if (inbox && isHostOf(page.inboxUrl, hosts)) {
+      const inboxEntry = feeds.getFeedEntry('public-inbox:messages', { inbox })
+
+      if (page.kind === 'message') {
+        const params = { inbox, messageId: page.messageId }
+
+        return [feeds.getFeedEntry('public-inbox:thread', params), inboxEntry]
+      }
+
+      return [inboxEntry]
+    }
+
     const inboxFeed: DiscoverUriEntry = {
       uri: `${page.inboxUrl}new.atom`,
       hint: composeHint('public-inbox:messages'),
@@ -93,4 +115,6 @@ export const publicInboxHandler: PlatformHandler = {
 
     return [inboxFeed]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }

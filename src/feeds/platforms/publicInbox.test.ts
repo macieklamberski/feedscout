@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   getPublicInboxPage,
   isPublicInboxHtml,
@@ -273,8 +275,149 @@ describe('publicInboxHandler', () => {
       expect(publicInboxHandler.resolve(value, anubisHtml)).toEqual(expected)
     })
 
+    it('should return the inbox feed for a lore.kernel.org list page', () => {
+      const value = 'https://lore.kernel.org/example/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://lore.kernel.org/example/new.atom',
+          hint: { key: 'public-inbox:messages', label: 'Messages' },
+        },
+      ]
+
+      expect(publicInboxHandler.resolve(value, anubisHtml)).toEqual(expected)
+    })
+
+    it('should return the thread and inbox feeds for a self-hosted message page', () => {
+      const value = 'https://lore.example.org/example/20260101000000.12345-1-alice@example.com/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://lore.example.org/example/20260101000000.12345-1-alice@example.com/t.atom',
+          hint: { key: 'public-inbox:thread', label: 'Thread' },
+        },
+        {
+          uri: 'https://lore.example.org/example/new.atom',
+          hint: { key: 'public-inbox:messages', label: 'Messages' },
+        },
+      ]
+
+      expect(publicInboxHandler.resolve(value, messageHtml)).toEqual(expected)
+    })
+
+    it('should return https feeds for a lore.kernel.org page over http', () => {
+      const value = 'http://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/t.atom',
+          hint: { key: 'public-inbox:thread', label: 'Thread' },
+        },
+        {
+          uri: 'https://lore.kernel.org/example/new.atom',
+          hint: { key: 'public-inbox:messages', label: 'Messages' },
+        },
+      ]
+
+      expect(publicInboxHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the scheme of a self-hosted inbox over http', () => {
+      const value = 'http://lore.example.org/example/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://lore.example.org/example/new.atom',
+          hint: { key: 'public-inbox:messages', label: 'Messages' },
+        },
+      ]
+
+      expect(publicInboxHandler.resolve(value, inboxHtml)).toEqual(expected)
+    })
+
     it('should return empty array for a page that does not parse', () => {
       expect(publicInboxHandler.resolve('https://example.com/', anubisHtml)).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the messages key for the inbox feed', () => {
+      const value = 'https://lore.kernel.org/example/new.atom'
+      const expected = 'public-inbox:messages'
+
+      expect(publicInboxHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the messages key for the inbox feed over http', () => {
+      const value = 'http://lore.kernel.org/example/new.atom'
+      const expected = 'public-inbox:messages'
+
+      expect(publicInboxHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the thread key for the thread feed', () => {
+      const value =
+        'https://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/t.atom'
+      const expected = 'public-inbox:thread'
+
+      expect(publicInboxHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the thread key for a thread feed with a percent-encoded message id', () => {
+      const value =
+        'https://lore.kernel.org/example/alice%2Fexample%2Fissues%2F1%2F12345@github.com/t.atom'
+      const expected = 'public-inbox:thread'
+
+      expect(publicInboxHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the thread key for a thread feed with an encoded-word message id', () => {
+      const value =
+        'https://lore.kernel.org/example/=%3Futf-8%3Fq%3F=3C12345=2Egit=2Ealice=40example=2Ecom=3E%3F=/t.atom'
+      const expected = 'public-inbox:thread'
+
+      expect(publicInboxHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for an inbox page', () => {
+      const value = 'https://lore.kernel.org/example/'
+
+      expect(publicInboxHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a message page', () => {
+      const value = 'https://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/'
+
+      expect(publicInboxHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the inbox feed of a self-hosted inbox', () => {
+      const value = 'https://lore.example.org/example/new.atom'
+
+      expect(publicInboxHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const messagesHint: DiscoverUriHint = { key: 'public-inbox:messages', label: 'Messages' }
+    const threadHint: DiscoverUriHint = { key: 'public-inbox:thread', label: 'Thread' }
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://lore.kernel.org/example/new.atom/', messagesHint],
+      [
+        'https://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/t.atom',
+        threadHint,
+      ],
+      [
+        'http://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/t.atom',
+        threadHint,
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [publicInboxHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
