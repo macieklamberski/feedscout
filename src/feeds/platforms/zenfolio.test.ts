@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   isZenfolioHeaders,
   isZenfolioHtml,
@@ -152,6 +154,86 @@ describe('zenfolioHandler', () => {
 
     it('should return empty array for a URL that does not parse', () => {
       expect(zenfolioHandler.resolve('not-a-url')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    const feedKeys: Array<[string, string]> = [
+      ['https://ctcphotography.zenfolio.com/recent.rss', 'zenfolio:recent'],
+      ['https://ctcphotography.zenfolio.com/recent.atom', 'zenfolio:recent'],
+      ['https://ctcphotography.zenfolio.com/featured.rss', 'zenfolio:featured'],
+      ['https://ctcphotography.zenfolio.com/featured.atom', 'zenfolio:featured'],
+      ['https://ctcphotography.zenfolio.com/blog.rss', 'zenfolio:blog'],
+      ['https://ctcphotography.zenfolio.com/blog.atom', 'zenfolio:blog'],
+      ['http://ctcphotography.zenfolio.com/recent.rss', 'zenfolio:recent'],
+    ]
+
+    it.each(feedKeys)('should return the key for %s', (value, expected) => {
+      expect(zenfolioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a site page', () => {
+      const value = 'https://ctcphotography.zenfolio.com/p411800779'
+
+      expect(zenfolioHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://zenfolio.com/blog.rss'
+
+      expect(zenfolioHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www host', () => {
+      const value = 'https://www.zenfolio.com/recent.rss'
+
+      expect(zenfolioHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://photos.example.zenfolio.com/recent.rss'
+
+      expect(zenfolioHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://www.jennypodesta.com/recent.rss'
+
+      expect(zenfolioHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriEntry['hint']]> = [
+      [
+        'https://ctcphotography.zenfolio.com/recent.rss',
+        { key: 'zenfolio:recent', label: 'Recent galleries' },
+      ],
+      [
+        'https://ctcphotography.zenfolio.com/recent.atom',
+        { key: 'zenfolio:recent', label: 'Recent galleries' },
+      ],
+      [
+        'https://ctcphotography.zenfolio.com/featured.rss',
+        { key: 'zenfolio:featured', label: 'Featured galleries' },
+      ],
+      [
+        'https://ctcphotography.zenfolio.com/featured.atom',
+        { key: 'zenfolio:featured', label: 'Featured galleries' },
+      ],
+      ['https://ctcphotography.zenfolio.com/blog.rss', { key: 'zenfolio:blog', label: 'Blog' }],
+      ['https://ctcphotography.zenfolio.com/blog.atom', { key: 'zenfolio:blog', label: 'Blog' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [zenfolioHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
