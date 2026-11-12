@@ -1,7 +1,7 @@
 import { getPathSegments } from 'trousse'
-import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -11,6 +11,13 @@ const domains = ['squarespace.com']
 
 const squarespaceRegex = /squarespace/i
 
+const feeds = definePlatformFeeds(
+  [{ key: 'squarespace:collection', template: '{scheme}://{host}/{collection}?format=rss' }],
+  { domains },
+)
+
+// A site on its own domain is known only by its marker, so only a feed on a squarespace.com site
+// is claimed.
 const ownFeeds = definePlatformFeeds(
   [
     {
@@ -18,12 +25,6 @@ const ownFeeds = definePlatformFeeds(
       template: '{scheme}://{site}.{domain}/{collection}?format=rss',
     },
   ],
-  { domains },
-)
-
-// A site on its own domain is known only by its marker, so its feeds are built but not claimed.
-const siteFeeds = definePlatformFeeds(
-  [{ key: 'squarespace:collection', template: '{scheme}://{host}/{collection}?format=rss' }],
   { domains },
 )
 
@@ -52,20 +53,13 @@ export const squarespaceHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseSquarespaceUrl(url)
-    const site = getTenantSubdomain(url, domains)
-    const page = site ? ownFeeds.forUrl(url) : siteFeeds.forUrl(url)
+    const page = feeds.forUrl(url)
 
     if (!parsed || !page) {
       return []
     }
 
-    const params: PlatformFeedParams = { collection: parsed.collection }
-
-    if (site) {
-      params.site = site
-    }
-
-    return [page.getFeedEntry('squarespace:collection', params)]
+    return [page.getFeedEntry('squarespace:collection', { collection: parsed.collection })]
   },
 
   getFeedHint: ownFeeds.getFeedHint,
