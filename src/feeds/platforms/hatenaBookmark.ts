@@ -78,6 +78,10 @@ const feeds = definePlatformFeeds([
   },
   { key: 'hatena-bookmark:search', template: 'https://b.hatena.ne.jp/q/{query}?mode=rss' },
   { key: 'hatena-bookmark:bookmarks', template: 'https://b.hatena.ne.jp/{username}/bookmark.rss' },
+  {
+    key: 'hatena-bookmark:user-tag',
+    template: 'https://b.hatena.ne.jp/{username}/bookmark.rss?tag={tag}',
+  },
 ])
 
 const copySearchFilters = (

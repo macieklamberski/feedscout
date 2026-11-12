@@ -505,8 +505,8 @@ describe('hatenaBookmarkHandler', () => {
         { key: 'hatena-bookmark:bookmarks', label: 'Bookmarks' },
       ],
       [
-        'https://b.hatena.ne.jp/efcl/bookmark.rss?tag=atom',
-        { key: 'hatena-bookmark:bookmarks', label: 'Bookmarks' },
+        'https://b.hatena.ne.jp/alice/bookmark.rss?tag=atom',
+        { key: 'hatena-bookmark:user-tag', label: 'User tag' },
       ],
     ]
 
@@ -553,6 +553,7 @@ describe('hatenaBookmarkHandler', () => {
     const search: DiscoverUriHint = { key: 'hatena-bookmark:search', label: 'Search' }
     const site: DiscoverUriHint = { key: 'hatena-bookmark:site', label: 'Site' }
     const bookmarks: DiscoverUriHint = { key: 'hatena-bookmark:bookmarks', label: 'Bookmarks' }
+    const userTag: DiscoverUriHint = { key: 'hatena-bookmark:user-tag', label: 'User tag' }
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://b.hatena.ne.jp/hotentry.rss', hot],
       ['https://b.hatena.ne.jp/hotentry/all.rss', hot],
@@ -570,9 +571,10 @@ describe('hatenaBookmarkHandler', () => {
       ['https://b.hatena.ne.jp/site/blog.livedoor.jp/nwknews?mode=rss', site],
       ['https://b.hatena.ne.jp/site/bookmark.rss', bookmarks],
       [
-        'https://b.hatena.ne.jp/yukatti/bookmark.rss?tag=%E4%BD%90%E8%97%A4%E4%BA%9C%E7%B4%80',
-        bookmarks,
+        'https://b.hatena.ne.jp/alice/bookmark.rss?tag=%E4%BD%90%E8%97%A4%E4%BA%9C%E7%B4%80',
+        userTag,
       ],
+      ['http://b.hatena.ne.jp/alice/bookmark.rss?tag=example', userTag],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

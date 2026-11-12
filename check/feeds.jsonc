@@ -692,7 +692,8 @@
     "hatena-bookmark:new": "https://b.hatena.ne.jp/entrylist.rss",
     "hatena-bookmark:new-category": "https://b.hatena.ne.jp/entrylist/game.rss",
     "hatena-bookmark:search": "https://b.hatena.ne.jp/q/rss?mode=rss",
-    "hatena-bookmark:site": "https://b.hatena.ne.jp/site/example.com?mode=rss"
+    "hatena-bookmark:site": "https://b.hatena.ne.jp/site/example.com?mode=rss",
+    "hatena-bookmark:user-tag": "https://b.hatena.ne.jp/efcl/bookmark.rss?tag=javascript"
   },
   "hatenaFotolife": {
     "hatena-fotolife:folder": "https://f.hatena.ne.jp/silver_dragon/anime/rss",
