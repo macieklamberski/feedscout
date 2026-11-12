@@ -103,44 +103,44 @@ describe('smeBlogHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for a blog feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a blog feed', () => {
       const value = 'https://blog.sme.sk/alice/rss'
-      const expected = 'sme-blog:posts'
+      const expected: DiscoverUriHint = { key: 'sme-blog:posts', label: 'Posts' }
 
-      expect(smeBlogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(smeBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the site key for the site feed', () => {
+    it('should return the site hint for the site feed', () => {
       const value = 'https://blog.sme.sk/rss'
-      const expected = 'sme-blog:site'
+      const expected: DiscoverUriHint = { key: 'sme-blog:site', label: 'Site' }
 
-      expect(smeBlogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(smeBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the site key for the site feed with a query', () => {
+    it('should return the site hint for the site feed with a query', () => {
       const value = 'https://blog.sme.sk/rss?vr=1'
-      const expected = 'sme-blog:site'
+      const expected: DiscoverUriHint = { key: 'sme-blog:site', label: 'Site' }
 
-      expect(smeBlogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(smeBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://blog.sme.sk/alice'
 
-      expect(smeBlogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(smeBlogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a post', () => {
       const value = 'https://blog.sme.sk/alice/politika/example-post'
 
-      expect(smeBlogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(smeBlogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/alice/rss'
 
-      expect(smeBlogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(smeBlogHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

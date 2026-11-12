@@ -46,5 +46,5 @@ export const smeBlogHandler: PlatformHandler = {
     return [feeds.getFeedEntry('sme-blog:site')]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
