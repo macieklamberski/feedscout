@@ -1,11 +1,18 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type TistoryUrl = { kind: 'blog' }
 
 const domains = ['tistory.com']
+
+const feeds = definePlatformFeeds([
+  { key: 'tistory:blog', template: '{scheme}://{blog}.tistory.com/rss' },
+  { key: 'tistory:blog', template: '{scheme}://{blog}.tistory.com/feed' },
+  { key: 'tistory:blog', template: '{scheme}://{blog}.tistory.com/index.xml' },
+])
 
 export const parseTistoryUrl = (url: string): TistoryUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -21,14 +28,16 @@ export const tistoryHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsed = parseTistoryUrl(url)
+    const blog = getTenantSubdomain(url, domains)
 
-    if (!parsed) {
+    if (!blog) {
       return []
     }
 
-    const { origin } = new URL(url)
+    const scheme = new URL(url).protocol.slice(0, -1)
 
-    return [{ uri: `${origin}/rss`, hint: composeHint('tistory:blog') }]
+    return [feeds.getFeedEntry('tistory:blog', { scheme, blog })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
