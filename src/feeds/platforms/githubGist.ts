@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers gist, publicGists, starred, user (guess, html).
@@ -19,6 +19,15 @@ const feedSuffixRegex = /\.atom$/i
 
 const forksSections = ['forks', 'forked']
 
+// GitHub serves `/{username}/forks.atom` as the user's own gists, and the forked gists only at
+// `/{username}/forked.atom`.
+const feeds = definePlatformFeeds([
+  { key: 'github-gist:discover', template: 'https://gist.github.com/discover.atom' },
+  { key: 'github-gist:starred', template: 'https://gist.github.com/{username}/starred.atom' },
+  { key: 'github-gist:forks', template: 'https://gist.github.com/{username}/forked.atom' },
+  { key: 'github-gist:gists', template: 'https://gist.github.com/{username}.atom' },
+])
+
 // A gist page, /{username}/{gist-id}, and the /public and /secret listings belong to the
 // user's gists.
 export const parseGithubGistUrl = (url: string): GithubGistUrl | undefined => {
@@ -31,10 +40,7 @@ export const parseGithubGistUrl = (url: string): GithubGistUrl | undefined => {
     return { kind: 'discover' }
   }
 
-  const [first, second, ...rest] = getPathSegments(url)
-  const username = second ? first : first?.replace(feedSuffixRegex, '')
-  // The starred and forked feed URLs, such as /{username}/starred.atom, name their page too.
-  const section = second?.replace(feedSuffixRegex, '')
+  const [username, section, ...rest] = getPathSegments(url)
 
   // GitHub names carry no dots, so a dotted segment such as robots.txt is a file of the site.
   if (!username || username.includes('.')) {
@@ -65,39 +71,30 @@ export const githubGistHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'discover') {
-      return [
-        {
-          uri: 'https://gist.github.com/discover.atom',
-          hint: composeHint('github-gist:discover'),
-        },
-      ]
+      return [feeds.getFeedEntry('github-gist:discover')]
     }
 
     if (parsed.kind === 'starred') {
-      return [
-        {
-          uri: `https://gist.github.com/${parsed.username}/starred.atom`,
-          hint: composeHint('github-gist:starred'),
-        },
-      ]
+      return [feeds.getFeedEntry('github-gist:starred', { username: parsed.username })]
     }
 
-    // GitHub serves `/{username}/forks.atom` as the user's own gists, and the forked
-    // gists only at `/{username}/forked.atom`.
     if (parsed.kind === 'forks') {
-      return [
-        {
-          uri: `https://gist.github.com/${parsed.username}/forked.atom`,
-          hint: composeHint('github-gist:forks'),
-        },
-      ]
+      return [feeds.getFeedEntry('github-gist:forks', { username: parsed.username })]
     }
 
-    return [
-      {
-        uri: `https://gist.github.com/${parsed.username}.atom`,
-        hint: composeHint('github-gist:gists'),
-      },
-    ]
+    return [feeds.getFeedEntry('github-gist:gists', { username: parsed.username })]
+  },
+
+  getFeedKey: (url) => {
+    const [name, section] = getPathSegments(url)
+    const username = section ? name : name?.replace(feedSuffixRegex, '')
+
+    // GitHub names carry no dots, and /discover is the site's page, so /discover/starred.atom
+    // names no user.
+    if (!username || username.includes('.') || (section && isAnyOf(username, 'discover'))) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
