@@ -152,8 +152,21 @@ describe('libsynHandler', () => {
       expect(libsynHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a show page without the feed path', () => {
+    it('should return the podcast key for a show feed without the feed path', () => {
       const value = 'https://feeds.libsyn.com/12345'
+      const expected = 'libsyn:podcast'
+
+      expect(libsynHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for another feed under a show', () => {
+      const value = 'https://feeds.libsyn.com/12345/last100'
+
+      expect(libsynHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a file on the feeds host', () => {
+      const value = 'https://feeds.libsyn.com/robots.txt'
 
       expect(libsynHandler.getFeedKey?.(value)).toBeUndefined()
     })
@@ -188,6 +201,7 @@ describe('libsynHandler', () => {
     const values = [
       'https://feeds.libsyn.com/12345/rss',
       'http://feeds.libsyn.com/12345/rss',
+      'https://feeds.libsyn.com/12345/',
       'https://alice.libsyn.com/rss',
       'https://alice.libsyn.com/rss/',
       'http://alice.libsyn.com/rss',

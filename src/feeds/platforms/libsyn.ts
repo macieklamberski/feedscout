@@ -12,6 +12,7 @@ const feedHosts = ['feeds.libsyn.com']
 
 const feeds = definePlatformFeeds([
   { key: 'libsyn:podcast', template: 'https://feeds.libsyn.com/{showId}/rss' },
+  { key: 'libsyn:podcast', template: 'https://feeds.libsyn.com/{showId}' },
   { key: 'libsyn:podcast', template: 'https://{slug}.libsyn.com/rss' },
 ])
 
