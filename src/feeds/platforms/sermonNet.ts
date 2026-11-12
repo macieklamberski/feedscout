@@ -20,10 +20,13 @@ const domains = ['sermon.net']
 // one the church owns serves a feed.
 const channelRegex = /"is_series":(?:false|true),"url":"([^"]+)"/g
 
-const feeds = definePlatformFeeds([
-  { key: 'sermon-net:channel', template: 'https://{tenant}.sermon.net/rss/{channel}/audio' },
-  { key: 'sermon-net:church', template: 'https://{tenant}.sermon.net/rss' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'sermon-net:channel', template: '{scheme}://{host}/rss/{channel}/audio' },
+    { key: 'sermon-net:church', template: '{scheme}://{host}/rss' },
+  ],
+  { domains },
+)
 
 export const parseSermonNetUrl = (url: string): SermonNetUrl | undefined => {
   const tenant = getTenantSubdomain(url, domains)
@@ -75,26 +78,25 @@ export const sermonNetHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getSermonNetPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { tenant } = page
-
     if (page.kind === 'channel') {
-      return [feeds.getFeedEntry('sermon-net:channel', { tenant, channel: page.channel })]
+      return [pageFeeds.getFeedEntry('sermon-net:channel', { channel: page.channel })]
     }
 
     if (page.channels.length > 0) {
       // The channel is page text, which can hold a `/`, and the table escapes it.
       return page.channels.map((channel) => {
-        return feeds.getFeedEntry('sermon-net:channel', { tenant, channel })
+        return pageFeeds.getFeedEntry('sermon-net:channel', { channel })
       })
     }
 
     // A church whose media was removed lists no channel and still serves an empty feed here.
-    return [feeds.getFeedEntry('sermon-net:church', { tenant })]
+    return [pageFeeds.getFeedEntry('sermon-net:church')]
   },
 
   getFeedHint: feeds.getFeedHint,

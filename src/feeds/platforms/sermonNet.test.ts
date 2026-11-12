@@ -182,12 +182,12 @@ describe('sermonNetHandler', () => {
       expect(sermonNetHandler.resolve(value, content)).toEqual(expected)
     })
 
-    it('should return the https feed of a channel page opened over http', () => {
+    it('should keep the http scheme of a channel page opened over http', () => {
       const value = 'http://example.sermon.net/main/sermons'
       const content = 'var StudioAppData = {"allPlaylists":[{"is_series":true,"url":"sermons"}]};'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.sermon.net/rss/sermons/audio',
+          uri: 'http://example.sermon.net/rss/sermons/audio',
           hint: { key: 'sermon-net:channel', label: 'Channel podcast' },
         },
       ]
@@ -195,11 +195,11 @@ describe('sermonNetHandler', () => {
       expect(sermonNetHandler.resolve(value, content)).toEqual(expected)
     })
 
-    it('should return the https church feed of a church page opened over http', () => {
+    it('should keep the http scheme of a church page opened over http', () => {
       const value = 'http://example.sermon.net/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.sermon.net/rss',
+          uri: 'http://example.sermon.net/rss',
           hint: { key: 'sermon-net:church', label: 'Church' },
         },
       ]
