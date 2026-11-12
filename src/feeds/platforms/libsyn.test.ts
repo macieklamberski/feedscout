@@ -104,11 +104,11 @@ describe('libsynHandler', () => {
       expect(libsynHandler.resolve(value)).toEqual([])
     })
 
-    it('should return https feed URL for an http podcast page', () => {
+    it('should return the feed under the page scheme for an http podcast page', () => {
       const value = 'http://alice.libsyn.com/website'
       const expected = [
         {
-          uri: 'https://alice.libsyn.com/rss',
+          uri: 'http://alice.libsyn.com/rss',
           hint: { key: 'libsyn:podcast', label: 'Podcast' },
         },
       ]

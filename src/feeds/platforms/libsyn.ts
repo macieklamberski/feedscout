@@ -10,16 +10,19 @@ export type LibsynUrl = { kind: 'feed'; showId: string } | { kind: 'podcast'; sl
 const domains = ['libsyn.com']
 const feedHosts = ['feeds.libsyn.com']
 
-const feeds = definePlatformFeeds([
-  { key: 'libsyn:podcast', template: 'https://feeds.libsyn.com/{showId}/rss' },
-  { key: 'libsyn:podcast', template: 'https://feeds.libsyn.com/{showId}' },
-  { key: 'libsyn:podcast', template: 'https://{slug}.libsyn.com/rss' },
-  // Where feeds.libsyn.com/{showId}/rss redirects. The destination id is not in the show id.
-  {
-    key: 'libsyn:podcast',
-    template: 'https://rss.libsyn.com/shows/{showId}/destinations/{destinationId}.xml',
-  },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'libsyn:podcast', template: 'https://feeds.libsyn.com/{showId}/rss' },
+    { key: 'libsyn:podcast', template: 'https://feeds.libsyn.com/{showId}' },
+    { key: 'libsyn:podcast', template: '{scheme}://{host}/rss' },
+    // Where feeds.libsyn.com/{showId}/rss redirects. The destination id is not in the show id.
+    {
+      key: 'libsyn:podcast',
+      template: 'https://rss.libsyn.com/shows/{showId}/destinations/{destinationId}.xml',
+    },
+  ],
+  { domains },
+)
 
 export const parseLibsynUrl = (url: string): LibsynUrl | undefined => {
   const slug = getTenantSubdomain(url, domains)
@@ -59,7 +62,13 @@ export const libsynHandler: PlatformHandler = {
       return [feeds.getFeedEntry('libsyn:podcast', { showId: parsed.showId })]
     }
 
-    return [feeds.getFeedEntry('libsyn:podcast', { slug: parsed.slug })]
+    const page = feeds.forUrl(url)
+
+    if (!page) {
+      return []
+    }
+
+    return [page.getFeedEntry('libsyn:podcast')]
   },
 
   // The table reads any subdomain as a show, so the page parser refuses feeds.libsyn.com/rss,
