@@ -1,4 +1,5 @@
 import { getAnyOf, isAnyOf, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
+import type { DiscoverUriHint } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
@@ -34,6 +35,8 @@ const sortRegex = /^\/games\/([^/]+)/i
 // length: keeps a single-filter listing out
 const combinedListingRegex = /^\/games(?:\/[^/]+){2,}/i
 const combinedListingFeedRegex = /^\/games\/[^/]+\/.+\.xml\/?$/i
+// A listing of one sort and one tag or creator, such as /games/newest/tag-horror.
+const sortedListingRegex = /^\/games\/(?<sort>[^/]+)\/(?<filter>tag|by)-[^/.]+(?:\.xml)?\/?$/i
 const firstSegmentRegex = /^\/([^/]+)/
 const gamesRegex = /^\/games\/?$/i
 const devlogsRegex = /^\/devlogs\/?$/i
@@ -77,6 +80,22 @@ const feeds = definePlatformFeeds([
   { key: 'itchio:sales', template: 'https://itch.io/feed/sales.xml' },
   { key: 'itchio:section', template: 'https://itch.io/{section}.xml' },
 ])
+
+// A sort keeps the key of the listing it sorts, so a sorted tag or creator listing is that tag's
+// or creator's feed. A listing with any other filter is a games listing.
+const getListingHint = (path: string): DiscoverUriHint => {
+  const groups = sortedListingRegex.exec(path)?.groups
+
+  if (!groups || !getAnyOf(groups.sort, sorts)) {
+    return composeHint('itchio:games')
+  }
+
+  if (isAnyOf(groups.filter, 'tag')) {
+    return composeHint('itchio:tag')
+  }
+
+  return composeHint('itchio:creator')
+}
 
 export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
   if (!isHostOf(url, mainHosts) && !isSubdomainOf(url, domains)) {
@@ -204,7 +223,7 @@ export const itchioHandler: PlatformHandler = {
 
     // A listing has any number of filters, more path segments than a template placeholder holds.
     if (parsed.kind === 'listing') {
-      return [{ uri: `https://itch.io${parsed.path}.xml`, hint: composeHint('itchio:games') }]
+      return [{ uri: `https://itch.io${parsed.path}.xml`, hint: getListingHint(parsed.path) }]
     }
 
     if (parsed.kind === 'games' && parsed.sort) {
@@ -246,7 +265,7 @@ export const itchioHandler: PlatformHandler = {
     }
 
     if (isHostOf(parsedUrl, mainHosts) && combinedListingFeedRegex.test(parsedUrl.pathname)) {
-      return composeHint('itchio:games')
+      return getListingHint(parsedUrl.pathname)
     }
 
     const hint = feeds.getFeedHint(url)

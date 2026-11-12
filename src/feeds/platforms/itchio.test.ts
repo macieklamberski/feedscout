@@ -173,6 +173,30 @@ describe('itchioHandler', () => {
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the tag feed of a sorted tag listing', () => {
+      const value = 'https://itch.io/games/newest/tag-horror'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://itch.io/games/newest/tag-horror.xml',
+          hint: { key: 'itchio:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the creator feed of a sorted creator listing', () => {
+      const value = 'https://itch.io/games/newest/by-alice'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://itch.io/games/newest/by-alice.xml',
+          hint: { key: 'itchio:creator', label: 'Creator' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for a URL outside itch.io', () => {
       expect(itchioHandler.resolve('https://example.com/')).toEqual([])
     })
@@ -634,16 +658,30 @@ describe('itchioHandler', () => {
       expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the games hint for a listing feed with two filters', () => {
+    it('should return the tag hint for a sorted tag listing feed with a sort word', () => {
       const value = 'https://itch.io/games/newest/tag-horror.xml'
+      const expected: DiscoverUriHint = { key: 'itchio:tag', label: 'Tag' }
+
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a sorted tag listing feed', () => {
+      const value = 'https://itch.io/games/top-rated/tag-pixel-art.xml'
+      const expected: DiscoverUriHint = { key: 'itchio:tag', label: 'Tag' }
+
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the games hint for a tag listing feed with another filter', () => {
+      const value = 'https://itch.io/games/genre-puzzle/tag-pixel-art.xml'
       const expected: DiscoverUriHint = { key: 'itchio:games', label: 'Games' }
 
       expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the games hint for a listing feed with a creator filter', () => {
+    it('should return the creator hint for a sorted creator listing feed', () => {
       const value = 'https://itch.io/games/newest/by-alice.xml'
-      const expected: DiscoverUriHint = { key: 'itchio:games', label: 'Games' }
+      const expected: DiscoverUriHint = { key: 'itchio:creator', label: 'Creator' }
 
       expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -656,16 +694,16 @@ describe('itchioHandler', () => {
       expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the games hint for a listing feed with a capitalized games segment', () => {
+    it('should return the tag hint for a sorted tag listing feed with a capitalized games segment', () => {
       const value = 'https://itch.io/Games/newest/tag-horror.xml'
-      const expected: DiscoverUriHint = { key: 'itchio:games', label: 'Games' }
+      const expected: DiscoverUriHint = { key: 'itchio:tag', label: 'Tag' }
 
       expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the games hint for a listing feed with a trailing slash', () => {
+    it('should return the tag hint for a sorted tag listing feed with a trailing slash', () => {
       const value = 'https://itch.io/games/newest/tag-horror.xml/'
-      const expected: DiscoverUriHint = { key: 'itchio:games', label: 'Games' }
+      const expected: DiscoverUriHint = { key: 'itchio:tag', label: 'Tag' }
 
       expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -783,7 +821,13 @@ describe('itchioHandler', () => {
       ],
       ['https://itch.io/games/newest.xml', { key: 'itchio:games', label: 'Games' }],
       ['https://itch.io/games.xml', { key: 'itchio:games', label: 'Games' }],
-      ['https://itch.io/games/newest/tag-horror.xml', { key: 'itchio:games', label: 'Games' }],
+      ['https://itch.io/games/newest/tag-horror.xml', { key: 'itchio:tag', label: 'Tag' }],
+      ['http://www.itch.io/games/free/tag-anime.xml', { key: 'itchio:tag', label: 'Tag' }],
+      ['https://itch.io/games/newest/by-alice.xml', { key: 'itchio:creator', label: 'Creator' }],
+      [
+        'https://itch.io/games/newest/tag-horror/by-alice.xml',
+        { key: 'itchio:games', label: 'Games' },
+      ],
       [
         'https://itch.io/games/15-dollars-or-less/accessibility-highcontrast/genre-puzzle.xml',
         { key: 'itchio:games', label: 'Games' },
