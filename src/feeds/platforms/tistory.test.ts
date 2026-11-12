@@ -81,63 +81,63 @@ describe('tistoryHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the blog key for an RSS feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the blog hint for an RSS feed', () => {
       const value = 'https://alice.tistory.com/rss'
-      const expected = 'tistory:blog'
+      const expected: DiscoverUriHint = { key: 'tistory:blog', label: 'Blog' }
 
-      expect(tistoryHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tistoryHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for an http RSS feed', () => {
+    it('should return the blog hint for an http RSS feed', () => {
       const value = 'http://alice.tistory.com/rss'
-      const expected = 'tistory:blog'
+      const expected: DiscoverUriHint = { key: 'tistory:blog', label: 'Blog' }
 
-      expect(tistoryHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tistoryHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for the feed path', () => {
+    it('should return the blog hint for the feed path', () => {
       const value = 'https://alice.tistory.com/feed'
-      const expected = 'tistory:blog'
+      const expected: DiscoverUriHint = { key: 'tistory:blog', label: 'Blog' }
 
-      expect(tistoryHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tistoryHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for the index.xml path', () => {
+    it('should return the blog hint for the index.xml path', () => {
       const value = 'https://alice.tistory.com/index.xml'
-      const expected = 'tistory:blog'
+      const expected: DiscoverUriHint = { key: 'tistory:blog', label: 'Blog' }
 
-      expect(tistoryHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tistoryHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a post page', () => {
       const value = 'https://alice.tistory.com/123'
 
-      expect(tistoryHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tistoryHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the apex', () => {
       const value = 'https://tistory.com/rss'
 
-      expect(tistoryHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tistoryHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the www host', () => {
       const value = 'https://www.tistory.com/rss'
 
-      expect(tistoryHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tistoryHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on a nested subdomain', () => {
       const value = 'https://blog.alice.tistory.com/rss'
 
-      expect(tistoryHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tistoryHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/rss'
 
-      expect(tistoryHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tistoryHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

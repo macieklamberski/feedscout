@@ -39,5 +39,5 @@ export const tistoryHandler: PlatformHandler = {
     return [feeds.getFeedEntry('tistory:blog', { scheme, blog })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
