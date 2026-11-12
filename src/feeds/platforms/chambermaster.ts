@@ -1,7 +1,7 @@
-import { getPathSegments, getSubdomain, isAnyOf, isSubdomainOf } from 'trousse'
+import { getPathSegments, isAnyOf, isSubdomainOf } from 'trousse'
 import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -13,8 +13,9 @@ export type ChambermasterUrl = {
 // A chamber on its platform subdomain serves the feeds only over http. Over https every feed
 // redirects to the sign-in page.
 const domains = ['chambermaster.com', 'memberzone.com']
-// A preview host keeps the page's own scheme, and serves the feeds over both.
-const previewDomains = ['gochambermaster.com']
+// A preview host keeps the page's own scheme, and serves the feeds over both. It is one label
+// under gochambermaster.com or under its preview subdomain.
+const previewDomains = ['gochambermaster.com', 'preview.gochambermaster.com']
 
 // A custom domain is known only by its marker, so its feeds are built here but not claimed.
 const feeds = definePlatformFeeds(
@@ -138,14 +139,5 @@ export const chambermasterHandler: PlatformHandler = {
 
   // The table reads any host under the domains, so the apex and www, whose feeds answer 404 or
   // 500 or a page, are refused first. A preview host can nest, as in `example.preview`.
-  getFeedHint: (url) => {
-    const previewSubdomain = getSubdomain(url, previewDomains)
-    const isPreviewHost = previewSubdomain !== undefined && !isAnyOf(previewSubdomain, 'www')
-
-    if (!getTenantSubdomain(url, domains) && !isPreviewHost) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

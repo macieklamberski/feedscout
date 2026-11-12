@@ -368,8 +368,18 @@ describe('chambermasterHandler', () => {
       expect(chambermasterHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a feed on a nested chamber subdomain', () => {
+    it('should return the hint for a feed on www in front of a chamber', () => {
       const value = 'http://www.examplechamber.memberzone.com/Feed/rss/UpcomingEvents.rss'
+      const expected: DiscoverUriHint = {
+        key: 'chambermaster:upcoming-events',
+        label: 'Upcoming events',
+      }
+
+      expect(chambermasterHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a feed on a nested chamber subdomain', () => {
+      const value = 'http://app.examplechamber.memberzone.com/Feed/rss/UpcomingEvents.rss'
 
       expect(chambermasterHandler.getFeedHint?.(value)).toBeUndefined()
     })
