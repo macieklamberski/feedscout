@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   isProboardsHtml,
   type ProboardsUrl,
@@ -45,7 +47,7 @@ describe('parseProboardsUrl', () => {
   ]
 
   it.each(forumUrls)('should return the forum for %s', (value) => {
-    const expected: ProboardsUrl = { kind: 'forum' }
+    const expected: ProboardsUrl = { kind: 'forum', forum: 'example' }
 
     expect(parseProboardsUrl(value)).toEqual(expected)
   })
@@ -121,6 +123,82 @@ describe('proboardsHandler', () => {
       ]
 
       expect(proboardsHandler.resolve(value, coreScriptHtml)).toEqual(expected)
+    })
+
+    it('should return the https posts feed for a forum opened over http', () => {
+      const value = 'http://example.freeforums.net/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.freeforums.net/rss/public',
+          hint: { key: 'proboards:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(proboardsHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep http for the posts feed of a custom domain opened over http', () => {
+      const value = 'http://forum.example.com/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://forum.example.com/rss/public',
+          hint: { key: 'proboards:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(proboardsHandler.resolve(value, coreScriptHtml)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    const feedValues: Array<string> = [
+      'https://example.proboards.com/rss/public',
+      'https://example.freeforums.net/rss/public',
+      'https://example.boards.net/rss/public',
+      'http://example.proboards.com/rss/public',
+      'https://example.proboards.com/rss/public/',
+      'https://www.example.boards.net/rss/public',
+    ]
+
+    it.each(feedValues)('should return the posts key for %s', (value) => {
+      const expected = 'proboards:posts'
+
+      expect(proboardsHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    const otherValues: Array<string> = [
+      'https://example.proboards.com/',
+      'https://example.proboards.com/thread/71771/introductions',
+      'https://example.proboards.com/rss',
+      'https://proboards.com/rss/public',
+      'https://www.proboards.com/rss/public',
+      'https://m.example.boards.net/rss/public',
+      'https://forum.example.com/rss/public',
+    ]
+
+    it.each(otherValues)('should return undefined for %s', (value) => {
+      expect(proboardsHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const postsHint: DiscoverUriHint = { key: 'proboards:posts', label: 'Posts' }
+    const ownFeeds: Array<string> = [
+      'https://example.proboards.com/rss/public',
+      'http://example.freeforums.net/rss/public',
+      'https://example.boards.net/rss/public/',
+      'https://www.example.proboards.com/rss/public',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [proboardsHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint: postsHint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
