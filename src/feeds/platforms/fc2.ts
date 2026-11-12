@@ -44,17 +44,16 @@ export const fc2Handler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    if (!parseFc2Url(url)) {
+    const page = feeds.forUrl(url)
+
+    if (!parseFc2Url(url) || !page) {
       return []
     }
 
-    const { protocol, host } = new URL(url)
-    const params = { scheme: protocol.slice(0, -1), host }
-
     return [
-      feeds.getFeedEntry('fc2:posts', params),
-      feeds.getFeedEntry('fc2:comments', params),
-      feeds.getFeedEntry('fc2:trackbacks', params),
+      page.getFeedEntry('fc2:posts'),
+      page.getFeedEntry('fc2:comments'),
+      page.getFeedEntry('fc2:trackbacks'),
     ]
   },
 
