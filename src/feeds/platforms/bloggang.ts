@@ -17,9 +17,9 @@ const mobileHosts = ['m.bloggang.com']
 
 const scriptRegex = /^\/(\w+)\.php$/i
 
-const feeds = definePlatformFeeds([
-  { key: 'bloggang:posts', template: 'https://{username}.bloggang.com/rss' },
-])
+const feeds = definePlatformFeeds([{ key: 'bloggang:posts', template: '{scheme}://{host}/rss' }], {
+  domains,
+})
 
 export const parseBloggangUrl = (url: string): BloggangUrl | undefined => {
   const subdomain = getTenantSubdomain(url, domains)
@@ -61,12 +61,14 @@ export const bloggangHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseBloggangUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    return [feeds.getFeedEntry('bloggang:posts', { username: parsed.username })]
+    // A page on www names the blog in its query, so the feed host is built from the username.
+    return [page.getFeedEntry('bloggang:posts', { host: `${parsed.username}.bloggang.com` })]
   },
 
   // m.bloggang.com/rss redirects to www.bloggang.com/rss/, so only a blog host serves a feed.

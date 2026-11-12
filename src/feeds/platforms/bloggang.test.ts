@@ -101,6 +101,18 @@ describe('bloggangHandler', () => {
       expect(bloggangHandler.resolve('https://example.com/')).toEqual([])
     })
 
+    it('should keep the scheme of an http blog page', () => {
+      const value = 'http://www.bloggang.com/mainblog.php?id=gonga'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://gonga.bloggang.com/rss',
+          hint: { key: 'bloggang:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(bloggangHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the posts feed for a blog subdomain', () => {
       const value = 'https://gonga.bloggang.com/'
       const expected: Array<DiscoverUriEntry> = [
