@@ -106,11 +106,11 @@ describe('wixHandler', () => {
       expect(wixHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the https blog feed of a free site opened over http', () => {
+    it('should keep the http scheme of a free site opened over http', () => {
       const value = 'http://account.wixsite.com/mysite/post/hello'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://account.wixsite.com/mysite/blog-feed.xml',
+          uri: 'http://account.wixsite.com/mysite/blog-feed.xml',
           hint: { key: 'wix:blog', label: 'Blog' },
         },
       ]
