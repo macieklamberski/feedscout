@@ -85,11 +85,11 @@ describe('atyponHandler', () => {
       expect(atyponHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return an https feed for an http journal page', () => {
+    it('should keep the scheme of an http journal page', () => {
       const value = 'http://www.tandfonline.com/toc/tprs20/current'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://www.tandfonline.com/action/showFeed?type=etoc&feed=rss&jc=tprs20',
+          uri: 'http://www.tandfonline.com/action/showFeed?type=etoc&feed=rss&jc=tprs20',
           hint: { key: 'atypon:journal', label: 'Journal' },
         },
       ]

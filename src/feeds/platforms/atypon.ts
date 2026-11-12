@@ -30,9 +30,12 @@ const feeds = definePlatformFeeds(
   [
     {
       key: 'atypon:journal',
-      template: 'https://{host}/action/showFeed?type=etoc&feed=rss&jc={code}',
+      template: '{scheme}://{host}/action/showFeed?type=etoc&feed=rss&jc={code}',
     },
-    { key: 'atypon:journal', template: 'https://{host}/action/showFeed/feed?type=etoc&jc={code}' },
+    {
+      key: 'atypon:journal',
+      template: '{scheme}://{host}/action/showFeed/feed?type=etoc&jc={code}',
+    },
     { key: 'atypon:journal', template: 'https://www.tandfonline.com/feed/rss/{code}' },
     { key: 'atypon:journal', template: 'https://onlinelibrary.wiley.com/feed/{code}/most-recent' },
     {
@@ -65,16 +68,16 @@ export const atyponHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseAtyponUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { hostname } = new URL(url)
-    const uris = [feeds.getFeedEntry('atypon:journal', { host: hostname, code: parsed.code })]
+    const uris = [page.getFeedEntry('atypon:journal', { code: parsed.code })]
 
     if (parsed.isWiley) {
-      uris.push(feeds.getFeedEntry('atypon:most-cited', { code: parsed.code }))
+      uris.push(page.getFeedEntry('atypon:most-cited', { code: parsed.code }))
     }
 
     return uris
