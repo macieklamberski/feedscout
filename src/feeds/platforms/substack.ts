@@ -11,25 +11,52 @@ export type SubstackUrl = { kind: 'newsletter' } | { kind: 'profile'; username: 
 export type SubstackPage = { kind: 'newsletter' | 'profile'; origin: string }
 
 const domains = ['substack.com']
-// The app host names a publication in the path, so it is no publication itself.
-const appHosts = ['open.substack.com']
+// The app host names a publication in the path and the API host serves podcast feeds, so neither
+// is a publication itself.
+const appHosts = ['open.substack.com', 'api.substack.com']
 
 const profileRegex = /^\/@(?<username>[^/]+)/
 // A profile page embeds its primary publication as escaped JSON. The publication
 // subdomain is not always the handle, and a custom domain replaces it.
 const publicationRegex =
   /primaryPublication\\?":\{[^{}]*?\\?"subdomain\\?":\\?"(?<subdomain>[\w-]+)\\?",\\?"custom_domain\\?":(?:\\?"(?<customDomain>[^"\\]+)\\?"|null)/
+// A publication page embeds its own record, with the id its podcast feed is named by. A publication
+// without a podcast answers 404 there, so the id is read only when the podcast is on.
+const pubRecordRegex = /\\?"pub\\?":\{(?<record>[^{}]*)/
+const pubIdRegex = /\\?"id\\?":(?<pubId>\d+),/
+const podcastEnabledRegex = /\\?"podcast_enabled\\?":true\b/
 
 // A custom domain is read only from a profile page, so its feed is built here but not claimed.
-// The same feed answers at feed.xml and feed.rss.
+// The same feed answers at feed.xml and feed.rss. No page links a section's podcast or the Spotify
+// copy of a podcast, so those feeds are claimed but not built. The private feed of a paid podcast
+// carries a subscriber token, so it is neither.
 const feeds = definePlatformFeeds(
   [
     { key: 'substack:newsletter', template: '{scheme}://{host}/feed' },
     { key: 'substack:newsletter', template: '{scheme}://{host}/feed.xml' },
     { key: 'substack:newsletter', template: '{scheme}://{host}/feed.rss' },
+    { key: 'substack:podcast', template: 'https://api.substack.com/feed/podcast/{pubId}.rss' },
+    {
+      key: 'substack:podcast',
+      template: 'https://api.substack.com/feed/podcast/{pubId}/s/{sectionId}.rss',
+    },
+    {
+      key: 'substack:podcast',
+      template: 'https://api.substack.com/feed/podcast/spotify/{uuid}/{pubId}.rss',
+    },
   ],
   { domains },
 )
+
+const getPodcastPubId = (content: string | undefined): string | undefined => {
+  const record = content?.match(pubRecordRegex)?.groups?.record
+
+  if (!record || !podcastEnabledRegex.test(record)) {
+    return
+  }
+
+  return record.match(pubIdRegex)?.groups?.pubId
+}
 
 const getPublicationOrigin = (content: string | undefined): string | undefined => {
   const { subdomain, customDomain } = content?.match(publicationRegex)?.groups ?? {}
@@ -104,16 +131,26 @@ export const substackHandler: PlatformHandler = {
       return []
     }
 
-    return [pageFeeds.getFeedEntry('substack:newsletter')]
+    const newsletterFeed = pageFeeds.getFeedEntry('substack:newsletter')
+    const pubId = getPodcastPubId(content)
+
+    if (!pubId) {
+      return [newsletterFeed]
+    }
+
+    return [newsletterFeed, feeds.getFeedEntry('substack:podcast', { pubId })]
   },
 
-  // The table reads any host under substack.com, so the page parser refuses the apex and the app
-  // host first, whose /feed answers 404, and a nested subdomain, which fails its TLS handshake.
+  // The table reads any host under substack.com, so the page parser refuses a newsletter feed on
+  // the apex and the app hosts, whose /feed answers 404, and on a nested subdomain, which fails its
+  // TLS handshake.
   getFeedHint: (url) => {
-    if (!parseSubstackUrl(url)) {
+    const hint = feeds.getFeedHint(url)
+
+    if (hint?.key === 'substack:newsletter' && !parseSubstackUrl(url)) {
       return
     }
 
-    return feeds.getFeedHint(url)
+    return hint
   },
 }

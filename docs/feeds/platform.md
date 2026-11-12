@@ -115,14 +115,16 @@ Discovers RSS feeds for Medium user profiles, publications, tags, and subdomains
 
 ### Substack
 
-Discovers RSS feeds for Substack newsletters.
+Discovers RSS feeds for Substack newsletters and podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.substack.com` | Newsletter |
+| `*.substack.com` | Newsletter · podcast<sup>‡</sup> |
 | `substack.com/@{user}` | Newsletter<sup>†</sup>* |
 
 \* *The publication can differ from the handle and can sit on a custom domain. It is read from the page content when available, with the handle as the fallback.*
+
+<sup>‡</sup> *Requires HTML content, and only for a publication with a podcast.*
 
 <sup>†</sup> *Found only by the Platform method.*
 
