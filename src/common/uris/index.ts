@@ -10,7 +10,7 @@ import { discoverUrisFromFeed } from './feed/index.js'
 import { discoverUrisFromGuess } from './guess/index.js'
 import { discoverUrisFromHeaders } from './headers/index.js'
 import { discoverUrisFromHtml } from './html/index.js'
-import { discoverUrisFromPlatform, getFeedKey } from './platform/index.js'
+import { discoverUrisFromPlatform, getFeedHint } from './platform/index.js'
 import type { PlatformHandler } from './platform/types.js'
 
 // A guess is kept when no handler claims it as one of its feeds or the platform emitted it: a
@@ -22,7 +22,7 @@ const excludeGuesses = (
   platformUris: Array<string>,
 ): Array<UriEntry> => {
   const isKept = (uri: string) => {
-    return platformUris.includes(uri) || getFeedKey(handlers, uri) === undefined
+    return platformUris.includes(uri) || !getFeedHint(handlers, uri)
   }
 
   return guesses.flatMap((guess): Array<UriEntry> => {
