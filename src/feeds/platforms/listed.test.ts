@@ -86,6 +86,7 @@ describe('listedHandler', () => {
       ['https://listed.to/@alice/feed', 'listed:blog'],
       ['http://listed.to/@alice/feed.rss', 'listed:blog'],
       ['https://listed.to/@alice/feed/', 'listed:blog'],
+      ['https://listed.to/authors/12345/feed', 'listed:blog'],
     ]
 
     it.each(feedKeys)('should return the key of %s', (value, expected) => {
@@ -104,12 +105,6 @@ describe('listedHandler', () => {
       expect(listedHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for an author feed by numeric id', () => {
-      const value = 'https://listed.to/authors/12345/feed'
-
-      expect(listedHandler.getFeedKey?.(value)).toBeUndefined()
-    })
-
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/@alice/feed.rss'
 
@@ -123,6 +118,7 @@ describe('listedHandler', () => {
       'https://listed.to/@alice/feed',
       'http://listed.to/@alice/feed.rss',
       'https://listed.to/@alice/feed.rss/',
+      'https://listed.to/authors/12345/feed',
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value) => {

@@ -10,10 +10,11 @@ const hosts = ['listed.to', 'www.listed.to']
 
 const userRegex = /^\/@([^/]+)/
 
-// Listed serves the same feed at `/feed`, which its pages do not link.
+// Listed serves the same feed at `/feed` and, by numeric author id, at `/authors/{id}/feed`.
 const feeds = definePlatformFeeds([
   { key: 'listed:blog', template: 'https://listed.to/@{username}/feed.rss' },
   { key: 'listed:blog', template: 'https://listed.to/@{username}/feed' },
+  { key: 'listed:blog', template: 'https://listed.to/authors/{id}/feed' },
 ])
 
 export const parseListedUrl = (url: string): ListedUrl | undefined => {
