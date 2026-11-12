@@ -115,15 +115,15 @@ describe('exblogHandler', () => {
       expect(exblogHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return HTTPS feeds for an HTTP blog page', () => {
+    it('should keep the scheme of an HTTP blog page', () => {
       const value = 'http://example.exblog.jp/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.exblog.jp/index.xml',
+          uri: 'http://example.exblog.jp/index.xml',
           hint: { key: 'exblog:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://example.exblog.jp/atom.xml',
+          uri: 'http://example.exblog.jp/atom.xml',
           hint: { key: 'exblog:posts', label: 'Posts', format: 'atom' },
         },
       ]

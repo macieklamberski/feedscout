@@ -14,20 +14,23 @@ const domains = ['exblog.jp']
 
 const categoryRegex = /^\/i(\d+)(?:\/|$)/i
 
-const feeds = definePlatformFeeds([
-  {
-    key: 'exblog:category',
-    template: 'https://{blog}.exblog.jp/i{category}/index.xml',
-    format: 'rss',
-  },
-  {
-    key: 'exblog:category',
-    template: 'https://{blog}.exblog.jp/i{category}/atom.xml',
-    format: 'atom',
-  },
-  { key: 'exblog:posts', template: 'https://{blog}.exblog.jp/index.xml', format: 'rss' },
-  { key: 'exblog:posts', template: 'https://{blog}.exblog.jp/atom.xml', format: 'atom' },
-])
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'exblog:category',
+      template: '{scheme}://{host}/i{category}/index.xml',
+      format: 'rss',
+    },
+    {
+      key: 'exblog:category',
+      template: '{scheme}://{host}/i{category}/atom.xml',
+      format: 'atom',
+    },
+    { key: 'exblog:posts', template: '{scheme}://{host}/index.xml', format: 'rss' },
+    { key: 'exblog:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
+  ],
+  { domains },
+)
 
 export const parseExblogUrl = (url: string): ExblogUrl | undefined => {
   const blog = getTenantSubdomain(url, domains)
@@ -52,8 +55,9 @@ export const exblogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseExblogUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
@@ -61,17 +65,17 @@ export const exblogHandler: PlatformHandler = {
 
     // Category page: /i{N}.
     if (parsed.kind === 'category') {
-      const params = { blog: parsed.blog, category: parsed.category }
+      const params = { category: parsed.category }
 
       uris.push(
-        feeds.getFeedEntry('exblog:category', params, 'rss'),
-        feeds.getFeedEntry('exblog:category', params, 'atom'),
+        page.getFeedEntry('exblog:category', params, 'rss'),
+        page.getFeedEntry('exblog:category', params, 'atom'),
       )
     }
 
     uris.push(
-      feeds.getFeedEntry('exblog:posts', { blog: parsed.blog }, 'rss'),
-      feeds.getFeedEntry('exblog:posts', { blog: parsed.blog }, 'atom'),
+      page.getFeedEntry('exblog:posts', {}, 'rss'),
+      page.getFeedEntry('exblog:posts', {}, 'atom'),
     )
 
     return uris
