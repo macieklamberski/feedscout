@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type MailArchiveUrl, mailArchiveHandler, parseMailArchiveUrl } from './mailArchive.js'
 
 describe('parseMailArchiveUrl', () => {
@@ -127,6 +129,90 @@ describe('mailArchiveHandler', () => {
       ]
 
       expect(mailArchiveHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the http scheme of the page', () => {
+      const value = 'http://www.mail-archive.com/alice@example.org/msg1.html'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://www.mail-archive.com/alice@example.org/maillist.xml',
+          hint: { key: 'mail-archive:list', label: 'Mailing list' },
+        },
+      ]
+
+      expect(mailArchiveHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the list key for a list feed', () => {
+      const value = 'https://www.mail-archive.com/alice@example.org/maillist.xml'
+      const expected = 'mail-archive:list'
+
+      expect(mailArchiveHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the list key for a list feed on the apex host', () => {
+      const value = 'https://mail-archive.com/alice@lists.example.org/maillist.xml'
+      const expected = 'mail-archive:list'
+
+      expect(mailArchiveHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the list key for a list feed over http', () => {
+      const value = 'http://www.mail-archive.com/alice@example.org/maillist.xml'
+      const expected = 'mail-archive:list'
+
+      expect(mailArchiveHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the list key for a list feed with a percent-encoded at sign', () => {
+      const value = 'https://www.mail-archive.com/alice%40example.org/maillist.xml'
+      const expected = 'mail-archive:list'
+
+      expect(mailArchiveHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a list page', () => {
+      const value = 'https://www.mail-archive.com/alice@example.org/msg1.html'
+
+      expect(mailArchiveHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path under a segment without an at sign', () => {
+      const value = 'https://www.mail-archive.com/faq/maillist.xml'
+
+      expect(mailArchiveHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/alice@example.org/maillist.xml'
+
+      expect(mailArchiveHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://www.mail-archive.com/alice@example.org/maillist.xml',
+        { key: 'mail-archive:list', label: 'Mailing list' },
+      ],
+      [
+        'https://mail-archive.com/alice@example.org/maillist.xml/',
+        { key: 'mail-archive:list', label: 'Mailing list' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [mailArchiveHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

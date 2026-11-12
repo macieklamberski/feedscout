@@ -1,6 +1,6 @@
-import { decodeSegment, encodePathSegment, getPathSegments, isHostOf } from 'trousse'
+import { decodeSegment, getPathSegments, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers list (html).
@@ -9,6 +9,11 @@ import { composeHint } from '../../common/utils.js'
 export type MailArchiveUrl = { kind: 'list'; list: string }
 
 const hosts = ['mail-archive.com', 'www.mail-archive.com']
+
+const feeds = definePlatformFeeds(
+  [{ key: 'mail-archive:list', template: '{scheme}://{host}/{list}/maillist.xml' }],
+  { hosts },
+)
 
 export const parseMailArchiveUrl = (url: string): MailArchiveUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -38,14 +43,19 @@ export const mailArchiveHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-    const list = encodePathSegment(parsed.list)
+    const { protocol, host } = new URL(url)
+    const params = { scheme: protocol.slice(0, -1), host, list: parsed.list }
 
-    return [
-      {
-        uri: `${origin}/${list}/maillist.xml`,
-        hint: composeHint('mail-archive:list'),
-      },
-    ]
+    return [feeds.getFeedEntry('mail-archive:list', params)]
+  },
+
+  // The table reads any first segment as a list, so a segment without `@`, a page of the site, is
+  // refused by the page parser first.
+  getFeedKey: (url) => {
+    if (!parseMailArchiveUrl(url)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
