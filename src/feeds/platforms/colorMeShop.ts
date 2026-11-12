@@ -47,12 +47,15 @@ export const colorMeShopHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { protocol, host } = new URL(url)
-    const params = { scheme: protocol.slice(0, -1), host }
+    const page = feeds.forUrl(url)
+
+    if (!page) {
+      return []
+    }
 
     return [
-      feeds.getFeedEntry('color-me-shop:products', params, 'rdf'),
-      feeds.getFeedEntry('color-me-shop:products', params, 'atom'),
+      page.getFeedEntry('color-me-shop:products', {}, 'rdf'),
+      page.getFeedEntry('color-me-shop:products', {}, 'atom'),
     ]
   },
 
