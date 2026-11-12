@@ -129,14 +129,22 @@ describe('letterboxdHandler', () => {
 
     it('should return empty array for the homepage', () => {
       const value = 'https://letterboxd.com/'
+      const expected: Array<DiscoverUriEntry> = []
 
-      expect(letterboxdHandler.resolve(value)).toEqual([])
+      expect(letterboxdHandler.resolve(value)).toEqual(expected)
     })
   })
 
   describe('getFeedKey', () => {
     it('should return the diary key for a member feed', () => {
       const value = 'https://letterboxd.com/alice/rss/'
+      const expected = 'letterboxd:diary'
+
+      expect(letterboxdHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the diary key for a member feed on the embed host', () => {
+      const value = 'https://embed.letterboxd.com/alice/rss/'
       const expected = 'letterboxd:diary'
 
       expect(letterboxdHandler.getFeedKey?.(value)).toBe(expected)
@@ -176,6 +184,7 @@ describe('discoverUrisFromPlatform', () => {
     ['https://letterboxd.com/alice/rss/', diaryHint],
     ['http://letterboxd.com/alice/rss/', diaryHint],
     ['https://www.letterboxd.com/alice/rss', diaryHint],
+    ['https://embed.letterboxd.com/alice/rss/', diaryHint],
     ['https://letterboxd.com/journal/rss/', journalHint],
     ['http://www.letterboxd.com/journal/rss', journalHint],
   ]

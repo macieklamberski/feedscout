@@ -11,6 +11,7 @@ const hosts = ['letterboxd.com', 'www.letterboxd.com']
 const feeds = definePlatformFeeds([
   { key: 'letterboxd:journal', template: 'https://letterboxd.com/journal/rss/' },
   { key: 'letterboxd:diary', template: 'https://letterboxd.com/{username}/rss/' },
+  { key: 'letterboxd:diary', template: 'https://embed.letterboxd.com/{username}/rss/' },
 ])
 
 export const parseLetterboxdUrl = (url: string): LetterboxdUrl | undefined => {
