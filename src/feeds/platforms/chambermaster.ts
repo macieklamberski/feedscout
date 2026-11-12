@@ -136,7 +136,7 @@ export const chambermasterHandler: PlatformHandler = {
 
   // The table reads any host under the domains, so the apex and www, whose feeds answer 404 or
   // 500 or a page, are refused first. A preview host can nest, as in `example.preview`.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const previewSubdomain = getSubdomain(url, previewDomains)
     const isPreviewHost = previewSubdomain !== undefined && !isAnyOf(previewSubdomain, 'www')
 
@@ -144,6 +144,6 @@ export const chambermasterHandler: PlatformHandler = {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }

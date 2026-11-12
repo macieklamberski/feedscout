@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import {
@@ -276,110 +276,116 @@ describe('chambermasterHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    const feedUrls: Array<[string, string]> = [
+  describe('getFeedHint', () => {
+    const feedUrls: Array<[string, DiscoverUriHint]> = [
       [
         'http://examplechamber.chambermaster.com/Feed/rss/UpcomingEvents.rss',
-        'chambermaster:upcoming-events',
+        { key: 'chambermaster:upcoming-events', label: 'Upcoming events' },
       ],
       [
         'http://examplechamber.chambermaster.com/Feed/rss/NewEvents.rss',
-        'chambermaster:new-events',
+        { key: 'chambermaster:new-events', label: 'New events' },
       ],
       [
         'http://examplechamber.chambermaster.com/Feed/rss/FeaturedEvents.rss',
-        'chambermaster:featured-events',
+        { key: 'chambermaster:featured-events', label: 'Featured events' },
       ],
       [
         'http://examplechamber.chambermaster.com/Feed/rss/NewMembers.rss',
-        'chambermaster:new-members',
+        { key: 'chambermaster:new-members', label: 'New members' },
       ],
       [
         'http://examplechamber.chambermaster.com/Feed/rss/FeaturedMembers.rss',
-        'chambermaster:featured-members',
+        { key: 'chambermaster:featured-members', label: 'Featured members' },
       ],
-      ['http://examplechamber.memberzone.com/Feed/rss/NewJobs.rss', 'chambermaster:new-jobs'],
-      ['http://examplechamber.memberzone.com/Feed/rss/NewCoupons.rss', 'chambermaster:new-coupons'],
+      [
+        'http://examplechamber.memberzone.com/Feed/rss/NewJobs.rss',
+        { key: 'chambermaster:new-jobs', label: 'New jobs' },
+      ],
+      [
+        'http://examplechamber.memberzone.com/Feed/rss/NewCoupons.rss',
+        { key: 'chambermaster:new-coupons', label: 'New coupons' },
+      ],
       [
         'http://examplechamber.chambermaster.com/Feed/Rss/NewMarketItems.rss',
-        'chambermaster:new-market-items',
+        { key: 'chambermaster:new-market-items', label: 'New marketplace items' },
       ],
       [
         'http://examplechamber.memberzone.com/Feed/rss/NewsReleases.rss',
-        'chambermaster:news-releases',
+        { key: 'chambermaster:news-releases', label: 'News releases' },
       ],
       [
         'http://examplechamber.memberzone.com/Feed/rss/NewM2MDeals.rss',
-        'chambermaster:new-m2m-deals',
+        { key: 'chambermaster:new-m2m-deals', label: 'New member to member deals' },
       ],
       [
         'http://examplechamber.chambermaster.com/feed/rss/UpcomingEvents.rss',
-        'chambermaster:upcoming-events',
+        { key: 'chambermaster:upcoming-events', label: 'Upcoming events' },
       ],
       [
         'https://examplechamber.memberzone.com/Feed/rss/UpcomingEvents.rss',
-        'chambermaster:upcoming-events',
+        { key: 'chambermaster:upcoming-events', label: 'Upcoming events' },
       ],
       [
         'https://examplechamber.preview.gochambermaster.com/Feed/rss/UpcomingEvents.rss',
-        'chambermaster:upcoming-events',
+        { key: 'chambermaster:upcoming-events', label: 'Upcoming events' },
       ],
       [
         'http://exampledev.gochambermaster.com/Feed/rss/FeaturedEvents.rss',
-        'chambermaster:featured-events',
+        { key: 'chambermaster:featured-events', label: 'Featured events' },
       ],
     ]
 
-    it.each(feedUrls)('should return the key for %s', (value, expected) => {
-      expect(chambermasterHandler.getFeedKey?.(value)).toBe(expected)
+    it.each(feedUrls)('should return the hint for %s', (value, expected) => {
+      expect(chambermasterHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a page on a chamber subdomain', () => {
       const value = 'http://examplechamber.chambermaster.com/events'
 
-      expect(chambermasterHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(chambermasterHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another feed name', () => {
       const value = 'http://examplechamber.chambermaster.com/Feed/rss/Other.rss'
 
-      expect(chambermasterHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(chambermasterHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'http://chambermaster.com/Feed/rss/UpcomingEvents.rss'
 
-      expect(chambermasterHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(chambermasterHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on www', () => {
       const value = 'http://www.memberzone.com/Feed/rss/UpcomingEvents.rss'
 
-      expect(chambermasterHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(chambermasterHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested chamber subdomain', () => {
       const value = 'http://www.examplechamber.memberzone.com/Feed/rss/UpcomingEvents.rss'
 
-      expect(chambermasterHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(chambermasterHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the preview apex', () => {
       const value = 'https://gochambermaster.com/Feed/rss/UpcomingEvents.rss'
 
-      expect(chambermasterHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(chambermasterHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the preview www host', () => {
       const value = 'http://www.gochambermaster.com/Feed/rss/UpcomingEvents.rss'
 
-      expect(chambermasterHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(chambermasterHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a custom domain', () => {
       const value = 'https://business.example.com/Feed/rss/UpcomingEvents.rss'
 
-      expect(chambermasterHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(chambermasterHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
