@@ -1,5 +1,7 @@
+import { getRegistrableDomain } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -12,6 +14,15 @@ const domains = ['ghost.io']
 
 const tagRegex = /^\/tag\/([^/]+)/i
 const authorRegex = /^\/author\/([^/]+)/i
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'ghost:tag', template: 'https://{blog}.{domain}/tag/{tag}/rss/' },
+    { key: 'ghost:author', template: 'https://{blog}.{domain}/author/{author}/rss/' },
+    { key: 'ghost:blog', template: 'https://{blog}.{domain}/rss/' },
+  ],
+  { domains },
+)
 
 export const parseGhostUrl = (url: string): GhostUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -41,25 +52,26 @@ export const ghostHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseGhostUrl(url)
+    const blog = getTenantSubdomain(url, domains)
+    const domain = getRegistrableDomain(url)
 
-    if (!parsed) {
+    if (!parsed || !blog || !domain) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const blog = { uri: `${origin}/rss/`, hint: composeHint('ghost:blog') }
+    const params = { blog, domain }
+    const blogFeed = feeds.getFeedEntry('ghost:blog', params)
 
     if (parsed.kind === 'tag') {
-      return [{ uri: `${origin}/tag/${parsed.tag}/rss/`, hint: composeHint('ghost:tag') }, blog]
+      return [feeds.getFeedEntry('ghost:tag', { ...params, tag: parsed.tag }), blogFeed]
     }
 
     if (parsed.kind === 'author') {
-      return [
-        { uri: `${origin}/author/${parsed.author}/rss/`, hint: composeHint('ghost:author') },
-        blog,
-      ]
+      return [feeds.getFeedEntry('ghost:author', { ...params, author: parsed.author }), blogFeed]
     }
 
-    return [blog]
+    return [blogFeed]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
