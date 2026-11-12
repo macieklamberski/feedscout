@@ -1,7 +1,7 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -12,6 +12,15 @@ export type TwodayUrl =
 const domains = ['twoday.net']
 
 const topicRegex = /^\/topics\/([^/]+)(?:\/|$)/i
+
+// A blog's skin links its posts feed as `/index.rdf` or `/rss`, and both serve the same stories
+// as `/summary.rdf`.
+const feeds = definePlatformFeeds([
+  { key: 'twoday:posts', template: 'https://{blog}.twoday.net/index.rdf' },
+  { key: 'twoday:posts', template: 'https://{blog}.twoday.net/rss' },
+  { key: 'twoday:posts', template: 'https://{blog}.twoday.net/summary.rdf' },
+  { key: 'twoday:topic', template: 'https://{blog}.twoday.net/topics/{topic}/index.rdf' },
+])
 
 export const parseTwodayUrl = (url: string): TwodayUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
@@ -47,19 +56,16 @@ export const twodayHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
+    const posts = feeds.getFeedEntry('twoday:posts', { blog: parsed.blog })
 
     if (parsed.kind === 'topic') {
-      uris.push({
-        uri: `${origin}/topics/${parsed.topic}/index.rdf`,
-        hint: composeHint('twoday:topic'),
-      })
+      const { blog, topic } = parsed
+
+      return [feeds.getFeedEntry('twoday:topic', { blog, topic }), posts]
     }
 
-    // A blog's skin links either spelling, and both serve the same feed.
-    uris.push({ uri: [`${origin}/index.rdf`, `${origin}/rss`], hint: composeHint('twoday:posts') })
-
-    return uris
+    return [posts]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
