@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import {
   type DuckWebcomicsUrl,
   duckWebcomicsHandler,
@@ -105,23 +105,25 @@ describe('duckWebcomicsHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the comic key for a comic feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the comic hint for a comic feed', () => {
       const value = 'https://www.theduckwebcomics.com/hats/rss/'
+      const expected: DiscoverUriHint = { key: 'duck-webcomics:comic', label: 'Comic' }
 
-      expect(duckWebcomicsHandler.getFeedKey?.(value)).toBe('duck-webcomics:comic')
+      expect(duckWebcomicsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the comic key for a comic feed without the trailing slash', () => {
+    it('should return the comic hint for a comic feed without the trailing slash', () => {
       const value = 'https://theduckwebcomics.com/hats/rss'
+      const expected: DiscoverUriHint = { key: 'duck-webcomics:comic', label: 'Comic' }
 
-      expect(duckWebcomicsHandler.getFeedKey?.(value)).toBe('duck-webcomics:comic')
+      expect(duckWebcomicsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a strip page', () => {
       const value = 'https://www.theduckwebcomics.com/HaTs/4960244/'
 
-      expect(duckWebcomicsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(duckWebcomicsHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 })
