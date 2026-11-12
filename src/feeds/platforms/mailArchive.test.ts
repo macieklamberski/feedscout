@@ -144,58 +144,62 @@ describe('mailArchiveHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the list key for a list feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the list hint for a list feed', () => {
       const value = 'https://www.mail-archive.com/alice@example.org/maillist.xml'
-      const expected = 'mail-archive:list'
+      const expected: DiscoverUriHint = { key: 'mail-archive:list', label: 'Mailing list' }
 
-      expect(mailArchiveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(mailArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the list key for a list feed on the apex host', () => {
+    it('should return the list hint for a list feed on the apex host', () => {
       const value = 'https://mail-archive.com/alice@lists.example.org/maillist.xml'
-      const expected = 'mail-archive:list'
+      const expected: DiscoverUriHint = { key: 'mail-archive:list', label: 'Mailing list' }
 
-      expect(mailArchiveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(mailArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the list key for a list feed over http', () => {
+    it('should return the list hint for a list feed over http', () => {
       const value = 'http://www.mail-archive.com/alice@example.org/maillist.xml'
-      const expected = 'mail-archive:list'
+      const expected: DiscoverUriHint = { key: 'mail-archive:list', label: 'Mailing list' }
 
-      expect(mailArchiveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(mailArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the list key for a list feed with a percent-encoded at sign', () => {
+    it('should return the list hint for a list feed with a percent-encoded at sign', () => {
       const value = 'https://www.mail-archive.com/alice%40example.org/maillist.xml'
-      const expected = 'mail-archive:list'
+      const expected: DiscoverUriHint = { key: 'mail-archive:list', label: 'Mailing list' }
 
-      expect(mailArchiveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(mailArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the list key for an rdf list feed', () => {
+    it('should return the list hint for an rdf list feed', () => {
       const value = 'https://mail-archive.com/alice@example.org/maillist.rdf'
-      const expected = 'mail-archive:list'
+      const expected: DiscoverUriHint = {
+        key: 'mail-archive:list',
+        label: 'Mailing list',
+        format: 'rdf',
+      }
 
-      expect(mailArchiveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(mailArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a list page', () => {
       const value = 'https://www.mail-archive.com/alice@example.org/msg1.html'
 
-      expect(mailArchiveHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(mailArchiveHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path under a segment without an at sign', () => {
       const value = 'https://www.mail-archive.com/faq/maillist.xml'
 
-      expect(mailArchiveHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(mailArchiveHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/alice@example.org/maillist.xml'
 
-      expect(mailArchiveHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(mailArchiveHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
@@ -211,7 +215,7 @@ describe('mailArchiveHandler', () => {
       ],
       [
         'https://mail-archive.com/alice@example.org/maillist.rdf',
-        { key: 'mail-archive:list', label: 'Mailing list' },
+        { key: 'mail-archive:list', label: 'Mailing list', format: 'rdf' },
       ],
     ]
 

@@ -54,11 +54,11 @@ export const mailArchiveHandler: PlatformHandler = {
 
   // The table reads any first segment as a list, so a segment without `@`, a page of the site, is
   // refused by the page parser first.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (!parseMailArchiveUrl(url)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
