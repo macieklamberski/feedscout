@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { type AudioboomUrl, audioboomHandler, parseAudioboomUrl } from './audioboom.js'
@@ -110,37 +110,37 @@ describe('audioboomHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the podcast key for a channel feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for a channel feed', () => {
       const value = 'https://audioboom.com/channels/5016155.rss'
-      const expected = 'audioboom:podcast'
+      const expected: DiscoverUriHint = { key: 'audioboom:podcast', label: 'Podcast' }
 
-      expect(audioboomHandler.getFeedKey?.(value)).toBe(expected)
+      expect(audioboomHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a channel feed on the www host', () => {
+    it('should return the podcast hint for a channel feed on the www host', () => {
       const value = 'https://www.audioboom.com/channels/5050302.rss'
-      const expected = 'audioboom:podcast'
+      const expected: DiscoverUriHint = { key: 'audioboom:podcast', label: 'Podcast' }
 
-      expect(audioboomHandler.getFeedKey?.(value)).toBe(expected)
+      expect(audioboomHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a channel page', () => {
       const value = 'https://audioboom.com/channels/5016155'
 
-      expect(audioboomHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(audioboomHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a playlist feed', () => {
       const value = 'https://audioboom.com/playlists/1303121.rss'
 
-      expect(audioboomHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(audioboomHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/channels/5016155.rss'
 
-      expect(audioboomHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(audioboomHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

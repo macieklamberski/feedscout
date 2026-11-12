@@ -46,5 +46,5 @@ export const audioboomHandler: PlatformHandler = {
     return [feeds.getFeedEntry('audioboom:podcast', { channelId: parsed.channelId })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
