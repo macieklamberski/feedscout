@@ -88,13 +88,13 @@ export const pinterestHandler: PlatformHandler = {
   },
 
   // Country label hosts serve the same feeds, other subdomains such as help do not.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const parsedUrl = parseUrl(url)
 
     if (!parsedUrl || !isPinterestHost(parsedUrl)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }

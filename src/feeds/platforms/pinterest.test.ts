@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import type { PinterestUrl } from './pinterest.js'
@@ -168,72 +168,72 @@ describe('pinterestHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the pins key for a pins feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the pins hint for a pins feed', () => {
       const value = 'https://www.pinterest.com/videodred/feed.rss'
-      const expected = 'pinterest:pins'
+      const expected: DiscoverUriHint = { key: 'pinterest:pins', label: 'Pins' }
 
-      expect(pinterestHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinterestHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the board key for a board feed', () => {
+    it('should return the board hint for a board feed', () => {
       const value =
         'https://www.pinterest.com/VisitStA/tour-st-augustine-from-water-land-and-air.rss'
-      const expected = 'pinterest:board'
+      const expected: DiscoverUriHint = { key: 'pinterest:board', label: 'Board' }
 
-      expect(pinterestHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinterestHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the board key for a percent-encoded board feed', () => {
+    it('should return the board hint for a percent-encoded board feed', () => {
       const value = 'https://www.pinterest.com/nasa/caf%C3%A9.rss'
-      const expected = 'pinterest:board'
+      const expected: DiscoverUriHint = { key: 'pinterest:board', label: 'Board' }
 
-      expect(pinterestHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinterestHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the pins key for a pins feed on the bare host', () => {
+    it('should return the pins hint for a pins feed on the bare host', () => {
       const value = 'https://pinterest.com/videodred/feed.rss'
-      const expected = 'pinterest:pins'
+      const expected: DiscoverUriHint = { key: 'pinterest:pins', label: 'Pins' }
 
-      expect(pinterestHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinterestHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the pins key for a pins feed on a country label host', () => {
+    it('should return the pins hint for a pins feed on a country label host', () => {
       const value = 'https://uk.pinterest.com/pinterest/feed.rss'
-      const expected = 'pinterest:pins'
+      const expected: DiscoverUriHint = { key: 'pinterest:pins', label: 'Pins' }
 
-      expect(pinterestHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinterestHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the board key for a board feed on a country label host', () => {
+    it('should return the board hint for a board feed on a country label host', () => {
       const value = 'https://uk.pinterest.com/nasa/hubble-space-telescope.rss'
-      const expected = 'pinterest:board'
+      const expected: DiscoverUriHint = { key: 'pinterest:board', label: 'Board' }
 
-      expect(pinterestHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinterestHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a feed on a subdomain longer than a country label', () => {
       const value = 'https://help.pinterest.com/pinterest/feed.rss'
 
-      expect(pinterestHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(pinterestHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a country domain', () => {
       const value = 'https://www.pinterest.co.uk/pinterest/feed.rss'
 
-      expect(pinterestHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(pinterestHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a board page', () => {
       const value = 'https://www.pinterest.com/nasa/mars'
 
-      expect(pinterestHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(pinterestHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a profile page', () => {
       const value = 'https://www.pinterest.com/videodred/'
 
-      expect(pinterestHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(pinterestHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 })
