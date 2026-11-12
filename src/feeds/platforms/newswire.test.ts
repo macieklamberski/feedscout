@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type NewswireUrl, newswireHandler, parseNewswireUrl } from './newswire.js'
 
 describe('parseNewswireUrl', () => {
@@ -194,6 +196,117 @@ describe('newswireHandler', () => {
       ]
 
       expect(newswireHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the beat key for a beat feed', () => {
+      const value = 'https://flyinstyle.newswire.com/browse/rss/beat/industries-travel'
+      const expected = 'newswire:beat'
+
+      expect(newswireHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the press releases key for a press releases feed', () => {
+      const value = 'https://zuum-transportation-inc.newswire.com/browse/rss/pr'
+      const expected = 'newswire:press-releases'
+
+      expect(newswireHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the social key for a social wire feed', () => {
+      const value = 'https://bhcoe.newswire.com/browse/rss/social'
+      const expected = 'newswire:social'
+
+      expect(newswireHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the news key for a news feed', () => {
+      const value = 'https://intratec.newswire.com/browse/rss/news'
+      const expected = 'newswire:news'
+
+      expect(newswireHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the newsroom key for a newsroom feed', () => {
+      const value = 'https://connectfx.newswire.com/browse/rss'
+      const expected = 'newswire:newsroom'
+
+      expect(newswireHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the newsroom key for a newsroom feed over http', () => {
+      const value = 'http://link.newswire.com/browse/rss'
+      const expected = 'newswire:newsroom'
+
+      expect(newswireHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a beat page', () => {
+      const value = 'https://flyinstyle.newswire.com/browse/beat/industries-travel'
+
+      expect(newswireHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path with no beat', () => {
+      const value = 'https://flyinstyle.newswire.com/browse/rss/beat'
+
+      expect(newswireHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://news.acme.newswire.com/browse/rss'
+
+      expect(newswireHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://newswire.com/browse/rss'
+
+      expect(newswireHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/browse/rss'
+
+      expect(newswireHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://flyinstyle.newswire.com/browse/rss/beat/industries-travel',
+        { key: 'newswire:beat', label: 'Beat' },
+      ],
+      [
+        'https://temptingfatellc.newswire.com/browse/rss/beat/lifestyles-and-society-relationship',
+        { key: 'newswire:beat', label: 'Beat' },
+      ],
+      [
+        'https://connectfx.newswire.com/browse/rss/pr',
+        { key: 'newswire:press-releases', label: 'Press releases' },
+      ],
+      [
+        'https://eclincher.newswire.com/browse/rss/social',
+        { key: 'newswire:social', label: 'Social wire' },
+      ],
+      ['https://matefit.newswire.com/browse/rss/news', { key: 'newswire:news', label: 'News' }],
+      [
+        'https://connectfx.newswire.com/browse/rss',
+        { key: 'newswire:newsroom', label: 'Newsroom' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [newswireHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
