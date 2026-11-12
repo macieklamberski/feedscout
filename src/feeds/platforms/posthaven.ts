@@ -12,11 +12,14 @@ const domains = ['posthaven.com']
 
 const tagRegex = /^\/tag\/([^/]+)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'posthaven:posts', template: 'https://{blog}.posthaven.com/posts.atom' },
-  // Posthaven serves an undocumented per-tag Atom feed.
-  { key: 'posthaven:tag', template: 'https://{blog}.posthaven.com/tag/{tag}.atom' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'posthaven:posts', template: '{scheme}://{host}/posts.atom' },
+    // Posthaven serves an undocumented per-tag Atom feed.
+    { key: 'posthaven:tag', template: '{scheme}://{host}/tag/{tag}.atom' },
+  ],
+  { domains },
+)
 
 export const parsePosthavenUrl = (url: string): PosthavenUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -41,16 +44,16 @@ export const posthavenHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePosthavenUrl(url)
-    const blog = getTenantSubdomain(url, domains)
+    const page = feeds.forUrl(url)
 
-    if (!parsed || !blog) {
+    if (!parsed || !page) {
       return []
     }
 
-    const posts = feeds.getFeedEntry('posthaven:posts', { blog })
+    const posts = page.getFeedEntry('posthaven:posts')
 
     if (parsed.kind === 'tag') {
-      return [feeds.getFeedEntry('posthaven:tag', { blog, tag: parsed.tag }), posts]
+      return [page.getFeedEntry('posthaven:tag', { tag: parsed.tag }), posts]
     }
 
     return [posts]

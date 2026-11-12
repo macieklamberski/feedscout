@@ -71,11 +71,11 @@ describe('posthavenHandler', () => {
       expect(posthavenHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return https feeds for an http page', () => {
+    it('should return the feeds under the page scheme for an http page', () => {
       const value = 'http://alice.posthaven.com'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.posthaven.com/posts.atom',
+          uri: 'http://alice.posthaven.com/posts.atom',
           hint: { key: 'posthaven:posts', label: 'Posts' },
         },
       ]
