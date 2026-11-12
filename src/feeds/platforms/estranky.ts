@@ -100,17 +100,19 @@ export const estrankyHandler: PlatformHandler = {
   // 404 on a set it lacks. Its `photos.xml` and `comments.xml` links serve the posts feed.
   resolve: (url, content) => {
     const { origin, sliceOrigin } = getEstrankyPage(url, content)
-    const site = new URL(origin)
-    const slice = new URL(sliceOrigin)
-    const siteParams = { scheme: site.protocol.slice(0, -1), host: site.host }
-    const sliceParams = { scheme: slice.protocol.slice(0, -1), host: slice.host }
+    const siteFeeds = feeds.forUrl(origin)
+    const sliceFeeds = feeds.forUrl(sliceOrigin)
+
+    if (!siteFeeds || !sliceFeeds) {
+      return []
+    }
 
     return [
-      feeds.getFeedEntry('estranky:posts', siteParams),
-      feeds.getFeedEntry('estranky:photos', siteParams),
-      feeds.getFeedEntry('estranky:comments', siteParams),
-      feeds.getFeedEntry('estranky:homepage-slice', sliceParams),
-      feeds.getFeedEntry('estranky:photos-slice', sliceParams),
+      siteFeeds.getFeedEntry('estranky:posts'),
+      siteFeeds.getFeedEntry('estranky:photos'),
+      siteFeeds.getFeedEntry('estranky:comments'),
+      sliceFeeds.getFeedEntry('estranky:homepage-slice'),
+      sliceFeeds.getFeedEntry('estranky:photos-slice'),
     ]
   },
 
