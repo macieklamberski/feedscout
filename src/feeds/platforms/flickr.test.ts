@@ -432,6 +432,22 @@ describe('flickrHandler', () => {
       expect(flickrHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the group pool key for a group pool feed with a tag it ignores', () => {
+      const value =
+        'https://www.flickr.com/services/feeds/groups_pool.gne?id=42097308@N00&tags=cats'
+      const expected = 'flickr:group-pool'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the favorites key for a favorites feed with a tag it ignores', () => {
+      const value =
+        'https://www.flickr.com/services/feeds/photos_faves.gne?id=24662369@N07&tags=cats'
+      const expected = 'flickr:faves'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return undefined for a photostream feed narrowed to a tag', () => {
       const value =
         'https://api.flickr.com/services/feeds/photos_public.gne?id=24662369@N07&tags=cats&format=atom'
@@ -518,6 +534,14 @@ describe('flickrHandler', () => {
         { key: 'flickr:group-geo', label: 'Group pool with location' },
       ],
       ['https://www.flickr.com/services/feeds/forums.gne', { key: 'flickr:forum', label: 'Forum' }],
+      [
+        'https://www.flickr.com/services/feeds/groups_pool.gne?id=42097308@N00&tags=cats',
+        { key: 'flickr:group-pool', label: 'Group pool' },
+      ],
+      [
+        'https://www.flickr.com/services/feeds/photos_faves.gne?id=24662369@N07&tags=cats',
+        { key: 'flickr:faves', label: 'Favorites' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

@@ -171,6 +171,12 @@ export const flickrHandler: PlatformHandler = {
 
   getFeedKey: (url) => {
     const parsedUrl = parseUrl(url)
+    const key = feeds.getFeedKey(url)
+
+    // Flickr ignores `tags` on a group pool or favorites feed, so the feed stays the same.
+    if (isAnyOf(key, ['flickr:group-pool', 'flickr:faves'])) {
+      return key
+    }
 
     // Flickr narrows a photostream or a group location feed to one tag when `tags` sits beside
     // `id` or `g`, a feed resolve never builds.
@@ -181,6 +187,6 @@ export const flickrHandler: PlatformHandler = {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return key
   },
 }
