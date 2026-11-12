@@ -127,10 +127,18 @@ describe('tumblrHandler', () => {
       expect(tumblrHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return feed URL for blog', () => {
+    it('should return the posts, theme posts and podcast feeds for blog', () => {
       const value = 'https://example.tumblr.com'
       const expected = [
         { uri: 'https://example.tumblr.com/rss', hint: { key: 'tumblr:posts', label: 'Posts' } },
+        {
+          uri: 'https://example.tumblr.com/?format=rss',
+          hint: { key: 'tumblr:theme-posts', label: 'Theme posts' },
+        },
+        {
+          uri: 'https://example.tumblr.com/podcast',
+          hint: { key: 'tumblr:podcast', label: 'Podcast' },
+        },
       ]
 
       expect(tumblrHandler.resolve(value)).toEqual(expected)
@@ -148,19 +156,35 @@ describe('tumblrHandler', () => {
       expect(tumblrHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return blog subdomain feed URL for www.tumblr.com blog path', () => {
+    it('should return the blog subdomain feeds for www.tumblr.com blog path', () => {
       const value = 'https://www.tumblr.com/example/123/example-post'
       const expected = [
         { uri: 'https://example.tumblr.com/rss', hint: { key: 'tumblr:posts', label: 'Posts' } },
+        {
+          uri: 'https://example.tumblr.com/?format=rss',
+          hint: { key: 'tumblr:theme-posts', label: 'Theme posts' },
+        },
+        {
+          uri: 'https://example.tumblr.com/podcast',
+          hint: { key: 'tumblr:podcast', label: 'Podcast' },
+        },
       ]
 
       expect(tumblrHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the https feed URL for an http blog page', () => {
+    it('should return the https feeds for an http blog page', () => {
       const value = 'http://example.tumblr.com/post/123'
       const expected = [
         { uri: 'https://example.tumblr.com/rss', hint: { key: 'tumblr:posts', label: 'Posts' } },
+        {
+          uri: 'https://example.tumblr.com/?format=rss',
+          hint: { key: 'tumblr:theme-posts', label: 'Theme posts' },
+        },
+        {
+          uri: 'https://example.tumblr.com/podcast',
+          hint: { key: 'tumblr:podcast', label: 'Podcast' },
+        },
       ]
 
       expect(tumblrHandler.resolve(value)).toEqual(expected)
