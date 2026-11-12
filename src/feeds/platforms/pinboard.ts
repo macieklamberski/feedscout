@@ -19,10 +19,15 @@ const feedHosts = ['feeds.pinboard.in']
 const userRegex = /^u:(.+)$/i
 const tagRegex = /^t:(.+)$/i
 const recentRegex = /^\/recent\/?$/i
-const tagFeedRegex = /^\/rss\/(?:u:[^/]+\/)?t:[^/]+(?:\/t:[^/]+)*\/?$/i
+const tagFeedRegex = /^\/rss\/(?:(?:secret:[^/]+\/)?u:[^/]+\/)?t:[^/]+(?:\/t:[^/]+)*\/?$/i
 
 const feeds = definePlatformFeeds([
   { key: 'pinboard:bookmarks', template: 'https://feeds.pinboard.in/rss/u:{username}/' },
+  // A private feed, whose token only its owner knows, so it is claimed and never built.
+  {
+    key: 'pinboard:bookmarks',
+    template: 'https://feeds.pinboard.in/rss/secret:{token}/u:{username}/',
+  },
   { key: 'pinboard:recent', template: 'https://feeds.pinboard.in/rss/recent/' },
   { key: 'pinboard:popular', template: 'https://feeds.pinboard.in/rss/popular/' },
 ])
@@ -126,7 +131,8 @@ export const pinboardHandler: PlatformHandler = {
 
     const parsedUrl = parseUrl(url)
 
-    // A tag feed carries any number of tag segments, which a template segment cannot hold.
+    // A tag feed carries any number of tag segments, which a template segment cannot hold. A
+    // private one opens with its owner's token.
     if (parsedUrl && isHostOf(parsedUrl, feedHosts) && tagFeedRegex.test(parsedUrl.pathname)) {
       return composeHint('pinboard:tag')
     }

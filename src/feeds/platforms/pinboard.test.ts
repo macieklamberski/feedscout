@@ -270,8 +270,29 @@ describe('pinboardHandler', () => {
       expect(pinboardHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a private feed', () => {
-      const value = 'https://feeds.pinboard.in/rss/secret:abc123/u:example/t:programming/'
+    it('should return the bookmarks hint for a private user feed', () => {
+      const value = 'https://feeds.pinboard.in/rss/secret:abc123/u:example'
+      const expected: DiscoverUriHint = { key: 'pinboard:bookmarks', label: 'Bookmarks' }
+
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a private tag feed', () => {
+      const value = 'https://feeds.pinboard.in/rss/secret:abc123/u:example/t:programming'
+      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
+
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a private feed with several tags', () => {
+      const value = 'https://feeds.pinboard.in/rss/secret:abc123/u:example/t:programming/t:rust/'
+      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
+
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a private feed without a user', () => {
+      const value = 'https://feeds.pinboard.in/rss/secret:abc123/t:programming/'
 
       expect(pinboardHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -306,6 +327,14 @@ describe('pinboardHandler', () => {
         { key: 'pinboard:tag', label: 'Tag' },
       ],
       ['https://feeds.pinboard.in/rss/t:programming/', { key: 'pinboard:tag', label: 'Tag' }],
+      [
+        'https://feeds.pinboard.in/rss/secret:abc123/u:example',
+        { key: 'pinboard:bookmarks', label: 'Bookmarks' },
+      ],
+      [
+        'https://feeds.pinboard.in/rss/secret:abc123/u:example/t:programming',
+        { key: 'pinboard:tag', label: 'Tag' },
+      ],
       ['https://feeds.pinboard.in/rss/recent/', { key: 'pinboard:recent', label: 'Recent' }],
       ['https://feeds.pinboard.in/rss/popular/', { key: 'pinboard:popular', label: 'Popular' }],
     ]
