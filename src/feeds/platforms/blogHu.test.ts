@@ -212,6 +212,10 @@ describe('blogHuHandler', () => {
         'https://usznikek.blog.hu/comments/comments/rss',
         { key: 'blog-hu:comments', label: 'Comments' },
       ],
+      [
+        'https://lambda.blog.hu/comments/comments/rss2',
+        { key: 'blog-hu:comments', label: 'Comments' },
+      ],
       ['https://isolde.blog.hu/comments/atom', { key: 'blog-hu:comments', label: 'Comments' }],
       ['https://blog.hu/user/1264714/rss', { key: 'blog-hu:user', label: 'User activity' }],
     ]
