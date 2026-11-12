@@ -204,86 +204,86 @@ describe('doubanHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the interests key for a user interests feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the interests hint for a user interests feed', () => {
       const value = 'https://www.douban.com/feed/people/mockee/interests'
-      const expected = 'douban:interests'
+      const expected: DiscoverUriHint = { key: 'douban:interests', label: 'Interests' }
 
-      expect(doubanHandler.getFeedKey?.(value)).toBe(expected)
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the reviews key for a user reviews feed', () => {
+    it('should return the reviews hint for a user reviews feed', () => {
       const value = 'https://www.douban.com/feed/people/29610886/reviews'
-      const expected = 'douban:reviews'
+      const expected: DiscoverUriHint = { key: 'douban:reviews', label: 'Reviews' }
 
-      expect(doubanHandler.getFeedKey?.(value)).toBe(expected)
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the notes key for a user notes feed', () => {
+    it('should return the notes hint for a user notes feed', () => {
       const value = 'https://www.douban.com/feed/people/mockee/notes'
-      const expected = 'douban:notes'
+      const expected: DiscoverUriHint = { key: 'douban:notes', label: 'Notes' }
 
-      expect(doubanHandler.getFeedKey?.(value)).toBe(expected)
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the subject reviews key for a subject reviews feed', () => {
+    it('should return the subject reviews hint for a subject reviews feed', () => {
       const value = 'https://www.douban.com/feed/subject/1092183/reviews'
-      const expected = 'douban:subject-reviews'
+      const expected: DiscoverUriHint = { key: 'douban:subject-reviews', label: 'Subject reviews' }
 
-      expect(doubanHandler.getFeedKey?.(value)).toBe(expected)
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the book reviews key for the book reviews feed', () => {
+    it('should return the book reviews hint for the book reviews feed', () => {
       const value = 'https://www.douban.com/feed/review/book'
-      const expected = 'douban:book-reviews'
+      const expected: DiscoverUriHint = { key: 'douban:book-reviews', label: 'Book reviews' }
 
-      expect(doubanHandler.getFeedKey?.(value)).toBe(expected)
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the movie reviews key for the movie reviews feed', () => {
+    it('should return the movie reviews hint for the movie reviews feed', () => {
       const value = 'https://www.douban.com/feed/review/movie'
-      const expected = 'douban:movie-reviews'
+      const expected: DiscoverUriHint = { key: 'douban:movie-reviews', label: 'Movie reviews' }
 
-      expect(doubanHandler.getFeedKey?.(value)).toBe(expected)
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the music reviews key for the music reviews feed', () => {
+    it('should return the music reviews hint for the music reviews feed', () => {
       const value = 'https://www.douban.com/feed/review/music'
-      const expected = 'douban:music-reviews'
+      const expected: DiscoverUriHint = { key: 'douban:music-reviews', label: 'Music reviews' }
 
-      expect(doubanHandler.getFeedKey?.(value)).toBe(expected)
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the drama reviews key for the drama reviews feed', () => {
+    it('should return the drama reviews hint for the drama reviews feed', () => {
       const value = 'https://www.douban.com/feed/review/drama'
-      const expected = 'douban:drama-reviews'
+      const expected: DiscoverUriHint = { key: 'douban:drama-reviews', label: 'Drama reviews' }
 
-      expect(doubanHandler.getFeedKey?.(value)).toBe(expected)
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the subject reviews key for a feed on the apex host', () => {
+    it('should return the subject reviews hint for a feed on the apex host', () => {
       const value = 'https://douban.com/feed/subject/1112696/reviews'
-      const expected = 'douban:subject-reviews'
+      const expected: DiscoverUriHint = { key: 'douban:subject-reviews', label: 'Subject reviews' }
 
-      expect(doubanHandler.getFeedKey?.(value)).toBe(expected)
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a user page', () => {
       const value = 'https://www.douban.com/people/mockee/'
 
-      expect(doubanHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(doubanHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a subject page', () => {
       const value = 'https://movie.douban.com/subject/1092183/'
 
-      expect(doubanHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(doubanHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/feed/people/mockee/notes'
 
-      expect(doubanHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(doubanHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
