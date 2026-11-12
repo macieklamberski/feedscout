@@ -153,6 +153,12 @@ describe('soundcloudHandler', () => {
       expect(soundcloudHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
+    it('should return undefined for a user feed with a word before the id', () => {
+      const value = 'https://feeds.soundcloud.com/users/soundcloud:users:alice:12345/sounds.rss'
+
+      expect(soundcloudHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a playlist feed', () => {
       const value = 'https://feeds.soundcloud.com/playlists/soundcloud:sets:12345/sounds.rss'
 
