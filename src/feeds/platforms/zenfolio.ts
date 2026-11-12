@@ -89,11 +89,11 @@ export const zenfolioHandler: PlatformHandler = {
 
   // The table reads any host under zenfolio.com, so the page parser first refuses the apex, www
   // and a nested subdomain, which are not one photographer's site.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (!parseZenfolioUrl(url)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }

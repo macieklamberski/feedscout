@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import {
@@ -189,49 +189,70 @@ describe('zenfolioHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    const feedKeys: Array<[string, string]> = [
-      ['https://ctcphotography.zenfolio.com/recent.rss', 'zenfolio:recent'],
-      ['https://ctcphotography.zenfolio.com/recent.atom', 'zenfolio:recent'],
-      ['https://ctcphotography.zenfolio.com/featured.rss', 'zenfolio:featured'],
-      ['https://ctcphotography.zenfolio.com/featured.atom', 'zenfolio:featured'],
-      ['https://ctcphotography.zenfolio.com/blog.rss', 'zenfolio:blog'],
-      ['https://ctcphotography.zenfolio.com/blog.atom', 'zenfolio:blog'],
-      ['http://ctcphotography.zenfolio.com/recent.rss', 'zenfolio:recent'],
+  describe('getFeedHint', () => {
+    const feedKeys: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://ctcphotography.zenfolio.com/recent.rss',
+        { key: 'zenfolio:recent', label: 'Recent galleries', format: 'rss' },
+      ],
+      [
+        'https://ctcphotography.zenfolio.com/recent.atom',
+        { key: 'zenfolio:recent', label: 'Recent galleries', format: 'atom' },
+      ],
+      [
+        'https://ctcphotography.zenfolio.com/featured.rss',
+        { key: 'zenfolio:featured', label: 'Featured galleries', format: 'rss' },
+      ],
+      [
+        'https://ctcphotography.zenfolio.com/featured.atom',
+        { key: 'zenfolio:featured', label: 'Featured galleries', format: 'atom' },
+      ],
+      [
+        'https://ctcphotography.zenfolio.com/blog.rss',
+        { key: 'zenfolio:blog', label: 'Blog', format: 'rss' },
+      ],
+      [
+        'https://ctcphotography.zenfolio.com/blog.atom',
+        { key: 'zenfolio:blog', label: 'Blog', format: 'atom' },
+      ],
+      [
+        'http://ctcphotography.zenfolio.com/recent.rss',
+        { key: 'zenfolio:recent', label: 'Recent galleries', format: 'rss' },
+      ],
     ]
 
-    it.each(feedKeys)('should return the key for %s', (value, expected) => {
-      expect(zenfolioHandler.getFeedKey?.(value)).toBe(expected)
+    it.each(feedKeys)('should return the hint for %s', (value, expected) => {
+      expect(zenfolioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a site page', () => {
       const value = 'https://ctcphotography.zenfolio.com/p411800779'
 
-      expect(zenfolioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(zenfolioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://zenfolio.com/blog.rss'
 
-      expect(zenfolioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(zenfolioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the www host', () => {
       const value = 'https://www.zenfolio.com/recent.rss'
 
-      expect(zenfolioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(zenfolioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://photos.example.zenfolio.com/recent.rss'
 
-      expect(zenfolioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(zenfolioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a custom domain', () => {
       const value = 'https://www.jennypodesta.com/recent.rss'
 
-      expect(zenfolioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(zenfolioHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
@@ -239,22 +260,28 @@ describe('zenfolioHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriEntry['hint']]> = [
       [
         'https://ctcphotography.zenfolio.com/recent.rss',
-        { key: 'zenfolio:recent', label: 'Recent galleries' },
+        { key: 'zenfolio:recent', label: 'Recent galleries', format: 'rss' },
       ],
       [
         'https://ctcphotography.zenfolio.com/recent.atom',
-        { key: 'zenfolio:recent', label: 'Recent galleries' },
+        { key: 'zenfolio:recent', label: 'Recent galleries', format: 'atom' },
       ],
       [
         'https://ctcphotography.zenfolio.com/featured.rss',
-        { key: 'zenfolio:featured', label: 'Featured galleries' },
+        { key: 'zenfolio:featured', label: 'Featured galleries', format: 'rss' },
       ],
       [
         'https://ctcphotography.zenfolio.com/featured.atom',
-        { key: 'zenfolio:featured', label: 'Featured galleries' },
+        { key: 'zenfolio:featured', label: 'Featured galleries', format: 'atom' },
       ],
-      ['https://ctcphotography.zenfolio.com/blog.rss', { key: 'zenfolio:blog', label: 'Blog' }],
-      ['https://ctcphotography.zenfolio.com/blog.atom', { key: 'zenfolio:blog', label: 'Blog' }],
+      [
+        'https://ctcphotography.zenfolio.com/blog.rss',
+        { key: 'zenfolio:blog', label: 'Blog', format: 'rss' },
+      ],
+      [
+        'https://ctcphotography.zenfolio.com/blog.atom',
+        { key: 'zenfolio:blog', label: 'Blog', format: 'atom' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
