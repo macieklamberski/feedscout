@@ -387,4 +387,97 @@ describe('definePlatformFeeds', () => {
       expect(feeds.getFeedHint(value)).toBeUndefined()
     })
   })
+
+  describe('forUrl', () => {
+    const siteFeeds = definePlatformFeeds(
+      [
+        { key: 'example:posts', template: '{scheme}://{blog}.{domain}/feed' },
+        { key: 'ocnk:products', template: '{scheme}://{host}/feed' },
+      ],
+      { domains: ['example.net', 'example.org'] },
+    )
+
+    it('should fill the scheme of an http page', () => {
+      const value = 'http://alice.example.net/about'
+      const expected = 'http://alice.example.net/feed'
+
+      expect(siteFeeds.forUrl(value)?.getFeedUrl('example:posts', { blog: 'alice' })).toBe(expected)
+    })
+
+    it('should fill the scheme of an https page', () => {
+      const value = 'https://alice.example.net/about'
+      const expected = 'https://alice.example.net/feed'
+
+      expect(siteFeeds.forUrl(value)?.getFeedUrl('example:posts', { blog: 'alice' })).toBe(expected)
+    })
+
+    it('should fill the host of the page', () => {
+      const value = 'https://www.example.com/about'
+      const expected = 'https://www.example.com/feed'
+
+      expect(siteFeeds.forUrl(value)?.getFeedUrl('ocnk:products')).toBe(expected)
+    })
+
+    it('should keep the port in the host of the page', () => {
+      const value = 'http://example.com:8080/about'
+      const expected = 'http://example.com:8080/feed'
+
+      expect(siteFeeds.forUrl(value)?.getFeedUrl('ocnk:products')).toBe(expected)
+    })
+
+    it('should fill the domain the host of the page is under', () => {
+      const value = 'https://alice.example.org/about'
+      const expected = 'https://alice.example.org/feed'
+
+      expect(siteFeeds.forUrl(value)?.getFeedUrl('example:posts', { blog: 'alice' })).toBe(expected)
+    })
+
+    it('should fill the domain under a tenant with a dot', () => {
+      const value = 'https://my.blog.example.org/'
+      const params = { blog: 'my.blog' }
+      const expected = 'https://my.blog.example.org/feed'
+
+      expect(siteFeeds.forUrl(value)?.getFeedUrl('example:posts', params)).toBe(expected)
+    })
+
+    it('should keep the domain placeholder for a host under no domain', () => {
+      const value = 'https://alice.example.com/'
+      const expected = 'https://alice.{domain}/feed'
+
+      expect(siteFeeds.forUrl(value)?.getFeedUrl('example:posts', { blog: 'alice' })).toBe(expected)
+    })
+
+    it('should write a value the handler passes over the one of the page', () => {
+      const value = 'https://alice.example.net/'
+      const params = {
+        scheme: 'http',
+        blog: 'alice',
+      }
+      const expected = 'http://alice.example.net/feed'
+
+      expect(siteFeeds.forUrl(value)?.getFeedUrl('example:posts', params)).toBe(expected)
+    })
+
+    it('should return the feed with its hint', () => {
+      const value = 'https://www.example.com/'
+      const expected: DiscoverUriEntry = {
+        uri: 'https://www.example.com/feed',
+        hint: { key: 'ocnk:products', label: 'Products' },
+      }
+
+      expect(siteFeeds.forUrl(value)?.getFeedEntry('ocnk:products')).toEqual(expected)
+    })
+
+    it('should return undefined for an unparsable URL', () => {
+      const value = 'not a url'
+
+      expect(siteFeeds.forUrl(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a URL without an http origin', () => {
+      const value = 'ftp://www.example.com/'
+
+      expect(siteFeeds.forUrl(value)).toBeUndefined()
+    })
+  })
 })
