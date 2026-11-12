@@ -147,43 +147,43 @@ describe('spreakerHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the podcast key for a show feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for a show feed', () => {
       const value = 'https://www.spreaker.com/show/12345/episodes/feed'
-      const expected = 'spreaker:podcast'
+      const expected: DiscoverUriHint = { key: 'spreaker:podcast', label: 'Podcast' }
 
-      expect(spreakerHandler.getFeedKey?.(value)).toBe(expected)
+      expect(spreakerHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a show feed on the apex host', () => {
+    it('should return the podcast hint for a show feed on the apex host', () => {
       const value = 'https://spreaker.com/show/12345/episodes/feed'
-      const expected = 'spreaker:podcast'
+      const expected: DiscoverUriHint = { key: 'spreaker:podcast', label: 'Podcast' }
 
-      expect(spreakerHandler.getFeedKey?.(value)).toBe(expected)
+      expect(spreakerHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a feed path with a word in place of the show id', () => {
       const value = 'https://www.spreaker.com/show/my-show/episodes/feed'
 
-      expect(spreakerHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(spreakerHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a show page', () => {
       const value = 'https://www.spreaker.com/show/12345/episodes'
 
-      expect(spreakerHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(spreakerHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the one-item feed path', () => {
       const value = 'https://spreaker.com/show/12345/episodes/feed/items/1'
 
-      expect(spreakerHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(spreakerHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/show/12345/episodes/feed'
 
-      expect(spreakerHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(spreakerHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

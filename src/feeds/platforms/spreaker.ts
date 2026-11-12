@@ -50,13 +50,13 @@ export const spreakerHandler: PlatformHandler = {
   },
 
   // A show id is digits, and a word in its place answers 404.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const [, showId] = getPathSegments(url)
 
     if (!showId || !digitsRegex.test(showId)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
