@@ -116,70 +116,70 @@ describe('posthavenHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for a posts feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a posts feed', () => {
       const value = 'https://10thdot.posthaven.com/posts.atom'
-      const expected = 'posthaven:posts'
+      const expected: DiscoverUriHint = { key: 'posthaven:posts', label: 'Posts' }
 
-      expect(posthavenHandler.getFeedKey?.(value)).toBe(expected)
+      expect(posthavenHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed', () => {
+    it('should return the tag hint for a tag feed', () => {
       const value = 'https://kathykavan.posthaven.com/tag/webapp.atom'
-      const expected = 'posthaven:tag'
+      const expected: DiscoverUriHint = { key: 'posthaven:tag', label: 'Tag' }
 
-      expect(posthavenHandler.getFeedKey?.(value)).toBe(expected)
+      expect(posthavenHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed with a capitalized tag', () => {
+    it('should return the tag hint for a tag feed with a capitalized tag', () => {
       const value = 'https://paulbrooker.posthaven.com/tag/Kurd.atom'
-      const expected = 'posthaven:tag'
+      const expected: DiscoverUriHint = { key: 'posthaven:tag', label: 'Tag' }
 
-      expect(posthavenHandler.getFeedKey?.(value)).toBe(expected)
+      expect(posthavenHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a percent-encoded tag feed', () => {
+    it('should return the tag hint for a percent-encoded tag feed', () => {
       const value = "https://4cp.posthaven.com/tag/Cosmic%20Debris:%20Kirby%20in%20the%20'70s.atom"
-      const expected = 'posthaven:tag'
+      const expected: DiscoverUriHint = { key: 'posthaven:tag', label: 'Tag' }
 
-      expect(posthavenHandler.getFeedKey?.(value)).toBe(expected)
+      expect(posthavenHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed with a dot in the tag', () => {
+    it('should return the tag hint for a tag feed with a dot in the tag', () => {
       const value = 'https://aliabunimah.posthaven.com/tag/NEST%20U.S.A.atom'
-      const expected = 'posthaven:tag'
+      const expected: DiscoverUriHint = { key: 'posthaven:tag', label: 'Tag' }
 
-      expect(posthavenHandler.getFeedKey?.(value)).toBe(expected)
+      expect(posthavenHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a tag page', () => {
       const value = 'https://kathykavan.posthaven.com/tag/webapp'
 
-      expect(posthavenHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(posthavenHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://blog.example.posthaven.com/posts.atom'
 
-      expect(posthavenHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(posthavenHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://posthaven.com/posts.atom'
 
-      expect(posthavenHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(posthavenHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on www', () => {
       const value = 'https://www.posthaven.com/posts.atom'
 
-      expect(posthavenHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(posthavenHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/tag/webapp.atom'
 
-      expect(posthavenHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(posthavenHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

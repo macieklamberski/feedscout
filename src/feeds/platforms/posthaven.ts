@@ -56,5 +56,5 @@ export const posthavenHandler: PlatformHandler = {
     return [posts]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
