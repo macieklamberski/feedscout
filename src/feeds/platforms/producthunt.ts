@@ -7,15 +7,15 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 export type ProducthuntUrl =
   | { kind: 'product'; slug: string }
   | { kind: 'topic'; topic: string }
+  | { kind: 'category'; category: string }
   | { kind: 'home' }
 
 export const hosts = ['producthunt.com', 'www.producthunt.com']
 
 const productRegex = /^\/products\/([^/]+)(?:\/|$)/i
 const topicRegex = /^\/topics\/([^/]+)\/?$/i
+const categoryRegex = /^\/categories\/([^/]+)\/?$/i
 
-// The category feed is claimed only: the category page answers plain requests with a challenge,
-// so which feed it links is unknown.
 const feeds = definePlatformFeeds([
   { key: 'producthunt:products', template: 'https://www.producthunt.com/feed' },
   { key: 'producthunt:category', template: 'https://www.producthunt.com/feed?category={category}' },
@@ -41,6 +41,12 @@ export const parseProducthuntUrl = (url: string): ProducthuntUrl | undefined => 
     return { kind: 'topic', topic }
   }
 
+  const category = parsedUrl.pathname.match(categoryRegex)?.[1]
+
+  if (category) {
+    return { kind: 'category', category }
+  }
+
   return { kind: 'home' }
 }
 
@@ -54,6 +60,14 @@ export const producthuntHandler: PlatformHandler = {
 
     if (!parsed) {
       return []
+    }
+
+    // The category page answers plain requests with a challenge, so its feed is built from the URL.
+    if (parsed.kind === 'category') {
+      return [
+        feeds.getFeedEntry('producthunt:category', { category: parsed.category }),
+        feeds.getFeedEntry('producthunt:products'),
+      ]
     }
 
     return [feeds.getFeedEntry('producthunt:products')]

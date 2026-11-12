@@ -34,9 +34,21 @@ describe('parseProducthuntUrl', () => {
     'https://www.producthunt.com/', // the home page
     'https://www.producthunt.com/topics', // the topics index
     'https://www.producthunt.com/topics/productivity/launches', // a topic subpage
-    'https://www.producthunt.com/categories/tech', // a category page
+    'https://www.producthunt.com/categories', // the categories index
     'https://www.producthunt.com/@rrhoover', // a user page
   ]
+
+  const categoryPages: Array<string> = [
+    'https://www.producthunt.com/categories/productivity', // a category page
+    'https://www.producthunt.com/categories/productivity/', // a trailing slash
+    'https://producthunt.com/Categories/productivity', // a capitalized categories segment
+  ]
+
+  it.each(categoryPages)('should return the category for %s', (value) => {
+    const expected: ProducthuntUrl = { kind: 'category', category: 'productivity' }
+
+    expect(parseProducthuntUrl(value)).toEqual(expected)
+  })
 
   it.each(homePages)('should return the home page for %s', (value) => {
     const expected: ProducthuntUrl = { kind: 'home' }
@@ -94,8 +106,40 @@ describe('producthuntHandler', () => {
       expect(producthuntHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the products feed for a category page', () => {
-      const value = 'https://www.producthunt.com/categories/tech'
+    it('should return the category feed first for a category page', () => {
+      const value = 'https://www.producthunt.com/categories/productivity'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://www.producthunt.com/feed?category=productivity',
+          hint: { key: 'producthunt:category', label: 'Category' },
+        },
+        {
+          uri: 'https://www.producthunt.com/feed',
+          hint: { key: 'producthunt:products', label: 'Products' },
+        },
+      ]
+
+      expect(producthuntHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the category feed for a category page on the host without www', () => {
+      const value = 'http://producthunt.com/categories/design-tools/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://www.producthunt.com/feed?category=design-tools',
+          hint: { key: 'producthunt:category', label: 'Category' },
+        },
+        {
+          uri: 'https://www.producthunt.com/feed',
+          hint: { key: 'producthunt:products', label: 'Products' },
+        },
+      ]
+
+      expect(producthuntHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the products feed for the categories index', () => {
+      const value = 'https://www.producthunt.com/categories'
 
       expect(producthuntHandler.resolve(value)).toEqual(expected)
     })
