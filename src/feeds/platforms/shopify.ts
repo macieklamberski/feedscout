@@ -1,7 +1,7 @@
 import { getPathSegments, isAnyOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain, hasMarker, letterGroupsRegex } from '../../common/utils.js'
+import { hasMarker, letterGroupsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -81,13 +81,5 @@ export const shopifyHandler: PlatformHandler = {
     return [page.getFeedEntry('shopify:blog', { handle })]
   },
 
-  // The table reads any host under myshopify.com, so only a store's own subdomain is claimed,
-  // never the apex, www or a nested host.
-  getFeedHint: (url) => {
-    if (!getTenantSubdomain(url, domains)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
