@@ -61,5 +61,5 @@ export const naverBlogHandler: PlatformHandler = {
     return [feeds.getFeedEntry('naver-blog:blog', { blogId: parsed.blogId })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

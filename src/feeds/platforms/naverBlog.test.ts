@@ -99,56 +99,56 @@ describe('naverBlogHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the blog key for a blog feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the blog hint for a blog feed', () => {
       const value = 'https://rss.blog.naver.com/ansrnsdhqk74.xml'
-      const expected = 'naver-blog:blog'
+      const expected: DiscoverUriHint = { key: 'naver-blog:blog', label: 'Blog' }
 
-      expect(naverBlogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(naverBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a blog feed with a hyphen in the id', () => {
+    it('should return the blog hint for a blog feed with a hyphen in the id', () => {
       const value = 'https://rss.blog.naver.com/chart-worm.xml'
-      const expected = 'naver-blog:blog'
+      const expected: DiscoverUriHint = { key: 'naver-blog:blog', label: 'Blog' }
 
-      expect(naverBlogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(naverBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a blog feed over http', () => {
+    it('should return the blog hint for a blog feed over http', () => {
       const value = 'http://rss.blog.naver.com/prologue.xml'
-      const expected = 'naver-blog:blog'
+      const expected: DiscoverUriHint = { key: 'naver-blog:blog', label: 'Blog' }
 
-      expect(naverBlogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(naverBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://blog.naver.com/prologue'
 
-      expect(naverBlogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(naverBlogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an xml path on the blog host', () => {
       const value = 'https://blog.naver.com/prologue.xml'
 
-      expect(naverBlogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(naverBlogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the root of the feed host', () => {
       const value = 'https://rss.blog.naver.com/'
 
-      expect(naverBlogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(naverBlogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a nested path on the feed host', () => {
       const value = 'https://rss.blog.naver.com/prologue/223000000000.xml'
 
-      expect(naverBlogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(naverBlogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/prologue.xml'
 
-      expect(naverBlogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(naverBlogHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
