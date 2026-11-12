@@ -376,6 +376,13 @@ describe('lobstersHandler', () => {
       expect(lobstersHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the top key for the top feed without a period in its .rss spelling', () => {
+      const value = 'https://lobste.rs/top.rss'
+      const expected = 'lobsters:top'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the newest key for the newest feed', () => {
       const value = 'https://lobste.rs/newest.rss'
       const expected = 'lobsters:newest'
@@ -446,6 +453,7 @@ describe('lobstersHandler', () => {
       ['https://lobste.rs/top/1w/rss', { key: 'lobsters:top', label: 'Top stories' }],
       ['https://lobste.rs/top/1w.rss', { key: 'lobsters:top', label: 'Top stories' }],
       ['https://lobste.rs/top/rss', { key: 'lobsters:top', label: 'Top stories' }],
+      ['https://lobste.rs/top.rss', { key: 'lobsters:top', label: 'Top stories' }],
       ['https://lobste.rs/newest.rss', { key: 'lobsters:newest', label: 'Newest' }],
       ['https://lobste.rs/comments.rss', { key: 'lobsters:comments', label: 'Comments' }],
     ]
