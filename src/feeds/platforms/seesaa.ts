@@ -18,16 +18,10 @@ const domains = [
   'xblog.jp',
 ]
 
-// A blog with a podcast also serves its RSS feed as `index_custom.rdf`.
 const feeds = definePlatformFeeds(
   [
     { key: 'seesaa:posts', template: '{scheme}://{blog}.{domain}/index20.rdf', format: 'rss' },
     { key: 'seesaa:posts', template: '{scheme}://{blog}.{domain}/index.rdf', format: 'rdf' },
-    {
-      key: 'seesaa:posts',
-      template: '{scheme}://{blog}.{domain}/index_custom.rdf',
-      format: 'rss',
-    },
   ],
   { domains },
 )
@@ -53,7 +47,9 @@ export const seesaaHandler: PlatformHandler = {
       return []
     }
 
-    const params = { scheme: new URL(url).protocol.slice(0, -1), blog, domain }
+    // The certificate the blogs share leaves out stablo.jp, so its blogs serve feeds over http.
+    // The other domains redirect http to https.
+    const params = { scheme: domain === 'stablo.jp' ? 'http' : 'https', blog, domain }
 
     return [
       feeds.getFeedEntry('seesaa:posts', params, 'rss'),

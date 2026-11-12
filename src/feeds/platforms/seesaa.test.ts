@@ -115,7 +115,23 @@ describe('seesaaHandler', () => {
       expect(seesaaHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should keep the http scheme of the page', () => {
+    it('should return https feeds for an http page', () => {
+      const value = 'http://alice.seesaa.net/article/123.html'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.seesaa.net/index20.rdf',
+          hint: { key: 'seesaa:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://alice.seesaa.net/index.rdf',
+          hint: { key: 'seesaa:posts', label: 'Posts', format: 'rdf' },
+        },
+      ]
+
+      expect(seesaaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return http feeds for a stablo.jp blog', () => {
       const value = 'http://alice.stablo.jp/article/123.html'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -147,13 +163,6 @@ describe('seesaaHandler', () => {
       expect(seesaaHandler.getFeedKey?.(value)).toBe(expected)
     })
 
-    it('should return the posts key for a podcast RSS feed', () => {
-      const value = 'https://alice.seesaa.space/index_custom.rdf'
-      const expected = 'seesaa:posts'
-
-      expect(seesaaHandler.getFeedKey?.(value)).toBe(expected)
-    })
-
     it('should return the posts key for an http feed on another domain', () => {
       const value = 'http://alice.stablo.jp/index20.rdf'
       const expected = 'seesaa:posts'
@@ -163,6 +172,12 @@ describe('seesaaHandler', () => {
 
     it('should return undefined for an article page', () => {
       const value = 'https://alice.seesaa.net/article/123.html'
+
+      expect(seesaaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a podcast feed', () => {
+      const value = 'https://alice.seesaa.space/index_custom.rdf'
 
       expect(seesaaHandler.getFeedKey?.(value)).toBeUndefined()
     })
@@ -196,7 +211,7 @@ describe('seesaaHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://alice.seesaa.net/index20.rdf', { key: 'seesaa:posts', label: 'Posts' }],
       ['http://alice.seesaa.net/index.rdf', { key: 'seesaa:posts', label: 'Posts' }],
-      ['https://alice.seesaa.space/index_custom.rdf', { key: 'seesaa:posts', label: 'Posts' }],
+      ['https://alice.seesaa.space/index20.rdf', { key: 'seesaa:posts', label: 'Posts' }],
       ['http://alice.stablo.jp/index.rdf', { key: 'seesaa:posts', label: 'Posts' }],
     ]
 
