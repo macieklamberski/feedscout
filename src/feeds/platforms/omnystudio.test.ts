@@ -97,60 +97,60 @@ describe('omnystudioHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the show key for a show feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the show hint for a show feed', () => {
       const value = 'https://omny.fm/shows/example-show/playlists/podcast.rss'
-      const expected = 'omnystudio:show'
+      const expected: DiscoverUriHint = { key: 'omnystudio:show', label: 'Show' }
 
-      expect(omnystudioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(omnystudioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the show key for an http show feed', () => {
+    it('should return the show hint for an http show feed', () => {
       const value = 'http://omny.fm/shows/example-show/playlists/podcast.rss'
-      const expected = 'omnystudio:show'
+      const expected: DiscoverUriHint = { key: 'omnystudio:show', label: 'Show' }
 
-      expect(omnystudioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(omnystudioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the show key for a show feed on the content host', () => {
+    it('should return the show hint for a show feed on the content host', () => {
       const value =
         'https://www.omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss'
-      const expected = 'omnystudio:show'
+      const expected: DiscoverUriHint = { key: 'omnystudio:show', label: 'Show' }
 
-      expect(omnystudioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(omnystudioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the show key for a show feed on the content host apex', () => {
+    it('should return the show hint for a show feed on the content host apex', () => {
       const value =
         'https://omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss'
-      const expected = 'omnystudio:show'
+      const expected: DiscoverUriHint = { key: 'omnystudio:show', label: 'Show' }
 
-      expect(omnystudioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(omnystudioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a show feed carrying an access token', () => {
       const value =
         'https://omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss?accessToken=example'
 
-      expect(omnystudioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(omnystudioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a show page', () => {
       const value = 'https://omny.fm/shows/example-show'
 
-      expect(omnystudioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(omnystudioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the playlist page without the rss suffix', () => {
       const value = 'https://omny.fm/shows/example-show/playlists/podcast'
 
-      expect(omnystudioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(omnystudioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a show feed path on another host', () => {
       const value = 'https://example.com/shows/example-show/playlists/podcast.rss'
 
-      expect(omnystudioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(omnystudioHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

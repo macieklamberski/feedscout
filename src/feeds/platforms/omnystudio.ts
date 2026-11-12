@@ -49,12 +49,12 @@ export const omnystudioHandler: PlatformHandler = {
     return [feeds.getFeedEntry('omnystudio:show', { show: parsed.show })]
   },
 
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     // A feed carrying an access token is private to its subscriber.
     if (getQueryParam(parseUrl(url), 'accessToken') !== undefined) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
