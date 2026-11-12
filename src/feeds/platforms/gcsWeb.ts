@@ -1,12 +1,7 @@
 import { isHostOrSubdomainOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  type Element,
-  findElement,
-  getTenantSubdomain,
-  isRootOfPage,
-} from '../../common/utils.js'
+import { type Element, findElement, getTenantSubdomain, isRootOfPage } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -16,6 +11,16 @@ export type GcsWebUrl = { kind: 'site' }
 const domains = ['gcs-web.com']
 
 const filesPathRegex = /\/sites\/g\/files\/knoqqb\d+\//i
+
+// A site on its own domain is known only by its markup, so its feeds are built but not claimed.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'gcs-web:news-releases', template: '{scheme}://{host}/rss/news-releases.xml' },
+    { key: 'gcs-web:sec-filings', template: '{scheme}://{host}/rss/sec-filings.xml' },
+    { key: 'gcs-web:events', template: '{scheme}://{host}/rss/events.xml' },
+  ],
+  { domains },
+)
 
 const getAssetUrl = (element: Element): string => {
   return element.attribs.href ?? element.attribs.src ?? ''
@@ -50,12 +55,23 @@ export const gcsWebHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
+    const { protocol, host } = new URL(url)
+    const params = { scheme: protocol.slice(0, -1), host }
 
     return [
-      { uri: `${origin}/rss/news-releases.xml`, hint: composeHint('gcs-web:news-releases') },
-      { uri: `${origin}/rss/sec-filings.xml`, hint: composeHint('gcs-web:sec-filings') },
-      { uri: `${origin}/rss/events.xml`, hint: composeHint('gcs-web:events') },
+      feeds.getFeedEntry('gcs-web:news-releases', params),
+      feeds.getFeedEntry('gcs-web:sec-filings', params),
+      feeds.getFeedEntry('gcs-web:events', params),
     ]
+  },
+
+  // The table reads any host under gcs-web.com, so the page parser refuses the apex, which does not
+  // answer, and a nested subdomain, which has no DNS record.
+  getFeedKey: (url) => {
+    if (!parseGcsWebUrl(url)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
