@@ -173,105 +173,111 @@ describe('isProgrammerHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the post comments key for a post comments feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the post comments hint for a post comments feed', () => {
       const value = 'http://joe.is-programmer.com/posts/17753.rss'
-      const expected = 'is-programmer:post-comments'
+      const expected: DiscoverUriHint = {
+        key: 'is-programmer:post-comments',
+        label: 'Post comments',
+      }
 
-      expect(isProgrammerHandler.getFeedKey?.(value)).toBe(expected)
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a posts feed', () => {
+    it('should return the posts hint for a posts feed', () => {
       const value = 'http://baudelaire.is-programmer.com/posts.rss'
-      const expected = 'is-programmer:posts'
+      const expected: DiscoverUriHint = { key: 'is-programmer:posts', label: 'Posts' }
 
-      expect(isProgrammerHandler.getFeedKey?.(value)).toBe(expected)
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a posts feed at /feed', () => {
+    it('should return the posts hint for a posts feed at /feed', () => {
       const value = 'http://jade.is-programmer.com/feed'
-      const expected = 'is-programmer:posts'
+      const expected: DiscoverUriHint = { key: 'is-programmer:posts', label: 'Posts' }
 
-      expect(isProgrammerHandler.getFeedKey?.(value)).toBe(expected)
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a posts feed at /feed.rss', () => {
+    it('should return the posts hint for a posts feed at /feed.rss', () => {
       const value = 'http://renyuneyun.is-programmer.com/feed.rss'
-      const expected = 'is-programmer:posts'
+      const expected: DiscoverUriHint = { key: 'is-programmer:posts', label: 'Posts' }
 
-      expect(isProgrammerHandler.getFeedKey?.(value)).toBe(expected)
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a posts feed at /rss', () => {
+    it('should return the posts hint for a posts feed at /rss', () => {
       const value = 'http://lispor.is-programmer.com/rss'
-      const expected = 'is-programmer:posts'
+      const expected: DiscoverUriHint = { key: 'is-programmer:posts', label: 'Posts' }
 
-      expect(isProgrammerHandler.getFeedKey?.(value)).toBe(expected)
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a posts feed at /?format=rss', () => {
+    it('should return the posts hint for a posts feed at /?format=rss', () => {
       const value = 'http://cnlox.is-programmer.com/?format=rss'
-      const expected = 'is-programmer:posts'
+      const expected: DiscoverUriHint = { key: 'is-programmer:posts', label: 'Posts' }
 
-      expect(isProgrammerHandler.getFeedKey?.(value)).toBe(expected)
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the comments key for a comments feed', () => {
+    it('should return the comments hint for a comments feed', () => {
       const value = 'http://baudelaire.is-programmer.com/comments.rss'
-      const expected = 'is-programmer:comments'
+      const expected: DiscoverUriHint = { key: 'is-programmer:comments', label: 'Comments' }
 
-      expect(isProgrammerHandler.getFeedKey?.(value)).toBe(expected)
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the messages key for a messages feed', () => {
+    it('should return the messages hint for a messages feed', () => {
       const value = 'http://baudelaire.is-programmer.com/messages.rss'
-      const expected = 'is-programmer:messages'
+      const expected: DiscoverUriHint = { key: 'is-programmer:messages', label: 'Messages' }
 
-      expect(isProgrammerHandler.getFeedKey?.(value)).toBe(expected)
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the site key for a site feed', () => {
+    it('should return the site hint for a site feed', () => {
       const value = 'http://baudelaire.is-programmer.com/site.rss'
-      const expected = 'is-programmer:site'
+      const expected: DiscoverUriHint = { key: 'is-programmer:site', label: 'Site' }
 
-      expect(isProgrammerHandler.getFeedKey?.(value)).toBe(expected)
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the post comments key for a feed from a mixed-case host', () => {
+    it('should return the post comments hint for a feed from a mixed-case host', () => {
       const value = 'http://Joe.is-programmer.com/posts/17753.rss'
-      const expected = 'is-programmer:post-comments'
+      const expected: DiscoverUriHint = {
+        key: 'is-programmer:post-comments',
+        label: 'Post comments',
+      }
 
-      expect(isProgrammerHandler.getFeedKey?.(value)).toBe(expected)
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a post page', () => {
       const value = 'http://joe.is-programmer.com/posts/17753.html'
 
-      expect(isProgrammerHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(isProgrammerHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a blog home page', () => {
       const value = 'http://joe.is-programmer.com/'
 
-      expect(isProgrammerHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(isProgrammerHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex domain', () => {
       const value = 'http://is-programmer.com/posts.rss'
 
-      expect(isProgrammerHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(isProgrammerHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a host below a blog subdomain', () => {
       const value = 'http://blog.joe.is-programmer.com/posts.rss'
 
-      expect(isProgrammerHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(isProgrammerHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'http://joe.example.com/posts.rss'
 
-      expect(isProgrammerHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(isProgrammerHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
