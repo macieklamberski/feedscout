@@ -78,6 +78,7 @@ describe('viablogaHandler', () => {
     const postsFeeds = [
       'http://denis-collin.viabloga.com/index.xml',
       'http://denis-collin.viabloga.com/atom.xml',
+      'http://zen.viabloga.com/atom',
       'http://denis-collin.viabloga.com/index.rdf',
     ]
 
@@ -149,6 +150,7 @@ describe('viablogaHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['http://denis-collin.viabloga.com/index.xml', { key: 'viabloga:posts', label: 'Posts' }],
       ['http://denis-collin.viabloga.com/atom.xml', { key: 'viabloga:posts', label: 'Posts' }],
+      ['http://zen.viabloga.com/atom', { key: 'viabloga:posts', label: 'Posts' }],
       ['http://denis-collin.viabloga.com/index.rdf', { key: 'viabloga:posts', label: 'Posts' }],
       [
         'http://alain-lefebvre.viabloga.com/comments.xml',

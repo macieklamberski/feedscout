@@ -13,6 +13,7 @@ const feeds = definePlatformFeeds(
   [
     { key: 'viabloga:posts', template: '{scheme}://{blog}.{domain}/index.xml', format: 'rss' },
     { key: 'viabloga:posts', template: '{scheme}://{blog}.{domain}/atom.xml', format: 'atom' },
+    { key: 'viabloga:posts', template: '{scheme}://{blog}.{domain}/atom', format: 'atom' },
     { key: 'viabloga:posts', template: '{scheme}://{blog}.{domain}/index.rdf', format: 'rdf' },
     {
       key: 'viabloga:comments',
