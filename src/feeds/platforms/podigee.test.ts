@@ -162,6 +162,7 @@ describe('podigeeHandler', () => {
       'https://alice.podigee.io/feed/mp3?source=itunes',
       'https://alice.podigee.io/feeds/new_feed_12345/mp3',
       'https://alice.podigee.io/feeds/new_feed_12345/opus',
+      'https://alice.podigee.io/feeds/new_feed_12345/vorbis',
     ]
 
     it.each(values)('should return %s as itself', async (value) => {
