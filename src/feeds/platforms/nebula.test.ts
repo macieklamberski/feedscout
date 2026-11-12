@@ -307,73 +307,76 @@ describe('nebulaHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the videos key for a channel feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the videos hint for a channel feed', () => {
       const value = 'https://rss.nebula.app/video/channels/royal-ocean-film-society.rss'
-      const expected = 'nebula:videos'
+      const expected: DiscoverUriHint = { key: 'nebula:videos', label: 'Videos' }
 
-      expect(nebulaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the videos plus key for a channel Plus feed', () => {
+    it('should return the videos plus hint for a channel Plus feed', () => {
       const value = 'https://rss.nebula.app/video/channels/extremities.rss?plus=true'
-      const expected = 'nebula:videos-plus'
+      const expected: DiscoverUriHint = { key: 'nebula:videos-plus', label: 'Videos (Plus)' }
 
-      expect(nebulaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the originals key for the Originals feed', () => {
+    it('should return the originals hint for the Originals feed', () => {
       const value = 'https://rss.nebula.app/video/categories/originals.rss'
-      const expected = 'nebula:originals'
+      const expected: DiscoverUriHint = { key: 'nebula:originals', label: 'Nebula Originals' }
 
-      expect(nebulaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the category key for a category feed', () => {
+    it('should return the category hint for a category feed', () => {
       const value = 'https://rss.nebula.app/video/categories/technology.rss'
-      const expected = 'nebula:category'
+      const expected: DiscoverUriHint = { key: 'nebula:category', label: 'Category' }
 
-      expect(nebulaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the category plus key for a category Plus feed', () => {
+    it('should return the category plus hint for a category Plus feed', () => {
       const value = 'https://rss.nebula.app/video/categories/technology.rss?plus=true'
-      const expected = 'nebula:category-plus'
+      const expected: DiscoverUriHint = { key: 'nebula:category-plus', label: 'Category (Plus)' }
 
-      expect(nebulaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the videos all key for the all videos feed', () => {
+    it('should return the videos all hint for the all videos feed', () => {
       const value = 'https://rss.nebula.app/video.rss'
-      const expected = 'nebula:videos-all'
+      const expected: DiscoverUriHint = { key: 'nebula:videos-all', label: 'All Videos' }
 
-      expect(nebulaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the videos all plus key for the all videos Plus feed', () => {
+    it('should return the videos all plus hint for the all videos Plus feed', () => {
       const value = 'https://rss.nebula.app/video.rss?plus=true'
-      const expected = 'nebula:videos-all-plus'
+      const expected: DiscoverUriHint = {
+        key: 'nebula:videos-all-plus',
+        label: 'All Videos (Plus)',
+      }
 
-      expect(nebulaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the channels key for the recently added channels feed', () => {
+    it('should return the channels hint for the recently added channels feed', () => {
       const value = 'https://rss.nebula.app/video/channels.rss'
-      const expected = 'nebula:channels'
+      const expected: DiscoverUriHint = { key: 'nebula:channels', label: 'Recently Added Channels' }
 
-      expect(nebulaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a channel page', () => {
       const value = 'https://nebula.tv/royal-ocean-film-society'
 
-      expect(nebulaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(nebulaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a channel feed path on nebula.tv', () => {
       const value = 'https://nebula.tv/video/channels/extremities.rss'
 
-      expect(nebulaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(nebulaHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
