@@ -72,12 +72,12 @@ const feeds = definePlatformFeeds(
     { key: 'reddit:subreddits', template: 'https://www.reddit.com/subreddits/{sort}/.rss' },
     { key: 'reddit:subreddits', template: 'https://www.reddit.com/subreddits/.rss' },
     {
-      key: 'reddit:posts',
+      key: 'reddit:subreddit',
       template: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss?t={timeframe}',
     },
-    { key: 'reddit:posts', template: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss' },
-    { key: 'reddit:posts', template: 'https://www.reddit.com/r/{subreddit}/.rss' },
-    { key: 'reddit:posts', template: 'https://www.reddit.com/r/{subreddit}.rss' },
+    { key: 'reddit:subreddit', template: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss' },
+    { key: 'reddit:subreddit', template: 'https://www.reddit.com/r/{subreddit}/.rss' },
+    { key: 'reddit:subreddit', template: 'https://www.reddit.com/r/{subreddit}.rss' },
     { key: 'reddit:posts', template: 'https://www.reddit.com/user/{username}/.rss' },
     { key: 'reddit:posts', template: 'https://www.reddit.com/domain/{domain}/.rss' },
     { key: 'reddit:posts', template: 'https://www.reddit.com/{sort}/.rss?t={timeframe}' },
@@ -104,9 +104,9 @@ const feeds = definePlatformFeeds(
     { key: 'reddit:user-comments', template: 'https://{host}/user/{username}/comments/.rss' },
     { key: 'reddit:subreddits', template: 'https://{host}/subreddits/{sort}/.rss' },
     { key: 'reddit:subreddits', template: 'https://{host}/subreddits/.rss' },
-    { key: 'reddit:posts', template: 'https://{host}/r/{subreddit}/{sort}/.rss' },
-    { key: 'reddit:posts', template: 'https://{host}/r/{subreddit}/.rss' },
-    { key: 'reddit:posts', template: 'https://{host}/r/{subreddit}.rss' },
+    { key: 'reddit:subreddit', template: 'https://{host}/r/{subreddit}/{sort}/.rss' },
+    { key: 'reddit:subreddit', template: 'https://{host}/r/{subreddit}/.rss' },
+    { key: 'reddit:subreddit', template: 'https://{host}/r/{subreddit}.rss' },
     { key: 'reddit:posts', template: 'https://{host}/user/{username}/.rss' },
     { key: 'reddit:posts', template: 'https://{host}/domain/{domain}/.rss' },
   ],
@@ -280,10 +280,10 @@ export const redditHandler: PlatformHandler = {
           ? { subreddit, sort, timeframe }
           : { subreddit, sort }
 
-        return [feeds.getFeedEntry('reddit:posts', params), comments]
+        return [feeds.getFeedEntry('reddit:subreddit', params), comments]
       }
 
-      return [feeds.getFeedEntry('reddit:posts', { subreddit }), comments]
+      return [feeds.getFeedEntry('reddit:subreddit', { subreddit }), comments]
     }
 
     if (parsed.kind === 'multireddit') {

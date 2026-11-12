@@ -327,7 +327,7 @@ describe('redditHandler', () => {
       const expected = [
         {
           uri: 'https://www.reddit.com/r/programming/.rss',
-          hint: { key: 'reddit:posts', label: 'Posts' },
+          hint: { key: 'reddit:subreddit', label: 'Subreddit' },
         },
         {
           uri: 'https://www.reddit.com/r/programming/comments/.rss',
@@ -344,7 +344,7 @@ describe('redditHandler', () => {
         [
           {
             uri: 'https://www.reddit.com/r/programming/hot/.rss',
-            hint: { key: 'reddit:posts', label: 'Posts' },
+            hint: { key: 'reddit:subreddit', label: 'Subreddit' },
           },
           {
             uri: 'https://www.reddit.com/r/programming/comments/.rss',
@@ -357,7 +357,7 @@ describe('redditHandler', () => {
         [
           {
             uri: 'https://www.reddit.com/r/programming/new/.rss',
-            hint: { key: 'reddit:posts', label: 'Posts' },
+            hint: { key: 'reddit:subreddit', label: 'Subreddit' },
           },
           {
             uri: 'https://www.reddit.com/r/programming/comments/.rss',
@@ -370,7 +370,7 @@ describe('redditHandler', () => {
         [
           {
             uri: 'https://www.reddit.com/r/programming/rising/.rss',
-            hint: { key: 'reddit:posts', label: 'Posts' },
+            hint: { key: 'reddit:subreddit', label: 'Subreddit' },
           },
           {
             uri: 'https://www.reddit.com/r/programming/comments/.rss',
@@ -383,7 +383,7 @@ describe('redditHandler', () => {
         [
           {
             uri: 'https://www.reddit.com/r/programming/controversial/.rss',
-            hint: { key: 'reddit:posts', label: 'Posts' },
+            hint: { key: 'reddit:subreddit', label: 'Subreddit' },
           },
           {
             uri: 'https://www.reddit.com/r/programming/comments/.rss',
@@ -396,7 +396,7 @@ describe('redditHandler', () => {
         [
           {
             uri: 'https://www.reddit.com/r/programming/top/.rss',
-            hint: { key: 'reddit:posts', label: 'Posts' },
+            hint: { key: 'reddit:subreddit', label: 'Subreddit' },
           },
           {
             uri: 'https://www.reddit.com/r/programming/comments/.rss',
@@ -409,7 +409,7 @@ describe('redditHandler', () => {
         [
           {
             uri: 'https://www.reddit.com/r/programming/best/.rss',
-            hint: { key: 'reddit:posts', label: 'Posts' },
+            hint: { key: 'reddit:subreddit', label: 'Subreddit' },
           },
           {
             uri: 'https://www.reddit.com/r/programming/comments/.rss',
@@ -432,7 +432,7 @@ describe('redditHandler', () => {
         [
           {
             uri: 'https://www.reddit.com/r/programming/top/.rss?t=week',
-            hint: { key: 'reddit:posts', label: 'Posts' },
+            hint: { key: 'reddit:subreddit', label: 'Subreddit' },
           },
           {
             uri: 'https://www.reddit.com/r/programming/comments/.rss',
@@ -445,7 +445,7 @@ describe('redditHandler', () => {
         [
           {
             uri: 'https://www.reddit.com/r/programming/controversial/.rss?t=all',
-            hint: { key: 'reddit:posts', label: 'Posts' },
+            hint: { key: 'reddit:subreddit', label: 'Subreddit' },
           },
           {
             uri: 'https://www.reddit.com/r/programming/comments/.rss',
@@ -467,7 +467,7 @@ describe('redditHandler', () => {
       const expected = [
         {
           uri: 'https://www.reddit.com/r/programming/top/.rss',
-          hint: { key: 'reddit:posts', label: 'Posts' },
+          hint: { key: 'reddit:subreddit', label: 'Subreddit' },
         },
         {
           uri: 'https://www.reddit.com/r/programming/comments/.rss',
@@ -483,7 +483,7 @@ describe('redditHandler', () => {
       const expected = [
         {
           uri: 'https://www.reddit.com/r/programming/new/.rss',
-          hint: { key: 'reddit:posts', label: 'Posts' },
+          hint: { key: 'reddit:subreddit', label: 'Subreddit' },
         },
         {
           uri: 'https://www.reddit.com/r/programming/comments/.rss',
@@ -499,7 +499,7 @@ describe('redditHandler', () => {
       const expected = [
         {
           uri: 'https://www.reddit.com/r/programming/.rss',
-          hint: { key: 'reddit:posts', label: 'Posts' },
+          hint: { key: 'reddit:subreddit', label: 'Subreddit' },
         },
         {
           uri: 'https://www.reddit.com/r/programming/comments/.rss',
@@ -605,7 +605,7 @@ describe('redditHandler', () => {
       const expected = [
         {
           uri: 'https://www.reddit.com/r/programming/.rss',
-          hint: { key: 'reddit:posts', label: 'Posts' },
+          hint: { key: 'reddit:subreddit', label: 'Subreddit' },
         },
         {
           uri: 'https://www.reddit.com/r/programming/comments/.rss',
@@ -834,7 +834,7 @@ describe('redditHandler', () => {
       const expected = [
         {
           uri: 'https://www.reddit.com/r/AskReddit/.rss',
-          hint: { key: 'reddit:posts', label: 'Posts' },
+          hint: { key: 'reddit:subreddit', label: 'Subreddit' },
         },
         {
           uri: 'https://www.reddit.com/r/AskReddit/comments/.rss',
@@ -863,28 +863,28 @@ describe('redditHandler', () => {
 
     it('should return the posts hint for a subreddit feed', () => {
       const value = 'https://www.reddit.com/r/dns/.rss'
-      const expected: DiscoverUriHint = { key: 'reddit:posts', label: 'Posts' }
+      const expected: DiscoverUriHint = { key: 'reddit:subreddit', label: 'Subreddit' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a subreddit feed without the slash before the extension', () => {
       const value = 'https://www.reddit.com/r/emacs.rss'
-      const expected: DiscoverUriHint = { key: 'reddit:posts', label: 'Posts' }
+      const expected: DiscoverUriHint = { key: 'reddit:subreddit', label: 'Subreddit' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a subreddit sort feed with its timeframe', () => {
       const value = 'https://www.reddit.com/r/OpenAI/top/.rss?t=month'
-      const expected: DiscoverUriHint = { key: 'reddit:posts', label: 'Posts' }
+      const expected: DiscoverUriHint = { key: 'reddit:subreddit', label: 'Subreddit' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a subreddit sort feed with a cache-busting parameter', () => {
       const value = 'https://www.reddit.com/r/devops/top/.rss?_=1782881925'
-      const expected: DiscoverUriHint = { key: 'reddit:posts', label: 'Posts' }
+      const expected: DiscoverUriHint = { key: 'reddit:subreddit', label: 'Subreddit' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -1035,12 +1035,15 @@ describe('redditHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://www.reddit.com/.rss', { key: 'reddit:posts', label: 'Posts' }],
       ['https://www.reddit.com/top/.rss?t=week', { key: 'reddit:posts', label: 'Posts' }],
-      ['https://www.reddit.com/r/dns/.rss', { key: 'reddit:posts', label: 'Posts' }],
-      ['https://www.reddit.com/r/emacs.rss', { key: 'reddit:posts', label: 'Posts' }],
-      ['https://www.reddit.com/r/OpenAI/top/.rss?t=month', { key: 'reddit:posts', label: 'Posts' }],
+      ['https://www.reddit.com/r/dns/.rss', { key: 'reddit:subreddit', label: 'Subreddit' }],
+      ['https://www.reddit.com/r/emacs.rss', { key: 'reddit:subreddit', label: 'Subreddit' }],
+      [
+        'https://www.reddit.com/r/OpenAI/top/.rss?t=month',
+        { key: 'reddit:subreddit', label: 'Subreddit' },
+      ],
       [
         'https://www.reddit.com/r/devops/top/.rss?_=1782881925',
-        { key: 'reddit:posts', label: 'Posts' },
+        { key: 'reddit:subreddit', label: 'Subreddit' },
       ],
       ['https://www.reddit.com/user/feathj/.rss', { key: 'reddit:posts', label: 'Posts' }],
       ['https://www.reddit.com/domain/github.com/.rss', { key: 'reddit:posts', label: 'Posts' }],
@@ -1093,10 +1096,13 @@ describe('redditHandler', () => {
         'https://new.reddit.com/user/gamavalkharid/comments/.rss',
         { key: 'reddit:user-comments', label: 'Comments' },
       ],
-      ['https://old.reddit.com/r/dns/.rss', { key: 'reddit:posts', label: 'Posts' }],
-      ['https://old.reddit.com/r/emacs.rss', { key: 'reddit:posts', label: 'Posts' }],
-      ['https://old.reddit.com/r/OpenAI/top/.rss?t=month', { key: 'reddit:posts', label: 'Posts' }],
-      ['https://old.reddit.com/r/devops/top/.rss', { key: 'reddit:posts', label: 'Posts' }],
+      ['https://old.reddit.com/r/dns/.rss', { key: 'reddit:subreddit', label: 'Subreddit' }],
+      ['https://old.reddit.com/r/emacs.rss', { key: 'reddit:subreddit', label: 'Subreddit' }],
+      [
+        'https://old.reddit.com/r/OpenAI/top/.rss?t=month',
+        { key: 'reddit:subreddit', label: 'Subreddit' },
+      ],
+      ['https://old.reddit.com/r/devops/top/.rss', { key: 'reddit:subreddit', label: 'Subreddit' }],
       ['https://old.reddit.com/user/feathj/.rss', { key: 'reddit:posts', label: 'Posts' }],
       ['https://old.reddit.com/domain/github.com/.rss', { key: 'reddit:posts', label: 'Posts' }],
       [

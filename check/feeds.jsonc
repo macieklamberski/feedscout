@@ -1451,14 +1451,16 @@
     "reddit:post-comments": "https://www.reddit.com/r/programming/comments/1qoxwdt/.rss",
     "reddit:posts": [
       "https://www.reddit.com/.rss",
-      "https://www.reddit.com/r/programming/.rss",
-      "https://www.reddit.com/r/programming/new/.rss",
-      "https://www.reddit.com/r/programming/top/.rss?t=week",
-      "https://www.reddit.com/r/programming+javascript/.rss",
       "https://www.reddit.com/user/spez/.rss",
       "https://www.reddit.com/domain/github.com/.rss"
     ],
     "reddit:search": "https://www.reddit.com/search.rss?q=typescript",
+    "reddit:subreddit": [
+      "https://www.reddit.com/r/programming/.rss",
+      "https://www.reddit.com/r/programming/new/.rss",
+      "https://www.reddit.com/r/programming/top/.rss?t=week",
+      "https://www.reddit.com/r/programming+javascript/.rss"
+    ],
     "reddit:subreddits": "https://www.reddit.com/subreddits/.rss",
     "reddit:user-comments": "https://www.reddit.com/user/spez/comments/.rss",
     "reddit:user-submitted": "https://www.reddit.com/user/spez/submitted/.rss",
