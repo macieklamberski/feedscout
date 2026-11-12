@@ -24,6 +24,14 @@ const ownFeeds = definePlatformFeeds(
       key: 'squarespace:collection',
       template: '{scheme}://{site}.{domain}/{collection}?format=rss',
     },
+    {
+      key: 'squarespace:category',
+      template: '{scheme}://{site}.{domain}/{collection}?category={category}&format=rss',
+    },
+    {
+      key: 'squarespace:tag',
+      template: '{scheme}://{site}.{domain}/{collection}?tag={tag}&format=rss',
+    },
   ],
   { domains },
 )

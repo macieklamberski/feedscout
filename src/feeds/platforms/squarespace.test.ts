@@ -151,9 +151,23 @@ describe('squarespaceHandler', () => {
       expect(squarespaceHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the collection hint for a category feed', () => {
+    it('should return the category hint for a category feed', () => {
       const value = 'https://alice.squarespace.com/blog?category=News&format=rss'
-      const expected: DiscoverUriHint = { key: 'squarespace:collection', label: 'Collection' }
+      const expected: DiscoverUriHint = { key: 'squarespace:category', label: 'Category' }
+
+      expect(squarespaceHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the category hint for a category feed with a plus in the name', () => {
+      const value = 'https://alice.squarespace.com/resources?category=Bible+Talks&format=rss'
+      const expected: DiscoverUriHint = { key: 'squarespace:category', label: 'Category' }
+
+      expect(squarespaceHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a tag feed', () => {
+      const value = 'https://alice.squarespace.com/podcast?format=rss&tag=example'
+      const expected: DiscoverUriHint = { key: 'squarespace:tag', label: 'Tag' }
 
       expect(squarespaceHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -190,21 +204,25 @@ describe('squarespaceHandler', () => {
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<string> = [
-      'https://alice.squarespace.com/blog?format=rss',
-      'http://alice.squarespace.com/podcast?format=rss',
-      'https://alice.squarespace.com/blog/?category=News&format=rss',
+    const collection: DiscoverUriHint = { key: 'squarespace:collection', label: 'Collection' }
+    const category: DiscoverUriHint = { key: 'squarespace:category', label: 'Category' }
+    const tag: DiscoverUriHint = { key: 'squarespace:tag', label: 'Tag' }
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://alice.squarespace.com/blog?format=rss', collection],
+      ['http://alice.squarespace.com/podcast?format=rss', collection],
+      ['https://alice.squarespace.com/blog/?category=News&format=rss', category],
+      ['http://alice.squarespace.com/blog?category=Example+Talks&format=rss', category],
+      ['https://alice.squarespace.com/podcast?format=rss&tag=example', tag],
+      ['http://alice.squarespace.com/blog/?tag=example&format=rss', tag],
     ]
 
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [squarespaceHandler],
         baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: value, hint: { key: 'squarespace:collection', label: 'Collection' } },
-      ]
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
       expect(result).toEqual(expected)
     })
