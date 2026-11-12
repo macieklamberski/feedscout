@@ -133,13 +133,13 @@ describe('bubblelifeHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return an https feed for an http community page', () => {
+    it('should keep the scheme of an http community page', () => {
       const value = 'http://sandysprings.bubblelife.com/community/idealplotter'
       const content =
         '<a href="/community/idealplotter/library/3569381092" title="News" class="blMobileItem">'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://sandysprings.bubblelife.com/rss?c=3569381092',
+          uri: 'http://sandysprings.bubblelife.com/rss?c=3569381092',
           hint: { key: 'bubblelife:posts', label: 'Posts' },
         },
       ]

@@ -20,8 +20,8 @@ const feedHrefRegex = /^\/rss\?c=(\d+)$/i
 // A community's posts feed is its first library's feed, so a feed URL reads back as a library.
 const feeds = definePlatformFeeds(
   [
-    { key: 'bubblelife:library', template: 'https://{host}/rss?c={id}' },
-    { key: 'bubblelife:posts', template: 'https://{host}/rss?c={id}' },
+    { key: 'bubblelife:library', template: '{scheme}://{host}/rss?c={id}' },
+    { key: 'bubblelife:posts', template: '{scheme}://{host}/rss?c={id}' },
   ],
   { domains },
 )
@@ -95,18 +95,19 @@ export const bubblelifeHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getBubblelifePage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const params = { host: new URL(url).hostname, id: page.feedId }
+    const params = { id: page.feedId }
 
     if (page.kind === 'library') {
-      return [feeds.getFeedEntry('bubblelife:library', params)]
+      return [pageFeeds.getFeedEntry('bubblelife:library', params)]
     }
 
-    return [feeds.getFeedEntry('bubblelife:posts', params)]
+    return [pageFeeds.getFeedEntry('bubblelife:posts', params)]
   },
 
   getFeedHint: (url) => {
