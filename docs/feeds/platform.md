@@ -2966,6 +2966,7 @@ Discovers the news and events feeds of a Sportsregions club site. A club on its 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{club}.sportsregions.fr/*` | News · events |
+| `{club}.sportsregions.fr/evenements?type_id={type}&groupe_id={group}` | Filtered events · news · events |
 | `{custom-domain}/*` | News · events |
 
 ### Ochanoko Net

@@ -1,7 +1,8 @@
-import { isHostOrSubdomainOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { getQueryParam, isHostOrSubdomainOf, parseUrl } from 'trousse'
+import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { digitsRegex, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,9 +10,23 @@ export type SportsregionsUrl = { kind: 'club' }
 
 const domains = ['sportsregions.fr']
 
+const eventsPathRegex = /^\/evenements\/?$/i
+
 const clubFeeds = definePlatformFeeds([
   { key: 'sportsregions:news', template: 'https://{club}.sportsregions.fr/rss/news' },
   { key: 'sportsregions:events', template: 'https://{club}.sportsregions.fr/rss/evenement' },
+  {
+    key: 'sportsregions:filtered-events',
+    template: 'https://{club}.sportsregions.fr/rss/evenement?type_id={typeId}&groupe_id={groupId}',
+  },
+  {
+    key: 'sportsregions:filtered-events',
+    template: 'https://{club}.sportsregions.fr/rss/evenement?type_id={typeId}',
+  },
+  {
+    key: 'sportsregions:filtered-events',
+    template: 'https://{club}.sportsregions.fr/rss/evenement?groupe_id={groupId}',
+  },
 ])
 
 // A club on its own domain is known only by its markers, so its feeds are built but not claimed.
@@ -19,6 +34,18 @@ const siteFeeds = definePlatformFeeds(
   [
     { key: 'sportsregions:news', template: '{scheme}://{host}/rss/news' },
     { key: 'sportsregions:events', template: '{scheme}://{host}/rss/evenement' },
+    {
+      key: 'sportsregions:filtered-events',
+      template: '{scheme}://{host}/rss/evenement?type_id={typeId}&groupe_id={groupId}',
+    },
+    {
+      key: 'sportsregions:filtered-events',
+      template: '{scheme}://{host}/rss/evenement?type_id={typeId}',
+    },
+    {
+      key: 'sportsregions:filtered-events',
+      template: '{scheme}://{host}/rss/evenement?groupe_id={groupId}',
+    },
   ],
   { domains },
 )
@@ -26,6 +53,33 @@ const siteFeeds = definePlatformFeeds(
 // The footer of every club site links the platform's abuse report form, on custom domains too.
 export const isSportsregionsHtml = (content: string): boolean => {
   return content.includes('www.sportsregions.fr/signaler-un-contenu-inapproprie')
+}
+
+// The events page filtered by event type or group links the events feed with the same filter.
+const getEventFilters = (url: string): PlatformFeedParams | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !eventsPathRegex.test(parsedUrl.pathname)) {
+    return
+  }
+
+  const filters: PlatformFeedParams = {}
+  const typeId = getQueryParam(parsedUrl, 'type_id')
+  const groupId = getQueryParam(parsedUrl, 'groupe_id')
+
+  if (typeId && digitsRegex.test(typeId)) {
+    filters.typeId = typeId
+  }
+
+  if (groupId && digitsRegex.test(groupId)) {
+    filters.groupId = groupId
+  }
+
+  if (Object.keys(filters).length === 0) {
+    return
+  }
+
+  return filters
 }
 
 export const parseSportsregionsUrl = (url: string): SportsregionsUrl | undefined => {
@@ -52,21 +106,26 @@ export const sportsregionsHandler: PlatformHandler = {
 
   resolve: (url) => {
     const club = getTenantSubdomain(url, domains)
-
-    if (club) {
-      return [
-        clubFeeds.getFeedEntry('sportsregions:news', { club }),
-        clubFeeds.getFeedEntry('sportsregions:events', { club }),
-      ]
-    }
-
-    const page = siteFeeds.forUrl(url)
+    const page = club ? clubFeeds.forUrl(url) : siteFeeds.forUrl(url)
 
     if (!page) {
       return []
     }
 
-    return [page.getFeedEntry('sportsregions:news'), page.getFeedEntry('sportsregions:events')]
+    const params: PlatformFeedParams = club ? { club } : {}
+    const filters = getEventFilters(url)
+    const uris: Array<DiscoverUriEntry> = []
+
+    if (filters) {
+      uris.push(page.getFeedEntry('sportsregions:filtered-events', { ...params, ...filters }))
+    }
+
+    uris.push(
+      page.getFeedEntry('sportsregions:news', params),
+      page.getFeedEntry('sportsregions:events', params),
+    )
+
+    return uris
   },
 
   getFeedHint: clubFeeds.getFeedHint,

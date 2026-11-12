@@ -154,6 +154,82 @@ describe('sportsregionsHandler', () => {
 
       expect(sportsregionsHandler.resolve(value, clubHtml)).toEqual(expected)
     })
+
+    it('should return the filtered events feed first for a filtered events page of a club', () => {
+      const value = 'https://example-club.sportsregions.fr/evenements?type_id=1&groupe_id=12345'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example-club.sportsregions.fr/rss/evenement?type_id=1&groupe_id=12345',
+          hint: { key: 'sportsregions:filtered-events', label: 'Filtered events' },
+        },
+        {
+          uri: 'https://example-club.sportsregions.fr/rss/news',
+          hint: { key: 'sportsregions:news', label: 'News' },
+        },
+        {
+          uri: 'https://example-club.sportsregions.fr/rss/evenement',
+          hint: { key: 'sportsregions:events', label: 'Events' },
+        },
+      ]
+
+      expect(sportsregionsHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the events feed filtered by group for an events page of a group', () => {
+      const value = 'https://example-club.sportsregions.fr/evenements?groupe_id=12345'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example-club.sportsregions.fr/rss/evenement?groupe_id=12345',
+          hint: { key: 'sportsregions:filtered-events', label: 'Filtered events' },
+        },
+        {
+          uri: 'https://example-club.sportsregions.fr/rss/news',
+          hint: { key: 'sportsregions:news', label: 'News' },
+        },
+        {
+          uri: 'https://example-club.sportsregions.fr/rss/evenement',
+          hint: { key: 'sportsregions:events', label: 'Events' },
+        },
+      ]
+
+      expect(sportsregionsHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the http scheme of a filtered events page of a custom domain', () => {
+      const value = 'http://example.com/evenements?type_id=2'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.com/rss/evenement?type_id=2',
+          hint: { key: 'sportsregions:filtered-events', label: 'Filtered events' },
+        },
+        {
+          uri: 'http://example.com/rss/news',
+          hint: { key: 'sportsregions:news', label: 'News' },
+        },
+        {
+          uri: 'http://example.com/rss/evenement',
+          hint: { key: 'sportsregions:events', label: 'Events' },
+        },
+      ]
+
+      expect(sportsregionsHandler.resolve(value, clubHtml)).toEqual(expected)
+    })
+
+    it('should return news and events feeds for an events page filtered by an event type the feed ignores', () => {
+      const value = 'https://example-club.sportsregions.fr/evenements?type_evenement_id=1'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example-club.sportsregions.fr/rss/news',
+          hint: { key: 'sportsregions:news', label: 'News' },
+        },
+        {
+          uri: 'https://example-club.sportsregions.fr/rss/evenement',
+          hint: { key: 'sportsregions:events', label: 'Events' },
+        },
+      ]
+
+      expect(sportsregionsHandler.resolve(value)).toEqual(expected)
+    })
   })
 
   describe('getFeedHint', () => {
@@ -178,8 +254,38 @@ describe('sportsregionsHandler', () => {
       expect(sportsregionsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the events hint for the events feed filtered by group and type', () => {
+    it('should return the filtered events hint for the events feed filtered by group and type', () => {
       const value = 'https://example-club.sportsregions.fr/rss/evenement?groupe_id=12345&type_id=2'
+      const expected: DiscoverUriHint = {
+        key: 'sportsregions:filtered-events',
+        label: 'Filtered events',
+      }
+
+      expect(sportsregionsHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the filtered events hint for the events feed filtered by type', () => {
+      const value = 'http://example-club.sportsregions.fr/rss/evenement?type_id=2'
+      const expected: DiscoverUriHint = {
+        key: 'sportsregions:filtered-events',
+        label: 'Filtered events',
+      }
+
+      expect(sportsregionsHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the filtered events hint for the events feed filtered by group', () => {
+      const value = 'https://example-club.sportsregions.fr/rss/evenement?groupe_id=12345'
+      const expected: DiscoverUriHint = {
+        key: 'sportsregions:filtered-events',
+        label: 'Filtered events',
+      }
+
+      expect(sportsregionsHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the events hint for the events feed with an event type the feed ignores', () => {
+      const value = 'https://example-club.sportsregions.fr/rss/evenement?type_evenement_id=1'
       const expected: DiscoverUriHint = { key: 'sportsregions:events', label: 'Events' }
 
       expect(sportsregionsHandler.getFeedHint?.(value)).toEqual(expected)
@@ -208,17 +314,33 @@ describe('sportsregionsHandler', () => {
 
       expect(sportsregionsHandler.getFeedHint?.(value)).toBeUndefined()
     })
+
+    it('should return undefined for a filtered events feed of a custom domain', () => {
+      const value = 'https://example.com/rss/evenement?type_id=2'
+
+      expect(sportsregionsHandler.getFeedHint?.(value)).toBeUndefined()
+    })
   })
 
   describe('own feeds through the Platform method', () => {
     const newsHint: DiscoverUriHint = { key: 'sportsregions:news', label: 'News' }
     const eventsHint: DiscoverUriHint = { key: 'sportsregions:events', label: 'Events' }
+    const filteredEventsHint: DiscoverUriHint = {
+      key: 'sportsregions:filtered-events',
+      label: 'Filtered events',
+    }
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://example-club.sportsregions.fr/rss/news', newsHint],
       ['http://example-club.sportsregions.fr/rss/news', newsHint],
       ['https://example-club.sportsregions.fr/rss/evenement', eventsHint],
       ['https://example-club.sportsregions.fr/rss/evenement/', eventsHint],
       ['https://example-club.sportsregions.fr/rss/evenement?type_evenement_id=1', eventsHint],
+      [
+        'https://example-club.sportsregions.fr/rss/evenement?groupe_id=12345&type_id=2',
+        filteredEventsHint,
+      ],
+      ['http://example-club.sportsregions.fr/rss/evenement?type_id=2', filteredEventsHint],
+      ['https://example-club.sportsregions.fr/rss/evenement?groupe_id=12345', filteredEventsHint],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
