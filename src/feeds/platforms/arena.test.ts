@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { ArenaUrl } from './arena.js'
 import { arenaHandler, parseArenaUrl } from './arena.js'
 
@@ -157,6 +160,103 @@ describe('arenaHandler', () => {
       ]
 
       expect(arenaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return no feeds for the homepage', () => {
+      const value = 'https://www.are.na/'
+      const expected: Array<DiscoverUriEntry> = []
+
+      expect(arenaHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the profile key for a profile feed', () => {
+      const value = 'https://www.are.na/laurel-schwulst/feed/rss'
+      const expected = 'arena:profile'
+
+      expect(arenaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the channel key for a channel feed', () => {
+      const value = 'https://www.are.na/jason-santa-maria/typefaces-decorative-xghnyjwr8h0/feed/rss'
+      const expected = 'arena:channel'
+
+      expect(arenaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the editorial key for the editorial feed', () => {
+      const value = 'https://www.are.na/editorial/feed/rss'
+      const expected = 'arena:editorial'
+
+      expect(arenaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the editorial key for the editorial feed with a capitalized route', () => {
+      const value = 'https://www.are.na/Editorial/Feed/RSS'
+      const expected = 'arena:editorial'
+
+      expect(arenaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the profile key for a profile feed on the host without www', () => {
+      const value = 'https://are.na/laurel-schwulst/feed/rss'
+      const expected = 'arena:profile'
+
+      expect(arenaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the channel key for a channel feed over http with a trailing slash', () => {
+      const value = 'http://www.are.na/michelle-tran/misc-articles/feed/rss/'
+      const expected = 'arena:channel'
+
+      expect(arenaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a profile page', () => {
+      const value = 'https://www.are.na/laurel-schwulst'
+
+      expect(arenaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a channel page', () => {
+      const value = 'https://www.are.na/michelle-tran/misc-articles'
+
+      expect(arenaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an editorial article', () => {
+      const value = 'https://www.are.na/editorial/learning-to-float'
+
+      expect(arenaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/laurel-schwulst/feed/rss'
+
+      expect(arenaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://www.are.na/laurel-schwulst/feed/rss', { key: 'arena:profile', label: 'Profile' }],
+      [
+        'https://www.are.na/michelle-tran/misc-articles/feed/rss',
+        { key: 'arena:channel', label: 'Channel' },
+      ],
+      ['https://www.are.na/editorial/feed/rss', { key: 'arena:editorial', label: 'Editorial' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [arenaHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
