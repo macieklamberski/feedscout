@@ -3,7 +3,6 @@ import {
   getAnyOf,
   getPathSegments,
   getQueryParam,
-  hasQueryParam,
   isAnyOf,
   isHostOf,
   parseUrl,
@@ -178,11 +177,11 @@ export const flickrHandler: PlatformHandler = {
       return key
     }
 
-    // Flickr narrows a photostream or a group location feed to one tag when `tags` sits beside
-    // `id` or `g`, a feed resolve never builds.
+    // Flickr narrows a photostream or a group location feed to one tag when `tags` sits beside a
+    // non-empty `id` or `g`, a feed resolve never builds. An empty `id=` leaves the tag feed.
     if (
       getQueryParam(parsedUrl, 'tags') &&
-      (hasQueryParam(parsedUrl, 'id') || hasQueryParam(parsedUrl, 'g'))
+      (getQueryParam(parsedUrl, 'id') || getQueryParam(parsedUrl, 'g'))
     ) {
       return
     }
