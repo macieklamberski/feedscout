@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { isOcnkHtml, type OcnkUrl, ocnkHandler, parseOcnkUrl } from './ocnk.js'
 
 const pcScriptHtml = `
@@ -142,6 +144,62 @@ describe('ocnkHandler', () => {
       ]
 
       expect(ocnkHandler.resolve(value, pcScriptHtml)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the products key for the products feed', () => {
+      const value = 'https://example.ocnk.net/rss/rss.php'
+      const expected = 'ocnk:products'
+
+      expect(ocnkHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the products key for the products feed over http', () => {
+      const value = 'http://example.ocnk.net/rss/rss.php'
+      const expected = 'ocnk:products'
+
+      expect(ocnkHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a shop page', () => {
+      const value = 'https://example.ocnk.net/product/24'
+
+      expect(ocnkHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the feed path on the apex domain', () => {
+      const value = 'https://ocnk.net/rss/rss.php'
+
+      expect(ocnkHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the feed path on a nested subdomain', () => {
+      const value = 'https://a.example.ocnk.net/rss/rss.php'
+
+      expect(ocnkHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the feed path on a custom domain', () => {
+      const value = 'https://www.example.com/rss/rss.php'
+
+      expect(ocnkHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('through discoverUrisFromPlatform', () => {
+    const hint: DiscoverUriHint = { key: 'ocnk:products', label: 'Products' }
+    const feedUrls = ['https://example.ocnk.net/rss/rss.php', 'http://example.ocnk.net/rss/rss.php']
+
+    it.each(feedUrls)('should return %s as itself', async (value) => {
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [ocnkHandler],
+        baseUrl: value,
+      })
+
+      expect(result).toEqual(expected)
     })
   })
 })
