@@ -112,6 +112,29 @@ describe('omnystudioHandler', () => {
       expect(omnystudioHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the show key for a show feed on the content host', () => {
+      const value =
+        'https://www.omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss'
+      const expected = 'omnystudio:show'
+
+      expect(omnystudioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the show key for a show feed on the content host apex', () => {
+      const value =
+        'https://omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss'
+      const expected = 'omnystudio:show'
+
+      expect(omnystudioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a show feed carrying an access token', () => {
+      const value =
+        'https://omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss?accessToken=example'
+
+      expect(omnystudioHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a show page', () => {
       const value = 'https://omny.fm/shows/example-show'
 
@@ -139,6 +162,8 @@ describe('omnystudioHandler', () => {
       'http://omny.fm/shows/example-show/playlists/podcast.rss',
       'https://www.omny.fm/shows/example-show/playlists/podcast.rss',
       'https://omny.fm/Shows/example-show/playlists/podcast.rss',
+      'https://www.omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss',
+      'https://omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss',
     ]
 
     it.each(values)('should return %s as itself', async (value) => {

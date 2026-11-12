@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { getQueryParam, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -12,6 +12,10 @@ const showPathRegex = /^\/shows\/([^/]+)/i
 
 const feeds = definePlatformFeeds([
   { key: 'omnystudio:show', template: 'https://omny.fm/shows/{show}/playlists/podcast.rss' },
+  {
+    key: 'omnystudio:show',
+    template: 'https://www.omnycontent.com/d/playlist/{orgId}/{programId}/{playlistId}/podcast.rss',
+  },
 ])
 
 export const parseOmnystudioUrl = (url: string): OmnystudioUrl | undefined => {
@@ -45,5 +49,12 @@ export const omnystudioHandler: PlatformHandler = {
     return [feeds.getFeedEntry('omnystudio:show', { show: parsed.show })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedKey: (url) => {
+    // A feed carrying an access token is private to its subscriber.
+    if (getQueryParam(parseUrl(url), 'accessToken') !== undefined) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
+  },
 }
