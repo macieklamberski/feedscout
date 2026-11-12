@@ -1,7 +1,7 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { wordOrHyphenRegex } from '../../common/utils.js'
+import { digitsRegex, wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -75,5 +75,15 @@ export const soundcloudHandler: PlatformHandler = {
     return [feeds.getFeedEntry('soundcloud:tracks', { userId: page.userId })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  // A user id is digits, and a word in its place answers 400.
+  getFeedKey: (url) => {
+    const [, userSegment] = getPathSegments(url)
+    const userId = userSegment?.split(':').at(-1)
+
+    if (!userId || !digitsRegex.test(userId)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
+  },
 }
