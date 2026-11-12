@@ -323,5 +323,5 @@ export const redditHandler: PlatformHandler = {
     return [feeds.getFeedEntry('reddit:posts', { domain: parsed.domain })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

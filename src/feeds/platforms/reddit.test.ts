@@ -846,188 +846,188 @@ describe('redditHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for the home feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for the home feed', () => {
       const value = 'https://www.reddit.com/.rss'
-      const expected = 'reddit:posts'
+      const expected: DiscoverUriHint = { key: 'reddit:posts', label: 'Posts' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a site sort feed with its timeframe', () => {
+    it('should return the posts hint for a site sort feed with its timeframe', () => {
       const value = 'https://www.reddit.com/top/.rss?t=week'
-      const expected = 'reddit:posts'
+      const expected: DiscoverUriHint = { key: 'reddit:posts', label: 'Posts' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a subreddit feed', () => {
+    it('should return the posts hint for a subreddit feed', () => {
       const value = 'https://www.reddit.com/r/dns/.rss'
-      const expected = 'reddit:posts'
+      const expected: DiscoverUriHint = { key: 'reddit:posts', label: 'Posts' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a subreddit feed without the slash before the extension', () => {
+    it('should return the posts hint for a subreddit feed without the slash before the extension', () => {
       const value = 'https://www.reddit.com/r/emacs.rss'
-      const expected = 'reddit:posts'
+      const expected: DiscoverUriHint = { key: 'reddit:posts', label: 'Posts' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a subreddit sort feed with its timeframe', () => {
+    it('should return the posts hint for a subreddit sort feed with its timeframe', () => {
       const value = 'https://www.reddit.com/r/OpenAI/top/.rss?t=month'
-      const expected = 'reddit:posts'
+      const expected: DiscoverUriHint = { key: 'reddit:posts', label: 'Posts' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a subreddit sort feed with a cache-busting parameter', () => {
+    it('should return the posts hint for a subreddit sort feed with a cache-busting parameter', () => {
       const value = 'https://www.reddit.com/r/devops/top/.rss?_=1782881925'
-      const expected = 'reddit:posts'
+      const expected: DiscoverUriHint = { key: 'reddit:posts', label: 'Posts' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a user feed', () => {
+    it('should return the posts hint for a user feed', () => {
       const value = 'https://www.reddit.com/user/feathj/.rss'
-      const expected = 'reddit:posts'
+      const expected: DiscoverUriHint = { key: 'reddit:posts', label: 'Posts' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a domain feed', () => {
+    it('should return the posts hint for a domain feed', () => {
       const value = 'https://www.reddit.com/domain/github.com/.rss'
-      const expected = 'reddit:posts'
+      const expected: DiscoverUriHint = { key: 'reddit:posts', label: 'Posts' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the comments key for a subreddit comments feed', () => {
+    it('should return the comments hint for a subreddit comments feed', () => {
       const value = 'https://www.reddit.com/r/longevity/comments/.rss'
-      const expected = 'reddit:comments'
+      const expected: DiscoverUriHint = { key: 'reddit:comments', label: 'Comments' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the user comments key for a user comments feed', () => {
+    it('should return the user comments hint for a user comments feed', () => {
       const value = 'https://www.reddit.com/user/gamavalkharid/comments/.rss'
-      const expected = 'reddit:user-comments'
+      const expected: DiscoverUriHint = { key: 'reddit:user-comments', label: 'Comments' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the post comments key for a subreddit post feed', () => {
+    it('should return the post comments hint for a subreddit post feed', () => {
       const value = 'https://www.reddit.com/r/ansible/comments/y7v2ed/.rss'
-      const expected = 'reddit:post-comments'
+      const expected: DiscoverUriHint = { key: 'reddit:post-comments', label: 'Post comments' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the post comments key for a user post feed', () => {
+    it('should return the post comments hint for a user post feed', () => {
       const value = 'https://www.reddit.com/user/spez/comments/abc123/.rss'
-      const expected = 'reddit:post-comments'
+      const expected: DiscoverUriHint = { key: 'reddit:post-comments', label: 'Post comments' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the search key for a site search feed', () => {
+    it('should return the search hint for a site search feed', () => {
       const value = 'https://www.reddit.com/search.rss?q=%22Sue%20Scheff%22'
-      const expected = 'reddit:search'
+      const expected: DiscoverUriHint = { key: 'reddit:search', label: 'Search' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the search key for a subreddit search feed', () => {
+    it('should return the search hint for a subreddit search feed', () => {
       const value = 'https://www.reddit.com/r/programming/search.rss?q=rust&restrict_sr=on'
-      const expected = 'reddit:search'
+      const expected: DiscoverUriHint = { key: 'reddit:search', label: 'Search' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the wiki key for a wiki feed', () => {
+    it('should return the wiki hint for a wiki feed', () => {
       const value = 'https://www.reddit.com/r/problemgambling/wiki/index.rss'
-      const expected = 'reddit:wiki'
+      const expected: DiscoverUriHint = { key: 'reddit:wiki', label: 'Wiki' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the subreddits key for the subreddits feed', () => {
+    it('should return the subreddits hint for the subreddits feed', () => {
       const value = 'https://www.reddit.com/subreddits/.rss'
-      const expected = 'reddit:subreddits'
+      const expected: DiscoverUriHint = { key: 'reddit:subreddits', label: 'Subreddits' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the subreddits key for a sorted subreddits feed', () => {
+    it('should return the subreddits hint for a sorted subreddits feed', () => {
       const value = 'https://www.reddit.com/subreddits/new/.rss'
-      const expected = 'reddit:subreddits'
+      const expected: DiscoverUriHint = { key: 'reddit:subreddits', label: 'Subreddits' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the user submitted key for a submitted feed', () => {
+    it('should return the user submitted hint for a submitted feed', () => {
       const value = 'https://www.reddit.com/user/Darkskynet/submitted/.rss'
-      const expected = 'reddit:user-submitted'
+      const expected: DiscoverUriHint = { key: 'reddit:user-submitted', label: 'Submitted' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the multireddit key for a multireddit feed', () => {
+    it('should return the multireddit hint for a multireddit feed', () => {
       const value = 'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss'
-      const expected = 'reddit:multireddit'
+      const expected: DiscoverUriHint = { key: 'reddit:multireddit', label: 'Multireddit' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the comments key for a subreddit comments feed on the old host', () => {
+    it('should return the comments hint for a subreddit comments feed on the old host', () => {
       const value = 'https://old.reddit.com/r/longevity/comments/.rss'
-      const expected = 'reddit:comments'
+      const expected: DiscoverUriHint = { key: 'reddit:comments', label: 'Comments' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the user comments key for a user comments feed on the new host', () => {
+    it('should return the user comments hint for a user comments feed on the new host', () => {
       const value = 'https://new.reddit.com/user/gamavalkharid/comments/.rss'
-      const expected = 'reddit:user-comments'
+      const expected: DiscoverUriHint = { key: 'reddit:user-comments', label: 'Comments' }
 
-      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a subreddit page', () => {
       const value = 'https://www.reddit.com/r/longevity/'
 
-      expect(redditHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(redditHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a post page', () => {
       const value = 'https://www.reddit.com/r/AskReddit/comments/abc123/whats_your_favorite'
 
-      expect(redditHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(redditHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a user page', () => {
       const value = 'https://www.reddit.com/user/feathj/'
 
-      expect(redditHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(redditHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a site search page', () => {
       const value = 'https://www.reddit.com/search?q=typescript'
 
-      expect(redditHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(redditHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the home feed on the old host', () => {
       const value = 'https://old.reddit.com/.rss'
 
-      expect(redditHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(redditHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/r/dns/.rss'
 
-      expect(redditHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(redditHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
