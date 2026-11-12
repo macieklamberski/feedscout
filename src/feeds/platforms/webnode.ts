@@ -2,7 +2,7 @@ import { getPathSegments, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers article, site (html), partly covers section.
@@ -81,13 +81,5 @@ export const webnodeHandler: PlatformHandler = {
     return uris
   },
 
-  // The table reads a tenant after stripping www, so a www host in front of a site is refused
-  // first: Webnode's certificate does not cover it, and its http spelling redirects to the site.
-  getFeedHint: (url) => {
-    if (!getTenantSubdomain(url, domains)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
