@@ -99,5 +99,5 @@ export const myanimelistHandler: PlatformHandler = {
     ]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

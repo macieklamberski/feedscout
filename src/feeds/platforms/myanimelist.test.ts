@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import type { MyanimelistUrl } from './myanimelist.js'
@@ -345,66 +345,69 @@ describe('myanimelistHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the anime key for an anime list feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the anime hint for an anime list feed', () => {
       const value = 'https://myanimelist.net/rss.php?type=rw&u=MoonFox'
-      const expected = 'myanimelist:anime'
+      const expected: DiscoverUriHint = { key: 'myanimelist:anime', label: 'Anime list' }
 
-      expect(myanimelistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the manga key for a manga list feed', () => {
+    it('should return the manga hint for a manga list feed', () => {
       const value = 'https://myanimelist.net/rss.php?type=rm&u=MoonFox'
-      const expected = 'myanimelist:manga'
+      const expected: DiscoverUriHint = { key: 'myanimelist:manga', label: 'Manga list' }
 
-      expect(myanimelistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the recently-watched key for a recently watched feed', () => {
+    it('should return the recently-watched hint for a recently watched feed', () => {
       const value = 'https://myanimelist.net/rss.php?type=rwe&u=MoonFox'
-      const expected = 'myanimelist:recently-watched'
+      const expected: DiscoverUriHint = {
+        key: 'myanimelist:recently-watched',
+        label: 'Recently watched',
+      }
 
-      expect(myanimelistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the recently-read key for a recently read feed', () => {
+    it('should return the recently-read hint for a recently read feed', () => {
       const value = 'https://myanimelist.net/rss.php?type=rrm&u=Felix-san'
-      const expected = 'myanimelist:recently-read'
+      const expected: DiscoverUriHint = { key: 'myanimelist:recently-read', label: 'Recently read' }
 
-      expect(myanimelistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a blog feed', () => {
+    it('should return the blog hint for a blog feed', () => {
       const value = 'https://myanimelist.net/rss.php?type=blog&u=Felix-san'
-      const expected = 'myanimelist:blog'
+      const expected: DiscoverUriHint = { key: 'myanimelist:blog', label: 'Blog' }
 
-      expect(myanimelistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the featured key for the featured feed', () => {
+    it('should return the featured hint for the featured feed', () => {
       const value = 'https://myanimelist.net/rss/featured.xml'
-      const expected = 'myanimelist:featured'
+      const expected: DiscoverUriHint = { key: 'myanimelist:featured', label: 'Featured' }
 
-      expect(myanimelistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the news key for the news feed', () => {
+    it('should return the news hint for the news feed', () => {
       const value = 'https://myanimelist.net/rss/news.xml'
-      const expected = 'myanimelist:news'
+      const expected: DiscoverUriHint = { key: 'myanimelist:news', label: 'News' }
 
-      expect(myanimelistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a feed URL without a list type', () => {
       const value = 'https://myanimelist.net/rss.php?u=MoonFox'
 
-      expect(myanimelistHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(myanimelistHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a profile page', () => {
       const value = 'https://myanimelist.net/profile/MoonFox'
 
-      expect(myanimelistHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(myanimelistHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 })
