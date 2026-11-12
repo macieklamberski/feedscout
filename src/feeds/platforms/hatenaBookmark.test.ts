@@ -392,6 +392,18 @@ describe('hatenaBookmarkHandler', () => {
 
       expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return an https site feed for an http site page', () => {
+      const value = 'http://b.hatena.ne.jp/site/example.com'
+      const expected = [
+        {
+          uri: `${base}/site/example.com?mode=rss`,
+          hint: { key: 'hatena-bookmark:site', label: 'Site' },
+        },
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
+    })
   })
 
   describe('getFeedKey', () => {
