@@ -146,64 +146,64 @@ describe('noteHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the blog key for a blog feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the blog hint for a blog feed', () => {
       const value = 'https://note.com/tsukasa_yamato/rss'
-      const expected = 'note:blog'
+      const expected: DiscoverUriHint = { key: 'note:blog', label: 'Blog' }
 
-      expect(noteHandler.getFeedKey?.(value)).toBe(expected)
+      expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a blog feed whose name ends in an encoded space', () => {
+    it('should return the blog hint for a blog feed whose name ends in an encoded space', () => {
       const value = 'https://note.com/yuonkanpo%20/rss'
-      const expected = 'note:blog'
+      const expected: DiscoverUriHint = { key: 'note:blog', label: 'Blog' }
 
-      expect(noteHandler.getFeedKey?.(value)).toBe(expected)
+      expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the hashtag key for a hashtag feed', () => {
+    it('should return the hashtag hint for a hashtag feed', () => {
       const value = 'https://note.com/hashtag/%E6%9D%BE%E5%B1%8B/rss'
-      const expected = 'note:hashtag'
+      const expected: DiscoverUriHint = { key: 'note:hashtag', label: 'Hashtag' }
 
-      expect(noteHandler.getFeedKey?.(value)).toBe(expected)
+      expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the magazine key for a magazine feed', () => {
+    it('should return the magazine hint for a magazine feed', () => {
       const value = 'https://note.com/notemag/m/m7244518f06ae/rss'
-      const expected = 'note:magazine'
+      const expected: DiscoverUriHint = { key: 'note:magazine', label: 'Magazine' }
 
-      expect(noteHandler.getFeedKey?.(value)).toBe(expected)
+      expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the featured key for the featured feed', () => {
+    it('should return the featured hint for the featured feed', () => {
       const value = 'https://note.com/rss'
-      const expected = 'note:featured'
+      const expected: DiscoverUriHint = { key: 'note:featured', label: 'Featured' }
 
-      expect(noteHandler.getFeedKey?.(value)).toBe(expected)
+      expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a profile page', () => {
       const value = 'https://note.com/tsukasa_yamato'
 
-      expect(noteHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(noteHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a hashtag page', () => {
       const value = 'https://note.com/hashtag/AI'
 
-      expect(noteHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(noteHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path under a dotted first segment', () => {
       const value = 'https://note.com/robots.txt/rss'
 
-      expect(noteHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(noteHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/tsukasa_yamato/rss'
 
-      expect(noteHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(noteHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
