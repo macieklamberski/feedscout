@@ -1,6 +1,6 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home, profile (guess, html).
@@ -19,6 +19,13 @@ export const hosts = ['note.com', 'www.note.com']
 const hashtagRegex = /^\/(?:hashtag|tag)\/([^/]+)/i
 const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/i
 const noteRegex = /^\/([^/]+)\/n\/[^/]+/i
+
+const feeds = definePlatformFeeds([
+  { key: 'note:featured', template: 'https://note.com/rss' },
+  { key: 'note:hashtag', template: 'https://note.com/hashtag/{tag}/rss' },
+  { key: 'note:magazine', template: 'https://note.com/{username}/m/{magazine}/rss' },
+  { key: 'note:blog', template: 'https://note.com/{username}/rss' },
+])
 
 export const parseNoteUrl = (url: string): NoteUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -73,38 +80,33 @@ export const noteHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'hashtag') {
-      return [
-        {
-          uri: `https://note.com/hashtag/${parsed.tag}/rss`,
-          hint: composeHint('note:hashtag'),
-        },
-      ]
+      return [feeds.getFeedEntry('note:hashtag', { tag: parsed.tag })]
     }
 
     if (parsed.kind === 'magazine') {
       return [
-        {
-          uri: `https://note.com/${parsed.username}/m/${parsed.magazine}/rss`,
-          hint: composeHint('note:magazine'),
-        },
+        feeds.getFeedEntry('note:magazine', {
+          username: parsed.username,
+          magazine: parsed.magazine,
+        }),
       ]
     }
 
     // A note page leads to its author's blog feed.
     if (parsed.kind === 'note' || parsed.kind === 'user') {
-      return [
-        {
-          uri: `https://note.com/${parsed.username}/rss`,
-          hint: composeHint('note:blog'),
-        },
-      ]
+      return [feeds.getFeedEntry('note:blog', { username: parsed.username })]
     }
 
-    return [
-      {
-        uri: 'https://note.com/rss',
-        hint: composeHint('note:featured'),
-      },
-    ]
+    return [feeds.getFeedEntry('note:featured')]
+  },
+
+  // The table reads any first segment as a name, so a dotted one, a file of the site, is refused
+  // by the page parser first: note.com/robots.txt/rss answers 404.
+  getFeedKey: (url) => {
+    if (!parseNoteUrl(url)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
