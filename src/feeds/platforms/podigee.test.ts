@@ -125,6 +125,13 @@ describe('podigeeHandler', () => {
       expect(podigeeHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the podcast key for the mp3 feed with an auth token', () => {
+      const value = 'https://alice.podigee.io/feed/mp3?auth=abc123'
+      const expected = 'podigee:podcast'
+
+      expect(podigeeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the podcast key for a further mp3 feed of a show', () => {
       const value = 'https://alice.podigee.io/feeds/new_feed_12345/mp3'
       const expected = 'podigee:podcast'
