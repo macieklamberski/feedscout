@@ -25,8 +25,9 @@ const collectionRegex = /^\/news\/collection\/([^/]+)/i
 // The store front links to `/newshub/`, which redirects to `/news/`.
 const newsRegex = /^\/news(?:hub)?(?:\/|$)/i
 
-// The app page links /feeds/news/app/{id}/. The news hub path and a trailing app name serve the
-// same feed. The community /games/{id}/rss carries the same announcements under its own guids.
+// The app page links /feeds/news/app/{id}/. The news hub path and a trailing name serve the same
+// feed, for an app, a group and a collection alike. The community /games/{id}/rss carries the
+// same announcements under its own guids.
 const feeds = definePlatformFeeds([
   { key: 'steam:news', template: 'https://store.steampowered.com/feeds/news/app/{appId}/' },
   {
@@ -41,8 +42,24 @@ const feeds = definePlatformFeeds([
     template: 'https://store.steampowered.com/feeds/news/group/{clanId}',
   },
   {
+    key: 'steam:group-news',
+    template: 'https://store.steampowered.com/feeds/news/group/{clanId}/{name}',
+  },
+  {
+    key: 'steam:group-news',
+    template: 'https://store.steampowered.com/feeds/newshub/group/{clanId}',
+  },
+  {
     key: 'steam:news-collection',
     template: 'https://store.steampowered.com/feeds/news/collection/{collection}',
+  },
+  {
+    key: 'steam:news-collection',
+    template: 'https://store.steampowered.com/feeds/news/collection/{collection}/{name}',
+  },
+  {
+    key: 'steam:news-collection',
+    template: 'https://store.steampowered.com/feeds/newshub/collection/{collection}',
   },
   { key: 'steam:news-global', template: 'https://store.steampowered.com/feeds/news.xml' },
   { key: 'steam:daily-deals', template: 'https://store.steampowered.com/feeds/daily_deals.xml' },

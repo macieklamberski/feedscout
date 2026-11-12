@@ -38,8 +38,12 @@ const feedCases: Array<[string, DiscoverUriHint]> = [
   ['https://steamcommunity.com/games/ExampleGame/rss', communityNewsHint],
   ['https://store.steampowered.com/feeds/news/group/12345', groupNewsHint],
   ['https://store.steampowered.com/feeds/news/group/12345?cc=HK&l=schinese', groupNewsHint],
+  ['https://store.steampowered.com/feeds/news/group/12345/Example', groupNewsHint],
+  ['https://store.steampowered.com/feeds/newshub/group/12345', groupNewsHint],
   ['https://store.steampowered.com/feeds/news/collection/steam', collectionHint],
   ['https://store.steampowered.com/feeds/news/collection/steam?cc=HK&l=schinese', collectionHint],
+  ['https://store.steampowered.com/feeds/news/collection/steam/Example', collectionHint],
+  ['https://store.steampowered.com/feeds/newshub/collection/steam', collectionHint],
   ['https://store.steampowered.com/feeds/newreleases.xml', newReleasesHint],
   [
     'https://store.steampowered.com/feeds/weeklytopsellers.xml?utm_campaign=link&utm_medium=organic',
@@ -350,6 +354,34 @@ describe('steamHandler', () => {
       expect(steamHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the group news hint for a group news feed with a name', () => {
+      const value = 'https://store.steampowered.com/feeds/news/group/12345/Example'
+      const expected = groupNewsHint
+
+      expect(steamHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the group news hint for a group news hub feed', () => {
+      const value = 'https://store.steampowered.com/feeds/newshub/group/12345'
+      const expected = groupNewsHint
+
+      expect(steamHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the collection hint for a news collection feed with a name', () => {
+      const value = 'https://store.steampowered.com/feeds/news/collection/steam/Example'
+      const expected = collectionHint
+
+      expect(steamHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the collection hint for a news hub collection feed', () => {
+      const value = 'https://store.steampowered.com/feeds/newshub/collection/steam'
+      const expected = collectionHint
+
+      expect(steamHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the collection hint for a news collection feed', () => {
       const value = 'https://store.steampowered.com/feeds/news/collection/steam'
       const expected = collectionHint
@@ -379,6 +411,12 @@ describe('steamHandler', () => {
 
     it('should return undefined for a word in place of the clan id', () => {
       const value = 'https://store.steampowered.com/feeds/news/group/example'
+
+      expect(steamHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a word in place of the news hub clan id', () => {
+      const value = 'https://store.steampowered.com/feeds/newshub/group/example'
 
       expect(steamHandler.getFeedHint?.(value)).toBeUndefined()
     })
