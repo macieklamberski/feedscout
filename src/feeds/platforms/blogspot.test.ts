@@ -523,149 +523,177 @@ describe('blogspotHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for an Atom posts feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for an Atom posts feed', () => {
       const value = 'https://frikadel.blogspot.com/feeds/posts/default'
-      const expected = 'blogspot:posts'
+      const expected: DiscoverUriHint = { key: 'blogspot:posts', label: 'Posts', format: 'atom' }
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an RSS posts feed', () => {
+    it('should return the posts hint for an RSS posts feed', () => {
       const value = 'https://911summary.blogspot.com/feeds/posts/default?alt=rss'
-      const expected = 'blogspot:posts'
+      const expected: DiscoverUriHint = { key: 'blogspot:posts', label: 'Posts', format: 'rss' }
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an Atom full posts feed', () => {
+    it('should return the posts hint for an Atom full posts feed', () => {
       const value = 'https://day-to-day-stuff.blogspot.com/feeds/posts/full'
-      const expected = 'blogspot:posts'
+      const expected: DiscoverUriHint = { key: 'blogspot:posts', label: 'Posts', format: 'atom' }
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an RSS full posts feed', () => {
+    it('should return the posts hint for an RSS full posts feed', () => {
       const value = 'https://delian.blogspot.com/feeds/posts/full?alt=rss'
-      const expected = 'blogspot:posts'
+      const expected: DiscoverUriHint = { key: 'blogspot:posts', label: 'Posts', format: 'rss' }
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an atom.xml feed', () => {
+    it('should return the posts hint for an atom.xml feed', () => {
       const value = 'https://ayahsafa.blogspot.com/atom.xml'
-      const expected = 'blogspot:posts'
+      const expected: DiscoverUriHint = { key: 'blogspot:posts', label: 'Posts', format: 'atom' }
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a feed on a country domain', () => {
+    it('should return the posts hint for a feed on a country domain', () => {
       const value = 'https://frikadel.blogspot.co.uk/feeds/posts/default'
-      const expected = 'blogspot:posts'
+      const expected: DiscoverUriHint = { key: 'blogspot:posts', label: 'Posts', format: 'atom' }
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an http feed', () => {
+    it('should return the posts hint for an http feed', () => {
       const value = 'http://frikadel.blogspot.com/feeds/posts/default'
-      const expected = 'blogspot:posts'
+      const expected: DiscoverUriHint = { key: 'blogspot:posts', label: 'Posts', format: 'atom' }
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts summary key for an Atom summary feed', () => {
+    it('should return the posts summary hint for an Atom summary feed', () => {
       const value = 'https://bitacoradelgaleon.blogspot.com/feeds/posts/summary'
-      const expected = 'blogspot:posts-summary'
+      const expected: DiscoverUriHint = {
+        key: 'blogspot:posts-summary',
+        label: 'Posts summary',
+        format: 'atom',
+      }
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts summary key for an RSS summary feed', () => {
+    it('should return the posts summary hint for an RSS summary feed', () => {
       const value = 'https://bitacoradelgaleon.blogspot.com/feeds/posts/summary?alt=rss'
-      const expected = 'blogspot:posts-summary'
+      const expected: DiscoverUriHint = {
+        key: 'blogspot:posts-summary',
+        label: 'Posts summary',
+        format: 'rss',
+      }
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the comments key for an Atom comments feed', () => {
+    it('should return the comments hint for an Atom comments feed', () => {
       const value = 'https://frikadel.blogspot.com/feeds/comments/default'
-      const expected = 'blogspot:comments'
+      const expected: DiscoverUriHint = {
+        key: 'blogspot:comments',
+        label: 'Comments',
+        format: 'atom',
+      }
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the comments key for an RSS comments feed', () => {
+    it('should return the comments hint for an RSS comments feed', () => {
       const value = 'https://frikadel.blogspot.com/feeds/comments/default?alt=rss'
-      const expected = 'blogspot:comments'
+      const expected: DiscoverUriHint = {
+        key: 'blogspot:comments',
+        label: 'Comments',
+        format: 'rss',
+      }
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the comments key for an Atom full comments feed', () => {
+    it('should return the comments hint for an Atom full comments feed', () => {
       const value = 'https://cathychou55.blogspot.com/feeds/comments/full'
-      const expected = 'blogspot:comments'
+      const expected: DiscoverUriHint = {
+        key: 'blogspot:comments',
+        label: 'Comments',
+        format: 'atom',
+      }
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the label key for a percent-encoded Atom label feed', () => {
+    it('should return the label hint for a percent-encoded Atom label feed', () => {
       const value = 'https://jenniemeid.blogspot.com/feeds/posts/default/-/Call%20of%20Cthulhu'
-      const expected = 'blogspot:label'
+      const expected: DiscoverUriHint = { key: 'blogspot:label', label: 'Label', format: 'atom' }
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the label key for an RSS label feed', () => {
+    it('should return the label hint for an RSS label feed', () => {
       const value = 'https://jliu396.blogspot.com/feeds/posts/default/-/Open%20Source?alt=rss'
-      const expected = 'blogspot:label'
+      const expected: DiscoverUriHint = { key: 'blogspot:label', label: 'Label', format: 'rss' }
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the post comments key for an Atom post comments feed', () => {
+    it('should return the post comments hint for an Atom post comments feed', () => {
       const value =
         'https://angka-jitu-hoki88.blogspot.com/feeds/53245391660122082/comments/default'
-      const expected = 'blogspot:post-comments'
+      const expected: DiscoverUriHint = {
+        key: 'blogspot:post-comments',
+        label: 'Post comments',
+        format: 'atom',
+      }
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the post comments key for an RSS post comments feed', () => {
+    it('should return the post comments hint for an RSS post comments feed', () => {
       const value =
         'https://angka-jitu-hoki88.blogspot.com/feeds/53245391660122082/comments/default?alt=rss'
-      const expected = 'blogspot:post-comments'
+      const expected: DiscoverUriHint = {
+        key: 'blogspot:post-comments',
+        label: 'Post comments',
+        format: 'rss',
+      }
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a label page', () => {
       const value = 'https://example.blogspot.com/search/label/News'
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blogspotHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://blogspot.com/feeds/posts/default'
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blogspotHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on www.blogspot.com', () => {
       const value = 'https://www.blogspot.com/feeds/posts/default'
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blogspotHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://blog.example.blogspot.com/feeds/posts/default'
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blogspotHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a custom domain', () => {
       const value = 'https://example.com/feeds/posts/default'
 
-      expect(blogspotHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blogspotHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
@@ -673,36 +701,39 @@ describe('blogspotHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
         'https://frikadel.blogspot.com/feeds/posts/default',
-        { key: 'blogspot:posts', label: 'Posts' },
+        { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
       ],
       [
         'https://911summary.blogspot.com/feeds/posts/default?alt=rss',
-        { key: 'blogspot:posts', label: 'Posts' },
+        { key: 'blogspot:posts', label: 'Posts', format: 'rss' },
       ],
       [
         'https://day-to-day-stuff.blogspot.com/feeds/posts/full',
-        { key: 'blogspot:posts', label: 'Posts' },
+        { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
       ],
-      ['https://ayahsafa.blogspot.com/atom.xml', { key: 'blogspot:posts', label: 'Posts' }],
+      [
+        'https://ayahsafa.blogspot.com/atom.xml',
+        { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
+      ],
       [
         'https://bitacoradelgaleon.blogspot.com/feeds/posts/summary',
-        { key: 'blogspot:posts-summary', label: 'Posts summary' },
+        { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'atom' },
       ],
       [
         'https://frikadel.blogspot.com/feeds/comments/default?alt=rss',
-        { key: 'blogspot:comments', label: 'Comments' },
+        { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
       ],
       [
         'https://cathychou55.blogspot.com/feeds/comments/full',
-        { key: 'blogspot:comments', label: 'Comments' },
+        { key: 'blogspot:comments', label: 'Comments', format: 'atom' },
       ],
       [
         'https://jenniemeid.blogspot.com/feeds/posts/default/-/Call%20of%20Cthulhu',
-        { key: 'blogspot:label', label: 'Label' },
+        { key: 'blogspot:label', label: 'Label', format: 'atom' },
       ],
       [
         'https://angka-jitu-hoki88.blogspot.com/feeds/53245391660122082/comments/default',
-        { key: 'blogspot:post-comments', label: 'Post comments' },
+        { key: 'blogspot:post-comments', label: 'Post comments', format: 'atom' },
       ],
     ]
 

@@ -270,11 +270,11 @@ export const blogspotHandler: PlatformHandler = {
   // The table reads any host under a Blogger domain, so the apex, www and a nested subdomain are
   // refused first: blogspot.com redirects its feeds to blogger.com, and a nested host fails its
   // TLS handshake.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (!getTenantSubdomain(url, domains)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
