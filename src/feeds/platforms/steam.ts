@@ -1,6 +1,7 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -19,6 +20,21 @@ const appRegex = /^\/(?:agecheck\/|news(?:hub)?\/)?app\/(\d+)(?:\/|$)/i
 const groupRegex = /^\/groups\/([^/]+)/i
 // The store front links to `/newshub/`, which redirects to `/news/`.
 const newsRegex = /^\/news(?:hub)?(?:\/|$)/i
+
+// The app page links /feeds/news/app/{id}/. The news hub path, a trailing app name and the
+// community /games/{id}/rss serve the same entries.
+const feeds = definePlatformFeeds([
+  { key: 'steam:news', template: 'https://store.steampowered.com/feeds/news/app/{appId}/' },
+  {
+    key: 'steam:news',
+    template: 'https://store.steampowered.com/feeds/news/app/{appId}/{appName}',
+  },
+  { key: 'steam:news', template: 'https://store.steampowered.com/feeds/newshub/app/{appId}' },
+  { key: 'steam:news', template: 'https://steamcommunity.com/games/{appId}/rss' },
+  { key: 'steam:group', template: 'https://steamcommunity.com/groups/{group}/rss' },
+  { key: 'steam:news-global', template: 'https://store.steampowered.com/feeds/news.xml' },
+  { key: 'steam:daily-deals', template: 'https://store.steampowered.com/feeds/daily_deals.xml' },
+])
 
 export const parseSteamUrl = (url: string): SteamUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -60,32 +76,26 @@ export const steamHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'app') {
-      return [
-        {
-          uri: `https://store.steampowered.com/feeds/news/app/${parsed.appId}/`,
-          hint: composeHint('steam:news'),
-        },
-      ]
+      return [feeds.getFeedEntry('steam:news', { appId: parsed.appId })]
     }
 
     if (parsed.kind === 'group') {
-      return [
-        {
-          uri: `https://steamcommunity.com/groups/${parsed.group}/rss`,
-          hint: composeHint('steam:group'),
-        },
-      ]
+      return [feeds.getFeedEntry('steam:group', { group: parsed.group })]
     }
 
-    return [
-      {
-        uri: 'https://store.steampowered.com/feeds/news.xml',
-        hint: composeHint('steam:news-global'),
-      },
-      {
-        uri: 'https://store.steampowered.com/feeds/daily_deals.xml',
-        hint: composeHint('steam:daily-deals'),
-      },
-    ]
+    return [feeds.getFeedEntry('steam:news-global'), feeds.getFeedEntry('steam:daily-deals')]
+  },
+
+  // A store app id is digits, and /feeds/news/app/{word}/ answers 404. The community feed also
+  // takes a game's name, as /games/CSGO/rss.
+  getFeedKey: (url) => {
+    const key = feeds.getFeedKey(url)
+    const [, , , appId] = getPathSegments(url)
+
+    if (key === 'steam:news' && isHostOf(url, storeHosts) && !digitsRegex.test(appId ?? '')) {
+      return
+    }
+
+    return key
   },
 }
