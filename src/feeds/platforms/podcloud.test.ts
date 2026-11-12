@@ -103,6 +103,13 @@ describe('podcloudHandler', () => {
       expect(podcloudHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the podcast key for the /feed show feed', () => {
+      const value = 'https://alice-podcast.lepodcast.fr/feed'
+      const expected = 'podcloud:podcast'
+
+      expect(podcloudHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return undefined for an episode page', () => {
       const value = 'https://alice-podcast.lepodcast.fr/first-episode'
 
@@ -127,6 +134,7 @@ describe('podcloudHandler', () => {
       'https://alice-podcast.lepodcast.fr/rss',
       'http://alice-podcast.lepodcast.fr/rss',
       'https://alice-podcast.lepodcast.fr/rss/',
+      'https://alice-podcast.lepodcast.fr/feed',
     ]
 
     it.each(values)('should return %s as given with its key', async (value) => {
