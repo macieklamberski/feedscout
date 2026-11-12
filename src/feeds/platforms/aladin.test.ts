@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   type AladinPage,
   type AladinUrl,
@@ -196,6 +198,87 @@ describe('aladinHandler', () => {
       ]
 
       expect(aladinHandler.resolve(value, content)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for a blog feed', () => {
+      const value = 'https://blog.aladin.co.kr/singri/rss'
+      const expected = 'aladin:posts'
+
+      expect(aladinHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a numeric user feed', () => {
+      const value = 'https://blog.aladin.co.kr/790598133/rss'
+      const expected = 'aladin:posts'
+
+      expect(aladinHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a blog feed over http', () => {
+      const value = 'http://blog.aladin.co.kr/singri/rss'
+      const expected = 'aladin:posts'
+
+      expect(aladinHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the category key for a category feed', () => {
+      const value = 'https://blog.aladin.co.kr/729975157/category/28094802/rss'
+      const expected = 'aladin:category'
+
+      expect(aladinHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://blog.aladin.co.kr/singri'
+
+      expect(aladinHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a category page', () => {
+      const value = 'https://blog.aladin.co.kr/singri/category/12345678'
+
+      expect(aladinHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path under a dotted first segment', () => {
+      const value = 'https://blog.aladin.co.kr/ScriptResource.axd/rss'
+
+      expect(aladinHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a bookstore feed', () => {
+      const value = 'https://www.aladin.co.kr/rss/new_all/798'
+
+      expect(aladinHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/singri/rss'
+
+      expect(aladinHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://blog.aladin.co.kr/singri/rss', { key: 'aladin:posts', label: 'Posts' }],
+      [
+        'https://blog.aladin.co.kr/729975157/category/28094802/rss',
+        { key: 'aladin:category', label: 'Category' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [aladinHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
