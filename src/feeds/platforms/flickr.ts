@@ -153,19 +153,23 @@ export const flickrHandler: PlatformHandler = {
     // Group pool or discussion: /groups/{nsid}, /groups/{nsid}/pool, /groups/{nsid}/discuss
     if (parsed.kind === 'group') {
       const params = { host, id: parsed.group }
-      const pool = page.getFeedEntry('flickr:group-pool', params)
-      const discuss = page.getFeedEntry('flickr:group-discuss', params)
-      const geo = page.getFeedEntry('flickr:group-geo', params)
 
       if (parsed.section === 'discuss') {
-        return [discuss]
+        return [page.getFeedEntry('flickr:group-discuss', params)]
       }
 
       if (parsed.section === 'pool') {
-        return [pool, geo]
+        return [
+          page.getFeedEntry('flickr:group-pool', params),
+          page.getFeedEntry('flickr:group-geo', params),
+        ]
       }
 
-      return [pool, discuss, geo]
+      return [
+        page.getFeedEntry('flickr:group-pool', params),
+        page.getFeedEntry('flickr:group-discuss', params),
+        page.getFeedEntry('flickr:group-geo', params),
+      ]
     }
 
     if (!nsidRegex.test(parsed.userId)) {
