@@ -36,7 +36,7 @@ const hosts = [...mainHosts, ...bugsHosts, ...codeHosts]
 // Launchpad advertises its feeds over http, and the https URLs redirect there.
 const feeds = definePlatformFeeds([
   {
-    key: 'launchpad:announcements',
+    key: 'launchpad:project-announcements',
     template: 'http://feeds.launchpad.net/{project}/announcements.atom',
   },
   { key: 'launchpad:announcements', template: 'http://feeds.launchpad.net/announcements.atom' },
@@ -44,9 +44,16 @@ const feeds = definePlatformFeeds([
     key: 'launchpad:bugs',
     template: 'http://feeds.launchpad.net/{distribution}/+source/{sourcePackage}/latest-bugs.atom',
   },
-  { key: 'launchpad:bugs', template: 'http://feeds.launchpad.net/~{username}/latest-bugs.atom' },
-  { key: 'launchpad:bugs', template: 'http://feeds.launchpad.net/{project}/latest-bugs.atom' },
+  // The site-wide bugs feed sits where a project named `bugs` would, so it comes first.
   { key: 'launchpad:bugs', template: 'http://feeds.launchpad.net/bugs/latest-bugs.atom' },
+  {
+    key: 'launchpad:person-bugs',
+    template: 'http://feeds.launchpad.net/~{username}/latest-bugs.atom',
+  },
+  {
+    key: 'launchpad:project-bugs',
+    template: 'http://feeds.launchpad.net/{project}/latest-bugs.atom',
+  },
   { key: 'launchpad:bug', template: 'http://feeds.launchpad.net/bugs/{bugId}/bug.atom' },
   {
     key: 'launchpad:branch',
@@ -57,10 +64,22 @@ const feeds = definePlatformFeeds([
     key: 'launchpad:branch',
     template: 'http://feeds.launchpad.net/~{owner}/{project}/{branch}/branch.atom',
   },
-  { key: 'launchpad:branches', template: 'http://feeds.launchpad.net/~{username}/branches.atom' },
-  { key: 'launchpad:branches', template: 'http://feeds.launchpad.net/{project}/branches.atom' },
-  { key: 'launchpad:revisions', template: 'http://feeds.launchpad.net/~{username}/revisions.atom' },
-  { key: 'launchpad:revisions', template: 'http://feeds.launchpad.net/{project}/revisions.atom' },
+  {
+    key: 'launchpad:person-branches',
+    template: 'http://feeds.launchpad.net/~{username}/branches.atom',
+  },
+  {
+    key: 'launchpad:project-branches',
+    template: 'http://feeds.launchpad.net/{project}/branches.atom',
+  },
+  {
+    key: 'launchpad:person-revisions',
+    template: 'http://feeds.launchpad.net/~{username}/revisions.atom',
+  },
+  {
+    key: 'launchpad:project-revisions',
+    template: 'http://feeds.launchpad.net/{project}/revisions.atom',
+  },
 ])
 
 const getApplication = (parsedUrl: URL): LaunchpadApplication => {
@@ -181,17 +200,34 @@ export const launchpadHandler: PlatformHandler = {
 
     const entries: Array<DiscoverUriEntry> = []
 
-    if (parsed.kind === 'project' && parsed.application === 'main') {
-      entries.push(feeds.getFeedEntry('launchpad:announcements', parsed))
+    if (parsed.kind === 'project') {
+      const { application, project } = parsed
+
+      if (application === 'main') {
+        entries.push(feeds.getFeedEntry('launchpad:project-announcements', { project }))
+      }
+
+      if (application !== 'code') {
+        entries.push(feeds.getFeedEntry('launchpad:project-bugs', { project }))
+      }
+
+      if (application !== 'bugs') {
+        entries.push(feeds.getFeedEntry('launchpad:project-branches', { project }))
+        entries.push(feeds.getFeedEntry('launchpad:project-revisions', { project }))
+      }
+
+      return entries
     }
 
-    if (parsed.application !== 'code') {
-      entries.push(feeds.getFeedEntry('launchpad:bugs', parsed))
+    const { application, username } = parsed
+
+    if (application !== 'code') {
+      entries.push(feeds.getFeedEntry('launchpad:person-bugs', { username }))
     }
 
-    if (parsed.application !== 'bugs') {
-      entries.push(feeds.getFeedEntry('launchpad:branches', parsed))
-      entries.push(feeds.getFeedEntry('launchpad:revisions', parsed))
+    if (application !== 'bugs') {
+      entries.push(feeds.getFeedEntry('launchpad:person-branches', { username }))
+      entries.push(feeds.getFeedEntry('launchpad:person-revisions', { username }))
     }
 
     return entries
