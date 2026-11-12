@@ -29,13 +29,15 @@ const domains = [
 ]
 
 // A blog on a custom domain is known only by its marker, so its feeds are built in resolve, under
-// the blog root the page links, and claimed only for a blog at the root of HubSpot's own hosts.
+// the blog root the page links, and claimed only for a blog at the root of HubSpot's own hosts. A
+// podcast's feed is only claimed.
 const feeds = definePlatformFeeds(
   [
     { key: 'hubspot:author', template: '{scheme}://{tenant}.{domain}/author/{name}/rss.xml' },
     { key: 'hubspot:tag', template: '{scheme}://{tenant}.{domain}/tag/{name}/rss.xml' },
     { key: 'hubspot:tag', template: '{scheme}://{tenant}.{domain}/topic/{name}/rss.xml' },
     { key: 'hubspot:blog', template: '{scheme}://{tenant}.{domain}/rss.xml' },
+    { key: 'hubspot:podcast', template: '{scheme}://{tenant}.{domain}/podcasts/{id}/rss.xml' },
   ],
   { domains },
 )

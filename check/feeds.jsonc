@@ -742,6 +742,7 @@
   "hubspot": {
     "hubspot:author": "https://weidert.com/blog/author/frank-isca/rss.xml",
     "hubspot:blog": "https://www.smartbugmedia.com/blog/rss.xml",
+    "hubspot:podcast": "https://39665558.hs-sites.com/podcasts/191524826249/rss.xml",
     "hubspot:tag": "https://bluleadz.com/blog/topic/hubspot/rss.xml"
   },
   "hubzilla": {

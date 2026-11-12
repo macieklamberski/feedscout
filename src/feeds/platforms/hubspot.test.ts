@@ -263,8 +263,15 @@ describe('hubspotHandler', () => {
       expect(hubspotHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a podcast feed', () => {
+    it('should return the podcast hint for a podcast feed', () => {
       const value = 'https://12345.hs-sites.com/podcasts/67890/rss.xml'
+      const expected: DiscoverUriHint = { key: 'hubspot:podcast', label: 'Podcast' }
+
+      expect(hubspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a podcast feed on a custom domain', () => {
+      const value = 'https://example.com/podcasts/67890/rss.xml'
 
       expect(hubspotHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -297,6 +304,10 @@ describe('hubspotHandler', () => {
       ],
       ['https://12345.hs-sites.com/tag/news/rss.xml', { key: 'hubspot:tag', label: 'Tag' }],
       ['https://12345.hs-sitesqa.com/topic/news/rss.xml', { key: 'hubspot:tag', label: 'Tag' }],
+      [
+        'https://12345.hs-sites-na2.com/podcasts/67890/rss.xml',
+        { key: 'hubspot:podcast', label: 'Podcast' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
