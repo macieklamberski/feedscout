@@ -406,61 +406,97 @@ describe('hatenaBookmarkHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    const ownFeedKeys: Array<[string, string]> = [
-      ['https://b.hatena.ne.jp/hotentry.rss', 'hatena-bookmark:hot'],
-      ['https://b.hatena.ne.jp/hotentry/life.rss', 'hatena-bookmark:hot'],
-      ['https://b.hatena.ne.jp/entrylist.rss', 'hatena-bookmark:new'],
-      ['https://b.hatena.ne.jp/entrylist/entertainment.rss', 'hatena-bookmark:new'],
-      ['https://b.hatena.ne.jp/q/%E8%A1%8C%E6%94%BF?mode=rss', 'hatena-bookmark:search'],
-      ['https://b.hatena.ne.jp/q/セキュリティ?mode=rss', 'hatena-bookmark:search'],
-      ['https://b.hatena.ne.jp/q/c++%20web?target=title&mode=rss', 'hatena-bookmark:search'],
+  describe('getFeedHint', () => {
+    const ownFeedHints: Array<[string, DiscoverUriHint]> = [
+      ['https://b.hatena.ne.jp/hotentry.rss', { key: 'hatena-bookmark:hot', label: 'Hot entries' }],
+      [
+        'https://b.hatena.ne.jp/hotentry/life.rss',
+        { key: 'hatena-bookmark:hot', label: 'Hot entries' },
+      ],
+      [
+        'https://b.hatena.ne.jp/entrylist.rss',
+        { key: 'hatena-bookmark:new', label: 'New entries' },
+      ],
+      [
+        'https://b.hatena.ne.jp/entrylist/entertainment.rss',
+        { key: 'hatena-bookmark:new', label: 'New entries' },
+      ],
+      [
+        'https://b.hatena.ne.jp/q/%E8%A1%8C%E6%94%BF?mode=rss',
+        { key: 'hatena-bookmark:search', label: 'Search' },
+      ],
+      [
+        'https://b.hatena.ne.jp/q/セキュリティ?mode=rss',
+        { key: 'hatena-bookmark:search', label: 'Search' },
+      ],
+      [
+        'https://b.hatena.ne.jp/q/c++%20web?target=title&mode=rss',
+        { key: 'hatena-bookmark:search', label: 'Search' },
+      ],
       [
         'https://b.hatena.ne.jp/q/rpg?date_range=5y&mode=rss&safe=on&sort=recent&target=tag&users=5',
-        'hatena-bookmark:search',
+        { key: 'hatena-bookmark:search', label: 'Search' },
       ],
       [
         'https://b.hatena.ne.jp/q/Android?%3Bdate_range=5y&%3Bsafe=on&%3Bsort=popular&%3Btarget=tag&%3Busers=3&mode=rss',
-        'hatena-bookmark:search',
+        { key: 'hatena-bookmark:search', label: 'Search' },
       ],
-      ['https://b.hatena.ne.jp/q/nodejs/?mode=rss&sort=hot&threshold=3', 'hatena-bookmark:search'],
-      ['https://b.hatena.ne.jp/site/0-designing.com?mode=rss', 'hatena-bookmark:site'],
-      ['https://b.hatena.ne.jp/site/blog.livedoor.jp/itsoku?mode=rss', 'hatena-bookmark:site'],
+      [
+        'https://b.hatena.ne.jp/q/nodejs/?mode=rss&sort=hot&threshold=3',
+        { key: 'hatena-bookmark:search', label: 'Search' },
+      ],
+      [
+        'https://b.hatena.ne.jp/site/0-designing.com?mode=rss',
+        { key: 'hatena-bookmark:site', label: 'Site' },
+      ],
+      [
+        'https://b.hatena.ne.jp/site/blog.livedoor.jp/itsoku?mode=rss',
+        { key: 'hatena-bookmark:site', label: 'Site' },
+      ],
       [
         'https://b.hatena.ne.jp/site/panathenaia.halfmoon.jp/?mode=rss&sort=eid&threshold=1',
-        'hatena-bookmark:site',
+        { key: 'hatena-bookmark:site', label: 'Site' },
       ],
-      ['https://b.hatena.ne.jp/t-wada/bookmark.rss', 'hatena-bookmark:bookmarks'],
-      ['https://b.hatena.ne.jp/site/bookmark.rss', 'hatena-bookmark:bookmarks'],
-      ['https://b.hatena.ne.jp/efcl/bookmark.rss?tag=atom', 'hatena-bookmark:bookmarks'],
+      [
+        'https://b.hatena.ne.jp/t-wada/bookmark.rss',
+        { key: 'hatena-bookmark:bookmarks', label: 'Bookmarks' },
+      ],
+      [
+        'https://b.hatena.ne.jp/site/bookmark.rss',
+        { key: 'hatena-bookmark:bookmarks', label: 'Bookmarks' },
+      ],
+      [
+        'https://b.hatena.ne.jp/efcl/bookmark.rss?tag=atom',
+        { key: 'hatena-bookmark:bookmarks', label: 'Bookmarks' },
+      ],
     ]
 
-    it.each(ownFeedKeys)('should return the key of %s', (value, expected) => {
-      expect(hatenaBookmarkHandler.getFeedKey?.(value)).toBe(expected)
+    it.each(ownFeedHints)('should return the hint of %s', (value, expected) => {
+      expect(hatenaBookmarkHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a search page', () => {
       const value = 'https://b.hatena.ne.jp/q/rss?target=title'
 
-      expect(hatenaBookmarkHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hatenaBookmarkHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a site page', () => {
       const value = 'https://b.hatena.ne.jp/site/blog.livedoor.jp/itsoku?sort=eid'
 
-      expect(hatenaBookmarkHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hatenaBookmarkHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a user page', () => {
       const value = 'https://b.hatena.ne.jp/jkondo/bookmark'
 
-      expect(hatenaBookmarkHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hatenaBookmarkHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a site feed on another host', () => {
       const value = 'https://example.com/site/example.com?mode=rss'
 
-      expect(hatenaBookmarkHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hatenaBookmarkHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

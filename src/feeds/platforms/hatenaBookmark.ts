@@ -7,6 +7,7 @@ import {
   isHostOf,
   parseUrl,
 } from 'trousse'
+import type { DiscoverUriHint } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -56,7 +57,7 @@ const searchFilters = ['target', 'sort', 'users', 'date_range', 'safe']
 // The first search row names every filter the page carries. `resolve` passes a filter the page
 // lacks as empty, which the query leaves out, and the bare row reads a feed without all of them.
 // A site feed carries the site's whole path, more segments than a placeholder holds, so
-// `getSiteFeedKey` reads it.
+// `getSiteFeedHint` reads it.
 const feeds = definePlatformFeeds([
   { key: 'hatena-bookmark:hot', template: 'https://b.hatena.ne.jp/hotentry/{category}.rss' },
   { key: 'hatena-bookmark:hot', template: 'https://b.hatena.ne.jp/hotentry.rss' },
@@ -154,7 +155,7 @@ export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefin
 }
 
 // A site feed is the site page with `mode=rss`, whatever else its query carries.
-const getSiteFeedKey = (url: string): string | undefined => {
+const getSiteFeedHint = (url: string): DiscoverUriHint | undefined => {
   const parsedUrl = parseUrl(url)
 
   if (!parsedUrl || !isHostOf(parsedUrl, hosts) || !siteRegex.test(parsedUrl.pathname)) {
@@ -165,7 +166,7 @@ const getSiteFeedKey = (url: string): string | undefined => {
     return
   }
 
-  return 'hatena-bookmark:site'
+  return composeHint('hatena-bookmark:site')
 }
 
 export const hatenaBookmarkHandler: PlatformHandler = {
@@ -223,7 +224,7 @@ export const hatenaBookmarkHandler: PlatformHandler = {
     return [feeds.getFeedEntry('hatena-bookmark:hot')]
   },
 
-  getFeedKey: (url) => {
-    return feeds.getFeedKey(url) ?? getSiteFeedKey(url)
+  getFeedHint: (url) => {
+    return feeds.getFeedHint(url) ?? getSiteFeedHint(url)
   },
 }
