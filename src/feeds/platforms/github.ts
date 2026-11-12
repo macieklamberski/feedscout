@@ -170,18 +170,18 @@ export const githubHandler: PlatformHandler = {
     return uris
   },
 
-  getFeedKey: (url) => {
-    const key = feeds.getFeedKey(url)
+  getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
 
-    if (key) {
-      return key
+    if (hint) {
+      return hint
     }
 
     const parsedUrl = parseUrl(url)
 
     // A file history feed carries a file path of any depth, which a template segment cannot hold.
     if (parsedUrl && isHostOf(parsedUrl, hosts) && fileHistoryFeedRegex.test(parsedUrl.pathname)) {
-      return 'github:file-history'
+      return composeHint('github:file-history')
     }
   },
 }
