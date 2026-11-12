@@ -12,8 +12,8 @@ const hosts = ['mypage.syosetu.com']
 const adultHosts = ['xmypage.syosetu.com']
 
 const writerRegex = /^\/(?<writerId>[^/]+)/
-// An adult-site writer id is x, digits and a letter, such as x5287p.
-const adultWriterIdRegex = /^x\d+[a-z]+$/i
+// An adult-site writer id is x, digits and optional letters, such as x5287p or x1235.
+const adultWriterIdRegex = /^x\d+[a-z]*$/i
 
 const feeds = definePlatformFeeds([
   { key: 'syosetu:author', template: 'https://api.syosetu.com/writernovel/{writerId}.Atom' },

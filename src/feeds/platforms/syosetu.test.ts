@@ -14,6 +14,7 @@ const feedCases: Array<[string, DiscoverUriHint]> = [
   ['https://api.syosetu.com/writer/12345.Atom/', activityHint],
   ['https://api.syosetu.com/writernovel/x1234a.Atom', authorHint],
   ['https://api.syosetu.com/writer/x1234a.Atom', activityHint],
+  ['https://api.syosetu.com/writernovel/x1235.Atom', authorHint],
   ['https://api.syosetu.com/allnovel.Atom', allNovelsHint],
   ['http://api.syosetu.com/allnovel.atom', allNovelsHint],
 ]
@@ -34,6 +35,13 @@ describe('parseSyosetuUrl', () => {
   it('should return the writer for an adult-site writer page', () => {
     const value = 'https://xmypage.syosetu.com/x1234a/'
     const expected: SyosetuUrl = { kind: 'writer', writerId: 'x1234a' }
+
+    expect(parseSyosetuUrl(value)).toEqual(expected)
+  })
+
+  it('should return the writer for an adult-site writer id without a letter', () => {
+    const value = 'https://xmypage.syosetu.com/x1235/'
+    const expected: SyosetuUrl = { kind: 'writer', writerId: 'x1235' }
 
     expect(parseSyosetuUrl(value)).toEqual(expected)
   })
