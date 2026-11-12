@@ -27,6 +27,14 @@ const feeds = definePlatformFeeds([
     key: 'webtoons:series',
     template: 'https://www.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
   },
+  {
+    key: 'webtoons:series',
+    template: 'https://sg.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
+  },
+  {
+    key: 'webtoons:series',
+    template: 'https://us.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
+  },
 ])
 
 export const parseWebtoonsUrl = (url: string): WebtoonsUrl | undefined => {

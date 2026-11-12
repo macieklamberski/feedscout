@@ -195,6 +195,20 @@ describe('webtoonsHandler', () => {
       expect(webtoonsHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the series key for a feed on the sg host', () => {
+      const value = 'https://sg.webtoons.com/en/challenge/the-legend-of-genji/rss?title_no=194154'
+      const expected = 'webtoons:series'
+
+      expect(webtoonsHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the series key for a feed on the us host', () => {
+      const value = 'https://us.webtoons.com/en/romance/sixth-sense-kiss/rss?title_no=2921'
+      const expected = 'webtoons:series'
+
+      expect(webtoonsHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return undefined for a series page', () => {
       const value = 'https://www.webtoons.com/en/challenge/chibird/list?title_no=97265'
 
@@ -221,6 +235,8 @@ describe('webtoonsHandler', () => {
       'https://www.webtoons.com/en/challenge/everyday-magic/rss?title_no=741756',
       'https://www.webtoons.com/en/drama/lookism/rss?title_no=1049',
       'https://www.webtoons.com/id/fantasy/deadly-7-inside-me/rss?title_no=722',
+      'https://sg.webtoons.com/en/challenge/the-legend-of-genji/rss?title_no=194154',
+      'https://us.webtoons.com/en/romance/sixth-sense-kiss/rss?title_no=2921',
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value) => {
