@@ -361,6 +361,17 @@ describe('bigcommerceHandler', () => {
       expect(bigcommerceHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the store hint for a feed on www in front of a store', () => {
+      const value = 'https://www.alice.mybigcommerce.com/rss.php?type=rss'
+      const expected: DiscoverUriHint = {
+        key: 'bigcommerce:new-products',
+        label: 'New products',
+        format: 'rss',
+      }
+
+      expect(bigcommerceHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for a store page', () => {
       const value = 'https://alice.mybigcommerce.com/shoes/'
 
