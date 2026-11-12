@@ -15,11 +15,14 @@ const feedHosts = ['feeds.castos.com']
 // The feed id is opaque, so it is read from the feed link every show page carries.
 const feedIdRegex = /https:\/\/feeds\.castos\.com\/([a-z0-9]+)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'castos:podcast', template: 'https://feeds.castos.com/{feedId}' },
-  // The show site redirects /feed to its feeds.castos.com URL.
-  { key: 'castos:podcast', template: 'https://{slug}.castos.com/feed' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'castos:podcast', template: 'https://feeds.castos.com/{feedId}' },
+    // The show site redirects /feed to its feeds.castos.com URL.
+    { key: 'castos:podcast', template: '{scheme}://{host}/feed' },
+  ],
+  { domains },
+)
 
 export const parseCastosUrl = (url: string): CastosUrl | undefined => {
   const slug = getTenantSubdomain(url, domains)
@@ -48,16 +51,13 @@ export const castosHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getCastosPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    if (page.feedId) {
-      return [feeds.getFeedEntry('castos:podcast', { feedId: page.feedId })]
-    }
-
-    return [feeds.getFeedEntry('castos:podcast', { slug: page.slug })]
+    return [pageFeeds.getFeedEntry('castos:podcast', { feedId: page.feedId })]
   },
 
   getFeedHint: (url) => {

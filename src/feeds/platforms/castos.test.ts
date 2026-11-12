@@ -77,6 +77,18 @@ describe('castosHandler', () => {
       expect(castosHandler.resolve('https://example.com/')).toEqual([])
     })
 
+    it('should keep the scheme of an http show page without a feed link', () => {
+      const value = 'http://alice-podcast.castos.com/'
+      const expected = [
+        {
+          uri: 'http://alice-podcast.castos.com/feed',
+          hint: { key: 'castos:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(castosHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return feed URL linked from the page', () => {
       const value = 'https://alice-podcast.castos.com/episodes/first-episode'
       const content =
