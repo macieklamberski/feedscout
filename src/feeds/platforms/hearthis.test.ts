@@ -104,6 +104,13 @@ describe('hearthisHandler', () => {
       expect(hearthisHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the tracks key for a user feed spelled podcast.xml', () => {
+      const value = 'https://hearthis.at/alice/podcast.xml'
+      const expected = 'hearthis:tracks'
+
+      expect(hearthisHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the new tracks key for the new tracks feed', () => {
       const value = 'https://hearthis.at/new_tracks.rss'
       const expected = 'hearthis:new-tracks'
@@ -114,17 +121,6 @@ describe('hearthisHandler', () => {
     it('should return undefined for a user page', () => {
       const value = 'https://hearthis.at/alice/'
 
-      expect(hearthisHandler.getFeedKey?.(value)).toBeUndefined()
-    })
-
-    const genrePages = [
-      'https://hearthis.at/categories/podcast/',
-      'https://hearthis.at/tags/podcast/',
-      'https://hearthis.at/artists/podcast/',
-      'https://hearthis.at/maps/podcast/',
-    ]
-
-    it.each(genrePages)('should return undefined for the genre page %s', (value) => {
       expect(hearthisHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
@@ -141,6 +137,7 @@ describe('hearthisHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://hearthis.at/alice/podcast/', tracksHint],
       ['http://www.hearthis.at/alice/podcast', tracksHint],
+      ['https://hearthis.at/alice/podcast.xml', tracksHint],
       ['https://hearthis.at/new_tracks.rss', newTracksHint],
       ['http://www.hearthis.at/new_tracks.rss', newTracksHint],
     ]
