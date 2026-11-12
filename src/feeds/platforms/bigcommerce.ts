@@ -2,7 +2,7 @@ import { getQueryParam } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers category, home, search.
@@ -203,11 +203,5 @@ export const bigcommerceHandler: PlatformHandler = {
 
   // The table reads any host under the domain, so the apex and the www host, which do not resolve,
   // are refused first.
-  getFeedHint: (url) => {
-    if (!getTenantSubdomain(url, domains)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
