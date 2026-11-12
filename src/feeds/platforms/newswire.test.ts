@@ -197,6 +197,22 @@ describe('newswireHandler', () => {
 
       expect(newswireHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return https feeds for an http page', () => {
+      const value = 'http://acme.newswire.com/browse/pr'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://acme.newswire.com/browse/rss/pr',
+          hint: { key: 'newswire:press-releases', label: 'Press releases' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss',
+          hint: { key: 'newswire:newsroom', label: 'Newsroom' },
+        },
+      ]
+
+      expect(newswireHandler.resolve(value)).toEqual(expected)
+    })
   })
 
   describe('getFeedKey', () => {
