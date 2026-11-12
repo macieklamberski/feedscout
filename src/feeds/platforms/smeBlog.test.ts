@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { parseSmeBlogUrl, type SmeBlogUrl, smeBlogHandler } from './smeBlog.js'
 
 describe('parseSmeBlogUrl', () => {
@@ -74,6 +76,81 @@ describe('smeBlogHandler', () => {
       ]
 
       expect(smeBlogHandler.resolve('https://blog.sme.sk/')).toEqual(expected)
+    })
+
+    it('should return the https posts feed for a blog over http', () => {
+      const value = 'http://blog.sme.sk/alice'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://blog.sme.sk/alice/rss',
+          hint: { key: 'sme-blog:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(smeBlogHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for a blog feed', () => {
+      const value = 'https://blog.sme.sk/alice/rss'
+      const expected = 'sme-blog:posts'
+
+      expect(smeBlogHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the site key for the site feed', () => {
+      const value = 'https://blog.sme.sk/rss'
+      const expected = 'sme-blog:site'
+
+      expect(smeBlogHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the site key for the site feed with a query', () => {
+      const value = 'https://blog.sme.sk/rss?vr=1'
+      const expected = 'sme-blog:site'
+
+      expect(smeBlogHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://blog.sme.sk/alice'
+
+      expect(smeBlogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a post', () => {
+      const value = 'https://blog.sme.sk/alice/politika/example-post'
+
+      expect(smeBlogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/alice/rss'
+
+      expect(smeBlogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const postsHint: DiscoverUriHint = { key: 'sme-blog:posts', label: 'Posts' }
+    const siteHint: DiscoverUriHint = { key: 'sme-blog:site', label: 'Site' }
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://blog.sme.sk/alice/rss', postsHint],
+      ['https://blog.sme.sk/alice/rss/', postsHint],
+      ['https://blog.sme.sk/rss', siteHint],
+      ['https://blog.sme.sk/rss?vr=1', siteHint],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [smeBlogHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
