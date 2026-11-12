@@ -80,11 +80,11 @@ describe('kktixHandler', () => {
       expect(kktixHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the feed on https for an http page', () => {
+    it('should return the feed under the page scheme for an http page', () => {
       const value = 'http://example.kktix.cc/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.kktix.cc/events.atom?locale=zh-TW',
+          uri: 'http://example.kktix.cc/events.atom?locale=zh-TW',
           hint: { key: 'kktix:events', label: 'Events' },
         },
       ]
