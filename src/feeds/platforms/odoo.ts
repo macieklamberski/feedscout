@@ -1,6 +1,7 @@
 import { parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames, hasMarker } from '../../common/utils.js'
+import { getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,6 +9,18 @@ export type OdooUrl = { kind: 'blog'; languagePath: string; blog: string }
 
 // The blog segment is `{slug}-{id}`, after an optional language prefix such as `/fr` or `/en_GB`.
 const blogRegex = /^((?:\/[a-z]+(?:_[a-z\d]+)?)?)\/blog\/([^/]+-\d+)(?:\/|$)/i
+
+// Odoo's own site runs on www.odoo.com, and a database on its own domain is known only by its
+// cookies, so feeds on either are built here but not claimed.
+const domains = ['odoo.com']
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'odoo:blog', template: '{scheme}://{host}/{language}/blog/{blog}/feed', format: 'atom' },
+    { key: 'odoo:blog', template: '{scheme}://{host}/blog/{blog}/feed', format: 'atom' },
+  ],
+  { domains },
+)
 
 // Odoo 11 and later set both cookies on a first visit to any website page.
 export const isOdooHeaders = (headers: Headers): boolean => {
@@ -43,18 +56,30 @@ export const odooHandler: PlatformHandler = {
 
   resolve: (url) => {
     const odooUrl = parseOdooUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!odooUrl) {
+    if (!odooUrl || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
+    const { blog, languagePath } = odooUrl
 
-    return [
-      {
-        uri: `${origin}${odooUrl.languagePath}/blog/${odooUrl.blog}/feed`,
-        hint: composeHint('odoo:blog', 'atom'),
-      },
-    ]
+    if (languagePath) {
+      const language = languagePath.slice(1)
+
+      return [page.getFeedEntry('odoo:blog', { language, blog }, 'atom')]
+    }
+
+    return [page.getFeedEntry('odoo:blog', { blog }, 'atom')]
+  },
+
+  // The table reads any host under odoo.com, so only a database's own subdomain is claimed, never
+  // the apex, www or a nested host.
+  getFeedHint: (url) => {
+    if (!getTenantSubdomain(url, domains)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }
