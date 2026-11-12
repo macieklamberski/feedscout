@@ -1,12 +1,19 @@
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type WeblogLolUrl = { kind: 'blog' }
 
 const domains = ['weblog.lol']
+
+// The http spellings redirect to the blog's https home page, not to the feed.
+const feeds = definePlatformFeeds([
+  { key: 'weblog-lol:posts', template: 'https://{blog}.weblog.lol/rss.xml', format: 'rss' },
+  { key: 'weblog-lol:posts', template: 'https://{blog}.weblog.lol/atom.xml', format: 'atom' },
+  { key: 'weblog-lol:posts', template: 'https://{blog}.weblog.lol/feed.json', format: 'json' },
+])
 
 export const parseWeblogLolUrl = (url: string): WeblogLolUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -22,19 +29,18 @@ export const weblogLolHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsed = parseWeblogLolUrl(url)
+    const blog = getTenantSubdomain(url, domains)
 
-    if (!parsed) {
+    if (!blog) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
-
-    uris.push({ uri: `${origin}/rss.xml`, hint: composeHint('weblog-lol:posts', 'rss') })
-    uris.push({ uri: `${origin}/atom.xml`, hint: composeHint('weblog-lol:posts', 'atom') })
-    uris.push({ uri: `${origin}/feed.json`, hint: composeHint('weblog-lol:posts', 'json') })
-
-    return uris
+    return [
+      feeds.getFeedEntry('weblog-lol:posts', { blog }, 'rss'),
+      feeds.getFeedEntry('weblog-lol:posts', { blog }, 'atom'),
+      feeds.getFeedEntry('weblog-lol:posts', { blog }, 'json'),
+    ]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
