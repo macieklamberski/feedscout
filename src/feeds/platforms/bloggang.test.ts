@@ -176,6 +176,7 @@ describe('bloggangHandler', () => {
     const values: Array<[string, DiscoverUriHint]> = [
       ['https://alice.bloggang.com/rss', { key: 'bloggang:posts', label: 'Posts' }],
       ['https://alice_example.bloggang.com/rss', { key: 'bloggang:posts', label: 'Posts' }],
+      ['http://alice.bloggang.com/rss', { key: 'bloggang:posts', label: 'Posts' }],
     ]
 
     it.each(values)('should return %s as itself', async (value, hint) => {
