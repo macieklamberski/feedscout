@@ -150,6 +150,12 @@ describe('colorMeShopHandler', () => {
       expect(colorMeShopHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
+    it('should return undefined for a feed on the www host', () => {
+      const value = 'https://www.shop-pro.jp/?mode=rss'
+
+      expect(colorMeShopHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a feed on a shop domain', () => {
       const value = 'https://www.example.com/?mode=rss'
 
