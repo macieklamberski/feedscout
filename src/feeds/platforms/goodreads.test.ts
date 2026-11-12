@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { GoodreadsUrl } from './goodreads.js'
 import { goodreadsHandler, parseGoodreadsUrl } from './goodreads.js'
 
@@ -187,10 +190,141 @@ describe('goodreadsHandler', () => {
       expect(goodreadsHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the feeds on the https www host for an http page on the bare host', () => {
+      const value = 'http://goodreads.com/user/show/1-otis-chandler'
+      const expected = [
+        {
+          uri: 'https://www.goodreads.com/user/updates_rss/1',
+          hint: { key: 'goodreads:updates', label: 'Updates' },
+        },
+        {
+          uri: 'https://www.goodreads.com/review/list_rss/1',
+          hint: { key: 'goodreads:reviews', label: 'Reviews' },
+        },
+      ]
+
+      expect(goodreadsHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for book pages', () => {
       const value = 'https://www.goodreads.com/book/show/5907.The_Hobbit'
 
       expect(goodreadsHandler.resolve(value)).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the reviews key for a review list feed', () => {
+      const value = 'https://www.goodreads.com/review/list_rss/7259651'
+      const expected = 'goodreads:reviews'
+
+      expect(goodreadsHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the reviews key for a review list feed with a page parameter', () => {
+      const value = 'https://www.goodreads.com/review/list_rss/50196372?page=6'
+      const expected = 'goodreads:reviews'
+
+      expect(goodreadsHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the reviews key for a review list feed on the bare host over http', () => {
+      const value = 'http://goodreads.com/review/list_rss/7259651'
+      const expected = 'goodreads:reviews'
+
+      expect(goodreadsHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the shelf key for a shelf feed', () => {
+      const value = 'https://www.goodreads.com/review/list_rss/6585469?shelf=currently-reading'
+      const expected = 'goodreads:shelf'
+
+      expect(goodreadsHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the shelf key for a shelf feed with an encoded shelf and a page', () => {
+      const value = 'https://www.goodreads.com/review/list_rss/3725895?page=1&shelf=%23ALL%23'
+      const expected = 'goodreads:shelf'
+
+      expect(goodreadsHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the updates key for an updates feed', () => {
+      const value = 'https://www.goodreads.com/user/updates_rss/4484461'
+      const expected = 'goodreads:updates'
+
+      expect(goodreadsHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the updates key for an updates feed with a v parameter', () => {
+      const value = 'https://www.goodreads.com/user/updates_rss/6585469?v=as'
+      const expected = 'goodreads:updates'
+
+      expect(goodreadsHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a review list feed with a private key', () => {
+      const value = 'https://www.goodreads.com/review/list_rss/1?key=abc123&shelf=read'
+
+      expect(goodreadsHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an updates feed with a private key', () => {
+      const value = 'https://www.goodreads.com/user/updates_rss/1?key=abc123'
+
+      expect(goodreadsHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a review list page', () => {
+      const value = 'https://www.goodreads.com/review/list/1-otis-chandler'
+
+      expect(goodreadsHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a quotes feed', () => {
+      const value = 'https://www.goodreads.com/quotes/list_rss/319473-sean-perry'
+
+      expect(goodreadsHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a review list feed path on another host', () => {
+      const value = 'https://example.com/review/list_rss/7259651'
+
+      expect(goodreadsHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an invalid URL', () => {
+      const value = 'not a url'
+
+      expect(goodreadsHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://www.goodreads.com/review/list_rss/7259651',
+        { key: 'goodreads:reviews', label: 'Reviews' },
+      ],
+      [
+        'https://www.goodreads.com/review/list_rss/14070425?shelf=read',
+        { key: 'goodreads:shelf', label: 'Shelf' },
+      ],
+      [
+        'https://www.goodreads.com/user/updates_rss/4484461',
+        { key: 'goodreads:updates', label: 'Updates' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [goodreadsHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })
