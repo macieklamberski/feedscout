@@ -68,11 +68,11 @@ describe('hashnodeHandler', () => {
       expect(hashnodeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the HTTPS feed URL for an HTTP blog page', () => {
+    it('should keep the scheme of an HTTP blog page', () => {
       const value = 'http://example.hashnode.dev/some-article-slug'
       const expected = [
         {
-          uri: 'https://example.hashnode.dev/rss.xml',
+          uri: 'http://example.hashnode.dev/rss.xml',
           hint: { key: 'hashnode:blog', label: 'Blog' },
         },
       ]
