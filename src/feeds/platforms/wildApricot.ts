@@ -17,7 +17,8 @@ const domains = ['wildapricot.org']
 
 // A site on a custom domain is known only by its load balancer header, so its feeds are built in
 // resolve and claimed only on Wild Apricot's own domain. A module's feed also answers under the
-// module's id, which names the blog or the events, while a page's own `/RSS` can be either.
+// module's id, which names the blog or the events. A page's own `/RSS` can be either, so it is
+// claimed under a key that names neither.
 const feeds = definePlatformFeeds(
   [
     {
@@ -28,6 +29,7 @@ const feeds = definePlatformFeeds(
       key: 'wild-apricot:events',
       template: '{scheme}://{tenant}.{domain}/page-{page}/EventModule/{id}/RSS',
     },
+    { key: 'wild-apricot:page', template: '{scheme}://{host}/page-{page}/RSS' },
   ],
   { domains },
 )

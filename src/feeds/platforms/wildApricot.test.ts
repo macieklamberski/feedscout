@@ -186,8 +186,15 @@ describe('wildApricotHandler', () => {
       expect(wildApricotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a page feed that can be a blog or events', () => {
+    it('should return the page hint for a page feed', () => {
       const value = 'https://alice.wildapricot.org/page-12345/RSS'
+      const expected: DiscoverUriHint = { key: 'wild-apricot:page', label: 'Page feed' }
+
+      expect(wildApricotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a page feed on a custom domain', () => {
+      const value = 'https://example.com/page-12345/RSS'
 
       expect(wildApricotHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -220,6 +227,10 @@ describe('wildApricotHandler', () => {
       [
         'https://alice.wildapricot.org/page-12345/EventModule/67890/RSS',
         { key: 'wild-apricot:events', label: 'Events' },
+      ],
+      [
+        'http://alice.wildapricot.org/page-12345/RSS',
+        { key: 'wild-apricot:page', label: 'Page feed' },
       ],
     ]
 
