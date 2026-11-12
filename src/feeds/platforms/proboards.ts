@@ -9,13 +9,8 @@ export type ProboardsUrl = { kind: 'forum'; forum: string } | { kind: 'customDom
 
 const domains = ['proboards.com', 'freeforums.net', 'boards.net']
 
-const forumFeeds = definePlatformFeeds(
-  [{ key: 'proboards:posts', template: 'https://{forum}.{domain}/rss/public' }],
-  { domains },
-)
-
 // A forum on its own domain is known only by its markers, so its feed is built but not claimed.
-const customDomainFeeds = definePlatformFeeds(
+const feeds = definePlatformFeeds(
   [{ key: 'proboards:posts', template: '{scheme}://{host}/rss/public' }],
   { domains },
 )
@@ -53,29 +48,14 @@ export const proboardsHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseProboardsUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    if (parsed.kind === 'customDomain') {
-      const customDomainPage = customDomainFeeds.forUrl(url)
-
-      if (!customDomainPage) {
-        return []
-      }
-
-      return [customDomainPage.getFeedEntry('proboards:posts')]
-    }
-
-    const forumPage = forumFeeds.forUrl(url)
-
-    if (!forumPage) {
-      return []
-    }
-
-    return [forumPage.getFeedEntry('proboards:posts', { forum: parsed.forum })]
+    return [page.getFeedEntry('proboards:posts')]
   },
 
-  getFeedHint: forumFeeds.getFeedHint,
+  getFeedHint: feeds.getFeedHint,
 }

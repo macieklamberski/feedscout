@@ -125,11 +125,11 @@ describe('proboardsHandler', () => {
       expect(proboardsHandler.resolve(value, coreScriptHtml)).toEqual(expected)
     })
 
-    it('should return the https posts feed for a forum opened over http', () => {
+    it('should return the posts feed under the page scheme for a forum opened over http', () => {
       const value = 'http://example.freeforums.net/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.freeforums.net/rss/public',
+          uri: 'http://example.freeforums.net/rss/public',
           hint: { key: 'proboards:posts', label: 'Posts' },
         },
       ]
