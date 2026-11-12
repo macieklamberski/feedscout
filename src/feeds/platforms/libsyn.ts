@@ -64,11 +64,11 @@ export const libsynHandler: PlatformHandler = {
 
   // The table reads any subdomain as a show, so the page parser refuses feeds.libsyn.com/rss,
   // which answers 404, and a feeds host path without a numeric show ID.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (!parseLibsynUrl(url)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }

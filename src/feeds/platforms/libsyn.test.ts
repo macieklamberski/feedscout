@@ -117,89 +117,89 @@ describe('libsynHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the podcast key for a show feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for a show feed', () => {
       const value = 'https://feeds.libsyn.com/12345/rss'
-      const expected = 'libsyn:podcast'
+      const expected: DiscoverUriHint = { key: 'libsyn:podcast', label: 'Podcast' }
 
-      expect(libsynHandler.getFeedKey?.(value)).toBe(expected)
+      expect(libsynHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a show feed over http', () => {
+    it('should return the podcast hint for a show feed over http', () => {
       const value = 'http://feeds.libsyn.com/12345/rss'
-      const expected = 'libsyn:podcast'
+      const expected: DiscoverUriHint = { key: 'libsyn:podcast', label: 'Podcast' }
 
-      expect(libsynHandler.getFeedKey?.(value)).toBe(expected)
+      expect(libsynHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a show destination feed', () => {
+    it('should return the podcast hint for a show destination feed', () => {
       const value = 'https://rss.libsyn.com/shows/12345/destinations/67890.xml'
-      const expected = 'libsyn:podcast'
+      const expected: DiscoverUriHint = { key: 'libsyn:podcast', label: 'Podcast' }
 
-      expect(libsynHandler.getFeedKey?.(value)).toBe(expected)
+      expect(libsynHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a podcast feed', () => {
+    it('should return the podcast hint for a podcast feed', () => {
       const value = 'https://alice.libsyn.com/rss'
-      const expected = 'libsyn:podcast'
+      const expected: DiscoverUriHint = { key: 'libsyn:podcast', label: 'Podcast' }
 
-      expect(libsynHandler.getFeedKey?.(value)).toBe(expected)
+      expect(libsynHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a podcast feed with a trailing slash', () => {
+    it('should return the podcast hint for a podcast feed with a trailing slash', () => {
       const value = 'https://alice.libsyn.com/rss/'
-      const expected = 'libsyn:podcast'
+      const expected: DiscoverUriHint = { key: 'libsyn:podcast', label: 'Podcast' }
 
-      expect(libsynHandler.getFeedKey?.(value)).toBe(expected)
+      expect(libsynHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a podcast page', () => {
       const value = 'https://alice.libsyn.com/website'
 
-      expect(libsynHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(libsynHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return the podcast key for a show feed without the feed path', () => {
+    it('should return the podcast hint for a show feed without the feed path', () => {
       const value = 'https://feeds.libsyn.com/12345'
-      const expected = 'libsyn:podcast'
+      const expected: DiscoverUriHint = { key: 'libsyn:podcast', label: 'Podcast' }
 
-      expect(libsynHandler.getFeedKey?.(value)).toBe(expected)
+      expect(libsynHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for another feed under a show', () => {
       const value = 'https://feeds.libsyn.com/12345/last100'
 
-      expect(libsynHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(libsynHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a file on the feeds host', () => {
       const value = 'https://feeds.libsyn.com/robots.txt'
 
-      expect(libsynHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(libsynHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the feeds host feed path', () => {
       const value = 'https://feeds.libsyn.com/rss'
 
-      expect(libsynHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(libsynHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path under a non-numeric show', () => {
       const value = 'https://feeds.libsyn.com/about/rss'
 
-      expect(libsynHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(libsynHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on a nested subdomain', () => {
       const value = 'https://blog.alice.libsyn.com/rss'
 
-      expect(libsynHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(libsynHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/rss'
 
-      expect(libsynHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(libsynHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
