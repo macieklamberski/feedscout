@@ -175,6 +175,18 @@ describe('mediumHandler', () => {
       expect(mediumHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the subdomain feed under the page scheme for an http publication', () => {
+      const value = 'http://alice.medium.com/some-article'
+      const expected = [
+        {
+          uri: 'http://alice.medium.com/feed',
+          hint: { key: 'medium:publication', label: 'Publication' },
+        },
+      ]
+
+      expect(mediumHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return RSS feed URL for tag page', () => {
       const value = 'https://medium.com/tag/javascript'
       const expected = [
