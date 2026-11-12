@@ -381,23 +381,23 @@ describe('microblogHandler', () => {
       expect(microblogHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return https feeds for an http blog page', () => {
+    it('should return the feeds under the page scheme for an http blog page', () => {
       const value = 'http://iamtony.micro.blog/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://iamtony.micro.blog/feed.xml',
+          uri: 'http://iamtony.micro.blog/feed.xml',
           hint: { key: 'microblog:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://iamtony.micro.blog/feed.json',
+          uri: 'http://iamtony.micro.blog/feed.json',
           hint: { key: 'microblog:posts', label: 'Posts', format: 'json' },
         },
         {
-          uri: 'https://iamtony.micro.blog/podcast.xml',
+          uri: 'http://iamtony.micro.blog/podcast.xml',
           hint: { key: 'microblog:podcast', label: 'Podcast', format: 'rss' },
         },
         {
-          uri: 'https://iamtony.micro.blog/podcast.json',
+          uri: 'http://iamtony.micro.blog/podcast.json',
           hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
         },
       ]

@@ -19,34 +19,37 @@ const categoryRegex = /^\/categories\/([^/]+)/i
 const archiveRegex = /^\/archive(?:\/|$)/i
 const photosRegex = /^\/photos(?:\/|$)/i
 
-const feeds = definePlatformFeeds([
-  {
-    key: 'microblog:category',
-    template: 'https://{username}.micro.blog/categories/{category}/feed.xml',
-    format: 'rss',
-  },
-  {
-    key: 'microblog:category',
-    template: 'https://{username}.micro.blog/categories/{category}/feed.json',
-    format: 'json',
-  },
-  { key: 'microblog:archive', template: 'https://{username}.micro.blog/archive/index.json' },
-  { key: 'microblog:photos', template: 'https://{username}.micro.blog/photos/index.json' },
-  { key: 'microblog:posts', template: 'https://{username}.micro.blog/feed.xml', format: 'rss' },
-  { key: 'microblog:posts', template: 'https://{username}.micro.blog/feed.json', format: 'json' },
-  // replies.xml redirects to feed.xml, so a stored one is the posts feed.
-  { key: 'microblog:posts', template: 'https://{username}.micro.blog/replies.xml', format: 'rss' },
-  {
-    key: 'microblog:podcast',
-    template: 'https://{username}.micro.blog/podcast.xml',
-    format: 'rss',
-  },
-  {
-    key: 'microblog:podcast',
-    template: 'https://{username}.micro.blog/podcast.json',
-    format: 'json',
-  },
-])
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'microblog:category',
+      template: '{scheme}://{host}/categories/{category}/feed.xml',
+      format: 'rss',
+    },
+    {
+      key: 'microblog:category',
+      template: '{scheme}://{host}/categories/{category}/feed.json',
+      format: 'json',
+    },
+    { key: 'microblog:archive', template: '{scheme}://{host}/archive/index.json' },
+    { key: 'microblog:photos', template: '{scheme}://{host}/photos/index.json' },
+    { key: 'microblog:posts', template: '{scheme}://{host}/feed.xml', format: 'rss' },
+    { key: 'microblog:posts', template: '{scheme}://{host}/feed.json', format: 'json' },
+    // replies.xml redirects to feed.xml, so a stored one is the posts feed.
+    { key: 'microblog:posts', template: '{scheme}://{host}/replies.xml', format: 'rss' },
+    {
+      key: 'microblog:podcast',
+      template: '{scheme}://{host}/podcast.xml',
+      format: 'rss',
+    },
+    {
+      key: 'microblog:podcast',
+      template: '{scheme}://{host}/podcast.json',
+      format: 'json',
+    },
+  ],
+  { domains },
+)
 
 export const parseMicroblogUrl = (url: string): MicroblogUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -81,36 +84,36 @@ export const microblogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseMicroblogUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { username } = parsed
     const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.kind === 'category') {
-      const params = { username, category: parsed.category }
+      const params = { category: parsed.category }
 
       uris.push(
-        feeds.getFeedEntry('microblog:category', params, 'rss'),
-        feeds.getFeedEntry('microblog:category', params, 'json'),
+        page.getFeedEntry('microblog:category', params, 'rss'),
+        page.getFeedEntry('microblog:category', params, 'json'),
       )
     }
 
     if (parsed.kind === 'archive') {
-      uris.push(feeds.getFeedEntry('microblog:archive', { username }))
+      uris.push(page.getFeedEntry('microblog:archive'))
     }
 
     if (parsed.kind === 'photos') {
-      uris.push(feeds.getFeedEntry('microblog:photos', { username }))
+      uris.push(page.getFeedEntry('microblog:photos'))
     }
 
     uris.push(
-      feeds.getFeedEntry('microblog:posts', { username }, 'rss'),
-      feeds.getFeedEntry('microblog:posts', { username }, 'json'),
-      feeds.getFeedEntry('microblog:podcast', { username }, 'rss'),
-      feeds.getFeedEntry('microblog:podcast', { username }, 'json'),
+      page.getFeedEntry('microblog:posts', {}, 'rss'),
+      page.getFeedEntry('microblog:posts', {}, 'json'),
+      page.getFeedEntry('microblog:podcast', {}, 'rss'),
+      page.getFeedEntry('microblog:podcast', {}, 'json'),
     )
 
     return uris
