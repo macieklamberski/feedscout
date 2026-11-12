@@ -15,8 +15,10 @@ const tagRegex = /^\/tag\/([^/]+)/i
 const feeds = definePlatformFeeds([
   { key: 'pika:posts', template: 'https://{blog}.pika.page/posts_feed', format: 'atom' },
   { key: 'pika:posts', template: 'https://{blog}.pika.page/posts_feed.rss', format: 'rss' },
+  { key: 'pika:posts', template: 'https://{blog}.pika.page/posts_feed.atom', format: 'atom' },
   { key: 'pika:tag', template: 'https://{blog}.pika.page/tag/{tag}/feed', format: 'atom' },
   { key: 'pika:tag', template: 'https://{blog}.pika.page/tag/{tag}/feed.rss', format: 'rss' },
+  { key: 'pika:tag', template: 'https://{blog}.pika.page/tag/{tag}/feed.atom', format: 'atom' },
 ])
 
 export const parsePikaUrl = (url: string): PikaUrl | undefined => {

@@ -166,6 +166,13 @@ describe('pikaHandler', () => {
       expect(pikaHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the posts key for an Atom posts feed with its extension', () => {
+      const value = 'https://alice.pika.page/posts_feed.atom'
+      const expected = 'pika:posts'
+
+      expect(pikaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the posts key for an http posts feed', () => {
       const value = 'http://alice.pika.page/posts_feed'
       const expected = 'pika:posts'
@@ -182,6 +189,13 @@ describe('pikaHandler', () => {
 
     it('should return the tag key for an RSS tag feed', () => {
       const value = 'https://alice.pika.page/tag/tech/feed.rss'
+      const expected = 'pika:tag'
+
+      expect(pikaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for an Atom tag feed with its extension', () => {
+      const value = 'https://alice.pika.page/tag/tech/feed.atom'
       const expected = 'pika:tag'
 
       expect(pikaHandler.getFeedKey?.(value)).toBe(expected)
@@ -228,9 +242,11 @@ describe('pikaHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://alice.pika.page/posts_feed', { key: 'pika:posts', label: 'Posts' }],
       ['https://alice.pika.page/posts_feed.rss', { key: 'pika:posts', label: 'Posts' }],
+      ['https://alice.pika.page/posts_feed.atom', { key: 'pika:posts', label: 'Posts' }],
       ['http://alice.pika.page/posts_feed', { key: 'pika:posts', label: 'Posts' }],
       ['https://alice.pika.page/tag/tech/feed', { key: 'pika:tag', label: 'Tag' }],
       ['https://alice.pika.page/tag/tech/feed.rss', { key: 'pika:tag', label: 'Tag' }],
+      ['https://alice.pika.page/tag/tech/feed.atom', { key: 'pika:tag', label: 'Tag' }],
       ['https://alice.pika.page/tag/tech/feed/', { key: 'pika:tag', label: 'Tag' }],
     ]
 
