@@ -60,7 +60,7 @@ export const castosHandler: PlatformHandler = {
     return [feeds.getFeedEntry('castos:podcast', { slug: page.slug })]
   },
 
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const [segment] = getPathSegments(url)
 
     // A feed id is word characters only, so a file on the feed host, such as `robots.txt`, is no
@@ -69,6 +69,6 @@ export const castosHandler: PlatformHandler = {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
