@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -14,6 +14,10 @@ const showRegex = /^\/pod\/(?:show|profile)\/[^/]+(?:\/|$)/i
 // Only 2 of the 4 shows measured also show a visible `/s/` link, which generic discovery reads,
 // so the block above holds for those shows alone.
 const feedUrlRegex = /anchor\.fm\/(?:s\/)?([\da-f]+)\/podcast\/rss/i
+
+const feeds = definePlatformFeeds([
+  { key: 'spotify-for-creators:podcast', template: 'https://anchor.fm/s/{stationId}/podcast/rss' },
+])
 
 export const parseSpotifyForCreatorsUrl = (url: string): SpotifyForCreatorsUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -51,11 +55,8 @@ export const spotifyForCreatorsHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://anchor.fm/s/${page.stationId}/podcast/rss`,
-        hint: composeHint('spotify-for-creators:podcast'),
-      },
-    ]
+    return [feeds.getFeedEntry('spotify-for-creators:podcast', { stationId: page.stationId })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
