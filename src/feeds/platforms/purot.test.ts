@@ -125,9 +125,9 @@ describe('getPurotPage', () => {
     expect(getPurotPage('https://example.purot.net/Kevatjuhla', pageHtml)).toEqual(expected)
   })
 
-  it('should return the user its profile feed link names', () => {
+  it('should return the wiki for a profile page', () => {
     const value = 'https://example.purot.net/profile/alice'
-    const expected: PurotPage = { kind: 'profile', wiki: 'example', user: 'alice' }
+    const expected: PurotPage = { kind: 'wiki', wiki: 'example' }
 
     expect(getPurotPage(value, missingProfileHtml)).toEqual(expected)
   })
@@ -208,21 +208,9 @@ describe('purotHandler', () => {
       expect(purotHandler.resolve(value, pageHtml)).toEqual(expected)
     })
 
-    it('should return the user and wiki feeds for a profile page', () => {
+    it('should return the wiki feed for a profile page', () => {
       const value = 'https://example.purot.net/profile/alice'
       const expected: Array<DiscoverUriEntry> = [
-        {
-          uri: 'https://example.purot.net/changes/profile/alice?mode=rss&messages=0',
-          hint: { key: 'purot:user-changes', label: 'User page changes' },
-        },
-        {
-          uri: 'https://example.purot.net/changes/profile/alice?mode=rss&pages=0',
-          hint: { key: 'purot:user-discussions', label: 'User discussions' },
-        },
-        {
-          uri: 'https://example.purot.net/changes/profile/alice?mode=rss',
-          hint: { key: 'purot:user-activity', label: 'User changes, discussions and likes' },
-        },
         {
           uri: 'https://example.purot.net/changes/all?mode=rss',
           hint: { key: 'purot:recent-changes', label: 'Recent changes' },

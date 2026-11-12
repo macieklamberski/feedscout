@@ -1432,16 +1432,16 @@
       "https://vertaisoppien.purot.net/changes/all?mode=rss&messages=0"
     ],
     "purot:user-activity": [
-      "https://sallatunturinkoulu.purot.net/changes/profile/sophie23?mode=rss",
-      "https://sandbox.purot.net/changes/profile/tuija?mode=rss"
+      "https://sandbox.purot.net/changes/profile/tuija?mode=rss",
+      "https://swingtowin.purot.net/changes/profile/riikka?mode=rss"
     ],
     "purot:user-changes": [
-      "https://sallatunturinkoulu.purot.net/changes/profile/sophie23?mode=rss&messages=0",
-      "https://sandbox.purot.net/changes/profile/tuija?mode=rss&messages=0"
+      "https://sandbox.purot.net/changes/profile/tuija?mode=rss&messages=0",
+      "https://swingtowin.purot.net/changes/profile/riikka?mode=rss&messages=0"
     ],
     "purot:user-discussions": [
-      "https://sallatunturinkoulu.purot.net/changes/profile/sophie23?mode=rss&pages=0",
-      "https://sandbox.purot.net/changes/profile/tuija?mode=rss&pages=0"
+      "https://sandbox.purot.net/changes/profile/tuija?mode=rss&pages=0",
+      "https://swingtowin.purot.net/changes/profile/riikka?mode=rss&pages=0"
     ]
   },
   "pypi": {
