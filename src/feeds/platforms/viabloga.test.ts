@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { parseViablogaUrl, type ViablogaUrl, viablogaHandler } from './viabloga.js'
 
 describe('parseViablogaUrl', () => {
@@ -69,6 +71,102 @@ describe('viablogaHandler', () => {
 
     it('should return empty array for a URL outside Viabloga', () => {
       expect(viablogaHandler.resolve('http://example.com/')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    const postsFeeds = [
+      'http://denis-collin.viabloga.com/index.xml',
+      'http://denis-collin.viabloga.com/atom.xml',
+      'http://denis-collin.viabloga.com/index.rdf',
+    ]
+
+    it.each(postsFeeds)('should return the posts key for %s', (value) => {
+      const expected = 'viabloga:posts'
+
+      expect(viablogaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the comments key for a comments feed', () => {
+      const value = 'http://alain-lefebvre.viabloga.com/comments.xml'
+      const expected = 'viabloga:comments'
+
+      expect(viablogaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the wiki key for a wiki feed', () => {
+      const value = 'http://aphanese.viabloga.com/wiki.rdf'
+      const expected = 'viabloga:wiki'
+
+      expect(viablogaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the wiki key for a wiki feed over https', () => {
+      const value = 'https://critico-blog.viabloga.com/wiki.rdf'
+      const expected = 'viabloga:wiki'
+
+      expect(viablogaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a post page', () => {
+      const value = 'http://alice.viabloga.com/news/canal-du-midi'
+
+      expect(viablogaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a theme feed the handler does not build', () => {
+      const value = 'https://denis-collin.viabloga.com/rss/theme/peche.xml'
+
+      expect(viablogaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'http://viabloga.com/index.xml'
+
+      expect(viablogaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www host', () => {
+      const value = 'http://www.viabloga.com/index.xml'
+
+      expect(viablogaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'http://blog.alice.viabloga.com/index.xml'
+
+      expect(viablogaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'http://example.com/index.xml'
+
+      expect(viablogaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['http://denis-collin.viabloga.com/index.xml', { key: 'viabloga:posts', label: 'Posts' }],
+      ['http://denis-collin.viabloga.com/atom.xml', { key: 'viabloga:posts', label: 'Posts' }],
+      ['http://denis-collin.viabloga.com/index.rdf', { key: 'viabloga:posts', label: 'Posts' }],
+      [
+        'http://alain-lefebvre.viabloga.com/comments.xml',
+        { key: 'viabloga:comments', label: 'Comments' },
+      ],
+      ['http://aphanese.viabloga.com/wiki.rdf', { key: 'viabloga:wiki', label: 'Wiki' }],
+      ['https://critico-blog.viabloga.com/wiki.rdf', { key: 'viabloga:wiki', label: 'Wiki' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [viablogaHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

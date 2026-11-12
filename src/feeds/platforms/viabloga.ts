@@ -1,5 +1,6 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog.
@@ -7,6 +8,21 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type ViablogaUrl = { kind: 'blog' }
 
 const domains = ['viabloga.com']
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'viabloga:posts', template: '{scheme}://{blog}.{domain}/index.xml', format: 'rss' },
+    { key: 'viabloga:posts', template: '{scheme}://{blog}.{domain}/atom.xml', format: 'atom' },
+    { key: 'viabloga:posts', template: '{scheme}://{blog}.{domain}/index.rdf', format: 'rdf' },
+    {
+      key: 'viabloga:comments',
+      template: '{scheme}://{blog}.{domain}/comments.xml',
+      format: 'rss',
+    },
+    { key: 'viabloga:wiki', template: '{scheme}://{blog}.{domain}/wiki.rdf', format: 'rdf' },
+  ],
+  { domains },
+)
 
 export const parseViablogaUrl = (url: string): ViablogaUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -22,20 +38,22 @@ export const viablogaHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsed = parseViablogaUrl(url)
+    const blog = getTenantSubdomain(url, domains)
 
-    if (!parsed) {
+    if (!blog) {
       return []
     }
 
-    const { origin } = new URL(url)
+    const params = { scheme: new URL(url).protocol.slice(0, -1), blog, domain: domains[0] }
 
     return [
-      { uri: `${origin}/index.xml`, hint: composeHint('viabloga:posts', 'rss') },
-      { uri: `${origin}/atom.xml`, hint: composeHint('viabloga:posts', 'atom') },
-      { uri: `${origin}/index.rdf`, hint: composeHint('viabloga:posts', 'rdf') },
-      { uri: `${origin}/comments.xml`, hint: composeHint('viabloga:comments', 'rss') },
-      { uri: `${origin}/wiki.rdf`, hint: composeHint('viabloga:wiki', 'rdf') },
+      feeds.getFeedEntry('viabloga:posts', params, 'rss'),
+      feeds.getFeedEntry('viabloga:posts', params, 'atom'),
+      feeds.getFeedEntry('viabloga:posts', params, 'rdf'),
+      feeds.getFeedEntry('viabloga:comments', params, 'rss'),
+      feeds.getFeedEntry('viabloga:wiki', params, 'rdf'),
     ]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
