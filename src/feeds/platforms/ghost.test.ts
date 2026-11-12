@@ -160,57 +160,57 @@ describe('ghostHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the blog key for a blog feed', () => {
       const value = 'https://alice.ghost.io/rss/'
-      const expected = 'ghost:blog'
+      const expected: DiscoverUriHint = { key: 'ghost:blog', label: 'Blog' }
 
-      expect(ghostHandler.getFeedKey?.(value)).toBe(expected)
+      expect(ghostHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the blog key for a blog feed without a trailing slash', () => {
       const value = 'https://alice.ghost.io/rss'
-      const expected = 'ghost:blog'
+      const expected: DiscoverUriHint = { key: 'ghost:blog', label: 'Blog' }
 
-      expect(ghostHandler.getFeedKey?.(value)).toBe(expected)
+      expect(ghostHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the tag key for a tag feed', () => {
       const value = 'https://alice.ghost.io/tag/getting-started/rss/'
-      const expected = 'ghost:tag'
+      const expected: DiscoverUriHint = { key: 'ghost:tag', label: 'Tag' }
 
-      expect(ghostHandler.getFeedKey?.(value)).toBe(expected)
+      expect(ghostHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the author key for an author feed', () => {
       const value = 'https://alice.ghost.io/author/jane/rss/'
-      const expected = 'ghost:author'
+      const expected: DiscoverUriHint = { key: 'ghost:author', label: 'Author' }
 
-      expect(ghostHandler.getFeedKey?.(value)).toBe(expected)
+      expect(ghostHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a tag page', () => {
       const value = 'https://alice.ghost.io/tag/getting-started/'
 
-      expect(ghostHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ghostHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a post page', () => {
       const value = 'https://alice.ghost.io/some-post/'
 
-      expect(ghostHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ghostHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://blog.example.ghost.io/rss/'
 
-      expect(ghostHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ghostHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on another host', () => {
       const value = 'https://example.com/rss/'
 
-      expect(ghostHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ghostHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

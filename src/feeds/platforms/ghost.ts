@@ -69,5 +69,5 @@ export const ghostHandler: PlatformHandler = {
     return [blogFeed]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
