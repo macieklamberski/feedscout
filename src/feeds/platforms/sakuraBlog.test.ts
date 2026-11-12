@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { parseSakuraBlogUrl, type SakuraBlogUrl, sakuraBlogHandler } from './sakuraBlog.js'
 
 describe('parseSakuraBlogUrl', () => {
@@ -66,6 +68,80 @@ describe('sakuraBlogHandler', () => {
       ]
 
       expect(sakuraBlogHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for an RSS 2.0 feed', () => {
+      const value = 'http://alice.sblo.jp/index20.rdf'
+      const expected = 'sakura-blog:posts'
+
+      expect(sakuraBlogHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an RDF feed', () => {
+      const value = 'http://alice.sblo.jp/index.rdf'
+      const expected = 'sakura-blog:posts'
+
+      expect(sakuraBlogHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a feed on the www host of a blog', () => {
+      const value = 'http://www.alice.sblo.jp/index20.rdf'
+      const expected = 'sakura-blog:posts'
+
+      expect(sakuraBlogHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for an article page', () => {
+      const value = 'http://alice.sblo.jp/article/123456.html'
+
+      expect(sakuraBlogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'http://blog.alice.sblo.jp/index20.rdf'
+
+      expect(sakuraBlogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex domain', () => {
+      const value = 'http://sblo.jp/index20.rdf'
+
+      expect(sakuraBlogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www host', () => {
+      const value = 'http://www.sblo.jp/index.rdf'
+
+      expect(sakuraBlogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'http://example.com/index20.rdf'
+
+      expect(sakuraBlogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const hint: DiscoverUriHint = { key: 'sakura-blog:posts', label: 'Posts' }
+    const ownFeeds = [
+      'http://alice.sblo.jp/index20.rdf',
+      'http://alice.sblo.jp/index.rdf',
+      'http://www.alice.sblo.jp/index20.rdf',
+      'http://www.alice.sblo.jp/index.rdf',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [sakuraBlogHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
