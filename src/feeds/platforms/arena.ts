@@ -79,5 +79,5 @@ export const arenaHandler: PlatformHandler = {
     return [feeds.getFeedEntry('arena:profile', { username: parsed.username })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

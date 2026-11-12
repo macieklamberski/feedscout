@@ -170,71 +170,71 @@ describe('arenaHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the profile key for a profile feed', () => {
       const value = 'https://www.are.na/laurel-schwulst/feed/rss'
-      const expected = 'arena:profile'
+      const expected: DiscoverUriHint = { key: 'arena:profile', label: 'Profile' }
 
-      expect(arenaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(arenaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the channel key for a channel feed', () => {
       const value = 'https://www.are.na/jason-santa-maria/typefaces-decorative-xghnyjwr8h0/feed/rss'
-      const expected = 'arena:channel'
+      const expected: DiscoverUriHint = { key: 'arena:channel', label: 'Channel' }
 
-      expect(arenaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(arenaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the editorial key for the editorial feed', () => {
       const value = 'https://www.are.na/editorial/feed/rss'
-      const expected = 'arena:editorial'
+      const expected: DiscoverUriHint = { key: 'arena:editorial', label: 'Editorial' }
 
-      expect(arenaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(arenaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the editorial key for the editorial feed with a capitalized route', () => {
       const value = 'https://www.are.na/Editorial/Feed/RSS'
-      const expected = 'arena:editorial'
+      const expected: DiscoverUriHint = { key: 'arena:editorial', label: 'Editorial' }
 
-      expect(arenaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(arenaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the profile key for a profile feed on the host without www', () => {
       const value = 'https://are.na/laurel-schwulst/feed/rss'
-      const expected = 'arena:profile'
+      const expected: DiscoverUriHint = { key: 'arena:profile', label: 'Profile' }
 
-      expect(arenaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(arenaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the channel key for a channel feed over http with a trailing slash', () => {
       const value = 'http://www.are.na/michelle-tran/misc-articles/feed/rss/'
-      const expected = 'arena:channel'
+      const expected: DiscoverUriHint = { key: 'arena:channel', label: 'Channel' }
 
-      expect(arenaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(arenaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a profile page', () => {
       const value = 'https://www.are.na/laurel-schwulst'
 
-      expect(arenaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(arenaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a channel page', () => {
       const value = 'https://www.are.na/michelle-tran/misc-articles'
 
-      expect(arenaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(arenaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an editorial article', () => {
       const value = 'https://www.are.na/editorial/learning-to-float'
 
-      expect(arenaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(arenaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/laurel-schwulst/feed/rss'
 
-      expect(arenaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(arenaHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
