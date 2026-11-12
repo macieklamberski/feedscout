@@ -270,6 +270,18 @@ describe('pinboardHandler', () => {
       expect(pinboardHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
+    it('should return undefined for a private feed', () => {
+      const value = 'https://feeds.pinboard.in/rss/secret:abc123/u:example/t:programming/'
+
+      expect(pinboardHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a tag feed narrowed by source', () => {
+      const value = 'https://feeds.pinboard.in/rss/u:example/t:programming/from:twitter'
+
+      expect(pinboardHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a tag feed path on another host', () => {
       const value = 'https://example.com/rss/u:example/t:programming/'
 
