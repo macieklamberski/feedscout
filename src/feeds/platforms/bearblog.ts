@@ -26,6 +26,10 @@ const feeds = definePlatformFeeds([
     template: 'https://{blog}.bearblog.dev/feed/?type=rss&q={tag}',
     format: 'rss',
   },
+  // A tag feed answers under these paths of the posts feed too, which the page does not link.
+  { key: 'bearblog:tag', template: 'https://{blog}.bearblog.dev/atom/?q={tag}', format: 'atom' },
+  { key: 'bearblog:tag', template: 'https://{blog}.bearblog.dev/atom.xml?q={tag}', format: 'atom' },
+  { key: 'bearblog:tag', template: 'https://{blog}.bearblog.dev/rss/?q={tag}', format: 'rss' },
   { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/feed/', format: 'atom' },
   { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/feed/?type=rss', format: 'rss' },
   // Every blog serves the same two feeds under these paths too, which the page does not link.

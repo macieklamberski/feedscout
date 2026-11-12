@@ -177,6 +177,18 @@ describe('bearblogHandler', () => {
         { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
       ],
       [
+        'https://example.bearblog.dev/atom/?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
+      ],
+      [
+        'https://example.bearblog.dev/atom.xml?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
+      ],
+      [
+        'http://example.bearblog.dev/rss/?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
+      ],
+      [
         'https://docs.bearblog.dev/feed/',
         { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
       ],
@@ -284,6 +296,18 @@ describe('bearblogHandler', () => {
       [
         'https://achyut.bearblog.dev/atom.xml',
         { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://example.bearblog.dev/atom/?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
+      ],
+      [
+        'https://example.bearblog.dev/atom.xml?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
+      ],
+      [
+        'https://example.bearblog.dev/rss/?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
       ],
     ]
 
