@@ -125,6 +125,18 @@ describe('pinterestHandler', () => {
       expect(pinterestHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the user feed under the page scheme for an http profile page', () => {
+      const value = 'http://www.pinterest.com/nasa'
+      const expected = [
+        {
+          uri: 'http://www.pinterest.com/nasa/feed.rss',
+          hint: { key: 'pinterest:pins', label: 'Pins' },
+        },
+      ]
+
+      expect(pinterestHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return board feed for /{user}/{board}', () => {
       const value = 'https://www.pinterest.com/nasa/mars'
       const expected = [

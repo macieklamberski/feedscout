@@ -25,8 +25,8 @@ const userSubpaths = ['pins', 'boards', '_saved', '_created', 'followers', 'foll
 const feeds = definePlatformFeeds(
   [
     // Before the board row, so a pins feed never reads as a board named feed.
-    { key: 'pinterest:pins', template: 'https://{host}/{username}/feed.rss' },
-    { key: 'pinterest:board', template: 'https://{host}/{username}/{board}.rss' },
+    { key: 'pinterest:pins', template: '{scheme}://{host}/{username}/feed.rss' },
+    { key: 'pinterest:board', template: '{scheme}://{host}/{username}/{board}.rss' },
   ],
   { hosts, domains },
 )
@@ -71,8 +71,9 @@ export const pinterestHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePinterestUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
@@ -81,10 +82,10 @@ export const pinterestHandler: PlatformHandler = {
     if (parsed.kind === 'board') {
       const params = { host, username: parsed.username, board: parsed.board }
 
-      return [feeds.getFeedEntry('pinterest:board', params)]
+      return [page.getFeedEntry('pinterest:board', params)]
     }
 
-    return [feeds.getFeedEntry('pinterest:pins', { host, username: parsed.username })]
+    return [page.getFeedEntry('pinterest:pins', { host, username: parsed.username })]
   },
 
   // Country label hosts serve the same feeds, other subdomains such as help do not.
