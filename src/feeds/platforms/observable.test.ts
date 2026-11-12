@@ -345,6 +345,10 @@ describe('observableHandler', () => {
         { key: 'observable:collection', label: 'Collection' },
       ],
       [
+        'https://api.observablehq.com/collection/@rreusser/math.rss',
+        { key: 'observable:collection', label: 'Collection' },
+      ],
+      [
         'https://api.observablehq.com/documents/public.rss',
         { key: 'observable:recent', label: 'Recent' },
       ],
