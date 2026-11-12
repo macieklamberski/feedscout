@@ -220,6 +220,18 @@ describe('purotHandler', () => {
       expect(purotHandler.resolve(value, missingProfileHtml)).toEqual(expected)
     })
 
+    it('should return the wiki feed under the page scheme for an http profile page', () => {
+      const value = 'http://example.purot.net/profile/alice'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.purot.net/changes/all?mode=rss',
+          hint: { key: 'purot:recent-changes', label: 'Recent changes' },
+        },
+      ]
+
+      expect(purotHandler.resolve(value, missingProfileHtml)).toEqual(expected)
+    })
+
     it('should return empty array for a URL outside purot.net', () => {
       expect(purotHandler.resolve('https://example.com/', pageHtml)).toEqual([])
     })

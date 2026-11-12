@@ -19,39 +19,42 @@ const domains = ['purot.net']
 const pageChangesRegex = /^\/changes\/([^/?]+)\?mode=rss&messages=0$/i
 
 // The wiki's changes come first, so its feeds are not read as the feeds of a page named all.
-const feeds = definePlatformFeeds([
-  { key: 'purot:recent-changes', template: 'https://{wiki}.purot.net/changes/all?mode=rss' },
-  {
-    key: 'purot:recent-page-changes',
-    template: 'https://{wiki}.purot.net/changes/all?mode=rss&messages=0',
-  },
-  {
-    key: 'purot:recent-discussions',
-    template: 'https://{wiki}.purot.net/changes/all?mode=rss&pages=0',
-  },
-  {
-    key: 'purot:page-changes',
-    template: 'https://{wiki}.purot.net/changes/{page}?mode=rss&messages=0',
-  },
-  {
-    key: 'purot:page-discussions',
-    template: 'https://{wiki}.purot.net/changes/{page}?mode=rss&pages=0',
-  },
-  { key: 'purot:page-activity', template: 'https://{wiki}.purot.net/changes/{page}?mode=rss' },
-  // Only a missing user's profile page links these, with every user's profile changes in them.
-  {
-    key: 'purot:user-changes',
-    template: 'https://{wiki}.purot.net/changes/profile/{user}?mode=rss&messages=0',
-  },
-  {
-    key: 'purot:user-discussions',
-    template: 'https://{wiki}.purot.net/changes/profile/{user}?mode=rss&pages=0',
-  },
-  {
-    key: 'purot:user-activity',
-    template: 'https://{wiki}.purot.net/changes/profile/{user}?mode=rss',
-  },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'purot:recent-changes', template: '{scheme}://{host}/changes/all?mode=rss' },
+    {
+      key: 'purot:recent-page-changes',
+      template: '{scheme}://{host}/changes/all?mode=rss&messages=0',
+    },
+    {
+      key: 'purot:recent-discussions',
+      template: '{scheme}://{host}/changes/all?mode=rss&pages=0',
+    },
+    {
+      key: 'purot:page-changes',
+      template: '{scheme}://{host}/changes/{page}?mode=rss&messages=0',
+    },
+    {
+      key: 'purot:page-discussions',
+      template: '{scheme}://{host}/changes/{page}?mode=rss&pages=0',
+    },
+    { key: 'purot:page-activity', template: '{scheme}://{host}/changes/{page}?mode=rss' },
+    // Only a missing user's profile page links these, with every user's profile changes in them.
+    {
+      key: 'purot:user-changes',
+      template: '{scheme}://{host}/changes/profile/{user}?mode=rss&messages=0',
+    },
+    {
+      key: 'purot:user-discussions',
+      template: '{scheme}://{host}/changes/profile/{user}?mode=rss&pages=0',
+    },
+    {
+      key: 'purot:user-activity',
+      template: '{scheme}://{host}/changes/profile/{user}?mode=rss',
+    },
+  ],
+  { domains },
+)
 
 export const parsePurotUrl = (url: string): PurotUrl | undefined => {
   const wiki = getTenantSubdomain(url, domains)
@@ -91,22 +94,23 @@ export const purotHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getPurotPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
     const uris: Array<DiscoverUriEntry> = []
 
     if (page.kind === 'page') {
-      const params = { wiki: page.wiki, page: page.page }
+      const params = { page: page.page }
 
-      uris.push(feeds.getFeedEntry('purot:page-changes', params))
-      uris.push(feeds.getFeedEntry('purot:page-discussions', params))
-      uris.push(feeds.getFeedEntry('purot:page-activity', params))
+      uris.push(pageFeeds.getFeedEntry('purot:page-changes', params))
+      uris.push(pageFeeds.getFeedEntry('purot:page-discussions', params))
+      uris.push(pageFeeds.getFeedEntry('purot:page-activity', params))
     }
 
-    uris.push(feeds.getFeedEntry('purot:recent-changes', { wiki: page.wiki }))
+    uris.push(pageFeeds.getFeedEntry('purot:recent-changes'))
 
     return uris
   },
