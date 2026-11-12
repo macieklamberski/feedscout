@@ -1,5 +1,6 @@
 import { getAnyOf, getPathSegments, isString, parseUrl, resolveUrl, stripWww } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -17,6 +18,27 @@ const feedPathRegex = /\/rss\.xml$/i
 const listingRoutes = ['author', 'tag', 'topic']
 
 const blogContentTypes = ['BLOG', 'BLOG_LISTING_PAGE', 'BLOG_POST', 'BLOG_AUTHOR', 'TAG']
+
+const domains = [
+  'hs-sites.com',
+  'hs-sites-eu1.com',
+  'hs-sites-ap1.com',
+  'hs-sites-na2.com',
+  'hs-sites-na3.com',
+  'hs-sitesqa.com',
+]
+
+// A blog on a custom domain is known only by its marker, so its feeds are built in resolve, under
+// the blog root the page links, and claimed only for a blog at the root of HubSpot's own hosts.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'hubspot:author', template: '{scheme}://{tenant}.{domain}/author/{name}/rss.xml' },
+    { key: 'hubspot:tag', template: '{scheme}://{tenant}.{domain}/tag/{name}/rss.xml' },
+    { key: 'hubspot:tag', template: '{scheme}://{tenant}.{domain}/topic/{name}/rss.xml' },
+    { key: 'hubspot:blog', template: '{scheme}://{tenant}.{domain}/rss.xml' },
+  ],
+  { domains },
+)
 
 // Every blog page links its blog's feed, `{blog}/rss.xml`, which names the blog's root. A blog can
 // sit at the host root or several segments deep.
@@ -153,4 +175,6 @@ export const hubspotHandler: PlatformHandler = {
 
     return uris
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
