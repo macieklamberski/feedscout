@@ -167,72 +167,72 @@ describe('gcsWebHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the news releases key for the news releases feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the news releases hint for the news releases feed', () => {
       const value = 'https://example.gcs-web.com/rss/news-releases.xml'
-      const expected = 'gcs-web:news-releases'
+      const expected: DiscoverUriHint = { key: 'gcs-web:news-releases', label: 'News releases' }
 
-      expect(gcsWebHandler.getFeedKey?.(value)).toBe(expected)
+      expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the SEC filings key for the SEC filings feed', () => {
+    it('should return the SEC filings hint for the SEC filings feed', () => {
       const value = 'https://example.gcs-web.com/rss/sec-filings.xml'
-      const expected = 'gcs-web:sec-filings'
+      const expected: DiscoverUriHint = { key: 'gcs-web:sec-filings', label: 'SEC filings' }
 
-      expect(gcsWebHandler.getFeedKey?.(value)).toBe(expected)
+      expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the events key for the events feed', () => {
+    it('should return the events hint for the events feed', () => {
       const value = 'https://example.gcs-web.com/rss/events.xml'
-      const expected = 'gcs-web:events'
+      const expected: DiscoverUriHint = { key: 'gcs-web:events', label: 'Events' }
 
-      expect(gcsWebHandler.getFeedKey?.(value)).toBe(expected)
+      expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the events key for the events feed over http', () => {
+    it('should return the events hint for the events feed over http', () => {
       const value = 'http://example.gcs-web.com/rss/events.xml'
-      const expected = 'gcs-web:events'
+      const expected: DiscoverUriHint = { key: 'gcs-web:events', label: 'Events' }
 
-      expect(gcsWebHandler.getFeedKey?.(value)).toBe(expected)
+      expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the SEC filings key for a feed filtered by item count and group', () => {
+    it('should return the SEC filings hint for a feed filtered by item count and group', () => {
       const value = 'https://example.gcs-web.com/rss/sec-filings.xml?items=15&sub_group=4'
-      const expected = 'gcs-web:sec-filings'
+      const expected: DiscoverUriHint = { key: 'gcs-web:sec-filings', label: 'SEC filings' }
 
-      expect(gcsWebHandler.getFeedKey?.(value)).toBe(expected)
+      expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the news releases key for a feed filtered by category', () => {
+    it('should return the news releases hint for a feed filtered by category', () => {
       const value =
         'https://example.gcs-web.com/rss/news-releases.xml?category=Corporate%2FFinancial'
-      const expected = 'gcs-web:news-releases'
+      const expected: DiscoverUriHint = { key: 'gcs-web:news-releases', label: 'News releases' }
 
-      expect(gcsWebHandler.getFeedKey?.(value)).toBe(expected)
+      expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a news releases page', () => {
       const value = 'https://example.gcs-web.com/news-releases'
 
-      expect(gcsWebHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(gcsWebHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://gcs-web.com/rss/news-releases.xml'
 
-      expect(gcsWebHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(gcsWebHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://www.example.gcs-web.com/rss/news-releases.xml'
 
-      expect(gcsWebHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(gcsWebHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a company domain', () => {
       const value = 'https://investors.example.com/rss/news-releases.xml'
 
-      expect(gcsWebHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(gcsWebHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
