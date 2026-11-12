@@ -142,5 +142,5 @@ export const hatenaFotolifeHandler: PlatformHandler = {
     return [feeds.getFeedEntry('hatena-fotolife:photos', { username })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
