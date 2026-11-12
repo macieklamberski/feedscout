@@ -90,5 +90,5 @@ export const purotHandler: PlatformHandler = {
     return uris
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

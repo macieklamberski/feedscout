@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import type { PurotPage, PurotUrl } from './purot.js'
@@ -225,57 +225,60 @@ describe('purotHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the recent changes key for the wiki feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the recent changes hint for the wiki feed', () => {
       const value = 'https://example.purot.net/changes/all?mode=rss'
-      const expected = 'purot:recent-changes'
+      const expected: DiscoverUriHint = { key: 'purot:recent-changes', label: 'Recent changes' }
 
-      expect(purotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(purotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the page changes key for a page changes feed', () => {
+    it('should return the page changes hint for a page changes feed', () => {
       const value = 'https://example.purot.net/changes/kevatjuhla?messages=0&mode=rss'
-      const expected = 'purot:page-changes'
+      const expected: DiscoverUriHint = { key: 'purot:page-changes', label: 'Page changes' }
 
-      expect(purotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(purotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the page discussions key for a page discussions feed', () => {
+    it('should return the page discussions hint for a page discussions feed', () => {
       const value = 'https://example.purot.net/changes/kevatjuhla?mode=rss&pages=0'
-      const expected = 'purot:page-discussions'
+      const expected: DiscoverUriHint = { key: 'purot:page-discussions', label: 'Page discussions' }
 
-      expect(purotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(purotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the page activity key for a page activity feed', () => {
+    it('should return the page activity hint for a page activity feed', () => {
       const value = 'https://example.purot.net/changes/kevatjuhla?mode=rss'
-      const expected = 'purot:page-activity'
+      const expected: DiscoverUriHint = {
+        key: 'purot:page-activity',
+        label: 'Page changes, discussions and likes',
+      }
 
-      expect(purotHandler.getFeedKey?.(value)).toBe(expected)
+      expect(purotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a profile feed', () => {
       const value = 'https://example.purot.net/changes/profile/alice?mode=rss'
 
-      expect(purotHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(purotHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a changes page', () => {
       const value = 'https://example.purot.net/changes/kevatjuhla'
 
-      expect(purotHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(purotHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the apex domain', () => {
       const value = 'https://purot.net/changes/all?mode=rss'
 
-      expect(purotHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(purotHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/changes/all?mode=rss'
 
-      expect(purotHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(purotHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
