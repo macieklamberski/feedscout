@@ -235,31 +235,65 @@ describe('shinobiHandler', () => {
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds = [
-      'https://example.blog.shinobi.jp/RSS/',
-      'https://example.blog.shinobi.jp/RSS',
-      'http://example.blog.shinobi.jp/ATOM/',
-      'http://example.blog.shinobi.jp/atom',
-      'https://example.blog.shinobi.jp/RSS/200',
-      'https://example.blog.shinobi.jp/RSS/091/',
-      'https://example.blog.shinobi.jp/RSS/100',
-      'https://example.blog.shinobi.jp/RSS/RSS',
-      'https://example.blog.shinobi.jp/RSS/200/RSS',
-      'https://example.blog.shinobi.jp/RSS/100/RSS',
-      'https://example.blog.shinobi.jp/RSS/091/index.rdf',
-      'https://example.blog.shinobi.jp/OPML',
-      'http://example.ni-3.net/rss',
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.blog.shinobi.jp/RSS/',
+        { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://example.blog.shinobi.jp/RSS',
+        { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'http://example.blog.shinobi.jp/ATOM/',
+        { key: 'shinobi:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'http://example.blog.shinobi.jp/atom',
+        { key: 'shinobi:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://example.blog.shinobi.jp/RSS/200',
+        { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://example.blog.shinobi.jp/RSS/091/',
+        { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://example.blog.shinobi.jp/RSS/100',
+        { key: 'shinobi:posts', label: 'Posts', format: 'rdf' },
+      ],
+      [
+        'https://example.blog.shinobi.jp/RSS/RSS',
+        { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://example.blog.shinobi.jp/RSS/200/RSS',
+        { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://example.blog.shinobi.jp/RSS/100/RSS',
+        { key: 'shinobi:posts', label: 'Posts', format: 'rdf' },
+      ],
+      [
+        'https://example.blog.shinobi.jp/RSS/091/index.rdf',
+        { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://example.blog.shinobi.jp/OPML',
+        { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
+      ],
+      ['http://example.ni-3.net/rss', { key: 'shinobi:posts', label: 'Posts', format: 'rss' }],
     ]
 
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [shinobiHandler],
         baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: value, hint: { key: 'shinobi:posts', label: 'Posts' } },
-      ]
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
       expect(result).toEqual(expected)
     })
