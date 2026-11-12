@@ -308,6 +308,41 @@ describe('sourceforgeHandler', () => {
       expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the activity key for an activity feed with an rss extension', () => {
+      const value = 'https://sourceforge.net/p/hsqldb/activity/feed.rss'
+      const expected = 'sourceforge:activity'
+
+      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the activity key for an activity feed with an atom extension', () => {
+      const value = 'https://sourceforge.net/p/hsqldb/activity/feed.atom'
+      const expected = 'sourceforge:activity'
+
+      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the discussion key for a discussion feed with an rss extension', () => {
+      const value = 'https://sourceforge.net/p/hsqldb/discussion/feed.rss'
+      const expected = 'sourceforge:discussion'
+
+      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the bugs key for a bugs feed with an rss extension', () => {
+      const value = 'https://sourceforge.net/p/hsqldb/bugs/feed.rss'
+      const expected = 'sourceforge:bugs'
+
+      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the bugs key for a bugs feed with an atom extension', () => {
+      const value = 'https://sourceforge.net/p/hsqldb/bugs/feed.atom'
+      const expected = 'sourceforge:bugs'
+
+      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the activity key for an activity feed over http', () => {
       const value = 'http://sourceforge.net/p/hsqldb/activity/feed'
       const expected = 'sourceforge:activity'
@@ -384,6 +419,23 @@ describe('sourceforgeHandler', () => {
         { key: 'sourceforge:discussion', label: 'Discussion' },
       ],
       ['http://sourceforge.net/p/hsqldb/bugs/feed', { key: 'sourceforge:bugs', label: 'Bugs' }],
+      [
+        'http://sourceforge.net/p/hsqldb/activity/feed.rss',
+        { key: 'sourceforge:activity', label: 'Recent activity' },
+      ],
+      [
+        'http://sourceforge.net/p/hsqldb/activity/feed.atom',
+        { key: 'sourceforge:activity', label: 'Recent activity' },
+      ],
+      [
+        'http://sourceforge.net/p/hsqldb/discussion/feed.rss',
+        { key: 'sourceforge:discussion', label: 'Discussion' },
+      ],
+      ['http://sourceforge.net/p/hsqldb/bugs/feed.rss', { key: 'sourceforge:bugs', label: 'Bugs' }],
+      [
+        'http://sourceforge.net/p/hsqldb/bugs/feed.atom',
+        { key: 'sourceforge:bugs', label: 'Bugs' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

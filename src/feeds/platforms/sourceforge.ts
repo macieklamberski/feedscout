@@ -11,9 +11,18 @@ const hosts = ['sourceforge.net', 'www.sourceforge.net']
 const projectPrefixes = ['projects', 'p']
 
 // SourceForge serves each feed at `feed`, `feed.rss` and `feed.atom`. The rows `resolve` never
-// builds claim the spellings the corpus stores, of the project and news feeds.
+// builds claim the other two spellings of each feed it emits.
 const feeds = definePlatformFeeds([
   { key: 'sourceforge:activity', template: 'https://sourceforge.net/p/{project}/activity/feed' },
+  {
+    key: 'sourceforge:activity',
+    template: 'https://sourceforge.net/p/{project}/activity/feed.rss',
+  },
+  {
+    key: 'sourceforge:activity',
+    template: 'https://sourceforge.net/p/{project}/activity/feed.atom',
+    format: 'atom',
+  },
   { key: 'sourceforge:project-feed', template: 'https://sourceforge.net/p/{project}/feed' },
   { key: 'sourceforge:project-feed', template: 'https://sourceforge.net/p/{project}/feed.rss' },
   {
@@ -44,10 +53,21 @@ const feeds = definePlatformFeeds([
   },
   {
     key: 'sourceforge:discussion',
+    template: 'https://sourceforge.net/p/{project}/discussion/feed.rss',
+    format: 'rss',
+  },
+  {
+    key: 'sourceforge:discussion',
     template: 'https://sourceforge.net/p/{project}/discussion/feed.atom',
     format: 'atom',
   },
   { key: 'sourceforge:bugs', template: 'https://sourceforge.net/p/{project}/bugs/feed' },
+  { key: 'sourceforge:bugs', template: 'https://sourceforge.net/p/{project}/bugs/feed.rss' },
+  {
+    key: 'sourceforge:bugs',
+    template: 'https://sourceforge.net/p/{project}/bugs/feed.atom',
+    format: 'atom',
+  },
 ])
 
 export const parseSourceforgeUrl = (url: string): SourceforgeUrl | undefined => {
