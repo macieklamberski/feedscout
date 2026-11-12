@@ -3753,7 +3753,7 @@ type PlatformHandler = {
 
 An entry of `domains` can be a pattern standing for a family of domains, anchored at both ends, such as `/^blogspot\.(?:com|com\.[a-z]{2}|[a-z]{2})$/` for `blogspot.com`, `blogspot.de` and `blogspot.com.br`. `{host}` and `{domain}` then stand for any domain the pattern matches, and `forUrl` fills `{domain}` with the one the page's host is under.
 
-A template can open with `{root}`, which stands for the scheme, the host with its port and an optional base path, as `https://example.com/forum`, written as given. `getFeedHint` reads a `{root}` row on a host in `hosts` or under `domains`, under any base path, and a table with neither builds the row without claiming it.
+A template can open with `{root}`, which stands for the scheme, the host with its port and an optional base path, as `https://example.com/forum`, written as given. `getFeedHint` reads a `{root}` row as a `{host}` row, on the origin of a host in `hosts` or a tenant under `domains`, never under a base path, since a tenant serves from its origin. A table with neither builds the row without claiming it.
 
 `getFeedHint` ignores a leading `www` in the URL's host. On a platform where `www` can be a tenant, set `isWwwTenant: true`: a row is then tried on the host as given first, so `www.example.com/rss` reads as the tenant `www` on a `{username}.example.com/rss` row, and the host without `www` only when no row matches.
 

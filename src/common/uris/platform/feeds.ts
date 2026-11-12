@@ -70,8 +70,6 @@ const trailingSlashRegex = /\/$/
 const anchorsRegex = /^\^|\$$/g
 
 const rootPlaceholder = '{root}'
-// The base path a `{root}` can carry, any number of segments.
-const basePathSource = '(?:/[^/]+)*'
 
 // A path decoded segment by segment, so `%40` and `@` compare equal. A decoded `%` and `/` are
 // written back as `%25` and `%2F`, so `%252F` stays apart from `%2F` and no segment splits.
@@ -112,7 +110,7 @@ const compileTemplate = (
   options: PlatformFeedTableOptions,
 ): CompiledTemplate => {
   const isRootTemplate = template.startsWith(rootPlaceholder)
-  // A `{root}` template reads as one on `{host}`, with a base path in front of its path.
+  // A `{root}` template reads as one on `{host}`: a tenant serves from its origin.
   const match = templateRegex.exec(
     isRootTemplate ? template.replace(rootPlaceholder, 'https://{host}') : template,
   )
@@ -139,8 +137,7 @@ const compileTemplate = (
   }
 
   // Matched on the decoded path without its trailing slash.
-  const routeSource = toRegexSource(path.replace(trailingSlashRegex, ''), '[^/]+', {}, true)
-  const pathSource = isRootTemplate ? `${basePathSource}${routeSource}` : routeSource
+  const pathSource = toRegexSource(path.replace(trailingSlashRegex, ''), '[^/]+', {}, true)
   const toHostPathRegex = (normalize: (value: string) => string): RegExp => {
     const hostSources = [
       ...hosts.map((value) => escapeRegex(normalize(value))),

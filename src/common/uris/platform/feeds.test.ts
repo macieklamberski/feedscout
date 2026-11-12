@@ -659,8 +659,20 @@ describe('definePlatformFeeds', () => {
         expect(rootFeeds.getFeedHint(value)?.key).toBe(expected)
       })
 
-      it('should return the key of a feed under a base path', () => {
+      it('should return undefined for a feed under a base path', () => {
         const value = 'https://example.com/forum/latest.rss'
+
+        expect(rootFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return undefined for a feed under a base path on a tenant', () => {
+        const value = 'https://alice.example.net/forum/latest.rss'
+
+        expect(rootFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return the key of a feed on a tenant with a port', () => {
+        const value = 'https://alice.example.net:8080/latest.rss'
         const expected = 'example:latest'
 
         expect(rootFeeds.getFeedHint(value)?.key).toBe(expected)
@@ -673,8 +685,8 @@ describe('definePlatformFeeds', () => {
         expect(rootFeeds.getFeedHint(value)?.key).toBe(expected)
       })
 
-      it('should return the key of a feed named by its query under a base path', () => {
-        const value = 'https://example.com/forum/search.rss?q=rss'
+      it('should return the key of a feed named by its query', () => {
+        const value = 'https://alice.example.net/search.rss?q=rss'
         const expected = 'example:search'
 
         expect(rootFeeds.getFeedHint(value)?.key).toBe(expected)
