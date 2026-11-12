@@ -14,9 +14,9 @@ const feedHosts = ['ameblo.jp', 'rssblog.ameba.jp']
 // same paths, so the table reads both hosts.
 const feeds = definePlatformFeeds(
   [
-    { key: 'ameblo:posts', template: 'https://{host}/{username}/rss20.xml', format: 'rss' },
-    { key: 'ameblo:posts', template: 'https://{host}/{username}/atom.xml', format: 'atom' },
-    { key: 'ameblo:posts', template: 'https://{host}/{username}/rss.html', format: 'rdf' },
+    { key: 'ameblo:posts', template: '{scheme}://{host}/{username}/rss20.xml', format: 'rss' },
+    { key: 'ameblo:posts', template: '{scheme}://{host}/{username}/atom.xml', format: 'atom' },
+    { key: 'ameblo:posts', template: '{scheme}://{host}/{username}/rss.html', format: 'rdf' },
   ],
   { hosts: feedHosts },
 )
@@ -43,16 +43,18 @@ export const amebloHandler: PlatformHandler = {
   resolve: (url) => {
     const parsed = parseAmebloUrl(url)
 
-    if (!parsed) {
+    const page = feeds.forUrl(url)
+
+    if (!parsed || !page) {
       return []
     }
 
     const params = { host: 'rssblog.ameba.jp', username: parsed.username }
 
     return [
-      feeds.getFeedEntry('ameblo:posts', params, 'rss'),
-      feeds.getFeedEntry('ameblo:posts', params, 'atom'),
-      feeds.getFeedEntry('ameblo:posts', params, 'rdf'),
+      page.getFeedEntry('ameblo:posts', params, 'rss'),
+      page.getFeedEntry('ameblo:posts', params, 'atom'),
+      page.getFeedEntry('ameblo:posts', params, 'rdf'),
     ]
   },
 

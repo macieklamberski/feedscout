@@ -76,6 +76,26 @@ describe('amebloHandler', () => {
       expect(amebloHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep the scheme of an http blog page', () => {
+      const value = 'http://ameblo.jp/shibuya'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://rssblog.ameba.jp/shibuya/rss20.xml',
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'http://rssblog.ameba.jp/shibuya/atom.xml',
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'http://rssblog.ameba.jp/shibuya/rss.html',
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'rdf' },
+        },
+      ]
+
+      expect(amebloHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array when the URL names no blog', () => {
       expect(amebloHandler.resolve('https://ameblo.jp/')).toEqual([])
     })
