@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type BloggangUrl, bloggangHandler, parseBloggangUrl } from './bloggang.js'
 
 describe('parseBloggangUrl', () => {
@@ -121,6 +123,70 @@ describe('bloggangHandler', () => {
       ]
 
       expect(bloggangHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for a posts feed', () => {
+      const value = 'https://alice.bloggang.com/rss'
+      const expected = 'bloggang:posts'
+
+      expect(bloggangHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a posts feed of a username with an underscore', () => {
+      const value = 'https://alice_example.bloggang.com/rss'
+      const expected = 'bloggang:posts'
+
+      expect(bloggangHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for the rss path on the mobile host', () => {
+      const value = 'https://m.bloggang.com/rss'
+
+      expect(bloggangHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the rss path on www', () => {
+      const value = 'https://www.bloggang.com/rss'
+
+      expect(bloggangHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://alice.bloggang.com/'
+
+      expect(bloggangHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://a.alice.bloggang.com/rss'
+
+      expect(bloggangHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/rss'
+
+      expect(bloggangHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const values: Array<[string, DiscoverUriHint]> = [
+      ['https://alice.bloggang.com/rss', { key: 'bloggang:posts', label: 'Posts' }],
+      ['https://alice_example.bloggang.com/rss', { key: 'bloggang:posts', label: 'Posts' }],
+    ]
+
+    it.each(values)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [bloggangHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
