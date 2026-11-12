@@ -54,13 +54,13 @@ export const royalroadHandler: PlatformHandler = {
   },
 
   // A fiction id is digits, and /syndication/latest answers 404.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const fictionId = getPathSegments(url).at(-1)
 
     if (!fictionId || !digitsRegex.test(fictionId)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }

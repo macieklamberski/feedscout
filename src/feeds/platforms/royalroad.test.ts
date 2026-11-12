@@ -91,51 +91,51 @@ describe('royalroadHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the fiction key for a fiction feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the fiction hint for a fiction feed', () => {
       const value = 'https://www.royalroad.com/syndication/12345'
-      const expected = 'royalroad:fiction'
+      const expected: DiscoverUriHint = { key: 'royalroad:fiction', label: 'Fiction' }
 
-      expect(royalroadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(royalroadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the fiction key for a fiction feed under the fiction path', () => {
+    it('should return the fiction hint for a fiction feed under the fiction path', () => {
       const value = 'https://www.royalroad.com/fiction/syndication/12345'
-      const expected = 'royalroad:fiction'
+      const expected: DiscoverUriHint = { key: 'royalroad:fiction', label: 'Fiction' }
 
-      expect(royalroadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(royalroadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the fiction key for a fiction feed with a count', () => {
+    it('should return the fiction hint for a fiction feed with a count', () => {
       const value = 'https://www.royalroad.com/syndication/12345?count=1'
-      const expected = 'royalroad:fiction'
+      const expected: DiscoverUriHint = { key: 'royalroad:fiction', label: 'Fiction' }
 
-      expect(royalroadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(royalroadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the fiction key for a fiction feed on the bare host', () => {
+    it('should return the fiction hint for a fiction feed on the bare host', () => {
       const value = 'http://royalroad.com/syndication/12345/'
-      const expected = 'royalroad:fiction'
+      const expected: DiscoverUriHint = { key: 'royalroad:fiction', label: 'Fiction' }
 
-      expect(royalroadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(royalroadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a word in place of the fiction id', () => {
       const value = 'https://www.royalroad.com/syndication/latest'
 
-      expect(royalroadHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(royalroadHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a fiction page', () => {
       const value = 'https://www.royalroad.com/fiction/12345'
 
-      expect(royalroadHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(royalroadHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/syndication/12345'
 
-      expect(royalroadHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(royalroadHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
