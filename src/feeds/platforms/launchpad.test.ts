@@ -340,121 +340,121 @@ describe('launchpadHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the announcements key for the site announcements feed', () => {
       const value = 'http://feeds.launchpad.net/announcements.atom'
-      const expected = 'launchpad:announcements'
+      const expected: DiscoverUriHint = { key: 'launchpad:announcements', label: 'Announcements' }
 
-      expect(launchpadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the announcements key for a project announcements feed', () => {
       const value = 'http://feeds.launchpad.net/example/announcements.atom'
-      const expected = 'launchpad:announcements'
+      const expected: DiscoverUriHint = { key: 'launchpad:announcements', label: 'Announcements' }
 
-      expect(launchpadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the announcements key for a project announcements feed over https', () => {
       const value = 'https://feeds.launchpad.net/example/announcements.atom'
-      const expected = 'launchpad:announcements'
+      const expected: DiscoverUriHint = { key: 'launchpad:announcements', label: 'Announcements' }
 
-      expect(launchpadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the bugs key for the site latest bugs feed', () => {
       const value = 'http://feeds.launchpad.net/bugs/latest-bugs.atom'
-      const expected = 'launchpad:bugs'
+      const expected: DiscoverUriHint = { key: 'launchpad:bugs', label: 'Latest bugs' }
 
-      expect(launchpadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the bugs key for a project latest bugs feed', () => {
       const value = 'http://feeds.launchpad.net/example/latest-bugs.atom'
-      const expected = 'launchpad:bugs'
+      const expected: DiscoverUriHint = { key: 'launchpad:bugs', label: 'Latest bugs' }
 
-      expect(launchpadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the bugs key for a person latest bugs feed', () => {
       const value = 'http://feeds.launchpad.net/~example/latest-bugs.atom'
-      const expected = 'launchpad:bugs'
+      const expected: DiscoverUriHint = { key: 'launchpad:bugs', label: 'Latest bugs' }
 
-      expect(launchpadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the bugs key for a source package latest bugs feed', () => {
       const value = 'http://feeds.launchpad.net/example/+source/package/latest-bugs.atom'
-      const expected = 'launchpad:bugs'
+      const expected: DiscoverUriHint = { key: 'launchpad:bugs', label: 'Latest bugs' }
 
-      expect(launchpadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the bug key for a bug feed', () => {
       const value = 'http://feeds.launchpad.net/bugs/123/bug.atom'
-      const expected = 'launchpad:bug'
+      const expected: DiscoverUriHint = { key: 'launchpad:bug', label: 'Bug' }
 
-      expect(launchpadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the branch key for a Bazaar branch feed', () => {
       const value = 'http://feeds.launchpad.net/~example/project/trunk/branch.atom'
-      const expected = 'launchpad:branch'
+      const expected: DiscoverUriHint = { key: 'launchpad:branch', label: 'Branch' }
 
-      expect(launchpadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the branch key for a source package branch feed', () => {
       const value = 'http://feeds.launchpad.net/~example/distro/series/package/branch/branch.atom'
-      const expected = 'launchpad:branch'
+      const expected: DiscoverUriHint = { key: 'launchpad:branch', label: 'Branch' }
 
-      expect(launchpadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the branches key for a project branches feed', () => {
       const value = 'http://feeds.launchpad.net/example/branches.atom'
-      const expected = 'launchpad:branches'
+      const expected: DiscoverUriHint = { key: 'launchpad:branches', label: 'Branches' }
 
-      expect(launchpadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the branches key for a person branches feed', () => {
       const value = 'http://feeds.launchpad.net/~example/branches.atom'
-      const expected = 'launchpad:branches'
+      const expected: DiscoverUriHint = { key: 'launchpad:branches', label: 'Branches' }
 
-      expect(launchpadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the revisions key for a project revisions feed', () => {
       const value = 'http://feeds.launchpad.net/example/revisions.atom'
-      const expected = 'launchpad:revisions'
+      const expected: DiscoverUriHint = { key: 'launchpad:revisions', label: 'Revisions' }
 
-      expect(launchpadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the revisions key for a person revisions feed', () => {
       const value = 'http://feeds.launchpad.net/~example/revisions.atom'
-      const expected = 'launchpad:revisions'
+      const expected: DiscoverUriHint = { key: 'launchpad:revisions', label: 'Revisions' }
 
-      expect(launchpadHandler.getFeedKey?.(value)).toBe(expected)
+      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a project page', () => {
       const value = 'https://launchpad.net/example'
 
-      expect(launchpadHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(launchpadHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a branch feed path without the owner tilde', () => {
       const value = 'http://feeds.launchpad.net/example/project/trunk/branch.atom'
 
-      expect(launchpadHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(launchpadHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'http://example.com/example/announcements.atom'
 
-      expect(launchpadHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(launchpadHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

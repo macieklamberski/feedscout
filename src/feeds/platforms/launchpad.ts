@@ -197,5 +197,5 @@ export const launchpadHandler: PlatformHandler = {
     return entries
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
