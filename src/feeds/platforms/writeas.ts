@@ -69,11 +69,11 @@ export const writeasHandler: PlatformHandler = {
 
   // The table reads any first segment as a name, so a dotted one, a file of the site, is refused
   // by the page parser first: write.as/{post}.md/feed/ answers with an empty body.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (!parseWriteasUrl(url)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }

@@ -116,64 +116,64 @@ describe('writeasHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the blog key for a blog feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the blog hint for a blog feed', () => {
       const value = 'https://write.as/matt/feed/'
-      const expected = 'writeas:blog'
+      const expected: DiscoverUriHint = { key: 'writeas:blog', label: 'Blog' }
 
-      expect(writeasHandler.getFeedKey?.(value)).toBe(expected)
+      expect(writeasHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a blog feed without a trailing slash', () => {
+    it('should return the blog hint for a blog feed without a trailing slash', () => {
       const value = 'https://write.as/matt/feed'
-      const expected = 'writeas:blog'
+      const expected: DiscoverUriHint = { key: 'writeas:blog', label: 'Blog' }
 
-      expect(writeasHandler.getFeedKey?.(value)).toBe(expected)
+      expect(writeasHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a blog feed over http', () => {
+    it('should return the blog hint for a blog feed over http', () => {
       const value = 'http://write.as/matt/feed/'
-      const expected = 'writeas:blog'
+      const expected: DiscoverUriHint = { key: 'writeas:blog', label: 'Blog' }
 
-      expect(writeasHandler.getFeedKey?.(value)).toBe(expected)
+      expect(writeasHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed', () => {
+    it('should return the tag hint for a tag feed', () => {
       const value = 'https://write.as/jasonpettus/tag:mindset/feed/'
-      const expected = 'writeas:tag'
+      const expected: DiscoverUriHint = { key: 'writeas:tag', label: 'Tag' }
 
-      expect(writeasHandler.getFeedKey?.(value)).toBe(expected)
+      expect(writeasHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed with an encoded tag', () => {
+    it('should return the tag hint for a tag feed with an encoded tag', () => {
       const value = 'https://write.as/andreas/tag:s%C3%B6dermalm/feed/'
-      const expected = 'writeas:tag'
+      const expected: DiscoverUriHint = { key: 'writeas:tag', label: 'Tag' }
 
-      expect(writeasHandler.getFeedKey?.(value)).toBe(expected)
+      expect(writeasHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://write.as/matt'
 
-      expect(writeasHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(writeasHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a tag page', () => {
       const value = 'https://write.as/jasonpettus/tag:mindset'
 
-      expect(writeasHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(writeasHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path under a dotted first segment', () => {
       const value = 'https://write.as/z6hpeu0fqc6a7.md/feed/'
 
-      expect(writeasHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(writeasHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/matt/feed/'
 
-      expect(writeasHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(writeasHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
