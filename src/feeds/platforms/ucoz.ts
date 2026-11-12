@@ -130,29 +130,32 @@ export const ucozHandler: PlatformHandler = {
       return []
     }
 
-    const { protocol, host, hostname } = new URL(url)
     const site = getTenantSubdomain(url, domains)
-    const feeds = site ? tenantFeeds : siteFeeds
-    const params: PlatformFeedParams = { scheme: protocol.slice(0, -1), host }
+    const pageFeeds = (site ? tenantFeeds : siteFeeds).forUrl(url)
+
+    if (!pageFeeds) {
+      return []
+    }
+
+    const params: PlatformFeedParams = {}
 
     if (site) {
       params.site = site
-      params.domain = hostname.slice(site.length + 1)
     }
 
     if (parsed.kind === 'forumSection') {
       return [
-        feeds.getFeedEntry('ucoz:forum-section', { ...params, sectionId: parsed.sectionId }),
-        feeds.getFeedEntry('ucoz:forum', params),
+        pageFeeds.getFeedEntry('ucoz:forum-section', { ...params, sectionId: parsed.sectionId }),
+        pageFeeds.getFeedEntry('ucoz:forum', params),
       ]
     }
 
     if (parsed.kind === 'module') {
-      return [feeds.getFeedEntry(moduleHints[parsed.module], params)]
+      return [pageFeeds.getFeedEntry(moduleHints[parsed.module], params)]
     }
 
     // Every site runs the news module, and the home page lists its news.
-    return [feeds.getFeedEntry('ucoz:news', params)]
+    return [pageFeeds.getFeedEntry('ucoz:news', params)]
   },
 
   getFeedHint: tenantFeeds.getFeedHint,
