@@ -64,11 +64,11 @@ describe('jellypodHandler', () => {
       expect(jellypodHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the https feed for an http show page', () => {
+    it('should return the feed under the page scheme for an http show page', () => {
       const value = 'http://alice-podcast.jellypod.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice-podcast.jellypod.com/rss',
+          uri: 'http://alice-podcast.jellypod.com/rss',
           hint: { key: 'jellypod:podcast', label: 'Podcast' },
         },
       ]

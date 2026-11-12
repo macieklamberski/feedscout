@@ -8,9 +8,12 @@ export type JellypodUrl = { kind: 'show' }
 
 const domains = ['jellypod.com']
 
-const feeds = definePlatformFeeds([
-  { key: 'jellypod:podcast', template: 'https://{show}.jellypod.com/rss' },
-])
+const feeds = definePlatformFeeds(
+  [{ key: 'jellypod:podcast', template: '{scheme}://{host}/rss' }],
+  {
+    domains,
+  },
+)
 
 export const parseJellypodUrl = (url: string): JellypodUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -26,13 +29,13 @@ export const jellypodHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const show = getTenantSubdomain(url, domains)
+    const page = feeds.forUrl(url)
 
-    if (!show) {
+    if (!page || !parseJellypodUrl(url)) {
       return []
     }
 
-    return [feeds.getFeedEntry('jellypod:podcast', { show })]
+    return [page.getFeedEntry('jellypod:podcast')]
   },
 
   // The table ignores `www`, so it would read `www.{show}.jellypod.com`, a host the page parser
