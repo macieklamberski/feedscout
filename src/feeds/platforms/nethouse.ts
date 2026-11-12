@@ -38,25 +38,24 @@ export const nethouseHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { protocol, hostname, host } = new URL(url)
     const site = getTenantSubdomain(url, domains)
+    const tenantPage = tenantFeeds.forUrl(url)
 
     // A site with a section turned off answers its feed with 404.
-    if (site) {
-      const params = { site, domain: hostname.slice(site.length + 1) }
-
+    if (site && tenantPage) {
       return [
-        tenantFeeds.getFeedEntry('nethouse:news', params),
-        tenantFeeds.getFeedEntry('nethouse:articles', params),
+        tenantPage.getFeedEntry('nethouse:news', { site }),
+        tenantPage.getFeedEntry('nethouse:articles', { site }),
       ]
     }
 
-    const params = { scheme: protocol.slice(0, -1), host }
+    const sitePage = siteFeeds.forUrl(url)
 
-    return [
-      siteFeeds.getFeedEntry('nethouse:news', params),
-      siteFeeds.getFeedEntry('nethouse:articles', params),
-    ]
+    if (!sitePage) {
+      return []
+    }
+
+    return [sitePage.getFeedEntry('nethouse:news'), sitePage.getFeedEntry('nethouse:articles')]
   },
 
   getFeedHint: tenantFeeds.getFeedHint,
