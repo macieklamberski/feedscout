@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type PromodjUrl, parsePromodjUrl, promodjHandler } from './promodj.js'
 
 describe('parsePromodjUrl', () => {
@@ -104,6 +106,96 @@ describe('promodjHandler', () => {
       ]
 
       expect(promodjHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the podcast key for a podcast feed', () => {
+      const value = 'https://promodj.com/yana.rysenko/podcast.xml'
+      const expected = 'promodj:podcast'
+
+      expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the content key for a content feed', () => {
+      const value = 'https://promodj.com/yana.rysenko/rss.xml'
+      const expected = 'promodj:content'
+
+      expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for a blog feed', () => {
+      const value = 'https://promodj.com/yana.rysenko/blog.xml'
+      const expected = 'promodj:blog'
+
+      expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the favorites key for a bookmarks feed', () => {
+      const value = 'https://promodj.com/yana.rysenko/bookmarks.xml'
+      const expected = 'promodj:favorites'
+
+      expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the events key for an events feed', () => {
+      const value = 'https://promodj.com/yana.rysenko/avisha.xml'
+      const expected = 'promodj:events'
+
+      expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a capitalized username on the www host', () => {
+      const value = 'http://www.promodj.com/10Element/podcast.xml'
+      const expected = 'promodj:podcast'
+
+      expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a profile page', () => {
+      const value = 'https://promodj.com/yana.rysenko'
+
+      expect(promodjHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a genre feed', () => {
+      const value = 'https://promodj.com/mixes/house/rss.xml'
+
+      expect(promodjHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/yana.rysenko/podcast.xml'
+
+      expect(promodjHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://promodj.com/yana.rysenko/podcast.xml',
+        { key: 'promodj:podcast', label: 'Podcast' },
+      ],
+      ['https://promodj.com/yana.rysenko/rss.xml', { key: 'promodj:content', label: 'Content' }],
+      ['https://promodj.com/yana.rysenko/blog.xml', { key: 'promodj:blog', label: 'Blog' }],
+      [
+        'https://promodj.com/yana.rysenko/bookmarks.xml',
+        { key: 'promodj:favorites', label: 'Favorites' },
+      ],
+      ['https://promodj.com/yana.rysenko/avisha.xml', { key: 'promodj:events', label: 'Events' }],
+      ['https://promodj.com/10Element/podcast.xml', { key: 'promodj:podcast', label: 'Podcast' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [promodjHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
