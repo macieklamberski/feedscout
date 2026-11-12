@@ -1,6 +1,6 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers log.
@@ -12,6 +12,12 @@ export type SourcehutUrl =
 
 export const hosts = ['git.sr.ht']
 const userHosts = ['sr.ht', 'todo.sr.ht', ...hosts]
+
+const feeds = definePlatformFeeds([
+  { key: 'sourcehut:commits', template: 'https://git.sr.ht/~{owner}/{repo}/log/rss.xml' },
+  { key: 'sourcehut:commits', template: 'https://git.sr.ht/~{owner}/{repo}/log/{ref}/rss.xml' },
+  { key: 'sourcehut:refs', template: 'https://git.sr.ht/~{owner}/{repo}/refs/rss.xml' },
+])
 
 export const parseSourcehutUrl = (url: string): SourcehutUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -44,22 +50,19 @@ export const sourcehutHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
     const parsed = parseSourcehutUrl(url)
 
     if (parsed?.kind !== 'repo') {
       return []
     }
 
+    const params = { owner: parsed.owner, repo: parsed.repo }
+
     return [
-      {
-        uri: `${origin}/~${parsed.owner}/${parsed.repo}/log/rss.xml`,
-        hint: composeHint('sourcehut:commits'),
-      },
-      {
-        uri: `${origin}/~${parsed.owner}/${parsed.repo}/refs/rss.xml`,
-        hint: composeHint('sourcehut:refs'),
-      },
+      feeds.getFeedEntry('sourcehut:commits', params),
+      feeds.getFeedEntry('sourcehut:refs', params),
     ]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
