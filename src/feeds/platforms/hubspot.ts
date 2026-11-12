@@ -19,14 +19,9 @@ const listingRoutes = ['author', 'tag', 'topic']
 
 const blogContentTypes = ['BLOG', 'BLOG_LISTING_PAGE', 'BLOG_POST', 'BLOG_AUTHOR', 'TAG']
 
-const domains = [
-  'hs-sites.com',
-  'hs-sites-eu1.com',
-  'hs-sites-ap1.com',
-  'hs-sites-na2.com',
-  'hs-sites-na3.com',
-  'hs-sitesqa.com',
-]
+// HubSpot's site hosts: hs-sites.com, a region suffix such as hs-sites-eu1.com, and hs-sitesqa.com.
+const hubspotDomainRegex = /^hs-sites(?:-[a-z]{2}\d|qa)?\.com$/
+const domains = [hubspotDomainRegex]
 
 // A blog on a custom domain is known only by its marker, so its feeds are built under the blog root
 // the page links, and claimed only for a blog at the root of HubSpot's own hosts. A podcast's feed

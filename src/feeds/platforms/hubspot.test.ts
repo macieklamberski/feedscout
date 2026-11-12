@@ -229,6 +229,19 @@ describe('hubspotHandler', () => {
       expect(hubspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the blog hint for a blog feed on the ap1 regional domain', () => {
+      const value = 'https://alice-12345.hs-sites-ap1.com/rss.xml'
+      const expected: DiscoverUriHint = { key: 'hubspot:blog', label: 'Blog' }
+
+      expect(hubspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a feed on a host that only looks regional', () => {
+      const value = 'https://alice-12345.hs-sites-eu.com/rss.xml'
+
+      expect(hubspotHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return the blog hint for a blog feed on a regional domain', () => {
       const value = 'https://alice-12345.hs-sites-eu1.com/rss.xml'
       const expected: DiscoverUriHint = { key: 'hubspot:blog', label: 'Blog' }
