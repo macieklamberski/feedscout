@@ -1,18 +1,25 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type MataroaUrl = { kind: 'blog' }
+export type MataroaUrl = { kind: 'blog'; blog: string }
 
 const domains = ['mataroa.blog']
 
+const feeds = definePlatformFeeds([
+  { key: 'mataroa:blog', template: '{scheme}://{blog}.mataroa.blog/rss/' },
+])
+
 export const parseMataroaUrl = (url: string): MataroaUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  const blog = getTenantSubdomain(url, domains)
+
+  if (!blog) {
     return
   }
 
-  return { kind: 'blog' }
+  return { kind: 'blog', blog }
 }
 
 export const mataroaHandler: PlatformHandler = {
@@ -27,8 +34,10 @@ export const mataroaHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
+    const scheme = new URL(url).protocol.slice(0, -1)
 
-    return [{ uri: `${origin}/rss/`, hint: composeHint('mataroa:blog') }]
+    return [feeds.getFeedEntry('mataroa:blog', { scheme, blog: parsed.blog })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
