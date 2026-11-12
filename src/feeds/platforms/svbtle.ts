@@ -1,7 +1,7 @@
 import { isHostOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain, hasMarker, hasMetaContent } from '../../common/utils.js'
+import { hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -41,13 +41,5 @@ export const svbtleHandler: PlatformHandler = {
     return [pageFeeds.getFeedEntry('svbtle:posts')]
   },
 
-  // The table reads any host under the domain, so the platform hosts, whose `/feed` is a page,
-  // are refused first.
-  getFeedHint: (url) => {
-    if (!getTenantSubdomain(url, domains)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
