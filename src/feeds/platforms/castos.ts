@@ -1,6 +1,7 @@
-import { isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain, wordRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -13,6 +14,12 @@ const feedHosts = ['feeds.castos.com']
 
 // The feed id is opaque, so it is read from the feed link every show page carries.
 const feedIdRegex = /https:\/\/feeds\.castos\.com\/([a-z0-9]+)/i
+
+const feeds = definePlatformFeeds([
+  { key: 'castos:podcast', template: 'https://feeds.castos.com/{feedId}' },
+  // The show site redirects /feed to its feeds.castos.com URL.
+  { key: 'castos:podcast', template: 'https://{slug}.castos.com/feed' },
+])
 
 export const parseCastosUrl = (url: string): CastosUrl | undefined => {
   const slug = getTenantSubdomain(url, domains)
@@ -47,20 +54,21 @@ export const castosHandler: PlatformHandler = {
     }
 
     if (page.feedId) {
-      return [
-        {
-          uri: `https://feeds.castos.com/${page.feedId}`,
-          hint: composeHint('castos:podcast'),
-        },
-      ]
+      return [feeds.getFeedEntry('castos:podcast', { feedId: page.feedId })]
     }
 
-    // The show site redirects /feed to its feeds.castos.com URL.
-    return [
-      {
-        uri: `https://${page.slug}.castos.com/feed`,
-        hint: composeHint('castos:podcast'),
-      },
-    ]
+    return [feeds.getFeedEntry('castos:podcast', { slug: page.slug })]
+  },
+
+  getFeedKey: (url) => {
+    const [segment] = getPathSegments(url)
+
+    // A feed id is word characters only, so a file on the feed host, such as `robots.txt`, is no
+    // feed.
+    if (!segment || !wordRegex.test(segment)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
