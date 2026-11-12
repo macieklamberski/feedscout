@@ -95,6 +95,27 @@ describe('buzzsproutHandler', () => {
       expect(buzzsproutHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the podcast key for a podcast feed on the feeds host', () => {
+      const value = 'https://feeds.buzzsprout.com/12345.rss'
+      const expected = 'buzzsprout:podcast'
+
+      expect(buzzsproutHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a podcast feed on the apex host', () => {
+      const value = 'https://buzzsprout.com/12345.rss'
+      const expected = 'buzzsprout:podcast'
+
+      expect(buzzsproutHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a podcast feed on the www host', () => {
+      const value = 'https://www.buzzsprout.com/12345.rss'
+      const expected = 'buzzsprout:podcast'
+
+      expect(buzzsproutHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return undefined for a podcast page', () => {
       const value = 'https://www.buzzsprout.com/1016149'
 
@@ -112,6 +133,9 @@ describe('buzzsproutHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://rss.buzzsprout.com/1016149.rss', { key: 'buzzsprout:podcast', label: 'Podcast' }],
       ['https://rss.buzzsprout.com/1097498.rss', { key: 'buzzsprout:podcast', label: 'Podcast' }],
+      ['https://feeds.buzzsprout.com/12345.rss', { key: 'buzzsprout:podcast', label: 'Podcast' }],
+      ['https://buzzsprout.com/12345.rss', { key: 'buzzsprout:podcast', label: 'Podcast' }],
+      ['https://www.buzzsprout.com/12345.rss', { key: 'buzzsprout:podcast', label: 'Podcast' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
