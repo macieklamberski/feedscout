@@ -96,6 +96,20 @@ describe('firstoryHandler', () => {
       expect(firstoryHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the podcast key for a show feed on open.firstory.me', () => {
+      const value = 'https://open.firstory.me/rss/user/ckabcdefgh0123456789klmno'
+      const expected = 'firstory:podcast'
+
+      expect(firstoryHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a show feed on open.firstory.fm', () => {
+      const value = 'https://open.firstory.fm/rss/user/ckabcdefgh0123456789klmno'
+      const expected = 'firstory:podcast'
+
+      expect(firstoryHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return undefined for a show page', () => {
       const value = 'https://open.firstory.me/user/example'
 
@@ -113,6 +127,8 @@ describe('firstoryHandler', () => {
     const values = [
       'https://feed.firstory.me/rss/user/ckabcdefgh0123456789klmno',
       'http://feed.firstory.me/rss/user/ckabcdefgh0123456789klmno',
+      'https://open.firstory.me/rss/user/ckabcdefgh0123456789klmno',
+      'https://open.firstory.fm/rss/user/ckabcdefgh0123456789klmno',
     ]
 
     it.each(values)('should return %s as itself', async (value) => {
