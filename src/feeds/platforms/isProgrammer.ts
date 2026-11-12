@@ -1,7 +1,8 @@
 import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (guess, html), partly covers post.
@@ -16,6 +17,18 @@ const postRegex = /^\/posts\/(\d+)(?:\.html)?(?:\/|$)/i
 
 // An unregistered name answers the sign-up page, served from the platform's own index account.
 const signUpPageRegex = /\/user_files\/index\/config\/favicon\.ico"/i
+
+// The host refuses connections on port 443, and every page links its feeds over http.
+const feeds = definePlatformFeeds([
+  {
+    key: 'is-programmer:post-comments',
+    template: 'http://{blog}.is-programmer.com/posts/{postId}.rss',
+  },
+  { key: 'is-programmer:posts', template: 'http://{blog}.is-programmer.com/posts.rss' },
+  { key: 'is-programmer:comments', template: 'http://{blog}.is-programmer.com/comments.rss' },
+  { key: 'is-programmer:messages', template: 'http://{blog}.is-programmer.com/messages.rss' },
+  { key: 'is-programmer:site', template: 'http://{blog}.is-programmer.com/site.rss' },
+])
 
 export const parseIsProgrammerUrl = (url: string): IsProgrammerUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -56,22 +69,24 @@ export const isProgrammerHandler: PlatformHandler = {
       return []
     }
 
-    // The host refuses connections on port 443, and every page links its feeds over http.
-    const origin = `http://${parsed.blog}.is-programmer.com`
+    const params = { blog: parsed.blog }
     const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.kind === 'post') {
-      uris.push({
-        uri: `${origin}/posts/${parsed.postId}.rss`,
-        hint: composeHint('is-programmer:post-comments'),
-      })
+      uris.push(
+        feeds.getFeedEntry('is-programmer:post-comments', { ...params, postId: parsed.postId }),
+      )
     }
 
-    uris.push({ uri: `${origin}/posts.rss`, hint: composeHint('is-programmer:posts') })
-    uris.push({ uri: `${origin}/comments.rss`, hint: composeHint('is-programmer:comments') })
-    uris.push({ uri: `${origin}/messages.rss`, hint: composeHint('is-programmer:messages') })
-    uris.push({ uri: `${origin}/site.rss`, hint: composeHint('is-programmer:site') })
+    uris.push(
+      feeds.getFeedEntry('is-programmer:posts', params),
+      feeds.getFeedEntry('is-programmer:comments', params),
+      feeds.getFeedEntry('is-programmer:messages', params),
+      feeds.getFeedEntry('is-programmer:site', params),
+    )
 
     return uris
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
