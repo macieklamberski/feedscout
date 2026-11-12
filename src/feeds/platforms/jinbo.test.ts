@@ -309,6 +309,13 @@ describe('jinboHandler', () => {
       expect(jinboHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the category key for a category feed named by text', () => {
+      const value = 'https://blog.jinbo.net/gilo/atom/category/%EC%A1%B0%EB%AF%B8%EA%B4%80%EA%B3%84'
+      const expected = 'jinbo:category'
+
+      expect(jinboHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the tag key for a tag feed', () => {
       const value = 'https://blog.jinbo.net/ysj40/atom/tag/32745'
       const expected = 'jinbo:tag'
