@@ -77,5 +77,5 @@ export const lagetHandler: PlatformHandler = {
     return [clubFeeds.getFeedEntry('laget:news', { scheme: protocol.slice(0, -1), host })]
   },
 
-  getFeedKey: teamFeeds.getFeedKey,
+  getFeedHint: teamFeeds.getFeedHint,
 }

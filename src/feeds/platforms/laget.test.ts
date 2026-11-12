@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { isLagetHtml, type LagetUrl, lagetHandler, parseLagetUrl } from './laget.js'
@@ -192,50 +192,50 @@ describe('lagetHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the news key for a team feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the news hint for a team feed', () => {
       const value = 'https://www.laget.se/ExempelIF/Home/NewsRss'
-      const expected = 'laget:news'
+      const expected: DiscoverUriHint = { key: 'laget:news', label: 'News' }
 
-      expect(lagetHandler.getFeedKey?.(value)).toBe(expected)
+      expect(lagetHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the news key for a team feed on the apex host over http', () => {
+    it('should return the news hint for a team feed on the apex host over http', () => {
       const value = 'http://laget.se/ExempelIF-P14/Home/NewsRss'
-      const expected = 'laget:news'
+      const expected: DiscoverUriHint = { key: 'laget:news', label: 'News' }
 
-      expect(lagetHandler.getFeedKey?.(value)).toBe(expected)
+      expect(lagetHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the news key for a team feed in lowercase with a trailing slash', () => {
+    it('should return the news hint for a team feed in lowercase with a trailing slash', () => {
       const value = 'https://www.laget.se/exempelif/home/newsrss/'
-      const expected = 'laget:news'
+      const expected: DiscoverUriHint = { key: 'laget:news', label: 'News' }
 
-      expect(lagetHandler.getFeedKey?.(value)).toBe(expected)
+      expect(lagetHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a team page', () => {
       const value = 'https://www.laget.se/ExempelIF'
 
-      expect(lagetHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(lagetHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the feed path at the root of laget.se', () => {
       const value = 'https://www.laget.se/Home/NewsRss'
 
-      expect(lagetHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(lagetHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a club feed on its own domain', () => {
       const value = 'https://www.example.com/Home/NewsRss'
 
-      expect(lagetHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(lagetHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a team feed path on another host', () => {
       const value = 'https://example.com/ExempelIF/Home/NewsRss'
 
-      expect(lagetHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(lagetHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
