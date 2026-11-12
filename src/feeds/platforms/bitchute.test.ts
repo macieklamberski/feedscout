@@ -95,6 +95,13 @@ describe('bitchuteHandler', () => {
       expect(bitchuteHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the channel key for a channel feed on the api host', () => {
+      const value = 'https://api.bitchute.com/feeds/rss/channel/sean_last/'
+      const expected = 'bitchute:channel'
+
+      expect(bitchuteHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return undefined for a channel page', () => {
       const value = 'https://www.bitchute.com/channel/clemens/'
 
@@ -116,6 +123,10 @@ describe('bitchuteHandler', () => {
       ],
       [
         'https://www.bitchute.com/feeds/rss/channel/clemens/',
+        { key: 'bitchute:channel', label: 'Channel' },
+      ],
+      [
+        'https://api.bitchute.com/feeds/rss/channel/sean_last/',
         { key: 'bitchute:channel', label: 'Channel' },
       ],
     ]

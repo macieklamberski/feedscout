@@ -9,8 +9,11 @@ export type BitchuteUrl = { kind: 'channel'; channel: string }
 
 const hosts = ['bitchute.com', 'www.bitchute.com']
 
+// A channel page links no feed. The www feed redirects to api.bitchute.com, the spelling feeds are
+// stored at, so the table reads both and builds the first.
 const feeds = definePlatformFeeds([
   { key: 'bitchute:channel', template: 'https://www.bitchute.com/feeds/rss/channel/{channel}/' },
+  { key: 'bitchute:channel', template: 'https://api.bitchute.com/feeds/rss/channel/{channel}/' },
 ])
 
 export const parseBitchuteUrl = (url: string): BitchuteUrl | undefined => {
