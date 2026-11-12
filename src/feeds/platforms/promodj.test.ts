@@ -111,49 +111,83 @@ describe('promodjHandler', () => {
 
   describe('getFeedKey', () => {
     it('should return the podcast key for a podcast feed', () => {
-      const value = 'https://promodj.com/yana.rysenko/podcast.xml'
+      const value = 'https://promodj.com/dj.someartist/podcast.xml'
       const expected = 'promodj:podcast'
 
       expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the content key for a content feed', () => {
-      const value = 'https://promodj.com/yana.rysenko/rss.xml'
+      const value = 'https://promodj.com/dj.someartist/rss.xml'
       const expected = 'promodj:content'
 
       expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the blog key for a blog feed', () => {
-      const value = 'https://promodj.com/yana.rysenko/blog.xml'
+      const value = 'https://promodj.com/dj.someartist/blog.xml'
       const expected = 'promodj:blog'
 
       expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the favorites key for a bookmarks feed', () => {
-      const value = 'https://promodj.com/yana.rysenko/bookmarks.xml'
+      const value = 'https://promodj.com/dj.someartist/bookmarks.xml'
       const expected = 'promodj:favorites'
 
       expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the events key for an events feed', () => {
-      const value = 'https://promodj.com/yana.rysenko/avisha.xml'
+      const value = 'https://promodj.com/dj.someartist/avisha.xml'
       const expected = 'promodj:events'
 
       expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the podcast key for a capitalized username on the www host', () => {
-      const value = 'http://www.promodj.com/10Element/podcast.xml'
+      const value = 'http://www.promodj.com/SomeArtist/podcast.xml'
       const expected = 'promodj:podcast'
 
       expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the podcast key for an alternate podcast feed', () => {
+      const value = 'https://promodj.com/dj.someartist/podcast_alt.xml'
+      const expected = 'promodj:podcast'
+
+      expect(promodjHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a section feed', () => {
+      const value = 'https://promodj.com/mixes/rss.xml'
+
+      expect(promodjHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a capitalized section feed', () => {
+      const value = 'https://promodj.com/Mixes/rss.xml'
+
+      expect(promodjHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    const sectionFeeds: Array<string> = [
+      'https://promodj.com/music/rss.xml',
+      'https://promodj.com/podcasts/rss.xml',
+      'https://promodj.com/promos/rss.xml',
+      'https://promodj.com/radioshows/rss.xml',
+      'https://promodj.com/remixes/rss.xml',
+      'https://promodj.com/tools/rss.xml',
+      'https://promodj.com/tracks/rss.xml',
+      'https://promodj.com/videos/rss.xml',
+    ]
+
+    it.each(sectionFeeds)('should return undefined for the section feed %s', (value) => {
+      expect(promodjHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a profile page', () => {
-      const value = 'https://promodj.com/yana.rysenko'
+      const value = 'https://promodj.com/dj.someartist'
 
       expect(promodjHandler.getFeedKey?.(value)).toBeUndefined()
     })
@@ -165,7 +199,7 @@ describe('promodjHandler', () => {
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/yana.rysenko/podcast.xml'
+      const value = 'https://example.com/dj.someartist/podcast.xml'
 
       expect(promodjHandler.getFeedKey?.(value)).toBeUndefined()
     })
@@ -174,17 +208,21 @@ describe('promodjHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://promodj.com/yana.rysenko/podcast.xml',
+        'https://promodj.com/dj.someartist/podcast.xml',
         { key: 'promodj:podcast', label: 'Podcast' },
       ],
-      ['https://promodj.com/yana.rysenko/rss.xml', { key: 'promodj:content', label: 'Content' }],
-      ['https://promodj.com/yana.rysenko/blog.xml', { key: 'promodj:blog', label: 'Blog' }],
+      ['https://promodj.com/dj.someartist/rss.xml', { key: 'promodj:content', label: 'Content' }],
+      ['https://promodj.com/dj.someartist/blog.xml', { key: 'promodj:blog', label: 'Blog' }],
       [
-        'https://promodj.com/yana.rysenko/bookmarks.xml',
+        'https://promodj.com/dj.someartist/bookmarks.xml',
         { key: 'promodj:favorites', label: 'Favorites' },
       ],
-      ['https://promodj.com/yana.rysenko/avisha.xml', { key: 'promodj:events', label: 'Events' }],
-      ['https://promodj.com/10Element/podcast.xml', { key: 'promodj:podcast', label: 'Podcast' }],
+      ['https://promodj.com/dj.someartist/avisha.xml', { key: 'promodj:events', label: 'Events' }],
+      ['https://promodj.com/SomeArtist/podcast.xml', { key: 'promodj:podcast', label: 'Podcast' }],
+      [
+        'https://promodj.com/dj.someartist/podcast_alt.xml',
+        { key: 'promodj:podcast', label: 'Podcast' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -8,8 +8,22 @@ export type PromodjUrl = { kind: 'profile'; username: string }
 
 const hosts = ['promodj.com', 'www.promodj.com']
 
+// Sections whose `/{section}/rss.xml` is the section's feed, not a profile's.
+const sectionSlugs = [
+  'mixes',
+  'music',
+  'podcasts',
+  'promos',
+  'radioshows',
+  'remixes',
+  'tools',
+  'tracks',
+  'videos',
+]
+
 const feeds = definePlatformFeeds([
   { key: 'promodj:podcast', template: 'https://promodj.com/{username}/podcast.xml' },
+  { key: 'promodj:podcast', template: 'https://promodj.com/{username}/podcast_alt.xml' },
   { key: 'promodj:content', template: 'https://promodj.com/{username}/rss.xml' },
   { key: 'promodj:blog', template: 'https://promodj.com/{username}/blog.xml' },
   { key: 'promodj:favorites', template: 'https://promodj.com/{username}/bookmarks.xml' },
@@ -53,5 +67,13 @@ export const promodjHandler: PlatformHandler = {
     ]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedKey: (url) => {
+    const [username] = getPathSegments(url)
+
+    if (isAnyOf(username, sectionSlugs)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
+  },
 }
