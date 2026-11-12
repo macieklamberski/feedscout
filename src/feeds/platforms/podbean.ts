@@ -47,5 +47,5 @@ export const podbeanHandler: PlatformHandler = {
     return [feeds.getFeedEntry('podbean:podcast', { show: parsed.show })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
