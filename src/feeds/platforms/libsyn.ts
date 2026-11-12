@@ -14,6 +14,11 @@ const feeds = definePlatformFeeds([
   { key: 'libsyn:podcast', template: 'https://feeds.libsyn.com/{showId}/rss' },
   { key: 'libsyn:podcast', template: 'https://feeds.libsyn.com/{showId}' },
   { key: 'libsyn:podcast', template: 'https://{slug}.libsyn.com/rss' },
+  // Where feeds.libsyn.com/{showId}/rss redirects. The destination id is not in the show id.
+  {
+    key: 'libsyn:podcast',
+    template: 'https://rss.libsyn.com/shows/{showId}/destinations/{destinationId}.xml',
+  },
 ])
 
 export const parseLibsynUrl = (url: string): LibsynUrl | undefined => {

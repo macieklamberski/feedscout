@@ -132,6 +132,13 @@ describe('libsynHandler', () => {
       expect(libsynHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the podcast key for a show destination feed', () => {
+      const value = 'https://rss.libsyn.com/shows/12345/destinations/67890.xml'
+      const expected = 'libsyn:podcast'
+
+      expect(libsynHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the podcast key for a podcast feed', () => {
       const value = 'https://alice.libsyn.com/rss'
       const expected = 'libsyn:podcast'
@@ -205,6 +212,7 @@ describe('libsynHandler', () => {
       'https://alice.libsyn.com/rss',
       'https://alice.libsyn.com/rss/',
       'http://alice.libsyn.com/rss',
+      'https://rss.libsyn.com/shows/12345/destinations/67890.xml',
     ]
 
     it.each(values)('should return %s as itself', async (value) => {
