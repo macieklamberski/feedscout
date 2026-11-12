@@ -72,13 +72,7 @@ export const shopifyHandler: PlatformHandler = {
       return []
     }
 
-    const { handle, locale } = parsed
-
-    if (locale) {
-      return [page.getFeedEntry('shopify:blog', { locale, handle })]
-    }
-
-    return [page.getFeedEntry('shopify:blog', { handle })]
+    return [page.getFeedEntry('shopify:blog', { locale: parsed.locale, handle: parsed.handle })]
   },
 
   getFeedHint: feeds.getFeedHint,
