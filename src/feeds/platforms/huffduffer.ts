@@ -1,7 +1,7 @@
 import { escapeRegex, getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex } from '../../common/utils.js'
+import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers profile, related (guess, html), partly covers huffduff.
@@ -13,7 +13,15 @@ export type HuffdufferUrl =
   | { kind: 'home' }
 
 const hosts = ['huffduffer.com', 'www.huffduffer.com']
-const origin = 'https://huffduffer.com'
+
+// `/new/{format}` reads before `/{username}/rss`, so the site-wide feed keeps its own key.
+const feeds = definePlatformFeeds([
+  { key: 'huffduffer:new', template: 'https://huffduffer.com/new/rss', format: 'rss' },
+  { key: 'huffduffer:new', template: 'https://huffduffer.com/new/atom', format: 'atom' },
+  { key: 'huffduffer:new', template: 'https://huffduffer.com/new/json', format: 'json' },
+  { key: 'huffduffer:huffduffs', template: 'https://huffduffer.com/{username}/rss' },
+  { key: 'huffduffer:related', template: 'https://huffduffer.com/{username}/{id}/related/rss' },
+])
 
 export const parseHuffdufferUrl = (url: string): HuffdufferUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -71,30 +79,38 @@ export const huffdufferHandler: PlatformHandler = {
 
     if (page.kind === 'home') {
       return [
-        { uri: `${origin}/new/rss`, hint: composeHint('huffduffer:new', 'rss') },
-        { uri: `${origin}/new/atom`, hint: composeHint('huffduffer:new', 'atom') },
-        { uri: `${origin}/new/json`, hint: composeHint('huffduffer:new', 'json') },
+        feeds.getFeedEntry('huffduffer:new', undefined, 'rss'),
+        feeds.getFeedEntry('huffduffer:new', undefined, 'atom'),
+        feeds.getFeedEntry('huffduffer:new', undefined, 'json'),
       ]
     }
 
-    const huffduffsFeed: DiscoverUriEntry = {
-      uri: `${origin}/${page.username}/rss`,
-      hint: composeHint('huffduffer:huffduffs'),
-    }
+    const huffduffsFeed = feeds.getFeedEntry('huffduffer:huffduffs', { username: page.username })
 
     if (page.kind === 'profile') {
       return [huffduffsFeed]
     }
 
-    const relatedFeed: DiscoverUriEntry = {
-      uri: `${origin}/${page.username}/${page.id}/related/rss`,
-      hint: composeHint('huffduffer:related'),
-    }
+    const relatedFeed = feeds.getFeedEntry('huffduffer:related', {
+      username: page.username,
+      id: page.id,
+    })
 
     if (page.kind === 'related') {
       return [relatedFeed]
     }
 
     return [relatedFeed, huffduffsFeed]
+  },
+
+  getFeedKey: (url) => {
+    const [route] = getPathSegments(url)
+
+    // `/search/rss` and `/popular/rss` are site-wide feeds, not those of a user named so.
+    if (isAnyOf(route, ['search', 'popular'])) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
