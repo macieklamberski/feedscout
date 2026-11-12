@@ -110,11 +110,11 @@ export const cocologHandler: PlatformHandler = {
 
   // A first segment with a dot is an uploaded file or the `.shared` assets, which the table's
   // `{blog}` placeholder would match.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (!getCocologPage(url, undefined)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
