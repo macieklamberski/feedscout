@@ -17,7 +17,8 @@ import { composeHint, getPlatformDomain } from '../../utils.js'
 export type PlatformFeedTemplate = {
   key: string
   // A feed URL with `{name}` placeholders, each one host label, path segment or query value, and
-  // `{scheme}` for a feed served under the page's own scheme.
+  // `{scheme}` for a feed served under the page's own scheme. A template opening with `{root}`
+  // takes the scheme, the host and an optional base path, as `https://example.com/forum`.
   template: string
   format?: DiscoverUriHint['format']
 }
@@ -65,6 +66,10 @@ const placeholderRegex = /\{(\w+)\}/g
 const trailingSlashRegex = /\/$/
 const anchorsRegex = /^\^|\$$/g
 
+const rootPlaceholder = '{root}'
+// The base path a `{root}` can carry, any number of segments.
+const basePathSource = '(?:/[^/]+)*'
+
 // A path decoded segment by segment, so `%40` and `@` compare equal. A decoded `%` and `/` are
 // written back as `%25` and `%2F`, so `%252F` stays apart from `%2F` and no segment splits.
 const decodePath = (path: string): string => {
@@ -103,7 +108,11 @@ const compileTemplate = (
   { key, format, template }: PlatformFeedTemplate,
   options: PlatformFeedTableOptions,
 ): CompiledTemplate => {
-  const match = templateRegex.exec(template)
+  const isRootTemplate = template.startsWith(rootPlaceholder)
+  // A `{root}` template reads as one on `{host}`, with a base path in front of its path.
+  const match = templateRegex.exec(
+    isRootTemplate ? template.replace(rootPlaceholder, 'https://{host}') : template,
+  )
 
   if (!match) {
     throw new Error(t(locales.errors.invalidFeedTemplate, { template }))
@@ -117,15 +126,18 @@ const compileTemplate = (
   })
   const domainSource = `(?:${domains.join('|')})`
 
+  const hasHosts = hosts.length > 0 || domains.length > 0
+
   if (
-    (host.includes('{host}') && hosts.length === 0 && domains.length === 0) ||
+    (!isRootTemplate && host.includes('{host}') && !hasHosts) ||
     (host.includes('{domain}') && domains.length === 0)
   ) {
     throw new Error(t(locales.errors.missingFeedHosts, { key }))
   }
 
   // Matched on the decoded path without its trailing slash.
-  const pathSource = toRegexSource(path.replace(trailingSlashRegex, ''), '[^/]+', {}, true)
+  const routeSource = toRegexSource(path.replace(trailingSlashRegex, ''), '[^/]+', {}, true)
+  const pathSource = isRootTemplate ? `${basePathSource}${routeSource}` : routeSource
   const toHostPathRegex = (normalize: (value: string) => string): RegExp => {
     const hostSources = [
       ...hosts.map((value) => escapeRegex(normalize(value))),
@@ -145,6 +157,11 @@ const compileTemplate = (
   })
 
   const matchesUrl = (url: URL, hostPathRegex: RegExp, hostname: string): boolean => {
+    // A `{root}` table without hosts serves any site, so nothing in its URL names the platform.
+    if (isRootTemplate && !hasHosts) {
+      return false
+    }
+
     const pathname = decodePath(url.pathname).replace(trailingSlashRegex, '')
 
     if (!hostPathRegex.test(hostname + pathname)) {
@@ -177,7 +194,12 @@ const compileTemplate = (
       Object.fromEntries(query.map(([name, value]) => [name, fillPlaceholders(value)])),
     )
 
-    return `${fillPlaceholders(scheme)}://${fillPlaceholders(host)}${fillPlaceholders(path, encodePathSegment)}${builtQuery}`
+    // A root is written as given, without the trailing slash the path brings.
+    const origin = isRootTemplate
+      ? fillPlaceholders(rootPlaceholder).replace(trailingSlashRegex, '')
+      : `${fillPlaceholders(scheme)}://${fillPlaceholders(host)}`
+
+    return `${origin}${fillPlaceholders(path, encodePathSegment)}${builtQuery}`
   }
 
   const names = [...template.matchAll(placeholderRegex)].map(([, name]) => name)
@@ -242,8 +264,9 @@ export const definePlatformFeeds = (
     return composeHint(template.key, template.format)
   }
 
-  // The table for one page: `{scheme}` and `{host}` come from the page URL, and `{domain}` from the
-  // entry of `domains` its host is under. A value the handler passes wins.
+  // The table for one page: `{scheme}`, `{host}` and `{root}` come from the page URL, and `{domain}`
+  // from the entry of `domains` its host is under. A value the handler passes wins, so a handler
+  // passes a root with the base path the page names.
   const forUrl: PlatformFeedTable['forUrl'] = (url) => {
     const parsedUrl = parseUrl(url)
 
@@ -254,6 +277,7 @@ export const definePlatformFeeds = (
     const urlParams: PlatformFeedParams = {
       scheme: parsedUrl.protocol.slice(0, -1),
       host: parsedUrl.host,
+      root: parsedUrl.origin,
     }
     const domain = getPlatformDomain(parsedUrl, options.domains ?? [])
 
