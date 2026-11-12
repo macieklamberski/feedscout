@@ -320,10 +320,26 @@ describe('publicInboxHandler', () => {
     })
 
     it('should keep the scheme of a self-hosted inbox over http', () => {
-      const value = 'http://lore.example.org/example/'
+      const value = 'http://lore.example.org/example/20260101000000.12345-1-alice@example.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
+          uri: 'http://lore.example.org/example/20260101000000.12345-1-alice@example.com/t.atom',
+          hint: { key: 'public-inbox:thread', label: 'Thread' },
+        },
+        {
           uri: 'http://lore.example.org/example/new.atom',
+          hint: { key: 'public-inbox:messages', label: 'Messages' },
+        },
+      ]
+
+      expect(publicInboxHandler.resolve(value, messageHtml)).toEqual(expected)
+    })
+
+    it('should keep a two-level inbox root on lore.kernel.org', () => {
+      const value = 'https://lore.kernel.org/example/lists/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://lore.kernel.org/example/lists/new.atom',
           hint: { key: 'public-inbox:messages', label: 'Messages' },
         },
       ]

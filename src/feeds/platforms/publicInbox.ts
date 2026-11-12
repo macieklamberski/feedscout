@@ -84,9 +84,10 @@ export const publicInboxHandler: PlatformHandler = {
       return []
     }
 
-    const [inbox] = getPathSegments(page.inboxUrl)
+    const inboxSegments = getPathSegments(page.inboxUrl)
 
-    if (inbox && isHostOf(page.inboxUrl, hosts)) {
+    if (inboxSegments.length === 1 && isHostOf(page.inboxUrl, hosts)) {
+      const [inbox] = inboxSegments
       const inboxEntry = feeds.getFeedEntry('public-inbox:messages', { inbox })
 
       if (page.kind === 'message') {
