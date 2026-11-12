@@ -557,6 +557,48 @@ describe('giteaHandler', () => {
       expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the activity key for a user feed with a trailing slash', () => {
+      const value = 'https://codeberg.org/forgejo.atom/'
+      const expected = 'gitea:activity'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the activity key for a repo feed with a trailing slash', () => {
+      const value = 'https://gitea.com/gitea/go-sdk.rss/'
+      const expected = 'gitea:activity'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the releases key for a releases feed with a trailing slash', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/releases.rss/'
+      const expected = 'gitea:releases'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tags key for a tags feed with a trailing slash', () => {
+      const value = 'https://gitea.com/gitea/blog/tags.atom/'
+      const expected = 'gitea:tags'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the branch commits key for a branch feed with a trailing slash', () => {
+      const value = 'https://gitea.com/noerw/tea/atom/branch/print-issue-label/'
+      const expected = 'gitea:branch-commits'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the file history key for a file history feed with a trailing slash', () => {
+      const value = 'https://gitea.com/noerw/unidiff-comments/atom/branch/master/types/hunk.go/'
+      const expected = 'gitea:file-history'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return undefined for a user page', () => {
       const value = 'https://codeberg.org/forgejo'
 
@@ -613,6 +655,12 @@ describe('giteaHandler', () => {
       [
         'https://gitea.com/noerw/unidiff-comments/atom/branch/master/types/hunk.go',
         { key: 'gitea:file-history', label: 'File history' },
+      ],
+      ['https://codeberg.org/forgejo.atom/', { key: 'gitea:activity', label: 'Activity' }],
+      ['https://gitea.com/gitea/blog/releases.atom/', { key: 'gitea:releases', label: 'Releases' }],
+      [
+        'https://gitea.com/noerw/tea/atom/branch/print-issue-label/',
+        { key: 'gitea:branch-commits', label: 'Branch commits' },
       ],
     ]
 
