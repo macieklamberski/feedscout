@@ -1,5 +1,6 @@
 import { composeQuery } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -22,6 +23,14 @@ const jiraPathRegex = /\/(?:jira|secure|issues)(?:\/|$)/i
 const trailingSlashRegex = /\/$/
 const confluencePathRegex = /^\/wiki(?:\/|$)/i
 
+const feeds = definePlatformFeeds([
+  {
+    key: 'jira:project',
+    template: 'https://{tenant}.atlassian.net/plugins/servlet/streams?key={key}',
+  },
+  { key: 'jira:site', template: 'https://{tenant}.atlassian.net/plugins/servlet/streams' },
+])
+
 const isCloudHost = (url: string): boolean => {
   return getTenantSubdomain(url, domains) !== undefined
 }
@@ -38,7 +47,7 @@ export const isJiraHtml = (content: string): boolean => {
   )
 }
 
-export type JiraPage = { baseUrl: string; projectKey?: string }
+export type JiraPage = { baseUrl: string; tenant?: string; projectKey?: string }
 
 const getJiraPage = (url: string, content: string | undefined): JiraPage | undefined => {
   const { origin, pathname } = new URL(url)
@@ -52,6 +61,7 @@ const getJiraPage = (url: string, content: string | undefined): JiraPage | undef
 
   return {
     baseUrl: `${origin}${contextPath}`.replace(trailingSlashRegex, ''),
+    tenant: getTenantSubdomain(url, domains),
     projectKey: pathKey ?? getMetaContent(content ?? '', 'ajs-project-key'),
   }
 }
@@ -82,8 +92,20 @@ export const jiraHandler: PlatformHandler = {
       return []
     }
 
-    const { baseUrl, projectKey } = page
+    const { baseUrl, tenant, projectKey } = page
     const uris: Array<DiscoverUriEntry> = []
+
+    if (tenant) {
+      if (projectKey) {
+        uris.push(feeds.getFeedEntry('jira:project', { tenant, key: projectKey }))
+      }
+
+      uris.push(feeds.getFeedEntry('jira:site', { tenant }))
+
+      return uris
+    }
+
+    // A Data Center install runs on its own host, under a root its page names.
 
     if (projectKey) {
       uris.push({
@@ -99,4 +121,6 @@ export const jiraHandler: PlatformHandler = {
 
     return uris
   },
+
+  getFeedKey: feeds.getFeedKey,
 }

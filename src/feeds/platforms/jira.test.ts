@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { isJiraHtml, jiraHandler } from './jira.js'
 
 const jiraHtml = `
@@ -210,8 +213,112 @@ describe('jiraHandler', () => {
       expect(jiraHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return https feeds for an http Cloud page', () => {
+      const value = 'http://example.atlassian.net/browse/ABC-1'
+      const expected = [
+        {
+          uri: 'https://example.atlassian.net/plugins/servlet/streams?key=ABC',
+          hint: { key: 'jira:project', label: 'Project' },
+        },
+        {
+          uri: 'https://example.atlassian.net/plugins/servlet/streams',
+          hint: { key: 'jira:site', label: 'Site activity' },
+        },
+      ]
+
+      expect(jiraHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return an empty array for a Confluence path', () => {
       expect(jiraHandler.resolve('https://example.atlassian.net/wiki/spaces/DOCS')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the project key for a project feed', () => {
+      const value = 'https://xdevsoftware.atlassian.net/plugins/servlet/streams?key=XWS'
+      const expected = 'jira:project'
+
+      expect(jiraHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the site key for a site feed', () => {
+      const value = 'https://dcosjira.atlassian.net/plugins/servlet/streams'
+      const expected = 'jira:site'
+
+      expect(jiraHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the project key for a project feed with a trailing slash', () => {
+      const value = 'https://dcosjira.atlassian.net/plugins/servlet/streams/?key=DCOS'
+      const expected = 'jira:project'
+
+      expect(jiraHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the project key for a project feed with another parameter', () => {
+      const value = 'https://dcosjira.atlassian.net/plugins/servlet/streams?key=DCOS&maxResults=10'
+      const expected = 'jira:project'
+
+      expect(jiraHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for an issue page', () => {
+      const value = 'https://dcosjira.atlassian.net/browse/DCOS-1'
+
+      expect(jiraHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a Confluence feed on a Cloud site', () => {
+      const value = 'https://dcosjira.atlassian.net/wiki/plugins/servlet/streams?key=DOCS'
+
+      expect(jiraHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www host', () => {
+      const value = 'https://www.atlassian.net/plugins/servlet/streams'
+
+      expect(jiraHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://a.dcosjira.atlassian.net/plugins/servlet/streams'
+
+      expect(jiraHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a Data Center feed', () => {
+      const value = 'https://jira.example.org/plugins/servlet/streams?key=ABC'
+
+      expect(jiraHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://xdevsoftware.atlassian.net/plugins/servlet/streams?key=XWS',
+        { key: 'jira:project', label: 'Project' },
+      ],
+      [
+        'https://dcosjira.atlassian.net/plugins/servlet/streams?key=DCOS',
+        { key: 'jira:project', label: 'Project' },
+      ],
+      [
+        'https://dcosjira.atlassian.net/plugins/servlet/streams',
+        { key: 'jira:site', label: 'Site activity' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [jiraHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
