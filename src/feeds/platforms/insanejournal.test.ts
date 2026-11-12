@@ -358,6 +358,26 @@ describe('insanejournalHandler', () => {
       expect(insanejournalHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep the http scheme of a feeds.insanejournal.com page', () => {
+      const value = 'http://feeds.insanejournal.com/dw_code_feed'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://feeds.insanejournal.com/dw_code_feed/data/rss',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'http://feeds.insanejournal.com/dw_code_feed/data/atom',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'http://feeds.insanejournal.com/dw_code_feed/data/userpics',
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should keep the http scheme of a journal subdomain page', () => {
       const value = 'http://alice.insanejournal.com/'
       const expected: Array<DiscoverUriEntry> = [
