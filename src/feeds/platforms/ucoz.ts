@@ -1,7 +1,11 @@
 import { getAnyOf, getPathSegments, isHostOrSubdomainOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import {
+  definePlatformFeeds,
+  type PlatformFeedParams,
+  type PlatformFeedTemplate,
+} from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -59,6 +63,21 @@ const moduleHints: Record<UcozModule, string> = {
   stuff: 'ucoz:stuff',
 }
 
+const getFeedTemplates = (origin: string): Array<PlatformFeedTemplate> => {
+  return [
+    ...modules.map((module) => ({ key: moduleHints[module], template: `${origin}/${module}/rss` })),
+    // uCoz serves the forum feed as section 0 too.
+    { key: 'ucoz:forum', template: `${origin}/forum/0-0-0-37` },
+    { key: 'ucoz:forum-section', template: `${origin}/forum/{sectionId}-0-0-37` },
+  ]
+}
+
+const tenantFeeds = definePlatformFeeds(getFeedTemplates('{scheme}://{site}.{domain}'), {
+  domains,
+})
+// A site on its own domain is known only by its markers, so its feeds are built but not claimed.
+const siteFeeds = definePlatformFeeds(getFeedTemplates('{scheme}://{host}'), { domains })
+
 export const isUcozHeaders = (headers: Headers): boolean => {
   return getCookieNames(headers).some((name) => cookieNameRegex.test(name))
 }
@@ -111,33 +130,30 @@ export const ucozHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
+    const { protocol, host, hostname } = new URL(url)
+    const site = getTenantSubdomain(url, domains)
+    const feeds = site ? tenantFeeds : siteFeeds
+    const params: PlatformFeedParams = { scheme: protocol.slice(0, -1), host }
+
+    if (site) {
+      params.site = site
+      params.domain = hostname.slice(site.length + 1)
+    }
 
     if (parsed.kind === 'forumSection') {
-      uris.push(
-        {
-          uri: `${origin}/forum/${parsed.sectionId}-0-0-37`,
-          hint: composeHint('ucoz:forum-section'),
-        },
-        { uri: `${origin}/forum/rss`, hint: composeHint('ucoz:forum') },
-      )
-
-      return uris
+      return [
+        feeds.getFeedEntry('ucoz:forum-section', { ...params, sectionId: parsed.sectionId }),
+        feeds.getFeedEntry('ucoz:forum', params),
+      ]
     }
 
     if (parsed.kind === 'module') {
-      uris.push({
-        uri: `${origin}/${parsed.module}/rss`,
-        hint: composeHint(moduleHints[parsed.module]),
-      })
-
-      return uris
+      return [feeds.getFeedEntry(moduleHints[parsed.module], params)]
     }
 
     // Every site runs the news module, and the home page lists its news.
-    uris.push({ uri: `${origin}/news/rss`, hint: composeHint('ucoz:news') })
-
-    return uris
+    return [feeds.getFeedEntry('ucoz:news', params)]
   },
+
+  getFeedKey: tenantFeeds.getFeedKey,
 }

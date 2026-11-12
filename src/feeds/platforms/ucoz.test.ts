@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { isUcozHeaders, parseUcozUrl, type UcozUrl, ucozHandler } from './ucoz.js'
 
 describe('isUcozHeaders', () => {
@@ -207,6 +209,140 @@ describe('ucozHandler', () => {
       ]
 
       expect(ucozHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the http origin of a custom domain', () => {
+      const value = 'http://example.com/news/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.com/news/rss',
+          hint: { key: 'ucoz:news', label: 'News' },
+        },
+      ]
+
+      expect(ucozHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the section and forum feeds for a topic page on a custom domain', () => {
+      const value = 'https://example.com/forum/108-107-1'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/forum/108-0-0-37',
+          hint: { key: 'ucoz:forum-section', label: 'Forum section' },
+        },
+        {
+          uri: 'https://example.com/forum/rss',
+          hint: { key: 'ucoz:forum', label: 'Forum' },
+        },
+      ]
+
+      expect(ucozHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    const moduleFeeds: Array<[string, string]> = [
+      ['https://example.ucoz.ru/news/rss', 'ucoz:news'],
+      ['https://example.at.ua/publ/rss', 'ucoz:publ'],
+      ['https://example.narod.ru/load/rss', 'ucoz:load'],
+      ['https://example.ucoz.net/photo/rss', 'ucoz:photo'],
+      ['https://example.ucoz.com.br/blog/rss', 'ucoz:blog'],
+      ['https://example.my1.ru/dir/rss', 'ucoz:dir'],
+      ['https://example.do.am/board/rss', 'ucoz:board'],
+      ['https://example.3dn.ru/stuff/rss', 'ucoz:stuff'],
+      ['https://example.clan.su/forum/rss', 'ucoz:forum'],
+    ]
+
+    it.each(moduleFeeds)('should return the module key for %s', (value, expected) => {
+      expect(ucozHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the forum key for the forum feed as section 0', () => {
+      const value = 'https://example.moy.su/forum/0-0-0-37'
+      const expected = 'ucoz:forum'
+
+      expect(ucozHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the forum section key for a section feed', () => {
+      const value = 'https://example.ucoz.ru/forum/12-0-0-37'
+      const expected = 'ucoz:forum-section'
+
+      expect(ucozHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the module key for a feed on the www host of a site', () => {
+      const value = 'http://www.example.ucoz.ru/load/rss'
+      const expected = 'ucoz:load'
+
+      expect(ucozHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the module key for a feed with a trailing slash', () => {
+      const value = 'https://example.ucoz.ru/news/rss/'
+      const expected = 'ucoz:news'
+
+      expect(ucozHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a module page', () => {
+      const value = 'https://example.ucoz.ru/news/'
+
+      expect(ucozHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the feed path of an unknown module', () => {
+      const value = 'https://example.ucoz.ru/gb/rss'
+
+      expect(ucozHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the uCoz apex', () => {
+      const value = 'https://ucoz.ru/news/rss'
+
+      expect(ucozHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://forum.example.ucoz.ru/news/rss'
+
+      expect(ucozHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the news feed of a custom domain', () => {
+      const value = 'https://example.com/news/rss'
+
+      expect(ucozHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://example.ucoz.ru/news/rss/', { key: 'ucoz:news', label: 'News' }],
+      ['https://example.at.ua/publ/rss/', { key: 'ucoz:publ', label: 'Articles' }],
+      ['http://www.example.ucoz.ru/load/rss', { key: 'ucoz:load', label: 'Files' }],
+      ['https://example.narod.ru/photo/rss/', { key: 'ucoz:photo', label: 'Photos' }],
+      ['https://example.ucoz.com.br/blog/rss/', { key: 'ucoz:blog', label: 'Blog' }],
+      ['https://example.my1.ru/dir/rss/', { key: 'ucoz:dir', label: 'Site catalog' }],
+      ['https://example.do.am/board/rss/', { key: 'ucoz:board', label: 'Classifieds' }],
+      ['https://example.3dn.ru/stuff/rss/', { key: 'ucoz:stuff', label: 'Online games' }],
+      ['https://example.clan.su/forum/rss/', { key: 'ucoz:forum', label: 'Forum' }],
+      ['https://example.moy.su/forum/0-0-0-37', { key: 'ucoz:forum', label: 'Forum' }],
+      [
+        'https://example.ucoz.net/forum/12-0-0-37',
+        { key: 'ucoz:forum-section', label: 'Forum section' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [ucozHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
