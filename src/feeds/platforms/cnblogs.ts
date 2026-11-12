@@ -47,16 +47,16 @@ export const cnblogsHandler: PlatformHandler = {
 
   // The table reads any first segment as a name, so the page parser refuses a dotted one first:
   // www.cnblogs.com/skins.aspx/rss answers 404.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     // The feed host serves feeds only, so its URLs skip the page parser.
     if (isHostOf(url, feedHosts)) {
-      return feeds.getFeedKey(url)
+      return feeds.getFeedHint(url)
     }
 
     if (!parseCnblogsUrl(url)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
