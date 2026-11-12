@@ -15,9 +15,9 @@ const topicRegex = /^\/forum\/topics\/([^/]+)\/?$/i
 const domains = ['ning.com']
 
 // A network on its own domain is known only by its marker, so its feeds are built here but not
-// claimed. A member's activity, a blog narrowed to an author, a tag or its featured posts and the
-// featured forum topics are linked from pages `resolve` does not read, so the table only claims
-// them.
+// claimed. A member's activity, a blog narrowed to an author, a tag or its featured posts, a
+// group's forum and the featured forum topics are linked from pages `resolve` does not read, so
+// the table only claims them. A group's featured topics read as the group's forum.
 const feeds = definePlatformFeeds(
   [
     { key: 'ning:topic', template: '{scheme}://{host}/forum/topics/{topic}?feed=yes&xn_auth=no' },
@@ -38,6 +38,10 @@ const feeds = definePlatformFeeds(
     },
     // The bare `/forum?feed=yes` answers with the forum page on some networks.
     { key: 'ning:forum', template: '{scheme}://{host}/forum/topic/list?feed=yes&xn_auth=no' },
+    {
+      key: 'ning:forum-group',
+      template: '{scheme}://{host}/forum/topic/list?feed=yes&groupUrl={group}&xn_auth=no',
+    },
     {
       key: 'ning:forum-featured',
       template: '{scheme}://{host}/forum/topic/list?featured=1&feed=yes&xn_auth=no',

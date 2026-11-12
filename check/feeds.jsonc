@@ -1095,6 +1095,7 @@
     "ning:blog-tag": "https://weebattledotcom.ning.com/profiles/blog/feed?tag=Cycling&xn_auth=no",
     "ning:forum": "https://korsika.ning.com/forum/topic/list?feed=yes&xn_auth=no",
     "ning:forum-featured": "http://opencoffee.ning.com/forum/topic/list?featured=1&feed=yes&xn_auth=no",
+    "ning:forum-group": "http://iuoma-network.ning.com/forum/topic/list?feed=yes&groupUrl=hand-carved-rubber-stamps&xn_auth=no",
     "ning:topic": "https://korsika.ning.com/forum/topics/tour-and-travel-vibrantindiatours?feed=yes&xn_auth=no"
   },
   "nodebb": {

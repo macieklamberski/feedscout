@@ -173,9 +173,21 @@ describe('ningHandler', () => {
         'https://example.ning.com/forum/topic/list?featured=1&feed=yes&xn_auth=no',
         { key: 'ning:forum-featured', label: 'Featured topics' },
       ],
+      [
+        'https://example.ning.com/forum/topic/list?feed=yes&groupUrl=hikers&xn_auth=no',
+        { key: 'ning:forum-group', label: 'Group forum' },
+      ],
     ]
 
     it.each(feedUrls)('should return the hint for %s', (value, expected) => {
+      expect(ningHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the group forum for the featured topics of a group', () => {
+      const value =
+        'https://example.ning.com/forum/topic/list?featured=1&feed=yes&groupUrl=hikers&xn_auth=no'
+      const expected: DiscoverUriHint = { key: 'ning:forum-group', label: 'Group forum' }
+
       expect(ningHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
@@ -247,6 +259,10 @@ describe('ningHandler', () => {
       [
         'https://example.ning.com/forum/topic/list?featured=1&feed=yes&xn_auth=no',
         { key: 'ning:forum-featured', label: 'Featured topics' },
+      ],
+      [
+        'https://example.ning.com/forum/topic/list?feed=yes&groupUrl=hikers&xn_auth=no',
+        { key: 'ning:forum-group', label: 'Group forum' },
       ],
     ]
 
