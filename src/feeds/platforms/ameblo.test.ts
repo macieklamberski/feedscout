@@ -81,91 +81,109 @@ describe('amebloHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for an RSS 2.0 feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for an RSS 2.0 feed', () => {
       const value = 'https://ameblo.jp/6262sm/rss20.xml'
-      const expected = 'ameblo:posts'
+      const expected: DiscoverUriHint = { key: 'ameblo:posts', label: 'Posts', format: 'rss' }
 
-      expect(amebloHandler.getFeedKey?.(value)).toBe(expected)
+      expect(amebloHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an Atom feed', () => {
+    it('should return the posts hint for an Atom feed', () => {
       const value = 'https://ameblo.jp/a-retro/atom.xml'
-      const expected = 'ameblo:posts'
+      const expected: DiscoverUriHint = { key: 'ameblo:posts', label: 'Posts', format: 'atom' }
 
-      expect(amebloHandler.getFeedKey?.(value)).toBe(expected)
+      expect(amebloHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an RDF feed on rssblog.ameba.jp', () => {
+    it('should return the posts hint for an RDF feed on rssblog.ameba.jp', () => {
       const value = 'https://rssblog.ameba.jp/6262sm/rss.html'
-      const expected = 'ameblo:posts'
+      const expected: DiscoverUriHint = { key: 'ameblo:posts', label: 'Posts', format: 'rdf' }
 
-      expect(amebloHandler.getFeedKey?.(value)).toBe(expected)
+      expect(amebloHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an RDF feed over http', () => {
+    it('should return the posts hint for an RDF feed over http', () => {
       const value = 'http://rssblog.ameba.jp/a-retro/rss.html'
-      const expected = 'ameblo:posts'
+      const expected: DiscoverUriHint = { key: 'ameblo:posts', label: 'Posts', format: 'rdf' }
 
-      expect(amebloHandler.getFeedKey?.(value)).toBe(expected)
+      expect(amebloHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an RSS 2.0 feed on rssblog.ameba.jp', () => {
+    it('should return the posts hint for an RSS 2.0 feed on rssblog.ameba.jp', () => {
       const value = 'https://rssblog.ameba.jp/6262sm/rss20.xml'
-      const expected = 'ameblo:posts'
+      const expected: DiscoverUriHint = { key: 'ameblo:posts', label: 'Posts', format: 'rss' }
 
-      expect(amebloHandler.getFeedKey?.(value)).toBe(expected)
+      expect(amebloHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an Atom feed on rssblog.ameba.jp', () => {
+    it('should return the posts hint for an Atom feed on rssblog.ameba.jp', () => {
       const value = 'https://rssblog.ameba.jp/6262sm/atom.xml'
-      const expected = 'ameblo:posts'
+      const expected: DiscoverUriHint = { key: 'ameblo:posts', label: 'Posts', format: 'atom' }
 
-      expect(amebloHandler.getFeedKey?.(value)).toBe(expected)
+      expect(amebloHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an RDF feed on ameblo.jp', () => {
+    it('should return the posts hint for an RDF feed on ameblo.jp', () => {
       const value = 'https://ameblo.jp/6262sm/rss.html'
-      const expected = 'ameblo:posts'
+      const expected: DiscoverUriHint = { key: 'ameblo:posts', label: 'Posts', format: 'rdf' }
 
-      expect(amebloHandler.getFeedKey?.(value)).toBe(expected)
+      expect(amebloHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a feed on the www host', () => {
+    it('should return the posts hint for a feed on the www host', () => {
       const value = 'https://www.ameblo.jp/6262sm/rss20.xml'
-      const expected = 'ameblo:posts'
+      const expected: DiscoverUriHint = { key: 'ameblo:posts', label: 'Posts', format: 'rss' }
 
-      expect(amebloHandler.getFeedKey?.(value)).toBe(expected)
+      expect(amebloHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://ameblo.jp/6262sm/entry-12345678901.html'
 
-      expect(amebloHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(amebloHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a page on rssblog.ameba.jp', () => {
       const value = 'https://rssblog.ameba.jp/6262sm/'
 
-      expect(amebloHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(amebloHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/6262sm/rss.html'
 
-      expect(amebloHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(amebloHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://ameblo.jp/6262sm/rss20.xml', { key: 'ameblo:posts', label: 'Posts' }],
-      ['https://ameblo.jp/a-retro/atom.xml', { key: 'ameblo:posts', label: 'Posts' }],
-      ['https://rssblog.ameba.jp/6262sm/rss.html', { key: 'ameblo:posts', label: 'Posts' }],
-      ['https://rssblog.ameba.jp/a-retro/rss.html', { key: 'ameblo:posts', label: 'Posts' }],
-      ['https://rssblog.ameba.jp/6262sm/rss20.xml', { key: 'ameblo:posts', label: 'Posts' }],
-      ['https://rssblog.ameba.jp/6262sm/atom.xml', { key: 'ameblo:posts', label: 'Posts' }],
-      ['https://ameblo.jp/6262sm/rss.html', { key: 'ameblo:posts', label: 'Posts' }],
+      [
+        'https://ameblo.jp/6262sm/rss20.xml',
+        { key: 'ameblo:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://ameblo.jp/a-retro/atom.xml',
+        { key: 'ameblo:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://rssblog.ameba.jp/6262sm/rss.html',
+        { key: 'ameblo:posts', label: 'Posts', format: 'rdf' },
+      ],
+      [
+        'https://rssblog.ameba.jp/a-retro/rss.html',
+        { key: 'ameblo:posts', label: 'Posts', format: 'rdf' },
+      ],
+      [
+        'https://rssblog.ameba.jp/6262sm/rss20.xml',
+        { key: 'ameblo:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://rssblog.ameba.jp/6262sm/atom.xml',
+        { key: 'ameblo:posts', label: 'Posts', format: 'atom' },
+      ],
+      ['https://ameblo.jp/6262sm/rss.html', { key: 'ameblo:posts', label: 'Posts', format: 'rdf' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
