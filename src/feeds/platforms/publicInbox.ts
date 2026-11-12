@@ -117,5 +117,5 @@ export const publicInboxHandler: PlatformHandler = {
     return [inboxFeed]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

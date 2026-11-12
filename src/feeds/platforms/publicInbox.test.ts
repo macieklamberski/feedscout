@@ -352,61 +352,61 @@ describe('publicInboxHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the messages key for the inbox feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the messages hint for the inbox feed', () => {
       const value = 'https://lore.kernel.org/example/new.atom'
-      const expected = 'public-inbox:messages'
+      const expected: DiscoverUriHint = { key: 'public-inbox:messages', label: 'Messages' }
 
-      expect(publicInboxHandler.getFeedKey?.(value)).toBe(expected)
+      expect(publicInboxHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the messages key for the inbox feed over http', () => {
+    it('should return the messages hint for the inbox feed over http', () => {
       const value = 'http://lore.kernel.org/example/new.atom'
-      const expected = 'public-inbox:messages'
+      const expected: DiscoverUriHint = { key: 'public-inbox:messages', label: 'Messages' }
 
-      expect(publicInboxHandler.getFeedKey?.(value)).toBe(expected)
+      expect(publicInboxHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the thread key for the thread feed', () => {
+    it('should return the thread hint for the thread feed', () => {
       const value =
         'https://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/t.atom'
-      const expected = 'public-inbox:thread'
+      const expected: DiscoverUriHint = { key: 'public-inbox:thread', label: 'Thread' }
 
-      expect(publicInboxHandler.getFeedKey?.(value)).toBe(expected)
+      expect(publicInboxHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the thread key for a thread feed with a percent-encoded message id', () => {
+    it('should return the thread hint for a thread feed with a percent-encoded message id', () => {
       const value =
         'https://lore.kernel.org/example/alice%2Fexample%2Fissues%2F1%2F12345@github.com/t.atom'
-      const expected = 'public-inbox:thread'
+      const expected: DiscoverUriHint = { key: 'public-inbox:thread', label: 'Thread' }
 
-      expect(publicInboxHandler.getFeedKey?.(value)).toBe(expected)
+      expect(publicInboxHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the thread key for a thread feed with an encoded-word message id', () => {
+    it('should return the thread hint for a thread feed with an encoded-word message id', () => {
       const value =
         'https://lore.kernel.org/example/=%3Futf-8%3Fq%3F=3C12345=2Egit=2Ealice=40example=2Ecom=3E%3F=/t.atom'
-      const expected = 'public-inbox:thread'
+      const expected: DiscoverUriHint = { key: 'public-inbox:thread', label: 'Thread' }
 
-      expect(publicInboxHandler.getFeedKey?.(value)).toBe(expected)
+      expect(publicInboxHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for an inbox page', () => {
       const value = 'https://lore.kernel.org/example/'
 
-      expect(publicInboxHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(publicInboxHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a message page', () => {
       const value = 'https://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/'
 
-      expect(publicInboxHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(publicInboxHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the inbox feed of a self-hosted inbox', () => {
       const value = 'https://lore.example.org/example/new.atom'
 
-      expect(publicInboxHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(publicInboxHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
