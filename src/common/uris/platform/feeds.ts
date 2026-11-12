@@ -1,5 +1,6 @@
 import {
   composeQuery,
+  decodePercent,
   encodePathSegment,
   escapeRegex,
   getQueryParam,
@@ -57,6 +58,15 @@ const templateRegex = /^(https?|\{scheme\}):\/\/([^/?#]+)(\/[^?#]*)?(?:\?([^#]*)
 const placeholderRegex = /\{(\w+)\}/g
 const trailingSlashRegex = /\/$/
 
+// A path decoded segment by segment, so `%40` and `@` compare equal. A decoded slash is written
+// back as `%2F`, so it never splits a segment.
+const decodePath = (path: string): string => {
+  return path
+    .split('/')
+    .map((segment) => decodePercent(segment).replaceAll('/', '%2F'))
+    .join('/')
+}
+
 // A placeholder becomes the capture, the text around it a literal.
 const toRegexSource = (
   text: string,
@@ -94,21 +104,21 @@ const compileTemplate = (
     throw new Error(t(locales.errors.missingFeedHosts, { key }))
   }
 
-  // Matched on the host without `www` and the path without its trailing slash.
+  // Matched on the host without `www` and the decoded path without its trailing slash.
   const hostSource = toRegexSource(stripWww(host), '[^.]+', {
     host: `(?:${hostSources.join('|')})`,
     domain: domainSource,
   })
-  const pathSource = toRegexSource(path.replace(trailingSlashRegex, ''), '[^/]+')
+  const pathSource = toRegexSource(decodePath(path).replace(trailingSlashRegex, ''), '[^/]+')
   const hostPathRegex = new RegExp(`^${hostSource}${pathSource}$`, 'i')
   const queryRegexes = query.map(([name, value]): [string, RegExp] => {
     return [name, new RegExp(`^${toRegexSource(value, '.+')}$`, 'i')]
   })
 
   const isFeedUrl = (url: URL): boolean => {
-    if (
-      !hostPathRegex.test(stripWww(url.hostname) + url.pathname.replace(trailingSlashRegex, ''))
-    ) {
+    const pathname = decodePath(url.pathname).replace(trailingSlashRegex, '')
+
+    if (!hostPathRegex.test(stripWww(url.hostname) + pathname)) {
       return false
     }
 

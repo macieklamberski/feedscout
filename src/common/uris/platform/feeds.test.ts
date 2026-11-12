@@ -22,6 +22,8 @@ const feeds = definePlatformFeeds(
     { key: 'example:site-feed', template: '{scheme}://{host}/feed' },
     { key: 'example:channel', template: 'https://www.example.com/feed/{channel}' },
     { key: 'example:channel', template: 'https://{subdomain}.example.org/feed' },
+    { key: 'example:handle', template: 'https://www.example.com/rss/@{username}' },
+    { key: 'example:topic', template: 'https://www.example.com/topics/tag:{tag}/feed' },
   ],
   { hosts: ['example.com', 'www.example.com'], domains: ['example.net', 'example.edu'] },
 )
@@ -109,6 +111,13 @@ describe('definePlatformFeeds', () => {
       const throwing = () => feeds.getFeedUrl('example:unknown')
 
       expect(throwing).toThrow('No feed template for example:unknown')
+    })
+
+    it('should write a reserved character of the template as written', () => {
+      const value = feeds.getFeedUrl('example:handle', { username: 'alice' })
+      const expected = 'https://www.example.com/rss/@alice'
+
+      expect(value).toBe(expected)
     })
 
     it('should keep a placeholder with no value', () => {
@@ -201,6 +210,49 @@ describe('definePlatformFeeds', () => {
         'https://feeds.example.com/rss.xml?utm_source=x&q=by%3Aalice%20sort%3Atime&type=item'
 
       expect(feeds.getFeedKey(value)).toBe('example:search')
+    })
+
+    it('should match an at sign of the template against its percent-encoded form', () => {
+      expect(feeds.getFeedKey('https://www.example.com/rss/%40alice')).toBe('example:handle')
+    })
+
+    it('should match an at sign of the template as written', () => {
+      expect(feeds.getFeedKey('https://www.example.com/rss/@alice')).toBe('example:handle')
+    })
+
+    it('should match a percent-encoded character of the template in either hex case', () => {
+      const lower = 'https://www.example.com/topics/tag%3acats/feed'
+      const upper = 'https://www.example.com/topics/tag%3Acats/feed'
+
+      expect(feeds.getFeedKey(lower)).toBe('example:topic')
+      expect(feeds.getFeedKey(upper)).toBe('example:topic')
+    })
+
+    it('should match a template written with a percent-encoded character', () => {
+      const encoded = definePlatformFeeds([
+        { key: 'example:handle', template: 'https://www.example.com/rss/%40{username}' },
+      ])
+
+      expect(encoded.getFeedKey('https://www.example.com/rss/@alice')).toBe('example:handle')
+      expect(encoded.getFeedKey('https://www.example.com/rss/%40alice')).toBe('example:handle')
+    })
+
+    it('should return the key of a feed built from an encoded value', () => {
+      const value = feeds.getFeedUrl('example:posts', { username: 'c#' })
+
+      expect(feeds.getFeedKey(value)).toBe('example:posts')
+    })
+
+    it('should keep an encoded slash inside one segment', () => {
+      expect(feeds.getFeedKey('https://www.example.com/alice%2Fbob/feed.rss')).toBe('example:posts')
+    })
+
+    it('should return undefined when an encoded slash would split a segment', () => {
+      expect(feeds.getFeedKey('https://www.example.com/alice%2Frecipes.rss')).toBeUndefined()
+    })
+
+    it('should return undefined for a double-encoded at sign', () => {
+      expect(feeds.getFeedKey('https://www.example.com/rss/%2540alice')).toBeUndefined()
     })
 
     it('should return undefined for a page URL', () => {
