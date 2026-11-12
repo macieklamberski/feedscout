@@ -126,49 +126,49 @@ describe('bloggangHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for a posts feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a posts feed', () => {
       const value = 'https://alice.bloggang.com/rss'
-      const expected = 'bloggang:posts'
+      const expected: DiscoverUriHint = { key: 'bloggang:posts', label: 'Posts' }
 
-      expect(bloggangHandler.getFeedKey?.(value)).toBe(expected)
+      expect(bloggangHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a posts feed of a username with an underscore', () => {
+    it('should return the posts hint for a posts feed of a username with an underscore', () => {
       const value = 'https://alice_example.bloggang.com/rss'
-      const expected = 'bloggang:posts'
+      const expected: DiscoverUriHint = { key: 'bloggang:posts', label: 'Posts' }
 
-      expect(bloggangHandler.getFeedKey?.(value)).toBe(expected)
+      expect(bloggangHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for the rss path on the mobile host', () => {
       const value = 'https://m.bloggang.com/rss'
 
-      expect(bloggangHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bloggangHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the rss path on www', () => {
       const value = 'https://www.bloggang.com/rss'
 
-      expect(bloggangHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bloggangHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://alice.bloggang.com/'
 
-      expect(bloggangHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bloggangHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://a.alice.bloggang.com/rss'
 
-      expect(bloggangHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bloggangHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/rss'
 
-      expect(bloggangHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bloggangHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

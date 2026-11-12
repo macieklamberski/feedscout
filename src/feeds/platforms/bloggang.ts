@@ -70,11 +70,11 @@ export const bloggangHandler: PlatformHandler = {
   },
 
   // m.bloggang.com/rss redirects to www.bloggang.com/rss/, so only a blog host serves a feed.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (!parseBloggangUrl(url)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
