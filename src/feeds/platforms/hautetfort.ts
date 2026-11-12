@@ -22,12 +22,11 @@ const domains = [
 const categoryRegex = /^\/([^/.]+)\/?$/
 const archivesCategoryRegex = /^\/archives\/category\/([^/]+)(?:\/|$)/i
 
-// Blog subdomains serve no certificate for their own name, so the feeds stay on http.
 const feeds = definePlatformFeeds(
   [
-    { key: 'hautetfort:category', template: 'http://{blog}.{domain}/{category}/index.rss' },
-    { key: 'hautetfort:posts', template: 'http://{blog}.{domain}/atom.xml', format: 'atom' },
-    { key: 'hautetfort:posts', template: 'http://{blog}.{domain}/index.rss', format: 'rss' },
+    { key: 'hautetfort:category', template: '{scheme}://{host}/{category}/index.rss' },
+    { key: 'hautetfort:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
+    { key: 'hautetfort:posts', template: '{scheme}://{host}/index.rss', format: 'rss' },
   ],
   { domains },
 )
@@ -67,22 +66,23 @@ export const hautetfortHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseHautetfortUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const domain = new URL(url).hostname.slice(parsed.blog.length + 1)
-    const params = { blog: parsed.blog, domain }
+    // Blog subdomains serve no certificate for their own name, so the feeds stay on http.
+    const params = { scheme: 'http' }
     const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.kind === 'category') {
-      uris.push(feeds.getFeedEntry('hautetfort:category', { ...params, category: parsed.category }))
+      uris.push(page.getFeedEntry('hautetfort:category', { ...params, category: parsed.category }))
     }
 
     uris.push(
-      feeds.getFeedEntry('hautetfort:posts', params, 'atom'),
-      feeds.getFeedEntry('hautetfort:posts', params, 'rss'),
+      page.getFeedEntry('hautetfort:posts', params, 'atom'),
+      page.getFeedEntry('hautetfort:posts', params, 'rss'),
     )
 
     return uris
