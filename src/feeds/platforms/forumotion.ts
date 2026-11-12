@@ -55,6 +55,19 @@ const feeds = definePlatformFeeds(
       template: '{scheme}://{host}/feed/?type=atom',
       format: 'atom',
     },
+    // Forumotion serves the same feeds at `/rss`, which only claims.
+    { key: 'forumotion:forum', template: '{scheme}://{host}/rss?f={forumId}', format: 'rss' },
+    {
+      key: 'forumotion:forum',
+      template: '{scheme}://{host}/rss?f={forumId}&type=atom',
+      format: 'atom',
+    },
+    { key: 'forumotion:latest-topics', template: '{scheme}://{host}/rss', format: 'rss' },
+    {
+      key: 'forumotion:latest-topics',
+      template: '{scheme}://{host}/rss?type=atom',
+      format: 'atom',
+    },
   ],
   { domains },
 )

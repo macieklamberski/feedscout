@@ -224,6 +224,26 @@ describe('forumotionHandler', () => {
         'https://example.1fr1.net/feed/?f=12&type=atom',
         { key: 'forumotion:forum', label: 'Forum', format: 'atom' },
       ],
+      [
+        'https://example.forumactif.com/rss',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
+      ],
+      [
+        'https://example.forumactif.com/rss?type=atom',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'atom' },
+      ],
+      [
+        'https://example.forumeiros.com/rss?tt=1',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
+      ],
+      [
+        'https://example.forumotion.com/rss?f=12',
+        { key: 'forumotion:forum', label: 'Forum', format: 'rss' },
+      ],
+      [
+        'https://example.forumotion.com/rss?f=12&type=atom',
+        { key: 'forumotion:forum', label: 'Forum', format: 'atom' },
+      ],
     ]
 
     it.each(feedUrls)('should return the hint for %s', (value, expected) => {
@@ -238,6 +258,12 @@ describe('forumotionHandler', () => {
 
     it('should return undefined for a feed on a custom domain', () => {
       const value = 'https://example.com/feed/'
+
+      expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an rss path on a custom domain', () => {
+      const value = 'https://example.com/rss'
 
       expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -277,6 +303,22 @@ describe('forumotionHandler', () => {
       ],
       [
         'https://example.forumactif.fr/feed/?type=atom&f=12',
+        { key: 'forumotion:forum', label: 'Forum', format: 'atom' },
+      ],
+      [
+        'https://example.forumactif.fr/rss',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
+      ],
+      [
+        'https://example.forumactif.fr/rss?type=atom',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'atom' },
+      ],
+      [
+        'https://example.forumactif.fr/rss?f=12',
+        { key: 'forumotion:forum', label: 'Forum', format: 'rss' },
+      ],
+      [
+        'https://example.forumactif.fr/rss?f=12&type=atom',
         { key: 'forumotion:forum', label: 'Forum', format: 'atom' },
       ],
     ]
