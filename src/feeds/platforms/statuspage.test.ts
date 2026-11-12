@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { isStatuspageHeaders, isStatuspageHtml, statuspageHandler } from './statuspage.js'
 
 const statuspageHtml = `
@@ -51,6 +53,13 @@ describe('statuspageHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL that does not parse', () => {
+      const value = 'not-a-url'
+      const expected: Array<DiscoverUriEntry> = []
+
+      expect(statuspageHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the incident history feeds', () => {
       const value = 'https://status.example.com/incidents/abc123def456'
       const expected: Array<DiscoverUriEntry> = [
@@ -65,6 +74,81 @@ describe('statuspageHandler', () => {
       ]
 
       expect(statuspageHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    const feedUrls: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.statuspage.io/history.rss',
+        { key: 'statuspage:history', label: 'Incident history', format: 'rss' },
+      ],
+      [
+        'https://example.statuspage.io/history.atom',
+        { key: 'statuspage:history', label: 'Incident history', format: 'atom' },
+      ],
+      [
+        'http://example.statuspage.io/history.rss/',
+        { key: 'statuspage:history', label: 'Incident history', format: 'rss' },
+      ],
+    ]
+
+    it.each(feedUrls)('should return the hint for %s', (value, expected) => {
+      expect(statuspageHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a page on a status page subdomain', () => {
+      const value = 'https://example.statuspage.io/incidents/abc123def456'
+
+      expect(statuspageHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://status.example.com/history.rss'
+
+      expect(statuspageHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://statuspage.io/history.rss'
+
+      expect(statuspageHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www', () => {
+      const value = 'https://www.statuspage.io/history.atom'
+
+      expect(statuspageHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://status.example.statuspage.io/history.rss'
+
+      expect(statuspageHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.statuspage.io/history.rss',
+        { key: 'statuspage:history', label: 'Incident history', format: 'rss' },
+      ],
+      [
+        'http://example.statuspage.io/history.atom',
+        { key: 'statuspage:history', label: 'Incident history', format: 'atom' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [statuspageHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
