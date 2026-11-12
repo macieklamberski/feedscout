@@ -198,6 +198,13 @@ describe('letterboxdHandler', () => {
     it('should return a ref when content is absent', () => {
       expect(letterboxdHandler.resolve('https://letterboxd.com/alice/')).toEqual([aliceRef])
     })
+
+    it('should return a ref for a member feed URL', () => {
+      const value = 'https://letterboxd.com/alice/rss/'
+      const expected = [{ platform: 'letterboxd', id: 'alice', url: value }]
+
+      expect(letterboxdHandler.resolve(value)).toEqual(expected)
+    })
   })
 })
 
