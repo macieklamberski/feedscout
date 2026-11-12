@@ -99,58 +99,58 @@ describe('cratesIoHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the releases key for a crate releases feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the releases hint for a crate releases feed', () => {
       const value = 'https://static.crates.io/rss/crates/highs.xml'
-      const expected = 'crates-io:releases'
+      const expected: DiscoverUriHint = { key: 'crates-io:releases', label: 'Releases' }
 
-      expect(cratesIoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(cratesIoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the releases key for a crate name with a hyphen', () => {
+    it('should return the releases hint for a crate name with a hyphen', () => {
       const value = 'https://static.crates.io/rss/crates/tokio-util.xml'
-      const expected = 'crates-io:releases'
+      const expected: DiscoverUriHint = { key: 'crates-io:releases', label: 'Releases' }
 
-      expect(cratesIoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(cratesIoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the releases key for a crate name with an underscore', () => {
+    it('should return the releases hint for a crate name with an underscore', () => {
       const value = 'https://static.crates.io/rss/crates/serde_json.xml'
-      const expected = 'crates-io:releases'
+      const expected: DiscoverUriHint = { key: 'crates-io:releases', label: 'Releases' }
 
-      expect(cratesIoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(cratesIoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the new crates key for the new crates feed', () => {
+    it('should return the new crates hint for the new crates feed', () => {
       const value = 'https://static.crates.io/rss/crates.xml'
-      const expected = 'crates-io:new-crates'
+      const expected: DiscoverUriHint = { key: 'crates-io:new-crates', label: 'New crates' }
 
-      expect(cratesIoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(cratesIoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the updates key for the updates feed', () => {
+    it('should return the updates hint for the updates feed', () => {
       const value = 'https://static.crates.io/rss/updates.xml'
-      const expected = 'crates-io:updates'
+      const expected: DiscoverUriHint = { key: 'crates-io:updates', label: 'Recent updates' }
 
-      expect(cratesIoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(cratesIoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a crate page', () => {
       const value = 'https://crates.io/crates/highs'
 
-      expect(cratesIoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(cratesIoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the page host', () => {
       const value = 'https://crates.io/rss/crates/highs.xml'
 
-      expect(cratesIoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(cratesIoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/rss/crates/highs.xml'
 
-      expect(cratesIoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(cratesIoHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
