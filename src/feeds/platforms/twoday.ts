@@ -13,8 +13,8 @@ const domains = ['twoday.net']
 
 const topicRegex = /^\/topics\/([^/]+)(?:\/|$)/i
 
-// A blog's skin links its posts feed as `/index.rdf` or `/rss`, and both serve the same stories
-// as `/summary.rdf`.
+// A blog's skin links its posts feed as `/index.rdf` or `/rss`, the same stories. Some skins
+// also serve them as `/summary.rdf`, with shorter text.
 const feeds = definePlatformFeeds([
   { key: 'twoday:posts', template: 'https://{blog}.twoday.net/index.rdf' },
   { key: 'twoday:posts', template: 'https://{blog}.twoday.net/rss' },
