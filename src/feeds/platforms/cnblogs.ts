@@ -1,12 +1,16 @@
 import { getPathSegments, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type CnblogsUrl = { kind: 'blog'; username: string }
 
 const hosts = ['cnblogs.com', 'www.cnblogs.com']
+
+const feeds = definePlatformFeeds([
+  { key: 'cnblogs:posts', template: 'https://www.cnblogs.com/{username}/rss' },
+])
 
 export const parseCnblogsUrl = (url: string): CnblogsUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -35,8 +39,16 @@ export const cnblogsHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
+    return [feeds.getFeedEntry('cnblogs:posts', { username: parsed.username })]
+  },
 
-    return [{ uri: `${origin}/${parsed.username}/rss`, hint: composeHint('cnblogs:posts') }]
+  // The table reads any first segment as a name, so the page parser refuses a dotted one first:
+  // www.cnblogs.com/skins.aspx/rss answers 404.
+  getFeedKey: (url) => {
+    if (!parseCnblogsUrl(url)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
