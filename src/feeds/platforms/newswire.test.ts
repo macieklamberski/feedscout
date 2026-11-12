@@ -198,15 +198,15 @@ describe('newswireHandler', () => {
       expect(newswireHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return https feeds for an http page', () => {
+    it('should return the feeds under the page scheme for an http page', () => {
       const value = 'http://acme.newswire.com/browse/pr'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://acme.newswire.com/browse/rss/pr',
+          uri: 'http://acme.newswire.com/browse/rss/pr',
           hint: { key: 'newswire:press-releases', label: 'Press releases' },
         },
         {
-          uri: 'https://acme.newswire.com/browse/rss',
+          uri: 'http://acme.newswire.com/browse/rss',
           hint: { key: 'newswire:newsroom', label: 'Newsroom' },
         },
       ]

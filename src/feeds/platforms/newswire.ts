@@ -21,13 +21,16 @@ const contentTypePathRegex = /^\/browse\/([^/]+)\/?$/i
 
 const contentTypes = ['news', 'pr', 'social'] as const
 
-const feeds = definePlatformFeeds([
-  { key: 'newswire:beat', template: 'https://{newsroom}.newswire.com/browse/rss/beat/{beat}' },
-  { key: 'newswire:news', template: 'https://{newsroom}.newswire.com/browse/rss/news' },
-  { key: 'newswire:press-releases', template: 'https://{newsroom}.newswire.com/browse/rss/pr' },
-  { key: 'newswire:social', template: 'https://{newsroom}.newswire.com/browse/rss/social' },
-  { key: 'newswire:newsroom', template: 'https://{newsroom}.newswire.com/browse/rss' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'newswire:beat', template: '{scheme}://{host}/browse/rss/beat/{beat}' },
+    { key: 'newswire:news', template: '{scheme}://{host}/browse/rss/news' },
+    { key: 'newswire:press-releases', template: '{scheme}://{host}/browse/rss/pr' },
+    { key: 'newswire:social', template: '{scheme}://{host}/browse/rss/social' },
+    { key: 'newswire:newsroom', template: '{scheme}://{host}/browse/rss' },
+  ],
+  { domains },
+)
 
 export const parseNewswireUrl = (url: string): NewswireUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
@@ -59,32 +62,32 @@ export const newswireHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseNewswireUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { newsroom } = parsed
     const uris: Array<DiscoverUriEntry> = []
 
     // A made-up beat redirects to the newsroom's /browse page, which validation drops.
     if (parsed.kind === 'beat') {
-      uris.push(feeds.getFeedEntry('newswire:beat', { newsroom, beat: parsed.beat }))
+      uris.push(page.getFeedEntry('newswire:beat', { beat: parsed.beat }))
     }
 
     if (parsed.kind === 'contentType' && parsed.contentType === 'news') {
-      uris.push(feeds.getFeedEntry('newswire:news', { newsroom }))
+      uris.push(page.getFeedEntry('newswire:news'))
     }
 
     if (parsed.kind === 'contentType' && parsed.contentType === 'pr') {
-      uris.push(feeds.getFeedEntry('newswire:press-releases', { newsroom }))
+      uris.push(page.getFeedEntry('newswire:press-releases'))
     }
 
     if (parsed.kind === 'contentType' && parsed.contentType === 'social') {
-      uris.push(feeds.getFeedEntry('newswire:social', { newsroom }))
+      uris.push(page.getFeedEntry('newswire:social'))
     }
 
-    uris.push(feeds.getFeedEntry('newswire:newsroom', { newsroom }))
+    uris.push(page.getFeedEntry('newswire:newsroom'))
 
     return uris
   },
