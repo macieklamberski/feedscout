@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type OpeneditionUrl, openeditionHandler, parseOpeneditionUrl } from './openedition.js'
 
 describe('parseOpeneditionUrl', () => {
@@ -124,6 +126,138 @@ describe('openeditionHandler', () => {
 
     it('should return empty array for a URL outside OpenEdition Journals', () => {
       expect(openeditionHandler.resolve('https://example.com/example/')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the documents key for the documents feed', () => {
+      const value = 'https://journals.openedition.org/example/backend?format=rssdocuments'
+      const expected = 'openedition:documents'
+
+      expect(openeditionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the documents key for the documents feed at backend.html', () => {
+      const value = 'https://journals.openedition.org/example/backend.html?format=rssdocuments'
+      const expected = 'openedition:documents'
+
+      expect(openeditionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the documents key for the documents feed at the journal home', () => {
+      const value = 'https://journals.openedition.org/example/?page=backend&format=rssdocuments'
+      const expected = 'openedition:documents'
+
+      expect(openeditionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the documents key for the documents feed of one author', () => {
+      const value =
+        'https://journals.openedition.org/example/backend?format=rssdocuments&identity=12345'
+      const expected = 'openedition:documents'
+
+      expect(openeditionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the issues key for the issues feed', () => {
+      const value = 'https://journals.openedition.org/example/backend?format=rssnumeros'
+      const expected = 'openedition:issues'
+
+      expect(openeditionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the issues key for the issues feed at backend.html', () => {
+      const value = 'https://journals.openedition.org/example/backend.html?format=rssnumeros'
+      const expected = 'openedition:issues'
+
+      expect(openeditionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the issues key for the issues feed at the journal home', () => {
+      const value = 'https://journals.openedition.org/example/?page=backend&format=rssnumeros'
+      const expected = 'openedition:issues'
+
+      expect(openeditionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the reviews key for the reviews feed', () => {
+      const value =
+        'https://journals.openedition.org/example/backend?format=rssdocuments&type=review'
+      const expected = 'openedition:reviews'
+
+      expect(openeditionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the reviews key for the reviews feed at backend.html', () => {
+      const value =
+        'https://journals.openedition.org/example/backend.html?format=rssdocuments&type=review'
+      const expected = 'openedition:reviews'
+
+      expect(openeditionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the reviews key for the reviews feed at the journal home', () => {
+      const value =
+        'https://journals.openedition.org/example/?page=backend&format=rssdocuments&type=review'
+      const expected = 'openedition:reviews'
+
+      expect(openeditionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a journal home', () => {
+      const value = 'https://journals.openedition.org/example/'
+
+      expect(openeditionHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the feed list page of a journal', () => {
+      const value = 'https://journals.openedition.org/example/?page=backend'
+
+      expect(openeditionHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed of the portal', () => {
+      const value = 'https://journals.openedition.org/?page=backend&format=rssarticles'
+
+      expect(openeditionHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed of another OpenEdition host', () => {
+      const value = 'https://books.openedition.org/example/backend/?format=rss'
+
+      expect(openeditionHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const documentsHint: DiscoverUriHint = { key: 'openedition:documents', label: 'Documents' }
+    const issuesHint: DiscoverUriHint = { key: 'openedition:issues', label: 'Issues' }
+    const reviewsHint: DiscoverUriHint = { key: 'openedition:reviews', label: 'Reviews' }
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://journals.openedition.org/example/backend?format=rssdocuments', documentsHint],
+      ['http://journals.openedition.org/example/backend.html?format=rssdocuments', documentsHint],
+      ['https://journals.openedition.org/example/?page=backend&format=rssdocuments', documentsHint],
+      ['https://journals.openedition.org/example/backend?format=rssnumeros', issuesHint],
+      ['https://journals.openedition.org/example/backend.html?format=rssnumeros', issuesHint],
+      [
+        'https://journals.openedition.org/example/backend?format=rssdocuments&type=review',
+        reviewsHint,
+      ],
+      [
+        'http://journals.openedition.org/example/backend?type=review&format=rssdocuments',
+        reviewsHint,
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [openeditionHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

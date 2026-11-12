@@ -1,6 +1,6 @@
 import { getPathSegments, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers journal.
@@ -8,6 +8,48 @@ import { composeHint } from '../../common/utils.js'
 export type OpeneditionUrl = { kind: 'journal'; journal: string }
 
 const hosts = ['journals.openedition.org']
+
+// Each feed also answers at `backend.html` and at the journal home with `page=backend`.
+const feeds = definePlatformFeeds([
+  {
+    key: 'openedition:documents',
+    template: 'https://journals.openedition.org/{journal}/backend?format=rssdocuments',
+  },
+  {
+    key: 'openedition:documents',
+    template: 'https://journals.openedition.org/{journal}/backend.html?format=rssdocuments',
+  },
+  {
+    key: 'openedition:documents',
+    template: 'https://journals.openedition.org/{journal}/?page=backend&format=rssdocuments',
+  },
+  {
+    key: 'openedition:issues',
+    template: 'https://journals.openedition.org/{journal}/backend?format=rssnumeros',
+  },
+  {
+    key: 'openedition:issues',
+    template: 'https://journals.openedition.org/{journal}/backend.html?format=rssnumeros',
+  },
+  {
+    key: 'openedition:issues',
+    template: 'https://journals.openedition.org/{journal}/?page=backend&format=rssnumeros',
+  },
+  {
+    key: 'openedition:reviews',
+    template: 'https://journals.openedition.org/{journal}/backend?format=rssdocuments&type=review',
+  },
+  {
+    key: 'openedition:reviews',
+    template:
+      'https://journals.openedition.org/{journal}/backend.html?format=rssdocuments&type=review',
+  },
+  {
+    key: 'openedition:reviews',
+    template:
+      'https://journals.openedition.org/{journal}/?page=backend&format=rssdocuments&type=review',
+  },
+])
 
 export const parseOpeneditionUrl = (url: string): OpeneditionUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -36,21 +78,14 @@ export const openeditionHandler: PlatformHandler = {
       return []
     }
 
-    const backendUrl = `https://journals.openedition.org/${parsed.journal}/backend`
+    const params = { journal: parsed.journal }
 
     return [
-      {
-        uri: `${backendUrl}?format=rssdocuments`,
-        hint: composeHint('openedition:documents'),
-      },
-      {
-        uri: `${backendUrl}?format=rssnumeros`,
-        hint: composeHint('openedition:issues'),
-      },
-      {
-        uri: `${backendUrl}?format=rssdocuments&type=review`,
-        hint: composeHint('openedition:reviews'),
-      },
+      feeds.getFeedEntry('openedition:documents', params),
+      feeds.getFeedEntry('openedition:issues', params),
+      feeds.getFeedEntry('openedition:reviews', params),
     ]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
