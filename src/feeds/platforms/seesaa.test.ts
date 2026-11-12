@@ -148,71 +148,77 @@ describe('seesaaHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for an RSS 2.0 feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for an RSS 2.0 feed', () => {
       const value = 'https://alice.seesaa.net/index20.rdf'
-      const expected = 'seesaa:posts'
+      const expected: DiscoverUriHint = { key: 'seesaa:posts', label: 'Posts', format: 'rss' }
 
-      expect(seesaaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(seesaaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an RDF feed', () => {
+    it('should return the posts hint for an RDF feed', () => {
       const value = 'https://alice.seesaa.net/index.rdf'
-      const expected = 'seesaa:posts'
+      const expected: DiscoverUriHint = { key: 'seesaa:posts', label: 'Posts', format: 'rdf' }
 
-      expect(seesaaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(seesaaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an http feed on another domain', () => {
+    it('should return the posts hint for an http feed on another domain', () => {
       const value = 'http://alice.stablo.jp/index20.rdf'
-      const expected = 'seesaa:posts'
+      const expected: DiscoverUriHint = { key: 'seesaa:posts', label: 'Posts', format: 'rss' }
 
-      expect(seesaaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(seesaaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for an article page', () => {
       const value = 'https://alice.seesaa.net/article/123.html'
 
-      expect(seesaaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(seesaaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a podcast feed', () => {
       const value = 'https://alice.seesaa.space/index_custom.rdf'
 
-      expect(seesaaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(seesaaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on a blog image host', () => {
       const value = 'https://alice.up.seesaa.net/index.rdf'
 
-      expect(seesaaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(seesaaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the apex', () => {
       const value = 'https://seesaa.net/index.rdf'
 
-      expect(seesaaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(seesaaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the www host', () => {
       const value = 'https://www.seesaa.net/index.rdf'
 
-      expect(seesaaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(seesaaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/index.rdf'
 
-      expect(seesaaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(seesaaHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://alice.seesaa.net/index20.rdf', { key: 'seesaa:posts', label: 'Posts' }],
-      ['http://alice.seesaa.net/index.rdf', { key: 'seesaa:posts', label: 'Posts' }],
-      ['https://alice.seesaa.space/index20.rdf', { key: 'seesaa:posts', label: 'Posts' }],
-      ['http://alice.stablo.jp/index.rdf', { key: 'seesaa:posts', label: 'Posts' }],
+      [
+        'https://alice.seesaa.net/index20.rdf',
+        { key: 'seesaa:posts', label: 'Posts', format: 'rss' },
+      ],
+      ['http://alice.seesaa.net/index.rdf', { key: 'seesaa:posts', label: 'Posts', format: 'rdf' }],
+      [
+        'https://alice.seesaa.space/index20.rdf',
+        { key: 'seesaa:posts', label: 'Posts', format: 'rss' },
+      ],
+      ['http://alice.stablo.jp/index.rdf', { key: 'seesaa:posts', label: 'Posts', format: 'rdf' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
