@@ -164,6 +164,48 @@ describe('proseHandler', () => {
       expect(proseHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the blog key for a blog rss.xml feed', () => {
+      const value = 'https://alice.prose.sh/rss.xml'
+      const expected = 'prose:blog'
+
+      expect(proseHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a tag rss.xml feed', () => {
+      const value = 'https://alice.prose.sh/rss.xml?tag=go'
+      const expected = 'prose:tag'
+
+      expect(proseHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for a blog feed.xml feed', () => {
+      const value = 'https://alice.prose.sh/feed.xml'
+      const expected = 'prose:blog'
+
+      expect(proseHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a tag feed.xml feed', () => {
+      const value = 'https://alice.prose.sh/feed.xml?tag=go'
+      const expected = 'prose:tag'
+
+      expect(proseHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for a blog atom.xml feed', () => {
+      const value = 'https://alice.prose.sh/atom.xml'
+      const expected = 'prose:blog'
+
+      expect(proseHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a tag atom.xml feed', () => {
+      const value = 'https://alice.prose.sh/atom.xml?tag=go'
+      const expected = 'prose:tag'
+
+      expect(proseHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the discovery key for the discovery feed', () => {
       const value = 'https://prose.sh/rss'
       const expected = 'prose:discovery'
@@ -197,6 +239,12 @@ describe('discoverUrisFromPlatform', () => {
     ['https://alice.prose.sh/atom', { key: 'prose:blog', label: 'Blog' }],
     ['https://alice.prose.sh/rss/?tag=go', { key: 'prose:tag', label: 'Tag' }],
     ['https://alice.prose.sh/atom?tag=go', { key: 'prose:tag', label: 'Tag' }],
+    ['https://alice.prose.sh/rss.xml', { key: 'prose:blog', label: 'Blog' }],
+    ['https://alice.prose.sh/rss.xml?tag=go', { key: 'prose:tag', label: 'Tag' }],
+    ['https://alice.prose.sh/feed.xml', { key: 'prose:blog', label: 'Blog' }],
+    ['https://alice.prose.sh/feed.xml?tag=go', { key: 'prose:tag', label: 'Tag' }],
+    ['https://alice.prose.sh/atom.xml', { key: 'prose:blog', label: 'Blog' }],
+    ['https://alice.prose.sh/atom.xml?tag=go', { key: 'prose:tag', label: 'Tag' }],
     ['https://prose.sh/rss.atom', { key: 'prose:discovery', label: 'Discovery' }],
   ]
 
