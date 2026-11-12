@@ -166,66 +166,66 @@ describe('alloforumHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the latest topics key for a latest topics feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the latest topics hint for a latest topics feed', () => {
       const value = 'https://123perlamis.alloforum.com/derniers-sujets.xml'
-      const expected = 'alloforum:latest-topics'
+      const expected: DiscoverUriHint = { key: 'alloforum:latest-topics', label: 'Latest topics' }
 
-      expect(alloforumHandler.getFeedKey?.(value)).toBe(expected)
+      expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the category key for a category feed', () => {
+    it('should return the category hint for a category feed', () => {
       const value = 'https://10253.alloforum.com/derniers-sujets-materiel-volieres-c285.xml'
-      const expected = 'alloforum:category'
+      const expected: DiscoverUriHint = { key: 'alloforum:category', label: 'Category' }
 
-      expect(alloforumHandler.getFeedKey?.(value)).toBe(expected)
+      expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the subcategory key for a subcategory feed', () => {
+    it('should return the subcategory hint for a subcategory feed', () => {
       const value =
         'https://123perlamis.alloforum.com/derniers-sujets-materiel-techniques-c44498-divers-s17544.xml'
-      const expected = 'alloforum:subcategory'
+      const expected: DiscoverUriHint = { key: 'alloforum:subcategory', label: 'Subcategory' }
 
-      expect(alloforumHandler.getFeedKey?.(value)).toBe(expected)
+      expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the subcategory key for a subcategory feed with a hyphenated slug', () => {
+    it('should return the subcategory hint for a subcategory feed with a hyphenated slug', () => {
       const value =
         'https://123perlamis.alloforum.com/derniers-sujets-materiel-techniques-c44498-nuanciers-perles-s17542.xml'
-      const expected = 'alloforum:subcategory'
+      const expected: DiscoverUriHint = { key: 'alloforum:subcategory', label: 'Subcategory' }
 
-      expect(alloforumHandler.getFeedKey?.(value)).toBe(expected)
+      expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the category key for an http category feed', () => {
+    it('should return the category hint for an http category feed', () => {
       const value = 'http://10253.alloforum.com/derniers-sujets-discussions-generales-c275.xml'
-      const expected = 'alloforum:category'
+      const expected: DiscoverUriHint = { key: 'alloforum:category', label: 'Category' }
 
-      expect(alloforumHandler.getFeedKey?.(value)).toBe(expected)
+      expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a category page', () => {
       const value = 'https://10253.alloforum.com/materiel-volieres-c285-1.html'
 
-      expect(alloforumHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(alloforumHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://blog.example.alloforum.com/derniers-sujets.xml'
 
-      expect(alloforumHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(alloforumHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://alloforum.com/derniers-sujets.xml'
 
-      expect(alloforumHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(alloforumHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/derniers-sujets.xml'
 
-      expect(alloforumHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(alloforumHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
