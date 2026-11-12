@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { type FirstoryPage, firstoryHandler, getFirstoryPage } from './firstory.js'
@@ -81,45 +81,45 @@ describe('firstoryHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the podcast key for a show feed', () => {
       const value = 'https://feed.firstory.me/rss/user/ckabcdefgh0123456789klmno'
-      const expected = 'firstory:podcast'
+      const expected: DiscoverUriHint = { key: 'firstory:podcast', label: 'Podcast' }
 
-      expect(firstoryHandler.getFeedKey?.(value)).toBe(expected)
+      expect(firstoryHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the podcast key for a show feed over http', () => {
       const value = 'http://feed.firstory.me/rss/user/ckabcdefgh0123456789klmno'
-      const expected = 'firstory:podcast'
+      const expected: DiscoverUriHint = { key: 'firstory:podcast', label: 'Podcast' }
 
-      expect(firstoryHandler.getFeedKey?.(value)).toBe(expected)
+      expect(firstoryHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the podcast key for a show feed on open.firstory.me', () => {
       const value = 'https://open.firstory.me/rss/user/ckabcdefgh0123456789klmno'
-      const expected = 'firstory:podcast'
+      const expected: DiscoverUriHint = { key: 'firstory:podcast', label: 'Podcast' }
 
-      expect(firstoryHandler.getFeedKey?.(value)).toBe(expected)
+      expect(firstoryHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the podcast key for a show feed on open.firstory.fm', () => {
       const value = 'https://open.firstory.fm/rss/user/ckabcdefgh0123456789klmno'
-      const expected = 'firstory:podcast'
+      const expected: DiscoverUriHint = { key: 'firstory:podcast', label: 'Podcast' }
 
-      expect(firstoryHandler.getFeedKey?.(value)).toBe(expected)
+      expect(firstoryHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a show page', () => {
       const value = 'https://open.firstory.me/user/example'
 
-      expect(firstoryHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(firstoryHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the feed host root', () => {
       const value = 'https://feed.firstory.me/'
 
-      expect(firstoryHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(firstoryHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

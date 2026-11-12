@@ -52,5 +52,5 @@ export const firstoryHandler: PlatformHandler = {
     return [feeds.getFeedEntry('firstory:podcast', { cuid: page.cuid })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
