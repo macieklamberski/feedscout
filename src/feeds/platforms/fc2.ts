@@ -12,6 +12,8 @@ export type Fc2Url = { kind: 'blog'; category?: string; tag?: string }
 const domains = ['blog.2nt.com', 'fc2.net']
 
 const numberedSubdomainRegex = /^(?<blog>[^.]+)\.blog\d*$/i
+// A blog on fc2.com is one label under blog.fc2.com or a numbered blog{n}.fc2.com.
+const blogDomainRegex = /^blog\d*\.fc2\.com$/i
 const categoryPathRegex = /^\/blog-category-(\d+)\.html$/i
 
 const feeds = definePlatformFeeds(
@@ -22,7 +24,7 @@ const feeds = definePlatformFeeds(
     { key: 'fc2:category', template: '{scheme}://{host}/?xml&category={category}' },
     { key: 'fc2:tag', template: '{scheme}://{host}/?xml&utag={tag}' },
   ],
-  { domains: [...domains, 'fc2.com'] },
+  { domains: [...domains, blogDomainRegex] },
 )
 
 // A category page, /blog-category-{n}.html or /?cat={n}, and a tag page, /?tag={tag}, link the
@@ -98,8 +100,7 @@ export const fc2Handler: PlatformHandler = {
     ]
   },
 
-  // The table reads any host under fc2.com, such as web.fc2.com, so the page parser narrows it to
-  // a blog host first.
+  // The table strips a `www` label above a blog, so the page parser refuses that host first.
   getFeedHint: (url) => {
     if (!parseFc2Url(url)) {
       return
