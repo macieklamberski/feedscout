@@ -249,97 +249,97 @@ describe('steamHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the news key for an app news feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the news hint for an app news feed', () => {
       const value = 'https://store.steampowered.com/feeds/news/app/12345/'
-      const expected = 'steam:news'
+      const expected: DiscoverUriHint = { key: 'steam:news', label: 'News' }
 
-      expect(steamHandler.getFeedKey?.(value)).toBe(expected)
+      expect(steamHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the news key for an app news feed with the app name', () => {
+    it('should return the news hint for an app news feed with the app name', () => {
       const value = 'https://store.steampowered.com/feeds/news/app/12345/Example_Game'
-      const expected = 'steam:news'
+      const expected: DiscoverUriHint = { key: 'steam:news', label: 'News' }
 
-      expect(steamHandler.getFeedKey?.(value)).toBe(expected)
+      expect(steamHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the news key for an app news hub feed', () => {
+    it('should return the news hint for an app news hub feed', () => {
       const value = 'https://store.steampowered.com/feeds/newshub/app/12345'
-      const expected = 'steam:news'
+      const expected: DiscoverUriHint = { key: 'steam:news', label: 'News' }
 
-      expect(steamHandler.getFeedKey?.(value)).toBe(expected)
+      expect(steamHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the news key for a community game feed', () => {
+    it('should return the news hint for a community game feed', () => {
       const value = 'https://steamcommunity.com/games/12345/rss'
-      const expected = 'steam:news'
+      const expected: DiscoverUriHint = { key: 'steam:news', label: 'News' }
 
-      expect(steamHandler.getFeedKey?.(value)).toBe(expected)
+      expect(steamHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the news key for a community game feed by name', () => {
+    it('should return the news hint for a community game feed by name', () => {
       const value = 'https://steamcommunity.com/games/ExampleGame/rss'
-      const expected = 'steam:news'
+      const expected: DiscoverUriHint = { key: 'steam:news', label: 'News' }
 
-      expect(steamHandler.getFeedKey?.(value)).toBe(expected)
+      expect(steamHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the group key for a group feed', () => {
+    it('should return the group hint for a group feed', () => {
       const value = 'https://steamcommunity.com/groups/alice/rss'
-      const expected = 'steam:group'
+      const expected: DiscoverUriHint = { key: 'steam:group', label: 'Group' }
 
-      expect(steamHandler.getFeedKey?.(value)).toBe(expected)
+      expect(steamHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the global news key for the global news feed', () => {
+    it('should return the global news hint for the global news feed', () => {
       const value = 'https://store.steampowered.com/feeds/news.xml'
-      const expected = 'steam:news-global'
+      const expected: DiscoverUriHint = { key: 'steam:news-global', label: 'News (global)' }
 
-      expect(steamHandler.getFeedKey?.(value)).toBe(expected)
+      expect(steamHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the daily deals key for the daily deals feed', () => {
+    it('should return the daily deals hint for the daily deals feed', () => {
       const value = 'https://store.steampowered.com/feeds/daily_deals.xml'
-      const expected = 'steam:daily-deals'
+      const expected: DiscoverUriHint = { key: 'steam:daily-deals', label: 'Daily deals' }
 
-      expect(steamHandler.getFeedKey?.(value)).toBe(expected)
+      expect(steamHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a word in place of the app id', () => {
       const value = 'https://store.steampowered.com/feeds/news/app/example/'
 
-      expect(steamHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(steamHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a word in place of the news hub app id', () => {
       const value = 'https://store.steampowered.com/feeds/newshub/app/example'
 
-      expect(steamHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(steamHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a word in place of the app id on a www store host', () => {
       const value = 'https://www.store.steampowered.com/feeds/news/app/example/'
 
-      expect(steamHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(steamHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an app page', () => {
       const value = 'https://store.steampowered.com/app/12345/'
 
-      expect(steamHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(steamHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a group page', () => {
       const value = 'https://steamcommunity.com/groups/alice'
 
-      expect(steamHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(steamHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/feeds/news/app/12345/'
 
-      expect(steamHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(steamHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

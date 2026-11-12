@@ -88,14 +88,18 @@ export const steamHandler: PlatformHandler = {
 
   // A store app id is digits, and /feeds/news/app/{word}/ answers 404. The community feed also
   // takes a game's name, as /games/CSGO/rss.
-  getFeedKey: (url) => {
-    const key = feeds.getFeedKey(url)
+  getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
     const [feedsSegment, , , appId] = getPathSegments(url)
 
-    if (key === 'steam:news' && isAnyOf(feedsSegment, 'feeds') && !digitsRegex.test(appId ?? '')) {
+    if (
+      hint?.key === 'steam:news' &&
+      isAnyOf(feedsSegment, 'feeds') &&
+      !digitsRegex.test(appId ?? '')
+    ) {
       return
     }
 
-    return key
+    return hint
   },
 }
