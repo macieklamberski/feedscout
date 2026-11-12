@@ -1,12 +1,34 @@
 import { getPathSegments, parseUrl } from 'trousse'
+import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker, letterPairsRegex } from '../../common/utils.js'
+import { getTenantSubdomain, hasMarker, letterPairsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type InstatusUrl = { kind: 'status'; language?: string }
 
 const pageMarkers = ['custom-html-above-header', 'custom-html-below-footer']
+const domains = ['instatus.com']
+
+// A status page on its own domain is known only by its markers, so its feeds are built here but
+// not claimed. A translation's row comes first, so a page in one builds it.
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'instatus:history',
+      template: '{scheme}://{host}/{language}/history.rss',
+      format: 'rss',
+    },
+    { key: 'instatus:history', template: '{scheme}://{host}/history.rss', format: 'rss' },
+    {
+      key: 'instatus:history',
+      template: '{scheme}://{host}/{language}/history.atom',
+      format: 'atom',
+    },
+    { key: 'instatus:history', template: '{scheme}://{host}/history.atom', format: 'atom' },
+  ],
+  { domains },
+)
 
 export const isInstatusHtml = (content: string): boolean => {
   return pageMarkers.every((marker) => content.includes(marker))
@@ -44,18 +66,33 @@ export const instatusHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseInstatusUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const { language } = parsed
-    const base = language ? `${origin}/${language}` : origin
+    const params: PlatformFeedParams = {}
+
+    if (parsed.language) {
+      params.language = parsed.language
+    }
 
     return [
-      { uri: `${base}/history.rss`, hint: composeHint('instatus:history', 'rss') },
-      { uri: `${base}/history.atom`, hint: composeHint('instatus:history', 'atom') },
+      pageFeeds.getFeedEntry('instatus:history', params, 'rss'),
+      pageFeeds.getFeedEntry('instatus:history', params, 'atom'),
     ]
+  },
+
+  // The table reads any host under the domains, so only a page's own subdomain is claimed, not the
+  // apex, www or a nested host. A segment before the feed is a translation only in its own form.
+  getFeedHint: (url) => {
+    const [language, feed] = getPathSegments(url)
+
+    if (!getTenantSubdomain(url, domains) || (feed && !letterPairsRegex.test(language))) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }
