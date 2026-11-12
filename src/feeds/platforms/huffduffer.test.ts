@@ -232,146 +232,193 @@ describe('huffdufferHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the huffduffs key for a user feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the huffduffs hint for a user feed', () => {
       const value = 'https://huffduffer.com/joeross/rss'
-      const expected = 'huffduffer:huffduffs'
+      const expected: DiscoverUriHint = {
+        key: 'huffduffer:huffduffs',
+        label: 'Huffduffs',
+        format: 'rss',
+      }
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBe(expected)
+      expect(huffdufferHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the huffduffs key for a user feed with a capitalized username', () => {
+    it('should return the huffduffs hint for a user feed with a capitalized username', () => {
       const value = 'https://huffduffer.com/BlueTyson/rss'
-      const expected = 'huffduffer:huffduffs'
+      const expected: DiscoverUriHint = {
+        key: 'huffduffer:huffduffs',
+        label: 'Huffduffs',
+        format: 'rss',
+      }
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBe(expected)
+      expect(huffdufferHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the huffduffs key for a user feed on the www host over http', () => {
+    it('should return the huffduffs hint for a user feed on the www host over http', () => {
       const value = 'http://www.huffduffer.com/joeross/rss'
-      const expected = 'huffduffer:huffduffs'
+      const expected: DiscoverUriHint = {
+        key: 'huffduffer:huffduffs',
+        label: 'Huffduffs',
+        format: 'rss',
+      }
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBe(expected)
+      expect(huffdufferHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the huffduffs key for a user atom feed', () => {
+    it('should return the huffduffs hint for a user atom feed', () => {
       const value = 'https://huffduffer.com/plindberg/atom'
-      const expected = 'huffduffer:huffduffs'
+      const expected: DiscoverUriHint = {
+        key: 'huffduffer:huffduffs',
+        label: 'Huffduffs',
+        format: 'atom',
+      }
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBe(expected)
+      expect(huffdufferHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the huffduffs key for a user json feed', () => {
+    it('should return the huffduffs hint for a user json feed', () => {
       const value = 'https://huffduffer.com/psd/json'
-      const expected = 'huffduffer:huffduffs'
+      const expected: DiscoverUriHint = {
+        key: 'huffduffer:huffduffs',
+        label: 'Huffduffs',
+        format: 'json',
+      }
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBe(expected)
+      expect(huffdufferHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the related key for a related feed', () => {
+    it('should return the related hint for a related feed', () => {
       const value = 'https://huffduffer.com/adactio/12345/related/rss'
-      const expected = 'huffduffer:related'
+      const expected: DiscoverUriHint = { key: 'huffduffer:related', label: 'Possibly related' }
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBe(expected)
+      expect(huffdufferHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the new key for the new rss feed', () => {
+    it('should return the new hint for the new rss feed', () => {
       const value = 'https://huffduffer.com/new/rss'
-      const expected = 'huffduffer:new'
+      const expected: DiscoverUriHint = {
+        key: 'huffduffer:new',
+        label: 'New huffduffs',
+        format: 'rss',
+      }
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBe(expected)
+      expect(huffdufferHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the new key for the new atom feed', () => {
+    it('should return the new hint for the new atom feed', () => {
       const value = 'https://huffduffer.com/new/atom'
-      const expected = 'huffduffer:new'
+      const expected: DiscoverUriHint = {
+        key: 'huffduffer:new',
+        label: 'New huffduffs',
+        format: 'atom',
+      }
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBe(expected)
+      expect(huffdufferHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the new key for the new json feed', () => {
+    it('should return the new hint for the new json feed', () => {
       const value = 'https://huffduffer.com/new/json'
-      const expected = 'huffduffer:new'
+      const expected: DiscoverUriHint = {
+        key: 'huffduffer:new',
+        label: 'New huffduffs',
+        format: 'json',
+      }
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBe(expected)
+      expect(huffdufferHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for the search feed', () => {
       const value = 'https://huffduffer.com/search/rss?q=Edward+Dutton'
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the popular feed', () => {
       const value = 'https://huffduffer.com/popular/rss'
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the search atom feed', () => {
       const value = 'https://huffduffer.com/search/atom?q=Edward+Dutton'
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the search json feed', () => {
       const value = 'https://huffduffer.com/search/json?q=Edward+Dutton'
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the popular atom feed', () => {
       const value = 'https://huffduffer.com/popular/atom'
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the popular json feed', () => {
       const value = 'https://huffduffer.com/popular/json'
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a collective feed', () => {
       const value = 'https://huffduffer.com/adactio/collective/rss'
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a profile page', () => {
       const value = 'https://huffduffer.com/adactio'
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an episode page', () => {
       const value = 'https://huffduffer.com/adactio/12345'
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/joeross/rss'
 
-      expect(huffdufferHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://huffduffer.com/joeross/rss', { key: 'huffduffer:huffduffs', label: 'Huffduffs' }],
+      [
+        'https://huffduffer.com/joeross/rss',
+        { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'rss' },
+      ],
       [
         'https://huffduffer.com/plindberg/atom',
-        { key: 'huffduffer:huffduffs', label: 'Huffduffs' },
+        { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'atom' },
       ],
-      ['https://huffduffer.com/psd/json', { key: 'huffduffer:huffduffs', label: 'Huffduffs' }],
+      [
+        'https://huffduffer.com/psd/json',
+        { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'json' },
+      ],
       [
         'https://huffduffer.com/adactio/12345/related/rss',
         { key: 'huffduffer:related', label: 'Possibly related' },
       ],
-      ['https://huffduffer.com/new/rss', { key: 'huffduffer:new', label: 'New huffduffs' }],
-      ['https://huffduffer.com/new/atom', { key: 'huffduffer:new', label: 'New huffduffs' }],
-      ['https://huffduffer.com/new/json', { key: 'huffduffer:new', label: 'New huffduffs' }],
+      [
+        'https://huffduffer.com/new/rss',
+        { key: 'huffduffer:new', label: 'New huffduffs', format: 'rss' },
+      ],
+      [
+        'https://huffduffer.com/new/atom',
+        { key: 'huffduffer:new', label: 'New huffduffs', format: 'atom' },
+      ],
+      [
+        'https://huffduffer.com/new/json',
+        { key: 'huffduffer:new', label: 'New huffduffs', format: 'json' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

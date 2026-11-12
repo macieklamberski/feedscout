@@ -113,7 +113,7 @@ export const huffdufferHandler: PlatformHandler = {
     return [relatedFeed, huffduffsFeed]
   },
 
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const [route] = getPathSegments(url)
 
     // `/search/rss` and `/popular/rss` are site-wide feeds, not those of a user named so.
@@ -121,6 +121,6 @@ export const huffdufferHandler: PlatformHandler = {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
