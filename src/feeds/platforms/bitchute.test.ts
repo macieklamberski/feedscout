@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { BitchuteUrl } from './bitchute.js'
 import { bitchuteHandler, parseBitchuteUrl } from './bitchute.js'
 
@@ -74,6 +77,58 @@ describe('bitchuteHandler', () => {
 
     it('should return an empty array when the URL names no channel', () => {
       expect(bitchuteHandler.resolve('https://www.bitchute.com/video/abc123/')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the channel key for a channel feed', () => {
+      const value = 'https://www.bitchute.com/feeds/rss/channel/uagSShqJKtfp/'
+      const expected = 'bitchute:channel'
+
+      expect(bitchuteHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the channel key for a channel feed named by a slug', () => {
+      const value = 'https://www.bitchute.com/feeds/rss/channel/clemens/'
+      const expected = 'bitchute:channel'
+
+      expect(bitchuteHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a channel page', () => {
+      const value = 'https://www.bitchute.com/channel/clemens/'
+
+      expect(bitchuteHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a channel feed path on another host', () => {
+      const value = 'https://example.com/feeds/rss/channel/clemens/'
+
+      expect(bitchuteHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://www.bitchute.com/feeds/rss/channel/uagSShqJKtfp/',
+        { key: 'bitchute:channel', label: 'Channel' },
+      ],
+      [
+        'https://www.bitchute.com/feeds/rss/channel/clemens/',
+        { key: 'bitchute:channel', label: 'Channel' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [bitchuteHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

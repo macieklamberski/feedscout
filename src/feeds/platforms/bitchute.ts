@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -8,6 +8,10 @@ import { composeHint } from '../../common/utils.js'
 export type BitchuteUrl = { kind: 'channel'; channel: string }
 
 const hosts = ['bitchute.com', 'www.bitchute.com']
+
+const feeds = definePlatformFeeds([
+  { key: 'bitchute:channel', template: 'https://www.bitchute.com/feeds/rss/channel/{channel}/' },
+])
 
 export const parseBitchuteUrl = (url: string): BitchuteUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -35,11 +39,8 @@ export const bitchuteHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://www.bitchute.com/feeds/rss/channel/${parsed.channel}/`,
-        hint: composeHint('bitchute:channel'),
-      },
-    ]
+    return [feeds.getFeedEntry('bitchute:channel', { channel: parsed.channel })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
