@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   getRedminePage,
   isRedmineHeaders,
@@ -710,6 +712,114 @@ describe('redmineHandler', () => {
       ]
 
       expect(redmineHandler.resolve(value, content)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    const feedUrls: Array<[string, DiscoverUriHint]> = [
+      ['https://example.plan.io/news.atom', { key: 'redmine:news', label: 'News' }],
+      ['https://example.plan.io/projects/acme/news.atom', { key: 'redmine:news', label: 'News' }],
+      ['https://example.plan.io/activity.atom', { key: 'redmine:activity', label: 'Activity' }],
+      [
+        'https://example.plan.io/projects/acme/activity.atom',
+        { key: 'redmine:activity', label: 'Activity' },
+      ],
+      ['https://example.plan.io/projects.atom', { key: 'redmine:projects', label: 'Projects' }],
+      ['https://example.plan.io/issues.atom', { key: 'redmine:issues', label: 'Issues' }],
+      [
+        'https://example.plan.io/projects/acme/issues.atom?set_filter=1&tracker_id=1',
+        { key: 'redmine:issues', label: 'Issues' },
+      ],
+      [
+        'https://example.plan.io/issues/12345.atom',
+        { key: 'redmine:issue', label: 'Issue updates' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/boards/2.atom',
+        { key: 'redmine:board', label: 'Forum' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/repository/main/revisions.atom',
+        { key: 'redmine:revisions', label: 'Revisions' },
+      ],
+    ]
+
+    it.each(feedUrls)('should return the hint for %s', (value, expected) => {
+      expect(redmineHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a page on a site subdomain', () => {
+      const value = 'https://example.plan.io/projects/acme/news'
+
+      expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://example.com/news.atom'
+
+      expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://plan.io/news.atom'
+
+      expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www', () => {
+      const value = 'https://www.plan.io/news.atom'
+
+      expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://www.example.plan.io/news.atom'
+
+      expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriEntry['hint']]> = [
+      ['https://example.plan.io/news.atom', { key: 'redmine:news', label: 'News' }],
+      ['https://example.plan.io/projects/acme/news.atom', { key: 'redmine:news', label: 'News' }],
+      ['https://example.plan.io/activity.atom', { key: 'redmine:activity', label: 'Activity' }],
+      [
+        'https://example.plan.io/projects/acme/issues.atom',
+        { key: 'redmine:issues', label: 'Issues' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/activity.atom',
+        { key: 'redmine:activity', label: 'Activity' },
+      ],
+      ['https://example.plan.io/projects.atom', { key: 'redmine:projects', label: 'Projects' }],
+      [
+        'https://example.plan.io/issues.atom?query_id=17&sort=updated_on%3Adesc',
+        { key: 'redmine:issues', label: 'Issues' },
+      ],
+      [
+        'https://example.plan.io/issues/12345.atom',
+        { key: 'redmine:issue', label: 'Issue updates' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/boards/2.atom',
+        { key: 'redmine:board', label: 'Forum' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/repository/main/revisions.atom',
+        { key: 'redmine:revisions', label: 'Revisions' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [redmineHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
