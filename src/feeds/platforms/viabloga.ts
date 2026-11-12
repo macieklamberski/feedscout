@@ -11,16 +11,12 @@ const domains = ['viabloga.com']
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'viabloga:posts', template: '{scheme}://{blog}.{domain}/index.xml', format: 'rss' },
-    { key: 'viabloga:posts', template: '{scheme}://{blog}.{domain}/atom.xml', format: 'atom' },
-    { key: 'viabloga:posts', template: '{scheme}://{blog}.{domain}/atom', format: 'atom' },
-    { key: 'viabloga:posts', template: '{scheme}://{blog}.{domain}/index.rdf', format: 'rdf' },
-    {
-      key: 'viabloga:comments',
-      template: '{scheme}://{blog}.{domain}/comments.xml',
-      format: 'rss',
-    },
-    { key: 'viabloga:wiki', template: '{scheme}://{blog}.{domain}/wiki.rdf', format: 'rdf' },
+    { key: 'viabloga:posts', template: '{scheme}://{host}/index.xml', format: 'rss' },
+    { key: 'viabloga:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
+    { key: 'viabloga:posts', template: '{scheme}://{host}/atom', format: 'atom' },
+    { key: 'viabloga:posts', template: '{scheme}://{host}/index.rdf', format: 'rdf' },
+    { key: 'viabloga:comments', template: '{scheme}://{host}/comments.xml', format: 'rss' },
+    { key: 'viabloga:wiki', template: '{scheme}://{host}/wiki.rdf', format: 'rdf' },
   ],
   { domains },
 )
@@ -39,19 +35,18 @@ export const viablogaHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const blog = getTenantSubdomain(url, domains)
     const page = feeds.forUrl(url)
 
-    if (!blog || !page) {
+    if (!parseViablogaUrl(url) || !page) {
       return []
     }
 
     return [
-      page.getFeedEntry('viabloga:posts', { blog }, 'rss'),
-      page.getFeedEntry('viabloga:posts', { blog }, 'atom'),
-      page.getFeedEntry('viabloga:posts', { blog }, 'rdf'),
-      page.getFeedEntry('viabloga:comments', { blog }, 'rss'),
-      page.getFeedEntry('viabloga:wiki', { blog }, 'rdf'),
+      page.getFeedEntry('viabloga:posts', {}, 'rss'),
+      page.getFeedEntry('viabloga:posts', {}, 'atom'),
+      page.getFeedEntry('viabloga:posts', {}, 'rdf'),
+      page.getFeedEntry('viabloga:comments', {}, 'rss'),
+      page.getFeedEntry('viabloga:wiki', {}, 'rdf'),
     ]
   },
 
