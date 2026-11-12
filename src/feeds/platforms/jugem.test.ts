@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { isJugemHtml, type JugemUrl, jugemHandler, parseJugemUrl } from './jugem.js'
 
 const faviconHtml = `
@@ -132,6 +134,80 @@ describe('jugemHandler', () => {
       ]
 
       expect(jugemHandler.resolve(value, faviconHtml)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for an RSS 1.0 feed', () => {
+      const value = 'https://alice.jugem.jp/?mode=rss'
+      const expected = 'jugem:posts'
+
+      expect(jugemHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an Atom feed', () => {
+      const value = 'https://alice.jugem.jp/?mode=atom'
+      const expected = 'jugem:posts'
+
+      expect(jugemHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an http feed on jugem.cc', () => {
+      const value = 'http://alice.jugem.cc/?mode=rss'
+      const expected = 'jugem:posts'
+
+      expect(jugemHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a post page', () => {
+      const value = 'https://alice.jugem.jp/?eid=123'
+
+      expect(jugemHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed query on the apex portal', () => {
+      const value = 'https://jugem.jp/?mode=rss'
+
+      expect(jugemHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed query on the www portal', () => {
+      const value = 'https://www.jugem.jp/?mode=atom'
+
+      expect(jugemHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed query on a nested subdomain', () => {
+      const value = 'https://blog.alice.jugem.jp/?mode=rss'
+
+      expect(jugemHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'http://blog.example.com/?mode=rss'
+
+      expect(jugemHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<string> = [
+      'https://alice.jugem.jp/?mode=rss',
+      'http://alice.jugem.jp/?mode=atom',
+      'https://alice.jugem.cc/?mode=atom',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [jugemHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'jugem:posts', label: 'Posts' } },
+      ]
+
+      expect(result).toEqual(expected)
     })
   })
 })
