@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { hasQueryParam, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
@@ -127,5 +127,14 @@ export const lobstersHandler: PlatformHandler = {
     return [feeds.getFeedEntry('lobsters:stories'), feeds.getFeedEntry('lobsters:comments')]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  // A token feed is the reader's private feed, filtered by their settings, not the site feed.
+  getFeedKey: (url) => {
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl || hasQueryParam(parsedUrl, 'token')) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
+  },
 }

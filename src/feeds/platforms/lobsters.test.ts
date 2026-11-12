@@ -355,14 +355,6 @@ describe('lobstersHandler', () => {
       expect(lobstersHandler.getFeedKey?.(value)).toBe(expected)
     })
 
-    it('should return the stories key for the site feed with a token', () => {
-      const value =
-        'https://lobste.rs/rss?token=0hovl39ZKFZbNNkhlZMBJwh43PhM7FbCque1ctVxn4yMpNCurENnjnKFpzCi'
-      const expected = 'lobsters:stories'
-
-      expect(lobstersHandler.getFeedKey?.(value)).toBe(expected)
-    })
-
     it('should return the top key for a top feed with its period', () => {
       const value = 'https://lobste.rs/top/1w/rss'
       const expected = 'lobsters:top'
@@ -418,6 +410,13 @@ describe('lobstersHandler', () => {
 
     it('should return undefined for a story page', () => {
       const value = 'https://lobste.rs/s/abc123/some_story'
+
+      expect(lobstersHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a private token feed', () => {
+      const value =
+        'https://lobste.rs/rss?token=0hovl39ZKFZbNNkhlZMBJwh43PhM7FbCque1ctVxn4yMpNCurENnjnKFpzCi'
 
       expect(lobstersHandler.getFeedKey?.(value)).toBeUndefined()
     })
