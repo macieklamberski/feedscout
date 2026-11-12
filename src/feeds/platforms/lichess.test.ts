@@ -216,78 +216,78 @@ describe('lichessHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the blog key for a user blog feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the blog hint for a user blog feed', () => {
       const value = 'https://lichess.org/@/A-T_A-S/blog.atom'
-      const expected = 'lichess:blog'
+      const expected: DiscoverUriHint = { key: 'lichess:blog', label: 'Blog' }
 
-      expect(lichessHandler.getFeedKey?.(value)).toBe(expected)
+      expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for the official blog feed', () => {
+    it('should return the blog hint for the official blog feed', () => {
       const value = 'https://lichess.org/@/Lichess/blog.atom'
-      const expected = 'lichess:blog'
+      const expected: DiscoverUriHint = { key: 'lichess:blog', label: 'Blog' }
 
-      expect(lichessHandler.getFeedKey?.(value)).toBe(expected)
+      expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for the official blog feed at its short path', () => {
+    it('should return the blog hint for the official blog feed at its short path', () => {
       const value = 'https://lichess.org/blog.atom'
-      const expected = 'lichess:blog'
+      const expected: DiscoverUriHint = { key: 'lichess:blog', label: 'Blog' }
 
-      expect(lichessHandler.getFeedKey?.(value)).toBe(expected)
+      expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the community key for a language community feed', () => {
+    it('should return the community hint for a language community feed', () => {
       const value = 'https://lichess.org/blog/community.atom?lang=de'
-      const expected = 'lichess:community'
+      const expected: DiscoverUriHint = { key: 'lichess:community', label: 'Community blogs' }
 
-      expect(lichessHandler.getFeedKey?.(value)).toBe(expected)
+      expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the community key for the community feed', () => {
+    it('should return the community hint for the community feed', () => {
       const value = 'https://lichess.org/blog/community.atom'
-      const expected = 'lichess:community'
+      const expected: DiscoverUriHint = { key: 'lichess:community', label: 'Community blogs' }
 
-      expect(lichessHandler.getFeedKey?.(value)).toBe(expected)
+      expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the updates key for the updates feed', () => {
+    it('should return the updates hint for the updates feed', () => {
       const value = 'https://lichess.org/feed.atom'
-      const expected = 'lichess:updates'
+      const expected: DiscoverUriHint = { key: 'lichess:updates', label: 'Updates' }
 
-      expect(lichessHandler.getFeedKey?.(value)).toBe(expected)
+      expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a feed on the www host', () => {
+    it('should return the blog hint for a feed on the www host', () => {
       const value = 'https://www.lichess.org/@/ambrona/blog.atom'
-      const expected = 'lichess:blog'
+      const expected: DiscoverUriHint = { key: 'lichess:blog', label: 'Blog' }
 
-      expect(lichessHandler.getFeedKey?.(value)).toBe(expected)
+      expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a user blog page', () => {
       const value = 'https://lichess.org/@/ambrona/blog'
 
-      expect(lichessHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(lichessHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a community blog page', () => {
       const value = 'https://lichess.org/de/blog/community'
 
-      expect(lichessHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(lichessHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a profile page', () => {
       const value = 'https://lichess.org/@/ambrona'
 
-      expect(lichessHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(lichessHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a blog feed on another host', () => {
       const value = 'https://example.com/@/ambrona/blog.atom'
 
-      expect(lichessHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(lichessHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

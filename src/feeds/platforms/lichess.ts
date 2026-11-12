@@ -86,5 +86,5 @@ export const lichessHandler: PlatformHandler = {
     return [feeds.getFeedEntry('lichess:updates')]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
