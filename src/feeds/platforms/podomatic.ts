@@ -1,6 +1,7 @@
 import { isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
+import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -10,6 +11,11 @@ const domains = ['podomatic.com']
 const hosts = ['podomatic.com', 'www.podomatic.com']
 
 const directoryPathRegex = /^\/podcasts\/([^/]+)/i
+
+const feeds = definePlatformFeeds([
+  { key: 'podomatic:show', template: 'https://{show}.podomatic.com/rss2.xml' },
+  { key: 'podomatic:show', template: 'https://{show}.podomatic.com/archive/rss2.xml' },
+])
 
 export const parsePodomaticUrl = (url: string): PodomaticUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -49,12 +55,14 @@ export const podomaticHandler: PlatformHandler = {
       return []
     }
 
-    const showOrigin = getHostOrigin(`${parsed.show}.podomatic.com`)
+    const show = parsed.show.toLowerCase()
 
-    if (!showOrigin) {
+    if (!getHostOrigin(`${show}.podomatic.com`)) {
       return []
     }
 
-    return [{ uri: `${showOrigin}/rss2.xml`, hint: composeHint('podomatic:show') }]
+    return [feeds.getFeedEntry('podomatic:show', { show })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
