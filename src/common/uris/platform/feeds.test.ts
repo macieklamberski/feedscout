@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../types.js'
-import { definePlatformFeeds } from './feeds.js'
+import { definePlatformFeeds, type PlatformFeedKey } from './feeds.js'
 
 const feeds = definePlatformFeeds(
   [
@@ -11,6 +11,11 @@ const feeds = definePlatformFeeds(
       format: 'atom',
     },
     { key: 'example:board', template: 'https://www.example.com/{username}/{board}.rss' },
+    {
+      key: 'example:products',
+      template: 'https://www.example.com/{username}/products.rdf',
+      format: 'rdf',
+    },
     { key: 'example:tag', template: 'https://feeds.example.com/rss.xml?q=tag:{tag}' },
     {
       key: 'example:search',
@@ -149,6 +154,13 @@ describe('definePlatformFeeds', () => {
   describe('getFeedKey', () => {
     it('should return the key of a feed URL', () => {
       expect(feeds.getFeedKey('https://www.example.com/alice/feed.rss')).toBe('example:posts')
+    })
+
+    it('should return the key and format of a feed whose row names a format', () => {
+      const value = 'https://www.example.com/alice/products.rdf'
+      const expected: PlatformFeedKey = { key: 'example:products', format: 'rdf' }
+
+      expect(feeds.getFeedKey(value)).toEqual(expected)
     })
 
     it('should return the key of a feed with two values', () => {

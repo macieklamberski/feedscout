@@ -4,8 +4,10 @@ import type {
   DiscoverErrorContext,
   DiscoverOnErrorFn,
   DiscoverRef,
+  DiscoverUriEntry,
   FetchFn,
 } from '../../types.js'
+import { definePlatformFeeds } from './feeds.js'
 import { discoverUrisFromPlatform } from './index.js'
 import type { PlatformHandler } from './types.js'
 
@@ -20,6 +22,28 @@ const samePageUrls = [
   'https://example.com:443/page?a=1&b=2',
   'https://user:pw@example.com/page?a=1&b=2',
   'https://example.com/p%61ge?a=1&b=2',
+]
+
+const claimedFeeds = definePlatformFeeds([
+  { key: 'ocnk:products', template: 'https://example.com/{shop}/products.rdf', format: 'rdf' },
+  { key: 'youtube:videos', template: 'https://example.com/{username}/videos.xml' },
+])
+
+const claimedFeedCases: Array<[string, DiscoverUriEntry]> = [
+  [
+    'https://example.com/alice/products.rdf',
+    {
+      uri: 'https://example.com/alice/products.rdf',
+      hint: { key: 'ocnk:products', label: 'Products', format: 'rdf' },
+    },
+  ],
+  [
+    'https://example.com/alice/videos.xml',
+    {
+      uri: 'https://example.com/alice/videos.xml',
+      hint: { key: 'youtube:videos', label: 'Videos' },
+    },
+  ],
 ]
 
 describe('discoverUrisFromPlatform', () => {
@@ -53,6 +77,23 @@ describe('discoverUrisFromPlatform', () => {
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
+
+  it.each(claimedFeedCases)(
+    'should carry the format of the feed table row that claims %s',
+    async (value, expected) => {
+      const handler: PlatformHandler = {
+        match: () => false,
+        resolve: () => [],
+        getFeedKey: claimedFeeds.getFeedKey,
+      }
+      const options = {
+        baseUrl: value,
+        handlers: [handler],
+      }
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual([expected])
+    },
+  )
 
   it('should ask every handler for its feed before any match', async () => {
     const pageHandler: PlatformHandler = {

@@ -1,4 +1,11 @@
-import { isHttpUrl, type NormalizeOptions, normalizeUrl, stripWww, trimUrlValues } from 'trousse'
+import {
+  isHttpUrl,
+  isString,
+  type NormalizeOptions,
+  normalizeUrl,
+  stripWww,
+  trimUrlValues,
+} from 'trousse'
 import { reportError } from '../../discover/utils.js'
 import type {
   DiscoverInputObject,
@@ -8,6 +15,7 @@ import type {
   FetchFn,
 } from '../../types.js'
 import { composeHint } from '../../utils.js'
+import type { PlatformFeedKey } from './feeds.js'
 import type { PlatformHandler, PlatformMethodOptions } from './types.js'
 
 type PlatformPage = Omit<DiscoverInputObject, 'status'>
@@ -47,7 +55,10 @@ const orderHandlers = (handlers: Array<PlatformHandler>, url: string): Array<Pla
 }
 
 // The hint key of the handler feed the URL is, read as the URL arrived.
-export const getFeedKey = (handlers: Array<PlatformHandler>, url: string): string | undefined => {
+export const getFeedKey = (
+  handlers: Array<PlatformHandler>,
+  url: string,
+): PlatformFeedKey | undefined => {
   for (const handler of handlers) {
     try {
       const key = handler.getFeedKey?.(url)
@@ -78,8 +89,12 @@ export const discoverUrisFromPlatform = async (
   // A URL that is one of a handler's feeds is that feed, and no page parser reads it.
   const ownFeedKey = getFeedKey(handlers, baseUrl)
 
-  if (ownFeedKey) {
+  if (isString(ownFeedKey)) {
     return [{ uri: baseUrl, hint: composeHint(ownFeedKey) }]
+  }
+
+  if (ownFeedKey) {
+    return [{ uri: baseUrl, hint: composeHint(ownFeedKey.key, ownFeedKey.format) }]
   }
 
   const fetchedPageUrl = readPageUrl(baseUrl)

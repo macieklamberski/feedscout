@@ -1,5 +1,6 @@
 import type { MaybePromise } from 'trousse'
 import type { DiscoverEnrichFn, DiscoverRef, DiscoverUriEntry, FetchFn } from '../../types.js'
+import type { PlatformFeedKey } from './feeds.js'
 
 export type PlatformHandler = {
   match: (url: string, content?: string, headers?: Headers) => boolean
@@ -13,7 +14,7 @@ export type PlatformHandler = {
     fetchFn?: FetchFn,
   ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef>>
   // The hint key of the feed the URL is, when it is one of the feeds the handler builds.
-  getFeedKey?: (url: string) => string | undefined
+  getFeedKey?: (url: string) => PlatformFeedKey | undefined
 }
 
 export type PlatformMethodOptions = {

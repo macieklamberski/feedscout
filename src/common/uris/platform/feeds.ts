@@ -20,6 +20,9 @@ export type PlatformFeedTemplate = {
   format?: DiscoverUriHint['format']
 }
 
+// A feed URL read back to its row: the key, with the format when the row names one.
+export type PlatformFeedKey = string | Required<Pick<PlatformFeedTemplate, 'key' | 'format'>>
+
 export type PlatformFeedParams = Record<string, string>
 
 export type PlatformFeedTableOptions = {
@@ -40,7 +43,7 @@ export type PlatformFeedTable = {
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
   ) => DiscoverUriEntry
-  getFeedKey: (url: string) => string | undefined
+  getFeedKey: (url: string) => PlatformFeedKey | undefined
 }
 
 type CompiledTemplate = {
@@ -176,7 +179,13 @@ export const definePlatformFeeds = (
       return
     }
 
-    return bySpecificity.find((candidate) => candidate.isFeedUrl(parsedUrl))?.key
+    const template = bySpecificity.find((candidate) => candidate.isFeedUrl(parsedUrl))
+
+    if (!template?.format) {
+      return template?.key
+    }
+
+    return { key: template.key, format: template.format }
   }
 
   return { getFeedUrl, getFeedEntry, getFeedKey }
