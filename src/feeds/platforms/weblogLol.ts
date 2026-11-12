@@ -42,5 +42,5 @@ export const weblogLolHandler: PlatformHandler = {
     ]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
