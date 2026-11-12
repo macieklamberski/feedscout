@@ -240,79 +240,79 @@ describe('ucozHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    const moduleFeeds: Array<[string, string]> = [
-      ['https://example.ucoz.ru/news/rss', 'ucoz:news'],
-      ['https://example.at.ua/publ/rss', 'ucoz:publ'],
-      ['https://example.narod.ru/load/rss', 'ucoz:load'],
-      ['https://example.ucoz.net/photo/rss', 'ucoz:photo'],
-      ['https://example.ucoz.com.br/blog/rss', 'ucoz:blog'],
-      ['https://example.my1.ru/dir/rss', 'ucoz:dir'],
-      ['https://example.do.am/board/rss', 'ucoz:board'],
-      ['https://example.3dn.ru/stuff/rss', 'ucoz:stuff'],
-      ['https://example.clan.su/forum/rss', 'ucoz:forum'],
+  describe('getFeedHint', () => {
+    const moduleFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://example.ucoz.ru/news/rss', { key: 'ucoz:news', label: 'News' }],
+      ['https://example.at.ua/publ/rss', { key: 'ucoz:publ', label: 'Articles' }],
+      ['https://example.narod.ru/load/rss', { key: 'ucoz:load', label: 'Files' }],
+      ['https://example.ucoz.net/photo/rss', { key: 'ucoz:photo', label: 'Photos' }],
+      ['https://example.ucoz.com.br/blog/rss', { key: 'ucoz:blog', label: 'Blog' }],
+      ['https://example.my1.ru/dir/rss', { key: 'ucoz:dir', label: 'Site catalog' }],
+      ['https://example.do.am/board/rss', { key: 'ucoz:board', label: 'Classifieds' }],
+      ['https://example.3dn.ru/stuff/rss', { key: 'ucoz:stuff', label: 'Online games' }],
+      ['https://example.clan.su/forum/rss', { key: 'ucoz:forum', label: 'Forum' }],
     ]
 
-    it.each(moduleFeeds)('should return the module key for %s', (value, expected) => {
-      expect(ucozHandler.getFeedKey?.(value)).toBe(expected)
+    it.each(moduleFeeds)('should return the module hint for %s', (value, expected) => {
+      expect(ucozHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the forum key for the forum feed as section 0', () => {
+    it('should return the forum hint for the forum feed as section 0', () => {
       const value = 'https://example.moy.su/forum/0-0-0-37'
-      const expected = 'ucoz:forum'
+      const expected: DiscoverUriHint = { key: 'ucoz:forum', label: 'Forum' }
 
-      expect(ucozHandler.getFeedKey?.(value)).toBe(expected)
+      expect(ucozHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the forum section key for a section feed', () => {
+    it('should return the forum section hint for a section feed', () => {
       const value = 'https://example.ucoz.ru/forum/12-0-0-37'
-      const expected = 'ucoz:forum-section'
+      const expected: DiscoverUriHint = { key: 'ucoz:forum-section', label: 'Forum section' }
 
-      expect(ucozHandler.getFeedKey?.(value)).toBe(expected)
+      expect(ucozHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the module key for a feed on the www host of a site', () => {
+    it('should return the module hint for a feed on the www host of a site', () => {
       const value = 'http://www.example.ucoz.ru/load/rss'
-      const expected = 'ucoz:load'
+      const expected: DiscoverUriHint = { key: 'ucoz:load', label: 'Files' }
 
-      expect(ucozHandler.getFeedKey?.(value)).toBe(expected)
+      expect(ucozHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the module key for a feed with a trailing slash', () => {
+    it('should return the module hint for a feed with a trailing slash', () => {
       const value = 'https://example.ucoz.ru/news/rss/'
-      const expected = 'ucoz:news'
+      const expected: DiscoverUriHint = { key: 'ucoz:news', label: 'News' }
 
-      expect(ucozHandler.getFeedKey?.(value)).toBe(expected)
+      expect(ucozHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a module page', () => {
       const value = 'https://example.ucoz.ru/news/'
 
-      expect(ucozHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ucozHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the feed path of an unknown module', () => {
       const value = 'https://example.ucoz.ru/gb/rss'
 
-      expect(ucozHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ucozHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the uCoz apex', () => {
       const value = 'https://ucoz.ru/news/rss'
 
-      expect(ucozHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ucozHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://forum.example.ucoz.ru/news/rss'
 
-      expect(ucozHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ucozHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the news feed of a custom domain', () => {
       const value = 'https://example.com/news/rss'
 
-      expect(ucozHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ucozHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

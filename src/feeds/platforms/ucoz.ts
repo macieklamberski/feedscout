@@ -155,5 +155,5 @@ export const ucozHandler: PlatformHandler = {
     return [feeds.getFeedEntry('ucoz:news', params)]
   },
 
-  getFeedKey: tenantFeeds.getFeedKey,
+  getFeedHint: tenantFeeds.getFeedHint,
 }
