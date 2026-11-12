@@ -176,5 +176,5 @@ export const goopeHandler: PlatformHandler = {
     return [news]
   },
 
-  getFeedKey: freeSiteFeeds.getFeedKey,
+  getFeedHint: freeSiteFeeds.getFeedHint,
 }

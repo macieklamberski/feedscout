@@ -227,64 +227,76 @@ describe('goopeHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the news key for the news feed of a free site', () => {
       const value = 'https://r.goope.jp/example/feed.rss'
-      const expected = 'goope:news'
+      const expected: DiscoverUriHint = { key: 'goope:news', label: 'News', format: 'rdf' }
 
-      expect(goopeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(goopeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the news key for the news feed over http', () => {
       const value = 'http://r.goope.jp/example/feed.rss'
-      const expected = 'goope:news'
+      const expected: DiscoverUriHint = { key: 'goope:news', label: 'News', format: 'rdf' }
 
-      expect(goopeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(goopeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the news key for the news feed under a template path', () => {
       const value = 'https://r.goope.jp/example/t_123456/feed.rss'
-      const expected = 'goope:news'
+      const expected: DiscoverUriHint = { key: 'goope:news', label: 'News', format: 'rdf' }
 
-      expect(goopeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(goopeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the member news key for the member news feed', () => {
       const value = 'https://r.goope.jp/example/shokokai/member/feed.rss'
-      const expected = 'goope:member-news'
+      const expected: DiscoverUriHint = {
+        key: 'goope:member-news',
+        label: 'Member news',
+        format: 'rdf',
+      }
 
-      expect(goopeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(goopeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the member news key for the member news feed under a template path', () => {
       const value = 'https://r.goope.jp/example/t_123456/shokokai/member/feed.rss'
-      const expected = 'goope:member-news'
+      const expected: DiscoverUriHint = {
+        key: 'goope:member-news',
+        label: 'Member news',
+        format: 'rdf',
+      }
 
-      expect(goopeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(goopeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a page of a free site', () => {
       const value = 'https://r.goope.jp/example/info/1234567'
 
-      expect(goopeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(goopeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a member news path with no site in front', () => {
       const value = 'https://r.goope.jp/shokokai/member/feed.rss'
 
-      expect(goopeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(goopeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the news feed of a custom domain', () => {
       const value = 'https://example.com/feed.rss'
 
-      expect(goopeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(goopeHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
-    const newsHint: DiscoverUriHint = { key: 'goope:news', label: 'News' }
-    const memberNewsHint: DiscoverUriHint = { key: 'goope:member-news', label: 'Member news' }
+    const newsHint: DiscoverUriHint = { key: 'goope:news', label: 'News', format: 'rdf' }
+    const memberNewsHint: DiscoverUriHint = {
+      key: 'goope:member-news',
+      label: 'Member news',
+      format: 'rdf',
+    }
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://r.goope.jp/example/feed.rss/', newsHint],
       ['https://r.goope.jp/example/t_123456/feed.rss/', newsHint],
