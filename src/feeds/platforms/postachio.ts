@@ -1,11 +1,16 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type PostachioUrl = { kind: 'site'; subdomain: string }
 
 const domains = ['postach.io']
+
+const feeds = definePlatformFeeds([
+  { key: 'postachio:posts', template: 'https://{subdomain}.postach.io/feed.xml' },
+])
 
 export const parsePostachioUrl = (url: string): PostachioUrl | undefined => {
   const subdomain = getTenantSubdomain(url, domains)
@@ -29,11 +34,8 @@ export const postachioHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://${parsed.subdomain}.postach.io/feed.xml`,
-        hint: composeHint('postachio:posts'),
-      },
-    ]
+    return [feeds.getFeedEntry('postachio:posts', { subdomain: parsed.subdomain })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
