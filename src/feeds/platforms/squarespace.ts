@@ -1,36 +1,129 @@
-import { getPathSegments } from 'trousse'
+import { getPathSegments, getQueryParam, isAnyOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type SquarespaceUrl = { kind: 'collection'; collection: string }
+export type SquarespaceUrl =
+  | { kind: 'collection'; collection: string }
+  | { kind: 'category'; collection: string; category: string }
+  | { kind: 'tag'; collection: string; tag: string }
 
 const domains = ['squarespace.com']
 
 const squarespaceRegex = /squarespace/i
 
 const feeds = definePlatformFeeds(
-  [{ key: 'squarespace:collection', template: '{scheme}://{host}/{collection}?format=rss' }],
+  [
+    { key: 'squarespace:collection', template: '{scheme}://{host}/{collection}?format=rss' },
+    {
+      key: 'squarespace:category',
+      template: '{scheme}://{host}/{collection}?category={category}&format=rss',
+    },
+    { key: 'squarespace:tag', template: '{scheme}://{host}/{collection}?tag={tag}&format=rss' },
+  ],
   { domains },
 )
 
 // A site on its own domain is known only by its marker, so only a feed on a squarespace.com site
-// is claimed.
+// is claimed. A Squarespace 5 site serves the `.xml` feeds, redirects them from https to http with
+// a jsessionid, and answers `?format=rss` with a page.
 const ownFeeds = definePlatformFeeds(
   [
     {
       key: 'squarespace:collection',
       template: '{scheme}://{site}.{domain}/{collection}?format=rss',
     },
+    { key: 'squarespace:collection', template: '{scheme}://{site}.{domain}/?format=rss' },
+    {
+      key: 'squarespace:collection',
+      template: '{scheme}://{site}.{domain}/{parent}/{collection}?format=rss',
+    },
+    { key: 'squarespace:collection', template: '{scheme}://{site}.{domain}/{collection}/rss.xml' },
+    {
+      key: 'squarespace:collection',
+      template: '{scheme}://{site}.{domain}/{collection}/rss.xml;jsessionid={session}',
+    },
+    {
+      key: 'squarespace:collection',
+      template: '{scheme}://{site}.{domain}/{collection}/atom.xml',
+      format: 'atom',
+    },
+    {
+      key: 'squarespace:collection',
+      template: '{scheme}://{site}.{domain}/{collection}/atom.xml;jsessionid={session}',
+      format: 'atom',
+    },
+    {
+      key: 'squarespace:collection',
+      template: '{scheme}://{site}.{domain}/{collection}/rdf.xml',
+      format: 'rdf',
+    },
+    {
+      key: 'squarespace:collection',
+      template: '{scheme}://{site}.{domain}/{collection}/rdf.xml;jsessionid={session}',
+      format: 'rdf',
+    },
     {
       key: 'squarespace:category',
       template: '{scheme}://{site}.{domain}/{collection}?category={category}&format=rss',
     },
     {
+      key: 'squarespace:category',
+      template: '{scheme}://{site}.{domain}/?category={category}&format=rss',
+    },
+    {
+      key: 'squarespace:category',
+      template: '{scheme}://{site}.{domain}/{collection}/category/{category}?format=rss',
+    },
+    {
+      key: 'squarespace:category',
+      template: '{scheme}://{site}.{domain}/{collection}/rss.xml?categoryId={categoryId}',
+    },
+    {
+      key: 'squarespace:category',
+      template:
+        '{scheme}://{site}.{domain}/{collection}/rss.xml;jsessionid={session}?categoryId={categoryId}',
+    },
+    {
+      key: 'squarespace:category',
+      template: '{scheme}://{site}.{domain}/{collection}/atom.xml?categoryId={categoryId}',
+      format: 'atom',
+    },
+    {
+      key: 'squarespace:category',
+      template:
+        '{scheme}://{site}.{domain}/{collection}/atom.xml;jsessionid={session}?categoryId={categoryId}',
+      format: 'atom',
+    },
+    {
+      key: 'squarespace:category',
+      template: '{scheme}://{site}.{domain}/{collection}/rdf.xml?categoryId={categoryId}',
+      format: 'rdf',
+    },
+    {
+      key: 'squarespace:category',
+      template:
+        '{scheme}://{site}.{domain}/{collection}/rdf.xml;jsessionid={session}?categoryId={categoryId}',
+      format: 'rdf',
+    },
+    {
       key: 'squarespace:tag',
       template: '{scheme}://{site}.{domain}/{collection}?tag={tag}&format=rss',
+    },
+    { key: 'squarespace:tag', template: '{scheme}://{site}.{domain}/?tag={tag}&format=rss' },
+    {
+      key: 'squarespace:tag',
+      template: '{scheme}://{site}.{domain}/{collection}/tag/{tag}?format=rss',
+    },
+    {
+      key: 'squarespace:comments',
+      template: '{scheme}://{site}.{domain}/{collection}/rss-comments.xml',
+    },
+    {
+      key: 'squarespace:comments',
+      template: '{scheme}://{site}.{domain}/{collection}/rss-comments.xml;jsessionid={session}',
     },
   ],
   { domains },
@@ -40,11 +133,30 @@ export const isSquarespaceHeaders = (headers: Headers): boolean => {
   return squarespaceRegex.test(headers.get('server') ?? '')
 }
 
+// A category or tag page filters its collection, by path or by query.
 export const parseSquarespaceUrl = (url: string): SquarespaceUrl | undefined => {
-  const [collection] = getPathSegments(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const [collection, route, value] = getPathSegments(parsedUrl)
 
   if (!collection) {
     return
+  }
+
+  const category = isAnyOf(route, 'category') ? value : getQueryParam(parsedUrl, 'category')
+
+  if (category) {
+    return { kind: 'category', collection, category }
+  }
+
+  const tag = isAnyOf(route, 'tag') ? value : getQueryParam(parsedUrl, 'tag')
+
+  if (tag) {
+    return { kind: 'tag', collection, tag }
   }
 
   return { kind: 'collection', collection }
@@ -67,7 +179,23 @@ export const squarespaceHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('squarespace:collection', { collection: parsed.collection })]
+    const collectionFeed = page.getFeedEntry('squarespace:collection', {
+      collection: parsed.collection,
+    })
+
+    if (parsed.kind === 'category') {
+      const params = { collection: parsed.collection, category: parsed.category }
+
+      return [page.getFeedEntry('squarespace:category', params), collectionFeed]
+    }
+
+    if (parsed.kind === 'tag') {
+      const params = { collection: parsed.collection, tag: parsed.tag }
+
+      return [page.getFeedEntry('squarespace:tag', params), collectionFeed]
+    }
+
+    return [collectionFeed]
   },
 
   getFeedHint: ownFeeds.getFeedHint,

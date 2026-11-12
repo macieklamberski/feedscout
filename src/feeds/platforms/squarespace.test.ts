@@ -39,6 +39,38 @@ describe('parseSquarespaceUrl', () => {
     expect(parseSquarespaceUrl('https://site.example/blog/first-post')).toEqual(expected)
   })
 
+  it('should return the category of a category page', () => {
+    const value = 'https://site.example/blog/category/News'
+    const expected: SquarespaceUrl = { kind: 'category', collection: 'blog', category: 'News' }
+
+    expect(parseSquarespaceUrl(value)).toEqual(expected)
+  })
+
+  it('should return the category of a collection page filtered by query', () => {
+    const value = 'https://site.example/blog?category=Bible+Talks'
+    const expected: SquarespaceUrl = {
+      kind: 'category',
+      collection: 'blog',
+      category: 'Bible Talks',
+    }
+
+    expect(parseSquarespaceUrl(value)).toEqual(expected)
+  })
+
+  it('should return the tag of a tag page', () => {
+    const value = 'https://site.example/blog/tag/podcast'
+    const expected: SquarespaceUrl = { kind: 'tag', collection: 'blog', tag: 'podcast' }
+
+    expect(parseSquarespaceUrl(value)).toEqual(expected)
+  })
+
+  it('should return the tag of a collection page filtered by query', () => {
+    const value = 'https://site.example/blog?tag=podcast'
+    const expected: SquarespaceUrl = { kind: 'tag', collection: 'blog', tag: 'podcast' }
+
+    expect(parseSquarespaceUrl(value)).toEqual(expected)
+  })
+
   it('should return undefined for the root', () => {
     expect(parseSquarespaceUrl('https://site.example/')).toBeUndefined()
   })
@@ -127,9 +159,82 @@ describe('squarespaceHandler', () => {
 
       expect(squarespaceHandler.resolve(value)).toEqual(expected)
     })
+    it('should return the category and collection feeds for a category page', () => {
+      const value = 'https://example.com/blog/category/News'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/blog?category=News&format=rss',
+          hint: { key: 'squarespace:category', label: 'Category' },
+        },
+        {
+          uri: 'https://example.com/blog?format=rss',
+          hint: { key: 'squarespace:collection', label: 'Collection' },
+        },
+      ]
+
+      expect(squarespaceHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the tag and collection feeds for a tag page', () => {
+      const value = 'https://alice.squarespace.com/blog?tag=podcast'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.squarespace.com/blog?tag=podcast&format=rss',
+          hint: { key: 'squarespace:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://alice.squarespace.com/blog?format=rss',
+          hint: { key: 'squarespace:collection', label: 'Collection' },
+        },
+      ]
+
+      expect(squarespaceHandler.resolve(value)).toEqual(expected)
+    })
   })
 
   describe('getFeedHint', () => {
+    const collection: DiscoverUriHint = { key: 'squarespace:collection', label: 'Collection' }
+    const category: DiscoverUriHint = { key: 'squarespace:category', label: 'Category' }
+    const tag: DiscoverUriHint = { key: 'squarespace:tag', label: 'Tag' }
+    const comments: DiscoverUriHint = { key: 'squarespace:comments', label: 'Comments' }
+    const atom: DiscoverUriHint = { ...collection, format: 'atom' }
+    const rdf: DiscoverUriHint = { ...collection, format: 'rdf' }
+    const otherShapes: Array<[string, DiscoverUriHint]> = [
+      ['https://alice.squarespace.com/?format=rss', collection],
+      ['https://alice.squarespace.com/en/blog?format=rss', collection],
+      ['http://alice.squarespace.com/blog/rss.xml', collection],
+      ['http://alice.squarespace.com/blog/rss.xml;jsessionid=ABC123.v5-web001', collection],
+      ['http://alice.squarespace.com/blog/atom.xml', atom],
+      ['http://alice.squarespace.com/blog/atom.xml;jsessionid=ABC123.v5-web001', atom],
+      ['http://alice.squarespace.com/blog/rdf.xml', rdf],
+      ['http://alice.squarespace.com/blog/rdf.xml;jsessionid=ABC123.v5-web001', rdf],
+      ['https://alice.squarespace.com/blog/category/News?format=rss', category],
+      ['http://alice.squarespace.com/blog/rss.xml?categoryId=12345', category],
+      [
+        'http://alice.squarespace.com/blog/rss.xml;jsessionid=ABC123.v5-web001?categoryId=12345',
+        category,
+      ],
+      [
+        'http://alice.squarespace.com/blog/atom.xml?categoryId=12345',
+        { ...category, format: 'atom' },
+      ],
+      ['https://alice.squarespace.com/?category=Podcast&format=rss', category],
+      ['https://alice.squarespace.com/?format=rss&tag=podcast', tag],
+      ['https://alice.squarespace.com/blog/tag/podcast?format=rss', tag],
+      ['http://alice.squarespace.com/blog/rss-comments.xml', comments],
+      ['http://alice.squarespace.com/blog/rss-comments.xml;jsessionid=ABC123.v5-web001', comments],
+    ]
+
+    it.each(otherShapes)('should return the hint of %s', (value, expected) => {
+      expect(squarespaceHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it.each(otherShapes)('should return undefined for %s on a custom domain', (feedUrl) => {
+      const value = feedUrl.replace('alice.squarespace.com', 'example.com')
+
+      expect(squarespaceHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return the collection hint for a collection feed on squarespace.com', () => {
       const value = 'https://alice.squarespace.com/blog?format=rss'
       const expected: DiscoverUriHint = { key: 'squarespace:collection', label: 'Collection' }
@@ -214,6 +319,18 @@ describe('squarespaceHandler', () => {
       ['http://alice.squarespace.com/blog?category=Example+Talks&format=rss', category],
       ['https://alice.squarespace.com/podcast?format=rss&tag=example', tag],
       ['http://alice.squarespace.com/blog/?tag=example&format=rss', tag],
+      ['https://alice.squarespace.com/?format=rss', collection],
+      ['https://alice.squarespace.com/en/blog?format=rss', collection],
+      ['http://alice.squarespace.com/blog/rss.xml;jsessionid=ABC123.v5-web001', collection],
+      ['http://alice.squarespace.com/blog/atom.xml', { ...collection, format: 'atom' }],
+      ['http://alice.squarespace.com/blog/rdf.xml', { ...collection, format: 'rdf' }],
+      ['https://alice.squarespace.com/blog/category/News?format=rss', category],
+      ['http://alice.squarespace.com/blog/rss.xml?categoryId=12345', category],
+      ['https://alice.squarespace.com/blog/tag/podcast?format=rss', tag],
+      [
+        'http://alice.squarespace.com/blog/rss-comments.xml',
+        { key: 'squarespace:comments', label: 'Comments' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

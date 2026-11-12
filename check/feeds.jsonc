@@ -1651,6 +1651,7 @@
   "squarespace": {
     "squarespace:category": "https://tierra-youngbloodfield-3ytp.squarespace.com/blog?category=Talks+With+T&format=rss",
     "squarespace:collection": "https://www.squarespace.com/blog?format=rss",
+    "squarespace:comments": "http://steveboese.squarespace.com/journal/rss-comments.xml",
     "squarespace:tag": "https://pittsfordpres.squarespace.com/blog?format=rss&tag=podcast"
   },
   "stackExchange": {
