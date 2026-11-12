@@ -365,10 +365,8 @@
     "discourse:category": "https://users.rust-lang.org/c/help.rss",
     "discourse:latest": "https://users.rust-lang.org/latest.rss",
     "discourse:posts": "https://meta.discourse.org/posts.rss",
-    "discourse:top": [
-      "https://meta.discourse.org/top.rss",
-      "https://meta.discourse.org/top.rss?period=weekly"
-    ],
+    "discourse:top": "https://meta.discourse.org/top.rss",
+    "discourse:top-period": "https://meta.discourse.org/top.rss?period=weekly",
     "discourse:topic": "https://users.rust-lang.org/t/welcome-to-the-rust-users-forum/2.rss"
   },
   "discuz": {

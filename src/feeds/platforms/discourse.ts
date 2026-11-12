@@ -1,5 +1,6 @@
 import { composeQuery, getAnyOf, getQueryParam, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -31,6 +32,27 @@ const topicRegex = /^\/t\/(?<slug>[^/]+)\/(?<topicId>[^/]+)/i
 const topRegex = /^\/top(?:\/([^/]+))?\/?$/i
 
 const validTopPeriods = ['daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'all']
+
+const domains = ['discourse.group', 'trydiscourse.com']
+
+// The feeds of a forum on a platform subdomain, which serves from the root. `resolve` builds them
+// from the page itself, since an install on its own domain can sit under a sub-path its markup
+// names and a category path runs one to three segments, `{slug}`, `{slug}/{id}` or
+// `{parent}/{slug}/{id}`.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'discourse:topic', template: 'https://{forum}.{domain}/t/{slug}/{topicId}.rss' },
+    { key: 'discourse:activity', template: 'https://{forum}.{domain}/u/{username}/activity.rss' },
+    { key: 'discourse:category', template: 'https://{forum}.{domain}/c/{category}.rss' },
+    { key: 'discourse:category', template: 'https://{forum}.{domain}/c/{slug}/{id}.rss' },
+    { key: 'discourse:category', template: 'https://{forum}.{domain}/c/{parent}/{slug}/{id}.rss' },
+    { key: 'discourse:top', template: 'https://{forum}.{domain}/top.rss' },
+    { key: 'discourse:top-period', template: 'https://{forum}.{domain}/top.rss?period={period}' },
+    { key: 'discourse:latest', template: 'https://{forum}.{domain}/latest.rss' },
+    { key: 'discourse:posts', template: 'https://{forum}.{domain}/posts.rss' },
+  ],
+  { domains },
+)
 
 const getTopPeriod = (
   pathPeriod: string | undefined,
@@ -166,15 +188,17 @@ export const discourseHandler: PlatformHandler = {
       ]
     }
 
-    if (page.kind === 'top') {
-      const periodQuery = page.period ? composeQuery({ period: page.period }) : ''
-
+    if (page.kind === 'top' && page.period) {
       return [
         {
-          uri: `${page.siteUrl}/top.rss${periodQuery}`,
-          hint: composeHint('discourse:top'),
+          uri: `${page.siteUrl}/top.rss${composeQuery({ period: page.period })}`,
+          hint: composeHint('discourse:top-period'),
         },
       ]
+    }
+
+    if (page.kind === 'top') {
+      return [{ uri: `${page.siteUrl}/top.rss`, hint: composeHint('discourse:top') }]
     }
 
     const uris: Array<DiscoverUriEntry> = []
@@ -190,4 +214,6 @@ export const discourseHandler: PlatformHandler = {
 
     return uris
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

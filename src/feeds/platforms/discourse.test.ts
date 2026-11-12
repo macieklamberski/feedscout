@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   type DiscoursePage,
   type DiscourseUrl,
@@ -391,7 +394,7 @@ describe('discourseHandler', () => {
     ]
 
     it.each(topPeriodValues)('should pass through period for %s', (value, uri) => {
-      const expected = [{ uri, hint: { key: 'discourse:top', label: 'Top' } }]
+      const expected = [{ uri, hint: { key: 'discourse:top-period', label: 'Top for a period' } }]
 
       expect(discourseHandler.resolve(value)).toEqual(expected)
     })
@@ -401,7 +404,7 @@ describe('discourseHandler', () => {
       const expected = [
         {
           uri: 'https://forum.example.com/top.rss?period=weekly',
-          hint: { key: 'discourse:top', label: 'Top' },
+          hint: { key: 'discourse:top-period', label: 'Top for a period' },
         },
       ]
 
@@ -413,7 +416,7 @@ describe('discourseHandler', () => {
       const expected = [
         {
           uri: 'https://forum.example.com/top.rss?period=weekly',
-          hint: { key: 'discourse:top', label: 'Top' },
+          hint: { key: 'discourse:top-period', label: 'Top for a period' },
         },
       ]
 
@@ -425,7 +428,7 @@ describe('discourseHandler', () => {
       const expected = [
         {
           uri: 'https://forum.example.com/top.rss?period=daily',
-          hint: { key: 'discourse:top', label: 'Top' },
+          hint: { key: 'discourse:top-period', label: 'Top for a period' },
         },
       ]
 
@@ -437,7 +440,7 @@ describe('discourseHandler', () => {
       const expected = [
         {
           uri: 'https://forum.example.com/top.rss?period=daily',
-          hint: { key: 'discourse:top', label: 'Top' },
+          hint: { key: 'discourse:top-period', label: 'Top for a period' },
         },
       ]
 
@@ -449,7 +452,7 @@ describe('discourseHandler', () => {
       const expected = [
         {
           uri: 'https://forum.example.com/top.rss?period=weekly',
-          hint: { key: 'discourse:top', label: 'Top' },
+          hint: { key: 'discourse:top-period', label: 'Top for a period' },
         },
       ]
 
@@ -466,6 +469,113 @@ describe('discourseHandler', () => {
       ]
 
       expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    const feedUrls: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.discourse.group/t/hello-world/123.rss',
+        { key: 'discourse:topic', label: 'Topic' },
+      ],
+      [
+        'https://example.discourse.group/u/alice/activity.rss',
+        { key: 'discourse:activity', label: 'Activity' },
+      ],
+      [
+        'https://example.discourse.group/c/support.rss',
+        { key: 'discourse:category', label: 'Category' },
+      ],
+      [
+        'https://example.discourse.group/c/support/6.rss',
+        { key: 'discourse:category', label: 'Category' },
+      ],
+      [
+        'https://example.discourse.group/c/contribute/feature/2.rss',
+        { key: 'discourse:category', label: 'Category' },
+      ],
+      ['https://example.discourse.group/top.rss', { key: 'discourse:top', label: 'Top' }],
+      [
+        'https://example.discourse.group/top.rss?period=weekly',
+        { key: 'discourse:top-period', label: 'Top for a period' },
+      ],
+      ['https://example.discourse.group/latest.rss', { key: 'discourse:latest', label: 'Latest' }],
+      [
+        'https://example.discourse.group/posts.rss',
+        { key: 'discourse:posts', label: 'Latest posts' },
+      ],
+      ['http://example.trydiscourse.com/latest.rss', { key: 'discourse:latest', label: 'Latest' }],
+    ]
+
+    it.each(feedUrls)('should return the hint for %s', (value, expected) => {
+      expect(discourseHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a topic page on a forum subdomain', () => {
+      const value = 'https://example.discourse.group/t/hello-world/123'
+
+      expect(discourseHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://forum.example.org/latest.rss'
+
+      expect(discourseHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://discourse.group/latest.rss'
+
+      expect(discourseHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www', () => {
+      const value = 'https://www.trydiscourse.com/latest.rss'
+
+      expect(discourseHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://forum.example.discourse.group/latest.rss'
+
+      expect(discourseHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.discourse.group/t/hello-world/123.rss',
+        { key: 'discourse:topic', label: 'Topic' },
+      ],
+      [
+        'https://example.discourse.group/u/alice/activity.rss',
+        { key: 'discourse:activity', label: 'Activity' },
+      ],
+      [
+        'https://example.discourse.group/c/support/6.rss',
+        { key: 'discourse:category', label: 'Category' },
+      ],
+      [
+        'https://example.discourse.group/top.rss?period=weekly',
+        { key: 'discourse:top-period', label: 'Top for a period' },
+      ],
+      ['https://example.discourse.group/latest.rss', { key: 'discourse:latest', label: 'Latest' }],
+      [
+        'https://example.discourse.group/posts.rss',
+        { key: 'discourse:posts', label: 'Latest posts' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [discourseHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

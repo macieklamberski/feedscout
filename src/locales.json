@@ -261,6 +261,7 @@
     "discourse:latest": "Latest",
     "discourse:posts": "Latest posts",
     "discourse:top": "Top",
+    "discourse:top-period": "Top for a period",
     "discourse:category": "Category",
     "discourse:topic": "Topic",
     "discourse:activity": "Activity",
