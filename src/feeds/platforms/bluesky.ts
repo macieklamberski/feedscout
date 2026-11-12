@@ -43,5 +43,5 @@ export const blueskyHandler: PlatformHandler = {
     return [feeds.getFeedEntry('bluesky:posts', { handle: parsed.handle })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

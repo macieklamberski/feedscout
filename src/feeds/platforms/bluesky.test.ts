@@ -102,51 +102,51 @@ describe('blueskyHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the posts key for a feed under a handle', () => {
       const value = 'https://bsky.app/profile/astrea.cc/rss'
-      const expected = 'bluesky:posts'
+      const expected: DiscoverUriHint = { key: 'bluesky:posts', label: 'Posts' }
 
-      expect(blueskyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blueskyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts key for a feed under a DID', () => {
       const value = 'https://bsky.app/profile/did:plc:5qmh4a6gwsozualtmtmzi5ja/rss'
-      const expected = 'bluesky:posts'
+      const expected: DiscoverUriHint = { key: 'bluesky:posts', label: 'Posts' }
 
-      expect(blueskyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blueskyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts key for a feed on web-cdn.bsky.app', () => {
       const value = 'https://web-cdn.bsky.app/profile/did:plc:5qmh4a6gwsozualtmtmzi5ja/rss'
-      const expected = 'bluesky:posts'
+      const expected: DiscoverUriHint = { key: 'bluesky:posts', label: 'Posts' }
 
-      expect(blueskyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blueskyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts key for a handle with percent-encoded spaces', () => {
       const value = 'https://bsky.app/profile/scienceslam.de%20%20/rss'
-      const expected = 'bluesky:posts'
+      const expected: DiscoverUriHint = { key: 'bluesky:posts', label: 'Posts' }
 
-      expect(blueskyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blueskyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a profile page', () => {
       const value = 'https://bsky.app/profile/astrea.cc'
 
-      expect(blueskyHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blueskyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a post page', () => {
       const value = 'https://bsky.app/profile/astrea.cc/post/3mys5hihpoc2v'
 
-      expect(blueskyHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blueskyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/profile/astrea.cc/rss'
 
-      expect(blueskyHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blueskyHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
