@@ -1,6 +1,6 @@
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -18,6 +18,10 @@ const domains = [
   'overblog.com',
   'overblog.fr',
 ]
+
+const feeds = definePlatformFeeds([{ key: 'overblog:posts', template: '{scheme}://{host}/rss' }], {
+  domains,
+})
 
 export const parseOverblogUrl = (url: string): OverblogUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -39,11 +43,18 @@ export const overblogHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
+    const { protocol, host } = new URL(url)
 
-    uris.push({ uri: `${origin}/rss`, hint: composeHint('overblog:posts') })
+    return [feeds.getFeedEntry('overblog:posts', { scheme: protocol.slice(0, -1), host })]
+  },
 
-    return uris
+  // The table reads any host under the domains, so the page parser refuses the apex and the www
+  // host first, whose /rss ends in a 404, and a www or nested subdomain of a blog.
+  getFeedKey: (url) => {
+    if (!parseOverblogUrl(url)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
