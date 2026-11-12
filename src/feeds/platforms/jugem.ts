@@ -11,11 +11,14 @@ const domains = ['jugem.cc', 'jugem.jp']
 const assetHosts = ['imaging.jugem.jp']
 const cookieScriptPath = './template/js/cookie.js'
 
-// A custom domain is known only by its markers, so its feeds are built here but not claimed.
+// A custom domain is known only by its markers, so its feeds are built here but not claimed. An
+// older template links the same feeds at /index.rdf and /atom.xml.
 const feeds = definePlatformFeeds(
   [
     { key: 'jugem:posts', template: '{scheme}://{host}/?mode=rss', format: 'rdf' },
     { key: 'jugem:posts', template: '{scheme}://{host}/?mode=atom', format: 'atom' },
+    { key: 'jugem:posts', template: '{scheme}://{host}/index.rdf', format: 'rdf' },
+    { key: 'jugem:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
   ],
   { domains },
 )

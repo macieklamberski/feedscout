@@ -159,6 +159,20 @@ describe('jugemHandler', () => {
       expect(jugemHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the posts key for an index.rdf feed', () => {
+      const value = 'https://alice.jugem.jp/index.rdf'
+      const expected = 'jugem:posts'
+
+      expect(jugemHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an atom.xml feed', () => {
+      const value = 'https://alice.jugem.jp/atom.xml'
+      const expected = 'jugem:posts'
+
+      expect(jugemHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return undefined for a post page', () => {
       const value = 'https://alice.jugem.jp/?eid=123'
 
@@ -195,6 +209,8 @@ describe('jugemHandler', () => {
       'https://alice.jugem.jp/?mode=rss',
       'http://alice.jugem.jp/?mode=atom',
       'https://alice.jugem.cc/?mode=atom',
+      'https://alice.jugem.jp/index.rdf',
+      'http://alice.jugem.jp/atom.xml',
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value) => {
