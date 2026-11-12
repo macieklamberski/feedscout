@@ -88,11 +88,11 @@ describe('twodayHandler', () => {
       expect(twodayHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return https feeds for an http blog page', () => {
+    it('should keep the http scheme of an http blog page', () => {
       const value = 'http://alice.twoday.net/stories/1022710479/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.twoday.net/index.rdf',
+          uri: 'http://alice.twoday.net/index.rdf',
           hint: { key: 'twoday:posts', label: 'Posts' },
         },
       ]
@@ -100,15 +100,15 @@ describe('twodayHandler', () => {
       expect(twodayHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return https feeds for an http topic page', () => {
+    it('should keep the http scheme of an http topic page', () => {
       const value = 'http://alice.twoday.net/topics/Wo+der+Hase+hinlief/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.twoday.net/topics/Wo+der+Hase+hinlief/index.rdf',
+          uri: 'http://alice.twoday.net/topics/Wo+der+Hase+hinlief/index.rdf',
           hint: { key: 'twoday:topic', label: 'Topic' },
         },
         {
-          uri: 'https://alice.twoday.net/index.rdf',
+          uri: 'http://alice.twoday.net/index.rdf',
           hint: { key: 'twoday:posts', label: 'Posts' },
         },
       ]

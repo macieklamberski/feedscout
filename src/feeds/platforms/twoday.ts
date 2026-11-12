@@ -15,14 +15,17 @@ const topicRegex = /^\/topics\/([^/]+)(?:\/|$)/i
 
 // A blog's skin links its posts feed as `/index.rdf` or `/rss`, the same stories. Some skins
 // also serve them as `/summary.rdf`, with shorter text.
-const feeds = definePlatformFeeds([
-  { key: 'twoday:posts', template: 'https://{blog}.twoday.net/index.rdf' },
-  { key: 'twoday:posts', template: 'https://{blog}.twoday.net/rss' },
-  { key: 'twoday:posts', template: 'https://{blog}.twoday.net/rss.xml' },
-  { key: 'twoday:posts', template: 'https://{blog}.twoday.net/summary.rdf' },
-  { key: 'twoday:topic', template: 'https://{blog}.twoday.net/topics/{topic}/index.rdf' },
-  { key: 'twoday:topic', template: 'https://{blog}.twoday.net/topics/{topic}/rss' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'twoday:posts', template: '{scheme}://{host}/index.rdf' },
+    { key: 'twoday:posts', template: '{scheme}://{host}/rss' },
+    { key: 'twoday:posts', template: '{scheme}://{host}/rss.xml' },
+    { key: 'twoday:posts', template: '{scheme}://{host}/summary.rdf' },
+    { key: 'twoday:topic', template: '{scheme}://{host}/topics/{topic}/index.rdf' },
+    { key: 'twoday:topic', template: '{scheme}://{host}/topics/{topic}/rss' },
+  ],
+  { domains },
+)
 
 export const parseTwodayUrl = (url: string): TwodayUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
@@ -53,17 +56,16 @@ export const twodayHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseTwodayUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const posts = feeds.getFeedEntry('twoday:posts', { blog: parsed.blog })
+    const posts = page.getFeedEntry('twoday:posts')
 
     if (parsed.kind === 'topic') {
-      const { blog, topic } = parsed
-
-      return [feeds.getFeedEntry('twoday:topic', { blog, topic }), posts]
+      return [page.getFeedEntry('twoday:topic', { topic: parsed.topic }), posts]
     }
 
     return [posts]
