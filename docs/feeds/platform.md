@@ -3747,7 +3747,9 @@ type PlatformHandler = {
 
 ### Declaring Feeds
 
-`definePlatformFeeds` holds a handler's feed URLs as templates keyed by hint key: `entry` builds a feed with its hint, `getFeedHint` reads a URL back to its hint, with the row's `format`, `{host}` stands for any host in `hosts` or under `domains`, `{domain}` for one of `domains`, and `{scheme}` for the page's scheme on a platform that runs on the site's own host.
+`definePlatformFeeds` holds a handler's feed URLs as templates keyed by hint key: `getFeedEntry` builds a feed with its hint, `getFeedHint` reads a URL back to its hint, with the row's `format`, `{host}` stands for any host in `hosts` or under `domains`, `{domain}` for one of `domains`, and `{scheme}` for the page's scheme on a platform that runs on the site's own host.
+
+`forUrl(url)` returns the same `getFeedUrl` and `getFeedEntry` with `{scheme}` and `{host}` filled from the page URL and `{domain}` with the entry of `domains` its host is under, so a handler passes only the values the URL cannot give. A value the handler passes wins. It returns `undefined` for a URL that is not an http URL.
 
 ```typescript
 import { definePlatformFeeds, type PlatformHandler } from 'feedscout/platform'
@@ -3766,8 +3768,13 @@ const exampleHandler: PlatformHandler = {
   match: (url) => new URL(url).hostname === 'example.com',
   resolve: (url) => {
     const [username] = new URL(url).pathname.split('/').filter(Boolean)
+    const pageFeeds = feeds.forUrl(url)
 
-    return [feeds.getFeedEntry('example:posts', { host: 'example.com', username })]
+    if (!pageFeeds) {
+      return []
+    }
+
+    return [pageFeeds.getFeedEntry('example:posts', { username })]
   },
   getFeedHint: feeds.getFeedHint,
 }
