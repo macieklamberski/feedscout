@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type HackernewsUrl, hackernewsHandler, parseHackernewsUrl } from './hackernews.js'
 
 describe('parseHackernewsUrl', () => {
@@ -95,6 +98,62 @@ describe('hackernewsHandler', () => {
       ]
 
       expect(hackernewsHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the front key for the front page feed', () => {
+      const value = 'https://news.ycombinator.com/rss'
+      const expected = 'hackernews:front'
+
+      expect(hackernewsHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the show key for the Show HN feed', () => {
+      const value = 'https://news.ycombinator.com/showrss'
+      const expected = 'hackernews:show'
+
+      expect(hackernewsHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for the Show HN page', () => {
+      const value = 'https://news.ycombinator.com/show'
+
+      expect(hackernewsHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed resolve never builds', () => {
+      const value = 'https://news.ycombinator.com/bigrss'
+
+      expect(hackernewsHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('discoverUrisFromPlatform', () => {
+    const front = {
+      key: 'hackernews:front',
+      label: 'Front page',
+    }
+    const show = {
+      key: 'hackernews:show',
+      label: 'Show HN',
+    }
+    const values: Array<[string, DiscoverUriEntry['hint']]> = [
+      ['https://news.ycombinator.com/rss', front],
+      ['http://news.ycombinator.com/rss', front],
+      ['https://news.ycombinator.com/showrss', show],
+      ['http://news.ycombinator.com/showrss', show],
+    ]
+
+    it.each(values)('should return %s as given with its key', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [hackernewsHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })
