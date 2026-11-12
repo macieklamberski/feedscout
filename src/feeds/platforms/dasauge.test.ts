@@ -92,57 +92,57 @@ describe('dasaugeHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the profile key for a profile feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the profile hint for a profile feed', () => {
       const value = 'https://dasauge.de/-alice/?rss'
-      const expected = 'dasauge:profile'
+      const expected: DiscoverUriHint = { key: 'dasauge:profile', label: 'Profile' }
 
-      expect(dasaugeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(dasaugeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the profile key for a profile feed with an empty rss value', () => {
+    it('should return the profile hint for a profile feed with an empty rss value', () => {
       const value = 'https://dasauge.de/-alice/?rss='
-      const expected = 'dasauge:profile'
+      const expected: DiscoverUriHint = { key: 'dasauge:profile', label: 'Profile' }
 
-      expect(dasaugeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(dasaugeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the profile key for a profile feed without a trailing slash', () => {
+    it('should return the profile hint for a profile feed without a trailing slash', () => {
       const value = 'https://dasauge.de/-alice?rss'
-      const expected = 'dasauge:profile'
+      const expected: DiscoverUriHint = { key: 'dasauge:profile', label: 'Profile' }
 
-      expect(dasaugeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(dasaugeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the profile key for a profile feed on another dasauge host', () => {
+    it('should return the profile hint for a profile feed on another dasauge host', () => {
       const value = 'https://dasauge.co.uk/-alice/?rss='
-      const expected = 'dasauge:profile'
+      const expected: DiscoverUriHint = { key: 'dasauge:profile', label: 'Profile' }
 
-      expect(dasaugeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(dasaugeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a profile page', () => {
       const value = 'https://dasauge.de/-alice/'
 
-      expect(dasaugeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(dasaugeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an rss query with a value', () => {
       const value = 'https://dasauge.de/-alice/?rss=1'
 
-      expect(dasaugeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(dasaugeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a directory listing feed', () => {
       const value = 'https://dasauge.de/profile/fotografen/?rss='
 
-      expect(dasaugeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(dasaugeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/-alice/?rss'
 
-      expect(dasaugeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(dasaugeHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

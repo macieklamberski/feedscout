@@ -56,5 +56,5 @@ export const dasaugeHandler: PlatformHandler = {
     return [feeds.getFeedEntry('dasauge:profile', { host, username: parsed.username })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
