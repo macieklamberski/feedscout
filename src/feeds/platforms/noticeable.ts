@@ -64,29 +64,28 @@ export const noticeableHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseNoticeableUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { protocol, host } = new URL(url)
-    const params = { scheme: protocol.slice(0, -1), host }
     const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.kind === 'label') {
-      const labelParams = { ...params, label: parsed.label }
+      const labelParams = { label: parsed.label }
 
       uris.push(
-        feeds.getFeedEntry('noticeable:label', labelParams, 'rss'),
-        feeds.getFeedEntry('noticeable:label', labelParams, 'atom'),
-        feeds.getFeedEntry('noticeable:label', labelParams, 'json'),
+        page.getFeedEntry('noticeable:label', labelParams, 'rss'),
+        page.getFeedEntry('noticeable:label', labelParams, 'atom'),
+        page.getFeedEntry('noticeable:label', labelParams, 'json'),
       )
     }
 
     uris.push(
-      feeds.getFeedEntry('noticeable:posts', params, 'rss'),
-      feeds.getFeedEntry('noticeable:posts', params, 'atom'),
-      feeds.getFeedEntry('noticeable:posts', params, 'json'),
+      page.getFeedEntry('noticeable:posts', {}, 'rss'),
+      page.getFeedEntry('noticeable:posts', {}, 'atom'),
+      page.getFeedEntry('noticeable:posts', {}, 'json'),
     )
 
     return uris
