@@ -60,13 +60,13 @@ export const spotifyForCreatorsHandler: PlatformHandler = {
   },
 
   // A station id starts with hex, and a word in its place answers 404.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const [, stationId] = getPathSegments(url)
 
     if (!stationId || !stationIdRegex.test(stationId)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
