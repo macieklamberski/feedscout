@@ -2,7 +2,7 @@ import { isPlainObject, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getJsonLd, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { getJsonLd, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home (guess, html), partly covers forum, topic.
@@ -145,13 +145,5 @@ export const forumotionHandler: PlatformHandler = {
     return uris
   },
 
-  // The table reads any host under the domains, so only a forum's own subdomain is claimed, not
-  // the apex, www or a nested host.
-  getFeedHint: (url) => {
-    if (!getTenantSubdomain(url, domains)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

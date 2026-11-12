@@ -280,8 +280,19 @@ describe('forumotionHandler', () => {
       expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a feed on a nested subdomain', () => {
+    it('should return the hint for a feed on www in front of a forum', () => {
       const value = 'https://www.example.forumotion.com/feed/'
+      const expected: DiscoverUriHint = {
+        key: 'forumotion:latest-topics',
+        label: 'Latest topics',
+        format: 'rss',
+      }
+
+      expect(forumotionHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://cms.example.forumotion.com/feed/'
 
       expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
     })
