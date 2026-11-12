@@ -47,7 +47,6 @@ const feeds = definePlatformFeeds(
     { key: 'discourse:category', template: 'https://{forum}.{domain}/c/{slug}/{id}.rss' },
     { key: 'discourse:category', template: 'https://{forum}.{domain}/c/{parent}/{slug}/{id}.rss' },
     { key: 'discourse:top', template: 'https://{forum}.{domain}/top.rss' },
-    { key: 'discourse:top-period', template: 'https://{forum}.{domain}/top.rss?period={period}' },
     { key: 'discourse:latest', template: 'https://{forum}.{domain}/latest.rss' },
     { key: 'discourse:posts', template: 'https://{forum}.{domain}/posts.rss' },
   ],
@@ -188,17 +187,15 @@ export const discourseHandler: PlatformHandler = {
       ]
     }
 
-    if (page.kind === 'top' && page.period) {
+    if (page.kind === 'top') {
+      const periodQuery = page.period ? composeQuery({ period: page.period }) : ''
+
       return [
         {
-          uri: `${page.siteUrl}/top.rss${composeQuery({ period: page.period })}`,
-          hint: composeHint('discourse:top-period'),
+          uri: `${page.siteUrl}/top.rss${periodQuery}`,
+          hint: composeHint('discourse:top'),
         },
       ]
-    }
-
-    if (page.kind === 'top') {
-      return [{ uri: `${page.siteUrl}/top.rss`, hint: composeHint('discourse:top') }]
     }
 
     const uris: Array<DiscoverUriEntry> = []

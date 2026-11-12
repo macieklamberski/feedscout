@@ -394,7 +394,7 @@ describe('discourseHandler', () => {
     ]
 
     it.each(topPeriodValues)('should pass through period for %s', (value, uri) => {
-      const expected = [{ uri, hint: { key: 'discourse:top-period', label: 'Top for a period' } }]
+      const expected = [{ uri, hint: { key: 'discourse:top', label: 'Top' } }]
 
       expect(discourseHandler.resolve(value)).toEqual(expected)
     })
@@ -404,7 +404,7 @@ describe('discourseHandler', () => {
       const expected = [
         {
           uri: 'https://forum.example.com/top.rss?period=weekly',
-          hint: { key: 'discourse:top-period', label: 'Top for a period' },
+          hint: { key: 'discourse:top', label: 'Top' },
         },
       ]
 
@@ -416,7 +416,7 @@ describe('discourseHandler', () => {
       const expected = [
         {
           uri: 'https://forum.example.com/top.rss?period=weekly',
-          hint: { key: 'discourse:top-period', label: 'Top for a period' },
+          hint: { key: 'discourse:top', label: 'Top' },
         },
       ]
 
@@ -428,7 +428,7 @@ describe('discourseHandler', () => {
       const expected = [
         {
           uri: 'https://forum.example.com/top.rss?period=daily',
-          hint: { key: 'discourse:top-period', label: 'Top for a period' },
+          hint: { key: 'discourse:top', label: 'Top' },
         },
       ]
 
@@ -440,7 +440,7 @@ describe('discourseHandler', () => {
       const expected = [
         {
           uri: 'https://forum.example.com/top.rss?period=daily',
-          hint: { key: 'discourse:top-period', label: 'Top for a period' },
+          hint: { key: 'discourse:top', label: 'Top' },
         },
       ]
 
@@ -452,7 +452,7 @@ describe('discourseHandler', () => {
       const expected = [
         {
           uri: 'https://forum.example.com/top.rss?period=weekly',
-          hint: { key: 'discourse:top-period', label: 'Top for a period' },
+          hint: { key: 'discourse:top', label: 'Top' },
         },
       ]
 
@@ -497,7 +497,7 @@ describe('discourseHandler', () => {
       ['https://example.discourse.group/top.rss', { key: 'discourse:top', label: 'Top' }],
       [
         'https://example.discourse.group/top.rss?period=weekly',
-        { key: 'discourse:top-period', label: 'Top for a period' },
+        { key: 'discourse:top', label: 'Top' },
       ],
       ['https://example.discourse.group/latest.rss', { key: 'discourse:latest', label: 'Latest' }],
       [
@@ -558,7 +558,7 @@ describe('discourseHandler', () => {
       ],
       [
         'https://example.discourse.group/top.rss?period=weekly',
-        { key: 'discourse:top-period', label: 'Top for a period' },
+        { key: 'discourse:top', label: 'Top' },
       ],
       ['https://example.discourse.group/latest.rss', { key: 'discourse:latest', label: 'Latest' }],
       [

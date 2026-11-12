@@ -985,8 +985,7 @@ Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator 
 | `{instance}/u/{user}` | User activity<sup>†</sup> (RSS) |
 | `{instance}/c/{slug}` | Category (RSS) |
 | `{instance}/t/{slug}/{id}` | Topic (RSS) |
-| `{instance}/top` | Top topics (RSS) |
-| `{instance}/top/{period}` or `/top?period={period}` | Top topics for a period (RSS) |
+| `{instance}/top` or `/top/{period}` | Top topics (RSS) |
 | `{instance}/` (or any other path) | Latest topics · latest posts (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
