@@ -13,7 +13,7 @@ export type BlogspotPage =
   | { kind: 'post'; postId?: string }
   | { kind: 'blog' }
 
-// Blogger's country domains still serve every blog's feeds, checked 2026-11-12.
+// The Blogger domains whose feeds are claimed, each serving every blog's feeds on 2026-11-12.
 const domains = [
   'blogspot.com',
   'blogspot.ae',
@@ -84,6 +84,10 @@ const domains = [
   'blogspot.ug',
 ]
 
+// Matches blogspot.com and Blogger's country domains like .co.uk, .com.br and .de, which still
+// serve feeds. getTenantSubdomain then refuses www and nested subdomains.
+// length: keeps any suffix but a two-letter country code out
+const blogspotDomainRegex = /\.(blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2}))$/
 const labelRegex = /^\/search\/label\/([^/]+)/i
 const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
 const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/i
@@ -206,7 +210,15 @@ export const getBlogspotPage = (
 
 export const blogspotHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (getTenantSubdomain(url, domains)) {
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl) {
+      return false
+    }
+
+    const domain = parsedUrl.hostname.match(blogspotDomainRegex)?.[1]
+
+    if (domain && getTenantSubdomain(parsedUrl, [domain])) {
       return true
     }
 

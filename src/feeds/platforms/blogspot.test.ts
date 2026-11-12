@@ -83,6 +83,7 @@ describe('blogspotHandler', () => {
       [true, 'https://example.blogspot.in'],
       [true, 'https://example.blogspot.jp'],
       [true, 'https://example.blogspot.com.br'],
+      [true, 'https://example.blogspot.zz'],
       [false, 'https://blogspot.com'],
       [false, 'https://example.com'],
     ]
@@ -235,6 +236,38 @@ describe('blogspotHandler', () => {
         },
         {
           uri: 'https://example.blogspot.com/feeds/comments/default?alt=rss',
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
+        },
+      ]
+
+      expect(blogspotHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return feed URLs for a blog on an unlisted country domain', () => {
+      const value = 'https://example.blogspot.zz'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.blogspot.zz/feeds/posts/default',
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.zz/feeds/posts/default?alt=rss',
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.blogspot.zz/feeds/posts/summary',
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.zz/feeds/posts/summary?alt=rss',
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'rss' },
+        },
+        {
+          uri: 'https://example.blogspot.zz/feeds/comments/default',
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.zz/feeds/comments/default?alt=rss',
           hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
         },
       ]
