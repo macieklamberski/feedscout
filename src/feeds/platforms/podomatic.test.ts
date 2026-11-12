@@ -76,6 +76,18 @@ describe('podomaticHandler', () => {
       expect(podomaticHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the show feed under the page scheme for an http subdomain', () => {
+      const value = 'http://example-show.podomatic.com/'
+      const expected = [
+        {
+          uri: 'http://example-show.podomatic.com/rss2.xml',
+          hint: { key: 'podomatic:show', label: 'Show' },
+        },
+      ]
+
+      expect(podomaticHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should map a directory path back to the subdomain', () => {
       const value = 'https://www.podomatic.com/podcasts/example-show'
       const expected = [

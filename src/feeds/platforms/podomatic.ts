@@ -12,10 +12,13 @@ const hosts = ['podomatic.com', 'www.podomatic.com']
 
 const directoryPathRegex = /^\/podcasts\/([^/]+)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'podomatic:show', template: 'https://{show}.podomatic.com/rss2.xml' },
-  { key: 'podomatic:show', template: 'https://{show}.podomatic.com/archive/rss2.xml' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'podomatic:show', template: '{scheme}://{host}/rss2.xml' },
+    { key: 'podomatic:show', template: '{scheme}://{host}/archive/rss2.xml' },
+  ],
+  { domains },
+)
 
 export const parsePodomaticUrl = (url: string): PodomaticUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -50,18 +53,19 @@ export const podomaticHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePodomaticUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const show = parsed.show.toLowerCase()
+    const host = `${parsed.show.toLowerCase()}.podomatic.com`
 
-    if (!getHostOrigin(`${show}.podomatic.com`)) {
+    if (!getHostOrigin(host)) {
       return []
     }
 
-    return [feeds.getFeedEntry('podomatic:show', { show })]
+    return [page.getFeedEntry('podomatic:show', { host })]
   },
 
   getFeedHint: feeds.getFeedHint,
