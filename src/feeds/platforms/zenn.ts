@@ -85,13 +85,13 @@ export const zennHandler: PlatformHandler = {
 
   // The posts row reads any first segment as a name, so zenn.dev/topics/feed, the page of a topic
   // named feed, is refused when the page parser reads it as a topic or publication.
-  getFeedKey: (url) => {
-    const key = feeds.getFeedKey(url)
+  getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
 
-    if (key === 'zenn:posts' && parseZennUrl(url)?.kind !== 'post') {
+    if (hint?.key === 'zenn:posts' && parseZennUrl(url)?.kind !== 'post') {
       return
     }
 
-    return key
+    return hint
   },
 }

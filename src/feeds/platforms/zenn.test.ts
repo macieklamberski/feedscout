@@ -142,84 +142,84 @@ describe('zennHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the trending key for the trending feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the trending hint for the trending feed', () => {
       const value = 'https://zenn.dev/feed'
-      const expected = 'zenn:trending'
+      const expected: DiscoverUriHint = { key: 'zenn:trending', label: 'Trending' }
 
-      expect(zennHandler.getFeedKey?.(value)).toBe(expected)
+      expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the trending key for the trending feed with a trailing slash', () => {
+    it('should return the trending hint for the trending feed with a trailing slash', () => {
       const value = 'https://zenn.dev/feed/'
-      const expected = 'zenn:trending'
+      const expected: DiscoverUriHint = { key: 'zenn:trending', label: 'Trending' }
 
-      expect(zennHandler.getFeedKey?.(value)).toBe(expected)
+      expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the trending key for the trending feed over http', () => {
+    it('should return the trending hint for the trending feed over http', () => {
       const value = 'http://zenn.dev/feed'
-      const expected = 'zenn:trending'
+      const expected: DiscoverUriHint = { key: 'zenn:trending', label: 'Trending' }
 
-      expect(zennHandler.getFeedKey?.(value)).toBe(expected)
+      expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a user feed', () => {
+    it('should return the posts hint for a user feed', () => {
       const value = 'https://zenn.dev/catnose99/feed'
-      const expected = 'zenn:posts'
+      const expected: DiscoverUriHint = { key: 'zenn:posts', label: 'Posts' }
 
-      expect(zennHandler.getFeedKey?.(value)).toBe(expected)
+      expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a user feed with all posts', () => {
+    it('should return the posts hint for a user feed with all posts', () => {
       const value = 'https://zenn.dev/manase/feed?all=1'
-      const expected = 'zenn:posts'
+      const expected: DiscoverUriHint = { key: 'zenn:posts', label: 'Posts' }
 
-      expect(zennHandler.getFeedKey?.(value)).toBe(expected)
+      expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the topic key for a topic feed', () => {
+    it('should return the topic hint for a topic feed', () => {
       const value = 'https://zenn.dev/topics/react/feed'
-      const expected = 'zenn:topic'
+      const expected: DiscoverUriHint = { key: 'zenn:topic', label: 'Topic' }
 
-      expect(zennHandler.getFeedKey?.(value)).toBe(expected)
+      expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the publication key for a publication feed', () => {
+    it('should return the publication hint for a publication feed', () => {
       const value = 'https://zenn.dev/p/team_zenn/feed'
-      const expected = 'zenn:publication'
+      const expected: DiscoverUriHint = { key: 'zenn:publication', label: 'Publication' }
 
-      expect(zennHandler.getFeedKey?.(value)).toBe(expected)
+      expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for the page of a topic named feed', () => {
       const value = 'https://zenn.dev/topics/feed'
 
-      expect(zennHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(zennHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the page of a publication named feed', () => {
       const value = 'https://zenn.dev/p/feed'
 
-      expect(zennHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(zennHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a user page', () => {
       const value = 'https://zenn.dev/catnose99'
 
-      expect(zennHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(zennHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a topic page', () => {
       const value = 'https://zenn.dev/topics/react'
 
-      expect(zennHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(zennHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/catnose99/feed'
 
-      expect(zennHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(zennHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
