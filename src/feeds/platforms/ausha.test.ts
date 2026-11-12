@@ -138,6 +138,12 @@ describe('aushaHandler', () => {
       expect(aushaHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
+    it('should return undefined for a file on the feed host', () => {
+      const value = 'https://feed.ausha.co/rss.xslt'
+
+      expect(aushaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a show page', () => {
       const value = 'https://podcast.ausha.co/example-show'
 

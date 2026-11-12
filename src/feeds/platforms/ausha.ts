@@ -1,6 +1,7 @@
 import { getPathSegments, isHostOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { wordRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers smartlink, smartlinkEpisode (html).
@@ -58,5 +59,15 @@ export const aushaHandler: PlatformHandler = {
     return [feeds.getFeedEntry('ausha:podcast', { feedId: page.feedId })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedKey: (url) => {
+    const [feedId] = getPathSegments(url)
+
+    // A feed id is word characters only, so a file on the feed host, such as `rss.xslt`, is no
+    // feed.
+    if (!feedId || !wordRegex.test(feedId)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
+  },
 }
