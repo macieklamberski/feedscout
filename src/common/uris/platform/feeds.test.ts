@@ -22,6 +22,7 @@ const feeds = definePlatformFeeds(
     { key: 'example:site-feed', template: '{scheme}://{host}/feed' },
     { key: 'example:channel', template: 'https://www.example.com/feed/{channel}' },
     { key: 'example:channel', template: 'https://{subdomain}.example.org/feed' },
+    { key: 'example:profile', template: 'https://www.example.com/-{username}/?rss' },
   ],
   { hosts: ['example.com', 'www.example.com'], domains: ['example.net', 'example.edu'] },
 )
@@ -66,6 +67,13 @@ describe('definePlatformFeeds', () => {
     it('should write a query value through composeQuery', () => {
       const value = feeds.getFeedUrl('example:search', { username: 'alice' })
       const expected = 'https://feeds.example.com/rss.xml?type=item&q=by:alice%20sort:time'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should write a query flag with no value', () => {
+      const value = feeds.getFeedUrl('example:profile', { username: 'alice' })
+      const expected = 'https://www.example.com/-alice/?rss'
 
       expect(value).toBe(expected)
     })
@@ -149,6 +157,26 @@ describe('definePlatformFeeds', () => {
   describe('getFeedKey', () => {
     it('should return the key of a feed URL', () => {
       expect(feeds.getFeedKey('https://www.example.com/alice/feed.rss')).toBe('example:posts')
+    })
+
+    it('should return the key of a feed named by a query flag', () => {
+      const value = 'https://www.example.com/-alice/?rss'
+      const expected = 'example:profile'
+
+      expect(feeds.getFeedKey(value)).toBe(expected)
+    })
+
+    it('should return the key of a feed named by a query flag with an empty value', () => {
+      const value = 'https://www.example.com/-alice/?rss='
+      const expected = 'example:profile'
+
+      expect(feeds.getFeedKey(value)).toBe(expected)
+    })
+
+    it('should return undefined for a query flag with a value', () => {
+      const value = 'https://www.example.com/-alice/?rss=1'
+
+      expect(feeds.getFeedKey(value)).toBeUndefined()
     })
 
     it('should return the key of a feed with two values', () => {
