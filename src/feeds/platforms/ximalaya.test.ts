@@ -125,44 +125,44 @@ describe('ximalayaHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the album key for an album feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the album hint for an album feed', () => {
       const value = 'https://www.ximalaya.com/album/10070285.xml'
-      const expected = 'ximalaya:album'
+      const expected: DiscoverUriHint = { key: 'ximalaya:album', label: 'Album' }
 
-      expect(ximalayaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(ximalayaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the album key for an album feed on the bare host', () => {
+    it('should return the album hint for an album feed on the bare host', () => {
       const value = 'https://ximalaya.com/album/13508172.xml'
-      const expected = 'ximalaya:album'
+      const expected: DiscoverUriHint = { key: 'ximalaya:album', label: 'Album' }
 
-      expect(ximalayaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(ximalayaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the album key for an album feed over http', () => {
+    it('should return the album hint for an album feed over http', () => {
       const value = 'http://www.ximalaya.com/album/13508172.xml'
-      const expected = 'ximalaya:album'
+      const expected: DiscoverUriHint = { key: 'ximalaya:album', label: 'Album' }
 
-      expect(ximalayaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(ximalayaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for an album page', () => {
       const value = 'https://www.ximalaya.com/album/10070285'
 
-      expect(ximalayaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ximalayaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a legacy album page', () => {
       const value = 'https://www.ximalaya.com/61425525/album/6912905'
 
-      expect(ximalayaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ximalayaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/album/10070285.xml'
 
-      expect(ximalayaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ximalayaHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
