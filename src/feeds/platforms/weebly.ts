@@ -1,11 +1,7 @@
-import { encodePathSegment, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  findElements,
-  formatSuffixRegex,
-  getTenantSubdomain,
-} from '../../common/utils.js'
+import { findElements, formatSuffixRegex, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -17,6 +13,10 @@ const domains = ['weebly.com']
 // A page link is one segment with an optional .html, as `/newsletter.html` or `/newsletter`. Any
 // other dot marks a file, such as `/favicon.ico`.
 const pageLinkRegex = /^\/([^/.]+)(?:\.html)?$/i
+
+const feeds = definePlatformFeeds([
+  { key: 'weebly:blog', template: '{scheme}://{site}.weebly.com/{page}/feed' },
+])
 
 export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -78,27 +78,27 @@ export const weeblyHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getWeeblyPage(url, content)
+    const site = getTenantSubdomain(url, domains)
 
-    if (!page) {
+    if (!page || !site) {
       return []
     }
 
-    const { origin } = new URL(url)
+    const scheme = new URL(url).protocol.slice(0, -1)
+    const slugs = page.kind === 'home' ? page.pages : [page.page ?? 'blog']
 
-    if (page.kind === 'home') {
-      return page.pages.map((slug) => {
-        return {
-          uri: `${origin}/${encodePathSegment(slug)}/feed`,
-          hint: composeHint('weebly:blog'),
-        }
-      })
+    return slugs.map((slug) => feeds.getFeedEntry('weebly:blog', { scheme, site, page: slug }))
+  },
+
+  // The table reads any first segment as a page, so a dotted one, a file of the site, is refused:
+  // /robots.txt/feed and /sitemap.xml/feed answer with a 404 or an empty body, never a feed.
+  getFeedKey: (url) => {
+    const [pageSegment] = getPathSegments(url)
+
+    if (!pageSegment || formatSuffixRegex.test(pageSegment)) {
+      return
     }
 
-    return [
-      {
-        uri: `${origin}/${encodePathSegment(page.page ?? 'blog')}/feed`,
-        hint: composeHint('weebly:blog'),
-      },
-    ]
+    return feeds.getFeedKey(url)
   },
 }

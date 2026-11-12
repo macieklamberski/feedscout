@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { parseWeeblyUrl, type WeeblyUrl, weeblyHandler } from './weebly.js'
 
 describe('parseWeeblyUrl', () => {
@@ -200,6 +203,118 @@ describe('weeblyHandler', () => {
       ]
 
       expect(weeblyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the http scheme of the page', () => {
+      const value = 'http://aeheideman.weebly.com/5'
+      const expected = [
+        {
+          uri: 'http://aeheideman.weebly.com/5/feed',
+          hint: { key: 'weebly:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(weeblyHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the blog key for a blog id feed', () => {
+      const value = 'https://bmsavid.weebly.com/1/feed'
+      const expected = 'weebly:blog'
+
+      expect(weeblyHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for a blog id feed over http', () => {
+      const value = 'http://aeheideman.weebly.com/5/feed'
+      const expected = 'weebly:blog'
+
+      expect(weeblyHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for a page slug feed', () => {
+      const value = 'https://bmsavid.weebly.com/wish-you-were-here/feed'
+      const expected = 'weebly:blog'
+
+      expect(weeblyHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for the default blog feed', () => {
+      const value = 'https://sounditoutphonics.weebly.com/blog/feed'
+      const expected = 'weebly:blog'
+
+      expect(weeblyHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for a feed with a capitalised route word', () => {
+      const value = 'https://bmsavid.weebly.com/1/FEED'
+      const expected = 'weebly:blog'
+
+      expect(weeblyHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a feed path under a robots file', () => {
+      const value = 'https://ondertschuim.weebly.com/robots.txt/feed'
+
+      expect(weeblyHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path under a sitemap file', () => {
+      const value = 'https://istanbulservis.weebly.com/sitemap.xml/feed'
+
+      expect(weeblyHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://bmsavid.weebly.com/wish-you-were-here'
+
+      expect(weeblyHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the root', () => {
+      const value = 'https://bmsavid.weebly.com/'
+
+      expect(weeblyHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.bmsavid.weebly.com/1/feed'
+
+      expect(weeblyHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://weebly.com/1/feed'
+
+      expect(weeblyHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/1/feed'
+
+      expect(weeblyHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://bmsavid.weebly.com/1/feed', { key: 'weebly:blog', label: 'Blog' }],
+      ['http://aeheideman.weebly.com/5/feed', { key: 'weebly:blog', label: 'Blog' }],
+      ['https://bmsavid.weebly.com/wish-you-were-here/feed', { key: 'weebly:blog', label: 'Blog' }],
+      ['https://sounditoutphonics.weebly.com/blog/feed', { key: 'weebly:blog', label: 'Blog' }],
+      ['https://bmsavid.weebly.com/1/FEED', { key: 'weebly:blog', label: 'Blog' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [weeblyHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
