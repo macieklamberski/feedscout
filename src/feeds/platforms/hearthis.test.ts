@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type HearthisUrl, hearthisHandler, parseHearthisUrl } from './hearthis.js'
 
 describe('parseHearthisUrl', () => {
@@ -76,6 +79,81 @@ describe('hearthisHandler', () => {
       const value = 'https://hearthis.at/'
 
       expect(hearthisHandler.resolve(value)).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the tracks key for a user feed', () => {
+      const value = 'https://hearthis.at/alice/podcast/'
+      const expected = 'hearthis:tracks'
+
+      expect(hearthisHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tracks key for a user feed without a trailing slash', () => {
+      const value = 'https://hearthis.at/alice/podcast'
+      const expected = 'hearthis:tracks'
+
+      expect(hearthisHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tracks key for a user feed over http on www', () => {
+      const value = 'http://www.hearthis.at/alice/podcast/'
+      const expected = 'hearthis:tracks'
+
+      expect(hearthisHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the new tracks key for the new tracks feed', () => {
+      const value = 'https://hearthis.at/new_tracks.rss'
+      const expected = 'hearthis:new-tracks'
+
+      expect(hearthisHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a user page', () => {
+      const value = 'https://hearthis.at/alice/'
+
+      expect(hearthisHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    const genrePages = [
+      'https://hearthis.at/categories/podcast/',
+      'https://hearthis.at/tags/podcast/',
+      'https://hearthis.at/artists/podcast/',
+      'https://hearthis.at/maps/podcast/',
+    ]
+
+    it.each(genrePages)('should return undefined for the genre page %s', (value) => {
+      expect(hearthisHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/alice/podcast/'
+
+      expect(hearthisHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const tracksHint: DiscoverUriHint = { key: 'hearthis:tracks', label: 'Tracks' }
+    const newTracksHint: DiscoverUriHint = { key: 'hearthis:new-tracks', label: 'New tracks' }
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://hearthis.at/alice/podcast/', tracksHint],
+      ['http://www.hearthis.at/alice/podcast', tracksHint],
+      ['https://hearthis.at/new_tracks.rss', newTracksHint],
+      ['http://www.hearthis.at/new_tracks.rss', newTracksHint],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [hearthisHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
