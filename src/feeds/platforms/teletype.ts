@@ -54,5 +54,5 @@ export const teletypeHandler: PlatformHandler = {
     ]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

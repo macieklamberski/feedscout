@@ -102,65 +102,71 @@ describe('teletypeHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for an RSS feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for an RSS feed', () => {
       const value = 'https://teletype.in/rss/zimnijpejzazh'
-      const expected = 'teletype:posts'
+      const expected: DiscoverUriHint = { key: 'teletype:posts', label: 'Posts', format: 'rss' }
 
-      expect(teletypeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(teletypeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an Atom feed', () => {
+    it('should return the posts hint for an Atom feed', () => {
       const value = 'https://teletype.in/atom/zimnijpejzazh'
-      const expected = 'teletype:posts'
+      const expected: DiscoverUriHint = { key: 'teletype:posts', label: 'Posts', format: 'atom' }
 
-      expect(teletypeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(teletypeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a feed over http', () => {
+    it('should return the posts hint for a feed over http', () => {
       const value = 'http://teletype.in/rss/zimnijpejzazh'
-      const expected = 'teletype:posts'
+      const expected: DiscoverUriHint = { key: 'teletype:posts', label: 'Posts', format: 'rss' }
 
-      expect(teletypeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(teletypeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a feed with a trailing slash', () => {
+    it('should return the posts hint for a feed with a trailing slash', () => {
       const value = 'https://teletype.in/atom/zimnijpejzazh/'
-      const expected = 'teletype:posts'
+      const expected: DiscoverUriHint = { key: 'teletype:posts', label: 'Posts', format: 'atom' }
 
-      expect(teletypeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(teletypeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a feed with an encoded username', () => {
+    it('should return the posts hint for a feed with an encoded username', () => {
       const value = 'https://teletype.in/rss/%D0%B4%D1%83%D1%80%D0%BE%D0%B2'
-      const expected = 'teletype:posts'
+      const expected: DiscoverUriHint = { key: 'teletype:posts', label: 'Posts', format: 'rss' }
 
-      expect(teletypeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(teletypeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://teletype.in/@zimnijpejzazh'
 
-      expect(teletypeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(teletypeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path without a username', () => {
       const value = 'https://teletype.in/rss/'
 
-      expect(teletypeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(teletypeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/rss/zimnijpejzazh'
 
-      expect(teletypeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(teletypeHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://teletype.in/rss/zimnijpejzazh', { key: 'teletype:posts', label: 'Posts' }],
-      ['https://teletype.in/atom/zimnijpejzazh', { key: 'teletype:posts', label: 'Posts' }],
+      [
+        'https://teletype.in/rss/zimnijpejzazh',
+        { key: 'teletype:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://teletype.in/atom/zimnijpejzazh',
+        { key: 'teletype:posts', label: 'Posts', format: 'atom' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
