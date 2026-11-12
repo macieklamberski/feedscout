@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type HashnodeUrl, hashnodeHandler, parseHashnodeUrl } from './hashnode.js'
 
 describe('parseHashnodeUrl', () => {
@@ -63,6 +66,85 @@ describe('hashnodeHandler', () => {
       ]
 
       expect(hashnodeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the HTTPS feed URL for an HTTP blog page', () => {
+      const value = 'http://example.hashnode.dev/some-article-slug'
+      const expected = [
+        {
+          uri: 'https://example.hashnode.dev/rss.xml',
+          hint: { key: 'hashnode:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(hashnodeHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the blog key for a blog feed', () => {
+      const value = 'https://example.hashnode.dev/rss.xml'
+      const expected = 'hashnode:blog'
+
+      expect(hashnodeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for a blog feed over HTTP', () => {
+      const value = 'http://example.hashnode.dev/rss.xml'
+      const expected = 'hashnode:blog'
+
+      expect(hashnodeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for a blog feed on hashnode.com', () => {
+      const value = 'https://example.hashnode.com/rss.xml'
+      const expected = 'hashnode:blog'
+
+      expect(hashnodeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://example.hashnode.dev/some-article-slug'
+
+      expect(hashnodeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.example.hashnode.dev/rss.xml'
+
+      expect(hashnodeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://hashnode.com/blog/rss.xml'
+
+      expect(hashnodeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/rss.xml'
+
+      expect(hashnodeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://example.hashnode.dev/rss.xml', { key: 'hashnode:blog', label: 'Blog' }],
+      ['http://example.hashnode.dev/rss.xml', { key: 'hashnode:blog', label: 'Blog' }],
+      ['https://example.hashnode.dev/rss.xml/', { key: 'hashnode:blog', label: 'Blog' }],
+      ['https://example.hashnode.com/rss.xml', { key: 'hashnode:blog', label: 'Blog' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [hashnodeHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

@@ -1,11 +1,18 @@
+import { getRegistrableDomain } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type HashnodeUrl = { kind: 'blog' }
 
 const domains = ['hashnode.dev', 'hashnode.com']
+
+const feeds = definePlatformFeeds(
+  [{ key: 'hashnode:blog', template: 'https://{blog}.{domain}/rss.xml' }],
+  { domains },
+)
 
 export const parseHashnodeUrl = (url: string): HashnodeUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -21,14 +28,15 @@ export const hashnodeHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsed = parseHashnodeUrl(url)
+    const blog = getTenantSubdomain(url, domains)
+    const domain = getRegistrableDomain(url)
 
-    if (!parsed) {
+    if (!blog || !domain) {
       return []
     }
 
-    const { origin } = new URL(url)
-
-    return [{ uri: `${origin}/rss.xml`, hint: composeHint('hashnode:blog') }]
+    return [feeds.getFeedEntry('hashnode:blog', { blog, domain })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
