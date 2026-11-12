@@ -16,7 +16,7 @@ const userRegex = /^\/([^/]+)/
 // to it.
 const feeds = definePlatformFeeds(
   [
-    { key: 'csdn:blog', template: 'https://{host}/{username}/rss/map' },
+    { key: 'csdn:blog', template: '{scheme}://{host}/{username}/rss/map' },
     { key: 'csdn:blog', template: 'https://blog.csdn.net/{username}/rss/list' },
   ],
   { hosts: feedHosts },
@@ -43,14 +43,15 @@ export const csdnHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseCsdnUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
     const { username } = parsed
 
-    return [feeds.getFeedEntry('csdn:blog', { host: 'rss.csdn.net', username })]
+    return [page.getFeedEntry('csdn:blog', { host: 'rss.csdn.net', username })]
   },
 
   getFeedHint: feeds.getFeedHint,

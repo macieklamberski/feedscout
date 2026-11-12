@@ -42,6 +42,18 @@ describe('csdnHandler', () => {
       expect(csdnHandler.resolve('https://example.com/')).toEqual([])
     })
 
+    it('should keep the scheme of an http blog page', () => {
+      const value = 'http://blog.csdn.net/csdnnews'
+      const expected = [
+        {
+          uri: 'http://rss.csdn.net/csdnnews/rss/map',
+          hint: { key: 'csdn:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(csdnHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return RSS feed URL for user blog', () => {
       const value = 'https://blog.csdn.net/csdnnews'
       const expected = [
