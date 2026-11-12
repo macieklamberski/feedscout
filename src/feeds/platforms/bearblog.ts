@@ -94,5 +94,5 @@ export const bearblogHandler: PlatformHandler = {
     return uris
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

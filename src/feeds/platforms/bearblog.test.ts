@@ -150,81 +150,141 @@ describe('bearblogHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    const feedKeys: Array<[string, string]> = [
-      ['https://bearblog.dev/discover/feed/', 'bearblog:discover'],
-      ['https://bearblog.dev/discover/feed/?type=rss', 'bearblog:discover'],
-      ['https://bearblog.dev/discover/feed/?newest=True', 'bearblog:discover'],
-      ['https://tiramisu.bearblog.dev/feed/?q=psychology', 'bearblog:tag'],
-      ['https://tiramisu.bearblog.dev/feed/?type=rss&q=psychology', 'bearblog:tag'],
-      ['https://reedybear.bearblog.dev/feed/?q=bearblog&type=rss', 'bearblog:tag'],
-      ['https://docs.bearblog.dev/feed/', 'bearblog:posts'],
-      ['https://docs.bearblog.dev/feed/?type=rss', 'bearblog:posts'],
-      ['http://herman.bearblog.dev/feed/', 'bearblog:posts'],
-      ['https://gabrielcornish.bearblog.dev/atom/', 'bearblog:posts'],
-      ['https://achyut.bearblog.dev/atom.xml', 'bearblog:posts'],
-      ['https://nikspyratos.bearblog.dev/feed.xml', 'bearblog:posts'],
-      ['https://reedybear.bearblog.dev/index.xml', 'bearblog:posts'],
-      ['https://ludwigabap.bearblog.dev/rss/', 'bearblog:posts'],
-      ['https://tbr.bearblog.dev/rss.xml', 'bearblog:posts'],
+  describe('getFeedHint', () => {
+    const feedHints: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://bearblog.dev/discover/feed/',
+        { key: 'bearblog:discover', label: 'Trending', format: 'atom' },
+      ],
+      [
+        'https://bearblog.dev/discover/feed/?type=rss',
+        { key: 'bearblog:discover', label: 'Trending', format: 'rss' },
+      ],
+      [
+        'https://bearblog.dev/discover/feed/?newest=True',
+        { key: 'bearblog:discover', label: 'Trending', format: 'atom' },
+      ],
+      [
+        'https://tiramisu.bearblog.dev/feed/?q=psychology',
+        { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
+      ],
+      [
+        'https://tiramisu.bearblog.dev/feed/?type=rss&q=psychology',
+        { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
+      ],
+      [
+        'https://reedybear.bearblog.dev/feed/?q=bearblog&type=rss',
+        { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
+      ],
+      [
+        'https://docs.bearblog.dev/feed/',
+        { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://docs.bearblog.dev/feed/?type=rss',
+        { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'http://herman.bearblog.dev/feed/',
+        { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://gabrielcornish.bearblog.dev/atom/',
+        { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://achyut.bearblog.dev/atom.xml',
+        { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://nikspyratos.bearblog.dev/feed.xml',
+        { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://reedybear.bearblog.dev/index.xml',
+        { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://ludwigabap.bearblog.dev/rss/',
+        { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://tbr.bearblog.dev/rss.xml',
+        { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
+      ],
     ]
 
-    it.each(feedKeys)('should return the key of %s', (value, expected) => {
-      expect(bearblogHandler.getFeedKey?.(value)).toBe(expected)
+    it.each(feedHints)('should return the key of %s', (value, expected) => {
+      expect(bearblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://herman.bearblog.dev/blog/'
 
-      expect(bearblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bearblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a tag page', () => {
       const value = 'https://herman.bearblog.dev/blog/?q=python'
 
-      expect(bearblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bearblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the discover page', () => {
       const value = 'https://bearblog.dev/discover/'
 
-      expect(bearblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bearblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the apex', () => {
       const value = 'https://bearblog.dev/feed/'
 
-      expect(bearblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bearblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://blog.example.bearblog.dev/feed/'
 
-      expect(bearblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bearblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/feed/'
 
-      expect(bearblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bearblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://bearblog.dev/discover/feed/', { key: 'bearblog:discover', label: 'Trending' }],
+      [
+        'https://bearblog.dev/discover/feed/',
+        { key: 'bearblog:discover', label: 'Trending', format: 'atom' },
+      ],
       [
         'https://bearblog.dev/discover/feed/?type=rss',
-        { key: 'bearblog:discover', label: 'Trending' },
+        { key: 'bearblog:discover', label: 'Trending', format: 'rss' },
       ],
-      ['https://tiramisu.bearblog.dev/feed/?q=psychology', { key: 'bearblog:tag', label: 'Tag' }],
+      [
+        'https://tiramisu.bearblog.dev/feed/?q=psychology',
+        { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
+      ],
       [
         'https://tiramisu.bearblog.dev/feed/?type=rss&q=psychology',
-        { key: 'bearblog:tag', label: 'Tag' },
+        { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
       ],
-      ['https://docs.bearblog.dev/feed/', { key: 'bearblog:posts', label: 'Posts' }],
-      ['https://docs.bearblog.dev/feed/?type=rss', { key: 'bearblog:posts', label: 'Posts' }],
-      ['https://achyut.bearblog.dev/atom.xml', { key: 'bearblog:posts', label: 'Posts' }],
+      [
+        'https://docs.bearblog.dev/feed/',
+        { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://docs.bearblog.dev/feed/?type=rss',
+        { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://achyut.bearblog.dev/atom.xml',
+        { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
