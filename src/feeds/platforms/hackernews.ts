@@ -48,5 +48,5 @@ export const hackernewsHandler: PlatformHandler = {
     return [feeds.getFeedEntry('hackernews:front')]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

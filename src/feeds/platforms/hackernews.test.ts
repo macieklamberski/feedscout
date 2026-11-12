@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { type HackernewsUrl, hackernewsHandler, parseHackernewsUrl } from './hackernews.js'
@@ -101,31 +101,31 @@ describe('hackernewsHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the front key for the front page feed', () => {
       const value = 'https://news.ycombinator.com/rss'
-      const expected = 'hackernews:front'
+      const expected: DiscoverUriHint = { key: 'hackernews:front', label: 'Front page' }
 
-      expect(hackernewsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hackernewsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the show key for the Show HN feed', () => {
       const value = 'https://news.ycombinator.com/showrss'
-      const expected = 'hackernews:show'
+      const expected: DiscoverUriHint = { key: 'hackernews:show', label: 'Show HN' }
 
-      expect(hackernewsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hackernewsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for the Show HN page', () => {
       const value = 'https://news.ycombinator.com/show'
 
-      expect(hackernewsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hackernewsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed resolve never builds', () => {
       const value = 'https://news.ycombinator.com/bigrss'
 
-      expect(hackernewsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hackernewsHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
