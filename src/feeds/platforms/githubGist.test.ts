@@ -41,6 +41,20 @@ describe('parseGithubGistUrl', () => {
     expect(parseGithubGistUrl(value)).toEqual(expected)
   })
 
+  it('should strip the feed suffix from a user feed URL', () => {
+    const value = 'https://gist.github.com/alice.atom'
+    const expected: GithubGistUrl = { kind: 'user', username: 'alice' }
+
+    expect(parseGithubGistUrl(value)).toEqual(expected)
+  })
+
+  it('should return the discover page for the discover feed URL', () => {
+    const value = 'https://gist.github.com/discover.atom'
+    const expected: GithubGistUrl = { kind: 'discover' }
+
+    expect(parseGithubGistUrl(value)).toEqual(expected)
+  })
+
   it('should return the starred gists for a starred page', () => {
     const expected: GithubGistUrl = { kind: 'starred', username: 'defunkt' }
 

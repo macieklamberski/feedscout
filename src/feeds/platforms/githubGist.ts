@@ -14,7 +14,7 @@ export type GithubGistUrl =
 
 const hosts = ['gist.github.com']
 
-const discoverRegex = /^\/discover\/?$/i
+const discoverRegex = /^\/discover(?:\.atom)?\/?$/i
 const feedSuffixRegex = /\.atom$/i
 
 const forksSections = ['forks', 'forked']
@@ -40,7 +40,9 @@ export const parseGithubGistUrl = (url: string): GithubGistUrl | undefined => {
     return { kind: 'discover' }
   }
 
-  const [username, section, ...rest] = getPathSegments(url)
+  const [name, section, ...rest] = getPathSegments(url)
+  // The favicon handler reads a user feed URL, /{username}.atom, as the user.
+  const username = section ? name : name?.replace(feedSuffixRegex, '')
 
   // GitHub names carry no dots, so a dotted segment such as robots.txt is a file of the site.
   if (!username || username.includes('.')) {
