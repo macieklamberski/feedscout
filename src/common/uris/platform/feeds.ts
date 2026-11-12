@@ -41,7 +41,7 @@ export type PlatformFeedTable = {
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
   ) => DiscoverUriEntry
-  getFeedKey: (url: string) => string | undefined
+  getFeedHint: (url: string) => DiscoverUriHint | undefined
 }
 
 type CompiledTemplate = {
@@ -161,7 +161,7 @@ const compileTemplate = (
 }
 
 // One table of a handler's feed URLs, keyed by hint key. `getFeedUrl` writes a feed from the values
-// a page gave, `getFeedEntry` adds its hint, and `getFeedKey` reads a URL back to the feed's key.
+// a page gave, `getFeedEntry` adds its hint, and `getFeedHint` reads a URL back to the feed's hint.
 export const definePlatformFeeds = (
   templates: Array<PlatformFeedTemplate>,
   options: PlatformFeedTableOptions = {},
@@ -191,15 +191,21 @@ export const definePlatformFeeds = (
     return { uri: getFeedUrl(key, params, format), hint: composeHint(key, format) }
   }
 
-  const getFeedKey: PlatformFeedTable['getFeedKey'] = (url) => {
+  const getFeedHint: PlatformFeedTable['getFeedHint'] = (url) => {
     const parsedUrl = parseUrl(url)
 
     if (!parsedUrl || !isHttpUrl(parsedUrl)) {
       return
     }
 
-    return bySpecificity.find((candidate) => candidate.isFeedUrl(parsedUrl))?.key
+    const template = bySpecificity.find((candidate) => candidate.isFeedUrl(parsedUrl))
+
+    if (!template) {
+      return
+    }
+
+    return composeHint(template.key, template.format)
   }
 
-  return { getFeedUrl, getFeedEntry, getFeedKey }
+  return { getFeedUrl, getFeedEntry, getFeedHint }
 }
