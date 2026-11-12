@@ -109,11 +109,11 @@ describe('comicfuryHandler', () => {
       expect(comicfuryHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the https comic feed for an http comic page', () => {
+    it('should keep the scheme of an http comic page', () => {
       const value = 'http://alice.thecomicseries.com/comics/1'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.thecomicseries.com/rss',
+          uri: 'http://alice.thecomicseries.com/rss',
           hint: { key: 'comicfury:comic', label: 'Comic' },
         },
       ]

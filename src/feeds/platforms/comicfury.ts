@@ -1,4 +1,4 @@
-import { getQueryParam, getRegistrableDomain, isHostOf, parseUrl } from 'trousse'
+import { getQueryParam, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { alphanumericOrHyphenRegex, getTenantSubdomain } from '../../common/utils.js'
@@ -23,7 +23,7 @@ const readerPathRegex = /^\/read\/([^/]+)/i
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'comicfury:comic', template: 'https://{comic}.{domain}/rss' },
+    { key: 'comicfury:comic', template: '{scheme}://{host}/rss' },
     { key: 'comicfury:reader', template: 'https://comicfury.com/read/{comic}/rss' },
   ],
   { domains },
@@ -72,24 +72,24 @@ export const comicfuryHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseComicfuryUrl(url)
-    const domain = getRegistrableDomain(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed || !domain) {
+    if (!parsed || !page) {
       return []
     }
 
     if (parsed.kind === 'comic') {
-      return [feeds.getFeedEntry('comicfury:comic', { comic: parsed.comic, domain })]
+      return [page.getFeedEntry('comicfury:comic')]
     }
 
     if (parsed.kind === 'profile') {
       // Every comic answers on thecomicseries.com, whichever of the domains it picked.
-      const params = { comic: parsed.comic, domain: 'thecomicseries.com' }
+      const params = { host: `${parsed.comic}.thecomicseries.com` }
 
-      return [feeds.getFeedEntry('comicfury:comic', params)]
+      return [page.getFeedEntry('comicfury:comic', params)]
     }
 
-    return [feeds.getFeedEntry('comicfury:reader', { comic: parsed.comic })]
+    return [page.getFeedEntry('comicfury:reader', { comic: parsed.comic })]
   },
 
   // The table reads any label or segment as a comic, the parser only a valid comic name.
