@@ -11,10 +11,13 @@ const domains = ['fireside.fm']
 // The feed host serves every show by path, so it names no show.
 const feedHosts = ['feeds.fireside.fm']
 
-const feeds = definePlatformFeeds([
-  { key: 'fireside:podcast', template: 'https://feeds.fireside.fm/{slug}/rss', format: 'rss' },
-  { key: 'fireside:podcast', template: 'https://{slug}.fireside.fm/json', format: 'json' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'fireside:podcast', template: 'https://feeds.fireside.fm/{slug}/rss', format: 'rss' },
+    { key: 'fireside:podcast', template: '{scheme}://{host}/json', format: 'json' },
+  ],
+  { domains },
+)
 
 export const parseFiresideUrl = (url: string): FiresideUrl | undefined => {
   const slug = getTenantSubdomain(url, domains)
@@ -33,14 +36,15 @@ export const firesideHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseFiresideUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
     return [
-      feeds.getFeedEntry('fireside:podcast', { slug: parsed.slug }, 'rss'),
-      feeds.getFeedEntry('fireside:podcast', { slug: parsed.slug }, 'json'),
+      page.getFeedEntry('fireside:podcast', { slug: parsed.slug }, 'rss'),
+      page.getFeedEntry('fireside:podcast', { slug: parsed.slug }, 'json'),
     ]
   },
 

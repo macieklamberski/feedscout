@@ -48,6 +48,22 @@ describe('firesideHandler', () => {
       expect(firesideHandler.resolve('https://example.com/')).toEqual([])
     })
 
+    it('should keep the scheme of an http podcast page on its own host', () => {
+      const value = 'http://alice.fireside.fm'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://feeds.fireside.fm/alice/rss',
+          hint: { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
+        },
+        {
+          uri: 'http://alice.fireside.fm/json',
+          hint: { key: 'fireside:podcast', label: 'Podcast', format: 'json' },
+        },
+      ]
+
+      expect(firesideHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return RSS and JSON feeds for podcast', () => {
       const value = 'https://alice.fireside.fm'
       const expected: Array<DiscoverUriEntry> = [
