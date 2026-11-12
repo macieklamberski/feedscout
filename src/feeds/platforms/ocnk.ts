@@ -67,10 +67,13 @@ export const ocnkHandler: PlatformHandler = {
 
     // A custom-domain shop spells its alternate link on its own origin.
     if (parsed.kind === 'customDomain') {
-      const { protocol, host } = new URL(url)
-      const params = { scheme: protocol.slice(0, -1), host }
+      const pageFeeds = customDomainFeeds.forUrl(url)
 
-      return [customDomainFeeds.getFeedEntry('ocnk:products', params, 'rdf')]
+      if (!pageFeeds) {
+        return []
+      }
+
+      return [pageFeeds.getFeedEntry('ocnk:products', {}, 'rdf')]
     }
 
     return [shopFeeds.getFeedEntry('ocnk:products', { shop: parsed.shop }, 'rdf')]
