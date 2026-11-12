@@ -205,70 +205,70 @@ describe('bloggoHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for a posts feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a posts feed', () => {
       const value = 'https://gunwah.bloggo.nu/feed/'
-      const expected = 'bloggo:posts'
+      const expected: DiscoverUriHint = { key: 'bloggo:posts', label: 'Posts' }
 
-      expect(bloggoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(bloggoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an http posts feed without a trailing slash', () => {
+    it('should return the posts hint for an http posts feed without a trailing slash', () => {
       const value = 'http://schackelina.bloggo.nu/feed'
-      const expected = 'bloggo:posts'
+      const expected: DiscoverUriHint = { key: 'bloggo:posts', label: 'Posts' }
 
-      expect(bloggoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(bloggoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the post comments key for a post comments feed', () => {
+    it('should return the post comments hint for a post comments feed', () => {
       const value = 'https://gunwah.bloggo.nu/Vitsippan-ute-i-backarna-star-/feed/'
-      const expected = 'bloggo:post-comments'
+      const expected: DiscoverUriHint = { key: 'bloggo:post-comments', label: 'Post comments' }
 
-      expect(bloggoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(bloggoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the post comments key for a post comments feed without a trailing slash', () => {
+    it('should return the post comments hint for a post comments feed without a trailing slash', () => {
       const value = 'https://eva49.bloggo.nu/Atta-nyanser-av-gront-/feed'
-      const expected = 'bloggo:post-comments'
+      const expected: DiscoverUriHint = { key: 'bloggo:post-comments', label: 'Post comments' }
 
-      expect(bloggoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(bloggoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the post comments key for a percent-encoded post comments feed', () => {
+    it('should return the post comments hint for a percent-encoded post comments feed', () => {
       const value = 'http://martasrike.bloggo.nu/M%C3%B6rkbladiga+fl%C3%A4der/feed/'
-      const expected = 'bloggo:post-comments'
+      const expected: DiscoverUriHint = { key: 'bloggo:post-comments', label: 'Post comments' }
 
-      expect(bloggoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(bloggoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a post page', () => {
       const value = 'https://gunwah.bloggo.nu/Vitsippan-ute-i-backarna-star-/'
 
-      expect(bloggoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bloggoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the www host', () => {
       const value = 'https://www.bloggo.nu/feed/'
 
-      expect(bloggoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bloggoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex domain', () => {
       const value = 'https://bloggo.nu/feed/'
 
-      expect(bloggoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bloggoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://blog.alice.bloggo.nu/feed/'
 
-      expect(bloggoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bloggoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on another host', () => {
       const value = 'https://example.com/Min-forsta-resa/feed/'
 
-      expect(bloggoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bloggoHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
