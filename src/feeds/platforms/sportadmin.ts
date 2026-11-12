@@ -18,8 +18,8 @@ const nextGameRegex = /wNextGame\.asp\?SID=(\d+)/i
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'sportadmin:team', template: 'https://{club}.{domain}/rss/?SID={sectionId}' },
-    { key: 'sportadmin:news', template: 'https://{club}.{domain}/rss/' },
+    { key: 'sportadmin:team', template: '{scheme}://{host}/rss/?SID={sectionId}' },
+    { key: 'sportadmin:news', template: '{scheme}://{host}/rss/' },
   ],
   { domains },
 )
@@ -79,20 +79,19 @@ export const sportadminHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getSportadminPage(url, content)
-    const club = getTenantSubdomain(url, domains)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page || !club) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const params = { club, domain: domains[0] }
     const uris: Array<DiscoverUriEntry> = []
 
     if (page.kind === 'team') {
-      uris.push(feeds.getFeedEntry('sportadmin:team', { ...params, sectionId: page.sectionId }))
+      uris.push(pageFeeds.getFeedEntry('sportadmin:team', { sectionId: page.sectionId }))
     }
 
-    uris.push(feeds.getFeedEntry('sportadmin:news', params))
+    uris.push(pageFeeds.getFeedEntry('sportadmin:news'))
 
     return uris
   },

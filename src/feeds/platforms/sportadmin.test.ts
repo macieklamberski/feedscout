@@ -186,15 +186,15 @@ describe('sportadminHandler', () => {
       expect(sportadminHandler.resolve(value, homeContent)).toEqual(expected)
     })
 
-    it('should return https feeds for a page opened over http', () => {
+    it('should keep the http scheme of a page opened over http', () => {
       const value = 'http://exampleclub.web.sportadmin.se/start/?ID=2001'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://exampleclub.web.sportadmin.se/rss/?SID=1002',
+          uri: 'http://exampleclub.web.sportadmin.se/rss/?SID=1002',
           hint: { key: 'sportadmin:team', label: 'Team news' },
         },
         {
-          uri: 'https://exampleclub.web.sportadmin.se/rss/',
+          uri: 'http://exampleclub.web.sportadmin.se/rss/',
           hint: { key: 'sportadmin:news', label: 'Club news' },
         },
       ]
