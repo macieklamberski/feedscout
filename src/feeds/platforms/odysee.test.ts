@@ -176,6 +176,13 @@ describe('odyseeHandler', () => {
       expect(odyseeHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the videos key for a feed with the claim ID as a path segment', () => {
+      const value = 'https://odysee.com/$/rss/@lbry/3fda836a92faaceedfe398225fb9b2ee2ed1f01a'
+      const expected = 'odysee:videos'
+
+      expect(odyseeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return undefined for a channel page', () => {
       const value = 'https://odysee.com/@eduard.messmer:5'
 
@@ -201,6 +208,7 @@ describe('odyseeHandler', () => {
       'https://odysee.com/$/rss/@CryptoRain:2feae5c0e5c62d5533e0dd78e58a7684ca94f215',
       'https://odysee.com/$/rss/@eduard.messmer:5',
       'https://odysee.com/$/rss/@LiberumAsociaci%C3%B3n:6',
+      'https://odysee.com/$/rss/@lbry/3fda836a92faaceedfe398225fb9b2ee2ed1f01a',
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value) => {
