@@ -82,7 +82,7 @@
     "@types/bun": "^1.4.4",
     "@types/http-link-header": "^1.0.7",
     "feedsmith": "^3.0.1",
-    "kvalita": "^1.34.0",
+    "kvalita": "^1.35.0",
     "ogier": "^1.8.1",
     "trousse": "^3.7.0",
     "tsdown": "0.23.7",
