@@ -15,29 +15,32 @@ const wwwHosts = ['www.dreamwidth.org', 'dreamwidth.org']
 
 const usersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 
-const feeds = definePlatformFeeds([
-  {
-    key: 'dreamwidth:posts-tag',
-    template: 'https://{journal}.dreamwidth.org/data/rss?tag={tag}',
-    format: 'rss',
-  },
-  {
-    key: 'dreamwidth:posts-tag',
-    template: 'https://{journal}.dreamwidth.org/data/atom?tag={tag}',
-    format: 'atom',
-  },
-  { key: 'dreamwidth:posts', template: 'https://{journal}.dreamwidth.org/data/rss', format: 'rss' },
-  {
-    key: 'dreamwidth:posts',
-    template: 'https://{journal}.dreamwidth.org/data/atom',
-    format: 'atom',
-  },
-  {
-    key: 'dreamwidth:userpics',
-    template: 'https://{journal}.dreamwidth.org/data/userpics',
-    format: 'atom',
-  },
-])
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'dreamwidth:posts-tag',
+      template: '{scheme}://{host}/data/rss?tag={tag}',
+      format: 'rss',
+    },
+    {
+      key: 'dreamwidth:posts-tag',
+      template: '{scheme}://{host}/data/atom?tag={tag}',
+      format: 'atom',
+    },
+    { key: 'dreamwidth:posts', template: '{scheme}://{host}/data/rss', format: 'rss' },
+    {
+      key: 'dreamwidth:posts',
+      template: '{scheme}://{host}/data/atom',
+      format: 'atom',
+    },
+    {
+      key: 'dreamwidth:userpics',
+      template: '{scheme}://{host}/data/userpics',
+      format: 'atom',
+    },
+  ],
+  { domains },
+)
 
 export const parseDreamwidthUrl = (url: string): DreamwidthUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
@@ -74,8 +77,9 @@ export const dreamwidthHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseDreamwidthUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
@@ -94,18 +98,20 @@ export const dreamwidthHandler: PlatformHandler = {
       return []
     }
 
+    // A journal named in the path lives on its own host, a journal page serves from its own.
+    const host = parsed.username ? `${journal}.dreamwidth.org` : undefined
     const entries: Array<DiscoverUriEntry> = []
 
     if (parsed.tag) {
       const tag = decodeSegment(parsed.tag) ?? parsed.tag
 
-      entries.push(feeds.getFeedEntry('dreamwidth:posts-tag', { journal, tag }, 'rss'))
-      entries.push(feeds.getFeedEntry('dreamwidth:posts-tag', { journal, tag }, 'atom'))
+      entries.push(page.getFeedEntry('dreamwidth:posts-tag', { host, tag }, 'rss'))
+      entries.push(page.getFeedEntry('dreamwidth:posts-tag', { host, tag }, 'atom'))
     }
 
-    entries.push(feeds.getFeedEntry('dreamwidth:posts', { journal }, 'rss'))
-    entries.push(feeds.getFeedEntry('dreamwidth:posts', { journal }, 'atom'))
-    entries.push(feeds.getFeedEntry('dreamwidth:userpics', { journal }, 'atom'))
+    entries.push(page.getFeedEntry('dreamwidth:posts', { host }, 'rss'))
+    entries.push(page.getFeedEntry('dreamwidth:posts', { host }, 'atom'))
+    entries.push(page.getFeedEntry('dreamwidth:userpics', { host }, 'atom'))
 
     return entries
   },

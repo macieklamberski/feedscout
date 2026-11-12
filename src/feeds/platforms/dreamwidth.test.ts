@@ -108,19 +108,19 @@ describe('dreamwidthHandler', () => {
       expect(dreamwidthHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return https feeds for an http journal page', () => {
+    it('should keep the scheme of an http journal page', () => {
       const value = 'http://alice.dreamwidth.org'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.dreamwidth.org/data/rss',
+          uri: 'http://alice.dreamwidth.org/data/rss',
           hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://alice.dreamwidth.org/data/atom',
+          uri: 'http://alice.dreamwidth.org/data/atom',
           hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://alice.dreamwidth.org/data/userpics',
+          uri: 'http://alice.dreamwidth.org/data/userpics',
           hint: { key: 'dreamwidth:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
