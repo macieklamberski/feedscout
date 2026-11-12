@@ -36,6 +36,19 @@ const repositoryRevisionsRegex = /\/repository\/([^/"?#]+)\/revisions\b/i
 const schemeRegex = /^https?:/
 const trailingSlashRegex = /\/$/
 const originSchemeRegex = /^https?:\/\//
+// The issue list parameters that lay the list out or turn its filters on, so an issues feed
+// with only these holds the same issues. Any other one, such as query_id, filters it.
+const issueListParams = [
+  'sort',
+  'per_page',
+  'page',
+  'c',
+  'group_by',
+  't',
+  'utf8',
+  'set_filter',
+  'key',
+]
 
 // Planio hosts an install on a site subdomain. An install on its own domain is known only by its
 // marker, so its feeds are built here but not claimed.
@@ -306,10 +319,29 @@ export const redmineHandler: PlatformHandler = {
   // The table reads any host under the domains, so only a site's own subdomain is claimed, not the
   // apex, www or a nested host.
   getFeedHint: (url) => {
-    if (!getTenantSubdomain(url, domains)) {
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl || !getTenantSubdomain(parsedUrl, domains)) {
       return
     }
 
-    return feeds.getFeedHint(url)
+    const hint = feeds.getFeedHint(url)
+
+    if (!hint || !isAnyOf(hint.key, ['redmine:issues', 'redmine:project-issues'])) {
+      return hint
+    }
+
+    // A parameter name such as `f[]` or `op[status_id]` is read without its brackets.
+    const names = [...parsedUrl.searchParams.keys()].map((name) => name.split('[')[0])
+
+    if (names.every((name) => isAnyOf(name, issueListParams))) {
+      return hint
+    }
+
+    if (hint.key === 'redmine:project-issues') {
+      return composeHint('redmine:project-filtered-issues')
+    }
+
+    return composeHint('redmine:filtered-issues')
   },
 }

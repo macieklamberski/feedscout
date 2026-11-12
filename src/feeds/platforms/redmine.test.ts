@@ -731,7 +731,19 @@ describe('redmineHandler', () => {
       ['https://example.plan.io/issues.atom', { key: 'redmine:issues', label: 'Issues' }],
       [
         'https://example.plan.io/projects/acme/issues.atom?set_filter=1&tracker_id=1',
-        { key: 'redmine:project-issues', label: 'Project issues' },
+        { key: 'redmine:project-filtered-issues', label: 'Filtered project issues' },
+      ],
+      [
+        'https://example.plan.io/issues.atom?query_id=17&sort=updated_on%3Adesc',
+        { key: 'redmine:filtered-issues', label: 'Filtered issues' },
+      ],
+      [
+        'https://example.plan.io/issues.atom?set_filter=1&f%5B%5D=status_id&op%5Bstatus_id%5D=c',
+        { key: 'redmine:filtered-issues', label: 'Filtered issues' },
+      ],
+      [
+        'https://example.plan.io/issues.atom?per_page=50&sort=id%3Adesc',
+        { key: 'redmine:issues', label: 'Issues' },
       ],
       [
         'https://example.plan.io/issues/12345.atom',
@@ -801,7 +813,11 @@ describe('redmineHandler', () => {
       ['https://example.plan.io/projects.atom', { key: 'redmine:projects', label: 'Projects' }],
       [
         'https://example.plan.io/issues.atom?query_id=17&sort=updated_on%3Adesc',
-        { key: 'redmine:issues', label: 'Issues' },
+        { key: 'redmine:filtered-issues', label: 'Filtered issues' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/issues.atom?set_filter=1&status_id=c',
+        { key: 'redmine:project-filtered-issues', label: 'Filtered project issues' },
       ],
       [
         'https://example.plan.io/issues/12345.atom',
