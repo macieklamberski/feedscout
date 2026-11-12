@@ -22,36 +22,26 @@ const feeds = definePlatformFeeds(
   [
     {
       key: 'tischtennislive:group-results',
-      template:
-        '{scheme}://{association}.{domain}/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next=0',
+      template: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next=0',
     },
     {
       key: 'tischtennislive:group-fixtures',
-      template:
-        '{scheme}://{association}.{domain}/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next=1',
+      template: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next=1',
     },
     {
       key: 'tischtennislive:league-results',
-      template:
-        '{scheme}://{association}.{domain}/Export/Tischtennis/RSS.aspx?Typ=Wett&ID={league}&Next=0',
+      template: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Wett&ID={league}&Next=0',
     },
     {
       key: 'tischtennislive:league-fixtures',
-      template:
-        '{scheme}://{association}.{domain}/Export/Tischtennis/RSS.aspx?Typ=Wett&ID={league}&Next=1',
+      template: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Wett&ID={league}&Next=1',
     },
-    { key: 'tischtennislive:news', template: '{scheme}://{association}.{domain}/Export/RSS.aspx' },
-    {
-      key: 'tischtennislive:dates',
-      template: '{scheme}://{association}.{domain}/Export/RSS_Termine.aspx',
-    },
-    {
-      key: 'tischtennislive:documents',
-      template: '{scheme}://{association}.{domain}/Export/RSS_Dokumente.aspx',
-    },
+    { key: 'tischtennislive:news', template: '{scheme}://{host}/Export/RSS.aspx' },
+    { key: 'tischtennislive:dates', template: '{scheme}://{host}/Export/RSS_Termine.aspx' },
+    { key: 'tischtennislive:documents', template: '{scheme}://{host}/Export/RSS_Dokumente.aspx' },
     {
       key: 'tischtennislive:tournaments',
-      template: '{scheme}://{association}.{domain}/Export/Tischtennis/RSS_Turniere.aspx',
+      template: '{scheme}://{host}/Export/Tischtennis/RSS_Turniere.aspx',
     },
   ],
   { domains },
@@ -124,35 +114,25 @@ export const tischtennisliveHandler: PlatformHandler = {
       return []
     }
 
-    // A page is read only on an association's own subdomain, its first host label.
-    const [association] = new URL(url).hostname.split('.')
-    const params = { association }
-
     if (page.kind === 'group') {
       return [
-        pageFeeds.getFeedEntry('tischtennislive:group-results', { ...params, group: page.group }),
-        pageFeeds.getFeedEntry('tischtennislive:group-fixtures', { ...params, group: page.group }),
+        pageFeeds.getFeedEntry('tischtennislive:group-results', { group: page.group }),
+        pageFeeds.getFeedEntry('tischtennislive:group-fixtures', { group: page.group }),
       ]
     }
 
     if (page.kind === 'league') {
       return [
-        pageFeeds.getFeedEntry('tischtennislive:league-results', {
-          ...params,
-          league: page.league,
-        }),
-        pageFeeds.getFeedEntry('tischtennislive:league-fixtures', {
-          ...params,
-          league: page.league,
-        }),
+        pageFeeds.getFeedEntry('tischtennislive:league-results', { league: page.league }),
+        pageFeeds.getFeedEntry('tischtennislive:league-fixtures', { league: page.league }),
       ]
     }
 
     return [
-      pageFeeds.getFeedEntry('tischtennislive:news', params),
-      pageFeeds.getFeedEntry('tischtennislive:dates', params),
-      pageFeeds.getFeedEntry('tischtennislive:documents', params),
-      pageFeeds.getFeedEntry('tischtennislive:tournaments', params),
+      pageFeeds.getFeedEntry('tischtennislive:news'),
+      pageFeeds.getFeedEntry('tischtennislive:dates'),
+      pageFeeds.getFeedEntry('tischtennislive:documents'),
+      pageFeeds.getFeedEntry('tischtennislive:tournaments'),
     ]
   },
 
