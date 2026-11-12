@@ -243,6 +243,7 @@
       "http://scwbawi.memberzone.com/Feed/rss/NewMembers.rss",
       "http://lowell-ma.chambermaster.com/Feed/rss/NewMembers.rss"
     ],
+    "chambermaster:new-products": "https://bigfork.chambermaster.com/store/newproducts/rss",
     "chambermaster:news-releases": "https://members.agcmass.org/Feed/rss/NewsReleases.rss",
     "chambermaster:upcoming-events": [
       "https://members.agcmass.org/Feed/rss/UpcomingEvents.rss",

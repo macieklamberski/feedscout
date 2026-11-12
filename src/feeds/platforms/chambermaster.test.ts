@@ -319,6 +319,10 @@ describe('chambermasterHandler', () => {
         { key: 'chambermaster:new-m2m-deals', label: 'New member to member deals' },
       ],
       [
+        'https://examplechamber.chambermaster.com/store/newproducts/rss',
+        { key: 'chambermaster:new-products', label: 'New products' },
+      ],
+      [
         'http://examplechamber.chambermaster.com/feed/rss/UpcomingEvents.rss',
         { key: 'chambermaster:upcoming-events', label: 'Upcoming events' },
       ],
@@ -387,6 +391,12 @@ describe('chambermasterHandler', () => {
 
       expect(chambermasterHandler.getFeedHint?.(value)).toBeUndefined()
     })
+
+    it('should return undefined for a store products feed on a custom domain', () => {
+      const value = 'https://business.example.com/store/newproducts/rss'
+
+      expect(chambermasterHandler.getFeedHint?.(value)).toBeUndefined()
+    })
   })
 
   describe('own feeds through the Platform method', () => {
@@ -410,6 +420,10 @@ describe('chambermasterHandler', () => {
       [
         'https://examplechamber.preview.gochambermaster.com/Feed/rss/NewJobs.rss',
         { key: 'chambermaster:new-jobs', label: 'New jobs' },
+      ],
+      [
+        'http://examplechamber.chambermaster.com/store/newproducts/rss',
+        { key: 'chambermaster:new-products', label: 'New products' },
       ],
     ]
 

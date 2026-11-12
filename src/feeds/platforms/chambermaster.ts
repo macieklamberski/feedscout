@@ -41,6 +41,8 @@ const feeds = definePlatformFeeds(
     },
     { key: 'chambermaster:news-releases', template: '{scheme}://{host}/Feed/rss/NewsReleases.rss' },
     { key: 'chambermaster:new-m2m-deals', template: '{scheme}://{host}/Feed/rss/NewM2MDeals.rss' },
+    // The page parser reads no store page, so this row only claims.
+    { key: 'chambermaster:new-products', template: '{scheme}://{host}/store/newproducts/rss' },
   ],
   { domains: [...domains, ...previewDomains] },
 )
