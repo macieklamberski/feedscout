@@ -77,15 +77,15 @@ describe('bearblogHandler', () => {
       expect(bearblogHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return https feeds for an http blog page', () => {
+    it('should keep the scheme of an http blog page', () => {
       const value = 'http://alice.bearblog.dev/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.bearblog.dev/feed/',
+          uri: 'http://alice.bearblog.dev/feed/',
           hint: { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://alice.bearblog.dev/feed/?type=rss',
+          uri: 'http://alice.bearblog.dev/feed/?type=rss',
           hint: { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
         },
       ]
