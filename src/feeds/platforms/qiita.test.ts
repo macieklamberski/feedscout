@@ -214,131 +214,131 @@ describe('qiitaHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for a user feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a user feed', () => {
       const value = 'https://qiita.com/najeira/feed.atom'
-      const expected = 'qiita:posts'
+      const expected: DiscoverUriHint = { key: 'qiita:posts', label: 'Posts' }
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a user feed without the extension', () => {
+    it('should return the posts hint for a user feed without the extension', () => {
       const value = 'https://qiita.com/najeira/feed'
-      const expected = 'qiita:posts'
+      const expected: DiscoverUriHint = { key: 'qiita:posts', label: 'Posts' }
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a user feed on the www host over http', () => {
+    it('should return the posts hint for a user feed on the www host over http', () => {
       const value = 'http://www.qiita.com/najeira/feed'
-      const expected = 'qiita:posts'
+      const expected: DiscoverUriHint = { key: 'qiita:posts', label: 'Posts' }
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed', () => {
+    it('should return the tag hint for a tag feed', () => {
       const value = 'https://qiita.com/tags/cloudformation/feed.atom'
-      const expected = 'qiita:tag'
+      const expected: DiscoverUriHint = { key: 'qiita:tag', label: 'Tag' }
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed without the extension', () => {
+    it('should return the tag hint for a tag feed without the extension', () => {
       const value = 'https://qiita.com/tags/iac/feed'
-      const expected = 'qiita:tag'
+      const expected: DiscoverUriHint = { key: 'qiita:tag', label: 'Tag' }
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed with a percent-encoded tag', () => {
+    it('should return the tag hint for a tag feed with a percent-encoded tag', () => {
       const value = 'https://qiita.com/tags/green%E9%96%A2%E6%95%B0/feed'
-      const expected = 'qiita:tag'
+      const expected: DiscoverUriHint = { key: 'qiita:tag', label: 'Tag' }
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed with a capitalized route', () => {
+    it('should return the tag hint for a tag feed with a capitalized route', () => {
       const value = 'https://qiita.com/Tags/iac/Feed'
-      const expected = 'qiita:tag'
+      const expected: DiscoverUriHint = { key: 'qiita:tag', label: 'Tag' }
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the organization key for an organization feed', () => {
+    it('should return the organization hint for an organization feed', () => {
       const value = 'https://qiita.com/organizations/nid-kt/activities.atom'
-      const expected = 'qiita:organization'
+      const expected: DiscoverUriHint = { key: 'qiita:organization', label: 'Organization' }
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the popular key for the popular feed', () => {
+    it('should return the popular hint for the popular feed', () => {
       const value = 'https://qiita.com/popular-items/feed.atom'
-      const expected = 'qiita:popular'
+      const expected: DiscoverUriHint = { key: 'qiita:popular', label: 'Popular items' }
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the popular key for the popular feed without the extension', () => {
+    it('should return the popular hint for the popular feed without the extension', () => {
       const value = 'https://qiita.com/popular-items/feed'
-      const expected = 'qiita:popular'
+      const expected: DiscoverUriHint = { key: 'qiita:popular', label: 'Popular items' }
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the zine key for the Qiita Zine RSS feed', () => {
+    it('should return the zine hint for the Qiita Zine RSS feed', () => {
       const value = 'https://qiita.com/official-columns/feed/'
-      const expected = 'qiita:zine'
+      const expected: DiscoverUriHint = { key: 'qiita:zine', label: 'Qiita Zine', format: 'rss' }
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the zine key for the Qiita Zine Atom feed', () => {
+    it('should return the zine hint for the Qiita Zine Atom feed', () => {
       const value = 'https://qiita.com/official-columns/feed/atom/'
-      const expected = 'qiita:zine'
+      const expected: DiscoverUriHint = { key: 'qiita:zine', label: 'Qiita Zine', format: 'atom' }
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a user page', () => {
       const value = 'https://qiita.com/najeira'
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a tag page', () => {
       const value = 'https://qiita.com/tags/iac'
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an organization page', () => {
       const value = 'https://qiita.com/organizations/nid-kt'
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an article page', () => {
       const value = 'https://qiita.com/najeira/items/0123456789abcdef0123'
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a user feed path on another host', () => {
       const value = 'https://example.com/najeira/feed'
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the page of a tag named feed', () => {
       const value = 'https://qiita.com/tags/feed'
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the page of an organization named feed', () => {
       const value = 'https://qiita.com/organizations/feed'
 
-      expect(qiitaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
@@ -360,8 +360,14 @@ describe('qiitaHandler', () => {
         { key: 'qiita:popular', label: 'Popular items' },
       ],
       ['https://qiita.com/popular-items/feed', { key: 'qiita:popular', label: 'Popular items' }],
-      ['https://qiita.com/official-columns/feed/', { key: 'qiita:zine', label: 'Qiita Zine' }],
-      ['https://qiita.com/official-columns/feed/atom/', { key: 'qiita:zine', label: 'Qiita Zine' }],
+      [
+        'https://qiita.com/official-columns/feed/',
+        { key: 'qiita:zine', label: 'Qiita Zine', format: 'rss' },
+      ],
+      [
+        'https://qiita.com/official-columns/feed/atom/',
+        { key: 'qiita:zine', label: 'Qiita Zine', format: 'atom' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

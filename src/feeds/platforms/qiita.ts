@@ -108,13 +108,13 @@ export const qiitaHandler: PlatformHandler = {
 
   // The table reads any first segment as a username, and a route word is none:
   // qiita.com/tags/feed is the page of the tag feed.
-  getFeedKey: (url) => {
-    const key = feeds.getFeedKey(url)
+  getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
 
-    if (key === 'qiita:posts' && parseQiitaUrl(url)?.kind !== 'user') {
+    if (hint?.key === 'qiita:posts' && parseQiitaUrl(url)?.kind !== 'user') {
       return
     }
 
-    return key
+    return hint
   },
 }
