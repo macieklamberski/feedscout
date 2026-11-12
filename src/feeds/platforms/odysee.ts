@@ -58,5 +58,5 @@ export const odyseeHandler: PlatformHandler = {
     return [feeds.getFeedEntry('odysee:videos', { name: parsed.name, claimId: parsed.claimId })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
