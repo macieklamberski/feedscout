@@ -7,9 +7,12 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 export type CnblogsUrl = { kind: 'blog'; username: string }
 
 const hosts = ['cnblogs.com', 'www.cnblogs.com']
+const feedHosts = ['feed.cnblogs.com']
 
 const feeds = definePlatformFeeds([
   { key: 'cnblogs:posts', template: 'https://www.cnblogs.com/{username}/rss' },
+  // The posts feed answers 302 to this spelling, under the blog's numeric id.
+  { key: 'cnblogs:posts', template: 'https://feed.cnblogs.com/blog/u/{blogId}/rss' },
 ])
 
 export const parseCnblogsUrl = (url: string): CnblogsUrl | undefined => {
@@ -45,6 +48,11 @@ export const cnblogsHandler: PlatformHandler = {
   // The table reads any first segment as a name, so the page parser refuses a dotted one first:
   // www.cnblogs.com/skins.aspx/rss answers 404.
   getFeedKey: (url) => {
+    // The feed host serves feeds only, so its URLs skip the page parser.
+    if (isHostOf(url, feedHosts)) {
+      return feeds.getFeedKey(url)
+    }
+
     if (!parseCnblogsUrl(url)) {
       return
     }

@@ -112,6 +112,26 @@ describe('cnblogsHandler', () => {
       expect(cnblogsHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the posts key for a posts feed on the feed host', () => {
+      const value = 'http://feed.cnblogs.com/blog/u/12345/rss/'
+      const expected = 'cnblogs:posts'
+
+      expect(cnblogsHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a posts feed on the feed host without a trailing slash', () => {
+      const value = 'https://feed.cnblogs.com/blog/u/12345/rss'
+      const expected = 'cnblogs:posts'
+
+      expect(cnblogsHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a blog id path on the feed host without the feed', () => {
+      const value = 'https://feed.cnblogs.com/blog/u/12345'
+
+      expect(cnblogsHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a blog page', () => {
       const value = 'https://www.cnblogs.com/example/'
 
@@ -137,6 +157,8 @@ describe('cnblogsHandler', () => {
       'https://www.cnblogs.com/example/rss',
       'https://www.cnblogs.com/example/rss/',
       'http://cnblogs.com/example/rss',
+      'http://feed.cnblogs.com/blog/u/12345/rss/',
+      'https://feed.cnblogs.com/blog/u/12345/rss',
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value) => {
