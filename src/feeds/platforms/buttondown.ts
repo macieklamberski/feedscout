@@ -43,5 +43,5 @@ export const buttondownHandler: PlatformHandler = {
     return [feeds.getFeedEntry('buttondown:newsletter', { username: parsed.username })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

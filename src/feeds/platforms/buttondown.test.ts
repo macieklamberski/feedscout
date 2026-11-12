@@ -88,45 +88,45 @@ describe('buttondownHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the newsletter key for a newsletter feed', () => {
       const value = 'https://buttondown.com/alice/rss'
-      const expected = 'buttondown:newsletter'
+      const expected: DiscoverUriHint = { key: 'buttondown:newsletter', label: 'Newsletter' }
 
-      expect(buttondownHandler.getFeedKey?.(value)).toBe(expected)
+      expect(buttondownHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the newsletter key for a newsletter feed over http on the www host', () => {
       const value = 'http://www.buttondown.com/alice/rss'
-      const expected = 'buttondown:newsletter'
+      const expected: DiscoverUriHint = { key: 'buttondown:newsletter', label: 'Newsletter' }
 
-      expect(buttondownHandler.getFeedKey?.(value)).toBe(expected)
+      expect(buttondownHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the newsletter key for a newsletter feed on the legacy host', () => {
       const value = 'https://buttondown.email/alice/rss'
-      const expected = 'buttondown:newsletter'
+      const expected: DiscoverUriHint = { key: 'buttondown:newsletter', label: 'Newsletter' }
 
-      expect(buttondownHandler.getFeedKey?.(value)).toBe(expected)
+      expect(buttondownHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the newsletter key for a newsletter feed with a dotted username', () => {
       const value = 'https://buttondown.com/alice.example/rss'
-      const expected = 'buttondown:newsletter'
+      const expected: DiscoverUriHint = { key: 'buttondown:newsletter', label: 'Newsletter' }
 
-      expect(buttondownHandler.getFeedKey?.(value)).toBe(expected)
+      expect(buttondownHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a newsletter page', () => {
       const value = 'https://buttondown.com/alice'
 
-      expect(buttondownHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(buttondownHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/alice/rss'
 
-      expect(buttondownHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(buttondownHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
