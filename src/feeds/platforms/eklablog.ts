@@ -91,7 +91,9 @@ export const eklablogHandler: PlatformHandler = {
   },
 
   // The table reads any host under the domains, so the page parser refuses the apex and the www
-  // host first, whose /rss ends in a 404, and a www or nested subdomain, which fails its TLS check.
+  // host first, whose /rss ends in a 404, and a www or nested subdomain of a blog. Over https both
+  // fail their TLS check, and over http the www one redirects to the blog's feed and a nested one
+  // answers 404.
   getFeedKey: (url) => {
     if (parseEklablogUrl(url)?.kind !== 'blog') {
       return
