@@ -154,7 +154,7 @@ export const giteaHandler: PlatformHandler = {
 
   // Only Codeberg and gitea.com are claimed: a self-hosted instance is known by its session cookie,
   // which a feed URL does not carry.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (!isHostOf(url, hosts)) {
       return
     }
@@ -164,19 +164,25 @@ export const giteaHandler: PlatformHandler = {
     // A user feed, /{owner}.atom, or a repo feed, /{owner}/{repo}.atom.
     if (!section) {
       if (activityFeedRegex.test(repoOrFeed ?? ownerOrFeed ?? '')) {
-        return 'gitea:activity'
+        return composeHint('gitea:activity')
       }
 
       return
     }
 
     if (!refType) {
-      return repoFeeds.find(({ files }) => isAnyOf(section, files))?.key
+      const repoFeed = repoFeeds.find(({ files }) => isAnyOf(section, files))
+
+      if (!repoFeed) {
+        return
+      }
+
+      return composeHint(repoFeed.key)
     }
 
     // A slashed branch, such as v11.0/forgejo, gets the file history label, as in resolve.
     if (isAnyOf(section, branchFeedRoutes) && isAnyOf(refType, 'branch') && refPath.length > 0) {
-      return refPath.length > 1 ? 'gitea:file-history' : 'gitea:branch-commits'
+      return composeHint(refPath.length > 1 ? 'gitea:file-history' : 'gitea:branch-commits')
     }
   },
 }

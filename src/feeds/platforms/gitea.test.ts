@@ -443,202 +443,202 @@ describe('giteaHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the activity key for a user Atom feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the activity hint for a user Atom feed', () => {
       const value = 'https://codeberg.org/forgejo.atom'
-      const expected = 'gitea:activity'
+      const expected: DiscoverUriHint = { key: 'gitea:activity', label: 'Activity' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the activity key for a user RSS feed', () => {
+    it('should return the activity hint for a user RSS feed', () => {
       const value = 'https://codeberg.org/forgejo.rss'
-      const expected = 'gitea:activity'
+      const expected: DiscoverUriHint = { key: 'gitea:activity', label: 'Activity' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the activity key for a repo Atom feed', () => {
+    it('should return the activity hint for a repo Atom feed', () => {
       const value = 'https://gitea.com/gitea/blog.atom'
-      const expected = 'gitea:activity'
+      const expected: DiscoverUriHint = { key: 'gitea:activity', label: 'Activity' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the activity key for a repo RSS feed', () => {
+    it('should return the activity hint for a repo RSS feed', () => {
       const value = 'https://gitea.com/gitea/go-sdk.rss'
-      const expected = 'gitea:activity'
+      const expected: DiscoverUriHint = { key: 'gitea:activity', label: 'Activity' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the releases key for a releases Atom feed', () => {
+    it('should return the releases hint for a releases Atom feed', () => {
       const value = 'https://gitea.com/gitea/blog/releases.atom'
-      const expected = 'gitea:releases'
+      const expected: DiscoverUriHint = { key: 'gitea:releases', label: 'Releases' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the releases key for a releases RSS feed', () => {
+    it('should return the releases hint for a releases RSS feed', () => {
       const value = 'https://codeberg.org/forgejo/forgejo/releases.rss'
-      const expected = 'gitea:releases'
+      const expected: DiscoverUriHint = { key: 'gitea:releases', label: 'Releases' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tags key for a tags Atom feed', () => {
+    it('should return the tags hint for a tags Atom feed', () => {
       const value = 'https://gitea.com/gitea/blog/tags.atom'
-      const expected = 'gitea:tags'
+      const expected: DiscoverUriHint = { key: 'gitea:tags', label: 'Tags' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tags key for a tags RSS feed', () => {
+    it('should return the tags hint for a tags RSS feed', () => {
       const value = 'https://codeberg.org/forgejo/forgejo/tags.rss'
-      const expected = 'gitea:tags'
+      const expected: DiscoverUriHint = { key: 'gitea:tags', label: 'Tags' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the branch commits key for a branch Atom feed', () => {
+    it('should return the branch commits hint for a branch Atom feed', () => {
       const value = 'https://gitea.com/noerw/tea/atom/branch/print-issue-label'
-      const expected = 'gitea:branch-commits'
+      const expected: DiscoverUriHint = { key: 'gitea:branch-commits', label: 'Branch commits' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the branch commits key for a branch RSS feed', () => {
+    it('should return the branch commits hint for a branch RSS feed', () => {
       const value = 'https://codeberg.org/forgejo/forgejo/rss/branch/forgejo'
-      const expected = 'gitea:branch-commits'
+      const expected: DiscoverUriHint = { key: 'gitea:branch-commits', label: 'Branch commits' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the file history key for a file history feed', () => {
+    it('should return the file history hint for a file history feed', () => {
       const value = 'https://gitea.com/noerw/unidiff-comments/atom/branch/master/types/hunk.go'
-      const expected = 'gitea:file-history'
+      const expected: DiscoverUriHint = { key: 'gitea:file-history', label: 'File history' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the file history key for a folder history feed', () => {
+    it('should return the file history hint for a folder history feed', () => {
       const value = 'https://gitea.com/jolheiser/theme/atom/branch/master/i18n'
-      const expected = 'gitea:file-history'
+      const expected: DiscoverUriHint = { key: 'gitea:file-history', label: 'File history' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the file history key for a percent-encoded file path', () => {
+    it('should return the file history hint for a percent-encoded file path', () => {
       const value =
         'https://gitea.com/CyberShell/Health-PDFS/atom/branch/master/Vaccine-Binder-Research.zip%20%28Unzipped%20Files%29/Vaccine-Binder-Research'
-      const expected = 'gitea:file-history'
+      const expected: DiscoverUriHint = { key: 'gitea:file-history', label: 'File history' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the file history key for a branch named with a slash', () => {
+    it('should return the file history hint for a branch named with a slash', () => {
       const value = 'https://codeberg.org/forgejo/forgejo/atom/branch/v11.0/forgejo'
-      const expected = 'gitea:file-history'
+      const expected: DiscoverUriHint = { key: 'gitea:file-history', label: 'File history' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the releases key for a feed on www', () => {
+    it('should return the releases hint for a feed on www', () => {
       const value = 'https://www.codeberg.org/forgejo/forgejo/releases.atom'
-      const expected = 'gitea:releases'
+      const expected: DiscoverUriHint = { key: 'gitea:releases', label: 'Releases' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the branch commits key for feed routes in another case', () => {
+    it('should return the branch commits hint for feed routes in another case', () => {
       const value = 'https://gitea.com/noerw/tea/Atom/Branch/print-issue-label'
-      const expected = 'gitea:branch-commits'
+      const expected: DiscoverUriHint = { key: 'gitea:branch-commits', label: 'Branch commits' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the activity key for a user feed with a trailing slash', () => {
+    it('should return the activity hint for a user feed with a trailing slash', () => {
       const value = 'https://codeberg.org/forgejo.atom/'
-      const expected = 'gitea:activity'
+      const expected: DiscoverUriHint = { key: 'gitea:activity', label: 'Activity' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the activity key for a repo feed with a trailing slash', () => {
+    it('should return the activity hint for a repo feed with a trailing slash', () => {
       const value = 'https://gitea.com/gitea/go-sdk.rss/'
-      const expected = 'gitea:activity'
+      const expected: DiscoverUriHint = { key: 'gitea:activity', label: 'Activity' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the releases key for a releases feed with a trailing slash', () => {
+    it('should return the releases hint for a releases feed with a trailing slash', () => {
       const value = 'https://codeberg.org/forgejo/forgejo/releases.rss/'
-      const expected = 'gitea:releases'
+      const expected: DiscoverUriHint = { key: 'gitea:releases', label: 'Releases' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tags key for a tags feed with a trailing slash', () => {
+    it('should return the tags hint for a tags feed with a trailing slash', () => {
       const value = 'https://gitea.com/gitea/blog/tags.atom/'
-      const expected = 'gitea:tags'
+      const expected: DiscoverUriHint = { key: 'gitea:tags', label: 'Tags' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the branch commits key for a branch feed with a trailing slash', () => {
+    it('should return the branch commits hint for a branch feed with a trailing slash', () => {
       const value = 'https://gitea.com/noerw/tea/atom/branch/print-issue-label/'
-      const expected = 'gitea:branch-commits'
+      const expected: DiscoverUriHint = { key: 'gitea:branch-commits', label: 'Branch commits' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the file history key for a file history feed with a trailing slash', () => {
+    it('should return the file history hint for a file history feed with a trailing slash', () => {
       const value = 'https://gitea.com/noerw/unidiff-comments/atom/branch/master/types/hunk.go/'
-      const expected = 'gitea:file-history'
+      const expected: DiscoverUriHint = { key: 'gitea:file-history', label: 'File history' }
 
-      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a user page', () => {
       const value = 'https://codeberg.org/forgejo'
 
-      expect(giteaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(giteaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a repo page', () => {
       const value = 'https://gitea.com/gitea/blog'
 
-      expect(giteaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(giteaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a releases page', () => {
       const value = 'https://gitea.com/gitea/blog/releases'
 
-      expect(giteaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(giteaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a branch page', () => {
       const value = 'https://codeberg.org/forgejo/forgejo/src/branch/forgejo'
 
-      expect(giteaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(giteaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a branch feed route without a branch', () => {
       const value = 'https://codeberg.org/forgejo/forgejo/atom/branch'
 
-      expect(giteaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(giteaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a file named like a feed under a branch', () => {
       const value = 'https://codeberg.org/forgejo/forgejo/src/branch/forgejo/releases.atom'
 
-      expect(giteaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(giteaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a self-hosted feed', () => {
       const value = 'https://git.example.org/owner/project/releases.atom'
 
-      expect(giteaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(giteaHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
