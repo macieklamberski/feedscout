@@ -11,6 +11,13 @@ describe('parseFiresideUrl', () => {
     expect(parseFiresideUrl('https://myshow.fireside.fm/')).toEqual(expected)
   })
 
+  it('should return the tag for a tag page', () => {
+    const value = 'https://alice.fireside.fm/tags/example%20tag'
+    const expected: FiresideUrl = { kind: 'podcast', slug: 'alice', tag: 'example tag' }
+
+    expect(parseFiresideUrl(value)).toEqual(expected)
+  })
+
   it('should return undefined for the www host', () => {
     expect(parseFiresideUrl('https://www.fireside.fm/')).toBeUndefined()
   })
@@ -59,6 +66,10 @@ describe('firesideHandler', () => {
           uri: 'http://alice.fireside.fm/json',
           hint: { key: 'fireside:podcast', label: 'Podcast', format: 'json' },
         },
+        {
+          uri: 'http://alice.fireside.fm/articles/rss',
+          hint: { key: 'fireside:blog', label: 'Blog' },
+        },
       ]
 
       expect(firesideHandler.resolve(value)).toEqual(expected)
@@ -75,6 +86,10 @@ describe('firesideHandler', () => {
           uri: 'https://alice.fireside.fm/json',
           hint: { key: 'fireside:podcast', label: 'Podcast', format: 'json' },
         },
+        {
+          uri: 'https://alice.fireside.fm/articles/rss',
+          hint: { key: 'fireside:blog', label: 'Blog' },
+        },
       ]
 
       expect(firesideHandler.resolve(value)).toEqual(expected)
@@ -90,6 +105,34 @@ describe('firesideHandler', () => {
         {
           uri: 'https://alice.fireside.fm/json',
           hint: { key: 'fireside:podcast', label: 'Podcast', format: 'json' },
+        },
+        {
+          uri: 'https://alice.fireside.fm/articles/rss',
+          hint: { key: 'fireside:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(firesideHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the tag feed first for a tag page', () => {
+      const value = 'https://alice.fireside.fm/tags/example%20tag'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.fireside.fm/tags/example%20tag/rss',
+          hint: { key: 'fireside:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://feeds.fireside.fm/alice/rss',
+          hint: { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
+        },
+        {
+          uri: 'https://alice.fireside.fm/json',
+          hint: { key: 'fireside:podcast', label: 'Podcast', format: 'json' },
+        },
+        {
+          uri: 'https://alice.fireside.fm/articles/rss',
+          hint: { key: 'fireside:blog', label: 'Blog' },
         },
       ]
 
@@ -139,8 +182,22 @@ describe('firesideHandler', () => {
       expect(firesideHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a tag feed', () => {
-      const value = 'https://99zueins.fireside.fm/tags/podcast/rss'
+    it('should return the tag hint for a tag feed', () => {
+      const value = 'https://alice.fireside.fm/tags/example%20tag/rss'
+      const expected: DiscoverUriHint = { key: 'fireside:tag', label: 'Tag' }
+
+      expect(firesideHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the blog hint for a blog feed', () => {
+      const value = 'https://alice.fireside.fm/articles/rss'
+      const expected: DiscoverUriHint = { key: 'fireside:blog', label: 'Blog' }
+
+      expect(firesideHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a tag page', () => {
+      const value = 'https://alice.fireside.fm/tags/example'
 
       expect(firesideHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -182,6 +239,8 @@ describe('firesideHandler', () => {
         'https://99zueins.fireside.fm/json',
         { key: 'fireside:podcast', label: 'Podcast', format: 'json' },
       ],
+      ['http://alice.fireside.fm/tags/example%20tag/rss', { key: 'fireside:tag', label: 'Tag' }],
+      ['https://alice.fireside.fm/articles/rss/', { key: 'fireside:blog', label: 'Blog' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
