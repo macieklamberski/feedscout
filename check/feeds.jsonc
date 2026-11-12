@@ -1560,7 +1560,10 @@
     "shinobi:posts": ["https://chabun.blog.shinobi.jp/RSS/", "https://chabun.blog.shinobi.jp/ATOM/"]
   },
   "shopify": {
-    "shopify:blog": "https://www.allbirds.com/blogs/news.atom"
+    "shopify:blog": "https://www.allbirds.com/blogs/news.atom",
+    "shopify:blog-tag": "https://theme651-basketball-store.myshopify.com/blogs/news/tagged/essentials.atom",
+    "shopify:collection": "https://theme336-tile-stone.myshopify.com/collections/all.atom",
+    "shopify:collection-tag": "https://theme651-basketball-store.myshopify.com/collections/tops-t-shirts/essentials.atom"
   },
   "shopserve": {
     "shopserve:news": [

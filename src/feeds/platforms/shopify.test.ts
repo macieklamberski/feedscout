@@ -158,6 +158,30 @@ describe('shopifyHandler', () => {
         { key: 'shopify:blog', label: 'Blog' },
       ],
       ['http://example.myshopify.com/blogs/journal.atom/', { key: 'shopify:blog', label: 'Blog' }],
+      [
+        'https://example.myshopify.com/blogs/news/tagged/travel.atom',
+        { key: 'shopify:blog-tag', label: 'Tag' },
+      ],
+      [
+        'https://example.myshopify.com/fr/blogs/news/tagged/travel.atom',
+        { key: 'shopify:blog-tag', label: 'Tag' },
+      ],
+      [
+        'https://example.myshopify.com/collections/shirts.atom',
+        { key: 'shopify:collection', label: 'Collection' },
+      ],
+      [
+        'https://example.myshopify.com/en-us/collections/shirts.atom',
+        { key: 'shopify:collection', label: 'Collection' },
+      ],
+      [
+        'https://example.myshopify.com/collections/all/blue+cotton.atom',
+        { key: 'shopify:collection-tag', label: 'Tagged products' },
+      ],
+      [
+        'https://example.myshopify.com/en-us/collections/all/blue.atom',
+        { key: 'shopify:collection-tag', label: 'Tagged products' },
+      ],
     ]
 
     it.each(feedUrls)('should return the hint for %s', (value, expected) => {
@@ -170,8 +194,8 @@ describe('shopifyHandler', () => {
       expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a collection feed', () => {
-      const value = 'https://example.myshopify.com/collections/all.atom'
+    it('should return undefined for a collection page on a store subdomain', () => {
+      const value = 'https://example.myshopify.com/collections/all'
 
       expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -205,6 +229,18 @@ describe('shopifyHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://example.myshopify.com/blogs/news.atom', { key: 'shopify:blog', label: 'Blog' }],
       ['http://example.myshopify.com/fr/blogs/news.atom', { key: 'shopify:blog', label: 'Blog' }],
+      [
+        'https://example.myshopify.com/blogs/news/tagged/travel.atom',
+        { key: 'shopify:blog-tag', label: 'Tag' },
+      ],
+      [
+        'https://example.myshopify.com/collections/shirts.atom',
+        { key: 'shopify:collection', label: 'Collection' },
+      ],
+      [
+        'https://example.myshopify.com/collections/all/blue.atom',
+        { key: 'shopify:collection-tag', label: 'Tagged products' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
