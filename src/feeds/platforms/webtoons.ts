@@ -74,5 +74,5 @@ export const webtoonsHandler: PlatformHandler = {
     return [feeds.getFeedEntry('webtoons:series', { ...parsed, genre })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

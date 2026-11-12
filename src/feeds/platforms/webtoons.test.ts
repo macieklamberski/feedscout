@@ -165,66 +165,66 @@ describe('webtoonsHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the series key for a Canvas series feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the series hint for a Canvas series feed', () => {
       const value = 'https://www.webtoons.com/en/challenge/chibird/rss?title_no=97265'
-      const expected = 'webtoons:series'
+      const expected: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
 
-      expect(webtoonsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(webtoonsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the series key for an original series feed', () => {
+    it('should return the series hint for an original series feed', () => {
       const value = 'https://www.webtoons.com/en/drama/lookism/rss?title_no=1049'
-      const expected = 'webtoons:series'
+      const expected: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
 
-      expect(webtoonsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(webtoonsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the series key for a feed with a percent-encoded name', () => {
+    it('should return the series hint for a feed with a percent-encoded name', () => {
       const value =
         'https://www.webtoons.com/zh-hant/challenge/%E8%97%8D%E6%9C%88%E4%B8%8B%E7%9A%84%E5%AE%B6/rss?title_no=681146'
-      const expected = 'webtoons:series'
+      const expected: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
 
-      expect(webtoonsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(webtoonsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the series key for a feed without www', () => {
+    it('should return the series hint for a feed without www', () => {
       const value = 'https://webtoons.com/en/challenge/everyday-magic/rss?title_no=741756'
-      const expected = 'webtoons:series'
+      const expected: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
 
-      expect(webtoonsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(webtoonsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the series key for a feed on the sg host', () => {
+    it('should return the series hint for a feed on the sg host', () => {
       const value = 'https://sg.webtoons.com/en/challenge/the-legend-of-genji/rss?title_no=194154'
-      const expected = 'webtoons:series'
+      const expected: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
 
-      expect(webtoonsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(webtoonsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the series key for a feed on the us host', () => {
+    it('should return the series hint for a feed on the us host', () => {
       const value = 'https://us.webtoons.com/en/romance/sixth-sense-kiss/rss?title_no=2921'
-      const expected = 'webtoons:series'
+      const expected: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
 
-      expect(webtoonsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(webtoonsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a series page', () => {
       const value = 'https://www.webtoons.com/en/challenge/chibird/list?title_no=97265'
 
-      expect(webtoonsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(webtoonsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path without a title number', () => {
       const value = 'https://www.webtoons.com/en/challenge/chibird/rss'
 
-      expect(webtoonsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(webtoonsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/en/challenge/chibird/rss?title_no=97265'
 
-      expect(webtoonsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(webtoonsHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
