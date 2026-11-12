@@ -38,5 +38,5 @@ export const blogiaHandler: PlatformHandler = {
     return [feeds.getFeedEntry('blogia:posts', { blog: parsed.blog })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

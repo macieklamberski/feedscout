@@ -64,43 +64,43 @@ describe('blogiaHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the posts key for a posts feed', () => {
       const value = 'https://alice.blogia.com/feed.xml'
-      const expected = 'blogia:posts'
+      const expected: DiscoverUriHint = { key: 'blogia:posts', label: 'Posts' }
 
-      expect(blogiaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogiaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts key for an http posts feed', () => {
       const value = 'http://alice.blogia.com/feed.xml'
-      const expected = 'blogia:posts'
+      const expected: DiscoverUriHint = { key: 'blogia:posts', label: 'Posts' }
 
-      expect(blogiaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(blogiaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://alice.blogia.com/temas/reflexiones/'
 
-      expect(blogiaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blogiaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://blog.alice.blogia.com/feed.xml'
 
-      expect(blogiaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blogiaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://blogia.com/feed.xml'
 
-      expect(blogiaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blogiaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/feed.xml'
 
-      expect(blogiaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blogiaHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
