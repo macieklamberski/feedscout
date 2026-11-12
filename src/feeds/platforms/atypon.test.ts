@@ -104,59 +104,68 @@ describe('atyponHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    const values: Array<[string, string]> = [
+  describe('getFeedHint', () => {
+    const values: Array<[string, DiscoverUriHint]> = [
       [
         'https://www.tandfonline.com/action/showFeed?type=etoc&feed=rss&jc=rdis20',
-        'atypon:journal',
+        { key: 'atypon:journal', label: 'Journal' },
       ],
       [
         'https://onlinelibrary.wiley.com/action/showFeed?type=etoc&feed=rss&jc=14429993',
-        'atypon:journal',
+        { key: 'atypon:journal', label: 'Journal' },
       ],
       [
         'https://www.tandfonline.com/action/showFeed?ai=2a7&feed=rss&jc=pcem20&mi=3dg6fv&type=etoc&ui=0',
-        'atypon:journal',
+        { key: 'atypon:journal', label: 'Journal' },
       ],
-      ['https://www.science.org/action/showFeed/feed?jc=science&type=etoc', 'atypon:journal'],
-      ['https://www.tandfonline.com/feed/rss/uann20', 'atypon:journal'],
-      ['https://onlinelibrary.wiley.com/feed/16136829/most-recent', 'atypon:journal'],
-      ['https://onlinelibrary.wiley.com/feed/14429993/most-cited', 'atypon:most-cited'],
+      [
+        'https://www.science.org/action/showFeed/feed?jc=science&type=etoc',
+        { key: 'atypon:journal', label: 'Journal' },
+      ],
+      ['https://www.tandfonline.com/feed/rss/uann20', { key: 'atypon:journal', label: 'Journal' }],
+      [
+        'https://onlinelibrary.wiley.com/feed/16136829/most-recent',
+        { key: 'atypon:journal', label: 'Journal' },
+      ],
+      [
+        'https://onlinelibrary.wiley.com/feed/14429993/most-cited',
+        { key: 'atypon:most-cited', label: 'Most cited' },
+      ],
     ]
 
-    it.each(values)('should read %s as %s', (value, expected) => {
-      expect(atyponHandler.getFeedKey?.(value)).toBe(expected)
+    it.each(values)('should read the hint of %s', (value, expected) => {
+      expect(atyponHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a search feed', () => {
       const value =
         'https://epubs.siam.org/action/showFeed?tagCode=topic-LI&taxonomyCode=topics&type=searchTopic'
 
-      expect(atyponHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(atyponHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an ahead of print feed', () => {
       const value = 'https://www.science.org/action/showFeed/feed?jc=science&type=axatoc'
 
-      expect(atyponHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(atyponHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a journal page', () => {
       const value = 'https://www.tandfonline.com/toc/rdis20/current'
 
-      expect(atyponHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(atyponHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a most cited feed outside Wiley', () => {
       const value = 'https://www.tandfonline.com/feed/rdis20/most-cited'
 
-      expect(atyponHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(atyponHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a journal feed on another host', () => {
       const value = 'https://example.com/action/showFeed?type=etoc&feed=rss&jc=rdis20'
 
-      expect(atyponHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(atyponHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
