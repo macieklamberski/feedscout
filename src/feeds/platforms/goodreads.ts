@@ -19,6 +19,20 @@ const feeds = definePlatformFeeds([
   },
   { key: 'goodreads:reviews', template: 'https://www.goodreads.com/review/list_rss/{userId}' },
   { key: 'goodreads:updates', template: 'https://www.goodreads.com/user/updates_rss/{userId}' },
+  // A `key` parameter carries the account owner's private token, which no page gives, so these
+  // rows only claim the feed.
+  {
+    key: 'goodreads:shelf',
+    template: 'https://www.goodreads.com/review/list_rss/{userId}?key={key}&shelf={shelf}',
+  },
+  {
+    key: 'goodreads:reviews',
+    template: 'https://www.goodreads.com/review/list_rss/{userId}?key={key}',
+  },
+  {
+    key: 'goodreads:updates',
+    template: 'https://www.goodreads.com/user/updates_rss/{userId}?key={key}',
+  },
 ])
 
 // A user page is /user/show/{id}-{slug} and their review list /review/list/{id}-{slug}.
@@ -82,12 +96,5 @@ export const goodreadsHandler: PlatformHandler = {
     ]
   },
 
-  getFeedHint: (url) => {
-    // A `key` parameter carries the account owner's private token.
-    if (getQueryParam(parseUrl(url), 'key') !== undefined) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

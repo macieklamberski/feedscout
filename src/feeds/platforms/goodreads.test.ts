@@ -263,16 +263,25 @@ describe('goodreadsHandler', () => {
       expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a review list feed with a private key', () => {
-      const value = 'https://www.goodreads.com/review/list_rss/1?key=abc123&shelf=read'
+    it('should return the shelf hint for a shelf feed with a private key', () => {
+      const value = 'https://www.goodreads.com/review/list_rss/12345?key=abc123&shelf=read'
+      const expected: DiscoverUriHint = { key: 'goodreads:shelf', label: 'Shelf' }
 
-      expect(goodreadsHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for an updates feed with a private key', () => {
-      const value = 'https://www.goodreads.com/user/updates_rss/1?key=abc123'
+    it('should return the reviews hint for a review list feed with a private key', () => {
+      const value = 'https://www.goodreads.com/review/list_rss/12345?key=abc123'
+      const expected: DiscoverUriHint = { key: 'goodreads:reviews', label: 'Reviews' }
 
-      expect(goodreadsHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the updates hint for an updates feed with a private key', () => {
+      const value = 'https://www.goodreads.com/user/updates_rss/12345?key=abc123'
+      const expected: DiscoverUriHint = { key: 'goodreads:updates', label: 'Updates' }
+
+      expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a review list page', () => {
@@ -312,6 +321,14 @@ describe('goodreadsHandler', () => {
       ],
       [
         'https://www.goodreads.com/user/updates_rss/4484461',
+        { key: 'goodreads:updates', label: 'Updates' },
+      ],
+      [
+        'https://www.goodreads.com/review/list_rss/12345?key=abc123&shelf=read',
+        { key: 'goodreads:shelf', label: 'Shelf' },
+      ],
+      [
+        'https://www.goodreads.com/user/updates_rss/12345?key=abc123',
         { key: 'goodreads:updates', label: 'Updates' },
       ],
     ]
