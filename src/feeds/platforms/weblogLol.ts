@@ -8,12 +8,14 @@ export type WeblogLolUrl = { kind: 'blog' }
 
 const domains = ['weblog.lol']
 
-// The http spellings redirect to the blog's https home page, not to the feed.
-const feeds = definePlatformFeeds([
-  { key: 'weblog-lol:posts', template: 'https://{blog}.weblog.lol/rss.xml', format: 'rss' },
-  { key: 'weblog-lol:posts', template: 'https://{blog}.weblog.lol/atom.xml', format: 'atom' },
-  { key: 'weblog-lol:posts', template: 'https://{blog}.weblog.lol/feed.json', format: 'json' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'weblog-lol:posts', template: '{scheme}://{host}/rss.xml', format: 'rss' },
+    { key: 'weblog-lol:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
+    { key: 'weblog-lol:posts', template: '{scheme}://{host}/feed.json', format: 'json' },
+  ],
+  { domains },
+)
 
 export const parseWeblogLolUrl = (url: string): WeblogLolUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -29,16 +31,19 @@ export const weblogLolHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const blog = getTenantSubdomain(url, domains)
+    const page = feeds.forUrl(url)
 
-    if (!blog) {
+    if (!parseWeblogLolUrl(url) || !page) {
       return []
     }
 
+    // The http spellings redirect to the blog's https home page, not to the feed.
+    const params = { scheme: 'https' }
+
     return [
-      feeds.getFeedEntry('weblog-lol:posts', { blog }, 'rss'),
-      feeds.getFeedEntry('weblog-lol:posts', { blog }, 'atom'),
-      feeds.getFeedEntry('weblog-lol:posts', { blog }, 'json'),
+      page.getFeedEntry('weblog-lol:posts', params, 'rss'),
+      page.getFeedEntry('weblog-lol:posts', params, 'atom'),
+      page.getFeedEntry('weblog-lol:posts', params, 'json'),
     ]
   },
 
