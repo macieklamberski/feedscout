@@ -89,11 +89,11 @@ export const blogHuHandler: PlatformHandler = {
   },
 
   // A user feed with a `token` query is signed for one reader, so it stays unclaimed.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (hasQueryParam(parseUrl(url), 'token')) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }

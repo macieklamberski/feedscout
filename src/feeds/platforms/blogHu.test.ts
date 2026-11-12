@@ -144,79 +144,106 @@ describe('blogHuHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    const feedKeys: Array<[string, string]> = [
-      ['https://isolde.blog.hu/rss2', 'blog-hu:posts'],
-      ['https://bit.blog.hu/rss', 'blog-hu:posts'],
-      ['https://juventuz.blog.hu/atom', 'blog-hu:posts'],
-      ['https://candc.blog.hu/comments/rss2', 'blog-hu:comments'],
-      ['https://sajtologia.blog.hu/comments/rss', 'blog-hu:comments'],
-      ['https://usznikek.blog.hu/comments/comments/rss', 'blog-hu:comments'],
-      ['https://lambda.blog.hu/comments/comments/rss2', 'blog-hu:comments'],
-      ['https://konyves.blog.hu/comments/comments/rss2/', 'blog-hu:comments'],
-      ['https://isolde.blog.hu/comments/atom', 'blog-hu:comments'],
-      ['http://kertbuvolo.blog.hu/rss2', 'blog-hu:posts'],
-      ['https://blog.hu/user/1264714/rss', 'blog-hu:user'],
-      ['https://www.blog.hu/user/1264714/rss', 'blog-hu:user'],
+  describe('getFeedHint', () => {
+    const feedKeys: Array<[string, DiscoverUriHint]> = [
+      ['https://isolde.blog.hu/rss2', { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }],
+      ['https://bit.blog.hu/rss', { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }],
+      ['https://juventuz.blog.hu/atom', { key: 'blog-hu:posts', label: 'Posts', format: 'atom' }],
+      [
+        'https://candc.blog.hu/comments/rss2',
+        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
+      ],
+      [
+        'https://sajtologia.blog.hu/comments/rss',
+        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
+      ],
+      [
+        'https://usznikek.blog.hu/comments/comments/rss',
+        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
+      ],
+      [
+        'https://lambda.blog.hu/comments/comments/rss2',
+        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
+      ],
+      [
+        'https://konyves.blog.hu/comments/comments/rss2/',
+        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
+      ],
+      [
+        'https://isolde.blog.hu/comments/atom',
+        { key: 'blog-hu:comments', label: 'Comments', format: 'atom' },
+      ],
+      ['http://kertbuvolo.blog.hu/rss2', { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }],
+      ['https://blog.hu/user/1264714/rss', { key: 'blog-hu:user', label: 'User activity' }],
+      ['https://www.blog.hu/user/1264714/rss', { key: 'blog-hu:user', label: 'User activity' }],
     ]
 
-    it.each(feedKeys)('should return the key for %s', (value, expected) => {
-      expect(blogHuHandler.getFeedKey?.(value)).toBe(expected)
+    it.each(feedKeys)('should return the hint for %s', (value, expected) => {
+      expect(blogHuHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a user feed carrying a token', () => {
       const value = 'https://blog.hu/user/1264505/rss?token=0123456789abcdef'
 
-      expect(blogHuHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://egyatucatbol.blog.hu/2026/09/30/blog_vs_imdb'
 
-      expect(blogHuHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a user profile', () => {
       const value = 'https://blog.hu/user/821883'
 
-      expect(blogHuHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the apex', () => {
       const value = 'https://blog.hu/rss2'
 
-      expect(blogHuHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://a.kertbuvolo.blog.hu/rss2'
 
-      expect(blogHuHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on another host', () => {
       const value = 'https://example.com/rss2'
 
-      expect(blogHuHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://isolde.blog.hu/rss2', { key: 'blog-hu:posts', label: 'Posts' }],
-      ['https://bit.blog.hu/rss', { key: 'blog-hu:posts', label: 'Posts' }],
-      ['https://juventuz.blog.hu/atom', { key: 'blog-hu:posts', label: 'Posts' }],
-      ['https://candc.blog.hu/comments/rss2', { key: 'blog-hu:comments', label: 'Comments' }],
-      ['https://sajtologia.blog.hu/comments/rss', { key: 'blog-hu:comments', label: 'Comments' }],
+      ['https://isolde.blog.hu/rss2', { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }],
+      ['https://bit.blog.hu/rss', { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }],
+      ['https://juventuz.blog.hu/atom', { key: 'blog-hu:posts', label: 'Posts', format: 'atom' }],
+      [
+        'https://candc.blog.hu/comments/rss2',
+        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
+      ],
+      [
+        'https://sajtologia.blog.hu/comments/rss',
+        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
+      ],
       [
         'https://usznikek.blog.hu/comments/comments/rss',
-        { key: 'blog-hu:comments', label: 'Comments' },
+        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
       ],
       [
         'https://lambda.blog.hu/comments/comments/rss2',
-        { key: 'blog-hu:comments', label: 'Comments' },
+        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
       ],
-      ['https://isolde.blog.hu/comments/atom', { key: 'blog-hu:comments', label: 'Comments' }],
+      [
+        'https://isolde.blog.hu/comments/atom',
+        { key: 'blog-hu:comments', label: 'Comments', format: 'atom' },
+      ],
       ['https://blog.hu/user/1264714/rss', { key: 'blog-hu:user', label: 'User activity' }],
     ]
 
