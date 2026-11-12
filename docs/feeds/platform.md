@@ -3735,7 +3735,7 @@ type PlatformHandler = {
     headers?: Headers,
     fetchFn?: FetchFn,
   ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef>>
-  getFeedKey?: (url: string) => string | undefined
+  getFeedHint?: (url: string) => DiscoverUriHint | undefined
 }
 ```
 
@@ -3743,11 +3743,11 @@ type PlatformHandler = {
 |--------|-------------|
 | `match(url, content?, headers?)` | Returns `true` if this handler should process the URL |
 | `resolve(url, content?, headers?, fetchFn?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL. A favicon handler can also return a [`DiscoverRef`](/reference/types#discoverref) for an icon that takes an extra request. See [Enriching Platform Icons](/other/favicons#enriching-platform-icons) |
-| `getFeedKey(url)` | Returns the hint key of the feed the URL is, when it is one of the feeds the handler builds. The Platform method returns such a URL as given, and the [Guess method](/feeds/guess) drops a guessed one |
+| `getFeedHint(url)` | Returns the [hint](/reference/types#discoverurihint) of the feed the URL is, when it is one of the feeds the handler builds. The Platform method returns such a URL as given with that hint, and the [Guess method](/feeds/guess) drops a guessed one |
 
 ### Declaring Feeds
 
-`definePlatformFeeds` holds a handler's feed URLs as templates keyed by hint key: `entry` builds a feed with its hint, `getFeedKey` reads a URL back to its key, `{host}` stands for any host in `hosts` or under `domains`, `{domain}` for one of `domains`, and `{scheme}` for the page's scheme on a platform that runs on the site's own host.
+`definePlatformFeeds` holds a handler's feed URLs as templates keyed by hint key: `entry` builds a feed with its hint, `getFeedHint` reads a URL back to its hint, with the row's `format`, `{host}` stands for any host in `hosts` or under `domains`, `{domain}` for one of `domains`, and `{scheme}` for the page's scheme on a platform that runs on the site's own host.
 
 ```typescript
 import { definePlatformFeeds, type PlatformHandler } from 'feedscout/platform'
@@ -3769,7 +3769,7 @@ const exampleHandler: PlatformHandler = {
 
     return [feeds.getFeedEntry('example:posts', { host: 'example.com', username })]
   },
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
 ```
 
