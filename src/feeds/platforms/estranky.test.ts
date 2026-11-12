@@ -354,111 +354,123 @@ describe('estrankyHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for a posts feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a posts feed', () => {
       const value = 'https://example.estranky.cz/rss/articles/data.xml'
-      const expected = 'estranky:posts'
+      const expected: DiscoverUriHint = { key: 'estranky:posts', label: 'Posts' }
 
-      expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a posts feed in another language', () => {
+    it('should return the posts hint for a posts feed in another language', () => {
       const value = 'https://example.estranky.sk/rss/en/articles/data.xml'
-      const expected = 'estranky:posts'
+      const expected: DiscoverUriHint = { key: 'estranky:posts', label: 'Posts' }
 
-      expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the photos key for a photos feed', () => {
+    it('should return the photos hint for a photos feed', () => {
       const value = 'https://example.estranky.cz/rss/photos/data.xml'
-      const expected = 'estranky:photos'
+      const expected: DiscoverUriHint = { key: 'estranky:photos', label: 'Photos' }
 
-      expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the photos key for a photos feed in another language', () => {
+    it('should return the photos hint for a photos feed in another language', () => {
       const value = 'https://example.estranky.cz/rss/en/photos/data.xml'
-      const expected = 'estranky:photos'
+      const expected: DiscoverUriHint = { key: 'estranky:photos', label: 'Photos' }
 
-      expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the comments key for a comments feed', () => {
+    it('should return the comments hint for a comments feed', () => {
       const value = 'https://example.estranky.sk/rss/comments/data.xml'
-      const expected = 'estranky:comments'
+      const expected: DiscoverUriHint = { key: 'estranky:comments', label: 'Comments' }
 
-      expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the comments key for a comments feed in another language', () => {
+    it('should return the comments hint for a comments feed in another language', () => {
       const value = 'https://example.estranky.sk/rss/en/comments/data.xml'
-      const expected = 'estranky:comments'
+      const expected: DiscoverUriHint = { key: 'estranky:comments', label: 'Comments' }
 
-      expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the home page slice key for a home page slice feed', () => {
+    it('should return the home page slice hint for a home page slice feed', () => {
       const value = 'http://www.example.estranky.cz/rss/slices/l/homepage/data.xml'
-      const expected = 'estranky:homepage-slice'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:homepage-slice',
+        label: 'Home page (Web Slice)',
+      }
 
-      expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the home page slice key for a home page slice feed in another language', () => {
+    it('should return the home page slice hint for a home page slice feed in another language', () => {
       const value = 'https://example.estranky.cz/rss/en/slices/l/homepage/data.xml'
-      const expected = 'estranky:homepage-slice'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:homepage-slice',
+        label: 'Home page (Web Slice)',
+      }
 
-      expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the photo album slice key for a photo album slice feed', () => {
+    it('should return the photo album slice hint for a photo album slice feed', () => {
       const value = 'https://example.estranky.cz/rss/slices/l/photos/data.xml'
-      const expected = 'estranky:photos-slice'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:photos-slice',
+        label: 'Photo album (Web Slice)',
+      }
 
-      expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the photo album slice key for a photo album slice feed in another language', () => {
+    it('should return the photo album slice hint for a photo album slice feed in another language', () => {
       const value = 'https://example.estranky.cz/rss/en/slices/l/photos/data.xml'
-      const expected = 'estranky:photos-slice'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:photos-slice',
+        label: 'Photo album (Web Slice)',
+      }
 
-      expect(estrankyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a page', () => {
       const value = 'https://example.estranky.cz/fotoalbum/'
 
-      expect(estrankyHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an article slice feed', () => {
       const value = 'https://example.estranky.cz/rss/slices/a/604/data.xml'
 
-      expect(estrankyHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a section feed', () => {
       const value = 'https://example.estranky.cz/rss/section/12/data.xml'
 
-      expect(estrankyHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the www host', () => {
       const value = 'https://www.estranky.cz/rss/articles/data.xml'
 
-      expect(estrankyHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://estranky.sk/rss/slices/l/homepage/data.xml'
 
-      expect(estrankyHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a custom domain', () => {
       const value = 'https://www.example.com/rss/articles/data.xml'
 
-      expect(estrankyHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
