@@ -1,13 +1,26 @@
-import { getPathSegments, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
+import { getPathSegments, getSubdomain, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
+import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type WixUrl = { kind: 'freeSite'; site: string } | { kind: 'site' }
+export type WixUrl = { kind: 'freeSite'; account: string; site: string } | { kind: 'site' }
 
 const domains = ['wixsite.com']
 const assetHosts = ['static.parastorage.com']
+
+// Wix answers a free site's feed under any one segment after the site path, such as a language.
+const freeSiteFeeds = definePlatformFeeds([
+  { key: 'wix:blog', template: 'https://{account}.wixsite.com/{site}/blog-feed.xml' },
+  { key: 'wix:blog', template: 'https://{account}.wixsite.com/{site}/{section}/blog-feed.xml' },
+])
+
+// A site on its own domain is known only by its markers, so its feed is built but not claimed.
+const siteFeeds = definePlatformFeeds(
+  [{ key: 'wix:blog', template: '{scheme}://{host}/blog-feed.xml' }],
+  { domains },
+)
 
 export const isWixHtml = (content: string): boolean => {
   if (hasMetaContent(content, 'generator', 'Wix.com')) {
@@ -33,10 +46,11 @@ export const parseWixUrl = (url: string): WixUrl | undefined => {
     return
   }
 
+  const account = getSubdomain(parsedUrl, domains)
   const [site] = getPathSegments(parsedUrl)
 
-  if (isSubdomainOf(parsedUrl, domains) && site) {
-    return { kind: 'freeSite', site }
+  if (account && site) {
+    return { kind: 'freeSite', account, site }
   }
 
   return { kind: 'site' }
@@ -58,12 +72,16 @@ export const wixHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-
     if (parsed.kind === 'freeSite') {
-      return [{ uri: `${origin}/${parsed.site}/blog-feed.xml`, hint: composeHint('wix:blog') }]
+      return [
+        freeSiteFeeds.getFeedEntry('wix:blog', { account: parsed.account, site: parsed.site }),
+      ]
     }
 
-    return [{ uri: `${origin}/blog-feed.xml`, hint: composeHint('wix:blog') }]
+    const { protocol, host } = new URL(url)
+
+    return [siteFeeds.getFeedEntry('wix:blog', { scheme: protocol.slice(0, -1), host })]
   },
+
+  getFeedKey: freeSiteFeeds.getFeedKey,
 }
