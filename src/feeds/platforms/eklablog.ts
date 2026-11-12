@@ -76,18 +76,13 @@ export const eklablogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseEklablogUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
-    const { protocol, host } = new URL(url)
-    const params = { scheme: protocol.slice(0, -1), host }
-
-    return [
-      feeds.getFeedEntry('eklablog:posts', params),
-      feeds.getFeedEntry('eklablog:comments', params),
-    ]
+    return [pageFeeds.getFeedEntry('eklablog:posts'), pageFeeds.getFeedEntry('eklablog:comments')]
   },
 
   // The table reads any host under the domains, so the page parser refuses the apex and the www
