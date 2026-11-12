@@ -173,6 +173,13 @@ describe('mailArchiveHandler', () => {
       expect(mailArchiveHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the list key for an rdf list feed', () => {
+      const value = 'https://mail-archive.com/alice@example.org/maillist.rdf'
+      const expected = 'mail-archive:list'
+
+      expect(mailArchiveHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return undefined for a list page', () => {
       const value = 'https://www.mail-archive.com/alice@example.org/msg1.html'
 
@@ -200,6 +207,10 @@ describe('mailArchiveHandler', () => {
       ],
       [
         'https://mail-archive.com/alice@example.org/maillist.xml/',
+        { key: 'mail-archive:list', label: 'Mailing list' },
+      ],
+      [
+        'https://mail-archive.com/alice@example.org/maillist.rdf',
         { key: 'mail-archive:list', label: 'Mailing list' },
       ],
     ]

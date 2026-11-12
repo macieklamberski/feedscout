@@ -11,7 +11,10 @@ export type MailArchiveUrl = { kind: 'list'; list: string }
 const hosts = ['mail-archive.com', 'www.mail-archive.com']
 
 const feeds = definePlatformFeeds(
-  [{ key: 'mail-archive:list', template: '{scheme}://{host}/{list}/maillist.xml' }],
+  [
+    { key: 'mail-archive:list', template: '{scheme}://{host}/{list}/maillist.xml' },
+    { key: 'mail-archive:list', template: '{scheme}://{host}/{list}/maillist.rdf', format: 'rdf' },
+  ],
   { hosts },
 )
 
