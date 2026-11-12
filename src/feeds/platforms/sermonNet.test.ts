@@ -230,24 +230,24 @@ describe('sermonNetHandler', () => {
       expect(sermonNetHandler.resolve(value, content)).toEqual(expected)
     })
 
-    it('should return the https feeds of a channel page opened over http', () => {
+    it('should keep the http scheme of a channel page opened over http', () => {
       const value = 'http://example.sermon.net/main/sermons'
       const content = 'var StudioAppData = {"allPlaylists":[{"is_series":true,"url":"sermons"}]};'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.sermon.net/rss/sermons/audio',
+          uri: 'http://example.sermon.net/rss/sermons/audio',
           hint: { key: 'sermon-net:channel', label: 'Channel podcast' },
         },
         {
-          uri: 'https://example.sermon.net/rss/sermons',
+          uri: 'http://example.sermon.net/rss/sermons',
           hint: { key: 'sermon-net:channel-media', label: 'Channel media' },
         },
         {
-          uri: 'https://example.sermon.net/rss/sermons/video',
+          uri: 'http://example.sermon.net/rss/sermons/video',
           hint: { key: 'sermon-net:channel-video', label: 'Channel video podcast' },
         },
         {
-          uri: 'https://example.sermon.net/rss/sermons/audio_pdf',
+          uri: 'http://example.sermon.net/rss/sermons/audio_pdf',
           hint: { key: 'sermon-net:channel-audio-pdf', label: 'Channel podcast with PDFs' },
         },
       ]
@@ -255,11 +255,11 @@ describe('sermonNetHandler', () => {
       expect(sermonNetHandler.resolve(value, content)).toEqual(expected)
     })
 
-    it('should return the https church feed of a church page opened over http', () => {
+    it('should keep the http scheme of a church page opened over http', () => {
       const value = 'http://example.sermon.net/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.sermon.net/rss',
+          uri: 'http://example.sermon.net/rss',
           hint: { key: 'sermon-net:church', label: 'Church' },
         },
       ]
