@@ -135,6 +135,12 @@ describe('atyponHandler', () => {
       expect(atyponHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
+    it('should return undefined for an ahead of print feed', () => {
+      const value = 'https://www.science.org/action/showFeed/feed?jc=science&type=axatoc'
+
+      expect(atyponHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a journal page', () => {
       const value = 'https://www.tandfonline.com/toc/rdis20/current'
 
