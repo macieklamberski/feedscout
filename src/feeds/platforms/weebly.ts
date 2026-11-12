@@ -14,9 +14,10 @@ const domains = ['weebly.com']
 // other dot marks a file, such as `/favicon.ico`.
 const pageLinkRegex = /^\/([^/.]+)(?:\.html)?$/i
 
-const feeds = definePlatformFeeds([
-  { key: 'weebly:blog', template: '{scheme}://{site}.weebly.com/{page}/feed' },
-])
+const feeds = definePlatformFeeds(
+  [{ key: 'weebly:blog', template: '{scheme}://{host}/{page}/feed' }],
+  { domains },
+)
 
 export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -78,16 +79,15 @@ export const weeblyHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getWeeblyPage(url, content)
-    const site = getTenantSubdomain(url, domains)
     const pageFeeds = feeds.forUrl(url)
 
-    if (!page || !site || !pageFeeds) {
+    if (!page || !pageFeeds) {
       return []
     }
 
     const slugs = page.kind === 'home' ? page.pages : [page.page ?? 'blog']
 
-    return slugs.map((slug) => pageFeeds.getFeedEntry('weebly:blog', { site, page: slug }))
+    return slugs.map((slug) => pageFeeds.getFeedEntry('weebly:blog', { page: slug }))
   },
 
   // The table reads any first segment as a page, so a dotted one, a file of the site, is refused:
