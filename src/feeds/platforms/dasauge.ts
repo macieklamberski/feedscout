@@ -17,8 +17,8 @@ const hosts = [
 
 const profileRegex = /^-(.+)$/
 
-// The feed is the `rss` query with no value, linked as `?rss`. A stored copy of a `?rss=` URL is the
-// same RSS feed, so `?rss=` serves it too.
+// The feed is the `rss` query with no value, linked as `?rss`. A stored copy of a `?rss=` URL is
+// the same RSS feed, so `?rss=` serves it too.
 const feeds = definePlatformFeeds(
   [{ key: 'dasauge:profile', template: 'https://{host}/-{username}/?rss' }],
   { hosts },
