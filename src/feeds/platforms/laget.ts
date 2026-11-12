@@ -16,13 +16,13 @@ const lagetAssetRegex = /^(?:https?:)?\/\/[a-z]-content\.laget\.se\//i
 
 const assetTags = ['link', 'script']
 
-// A club on its own domain serves its news feed at the domain root, built here but not claimed,
-// since only the page markers tell such a domain apart.
-const feeds = definePlatformFeeds(
-  [
-    { key: 'laget:news', template: 'https://www.laget.se/{team}/Home/NewsRss' },
-    { key: 'laget:news', template: '{scheme}://{host}/Home/NewsRss' },
-  ],
+const teamFeeds = definePlatformFeeds([
+  { key: 'laget:news', template: 'https://www.laget.se/{team}/Home/NewsRss' },
+])
+
+// A club on its own domain is known only by its markers, so its feed is built but not claimed.
+const clubFeeds = definePlatformFeeds(
+  [{ key: 'laget:news', template: '{scheme}://{host}/Home/NewsRss' }],
   { hosts },
 )
 
@@ -65,7 +65,7 @@ export const lagetHandler: PlatformHandler = {
 
     if (parsed) {
       // The team page links its feed with the team spelled as the request spelled it.
-      return [feeds.getFeedEntry('laget:news', { team: parsed.team })]
+      return [teamFeeds.getFeedEntry('laget:news', { team: parsed.team })]
     }
 
     if (isHostOrSubdomainOf(url, domains)) {
@@ -74,15 +74,8 @@ export const lagetHandler: PlatformHandler = {
 
     const { protocol, host } = new URL(url)
 
-    return [feeds.getFeedEntry('laget:news', { scheme: protocol.slice(0, -1), host })]
+    return [clubFeeds.getFeedEntry('laget:news', { scheme: protocol.slice(0, -1), host })]
   },
 
-  // The club domain row reads the root of laget.se too, which answers 404.
-  getFeedKey: (url) => {
-    if (getPathSegments(url).length < 3) {
-      return
-    }
-
-    return feeds.getFeedKey(url)
-  },
+  getFeedKey: teamFeeds.getFeedKey,
 }
