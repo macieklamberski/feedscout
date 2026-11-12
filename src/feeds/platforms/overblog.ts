@@ -38,14 +38,13 @@ export const overblogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseOverblogUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { protocol, host } = new URL(url)
-
-    return [feeds.getFeedEntry('overblog:posts', { scheme: protocol.slice(0, -1), host })]
+    return [page.getFeedEntry('overblog:posts')]
   },
 
   // The table reads any host under the domains, so the page parser refuses the apex and the www
