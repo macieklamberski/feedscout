@@ -8,10 +8,12 @@ export type BlogiaUrl = { kind: 'blog'; blog: string }
 
 const domains = ['blogia.com']
 
-// The blog's alternate link is always https, and http redirects to it.
-const feeds = definePlatformFeeds([
-  { key: 'blogia:posts', template: 'https://{blog}.blogia.com/feed.xml' },
-])
+const feeds = definePlatformFeeds(
+  [{ key: 'blogia:posts', template: '{scheme}://{host}/feed.xml' }],
+  {
+    domains,
+  },
+)
 
 export const parseBlogiaUrl = (url: string): BlogiaUrl | undefined => {
   const blog = getTenantSubdomain(url, domains)
@@ -30,12 +32,13 @@ export const blogiaHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseBlogiaUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    return [feeds.getFeedEntry('blogia:posts', { blog: parsed.blog })]
+    return [page.getFeedEntry('blogia:posts')]
   },
 
   getFeedHint: feeds.getFeedHint,

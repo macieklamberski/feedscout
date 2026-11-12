@@ -47,11 +47,11 @@ describe('blogiaHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return the https posts feed for an http page', () => {
+    it('should keep the scheme of an http page', () => {
       const value = 'http://alice.blogia.com/temas/reflexiones/'
       const expected = [
         {
-          uri: 'https://alice.blogia.com/feed.xml',
+          uri: 'http://alice.blogia.com/feed.xml',
           hint: { key: 'blogia:posts', label: 'Posts' },
         },
       ]
