@@ -1,7 +1,8 @@
 import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers archive, blog, category, photos, replies.
@@ -17,6 +18,35 @@ export const domains = ['micro.blog']
 const categoryRegex = /^\/categories\/([^/]+)/i
 const archiveRegex = /^\/archive(?:\/|$)/i
 const photosRegex = /^\/photos(?:\/|$)/i
+
+const feeds = definePlatformFeeds([
+  {
+    key: 'microblog:category',
+    template: 'https://{username}.micro.blog/categories/{category}/feed.xml',
+    format: 'rss',
+  },
+  {
+    key: 'microblog:category',
+    template: 'https://{username}.micro.blog/categories/{category}/feed.json',
+    format: 'json',
+  },
+  { key: 'microblog:archive', template: 'https://{username}.micro.blog/archive/index.json' },
+  { key: 'microblog:photos', template: 'https://{username}.micro.blog/photos/index.json' },
+  { key: 'microblog:posts', template: 'https://{username}.micro.blog/feed.xml', format: 'rss' },
+  { key: 'microblog:posts', template: 'https://{username}.micro.blog/feed.json', format: 'json' },
+  // replies.xml redirects to feed.xml, so a stored one is the posts feed.
+  { key: 'microblog:posts', template: 'https://{username}.micro.blog/replies.xml', format: 'rss' },
+  {
+    key: 'microblog:podcast',
+    template: 'https://{username}.micro.blog/podcast.xml',
+    format: 'rss',
+  },
+  {
+    key: 'microblog:podcast',
+    template: 'https://{username}.micro.blog/podcast.json',
+    format: 'json',
+  },
+])
 
 export const parseMicroblogUrl = (url: string): MicroblogUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -56,35 +86,35 @@ export const microblogHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
+    const { username } = parsed
     const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.kind === 'category') {
-      const { category } = parsed
+      const params = { username, category: parsed.category }
 
-      uris.push({
-        uri: `${origin}/categories/${category}/feed.xml`,
-        hint: composeHint('microblog:category', 'rss'),
-      })
-      uris.push({
-        uri: `${origin}/categories/${category}/feed.json`,
-        hint: composeHint('microblog:category', 'json'),
-      })
+      uris.push(
+        feeds.getFeedEntry('microblog:category', params, 'rss'),
+        feeds.getFeedEntry('microblog:category', params, 'json'),
+      )
     }
 
     if (parsed.kind === 'archive') {
-      uris.push({ uri: `${origin}/archive/index.json`, hint: composeHint('microblog:archive') })
+      uris.push(feeds.getFeedEntry('microblog:archive', { username }))
     }
 
     if (parsed.kind === 'photos') {
-      uris.push({ uri: `${origin}/photos/index.json`, hint: composeHint('microblog:photos') })
+      uris.push(feeds.getFeedEntry('microblog:photos', { username }))
     }
 
-    uris.push({ uri: `${origin}/feed.xml`, hint: composeHint('microblog:posts', 'rss') })
-    uris.push({ uri: `${origin}/feed.json`, hint: composeHint('microblog:posts', 'json') })
-    uris.push({ uri: `${origin}/podcast.xml`, hint: composeHint('microblog:podcast', 'rss') })
-    uris.push({ uri: `${origin}/podcast.json`, hint: composeHint('microblog:podcast', 'json') })
+    uris.push(
+      feeds.getFeedEntry('microblog:posts', { username }, 'rss'),
+      feeds.getFeedEntry('microblog:posts', { username }, 'json'),
+      feeds.getFeedEntry('microblog:podcast', { username }, 'rss'),
+      feeds.getFeedEntry('microblog:podcast', { username }, 'json'),
+    )
 
     return uris
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
