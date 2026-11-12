@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../types.js'
-import { definePlatformFeeds, type PlatformFeedKey } from './feeds.js'
+import { definePlatformFeeds } from './feeds.js'
 
 const feeds = definePlatformFeeds(
   [
@@ -156,13 +156,6 @@ describe('definePlatformFeeds', () => {
       expect(feeds.getFeedKey('https://www.example.com/alice/feed.rss')).toBe('example:posts')
     })
 
-    it('should return the key and format of a feed whose row names a format', () => {
-      const value = 'https://www.example.com/alice/products.rdf'
-      const expected: PlatformFeedKey = { key: 'example:products', format: 'rdf' }
-
-      expect(feeds.getFeedKey(value)).toEqual(expected)
-    })
-
     it('should return the key of a feed with two values', () => {
       expect(feeds.getFeedKey('https://www.example.com/alice/recipes.rss')).toBe('example:board')
     })
@@ -233,6 +226,21 @@ describe('definePlatformFeeds', () => {
 
     it('should return undefined for a URL without an http origin', () => {
       expect(feeds.getFeedKey('ftp://www.example.com/alice/feed.rss')).toBeUndefined()
+    })
+  })
+
+  describe('getFeedFormat', () => {
+    it('should return the format of a feed whose row names one', () => {
+      const value = 'https://www.example.com/alice/products.rdf'
+      const expected = 'rdf'
+
+      expect(feeds.getFeedFormat(value)).toBe(expected)
+    })
+
+    it('should return undefined for a feed whose row names no format', () => {
+      const value = 'https://www.example.com/alice/feed.rss'
+
+      expect(feeds.getFeedFormat(value)).toBeUndefined()
     })
   })
 })

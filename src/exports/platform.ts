@@ -1,5 +1,4 @@
 export type {
-  PlatformFeedKey,
   PlatformFeedParams,
   PlatformFeedTable,
   PlatformFeedTableOptions,

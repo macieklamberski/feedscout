@@ -1,21 +1,14 @@
-import {
-  isHttpUrl,
-  isString,
-  type NormalizeOptions,
-  normalizeUrl,
-  stripWww,
-  trimUrlValues,
-} from 'trousse'
+import { isHttpUrl, type NormalizeOptions, normalizeUrl, stripWww, trimUrlValues } from 'trousse'
 import { reportError } from '../../discover/utils.js'
 import type {
   DiscoverInputObject,
   DiscoverOnErrorFn,
   DiscoverRef,
   DiscoverUriEntry,
+  DiscoverUriHint,
   FetchFn,
 } from '../../types.js'
 import { composeHint } from '../../utils.js'
-import type { PlatformFeedKey } from './feeds.js'
 import type { PlatformHandler, PlatformMethodOptions } from './types.js'
 
 type PlatformPage = Omit<DiscoverInputObject, 'status'>
@@ -54,20 +47,24 @@ const orderHandlers = (handlers: Array<PlatformHandler>, url: string): Array<Pla
   return [...urlHandlers, ...markerHandlers]
 }
 
-// The hint key of the handler feed the URL is, read as the URL arrived.
-export const getFeedKey = (
+// The hint of the handler feed the URL is, read as the URL arrived.
+const getFeedHint = (
   handlers: Array<PlatformHandler>,
   url: string,
-): PlatformFeedKey | undefined => {
+): DiscoverUriHint | undefined => {
   for (const handler of handlers) {
     try {
       const key = handler.getFeedKey?.(url)
 
       if (key) {
-        return key
+        return composeHint(key, handler.getFeedFormat?.(url))
       }
     } catch {}
   }
+}
+
+export const getFeedKey = (handlers: Array<PlatformHandler>, url: string): string | undefined => {
+  return getFeedHint(handlers, url)?.key
 }
 
 export const discoverUrisFromPlatform = async (
@@ -87,14 +84,10 @@ export const discoverUrisFromPlatform = async (
   }
 
   // A URL that is one of a handler's feeds is that feed, and no page parser reads it.
-  const ownFeedKey = getFeedKey(handlers, baseUrl)
+  const ownFeedHint = getFeedHint(handlers, baseUrl)
 
-  if (isString(ownFeedKey)) {
-    return [{ uri: baseUrl, hint: composeHint(ownFeedKey) }]
-  }
-
-  if (ownFeedKey) {
-    return [{ uri: baseUrl, hint: composeHint(ownFeedKey.key, ownFeedKey.format) }]
+  if (ownFeedHint) {
+    return [{ uri: baseUrl, hint: ownFeedHint }]
   }
 
   const fetchedPageUrl = readPageUrl(baseUrl)

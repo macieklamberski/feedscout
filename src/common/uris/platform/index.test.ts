@@ -85,6 +85,7 @@ describe('discoverUrisFromPlatform', () => {
         match: () => false,
         resolve: () => [],
         getFeedKey: claimedFeeds.getFeedKey,
+        getFeedFormat: claimedFeeds.getFeedFormat,
       }
       const options = {
         baseUrl: value,

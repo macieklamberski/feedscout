@@ -20,9 +20,6 @@ export type PlatformFeedTemplate = {
   format?: DiscoverUriHint['format']
 }
 
-// A feed URL read back to its row: the key, with the format when the row names one.
-export type PlatformFeedKey = string | Required<Pick<PlatformFeedTemplate, 'key' | 'format'>>
-
 export type PlatformFeedParams = Record<string, string>
 
 export type PlatformFeedTableOptions = {
@@ -43,7 +40,8 @@ export type PlatformFeedTable = {
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
   ) => DiscoverUriEntry
-  getFeedKey: (url: string) => PlatformFeedKey | undefined
+  getFeedKey: (url: string) => string | undefined
+  getFeedFormat: (url: string) => DiscoverUriHint['format'] | undefined
 }
 
 type CompiledTemplate = {
@@ -142,7 +140,8 @@ const compileTemplate = (
 }
 
 // One table of a handler's feed URLs, keyed by hint key. `getFeedUrl` writes a feed from the values
-// a page gave, `getFeedEntry` adds its hint, and `getFeedKey` reads a URL back to the feed's key.
+// a page gave, `getFeedEntry` adds its hint, and `getFeedKey` and `getFeedFormat` read a URL back
+// to the feed's key and format.
 export const definePlatformFeeds = (
   templates: Array<PlatformFeedTemplate>,
   options: PlatformFeedTableOptions = {},
@@ -172,21 +171,23 @@ export const definePlatformFeeds = (
     return { uri: getFeedUrl(key, params, format), hint: composeHint(key, format) }
   }
 
-  const getFeedKey: PlatformFeedTable['getFeedKey'] = (url) => {
+  const findTemplate = (url: string): CompiledTemplate | undefined => {
     const parsedUrl = parseUrl(url)
 
     if (!parsedUrl || !isHttpUrl(parsedUrl)) {
       return
     }
 
-    const template = bySpecificity.find((candidate) => candidate.isFeedUrl(parsedUrl))
-
-    if (!template?.format) {
-      return template?.key
-    }
-
-    return { key: template.key, format: template.format }
+    return bySpecificity.find((candidate) => candidate.isFeedUrl(parsedUrl))
   }
 
-  return { getFeedUrl, getFeedEntry, getFeedKey }
+  const getFeedKey: PlatformFeedTable['getFeedKey'] = (url) => {
+    return findTemplate(url)?.key
+  }
+
+  const getFeedFormat: PlatformFeedTable['getFeedFormat'] = (url) => {
+    return findTemplate(url)?.format
+  }
+
+  return { getFeedUrl, getFeedEntry, getFeedKey, getFeedFormat }
 }
