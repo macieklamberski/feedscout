@@ -8,10 +8,13 @@ export type TravellerspointUrl = { kind: 'blog'; blog: string }
 
 const domains = ['travellerspoint.com']
 
-const feeds = definePlatformFeeds([
-  { key: 'travellerspoint:posts', template: 'https://{blog}.travellerspoint.com/atom.xml' },
-  { key: 'travellerspoint:posts', template: 'https://{blog}.travellerspoint.com/rss.xml' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'travellerspoint:posts', template: '{scheme}://{host}/atom.xml' },
+    { key: 'travellerspoint:posts', template: '{scheme}://{host}/rss.xml' },
+  ],
+  { domains },
+)
 
 export const parseTravellerspointUrl = (url: string): TravellerspointUrl | undefined => {
   const blog = getTenantSubdomain(url, domains)
@@ -29,14 +32,13 @@ export const travellerspointHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsed = parseTravellerspointUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parseTravellerspointUrl(url) || !page) {
       return []
     }
 
-    // An http page redirects to https, and the page's alternate link spells the feed with https.
-    return [feeds.getFeedEntry('travellerspoint:posts', { blog: parsed.blog })]
+    return [page.getFeedEntry('travellerspoint:posts')]
   },
 
   getFeedHint: feeds.getFeedHint,

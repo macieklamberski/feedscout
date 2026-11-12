@@ -78,11 +78,11 @@ describe('travellerspointHandler', () => {
       expect(travellerspointHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the https feed for an http page', () => {
+    it('should keep the http scheme of an http page', () => {
       const value = 'http://alicetravels.travellerspoint.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alicetravels.travellerspoint.com/atom.xml',
+          uri: 'http://alicetravels.travellerspoint.com/atom.xml',
           hint: { key: 'travellerspoint:posts', label: 'Posts' },
         },
       ]
