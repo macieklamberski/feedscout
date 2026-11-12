@@ -485,11 +485,17 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the newest hint for the site feed on a nested subdomain', () => {
-      const value = 'https://chat.meta.stackexchange.com/feeds'
+    it('should return the newest hint for the site feed on a subdomain of an apex site', () => {
+      const value = 'https://meta.stackoverflow.com/feeds'
       const expected: DiscoverUriHint = { key: 'stackexchange:newest', label: 'Newest questions' }
 
       expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for the site feed on a nested subdomain', () => {
+      const value = 'https://chat.meta.stackexchange.com/feeds'
+
+      expect(stackExchangeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return the newest hint for the network feed', () => {

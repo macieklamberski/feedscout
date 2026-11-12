@@ -36,15 +36,17 @@ const collectiveRegex = /^\/collectives\/([^/]+)/i
 const validSorts = ['newest', 'active', 'votes', 'creation', 'hot', 'week', 'month']
 const feeds = definePlatformFeeds(
   [
-    // First under its key, so it writes every tag feed: an empty sort leaves the query out.
-    { key: 'stackexchange:tag', template: 'https://{host}/feeds/tag/{tag}?sort={sort}' },
-    { key: 'stackexchange:tag', template: 'https://{host}/feeds/tag/{tag}' },
-    { key: 'stackexchange:question', template: 'https://{host}/feeds/question/{questionId}' },
-    { key: 'stackexchange:user', template: 'https://{host}/feeds/user/{userId}' },
-    { key: 'stackexchange:collective', template: 'https://{host}/feeds/collectives/{collective}' },
-    { key: 'stackexchange:newest', template: 'https://{host}/feeds' },
+    { key: 'stackexchange:tag', template: '{scheme}://{host}/feeds/tag/{tag}?sort={sort}' },
+    { key: 'stackexchange:tag', template: '{scheme}://{host}/feeds/tag/{tag}' },
+    { key: 'stackexchange:question', template: '{scheme}://{host}/feeds/question/{questionId}' },
+    { key: 'stackexchange:user', template: '{scheme}://{host}/feeds/user/{userId}' },
+    {
+      key: 'stackexchange:collective',
+      template: '{scheme}://{host}/feeds/collectives/{collective}',
+    },
+    { key: 'stackexchange:newest', template: '{scheme}://{host}/feeds' },
   ],
-  { domains },
+  { hosts: domains, domains },
 )
 
 const getSort = (searchParams: URLSearchParams): string | undefined => {
@@ -105,33 +107,29 @@ export const stackExchangeHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseStackExchangeUrl(url)
-    const host = parseUrl(url)?.hostname
+    const page = feeds.forUrl(url)
 
-    if (!parsed || !host) {
+    if (!parsed || !page) {
       return []
     }
 
     if (parsed.kind === 'tag') {
-      const params = { host, tag: parsed.tag, sort: parsed.sort ?? '' }
-
-      return [feeds.getFeedEntry('stackexchange:tag', params)]
+      return [page.getFeedEntry('stackexchange:tag', { tag: parsed.tag, sort: parsed.sort })]
     }
 
     if (parsed.kind === 'question') {
-      return [feeds.getFeedEntry('stackexchange:question', { host, questionId: parsed.questionId })]
+      return [page.getFeedEntry('stackexchange:question', { questionId: parsed.questionId })]
     }
 
     if (parsed.kind === 'user') {
-      return [feeds.getFeedEntry('stackexchange:user', { host, userId: parsed.userId })]
+      return [page.getFeedEntry('stackexchange:user', { userId: parsed.userId })]
     }
 
     if (parsed.kind === 'collective') {
-      const params = { host, collective: parsed.collective }
-
-      return [feeds.getFeedEntry('stackexchange:collective', params)]
+      return [page.getFeedEntry('stackexchange:collective', { collective: parsed.collective })]
     }
 
-    return [feeds.getFeedEntry('stackexchange:newest', { host })]
+    return [page.getFeedEntry('stackexchange:newest')]
   },
 
   getFeedHint: (url) => {
