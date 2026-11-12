@@ -78,9 +78,13 @@ export const wixHandler: PlatformHandler = {
       ]
     }
 
-    const { protocol, host } = new URL(url)
+    const page = siteFeeds.forUrl(url)
 
-    return [siteFeeds.getFeedEntry('wix:blog', { scheme: protocol.slice(0, -1), host })]
+    if (!page) {
+      return []
+    }
+
+    return [page.getFeedEntry('wix:blog')]
   },
 
   getFeedHint: freeSiteFeeds.getFeedHint,
