@@ -36,8 +36,8 @@ const userRegex = /^\/([a-z][\w-]*?)(?:\.rss)?(?:\/|$)/i
 
 const bookmarkLists = ['hotentry', 'entrylist']
 
+// The `all` category is the whole list, which its page links as the bare feed.
 const categories = [
-  'all',
   'economics',
   'entertainment',
   'fun',
@@ -59,10 +59,18 @@ const searchFilters = ['target', 'sort', 'users', 'date_range', 'safe']
 // A site feed carries the site's whole path, more segments than a placeholder holds, so
 // `getSiteFeedHint` reads it.
 const feeds = definePlatformFeeds([
-  { key: 'hatena-bookmark:hot', template: 'https://b.hatena.ne.jp/hotentry/{category}.rss' },
   { key: 'hatena-bookmark:hot', template: 'https://b.hatena.ne.jp/hotentry.rss' },
-  { key: 'hatena-bookmark:new', template: 'https://b.hatena.ne.jp/entrylist/{category}.rss' },
+  { key: 'hatena-bookmark:hot', template: 'https://b.hatena.ne.jp/hotentry/all.rss' },
+  {
+    key: 'hatena-bookmark:hot-category',
+    template: 'https://b.hatena.ne.jp/hotentry/{category}.rss',
+  },
   { key: 'hatena-bookmark:new', template: 'https://b.hatena.ne.jp/entrylist.rss' },
+  { key: 'hatena-bookmark:new', template: 'https://b.hatena.ne.jp/entrylist/all.rss' },
+  {
+    key: 'hatena-bookmark:new-category',
+    template: 'https://b.hatena.ne.jp/entrylist/{category}.rss',
+  },
   {
     key: 'hatena-bookmark:search',
     template:
@@ -184,13 +192,21 @@ export const hatenaBookmarkHandler: PlatformHandler = {
     if (parsed.kind === 'hotentry') {
       const { category } = parsed
 
-      return [feeds.getFeedEntry('hatena-bookmark:hot', category ? { category } : {})]
+      if (!category) {
+        return [feeds.getFeedEntry('hatena-bookmark:hot')]
+      }
+
+      return [feeds.getFeedEntry('hatena-bookmark:hot-category', { category })]
     }
 
     if (parsed.kind === 'entrylist') {
       const { category } = parsed
 
-      return [feeds.getFeedEntry('hatena-bookmark:new', category ? { category } : {})]
+      if (!category) {
+        return [feeds.getFeedEntry('hatena-bookmark:new')]
+      }
+
+      return [feeds.getFeedEntry('hatena-bookmark:new-category', { category })]
     }
 
     // Search and per-site listings answer with RSS when `mode=rss` is set.

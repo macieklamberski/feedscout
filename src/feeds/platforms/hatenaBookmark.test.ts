@@ -184,6 +184,13 @@ describe('parseHatenaBookmarkUrl', () => {
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/Hotentry/nope')).toEqual(expected)
   })
 
+  it('should return the hot entries without a category for the all category', () => {
+    const value = 'https://b.hatena.ne.jp/hotentry/all'
+    const expected: HatenaBookmarkUrl = { kind: 'hotentry', category: undefined }
+
+    expect(parseHatenaBookmarkUrl(value)).toEqual(expected)
+  })
+
   it('should return the new entries', () => {
     const expected: HatenaBookmarkUrl = { kind: 'entrylist', category: undefined }
 
@@ -264,26 +271,37 @@ describe('hatenaBookmarkHandler', () => {
       expect(hatenaBookmarkHandler.resolve(`${base}/hotentry`)).toEqual(hotEntries)
     })
 
-    it('should return hot entries for a category page', () => {
-      const expected = [
+    it('should return hot entries in category for a category page', () => {
+      const value = `${base}/hotentry/it`
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${base}/hotentry/it.rss`,
-          hint: { key: 'hatena-bookmark:hot', label: 'Hot entries' },
+          hint: { key: 'hatena-bookmark:hot-category', label: 'Hot entries in category' },
         },
       ]
 
-      expect(hatenaBookmarkHandler.resolve(`${base}/hotentry/it`)).toEqual(expected)
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return lowercase hot entries for a capitalized category page', () => {
-      const expected = [
+    it('should return lowercase hot entries in category for a capitalized category page', () => {
+      const value = `${base}/Hotentry/IT`
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${base}/hotentry/it.rss`,
-          hint: { key: 'hatena-bookmark:hot', label: 'Hot entries' },
+          hint: { key: 'hatena-bookmark:hot-category', label: 'Hot entries in category' },
         },
       ]
 
-      expect(hatenaBookmarkHandler.resolve(`${base}/Hotentry/IT`)).toEqual(expected)
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return hot entries for the all category page', () => {
+      const value = `${base}/hotentry/all`
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: `${base}/hotentry.rss`, hint: { key: 'hatena-bookmark:hot', label: 'Hot entries' } },
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return hot entries for an unknown category page', () => {
@@ -301,15 +319,28 @@ describe('hatenaBookmarkHandler', () => {
       expect(hatenaBookmarkHandler.resolve(`${base}/entrylist`)).toEqual(expected)
     })
 
-    it('should return new entries for a category page', () => {
-      const expected = [
+    it('should return new entries in category for a category page', () => {
+      const value = `${base}/entrylist/game`
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${base}/entrylist/game.rss`,
+          hint: { key: 'hatena-bookmark:new-category', label: 'New entries in category' },
+        },
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return new entries for the all category page', () => {
+      const value = `${base}/entrylist/all`
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${base}/entrylist.rss`,
           hint: { key: 'hatena-bookmark:new', label: 'New entries' },
         },
       ]
 
-      expect(hatenaBookmarkHandler.resolve(`${base}/entrylist/game`)).toEqual(expected)
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return a search feed for a query page', () => {
@@ -386,7 +417,7 @@ describe('hatenaBookmarkHandler', () => {
       const expected = [
         {
           uri: `${base}/hotentry/it.rss`,
-          hint: { key: 'hatena-bookmark:hot', label: 'Hot entries' },
+          hint: { key: 'hatena-bookmark:hot-category', label: 'Hot entries in category' },
         },
       ]
 
@@ -410,16 +441,24 @@ describe('hatenaBookmarkHandler', () => {
     const ownFeedHints: Array<[string, DiscoverUriHint]> = [
       ['https://b.hatena.ne.jp/hotentry.rss', { key: 'hatena-bookmark:hot', label: 'Hot entries' }],
       [
-        'https://b.hatena.ne.jp/hotentry/life.rss',
+        'https://b.hatena.ne.jp/hotentry/all.rss',
         { key: 'hatena-bookmark:hot', label: 'Hot entries' },
+      ],
+      [
+        'https://b.hatena.ne.jp/hotentry/life.rss',
+        { key: 'hatena-bookmark:hot-category', label: 'Hot entries in category' },
       ],
       [
         'https://b.hatena.ne.jp/entrylist.rss',
         { key: 'hatena-bookmark:new', label: 'New entries' },
       ],
       [
-        'https://b.hatena.ne.jp/entrylist/entertainment.rss',
+        'https://b.hatena.ne.jp/entrylist/all.rss',
         { key: 'hatena-bookmark:new', label: 'New entries' },
+      ],
+      [
+        'https://b.hatena.ne.jp/entrylist/entertainment.rss',
+        { key: 'hatena-bookmark:new-category', label: 'New entries in category' },
       ],
       [
         'https://b.hatena.ne.jp/q/%E8%A1%8C%E6%94%BF?mode=rss',
@@ -502,15 +541,27 @@ describe('hatenaBookmarkHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const hot: DiscoverUriHint = { key: 'hatena-bookmark:hot', label: 'Hot entries' }
+    const hotCategory: DiscoverUriHint = {
+      key: 'hatena-bookmark:hot-category',
+      label: 'Hot entries in category',
+    }
     const fresh: DiscoverUriHint = { key: 'hatena-bookmark:new', label: 'New entries' }
+    const freshCategory: DiscoverUriHint = {
+      key: 'hatena-bookmark:new-category',
+      label: 'New entries in category',
+    }
     const search: DiscoverUriHint = { key: 'hatena-bookmark:search', label: 'Search' }
     const site: DiscoverUriHint = { key: 'hatena-bookmark:site', label: 'Site' }
     const bookmarks: DiscoverUriHint = { key: 'hatena-bookmark:bookmarks', label: 'Bookmarks' }
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://b.hatena.ne.jp/hotentry.rss', hot],
-      ['https://b.hatena.ne.jp/hotentry/life.rss', hot],
+      ['https://b.hatena.ne.jp/hotentry/all.rss', hot],
+      ['https://b.hatena.ne.jp/hotentry/life.rss', hotCategory],
+      ['http://b.hatena.ne.jp/hotentry/life.rss', hotCategory],
       ['https://b.hatena.ne.jp/entrylist.rss', fresh],
-      ['https://b.hatena.ne.jp/entrylist/entertainment.rss', fresh],
+      ['https://b.hatena.ne.jp/entrylist/all.rss', fresh],
+      ['https://b.hatena.ne.jp/entrylist/entertainment.rss', freshCategory],
+      ['http://b.hatena.ne.jp/entrylist/entertainment.rss', freshCategory],
       ['https://b.hatena.ne.jp/q/%E9%85%92?mode=rss', search],
       [
         'https://b.hatena.ne.jp/q/game?date_range=5y&mode=rss&safe=on&sort=popular&target=tag&users=5',
