@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   getWildApricotPage,
   isWildApricotHeaders,
@@ -159,6 +161,77 @@ describe('wildApricotHandler', () => {
 
     it('should return empty array without content', () => {
       expect(wildApricotHandler.resolve('https://example.com/news/')).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the blog hint for a blog module feed', () => {
+      const value = 'https://alice.wildapricot.org/page-12345/BlogPost/67890/RSS'
+      const expected: DiscoverUriHint = { key: 'wild-apricot:blog', label: 'Blog' }
+
+      expect(wildApricotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the events hint for an events module feed', () => {
+      const value = 'https://alice.wildapricot.org/page-12345/EventModule/67890/RSS'
+      const expected: DiscoverUriHint = { key: 'wild-apricot:events', label: 'Events' }
+
+      expect(wildApricotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the events hint for an events module feed in lowercase', () => {
+      const value = 'https://alice.wildapricot.org/page-12345/EventModule/67890/rss'
+      const expected: DiscoverUriHint = { key: 'wild-apricot:events', label: 'Events' }
+
+      expect(wildApricotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a page feed that can be a blog or events', () => {
+      const value = 'https://alice.wildapricot.org/page-12345/RSS'
+
+      expect(wildApricotHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a blog post page', () => {
+      const value = 'https://alice.wildapricot.org/page-12345/BlogPost/67890'
+
+      expect(wildApricotHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www host', () => {
+      const value = 'https://www.wildapricot.org/page-12345/BlogPost/67890/RSS'
+
+      expect(wildApricotHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://example.com/page-12345/BlogPost/67890/RSS'
+
+      expect(wildApricotHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://alice.wildapricot.org/page-12345/BlogPost/67890/RSS',
+        { key: 'wild-apricot:blog', label: 'Blog' },
+      ],
+      [
+        'https://alice.wildapricot.org/page-12345/EventModule/67890/RSS',
+        { key: 'wild-apricot:events', label: 'Events' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [wildApricotHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
