@@ -304,90 +304,90 @@ describe('sapoBlogsHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for an RSS feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for an RSS feed', () => {
       const value = 'https://cantinhodacasa.blogs.sapo.pt/data/rss'
-      const expected = 'sapo-blogs:posts'
+      const expected: DiscoverUriHint = { key: 'sapo-blogs:posts', label: 'Posts', format: 'rss' }
 
-      expect(sapoBlogsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sapoBlogsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an Atom feed', () => {
+    it('should return the posts hint for an Atom feed', () => {
       const value = 'https://cantinhodacasa.blogs.sapo.pt/data/atom'
-      const expected = 'sapo-blogs:posts'
+      const expected: DiscoverUriHint = { key: 'sapo-blogs:posts', label: 'Posts', format: 'atom' }
 
-      expect(sapoBlogsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sapoBlogsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed', () => {
+    it('should return the tag hint for a tag feed', () => {
       const value = 'https://cantinhodacasa.blogs.sapo.pt/data/rss?tag=compal'
-      const expected = 'sapo-blogs:tag'
+      const expected: DiscoverUriHint = { key: 'sapo-blogs:tag', label: 'Tag' }
 
-      expect(sapoBlogsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sapoBlogsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag spelled with a plus and an escape', () => {
+    it('should return the tag hint for a tag spelled with a plus and an escape', () => {
       const value = 'https://alice.blogs.sapo.pt/data/rss?tag=ant%C3%B3nio+costa'
-      const expected = 'sapo-blogs:tag'
+      const expected: DiscoverUriHint = { key: 'sapo-blogs:tag', label: 'Tag' }
 
-      expect(sapoBlogsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sapoBlogsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the comments key for a comments feed', () => {
+    it('should return the comments hint for a comments feed', () => {
       const value = 'https://blogs.sapo.pt/commentsrss.bml?blog=canetadapoesia'
-      const expected = 'sapo-blogs:comments'
+      const expected: DiscoverUriHint = { key: 'sapo-blogs:comments', label: 'Comments' }
 
-      expect(sapoBlogsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sapoBlogsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the comments key for a comments feed naming a blog with an underscore', () => {
+    it('should return the comments hint for a comments feed naming a blog with an underscore', () => {
       const value = 'https://blogs.sapo.pt/commentsrss.bml?blog=the_other_side'
-      const expected = 'sapo-blogs:comments'
+      const expected: DiscoverUriHint = { key: 'sapo-blogs:comments', label: 'Comments' }
 
-      expect(sapoBlogsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sapoBlogsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the post comments key for a post comments feed', () => {
+    it('should return the post comments hint for a post comments feed', () => {
       const value = 'https://blogs.sapo.pt/commentsrss.bml?blog=21ng&ditemid=62534'
-      const expected = 'sapo-blogs:post-comments'
+      const expected: DiscoverUriHint = { key: 'sapo-blogs:post-comments', label: 'Post comments' }
 
-      expect(sapoBlogsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sapoBlogsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a tag page', () => {
       const value = 'https://alice.blogs.sapo.pt/tag/blogs'
 
-      expect(sapoBlogsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sapoBlogsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a blog query on another apex path', () => {
       const value = 'https://blogs.sapo.pt/?blog=alice'
 
-      expect(sapoBlogsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sapoBlogsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a comments feed without a blog', () => {
       const value = 'https://blogs.sapo.pt/commentsrss.bml'
 
-      expect(sapoBlogsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sapoBlogsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the posts path on the apex', () => {
       const value = 'https://blogs.sapo.pt/data/rss'
 
-      expect(sapoBlogsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sapoBlogsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the posts path on a nested subdomain', () => {
       const value = 'https://news.alice.blogs.sapo.pt/data/rss'
 
-      expect(sapoBlogsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sapoBlogsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/data/rss'
 
-      expect(sapoBlogsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sapoBlogsHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
@@ -395,11 +395,11 @@ describe('sapoBlogsHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
         'https://cantinhodacasa.blogs.sapo.pt/data/rss',
-        { key: 'sapo-blogs:posts', label: 'Posts' },
+        { key: 'sapo-blogs:posts', label: 'Posts', format: 'rss' },
       ],
       [
         'https://cantinhodacasa.blogs.sapo.pt/data/atom',
-        { key: 'sapo-blogs:posts', label: 'Posts' },
+        { key: 'sapo-blogs:posts', label: 'Posts', format: 'atom' },
       ],
       [
         'https://cantinhodacasa.blogs.sapo.pt/data/rss?tag=compal',
