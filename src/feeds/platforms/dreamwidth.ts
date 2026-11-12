@@ -110,5 +110,5 @@ export const dreamwidthHandler: PlatformHandler = {
     return entries
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
