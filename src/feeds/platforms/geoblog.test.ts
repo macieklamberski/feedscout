@@ -151,62 +151,62 @@ describe('geoblogHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the trip key for a trip feed', () => {
       const value = 'http://alice.geoblog.pl/podroz/rss/12345.xml'
-      const expected = 'geoblog:trip'
+      const expected: DiscoverUriHint = { key: 'geoblog:trip', label: 'Trip' }
 
-      expect(geoblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(geoblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the trip key for a trip feed over https', () => {
       const value = 'https://alice.geoblog.pl/podroz/rss/12345.xml'
-      const expected = 'geoblog:trip'
+      const expected: DiscoverUriHint = { key: 'geoblog:trip', label: 'Trip' }
 
-      expect(geoblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(geoblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the trip key for a trip feed on the www form of a user host', () => {
       const value = 'http://www.alice.geoblog.pl/podroz/rss/12345.xml'
-      const expected = 'geoblog:trip'
+      const expected: DiscoverUriHint = { key: 'geoblog:trip', label: 'Trip' }
 
-      expect(geoblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(geoblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a trip page', () => {
       const value = 'http://alice.geoblog.pl/podroz/12345/majorka-2024'
 
-      expect(geoblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(geoblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a trip map', () => {
       const value = 'http://alice.geoblog.pl/podroz/kml/12345.kml'
 
-      expect(geoblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(geoblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the www host', () => {
       const value = 'http://www.geoblog.pl/podroz/rss/12345.xml'
 
-      expect(geoblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(geoblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the apex domain', () => {
       const value = 'http://geoblog.pl/podroz/rss/12345.xml'
 
-      expect(geoblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(geoblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on a nested subdomain', () => {
       const value = 'http://blog.alice.geoblog.pl/podroz/rss/12345.xml'
 
-      expect(geoblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(geoblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/podroz/rss/12345.xml'
 
-      expect(geoblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(geoblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

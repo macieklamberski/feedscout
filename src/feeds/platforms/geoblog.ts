@@ -79,5 +79,5 @@ export const geoblogHandler: PlatformHandler = {
     return [feeds.getFeedEntry('geoblog:trip', { scheme, user, tripId: page.tripId })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
