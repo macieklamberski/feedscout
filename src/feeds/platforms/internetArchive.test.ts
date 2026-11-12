@@ -169,6 +169,13 @@ describe('internetArchiveHandler', () => {
       expect(internetArchiveHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the collection key for a collection feed on the cors host', () => {
+      const value = 'https://cors.archive.org/services/collection-rss.php?collection=Film_Noir'
+      const expected = 'internet-archive:collection'
+
+      expect(internetArchiveHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return undefined for a feed with an empty query', () => {
       const value = 'https://archive.org/services/collection-rss.php?query='
 
@@ -218,6 +225,7 @@ describe('internetArchiveHandler', () => {
         searchHint,
       ],
       ['http://www.archive.org/services/collection-rss.php?query=subject%3Atrance', searchHint],
+      ['https://cors.archive.org/services/collection-rss.php?collection=Film_Noir', collectionHint],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

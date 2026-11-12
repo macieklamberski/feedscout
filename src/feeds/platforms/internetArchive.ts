@@ -19,6 +19,14 @@ const feeds = definePlatformFeeds([
     key: 'internet-archive:search',
     template: 'https://archive.org/services/collection-rss.php?query={query}',
   },
+  {
+    key: 'internet-archive:collection',
+    template: 'https://cors.archive.org/services/collection-rss.php?collection={collection}',
+  },
+  {
+    key: 'internet-archive:search',
+    template: 'https://cors.archive.org/services/collection-rss.php?query={query}',
+  },
 ])
 
 export type InternetArchivePage =
