@@ -24,8 +24,8 @@ const mostCitedHosts = ['onlinelibrary.wiley.com']
 
 const journalRegex = /^\/(?:toc|journals?|loi|home)\/(\w+)(?:\/|$)/i
 
-// Every host serves the journal feed at its `showFeed/feed` path too, Taylor & Francis at
-// `/feed/rss/{code}` and Wiley at `/feed/{code}/most-recent`, so the table reads those as well.
+// The journal feed is also served at `showFeed/feed`, on Taylor & Francis at `/feed/rss/{code}`
+// and on Wiley at `/feed/{code}/most-recent`, so the table reads those spellings as well.
 const feeds = definePlatformFeeds(
   [
     {
