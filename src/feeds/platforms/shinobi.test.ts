@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { parseShinobiUrl, type ShinobiUrl, shinobiHandler } from './shinobi.js'
 
 describe('parseShinobiUrl', () => {
@@ -113,6 +115,153 @@ describe('shinobiHandler', () => {
       ]
 
       expect(shinobiHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for the RSS feed', () => {
+      const value = 'https://example.blog.shinobi.jp/RSS/'
+      const expected = 'shinobi:posts'
+
+      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for the Atom feed', () => {
+      const value = 'https://example.blog.shinobi.jp/ATOM/'
+      const expected = 'shinobi:posts'
+
+      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for the Atom feed as its self link spells it', () => {
+      const value = 'http://example.blog.shinobi.jp/atom'
+      const expected = 'shinobi:posts'
+
+      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for the RSS 2.0 feed', () => {
+      const value = 'https://example.blog.shinobi.jp/RSS/200'
+      const expected = 'shinobi:posts'
+
+      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for the RSS 0.91 feed', () => {
+      const value = 'https://example.blog.shinobi.jp/RSS/091'
+      const expected = 'shinobi:posts'
+
+      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for the RSS 1.0 feed', () => {
+      const value = 'https://example.blog.shinobi.jp/RSS/100'
+      const expected = 'shinobi:posts'
+
+      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for the RSS feed under the RSS path', () => {
+      const value = 'https://example.blog.shinobi.jp/RSS/RSS'
+      const expected = 'shinobi:posts'
+
+      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for the RSS 2.0 feed under the RSS path', () => {
+      const value = 'https://example.blog.shinobi.jp/RSS/200/RSS'
+      const expected = 'shinobi:posts'
+
+      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for the RSS 1.0 feed under the RSS path', () => {
+      const value = 'https://example.blog.shinobi.jp/RSS/100/RSS'
+      const expected = 'shinobi:posts'
+
+      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for the RSS 0.91 feed as index.rdf', () => {
+      const value = 'https://example.blog.shinobi.jp/RSS/091/index.rdf'
+      const expected = 'shinobi:posts'
+
+      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for the RSS feed at the OPML path', () => {
+      const value = 'https://example.blog.shinobi.jp/OPML'
+      const expected = 'shinobi:posts'
+
+      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a feed on another Ninja Blog domain', () => {
+      const value = 'http://example.ni-3.net/RSS/'
+      const expected = 'shinobi:posts'
+
+      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for an entry page', () => {
+      const value = 'https://example.blog.shinobi.jp/Entry/1/'
+
+      expect(shinobiHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on the blog portal', () => {
+      const value = 'https://blog.shinobi.jp/RSS/'
+
+      expect(shinobiHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on the bare domain of a Ninja Blog domain', () => {
+      const value = 'https://ni-3.net/RSS/'
+
+      expect(shinobiHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on a nested subdomain', () => {
+      const value = 'https://blog.example.ni-3.net/RSS/'
+
+      expect(shinobiHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/RSS/'
+
+      expect(shinobiHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds = [
+      'https://example.blog.shinobi.jp/RSS/',
+      'https://example.blog.shinobi.jp/RSS',
+      'http://example.blog.shinobi.jp/ATOM/',
+      'http://example.blog.shinobi.jp/atom',
+      'https://example.blog.shinobi.jp/RSS/200',
+      'https://example.blog.shinobi.jp/RSS/091/',
+      'https://example.blog.shinobi.jp/RSS/100',
+      'https://example.blog.shinobi.jp/RSS/RSS',
+      'https://example.blog.shinobi.jp/RSS/200/RSS',
+      'https://example.blog.shinobi.jp/RSS/100/RSS',
+      'https://example.blog.shinobi.jp/RSS/091/index.rdf',
+      'https://example.blog.shinobi.jp/OPML',
+      'http://example.ni-3.net/rss',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [shinobiHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'shinobi:posts', label: 'Posts' } },
+      ]
+
+      expect(result).toEqual(expected)
     })
   })
 })

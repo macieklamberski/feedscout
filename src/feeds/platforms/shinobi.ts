@@ -1,5 +1,6 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -110,6 +111,29 @@ const domains = [
   'zoku-sei.com',
 ]
 
+// A blog serves one feed under every path below: RSS 2.0 at /RSS/, /RSS/200/ and /OPML, RSS 0.91 at
+// /RSS/091/, RSS 1.0 at /RSS/100/ and Atom at /ATOM/. The server ignores what follows a feed path,
+// so /RSS/200/RSS is the RSS 2.0 feed too.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/RSS/', format: 'rss' },
+    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/ATOM/', format: 'atom' },
+    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/RSS/200/', format: 'rss' },
+    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/RSS/RSS/', format: 'rss' },
+    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/RSS/200/RSS/', format: 'rss' },
+    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/OPML', format: 'rss' },
+    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/RSS/091/', format: 'rss' },
+    {
+      key: 'shinobi:posts',
+      template: '{scheme}://{blog}.{domain}/RSS/091/index.rdf',
+      format: 'rss',
+    },
+    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/RSS/100/', format: 'rdf' },
+    { key: 'shinobi:posts', template: '{scheme}://{blog}.{domain}/RSS/100/RSS/', format: 'rdf' },
+  ],
+  { domains },
+)
+
 export const parseShinobiUrl = (url: string): ShinobiUrl | undefined => {
   const blog = getTenantSubdomain(url, domains)
 
@@ -132,11 +156,19 @@ export const shinobiHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
+    // A tenant host is the blog label over one of the domains.
+    const { protocol, hostname } = new URL(url)
+    const params = {
+      scheme: protocol.slice(0, -1),
+      blog: parsed.blog,
+      domain: hostname.slice(parsed.blog.length + 1),
+    }
 
     return [
-      { uri: `${origin}/RSS/`, hint: composeHint('shinobi:posts', 'rss') },
-      { uri: `${origin}/ATOM/`, hint: composeHint('shinobi:posts', 'atom') },
+      feeds.getFeedEntry('shinobi:posts', params, 'rss'),
+      feeds.getFeedEntry('shinobi:posts', params, 'atom'),
     ]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
