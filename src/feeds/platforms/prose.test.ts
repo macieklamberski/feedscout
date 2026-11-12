@@ -221,6 +221,13 @@ describe('proseHandler', () => {
       expect(proseHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the blog hint for a feed of the user named www', () => {
+      const value = 'https://www.prose.sh/rss'
+      const expected: DiscoverUriHint = { key: 'prose:blog', label: 'Blog' }
+
+      expect(proseHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for a blog post page', () => {
       const value = 'https://alice.prose.sh/some-article-slug'
 

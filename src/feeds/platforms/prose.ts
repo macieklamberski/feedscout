@@ -13,20 +13,23 @@ export type ProseUrl =
 const domains = ['prose.sh']
 const apexHosts = ['prose.sh', 'www.prose.sh']
 
-const feeds = definePlatformFeeds([
-  { key: 'prose:discovery', template: 'https://prose.sh/rss' },
-  { key: 'prose:discovery', template: 'https://prose.sh/rss.atom' },
-  { key: 'prose:tag', template: 'https://{username}.prose.sh/rss?tag={tag}' },
-  { key: 'prose:tag', template: 'https://{username}.prose.sh/atom?tag={tag}' },
-  { key: 'prose:tag', template: 'https://{username}.prose.sh/rss.xml?tag={tag}' },
-  { key: 'prose:tag', template: 'https://{username}.prose.sh/feed.xml?tag={tag}' },
-  { key: 'prose:tag', template: 'https://{username}.prose.sh/atom.xml?tag={tag}' },
-  { key: 'prose:blog', template: 'https://{username}.prose.sh/rss' },
-  { key: 'prose:blog', template: 'https://{username}.prose.sh/atom' },
-  { key: 'prose:blog', template: 'https://{username}.prose.sh/rss.xml' },
-  { key: 'prose:blog', template: 'https://{username}.prose.sh/feed.xml' },
-  { key: 'prose:blog', template: 'https://{username}.prose.sh/atom.xml' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'prose:discovery', template: 'https://prose.sh/rss' },
+    { key: 'prose:discovery', template: 'https://prose.sh/rss.atom' },
+    { key: 'prose:tag', template: 'https://{username}.prose.sh/rss?tag={tag}' },
+    { key: 'prose:tag', template: 'https://{username}.prose.sh/atom?tag={tag}' },
+    { key: 'prose:tag', template: 'https://{username}.prose.sh/rss.xml?tag={tag}' },
+    { key: 'prose:tag', template: 'https://{username}.prose.sh/feed.xml?tag={tag}' },
+    { key: 'prose:tag', template: 'https://{username}.prose.sh/atom.xml?tag={tag}' },
+    { key: 'prose:blog', template: 'https://{username}.prose.sh/rss' },
+    { key: 'prose:blog', template: 'https://{username}.prose.sh/atom' },
+    { key: 'prose:blog', template: 'https://{username}.prose.sh/rss.xml' },
+    { key: 'prose:blog', template: 'https://{username}.prose.sh/feed.xml' },
+    { key: 'prose:blog', template: 'https://{username}.prose.sh/atom.xml' },
+  ],
+  { isWwwTenant: true },
+)
 
 export const parseProseUrl = (url: string): ProseUrl | undefined => {
   const parsedUrl = parseUrl(url)
