@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type ListedUrl, listedHandler, parseListedUrl } from './listed.js'
 
 describe('parseListedUrl', () => {
@@ -74,6 +77,65 @@ describe('listedHandler', () => {
       const value = 'https://listed.to/about'
 
       expect(listedHandler.resolve(value)).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    const feedKeys: Array<[string, string]> = [
+      ['https://listed.to/@alice/feed.rss', 'listed:blog'],
+      ['https://listed.to/@alice/feed', 'listed:blog'],
+      ['http://listed.to/@alice/feed.rss', 'listed:blog'],
+      ['https://listed.to/@alice/feed/', 'listed:blog'],
+    ]
+
+    it.each(feedKeys)('should return the key of %s', (value, expected) => {
+      expect(listedHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://listed.to/@alice'
+
+      expect(listedHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a post page', () => {
+      const value = 'https://listed.to/@alice/12345/hello-world'
+
+      expect(listedHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an author feed by numeric id', () => {
+      const value = 'https://listed.to/authors/12345/feed'
+
+      expect(listedHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/@alice/feed.rss'
+
+      expect(listedHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<string> = [
+      'https://listed.to/@alice/feed.rss',
+      'https://listed.to/@alice/feed',
+      'http://listed.to/@alice/feed.rss',
+      'https://listed.to/@alice/feed.rss/',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [listedHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'listed:blog', label: 'Blog' } },
+      ]
+
+      expect(result).toEqual(expected)
     })
   })
 })

@@ -1,6 +1,6 @@
 import { isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,6 +9,12 @@ export type ListedUrl = { kind: 'blog'; username: string }
 const hosts = ['listed.to', 'www.listed.to']
 
 const userRegex = /^\/@([^/]+)/
+
+// Listed serves the same feed at `/feed`, which its pages do not link.
+const feeds = definePlatformFeeds([
+  { key: 'listed:blog', template: 'https://listed.to/@{username}/feed.rss' },
+  { key: 'listed:blog', template: 'https://listed.to/@{username}/feed' },
+])
 
 export const parseListedUrl = (url: string): ListedUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -36,11 +42,8 @@ export const listedHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://listed.to/@${parsed.username}/feed.rss`,
-        hint: composeHint('listed:blog'),
-      },
-    ]
+    return [feeds.getFeedEntry('listed:blog', { username: parsed.username })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
