@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { parseTildesUrl, type TildesUrl, tildesHandler } from './tildes.js'
@@ -138,98 +138,108 @@ describe('tildesHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the group key for a group RSS feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the group hint for a group RSS feed', () => {
       const value = 'https://tildes.net/~example/topics.rss'
-      const expected = 'tildes:group'
+      const expected: DiscoverUriHint = { key: 'tildes:group', label: 'Group', format: 'rss' }
 
-      expect(tildesHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tildesHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the group key for a group Atom feed', () => {
+    it('should return the group hint for a group Atom feed', () => {
       const value = 'https://tildes.net/~example/topics.atom'
-      const expected = 'tildes:group'
+      const expected: DiscoverUriHint = { key: 'tildes:group', label: 'Group', format: 'atom' }
 
-      expect(tildesHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tildesHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the group key for a group feed with a tag', () => {
+    it('should return the group hint for a group feed with a tag', () => {
       const value = 'https://tildes.net/~example/topics.rss?tag=example'
-      const expected = 'tildes:group'
+      const expected: DiscoverUriHint = { key: 'tildes:group', label: 'Group', format: 'rss' }
 
-      expect(tildesHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tildesHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the group key for a group feed with another order', () => {
+    it('should return the group hint for a group feed with another order', () => {
       const value = 'https://tildes.net/~example/topics.atom?order=activity&period=30d'
-      const expected = 'tildes:group'
+      const expected: DiscoverUriHint = { key: 'tildes:group', label: 'Group', format: 'atom' }
 
-      expect(tildesHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tildesHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the group key for a subgroup feed', () => {
+    it('should return the group hint for a subgroup feed', () => {
       const value = 'https://tildes.net/~example.sub/topics.atom'
-      const expected = 'tildes:group'
+      const expected: DiscoverUriHint = { key: 'tildes:group', label: 'Group', format: 'atom' }
 
-      expect(tildesHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tildesHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the topics key for the RSS feed', () => {
+    it('should return the topics hint for the RSS feed', () => {
       const value = 'https://tildes.net/topics.rss'
-      const expected = 'tildes:topics'
+      const expected: DiscoverUriHint = { key: 'tildes:topics', label: 'Topics', format: 'rss' }
 
-      expect(tildesHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tildesHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the topics key for the Atom feed', () => {
+    it('should return the topics hint for the Atom feed', () => {
       const value = 'https://tildes.net/topics.atom'
-      const expected = 'tildes:topics'
+      const expected: DiscoverUriHint = { key: 'tildes:topics', label: 'Topics', format: 'atom' }
 
-      expect(tildesHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tildesHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the topics key for a topics feed with a tag', () => {
+    it('should return the topics hint for a topics feed with a tag', () => {
       const value = 'https://tildes.net/topics.atom?tag=example'
-      const expected = 'tildes:topics'
+      const expected: DiscoverUriHint = { key: 'tildes:topics', label: 'Topics', format: 'atom' }
 
-      expect(tildesHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tildesHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a group page', () => {
       const value = 'https://tildes.net/~example'
 
-      expect(tildesHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tildesHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a topic page', () => {
       const value = 'https://tildes.net/~example/1abc/example_topic'
 
-      expect(tildesHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tildesHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/~example/topics.rss'
 
-      expect(tildesHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tildesHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('discoverUrisFromPlatform', () => {
-    const groupHint = {
-      key: 'tildes:group',
-      label: 'Group',
-    }
-    const topicsHint = {
-      key: 'tildes:topics',
-      label: 'Topics',
-    }
     const values: Array<[string, DiscoverUriEntry['hint']]> = [
-      ['http://tildes.net/~example/topics.rss', groupHint],
-      ['https://www.tildes.net/~example/topics.atom/', groupHint],
-      ['https://tildes.net/~example/topics.atom?tag=example', groupHint],
-      ['http://www.tildes.net/topics.rss', topicsHint],
-      ['https://tildes.net/topics.atom/', topicsHint],
-      ['https://tildes.net/topics.rss?tag=example', topicsHint],
+      [
+        'http://tildes.net/~example/topics.rss',
+        { key: 'tildes:group', label: 'Group', format: 'rss' },
+      ],
+      [
+        'https://www.tildes.net/~example/topics.atom/',
+        { key: 'tildes:group', label: 'Group', format: 'atom' },
+      ],
+      [
+        'https://tildes.net/~example/topics.atom?tag=example',
+        { key: 'tildes:group', label: 'Group', format: 'atom' },
+      ],
+      [
+        'http://www.tildes.net/topics.rss',
+        { key: 'tildes:topics', label: 'Topics', format: 'rss' },
+      ],
+      [
+        'https://tildes.net/topics.atom/',
+        { key: 'tildes:topics', label: 'Topics', format: 'atom' },
+      ],
+      [
+        'https://tildes.net/topics.rss?tag=example',
+        { key: 'tildes:topics', label: 'Topics', format: 'rss' },
+      ],
     ]
 
     it.each(values)('should return %s as itself', async (value, hint) => {
