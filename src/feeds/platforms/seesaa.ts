@@ -22,8 +22,7 @@ const feeds = definePlatformFeeds(
   [
     { key: 'seesaa:posts', template: '{scheme}://{blog}.{domain}/index20.rdf', format: 'rss' },
     { key: 'seesaa:posts', template: '{scheme}://{blog}.{domain}/index.rdf', format: 'rdf' },
-    // The podcast feed. A blog that never set one up mostly answers 404, and few pages link it, so
-    // the row only claims it.
+    // The podcast feed. A blog that never set one up mostly answers 404, which discovery drops.
     { key: 'seesaa:podcast', template: '{scheme}://{blog}.{domain}/index_custom.rdf' },
   ],
   { domains },
@@ -57,6 +56,7 @@ export const seesaaHandler: PlatformHandler = {
     return [
       feeds.getFeedEntry('seesaa:posts', params, 'rss'),
       feeds.getFeedEntry('seesaa:posts', params, 'rdf'),
+      feeds.getFeedEntry('seesaa:podcast', params),
     ]
   },
 
