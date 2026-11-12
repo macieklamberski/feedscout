@@ -6,21 +6,24 @@ import { type GhostUrl, ghostHandler, parseGhostUrl } from './ghost.js'
 
 describe('parseGhostUrl', () => {
   it('should return the tag for a tag page', () => {
-    const expected: GhostUrl = { kind: 'tag', tag: 'news' }
+    const value = 'https://blog.ghost.io/tag/news/'
+    const expected: GhostUrl = { kind: 'tag', blog: 'blog', tag: 'news' }
 
-    expect(parseGhostUrl('https://blog.ghost.io/tag/news/')).toEqual(expected)
+    expect(parseGhostUrl(value)).toEqual(expected)
   })
 
   it('should return the author for an author page', () => {
-    const expected: GhostUrl = { kind: 'author', author: 'jane' }
+    const value = 'https://blog.ghost.io/author/jane/'
+    const expected: GhostUrl = { kind: 'author', blog: 'blog', author: 'jane' }
 
-    expect(parseGhostUrl('https://blog.ghost.io/author/jane/')).toEqual(expected)
+    expect(parseGhostUrl(value)).toEqual(expected)
   })
 
   it('should return the blog for any other page', () => {
-    const expected: GhostUrl = { kind: 'blog' }
+    const value = 'https://blog.ghost.io/some-post/'
+    const expected: GhostUrl = { kind: 'blog', blog: 'blog' }
 
-    expect(parseGhostUrl('https://blog.ghost.io/some-post/')).toEqual(expected)
+    expect(parseGhostUrl(value)).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {

@@ -1,4 +1,3 @@
-import { getRegistrableDomain } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -6,26 +5,25 @@ import { getTenantSubdomain } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 export type GhostUrl =
-  | { kind: 'tag'; tag: string }
-  | { kind: 'author'; author: string }
-  | { kind: 'blog' }
+  | { kind: 'tag'; blog: string; tag: string }
+  | { kind: 'author'; blog: string; author: string }
+  | { kind: 'blog'; blog: string }
 
 const domains = ['ghost.io']
 
 const tagRegex = /^\/tag\/([^/]+)/i
 const authorRegex = /^\/author\/([^/]+)/i
 
-const feeds = definePlatformFeeds(
-  [
-    { key: 'ghost:tag', template: 'https://{blog}.{domain}/tag/{tag}/rss/' },
-    { key: 'ghost:author', template: 'https://{blog}.{domain}/author/{author}/rss/' },
-    { key: 'ghost:blog', template: 'https://{blog}.{domain}/rss/' },
-  ],
-  { domains },
-)
+const feeds = definePlatformFeeds([
+  { key: 'ghost:tag', template: 'https://{blog}.ghost.io/tag/{tag}/rss/' },
+  { key: 'ghost:author', template: 'https://{blog}.ghost.io/author/{author}/rss/' },
+  { key: 'ghost:blog', template: 'https://{blog}.ghost.io/rss/' },
+])
 
 export const parseGhostUrl = (url: string): GhostUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  const blog = getTenantSubdomain(url, domains)
+
+  if (!blog) {
     return
   }
 
@@ -33,16 +31,16 @@ export const parseGhostUrl = (url: string): GhostUrl | undefined => {
   const tag = pathname.match(tagRegex)?.[1]
 
   if (tag) {
-    return { kind: 'tag', tag }
+    return { kind: 'tag', blog, tag }
   }
 
   const author = pathname.match(authorRegex)?.[1]
 
   if (author) {
-    return { kind: 'author', author }
+    return { kind: 'author', blog, author }
   }
 
-  return { kind: 'blog' }
+  return { kind: 'blog', blog }
 }
 
 export const ghostHandler: PlatformHandler = {
@@ -52,14 +50,12 @@ export const ghostHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseGhostUrl(url)
-    const blog = getTenantSubdomain(url, domains)
-    const domain = getRegistrableDomain(url)
 
-    if (!parsed || !blog || !domain) {
+    if (!parsed) {
       return []
     }
 
-    const params = { blog, domain }
+    const params = { blog: parsed.blog }
     const blogFeed = feeds.getFeedEntry('ghost:blog', params)
 
     if (parsed.kind === 'tag') {
