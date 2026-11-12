@@ -98,9 +98,13 @@ export const substackHandler: PlatformHandler = {
       return []
     }
 
-    const { protocol, host } = new URL(page.origin)
+    const pageFeeds = feeds.forUrl(page.origin)
 
-    return [feeds.getFeedEntry('substack:newsletter', { scheme: protocol.slice(0, -1), host })]
+    if (!pageFeeds) {
+      return []
+    }
+
+    return [pageFeeds.getFeedEntry('substack:newsletter')]
   },
 
   // The table reads any host under substack.com, so the page parser refuses the apex and the app
