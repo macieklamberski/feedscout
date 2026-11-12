@@ -54,5 +54,5 @@ export const acastHandler: PlatformHandler = {
     return [feeds.getFeedEntry('acast:podcast', { slug: parsed.slug })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
