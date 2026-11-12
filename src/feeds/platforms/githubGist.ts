@@ -88,7 +88,7 @@ export const githubGistHandler: PlatformHandler = {
     return [feeds.getFeedEntry('github-gist:gists', { username: parsed.username })]
   },
 
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const [name, section] = getPathSegments(url)
     const username = section ? name : name?.replace(feedSuffixRegex, '')
 
@@ -98,6 +98,6 @@ export const githubGistHandler: PlatformHandler = {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }

@@ -217,40 +217,40 @@ describe('githubGistHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the gists key for a user feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the gists hint for a user feed', () => {
       const value = 'https://gist.github.com/alice.atom'
-      const expected = 'github-gist:gists'
+      const expected: DiscoverUriHint = { key: 'github-gist:gists', label: 'Gists' }
 
-      expect(githubGistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(githubGistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the starred key for a starred feed', () => {
+    it('should return the starred hint for a starred feed', () => {
       const value = 'https://gist.github.com/alice/starred.atom'
-      const expected = 'github-gist:starred'
+      const expected: DiscoverUriHint = { key: 'github-gist:starred', label: 'Starred' }
 
-      expect(githubGistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(githubGistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the forks key for a forked feed', () => {
+    it('should return the forks hint for a forked feed', () => {
       const value = 'https://gist.github.com/alice/forked.atom'
-      const expected = 'github-gist:forks'
+      const expected: DiscoverUriHint = { key: 'github-gist:forks', label: 'Forks' }
 
-      expect(githubGistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(githubGistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the discover key for the discover feed', () => {
+    it('should return the discover hint for the discover feed', () => {
       const value = 'https://gist.github.com/discover.atom'
-      const expected = 'github-gist:discover'
+      const expected: DiscoverUriHint = { key: 'github-gist:discover', label: 'Discover' }
 
-      expect(githubGistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(githubGistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the gists key for a user feed with a trailing slash', () => {
+    it('should return the gists hint for a user feed with a trailing slash', () => {
       const value = 'https://gist.github.com/alice.atom/'
-      const expected = 'github-gist:gists'
+      const expected: DiscoverUriHint = { key: 'github-gist:gists', label: 'Gists' }
 
-      expect(githubGistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(githubGistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     const discoverValues: Array<string> = [
@@ -260,44 +260,44 @@ describe('githubGistHandler', () => {
     ]
 
     it.each(discoverValues)('should return undefined for %s', (value) => {
-      expect(githubGistHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(githubGistHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a dotted name', () => {
       const value = 'https://gist.github.com/alice.example.atom'
 
-      expect(githubGistHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(githubGistHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a user page', () => {
       const value = 'https://gist.github.com/alice'
 
-      expect(githubGistHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(githubGistHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return the gists key for the forks path the site serves as the user gists', () => {
+    it('should return the gists hint for the forks path the site serves as the user gists', () => {
       const value = 'https://gist.github.com/alice/forks.atom'
-      const expected = 'github-gist:gists'
+      const expected: DiscoverUriHint = { key: 'github-gist:gists', label: 'Gists' }
 
-      expect(githubGistHandler.getFeedKey?.(value)).toBe(expected)
+      expect(githubGistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for the homepage', () => {
       const value = 'https://gist.github.com/'
 
-      expect(githubGistHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(githubGistHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://github.com/alice.atom'
 
-      expect(githubGistHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(githubGistHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an invalid URL', () => {
       const value = 'not-a-url'
 
-      expect(githubGistHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(githubGistHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
