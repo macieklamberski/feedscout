@@ -12,6 +12,7 @@ const feedCases: Array<[string, DiscoverUriHint]> = [
   ['http://gist.github.com/alice/starred.atom', { key: 'github-gist:starred', label: 'Starred' }],
   ['https://gist.github.com/alice/forked.atom', { key: 'github-gist:forks', label: 'Forks' }],
   ['http://gist.github.com/alice/forked.atom', { key: 'github-gist:forks', label: 'Forks' }],
+  ['https://gist.github.com/alice/forks.atom', { key: 'github-gist:gists', label: 'Gists' }],
   ['https://gist.github.com/discover.atom', { key: 'github-gist:discover', label: 'Discover' }],
   ['http://gist.github.com/discover.atom', { key: 'github-gist:discover', label: 'Discover' }],
 ]
@@ -255,6 +256,7 @@ describe('githubGistHandler', () => {
     const discoverValues: Array<string> = [
       'https://gist.github.com/discover/starred.atom',
       'https://gist.github.com/Discover/forked.atom',
+      'https://gist.github.com/discover/forks.atom',
     ]
 
     it.each(discoverValues)('should return undefined for %s', (value) => {
@@ -273,10 +275,11 @@ describe('githubGistHandler', () => {
       expect(githubGistHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for the forks path the site serves as the user gists', () => {
+    it('should return the gists key for the forks path the site serves as the user gists', () => {
       const value = 'https://gist.github.com/alice/forks.atom'
+      const expected = 'github-gist:gists'
 
-      expect(githubGistHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(githubGistHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return undefined for the homepage', () => {
