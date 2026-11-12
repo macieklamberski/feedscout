@@ -1,14 +1,15 @@
 import {
-  composeQuery,
   decodeSegment,
   getAnyOf,
   getPathSegments,
+  getQueryParam,
+  hasQueryParam,
   isAnyOf,
   isHostOf,
   parseUrl,
 } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers favorites, groupDiscuss, photostream (html), partly covers group, groupPool.
@@ -25,7 +26,8 @@ export type FlickrUrl =
   | { kind: 'forum' }
 
 const hosts = ['flickr.com', 'www.flickr.com']
-const feedsBase = 'https://www.flickr.com/services/feeds'
+// The API host serves every feed the www host serves.
+const feedHosts = [...hosts, 'api.flickr.com']
 
 const tagRegex = /^\/photos\/tags\/([^/]+)/i
 const groupRegex = /^\/groups\/([^/]+)(?:\/([^/]+))?/i
@@ -33,6 +35,23 @@ const forumRegex = /^\/help\/forum(?:\/|$)/i
 const nsidRegex = /^\d+@N\d+$/
 
 const groupSections = ['pool', 'discuss']
+const feeds = definePlatformFeeds(
+  [
+    { key: 'flickr:forum', template: 'https://{host}/services/feeds/forums.gne' },
+    { key: 'flickr:tag', template: 'https://{host}/services/feeds/photos_public.gne?tags={tags}' },
+    { key: 'flickr:photos', template: 'https://{host}/services/feeds/photos_public.gne?id={id}' },
+    { key: 'flickr:faves', template: 'https://{host}/services/feeds/photos_faves.gne?id={id}' },
+    { key: 'flickr:faves', template: 'https://{host}/services/feeds/photos_faves.gne?nsid={id}' },
+    { key: 'flickr:group-pool', template: 'https://{host}/services/feeds/groups_pool.gne?id={id}' },
+    {
+      key: 'flickr:group-discuss',
+      template: 'https://{host}/services/feeds/groups_discuss.gne?id={id}',
+    },
+    // The pool photos that carry a location.
+    { key: 'flickr:group-geo', template: 'https://{host}/services/feeds/geo/?g={id}' },
+  ],
+  { hosts: feedHosts },
+)
 
 export const parseFlickrUrl = (url: string): FlickrUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -102,49 +121,35 @@ export const flickrHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseFlickrUrl(url)
+    const host = 'www.flickr.com'
 
     if (!parsed) {
       return []
     }
 
     if (parsed.kind === 'forum') {
-      return [{ uri: `${feedsBase}/forums.gne`, hint: composeHint('flickr:forum') }]
+      return [feeds.getFeedEntry('flickr:forum', { host })]
     }
 
     // Tag page: /photos/tags/{tag}
     if (parsed.kind === 'tag') {
-      const query = composeQuery({ tags: decodeSegment(parsed.tag) ?? parsed.tag })
+      const tags = decodeSegment(parsed.tag) ?? parsed.tag
 
-      return [
-        {
-          uri: `${feedsBase}/photos_public.gne${query}`,
-          hint: composeHint('flickr:tag'),
-        },
-      ]
+      return [feeds.getFeedEntry('flickr:tag', { host, tags })]
     }
 
     // Group pool or discussion: /groups/{nsid}, /groups/{nsid}/pool, /groups/{nsid}/discuss
     if (parsed.kind === 'group') {
-      const { group: nsid, section } = parsed
-      const pool = {
-        uri: `${feedsBase}/groups_pool.gne${composeQuery({ id: nsid })}`,
-        hint: composeHint('flickr:group-pool'),
-      }
-      const discuss = {
-        uri: `${feedsBase}/groups_discuss.gne${composeQuery({ id: nsid })}`,
-        hint: composeHint('flickr:group-discuss'),
-      }
-      // The pool photos that carry a location.
-      const geo = {
-        uri: `${feedsBase}/geo/${composeQuery({ g: nsid })}`,
-        hint: composeHint('flickr:group-geo'),
-      }
+      const params = { host, id: parsed.group }
+      const pool = feeds.getFeedEntry('flickr:group-pool', params)
+      const discuss = feeds.getFeedEntry('flickr:group-discuss', params)
+      const geo = feeds.getFeedEntry('flickr:group-geo', params)
 
-      if (section === 'discuss') {
+      if (parsed.section === 'discuss') {
         return [discuss]
       }
 
-      if (section === 'pool') {
+      if (parsed.section === 'pool') {
         return [pool, geo]
       }
 
@@ -155,20 +160,27 @@ export const flickrHandler: PlatformHandler = {
       return []
     }
 
+    const params = { host, id: parsed.userId }
+
     if (parsed.kind === 'favorites') {
-      return [
-        {
-          uri: `${feedsBase}/photos_faves.gne${composeQuery({ id: parsed.userId })}`,
-          hint: composeHint('flickr:faves'),
-        },
-      ]
+      return [feeds.getFeedEntry('flickr:faves', params)]
     }
 
-    return [
-      {
-        uri: `${feedsBase}/photos_public.gne${composeQuery({ id: parsed.userId })}`,
-        hint: composeHint('flickr:photos'),
-      },
-    ]
+    return [feeds.getFeedEntry('flickr:photos', params)]
+  },
+
+  getFeedKey: (url) => {
+    const parsedUrl = parseUrl(url)
+
+    // Flickr narrows a photostream or a group location feed to one tag when `tags` sits beside
+    // `id` or `g`, a feed resolve never builds.
+    if (
+      getQueryParam(parsedUrl, 'tags') &&
+      (hasQueryParam(parsedUrl, 'id') || hasQueryParam(parsedUrl, 'g'))
+    ) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }

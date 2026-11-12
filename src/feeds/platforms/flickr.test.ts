@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { FlickrUrl } from './flickr.js'
 import { flickrHandler, parseFlickrUrl } from './flickr.js'
 
@@ -328,6 +331,204 @@ describe('flickrHandler', () => {
       ]
 
       expect(flickrHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the photostream key for a photostream feed', () => {
+      const value = 'https://www.flickr.com/services/feeds/photos_public.gne?id=24662369@N07'
+      const expected = 'flickr:photos'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the photostream key for a photostream feed on the API host', () => {
+      const value =
+        'https://api.flickr.com/services/feeds/photos_public.gne?format=atom&id=24662369%40N07&lang=en-us'
+      const expected = 'flickr:photos'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the photostream key for a photostream feed on the bare host', () => {
+      const value =
+        'https://flickr.com/services/feeds/photos_public.gne?id=24662369@N07&format=rss_200'
+      const expected = 'flickr:photos'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the photostream key for a photostream feed over http', () => {
+      const value = 'http://api.flickr.com/services/feeds/photos_public.gne?id=24662369@N07'
+      const expected = 'flickr:photos'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a tag feed', () => {
+      const value = 'https://www.flickr.com/services/feeds/photos_public.gne?tags=cats'
+      const expected = 'flickr:tag'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a tag feed on the API host', () => {
+      const value =
+        'https://api.flickr.com/services/feeds/photos_public.gne?format=rss_200&lang=en-us&tags=cats'
+      const expected = 'flickr:tag'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the favorites key for a favorites feed', () => {
+      const value = 'https://www.flickr.com/services/feeds/photos_faves.gne?id=24662369@N07'
+      const expected = 'flickr:faves'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the favorites key for a favorites feed naming the user by nsid', () => {
+      const value =
+        'https://api.flickr.com/services/feeds/photos_faves.gne?format=rss_200&lang=en-us&nsid=24662369%40N07'
+      const expected = 'flickr:faves'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the group pool key for a group pool feed', () => {
+      const value =
+        'https://api.flickr.com/services/feeds/groups_pool.gne?format=atom&id=42097308@N00&lang=en-us'
+      const expected = 'flickr:group-pool'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the group discussion key for a group discussion feed', () => {
+      const value =
+        'https://api.flickr.com/services/feeds/groups_discuss.gne?format=rss_200&id=42097308%40N00&lang=en-us'
+      const expected = 'flickr:group-discuss'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the group location key for a group location feed', () => {
+      const value = 'https://www.flickr.com/services/feeds/geo/?g=42097308@N00&lang=en-us'
+      const expected = 'flickr:group-geo'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the forum key for the forum feed', () => {
+      const value = 'https://www.flickr.com/services/feeds/forums.gne'
+      const expected = 'flickr:forum'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should read the feed route words in any case', () => {
+      const value = 'https://www.flickr.com/Services/Feeds/Photos_Public.gne?id=24662369@N07'
+      const expected = 'flickr:photos'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a photostream feed narrowed to a tag', () => {
+      const value =
+        'https://api.flickr.com/services/feeds/photos_public.gne?id=24662369@N07&tags=cats&format=atom'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a group location feed narrowed to a tag', () => {
+      const value = 'https://www.flickr.com/services/feeds/geo/?g=42097308@N00&tags=cats'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the feed of every public photo', () => {
+      const value = 'https://www.flickr.com/services/feeds/photos_public.gne'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a user location feed', () => {
+      const value =
+        'https://api.flickr.com/services/feeds/geo?format=rss_200&id=24662369%40N07&lang=en-us'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an album feed', () => {
+      const value =
+        'https://api.flickr.com/services/feeds/photoset.gne?set=72157594208548823&nsid=24662369@N07&lang=en-us'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a friends feed', () => {
+      const value =
+        'https://api.flickr.com/services/feeds/photos_friends.gne?user_id=24662369@N07&friends=0&display_all=1&format=rss_200'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a photostream page', () => {
+      const value = 'https://www.flickr.com/photos/24662369@N07/'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a photostream feed path on another host', () => {
+      const value = 'https://example.com/services/feeds/photos_public.gne?id=24662369@N07'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an invalid URL', () => {
+      const value = 'not a url'
+
+      expect(flickrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://api.flickr.com/services/feeds/photos_public.gne?format=atom&id=24662369%40N07&lang=en-us',
+        { key: 'flickr:photos', label: 'Photostream' },
+      ],
+      [
+        'https://api.flickr.com/services/feeds/photos_public.gne?tags=cats',
+        { key: 'flickr:tag', label: 'Tag' },
+      ],
+      [
+        'https://api.flickr.com/services/feeds/photos_faves.gne?format=rss_200&lang=en-us&nsid=24662369%40N07',
+        { key: 'flickr:faves', label: 'Favorites' },
+      ],
+      [
+        'https://api.flickr.com/services/feeds/groups_pool.gne?format=atom&id=42097308@N00&lang=en-us',
+        { key: 'flickr:group-pool', label: 'Group pool' },
+      ],
+      [
+        'https://api.flickr.com/services/feeds/groups_discuss.gne?format=rss_200&id=42097308%40N00&lang=en-us',
+        { key: 'flickr:group-discuss', label: 'Group discussions' },
+      ],
+      [
+        'https://www.flickr.com/services/feeds/geo/?g=42097308@N00',
+        { key: 'flickr:group-geo', label: 'Group pool with location' },
+      ],
+      ['https://www.flickr.com/services/feeds/forums.gne', { key: 'flickr:forum', label: 'Forum' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [flickrHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })
