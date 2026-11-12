@@ -1,6 +1,7 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -11,6 +12,10 @@ const hosts = ['spreaker.com', 'www.spreaker.com']
 const podcastRegex = /^\/podcast\/[\w-]+--(\d+)(?:\/|$)/i
 // /show/{id} bare numeric form 301-redirects to the slug-suffixed canonical.
 const showRegex = /^\/show\/(\d+)(?:\/|$)/i
+
+const feeds = definePlatformFeeds([
+  { key: 'spreaker:podcast', template: 'https://www.spreaker.com/show/{showId}/episodes/feed' },
+])
 
 export const parseSpreakerUrl = (url: string): SpreakerUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -41,11 +46,17 @@ export const spreakerHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://www.spreaker.com/show/${parsed.showId}/episodes/feed`,
-        hint: composeHint('spreaker:podcast'),
-      },
-    ]
+    return [feeds.getFeedEntry('spreaker:podcast', { showId: parsed.showId })]
+  },
+
+  // A show id is digits, and a word in its place answers 404.
+  getFeedKey: (url) => {
+    const [, showId] = getPathSegments(url)
+
+    if (!showId || !digitsRegex.test(showId)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
