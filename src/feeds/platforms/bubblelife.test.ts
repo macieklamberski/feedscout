@@ -308,63 +308,63 @@ describe('bubblelifeHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the library key for a feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the library hint for a feed', () => {
       const value = 'https://mckinney.bubblelife.com/rss?c=35660530'
-      const expected = 'bubblelife:library'
+      const expected: DiscoverUriHint = { key: 'bubblelife:library', label: 'Library' }
 
-      expect(bubblelifeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the library key for a feed on a tenant with underscores', () => {
+    it('should return the library hint for a feed on a tenant with underscores', () => {
       const value = 'https://highland_park_dental.bubblelife.com/rss?c=3568411'
-      const expected = 'bubblelife:library'
+      const expected: DiscoverUriHint = { key: 'bubblelife:library', label: 'Library' }
 
-      expect(bubblelifeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the library key for a feed over http', () => {
+    it('should return the library hint for a feed over http', () => {
       const value = 'http://mckinney.bubblelife.com/rss?c=35660530'
-      const expected = 'bubblelife:library'
+      const expected: DiscoverUriHint = { key: 'bubblelife:library', label: 'Library' }
 
-      expect(bubblelifeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the library key for an uppercase feed path', () => {
+    it('should return the library hint for an uppercase feed path', () => {
       const value = 'https://plano.bubblelife.com/RSS?C=35660940'
-      const expected = 'bubblelife:library'
+      const expected: DiscoverUriHint = { key: 'bubblelife:library', label: 'Library' }
 
-      expect(bubblelifeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a topic feed', () => {
       const value = 'https://grandprairie.bubblelife.com/rss?c=35671234&t=357400'
 
-      expect(bubblelifeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bubblelifeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a news alert feed', () => {
       const value = 'https://plano.bubblelife.com/rss?c=35600714,nofriends'
 
-      expect(bubblelifeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bubblelifeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path without an id', () => {
       const value = 'https://plano.bubblelife.com/rss'
 
-      expect(bubblelifeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bubblelifeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a community page', () => {
       const value = 'https://sandysprings.bubblelife.com/community/idealplotter'
 
-      expect(bubblelifeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bubblelifeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/rss?c=35660530'
 
-      expect(bubblelifeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bubblelifeHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

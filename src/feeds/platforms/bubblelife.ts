@@ -109,7 +109,7 @@ export const bubblelifeHandler: PlatformHandler = {
     return [feeds.getFeedEntry('bubblelife:posts', params)]
   },
 
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const parsedUrl = parseUrl(url)
 
     // A topic feed adds `t` and a news alert feed suffixes its id, and the handler builds neither.
@@ -117,6 +117,6 @@ export const bubblelifeHandler: PlatformHandler = {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
