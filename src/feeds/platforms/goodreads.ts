@@ -1,5 +1,4 @@
 import { getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -69,16 +68,18 @@ export const goodreadsHandler: PlatformHandler = {
       ]
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.shelf) {
-      uris.push(feeds.getFeedEntry('goodreads:shelf', { userId, shelf: parsed.shelf }))
+      return [
+        feeds.getFeedEntry('goodreads:shelf', { userId, shelf: parsed.shelf }),
+        feeds.getFeedEntry('goodreads:reviews', { userId }),
+        feeds.getFeedEntry('goodreads:updates', { userId }),
+      ]
     }
 
-    uris.push(feeds.getFeedEntry('goodreads:reviews', { userId }))
-    uris.push(feeds.getFeedEntry('goodreads:updates', { userId }))
-
-    return uris
+    return [
+      feeds.getFeedEntry('goodreads:reviews', { userId }),
+      feeds.getFeedEntry('goodreads:updates', { userId }),
+    ]
   },
 
   getFeedHint: (url) => {
