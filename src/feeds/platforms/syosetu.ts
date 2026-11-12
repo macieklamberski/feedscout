@@ -51,7 +51,8 @@ export const syosetuHandler: PlatformHandler = {
     ]
   },
 
-  // The API answers a writer id that is not digits with a 404, so such a feed URL gets no key.
+  // The page parser builds feeds only for a digits writer id, so a feed URL with another id gets
+  // no key.
   getFeedKey: (url) => {
     const writerId = getPathSegments(url).at(-1)?.replace(formatSuffixRegex, '')
 
