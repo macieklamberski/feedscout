@@ -173,16 +173,16 @@ describe('tumblrHandler', () => {
       expect(tumblrHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the https feeds for an http blog page', () => {
+    it('should keep the http scheme of an http blog page', () => {
       const value = 'http://example.tumblr.com/post/123'
       const expected = [
-        { uri: 'https://example.tumblr.com/rss', hint: { key: 'tumblr:posts', label: 'Posts' } },
+        { uri: 'http://example.tumblr.com/rss', hint: { key: 'tumblr:posts', label: 'Posts' } },
         {
-          uri: 'https://example.tumblr.com/?format=rss',
+          uri: 'http://example.tumblr.com/?format=rss',
           hint: { key: 'tumblr:theme-posts', label: 'Theme posts' },
         },
         {
-          uri: 'https://example.tumblr.com/podcast',
+          uri: 'http://example.tumblr.com/podcast',
           hint: { key: 'tumblr:podcast', label: 'Podcast' },
         },
       ]
@@ -190,11 +190,11 @@ describe('tumblrHandler', () => {
       expect(tumblrHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the https tag feed URL for an http tag page', () => {
+    it('should keep the http scheme of an http tag page', () => {
       const value = 'http://example.tumblr.com/tagged/updates'
       const expected = [
         {
-          uri: 'https://example.tumblr.com/tagged/updates/rss',
+          uri: 'http://example.tumblr.com/tagged/updates/rss',
           hint: { key: 'tumblr:tag', label: 'Tag' },
         },
       ]

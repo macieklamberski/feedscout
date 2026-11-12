@@ -16,13 +16,16 @@ const tagRegex = /^\/tagged\/([^/]+)/i
 
 // `?format=rss` holds the posts as the theme renders them, `/podcast` the audio posts. Both
 // answer a plain request with a browser check. `/podcast/rss` is a spelling of the podcast.
-const feeds = definePlatformFeeds([
-  { key: 'tumblr:tag', template: 'https://{blog}.tumblr.com/tagged/{tag}/rss' },
-  { key: 'tumblr:posts', template: 'https://{blog}.tumblr.com/rss' },
-  { key: 'tumblr:theme-posts', template: 'https://{blog}.tumblr.com/?format=rss' },
-  { key: 'tumblr:podcast', template: 'https://{blog}.tumblr.com/podcast' },
-  { key: 'tumblr:podcast', template: 'https://{blog}.tumblr.com/podcast/rss' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'tumblr:tag', template: '{scheme}://{host}/tagged/{tag}/rss' },
+    { key: 'tumblr:posts', template: '{scheme}://{host}/rss' },
+    { key: 'tumblr:theme-posts', template: '{scheme}://{host}/?format=rss' },
+    { key: 'tumblr:podcast', template: '{scheme}://{host}/podcast' },
+    { key: 'tumblr:podcast', template: '{scheme}://{host}/podcast/rss' },
+  ],
+  { domains },
+)
 
 export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
   // www.tumblr.com/{blog} and the legacy www.tumblr.com/blog/view/{blog} show a blog, and
@@ -67,20 +70,27 @@ export const tumblrHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseTumblrUrl(url)
+    const page = feeds.forUrl(url)
+
+    if (!parsed || !page) {
+      return []
+    }
+
+    const host = `${parsed.blog}.tumblr.com`
 
     // A blog name read from a www.tumblr.com path has to be one host label.
-    if (!parsed || !getHostOrigin(`${parsed.blog}.tumblr.com`)) {
+    if (!getHostOrigin(host)) {
       return []
     }
 
     if (parsed.kind === 'tag') {
-      return [feeds.getFeedEntry('tumblr:tag', { blog: parsed.blog, tag: parsed.tag })]
+      return [page.getFeedEntry('tumblr:tag', { host, tag: parsed.tag })]
     }
 
     return [
-      feeds.getFeedEntry('tumblr:posts', { blog: parsed.blog }),
-      feeds.getFeedEntry('tumblr:theme-posts', { blog: parsed.blog }),
-      feeds.getFeedEntry('tumblr:podcast', { blog: parsed.blog }),
+      page.getFeedEntry('tumblr:posts', { host }),
+      page.getFeedEntry('tumblr:theme-posts', { host }),
+      page.getFeedEntry('tumblr:podcast', { host }),
     ]
   },
 
