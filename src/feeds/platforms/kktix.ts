@@ -1,5 +1,6 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers organizer (html).
@@ -8,6 +9,14 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type KktixUrl = { kind: 'organizer'; organizer: string }
 
 const domains = ['kktix.cc']
+
+// The page links the feed with the locale its request negotiated, zh-TW without an
+// Accept-Language header, and only that spelling dedupes against the page's own link. The feed
+// is also stored without the locale or with another one.
+const feeds = definePlatformFeeds([
+  { key: 'kktix:events', template: 'https://{organizer}.kktix.cc/events.atom?locale=zh-TW' },
+  { key: 'kktix:events', template: 'https://{organizer}.kktix.cc/events.atom' },
+])
 
 export const parseKktixUrl = (url: string): KktixUrl | undefined => {
   // A nested subdomain like a.b.kktix.cc fails TLS, since the certificate covers one label.
@@ -32,13 +41,8 @@ export const kktixHandler: PlatformHandler = {
       return []
     }
 
-    // The page links the feed with the locale its request negotiated, zh-TW without an
-    // Accept-Language header, and only that spelling dedupes against the page's own link.
-    return [
-      {
-        uri: `https://${parsed.organizer}.kktix.cc/events.atom?locale=zh-TW`,
-        hint: composeHint('kktix:events'),
-      },
-    ]
+    return [feeds.getFeedEntry('kktix:events', { organizer: parsed.organizer })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
