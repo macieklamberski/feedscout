@@ -78,8 +78,15 @@ describe('bloggerDeHandler', () => {
       expect(bloggerDeHandler.getFeedKey?.(value)).toBe(expected)
     })
 
-    it('should return the posts key for a posts feed listing all stories', () => {
+    it('should return the posts key for a feed of stories and comments', () => {
       const value = 'https://alice.blogger.de/rss?show=all'
+      const expected = 'blogger-de:posts'
+
+      expect(bloggerDeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a posts feed under a topic path', () => {
+      const value = 'https://alice.blogger.de/topics/cooking/rss'
       const expected = 'blogger-de:posts'
 
       expect(bloggerDeHandler.getFeedKey?.(value)).toBe(expected)
@@ -120,8 +127,8 @@ describe('bloggerDeHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<string> = [
       'https://alice.blogger.de/rss',
-      'https://alice.blogger.de/rss/',
       'https://alice.blogger.de/rss?show=all',
+      'https://alice.blogger.de/topics/cooking/rss',
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value) => {

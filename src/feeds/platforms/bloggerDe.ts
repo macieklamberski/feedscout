@@ -10,6 +10,7 @@ const domains = ['blogger.de']
 
 const feeds = definePlatformFeeds([
   { key: 'blogger-de:posts', template: 'https://{blog}.blogger.de/rss' },
+  { key: 'blogger-de:posts', template: 'https://{blog}.blogger.de/topics/{topic}/rss' },
 ])
 
 export const parseBloggerDeUrl = (url: string): BloggerDeUrl | undefined => {
