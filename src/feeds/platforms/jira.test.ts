@@ -213,15 +213,15 @@ describe('jiraHandler', () => {
       expect(jiraHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return https feeds for an http Cloud page', () => {
+    it('should return the feeds under the page scheme for an http Cloud page', () => {
       const value = 'http://example.atlassian.net/browse/ABC-1'
       const expected = [
         {
-          uri: 'https://example.atlassian.net/plugins/servlet/streams?key=ABC',
+          uri: 'http://example.atlassian.net/plugins/servlet/streams?key=ABC',
           hint: { key: 'jira:project', label: 'Project' },
         },
         {
-          uri: 'https://example.atlassian.net/plugins/servlet/streams',
+          uri: 'http://example.atlassian.net/plugins/servlet/streams',
           hint: { key: 'jira:site', label: 'Site activity' },
         },
       ]

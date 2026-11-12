@@ -1,9 +1,7 @@
-import { composeQuery } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
-  composeHint,
   getMetaContent,
   getTenantSubdomain,
   hasMarker,
@@ -23,15 +21,16 @@ const jiraPathRegex = /\/(?:jira|secure|issues)(?:\/|$)/i
 const trailingSlashRegex = /\/$/
 const confluencePathRegex = /^\/wiki(?:\/|$)/i
 
-const feeds = definePlatformFeeds([
-  {
-    key: 'jira:project',
-    template: 'https://{tenant}.atlassian.net/plugins/servlet/streams?key={key}',
-  },
-  { key: 'jira:project', template: 'https://{tenant}.atlassian.net/activity?key={key}' },
-  { key: 'jira:site', template: 'https://{tenant}.atlassian.net/plugins/servlet/streams' },
-  { key: 'jira:site', template: 'https://{tenant}.atlassian.net/activity' },
-])
+// A Data Center install runs on its own host, under a root its page names.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'jira:project', template: '{root}/plugins/servlet/streams?key={key}' },
+    { key: 'jira:project', template: '{root}/activity?key={key}' },
+    { key: 'jira:site', template: '{root}/plugins/servlet/streams' },
+    { key: 'jira:site', template: '{root}/activity' },
+  ],
+  { domains },
+)
 
 const isCloudHost = (url: string): boolean => {
   return getTenantSubdomain(url, domains) !== undefined
@@ -88,37 +87,23 @@ export const jiraHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const page = getJiraPage(url, content)
+    const jiraPage = getJiraPage(url, content)
+    const page = feeds.forUrl(url)
 
-    if (!page) {
+    if (!jiraPage || !page) {
       return []
     }
 
-    const { baseUrl, tenant, projectKey } = page
+    const { baseUrl, tenant, projectKey } = jiraPage
+    // A cloud site serves from its origin.
+    const root = tenant ? undefined : baseUrl
     const uris: Array<DiscoverUriEntry> = []
 
-    if (tenant) {
-      if (projectKey) {
-        uris.push(feeds.getFeedEntry('jira:project', { tenant, key: projectKey }))
-      }
-
-      uris.push(feeds.getFeedEntry('jira:site', { tenant }))
-
-      return uris
-    }
-
-    // A Data Center install runs on its own host, under a root its page names.
     if (projectKey) {
-      uris.push({
-        uri: `${baseUrl}/plugins/servlet/streams${composeQuery({ key: projectKey })}`,
-        hint: composeHint('jira:project'),
-      })
+      uris.push(page.getFeedEntry('jira:project', { root, key: projectKey }))
     }
 
-    uris.push({
-      uri: `${baseUrl}/plugins/servlet/streams`,
-      hint: composeHint('jira:site'),
-    })
+    uris.push(page.getFeedEntry('jira:site', { root }))
 
     return uris
   },
