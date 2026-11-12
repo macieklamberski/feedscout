@@ -248,6 +248,28 @@ describe('substackHandler', () => {
       expect(substackHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should return the podcast feed of each podcast section once', () => {
+      const value = 'https://example.substack.com/s/episodes'
+      const content =
+        '{"pub":{"author_id":678,"id":12345,"podcast_enabled":false},"sections":[{"id":111,"podcastSettings":{"section_id":111}},{"id":222,"podcastSettings":null},{"id":333,"podcastSettings":{"section_id":333}}],"section":{"id":111,"podcastSettings":{"section_id":111}}}'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+        {
+          uri: 'https://api.substack.com/feed/podcast/12345/s/111.rss',
+          hint: { key: 'substack:podcast', label: 'Podcast' },
+        },
+        {
+          uri: 'https://api.substack.com/feed/podcast/12345/s/333.rss',
+          hint: { key: 'substack:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(substackHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return the newsletter feed alone for a publication without a podcast', () => {
       const value = 'https://example.substack.com'
       const content = '{"pub":{"author_id":678,"id":12345,"podcast_enabled":false}}'

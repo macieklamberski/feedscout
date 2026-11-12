@@ -1,4 +1,5 @@
 import { isHostOf, parseUrl } from 'trousse'
+import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain, wordOrHyphenRegex } from '../../common/utils.js'
@@ -20,26 +21,28 @@ const profileRegex = /^\/@(?<username>[^/]+)/
 // subdomain is not always the handle, and a custom domain replaces it.
 const publicationRegex =
   /primaryPublication\\?":\{[^{}]*?\\?"subdomain\\?":\\?"(?<subdomain>[\w-]+)\\?",\\?"custom_domain\\?":(?:\\?"(?<customDomain>[^"\\]+)\\?"|null)/
-// A publication page embeds its own record, with the id its podcast feed is named by. A publication
-// without a podcast answers 404 there, so the id is read only when the podcast is on.
+// A publication page embeds its own record, with the id its podcast feeds are named by, and the
+// podcast settings of each section that is a podcast. A publication or section without a podcast
+// answers 404 there, so only those feeds are built.
 const pubRecordRegex = /\\?"pub\\?":\{(?<record>[^{}]*)/
 const pubIdRegex = /\\?"id\\?":(?<pubId>\d+),/
 const podcastEnabledRegex = /\\?"podcast_enabled\\?":true\b/
+const sectionPodcastRegex = /\\?"podcastSettings\\?":\{\\?"section_id\\?":(\d+)/g
 
 // A custom domain is read only from a profile page, so its feed is built here but not claimed.
-// The same feed answers at feed.xml and feed.rss. No page links a section's podcast or the Spotify
-// copy of a podcast, so those feeds are claimed but not built. The private feed of a paid podcast
-// carries a subscriber token, so it is neither.
+// The same feed answers at feed.xml and feed.rss. A podcast's section row comes first, so a section
+// id picks it. No page links the Spotify copy of a podcast, so it is claimed but not built. The
+// private feed of a paid podcast carries a subscriber token, so it is neither.
 const feeds = definePlatformFeeds(
   [
     { key: 'substack:newsletter', template: '{scheme}://{host}/feed' },
     { key: 'substack:newsletter', template: '{scheme}://{host}/feed.xml' },
     { key: 'substack:newsletter', template: '{scheme}://{host}/feed.rss' },
-    { key: 'substack:podcast', template: 'https://api.substack.com/feed/podcast/{pubId}.rss' },
     {
       key: 'substack:podcast',
       template: 'https://api.substack.com/feed/podcast/{pubId}/s/{sectionId}.rss',
     },
+    { key: 'substack:podcast', template: 'https://api.substack.com/feed/podcast/{pubId}.rss' },
     {
       key: 'substack:podcast',
       template: 'https://api.substack.com/feed/podcast/spotify/{uuid}/{pubId}.rss',
@@ -48,14 +51,24 @@ const feeds = definePlatformFeeds(
   { domains },
 )
 
-const getPodcastPubId = (content: string | undefined): string | undefined => {
+const getPodcastFeeds = (content: string | undefined): Array<DiscoverUriEntry> => {
   const record = content?.match(pubRecordRegex)?.groups?.record
+  const pubId = record?.match(pubIdRegex)?.groups?.pubId
 
-  if (!record || !podcastEnabledRegex.test(record)) {
-    return
+  if (!content || !record || !pubId) {
+    return []
   }
 
-  return record.match(pubIdRegex)?.groups?.pubId
+  const sectionIds = new Set([...content.matchAll(sectionPodcastRegex)].map(([, id]) => id))
+  const podcastFeeds = [...sectionIds].map((sectionId) => {
+    return feeds.getFeedEntry('substack:podcast', { pubId, sectionId })
+  })
+
+  if (podcastEnabledRegex.test(record)) {
+    podcastFeeds.unshift(feeds.getFeedEntry('substack:podcast', { pubId }))
+  }
+
+  return podcastFeeds
 }
 
 const getPublicationOrigin = (content: string | undefined): string | undefined => {
@@ -131,14 +144,7 @@ export const substackHandler: PlatformHandler = {
       return []
     }
 
-    const newsletterFeed = pageFeeds.getFeedEntry('substack:newsletter')
-    const pubId = getPodcastPubId(content)
-
-    if (!pubId) {
-      return [newsletterFeed]
-    }
-
-    return [newsletterFeed, feeds.getFeedEntry('substack:podcast', { pubId })]
+    return [pageFeeds.getFeedEntry('substack:newsletter'), ...getPodcastFeeds(content)]
   },
 
   // The table reads any host under substack.com, so the page parser refuses a newsletter feed on

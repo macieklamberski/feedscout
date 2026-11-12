@@ -124,7 +124,7 @@ Discovers RSS feeds for Substack newsletters and podcasts.
 
 \* *The publication can differ from the handle and can sit on a custom domain. It is read from the page content when available, with the handle as the fallback.*
 
-<sup>‡</sup> *Requires HTML content, and only for a publication with a podcast.*
+<sup>‡</sup> *Requires HTML content. One feed for a publication with a podcast, and one for each section that is a podcast.*
 
 <sup>†</sup> *Found only by the Platform method.*
 
