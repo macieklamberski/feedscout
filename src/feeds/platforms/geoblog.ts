@@ -1,6 +1,7 @@
 import { getPathSegments, isAnyOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
+import { digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers trip (html).
@@ -13,6 +14,10 @@ export type GeoblogPage = GeoblogUrl & { tripId: string }
 const domains = ['geoblog.pl']
 
 const tripPathRegex = /^\/podroz\/(\d+)(?:\/|$)/i
+
+const feeds = definePlatformFeeds([
+  { key: 'geoblog:trip', template: '{scheme}://{user}.geoblog.pl/podroz/rss/{tripId}.xml' },
+])
 
 export const parseGeoblogUrl = (url: string): GeoblogUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -63,13 +68,16 @@ export const geoblogHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getGeoblogPage(url, content)
+    const user = getTenantSubdomain(url, domains)
 
-    if (!page) {
+    if (!page || !user) {
       return []
     }
 
-    const { origin } = new URL(url)
+    const scheme = new URL(url).protocol.slice(0, -1)
 
-    return [{ uri: `${origin}/podroz/rss/${page.tripId}.xml`, hint: composeHint('geoblog:trip') }]
+    return [feeds.getFeedEntry('geoblog:trip', { scheme, user, tripId: page.tripId })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
