@@ -29,14 +29,13 @@ export const tistoryHandler: PlatformHandler = {
 
   resolve: (url) => {
     const blog = getTenantSubdomain(url, domains)
+    const page = feeds.forUrl(url)
 
-    if (!blog) {
+    if (!blog || !page) {
       return []
     }
 
-    const scheme = new URL(url).protocol.slice(0, -1)
-
-    return [feeds.getFeedEntry('tistory:blog', { scheme, blog })]
+    return [page.getFeedEntry('tistory:blog', { blog })]
   },
 
   getFeedHint: feeds.getFeedHint,
