@@ -73,5 +73,5 @@ export const prlogHandler: PlatformHandler = {
     return [feeds.getFeedEntry('prlog:press-releases', { pressroomId: page.pressroomId })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

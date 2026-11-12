@@ -113,50 +113,50 @@ describe('prlogHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the press releases key for a pressroom feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the press releases hint for a pressroom feed', () => {
       const value = 'https://pressroom.prlog.org/Example_Co/latest.xml'
-      const expected = 'prlog:press-releases'
+      const expected: DiscoverUriHint = { key: 'prlog:press-releases', label: 'Press releases' }
 
-      expect(prlogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(prlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the press releases key for an http pressroom feed', () => {
+    it('should return the press releases hint for an http pressroom feed', () => {
       const value = 'http://pressroom.prlog.org/Example_Co/latest.xml'
-      const expected = 'prlog:press-releases'
+      const expected: DiscoverUriHint = { key: 'prlog:press-releases', label: 'Press releases' }
 
-      expect(prlogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(prlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the press releases key for a pressroom feed with a tracking query', () => {
+    it('should return the press releases hint for a pressroom feed with a tracking query', () => {
       const value = 'https://pressroom.prlog.org/Example_Co/latest.xml?utm_source=example'
-      const expected = 'prlog:press-releases'
+      const expected: DiscoverUriHint = { key: 'prlog:press-releases', label: 'Press releases' }
 
-      expect(prlogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(prlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a pressroom page', () => {
       const value = 'https://pressroom.prlog.org/Example_Co/'
 
-      expect(prlogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(prlogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the pressroom directory', () => {
       const value = 'https://pressroom.prlog.org/latest.xml'
 
-      expect(prlogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(prlogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the main site', () => {
       const value = 'https://www.prlog.org/news/rss.xml'
 
-      expect(prlogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(prlogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/Example_Co/latest.xml'
 
-      expect(prlogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(prlogHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
