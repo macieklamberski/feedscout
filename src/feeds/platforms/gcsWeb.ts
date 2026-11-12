@@ -55,13 +55,16 @@ export const gcsWebHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { protocol, host } = new URL(url)
-    const params = { scheme: protocol.slice(0, -1), host }
+    const page = feeds.forUrl(url)
+
+    if (!page) {
+      return []
+    }
 
     return [
-      feeds.getFeedEntry('gcs-web:news-releases', params),
-      feeds.getFeedEntry('gcs-web:sec-filings', params),
-      feeds.getFeedEntry('gcs-web:events', params),
+      page.getFeedEntry('gcs-web:news-releases'),
+      page.getFeedEntry('gcs-web:sec-filings'),
+      page.getFeedEntry('gcs-web:events'),
     ]
   },
 
