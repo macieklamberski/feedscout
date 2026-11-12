@@ -1,6 +1,7 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { getRegistrableDomain, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
+import { findElement, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -20,6 +21,27 @@ const domains = [
 // A first segment with a dot is an uploaded file or the `.shared` assets, never a blog.
 const blogRegex = /^\/([^/.]+)(?:\/|$)/
 const feedPathRegex = /^\/([^/.]+)\/(?:atom\.xml|index\.rdf|rss\.xml)$/i
+
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'cocolog:posts',
+      template: '{scheme}://{account}.{domain}/{blog}/atom.xml',
+      format: 'atom',
+    },
+    {
+      key: 'cocolog:posts',
+      template: '{scheme}://{account}.{domain}/{blog}/index.rdf',
+      format: 'rdf',
+    },
+    {
+      key: 'cocolog:posts',
+      template: '{scheme}://{account}.{domain}/{blog}/rss.xml',
+      format: 'rss',
+    },
+  ],
+  { domains },
+)
 
 const getCocologPage = (url: string, content: string | undefined): CocologPage | undefined => {
   // A nested label such as app.f.cocolog-nifty.com is a service host, never a blog.
@@ -65,17 +87,34 @@ export const cocologHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getCocologPage(url, content)
+    const account = getTenantSubdomain(url, domains)
+    const domain = getRegistrableDomain(url)
 
-    if (!page) {
+    if (!page || !account || !domain) {
       return []
     }
 
-    const blogUrl = `${new URL(url).origin}/${page.blog}`
+    const params = {
+      scheme: new URL(url).protocol.slice(0, -1),
+      account,
+      domain,
+      blog: page.blog,
+    }
 
     return [
-      { uri: `${blogUrl}/atom.xml`, hint: composeHint('cocolog:posts', 'atom') },
-      { uri: `${blogUrl}/index.rdf`, hint: composeHint('cocolog:posts', 'rdf') },
-      { uri: `${blogUrl}/rss.xml`, hint: composeHint('cocolog:posts', 'rss') },
+      feeds.getFeedEntry('cocolog:posts', params, 'atom'),
+      feeds.getFeedEntry('cocolog:posts', params, 'rdf'),
+      feeds.getFeedEntry('cocolog:posts', params, 'rss'),
     ]
+  },
+
+  // The page parser keeps a dotted first segment, an uploaded file or the `.shared` assets, and a
+  // nested service host out of the table's matches.
+  getFeedKey: (url) => {
+    if (!getCocologPage(url, undefined)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }

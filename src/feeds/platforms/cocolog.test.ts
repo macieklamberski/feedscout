@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { cocologHandler } from './cocolog.js'
 
 const homeContent = `
@@ -118,6 +120,85 @@ describe('cocologHandler', () => {
 
     it('should return empty array for the home page without feed links', () => {
       expect(cocologHandler.resolve('https://example.cocolog-nifty.com/')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for an Atom feed', () => {
+      const value = 'https://example.cocolog-nifty.com/blog/atom.xml'
+      const expected = 'cocolog:posts'
+
+      expect(cocologHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an RDF feed', () => {
+      const value = 'https://example.cocolog-nifty.com/blog/index.rdf'
+      const expected = 'cocolog:posts'
+
+      expect(cocologHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an RSS feed', () => {
+      const value = 'https://example.cocolog-nifty.com/blog/rss.xml'
+      const expected = 'cocolog:posts'
+
+      expect(cocologHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an http feed on another domain', () => {
+      const value = 'http://alice.moe-nifty.com/diary/index.rdf'
+      const expected = 'cocolog:posts'
+
+      expect(cocologHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a post page', () => {
+      const value = 'https://example.cocolog-nifty.com/blog/2024/01/post-1a2b.html'
+
+      expect(cocologHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path under a dotted first segment', () => {
+      const value = 'https://example.cocolog-nifty.com/.shared/atom.xml'
+
+      expect(cocologHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on a service host', () => {
+      const value = 'https://app.f.cocolog-nifty.com/t/atom.xml'
+
+      expect(cocologHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on the apex', () => {
+      const value = 'https://cocolog-nifty.com/blog/atom.xml'
+
+      expect(cocologHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/blog/atom.xml'
+
+      expect(cocologHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://example.cocolog-nifty.com/blog/atom.xml', { key: 'cocolog:posts', label: 'Posts' }],
+      ['http://example.cocolog-nifty.com/blog/index.rdf', { key: 'cocolog:posts', label: 'Posts' }],
+      ['https://alice.moe-nifty.com/diary/rss.xml', { key: 'cocolog:posts', label: 'Posts' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [cocologHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
