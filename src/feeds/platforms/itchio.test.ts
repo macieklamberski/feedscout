@@ -570,202 +570,202 @@ describe('itchioHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the devlog key for a game devlog feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the devlog hint for a game devlog feed', () => {
       const value = 'https://alice.itch.io/x-moon/devlog.rss'
-      const expected = 'itchio:devlog'
+      const expected: DiscoverUriHint = { key: 'itchio:devlog', label: 'Devlog' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the games key for a creator games feed', () => {
+    it('should return the games hint for a creator games feed', () => {
       const value = 'https://itch.io/games/by-alice.xml'
-      const expected = 'itchio:games'
+      const expected: DiscoverUriHint = { key: 'itchio:games', label: 'Games' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed', () => {
+    it('should return the tag hint for a tag feed', () => {
       const value = 'https://itch.io/games/tag-horror.xml'
-      const expected = 'itchio:tag'
+      const expected: DiscoverUriHint = { key: 'itchio:tag', label: 'Tag' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed on www', () => {
+    it('should return the tag hint for a tag feed on www', () => {
       const value = 'https://www.itch.io/games/tag-horror.xml'
-      const expected = 'itchio:tag'
+      const expected: DiscoverUriHint = { key: 'itchio:tag', label: 'Tag' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the platform key for a platform feed', () => {
+    it('should return the platform hint for a platform feed', () => {
       const value = 'https://itch.io/games/platform-web.xml'
-      const expected = 'itchio:platform'
+      const expected: DiscoverUriHint = { key: 'itchio:platform', label: 'Platform' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the genre key for a genre feed', () => {
+    it('should return the genre hint for a genre feed', () => {
       const value = 'https://itch.io/games/genre-puzzle.xml'
-      const expected = 'itchio:genre'
+      const expected: DiscoverUriHint = { key: 'itchio:genre', label: 'Genre' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the made-with key for a made-with feed', () => {
+    it('should return the made-with hint for a made-with feed', () => {
       const value = 'https://itch.io/games/made-with-unity.xml'
-      const expected = 'itchio:made-with'
+      const expected: DiscoverUriHint = { key: 'itchio:made-with', label: 'Made with' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the games key for a sorted games feed', () => {
+    it('should return the games hint for a sorted games feed', () => {
       const value = 'https://itch.io/games/newest.xml'
-      const expected = 'itchio:games'
+      const expected: DiscoverUriHint = { key: 'itchio:games', label: 'Games' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the games key for the games feed', () => {
+    it('should return the games hint for the games feed', () => {
       const value = 'https://itch.io/games.xml'
-      const expected = 'itchio:games'
+      const expected: DiscoverUriHint = { key: 'itchio:games', label: 'Games' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the games key for a listing feed with two filters', () => {
+    it('should return the games hint for a listing feed with two filters', () => {
       const value = 'https://itch.io/games/newest/tag-horror.xml'
-      const expected = 'itchio:games'
+      const expected: DiscoverUriHint = { key: 'itchio:games', label: 'Games' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the games key for a listing feed with a creator filter', () => {
+    it('should return the games hint for a listing feed with a creator filter', () => {
       const value = 'https://itch.io/games/newest/by-alice.xml'
-      const expected = 'itchio:games'
+      const expected: DiscoverUriHint = { key: 'itchio:games', label: 'Games' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the games key for a listing feed with three filters', () => {
+    it('should return the games hint for a listing feed with three filters', () => {
       const value =
         'https://itch.io/games/15-dollars-or-less/accessibility-highcontrast/genre-puzzle.xml'
-      const expected = 'itchio:games'
+      const expected: DiscoverUriHint = { key: 'itchio:games', label: 'Games' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the games key for a listing feed with a capitalized games segment', () => {
+    it('should return the games hint for a listing feed with a capitalized games segment', () => {
       const value = 'https://itch.io/Games/newest/tag-horror.xml'
-      const expected = 'itchio:games'
+      const expected: DiscoverUriHint = { key: 'itchio:games', label: 'Games' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the games key for a listing feed with a trailing slash', () => {
+    it('should return the games hint for a listing feed with a trailing slash', () => {
       const value = 'https://itch.io/games/newest/tag-horror.xml/'
-      const expected = 'itchio:games'
+      const expected: DiscoverUriHint = { key: 'itchio:games', label: 'Games' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the section key for a section feed', () => {
+    it('should return the section hint for a section feed', () => {
       const value = 'https://itch.io/tools.xml'
-      const expected = 'itchio:section'
+      const expected: DiscoverUriHint = { key: 'itchio:section', label: 'Section' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the section key for a section feed with a trailing slash', () => {
+    it('should return the section hint for a section feed with a trailing slash', () => {
       const value = 'https://itch.io/tools.xml/'
-      const expected = 'itchio:section'
+      const expected: DiscoverUriHint = { key: 'itchio:section', label: 'Section' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the devlogs key for the devlogs feed', () => {
+    it('should return the devlogs hint for the devlogs feed', () => {
       const value = 'https://itch.io/devlogs.xml'
-      const expected = 'itchio:devlogs'
+      const expected: DiscoverUriHint = { key: 'itchio:devlogs', label: 'Devlogs' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for the blog feed', () => {
+    it('should return the blog hint for the blog feed', () => {
       const value = 'https://itch.io/blog.rss'
-      const expected = 'itchio:blog'
+      const expected: DiscoverUriHint = { key: 'itchio:blog', label: 'Blog' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the featured key for the featured feed', () => {
+    it('should return the featured hint for the featured feed', () => {
       const value = 'https://itch.io/feed/featured.xml'
-      const expected = 'itchio:featured'
+      const expected: DiscoverUriHint = { key: 'itchio:featured', label: 'Featured' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the featured key for a capitalized featured feed', () => {
+    it('should return the featured hint for a capitalized featured feed', () => {
       const value = 'https://itch.io/Feed/Featured.xml'
-      const expected = 'itchio:featured'
+      const expected: DiscoverUriHint = { key: 'itchio:featured', label: 'Featured' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the new key for the new feed', () => {
+    it('should return the new hint for the new feed', () => {
       const value = 'https://itch.io/feed/new.xml'
-      const expected = 'itchio:new'
+      const expected: DiscoverUriHint = { key: 'itchio:new', label: 'New' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the sales key for the sales feed', () => {
+    it('should return the sales hint for the sales feed', () => {
       const value = 'https://itch.io/feed/sales.xml'
-      const expected = 'itchio:sales'
+      const expected: DiscoverUriHint = { key: 'itchio:sales', label: 'Sales' }
 
-      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for the sitemap', () => {
       const value = 'https://itch.io/sitemap.xml'
 
-      expect(itchioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(itchioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a listing page', () => {
       const value = 'https://itch.io/games/newest/tag-horror'
 
-      expect(itchioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(itchioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a game page', () => {
       const value = 'https://alice.itch.io/x-moon'
 
-      expect(itchioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(itchioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a devlog feed on a nested subdomain', () => {
       const value = 'https://a.b.itch.io/x-moon/devlog.rss'
 
-      expect(itchioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(itchioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a listing feed path on a creator subdomain', () => {
       const value = 'https://alice.itch.io/games/newest/tag-horror.xml'
 
-      expect(itchioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(itchioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a listing feed path on another host', () => {
       const value = 'https://example.com/games/newest/tag-horror.xml'
 
-      expect(itchioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(itchioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an invalid URL', () => {
       const value = 'not-a-url'
 
-      expect(itchioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(itchioHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

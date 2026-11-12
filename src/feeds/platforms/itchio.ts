@@ -238,7 +238,7 @@ export const itchioHandler: PlatformHandler = {
 
   // itch.io serves its sitemap at /sitemap.xml, so a single-segment feed is a section feed only
   // for a section the platform lists.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const parsedUrl = parseUrl(url)
 
     if (!parsedUrl) {
@@ -246,16 +246,16 @@ export const itchioHandler: PlatformHandler = {
     }
 
     if (isHostOf(parsedUrl, mainHosts) && combinedListingFeedRegex.test(parsedUrl.pathname)) {
-      return 'itchio:games'
+      return composeHint('itchio:games')
     }
 
-    const key = feeds.getFeedKey(url)
+    const hint = feeds.getFeedHint(url)
     const section = parsedUrl.pathname.match(sectionFeedRegex)?.[1]
 
-    if (key === 'itchio:section' && !isAnyOf(section, sections)) {
+    if (hint?.key === 'itchio:section' && !isAnyOf(section, sections)) {
       return
     }
 
-    return key
+    return hint
   },
 }
