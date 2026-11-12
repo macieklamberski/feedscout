@@ -97,50 +97,50 @@ describe('acomicsHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the issues key for a comic feed', () => {
       const value = 'https://acomics.ru/~Oglaf/rss'
-      const expected = 'acomics:issues'
+      const expected: DiscoverUriHint = { key: 'acomics:issues', label: 'Issues' }
 
-      expect(acomicsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(acomicsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the subscriptions key for a user feed', () => {
       const value = 'https://acomics.ru/-Lilim/rss'
-      const expected = 'acomics:subscriptions'
+      const expected: DiscoverUriHint = { key: 'acomics:subscriptions', label: 'Subscriptions' }
 
-      expect(acomicsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(acomicsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the issues key for a comic feed on the www host', () => {
       const value = 'http://www.acomics.ru/~Example/rss'
-      const expected = 'acomics:issues'
+      const expected: DiscoverUriHint = { key: 'acomics:issues', label: 'Issues' }
 
-      expect(acomicsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(acomicsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a comic page', () => {
       const value = 'https://acomics.ru/~Oglaf'
 
-      expect(acomicsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(acomicsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an issue page', () => {
       const value = 'https://acomics.ru/~Oglaf/902'
 
-      expect(acomicsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(acomicsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path without a prefix', () => {
       const value = 'https://acomics.ru/comics/rss'
 
-      expect(acomicsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(acomicsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/~Oglaf/rss'
 
-      expect(acomicsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(acomicsHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

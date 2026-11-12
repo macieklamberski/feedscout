@@ -57,5 +57,5 @@ export const acomicsHandler: PlatformHandler = {
     return [feeds.getFeedEntry('acomics:subscriptions', { username: parsed.username })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
