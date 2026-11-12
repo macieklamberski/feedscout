@@ -2,7 +2,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 import {
   composeWordpressFeeds,
-  getWordpressFeedKey,
+  getWordpressFeedHint,
   parseWordpressPage,
   type WordpressUrl,
 } from './wordpress.js'
@@ -37,11 +37,11 @@ export const wpengineHandler: PlatformHandler = {
     return composeWordpressFeeds(new URL(url).origin, parsed)
   },
 
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (!getTenantSubdomain(url, domains)) {
       return
     }
 
-    return getWordpressFeedKey(url)
+    return getWordpressFeedHint(url)
   },
 }

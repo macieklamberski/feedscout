@@ -1268,47 +1268,47 @@ describe('wordpressHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the post comments key for a post feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the post comments hint for a post feed', () => {
       const value = 'https://4oops.edublogs.org/2014/07/24/link-check-notice/feed/'
-      const expected = 'wordpress:post-comments'
+      const expected: DiscoverUriHint = { key: 'wordpress:post-comments', label: 'Post comments' }
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the post comments key for a post Atom feed', () => {
+    it('should return the post comments hint for a post Atom feed', () => {
       const value = 'https://4oops.edublogs.org/2014/07/24/link-check-notice/feed/atom/'
-      const expected = 'wordpress:post-comments'
+      const expected: DiscoverUriHint = { key: 'wordpress:post-comments', label: 'Post comments' }
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the post comments key for a post feed in another case', () => {
+    it('should return the post comments hint for a post feed in another case', () => {
       const value = 'https://4oops.edublogs.org/2014/07/24/link-check-notice/Feed/'
-      const expected = 'wordpress:post-comments'
+      const expected: DiscoverUriHint = { key: 'wordpress:post-comments', label: 'Post comments' }
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the post comments key for a post feed query', () => {
+    it('should return the post comments hint for a post feed query', () => {
       const value = 'https://4oops.edublogs.org/2014/07/24/link-check-notice/?feed=rss'
-      const expected = 'wordpress:post-comments'
+      const expected: DiscoverUriHint = { key: 'wordpress:post-comments', label: 'Post comments' }
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the post comments key for a post-id feed without a trailing slash', () => {
+    it('should return the post comments hint for a post-id feed without a trailing slash', () => {
       const value = 'https://raffl.hypotheses.org/1009/feed'
-      const expected = 'wordpress:post-comments'
+      const expected: DiscoverUriHint = { key: 'wordpress:post-comments', label: 'Post comments' }
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the post comments key for the post whose slug is comments', () => {
+    it('should return the post comments hint for the post whose slug is comments', () => {
       const value = 'https://example.wordpress.com/2024/05/01/comments/feed/'
-      const expected = 'wordpress:post-comments'
+      const expected: DiscoverUriHint = { key: 'wordpress:post-comments', label: 'Post comments' }
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     const dateFeedPaths = [
@@ -1321,20 +1321,20 @@ describe('wordpressHandler', () => {
       '/?feed=rdf',
     ]
 
-    it.each(dateFeedPaths)('should return the date archive key for its %s feed', (path) => {
+    it.each(dateFeedPaths)('should return the date archive hint for its %s feed', (path) => {
       const value = `https://4oops.edublogs.org/2008/04/24${path}`
-      const expected = 'wordpress:date-archive'
+      const expected: DiscoverUriHint = { key: 'wordpress:date-archive', label: 'Date archive' }
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     const postsFeedPaths = ['/feed/', '/feed/rdf/', '/?feed=atom']
 
-    it.each(postsFeedPaths)('should return the posts key for the site %s feed', (path) => {
+    it.each(postsFeedPaths)('should return the posts hint for the site %s feed', (path) => {
       const value = `https://example.wordpress.com${path}`
-      const expected = 'wordpress:posts'
+      const expected: DiscoverUriHint = { key: 'wordpress:posts', label: 'Posts' }
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     const commentsFeedPaths = [
@@ -1344,67 +1344,67 @@ describe('wordpressHandler', () => {
       '/?feed=comments-atom',
     ]
 
-    it.each(commentsFeedPaths)('should return the comments key for the site %s feed', (path) => {
+    it.each(commentsFeedPaths)('should return the comments hint for the site %s feed', (path) => {
       const value = `https://example.wordpress.com${path}`
-      const expected = 'wordpress:comments'
+      const expected: DiscoverUriHint = { key: 'wordpress:comments', label: 'Comments' }
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed', () => {
+    it('should return the tag hint for a tag feed', () => {
       const value = 'https://example.wordpress.com/tag/javascript/feed/'
-      const expected = 'wordpress:tag'
+      const expected: DiscoverUriHint = { key: 'wordpress:tag', label: 'Tag' }
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for the feed of the tag named feed', () => {
+    it('should return the tag hint for the feed of the tag named feed', () => {
       const value = 'https://lorelle.wordpress.com/tag/feed/feed/'
-      const expected = 'wordpress:tag'
+      const expected: DiscoverUriHint = { key: 'wordpress:tag', label: 'Tag' }
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for the feed of the tag named amp', () => {
+    it('should return the tag hint for the feed of the tag named amp', () => {
       const value = 'https://afsr.hypotheses.org/tag/amp/feed'
-      const expected = 'wordpress:tag'
+      const expected: DiscoverUriHint = { key: 'wordpress:tag', label: 'Tag' }
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for the feed of the tag named embed', () => {
+    it('should return the tag hint for the feed of the tag named embed', () => {
       const value = 'https://pesannemariev.edublogs.org/tag/embed/feed/'
-      const expected = 'wordpress:tag'
+      const expected: DiscoverUriHint = { key: 'wordpress:tag', label: 'Tag' }
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the category key for a nested category feed', () => {
+    it('should return the category hint for a nested category feed', () => {
       const value = 'https://example.wordpress.com/category/news/north-brentwood/feed/'
-      const expected = 'wordpress:category'
+      const expected: DiscoverUriHint = { key: 'wordpress:category', label: 'Category' }
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the category key for a URL-encoded category feed query', () => {
+    it('should return the category hint for a URL-encoded category feed query', () => {
       const value = 'https://example.wordpress.com/category/c%2B%2B/?feed=rss'
-      const expected = 'wordpress:category'
+      const expected: DiscoverUriHint = { key: 'wordpress:category', label: 'Category' }
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the category key for a capitalized category route', () => {
+    it('should return the category hint for a capitalized category route', () => {
       const value = 'https://example.wordpress.com/Category/tech/feed/'
-      const expected = 'wordpress:category'
+      const expected: DiscoverUriHint = { key: 'wordpress:category', label: 'Category' }
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the author key for an author Atom feed', () => {
+    it('should return the author hint for an author Atom feed', () => {
       const value = 'https://example.wordpress.com/author/johndoe/feed/atom/'
-      const expected = 'wordpress:author'
+      const expected: DiscoverUriHint = { key: 'wordpress:author', label: 'Author' }
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     const tagNamedFeedPages = [
@@ -1414,7 +1414,7 @@ describe('wordpressHandler', () => {
     ]
 
     it.each(tagNamedFeedPages)('should return undefined for the tag named feed at %s', (value) => {
-      expect(wordpressHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     const archiveNamedFeedPages = [
@@ -1425,50 +1425,50 @@ describe('wordpressHandler', () => {
     it.each(archiveNamedFeedPages)(
       'should return undefined for the archive named feed at %s',
       (value) => {
-        expect(wordpressHandler.getFeedKey?.(value)).toBeUndefined()
+        expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
       },
     )
 
     it('should return undefined for the tag named embed', () => {
       const value = 'https://pesannemariev.edublogs.org/tag/embed/'
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a post comments feed query', () => {
       const value = 'https://example.wordpress.com/2024/05/01/hello/?feed=comments-rss2'
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a plugin feed under the feed path', () => {
       const value = 'https://example.wordpress.com/feed/podcast/'
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a post page', () => {
       const value = 'https://example.wordpress.com/2024/05/01/hello/'
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the www subdomain', () => {
       const value = 'https://www.example.wordpress.com/feed/'
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://wordpress.com/feed/'
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on another host', () => {
       const value = 'https://example.com/feed/'
 
-      expect(wordpressHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

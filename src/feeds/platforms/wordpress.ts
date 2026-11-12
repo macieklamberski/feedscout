@@ -1,5 +1,5 @@
 import { getQueryParam, isAnyOf, isSubdomainOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
 
@@ -132,16 +132,16 @@ export const parseWordpressUrl = (url: string): WordpressUrl | undefined => {
   return parseWordpressPage(url)
 }
 
-// The hint key of a WordPress feed URL: the feed endpoint comes off the path, or the `?feed=`
-// query is read, and the page left is the one whose feed it is. A WP Engine feed reads the same.
-export const getWordpressFeedKey = (url: string): string | undefined => {
+// The hint of a WordPress feed URL: the feed endpoint comes off the path, or the `?feed=` query
+// is read, and the page left is the one whose feed it is. A WP Engine feed reads the same.
+export const getWordpressFeedHint = (url: string): DiscoverUriHint | undefined => {
   const parsedUrl = new URL(url)
   const { origin, pathname } = parsedUrl
   const feedQuery = getQueryParam(parsedUrl, 'feed')
   const isCommentsFeedQuery = pathname === '/' && isAnyOf(feedQuery, commentsFeedQueries)
 
   if (commentsFeedRegex.test(pathname) || isCommentsFeedQuery) {
-    return 'wordpress:comments'
+    return composeHint('wordpress:comments')
   }
 
   const isFeedPath = feedEndpointRegex.test(pathname)
@@ -154,14 +154,14 @@ export const getWordpressFeedKey = (url: string): string | undefined => {
   const page = parseWordpressPage(`${origin}${pagePath}`)
 
   if (page.kind === 'archive') {
-    return page.hintKey
+    return composeHint(page.hintKey)
   }
 
   if (page.kind === 'post') {
-    return 'wordpress:post-comments'
+    return composeHint('wordpress:post-comments')
   }
 
-  return 'wordpress:posts'
+  return composeHint('wordpress:posts')
 }
 
 export const composeWordpressFeeds = (
@@ -225,11 +225,11 @@ export const wordpressHandler: PlatformHandler = {
     return composeWordpressFeeds(new URL(url).origin, parsed)
   },
 
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (!getTenantSubdomain(url, domains)) {
       return
     }
 
-    return getWordpressFeedKey(url)
+    return getWordpressFeedHint(url)
   },
 }

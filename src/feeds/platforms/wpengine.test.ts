@@ -613,44 +613,44 @@ describe('wpengineHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for the site feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for the site feed', () => {
       const value = 'https://example.wpenginepowered.com/feed/'
-      const expected = 'wordpress:posts'
+      const expected: DiscoverUriHint = { key: 'wordpress:posts', label: 'Posts' }
 
-      expect(wpengineHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wpengineHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag Atom feed on the legacy domain', () => {
+    it('should return the tag hint for a tag Atom feed on the legacy domain', () => {
       const value = 'https://example.wpengine.com/tag/news/feed/atom/'
-      const expected = 'wordpress:tag'
+      const expected: DiscoverUriHint = { key: 'wordpress:tag', label: 'Tag' }
 
-      expect(wpengineHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wpengineHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the post comments key for a post feed query', () => {
+    it('should return the post comments hint for a post feed query', () => {
       const value = 'https://example.wpenginepowered.com/2024/05/01/hello/?feed=rss'
-      const expected = 'wordpress:post-comments'
+      const expected: DiscoverUriHint = { key: 'wordpress:post-comments', label: 'Post comments' }
 
-      expect(wpengineHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wpengineHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a plugin feed under the feed path', () => {
       const value = 'https://wondersandwdev.wpengine.com/feed/podcast/'
 
-      expect(wpengineHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(wpengineHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the www subdomain', () => {
       const value = 'https://www.example.wpengine.com/feed/'
 
-      expect(wpengineHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(wpengineHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on another host', () => {
       const value = 'https://example.wordpress.com/feed/'
 
-      expect(wpengineHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(wpengineHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
