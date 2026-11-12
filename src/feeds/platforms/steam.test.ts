@@ -318,6 +318,12 @@ describe('steamHandler', () => {
       expect(steamHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
+    it('should return undefined for a word in place of the app id on a www store host', () => {
+      const value = 'https://www.store.steampowered.com/feeds/news/app/example/'
+
+      expect(steamHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for an app page', () => {
       const value = 'https://store.steampowered.com/app/12345/'
 

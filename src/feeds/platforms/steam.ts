@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
@@ -90,9 +90,9 @@ export const steamHandler: PlatformHandler = {
   // takes a game's name, as /games/CSGO/rss.
   getFeedKey: (url) => {
     const key = feeds.getFeedKey(url)
-    const [, , , appId] = getPathSegments(url)
+    const [feedsSegment, , , appId] = getPathSegments(url)
 
-    if (key === 'steam:news' && isHostOf(url, storeHosts) && !digitsRegex.test(appId ?? '')) {
+    if (key === 'steam:news' && isAnyOf(feedsSegment, 'feeds') && !digitsRegex.test(appId ?? '')) {
       return
     }
 
