@@ -42,5 +42,5 @@ export const sakuraBlogHandler: PlatformHandler = {
     ]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
