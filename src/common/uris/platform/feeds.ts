@@ -5,14 +5,14 @@ import {
   escapeRegex,
   getQueryParam,
   isHttpUrl,
-  isSubdomainOf,
+  isString,
   parseUrl,
   stripWww,
   t,
 } from 'trousse'
 import locales from '../../../locales.json' with { type: 'json' }
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../types.js'
-import { composeHint } from '../../utils.js'
+import { composeHint, getPlatformDomain } from '../../utils.js'
 
 export type PlatformFeedTemplate = {
   key: string
@@ -27,8 +27,9 @@ export type PlatformFeedParams = Record<string, string>
 export type PlatformFeedTableOptions = {
   // The hosts a `{host}` placeholder stands for, with every host under `domains`.
   hosts?: Array<string>
-  // The domains a `{domain}` placeholder stands for.
-  domains?: Array<string>
+  // The domains a `{domain}` placeholder stands for. A pattern stands for a family of domains, such
+  // as `/^blogspot\.(?:com|com\.[a-z]{2})$/`, anchored at both ends.
+  domains?: Array<string | RegExp>
   // Whether `www` can be a tenant, so `www.example.com` matches a `{user}.example.com` row.
   isWwwTenant?: boolean
 }
@@ -62,6 +63,7 @@ type CompiledTemplate = {
 const templateRegex = /^(https?|\{scheme\}):\/\/([^/?#]+)(\/[^?#]*)?(?:\?([^#]*))?$/i
 const placeholderRegex = /\{(\w+)\}/g
 const trailingSlashRegex = /\/$/
+const anchorsRegex = /^\^|\$$/g
 
 // A path decoded segment by segment, so `%40` and `@` compare equal. A decoded `%` and `/` are
 // written back as `%25` and `%2F`, so `%252F` stays apart from `%2F` and no segment splits.
@@ -110,7 +112,9 @@ const compileTemplate = (
   const [, scheme, host, path = '', queryText = ''] = match
   const query = [...new URLSearchParams(queryText)]
   const hosts = options.hosts ?? []
-  const domains = (options.domains ?? []).map(escapeRegex)
+  const domains = (options.domains ?? []).map((domain) => {
+    return isString(domain) ? escapeRegex(domain) : `(?:${domain.source.replace(anchorsRegex, '')})`
+  })
   const domainSource = `(?:${domains.join('|')})`
 
   if (
@@ -251,7 +255,7 @@ export const definePlatformFeeds = (
       scheme: parsedUrl.protocol.slice(0, -1),
       host: parsedUrl.host,
     }
-    const domain = options.domains?.find((candidate) => isSubdomainOf(parsedUrl, candidate))
+    const domain = getPlatformDomain(parsedUrl, options.domains ?? [])
 
     if (domain) {
       urlParams.domain = domain
