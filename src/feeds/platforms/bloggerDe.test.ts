@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type BloggerDeUrl, bloggerDeHandler, parseBloggerDeUrl } from './bloggerDe.js'
 
 describe('parseBloggerDeUrl', () => {
@@ -53,6 +55,89 @@ describe('bloggerDeHandler', () => {
       ]
 
       expect(bloggerDeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the https posts feed for an http blog page', () => {
+      const value = 'http://alice.blogger.de/stories/2918480/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.blogger.de/rss',
+          hint: { key: 'blogger-de:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(bloggerDeHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for a posts feed', () => {
+      const value = 'https://alice.blogger.de/rss'
+      const expected = 'blogger-de:posts'
+
+      expect(bloggerDeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a posts feed listing all stories', () => {
+      const value = 'https://alice.blogger.de/rss?show=all'
+      const expected = 'blogger-de:posts'
+
+      expect(bloggerDeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an http posts feed', () => {
+      const value = 'http://alice.blogger.de/rss'
+      const expected = 'blogger-de:posts'
+
+      expect(bloggerDeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://alice.blogger.de/stories/2918480/'
+
+      expect(bloggerDeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://blogger.de/rss'
+
+      expect(bloggerDeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.alice.blogger.de/rss'
+
+      expect(bloggerDeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/rss'
+
+      expect(bloggerDeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<string> = [
+      'https://alice.blogger.de/rss',
+      'https://alice.blogger.de/rss/',
+      'https://alice.blogger.de/rss?show=all',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [bloggerDeHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: value,
+          hint: { key: 'blogger-de:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })
