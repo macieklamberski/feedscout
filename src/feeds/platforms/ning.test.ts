@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { isNingHtml, type NingUrl, ningHandler, parseNingUrl } from './ning.js'
 
 const ningHtml = `
@@ -126,6 +128,97 @@ describe('ningHandler', () => {
       ]
 
       expect(ningHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    const feedUrls: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.ning.com/forum/topics/tour-and-travel?feed=yes&xn_auth=no',
+        { key: 'ning:topic', label: 'Topic' },
+      ],
+      [
+        'https://example.ning.com/activity/log/list?fmt=rss',
+        { key: 'ning:activity', label: 'Latest activity' },
+      ],
+      [
+        'https://example.ning.com/profiles/blog/feed?xn_auth=no',
+        { key: 'ning:blog', label: 'Blog posts' },
+      ],
+      [
+        'https://example.ning.com/forum/topic/list?feed=yes&xn_auth=no',
+        { key: 'ning:forum', label: 'Forum' },
+      ],
+      [
+        'http://example.ning.com/forum/topics/tour-and-travel/?xn_auth=no&feed=yes',
+        { key: 'ning:topic', label: 'Topic' },
+      ],
+    ]
+
+    it.each(feedUrls)('should return the hint for %s', (value, expected) => {
+      expect(ningHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a page on a network subdomain', () => {
+      const value = 'https://example.ning.com/forum/topics/tour-and-travel'
+
+      expect(ningHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://example.com/activity/log/list?fmt=rss'
+
+      expect(ningHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://ning.com/activity/log/list?fmt=rss'
+
+      expect(ningHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www', () => {
+      const value = 'https://www.ning.com/profiles/blog/feed?xn_auth=no'
+
+      expect(ningHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://forum.example.ning.com/forum/topic/list?feed=yes&xn_auth=no'
+
+      expect(ningHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.ning.com/forum/topics/tour-and-travel?feed=yes&xn_auth=no',
+        { key: 'ning:topic', label: 'Topic' },
+      ],
+      [
+        'https://example.ning.com/activity/log/list?fmt=rss',
+        { key: 'ning:activity', label: 'Latest activity' },
+      ],
+      [
+        'https://example.ning.com/profiles/blog/feed?xn_auth=no',
+        { key: 'ning:blog', label: 'Blog posts' },
+      ],
+      [
+        'http://example.ning.com/forum/topic/list?feed=yes&xn_auth=no',
+        { key: 'ning:forum', label: 'Forum' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [ningHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
