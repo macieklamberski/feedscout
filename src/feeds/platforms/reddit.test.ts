@@ -1093,6 +1093,41 @@ describe('redditHandler', () => {
         'https://new.reddit.com/user/gamavalkharid/comments/.rss',
         { key: 'reddit:user-comments', label: 'Comments' },
       ],
+      ['https://old.reddit.com/r/dns/.rss', { key: 'reddit:posts', label: 'Posts' }],
+      ['https://old.reddit.com/r/emacs.rss', { key: 'reddit:posts', label: 'Posts' }],
+      ['https://old.reddit.com/r/OpenAI/top/.rss?t=month', { key: 'reddit:posts', label: 'Posts' }],
+      ['https://old.reddit.com/r/devops/top/.rss', { key: 'reddit:posts', label: 'Posts' }],
+      ['https://old.reddit.com/user/feathj/.rss', { key: 'reddit:posts', label: 'Posts' }],
+      ['https://old.reddit.com/domain/github.com/.rss', { key: 'reddit:posts', label: 'Posts' }],
+      [
+        'https://old.reddit.com/r/ansible/comments/y7v2ed/.rss',
+        { key: 'reddit:post-comments', label: 'Post comments' },
+      ],
+      [
+        'https://old.reddit.com/user/spez/comments/abc123/.rss',
+        { key: 'reddit:post-comments', label: 'Post comments' },
+      ],
+      [
+        'https://old.reddit.com/r/programming/search.rss?q=rust&restrict_sr=on',
+        { key: 'reddit:search', label: 'Search' },
+      ],
+      [
+        'https://old.reddit.com/r/problemgambling/wiki/index.rss',
+        { key: 'reddit:wiki', label: 'Wiki' },
+      ],
+      ['https://old.reddit.com/subreddits/.rss', { key: 'reddit:subreddits', label: 'Subreddits' }],
+      [
+        'https://old.reddit.com/subreddits/new/.rss',
+        { key: 'reddit:subreddits', label: 'Subreddits' },
+      ],
+      [
+        'https://old.reddit.com/user/Darkskynet/submitted/.rss',
+        { key: 'reddit:user-submitted', label: 'Submitted' },
+      ],
+      [
+        'https://old.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss',
+        { key: 'reddit:multireddit', label: 'Multireddit' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

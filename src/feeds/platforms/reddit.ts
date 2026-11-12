@@ -83,8 +83,8 @@ const feeds = definePlatformFeeds(
     { key: 'reddit:posts', template: 'https://www.reddit.com/{sort}/.rss?t={timeframe}' },
     { key: 'reddit:posts', template: 'https://www.reddit.com/{sort}/.rss' },
     { key: 'reddit:posts', template: 'https://www.reddit.com/.rss' },
-    // The same feeds on old. and new., which the page parser reads as pages. They sit below every
-    // www row, so `resolve` builds on www.
+    // The same feeds on old. and new., which the page parser reads as pages. `resolve` passes no
+    // `host`, so it builds on www.
     {
       key: 'reddit:search',
       template: 'https://{host}/r/{subreddit}/search.rss?q={query}&restrict_sr=on',
@@ -104,7 +104,6 @@ const feeds = definePlatformFeeds(
     { key: 'reddit:user-comments', template: 'https://{host}/user/{username}/comments/.rss' },
     { key: 'reddit:subreddits', template: 'https://{host}/subreddits/{sort}/.rss' },
     { key: 'reddit:subreddits', template: 'https://{host}/subreddits/.rss' },
-    { key: 'reddit:posts', template: 'https://{host}/r/{subreddit}/{sort}/.rss?t={timeframe}' },
     { key: 'reddit:posts', template: 'https://{host}/r/{subreddit}/{sort}/.rss' },
     { key: 'reddit:posts', template: 'https://{host}/r/{subreddit}/.rss' },
     { key: 'reddit:posts', template: 'https://{host}/r/{subreddit}.rss' },
