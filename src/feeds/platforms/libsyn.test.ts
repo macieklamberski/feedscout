@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type LibsynUrl, libsynHandler, parseLibsynUrl } from './libsyn.js'
 
 describe('parseLibsynUrl', () => {
@@ -13,7 +16,7 @@ describe('parseLibsynUrl', () => {
   })
 
   it('should return the podcast for a show subdomain', () => {
-    const expected: LibsynUrl = { kind: 'podcast' }
+    const expected: LibsynUrl = { kind: 'podcast', slug: 'myshow' }
 
     expect(parseLibsynUrl('https://myshow.libsyn.com/')).toEqual(expected)
   })
@@ -99,6 +102,106 @@ describe('libsynHandler', () => {
       const value = 'https://feeds.libsyn.com/something-non-numeric'
 
       expect(libsynHandler.resolve(value)).toEqual([])
+    })
+
+    it('should return https feed URL for an http podcast page', () => {
+      const value = 'http://alice.libsyn.com/website'
+      const expected = [
+        {
+          uri: 'https://alice.libsyn.com/rss',
+          hint: { key: 'libsyn:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(libsynHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the podcast key for a show feed', () => {
+      const value = 'https://feeds.libsyn.com/12345/rss'
+      const expected = 'libsyn:podcast'
+
+      expect(libsynHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a show feed over http', () => {
+      const value = 'http://feeds.libsyn.com/12345/rss'
+      const expected = 'libsyn:podcast'
+
+      expect(libsynHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a podcast feed', () => {
+      const value = 'https://alice.libsyn.com/rss'
+      const expected = 'libsyn:podcast'
+
+      expect(libsynHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a podcast feed with a trailing slash', () => {
+      const value = 'https://alice.libsyn.com/rss/'
+      const expected = 'libsyn:podcast'
+
+      expect(libsynHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a podcast page', () => {
+      const value = 'https://alice.libsyn.com/website'
+
+      expect(libsynHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a show page without the feed path', () => {
+      const value = 'https://feeds.libsyn.com/12345'
+
+      expect(libsynHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the feeds host feed path', () => {
+      const value = 'https://feeds.libsyn.com/rss'
+
+      expect(libsynHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path under a non-numeric show', () => {
+      const value = 'https://feeds.libsyn.com/about/rss'
+
+      expect(libsynHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on a nested subdomain', () => {
+      const value = 'https://blog.alice.libsyn.com/rss'
+
+      expect(libsynHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/rss'
+
+      expect(libsynHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const hint: DiscoverUriHint = { key: 'libsyn:podcast', label: 'Podcast' }
+    const values = [
+      'https://feeds.libsyn.com/12345/rss',
+      'http://feeds.libsyn.com/12345/rss',
+      'https://alice.libsyn.com/rss',
+      'https://alice.libsyn.com/rss/',
+      'http://alice.libsyn.com/rss',
+    ]
+
+    it.each(values)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [libsynHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

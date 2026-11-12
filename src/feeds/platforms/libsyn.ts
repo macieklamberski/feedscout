@@ -1,16 +1,24 @@
 import { getPathSegments, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex, getTenantSubdomain } from '../../common/utils.js'
+import { digitsRegex, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type LibsynUrl = { kind: 'feed'; showId: string } | { kind: 'podcast' }
+export type LibsynUrl = { kind: 'feed'; showId: string } | { kind: 'podcast'; slug: string }
 
 const domains = ['libsyn.com']
 const feedHosts = ['feeds.libsyn.com']
 
+const feeds = definePlatformFeeds([
+  { key: 'libsyn:podcast', template: 'https://feeds.libsyn.com/{showId}/rss' },
+  { key: 'libsyn:podcast', template: 'https://{slug}.libsyn.com/rss' },
+])
+
 export const parseLibsynUrl = (url: string): LibsynUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  const slug = getTenantSubdomain(url, domains)
+
+  if (!slug) {
     return
   }
 
@@ -26,7 +34,7 @@ export const parseLibsynUrl = (url: string): LibsynUrl | undefined => {
     return { kind: 'feed', showId }
   }
 
-  return { kind: 'podcast' }
+  return { kind: 'podcast', slug }
 }
 
 export const libsynHandler: PlatformHandler = {
@@ -42,16 +50,19 @@ export const libsynHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'feed') {
-      return [
-        {
-          uri: `https://feeds.libsyn.com/${parsed.showId}/rss`,
-          hint: composeHint('libsyn:podcast'),
-        },
-      ]
+      return [feeds.getFeedEntry('libsyn:podcast', { showId: parsed.showId })]
     }
 
-    const { origin } = new URL(url)
+    return [feeds.getFeedEntry('libsyn:podcast', { slug: parsed.slug })]
+  },
 
-    return [{ uri: `${origin}/rss`, hint: composeHint('libsyn:podcast') }]
+  // The table reads any subdomain as a show, so the page parser refuses feeds.libsyn.com/rss,
+  // which answers 404, and a feeds host path without a numeric show ID.
+  getFeedKey: (url) => {
+    if (!parseLibsynUrl(url)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
