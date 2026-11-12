@@ -102,57 +102,57 @@ describe('nethouseHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the news key for the news feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the news hint for the news feed', () => {
       const value = 'https://alice.nethouse.ru/posts/rss'
-      const expected = 'nethouse:news'
+      const expected: DiscoverUriHint = { key: 'nethouse:news', label: 'News' }
 
-      expect(nethouseHandler.getFeedKey?.(value)).toBe(expected)
+      expect(nethouseHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the articles key for the articles feed', () => {
+    it('should return the articles hint for the articles feed', () => {
       const value = 'https://alice.nethouse.ru/articles/rss'
-      const expected = 'nethouse:articles'
+      const expected: DiscoverUriHint = { key: 'nethouse:articles', label: 'Articles' }
 
-      expect(nethouseHandler.getFeedKey?.(value)).toBe(expected)
+      expect(nethouseHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the news key for the news feed on nethouse.me', () => {
+    it('should return the news hint for the news feed on nethouse.me', () => {
       const value = 'https://alice.nethouse.me/posts/rss'
-      const expected = 'nethouse:news'
+      const expected: DiscoverUriHint = { key: 'nethouse:news', label: 'News' }
 
-      expect(nethouseHandler.getFeedKey?.(value)).toBe(expected)
+      expect(nethouseHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the articles key for the articles feed over http', () => {
+    it('should return the articles hint for the articles feed over http', () => {
       const value = 'http://alice.nethouse.ru/articles/rss'
-      const expected = 'nethouse:articles'
+      const expected: DiscoverUriHint = { key: 'nethouse:articles', label: 'Articles' }
 
-      expect(nethouseHandler.getFeedKey?.(value)).toBe(expected)
+      expect(nethouseHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a page of a site', () => {
       const value = 'https://alice.nethouse.ru/articles/223023'
 
-      expect(nethouseHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(nethouseHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the platform site', () => {
       const value = 'https://www.nethouse.ru/posts/rss'
 
-      expect(nethouseHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(nethouseHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on a nested subdomain', () => {
       const value = 'https://shop.alice.nethouse.ru/posts/rss'
 
-      expect(nethouseHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(nethouseHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the news feed of a custom domain', () => {
       const value = 'https://example.com/posts/rss'
 
-      expect(nethouseHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(nethouseHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

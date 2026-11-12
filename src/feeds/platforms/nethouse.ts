@@ -59,5 +59,5 @@ export const nethouseHandler: PlatformHandler = {
     ]
   },
 
-  getFeedKey: tenantFeeds.getFeedKey,
+  getFeedHint: tenantFeeds.getFeedHint,
 }
