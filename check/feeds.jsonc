@@ -1489,7 +1489,6 @@
     ],
     "redmine:project-news": "https://www.redmine.org/projects/redmine/news.atom",
     "redmine:projects": "https://www.redmine.org/projects.atom",
-    "redmine:revision-changes": "https://saxonica.plan.io/projects/saxon/repository/he/changes.atom?rev=fc6b1e6585191692c6dd739320203592fcd7e9ee",
     "redmine:revisions": "https://www.redmine.org/projects/redmine/repository/svn/revisions.atom"
   },
   "reformal": {

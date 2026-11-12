@@ -763,7 +763,7 @@ describe('redmineHandler', () => {
       ],
       [
         'https://example.plan.io/projects/acme/repository/main/changes.atom?rev=a1b2c3d4',
-        { key: 'redmine:revision-changes', label: 'Revision changes' },
+        { key: 'redmine:changes', label: 'Repository changes' },
       ],
       [
         'https://example.plan.io/projects/acme/boards.atom',
@@ -865,7 +865,7 @@ describe('redmineHandler', () => {
       ],
       [
         'https://example.plan.io/projects/acme/repository/main/changes.atom?rev=a1b2c3d4',
-        { key: 'redmine:revision-changes', label: 'Revision changes' },
+        { key: 'redmine:changes', label: 'Repository changes' },
       ],
       [
         'https://example.plan.io/projects/acme/boards.atom',

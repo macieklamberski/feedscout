@@ -75,16 +75,11 @@ const feeds = definePlatformFeeds(
       key: 'redmine:revisions',
       template: '{scheme}://{host}/projects/{project}/repository/{repository}/revisions.atom',
     },
-    // A repository's changes, a revision's changes and a project's forums are linked from pages the
-    // handler does not read, so these rows only claim.
+    // A repository's changes, also as of a revision with `?rev=`, and a project's forums are linked
+    // from pages the handler does not read, so these rows only claim.
     {
       key: 'redmine:changes',
       template: '{scheme}://{host}/projects/{project}/repository/{repository}/changes.atom',
-    },
-    {
-      key: 'redmine:revision-changes',
-      template:
-        '{scheme}://{host}/projects/{project}/repository/{repository}/changes.atom?rev={revision}',
     },
     { key: 'redmine:boards', template: '{scheme}://{host}/projects/{project}/boards.atom' },
   ],
