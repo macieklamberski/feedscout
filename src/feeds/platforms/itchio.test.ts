@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type ItchioUrl, itchioHandler, parseItchioUrl } from './itchio.js'
 
 describe('parseItchioUrl', () => {
@@ -80,8 +83,8 @@ describe('parseItchioUrl', () => {
     expect(parseItchioUrl('https://itch.io/tools')).toEqual(expected)
   })
 
-  it('should return the home page with its path for any other page', () => {
-    const expected: ItchioUrl = { kind: 'home', path: '/' }
+  it('should return the home page for any other page', () => {
+    const expected: ItchioUrl = { kind: 'home' }
 
     expect(parseItchioUrl('https://itch.io/')).toEqual(expected)
   })
@@ -111,13 +114,13 @@ describe('parseItchioUrl', () => {
   })
 
   it('should return the home page for a sort word with another suffix', () => {
-    const expected: ItchioUrl = { kind: 'home', path: '/games/newest.html' }
+    const expected: ItchioUrl = { kind: 'home' }
 
     expect(parseItchioUrl('https://itch.io/games/newest.html')).toEqual(expected)
   })
 
   it('should return the home page for a section word with another suffix', () => {
-    const expected: ItchioUrl = { kind: 'home', path: '/tools.html' }
+    const expected: ItchioUrl = { kind: 'home' }
 
     expect(parseItchioUrl('https://itch.io/tools.html')).toEqual(expected)
   })
@@ -234,18 +237,6 @@ describe('itchioHandler', () => {
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return games-by-user feed for by-username feed URL', () => {
-      const value = 'https://itch.io/games/by-alice.xml'
-      const expected = [
-        {
-          uri: 'https://itch.io/games/by-alice.xml',
-          hint: { key: 'itchio:games', label: 'Games' },
-        },
-      ]
-
-      expect(itchioHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should return tag feed for tag path', () => {
       const value = 'https://itch.io/games/tag-horror'
       const expected = [
@@ -260,18 +251,6 @@ describe('itchioHandler', () => {
 
     it('should return tag feed for tag path with a capitalized games segment', () => {
       const value = 'https://itch.io/Games/tag-horror'
-      const expected = [
-        {
-          uri: 'https://itch.io/games/tag-horror.xml',
-          hint: { key: 'itchio:tag', label: 'Tag' },
-        },
-      ]
-
-      expect(itchioHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return tag feed for tag feed URL', () => {
-      const value = 'https://itch.io/games/tag-horror.xml'
       const expected = [
         {
           uri: 'https://itch.io/games/tag-horror.xml',
@@ -489,18 +468,6 @@ describe('itchioHandler', () => {
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return games feed for /games feed URL', () => {
-      const value = 'https://itch.io/games.xml'
-      const expected = [
-        {
-          uri: 'https://itch.io/games.xml',
-          hint: { key: 'itchio:games', label: 'Games' },
-        },
-      ]
-
-      expect(itchioHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should return devlogs feed for /devlogs path', () => {
       const value = 'https://itch.io/devlogs'
       const expected = [
@@ -523,18 +490,6 @@ describe('itchioHandler', () => {
       const value = 'https://itch.io/devlogs/'
       const expected = [
         { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
-      ]
-
-      expect(itchioHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return devlogs feed for /devlogs feed URL', () => {
-      const value = 'https://itch.io/devlogs.xml'
-      const expected = [
-        {
-          uri: 'https://itch.io/devlogs.xml',
-          hint: { key: 'itchio:devlogs', label: 'Devlogs' },
-        },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -613,65 +568,230 @@ describe('itchioHandler', () => {
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
+  })
 
-    it('should return featured feed for featured feed URL', () => {
-      const value = 'https://itch.io/feed/featured.xml'
-      const expected = [
-        {
-          uri: 'https://itch.io/feed/featured.xml',
-          hint: { key: 'itchio:featured', label: 'Featured' },
-        },
-      ]
+  describe('getFeedKey', () => {
+    it('should return the devlog key for a game devlog feed', () => {
+      const value = 'https://alice.itch.io/x-moon/devlog.rss'
+      const expected = 'itchio:devlog'
 
-      expect(itchioHandler.resolve(value)).toEqual(expected)
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
     })
 
-    it('should return lowercase featured feed for a capitalized featured feed URL', () => {
-      const value = 'https://itch.io/Feed/Featured.xml'
-      const expected = [
-        {
-          uri: 'https://itch.io/feed/featured.xml',
-          hint: { key: 'itchio:featured', label: 'Featured' },
-        },
-      ]
+    it('should return the games key for a creator games feed', () => {
+      const value = 'https://itch.io/games/by-alice.xml'
+      const expected = 'itchio:games'
 
-      expect(itchioHandler.resolve(value)).toEqual(expected)
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
     })
 
-    it('should return new feed for new feed URL', () => {
-      const value = 'https://itch.io/feed/new.xml'
-      const expected = [
-        {
-          uri: 'https://itch.io/feed/new.xml',
-          hint: { key: 'itchio:new', label: 'New' },
-        },
-      ]
+    it('should return the tag key for a tag feed', () => {
+      const value = 'https://itch.io/games/tag-horror.xml'
+      const expected = 'itchio:tag'
 
-      expect(itchioHandler.resolve(value)).toEqual(expected)
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
     })
 
-    it('should return sales feed for sales feed URL', () => {
-      const value = 'https://itch.io/feed/sales.xml'
-      const expected = [
-        {
-          uri: 'https://itch.io/feed/sales.xml',
-          hint: { key: 'itchio:sales', label: 'Sales' },
-        },
-      ]
+    it('should return the tag key for a tag feed on www', () => {
+      const value = 'https://www.itch.io/games/tag-horror.xml'
+      const expected = 'itchio:tag'
 
-      expect(itchioHandler.resolve(value)).toEqual(expected)
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
     })
 
-    it('should return blog feed for blog feed URL', () => {
+    it('should return the platform key for a platform feed', () => {
+      const value = 'https://itch.io/games/platform-web.xml'
+      const expected = 'itchio:platform'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the genre key for a genre feed', () => {
+      const value = 'https://itch.io/games/genre-puzzle.xml'
+      const expected = 'itchio:genre'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the made-with key for a made-with feed', () => {
+      const value = 'https://itch.io/games/made-with-unity.xml'
+      const expected = 'itchio:made-with'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the games key for a sorted games feed', () => {
+      const value = 'https://itch.io/games/newest.xml'
+      const expected = 'itchio:games'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the games key for the games feed', () => {
+      const value = 'https://itch.io/games.xml'
+      const expected = 'itchio:games'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the games key for a listing feed with two filters', () => {
+      const value = 'https://itch.io/games/newest/tag-horror.xml'
+      const expected = 'itchio:games'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the games key for a listing feed with a creator filter', () => {
+      const value = 'https://itch.io/games/newest/by-alice.xml'
+      const expected = 'itchio:games'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the games key for a listing feed with a capitalized games segment', () => {
+      const value = 'https://itch.io/Games/newest/tag-horror.xml'
+      const expected = 'itchio:games'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the games key for a listing feed with a trailing slash', () => {
+      const value = 'https://itch.io/games/newest/tag-horror.xml/'
+      const expected = 'itchio:games'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the section key for a section feed', () => {
+      const value = 'https://itch.io/tools.xml'
+      const expected = 'itchio:section'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the section key for a section feed with a trailing slash', () => {
+      const value = 'https://itch.io/tools.xml/'
+      const expected = 'itchio:section'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the devlogs key for the devlogs feed', () => {
+      const value = 'https://itch.io/devlogs.xml'
+      const expected = 'itchio:devlogs'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for the blog feed', () => {
       const value = 'https://itch.io/blog.rss'
-      const expected = [
-        {
-          uri: 'https://itch.io/blog.rss',
-          hint: { key: 'itchio:blog', label: 'Blog' },
-        },
-      ]
+      const expected = 'itchio:blog'
 
-      expect(itchioHandler.resolve(value)).toEqual(expected)
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the featured key for the featured feed', () => {
+      const value = 'https://itch.io/feed/featured.xml'
+      const expected = 'itchio:featured'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the featured key for a capitalized featured feed', () => {
+      const value = 'https://itch.io/Feed/Featured.xml'
+      const expected = 'itchio:featured'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the new key for the new feed', () => {
+      const value = 'https://itch.io/feed/new.xml'
+      const expected = 'itchio:new'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the sales key for the sales feed', () => {
+      const value = 'https://itch.io/feed/sales.xml'
+      const expected = 'itchio:sales'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for the sitemap', () => {
+      const value = 'https://itch.io/sitemap.xml'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a listing page', () => {
+      const value = 'https://itch.io/games/newest/tag-horror'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a game page', () => {
+      const value = 'https://alice.itch.io/x-moon'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a devlog feed on a nested subdomain', () => {
+      const value = 'https://a.b.itch.io/x-moon/devlog.rss'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a listing feed path on a creator subdomain', () => {
+      const value = 'https://alice.itch.io/games/newest/tag-horror.xml'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a listing feed path on another host', () => {
+      const value = 'https://example.com/games/newest/tag-horror.xml'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an invalid URL', () => {
+      const value = 'not-a-url'
+
+      expect(itchioHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://alice.itch.io/x-moon/devlog.rss', { key: 'itchio:devlog', label: 'Devlog' }],
+      ['https://itch.io/games/by-alice.xml', { key: 'itchio:games', label: 'Games' }],
+      ['https://itch.io/games/tag-horror.xml', { key: 'itchio:tag', label: 'Tag' }],
+      ['https://itch.io/games/platform-web.xml', { key: 'itchio:platform', label: 'Platform' }],
+      ['https://itch.io/games/genre-puzzle.xml', { key: 'itchio:genre', label: 'Genre' }],
+      [
+        'https://itch.io/games/made-with-unity.xml',
+        { key: 'itchio:made-with', label: 'Made with' },
+      ],
+      ['https://itch.io/games/newest.xml', { key: 'itchio:games', label: 'Games' }],
+      ['https://itch.io/games.xml', { key: 'itchio:games', label: 'Games' }],
+      ['https://itch.io/games/newest/tag-horror.xml', { key: 'itchio:games', label: 'Games' }],
+      ['https://itch.io/tools.xml', { key: 'itchio:section', label: 'Section' }],
+      ['https://itch.io/devlogs.xml', { key: 'itchio:devlogs', label: 'Devlogs' }],
+      ['https://itch.io/blog.rss', { key: 'itchio:blog', label: 'Blog' }],
+      ['https://itch.io/feed/featured.xml', { key: 'itchio:featured', label: 'Featured' }],
+      ['https://itch.io/feed/new.xml', { key: 'itchio:new', label: 'New' }],
+      ['https://itch.io/feed/sales.xml', { key: 'itchio:sales', label: 'Sales' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [itchioHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
