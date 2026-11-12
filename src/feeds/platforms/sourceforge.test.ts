@@ -223,162 +223,182 @@ describe('sourceforgeHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the activity key for an activity feed', () => {
       const value = 'https://sourceforge.net/p/passwordsafe/activity/feed'
-      const expected = 'sourceforge:activity'
+      const expected: DiscoverUriHint = { key: 'sourceforge:activity', label: 'Recent activity' }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the project feed key for a project feed', () => {
       const value = 'https://sourceforge.net/p/passwordsafe/feed'
-      const expected = 'sourceforge:project-feed'
+      const expected: DiscoverUriHint = { key: 'sourceforge:project-feed', label: 'Project feed' }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the project feed key for a project feed with an rss extension', () => {
       const value = 'https://sourceforge.net/p/freedos/feed.rss'
-      const expected = 'sourceforge:project-feed'
+      const expected: DiscoverUriHint = { key: 'sourceforge:project-feed', label: 'Project feed' }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the project feed key for a project feed with an atom extension', () => {
       const value = 'https://sourceforge.net/p/openlte/feed.atom'
-      const expected = 'sourceforge:project-feed'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:project-feed',
+        label: 'Project feed',
+        format: 'atom',
+      }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the files key for a files feed', () => {
       const value = 'https://sourceforge.net/projects/expect/rss'
-      const expected = 'sourceforge:files'
+      const expected: DiscoverUriHint = { key: 'sourceforge:files', label: 'File releases' }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the files key for a files feed of one folder', () => {
       const value = 'https://sourceforge.net/projects/expect/rss?path=%2FExpect'
-      const expected = 'sourceforge:files'
+      const expected: DiscoverUriHint = { key: 'sourceforge:files', label: 'File releases' }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the news key for a news rss feed', () => {
       const value = 'https://sourceforge.net/p/clonezilla/news/feed.rss'
-      const expected = 'sourceforge:news'
+      const expected: DiscoverUriHint = { key: 'sourceforge:news', label: 'News', format: 'rss' }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the news key for a news feed without an extension', () => {
       const value = 'https://sourceforge.net/p/jabref/news/feed'
-      const expected = 'sourceforge:news'
+      const expected: DiscoverUriHint = { key: 'sourceforge:news', label: 'News', format: 'rss' }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the news key for a news atom feed', () => {
       const value = 'https://sourceforge.net/p/xblast/news/feed.atom'
-      const expected = 'sourceforge:news'
+      const expected: DiscoverUriHint = { key: 'sourceforge:news', label: 'News', format: 'atom' }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the discussion key for a discussion rss feed', () => {
       const value = 'https://sourceforge.net/p/hsqldb/discussion/feed'
-      const expected = 'sourceforge:discussion'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:discussion',
+        label: 'Discussion',
+        format: 'rss',
+      }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the discussion key for a discussion atom feed', () => {
       const value = 'https://sourceforge.net/p/hsqldb/discussion/feed.atom'
-      const expected = 'sourceforge:discussion'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:discussion',
+        label: 'Discussion',
+        format: 'atom',
+      }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the bugs key for a bugs feed', () => {
       const value = 'https://sourceforge.net/p/hsqldb/bugs/feed'
-      const expected = 'sourceforge:bugs'
+      const expected: DiscoverUriHint = { key: 'sourceforge:bugs', label: 'Bugs' }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the activity key for an activity feed with an rss extension', () => {
       const value = 'https://sourceforge.net/p/hsqldb/activity/feed.rss'
-      const expected = 'sourceforge:activity'
+      const expected: DiscoverUriHint = { key: 'sourceforge:activity', label: 'Recent activity' }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the activity key for an activity feed with an atom extension', () => {
       const value = 'https://sourceforge.net/p/hsqldb/activity/feed.atom'
-      const expected = 'sourceforge:activity'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:activity',
+        label: 'Recent activity',
+        format: 'atom',
+      }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the discussion key for a discussion feed with an rss extension', () => {
       const value = 'https://sourceforge.net/p/hsqldb/discussion/feed.rss'
-      const expected = 'sourceforge:discussion'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:discussion',
+        label: 'Discussion',
+        format: 'rss',
+      }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the bugs key for a bugs feed with an rss extension', () => {
       const value = 'https://sourceforge.net/p/hsqldb/bugs/feed.rss'
-      const expected = 'sourceforge:bugs'
+      const expected: DiscoverUriHint = { key: 'sourceforge:bugs', label: 'Bugs' }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the bugs key for a bugs feed with an atom extension', () => {
       const value = 'https://sourceforge.net/p/hsqldb/bugs/feed.atom'
-      const expected = 'sourceforge:bugs'
+      const expected: DiscoverUriHint = { key: 'sourceforge:bugs', label: 'Bugs', format: 'atom' }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the activity key for an activity feed over http', () => {
       const value = 'http://sourceforge.net/p/hsqldb/activity/feed'
-      const expected = 'sourceforge:activity'
+      const expected: DiscoverUriHint = { key: 'sourceforge:activity', label: 'Recent activity' }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the files key for a files feed on the www host', () => {
       const value = 'https://www.sourceforge.net/projects/hsqldb/rss'
-      const expected = 'sourceforge:files'
+      const expected: DiscoverUriHint = { key: 'sourceforge:files', label: 'File releases' }
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a project page', () => {
       const value = 'https://sourceforge.net/projects/hsqldb'
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sourceforgeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a discussion thread feed', () => {
       const value = 'https://sourceforge.net/p/hsqldb/discussion/708858/thread/f4155d65/feed.rss'
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sourceforgeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/p/hsqldb/activity/feed'
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sourceforgeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an invalid URL', () => {
       const value = 'not a url'
 
-      expect(sourceforgeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sourceforgeHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
@@ -394,7 +414,7 @@ describe('sourceforgeHandler', () => {
       ],
       [
         'https://sourceforge.net/p/openlte/feed.atom',
-        { key: 'sourceforge:project-feed', label: 'Project feed' },
+        { key: 'sourceforge:project-feed', label: 'Project feed', format: 'atom' },
       ],
       [
         'http://sourceforge.net/projects/hsqldb/rss',
@@ -404,19 +424,25 @@ describe('sourceforgeHandler', () => {
         'https://sourceforge.net/projects/expect/rss?path=%2FExpect',
         { key: 'sourceforge:files', label: 'File releases' },
       ],
-      ['http://sourceforge.net/p/hsqldb/news/feed.rss', { key: 'sourceforge:news', label: 'News' }],
-      ['https://sourceforge.net/p/jabref/news/feed', { key: 'sourceforge:news', label: 'News' }],
+      [
+        'http://sourceforge.net/p/hsqldb/news/feed.rss',
+        { key: 'sourceforge:news', label: 'News', format: 'rss' },
+      ],
+      [
+        'https://sourceforge.net/p/jabref/news/feed',
+        { key: 'sourceforge:news', label: 'News', format: 'rss' },
+      ],
       [
         'http://sourceforge.net/p/hsqldb/news/feed.atom',
-        { key: 'sourceforge:news', label: 'News' },
+        { key: 'sourceforge:news', label: 'News', format: 'atom' },
       ],
       [
         'http://sourceforge.net/p/hsqldb/discussion/feed',
-        { key: 'sourceforge:discussion', label: 'Discussion' },
+        { key: 'sourceforge:discussion', label: 'Discussion', format: 'rss' },
       ],
       [
         'http://sourceforge.net/p/hsqldb/discussion/feed.atom',
-        { key: 'sourceforge:discussion', label: 'Discussion' },
+        { key: 'sourceforge:discussion', label: 'Discussion', format: 'atom' },
       ],
       ['http://sourceforge.net/p/hsqldb/bugs/feed', { key: 'sourceforge:bugs', label: 'Bugs' }],
       [
@@ -425,16 +451,16 @@ describe('sourceforgeHandler', () => {
       ],
       [
         'http://sourceforge.net/p/hsqldb/activity/feed.atom',
-        { key: 'sourceforge:activity', label: 'Recent activity' },
+        { key: 'sourceforge:activity', label: 'Recent activity', format: 'atom' },
       ],
       [
         'http://sourceforge.net/p/hsqldb/discussion/feed.rss',
-        { key: 'sourceforge:discussion', label: 'Discussion' },
+        { key: 'sourceforge:discussion', label: 'Discussion', format: 'rss' },
       ],
       ['http://sourceforge.net/p/hsqldb/bugs/feed.rss', { key: 'sourceforge:bugs', label: 'Bugs' }],
       [
         'http://sourceforge.net/p/hsqldb/bugs/feed.atom',
-        { key: 'sourceforge:bugs', label: 'Bugs' },
+        { key: 'sourceforge:bugs', label: 'Bugs', format: 'atom' },
       ],
     ]
 

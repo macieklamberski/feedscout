@@ -112,5 +112,5 @@ export const sourceforgeHandler: PlatformHandler = {
     ]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
