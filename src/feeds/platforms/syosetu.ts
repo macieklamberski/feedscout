@@ -9,24 +9,35 @@ import { digitsRegex, formatSuffixRegex } from '../../common/utils.js'
 export type SyosetuUrl = { kind: 'writer'; writerId: string }
 
 const hosts = ['mypage.syosetu.com']
+const adultHosts = ['xmypage.syosetu.com']
 
 const writerRegex = /^\/(?<writerId>[^/]+)/
+// An adult-site writer id is x, digits and a letter, such as x5287p.
+const adultWriterIdRegex = /^x\d+[a-z]+$/i
 
 const feeds = definePlatformFeeds([
   { key: 'syosetu:author', template: 'https://api.syosetu.com/writernovel/{writerId}.Atom' },
   { key: 'syosetu:activity', template: 'https://api.syosetu.com/writer/{writerId}.Atom' },
+  { key: 'syosetu:all-novels', template: 'https://api.syosetu.com/allnovel.Atom' },
 ])
 
 export const parseSyosetuUrl = (url: string): SyosetuUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!parsedUrl) {
+    return
+  }
+
+  const isAdultHost = isHostOf(parsedUrl, adultHosts)
+
+  if (!isAdultHost && !isHostOf(parsedUrl, hosts)) {
     return
   }
 
   const writerId = parsedUrl.pathname.match(writerRegex)?.groups?.writerId
+  const writerIdRegex = isAdultHost ? adultWriterIdRegex : digitsRegex
 
-  if (!writerId || !digitsRegex.test(writerId)) {
+  if (!writerId || !writerIdRegex.test(writerId)) {
     return
   }
 
@@ -51,15 +62,20 @@ export const syosetuHandler: PlatformHandler = {
     ]
   },
 
-  // The page parser builds feeds only for a digits writer id, so a feed URL with another id gets
-  // no key.
+  // The page parser builds writer feeds only for a digits or adult-site writer id, so a writer
+  // feed URL with another id gets no key.
   getFeedHint: (url) => {
-    const writerId = getPathSegments(url).at(-1)?.replace(formatSuffixRegex, '')
+    const hint = feeds.getFeedHint(url)
+    const writerId = getPathSegments(url).at(-1)?.replace(formatSuffixRegex, '') ?? ''
 
-    if (!writerId || !digitsRegex.test(writerId)) {
+    if (hint?.key === 'syosetu:all-novels') {
+      return hint
+    }
+
+    if (!digitsRegex.test(writerId) && !adultWriterIdRegex.test(writerId)) {
       return
     }
 
-    return feeds.getFeedHint(url)
+    return hint
   },
 }

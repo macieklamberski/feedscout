@@ -1799,16 +1799,17 @@ Discovers the feeds of a Togetter curator or the site-wide news and popular feed
 
 ### Syosetu
 
-Discovers the Atom feeds of a Syosetu author.
+Discovers the Atom feeds of a Syosetu author, on the main site and the adult site.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `mypage.syosetu.com/{writerId}` | Author novels<sup>†</sup> · activity (Atom) |
+| `xmypage.syosetu.com/{writerId}` | Author novels · activity (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
 > [!NOTE]
-> There is no per-work feed, and a novel URL carries an ncode rather than the numeric writer id, so only an author page resolves.
+> There is no per-work feed, and a novel URL carries an ncode rather than the writer id, so only an author page resolves.
 
 ### Cnblogs
 

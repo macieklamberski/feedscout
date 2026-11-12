@@ -1702,8 +1702,15 @@
     ]
   },
   "syosetu": {
-    "syosetu:activity": "https://api.syosetu.com/writer/372556.Atom",
-    "syosetu:author": "https://api.syosetu.com/writernovel/372556.Atom"
+    "syosetu:activity": [
+      "https://api.syosetu.com/writer/372556.Atom",
+      "https://api.syosetu.com/writer/x5287p.Atom"
+    ],
+    "syosetu:all-novels": "https://api.syosetu.com/allnovel.Atom",
+    "syosetu:author": [
+      "https://api.syosetu.com/writernovel/372556.Atom",
+      "https://api.syosetu.com/writernovel/x5287p.Atom"
+    ]
   },
   "talentsoft": {
     "talentsoft:offers": [
