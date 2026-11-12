@@ -152,83 +152,83 @@ describe('eklablogHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for a posts feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a posts feed', () => {
       const value = 'https://alice.eklablog.com/rss'
-      const expected = 'eklablog:posts'
+      const expected: DiscoverUriHint = { key: 'eklablog:posts', label: 'Posts' }
 
-      expect(eklablogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the comments key for a comments feed', () => {
+    it('should return the comments hint for a comments feed', () => {
       const value = 'https://alice.eklablog.com/rss/comments'
-      const expected = 'eklablog:comments'
+      const expected: DiscoverUriHint = { key: 'eklablog:comments', label: 'Comments' }
 
-      expect(eklablogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an http posts feed', () => {
+    it('should return the posts hint for an http posts feed', () => {
       const value = 'http://alice.eklablog.fr/rss'
-      const expected = 'eklablog:posts'
+      const expected: DiscoverUriHint = { key: 'eklablog:posts', label: 'Posts' }
 
-      expect(eklablogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the comments key for an http comments feed', () => {
+    it('should return the comments hint for an http comments feed', () => {
       const value = 'http://alice.eklablog.fr/rss/comments'
-      const expected = 'eklablog:comments'
+      const expected: DiscoverUriHint = { key: 'eklablog:comments', label: 'Comments' }
 
-      expect(eklablogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a feed on another domain', () => {
+    it('should return the posts hint for a feed on another domain', () => {
       const value = 'https://example.ek.la/rss'
-      const expected = 'eklablog:posts'
+      const expected: DiscoverUriHint = { key: 'eklablog:posts', label: 'Posts' }
 
-      expect(eklablogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a feed with a trailing slash', () => {
+    it('should return the posts hint for a feed with a trailing slash', () => {
       const value = 'https://alice.eklablog.com/rss/'
-      const expected = 'eklablog:posts'
+      const expected: DiscoverUriHint = { key: 'eklablog:posts', label: 'Posts' }
 
-      expect(eklablogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://alice.eklablog.com/critique-en-serie-a129920826'
 
-      expect(eklablogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://eklablog.com/rss'
 
-      expect(eklablogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the www host', () => {
       const value = 'https://www.eklablog.com/rss'
 
-      expect(eklablogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the www subdomain of a blog', () => {
       const value = 'https://www.alice.eklablog.com/rss'
 
-      expect(eklablogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://blog.alice.eklablog.com/rss'
 
-      expect(eklablogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a custom domain', () => {
       const value = 'https://www.example.com/rss'
 
-      expect(eklablogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
