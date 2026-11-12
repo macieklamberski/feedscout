@@ -57,5 +57,5 @@ export const transistorHandler: PlatformHandler = {
     return [feeds.getFeedEntry('transistor:podcast', { slug: page.slug })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

@@ -149,43 +149,43 @@ describe('transistorHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the podcast key for a podcast feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for a podcast feed', () => {
       const value = 'https://feeds.transistor.fm/wearechildfree'
-      const expected = 'transistor:podcast'
+      const expected: DiscoverUriHint = { key: 'transistor:podcast', label: 'Podcast' }
 
-      expect(transistorHandler.getFeedKey?.(value)).toBe(expected)
+      expect(transistorHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a podcast feed with a dot in its slug', () => {
+    it('should return the podcast hint for a podcast feed with a dot in its slug', () => {
       const value = 'https://feeds.transistor.fm/alice.show'
-      const expected = 'transistor:podcast'
+      const expected: DiscoverUriHint = { key: 'transistor:podcast', label: 'Podcast' }
 
-      expect(transistorHandler.getFeedKey?.(value)).toBe(expected)
+      expect(transistorHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a show page', () => {
       const value = 'https://wearechildfree.transistor.fm/'
 
-      expect(transistorHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(transistorHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the feed host root', () => {
       const value = 'https://feeds.transistor.fm/'
 
-      expect(transistorHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(transistorHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a nested path on the feed host', () => {
       const value = 'https://feeds.transistor.fm/wearechildfree/episodes'
 
-      expect(transistorHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(transistorHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/wearechildfree'
 
-      expect(transistorHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(transistorHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
