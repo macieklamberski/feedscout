@@ -143,6 +143,18 @@ describe('hatenaFotolifeHandler', () => {
       expect(hatenaFotolifeHandler.resolve('https://f.hatena.ne.jp/alice/')).toEqual(expected)
     })
 
+    it('should return the https photos feed for an http user page', () => {
+      const value = 'http://f.hatena.ne.jp/alice/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://f.hatena.ne.jp/alice/rss',
+          hint: { key: 'hatena-fotolife:photos', label: 'Photos' },
+        },
+      ]
+
+      expect(hatenaFotolifeHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should escape a hyphen in the user of the photos feed', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
