@@ -10,6 +10,8 @@ const domains = ['pagecord.com']
 
 const feeds = definePlatformFeeds([
   { key: 'pagecord:blog', template: 'https://{blog}.pagecord.com/feed.xml' },
+  { key: 'pagecord:blog', template: 'https://{blog}.pagecord.com/feed' },
+  { key: 'pagecord:blog', template: 'https://{blog}.pagecord.com/feed.rss' },
 ])
 
 export const parsePagecordUrl = (url: string): PagecordUrl | undefined => {

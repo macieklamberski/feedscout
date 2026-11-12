@@ -107,6 +107,20 @@ describe('pagecordHandler', () => {
       expect(pagecordHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the blog key for the extensionless blog feed', () => {
+      const value = 'https://alice.pagecord.com/feed'
+      const expected = 'pagecord:blog'
+
+      expect(pagecordHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for the .rss blog feed', () => {
+      const value = 'https://alice.pagecord.com/feed.rss'
+      const expected = 'pagecord:blog'
+
+      expect(pagecordHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return undefined for a blog post', () => {
       const value = 'https://alice.pagecord.com/some-post-slug'
 
@@ -146,6 +160,8 @@ describe('pagecordHandler', () => {
         'https://alice.pagecord.com/feed.xml?tag=photography',
         { key: 'pagecord:blog', label: 'Blog' },
       ],
+      ['https://alice.pagecord.com/feed', { key: 'pagecord:blog', label: 'Blog' }],
+      ['https://alice.pagecord.com/feed.rss', { key: 'pagecord:blog', label: 'Blog' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
