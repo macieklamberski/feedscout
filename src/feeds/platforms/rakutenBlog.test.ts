@@ -70,37 +70,37 @@ describe('rakutenBlogHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for a posts feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a posts feed', () => {
       const value = 'https://api.plaza.rakuten.ne.jp/affiliatestaff/rss/'
-      const expected = 'rakuten-blog:posts'
+      const expected: DiscoverUriHint = { key: 'rakuten-blog:posts', label: 'Posts' }
 
-      expect(rakutenBlogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(rakutenBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a posts feed at the blog root on the feed host', () => {
+    it('should return the posts hint for a posts feed at the blog root on the feed host', () => {
       const value = 'https://api.plaza.rakuten.ne.jp/milkypinky/'
-      const expected = 'rakuten-blog:posts'
+      const expected: DiscoverUriHint = { key: 'rakuten-blog:posts', label: 'Posts' }
 
-      expect(rakutenBlogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(rakutenBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://plaza.rakuten.co.jp/affiliatestaff/diary/'
 
-      expect(rakutenBlogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(rakutenBlogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another path on the feed host', () => {
       const value = 'https://api.plaza.rakuten.ne.jp/affiliatestaff/diary/'
 
-      expect(rakutenBlogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(rakutenBlogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/affiliatestaff/rss/'
 
-      expect(rakutenBlogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(rakutenBlogHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

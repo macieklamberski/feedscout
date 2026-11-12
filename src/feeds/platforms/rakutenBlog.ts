@@ -45,5 +45,5 @@ export const rakutenBlogHandler: PlatformHandler = {
     return [feeds.getFeedEntry('rakuten-blog:posts', { username: parsed.username })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
