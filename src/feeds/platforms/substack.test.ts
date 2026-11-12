@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   getSubstackPage,
   parseSubstackUrl,
@@ -220,6 +223,94 @@ describe('substackHandler', () => {
 
     it('should return empty array for an apex URL without a profile path', () => {
       expect(substackHandler.resolve('https://substack.com/home')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    const feedUrls = [
+      'https://piratewires.substack.com/feed',
+      'https://piratewires.substack.com/feed.xml',
+      'https://piratewires.substack.com/feed.rss',
+      'http://piratewires.substack.com/feed',
+      'https://DASMEEOK.substack.com/feed',
+    ]
+
+    it.each(feedUrls)('should return the newsletter key for %s', (value) => {
+      const expected = 'substack:newsletter'
+
+      expect(substackHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the newsletter key for a section feed', () => {
+      const value = 'https://biggersisterchannel.substack.com/feed?sectionId=194387'
+      const expected = 'substack:newsletter'
+
+      expect(substackHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a newsletter page', () => {
+      const value = 'https://piratewires.substack.com/p/some-article'
+
+      expect(substackHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a podcast feed', () => {
+      const value = 'https://api.substack.com/feed/podcast/99741.rss'
+
+      expect(substackHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://substack.com/feed'
+
+      expect(substackHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www.substack.com', () => {
+      const value = 'https://www.substack.com/feed'
+
+      expect(substackHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the app host', () => {
+      const value = 'https://open.substack.com/feed'
+
+      expect(substackHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.piratewires.substack.com/feed'
+
+      expect(substackHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://www.lennysnewsletter.com/feed'
+
+      expect(substackHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds = [
+      'https://piratewires.substack.com/feed',
+      'https://piratewires.substack.com/feed.xml',
+      'https://piratewires.substack.com/feed.rss',
+      'https://DASMEEOK.substack.com/feed',
+      'https://biggersisterchannel.substack.com/feed?sectionId=194387',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [substackHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'substack:newsletter', label: 'Newsletter' } },
+      ]
+
+      expect(result).toEqual(expected)
     })
   })
 })

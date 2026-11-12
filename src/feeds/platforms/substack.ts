@@ -1,11 +1,7 @@
 import { isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  getHostOrigin,
-  getTenantSubdomain,
-  wordOrHyphenRegex,
-} from '../../common/utils.js'
+import { getHostOrigin, getTenantSubdomain, wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (guess, html).
@@ -23,6 +19,17 @@ const profileRegex = /^\/@(?<username>[^/]+)/
 // subdomain is not always the handle, and a custom domain replaces it.
 const publicationRegex =
   /primaryPublication\\?":\{[^{}]*?\\?"subdomain\\?":\\?"(?<subdomain>[\w-]+)\\?",\\?"custom_domain\\?":(?:\\?"(?<customDomain>[^"\\]+)\\?"|null)/
+
+// A custom domain is read only from a profile page, so its feed is built here but not claimed.
+// The same feed answers at feed.xml and feed.rss.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'substack:newsletter', template: '{scheme}://{host}/feed' },
+    { key: 'substack:newsletter', template: '{scheme}://{host}/feed.xml' },
+    { key: 'substack:newsletter', template: '{scheme}://{host}/feed.rss' },
+  ],
+  { domains },
+)
 
 const getPublicationOrigin = (content: string | undefined): string | undefined => {
   const { subdomain, customDomain } = content?.match(publicationRegex)?.groups ?? {}
@@ -91,6 +98,18 @@ export const substackHandler: PlatformHandler = {
       return []
     }
 
-    return [{ uri: `${page.origin}/feed`, hint: composeHint('substack:newsletter') }]
+    const { protocol, host } = new URL(page.origin)
+
+    return [feeds.getFeedEntry('substack:newsletter', { scheme: protocol.slice(0, -1), host })]
+  },
+
+  // The table reads any host under substack.com, so the page parser refuses the apex and the app
+  // host first, whose /feed answers 404, and a nested subdomain, which fails its TLS handshake.
+  getFeedKey: (url) => {
+    if (!parseSubstackUrl(url)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
