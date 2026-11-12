@@ -69,5 +69,5 @@ export const twodayHandler: PlatformHandler = {
     return [posts]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

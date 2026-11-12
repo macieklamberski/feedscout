@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { parseTwodayUrl, type TwodayUrl, twodayHandler } from './twoday.js'
@@ -117,98 +117,98 @@ describe('twodayHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for the index.rdf feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for the index.rdf feed', () => {
       const value = 'https://alice.twoday.net/index.rdf'
-      const expected = 'twoday:posts'
+      const expected: DiscoverUriHint = { key: 'twoday:posts', label: 'Posts' }
 
-      expect(twodayHandler.getFeedKey?.(value)).toBe(expected)
+      expect(twodayHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the rss feed', () => {
+    it('should return the posts hint for the rss feed', () => {
       const value = 'https://alice.twoday.net/rss'
-      const expected = 'twoday:posts'
+      const expected: DiscoverUriHint = { key: 'twoday:posts', label: 'Posts' }
 
-      expect(twodayHandler.getFeedKey?.(value)).toBe(expected)
+      expect(twodayHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the rss.xml feed', () => {
+    it('should return the posts hint for the rss.xml feed', () => {
       const value = 'https://alice.twoday.net/rss.xml'
-      const expected = 'twoday:posts'
+      const expected: DiscoverUriHint = { key: 'twoday:posts', label: 'Posts' }
 
-      expect(twodayHandler.getFeedKey?.(value)).toBe(expected)
+      expect(twodayHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the summary feed', () => {
+    it('should return the posts hint for the summary feed', () => {
       const value = 'https://alice.twoday.net/summary.rdf'
-      const expected = 'twoday:posts'
+      const expected: DiscoverUriHint = { key: 'twoday:posts', label: 'Posts' }
 
-      expect(twodayHandler.getFeedKey?.(value)).toBe(expected)
+      expect(twodayHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the topic key for a topic feed', () => {
+    it('should return the topic hint for a topic feed', () => {
       const value = 'https://alice.twoday.net/topics/Wo+der+Hase+hinlief/index.rdf'
-      const expected = 'twoday:topic'
+      const expected: DiscoverUriHint = { key: 'twoday:topic', label: 'Topic' }
 
-      expect(twodayHandler.getFeedKey?.(value)).toBe(expected)
+      expect(twodayHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the topic key for a topic rss feed', () => {
+    it('should return the topic hint for a topic rss feed', () => {
       const value = 'https://alice.twoday.net/topics/Wo+der+Hase+hinlief/rss'
-      const expected = 'twoday:topic'
+      const expected: DiscoverUriHint = { key: 'twoday:topic', label: 'Topic' }
 
-      expect(twodayHandler.getFeedKey?.(value)).toBe(expected)
+      expect(twodayHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the topic key for a topic feed with an uppercase route', () => {
+    it('should return the topic hint for a topic feed with an uppercase route', () => {
       const value = 'https://alice.twoday.net/TOPICS/Fuer+eilige+Leser/index.rdf'
-      const expected = 'twoday:topic'
+      const expected: DiscoverUriHint = { key: 'twoday:topic', label: 'Topic' }
 
-      expect(twodayHandler.getFeedKey?.(value)).toBe(expected)
+      expect(twodayHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the topic key for a topic feed with a percent-encoded name', () => {
+    it('should return the topic hint for a topic feed with a percent-encoded name', () => {
       const value = 'https://alice.twoday.net/topics/kreative+einsatzm%C3%B6glichkeiten/index.rdf'
-      const expected = 'twoday:topic'
+      const expected: DiscoverUriHint = { key: 'twoday:topic', label: 'Topic' }
 
-      expect(twodayHandler.getFeedKey?.(value)).toBe(expected)
+      expect(twodayHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an http feed', () => {
+    it('should return the posts hint for an http feed', () => {
       const value = 'http://alice.twoday.net/index.rdf'
-      const expected = 'twoday:posts'
+      const expected: DiscoverUriHint = { key: 'twoday:posts', label: 'Posts' }
 
-      expect(twodayHandler.getFeedKey?.(value)).toBe(expected)
+      expect(twodayHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://alice.twoday.net/stories/1022710479/'
 
-      expect(twodayHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(twodayHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the comments feed', () => {
       const value = 'https://alice.twoday.net/comments.rdf'
 
-      expect(twodayHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(twodayHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://twoday.net/index.rdf'
 
-      expect(twodayHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(twodayHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://blog.alice.twoday.net/index.rdf'
 
-      expect(twodayHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(twodayHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/index.rdf'
 
-      expect(twodayHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(twodayHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
