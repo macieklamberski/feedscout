@@ -443,16 +443,78 @@ describe('estrankyHandler', () => {
       expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for an article slice feed', () => {
-      const value = 'https://example.estranky.cz/rss/slices/a/604/data.xml'
+    it('should return the section hint for a section feed', () => {
+      const value = 'https://example.estranky.cz/rss/section/12/data.xml'
+      const expected: DiscoverUriHint = { key: 'estranky:section', label: 'Section' }
 
-      expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a section feed', () => {
-      const value = 'https://example.estranky.cz/rss/section/12/data.xml'
+    it('should return the section hint for a section feed in another language', () => {
+      const value = 'http://example.estranky.cz/rss/en/section/13/data.xml'
+      const expected: DiscoverUriHint = { key: 'estranky:section', label: 'Section' }
 
-      expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the article slice hint for an article slice feed', () => {
+      const value = 'https://example.estranky.cz/rss/slices/a/604/data.xml'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:article-slice',
+        label: 'Article (Web Slice)',
+      }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the article slice hint for an article slice feed in another language', () => {
+      const value = 'https://example.estranky.sk/rss/en/slices/a/604/data.xml'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:article-slice',
+        label: 'Article (Web Slice)',
+      }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the section slice hint for a section slice feed', () => {
+      const value = 'https://example.estranky.sk/rss/slices/s/118/data.xml'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:section-slice',
+        label: 'Section (Web Slice)',
+      }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the section slice hint for a section slice feed in another language', () => {
+      const value = 'https://example.estranky.cz/rss/en/slices/s/14/data.xml'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:section-slice',
+        label: 'Section (Web Slice)',
+      }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the photo folder slice hint for a photo folder slice feed', () => {
+      const value = 'http://www.example.estranky.sk/rss/slices/d/9/data.xml'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:photo-folder-slice',
+        label: 'Photo folder (Web Slice)',
+      }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the photo folder slice hint for a photo folder slice feed in another language', () => {
+      const value = 'https://example.estranky.cz/rss/de/slices/d/14/data.xml'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:photo-folder-slice',
+        label: 'Photo folder (Web Slice)',
+      }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a feed on the www host', () => {
@@ -515,6 +577,22 @@ describe('estrankyHandler', () => {
       [
         'https://example.estranky.cz/rss/en/slices/l/photos/data.xml',
         { key: 'estranky:photos-slice', label: 'Photo album (Web Slice)' },
+      ],
+      [
+        'https://example.estranky.cz/rss/section/12/data.xml',
+        { key: 'estranky:section', label: 'Section' },
+      ],
+      [
+        'https://example.estranky.cz/rss/slices/a/604/data.xml',
+        { key: 'estranky:article-slice', label: 'Article (Web Slice)' },
+      ],
+      [
+        'https://example.estranky.sk/rss/slices/s/118/data.xml',
+        { key: 'estranky:section-slice', label: 'Section (Web Slice)' },
+      ],
+      [
+        'http://www.example.estranky.sk/rss/slices/d/9/data.xml',
+        { key: 'estranky:photo-folder-slice', label: 'Photo folder (Web Slice)' },
       ],
     ]
 

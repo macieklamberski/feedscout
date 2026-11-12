@@ -450,6 +450,10 @@
     "eklablog:posts": "https://enaelyork.eklablog.com/rss"
   },
   "estranky": {
+    "estranky:article-slice": [
+      "https://zkzhornibrizafotbal.estranky.cz/rss/slices/a/48/data.xml",
+      "https://zlodejisnov.estranky.sk/rss/slices/a/278/data.xml"
+    ],
     "estranky:comments": [
       "https://fkdrnovice.estranky.cz/rss/comments/data.xml",
       "https://moeschke.estranky.sk/rss/comments/data.xml",
@@ -459,6 +463,10 @@
       "https://zvedavec.estranky.cz/rss/slices/l/homepage/data.xml",
       "https://veca.estranky.sk/rss/slices/l/homepage/data.xml",
       "https://www.veca.sk/rss/slices/l/homepage/data.xml"
+    ],
+    "estranky:photo-folder-slice": [
+      "https://knihovnachra.estranky.cz/rss/en/slices/d/100144/data.xml",
+      "https://veca.estranky.sk/rss/slices/d/5/data.xml"
     ],
     "estranky:photos": [
       "https://fkdrnovice.estranky.cz/rss/photos/data.xml",
@@ -474,6 +482,14 @@
       "https://fkdrnovice.estranky.cz/rss/articles/data.xml",
       "https://moeschke.estranky.sk/rss/articles/data.xml",
       "https://www.akbd.cz/rss/articles/data.xml"
+    ],
+    "estranky:section": [
+      "https://slugi.estranky.cz/rss/section/82/data.xml",
+      "https://caritas.estranky.sk/rss/section/8/data.xml"
+    ],
+    "estranky:section-slice": [
+      "https://zootechnika.estranky.cz/rss/slices/s/118/data.xml",
+      "https://caritas.estranky.sk/rss/slices/s/11/data.xml"
     ]
   },
   "exblog": {

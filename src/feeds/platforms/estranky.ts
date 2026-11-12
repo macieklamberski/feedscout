@@ -17,7 +17,8 @@ const estrankyAssetRegex = /^(?:https?:)?\/\/s3[a-z]\.(?:estranky\.(?:cz|sk)|eol
 const assetTags = ['link', 'script']
 
 // A site keeps the scheme it picked. A site in another language serves its feeds under the language
-// segment too, as `/rss/en/slices/l/homepage/data.xml`.
+// segment too, as `/rss/en/slices/l/homepage/data.xml`. A section feed and the Web Slices of one
+// article, section or photo folder carry its id, which no page URL names, so they are only claimed.
 const feeds = definePlatformFeeds(
   [
     { key: 'estranky:posts', template: '{scheme}://{host}/rss/articles/data.xml' },
@@ -38,6 +39,35 @@ const feeds = definePlatformFeeds(
     {
       key: 'estranky:photos-slice',
       template: '{scheme}://{host}/rss/{language}/slices/l/photos/data.xml',
+    },
+    { key: 'estranky:section', template: '{scheme}://{host}/rss/section/{section}/data.xml' },
+    {
+      key: 'estranky:section',
+      template: '{scheme}://{host}/rss/{language}/section/{section}/data.xml',
+    },
+    {
+      key: 'estranky:article-slice',
+      template: '{scheme}://{host}/rss/slices/a/{article}/data.xml',
+    },
+    {
+      key: 'estranky:article-slice',
+      template: '{scheme}://{host}/rss/{language}/slices/a/{article}/data.xml',
+    },
+    {
+      key: 'estranky:section-slice',
+      template: '{scheme}://{host}/rss/slices/s/{section}/data.xml',
+    },
+    {
+      key: 'estranky:section-slice',
+      template: '{scheme}://{host}/rss/{language}/slices/s/{section}/data.xml',
+    },
+    {
+      key: 'estranky:photo-folder-slice',
+      template: '{scheme}://{host}/rss/slices/d/{folder}/data.xml',
+    },
+    {
+      key: 'estranky:photo-folder-slice',
+      template: '{scheme}://{host}/rss/{language}/slices/d/{folder}/data.xml',
     },
   ],
   { domains },
