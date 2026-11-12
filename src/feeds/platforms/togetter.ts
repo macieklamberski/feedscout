@@ -56,5 +56,5 @@ export const togetterHandler: PlatformHandler = {
     return [feeds.getFeedEntry('togetter:news'), feeds.getFeedEntry('togetter:hot')]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

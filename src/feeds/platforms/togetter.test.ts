@@ -98,72 +98,72 @@ describe('togetterHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the curator key for a curator feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the curator hint for a curator feed', () => {
       const value = 'https://togetter.com/rss/id/yayoy_amber'
-      const expected = 'togetter:curator'
+      const expected: DiscoverUriHint = { key: 'togetter:curator', label: 'Curator' }
 
-      expect(togetterHandler.getFeedKey?.(value)).toBe(expected)
+      expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the curator key for a curator feed with digits in the name', () => {
+    it('should return the curator hint for a curator feed with digits in the name', () => {
       const value = 'https://togetter.com/rss/id/henohen54465820'
-      const expected = 'togetter:curator'
+      const expected: DiscoverUriHint = { key: 'togetter:curator', label: 'Curator' }
 
-      expect(togetterHandler.getFeedKey?.(value)).toBe(expected)
+      expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the curator key for a curator feed on the www host', () => {
+    it('should return the curator hint for a curator feed on the www host', () => {
       const value = 'https://www.togetter.com/rss/id/yayoy_amber'
-      const expected = 'togetter:curator'
+      const expected: DiscoverUriHint = { key: 'togetter:curator', label: 'Curator' }
 
-      expect(togetterHandler.getFeedKey?.(value)).toBe(expected)
+      expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the curator key for a curator feed over http', () => {
+    it('should return the curator hint for a curator feed over http', () => {
       const value = 'http://togetter.com/rss/id/yayoy_amber'
-      const expected = 'togetter:curator'
+      const expected: DiscoverUriHint = { key: 'togetter:curator', label: 'Curator' }
 
-      expect(togetterHandler.getFeedKey?.(value)).toBe(expected)
+      expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the popular key for the popular feed', () => {
+    it('should return the popular hint for the popular feed', () => {
       const value = 'https://togetter.com/rss/hot'
-      const expected = 'togetter:hot'
+      const expected: DiscoverUriHint = { key: 'togetter:hot', label: 'Popular' }
 
-      expect(togetterHandler.getFeedKey?.(value)).toBe(expected)
+      expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the popular key for the popular feed on the www host', () => {
+    it('should return the popular hint for the popular feed on the www host', () => {
       const value = 'https://www.togetter.com/rss/hot'
-      const expected = 'togetter:hot'
+      const expected: DiscoverUriHint = { key: 'togetter:hot', label: 'Popular' }
 
-      expect(togetterHandler.getFeedKey?.(value)).toBe(expected)
+      expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the news key for the news feed', () => {
+    it('should return the news hint for the news feed', () => {
       const value = 'https://togetter.com/rss/news'
-      const expected = 'togetter:news'
+      const expected: DiscoverUriHint = { key: 'togetter:news', label: 'News' }
 
-      expect(togetterHandler.getFeedKey?.(value)).toBe(expected)
+      expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a curator page', () => {
       const value = 'https://togetter.com/id/yayoy_amber'
 
-      expect(togetterHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(togetterHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a summary page', () => {
       const value = 'https://togetter.com/li/123456'
 
-      expect(togetterHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(togetterHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/rss/id/yayoy_amber'
 
-      expect(togetterHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(togetterHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
