@@ -78,6 +78,22 @@ describe('hatenablogHandler', () => {
       expect(hatenablogHandler.resolve('https://example.com/')).toEqual([])
     })
 
+    it('should keep the scheme of an http blog page', () => {
+      const value = 'http://example.hatenablog.com/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.hatenablog.com/rss',
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'http://example.hatenablog.com/feed',
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'atom' },
+        },
+      ]
+
+      expect(hatenablogHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the category feed for a capitalized archive segment', () => {
       const value = 'https://example.hatenablog.com/Archive/category/programming'
       const expected: Array<DiscoverUriEntry> = [
