@@ -41,16 +41,17 @@ const originSchemeRegex = /^https?:\/\//
 // marker, so its feeds are built here but not claimed.
 const domains = ['plan.io']
 
-// A key with a project row builds that row when the page names a project, and the site row when
-// it does not.
 const feeds = definePlatformFeeds(
   [
-    { key: 'redmine:news', template: '{scheme}://{host}/projects/{project}/news.atom' },
+    { key: 'redmine:project-news', template: '{scheme}://{host}/projects/{project}/news.atom' },
     { key: 'redmine:news', template: '{scheme}://{host}/news.atom' },
-    { key: 'redmine:activity', template: '{scheme}://{host}/projects/{project}/activity.atom' },
+    {
+      key: 'redmine:project-activity',
+      template: '{scheme}://{host}/projects/{project}/activity.atom',
+    },
     { key: 'redmine:activity', template: '{scheme}://{host}/activity.atom' },
     { key: 'redmine:projects', template: '{scheme}://{host}/projects.atom' },
-    { key: 'redmine:issues', template: '{scheme}://{host}/projects/{project}/issues.atom' },
+    { key: 'redmine:project-issues', template: '{scheme}://{host}/projects/{project}/issues.atom' },
     { key: 'redmine:issues', template: '{scheme}://{host}/issues.atom' },
     { key: 'redmine:issue', template: '{scheme}://{host}/issues/{issueId}.atom' },
     {
@@ -249,6 +250,10 @@ export const redmineHandler: PlatformHandler = {
 
       return { uri: getAlternateSpelling(uri, page.alternateHrefs), hint: composeHint(key) }
     }
+    // A page in a project gets the project's feed, and a page outside one the site's.
+    const getScopedFeedEntry = (key: string, projectKey: string): DiscoverUriEntry => {
+      return getFeedEntry(params.project ? projectKey : key)
+    }
     const uris: Array<DiscoverUriEntry> = []
 
     if (page.kind === 'home') {
@@ -260,7 +265,7 @@ export const redmineHandler: PlatformHandler = {
     }
 
     if (page.kind === 'issues') {
-      uris.push(getFeedEntry('redmine:issues'))
+      uris.push(getScopedFeedEntry('redmine:issues', 'redmine:project-issues'))
     }
 
     if (page.kind === 'issue') {
@@ -268,22 +273,22 @@ export const redmineHandler: PlatformHandler = {
     }
 
     if (page.kind === 'news') {
-      uris.push(getFeedEntry('redmine:news'))
+      uris.push(getScopedFeedEntry('redmine:news', 'redmine:project-news'))
     }
 
     if (page.kind === 'activity') {
-      uris.push(getFeedEntry('redmine:activity'))
+      uris.push(getScopedFeedEntry('redmine:activity', 'redmine:project-activity'))
     }
 
     if (page.kind === 'project') {
-      uris.push(getFeedEntry('redmine:activity'))
+      uris.push(getFeedEntry('redmine:project-activity'))
 
       if (page.hasIssues) {
-        uris.push(getFeedEntry('redmine:issues'))
+        uris.push(getFeedEntry('redmine:project-issues'))
       }
 
       if (page.hasNews) {
-        uris.push(getFeedEntry('redmine:news'))
+        uris.push(getFeedEntry('redmine:project-news'))
       }
     }
 

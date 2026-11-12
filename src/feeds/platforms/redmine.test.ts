@@ -496,15 +496,15 @@ describe('redmineHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/projects/acme-tools/activity.atom',
-          hint: { key: 'redmine:activity', label: 'Activity' },
+          hint: { key: 'redmine:project-activity', label: 'Project activity' },
         },
         {
           uri: 'https://example.com/projects/acme-tools/issues.atom',
-          hint: { key: 'redmine:issues', label: 'Issues' },
+          hint: { key: 'redmine:project-issues', label: 'Project issues' },
         },
         {
           uri: 'https://example.com/projects/acme-tools/news.atom',
-          hint: { key: 'redmine:news', label: 'News' },
+          hint: { key: 'redmine:project-news', label: 'Project news' },
         },
       ]
 
@@ -516,11 +516,11 @@ describe('redmineHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/projects/acme-tools/activity.atom',
-          hint: { key: 'redmine:activity', label: 'Activity' },
+          hint: { key: 'redmine:project-activity', label: 'Project activity' },
         },
         {
           uri: 'https://example.com/projects/acme-tools/issues.atom',
-          hint: { key: 'redmine:issues', label: 'Issues' },
+          hint: { key: 'redmine:project-issues', label: 'Project issues' },
         },
       ]
 
@@ -532,11 +532,11 @@ describe('redmineHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/projects/acme-tools/activity.atom',
-          hint: { key: 'redmine:activity', label: 'Activity' },
+          hint: { key: 'redmine:project-activity', label: 'Project activity' },
         },
         {
           uri: 'https://example.com/projects/acme-tools/news.atom',
-          hint: { key: 'redmine:news', label: 'News' },
+          hint: { key: 'redmine:project-news', label: 'Project news' },
         },
       ]
 
@@ -548,7 +548,7 @@ describe('redmineHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/projects/acme-tools/issues.atom',
-          hint: { key: 'redmine:issues', label: 'Issues' },
+          hint: { key: 'redmine:project-issues', label: 'Project issues' },
         },
       ]
 
@@ -560,7 +560,7 @@ describe('redmineHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/projects/acme-tools/news.atom',
-          hint: { key: 'redmine:news', label: 'News' },
+          hint: { key: 'redmine:project-news', label: 'Project news' },
         },
       ]
 
@@ -572,7 +572,7 @@ describe('redmineHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/projects/acme-tools/activity.atom',
-          hint: { key: 'redmine:activity', label: 'Activity' },
+          hint: { key: 'redmine:project-activity', label: 'Project activity' },
         },
       ]
 
@@ -707,7 +707,7 @@ describe('redmineHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/projects/acme%3Ftools/issues.atom',
-          hint: { key: 'redmine:issues', label: 'Issues' },
+          hint: { key: 'redmine:project-issues', label: 'Project issues' },
         },
       ]
 
@@ -718,17 +718,20 @@ describe('redmineHandler', () => {
   describe('getFeedHint', () => {
     const feedUrls: Array<[string, DiscoverUriHint]> = [
       ['https://example.plan.io/news.atom', { key: 'redmine:news', label: 'News' }],
-      ['https://example.plan.io/projects/acme/news.atom', { key: 'redmine:news', label: 'News' }],
+      [
+        'https://example.plan.io/projects/acme/news.atom',
+        { key: 'redmine:project-news', label: 'Project news' },
+      ],
       ['https://example.plan.io/activity.atom', { key: 'redmine:activity', label: 'Activity' }],
       [
         'https://example.plan.io/projects/acme/activity.atom',
-        { key: 'redmine:activity', label: 'Activity' },
+        { key: 'redmine:project-activity', label: 'Project activity' },
       ],
       ['https://example.plan.io/projects.atom', { key: 'redmine:projects', label: 'Projects' }],
       ['https://example.plan.io/issues.atom', { key: 'redmine:issues', label: 'Issues' }],
       [
         'https://example.plan.io/projects/acme/issues.atom?set_filter=1&tracker_id=1',
-        { key: 'redmine:issues', label: 'Issues' },
+        { key: 'redmine:project-issues', label: 'Project issues' },
       ],
       [
         'https://example.plan.io/issues/12345.atom',
@@ -782,15 +785,18 @@ describe('redmineHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriEntry['hint']]> = [
       ['https://example.plan.io/news.atom', { key: 'redmine:news', label: 'News' }],
-      ['https://example.plan.io/projects/acme/news.atom', { key: 'redmine:news', label: 'News' }],
+      [
+        'https://example.plan.io/projects/acme/news.atom',
+        { key: 'redmine:project-news', label: 'Project news' },
+      ],
       ['https://example.plan.io/activity.atom', { key: 'redmine:activity', label: 'Activity' }],
       [
         'https://example.plan.io/projects/acme/issues.atom',
-        { key: 'redmine:issues', label: 'Issues' },
+        { key: 'redmine:project-issues', label: 'Project issues' },
       ],
       [
         'https://example.plan.io/projects/acme/activity.atom',
-        { key: 'redmine:activity', label: 'Activity' },
+        { key: 'redmine:project-activity', label: 'Project activity' },
       ],
       ['https://example.plan.io/projects.atom', { key: 'redmine:projects', label: 'Projects' }],
       [
