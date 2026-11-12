@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { librivoxHandler } from './librivox.js'
@@ -57,56 +57,56 @@ describe('librivoxHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the key for an audiobook feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the hint for an audiobook feed', () => {
       const value = 'https://librivox.org/rss/12345'
-      const expected = 'librivox:audiobook'
+      const expected: DiscoverUriHint = { key: 'librivox:audiobook', label: 'Audiobook' }
 
-      expect(librivoxHandler.getFeedKey?.(value)).toBe(expected)
+      expect(librivoxHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the key for an audiobook feed over http', () => {
+    it('should return the hint for an audiobook feed over http', () => {
       const value = 'http://librivox.org/rss/12345'
-      const expected = 'librivox:audiobook'
+      const expected: DiscoverUriHint = { key: 'librivox:audiobook', label: 'Audiobook' }
 
-      expect(librivoxHandler.getFeedKey?.(value)).toBe(expected)
+      expect(librivoxHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the key for an audiobook feed with a trailing slash', () => {
+    it('should return the hint for an audiobook feed with a trailing slash', () => {
       const value = 'https://librivox.org/rss/12345/'
-      const expected = 'librivox:audiobook'
+      const expected: DiscoverUriHint = { key: 'librivox:audiobook', label: 'Audiobook' }
 
-      expect(librivoxHandler.getFeedKey?.(value)).toBe(expected)
+      expect(librivoxHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a named feed under rss', () => {
       const value = 'https://librivox.org/rss/latest_releases'
 
-      expect(librivoxHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(librivoxHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a file under rss', () => {
       const value = 'https://librivox.org/rss/robots.txt'
 
-      expect(librivoxHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(librivoxHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an audiobook page', () => {
       const value = 'https://librivox.org/example-by-alice/'
 
-      expect(librivoxHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(librivoxHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an audiobook feed on another host', () => {
       const value = 'https://example.com/rss/12345'
 
-      expect(librivoxHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(librivoxHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an invalid URL', () => {
       const value = 'not a url'
 
-      expect(librivoxHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(librivoxHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

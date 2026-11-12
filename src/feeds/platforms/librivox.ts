@@ -50,15 +50,15 @@ export const librivoxHandler: PlatformHandler = {
     return [feeds.getFeedEntry('librivox:audiobook', { audiobookId: page.audiobookId })]
   },
 
-  getFeedKey: (url) => {
-    const key = feeds.getFeedKey(url)
+  getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
     const [, audiobookId] = getPathSegments(url)
 
     // An audiobook id is digits, so a named feed such as rss/latest_releases is not one.
-    if (!key || !digitsRegex.test(audiobookId)) {
+    if (!hint || !digitsRegex.test(audiobookId)) {
       return
     }
 
-    return key
+    return hint
   },
 }
