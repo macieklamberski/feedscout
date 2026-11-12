@@ -165,133 +165,133 @@ describe('pinboardHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the bookmarks key for a user feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the bookmarks hint for a user feed', () => {
       const value = 'https://feeds.pinboard.in/rss/u:example/'
-      const expected = 'pinboard:bookmarks'
+      const expected: DiscoverUriHint = { key: 'pinboard:bookmarks', label: 'Bookmarks' }
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the bookmarks key for a user feed without a trailing slash', () => {
+    it('should return the bookmarks hint for a user feed without a trailing slash', () => {
       const value = 'https://feeds.pinboard.in/rss/u:example'
-      const expected = 'pinboard:bookmarks'
+      const expected: DiscoverUriHint = { key: 'pinboard:bookmarks', label: 'Bookmarks' }
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the bookmarks key for a user feed over http', () => {
+    it('should return the bookmarks hint for a user feed over http', () => {
       const value = 'http://feeds.pinboard.in/rss/u:example/'
-      const expected = 'pinboard:bookmarks'
+      const expected: DiscoverUriHint = { key: 'pinboard:bookmarks', label: 'Bookmarks' }
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the recent key for the recent feed', () => {
+    it('should return the recent hint for the recent feed', () => {
       const value = 'https://feeds.pinboard.in/rss/recent/'
-      const expected = 'pinboard:recent'
+      const expected: DiscoverUriHint = { key: 'pinboard:recent', label: 'Recent' }
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the popular key for the popular feed', () => {
+    it('should return the popular hint for the popular feed', () => {
       const value = 'https://feeds.pinboard.in/rss/popular'
-      const expected = 'pinboard:popular'
+      const expected: DiscoverUriHint = { key: 'pinboard:popular', label: 'Popular' }
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a user tag feed', () => {
+    it('should return the tag hint for a user tag feed', () => {
       const value = 'https://feeds.pinboard.in/rss/u:example/t:programming/'
-      const expected = 'pinboard:tag'
+      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a user tag feed without a trailing slash', () => {
+    it('should return the tag hint for a user tag feed without a trailing slash', () => {
       const value = 'https://feeds.pinboard.in/rss/u:example/t:programming'
-      const expected = 'pinboard:tag'
+      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a user tag feed over http', () => {
+    it('should return the tag hint for a user tag feed over http', () => {
       const value = 'http://feeds.pinboard.in/rss/u:example/t:programming/'
-      const expected = 'pinboard:tag'
+      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a user feed with several tags', () => {
+    it('should return the tag hint for a user feed with several tags', () => {
       const value = 'https://feeds.pinboard.in/rss/u:example/t:programming/t:rust/t:async/'
-      const expected = 'pinboard:tag'
+      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag holding a colon', () => {
+    it('should return the tag hint for a tag holding a colon', () => {
       const value = 'https://feeds.pinboard.in/rss/u:example/t:via:shortcuts/'
-      const expected = 'pinboard:tag'
+      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag holding an encoded slash', () => {
+    it('should return the tag hint for a tag holding an encoded slash', () => {
       const value = 'https://feeds.pinboard.in/rss/u:example/t:rust%252fasync/'
-      const expected = 'pinboard:tag'
+      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a site-wide tag feed', () => {
+    it('should return the tag hint for a site-wide tag feed', () => {
       const value = 'https://feeds.pinboard.in/rss/t:programming/'
-      const expected = 'pinboard:tag'
+      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed with a count parameter', () => {
+    it('should return the tag hint for a tag feed with a count parameter', () => {
       const value = 'https://feeds.pinboard.in/rss/u:example/t:programming?count=4'
-      const expected = 'pinboard:tag'
+      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should read the tag feed route words in any case', () => {
       const value = 'https://feeds.pinboard.in/RSS/U:example/T:programming/'
-      const expected = 'pinboard:tag'
+      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBe(expected)
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a user tag page', () => {
       const value = 'https://pinboard.in/u:example/t:programming/'
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(pinboardHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a private feed', () => {
       const value = 'https://feeds.pinboard.in/rss/secret:abc123/u:example/t:programming/'
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(pinboardHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a tag feed narrowed by source', () => {
       const value = 'https://feeds.pinboard.in/rss/u:example/t:programming/from:twitter'
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(pinboardHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a tag feed path on another host', () => {
       const value = 'https://example.com/rss/u:example/t:programming/'
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(pinboardHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an invalid URL', () => {
       const value = 'not a url'
 
-      expect(pinboardHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(pinboardHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

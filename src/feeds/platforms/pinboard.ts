@@ -117,18 +117,18 @@ export const pinboardHandler: PlatformHandler = {
     return [feeds.getFeedEntry('pinboard:popular')]
   },
 
-  getFeedKey: (url) => {
-    const key = feeds.getFeedKey(url)
+  getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
 
-    if (key) {
-      return key
+    if (hint) {
+      return hint
     }
 
     const parsedUrl = parseUrl(url)
 
     // A tag feed carries any number of tag segments, which a template segment cannot hold.
     if (parsedUrl && isHostOf(parsedUrl, feedHosts) && tagFeedRegex.test(parsedUrl.pathname)) {
-      return 'pinboard:tag'
+      return composeHint('pinboard:tag')
     }
   },
 }
