@@ -128,64 +128,64 @@ describe('wixHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the blog key for the blog feed of a free site', () => {
+  describe('getFeedHint', () => {
+    it('should return the blog hint for the blog feed of a free site', () => {
       const value = 'https://alice.wixsite.com/mysite/blog-feed.xml'
-      const expected = 'wix:blog'
+      const expected: DiscoverUriHint = { key: 'wix:blog', label: 'Blog' }
 
-      expect(wixHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wixHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for the blog feed over http', () => {
+    it('should return the blog hint for the blog feed over http', () => {
       const value = 'http://alice.wixsite.com/mysite/blog-feed.xml'
-      const expected = 'wix:blog'
+      const expected: DiscoverUriHint = { key: 'wix:blog', label: 'Blog' }
 
-      expect(wixHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wixHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for the blog feed under a language path', () => {
+    it('should return the blog hint for the blog feed under a language path', () => {
       const value = 'https://alice.wixsite.com/mysite/de/blog-feed.xml'
-      const expected = 'wix:blog'
+      const expected: DiscoverUriHint = { key: 'wix:blog', label: 'Blog' }
 
-      expect(wixHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wixHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for the blog feed under the blog path', () => {
+    it('should return the blog hint for the blog feed under the blog path', () => {
       const value = 'https://alice.wixsite.com/mysite/blog/blog-feed.xml'
-      const expected = 'wix:blog'
+      const expected: DiscoverUriHint = { key: 'wix:blog', label: 'Blog' }
 
-      expect(wixHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wixHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for the blog feed with a language query', () => {
+    it('should return the blog hint for the blog feed with a language query', () => {
       const value = 'https://alice.wixsite.com/mysite/blog-feed.xml?lang=en'
-      const expected = 'wix:blog'
+      const expected: DiscoverUriHint = { key: 'wix:blog', label: 'Blog' }
 
-      expect(wixHandler.getFeedKey?.(value)).toBe(expected)
+      expect(wixHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a page of a free site', () => {
       const value = 'https://alice.wixsite.com/mysite/post/hello'
 
-      expect(wixHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(wixHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a blog feed at the root of a wixsite.com account', () => {
       const value = 'https://alice.wixsite.com/blog-feed.xml'
 
-      expect(wixHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(wixHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a blog feed on www.wixsite.com', () => {
       const value = 'https://www.wixsite.com/mysite/blog-feed.xml'
 
-      expect(wixHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(wixHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the blog feed of a custom domain', () => {
       const value = 'https://www.example.com/blog-feed.xml'
 
-      expect(wixHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(wixHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

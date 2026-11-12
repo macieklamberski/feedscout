@@ -83,5 +83,5 @@ export const wixHandler: PlatformHandler = {
     return [siteFeeds.getFeedEntry('wix:blog', { scheme: protocol.slice(0, -1), host })]
   },
 
-  getFeedKey: freeSiteFeeds.getFeedKey,
+  getFeedHint: freeSiteFeeds.getFeedHint,
 }
