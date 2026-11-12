@@ -78,13 +78,19 @@ export const blogHuHandler: PlatformHandler = {
       return [feeds.getFeedEntry('blog-hu:user', { userId: parsed.userId })]
     }
 
-    const params = { scheme: new URL(url).protocol.slice(0, -1), blog: parsed.blog }
+    const page = feeds.forUrl(url)
+
+    if (!page) {
+      return []
+    }
+
+    const params = { blog: parsed.blog }
 
     return [
-      feeds.getFeedEntry('blog-hu:posts', params, 'rss'),
-      feeds.getFeedEntry('blog-hu:posts', params, 'atom'),
-      feeds.getFeedEntry('blog-hu:comments', params, 'rss'),
-      feeds.getFeedEntry('blog-hu:comments', params, 'atom'),
+      page.getFeedEntry('blog-hu:posts', params, 'rss'),
+      page.getFeedEntry('blog-hu:posts', params, 'atom'),
+      page.getFeedEntry('blog-hu:comments', params, 'rss'),
+      page.getFeedEntry('blog-hu:comments', params, 'atom'),
     ]
   },
 
