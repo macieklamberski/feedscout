@@ -58,24 +58,36 @@ const templateRegex = /^(https?|\{scheme\}):\/\/([^/?#]+)(\/[^?#]*)?(?:\?([^#]*)
 const placeholderRegex = /\{(\w+)\}/g
 const trailingSlashRegex = /\/$/
 
-// A path decoded segment by segment, so `%40` and `@` compare equal. A decoded slash is written
-// back as `%2F`, so it never splits a segment.
+// A path decoded segment by segment, so `%40` and `@` compare equal. A decoded `%` and `/` are
+// written back as `%25` and `%2F`, so `%252F` stays apart from `%2F` and no segment splits.
 const decodePath = (path: string): string => {
+  if (!path.includes('%')) {
+    return path
+  }
+
   return path
     .split('/')
-    .map((segment) => decodePercent(segment).replaceAll('/', '%2F'))
+    .map((segment) => decodePercent(segment).replaceAll('%', '%25').replaceAll('/', '%2F'))
     .join('/')
 }
 
-// A placeholder becomes the capture, the text around it a literal.
+// A placeholder becomes the capture, the text around it a literal, decoded for a path so an
+// encoded brace in it stays a literal.
 const toRegexSource = (
   text: string,
   capture: string,
   captures: Record<string, string> = {},
+  isPath = false,
 ): string => {
   return text
     .split(placeholderRegex)
-    .map((piece, index) => (index % 2 === 0 ? escapeRegex(piece) : (captures[piece] ?? capture)))
+    .map((piece, index) => {
+      if (index % 2 === 1) {
+        return captures[piece] ?? capture
+      }
+
+      return escapeRegex(isPath ? decodePath(piece) : piece)
+    })
     .join('')
 }
 
@@ -109,7 +121,7 @@ const compileTemplate = (
     host: `(?:${hostSources.join('|')})`,
     domain: domainSource,
   })
-  const pathSource = toRegexSource(decodePath(path).replace(trailingSlashRegex, ''), '[^/]+')
+  const pathSource = toRegexSource(path.replace(trailingSlashRegex, ''), '[^/]+', {}, true)
   const hostPathRegex = new RegExp(`^${hostSource}${pathSource}$`, 'i')
   const queryRegexes = query.map(([name, value]): [string, RegExp] => {
     return [name, new RegExp(`^${toRegexSource(value, '.+')}$`, 'i')]
