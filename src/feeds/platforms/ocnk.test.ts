@@ -147,48 +147,48 @@ describe('ocnkHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the products key for the products feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the products hint for the products feed', () => {
       const value = 'https://example.ocnk.net/rss/rss.php'
-      const expected = 'ocnk:products'
+      const expected: DiscoverUriHint = { key: 'ocnk:products', label: 'Products', format: 'rdf' }
 
-      expect(ocnkHandler.getFeedKey?.(value)).toBe(expected)
+      expect(ocnkHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the products key for the products feed over http', () => {
+    it('should return the products hint for the products feed over http', () => {
       const value = 'http://example.ocnk.net/rss/rss.php'
-      const expected = 'ocnk:products'
+      const expected: DiscoverUriHint = { key: 'ocnk:products', label: 'Products', format: 'rdf' }
 
-      expect(ocnkHandler.getFeedKey?.(value)).toBe(expected)
+      expect(ocnkHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a shop page', () => {
       const value = 'https://example.ocnk.net/product/24'
 
-      expect(ocnkHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ocnkHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the feed path on the apex domain', () => {
       const value = 'https://ocnk.net/rss/rss.php'
 
-      expect(ocnkHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ocnkHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the feed path on a nested subdomain', () => {
       const value = 'https://a.example.ocnk.net/rss/rss.php'
 
-      expect(ocnkHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ocnkHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the feed path on a custom domain', () => {
       const value = 'https://www.example.com/rss/rss.php'
 
-      expect(ocnkHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ocnkHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('through discoverUrisFromPlatform', () => {
-    const hint: DiscoverUriHint = { key: 'ocnk:products', label: 'Products' }
+    const hint: DiscoverUriHint = { key: 'ocnk:products', label: 'Products', format: 'rdf' }
     const feedUrls = ['https://example.ocnk.net/rss/rss.php', 'http://example.ocnk.net/rss/rss.php']
 
     it.each(feedUrls)('should return %s as itself', async (value) => {

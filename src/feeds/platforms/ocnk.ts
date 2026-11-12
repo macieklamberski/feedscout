@@ -76,5 +76,5 @@ export const ocnkHandler: PlatformHandler = {
     return [shopFeeds.getFeedEntry('ocnk:products', { shop: parsed.shop }, 'rdf')]
   },
 
-  getFeedKey: shopFeeds.getFeedKey,
+  getFeedHint: shopFeeds.getFeedHint,
 }
