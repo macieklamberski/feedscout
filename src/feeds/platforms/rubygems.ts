@@ -60,5 +60,5 @@ export const rubygemsHandler: PlatformHandler = {
     return [feeds.getFeedEntry('rubygems:latest-gems')]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { parseRubygemsUrl, type RubygemsUrl, rubygemsHandler } from './rubygems.js'
@@ -87,7 +87,7 @@ describe('rubygemsHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     const versionsFeeds: Array<string> = [
       'https://rubygems.org/gems/example/versions.atom',
       'http://rubygems.org/gems/example/versions.atom',
@@ -98,10 +98,10 @@ describe('rubygemsHandler', () => {
       'https://bundler.rubygems.org/gems/example/versions.atom',
     ]
 
-    it.each(versionsFeeds)('should return the versions key for %s', (value) => {
-      const expected = 'rubygems:versions'
+    it.each(versionsFeeds)('should return the versions hint for %s', (value) => {
+      const expected: DiscoverUriHint = { key: 'rubygems:versions', label: 'Versions' }
 
-      expect(rubygemsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(rubygemsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     const latestGemsFeeds: Array<string> = [
@@ -113,10 +113,10 @@ describe('rubygemsHandler', () => {
       'https://bundler.rubygems.org/gems.atom',
     ]
 
-    it.each(latestGemsFeeds)('should return the latest gems key for %s', (value) => {
-      const expected = 'rubygems:latest-gems'
+    it.each(latestGemsFeeds)('should return the latest gems hint for %s', (value) => {
+      const expected: DiscoverUriHint = { key: 'rubygems:latest-gems', label: 'Latest gems' }
 
-      expect(rubygemsHandler.getFeedKey?.(value)).toBe(expected)
+      expect(rubygemsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     const pages: Array<string> = [
@@ -129,13 +129,13 @@ describe('rubygemsHandler', () => {
     ]
 
     it.each(pages)('should return undefined for the page %s', (value) => {
-      expect(rubygemsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(rubygemsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on another RubyGems host', () => {
       const value = 'https://blog.rubygems.org/gems/example/versions.atom'
 
-      expect(rubygemsHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(rubygemsHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
