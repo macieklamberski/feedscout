@@ -78,6 +78,18 @@ describe('smeBlogHandler', () => {
       expect(smeBlogHandler.resolve('https://blog.sme.sk/')).toEqual(expected)
     })
 
+    it('should return the https site feed for home over http', () => {
+      const value = 'http://blog.sme.sk/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://blog.sme.sk/rss',
+          hint: { key: 'sme-blog:site', label: 'Site' },
+        },
+      ]
+
+      expect(smeBlogHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the https posts feed for a blog over http', () => {
       const value = 'http://blog.sme.sk/alice'
       const expected: Array<DiscoverUriEntry> = [
