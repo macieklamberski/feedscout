@@ -88,51 +88,51 @@ describe('paragraphHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the blog key for a blog feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the blog hint for a blog feed', () => {
       const value = 'https://api.paragraph.com/blogs/rss/@alice'
-      const expected = 'paragraph:blog'
+      const expected: DiscoverUriHint = { key: 'paragraph:blog', label: 'Blog' }
 
-      expect(paragraphHandler.getFeedKey?.(value)).toBe(expected)
+      expect(paragraphHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a blog feed with a trailing slash', () => {
+    it('should return the blog hint for a blog feed with a trailing slash', () => {
       const value = 'https://api.paragraph.com/blogs/rss/@alice/'
-      const expected = 'paragraph:blog'
+      const expected: DiscoverUriHint = { key: 'paragraph:blog', label: 'Blog' }
 
-      expect(paragraphHandler.getFeedKey?.(value)).toBe(expected)
+      expect(paragraphHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a blog feed on paragraph.com', () => {
+    it('should return the blog hint for a blog feed on paragraph.com', () => {
       const value = 'https://paragraph.com/api/blogs/rss/@alice'
-      const expected = 'paragraph:blog'
+      const expected: DiscoverUriHint = { key: 'paragraph:blog', label: 'Blog' }
 
-      expect(paragraphHandler.getFeedKey?.(value)).toBe(expected)
+      expect(paragraphHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a blog feed on paragraph.com with an encoded at sign', () => {
+    it('should return the blog hint for a blog feed on paragraph.com with an encoded at sign', () => {
       const value = 'https://paragraph.com/api/blogs/rss/%40alice'
-      const expected = 'paragraph:blog'
+      const expected: DiscoverUriHint = { key: 'paragraph:blog', label: 'Blog' }
 
-      expect(paragraphHandler.getFeedKey?.(value)).toBe(expected)
+      expect(paragraphHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://paragraph.com/@alice'
 
-      expect(paragraphHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(paragraphHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path without the at sign', () => {
       const value = 'https://api.paragraph.com/blogs/rss/alice'
 
-      expect(paragraphHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(paragraphHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/blogs/rss/@alice'
 
-      expect(paragraphHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(paragraphHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

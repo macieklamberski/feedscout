@@ -48,5 +48,5 @@ export const paragraphHandler: PlatformHandler = {
     return [feeds.getFeedEntry('paragraph:blog', { username: parsed.username })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
