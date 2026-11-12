@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type DreamwidthUrl, dreamwidthHandler, parseDreamwidthUrl } from './dreamwidth.js'
 
 describe('parseDreamwidthUrl', () => {
@@ -70,12 +72,44 @@ describe('dreamwidthHandler', () => {
       expect(dreamwidthHandler.resolve(value)).toEqual([])
     })
 
+    it('should return an empty array for a path username with an @', () => {
+      const value = 'https://www.dreamwidth.org/~carol@alice'
+
+      expect(dreamwidthHandler.resolve(value)).toEqual([])
+    })
+
+    it('should return an empty array for a path username that names the www host', () => {
+      const value = 'https://www.dreamwidth.org/~www'
+
+      expect(dreamwidthHandler.resolve(value)).toEqual([])
+    })
+
     it('should return empty array for a URL outside Dreamwidth', () => {
       expect(dreamwidthHandler.resolve('https://example.com/')).toEqual([])
     })
 
     it('should return RSS, Atom, and userpics feeds for blog', () => {
       const value = 'https://alice.dreamwidth.org'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.dreamwidth.org/data/rss',
+          hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://alice.dreamwidth.org/data/atom',
+          hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://alice.dreamwidth.org/data/userpics',
+          hint: { key: 'dreamwidth:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(dreamwidthHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return https feeds for an http journal page', () => {
+      const value = 'http://alice.dreamwidth.org'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://alice.dreamwidth.org/data/rss',
@@ -232,6 +266,129 @@ describe('dreamwidthHandler', () => {
       ]
 
       expect(dreamwidthHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for an RSS feed', () => {
+      const value = 'https://zvi.dreamwidth.org/data/rss'
+      const expected = 'dreamwidth:posts'
+
+      expect(dreamwidthHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an Atom feed', () => {
+      const value = 'https://kake.dreamwidth.org/data/atom'
+      const expected = 'dreamwidth:posts'
+
+      expect(dreamwidthHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a feed with a trailing slash', () => {
+      const value = 'https://elfs.dreamwidth.org/data/rss/'
+      const expected = 'dreamwidth:posts'
+
+      expect(dreamwidthHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an http feed', () => {
+      const value = 'http://zvi.dreamwidth.org/data/rss'
+      const expected = 'dreamwidth:posts'
+
+      expect(dreamwidthHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for an RSS tag feed', () => {
+      const value = 'https://zvi.dreamwidth.org/data/rss?tag=feedback'
+      const expected = 'dreamwidth:posts-tag'
+
+      expect(dreamwidthHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for an Atom tag feed with an encoded tag', () => {
+      const value = 'https://zulu.dreamwidth.org/data/atom?tag=fandom%3A+greys+anatomy'
+      const expected = 'dreamwidth:posts-tag'
+
+      expect(dreamwidthHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a tag feed with a trailing slash', () => {
+      const value = 'https://elfs.dreamwidth.org/data/atom/?tag=news'
+      const expected = 'dreamwidth:posts-tag'
+
+      expect(dreamwidthHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the userpics key for a userpics feed', () => {
+      const value = 'https://zvi.dreamwidth.org/data/userpics'
+      const expected = 'dreamwidth:userpics'
+
+      expect(dreamwidthHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a journal page', () => {
+      const value = 'https://zvi.dreamwidth.org/tag/feedback'
+
+      expect(dreamwidthHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.example.dreamwidth.org/data/rss'
+
+      expect(dreamwidthHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on www', () => {
+      const value = 'https://www.dreamwidth.org/data/rss'
+
+      expect(dreamwidthHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on the apex', () => {
+      const value = 'https://dreamwidth.org/data/rss'
+
+      expect(dreamwidthHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/data/rss'
+
+      expect(dreamwidthHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://zvi.dreamwidth.org/data/rss', { key: 'dreamwidth:posts', label: 'Posts' }],
+      ['https://kake.dreamwidth.org/data/atom', { key: 'dreamwidth:posts', label: 'Posts' }],
+      ['https://elfs.dreamwidth.org/data/rss/', { key: 'dreamwidth:posts', label: 'Posts' }],
+      [
+        'https://zvi.dreamwidth.org/data/rss?tag=feedback',
+        { key: 'dreamwidth:posts-tag', label: 'Tag' },
+      ],
+      [
+        'https://zulu.dreamwidth.org/data/atom?tag=fandom%3A+greys+anatomy',
+        { key: 'dreamwidth:posts-tag', label: 'Tag' },
+      ],
+      [
+        'https://elfs.dreamwidth.org/data/atom/?tag=news',
+        { key: 'dreamwidth:posts-tag', label: 'Tag' },
+      ],
+      [
+        'https://zvi.dreamwidth.org/data/userpics',
+        { key: 'dreamwidth:userpics', label: 'Userpics' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [dreamwidthHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

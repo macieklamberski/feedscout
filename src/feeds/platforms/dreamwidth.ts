@@ -1,7 +1,9 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { decodeSegment, isHostOf, parseUrl } from 'trousse'
+import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
-import { getJournalFeeds, getJournalName, journalTagRegex } from './livejournal.js'
+import { getJournalName, journalTagRegex } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, tag, tildePath, userPath.
@@ -12,6 +14,30 @@ const domains = ['dreamwidth.org']
 const wwwHosts = ['www.dreamwidth.org', 'dreamwidth.org']
 
 const usersPathRegex = /^\/(?:users\/|~)([^/]+)/i
+
+const feeds = definePlatformFeeds([
+  {
+    key: 'dreamwidth:posts-tag',
+    template: 'https://{journal}.dreamwidth.org/data/rss?tag={tag}',
+    format: 'rss',
+  },
+  {
+    key: 'dreamwidth:posts-tag',
+    template: 'https://{journal}.dreamwidth.org/data/atom?tag={tag}',
+    format: 'atom',
+  },
+  { key: 'dreamwidth:posts', template: 'https://{journal}.dreamwidth.org/data/rss', format: 'rss' },
+  {
+    key: 'dreamwidth:posts',
+    template: 'https://{journal}.dreamwidth.org/data/atom',
+    format: 'atom',
+  },
+  {
+    key: 'dreamwidth:userpics',
+    template: 'https://{journal}.dreamwidth.org/data/userpics',
+    format: 'atom',
+  },
+])
 
 export const parseDreamwidthUrl = (url: string): DreamwidthUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
@@ -54,14 +80,35 @@ export const dreamwidthHandler: PlatformHandler = {
     }
 
     // A username with `_` is served on a hostname with `-`.
-    const base = parsed.username
+    const origin = parsed.username
       ? getHostOrigin(`${parsed.username.replaceAll('_', '-')}.dreamwidth.org`)
-      : new URL(url).origin
+      : url
 
-    if (!base) {
+    if (!origin) {
       return []
     }
 
-    return getJournalFeeds(base, parsed.tag, 'dreamwidth')
+    const journal = getTenantSubdomain(origin, domains)
+
+    if (!journal) {
+      return []
+    }
+
+    const entries: Array<DiscoverUriEntry> = []
+
+    if (parsed.tag) {
+      const tag = decodeSegment(parsed.tag) ?? parsed.tag
+
+      entries.push(feeds.getFeedEntry('dreamwidth:posts-tag', { journal, tag }, 'rss'))
+      entries.push(feeds.getFeedEntry('dreamwidth:posts-tag', { journal, tag }, 'atom'))
+    }
+
+    entries.push(feeds.getFeedEntry('dreamwidth:posts', { journal }, 'rss'))
+    entries.push(feeds.getFeedEntry('dreamwidth:posts', { journal }, 'atom'))
+    entries.push(feeds.getFeedEntry('dreamwidth:userpics', { journal }, 'atom'))
+
+    return entries
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
