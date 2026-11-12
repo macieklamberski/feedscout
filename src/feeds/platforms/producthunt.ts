@@ -56,5 +56,5 @@ export const producthuntHandler: PlatformHandler = {
     return [feeds.getFeedEntry('producthunt:products')]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

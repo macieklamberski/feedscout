@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { type ProducthuntUrl, parseProducthuntUrl, producthuntHandler } from './producthunt.js'
@@ -107,7 +107,7 @@ describe('producthuntHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     const productsFeeds: Array<string> = [
       'https://www.producthunt.com/feed',
       'https://producthunt.com/feed',
@@ -117,10 +117,10 @@ describe('producthuntHandler', () => {
       'https://www.producthunt.com/feed?cache=12345',
     ]
 
-    it.each(productsFeeds)('should return the products key for %s', (value) => {
-      const expected = 'producthunt:products'
+    it.each(productsFeeds)('should return the products hint for %s', (value) => {
+      const expected: DiscoverUriHint = { key: 'producthunt:products', label: 'Products' }
 
-      expect(producthuntHandler.getFeedKey?.(value)).toBe(expected)
+      expect(producthuntHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     const pages: Array<string> = [
@@ -131,13 +131,13 @@ describe('producthuntHandler', () => {
     ]
 
     it.each(pages)('should return undefined for the page %s', (value) => {
-      expect(producthuntHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(producthuntHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on another host', () => {
       const value = 'https://example.com/feed'
 
-      expect(producthuntHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(producthuntHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
