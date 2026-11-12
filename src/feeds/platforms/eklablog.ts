@@ -1,7 +1,7 @@
 import { isHostOf, isHostOrSubdomainOf, resolveUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, customDomain.
@@ -26,6 +26,15 @@ const domains = [
   'zic.fr',
 ]
 const connectHosts = ['connect.eklablog.com']
+
+// A custom domain is known only by its marker, so its feeds are built here but not claimed.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'eklablog:posts', template: '{scheme}://{host}/rss' },
+    { key: 'eklablog:comments', template: '{scheme}://{host}/rss/comments' },
+  ],
+  { domains },
+)
 
 const isConnectScript = (src: string | undefined): boolean => {
   return isHostOf(resolveUrl(src ?? '') ?? '', connectHosts)
@@ -72,12 +81,22 @@ export const eklablogHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
+    const { protocol, host } = new URL(url)
+    const params = { scheme: protocol.slice(0, -1), host }
 
-    uris.push({ uri: `${origin}/rss`, hint: composeHint('eklablog:posts') })
-    uris.push({ uri: `${origin}/rss/comments`, hint: composeHint('eklablog:comments') })
+    return [
+      feeds.getFeedEntry('eklablog:posts', params),
+      feeds.getFeedEntry('eklablog:comments', params),
+    ]
+  },
 
-    return uris
+  // The table reads any host under the domains, so the page parser refuses the apex and the www
+  // host first, whose /rss ends in a 404, and a www or nested subdomain, which fails its TLS check.
+  getFeedKey: (url) => {
+    if (parseEklablogUrl(url)?.kind !== 'blog') {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
