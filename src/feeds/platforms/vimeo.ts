@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
@@ -15,8 +15,6 @@ export type VimeoUrl =
   | { kind: 'user'; username: string }
 
 const hosts = ['vimeo.com', 'www.vimeo.com']
-
-const rssSuffixRegex = /\/rss\/?$/i
 
 const albumSegments = ['album', 'showcase']
 
@@ -112,18 +110,11 @@ export const vimeoHandler: PlatformHandler = {
 
   getFeedKey: (url) => {
     const key = feeds.getFeedKey(url)
-    const parsedUrl = parseUrl(url)
+    const page = parseVimeoUrl(url)
 
-    if (!key || !parsedUrl) {
-      return
-    }
-
-    // The feed's page must read as the kind that emits the key: `/123/videos/rss` is a video's
-    // and `/channels/likes/rss` a channel's, neither a user's feed.
-    parsedUrl.pathname = parsedUrl.pathname.replace(rssSuffixRegex, '')
-    const page = parseVimeoUrl(parsedUrl.href)
-
-    if (!page || feedKeys[page.kind] !== key) {
+    // The feed must read as the page kind that emits its key: `/123/videos/rss` is a video's and
+    // `/channels/likes/rss` a channel's, neither a user's feed.
+    if (!key || !page || feedKeys[page.kind] !== key) {
       return
     }
 
