@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type GoopeUrl, goopeHandler, isGoopeHtml, parseGoopeUrl } from './goope.js'
 
 const qrCodeHtml = '<img src="//r.goope.jp/qr/example" width="100" height="100" />'
@@ -42,49 +44,57 @@ describe('isGoopeHtml', () => {
 
 describe('parseGoopeUrl', () => {
   it('should return the free site for a path on r.goope.jp', () => {
-    const expected: GoopeUrl = { kind: 'freeSite', sitePath: '/example', isMemberPage: false }
+    const value = 'https://r.goope.jp/example/info/1234567'
+    const expected: GoopeUrl = { kind: 'freeSite', site: 'example', isMemberPage: false }
 
-    expect(parseGoopeUrl('https://r.goope.jp/example/info/1234567')).toEqual(expected)
+    expect(parseGoopeUrl(value)).toEqual(expected)
   })
 
   it('should return the template path for a free site', () => {
+    const value = 'https://r.goope.jp/example/t_123456/menu'
     const expected: GoopeUrl = {
       kind: 'freeSite',
-      sitePath: '/example/t_123456',
+      site: 'example',
+      templateId: '123456',
       isMemberPage: false,
     }
 
-    expect(parseGoopeUrl('https://r.goope.jp/example/t_123456/menu')).toEqual(expected)
+    expect(parseGoopeUrl(value)).toEqual(expected)
   })
 
   it('should return the member page of a free site', () => {
-    const expected: GoopeUrl = { kind: 'freeSite', sitePath: '/example', isMemberPage: true }
+    const value = 'https://r.goope.jp/example/shokokai/member/info/'
+    const expected: GoopeUrl = { kind: 'freeSite', site: 'example', isMemberPage: true }
 
-    expect(parseGoopeUrl('https://r.goope.jp/example/shokokai/member/info/')).toEqual(expected)
+    expect(parseGoopeUrl(value)).toEqual(expected)
   })
 
   it('should return the site for a custom domain', () => {
-    const expected: GoopeUrl = { kind: 'site', sitePath: '', isMemberPage: false }
+    const value = 'https://example.com/info/1234567'
+    const expected: GoopeUrl = { kind: 'site', isMemberPage: false }
 
-    expect(parseGoopeUrl('https://example.com/info/1234567')).toEqual(expected)
+    expect(parseGoopeUrl(value)).toEqual(expected)
   })
 
   it('should return the template path for a custom domain', () => {
-    const expected: GoopeUrl = { kind: 'site', sitePath: '/t_123456', isMemberPage: false }
+    const value = 'https://example.com/t_123456'
+    const expected: GoopeUrl = { kind: 'site', templateId: '123456', isMemberPage: false }
 
-    expect(parseGoopeUrl('https://example.com/t_123456')).toEqual(expected)
+    expect(parseGoopeUrl(value)).toEqual(expected)
   })
 
   it('should return the member page of a custom domain', () => {
-    const expected: GoopeUrl = { kind: 'site', sitePath: '', isMemberPage: true }
+    const value = 'https://example.com/shokokai/member/2/'
+    const expected: GoopeUrl = { kind: 'site', isMemberPage: true }
 
-    expect(parseGoopeUrl('https://example.com/shokokai/member/2/')).toEqual(expected)
+    expect(parseGoopeUrl(value)).toEqual(expected)
   })
 
   it('should return the site for a shokokai page outside the members', () => {
-    const expected: GoopeUrl = { kind: 'site', sitePath: '', isMemberPage: false }
+    const value = 'https://example.com/shokokai/'
+    const expected: GoopeUrl = { kind: 'site', isMemberPage: false }
 
-    expect(parseGoopeUrl('https://example.com/shokokai/')).toEqual(expected)
+    expect(parseGoopeUrl(value)).toEqual(expected)
   })
 
   it('should return undefined for the root of r.goope.jp', () => {
@@ -136,6 +146,42 @@ describe('goopeHandler', () => {
       expect(goopeHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the https news feed of a free site opened over http', () => {
+      const value = 'http://r.goope.jp/example/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://r.goope.jp/example/feed.rss',
+          hint: { key: 'goope:news', label: 'News', format: 'rdf' },
+        },
+      ]
+
+      expect(goopeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the news feed under the template path of a free site', () => {
+      const value = 'https://r.goope.jp/example/t_123456/menu'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://r.goope.jp/example/t_123456/feed.rss',
+          hint: { key: 'goope:news', label: 'News', format: 'rdf' },
+        },
+      ]
+
+      expect(goopeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the news feed of a custom domain opened over http', () => {
+      const value = 'http://example.com/info/1234567'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.com/feed.rss',
+          hint: { key: 'goope:news', label: 'News', format: 'rdf' },
+        },
+      ]
+
+      expect(goopeHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the news feed under the template path', () => {
       const value = 'https://example.com/t_123456/'
       const expected: Array<DiscoverUriEntry> = [
@@ -162,6 +208,99 @@ describe('goopeHandler', () => {
       ]
 
       expect(goopeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the member news feed under the template path of a custom domain', () => {
+      const value = 'https://example.com/t_123456/shokokai/member/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/t_123456/shokokai/member/feed.rss',
+          hint: { key: 'goope:member-news', label: 'Member news', format: 'rdf' },
+        },
+        {
+          uri: 'https://example.com/t_123456/feed.rss',
+          hint: { key: 'goope:news', label: 'News', format: 'rdf' },
+        },
+      ]
+
+      expect(goopeHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the news key for the news feed of a free site', () => {
+      const value = 'https://r.goope.jp/example/feed.rss'
+      const expected = 'goope:news'
+
+      expect(goopeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the news key for the news feed over http', () => {
+      const value = 'http://r.goope.jp/example/feed.rss'
+      const expected = 'goope:news'
+
+      expect(goopeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the news key for the news feed under a template path', () => {
+      const value = 'https://r.goope.jp/example/t_123456/feed.rss'
+      const expected = 'goope:news'
+
+      expect(goopeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the member news key for the member news feed', () => {
+      const value = 'https://r.goope.jp/example/shokokai/member/feed.rss'
+      const expected = 'goope:member-news'
+
+      expect(goopeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the member news key for the member news feed under a template path', () => {
+      const value = 'https://r.goope.jp/example/t_123456/shokokai/member/feed.rss'
+      const expected = 'goope:member-news'
+
+      expect(goopeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a page of a free site', () => {
+      const value = 'https://r.goope.jp/example/info/1234567'
+
+      expect(goopeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a member news path with no site in front', () => {
+      const value = 'https://r.goope.jp/shokokai/member/feed.rss'
+
+      expect(goopeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the news feed of a custom domain', () => {
+      const value = 'https://example.com/feed.rss'
+
+      expect(goopeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const newsHint: DiscoverUriHint = { key: 'goope:news', label: 'News' }
+    const memberNewsHint: DiscoverUriHint = { key: 'goope:member-news', label: 'Member news' }
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://r.goope.jp/example/feed.rss/', newsHint],
+      ['https://r.goope.jp/example/t_123456/feed.rss/', newsHint],
+      ['https://r.goope.jp/example/shokokai/member/feed.rss', memberNewsHint],
+      ['https://r.goope.jp/example/t_123456/shokokai/member/feed.rss', memberNewsHint],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [goopeHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
