@@ -218,6 +218,13 @@ describe('shopifyHandler', () => {
       expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
+    it('should return the blog hint for a feed on www in front of a store', () => {
+      const value = 'https://www.example.myshopify.com/blogs/news.atom'
+      const expected: DiscoverUriHint = { key: 'shopify:blog', label: 'Blog' }
+
+      expect(shopifyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://shop.example.myshopify.com/blogs/news.atom'
 
