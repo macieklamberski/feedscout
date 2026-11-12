@@ -36,6 +36,18 @@ describe('parseSourceforgeUrl', () => {
     expect(parseSourceforgeUrl('https://sourceforge.net/p/nmap/bugs/123')).toEqual(expected)
   })
 
+  it('should return the forum and thread for a discussion thread page', () => {
+    const value = 'https://sourceforge.net/p/example/discussion/12345/thread/abc123/'
+    const expected: SourceforgeUrl = {
+      kind: 'project',
+      project: 'example',
+      forum: '12345',
+      thread: 'abc123',
+    }
+
+    expect(parseSourceforgeUrl(value)).toEqual(expected)
+  })
+
   it('should return the project for a project name with hyphens', () => {
     const value = 'https://sourceforge.net/projects/my-cool-project'
     const expected: SourceforgeUrl = { kind: 'project', project: 'my-cool-project' }
@@ -130,6 +142,54 @@ describe('sourceforgeHandler', () => {
         {
           uri: 'https://sourceforge.net/p/filezilla/bugs/feed',
           hint: { key: 'sourceforge:bugs', label: 'Bugs' },
+        },
+      ]
+
+      expect(sourceforgeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the thread feeds for a discussion thread page', () => {
+      const value = 'https://sourceforge.net/p/example/discussion/12345/thread/abc123/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://sourceforge.net/p/example/activity/feed',
+          hint: { key: 'sourceforge:activity', label: 'Recent activity' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/feed',
+          hint: { key: 'sourceforge:project-feed', label: 'Project feed' },
+        },
+        {
+          uri: 'https://sourceforge.net/projects/example/rss',
+          hint: { key: 'sourceforge:files', label: 'File releases' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/news/feed.rss',
+          hint: { key: 'sourceforge:news', label: 'News', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/news/feed.atom',
+          hint: { key: 'sourceforge:news', label: 'News', format: 'atom' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/discussion/feed',
+          hint: { key: 'sourceforge:discussion', label: 'Discussion', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/discussion/feed.atom',
+          hint: { key: 'sourceforge:discussion', label: 'Discussion', format: 'atom' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/bugs/feed',
+          hint: { key: 'sourceforge:bugs', label: 'Bugs' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/discussion/12345/thread/abc123/feed',
+          hint: { key: 'sourceforge:discussion-thread', label: 'Thread', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/discussion/12345/thread/abc123/feed.atom',
+          hint: { key: 'sourceforge:discussion-thread', label: 'Thread', format: 'atom' },
         },
       ]
 
@@ -383,10 +443,121 @@ describe('sourceforgeHandler', () => {
       expect(sourceforgeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a discussion thread feed', () => {
-      const value = 'https://sourceforge.net/p/hsqldb/discussion/708858/thread/f4155d65/feed.rss'
+    it('should return the thread key for a discussion thread feed', () => {
+      const value = 'https://sourceforge.net/p/example/discussion/12345/thread/abc123/feed.rss'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:discussion-thread',
+        label: 'Thread',
+        format: 'rss',
+      }
 
-      expect(sourceforgeHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the thread key for a discussion thread atom feed', () => {
+      const value = 'https://sourceforge.net/p/example/discussion/12345/thread/abc123/feed.atom'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:discussion-thread',
+        label: 'Thread',
+        format: 'atom',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the forum key for a discussion forum feed', () => {
+      const value = 'https://sourceforge.net/p/example/discussion/12345/feed.rss'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:discussion-forum',
+        label: 'Forum',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tool key for a wiki feed', () => {
+      const value = 'https://sourceforge.net/p/example/wiki/feed.rss'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:tool',
+        label: 'Tool changes',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tool key for a code repository atom feed', () => {
+      const value = 'https://sourceforge.net/p/example/example-git/feed.atom'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:tool',
+        label: 'Tool changes',
+        format: 'atom',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tool page key for a wiki page feed', () => {
+      const value = 'https://sourceforge.net/p/example/wiki/Home/feed.atom'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:tool-page',
+        label: 'Page changes',
+        format: 'atom',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tool page key for a ticket feed', () => {
+      const value = 'https://sourceforge.net/p/example/bugs/12345/feed.rss'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:tool-page',
+        label: 'Page changes',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the user key for a user feed', () => {
+      const value = 'https://sourceforge.net/u/alice/feed.rss'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:user',
+        label: 'User feed',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the user tool key for a user blog feed', () => {
+      const value = 'https://sourceforge.net/u/alice/blog/feed'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:user-tool',
+        label: 'User tool changes',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the activity key for a mirror activity feed', () => {
+      const value = 'https://sourceforge.net/mirror/example/activity/feed'
+      const expected: DiscoverUriHint = { key: 'sourceforge:activity', label: 'Recent activity' }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should keep the discussion key for a discussion feed beside the tool rows', () => {
+      const value = 'https://sourceforge.net/p/example/discussion/feed.rss'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:discussion',
+        label: 'Discussion',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a feed path on another host', () => {
@@ -461,6 +632,34 @@ describe('sourceforgeHandler', () => {
       [
         'http://sourceforge.net/p/hsqldb/bugs/feed.atom',
         { key: 'sourceforge:bugs', label: 'Bugs', format: 'atom' },
+      ],
+      [
+        'http://sourceforge.net/p/example/discussion/12345/thread/abc123/feed.rss',
+        { key: 'sourceforge:discussion-thread', label: 'Thread', format: 'rss' },
+      ],
+      [
+        'http://sourceforge.net/p/example/discussion/12345/feed.rss',
+        { key: 'sourceforge:discussion-forum', label: 'Forum', format: 'rss' },
+      ],
+      [
+        'http://sourceforge.net/p/example/wiki/feed',
+        { key: 'sourceforge:tool', label: 'Tool changes', format: 'rss' },
+      ],
+      [
+        'http://sourceforge.net/p/example/wiki/Home/feed.atom',
+        { key: 'sourceforge:tool-page', label: 'Page changes', format: 'atom' },
+      ],
+      [
+        'http://sourceforge.net/u/alice/feed.atom',
+        { key: 'sourceforge:user', label: 'User feed', format: 'atom' },
+      ],
+      [
+        'http://sourceforge.net/u/alice/blog/feed.rss',
+        { key: 'sourceforge:user-tool', label: 'User tool changes', format: 'rss' },
+      ],
+      [
+        'https://sourceforge.net/mirror/example/activity/feed.atom',
+        { key: 'sourceforge:activity', label: 'Recent activity', format: 'atom' },
       ],
     ]
 
