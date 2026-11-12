@@ -179,95 +179,95 @@ describe('tumblrHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for a blog feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a blog feed', () => {
       const value = 'https://example.tumblr.com/rss'
-      const expected = 'tumblr:posts'
+      const expected: DiscoverUriHint = { key: 'tumblr:posts', label: 'Posts' }
 
-      expect(tumblrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tumblrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a blog feed with a trailing slash', () => {
+    it('should return the posts hint for a blog feed with a trailing slash', () => {
       const value = 'https://example.tumblr.com/rss/'
-      const expected = 'tumblr:posts'
+      const expected: DiscoverUriHint = { key: 'tumblr:posts', label: 'Posts' }
 
-      expect(tumblrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tumblrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a blog feed on a www subdomain', () => {
+    it('should return the posts hint for a blog feed on a www subdomain', () => {
       const value = 'https://www.example.tumblr.com/rss'
-      const expected = 'tumblr:posts'
+      const expected: DiscoverUriHint = { key: 'tumblr:posts', label: 'Posts' }
 
-      expect(tumblrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tumblrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an http blog feed', () => {
+    it('should return the posts hint for an http blog feed', () => {
       const value = 'http://example.tumblr.com/rss'
-      const expected = 'tumblr:posts'
+      const expected: DiscoverUriHint = { key: 'tumblr:posts', label: 'Posts' }
 
-      expect(tumblrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tumblrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed', () => {
+    it('should return the tag hint for a tag feed', () => {
       const value = 'https://example.tumblr.com/tagged/updates/rss'
-      const expected = 'tumblr:tag'
+      const expected: DiscoverUriHint = { key: 'tumblr:tag', label: 'Tag' }
 
-      expect(tumblrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tumblrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a percent-encoded tag feed', () => {
+    it('should return the tag hint for a percent-encoded tag feed', () => {
       const value = 'https://example.tumblr.com/tagged/caf%C3%A9/rss'
-      const expected = 'tumblr:tag'
+      const expected: DiscoverUriHint = { key: 'tumblr:tag', label: 'Tag' }
 
-      expect(tumblrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tumblrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for the format query on the blog root', () => {
       const value = 'https://example.tumblr.com/?format=rss'
 
-      expect(tumblrHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tumblrHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a podcast feed', () => {
       const value = 'https://example.tumblr.com/podcast/rss'
 
-      expect(tumblrHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tumblrHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://example.tumblr.com/post/123'
 
-      expect(tumblrHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tumblrHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a tag page', () => {
       const value = 'https://example.tumblr.com/tagged/updates'
 
-      expect(tumblrHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tumblrHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on www.tumblr.com', () => {
       const value = 'https://www.tumblr.com/example/rss'
 
-      expect(tumblrHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tumblrHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://blog.example.tumblr.com/rss'
 
-      expect(tumblrHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tumblrHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://tumblr.com/rss'
 
-      expect(tumblrHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tumblrHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/rss'
 
-      expect(tumblrHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tumblrHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
