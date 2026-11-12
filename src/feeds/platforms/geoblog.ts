@@ -69,14 +69,13 @@ export const geoblogHandler: PlatformHandler = {
   resolve: (url, content) => {
     const page = getGeoblogPage(url, content)
     const user = getTenantSubdomain(url, domains)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page || !user) {
+    if (!page || !user || !pageFeeds) {
       return []
     }
 
-    const scheme = new URL(url).protocol.slice(0, -1)
-
-    return [feeds.getFeedEntry('geoblog:trip', { scheme, user, tripId: page.tripId })]
+    return [pageFeeds.getFeedEntry('geoblog:trip', { user, tripId: page.tripId })]
   },
 
   getFeedHint: feeds.getFeedHint,
