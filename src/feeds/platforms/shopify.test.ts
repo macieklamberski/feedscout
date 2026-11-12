@@ -48,6 +48,22 @@ describe('parseShopifyUrl', () => {
     expect(parseShopifyUrl('https://shop.example/zh-hant-hk/blogs/videos')).toEqual(expected)
   })
 
+  it('should drop the format from the handle of a blog feed', () => {
+    const expected: ShopifyUrl = { kind: 'blog', handle: 'news' }
+
+    expect(parseShopifyUrl('https://shop.example/blogs/news.atom')).toEqual(expected)
+  })
+
+  it('should drop the format from the handle of a market blog feed', () => {
+    const expected: ShopifyUrl = { kind: 'blog', handle: 'news', locale: 'en-us' }
+
+    expect(parseShopifyUrl('https://shop.example/en-us/blogs/news.atom')).toEqual(expected)
+  })
+
+  it('should return undefined for a format with no handle', () => {
+    expect(parseShopifyUrl('https://shop.example/blogs/.atom')).toBeUndefined()
+  })
+
   it('should return undefined for a page outside a blog', () => {
     expect(parseShopifyUrl('https://shop.example/products/shirt')).toBeUndefined()
   })
@@ -143,6 +159,46 @@ describe('shopifyHandler', () => {
       ]
 
       expect(shopifyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the blog feed itself for a blog feed', () => {
+      const value = 'https://example.com/blogs/news.atom'
+      const expected = [
+        {
+          uri: 'https://example.com/blogs/news.atom',
+          hint: { key: 'shopify:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(shopifyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the market blog feed itself for a market blog feed', () => {
+      const value = 'https://example.com/en-us/blogs/news.atom'
+      const expected = [
+        {
+          uri: 'https://example.com/en-us/blogs/news.atom',
+          hint: { key: 'shopify:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(shopifyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the blog feed for a blog tag feed', () => {
+      const value = 'https://example.com/blogs/news/tagged/travel.atom'
+      const expected = [
+        {
+          uri: 'https://example.com/blogs/news.atom',
+          hint: { key: 'shopify:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(shopifyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return an empty array for a collection feed', () => {
+      expect(shopifyHandler.resolve('https://example.com/collections/shoes.atom')).toEqual([])
     })
 
     it('should return an empty array for the store root', () => {

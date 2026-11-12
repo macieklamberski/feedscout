@@ -1,7 +1,7 @@
 import { getPathSegments, isAnyOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { hasMarker, letterGroupsRegex } from '../../common/utils.js'
+import { formatSuffixRegex, hasMarker, letterGroupsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -46,7 +46,9 @@ export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {
   // A market's locale folder, as in `/en-us/blogs/news` or `/zh-hant-hk/blogs/news`.
   const [localeOrRoute] = segments
   const locale = letterGroupsRegex.test(localeOrRoute ?? '') ? localeOrRoute : undefined
-  const [route, handle] = locale ? segments.slice(1) : segments
+  const [route, handleSegment] = locale ? segments.slice(1) : segments
+  // A handle holds no dot, so a feed URL's `.atom` is a format, not part of the handle.
+  const handle = handleSegment?.replace(formatSuffixRegex, '')
 
   if (!isAnyOf(route, 'blogs') || !handle) {
     return
