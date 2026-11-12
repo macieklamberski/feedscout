@@ -269,81 +269,81 @@ describe('tenderHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the discussions key for the discussions feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the discussions hint for the discussions feed', () => {
       const value = 'https://gpgtools.tenderapp.com/discussions.atom'
-      const expected = 'tender:discussions'
+      const expected: DiscoverUriHint = { key: 'tender:discussions', label: 'Discussions' }
 
-      expect(tenderHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tenderHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the comments key for the recent comments feed', () => {
+    it('should return the comments hint for the recent comments feed', () => {
       const value = 'https://gpgtools.tenderapp.com/comments/recent.atom'
-      const expected = 'tender:comments'
+      const expected: DiscoverUriHint = { key: 'tender:comments', label: 'Recent comments' }
 
-      expect(tenderHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tenderHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the discussion key for a discussion feed', () => {
+    it('should return the discussion hint for a discussion feed', () => {
       const value =
         'https://infinitekind.tenderapp.com/discussions/general-questions/135551-change-view.atom?discussion_id=135551-change-view'
-      const expected = 'tender:discussion'
+      const expected: DiscoverUriHint = { key: 'tender:discussion', label: 'Discussion comments' }
 
-      expect(tenderHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tenderHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the discussion key for a discussion feed without discussion_id', () => {
+    it('should return the discussion hint for a discussion feed without discussion_id', () => {
       const value =
         'https://infinitekind.tenderapp.com/discussions/general-questions/135551-change-view.atom'
-      const expected = 'tender:discussion'
+      const expected: DiscoverUriHint = { key: 'tender:discussion', label: 'Discussion comments' }
 
-      expect(tenderHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tenderHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the discussions key for the discussions feed under /help', () => {
+    it('should return the discussions hint for the discussions feed under /help', () => {
       const value = 'https://the-unsigned-guide-2.tenderapp.com/help/discussions.atom'
-      const expected = 'tender:discussions'
+      const expected: DiscoverUriHint = { key: 'tender:discussions', label: 'Discussions' }
 
-      expect(tenderHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tenderHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the discussion key for a discussion feed under /help over http', () => {
+    it('should return the discussion hint for a discussion feed under /help over http', () => {
       const value =
         'http://scrivener.tenderapp.com/help/discussions/scrivener-3-beta/890-translation-feedback-japanese.atom?discussion_id=890-translation-feedback-japanese'
-      const expected = 'tender:discussion'
+      const expected: DiscoverUriHint = { key: 'tender:discussion', label: 'Discussion comments' }
 
-      expect(tenderHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tenderHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a discussion page', () => {
       const value =
         'https://infinitekind.tenderapp.com/discussions/general-questions/135551-change-view'
 
-      expect(tenderHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tenderHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a custom domain', () => {
       const value = 'https://support.example.com/discussions.atom'
 
-      expect(tenderHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tenderHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the www host', () => {
       const value = 'https://www.tenderapp.com/discussions.atom'
 
-      expect(tenderHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tenderHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a new discussion form under a category', () => {
       const value = 'https://alice.tenderapp.com/discussions/questions/new.atom'
 
-      expect(tenderHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tenderHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an invalid URL', () => {
       const value = 'not a url'
 
-      expect(tenderHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tenderHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

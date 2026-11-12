@@ -133,7 +133,7 @@ export const tenderHandler: PlatformHandler = {
 
   // A site's root comes from its settings script and a custom domain carries no marker in the URL
   // alone, so only a feed on a Tender host is read, under its origin or `/help`.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const parsedUrl = parseUrl(url)
 
     if (!parsedUrl || !getTenantSubdomain(url, domains)) {
@@ -143,16 +143,16 @@ export const tenderHandler: PlatformHandler = {
     const sitePath = getSitePath(parsedUrl.pathname, getRoot(parsedUrl.pathname, undefined))
 
     if (discussionsFeedPathRegex.test(sitePath)) {
-      return 'tender:discussions'
+      return composeHint('tender:discussions')
     }
 
     if (commentsFeedPathRegex.test(sitePath)) {
-      return 'tender:comments'
+      return composeHint('tender:comments')
     }
 
     // A discussion answers its feed with or without the `discussion_id` the page links.
     if (discussionFeedPathRegex.test(sitePath)) {
-      return 'tender:discussion'
+      return composeHint('tender:discussion')
     }
   },
 }
