@@ -110,11 +110,11 @@ describe('ocnkHandler', () => {
       expect(ocnkHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the https feed for a shop page on http', () => {
+    it('should return the feed under the page scheme for a shop page on http', () => {
       const value = 'http://example.ocnk.net/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.ocnk.net/rss/rss.php',
+          uri: 'http://example.ocnk.net/rss/rss.php',
           hint: { key: 'ocnk:products', label: 'Products', format: 'rdf' },
         },
       ]

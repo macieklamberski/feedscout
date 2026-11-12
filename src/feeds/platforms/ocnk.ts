@@ -12,13 +12,8 @@ const domains = ['ocnk.net']
 const cartScriptRegex =
   /^(?:https?:\/\/[^/]+)?\/res\/[^/]+\/js\/(?:ocnk|pack\/ocnk-min)\.js(?:\?|$)/i
 
-// Every shop page redirects to https and its alternate link spells the feed with https.
-const shopFeeds = definePlatformFeeds([
-  { key: 'ocnk:products', template: 'https://{shop}.ocnk.net/rss/rss.php', format: 'rdf' },
-])
-
 // A shop on its own domain is known only by its markers, so its feed is built but not claimed.
-const customDomainFeeds = definePlatformFeeds(
+const feeds = definePlatformFeeds(
   [{ key: 'ocnk:products', template: '{scheme}://{host}/rss/rss.php', format: 'rdf' }],
   { domains },
 )
@@ -60,24 +55,14 @@ export const ocnkHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseOcnkUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    // A custom-domain shop spells its alternate link on its own origin.
-    if (parsed.kind === 'customDomain') {
-      const pageFeeds = customDomainFeeds.forUrl(url)
-
-      if (!pageFeeds) {
-        return []
-      }
-
-      return [pageFeeds.getFeedEntry('ocnk:products', {}, 'rdf')]
-    }
-
-    return [shopFeeds.getFeedEntry('ocnk:products', { shop: parsed.shop }, 'rdf')]
+    return [page.getFeedEntry('ocnk:products', {}, 'rdf')]
   },
 
-  getFeedHint: shopFeeds.getFeedHint,
+  getFeedHint: feeds.getFeedHint,
 }
