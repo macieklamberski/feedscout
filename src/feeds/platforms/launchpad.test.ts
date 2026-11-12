@@ -28,6 +28,7 @@ describe('parseLaunchpadUrl', () => {
   })
 
   it('should return the branch for a branch page', () => {
+    const value = 'https://code.launchpad.net/~bzr-pqm/bzr/bzr.dev'
     const expected: LaunchpadUrl = {
       kind: 'branch',
       owner: 'bzr-pqm',
@@ -35,7 +36,7 @@ describe('parseLaunchpadUrl', () => {
       branch: 'bzr.dev',
     }
 
-    expect(parseLaunchpadUrl('https://code.launchpad.net/~bzr-pqm/bzr/bzr.dev')).toEqual(expected)
+    expect(parseLaunchpadUrl(value)).toEqual(expected)
   })
 
   it('should return the branch for a source package branch page', () => {
