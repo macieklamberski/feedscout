@@ -870,10 +870,8 @@
     "launchpad:announcements": "http://feeds.launchpad.net/announcements.atom",
     "launchpad:branch": "http://feeds.launchpad.net/~bzr-pqm/bzr/bzr.dev/branch.atom",
     "launchpad:bug": "http://feeds.launchpad.net/bugs/1/bug.atom",
-    "launchpad:bugs": [
-      "http://feeds.launchpad.net/bugs/latest-bugs.atom",
-      "http://feeds.launchpad.net/ubuntu/+source/bash/latest-bugs.atom"
-    ],
+    "launchpad:bugs": "http://feeds.launchpad.net/bugs/latest-bugs.atom",
+    "launchpad:package-bugs": "http://feeds.launchpad.net/ubuntu/+source/bash/latest-bugs.atom",
     "launchpad:person-branches": "http://feeds.launchpad.net/~cjwatson/branches.atom",
     "launchpad:person-bugs": "http://feeds.launchpad.net/~cjwatson/latest-bugs.atom",
     "launchpad:person-revisions": "http://feeds.launchpad.net/~cjwatson/revisions.atom",

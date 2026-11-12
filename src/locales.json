@@ -499,6 +499,7 @@
     "launchpad:bug": "Bug",
     "launchpad:bugs": "Latest bugs",
     "launchpad:project-bugs": "Project latest bugs",
+    "launchpad:package-bugs": "Package latest bugs",
     "launchpad:person-bugs": "Person latest bugs",
     "launchpad:branch": "Branch",
     "launchpad:project-branches": "Project branches",

@@ -311,7 +311,7 @@ describe('launchpadHandler', () => {
       const expected = [
         {
           uri: 'http://feeds.launchpad.net/example/+source/package/latest-bugs.atom',
-          hint: { key: 'launchpad:bugs', label: 'Latest bugs' },
+          hint: { key: 'launchpad:package-bugs', label: 'Package latest bugs' },
         },
       ]
 
@@ -399,9 +399,12 @@ describe('launchpadHandler', () => {
       expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the bugs key for a source package latest bugs feed', () => {
+    it('should return the package bugs key for a source package latest bugs feed', () => {
       const value = 'http://feeds.launchpad.net/example/+source/package/latest-bugs.atom'
-      const expected: DiscoverUriHint = { key: 'launchpad:bugs', label: 'Latest bugs' }
+      const expected: DiscoverUriHint = {
+        key: 'launchpad:package-bugs',
+        label: 'Package latest bugs',
+      }
 
       expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -506,7 +509,11 @@ describe('launchpadHandler', () => {
       ],
       [
         'http://feeds.launchpad.net/example/+source/package/latest-bugs.atom',
-        { key: 'launchpad:bugs', label: 'Latest bugs' },
+        { key: 'launchpad:package-bugs', label: 'Package latest bugs' },
+      ],
+      [
+        'https://feeds.launchpad.net/example/+source/package/latest-bugs.atom',
+        { key: 'launchpad:package-bugs', label: 'Package latest bugs' },
       ],
       ['http://feeds.launchpad.net/bugs/123/bug.atom', { key: 'launchpad:bug', label: 'Bug' }],
       [

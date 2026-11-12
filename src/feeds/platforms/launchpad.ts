@@ -33,7 +33,7 @@ const bugsHosts = ['bugs.launchpad.net']
 const codeHosts = ['code.launchpad.net']
 const hosts = [...mainHosts, ...bugsHosts, ...codeHosts]
 
-// Launchpad advertises its feeds over http, and the https URLs redirect there.
+// Launchpad advertises its feeds over http, and the http URLs redirect to https.
 const feeds = definePlatformFeeds([
   {
     key: 'launchpad:project-announcements',
@@ -41,7 +41,7 @@ const feeds = definePlatformFeeds([
   },
   { key: 'launchpad:announcements', template: 'http://feeds.launchpad.net/announcements.atom' },
   {
-    key: 'launchpad:bugs',
+    key: 'launchpad:package-bugs',
     template: 'http://feeds.launchpad.net/{distribution}/+source/{sourcePackage}/latest-bugs.atom',
   },
   // The site-wide bugs feed sits where a project named `bugs` would, so it comes first.
@@ -195,7 +195,7 @@ export const launchpadHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'sourcePackage') {
-      return [feeds.getFeedEntry('launchpad:bugs', parsed)]
+      return [feeds.getFeedEntry('launchpad:package-bugs', parsed)]
     }
 
     const entries: Array<DiscoverUriEntry> = []
