@@ -74,6 +74,7 @@ describe('jimdoHandler', () => {
     const feedUrls: Array<[string, DiscoverUriHint]> = [
       ['https://example.jimdofree.com/rss/blog', { key: 'jimdo:blog', label: 'Blog' }],
       ['http://example.jimdofree.com/rss/blog/', { key: 'jimdo:blog', label: 'Blog' }],
+      ['https://example.jimdofree.com/rss/blog/news', { key: 'jimdo:blog-tag', label: 'Tag' }],
     ]
 
     it.each(feedUrls)('should return the hint for %s', (value, expected) => {
@@ -115,6 +116,7 @@ describe('jimdoHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://example.jimdofree.com/rss/blog', { key: 'jimdo:blog', label: 'Blog' }],
       ['http://example.jimdofree.com/rss/blog', { key: 'jimdo:blog', label: 'Blog' }],
+      ['https://example.jimdofree.com/rss/blog/news', { key: 'jimdo:blog-tag', label: 'Tag' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
