@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type FiresideUrl, firesideHandler, parseFiresideUrl } from './fireside.js'
 
 describe('parseFiresideUrl', () => {
@@ -80,6 +82,88 @@ describe('firesideHandler', () => {
 
     it('should return empty array for the bare host', () => {
       expect(firesideHandler.resolve('https://fireside.fm/')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the podcast key for an RSS feed', () => {
+      const value = 'https://feeds.fireside.fm/99zueins/rss'
+      const expected = 'fireside:podcast'
+
+      expect(firesideHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for an RSS feed with a trailing slash', () => {
+      const value = 'https://feeds.fireside.fm/podcastmethod/rss/'
+      const expected = 'fireside:podcast'
+
+      expect(firesideHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a JSON feed', () => {
+      const value = 'https://99zueins.fireside.fm/json'
+      const expected = 'fireside:podcast'
+
+      expect(firesideHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a show page', () => {
+      const value = 'https://99zueins.fireside.fm/'
+
+      expect(firesideHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a show path on the feed host', () => {
+      const value = 'https://feeds.fireside.fm/99zueins'
+
+      expect(firesideHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a tag feed', () => {
+      const value = 'https://99zueins.fireside.fm/tags/podcast/rss'
+
+      expect(firesideHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a JSON feed on a nested subdomain', () => {
+      const value = 'https://blog.example.fireside.fm/json'
+
+      expect(firesideHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a JSON feed on the www host', () => {
+      const value = 'https://www.fireside.fm/json'
+
+      expect(firesideHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/json'
+
+      expect(firesideHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://feeds.fireside.fm/99zueins/rss', { key: 'fireside:podcast', label: 'Podcast' }],
+      ['https://feeds.fireside.fm/assets/rss', { key: 'fireside:podcast', label: 'Podcast' }],
+      [
+        'https://feeds.fireside.fm/podcastmethod/rss/',
+        { key: 'fireside:podcast', label: 'Podcast' },
+      ],
+      ['https://99zueins.fireside.fm/json', { key: 'fireside:podcast', label: 'Podcast' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [firesideHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

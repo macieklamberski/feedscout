@@ -1,6 +1,7 @@
 import { isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,6 +10,11 @@ export type FiresideUrl = { kind: 'podcast'; slug: string }
 const domains = ['fireside.fm']
 // The feed host serves every show by path, so it names no show.
 const feedHosts = ['feeds.fireside.fm']
+
+const feeds = definePlatformFeeds([
+  { key: 'fireside:podcast', template: 'https://feeds.fireside.fm/{slug}/rss', format: 'rss' },
+  { key: 'fireside:podcast', template: 'https://{slug}.fireside.fm/json', format: 'json' },
+])
 
 export const parseFiresideUrl = (url: string): FiresideUrl | undefined => {
   const slug = getTenantSubdomain(url, domains)
@@ -33,14 +39,10 @@ export const firesideHandler: PlatformHandler = {
     }
 
     return [
-      {
-        uri: `https://feeds.fireside.fm/${parsed.slug}/rss`,
-        hint: composeHint('fireside:podcast', 'rss'),
-      },
-      {
-        uri: `https://${parsed.slug}.fireside.fm/json`,
-        hint: composeHint('fireside:podcast', 'json'),
-      },
+      feeds.getFeedEntry('fireside:podcast', { slug: parsed.slug }, 'rss'),
+      feeds.getFeedEntry('fireside:podcast', { slug: parsed.slug }, 'json'),
     ]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
