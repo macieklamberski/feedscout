@@ -1,16 +1,41 @@
-import { composeQuery, getQueryParam, isHostOf } from 'trousse'
+import { getQueryParam, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (guess, html).
 // Handler needed for: home.
 
-export type BearblogUrl = { kind: 'discover' } | { kind: 'blog'; tag?: string }
+export type BearblogUrl = { kind: 'discover' } | { kind: 'blog'; blog: string; tag?: string }
 
 const domains = ['bearblog.dev']
 const apexHosts = ['bearblog.dev', 'www.bearblog.dev']
+
+const feeds = definePlatformFeeds([
+  { key: 'bearblog:discover', template: 'https://bearblog.dev/discover/feed/', format: 'atom' },
+  {
+    key: 'bearblog:discover',
+    template: 'https://bearblog.dev/discover/feed/?type=rss',
+    format: 'rss',
+  },
+  { key: 'bearblog:tag', template: 'https://{blog}.bearblog.dev/feed/?q={tag}', format: 'atom' },
+  {
+    key: 'bearblog:tag',
+    template: 'https://{blog}.bearblog.dev/feed/?type=rss&q={tag}',
+    format: 'rss',
+  },
+  { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/feed/', format: 'atom' },
+  { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/feed/?type=rss', format: 'rss' },
+  // Every blog serves the same two feeds under these paths too, which the page does not link.
+  { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/atom/', format: 'atom' },
+  { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/atom.xml', format: 'atom' },
+  { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/feed.xml', format: 'atom' },
+  { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/index.xml', format: 'atom' },
+  { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/rss/', format: 'rss' },
+  { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/rss.xml', format: 'rss' },
+])
 
 export const parseBearblogUrl = (url: string): BearblogUrl | undefined => {
   // Apex bearblog.dev exposes the platform-wide trending discovery feed.
@@ -18,14 +43,16 @@ export const parseBearblogUrl = (url: string): BearblogUrl | undefined => {
     return { kind: 'discover' }
   }
 
-  if (!getTenantSubdomain(url, domains)) {
+  const blog = getTenantSubdomain(url, domains)
+
+  if (!blog) {
     return
   }
 
   // Tag filter via ?q= query param.
   const tag = getQueryParam(new URL(url).searchParams, 'q')
 
-  return { kind: 'blog', tag }
+  return { kind: 'blog', blog, tag }
 }
 
 export const bearblogHandler: PlatformHandler = {
@@ -42,34 +69,30 @@ export const bearblogHandler: PlatformHandler = {
 
     if (parsed.kind === 'discover') {
       return [
-        {
-          uri: 'https://bearblog.dev/discover/feed/',
-          hint: composeHint('bearblog:discover', 'atom'),
-        },
-        {
-          uri: 'https://bearblog.dev/discover/feed/?type=rss',
-          hint: composeHint('bearblog:discover', 'rss'),
-        },
+        feeds.getFeedEntry('bearblog:discover', {}, 'atom'),
+        feeds.getFeedEntry('bearblog:discover', {}, 'rss'),
       ]
     }
 
-    const { origin } = new URL(url)
+    const { blog } = parsed
     const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.tag) {
-      uris.push({
-        uri: `${origin}/feed/${composeQuery({ q: parsed.tag })}`,
-        hint: composeHint('bearblog:tag', 'atom'),
-      })
-      uris.push({
-        uri: `${origin}/feed/${composeQuery({ type: 'rss', q: parsed.tag })}`,
-        hint: composeHint('bearblog:tag', 'rss'),
-      })
+      const params = { blog, tag: parsed.tag }
+
+      uris.push(
+        feeds.getFeedEntry('bearblog:tag', params, 'atom'),
+        feeds.getFeedEntry('bearblog:tag', params, 'rss'),
+      )
     }
 
-    uris.push({ uri: `${origin}/feed/`, hint: composeHint('bearblog:posts', 'atom') })
-    uris.push({ uri: `${origin}/feed/?type=rss`, hint: composeHint('bearblog:posts', 'rss') })
+    uris.push(
+      feeds.getFeedEntry('bearblog:posts', { blog }, 'atom'),
+      feeds.getFeedEntry('bearblog:posts', { blog }, 'rss'),
+    )
 
     return uris
   },
+
+  getFeedKey: feeds.getFeedKey,
 }

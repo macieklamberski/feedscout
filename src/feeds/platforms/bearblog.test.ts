@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type BearblogUrl, bearblogHandler, parseBearblogUrl } from './bearblog.js'
 
 describe('parseBearblogUrl', () => {
@@ -10,13 +12,21 @@ describe('parseBearblogUrl', () => {
   })
 
   it('should return the blog for a subdomain', () => {
-    const expected: BearblogUrl = { kind: 'blog', tag: undefined }
+    const expected: BearblogUrl = {
+      kind: 'blog',
+      blog: 'herman',
+      tag: undefined,
+    }
 
     expect(parseBearblogUrl('https://herman.bearblog.dev/')).toEqual(expected)
   })
 
   it('should return the blog with its tag for a tag filter', () => {
-    const expected: BearblogUrl = { kind: 'blog', tag: 'python' }
+    const expected: BearblogUrl = {
+      kind: 'blog',
+      blog: 'herman',
+      tag: 'python',
+    }
 
     expect(parseBearblogUrl('https://herman.bearblog.dev/blog/?q=python')).toEqual(expected)
   })
@@ -53,6 +63,22 @@ describe('bearblogHandler', () => {
 
     it('should return Atom and RSS feeds for blog', () => {
       const value = 'https://alice.bearblog.dev'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.bearblog.dev/feed/',
+          hint: { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://alice.bearblog.dev/feed/?type=rss',
+          hint: { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
+        },
+      ]
+
+      expect(bearblogHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return https feeds for an http blog page', () => {
+      const value = 'http://alice.bearblog.dev/'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://alice.bearblog.dev/feed/',
@@ -121,6 +147,95 @@ describe('bearblogHandler', () => {
       ]
 
       expect(bearblogHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    const feedKeys: Array<[string, string]> = [
+      ['https://bearblog.dev/discover/feed/', 'bearblog:discover'],
+      ['https://bearblog.dev/discover/feed/?type=rss', 'bearblog:discover'],
+      ['https://bearblog.dev/discover/feed/?newest=True', 'bearblog:discover'],
+      ['https://tiramisu.bearblog.dev/feed/?q=psychology', 'bearblog:tag'],
+      ['https://tiramisu.bearblog.dev/feed/?type=rss&q=psychology', 'bearblog:tag'],
+      ['https://reedybear.bearblog.dev/feed/?q=bearblog&type=rss', 'bearblog:tag'],
+      ['https://docs.bearblog.dev/feed/', 'bearblog:posts'],
+      ['https://docs.bearblog.dev/feed/?type=rss', 'bearblog:posts'],
+      ['http://herman.bearblog.dev/feed/', 'bearblog:posts'],
+      ['https://gabrielcornish.bearblog.dev/atom/', 'bearblog:posts'],
+      ['https://achyut.bearblog.dev/atom.xml', 'bearblog:posts'],
+      ['https://nikspyratos.bearblog.dev/feed.xml', 'bearblog:posts'],
+      ['https://reedybear.bearblog.dev/index.xml', 'bearblog:posts'],
+      ['https://ludwigabap.bearblog.dev/rss/', 'bearblog:posts'],
+      ['https://tbr.bearblog.dev/rss.xml', 'bearblog:posts'],
+    ]
+
+    it.each(feedKeys)('should return the key of %s', (value, expected) => {
+      expect(bearblogHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://herman.bearblog.dev/blog/'
+
+      expect(bearblogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a tag page', () => {
+      const value = 'https://herman.bearblog.dev/blog/?q=python'
+
+      expect(bearblogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the discover page', () => {
+      const value = 'https://bearblog.dev/discover/'
+
+      expect(bearblogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on the apex', () => {
+      const value = 'https://bearblog.dev/feed/'
+
+      expect(bearblogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.example.bearblog.dev/feed/'
+
+      expect(bearblogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/feed/'
+
+      expect(bearblogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://bearblog.dev/discover/feed/', { key: 'bearblog:discover', label: 'Trending' }],
+      [
+        'https://bearblog.dev/discover/feed/?type=rss',
+        { key: 'bearblog:discover', label: 'Trending' },
+      ],
+      ['https://tiramisu.bearblog.dev/feed/?q=psychology', { key: 'bearblog:tag', label: 'Tag' }],
+      [
+        'https://tiramisu.bearblog.dev/feed/?type=rss&q=psychology',
+        { key: 'bearblog:tag', label: 'Tag' },
+      ],
+      ['https://docs.bearblog.dev/feed/', { key: 'bearblog:posts', label: 'Posts' }],
+      ['https://docs.bearblog.dev/feed/?type=rss', { key: 'bearblog:posts', label: 'Posts' }],
+      ['https://achyut.bearblog.dev/atom.xml', { key: 'bearblog:posts', label: 'Posts' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [bearblogHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
