@@ -1,15 +1,7 @@
-import {
-  composeQuery,
-  getAnyOf,
-  getPathSegments,
-  getQueryParam,
-  isAnyOf,
-  isHostOf,
-  parseUrl,
-} from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getAnyOf, getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import type { PlatformFeedParams } from '../../common/uris/platform/feeds.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers domain, subreddits (guess, html), partly covers multiSubreddit.
@@ -44,16 +36,56 @@ const timeOptions = ['hour', 'day', 'week', 'month', 'year', 'all']
 const timeFilteredSorts = ['top', 'controversial']
 const userPrefixes = ['u', 'user']
 
+// Rows with a fixed segment sit above the `{sort}` rows that would read it as a sort. Within a key,
+// a row with more placeholders sits above one with fewer, since the first row the values fill is
+// built.
+const feeds = definePlatformFeeds([
+  {
+    key: 'reddit:search',
+    template: 'https://www.reddit.com/r/{subreddit}/search.rss?q={query}&restrict_sr=on',
+  },
+  { key: 'reddit:search', template: 'https://www.reddit.com/search.rss?q={query}' },
+  { key: 'reddit:wiki', template: 'https://www.reddit.com/r/{subreddit}/wiki/index.rss' },
+  {
+    key: 'reddit:post-comments',
+    template: 'https://www.reddit.com/r/{subreddit}/comments/{postId}/.rss',
+  },
+  {
+    key: 'reddit:post-comments',
+    template: 'https://www.reddit.com/user/{username}/comments/{postId}/.rss',
+  },
+  { key: 'reddit:comments', template: 'https://www.reddit.com/r/{subreddit}/comments/.rss' },
+  {
+    key: 'reddit:multireddit',
+    template: 'https://www.reddit.com/user/{username}/m/{multireddit}/.rss',
+  },
+  {
+    key: 'reddit:user-submitted',
+    template: 'https://www.reddit.com/user/{username}/submitted/.rss',
+  },
+  { key: 'reddit:user-comments', template: 'https://www.reddit.com/user/{username}/comments/.rss' },
+  { key: 'reddit:subreddits', template: 'https://www.reddit.com/subreddits/{sort}/.rss' },
+  { key: 'reddit:subreddits', template: 'https://www.reddit.com/subreddits/.rss' },
+  {
+    key: 'reddit:posts',
+    template: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss?t={timeframe}',
+  },
+  { key: 'reddit:posts', template: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss' },
+  { key: 'reddit:posts', template: 'https://www.reddit.com/r/{subreddit}/.rss' },
+  { key: 'reddit:posts', template: 'https://www.reddit.com/r/{subreddit}.rss' },
+  { key: 'reddit:posts', template: 'https://www.reddit.com/user/{username}/.rss' },
+  { key: 'reddit:posts', template: 'https://www.reddit.com/domain/{domain}/.rss' },
+  { key: 'reddit:posts', template: 'https://www.reddit.com/{sort}/.rss?t={timeframe}' },
+  { key: 'reddit:posts', template: 'https://www.reddit.com/{sort}/.rss' },
+  { key: 'reddit:posts', template: 'https://www.reddit.com/.rss' },
+])
+
 const getTimeframe = (sort: string, searchParams: URLSearchParams): string | undefined => {
   if (!timeFilteredSorts.includes(sort)) {
     return
   }
 
   return getAnyOf(getQueryParam(searchParams, 't'), timeOptions)
-}
-
-const composeTimeframeQuery = (timeframe: string | undefined): string => {
-  return timeframe ? composeQuery({ t: timeframe }) : ''
 }
 
 // Combined subreddits work transparently: /r/{sub1}+{sub2} is captured as one name.
@@ -169,148 +201,94 @@ export const redditHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'home') {
-      return [{ uri: 'https://www.reddit.com/.rss', hint: composeHint('reddit:posts') }]
+      return [feeds.getFeedEntry('reddit:posts')]
     }
 
     if (parsed.kind === 'siteSort') {
-      return [
-        {
-          uri: `https://www.reddit.com/${parsed.sort}/.rss${composeTimeframeQuery(parsed.timeframe)}`,
-          hint: composeHint('reddit:posts'),
-        },
-      ]
+      const { sort, timeframe } = parsed
+
+      return [feeds.getFeedEntry('reddit:posts', timeframe ? { sort, timeframe } : { sort })]
     }
 
     if (parsed.kind === 'siteSearch') {
-      return [
-        {
-          uri: `https://www.reddit.com/search.rss${composeQuery({ q: parsed.query })}`,
-          hint: composeHint('reddit:search'),
-        },
-      ]
+      return [feeds.getFeedEntry('reddit:search', { query: parsed.query })]
     }
 
     if (parsed.kind === 'subreddits') {
-      const path = parsed.sort ? `subreddits/${parsed.sort}` : 'subreddits'
+      const { sort } = parsed
 
-      return [
-        {
-          uri: `https://www.reddit.com/${path}/.rss`,
-          hint: composeHint('reddit:subreddits'),
-        },
-      ]
+      return [feeds.getFeedEntry('reddit:subreddits', sort ? { sort } : {})]
     }
 
     if (parsed.kind === 'search' && parsed.query) {
       return [
-        {
-          uri: `https://www.reddit.com/r/${parsed.subreddit}/search.rss${composeQuery({ q: parsed.query, restrict_sr: 'on' })}`,
-          hint: composeHint('reddit:search'),
-        },
+        feeds.getFeedEntry('reddit:search', { subreddit: parsed.subreddit, query: parsed.query }),
       ]
     }
 
     if (parsed.kind === 'wiki') {
-      return [
-        {
-          uri: `https://www.reddit.com/r/${parsed.subreddit}/wiki/index.rss`,
-          hint: composeHint('reddit:wiki'),
-        },
-      ]
+      return [feeds.getFeedEntry('reddit:wiki', { subreddit: parsed.subreddit })]
     }
 
     if (parsed.kind === 'post') {
-      return [
-        {
-          uri: `https://www.reddit.com/r/${parsed.subreddit}/comments/${parsed.postId}/.rss`,
-          hint: composeHint('reddit:post-comments'),
-        },
-      ]
+      const { subreddit, postId } = parsed
+
+      return [feeds.getFeedEntry('reddit:post-comments', { subreddit, postId })]
     }
 
     // A subreddit search without a query shows the subreddit.
     if (parsed.kind === 'subreddit' || parsed.kind === 'search') {
       const { subreddit } = parsed
-      const uris: Array<DiscoverUriEntry> = []
+      const comments = feeds.getFeedEntry('reddit:comments', { subreddit })
 
       if (parsed.kind === 'subreddit' && parsed.sort) {
-        uris.push({
-          uri: `https://www.reddit.com/r/${subreddit}/${parsed.sort}/.rss${composeTimeframeQuery(parsed.timeframe)}`,
-          hint: composeHint('reddit:posts'),
-        })
-      } else {
-        uris.push({
-          uri: `https://www.reddit.com/r/${subreddit}/.rss`,
-          hint: composeHint('reddit:posts'),
-        })
+        const { sort, timeframe } = parsed
+        const params: PlatformFeedParams = timeframe
+          ? { subreddit, sort, timeframe }
+          : { subreddit, sort }
+
+        return [feeds.getFeedEntry('reddit:posts', params), comments]
       }
 
-      uris.push({
-        uri: `https://www.reddit.com/r/${subreddit}/comments/.rss`,
-        hint: composeHint('reddit:comments'),
-      })
-
-      return uris
+      return [feeds.getFeedEntry('reddit:posts', { subreddit }), comments]
     }
 
     if (parsed.kind === 'multireddit') {
-      return [
-        {
-          uri: `https://www.reddit.com/user/${parsed.username}/m/${parsed.multireddit}/.rss`,
-          hint: composeHint('reddit:multireddit'),
-        },
-      ]
+      const { username, multireddit } = parsed
+
+      return [feeds.getFeedEntry('reddit:multireddit', { username, multireddit })]
     }
 
     if (parsed.kind === 'submitted') {
+      const { username } = parsed
+
       return [
-        {
-          uri: `https://www.reddit.com/user/${parsed.username}/submitted/.rss`,
-          hint: composeHint('reddit:user-submitted'),
-        },
-        {
-          uri: `https://www.reddit.com/user/${parsed.username}/.rss`,
-          hint: composeHint('reddit:posts'),
-        },
+        feeds.getFeedEntry('reddit:user-submitted', { username }),
+        feeds.getFeedEntry('reddit:posts', { username }),
       ]
     }
 
     if (parsed.kind === 'userPost') {
-      return [
-        {
-          uri: `https://www.reddit.com/user/${parsed.username}/comments/${parsed.postId}/.rss`,
-          hint: composeHint('reddit:post-comments'),
-        },
-      ]
+      const { username, postId } = parsed
+
+      return [feeds.getFeedEntry('reddit:post-comments', { username, postId })]
     }
 
     if (parsed.kind === 'comments') {
+      const { username } = parsed
+
       return [
-        {
-          uri: `https://www.reddit.com/user/${parsed.username}/comments/.rss`,
-          hint: composeHint('reddit:user-comments'),
-        },
-        {
-          uri: `https://www.reddit.com/user/${parsed.username}/.rss`,
-          hint: composeHint('reddit:posts'),
-        },
+        feeds.getFeedEntry('reddit:user-comments', { username }),
+        feeds.getFeedEntry('reddit:posts', { username }),
       ]
     }
 
     if (parsed.kind === 'user') {
-      return [
-        {
-          uri: `https://www.reddit.com/user/${parsed.username}/.rss`,
-          hint: composeHint('reddit:posts'),
-        },
-      ]
+      return [feeds.getFeedEntry('reddit:posts', { username: parsed.username })]
     }
 
-    return [
-      {
-        uri: `https://www.reddit.com/domain/${parsed.domain}/.rss`,
-        hint: composeHint('reddit:posts'),
-      },
-    ]
+    return [feeds.getFeedEntry('reddit:posts', { domain: parsed.domain })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }

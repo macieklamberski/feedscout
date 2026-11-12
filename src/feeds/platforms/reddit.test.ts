@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { RedditUrl } from './reddit.js'
 import { parseRedditUrl, redditHandler } from './reddit.js'
 
@@ -841,6 +843,239 @@ describe('redditHandler', () => {
       ]
 
       expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for the home feed', () => {
+      const value = 'https://www.reddit.com/.rss'
+      const expected = 'reddit:posts'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a site sort feed with its timeframe', () => {
+      const value = 'https://www.reddit.com/top/.rss?t=week'
+      const expected = 'reddit:posts'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a subreddit feed', () => {
+      const value = 'https://www.reddit.com/r/dns/.rss'
+      const expected = 'reddit:posts'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a subreddit feed without the slash before the extension', () => {
+      const value = 'https://www.reddit.com/r/emacs.rss'
+      const expected = 'reddit:posts'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a subreddit sort feed with its timeframe', () => {
+      const value = 'https://www.reddit.com/r/OpenAI/top/.rss?t=month'
+      const expected = 'reddit:posts'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a subreddit sort feed with a cache-busting parameter', () => {
+      const value = 'https://www.reddit.com/r/devops/top/.rss?_=1782881925'
+      const expected = 'reddit:posts'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a user feed', () => {
+      const value = 'https://www.reddit.com/user/feathj/.rss'
+      const expected = 'reddit:posts'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a domain feed', () => {
+      const value = 'https://www.reddit.com/domain/github.com/.rss'
+      const expected = 'reddit:posts'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the comments key for a subreddit comments feed', () => {
+      const value = 'https://www.reddit.com/r/longevity/comments/.rss'
+      const expected = 'reddit:comments'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the user comments key for a user comments feed', () => {
+      const value = 'https://www.reddit.com/user/gamavalkharid/comments/.rss'
+      const expected = 'reddit:user-comments'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the post comments key for a subreddit post feed', () => {
+      const value = 'https://www.reddit.com/r/ansible/comments/y7v2ed/.rss'
+      const expected = 'reddit:post-comments'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the post comments key for a user post feed', () => {
+      const value = 'https://www.reddit.com/user/spez/comments/abc123/.rss'
+      const expected = 'reddit:post-comments'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the search key for a site search feed', () => {
+      const value = 'https://www.reddit.com/search.rss?q=%22Sue%20Scheff%22'
+      const expected = 'reddit:search'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the search key for a subreddit search feed', () => {
+      const value = 'https://www.reddit.com/r/programming/search.rss?q=rust&restrict_sr=on'
+      const expected = 'reddit:search'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the wiki key for a wiki feed', () => {
+      const value = 'https://www.reddit.com/r/problemgambling/wiki/index.rss'
+      const expected = 'reddit:wiki'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the subreddits key for the subreddits feed', () => {
+      const value = 'https://www.reddit.com/subreddits/.rss'
+      const expected = 'reddit:subreddits'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the subreddits key for a sorted subreddits feed', () => {
+      const value = 'https://www.reddit.com/subreddits/new/.rss'
+      const expected = 'reddit:subreddits'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the user submitted key for a submitted feed', () => {
+      const value = 'https://www.reddit.com/user/Darkskynet/submitted/.rss'
+      const expected = 'reddit:user-submitted'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the multireddit key for a multireddit feed', () => {
+      const value = 'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss'
+      const expected = 'reddit:multireddit'
+
+      expect(redditHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a subreddit page', () => {
+      const value = 'https://www.reddit.com/r/longevity/'
+
+      expect(redditHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a post page', () => {
+      const value = 'https://www.reddit.com/r/AskReddit/comments/abc123/whats_your_favorite'
+
+      expect(redditHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a user page', () => {
+      const value = 'https://www.reddit.com/user/feathj/'
+
+      expect(redditHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a site search page', () => {
+      const value = 'https://www.reddit.com/search?q=typescript'
+
+      expect(redditHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/r/dns/.rss'
+
+      expect(redditHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://www.reddit.com/.rss', { key: 'reddit:posts', label: 'Posts' }],
+      ['https://www.reddit.com/top/.rss?t=week', { key: 'reddit:posts', label: 'Posts' }],
+      ['https://www.reddit.com/r/dns/.rss', { key: 'reddit:posts', label: 'Posts' }],
+      ['https://www.reddit.com/r/emacs.rss', { key: 'reddit:posts', label: 'Posts' }],
+      ['https://www.reddit.com/r/OpenAI/top/.rss?t=month', { key: 'reddit:posts', label: 'Posts' }],
+      [
+        'https://www.reddit.com/r/devops/top/.rss?_=1782881925',
+        { key: 'reddit:posts', label: 'Posts' },
+      ],
+      ['https://www.reddit.com/user/feathj/.rss', { key: 'reddit:posts', label: 'Posts' }],
+      ['https://www.reddit.com/domain/github.com/.rss', { key: 'reddit:posts', label: 'Posts' }],
+      [
+        'https://www.reddit.com/r/longevity/comments/.rss',
+        { key: 'reddit:comments', label: 'Comments' },
+      ],
+      [
+        'https://www.reddit.com/user/gamavalkharid/comments/.rss',
+        { key: 'reddit:user-comments', label: 'Comments' },
+      ],
+      [
+        'https://www.reddit.com/r/ansible/comments/y7v2ed/.rss',
+        { key: 'reddit:post-comments', label: 'Post comments' },
+      ],
+      [
+        'https://www.reddit.com/user/spez/comments/abc123/.rss',
+        { key: 'reddit:post-comments', label: 'Post comments' },
+      ],
+      [
+        'https://www.reddit.com/search.rss?q=%22Sue%20Scheff%22',
+        { key: 'reddit:search', label: 'Search' },
+      ],
+      [
+        'https://www.reddit.com/r/programming/search.rss?q=rust&restrict_sr=on',
+        { key: 'reddit:search', label: 'Search' },
+      ],
+      [
+        'https://www.reddit.com/r/problemgambling/wiki/index.rss',
+        { key: 'reddit:wiki', label: 'Wiki' },
+      ],
+      ['https://www.reddit.com/subreddits/.rss', { key: 'reddit:subreddits', label: 'Subreddits' }],
+      [
+        'https://www.reddit.com/subreddits/new/.rss',
+        { key: 'reddit:subreddits', label: 'Subreddits' },
+      ],
+      [
+        'https://www.reddit.com/user/Darkskynet/submitted/.rss',
+        { key: 'reddit:user-submitted', label: 'Submitted' },
+      ],
+      [
+        'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss',
+        { key: 'reddit:multireddit', label: 'Multireddit' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [redditHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
