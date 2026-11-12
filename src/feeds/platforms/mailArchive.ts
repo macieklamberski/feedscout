@@ -41,15 +41,13 @@ export const mailArchiveHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseMailArchiveUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
-    const { protocol, host } = new URL(url)
-    const params = { scheme: protocol.slice(0, -1), host, list: parsed.list }
-
-    return [feeds.getFeedEntry('mail-archive:list', params)]
+    return [pageFeeds.getFeedEntry('mail-archive:list', { list: parsed.list })]
   },
 
   // The table reads any first segment as a list, so a segment without `@`, a page of the site, is
