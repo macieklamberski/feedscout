@@ -46,5 +46,5 @@ export const listedHandler: PlatformHandler = {
     return [feeds.getFeedEntry('listed:blog', { username: parsed.username })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
