@@ -246,6 +246,12 @@ describe('arenaHandler', () => {
         { key: 'arena:channel', label: 'Channel' },
       ],
       ['https://www.are.na/editorial/feed/rss', { key: 'arena:editorial', label: 'Editorial' }],
+      ['http://are.na/jane-artist/feed/rss/', { key: 'arena:profile', label: 'Profile' }],
+      [
+        'https://are.na/jane-artist/reading-list/feed/rss/',
+        { key: 'arena:channel', label: 'Channel' },
+      ],
+      ['http://are.na/editorial/feed/rss/', { key: 'arena:editorial', label: 'Editorial' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
