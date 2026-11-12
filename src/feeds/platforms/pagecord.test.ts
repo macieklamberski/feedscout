@@ -72,11 +72,11 @@ describe('pagecordHandler', () => {
       expect(pagecordHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the https feed URL for an http blog page', () => {
+    it('should return the feed under the page scheme for an http blog page', () => {
       const value = 'http://alice.pagecord.com/some-post-slug'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.pagecord.com/feed.xml',
+          uri: 'http://alice.pagecord.com/feed.xml',
           hint: { key: 'pagecord:blog', label: 'Blog' },
         },
       ]

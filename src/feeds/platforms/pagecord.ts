@@ -8,11 +8,14 @@ export type PagecordUrl = { kind: 'blog'; blog: string }
 
 const domains = ['pagecord.com']
 
-const feeds = definePlatformFeeds([
-  { key: 'pagecord:blog', template: 'https://{blog}.pagecord.com/feed.xml' },
-  { key: 'pagecord:blog', template: 'https://{blog}.pagecord.com/feed' },
-  { key: 'pagecord:blog', template: 'https://{blog}.pagecord.com/feed.rss' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'pagecord:blog', template: '{scheme}://{host}/feed.xml' },
+    { key: 'pagecord:blog', template: '{scheme}://{host}/feed' },
+    { key: 'pagecord:blog', template: '{scheme}://{host}/feed.rss' },
+  ],
+  { domains },
+)
 
 export const parsePagecordUrl = (url: string): PagecordUrl | undefined => {
   const blog = getTenantSubdomain(url, domains)
@@ -31,12 +34,13 @@ export const pagecordHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePagecordUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    return [feeds.getFeedEntry('pagecord:blog', { blog: parsed.blog })]
+    return [page.getFeedEntry('pagecord:blog')]
   },
 
   getFeedHint: feeds.getFeedHint,
