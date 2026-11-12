@@ -78,56 +78,56 @@ describe('postachioHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for a posts feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a posts feed', () => {
       const value = 'https://alice.postach.io/feed.xml'
-      const expected = 'postachio:posts'
+      const expected: DiscoverUriHint = { key: 'postachio:posts', label: 'Posts' }
 
-      expect(postachioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(postachioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a posts feed over http', () => {
+    it('should return the posts hint for a posts feed over http', () => {
       const value = 'http://alice.postach.io/feed.xml'
-      const expected = 'postachio:posts'
+      const expected: DiscoverUriHint = { key: 'postachio:posts', label: 'Posts' }
 
-      expect(postachioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(postachioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the extensionless posts feed', () => {
+    it('should return the posts hint for the extensionless posts feed', () => {
       const value = 'https://alice.postach.io/feed'
-      const expected = 'postachio:posts'
+      const expected: DiscoverUriHint = { key: 'postachio:posts', label: 'Posts' }
 
-      expect(postachioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(postachioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a site page', () => {
       const value = 'https://alice.postach.io/'
 
-      expect(postachioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(postachioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a post page', () => {
       const value = 'https://alice.postach.io/post/some-post'
 
-      expect(postachioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(postachioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://blog.alice.postach.io/feed.xml'
 
-      expect(postachioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(postachioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://postach.io/feed.xml'
 
-      expect(postachioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(postachioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/feed.xml'
 
-      expect(postachioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(postachioHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

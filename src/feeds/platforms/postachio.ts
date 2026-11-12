@@ -38,5 +38,5 @@ export const postachioHandler: PlatformHandler = {
     return [feeds.getFeedEntry('postachio:posts', { subdomain: parsed.subdomain })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
