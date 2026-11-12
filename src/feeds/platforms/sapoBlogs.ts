@@ -18,16 +18,19 @@ const domains = ['blogs.sapo.pt']
 const postRegex = /^\/(?:[^/]+-(\d+)|(\d+)\.html)\/?$/i
 const tagRegex = /^\/tag\/(.+?)\/?$/i
 
-const feeds = definePlatformFeeds([
-  { key: 'sapo-blogs:posts', template: 'https://{blog}.blogs.sapo.pt/data/rss', format: 'rss' },
-  { key: 'sapo-blogs:posts', template: 'https://{blog}.blogs.sapo.pt/data/atom', format: 'atom' },
-  { key: 'sapo-blogs:tag', template: 'https://{blog}.blogs.sapo.pt/data/rss?tag={tag}' },
-  { key: 'sapo-blogs:comments', template: 'https://blogs.sapo.pt/commentsrss.bml?blog={blog}' },
-  {
-    key: 'sapo-blogs:post-comments',
-    template: 'https://blogs.sapo.pt/commentsrss.bml?blog={blog}&ditemid={postId}',
-  },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'sapo-blogs:posts', template: '{scheme}://{host}/data/rss', format: 'rss' },
+    { key: 'sapo-blogs:posts', template: '{scheme}://{host}/data/atom', format: 'atom' },
+    { key: 'sapo-blogs:tag', template: '{scheme}://{host}/data/rss?tag={tag}' },
+    { key: 'sapo-blogs:comments', template: 'https://blogs.sapo.pt/commentsrss.bml?blog={blog}' },
+    {
+      key: 'sapo-blogs:post-comments',
+      template: 'https://blogs.sapo.pt/commentsrss.bml?blog={blog}&ditemid={postId}',
+    },
+  ],
+  { domains },
+)
 
 export const parseSapoBlogsUrl = (url: string): SapoBlogsUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -90,8 +93,9 @@ export const sapoBlogsHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getSapoBlogsPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
@@ -99,17 +103,17 @@ export const sapoBlogsHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
 
     if (page.kind === 'post') {
-      uris.push(feeds.getFeedEntry('sapo-blogs:post-comments', { blog, postId: page.postId }))
+      uris.push(pageFeeds.getFeedEntry('sapo-blogs:post-comments', { blog, postId: page.postId }))
     }
 
     if (page.kind === 'tag') {
-      uris.push(feeds.getFeedEntry('sapo-blogs:tag', { blog, tag: page.tag }))
+      uris.push(pageFeeds.getFeedEntry('sapo-blogs:tag', { tag: page.tag }))
     }
 
     uris.push(
-      feeds.getFeedEntry('sapo-blogs:posts', { blog }, 'rss'),
-      feeds.getFeedEntry('sapo-blogs:posts', { blog }, 'atom'),
-      feeds.getFeedEntry('sapo-blogs:comments', { blog }),
+      pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'rss'),
+      pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'atom'),
+      pageFeeds.getFeedEntry('sapo-blogs:comments', { blog }),
     )
 
     return uris

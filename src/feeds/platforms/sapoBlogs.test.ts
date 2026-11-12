@@ -160,6 +160,26 @@ describe('sapoBlogsHandler', () => {
       expect(sapoBlogsHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep the http scheme of an http blog page', () => {
+      const value = 'http://alice.blogs.sapo.pt/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://alice.blogs.sapo.pt/data/rss',
+          hint: { key: 'sapo-blogs:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'http://alice.blogs.sapo.pt/data/atom',
+          hint: { key: 'sapo-blogs:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://blogs.sapo.pt/commentsrss.bml?blog=alice',
+          hint: { key: 'sapo-blogs:comments', label: 'Comments' },
+        },
+      ]
+
+      expect(sapoBlogsHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the post comments feed first for a post', () => {
       const value = 'https://alice.blogs.sapo.pt/a-new-address-1234567'
       const content = `
