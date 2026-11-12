@@ -20,6 +20,7 @@ export type DiscourseUrl =
   | { kind: 'topic'; slug: string; topicId: string }
   | { kind: 'user'; username: string }
   | { kind: 'category'; category: string }
+  | { kind: 'tag'; tag: string }
   | { kind: 'top'; period?: string }
   | { kind: 'latest' }
 export type DiscoursePage = DiscourseUrl & { siteUrl: string }
@@ -28,6 +29,8 @@ const userRegex = /^\/u\/([^/]+)/i
 // A category page takes a `/none` or `/all` subcategory tail and an `/l/{filter}` list tail, and the
 // category feed answers only without them.
 const categoryRegex = /^\/c\/(.+?)(?:\/(?:none|all))?(?:\/l\/.+)?\/?$/i
+// A tag page is `/tag/{slug}` or `/tag/{slug}/{id}`, with an optional `/l/{filter}` list tail.
+const tagRegex = /^\/tag\/([^/]+(?:\/[^/]+)?)(?:\/l\/.+)?\/?$/i
 const topicRegex = /^\/t\/(?<slug>[^/]+)\/(?<topicId>[^/]+)/i
 const topRegex = /^\/top(?:\/([^/]+))?\/?$/i
 
@@ -46,6 +49,8 @@ const feeds = definePlatformFeeds(
     { key: 'discourse:category', template: 'https://{forum}.{domain}/c/{category}.rss' },
     { key: 'discourse:category', template: 'https://{forum}.{domain}/c/{slug}/{id}.rss' },
     { key: 'discourse:category', template: 'https://{forum}.{domain}/c/{parent}/{slug}/{id}.rss' },
+    { key: 'discourse:tag', template: 'https://{forum}.{domain}/tag/{slug}/{id}.rss' },
+    { key: 'discourse:tag', template: 'https://{forum}.{domain}/tag/{slug}.rss' },
     { key: 'discourse:top', template: 'https://{forum}.{domain}/top.rss' },
     { key: 'discourse:latest', template: 'https://{forum}.{domain}/latest.rss' },
     { key: 'discourse:posts', template: 'https://{forum}.{domain}/posts.rss' },
@@ -89,6 +94,13 @@ export const parseDiscourseUrl = (url: string): DiscourseUrl | undefined => {
 
   if (category) {
     return { kind: 'category', category }
+  }
+
+  // A tag also answers with a format extension, as `.rss`.
+  const tag = pathname.match(tagRegex)?.[1]?.replace(formatSuffixRegex, '')
+
+  if (tag) {
+    return { kind: 'tag', tag }
   }
 
   // Top topics: /top or /top/{period}
@@ -185,6 +197,10 @@ export const discourseHandler: PlatformHandler = {
           hint: composeHint('discourse:category'),
         },
       ]
+    }
+
+    if (page.kind === 'tag') {
+      return [{ uri: `${page.siteUrl}/tag/${page.tag}.rss`, hint: composeHint('discourse:tag') }]
     }
 
     if (page.kind === 'top') {

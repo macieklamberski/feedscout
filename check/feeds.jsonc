@@ -365,6 +365,7 @@
     "discourse:category": "https://users.rust-lang.org/c/help.rss",
     "discourse:latest": "https://users.rust-lang.org/latest.rss",
     "discourse:posts": "https://meta.discourse.org/posts.rss",
+    "discourse:tag": "https://swi-prolog.discourse.group/tag/bug/1.rss",
     "discourse:top": [
       "https://meta.discourse.org/top.rss",
       "https://meta.discourse.org/top.rss?period=weekly"
