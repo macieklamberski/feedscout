@@ -22,14 +22,16 @@ const cookiesScriptPath = '/client/dist/talentsoft-cookies.iife.js'
 const domains = ['talent-soft.com']
 
 const offerFeedPathRegex = /^\/handlers\/offerRss\.ashx$/i
+const leadingSlashesRegex = /^(https?:\/\/[^/?#]+)\/\/+/i
 
 // A career site on a custom domain is known only by its marker, so its feeds are built here but
 // claimed only on Talentsoft's own domain. The site's own feed list spells the language as `LCID`,
-// and the feed answers without it.
+// and the feed answers without it. The feed list page's own link serves the same offers.
 const feeds = definePlatformFeeds(
   [
     { key: 'talentsoft:offers', template: '{scheme}://{host}/handlers/offerRss.ashx?LCID={lcid}' },
     { key: 'talentsoft:offers', template: '{scheme}://{host}/handlers/offerRss.ashx' },
+    { key: 'talentsoft:offers', template: '{scheme}://{host}/offre-de-emploi/flux-rss.ashx' },
   ],
   { domains },
 )
@@ -120,7 +122,8 @@ export const talentsoftHandler: PlatformHandler = {
       return
     }
 
-    const hint = feeds.getFeedHint(url)
+    // Feed lists can print the path after a doubled slash, which the server reads the same.
+    const hint = feeds.getFeedHint(url.replace(leadingSlashesRegex, '$1/'))
 
     if (!hint) {
       return

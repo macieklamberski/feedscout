@@ -303,6 +303,28 @@ describe('talentsoftHandler', () => {
       expect(talentsoftHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the offers hint for the feed list page link', () => {
+      const value = 'https://alice.talent-soft.com/offre-de-emploi/flux-rss.ashx'
+      const expected: DiscoverUriHint = { key: 'talentsoft:offers', label: 'Job offers' }
+
+      expect(talentsoftHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the offers hint for an offers feed after a doubled slash', () => {
+      const value = 'https://alice.talent-soft.com//handlers/offerRss.ashx?LCID=1036'
+      const expected: DiscoverUriHint = { key: 'talentsoft:offers', label: 'Job offers' }
+
+      expect(talentsoftHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the search hint for a criteria feed after a tripled slash', () => {
+      const value =
+        'https://alice.talent-soft.com///handlers/offerRss.ashx?LCID=1036&Rss_Profile=12'
+      const expected: DiscoverUriHint = { key: 'talentsoft:search', label: 'Search results' }
+
+      expect(talentsoftHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for a career site page', () => {
       const value = 'https://alice.talent-soft.com/accueil.aspx?LCID=1036'
 
@@ -340,6 +362,14 @@ describe('talentsoftHandler', () => {
       ],
       [
         'https://alice.talent-soft.com/handlers/offerRss.ashx?LCID=2057&Rss_Entity=68',
+        { key: 'talentsoft:search', label: 'Search results' },
+      ],
+      [
+        'https://alice.talent-soft.com/offre-de-emploi/flux-rss.ashx',
+        { key: 'talentsoft:offers', label: 'Job offers' },
+      ],
+      [
+        'https://alice.talent-soft.com//handlers/offerRss.ashx?LCID=1036&Rss_Profile=12',
         { key: 'talentsoft:search', label: 'Search results' },
       ],
     ]
