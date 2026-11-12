@@ -1,12 +1,18 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type BlueskyUrl = { kind: 'profile'; handle: string }
 
 const hosts = ['bsky.app', 'www.bsky.app']
+
+// web-cdn.bsky.app serves the same app and the same feeds under the same paths.
+const feeds = definePlatformFeeds([
+  { key: 'bluesky:posts', template: 'https://bsky.app/profile/{handle}/rss' },
+  { key: 'bluesky:posts', template: 'https://web-cdn.bsky.app/profile/{handle}/rss' },
+])
 
 export const parseBlueskyUrl = (url: string): BlueskyUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -34,11 +40,8 @@ export const blueskyHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://bsky.app/profile/${parsed.handle}/rss`,
-        hint: composeHint('bluesky:posts'),
-      },
-    ]
+    return [feeds.getFeedEntry('bluesky:posts', { handle: parsed.handle })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }

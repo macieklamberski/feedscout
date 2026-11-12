@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { BlueskyUrl } from './bluesky.js'
 import { blueskyHandler, parseBlueskyUrl } from './bluesky.js'
 
@@ -96,6 +99,83 @@ describe('blueskyHandler', () => {
 
     it('should return empty array when the URL names no profile', () => {
       expect(blueskyHandler.resolve('https://bsky.app/about')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for a feed under a handle', () => {
+      const value = 'https://bsky.app/profile/astrea.cc/rss'
+      const expected = 'bluesky:posts'
+
+      expect(blueskyHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a feed under a DID', () => {
+      const value = 'https://bsky.app/profile/did:plc:5qmh4a6gwsozualtmtmzi5ja/rss'
+      const expected = 'bluesky:posts'
+
+      expect(blueskyHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a feed on web-cdn.bsky.app', () => {
+      const value = 'https://web-cdn.bsky.app/profile/did:plc:5qmh4a6gwsozualtmtmzi5ja/rss'
+      const expected = 'bluesky:posts'
+
+      expect(blueskyHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a handle with percent-encoded spaces', () => {
+      const value = 'https://bsky.app/profile/scienceslam.de%20%20/rss'
+      const expected = 'bluesky:posts'
+
+      expect(blueskyHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a profile page', () => {
+      const value = 'https://bsky.app/profile/astrea.cc'
+
+      expect(blueskyHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a post page', () => {
+      const value = 'https://bsky.app/profile/astrea.cc/post/3mys5hihpoc2v'
+
+      expect(blueskyHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/profile/astrea.cc/rss'
+
+      expect(blueskyHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://bsky.app/profile/astrea.cc/rss', { key: 'bluesky:posts', label: 'Posts' }],
+      [
+        'https://bsky.app/profile/did:plc:5qmh4a6gwsozualtmtmzi5ja/rss',
+        { key: 'bluesky:posts', label: 'Posts' },
+      ],
+      [
+        'https://web-cdn.bsky.app/profile/did:plc:5qmh4a6gwsozualtmtmzi5ja/rss',
+        { key: 'bluesky:posts', label: 'Posts' },
+      ],
+      [
+        'https://bsky.app/profile/scienceslam.de%20%20/rss',
+        { key: 'bluesky:posts', label: 'Posts' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [blueskyHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
