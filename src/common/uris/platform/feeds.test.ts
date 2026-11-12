@@ -50,6 +50,17 @@ const wwwTenantFeeds = definePlatformFeeds(wwwTenantTemplates, { isWwwTenant: tr
 
 const wwwStrippedFeeds = definePlatformFeeds(wwwTenantTemplates)
 
+const domainPatternTemplates = [
+  { key: 'example:blog', template: '{scheme}://{username}.{domain}/feed' },
+  { key: 'example:site', template: 'https://{host}/feeds/site' },
+]
+
+const domainPatternOptions = {
+  domains: ['example.net', /^example\.(?:com|co\.[a-z]{2}|[a-z]{2})$/],
+}
+
+const domainPatternFeeds = definePlatformFeeds(domainPatternTemplates, domainPatternOptions)
+
 describe('definePlatformFeeds', () => {
   it('should throw for a template without an http scheme', () => {
     const throwing = () =>
@@ -452,6 +463,79 @@ describe('definePlatformFeeds', () => {
 
       expect(feeds.getFeedHint(value)).toBeUndefined()
     })
+
+    describe('with a domain pattern', () => {
+      it('should return the key of a feed on a domain the pattern matches', () => {
+        const value = 'https://alice.example.co.uk/feed'
+        const expected = 'example:blog'
+
+        expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+      })
+
+      it('should return the key of a feed on a plain domain beside the pattern', () => {
+        const value = 'https://alice.example.net/feed'
+        const expected = 'example:blog'
+
+        expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+      })
+
+      it('should return the key of a feed with www before the tenant', () => {
+        const value = 'https://www.alice.example.de/feed'
+        const expected = 'example:blog'
+
+        expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+      })
+
+      it('should return the key of a feed on a port', () => {
+        const value = 'https://alice.example.de:8080/feed'
+        const expected = 'example:blog'
+
+        expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+      })
+
+      it('should return the key of a host feed on the apex', () => {
+        const value = 'https://example.co.uk/feeds/site'
+        const expected = 'example:site'
+
+        expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+      })
+
+      it('should return the key of a host feed on a nested host', () => {
+        const value = 'https://blog.alice.example.co.uk/feeds/site'
+        const expected = 'example:site'
+
+        expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+      })
+
+      it('should return the key of www as a tenant', () => {
+        const wwwTenantPatternFeeds = definePlatformFeeds(domainPatternTemplates, {
+          ...domainPatternOptions,
+          isWwwTenant: true,
+        })
+        const value = 'https://www.example.de/feed'
+        const expected = 'example:blog'
+
+        expect(wwwTenantPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+      })
+
+      it('should return undefined for www as a tenant without isWwwTenant', () => {
+        const value = 'https://www.example.de/feed'
+
+        expect(domainPatternFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return undefined for a suffix outside the pattern', () => {
+        const value = 'https://alice.example.info/feed'
+
+        expect(domainPatternFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return undefined for a matching domain inside another host', () => {
+        const value = 'https://alice.example.de.example.org/feed'
+
+        expect(domainPatternFeeds.getFeedHint(value)).toBeUndefined()
+      })
+    })
   })
 
   describe('forUrl', () => {
@@ -504,6 +588,30 @@ describe('definePlatformFeeds', () => {
       const expected = 'https://my.blog.example.org/feed'
 
       expect(siteFeeds.forUrl(value)?.getFeedUrl('example:posts', params)).toBe(expected)
+    })
+
+    it('should fill the domain a pattern matches', () => {
+      const value = 'https://alice.example.co.uk/about'
+      const params = { username: 'alice' }
+      const expected = 'https://alice.example.co.uk/feed'
+
+      expect(domainPatternFeeds.forUrl(value)?.getFeedUrl('example:blog', params)).toBe(expected)
+    })
+
+    it('should fill the domain a pattern matches under a nested host', () => {
+      const value = 'https://my.blog.example.de/'
+      const params = { username: 'my.blog' }
+      const expected = 'https://my.blog.example.de/feed'
+
+      expect(domainPatternFeeds.forUrl(value)?.getFeedUrl('example:blog', params)).toBe(expected)
+    })
+
+    it('should keep the domain placeholder for the apex of a pattern', () => {
+      const value = 'https://example.de/'
+      const params = { username: 'alice' }
+      const expected = 'https://alice.{domain}/feed'
+
+      expect(domainPatternFeeds.forUrl(value)?.getFeedUrl('example:blog', params)).toBe(expected)
     })
 
     it('should keep the domain placeholder for a host under no domain', () => {
