@@ -69,5 +69,5 @@ export const niconicoHandler: PlatformHandler = {
     return [video, live, blog]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

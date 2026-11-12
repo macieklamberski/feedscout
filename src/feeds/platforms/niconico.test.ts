@@ -154,57 +154,57 @@ describe('niconicoHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the videos key for a video feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the videos hint for a video feed', () => {
       const value = 'https://ch.nicovideo.jp/examplechannel/video?rss=2.0'
-      const expected = 'niconico:videos'
+      const expected: DiscoverUriHint = { key: 'niconico:videos', label: 'Videos' }
 
-      expect(niconicoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(niconicoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the live key for a live feed', () => {
+    it('should return the live hint for a live feed', () => {
       const value = 'https://ch.nicovideo.jp/examplechannel/live?rss=2.0'
-      const expected = 'niconico:live'
+      const expected: DiscoverUriHint = { key: 'niconico:live', label: 'Live' }
 
-      expect(niconicoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(niconicoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a blog feed', () => {
+    it('should return the blog hint for a blog feed', () => {
       const value = 'https://ch.nicovideo.jp/examplechannel/blomaga/nico/feed'
-      const expected = 'niconico:blog'
+      const expected: DiscoverUriHint = { key: 'niconico:blog', label: 'Blog' }
 
-      expect(niconicoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(niconicoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the videos key for a video feed over http', () => {
+    it('should return the videos hint for a video feed over http', () => {
       const value = 'http://ch.nicovideo.jp/examplechannel/video?rss=2.0'
-      const expected = 'niconico:videos'
+      const expected: DiscoverUriHint = { key: 'niconico:videos', label: 'Videos' }
 
-      expect(niconicoHandler.getFeedKey?.(value)).toBe(expected)
+      expect(niconicoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a video page', () => {
       const value = 'https://ch.nicovideo.jp/examplechannel/video'
 
-      expect(niconicoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(niconicoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a video page with another rss value', () => {
       const value = 'https://ch.nicovideo.jp/examplechannel/video?rss=atom'
 
-      expect(niconicoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(niconicoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a channel page', () => {
       const value = 'https://ch.nicovideo.jp/examplechannel'
 
-      expect(niconicoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(niconicoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/examplechannel/video?rss=2.0'
 
-      expect(niconicoHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(niconicoHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
