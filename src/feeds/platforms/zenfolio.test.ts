@@ -152,6 +152,38 @@ describe('zenfolioHandler', () => {
       expect(zenfolioHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep the scheme of an http page', () => {
+      const value = 'http://ctcphotography.zenfolio.com/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://ctcphotography.zenfolio.com/recent.rss',
+          hint: { key: 'zenfolio:recent', label: 'Recent galleries', format: 'rss' },
+        },
+        {
+          uri: 'http://ctcphotography.zenfolio.com/recent.atom',
+          hint: { key: 'zenfolio:recent', label: 'Recent galleries', format: 'atom' },
+        },
+        {
+          uri: 'http://ctcphotography.zenfolio.com/featured.rss',
+          hint: { key: 'zenfolio:featured', label: 'Featured galleries', format: 'rss' },
+        },
+        {
+          uri: 'http://ctcphotography.zenfolio.com/featured.atom',
+          hint: { key: 'zenfolio:featured', label: 'Featured galleries', format: 'atom' },
+        },
+        {
+          uri: 'http://ctcphotography.zenfolio.com/blog.rss',
+          hint: { key: 'zenfolio:blog', label: 'Blog', format: 'rss' },
+        },
+        {
+          uri: 'http://ctcphotography.zenfolio.com/blog.atom',
+          hint: { key: 'zenfolio:blog', label: 'Blog', format: 'atom' },
+        },
+      ]
+
+      expect(zenfolioHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for a URL that does not parse', () => {
       expect(zenfolioHandler.resolve('not-a-url')).toEqual([])
     })
