@@ -208,141 +208,141 @@ describe('habrHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the user key for a user feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the user hint for a user feed', () => {
       const value = 'https://habr.com/en/rss/users/app-z/posts/'
-      const expected = 'habr:user'
+      const expected: DiscoverUriHint = { key: 'habr:user', label: 'User' }
 
-      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the user key for a user articles feed', () => {
+    it('should return the user hint for a user articles feed', () => {
       const value = 'https://habr.com/en/rss/users/app-z/articles/?fl=en'
-      const expected = 'habr:user'
+      const expected: DiscoverUriHint = { key: 'habr:user', label: 'User' }
 
-      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the user key for a user publications feed', () => {
+    it('should return the user hint for a user publications feed', () => {
       const value = 'https://habr.com/ru/rss/users/b0fh/publications/articles/'
-      const expected = 'habr:user'
+      const expected: DiscoverUriHint = { key: 'habr:user', label: 'User' }
 
-      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the user key for a user publications posts feed', () => {
+    it('should return the user hint for a user publications posts feed', () => {
       const value = 'https://habr.com/ru/rss/users/alizar/publications/posts/'
-      const expected = 'habr:user'
+      const expected: DiscoverUriHint = { key: 'habr:user', label: 'User' }
 
-      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the company key for a company feed of all articles', () => {
+    it('should return the company hint for a company feed of all articles', () => {
       const value = 'https://habr.com/ru/rss/companies/yandex/articles/all/'
-      const expected = 'habr:company'
+      const expected: DiscoverUriHint = { key: 'habr:company', label: 'Company' }
 
-      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the company key for a company blog feed', () => {
+    it('should return the company hint for a company blog feed', () => {
       const value = 'https://habr.com/ru/rss/company/yandex/blog/'
-      const expected = 'habr:company'
+      const expected: DiscoverUriHint = { key: 'habr:company', label: 'Company' }
 
-      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the company key for a company feed', () => {
+    it('should return the company hint for a company feed', () => {
       const value = 'https://habr.com/en/rss/companies/comptek/articles/'
-      const expected = 'habr:company'
+      const expected: DiscoverUriHint = { key: 'habr:company', label: 'Company' }
 
-      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the company key for a company feed with its language query', () => {
+    it('should return the company hint for a company feed with its language query', () => {
       const value = 'https://habr.com/ru/rss/companies/kingservers/articles/?fl=ru'
-      const expected = 'habr:company'
+      const expected: DiscoverUriHint = { key: 'habr:company', label: 'Company' }
 
-      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the hub key for a hub feed', () => {
+    it('should return the hub hint for a hub feed', () => {
       const value = 'https://habr.com/ru/rss/hub/office365dev/'
-      const expected = 'habr:hub'
+      const expected: DiscoverUriHint = { key: 'habr:hub', label: 'Hub' }
 
-      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the hub key for a hub articles feed', () => {
+    it('should return the hub hint for a hub articles feed', () => {
       const value = 'https://habr.com/ru/rss/hubs/python/articles/?fl=ru'
-      const expected = 'habr:hub'
+      const expected: DiscoverUriHint = { key: 'habr:hub', label: 'Hub' }
 
-      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the hub key for a hub feed of all articles', () => {
+    it('should return the hub hint for a hub feed of all articles', () => {
       const value = 'https://habr.com/ru/rss/hubs/python/articles/all/'
-      const expected = 'habr:hub'
+      const expected: DiscoverUriHint = { key: 'habr:hub', label: 'Hub' }
 
-      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the hub key for a hub feed without a trailing slash', () => {
+    it('should return the hub hint for a hub feed without a trailing slash', () => {
       const value = 'https://habr.com/en/rss/hub/controllers'
-      const expected = 'habr:hub'
+      const expected: DiscoverUriHint = { key: 'habr:hub', label: 'Hub' }
 
-      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the articles key for the site feed', () => {
+    it('should return the articles hint for the site feed', () => {
       const value = 'https://habr.com/ru/rss/articles/'
-      const expected = 'habr:articles'
+      const expected: DiscoverUriHint = { key: 'habr:articles', label: 'Articles' }
 
-      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the articles key for a feed with a capitalized route', () => {
+    it('should return the articles hint for a feed with a capitalized route', () => {
       const value = 'https://habr.com/RU/RSS/Articles/'
-      const expected = 'habr:articles'
+      const expected: DiscoverUriHint = { key: 'habr:articles', label: 'Articles' }
 
-      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the user key for a feed on the www host', () => {
+    it('should return the user hint for a feed on the www host', () => {
       const value = 'https://www.habr.com/en/rss/users/b0fh/posts/'
-      const expected = 'habr:user'
+      const expected: DiscoverUriHint = { key: 'habr:user', label: 'User' }
 
-      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the user key for a feed over http', () => {
+    it('should return the user hint for a feed over http', () => {
       const value = 'http://habr.com/en/rss/users/b0fh/posts/'
-      const expected = 'habr:user'
+      const expected: DiscoverUriHint = { key: 'habr:user', label: 'User' }
 
-      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a hub page', () => {
       const value = 'https://habr.com/ru/hubs/python/articles/'
 
-      expect(habrHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(habrHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a user page', () => {
       const value = 'https://habr.com/en/users/app-z/posts/'
 
-      expect(habrHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(habrHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a company page', () => {
       const value = 'https://habr.com/ru/companies/kingservers/articles/'
 
-      expect(habrHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(habrHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/en/rss/users/app-z/posts/'
 
-      expect(habrHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(habrHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

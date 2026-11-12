@@ -113,5 +113,5 @@ export const habrHandler: PlatformHandler = {
     return [articles]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
