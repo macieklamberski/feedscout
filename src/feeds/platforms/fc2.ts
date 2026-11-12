@@ -60,11 +60,11 @@ export const fc2Handler: PlatformHandler = {
 
   // The table reads any host under fc2.com, such as web.fc2.com, so the page parser narrows it to
   // a blog host first.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (!parseFc2Url(url)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
