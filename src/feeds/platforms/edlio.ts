@@ -15,8 +15,11 @@ const classFeedHrefRegex = /^\/apps\/classes\/assignment_rss\.jsp\?classREC_ID=(
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'edlio:news', template: '{scheme}://{host}/apps/news/rss?categoryid={categoryId}' },
     { key: 'edlio:news', template: '{scheme}://{host}/apps/news/rss' },
+    {
+      key: 'edlio:news-category',
+      template: '{scheme}://{host}/apps/news/rss?categoryid={categoryId}',
+    },
     {
       key: 'edlio:assignments',
       template: '{scheme}://{host}/apps/classes/assignment_rss.jsp?classREC_ID={classId}',
@@ -31,7 +34,7 @@ const ownFeeds = definePlatformFeeds(
   [
     { key: 'edlio:news', template: '{scheme}://{school}.{domain}/apps/news/rss' },
     {
-      key: 'edlio:news',
+      key: 'edlio:news-category',
       template: '{scheme}://{school}.{domain}/apps/news/rss?categoryid={categoryId}',
     },
     {
@@ -97,7 +100,7 @@ export const edlioHandler: PlatformHandler = {
       return [pageFeeds.getFeedEntry('edlio:news')]
     }
 
-    return [pageFeeds.getFeedEntry('edlio:news', { categoryId: page.categoryId })]
+    return [pageFeeds.getFeedEntry('edlio:news-category', { categoryId: page.categoryId })]
   },
 
   getFeedHint: ownFeeds.getFeedHint,

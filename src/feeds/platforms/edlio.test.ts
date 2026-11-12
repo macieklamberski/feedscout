@@ -100,7 +100,7 @@ describe('edlioHandler', () => {
       const expected = [
         {
           uri: 'https://example.com/apps/news/rss?categoryid=12345',
-          hint: { key: 'edlio:news', label: 'News' },
+          hint: { key: 'edlio:news-category', label: 'News category' },
         },
       ]
 
@@ -125,7 +125,7 @@ describe('edlioHandler', () => {
       const expected = [
         {
           uri: 'https://example.com/apps/news/rss?categoryid=12345',
-          hint: { key: 'edlio:news', label: 'News' },
+          hint: { key: 'edlio:news-category', label: 'News category' },
         },
       ]
 
@@ -198,7 +198,7 @@ describe('edlioHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'http://example.edlio.com/apps/news/rss?categoryid=12345',
-          hint: { key: 'edlio:news', label: 'News' },
+          hint: { key: 'edlio:news-category', label: 'News category' },
         },
       ]
 
@@ -214,9 +214,9 @@ describe('edlioHandler', () => {
       expect(edlioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the news hint for a category news feed', () => {
+    it('should return the news category hint for a category news feed', () => {
       const value = 'https://example.edlio.com/apps/news/rss?categoryid=12345'
-      const expected: DiscoverUriHint = { key: 'edlio:news', label: 'News' }
+      const expected: DiscoverUriHint = { key: 'edlio:news-category', label: 'News category' }
 
       expect(edlioHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -271,7 +271,7 @@ describe('edlioHandler', () => {
       ['https://example.edlio.com/apps/news/rss', { key: 'edlio:news', label: 'News' }],
       [
         'https://example.edlio.com/apps/news/rss?categoryid=12345',
-        { key: 'edlio:news', label: 'News' },
+        { key: 'edlio:news-category', label: 'News category' },
       ],
       [
         'https://example.edlio.com/apps/classes/assignment_rss.jsp?classREC_ID=67890',
