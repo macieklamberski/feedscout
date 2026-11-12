@@ -2,7 +2,7 @@ import { getAnyOf, getPathSegments, isString, parseUrl, resolveUrl, stripWww } f
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
+import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, post (html), partly covers author, tag.
@@ -28,16 +28,16 @@ const domains = [
   'hs-sitesqa.com',
 ]
 
-// A blog on a custom domain is known only by its marker, so its feeds are built in resolve, under
-// the blog root the page links, and claimed only for a blog at the root of HubSpot's own hosts. A
-// podcast's feed is only claimed.
+// A blog on a custom domain is known only by its marker, so its feeds are built under the blog root
+// the page links, and claimed only for a blog at the root of HubSpot's own hosts. A podcast's feed
+// is only claimed.
 const feeds = definePlatformFeeds(
   [
-    { key: 'hubspot:author', template: '{scheme}://{tenant}.{domain}/author/{name}/rss.xml' },
-    { key: 'hubspot:tag', template: '{scheme}://{tenant}.{domain}/tag/{name}/rss.xml' },
-    { key: 'hubspot:tag', template: '{scheme}://{tenant}.{domain}/topic/{name}/rss.xml' },
-    { key: 'hubspot:blog', template: '{scheme}://{tenant}.{domain}/rss.xml' },
-    { key: 'hubspot:podcast', template: '{scheme}://{tenant}.{domain}/podcasts/{id}/rss.xml' },
+    { key: 'hubspot:author', template: '{root}/author/{name}/rss.xml' },
+    { key: 'hubspot:tag', template: '{root}/tag/{name}/rss.xml' },
+    { key: 'hubspot:tag', template: '{root}/topic/{topic}/rss.xml' },
+    { key: 'hubspot:blog', template: '{root}/rss.xml' },
+    { key: 'hubspot:podcast', template: '{root}/podcasts/{id}/rss.xml' },
   ],
   { domains },
 )
@@ -150,30 +150,29 @@ export const hubspotHandler: PlatformHandler = {
   resolve: (url, content, headers) => {
     const { origin } = new URL(url)
     const parsed = getHubspotPage(url, content, headers)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const blogUrl = parsed.blog ? `${origin}/${parsed.blog}` : origin
-
+    const root = parsed.blog ? `${origin}/${parsed.blog}` : origin
     const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.kind === 'author') {
-      uris.push({
-        uri: `${blogUrl}/author/${parsed.name}/rss.xml`,
-        hint: composeHint('hubspot:author'),
-      })
+      uris.push(page.getFeedEntry('hubspot:author', { root, name: parsed.name }))
     }
 
-    if (parsed.kind === 'tag') {
-      uris.push({
-        uri: `${blogUrl}/${parsed.route}/${parsed.name}/rss.xml`,
-        hint: composeHint('hubspot:tag'),
-      })
+    // A topic listing takes its own row, so the name goes under the topic placeholder.
+    if (parsed.kind === 'tag' && parsed.route === 'topic') {
+      uris.push(page.getFeedEntry('hubspot:tag', { root, topic: parsed.name }))
     }
 
-    uris.push({ uri: `${blogUrl}/rss.xml`, hint: composeHint('hubspot:blog') })
+    if (parsed.kind === 'tag' && parsed.route !== 'topic') {
+      uris.push(page.getFeedEntry('hubspot:tag', { root, name: parsed.name }))
+    }
+
+    uris.push(page.getFeedEntry('hubspot:blog', { root }))
 
     return uris
   },
