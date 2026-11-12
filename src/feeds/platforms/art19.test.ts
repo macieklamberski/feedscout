@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type Art19Url, art19Handler, parseArt19Url } from './art19.js'
 
 describe('parseArt19Url', () => {
@@ -79,6 +82,69 @@ describe('art19Handler', () => {
 
     it('should return an empty array for the site root', () => {
       expect(art19Handler.resolve('https://art19.com/')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the show key for a show feed under its slug', () => {
+      const value = 'https://rss.art19.com/business-movers'
+      const expected = 'art19:show'
+
+      expect(art19Handler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the show key for a show feed under its uuid', () => {
+      const value = 'https://rss.art19.com/3399916b-c0b3-4c58-89e3-4572f197d6f1'
+      const expected = 'art19:show'
+
+      expect(art19Handler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the show key for a show feed with a capitalized slug', () => {
+      const value = 'https://rss.art19.com/Podcast-gids-in-gezondheid'
+      const expected = 'art19:show'
+
+      expect(art19Handler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for the feed host root', () => {
+      const value = 'https://rss.art19.com/'
+
+      expect(art19Handler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a show page', () => {
+      const value = 'https://art19.com/shows/business-movers'
+
+      expect(art19Handler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/business-movers'
+
+      expect(art19Handler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://rss.art19.com/business-movers', { key: 'art19:show', label: 'Show' }],
+      [
+        'https://rss.art19.com/3399916b-c0b3-4c58-89e3-4572f197d6f1',
+        { key: 'art19:show', label: 'Show' },
+      ],
+      ['https://rss.art19.com/Podcast-gids-in-gezondheid', { key: 'art19:show', label: 'Show' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [art19Handler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

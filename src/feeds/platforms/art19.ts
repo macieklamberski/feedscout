@@ -1,6 +1,7 @@
 import { isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, uuidRegex } from '../../common/utils.js'
+import { uuidRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,6 +10,9 @@ export type Art19Url = { kind: 'show'; slug: string }
 const hosts = ['art19.com', 'www.art19.com']
 
 const showPathRegex = /^\/shows\/([^/]+)/i
+
+// Stored feeds also name a show by its uuid, and the one segment placeholder claims both spellings.
+const feeds = definePlatformFeeds([{ key: 'art19:show', template: 'https://rss.art19.com/{slug}' }])
 
 export const parseArt19Url = (url: string): Art19Url | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -38,6 +42,8 @@ export const art19Handler: PlatformHandler = {
       return []
     }
 
-    return [{ uri: `https://rss.art19.com/${parsed.slug}`, hint: composeHint('art19:show') }]
+    return [feeds.getFeedEntry('art19:show', { slug: parsed.slug })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
