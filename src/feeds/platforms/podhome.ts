@@ -1,17 +1,22 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElements } from '../../common/utils.js'
+import { findElements, hexOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 // Every show site, on serve.podhome.fm or a custom domain, loads the servesite assets and links
 // the show feed at serve.podhome.fm/rss/{id}, an id the page URL does not carry.
-export type PodhomePage = { feedUrls: Array<string> }
+export type PodhomePage = { feedIds: Array<string> }
 
 const hosts = ['serve.podhome.fm']
 const assetPath = 'cdn.podhome.fm/servesite'
 
-const feedPathRegex = /^\/rss\/[^/]+$/i
+const feedPathRegex = /^\/rss\/([^/]+)$/i
+
+const feeds = definePlatformFeeds([
+  { key: 'podhome:podcast', template: 'https://serve.podhome.fm/rss/{feedId}' },
+])
 
 const getPodhomePage = (url: string, content: string | undefined): PodhomePage | undefined => {
   if (!content?.includes(assetPath)) {
@@ -25,21 +30,22 @@ const getPodhomePage = (url: string, content: string | undefined): PodhomePage |
       Boolean(element.attribs.href)
     )
   })
-  const feedUrls: Array<string> = []
+  const feedIds: Array<string> = []
 
   for (const link of links) {
     const feedUrl = parseUrl(link.attribs.href, url)
+    const feedId = feedUrl && isHostOf(feedUrl, hosts) && feedPathRegex.exec(feedUrl.pathname)?.[1]
 
-    if (feedUrl && isHostOf(feedUrl, hosts) && feedPathRegex.test(feedUrl.pathname)) {
-      feedUrls.push(feedUrl.href)
+    if (feedId) {
+      feedIds.push(feedId)
     }
   }
 
-  if (feedUrls.length === 0) {
+  if (feedIds.length === 0) {
     return
   }
 
-  return { feedUrls }
+  return { feedIds }
 }
 
 export const podhomeHandler: PlatformHandler = {
@@ -54,8 +60,19 @@ export const podhomeHandler: PlatformHandler = {
       return []
     }
 
-    return page.feedUrls.map((uri) => {
-      return { uri, hint: composeHint('podhome:podcast') }
+    return page.feedIds.map((feedId) => {
+      return feeds.getFeedEntry('podhome:podcast', { feedId })
     })
+  },
+
+  getFeedKey: (url) => {
+    const [, feedId] = getPathSegments(url)
+
+    // A feed id is a GUID, so `xslsheet`, the stylesheet every feed links under /rss/, is no feed.
+    if (!feedId || !hexOrHyphenRegex.test(feedId)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
