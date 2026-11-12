@@ -1,4 +1,4 @@
-import { getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, getQueryParam, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findDescendant, findElement, letterThenWordOrHyphenRegex } from '../../common/utils.js'
@@ -17,9 +17,6 @@ const feeds = definePlatformFeeds([
   { key: 'hatena-antenna:group', template: 'http://a.hatena.ne.jp/{username}/rss?gid={groupId}' },
   { key: 'hatena-antenna:antenna', template: 'http://a.hatena.ne.jp/{username}/rss' },
 ])
-
-// Site routes in the user position, which redirect their rss path to the home page.
-const routeWords = ['include', 'category']
 
 // The group nav with one group in bold, the one the page shows.
 const hasSelectedGroup = (content: string): boolean => {
@@ -102,11 +99,9 @@ export const hatenaAntennaHandler: PlatformHandler = {
   },
 
   // The table reads any first segment as a user, so the page parser refuses a segment that is no
-  // Hatena ID, such as a file of the site, and the route words are refused here.
+  // Hatena ID, such as a file of the site.
   getFeedKey: (url) => {
-    const parsed = parseHatenaAntennaUrl(url)
-
-    if (!parsed || isAnyOf(parsed.username, routeWords)) {
+    if (!parseHatenaAntennaUrl(url)) {
       return
     }
 

@@ -236,18 +236,6 @@ describe('hatenaAntennaHandler', () => {
       expect(hatenaAntennaHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for the rss path of the include route', () => {
-      const value = 'https://a.hatena.ne.jp/include/rss'
-
-      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the rss path of the category route', () => {
-      const value = 'https://a.hatena.ne.jp/category/rss'
-
-      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBeUndefined()
-    })
-
     it('should return undefined for an rss path under a dotted first segment', () => {
       const value = 'https://a.hatena.ne.jp/robots.txt/rss'
 
