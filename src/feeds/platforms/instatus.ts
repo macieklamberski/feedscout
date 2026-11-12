@@ -1,7 +1,7 @@
 import { getPathSegments, parseUrl } from 'trousse'
-import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain, hasMarker, letterPairsRegex } from '../../common/utils.js'
+import { hasMarker, letterPairsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -72,11 +72,7 @@ export const instatusHandler: PlatformHandler = {
       return []
     }
 
-    const params: PlatformFeedParams = {}
-
-    if (parsed.language) {
-      params.language = parsed.language
-    }
+    const params = { language: parsed.language }
 
     return [
       pageFeeds.getFeedEntry('instatus:history', params, 'rss'),
@@ -84,12 +80,11 @@ export const instatusHandler: PlatformHandler = {
     ]
   },
 
-  // The table reads any host under the domains, so only a page's own subdomain is claimed, not the
-  // apex, www or a nested host. A segment before the feed is a translation only in its own form.
+  // A segment before the feed is a translation only in its own form.
   getFeedHint: (url) => {
     const [language, feed] = getPathSegments(url)
 
-    if (!getTenantSubdomain(url, domains) || (feed && !letterPairsRegex.test(language))) {
+    if (feed && !letterPairsRegex.test(language)) {
       return
     }
 
