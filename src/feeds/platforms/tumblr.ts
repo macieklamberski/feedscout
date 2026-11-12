@@ -14,10 +14,13 @@ export const domains = ['tumblr.com']
 
 const tagRegex = /^\/tagged\/([^/]+)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'tumblr:tag', template: 'https://{blog}.tumblr.com/tagged/{tag}/rss' },
-  { key: 'tumblr:posts', template: 'https://{blog}.tumblr.com/rss' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'tumblr:tag', template: '{scheme}://{host}/tagged/{tag}/rss' },
+    { key: 'tumblr:posts', template: '{scheme}://{host}/rss' },
+  ],
+  { domains },
+)
 
 export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
   // www.tumblr.com/{blog} and the legacy www.tumblr.com/blog/view/{blog} show a blog, and
@@ -62,17 +65,24 @@ export const tumblrHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseTumblrUrl(url)
+    const page = feeds.forUrl(url)
+
+    if (!parsed || !page) {
+      return []
+    }
+
+    const host = `${parsed.blog}.tumblr.com`
 
     // A blog name read from a www.tumblr.com path has to be one host label.
-    if (!parsed || !getHostOrigin(`${parsed.blog}.tumblr.com`)) {
+    if (!getHostOrigin(host)) {
       return []
     }
 
     if (parsed.kind === 'tag') {
-      return [feeds.getFeedEntry('tumblr:tag', { blog: parsed.blog, tag: parsed.tag })]
+      return [page.getFeedEntry('tumblr:tag', { host, tag: parsed.tag })]
     }
 
-    return [feeds.getFeedEntry('tumblr:posts', { blog: parsed.blog })]
+    return [page.getFeedEntry('tumblr:posts', { host })]
   },
 
   getFeedHint: feeds.getFeedHint,
