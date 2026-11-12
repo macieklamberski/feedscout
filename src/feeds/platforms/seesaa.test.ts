@@ -176,10 +176,11 @@ describe('seesaaHandler', () => {
       expect(seesaaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a podcast feed', () => {
+    it('should return the podcast hint for a podcast feed', () => {
       const value = 'https://alice.seesaa.space/index_custom.rdf'
+      const expected: DiscoverUriHint = { key: 'seesaa:podcast', label: 'Podcast' }
 
-      expect(seesaaHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(seesaaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a feed path on a blog image host', () => {
@@ -219,6 +220,7 @@ describe('seesaaHandler', () => {
         { key: 'seesaa:posts', label: 'Posts', format: 'rss' },
       ],
       ['http://alice.stablo.jp/index.rdf', { key: 'seesaa:posts', label: 'Posts', format: 'rdf' }],
+      ['https://alice.seesaa.net/index_custom.rdf', { key: 'seesaa:podcast', label: 'Podcast' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

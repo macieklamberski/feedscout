@@ -22,6 +22,9 @@ const feeds = definePlatformFeeds(
   [
     { key: 'seesaa:posts', template: '{scheme}://{blog}.{domain}/index20.rdf', format: 'rss' },
     { key: 'seesaa:posts', template: '{scheme}://{blog}.{domain}/index.rdf', format: 'rdf' },
+    // A blog with a podcast serves it here, and a blog without one answers 404. The page does not
+    // link it, so the row only claims it.
+    { key: 'seesaa:podcast', template: '{scheme}://{blog}.{domain}/index_custom.rdf' },
   ],
   { domains },
 )
