@@ -37,6 +37,16 @@ const ownFeeds = definePlatformFeeds(
       key: 'squarespace:collection',
       template: '{scheme}://{host}/{parent}/{collection}?format=rss',
     },
+    // One fixed value every site answers with the same feed as `format=rss`. Any other value after
+    // `sqsp_rss_` answers the page.
+    {
+      key: 'squarespace:collection',
+      template: '{scheme}://{host}/{collection}?format=sqsp_rss_wceoq1kgqnmf2cn9czutlluofr44tazt',
+    },
+    {
+      key: 'squarespace:collection',
+      template: '{scheme}://{host}/?format=sqsp_rss_wceoq1kgqnmf2cn9czutlluofr44tazt',
+    },
     { key: 'squarespace:collection', template: '{scheme}://{host}/{collection}/rss.xml' },
     {
       key: 'squarespace:collection',

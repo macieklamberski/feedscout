@@ -202,6 +202,14 @@ describe('squarespaceHandler', () => {
     const otherShapes: Array<[string, DiscoverUriHint]> = [
       ['https://alice.squarespace.com/?format=rss', collection],
       ['https://alice.squarespace.com/en/blog?format=rss', collection],
+      [
+        'https://alice.squarespace.com/blog?format=sqsp_rss_wceoq1kgqnmf2cn9czutlluofr44tazt',
+        collection,
+      ],
+      [
+        'https://alice.squarespace.com/?format=sqsp_rss_wceoq1kgqnmf2cn9czutlluofr44tazt',
+        collection,
+      ],
       ['http://alice.squarespace.com/blog/rss.xml', collection],
       ['http://alice.squarespace.com/blog/rss.xml;jsessionid=ABC123.v5-web001', collection],
       ['http://alice.squarespace.com/blog/atom.xml', atom],
@@ -289,6 +297,12 @@ describe('squarespaceHandler', () => {
       expect(squarespaceHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
+    it('should return undefined for another sqsp_rss format value', () => {
+      const value = 'https://alice.squarespace.com/blog?format=sqsp_rss_abc123'
+
+      expect(squarespaceHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://squarespace.com/blog?format=rss'
 
@@ -321,6 +335,10 @@ describe('squarespaceHandler', () => {
       ['http://alice.squarespace.com/blog/?tag=example&format=rss', tag],
       ['https://alice.squarespace.com/?format=rss', collection],
       ['https://alice.squarespace.com/en/blog?format=rss', collection],
+      [
+        'https://alice.squarespace.com/blog?format=sqsp_rss_wceoq1kgqnmf2cn9czutlluofr44tazt',
+        collection,
+      ],
       ['http://alice.squarespace.com/blog/rss.xml;jsessionid=ABC123.v5-web001', collection],
       ['http://alice.squarespace.com/blog/atom.xml', { ...collection, format: 'atom' }],
       ['http://alice.squarespace.com/blog/rdf.xml', { ...collection, format: 'rdf' }],
