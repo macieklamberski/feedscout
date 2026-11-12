@@ -283,126 +283,144 @@ describe('tischtennisliveHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the group results key for a group results feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the group results hint for a group results feed', () => {
       const value =
         'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID=1234&Next=0'
-      const expected = 'tischtennislive:group-results'
+      const expected: DiscoverUriHint = {
+        key: 'tischtennislive:group-results',
+        label: 'Group results',
+      }
 
-      expect(tischtennisliveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tischtennisliveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the group fixtures key for a group fixtures feed', () => {
+    it('should return the group fixtures hint for a group fixtures feed', () => {
       const value =
         'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID=1234&Next=1'
-      const expected = 'tischtennislive:group-fixtures'
+      const expected: DiscoverUriHint = {
+        key: 'tischtennislive:group-fixtures',
+        label: 'Group fixtures',
+      }
 
-      expect(tischtennisliveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tischtennisliveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the league results key for a league results feed', () => {
+    it('should return the league results hint for a league results feed', () => {
       const value =
         'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?Typ=Wett&ID=56789&Next=0'
-      const expected = 'tischtennislive:league-results'
+      const expected: DiscoverUriHint = {
+        key: 'tischtennislive:league-results',
+        label: 'League results',
+      }
 
-      expect(tischtennisliveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tischtennisliveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the league fixtures key for a league fixtures feed', () => {
+    it('should return the league fixtures hint for a league fixtures feed', () => {
       const value =
         'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?Typ=Wett&ID=56789&Next=1'
-      const expected = 'tischtennislive:league-fixtures'
+      const expected: DiscoverUriHint = {
+        key: 'tischtennislive:league-fixtures',
+        label: 'League fixtures',
+      }
 
-      expect(tischtennisliveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tischtennisliveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the league results key for a league results feed with its query reordered', () => {
+    it('should return the league results hint for a league results feed with its query reordered', () => {
       const value =
         'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?ID=56789&Next=0&Typ=Wett'
-      const expected = 'tischtennislive:league-results'
+      const expected: DiscoverUriHint = {
+        key: 'tischtennislive:league-results',
+        label: 'League results',
+      }
 
-      expect(tischtennisliveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tischtennisliveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the group results key for a group results feed with lowercase names', () => {
+    it('should return the group results hint for a group results feed with lowercase names', () => {
       const value =
         'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?typ=Gruppe&id=1234&next=0'
-      const expected = 'tischtennislive:group-results'
+      const expected: DiscoverUriHint = {
+        key: 'tischtennislive:group-results',
+        label: 'Group results',
+      }
 
-      expect(tischtennisliveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tischtennisliveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the news key for a news feed', () => {
+    it('should return the news hint for a news feed', () => {
       const value = 'https://musterkreis.tischtennislive.de/Export/RSS.aspx'
-      const expected = 'tischtennislive:news'
+      const expected: DiscoverUriHint = { key: 'tischtennislive:news', label: 'News' }
 
-      expect(tischtennisliveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tischtennisliveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the news key for a news feed over http', () => {
+    it('should return the news hint for a news feed over http', () => {
       const value = 'http://musterkreis.tischtennislive.de/Export/RSS.aspx'
-      const expected = 'tischtennislive:news'
+      const expected: DiscoverUriHint = { key: 'tischtennislive:news', label: 'News' }
 
-      expect(tischtennisliveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tischtennisliveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the dates key for a dates feed', () => {
+    it('should return the dates hint for a dates feed', () => {
       const value = 'https://musterkreis.tischtennislive.de/Export/RSS_Termine.aspx'
-      const expected = 'tischtennislive:dates'
+      const expected: DiscoverUriHint = { key: 'tischtennislive:dates', label: 'Dates' }
 
-      expect(tischtennisliveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tischtennisliveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the documents key for a documents feed', () => {
+    it('should return the documents hint for a documents feed', () => {
       const value = 'https://musterkreis.tischtennislive.de/Export/RSS_Dokumente.aspx'
-      const expected = 'tischtennislive:documents'
+      const expected: DiscoverUriHint = { key: 'tischtennislive:documents', label: 'Documents' }
 
-      expect(tischtennisliveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tischtennisliveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tournaments key for a tournaments feed', () => {
+    it('should return the tournaments hint for a tournaments feed', () => {
       const value = 'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS_Turniere.aspx'
-      const expected = 'tischtennislive:tournaments'
+      const expected: DiscoverUriHint = { key: 'tischtennislive:tournaments', label: 'Tournaments' }
 
-      expect(tischtennisliveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(tischtennisliveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for an association page', () => {
       const value = 'https://musterkreis.tischtennislive.de/?L1=Ergebnisse&L2=TTStaffeln&L2P=56789'
 
-      expect(tischtennisliveHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tischtennisliveHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a results feed of an unknown type', () => {
       const value =
         'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?Typ=Verein&ID=56789&Next=0'
 
-      expect(tischtennisliveHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tischtennisliveHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a results feed without a period', () => {
       const value =
         'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?Typ=Wett&ID=56789'
 
-      expect(tischtennisliveHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tischtennisliveHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a news feed on the apex domain', () => {
       const value = 'https://tischtennislive.de/Export/RSS.aspx'
 
-      expect(tischtennisliveHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tischtennisliveHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a news feed on a dotted subdomain', () => {
       const value = 'https://alpha.musterkreis.tischtennislive.de/Export/RSS.aspx'
 
-      expect(tischtennisliveHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tischtennisliveHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a news feed on another host', () => {
       const value = 'https://example.com/Export/RSS.aspx'
 
-      expect(tischtennisliveHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(tischtennisliveHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
