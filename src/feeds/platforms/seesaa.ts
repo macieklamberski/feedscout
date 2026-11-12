@@ -20,8 +20,8 @@ const domains = [
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'seesaa:posts', template: '{scheme}://{blog}.{domain}/index20.rdf', format: 'rss' },
-    { key: 'seesaa:posts', template: '{scheme}://{blog}.{domain}/index.rdf', format: 'rdf' },
+    { key: 'seesaa:posts', template: '{scheme}://{host}/index20.rdf', format: 'rss' },
+    { key: 'seesaa:posts', template: '{scheme}://{host}/index.rdf', format: 'rdf' },
   ],
   { domains },
 )
@@ -40,20 +40,20 @@ export const seesaaHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const blog = getTenantSubdomain(url, domains)
     const domain = getRegistrableDomain(url)
+    const page = feeds.forUrl(url)
 
-    if (!blog || !domain) {
+    if (!parseSeesaaUrl(url) || !domain || !page) {
       return []
     }
 
     // The certificate the blogs share leaves out stablo.jp, so its blogs serve feeds over http.
     // The other domains redirect http to https.
-    const params = { scheme: domain === 'stablo.jp' ? 'http' : 'https', blog, domain }
+    const params = { scheme: domain === 'stablo.jp' ? 'http' : 'https' }
 
     return [
-      feeds.getFeedEntry('seesaa:posts', params, 'rss'),
-      feeds.getFeedEntry('seesaa:posts', params, 'rdf'),
+      page.getFeedEntry('seesaa:posts', params, 'rss'),
+      page.getFeedEntry('seesaa:posts', params, 'rdf'),
     ]
   },
 
