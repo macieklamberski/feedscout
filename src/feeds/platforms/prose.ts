@@ -1,7 +1,6 @@
-import { getQueryParam, isHostOf, parseUrl } from 'trousse'
+import { getQueryParam, getSubdomain, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -11,7 +10,7 @@ export type ProseUrl =
   | { kind: 'blog'; username: string }
 
 const domains = ['prose.sh']
-const apexHosts = ['prose.sh', 'www.prose.sh']
+const apexHosts = ['prose.sh']
 
 const feeds = definePlatformFeeds(
   [
@@ -43,9 +42,10 @@ export const parseProseUrl = (url: string): ProseUrl | undefined => {
     return { kind: 'home' }
   }
 
-  const username = getTenantSubdomain(parsedUrl, domains)
+  // `www` is a Prose user like any other, so `www.prose.sh` is a blog.
+  const username = getSubdomain(parsedUrl, domains)
 
-  if (!username) {
+  if (!username || username.includes('.')) {
     return
   }
 

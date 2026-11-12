@@ -123,12 +123,24 @@ describe('proseHandler', () => {
       expect(proseHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return discovery feed for www apex', () => {
+    it('should return the blog feed of the user named www for its home page', () => {
       const value = 'https://www.prose.sh/'
       const expected = [
         {
-          uri: 'https://prose.sh/rss',
-          hint: { key: 'prose:discovery', label: 'Discovery' },
+          uri: 'https://www.prose.sh/rss',
+          hint: { key: 'prose:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(proseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the blog feed of the user named www for a post page', () => {
+      const value = 'https://www.prose.sh/some-article-slug'
+      const expected = [
+        {
+          uri: 'https://www.prose.sh/rss',
+          hint: { key: 'prose:blog', label: 'Blog' },
         },
       ]
 
