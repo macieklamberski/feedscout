@@ -67,47 +67,47 @@ describe('atwikiHandler', () => {
   })
   describe('getFeedKey', () => {
     it('should return the updated pages key for an RDF feed', () => {
-      const value = 'https://w.atwiki.jp/jojobr2/rss10.xml'
+      const value = 'https://w.atwiki.jp/example/rss10.xml'
       const expected = 'atwiki:updated-pages'
 
       expect(atwikiHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the updated pages key for the rss spelling of the RDF feed', () => {
-      const value = 'https://w.atwiki.jp/2chserver/rss'
+      const value = 'https://w.atwiki.jp/example/rss'
       const expected = 'atwiki:updated-pages'
 
       expect(atwikiHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the updated pages key for an Atom feed', () => {
-      const value = 'https://w.atwiki.jp/jojobr2/feed.atom'
+      const value = 'https://w.atwiki.jp/example/feed.atom'
       const expected = 'atwiki:updated-pages'
 
       expect(atwikiHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the new pages key for a new pages feed', () => {
-      const value = 'https://w.atwiki.jp/jojobr2/rss10_new.xml'
+      const value = 'https://w.atwiki.jp/example/rss10_new.xml'
       const expected = 'atwiki:new-pages'
 
       expect(atwikiHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return undefined for a wiki page', () => {
-      const value = 'https://w.atwiki.jp/jojobr2/pages/1.html'
+      const value = 'https://w.atwiki.jp/example/pages/1.html'
 
       expect(atwikiHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a wiki root', () => {
-      const value = 'https://w.atwiki.jp/jojobr2/'
+      const value = 'https://w.atwiki.jp/example/'
 
       expect(atwikiHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/jojobr2/rss10.xml'
+      const value = 'https://example.com/example/rss10.xml'
 
       expect(atwikiHandler.getFeedKey?.(value)).toBeUndefined()
     })
@@ -123,10 +123,10 @@ describe('atwikiHandler', () => {
       label: 'New pages',
     }
     const values: Array<[string, DiscoverUriEntry['hint']]> = [
-      ['https://w.atwiki.jp/jojobr2/rss10.xml', updatedPages],
-      ['https://w.atwiki.jp/2chserver/rss', updatedPages],
-      ['https://w.atwiki.jp/jojobr2/feed.atom', updatedPages],
-      ['https://w.atwiki.jp/jojobr2/rss10_new.xml', newPages],
+      ['https://w.atwiki.jp/example/rss10.xml', updatedPages],
+      ['https://w.atwiki.jp/example/rss', updatedPages],
+      ['https://w.atwiki.jp/example/feed.atom', updatedPages],
+      ['https://w.atwiki.jp/example/rss10_new.xml', newPages],
     ]
 
     it.each(values)('should return %s as itself', async (value, hint) => {
