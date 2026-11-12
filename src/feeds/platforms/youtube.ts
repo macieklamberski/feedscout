@@ -218,10 +218,10 @@ export const youtubeHandler: PlatformHandler = {
     return uris
   },
 
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const parsedUrl = parseUrl(url)
 
-    if (!parsedUrl || !feeds.getFeedKey(url)) {
+    if (!parsedUrl || !feeds.getFeedHint(url)) {
       return
     }
 
@@ -229,12 +229,12 @@ export const youtubeHandler: PlatformHandler = {
 
     if (channelId) {
       if (channelIdFormatRegex.test(channelId)) {
-        return 'youtube:all'
+        return composeHint('youtube:all')
       }
 
       return
     }
 
-    return getPlaylistKey(getQueryParam(parsedUrl, 'playlist_id'))
+    return composeHint(getPlaylistKey(getQueryParam(parsedUrl, 'playlist_id')))
   },
 }

@@ -497,86 +497,89 @@ describe('youtubeHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    const channelFeedKeys: Array<[string, string]> = [
+  describe('getFeedHint', () => {
+    const channelFeedHints: Array<[string, DiscoverUriHint]> = [
       [
         'https://www.youtube.com/feeds/videos.xml?channel_id=UCh63NPM0o2atIXHQQjqfIqA',
-        'youtube:all',
+        { key: 'youtube:all', label: 'All uploads' },
       ],
       [
         'https://www.youtube.com/feeds/videos.xml?playlist_id=UUh63NPM0o2atIXHQQjqfIqA',
-        'youtube:all',
+        { key: 'youtube:all', label: 'All uploads' },
       ],
       [
         'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFh63NPM0o2atIXHQQjqfIqA',
-        'youtube:videos',
+        { key: 'youtube:videos', label: 'Videos' },
       ],
       [
         'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHh63NPM0o2atIXHQQjqfIqA',
-        'youtube:shorts',
+        { key: 'youtube:shorts', label: 'Shorts' },
       ],
       [
         'https://www.youtube.com/feeds/videos.xml?playlist_id=UULVh63NPM0o2atIXHQQjqfIqA',
-        'youtube:live',
+        { key: 'youtube:live', label: 'Live streams' },
       ],
       [
         'https://www.youtube.com/feeds/videos.xml?playlist_id=UULPh63NPM0o2atIXHQQjqfIqA',
-        'youtube:popular-videos',
+        { key: 'youtube:popular-videos', label: 'Popular videos' },
       ],
       [
         'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPSh63NPM0o2atIXHQQjqfIqA',
-        'youtube:popular-shorts',
+        { key: 'youtube:popular-shorts', label: 'Popular shorts' },
       ],
       [
         'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPVh63NPM0o2atIXHQQjqfIqA',
-        'youtube:popular-live',
+        { key: 'youtube:popular-live', label: 'Popular live streams' },
       ],
       [
         'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMOh63NPM0o2atIXHQQjqfIqA',
-        'youtube:member-videos',
+        { key: 'youtube:member-videos', label: 'Member videos' },
       ],
       [
         'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMSh63NPM0o2atIXHQQjqfIqA',
-        'youtube:member-shorts',
+        { key: 'youtube:member-shorts', label: 'Member shorts' },
       ],
       [
         'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMVh63NPM0o2atIXHQQjqfIqA',
-        'youtube:member-live',
+        { key: 'youtube:member-live', label: 'Member live streams' },
       ],
     ]
 
-    it.each(channelFeedKeys)('should return the key of the channel feed %s', (value, expected) => {
-      expect(youtubeHandler.getFeedKey?.(value)).toBe(expected)
-    })
+    it.each(channelFeedHints)(
+      'should return the hint of the channel feed %s',
+      (value, expected) => {
+        expect(youtubeHandler.getFeedHint?.(value)).toEqual(expected)
+      },
+    )
 
-    it('should return the key of a channel feed with a capitalized path and no www', () => {
+    it('should return the hint of a channel feed with a capitalized path and no www', () => {
       const value = 'https://youtube.com/Feeds/Videos.xml?playlist_id=UULFh63NPM0o2atIXHQQjqfIqA'
-      const expected = 'youtube:videos'
+      const expected: DiscoverUriHint = { key: 'youtube:videos', label: 'Videos' }
 
-      expect(youtubeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(youtubeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the playlist key for a playlist feed', () => {
+    it('should return the playlist hint for a playlist feed', () => {
       const value =
         'https://www.youtube.com/feeds/videos.xml?playlist_id=OLAK5uy_lmKuYKcDhQg3fS7o3Ql9Q41XabFKm02_M'
-      const expected = 'youtube:playlist'
+      const expected: DiscoverUriHint = { key: 'youtube:playlist', label: 'Playlist' }
 
-      expect(youtubeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(youtubeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the channel key for an uploads list whose channel ID starts with a prefix', () => {
+    it('should return the channel hint for an uploads list whose channel ID starts with a prefix', () => {
       const value = 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFHVgbSwvTgM1PcsOCvHjw'
-      const expected = 'youtube:all'
+      const expected: DiscoverUriHint = { key: 'youtube:all', label: 'All uploads' }
 
-      expect(youtubeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(youtubeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the videos key for a videos list whose channel ID starts with a prefix', () => {
+    it('should return the videos hint for a videos list whose channel ID starts with a prefix', () => {
       const value =
         'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFLFHVgbSwvTgM1PcsOCvHjw'
-      const expected = 'youtube:videos'
+      const expected: DiscoverUriHint = { key: 'youtube:videos', label: 'Videos' }
 
-      expect(youtubeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(youtubeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     const notUploadsFeedValues: Array<string> = [
@@ -585,34 +588,34 @@ describe('youtubeHandler', () => {
       'https://www.youtube.com/feeds/videos.xml?playlist_id=UUOGFVzj8CefByxicwh4etbwu',
     ]
 
-    it.each(notUploadsFeedValues)('should return the playlist key for %s', (value) => {
-      const expected = 'youtube:playlist'
+    it.each(notUploadsFeedValues)('should return the playlist hint for %s', (value) => {
+      const expected: DiscoverUriHint = { key: 'youtube:playlist', label: 'Playlist' }
 
-      expect(youtubeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(youtubeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a channel feed without the UC prefix', () => {
       const value = 'https://www.youtube.com/feeds/videos.xml?channel_id=abc'
 
-      expect(youtubeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(youtubeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed without a channel or playlist', () => {
       const value = 'https://www.youtube.com/feeds/videos.xml'
 
-      expect(youtubeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(youtubeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a channel page', () => {
       const value = 'https://www.youtube.com/channel/UCh63NPM0o2atIXHQQjqfIqA'
 
-      expect(youtubeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(youtubeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/feeds/videos.xml?channel_id=UCh63NPM0o2atIXHQQjqfIqA'
 
-      expect(youtubeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(youtubeHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 })
