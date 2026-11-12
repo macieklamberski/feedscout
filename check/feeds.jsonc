@@ -1089,14 +1089,25 @@
   "ning": {
     "ning:activity": "https://korsika.ning.com/activity/log/list?fmt=rss",
     "ning:activity-member": "https://mcspartners.ning.com/activity/log/list?fmt=rss&screenName=0pur6xqjz52bu",
+    "ning:album-comments": "https://anoneire.ning.com/photo/albumcomment/feed?attachedTo=2163779%3AAlbum%3A13721&xn_auth=no",
     "ning:blog": "https://korsika.ning.com/profiles/blog/feed?xn_auth=no",
     "ning:blog-author": "https://mcspartners.ning.com/profiles/blog/feed?user=1ps5stse894j5&xn_auth=no",
     "ning:blog-featured": "http://spartinos.ning.com/profiles/blog/feed?promoted=1&xn_auth=no",
+    "ning:blog-post-comments": "https://aliciasimon.ning.com/profiles/comment/feed?attachedTo=4706882%3ABlogPost%3A391&xn_auth=no",
     "ning:blog-tag": "https://weebattledotcom.ning.com/profiles/blog/feed?tag=Cycling&xn_auth=no",
+    "ning:event-comments": "https://anon-hh.ning.com/events/comment/feed?attachedTo=2192589%3AEvent%3A22050&xn_auth=no",
     "ning:forum": "https://korsika.ning.com/forum/topic/list?feed=yes&xn_auth=no",
     "ning:forum-featured": "http://opencoffee.ning.com/forum/topic/list?featured=1&feed=yes&xn_auth=no",
     "ning:forum-group": "http://iuoma-network.ning.com/forum/topic/list?feed=yes&groupUrl=hand-carved-rubber-stamps&xn_auth=no",
-    "ning:topic": "https://korsika.ning.com/forum/topics/tour-and-travel-vibrantindiatours?feed=yes&xn_auth=no"
+    "ning:forum-group-member": "https://jazzburgher.ning.com/group/musicwoman/forum/topic/listForContributor?feed=yes&user=5zsu1od4o6pr&xn_auth=no",
+    "ning:forum-group-tag": "https://jazzburgher.ning.com/group/newgranadatheater/forum/topic/listForTag?feed=yes&tag=savoy&xn_auth=no",
+    "ning:forum-member": "https://6364cadillac.ning.com/forum/topic/listForContributor?feed=yes&user=2hyozxwkpyax3&xn_auth=no",
+    "ning:forum-tag": "https://6364cadillac.ning.com/forum/topic/listForTag?feed=yes&tag=buckle&xn_auth=no",
+    "ning:photos-member": "https://6364cadillac.ning.com/photo/photo/listForContributor?rss=yes&screenName=1nyc7wxnn1uro&xn_auth=no",
+    "ning:status-comments": "https://silvopasture.ning.com/profiles/statuscomment/feed?attachedTo=6457695%3AStatus%3A19952&xn_auth=no",
+    "ning:topic": "https://korsika.ning.com/forum/topics/tour-and-travel-vibrantindiatours?feed=yes&xn_auth=no",
+    "ning:videos-member": "https://6364cadillac.ning.com/video/video/listForContributor?rss=yes&screenName=2voutbeyhyvqg&xn_auth=no",
+    "ning:videos-tag": "https://lovevideoplayhouse.ning.com/video/video/listTagged?rss=yes&tag=west&xn_auth=no"
   },
   "nodebb": {
     "nodebb:category": "https://community.nodebb.org/category/2.rss",

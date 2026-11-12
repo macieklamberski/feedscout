@@ -15,12 +15,16 @@ const topicRegex = /^\/forum\/topics\/([^/]+)\/?$/i
 const domains = ['ning.com']
 
 // A network on its own domain is known only by its marker, so its feeds are built here but not
-// claimed. A member's activity, a blog narrowed to an author, a tag or its featured posts, a
-// group's forum and the featured forum topics are linked from pages `resolve` does not read, so
-// the table only claims them. A group's featured topics read as the group's forum.
+// claimed. Every row past the four `resolve` builds reads its value from a page link or a page id,
+// so the table only claims it. A group's featured topics read as the group's forum, and a topic in
+// a group is still that one topic.
 const feeds = definePlatformFeeds(
   [
     { key: 'ning:topic', template: '{scheme}://{host}/forum/topics/{topic}?feed=yes&xn_auth=no' },
+    {
+      key: 'ning:topic',
+      template: '{scheme}://{host}/group/{group}/forum/topics/{topic}?feed=yes&xn_auth=no',
+    },
     { key: 'ning:activity', template: '{scheme}://{host}/activity/log/list?fmt=rss' },
     {
       key: 'ning:activity-member',
@@ -45,6 +49,68 @@ const feeds = definePlatformFeeds(
     {
       key: 'ning:forum-featured',
       template: '{scheme}://{host}/forum/topic/list?featured=1&feed=yes&xn_auth=no',
+    },
+    {
+      key: 'ning:forum-group',
+      template: '{scheme}://{host}/group/{group}/forum?feed=yes&xn_auth=no',
+    },
+    {
+      key: 'ning:forum-member',
+      template: '{scheme}://{host}/forum/topic/listForContributor?feed=yes&user={user}&xn_auth=no',
+    },
+    {
+      key: 'ning:forum-group-member',
+      template:
+        '{scheme}://{host}/group/{group}/forum/topic/listForContributor?feed=yes&user={user}&xn_auth=no',
+    },
+    {
+      key: 'ning:forum-group-member',
+      template:
+        '{scheme}://{host}/forum/topic/listForContributor?feed=yes&groupUrl={group}&user={user}&xn_auth=no',
+    },
+    {
+      key: 'ning:forum-tag',
+      template: '{scheme}://{host}/forum/topic/listForTag?feed=yes&tag={tag}&xn_auth=no',
+    },
+    {
+      key: 'ning:forum-group-tag',
+      template:
+        '{scheme}://{host}/group/{group}/forum/topic/listForTag?feed=yes&tag={tag}&xn_auth=no',
+    },
+    {
+      key: 'ning:forum-group-tag',
+      template:
+        '{scheme}://{host}/forum/topic/listForTag?feed=yes&groupUrl={group}&tag={tag}&xn_auth=no',
+    },
+    {
+      key: 'ning:blog-post-comments',
+      template: '{scheme}://{host}/profiles/comment/feed?attachedTo={post}&xn_auth=no',
+    },
+    {
+      key: 'ning:status-comments',
+      template: '{scheme}://{host}/profiles/statuscomment/feed?attachedTo={status}&xn_auth=no',
+    },
+    {
+      key: 'ning:album-comments',
+      template: '{scheme}://{host}/photo/albumcomment/feed?attachedTo={album}&xn_auth=no',
+    },
+    {
+      key: 'ning:photos-member',
+      template:
+        '{scheme}://{host}/photo/photo/listForContributor?rss=yes&screenName={member}&xn_auth=no',
+    },
+    {
+      key: 'ning:videos-member',
+      template:
+        '{scheme}://{host}/video/video/listForContributor?rss=yes&screenName={member}&xn_auth=no',
+    },
+    {
+      key: 'ning:videos-tag',
+      template: '{scheme}://{host}/video/video/listTagged?rss=yes&tag={tag}&xn_auth=no',
+    },
+    {
+      key: 'ning:event-comments',
+      template: '{scheme}://{host}/events/comment/feed?attachedTo={event}&xn_auth=no',
     },
   ],
   { domains },

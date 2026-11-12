@@ -177,6 +177,66 @@ describe('ningHandler', () => {
         'https://example.ning.com/forum/topic/list?feed=yes&groupUrl=hikers&xn_auth=no',
         { key: 'ning:forum-group', label: 'Group forum' },
       ],
+      [
+        'https://example.ning.com/group/hikers/forum/topics/a-trail?feed=yes&xn_auth=no',
+        { key: 'ning:topic', label: 'Topic' },
+      ],
+      [
+        'https://example.ning.com/group/hikers/forum?feed=yes&xn_auth=no',
+        { key: 'ning:forum-group', label: 'Group forum' },
+      ],
+      [
+        'https://example.ning.com/forum/topic/listForContributor?feed=yes&user=1abcdefghij2k&xn_auth=no',
+        { key: 'ning:forum-member', label: 'Member topics' },
+      ],
+      [
+        'https://example.ning.com/group/hikers/forum/topic/listForContributor?feed=yes&user=1abcdefghij2k&xn_auth=no',
+        { key: 'ning:forum-group-member', label: 'Member group topics' },
+      ],
+      [
+        'https://example.ning.com/forum/topic/listForContributor?feed=yes&groupUrl=hikers&user=1abcdefghij2k&xn_auth=no',
+        { key: 'ning:forum-group-member', label: 'Member group topics' },
+      ],
+      [
+        'https://example.ning.com/forum/topic/listForTag?feed=yes&tag=travel&xn_auth=no',
+        { key: 'ning:forum-tag', label: 'Tagged topics' },
+      ],
+      [
+        'https://example.ning.com/group/hikers/forum/topic/listForTag?feed=yes&tag=travel&xn_auth=no',
+        { key: 'ning:forum-group-tag', label: 'Tagged group topics' },
+      ],
+      [
+        'https://example.ning.com/forum/topic/listForTag?feed=yes&groupUrl=hikers&tag=travel&xn_auth=no',
+        { key: 'ning:forum-group-tag', label: 'Tagged group topics' },
+      ],
+      [
+        'https://example.ning.com/profiles/comment/feed?attachedTo=1234567%3ABlogPost%3A89&xn_auth=no',
+        { key: 'ning:blog-post-comments', label: 'Blog post comments' },
+      ],
+      [
+        'https://example.ning.com/profiles/statuscomment/feed?attachedTo=1234567%3AStatus%3A89&xn_auth=no',
+        { key: 'ning:status-comments', label: 'Status comments' },
+      ],
+      [
+        'https://example.ning.com/photo/albumcomment/feed?attachedTo=1234567%3AAlbum%3A89&xn_auth=no',
+        { key: 'ning:album-comments', label: 'Album comments' },
+      ],
+      [
+        'https://example.ning.com/photo/photo/listForContributor?rss=yes&screenName=1abcdefghij2k&xn_auth=no',
+        { key: 'ning:photos-member', label: 'Member photos' },
+      ],
+      [
+        'https://example.ning.com/video/video/listForContributor?rss=yes&screenName=1abcdefghij2k&xn_auth=no',
+        { key: 'ning:videos-member', label: 'Member videos' },
+      ],
+      [
+        'https://example.ning.com/video/video/listTagged?rss=yes&tag=travel&xn_auth=no',
+        { key: 'ning:videos-tag', label: 'Tagged videos' },
+      ],
+      [
+        'https://example.ning.com/events/comment/feed?attachedTo=1234567%3AEvent%3A89&xn_auth=no',
+        { key: 'ning:event-comments', label: 'Event comments' },
+      ],
     ]
 
     it.each(feedUrls)('should return the hint for %s', (value, expected) => {
@@ -263,6 +323,66 @@ describe('ningHandler', () => {
       [
         'https://example.ning.com/forum/topic/list?feed=yes&groupUrl=hikers&xn_auth=no',
         { key: 'ning:forum-group', label: 'Group forum' },
+      ],
+      [
+        'https://example.ning.com/group/hikers/forum/topics/a-trail?feed=yes&xn_auth=no',
+        { key: 'ning:topic', label: 'Topic' },
+      ],
+      [
+        'https://example.ning.com/group/hikers/forum?feed=yes&xn_auth=no',
+        { key: 'ning:forum-group', label: 'Group forum' },
+      ],
+      [
+        'https://example.ning.com/forum/topic/listForContributor?feed=yes&user=1abcdefghij2k&xn_auth=no',
+        { key: 'ning:forum-member', label: 'Member topics' },
+      ],
+      [
+        'https://example.ning.com/group/hikers/forum/topic/listForContributor?feed=yes&user=1abcdefghij2k&xn_auth=no',
+        { key: 'ning:forum-group-member', label: 'Member group topics' },
+      ],
+      [
+        'https://example.ning.com/forum/topic/listForContributor?feed=yes&groupUrl=hikers&user=1abcdefghij2k&xn_auth=no',
+        { key: 'ning:forum-group-member', label: 'Member group topics' },
+      ],
+      [
+        'https://example.ning.com/forum/topic/listForTag?feed=yes&tag=travel&xn_auth=no',
+        { key: 'ning:forum-tag', label: 'Tagged topics' },
+      ],
+      [
+        'https://example.ning.com/group/hikers/forum/topic/listForTag?feed=yes&tag=travel&xn_auth=no',
+        { key: 'ning:forum-group-tag', label: 'Tagged group topics' },
+      ],
+      [
+        'https://example.ning.com/forum/topic/listForTag?feed=yes&groupUrl=hikers&tag=travel&xn_auth=no',
+        { key: 'ning:forum-group-tag', label: 'Tagged group topics' },
+      ],
+      [
+        'https://example.ning.com/profiles/comment/feed?attachedTo=1234567%3ABlogPost%3A89&xn_auth=no',
+        { key: 'ning:blog-post-comments', label: 'Blog post comments' },
+      ],
+      [
+        'https://example.ning.com/profiles/statuscomment/feed?attachedTo=1234567%3AStatus%3A89&xn_auth=no',
+        { key: 'ning:status-comments', label: 'Status comments' },
+      ],
+      [
+        'https://example.ning.com/photo/albumcomment/feed?attachedTo=1234567%3AAlbum%3A89&xn_auth=no',
+        { key: 'ning:album-comments', label: 'Album comments' },
+      ],
+      [
+        'https://example.ning.com/photo/photo/listForContributor?rss=yes&screenName=1abcdefghij2k&xn_auth=no',
+        { key: 'ning:photos-member', label: 'Member photos' },
+      ],
+      [
+        'https://example.ning.com/video/video/listForContributor?rss=yes&screenName=1abcdefghij2k&xn_auth=no',
+        { key: 'ning:videos-member', label: 'Member videos' },
+      ],
+      [
+        'https://example.ning.com/video/video/listTagged?rss=yes&tag=travel&xn_auth=no',
+        { key: 'ning:videos-tag', label: 'Tagged videos' },
+      ],
+      [
+        'https://example.ning.com/events/comment/feed?attachedTo=1234567%3AEvent%3A89&xn_auth=no',
+        { key: 'ning:event-comments', label: 'Event comments' },
       ],
     ]
 
