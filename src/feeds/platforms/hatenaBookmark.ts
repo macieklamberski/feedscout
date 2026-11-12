@@ -1,12 +1,13 @@
 import {
   composeQuery,
   decodeSegment,
-  encodePathSegment,
   getAnyOf,
   getQueryParam,
+  isAnyOf,
   isHostOf,
   parseUrl,
 } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -51,6 +52,24 @@ const searchTypes = ['tag', 'text', 'title']
 
 // The filters the search page carries into its own feed link. It drops `page` and anything else.
 const searchFilters = ['target', 'sort', 'users', 'date_range', 'safe']
+
+// The first search row names every filter the page carries. `resolve` passes a filter the page
+// lacks as empty, which the query leaves out, and the bare row reads a feed without all of them.
+// A site feed carries the site's whole path, more segments than a placeholder holds, so
+// `getSiteFeedKey` reads it.
+const feeds = definePlatformFeeds([
+  { key: 'hatena-bookmark:hot', template: 'https://b.hatena.ne.jp/hotentry/{category}.rss' },
+  { key: 'hatena-bookmark:hot', template: 'https://b.hatena.ne.jp/hotentry.rss' },
+  { key: 'hatena-bookmark:new', template: 'https://b.hatena.ne.jp/entrylist/{category}.rss' },
+  { key: 'hatena-bookmark:new', template: 'https://b.hatena.ne.jp/entrylist.rss' },
+  {
+    key: 'hatena-bookmark:search',
+    template:
+      'https://b.hatena.ne.jp/q/{query}?target={target}&sort={sort}&users={users}&date_range={date_range}&safe={safe}&mode=rss',
+  },
+  { key: 'hatena-bookmark:search', template: 'https://b.hatena.ne.jp/q/{query}?mode=rss' },
+  { key: 'hatena-bookmark:bookmarks', template: 'https://b.hatena.ne.jp/{username}/bookmark.rss' },
+])
 
 const copySearchFilters = (
   from: URLSearchParams,
@@ -134,6 +153,21 @@ export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefin
   return { kind: 'user', username }
 }
 
+// A site feed is the site page with `mode=rss`, whatever else its query carries.
+const getSiteFeedKey = (url: string): string | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts) || !siteRegex.test(parsedUrl.pathname)) {
+    return
+  }
+
+  if (!isAnyOf(getQueryParam(parsedUrl, 'mode'), 'rss')) {
+    return
+  }
+
+  return 'hatena-bookmark:site'
+}
+
 export const hatenaBookmarkHandler: PlatformHandler = {
   match: (url) => {
     return parseHatenaBookmarkUrl(url) !== undefined
@@ -146,29 +180,27 @@ export const hatenaBookmarkHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-
     if (parsed.kind === 'hotentry') {
-      const suffix = parsed.category ? `/${parsed.category}` : ''
+      const { category } = parsed
 
-      return [{ uri: `${origin}/hotentry${suffix}.rss`, hint: composeHint('hatena-bookmark:hot') }]
+      return [feeds.getFeedEntry('hatena-bookmark:hot', category ? { category } : {})]
     }
 
     if (parsed.kind === 'entrylist') {
-      const suffix = parsed.category ? `/${parsed.category}` : ''
+      const { category } = parsed
 
-      return [{ uri: `${origin}/entrylist${suffix}.rss`, hint: composeHint('hatena-bookmark:new') }]
+      return [feeds.getFeedEntry('hatena-bookmark:new', category ? { category } : {})]
     }
 
+    // Search and per-site listings answer with RSS when `mode=rss` is set.
     if (parsed.kind === 'search') {
-      // Search and per-site listings answer with RSS when `mode=rss` is set.
-      const query = composeQuery({ ...parsed.params, mode: 'rss' })
+      const filters = searchFilters.map((filter) => [filter, parsed.params[filter] ?? ''])
 
       return [
-        {
-          uri: `${origin}/q/${encodePathSegment(parsed.query)}${query}`,
-          hint: composeHint('hatena-bookmark:search'),
-        },
+        feeds.getFeedEntry('hatena-bookmark:search', {
+          query: parsed.query,
+          ...Object.fromEntries(filters),
+        }),
       ]
     }
 
@@ -177,7 +209,7 @@ export const hatenaBookmarkHandler: PlatformHandler = {
 
       return [
         {
-          uri: `${origin}/site/${parsed.site}${query}`,
+          uri: `https://b.hatena.ne.jp/site/${parsed.site}${query}`,
           hint: composeHint('hatena-bookmark:site'),
         },
       ]
@@ -185,19 +217,13 @@ export const hatenaBookmarkHandler: PlatformHandler = {
 
     // User bookmarks: /{username} or /{username}/bookmark.
     if (parsed.kind === 'user') {
-      return [
-        {
-          uri: `${origin}/${parsed.username}/bookmark.rss`,
-          hint: composeHint('hatena-bookmark:bookmarks'),
-        },
-      ]
+      return [feeds.getFeedEntry('hatena-bookmark:bookmarks', { username: parsed.username })]
     }
 
-    return [
-      {
-        uri: `${origin}/hotentry.rss`,
-        hint: composeHint('hatena-bookmark:hot'),
-      },
-    ]
+    return [feeds.getFeedEntry('hatena-bookmark:hot')]
+  },
+
+  getFeedKey: (url) => {
+    return feeds.getFeedKey(url) ?? getSiteFeedKey(url)
   },
 }
