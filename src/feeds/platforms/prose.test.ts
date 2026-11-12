@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'bun:test'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type ProseUrl, parseProseUrl, proseHandler } from './prose.js'
 
 describe('parseProseUrl', () => {
@@ -9,13 +11,20 @@ describe('parseProseUrl', () => {
   })
 
   it('should return the tag for a tag query', () => {
-    const expected: ProseUrl = { kind: 'tag', tag: 'go' }
+    const expected: ProseUrl = {
+      kind: 'tag',
+      username: 'example',
+      tag: 'go',
+    }
 
     expect(parseProseUrl('https://example.prose.sh/?tag=go')).toEqual(expected)
   })
 
   it('should return the blog for a subdomain', () => {
-    const expected: ProseUrl = { kind: 'blog' }
+    const expected: ProseUrl = {
+      kind: 'blog',
+      username: 'example',
+    }
 
     expect(parseProseUrl('https://example.prose.sh/')).toEqual(expected)
   })
@@ -89,6 +98,18 @@ describe('proseHandler', () => {
       expect(proseHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return https feed URL for an http blog page', () => {
+      const value = 'http://alice.prose.sh/'
+      const expected = [
+        {
+          uri: 'https://alice.prose.sh/rss',
+          hint: { key: 'prose:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(proseHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return discovery feed for apex prose.sh', () => {
       const value = 'https://prose.sh/'
       const expected = [
@@ -112,5 +133,73 @@ describe('proseHandler', () => {
 
       expect(proseHandler.resolve(value)).toEqual(expected)
     })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the blog key for a blog feed', () => {
+      const value = 'https://alice.prose.sh/rss'
+      const expected = 'prose:blog'
+
+      expect(proseHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for a blog atom feed', () => {
+      const value = 'https://alice.prose.sh/atom'
+      const expected = 'prose:blog'
+
+      expect(proseHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a tag feed', () => {
+      const value = 'https://alice.prose.sh/rss?tag=go'
+      const expected = 'prose:tag'
+
+      expect(proseHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the discovery key for the discovery feed', () => {
+      const value = 'https://prose.sh/rss'
+      const expected = 'prose:discovery'
+
+      expect(proseHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the discovery key for the discovery atom feed', () => {
+      const value = 'https://prose.sh/rss.atom'
+      const expected = 'prose:discovery'
+
+      expect(proseHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a blog post page', () => {
+      const value = 'https://alice.prose.sh/some-article-slug'
+
+      expect(proseHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.alice.prose.sh/rss'
+
+      expect(proseHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+})
+
+describe('discoverUrisFromPlatform', () => {
+  const values: Array<[string, { key: string; label: string }]> = [
+    ['https://alice.prose.sh/atom', { key: 'prose:blog', label: 'Blog' }],
+    ['https://alice.prose.sh/rss/?tag=go', { key: 'prose:tag', label: 'Tag' }],
+    ['https://prose.sh/rss.atom', { key: 'prose:discovery', label: 'Discovery' }],
+  ]
+
+  it.each(values)('should return %s as the feed it is', async (value, hint) => {
+    const options = {
+      ...defaultPlatformOptions,
+      handlers: [proseHandler],
+      baseUrl: value,
+    }
+    const expected = [{ uri: value, hint }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 })

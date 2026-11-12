@@ -1,13 +1,25 @@
-import { composeQuery, getQueryParam, isHostOf, parseUrl } from 'trousse'
+import { getQueryParam, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type ProseUrl = { kind: 'home' } | { kind: 'tag'; tag: string } | { kind: 'blog' }
+export type ProseUrl =
+  | { kind: 'home' }
+  | { kind: 'tag'; username: string; tag: string }
+  | { kind: 'blog'; username: string }
 
 const domains = ['prose.sh']
 const apexHosts = ['prose.sh', 'www.prose.sh']
+
+const feeds = definePlatformFeeds([
+  { key: 'prose:discovery', template: 'https://prose.sh/rss' },
+  { key: 'prose:discovery', template: 'https://prose.sh/rss.atom' },
+  { key: 'prose:tag', template: 'https://{username}.prose.sh/rss?tag={tag}' },
+  { key: 'prose:blog', template: 'https://{username}.prose.sh/rss' },
+  { key: 'prose:blog', template: 'https://{username}.prose.sh/atom' },
+])
 
 export const parseProseUrl = (url: string): ProseUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -21,17 +33,19 @@ export const parseProseUrl = (url: string): ProseUrl | undefined => {
     return { kind: 'home' }
   }
 
-  if (!getTenantSubdomain(parsedUrl, domains)) {
+  const username = getTenantSubdomain(parsedUrl, domains)
+
+  if (!username) {
     return
   }
 
   const tag = getQueryParam(parsedUrl.searchParams, 'tag')
 
   if (tag) {
-    return { kind: 'tag', tag }
+    return { kind: 'tag', username, tag }
   }
 
-  return { kind: 'blog' }
+  return { kind: 'blog', username }
 }
 
 export const proseHandler: PlatformHandler = {
@@ -47,25 +61,15 @@ export const proseHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'home') {
-      return [
-        {
-          uri: 'https://prose.sh/rss',
-          hint: composeHint('prose:discovery'),
-        },
-      ]
+      return [feeds.getFeedEntry('prose:discovery')]
     }
-
-    const { origin } = new URL(url)
 
     if (parsed.kind === 'tag') {
-      return [
-        {
-          uri: `${origin}/rss${composeQuery({ tag: parsed.tag })}`,
-          hint: composeHint('prose:tag'),
-        },
-      ]
+      return [feeds.getFeedEntry('prose:tag', { username: parsed.username, tag: parsed.tag })]
     }
 
-    return [{ uri: `${origin}/rss`, hint: composeHint('prose:blog') }]
+    return [feeds.getFeedEntry('prose:blog', { username: parsed.username })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
