@@ -58,5 +58,5 @@ export const velogHandler: PlatformHandler = {
     return [feeds.getFeedEntry('velog:trending')]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

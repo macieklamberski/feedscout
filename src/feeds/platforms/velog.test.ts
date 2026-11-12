@@ -119,85 +119,85 @@ describe('velogHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for a user feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a user feed', () => {
       const value = 'https://v2.velog.io/rss/jay_be'
-      const expected = 'velog:posts'
+      const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
 
-      expect(velogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a user feed with an at sign', () => {
+    it('should return the posts hint for a user feed with an at sign', () => {
       const value = 'https://v2.velog.io/rss/@minzami1215'
-      const expected = 'velog:posts'
+      const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
 
-      expect(velogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a percent-encoded username', () => {
+    it('should return the posts hint for a percent-encoded username', () => {
       const value = 'https://v2.velog.io/rss/%EA%B9%80'
-      const expected = 'velog:posts'
+      const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
 
-      expect(velogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a feed with a trailing slash', () => {
+    it('should return the posts hint for a feed with a trailing slash', () => {
       const value = 'https://v2.velog.io/rss/kkh3/'
-      const expected = 'velog:posts'
+      const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
 
-      expect(velogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a feed over http', () => {
+    it('should return the posts hint for a feed over http', () => {
       const value = 'http://v2.velog.io/rss/kkh3'
-      const expected = 'velog:posts'
+      const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
 
-      expect(velogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a capitalized route', () => {
+    it('should return the posts hint for a capitalized route', () => {
       const value = 'https://v2.velog.io/RSS/kkh3'
-      const expected = 'velog:posts'
+      const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
 
-      expect(velogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the trending key for the trending feed', () => {
+    it('should return the trending hint for the trending feed', () => {
       const value = 'https://v2.velog.io/rss'
-      const expected = 'velog:trending'
+      const expected: DiscoverUriHint = { key: 'velog:trending', label: 'Trending' }
 
-      expect(velogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the trending key for the trending feed with a trailing slash', () => {
+    it('should return the trending hint for the trending feed with a trailing slash', () => {
       const value = 'https://v2.velog.io/rss/'
-      const expected = 'velog:trending'
+      const expected: DiscoverUriHint = { key: 'velog:trending', label: 'Trending' }
 
-      expect(velogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a profile page', () => {
       const value = 'https://velog.io/@jay_be'
 
-      expect(velogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(velogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the feed path on the page host', () => {
       const value = 'https://velog.io/rss/jay_be'
 
-      expect(velogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(velogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a path below a user feed', () => {
       const value = 'https://v2.velog.io/rss/jay_be/posts'
 
-      expect(velogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(velogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/rss/jay_be'
 
-      expect(velogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(velogHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
