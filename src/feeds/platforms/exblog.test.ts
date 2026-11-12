@@ -136,87 +136,109 @@ describe('exblogHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for an RSS feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for an RSS feed', () => {
       const value = 'https://example.exblog.jp/index.xml'
-      const expected = 'exblog:posts'
+      const expected: DiscoverUriHint = { key: 'exblog:posts', label: 'Posts', format: 'rss' }
 
-      expect(exblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(exblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an Atom feed', () => {
+    it('should return the posts hint for an Atom feed', () => {
       const value = 'https://example.exblog.jp/atom.xml'
-      const expected = 'exblog:posts'
+      const expected: DiscoverUriHint = { key: 'exblog:posts', label: 'Posts', format: 'atom' }
 
-      expect(exblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(exblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an RSS feed over HTTP', () => {
+    it('should return the posts hint for an RSS feed over HTTP', () => {
       const value = 'http://example.exblog.jp/index.xml'
-      const expected = 'exblog:posts'
+      const expected: DiscoverUriHint = { key: 'exblog:posts', label: 'Posts', format: 'rss' }
 
-      expect(exblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(exblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the category key for an RSS category feed', () => {
+    it('should return the category hint for an RSS category feed', () => {
       const value = 'https://example.exblog.jp/i12/index.xml'
-      const expected = 'exblog:category'
+      const expected: DiscoverUriHint = { key: 'exblog:category', label: 'Category', format: 'rss' }
 
-      expect(exblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(exblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the category key for an Atom category feed', () => {
+    it('should return the category hint for an Atom category feed', () => {
       const value = 'https://example.exblog.jp/i12/atom.xml'
-      const expected = 'exblog:category'
+      const expected: DiscoverUriHint = {
+        key: 'exblog:category',
+        label: 'Category',
+        format: 'atom',
+      }
 
-      expect(exblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(exblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a category feed whose id runs into letters', () => {
       const value = 'https://example.exblog.jp/i12x/index.xml'
 
-      expect(exblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(exblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a category page', () => {
       const value = 'https://example.exblog.jp/i12/'
 
-      expect(exblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(exblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a post page', () => {
       const value = 'https://example.exblog.jp/30123456/'
 
-      expect(exblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(exblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the portal', () => {
       const value = 'https://www.exblog.jp/index.xml'
 
-      expect(exblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(exblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://blog.example.exblog.jp/index.xml'
 
-      expect(exblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(exblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/index.xml'
 
-      expect(exblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(exblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://example.exblog.jp/index.xml', { key: 'exblog:posts', label: 'Posts' }],
-      ['https://example.exblog.jp/atom.xml', { key: 'exblog:posts', label: 'Posts' }],
-      ['http://example.exblog.jp/index.xml', { key: 'exblog:posts', label: 'Posts' }],
-      ['https://example.exblog.jp/i12/index.xml', { key: 'exblog:category', label: 'Category' }],
-      ['https://example.exblog.jp/i12/atom.xml', { key: 'exblog:category', label: 'Category' }],
-      ['http://example.exblog.jp/i12/atom.xml', { key: 'exblog:category', label: 'Category' }],
+      [
+        'https://example.exblog.jp/index.xml',
+        { key: 'exblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://example.exblog.jp/atom.xml',
+        { key: 'exblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'http://example.exblog.jp/index.xml',
+        { key: 'exblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://example.exblog.jp/i12/index.xml',
+        { key: 'exblog:category', label: 'Category', format: 'rss' },
+      ],
+      [
+        'https://example.exblog.jp/i12/atom.xml',
+        { key: 'exblog:category', label: 'Category', format: 'atom' },
+      ],
+      [
+        'http://example.exblog.jp/i12/atom.xml',
+        { key: 'exblog:category', label: 'Category', format: 'atom' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

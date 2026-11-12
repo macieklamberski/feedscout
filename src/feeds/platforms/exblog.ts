@@ -77,14 +77,14 @@ export const exblogHandler: PlatformHandler = {
     return uris
   },
 
-  getFeedKey: (url) => {
-    const key = feeds.getFeedKey(url)
+  getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
 
     // The table reads any segment after `i`, while a category id is digits only.
-    if (key === 'exblog:category' && parseExblogUrl(url)?.kind !== 'category') {
+    if (hint?.key === 'exblog:category' && parseExblogUrl(url)?.kind !== 'category') {
       return
     }
 
-    return key
+    return hint
   },
 }
