@@ -59,7 +59,7 @@ export const aushaHandler: PlatformHandler = {
     return [feeds.getFeedEntry('ausha:podcast', { feedId: page.feedId })]
   },
 
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const [feedId] = getPathSegments(url)
 
     // A feed id is word characters only, so a file on the feed host, such as `rss.xslt`, is no
@@ -68,6 +68,6 @@ export const aushaHandler: PlatformHandler = {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }

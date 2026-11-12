@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import {
@@ -110,50 +111,50 @@ describe('aushaHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the podcast key for a podcast feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for a podcast feed', () => {
       const value = 'https://feed.ausha.co/abc123'
-      const expected = 'ausha:podcast'
+      const expected: DiscoverUriHint = { key: 'ausha:podcast', label: 'Podcast' }
 
-      expect(aushaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(aushaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a podcast feed over http', () => {
+    it('should return the podcast hint for a podcast feed over http', () => {
       const value = 'http://feed.ausha.co/abc123'
-      const expected = 'ausha:podcast'
+      const expected: DiscoverUriHint = { key: 'ausha:podcast', label: 'Podcast' }
 
-      expect(aushaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(aushaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a podcast feed with a trailing slash', () => {
+    it('should return the podcast hint for a podcast feed with a trailing slash', () => {
       const value = 'https://feed.ausha.co/abc123/'
-      const expected = 'ausha:podcast'
+      const expected: DiscoverUriHint = { key: 'ausha:podcast', label: 'Podcast' }
 
-      expect(aushaHandler.getFeedKey?.(value)).toBe(expected)
+      expect(aushaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for the feed host root', () => {
       const value = 'https://feed.ausha.co/'
 
-      expect(aushaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(aushaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a file on the feed host', () => {
       const value = 'https://feed.ausha.co/rss.xslt'
 
-      expect(aushaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(aushaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a show page', () => {
       const value = 'https://podcast.ausha.co/example-show'
 
-      expect(aushaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(aushaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed id under another host', () => {
       const value = 'https://feed.example.com/abc123'
 
-      expect(aushaHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(aushaHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
