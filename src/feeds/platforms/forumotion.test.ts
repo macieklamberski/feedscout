@@ -285,6 +285,23 @@ describe('forumotionHandler', () => {
 
       expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
     })
+
+    it('should return the hint for a feed on a country domain outside the old list', () => {
+      const value = 'https://example.forumotion.co.uk/feed/'
+      const expected: DiscoverUriHint = {
+        key: 'forumotion:latest-topics',
+        label: 'Latest topics',
+        format: 'rss',
+      }
+
+      expect(forumotionHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a suffix outside the domain patterns', () => {
+      const value = 'https://example.forumgratuit.net/feed/'
+
+      expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
+    })
   })
 
   describe('own feeds through the Platform method', () => {
