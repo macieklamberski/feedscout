@@ -1,7 +1,8 @@
-import { composeQuery, getQueryParam, parseUrl } from 'trousse'
+import { getQueryParam, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
+import { digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers club (guess), partly covers team, teamNewTemplate.
@@ -14,6 +15,14 @@ const domains = ['web.sportadmin.se']
 const layoutLinkRegex = /^\.\.\/\?SID=(\d+)&platform=(?:app|web)$/i
 // The next game widget, which the classic template prints on the club home page alone.
 const nextGameRegex = /wNextGame\.asp\?SID=(\d+)/i
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'sportadmin:team', template: 'https://{club}.{domain}/rss/?SID={sectionId}' },
+    { key: 'sportadmin:news', template: 'https://{club}.{domain}/rss/' },
+  ],
+  { domains },
+)
 
 const findLayoutSectionId = (content: string | undefined): string | undefined => {
   const link = findElement(content, (element) => {
@@ -70,23 +79,23 @@ export const sportadminHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getSportadminPage(url, content)
+    const club = getTenantSubdomain(url, domains)
 
-    if (!page) {
+    if (!page || !club) {
       return []
     }
 
-    const { origin } = new URL(url)
+    const params = { club, domain: domains[0] }
     const uris: Array<DiscoverUriEntry> = []
 
     if (page.kind === 'team') {
-      uris.push({
-        uri: `${origin}/rss/${composeQuery({ SID: page.sectionId })}`,
-        hint: composeHint('sportadmin:team'),
-      })
+      uris.push(feeds.getFeedEntry('sportadmin:team', { ...params, sectionId: page.sectionId }))
     }
 
-    uris.push({ uri: `${origin}/rss/`, hint: composeHint('sportadmin:news') })
+    uris.push(feeds.getFeedEntry('sportadmin:news', params))
 
     return uris
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
