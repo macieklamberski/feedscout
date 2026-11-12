@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { GiteaPage, GiteaUrl } from './gitea.js'
 import { getGiteaPage, giteaHandler, parseGiteaUrl } from './gitea.js'
 
@@ -437,6 +440,191 @@ describe('giteaHandler', () => {
       ]
 
       expect(giteaHandler.resolve(value, giteaSubPathHtml)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the activity key for a user Atom feed', () => {
+      const value = 'https://codeberg.org/forgejo.atom'
+      const expected = 'gitea:activity'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the activity key for a user RSS feed', () => {
+      const value = 'https://codeberg.org/forgejo.rss'
+      const expected = 'gitea:activity'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the activity key for a repo Atom feed', () => {
+      const value = 'https://gitea.com/gitea/blog.atom'
+      const expected = 'gitea:activity'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the activity key for a repo RSS feed', () => {
+      const value = 'https://gitea.com/gitea/go-sdk.rss'
+      const expected = 'gitea:activity'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the releases key for a releases Atom feed', () => {
+      const value = 'https://gitea.com/gitea/blog/releases.atom'
+      const expected = 'gitea:releases'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the releases key for a releases RSS feed', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/releases.rss'
+      const expected = 'gitea:releases'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tags key for a tags Atom feed', () => {
+      const value = 'https://gitea.com/gitea/blog/tags.atom'
+      const expected = 'gitea:tags'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tags key for a tags RSS feed', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/tags.rss'
+      const expected = 'gitea:tags'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the branch commits key for a branch Atom feed', () => {
+      const value = 'https://gitea.com/noerw/tea/atom/branch/print-issue-label'
+      const expected = 'gitea:branch-commits'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the branch commits key for a branch RSS feed', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/rss/branch/forgejo'
+      const expected = 'gitea:branch-commits'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the file history key for a file history feed', () => {
+      const value = 'https://gitea.com/noerw/unidiff-comments/atom/branch/master/types/hunk.go'
+      const expected = 'gitea:file-history'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the file history key for a folder history feed', () => {
+      const value = 'https://gitea.com/jolheiser/theme/atom/branch/master/i18n'
+      const expected = 'gitea:file-history'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the file history key for a percent-encoded file path', () => {
+      const value =
+        'https://gitea.com/CyberShell/Health-PDFS/atom/branch/master/Vaccine-Binder-Research.zip%20%28Unzipped%20Files%29/Vaccine-Binder-Research'
+      const expected = 'gitea:file-history'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the file history key for a branch named with a slash', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/atom/branch/v11.0/forgejo'
+      const expected = 'gitea:file-history'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the releases key for a feed on www', () => {
+      const value = 'https://www.codeberg.org/forgejo/forgejo/releases.atom'
+      const expected = 'gitea:releases'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the branch commits key for feed routes in another case', () => {
+      const value = 'https://gitea.com/noerw/tea/Atom/Branch/print-issue-label'
+      const expected = 'gitea:branch-commits'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a user page', () => {
+      const value = 'https://codeberg.org/forgejo'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a repo page', () => {
+      const value = 'https://gitea.com/gitea/blog'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a releases page', () => {
+      const value = 'https://gitea.com/gitea/blog/releases'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a branch page', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/src/branch/forgejo'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a branch feed route without a branch', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/atom/branch'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a file named like a feed under a branch', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/src/branch/forgejo/releases.atom'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a self-hosted feed', () => {
+      const value = 'https://git.example.org/owner/project/releases.atom'
+
+      expect(giteaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://codeberg.org/forgejo.atom', { key: 'gitea:activity', label: 'Activity' }],
+      ['https://gitea.com/gitea/blog.atom', { key: 'gitea:activity', label: 'Activity' }],
+      ['https://gitea.com/gitea/blog/releases.atom', { key: 'gitea:releases', label: 'Releases' }],
+      ['https://gitea.com/gitea/blog/tags.atom', { key: 'gitea:tags', label: 'Tags' }],
+      [
+        'https://gitea.com/noerw/tea/atom/branch/print-issue-label',
+        { key: 'gitea:branch-commits', label: 'Branch commits' },
+      ],
+      [
+        'https://gitea.com/noerw/unidiff-comments/atom/branch/master/types/hunk.go',
+        { key: 'gitea:file-history', label: 'File history' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [giteaHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })
