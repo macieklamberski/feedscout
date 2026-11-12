@@ -1,5 +1,4 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
@@ -155,19 +154,20 @@ export const ningHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.kind === 'topic') {
-      uris.push(page.getFeedEntry('ning:topic', { topic: parsed.topic }))
+      return [
+        page.getFeedEntry('ning:topic', { topic: parsed.topic }),
+        page.getFeedEntry('ning:activity'),
+        page.getFeedEntry('ning:blog'),
+        page.getFeedEntry('ning:forum'),
+      ]
     }
 
-    uris.push(
+    return [
       page.getFeedEntry('ning:activity'),
       page.getFeedEntry('ning:blog'),
       page.getFeedEntry('ning:forum'),
-    )
-
-    return uris
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
