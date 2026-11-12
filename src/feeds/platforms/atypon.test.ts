@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type AtyponUrl, atyponHandler, parseAtyponUrl } from './atypon.js'
 
 describe('parseAtyponUrl', () => {
@@ -82,10 +85,95 @@ describe('atyponHandler', () => {
       expect(atyponHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return an https feed for an http journal page', () => {
+      const value = 'http://www.tandfonline.com/toc/tprs20/current'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://www.tandfonline.com/action/showFeed?type=etoc&feed=rss&jc=tprs20',
+          hint: { key: 'atypon:journal', label: 'Journal' },
+        },
+      ]
+
+      expect(atyponHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for URL without journal code', () => {
       const value = 'https://dl.acm.org/doi/10.1145/3290605.3300233'
 
       expect(atyponHandler.resolve(value)).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    const values: Array<[string, string]> = [
+      [
+        'https://www.tandfonline.com/action/showFeed?type=etoc&feed=rss&jc=rdis20',
+        'atypon:journal',
+      ],
+      [
+        'https://onlinelibrary.wiley.com/action/showFeed?type=etoc&feed=rss&jc=14429993',
+        'atypon:journal',
+      ],
+      [
+        'https://www.tandfonline.com/action/showFeed?ai=2a7&feed=rss&jc=pcem20&mi=3dg6fv&type=etoc&ui=0',
+        'atypon:journal',
+      ],
+      ['https://www.science.org/action/showFeed/feed?jc=science&type=etoc', 'atypon:journal'],
+      ['https://www.tandfonline.com/feed/rss/uann20', 'atypon:journal'],
+      ['https://onlinelibrary.wiley.com/feed/16136829/most-recent', 'atypon:journal'],
+      ['https://onlinelibrary.wiley.com/feed/14429993/most-cited', 'atypon:most-cited'],
+    ]
+
+    it.each(values)('should read %s as %s', (value, expected) => {
+      expect(atyponHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a search feed', () => {
+      const value =
+        'https://epubs.siam.org/action/showFeed?tagCode=topic-LI&taxonomyCode=topics&type=searchTopic'
+
+      expect(atyponHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a journal page', () => {
+      const value = 'https://www.tandfonline.com/toc/rdis20/current'
+
+      expect(atyponHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a most cited feed outside Wiley', () => {
+      const value = 'https://www.tandfonline.com/feed/rdis20/most-cited'
+
+      expect(atyponHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a journal feed on another host', () => {
+      const value = 'https://example.com/action/showFeed?type=etoc&feed=rss&jc=rdis20'
+
+      expect(atyponHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const journal: DiscoverUriHint = { key: 'atypon:journal', label: 'Journal' }
+    const mostCited: DiscoverUriHint = { key: 'atypon:most-cited', label: 'Most cited' }
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://www.tandfonline.com/action/showFeed?type=etoc&feed=rss&jc=rdis20', journal],
+      ['https://www.science.org/action/showFeed/feed?jc=science&type=etoc', journal],
+      ['https://www.tandfonline.com/feed/rss/uann20', journal],
+      ['https://onlinelibrary.wiley.com/feed/16136829/most-recent', journal],
+      ['https://onlinelibrary.wiley.com/feed/14429993/most-cited', mostCited],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [atyponHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

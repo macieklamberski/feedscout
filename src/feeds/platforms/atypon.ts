@@ -1,6 +1,6 @@
-import { composeQuery, isHostOf } from 'trousse'
+import { isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Unmeasured, bot wall.
 
@@ -23,6 +23,25 @@ const hosts = [
 const mostCitedHosts = ['onlinelibrary.wiley.com']
 
 const journalRegex = /^\/(?:toc|journals?|loi|home)\/(\w+)(?:\/|$)/i
+
+// Every host serves the journal feed at its `showFeed/feed` path too, Taylor & Francis at
+// `/feed/rss/{code}` and Wiley at `/feed/{code}/most-recent`, so the table reads those as well.
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'atypon:journal',
+      template: 'https://{host}/action/showFeed?type=etoc&feed=rss&jc={code}',
+    },
+    { key: 'atypon:journal', template: 'https://{host}/action/showFeed/feed?type=etoc&jc={code}' },
+    { key: 'atypon:journal', template: 'https://www.tandfonline.com/feed/rss/{code}' },
+    { key: 'atypon:journal', template: 'https://onlinelibrary.wiley.com/feed/{code}/most-recent' },
+    {
+      key: 'atypon:most-cited',
+      template: 'https://onlinelibrary.wiley.com/feed/{code}/most-cited',
+    },
+  ],
+  { hosts },
+)
 
 export const parseAtyponUrl = (url: string): AtyponUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -51,21 +70,15 @@ export const atyponHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris = [
-      {
-        uri: `${origin}/action/showFeed${composeQuery({ type: 'etoc', feed: 'rss', jc: parsed.code })}`,
-        hint: composeHint('atypon:journal'),
-      },
-    ]
+    const { hostname } = new URL(url)
+    const uris = [feeds.getFeedEntry('atypon:journal', { host: hostname, code: parsed.code })]
 
     if (parsed.isWiley) {
-      uris.push({
-        uri: `${origin}/feed/${parsed.code}/most-cited`,
-        hint: composeHint('atypon:most-cited'),
-      })
+      uris.push(feeds.getFeedEntry('atypon:most-cited', { code: parsed.code }))
     }
 
     return uris
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
