@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type KickstarterUrl, kickstarterHandler, parseKickstarterUrl } from './kickstarter.js'
 
 describe('parseKickstarterUrl', () => {
@@ -140,5 +143,91 @@ describe('kickstarterHandler', () => {
 
       expect(kickstarterHandler.resolve(value)).toEqual(expected)
     })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the updates key for a project updates feed', () => {
+      const value = 'https://www.kickstarter.com/projects/alice/example/posts.atom'
+      const expected = 'kickstarter:updates'
+
+      expect(kickstarterHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the updates key for a project updates feed with a numeric creator', () => {
+      const value = 'https://www.kickstarter.com/projects/12345/example/posts.atom'
+      const expected = 'kickstarter:updates'
+
+      expect(kickstarterHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the updates key for a project updates feed without www', () => {
+      const value = 'https://kickstarter.com/projects/alice/example/posts.atom'
+      const expected = 'kickstarter:updates'
+
+      expect(kickstarterHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the updates key for a project updates feed over http', () => {
+      const value = 'http://www.kickstarter.com/projects/alice/example/posts.atom'
+      const expected = 'kickstarter:updates'
+
+      expect(kickstarterHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the projects key for the projects feed', () => {
+      const value = 'https://www.kickstarter.com/projects/feed.atom'
+      const expected = 'kickstarter:projects'
+
+      expect(kickstarterHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the projects key for the projects feed without www', () => {
+      const value = 'https://kickstarter.com/projects/feed.atom'
+      const expected = 'kickstarter:projects'
+
+      expect(kickstarterHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a project page', () => {
+      const value = 'https://www.kickstarter.com/projects/alice/example'
+
+      expect(kickstarterHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the updates feed path on another host', () => {
+      const value = 'https://example.com/projects/alice/example/posts.atom'
+
+      expect(kickstarterHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+})
+
+describe('discoverUrisFromPlatform', () => {
+  const values: Array<[string, string, string]> = [
+    [
+      'https://www.kickstarter.com/projects/alice/example/posts.atom',
+      'kickstarter:updates',
+      'Updates',
+    ],
+    ['https://kickstarter.com/projects/alice/example/posts.atom', 'kickstarter:updates', 'Updates'],
+    [
+      'http://www.kickstarter.com/projects/alice/example/posts.atom',
+      'kickstarter:updates',
+      'Updates',
+    ],
+    ['https://www.kickstarter.com/projects/feed.atom', 'kickstarter:projects', 'Projects'],
+    ['https://kickstarter.com/projects/feed.atom', 'kickstarter:projects', 'Projects'],
+    ['http://www.kickstarter.com/projects/feed.atom', 'kickstarter:projects', 'Projects'],
+  ]
+
+  it.each(values)('should return %s itself as %s', async (value, key, label) => {
+    const options = {
+      ...defaultPlatformOptions,
+      handlers: [kickstarterHandler],
+      baseUrl: value,
+    }
+    const expected: Array<DiscoverUriEntry> = [{ uri: value, hint: { key, label } }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 })

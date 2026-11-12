@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers discover, project (guess, html).
@@ -11,6 +11,14 @@ export type KickstarterUrl =
   | { kind: 'home' }
 
 const hosts = ['kickstarter.com', 'www.kickstarter.com']
+
+const feeds = definePlatformFeeds([
+  {
+    key: 'kickstarter:updates',
+    template: 'https://www.kickstarter.com/projects/{creator}/{project}/posts.atom',
+  },
+  { key: 'kickstarter:projects', template: 'https://www.kickstarter.com/projects/feed.atom' },
+])
 
 export const parseKickstarterUrl = (url: string): KickstarterUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -41,19 +49,16 @@ export const kickstarterHandler: PlatformHandler = {
 
     if (parsed.kind === 'project') {
       return [
-        {
-          uri: `https://www.kickstarter.com/projects/${parsed.creator}/${parsed.project}/posts.atom`,
-          hint: composeHint('kickstarter:updates'),
-        },
+        feeds.getFeedEntry('kickstarter:updates', {
+          creator: parsed.creator,
+          project: parsed.project,
+        }),
       ]
     }
 
     // Homepage or discover pages - return global new projects feed.
-    return [
-      {
-        uri: 'https://www.kickstarter.com/projects/feed.atom',
-        hint: composeHint('kickstarter:projects'),
-      },
-    ]
+    return [feeds.getFeedEntry('kickstarter:projects')]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
