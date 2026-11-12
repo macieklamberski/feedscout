@@ -63,11 +63,11 @@ export const bigCartelHandler: PlatformHandler = {
 
   // The table reads any host under bigcartel.com, so the page parser refuses the apex, the www host
   // and a nested subdomain first.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (!parseBigCartelUrl(url)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }

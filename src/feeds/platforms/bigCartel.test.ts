@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import {
@@ -148,53 +148,53 @@ describe('bigCartelHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     const feedUrls = [
       'https://alice.bigcartel.com/products.rss',
       'http://alice.bigcartel.com/products.rss',
       'https://ALICE.bigcartel.com/products.rss',
     ]
 
-    it.each(feedUrls)('should return the products key for %s', (value) => {
-      const expected = 'big-cartel:products'
+    it.each(feedUrls)('should return the products hint for %s', (value) => {
+      const expected: DiscoverUriHint = { key: 'big-cartel:products', label: 'Products' }
 
-      expect(bigCartelHandler.getFeedKey?.(value)).toBe(expected)
+      expect(bigCartelHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a store page', () => {
       const value = 'https://alice.bigcartel.com/product/a-print'
 
-      expect(bigCartelHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bigCartelHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the Google Merchant feed', () => {
       const value = 'https://alice.bigcartel.com/products.xml'
 
-      expect(bigCartelHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bigCartelHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://bigcartel.com/products.rss'
 
-      expect(bigCartelHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bigCartelHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the www host', () => {
       const value = 'https://www.bigcartel.com/products.rss'
 
-      expect(bigCartelHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bigCartelHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://foo.alice.bigcartel.com/products.rss'
 
-      expect(bigCartelHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bigCartelHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a store on its own domain', () => {
       const value = 'https://shop.example.com/products.rss'
 
-      expect(bigCartelHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(bigCartelHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
