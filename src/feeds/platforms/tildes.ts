@@ -1,7 +1,6 @@
-import { composeQuery, getQueryParam, isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getQueryParam, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -12,6 +11,26 @@ export type TildesUrl =
 const hosts = ['tildes.net', 'www.tildes.net']
 
 const groupRegex = /^\/~([^/]+)/
+
+// Tildes' feed views honour the ?tag= query (forces order=NEW server-side).
+const feeds = definePlatformFeeds([
+  {
+    key: 'tildes:group',
+    template: 'https://tildes.net/~{group}/topics.rss?tag={tag}',
+    format: 'rss',
+  },
+  {
+    key: 'tildes:group',
+    template: 'https://tildes.net/~{group}/topics.atom?tag={tag}',
+    format: 'atom',
+  },
+  { key: 'tildes:group', template: 'https://tildes.net/~{group}/topics.rss', format: 'rss' },
+  { key: 'tildes:group', template: 'https://tildes.net/~{group}/topics.atom', format: 'atom' },
+  { key: 'tildes:topics', template: 'https://tildes.net/topics.rss?tag={tag}', format: 'rss' },
+  { key: 'tildes:topics', template: 'https://tildes.net/topics.atom?tag={tag}', format: 'atom' },
+  { key: 'tildes:topics', template: 'https://tildes.net/topics.rss', format: 'rss' },
+  { key: 'tildes:topics', template: 'https://tildes.net/topics.atom', format: 'atom' },
+])
 
 export const parseTildesUrl = (url: string): TildesUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -43,33 +62,22 @@ export const tildesHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
-    // Tildes' feed views honour the ?tag= query (forces order=NEW server-side).
-    const tagSuffix = parsed.tag ? composeQuery({ tag: parsed.tag }) : ''
+    const tagParams: PlatformFeedParams = parsed.tag ? { tag: parsed.tag } : {}
 
     if (parsed.kind === 'group') {
-      uris.push({
-        uri: `https://tildes.net/~${parsed.group}/topics.rss${tagSuffix}`,
-        hint: composeHint('tildes:group', 'rss'),
-      })
-      uris.push({
-        uri: `https://tildes.net/~${parsed.group}/topics.atom${tagSuffix}`,
-        hint: composeHint('tildes:group', 'atom'),
-      })
+      const params = { ...tagParams, group: parsed.group }
 
-      return uris
+      return [
+        feeds.getFeedEntry('tildes:group', params, 'rss'),
+        feeds.getFeedEntry('tildes:group', params, 'atom'),
+      ]
     }
 
-    uris.push({
-      uri: `https://tildes.net/topics.rss${tagSuffix}`,
-      hint: composeHint('tildes:topics', 'rss'),
-    })
-    uris.push({
-      uri: `https://tildes.net/topics.atom${tagSuffix}`,
-      hint: composeHint('tildes:topics', 'atom'),
-    })
-
-    return uris
+    return [
+      feeds.getFeedEntry('tildes:topics', tagParams, 'rss'),
+      feeds.getFeedEntry('tildes:topics', tagParams, 'atom'),
+    ]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
