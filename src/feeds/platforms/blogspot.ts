@@ -13,81 +13,11 @@ export type BlogspotPage =
   | { kind: 'post'; postId?: string }
   | { kind: 'blog' }
 
-// The Blogger domains whose feeds are claimed, each serving every blog's feeds on 2026-11-12.
-const domains = [
-  'blogspot.com',
-  'blogspot.ae',
-  'blogspot.al',
-  'blogspot.am',
-  'blogspot.ba',
-  'blogspot.be',
-  'blogspot.bg',
-  'blogspot.ca',
-  'blogspot.ch',
-  'blogspot.cl',
-  'blogspot.co.at',
-  'blogspot.co.id',
-  'blogspot.co.il',
-  'blogspot.co.ke',
-  'blogspot.co.nz',
-  'blogspot.co.uk',
-  'blogspot.co.za',
-  'blogspot.com.ar',
-  'blogspot.com.au',
-  'blogspot.com.br',
-  'blogspot.com.by',
-  'blogspot.com.co',
-  'blogspot.com.cy',
-  'blogspot.com.ee',
-  'blogspot.com.eg',
-  'blogspot.com.es',
-  'blogspot.com.mt',
-  'blogspot.com.ng',
-  'blogspot.com.tr',
-  'blogspot.com.uy',
-  'blogspot.cz',
-  'blogspot.de',
-  'blogspot.dk',
-  'blogspot.fi',
-  'blogspot.fr',
-  'blogspot.gr',
-  'blogspot.hk',
-  'blogspot.hr',
-  'blogspot.hu',
-  'blogspot.ie',
-  'blogspot.in',
-  'blogspot.is',
-  'blogspot.it',
-  'blogspot.jp',
-  'blogspot.kr',
-  'blogspot.li',
-  'blogspot.lt',
-  'blogspot.lu',
-  'blogspot.md',
-  'blogspot.mk',
-  'blogspot.mx',
-  'blogspot.my',
-  'blogspot.nl',
-  'blogspot.no',
-  'blogspot.pe',
-  'blogspot.pt',
-  'blogspot.qa',
-  'blogspot.ro',
-  'blogspot.rs',
-  'blogspot.ru',
-  'blogspot.se',
-  'blogspot.sg',
-  'blogspot.si',
-  'blogspot.sk',
-  'blogspot.sn',
-  'blogspot.tw',
-  'blogspot.ug',
-]
-
-// Matches blogspot.com and Blogger's country domains like .co.uk, .com.br and .de, which still
-// serve feeds. getTenantSubdomain then refuses www and nested subdomains.
+// blogspot.com and Blogger's country domains like .co.uk, .com.br and .de, which still serve
+// feeds. getTenantSubdomain then refuses www and nested subdomains.
 // length: keeps any suffix but a two-letter country code out
-const blogspotDomainRegex = /\.(blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2}))$/
+const domains = [/^blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2})$/]
+
 const labelRegex = /^\/search\/label\/([^/]+)/i
 const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
 const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/i
@@ -210,15 +140,7 @@ export const getBlogspotPage = (
 
 export const blogspotHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    const domain = parsedUrl.hostname.match(blogspotDomainRegex)?.[1]
-
-    if (domain && getTenantSubdomain(parsedUrl, [domain])) {
+    if (getTenantSubdomain(url, domains)) {
       return true
     }
 
@@ -266,9 +188,8 @@ export const blogspotHandler: PlatformHandler = {
     return uris
   },
 
-  // The table reads any host under a Blogger domain, so the apex, www and a nested subdomain are
-  // refused first: blogspot.com redirects its feeds to blogger.com, and a nested host fails its
-  // TLS handshake.
+  // The table reads a tenant after stripping www, so a www host in front of a tenant is refused
+  // first: Blogger's certificate does not cover it, and its http spelling redirects to the tenant.
   getFeedHint: (url) => {
     if (!getTenantSubdomain(url, domains)) {
       return

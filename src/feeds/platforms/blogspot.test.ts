@@ -566,6 +566,13 @@ describe('blogspotHandler', () => {
       expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the posts hint for a feed on a country domain outside the stored ones', () => {
+      const value = 'https://frikadel.blogspot.co.jp/feeds/posts/default'
+      const expected: DiscoverUriHint = { key: 'blogspot:posts', label: 'Posts', format: 'atom' }
+
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the posts hint for an http feed', () => {
       const value = 'http://frikadel.blogspot.com/feeds/posts/default'
       const expected: DiscoverUriHint = { key: 'blogspot:posts', label: 'Posts', format: 'atom' }
@@ -686,6 +693,12 @@ describe('blogspotHandler', () => {
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://blog.example.blogspot.com/feeds/posts/default'
+
+      expect(blogspotHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www in front of a tenant', () => {
+      const value = 'https://www.frikadel.blogspot.com/feeds/posts/default'
 
       expect(blogspotHandler.getFeedHint?.(value)).toBeUndefined()
     })
