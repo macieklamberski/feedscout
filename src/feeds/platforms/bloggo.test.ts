@@ -193,10 +193,10 @@ describe('bloggoHandler', () => {
       expect(bloggoHandler.resolve(value, content)).toEqual(expected)
     })
 
-    it('should spell the feeds with https for an http page', () => {
+    it('should keep the scheme of an http page', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.bloggo.nu/feed/',
+          uri: 'http://alice.bloggo.nu/feed/',
           hint: { key: 'bloggo:posts', label: 'Posts' },
         },
       ]

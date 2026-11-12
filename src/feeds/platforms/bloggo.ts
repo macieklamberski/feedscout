@@ -13,11 +13,13 @@ const domains = ['bloggo.nu']
 
 const postBodyRegex = /<body[^>]*\bpost-id-\d+/
 
-// Every page redirects to https and its feed links spell https.
-const feeds = definePlatformFeeds([
-  { key: 'bloggo:posts', template: 'https://{blog}.bloggo.nu/feed/' },
-  { key: 'bloggo:post-comments', template: 'https://{blog}.bloggo.nu/{slug}/feed/' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'bloggo:posts', template: '{scheme}://{host}/feed/' },
+    { key: 'bloggo:post-comments', template: '{scheme}://{host}/{slug}/feed/' },
+  ],
+  { domains },
+)
 
 // The about page belongs to the blog, not to a post.
 const blogPaths = ['about']
@@ -62,19 +64,19 @@ export const bloggoHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getBloggoPage(url, content)
-    const blog = getTenantSubdomain(url, domains)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page || !blog) {
+    if (!page || !pageFeeds) {
       return []
     }
 
     const uris: Array<DiscoverUriEntry> = []
 
     if (page.kind === 'post') {
-      uris.push(feeds.getFeedEntry('bloggo:post-comments', { blog, slug: page.slug }))
+      uris.push(pageFeeds.getFeedEntry('bloggo:post-comments', { slug: page.slug }))
     }
 
-    uris.push(feeds.getFeedEntry('bloggo:posts', { blog }))
+    uris.push(pageFeeds.getFeedEntry('bloggo:posts'))
 
     return uris
   },
