@@ -99,6 +99,18 @@ describe('qiitaHandler', () => {
       expect(qiitaHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return feed URL for the page of a tag named feed', () => {
+      const value = 'https://qiita.com/tags/feed'
+      const expected = [
+        {
+          uri: 'https://qiita.com/tags/feed/feed.atom',
+          hint: { key: 'qiita:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(qiitaHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return feed URL for tag page with a capitalized tags segment', () => {
       const value = 'https://qiita.com/Tags/javascript'
       const expected = [
@@ -316,6 +328,18 @@ describe('qiitaHandler', () => {
 
       expect(qiitaHandler.getFeedKey?.(value)).toBeUndefined()
     })
+
+    it('should return undefined for the page of a tag named feed', () => {
+      const value = 'https://qiita.com/tags/feed'
+
+      expect(qiitaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the page of an organization named feed', () => {
+      const value = 'https://qiita.com/organizations/feed'
+
+      expect(qiitaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
   })
 
   describe('own feeds through the Platform method', () => {
@@ -347,6 +371,20 @@ describe('qiitaHandler', () => {
         baseUrl: value,
       })
       const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should return the tag feed for the page of a tag named feed', async () => {
+      const value = 'https://qiita.com/tags/feed'
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://qiita.com/tags/feed/feed.atom', hint: { key: 'qiita:tag', label: 'Tag' } },
+      ]
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [qiitaHandler],
+        baseUrl: value,
+      })
 
       expect(result).toEqual(expected)
     })
