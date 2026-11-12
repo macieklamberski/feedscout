@@ -68,5 +68,5 @@ export const pikaHandler: PlatformHandler = {
     return posts
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
