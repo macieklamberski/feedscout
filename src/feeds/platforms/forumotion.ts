@@ -1,7 +1,8 @@
-import { composeQuery, isPlainObject, parseUrl } from 'trousse'
+import { isPlainObject, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getJsonLd, hasMarker } from '../../common/utils.js'
+import { getJsonLd, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home (guess, html), partly covers forum, topic.
@@ -13,6 +14,50 @@ export type ForumotionPage =
 
 const forumPathRegex = /^\/f(\d+)(?:p\d+)?-/i
 const topicPathRegex = /^\/t\d+(?:p\d+)?-/i
+
+const domains = [
+  '1fr1.net',
+  'actieforum.com',
+  'forumactif.be',
+  'forumactif.biz',
+  'forumactif.com',
+  'forumactif.fr',
+  'forumactif.info',
+  'forumactif.org',
+  'forumeiros.com',
+  'forumgratuit.be',
+  'forumgratuit.ch',
+  'forumgratuit.fr',
+  'forumgratuit.org',
+  'forumgratuit.ro',
+  'forumotion.asia',
+  'forumotion.com',
+  'forumotion.eu',
+  'forumotion.me',
+  'forumotion.net',
+  'forumotion.org',
+  'forumpro.fr',
+]
+
+// A forum on its own domain is known only by its marker, so its feeds are built here but not
+// claimed.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'forumotion:forum', template: '{scheme}://{host}/feed/?f={forumId}', format: 'rss' },
+    {
+      key: 'forumotion:forum',
+      template: '{scheme}://{host}/feed/?f={forumId}&type=atom',
+      format: 'atom',
+    },
+    { key: 'forumotion:latest-topics', template: '{scheme}://{host}/feed/', format: 'rss' },
+    {
+      key: 'forumotion:latest-topics',
+      template: '{scheme}://{host}/feed/?type=atom',
+      format: 'atom',
+    },
+  ],
+  { domains },
+)
 
 // Core prints the `_userdata` script in every page head, on every template and domain.
 export const isForumotionHtml = (content: string): boolean => {
@@ -74,28 +119,38 @@ export const forumotionHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getForumotionPage(url, content)
-    const { origin } = new URL(url)
+    const pageFeeds = feeds.forUrl(url)
     const uris: Array<DiscoverUriEntry> = []
+
+    if (!pageFeeds) {
+      return uris
+    }
 
     // Forumotion serves no topic feed and ignores `?t=`, so a topic page gets its forum's feed.
     if (page.kind === 'forum' || page.kind === 'topic') {
+      const params = { forumId: page.forumId }
+
       uris.push(
-        {
-          uri: `${origin}/feed/${composeQuery({ f: page.forumId })}`,
-          hint: composeHint('forumotion:forum', 'rss'),
-        },
-        {
-          uri: `${origin}/feed/${composeQuery({ f: page.forumId, type: 'atom' })}`,
-          hint: composeHint('forumotion:forum', 'atom'),
-        },
+        pageFeeds.getFeedEntry('forumotion:forum', params, 'rss'),
+        pageFeeds.getFeedEntry('forumotion:forum', params, 'atom'),
       )
     }
 
     uris.push(
-      { uri: `${origin}/feed/`, hint: composeHint('forumotion:latest-topics', 'rss') },
-      { uri: `${origin}/feed/?type=atom`, hint: composeHint('forumotion:latest-topics', 'atom') },
+      pageFeeds.getFeedEntry('forumotion:latest-topics', {}, 'rss'),
+      pageFeeds.getFeedEntry('forumotion:latest-topics', {}, 'atom'),
     )
 
     return uris
+  },
+
+  // The table reads any host under the domains, so only a forum's own subdomain is claimed, not
+  // the apex, www or a nested host.
+  getFeedHint: (url) => {
+    if (!getTenantSubdomain(url, domains)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }
