@@ -219,58 +219,58 @@ describe('cppblogHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the posts key for a posts feed', () => {
       const value = 'http://www.cppblog.com/alice/rss.aspx'
-      const expected = 'cppblog:posts'
+      const expected: DiscoverUriHint = { key: 'cppblog:posts', label: 'Posts' }
 
-      expect(cppblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(cppblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts key for a capitalized posts feed on the https apex', () => {
       const value = 'https://cppblog.com/alice/Rss.aspx'
-      const expected = 'cppblog:posts'
+      const expected: DiscoverUriHint = { key: 'cppblog:posts', label: 'Posts' }
 
-      expect(cppblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(cppblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the comments key for a comments feed', () => {
       const value = 'https://www.cppblog.com/alice/CommentsRSS.aspx'
-      const expected = 'cppblog:comments'
+      const expected: DiscoverUriHint = { key: 'cppblog:comments', label: 'Comments' }
 
-      expect(cppblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(cppblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the category key for a category feed', () => {
       const value = 'http://cppblog.com/alice/category/5356.html/rss'
-      const expected = 'cppblog:category'
+      const expected: DiscoverUriHint = { key: 'cppblog:category', label: 'Category' }
 
-      expect(cppblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(cppblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the favorites key for a favorite feed', () => {
       const value = 'https://www.cppblog.com/alice/favorite/1914.html/rss'
-      const expected = 'cppblog:favorites'
+      const expected: DiscoverUriHint = { key: 'cppblog:favorites', label: 'Favorites' }
 
-      expect(cppblogHandler.getFeedKey?.(value)).toBe(expected)
+      expect(cppblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a category page', () => {
       const value = 'http://www.cppblog.com/alice/category/5356.html'
 
-      expect(cppblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(cppblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the site feed', () => {
       const value = 'http://www.cppblog.com/rss.aspx'
 
-      expect(cppblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(cppblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on another subdomain', () => {
       const value = 'http://m.cppblog.com/alice/rss.aspx'
 
-      expect(cppblogHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(cppblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
