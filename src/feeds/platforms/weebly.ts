@@ -92,13 +92,13 @@ export const weeblyHandler: PlatformHandler = {
 
   // The table reads any first segment as a page, so a dotted one, a file of the site, is refused:
   // /robots.txt/feed and /sitemap.xml/feed answer with a 404 or an empty body, never a feed.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const [pageSegment] = getPathSegments(url)
 
     if (!pageSegment || formatSuffixRegex.test(pageSegment)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }

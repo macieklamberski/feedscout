@@ -218,82 +218,82 @@ describe('weeblyHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the blog key for a blog id feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the blog hint for a blog id feed', () => {
       const value = 'https://bmsavid.weebly.com/1/feed'
-      const expected = 'weebly:blog'
+      const expected: DiscoverUriHint = { key: 'weebly:blog', label: 'Blog' }
 
-      expect(weeblyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(weeblyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a blog id feed over http', () => {
+    it('should return the blog hint for a blog id feed over http', () => {
       const value = 'http://aeheideman.weebly.com/5/feed'
-      const expected = 'weebly:blog'
+      const expected: DiscoverUriHint = { key: 'weebly:blog', label: 'Blog' }
 
-      expect(weeblyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(weeblyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a page slug feed', () => {
+    it('should return the blog hint for a page slug feed', () => {
       const value = 'https://bmsavid.weebly.com/wish-you-were-here/feed'
-      const expected = 'weebly:blog'
+      const expected: DiscoverUriHint = { key: 'weebly:blog', label: 'Blog' }
 
-      expect(weeblyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(weeblyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for the default blog feed', () => {
+    it('should return the blog hint for the default blog feed', () => {
       const value = 'https://sounditoutphonics.weebly.com/blog/feed'
-      const expected = 'weebly:blog'
+      const expected: DiscoverUriHint = { key: 'weebly:blog', label: 'Blog' }
 
-      expect(weeblyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(weeblyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a feed with a capitalised route word', () => {
+    it('should return the blog hint for a feed with a capitalised route word', () => {
       const value = 'https://bmsavid.weebly.com/1/FEED'
-      const expected = 'weebly:blog'
+      const expected: DiscoverUriHint = { key: 'weebly:blog', label: 'Blog' }
 
-      expect(weeblyHandler.getFeedKey?.(value)).toBe(expected)
+      expect(weeblyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a feed path under a robots file', () => {
       const value = 'https://ondertschuim.weebly.com/robots.txt/feed'
 
-      expect(weeblyHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(weeblyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path under a sitemap file', () => {
       const value = 'https://istanbulservis.weebly.com/sitemap.xml/feed'
 
-      expect(weeblyHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(weeblyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://bmsavid.weebly.com/wish-you-were-here'
 
-      expect(weeblyHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(weeblyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the root', () => {
       const value = 'https://bmsavid.weebly.com/'
 
-      expect(weeblyHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(weeblyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://blog.bmsavid.weebly.com/1/feed'
 
-      expect(weeblyHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(weeblyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://weebly.com/1/feed'
 
-      expect(weeblyHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(weeblyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/1/feed'
 
-      expect(weeblyHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(weeblyHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
