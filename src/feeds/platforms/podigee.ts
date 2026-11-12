@@ -10,16 +10,19 @@ const domains = ['podigee.io']
 
 // The mp3 feed comes first, so resolve builds it. The aac, opus and vorbis feeds list the same
 // episodes in another encoding, and a show's further feeds live under /feeds/{feed}.
-const feeds = definePlatformFeeds([
-  { key: 'podigee:podcast', template: 'https://{podcast}.podigee.io/feed/mp3' },
-  { key: 'podigee:podcast', template: 'https://{podcast}.podigee.io/feed/aac' },
-  { key: 'podigee:podcast', template: 'https://{podcast}.podigee.io/feed/opus' },
-  { key: 'podigee:podcast', template: 'https://{podcast}.podigee.io/feed/vorbis' },
-  { key: 'podigee:podcast', template: 'https://{podcast}.podigee.io/feeds/{feed}/mp3' },
-  { key: 'podigee:podcast', template: 'https://{podcast}.podigee.io/feeds/{feed}/aac' },
-  { key: 'podigee:podcast', template: 'https://{podcast}.podigee.io/feeds/{feed}/opus' },
-  { key: 'podigee:podcast', template: 'https://{podcast}.podigee.io/feeds/{feed}/vorbis' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'podigee:podcast', template: '{scheme}://{host}/feed/mp3' },
+    { key: 'podigee:podcast', template: '{scheme}://{host}/feed/aac' },
+    { key: 'podigee:podcast', template: '{scheme}://{host}/feed/opus' },
+    { key: 'podigee:podcast', template: '{scheme}://{host}/feed/vorbis' },
+    { key: 'podigee:podcast', template: '{scheme}://{host}/feeds/{feed}/mp3' },
+    { key: 'podigee:podcast', template: '{scheme}://{host}/feeds/{feed}/aac' },
+    { key: 'podigee:podcast', template: '{scheme}://{host}/feeds/{feed}/opus' },
+    { key: 'podigee:podcast', template: '{scheme}://{host}/feeds/{feed}/vorbis' },
+  ],
+  { domains },
+)
 
 export const parsePodigeeUrl = (url: string): PodigeeUrl | undefined => {
   const podcast = getTenantSubdomain(url, domains)
@@ -38,12 +41,13 @@ export const podigeeHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePodigeeUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    return [feeds.getFeedEntry('podigee:podcast', { podcast: parsed.podcast })]
+    return [page.getFeedEntry('podigee:podcast')]
   },
 
   getFeedHint: feeds.getFeedHint,

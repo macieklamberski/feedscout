@@ -69,11 +69,11 @@ describe('podigeeHandler', () => {
       expect(podigeeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the https feed for a show opened over http', () => {
+    it('should return the feed under the page scheme for a show opened over http', () => {
       const value = 'http://alice.podigee.io/episodes'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.podigee.io/feed/mp3',
+          uri: 'http://alice.podigee.io/feed/mp3',
           hint: { key: 'podigee:podcast', label: 'Podcast' },
         },
       ]
