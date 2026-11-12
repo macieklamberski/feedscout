@@ -21,8 +21,8 @@ const groupRegex = /^\/groups\/([^/]+)/i
 // The store front links to `/newshub/`, which redirects to `/news/`.
 const newsRegex = /^\/news(?:hub)?(?:\/|$)/i
 
-// The app page links /feeds/news/app/{id}/. The news hub path, a trailing app name and the
-// community /games/{id}/rss serve the same entries.
+// The app page links /feeds/news/app/{id}/. The news hub path and a trailing app name serve the
+// same feed. The community /games/{id}/rss carries the same announcements under community links.
 const feeds = definePlatformFeeds([
   { key: 'steam:news', template: 'https://store.steampowered.com/feeds/news/app/{appId}/' },
   {
