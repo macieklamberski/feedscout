@@ -1,7 +1,8 @@
 import { getPathSegments, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -12,8 +13,14 @@ const domains = ['bloggo.nu']
 
 const postBodyRegex = /<body[^>]*\bpost-id-\d+/
 
-// The about page and the feed belong to the blog, not to a post.
-const blogPaths = ['about', 'feed']
+// Every page redirects to https and its feed links spell https.
+const feeds = definePlatformFeeds([
+  { key: 'bloggo:posts', template: 'https://{blog}.bloggo.nu/feed/' },
+  { key: 'bloggo:post-comments', template: 'https://{blog}.bloggo.nu/{slug}/feed/' },
+])
+
+// The about page belongs to the blog, not to a post.
+const blogPaths = ['about']
 
 export const parseBloggoUrl = (url: string): BloggoUrl | undefined => {
   const subdomain = getTenantSubdomain(url, domains)
@@ -55,24 +62,22 @@ export const bloggoHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getBloggoPage(url, content)
+    const blog = getTenantSubdomain(url, domains)
 
-    if (!page) {
+    if (!page || !blog) {
       return []
     }
 
-    // Every page redirects to https and its feed links spell https.
-    const origin = `https://${new URL(url).hostname}`
     const uris: Array<DiscoverUriEntry> = []
 
     if (page.kind === 'post') {
-      uris.push({
-        uri: `${origin}/${page.slug}/feed/`,
-        hint: composeHint('bloggo:post-comments'),
-      })
+      uris.push(feeds.getFeedEntry('bloggo:post-comments', { blog, slug: page.slug }))
     }
 
-    uris.push({ uri: `${origin}/feed/`, hint: composeHint('bloggo:posts') })
+    uris.push(feeds.getFeedEntry('bloggo:posts', { blog }))
 
     return uris
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
