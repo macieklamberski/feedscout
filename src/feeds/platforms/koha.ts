@@ -1,4 +1,5 @@
 import { composeQuery, getQueryParam, getQueryParamValues, isAnyOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex, hasMarker } from '../../common/utils.js'
 
@@ -6,11 +7,38 @@ import { composeHint, digitsRegex, hasMarker } from '../../common/utils.js'
 // Generic covers comments, search (html).
 // Handler needed for: list.
 
+const domains = ['kohacatalog.com']
+
 const scriptRegex =
   /^(?<root>.*)\/cgi-bin\/koha\/(?<script>opac-search|opac-shelves|opac-showreviews)\.pl$/i
 
 // The feed link Koha prints drops the page's paging and sort for the newest acquisitions.
 const searchPageParams = ['count', 'format', 'offset', 'sort_by']
+
+// A feed takes the install root and a search its query from the page, which no template holds, so
+// resolve builds them and the table only claims a feed of a catalog on kohacatalog.com.
+const ownFeeds = definePlatformFeeds(
+  [
+    {
+      key: 'koha:search',
+      template: '{scheme}://{library}.{domain}/cgi-bin/koha/opac-search.pl?format=rss',
+    },
+    {
+      key: 'koha:search',
+      template: '{scheme}://{library}.{domain}/cgi-bin/koha/opac-search.pl?format=rss2',
+    },
+    {
+      key: 'koha:list',
+      template:
+        '{scheme}://{library}.{domain}/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber={shelfNumber}',
+    },
+    {
+      key: 'koha:comments',
+      template: '{scheme}://{library}.{domain}/cgi-bin/koha/opac-showreviews.pl?format=rss',
+    },
+  ],
+  { domains },
+)
 
 export type KohaUrl =
   | { kind: 'search'; root: string; params: string }
@@ -109,4 +137,6 @@ export const kohaHandler: PlatformHandler = {
       },
     ]
   },
+
+  getFeedHint: ownFeeds.getFeedHint,
 }
