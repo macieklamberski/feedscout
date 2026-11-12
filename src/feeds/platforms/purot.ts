@@ -11,16 +11,24 @@ export type PurotUrl = { kind: 'wiki'; wiki: string }
 export type PurotPage =
   | { kind: 'wiki'; wiki: string }
   | { kind: 'page'; wiki: string; page: string }
+  | { kind: 'profile'; wiki: string; user: string }
 
 const domains = ['purot.net']
 
-// A profile id holds a slash, so a profile page never matches. A profile page links its user's
-// feeds even when it answers "User not found", and a real profile redirects to the home page.
-const pageChangesRegex = /^\/changes\/([^/?]+)\?mode=rss&messages=0$/i
+// A profile page links its user's feeds under profile/, even when it answers "User not found".
+const pageChangesRegex = /^\/changes\/(?<profile>profile\/)?(?<id>[^/?]+)\?mode=rss&messages=0$/i
 
-// The wiki's changes come first, so its feed is not read as the activity of a page named all.
+// The wiki's changes come first, so its feeds are not read as the feeds of a page named all.
 const feeds = definePlatformFeeds([
   { key: 'purot:recent-changes', template: 'https://{wiki}.purot.net/changes/all?mode=rss' },
+  {
+    key: 'purot:recent-page-changes',
+    template: 'https://{wiki}.purot.net/changes/all?mode=rss&messages=0',
+  },
+  {
+    key: 'purot:recent-discussions',
+    template: 'https://{wiki}.purot.net/changes/all?mode=rss&pages=0',
+  },
   {
     key: 'purot:page-changes',
     template: 'https://{wiki}.purot.net/changes/{page}?mode=rss&messages=0',
@@ -30,6 +38,18 @@ const feeds = definePlatformFeeds([
     template: 'https://{wiki}.purot.net/changes/{page}?mode=rss&pages=0',
   },
   { key: 'purot:page-activity', template: 'https://{wiki}.purot.net/changes/{page}?mode=rss' },
+  {
+    key: 'purot:user-changes',
+    template: 'https://{wiki}.purot.net/changes/profile/{user}?mode=rss&messages=0',
+  },
+  {
+    key: 'purot:user-discussions',
+    template: 'https://{wiki}.purot.net/changes/profile/{user}?mode=rss&pages=0',
+  },
+  {
+    key: 'purot:user-activity',
+    template: 'https://{wiki}.purot.net/changes/profile/{user}?mode=rss',
+  },
 ])
 
 export const parsePurotUrl = (url: string): PurotUrl | undefined => {
@@ -54,13 +74,17 @@ export const getPurotPage = (url: string, content: string | undefined): PurotPag
   const link = findElement(content, (element) => {
     return element.name === 'link' && pageChangesRegex.test(element.attribs.href ?? '')
   })
-  const page = link?.attribs.href?.match(pageChangesRegex)?.[1]
+  const groups = link?.attribs.href?.match(pageChangesRegex)?.groups
 
-  if (!page) {
+  if (!groups?.id) {
     return parsed
   }
 
-  return { kind: 'page', wiki: parsed.wiki, page: encodePathSegment(page) }
+  if (groups.profile) {
+    return { kind: 'profile', wiki: parsed.wiki, user: encodePathSegment(groups.id) }
+  }
+
+  return { kind: 'page', wiki: parsed.wiki, page: encodePathSegment(groups.id) }
 }
 
 export const purotHandler: PlatformHandler = {
@@ -83,6 +107,14 @@ export const purotHandler: PlatformHandler = {
       uris.push(feeds.getFeedEntry('purot:page-changes', params))
       uris.push(feeds.getFeedEntry('purot:page-discussions', params))
       uris.push(feeds.getFeedEntry('purot:page-activity', params))
+    }
+
+    if (page.kind === 'profile') {
+      const params = { wiki: page.wiki, user: page.user }
+
+      uris.push(feeds.getFeedEntry('purot:user-changes', params))
+      uris.push(feeds.getFeedEntry('purot:user-discussions', params))
+      uris.push(feeds.getFeedEntry('purot:user-activity', params))
     }
 
     uris.push(feeds.getFeedEntry('purot:recent-changes', { wiki: page.wiki }))

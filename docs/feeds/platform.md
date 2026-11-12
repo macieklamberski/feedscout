@@ -3177,9 +3177,10 @@ Discovers the change feeds of a wiki on Purot.net. The page's own feeds come fro
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{wiki}.purot.net/{page}`, `{wiki}.purot.net/` | Page changes* · page discussions* · page changes, discussions and likes (RSS)* · recent changes |
-| `{wiki}.purot.net/profile/{user}`, any other page | Recent changes (RSS) |
+| `{wiki}.purot.net/profile/{user}` | User page changes* · user discussions* · user changes, discussions and likes (RSS)* · recent changes |
+| Any other page | Recent changes (RSS) |
 
-\* *Requires HTML content to read the page ID.*
+\* *Requires HTML content to read the page or user ID.*
 
 ### SkyCMS
 
