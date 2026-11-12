@@ -130,5 +130,5 @@ export const deviantartHandler: PlatformHandler = {
     return [feeds.getFeedEntry('deviantart:deviations', { username: parsed.username })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
