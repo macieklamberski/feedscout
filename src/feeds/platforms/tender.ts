@@ -21,9 +21,9 @@ const settingsRootRegex = /"root":"(?<root>\/[^"]*)"/
 const sessionCookieRegex = /^_tender\d*_session$/
 const helpRootRegex = /^\/help(?:\/|$)/i
 const discussionPathRegex = /^\/discussions\/(?<category>[^/]+)\/(?<discussion>\d+[^/]*)\/?$/i
-const discussionsFeedPathRegex = /^\/discussions\.atom$/i
-const commentsFeedPathRegex = /^\/comments\/recent\.atom$/i
-const discussionFeedPathRegex = /^\/discussions\/[^/]+\/\d+[^/]*\.atom$/i
+const discussionsFeedPathRegex = /^\/discussions\.atom\/?$/i
+const commentsFeedPathRegex = /^\/comments\/recent\.atom\/?$/i
+const discussionFeedPathRegex = /^\/discussions\/[^/]+\/\d+[^/]*\.atom\/?$/i
 const trailingSlashRegex = /\/$/
 // A missing page answers 404 with the stock Rails error page inside the site layout, and a
 // made-up category would otherwise get the site's feed.

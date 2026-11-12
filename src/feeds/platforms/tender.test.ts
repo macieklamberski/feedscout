@@ -334,8 +334,16 @@ describe('tenderHandler', () => {
       expect(tenderHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
+    it('should return undefined for a new discussion form under a category', () => {
+      const value = 'https://alice.tenderapp.com/discussions/questions/new.atom'
+
+      expect(tenderHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for an invalid URL', () => {
-      expect(tenderHandler.getFeedKey?.('not a url')).toBeUndefined()
+      const value = 'not a url'
+
+      expect(tenderHandler.getFeedKey?.(value)).toBeUndefined()
     })
   })
 
@@ -346,7 +354,15 @@ describe('tenderHandler', () => {
         { key: 'tender:discussions', label: 'Discussions' },
       ],
       [
+        'https://infinitekind.tenderapp.com/discussions.atom/',
+        { key: 'tender:discussions', label: 'Discussions' },
+      ],
+      [
         'https://gpgtools.tenderapp.com/comments/recent.atom',
+        { key: 'tender:comments', label: 'Recent comments' },
+      ],
+      [
+        'https://gpgtools.tenderapp.com/comments/recent.atom/',
         { key: 'tender:comments', label: 'Recent comments' },
       ],
       [
@@ -355,6 +371,10 @@ describe('tenderHandler', () => {
       ],
       [
         'https://infinitekind.tenderapp.com/discussions/problems/50-quicken-credit-card-and-chase.atom',
+        { key: 'tender:discussion', label: 'Discussion comments' },
+      ],
+      [
+        'https://infinitekind.tenderapp.com/discussions/general-questions/135551-change-view.atom/',
         { key: 'tender:discussion', label: 'Discussion comments' },
       ],
       [
