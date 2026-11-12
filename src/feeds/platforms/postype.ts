@@ -15,10 +15,13 @@ const domains = ['postype.com']
 export const hosts = ['postype.com', 'www.postype.com']
 
 // A subdomain feed redirects to the channel feed on www.postype.com, and http to https.
-const feeds = definePlatformFeeds([
-  { key: 'postype:posts', template: 'https://www.postype.com/@{channel}/rss' },
-  { key: 'postype:posts', template: 'https://{subdomain}.postype.com/rss' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'postype:posts', template: 'https://www.postype.com/@{channel}/rss' },
+    { key: 'postype:posts', template: '{scheme}://{host}/rss' },
+  ],
+  { domains },
+)
 
 export const parsePostypeUrl = (url: string): PostypeUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -64,7 +67,13 @@ export const postypeHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'subdomain') {
-      return [feeds.getFeedEntry('postype:posts', { subdomain: parsed.channel })]
+      const page = feeds.forUrl(url)
+
+      if (!page) {
+        return []
+      }
+
+      return [page.getFeedEntry('postype:posts')]
     }
 
     return [feeds.getFeedEntry('postype:posts', { channel: parsed.channel })]

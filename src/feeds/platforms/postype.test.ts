@@ -103,11 +103,11 @@ describe('postypeHandler', () => {
       expect(postypeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the https channel feed for a subdomain opened over http', () => {
+    it('should return the channel feed under the page scheme for a subdomain opened over http', () => {
       const value = 'http://example.postype.com/'
       const expected = [
         {
-          uri: 'https://example.postype.com/rss',
+          uri: 'http://example.postype.com/rss',
           hint: { key: 'postype:posts', label: 'Posts' },
         },
       ]
