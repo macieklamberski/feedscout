@@ -71,6 +71,18 @@ describe('posthavenHandler', () => {
       expect(posthavenHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return https feeds for an http page', () => {
+      const value = 'http://alice.posthaven.com'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.posthaven.com/posts.atom',
+          hint: { key: 'posthaven:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(posthavenHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return tag and posts feeds for /tag/{tag}', () => {
       const value = 'https://alice.posthaven.com/tag/Feature%20Releases'
       const expected = [
