@@ -415,7 +415,7 @@ Discovers RSS feeds for SoundCloud user profiles and playlists.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `soundcloud.com/{user}` | User sounds<sup>†</sup>* |
-| `soundcloud.com/{user}/sets/{playlist}` | Playlist sounds* |
+| `soundcloud.com/{user}/sets/{playlist}` | Playlist sounds<sup>†</sup>* |
 
 \* *Requires HTML content to extract the user or playlist ID.*
 
