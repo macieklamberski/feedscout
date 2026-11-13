@@ -958,6 +958,7 @@
     "lobsters:comments": "https://lobste.rs/comments.rss",
     "lobsters:domain": "https://lobste.rs/domains/github.com.rss",
     "lobsters:newest": "https://lobste.rs/newest.rss",
+    "lobsters:private": "https://lobste.rs/rss?token=0123456789abcdef",
     "lobsters:stories": ["https://lobste.rs/~pushcx/stories.rss", "https://lobste.rs/rss"],
     "lobsters:tag": "https://lobste.rs/t/programming.rss",
     "lobsters:top": ["https://lobste.rs/top/rss", "https://lobste.rs/top/1w/rss"]
