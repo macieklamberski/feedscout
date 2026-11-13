@@ -107,20 +107,19 @@ const getPlaylistKey = (playlistId: string | undefined): string => {
   return 'youtube:playlist'
 }
 
-const pushChannelUris = (uris: Array<DiscoverUriEntry>, channelId: string): void => {
-  const uploadsPlaylistId = toUploadsPlaylistId('UU', channelId)
-
-  uris.push({
-    uri: [
-      feeds.getFeedUrl('youtube:all', { channelId }),
-      feeds.getFeedUrl('youtube:playlist', { playlistId: uploadsPlaylistId }),
-    ],
-    hint: composeHint('youtube:all'),
-  })
-
-  for (const [prefix, key] of Object.entries(uploadsPlaylistKeys)) {
-    uris.push(feeds.getFeedEntry(key, { playlistId: toUploadsPlaylistId(prefix, channelId) }))
-  }
+const getChannelUris = (channelId: string): Array<DiscoverUriEntry> => {
+  return [
+    {
+      uri: [
+        feeds.getFeedUrl('youtube:all', { channelId }),
+        feeds.getFeedUrl('youtube:playlist', { playlistId: toUploadsPlaylistId('UU', channelId) }),
+      ],
+      hint: composeHint('youtube:all'),
+    },
+    ...Object.entries(uploadsPlaylistKeys).map(([prefix, key]) => {
+      return feeds.getFeedEntry(key, { playlistId: toUploadsPlaylistId(prefix, channelId) })
+    }),
+  ]
 }
 
 export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
@@ -202,20 +201,19 @@ export const youtubeHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
+    const channelId = page.kind === 'playlist' ? undefined : page.channelId
 
-    if (page.kind !== 'playlist' && page.channelId) {
-      pushChannelUris(uris, page.channelId)
-    }
-
-    if (page.playlistId) {
-      uris.push({
-        uri: feeds.getFeedUrl('youtube:playlist', { playlistId: page.playlistId }),
-        hint: composeHint(getPlaylistKey(page.playlistId)),
-      })
-    }
-
-    return uris
+    return [
+      ...(channelId ? getChannelUris(channelId) : []),
+      ...(page.playlistId
+        ? [
+            {
+              uri: feeds.getFeedUrl('youtube:playlist', { playlistId: page.playlistId }),
+              hint: composeHint(getPlaylistKey(page.playlistId)),
+            },
+          ]
+        : []),
+    ]
   },
 
   getFeedHint: (url) => {
