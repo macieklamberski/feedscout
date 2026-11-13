@@ -2363,9 +2363,9 @@ Discovers the feeds of a Koha library catalogue. Detected by the `/opac-tmpl/` a
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{host}/cgi-bin/koha/opac-search.pl?q={query}` | Search results, newest acquisitions first (RSS) |
-| `{host}/cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber={id}` | List<sup>†</sup> (RSS) |
-| `{host}/cgi-bin/koha/opac-showreviews.pl` | Recent comments (RSS) |
+| `{root}/cgi-bin/koha/opac-search.pl?q={query}` | Search results, newest acquisitions first (RSS) |
+| `{root}/cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber={id}` | List<sup>†</sup> (RSS) |
+| `{root}/cgi-bin/koha/opac-showreviews.pl` | Recent comments (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
