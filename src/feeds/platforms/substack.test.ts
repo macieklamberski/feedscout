@@ -10,6 +10,8 @@ import {
   substackHandler,
 } from './substack.js'
 
+const podcastHint: DiscoverUriHint = { key: 'substack:podcast', label: 'Podcast' }
+
 describe('parseSubstackUrl', () => {
   it('should return the newsletter for a publication subdomain', () => {
     const expected: SubstackUrl = { kind: 'newsletter' }
@@ -254,10 +256,19 @@ describe('substackHandler', () => {
       expect(substackHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a podcast feed', () => {
-      const value = 'https://api.substack.com/feed/podcast/99741.rss'
+    const podcastFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://api.substack.com/feed/podcast/12345.rss', podcastHint],
+      ['https://alice.substack.com/feed/podcast/12345.rss', podcastHint],
+      ['https://api.substack.com/feed/podcast/12345/private/abc-123.rss', podcastHint],
+      ['https://api.substack.com/feed/podcast/spotify/abc-123/12345.rss', podcastHint],
+      [
+        'https://api.substack.com/feed/podcast/12345/s/678.rss',
+        { key: 'substack:podcast-section', label: 'Podcast section' },
+      ],
+    ]
 
-      expect(substackHandler.getFeedHint?.(value)).toBeUndefined()
+    it.each(podcastFeeds)('should return the podcast hint for %s', (value, expected) => {
+      expect(substackHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a feed on the apex', () => {
@@ -299,6 +310,25 @@ describe('substackHandler', () => {
       'https://DASMEEOK.substack.com/feed',
       'https://biggersisterchannel.substack.com/feed?sectionId=194387',
     ]
+
+    const podcastFeeds: Array<[string, DiscoverUriHint]> = [
+      ['http://api.substack.com/feed/podcast/12345.rss', podcastHint],
+      [
+        'https://api.substack.com/feed/podcast/12345/s/678.rss',
+        { key: 'substack:podcast-section', label: 'Podcast section' },
+      ],
+    ]
+
+    it.each(podcastFeeds)('should return %s as itself with its hint', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [substackHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
+    })
 
     it.each(ownFeeds)('should return %s as itself', async (value) => {
       const result = await discoverUrisFromPlatform(undefined, undefined, {

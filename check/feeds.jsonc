@@ -1690,7 +1690,9 @@
     "substack:newsletter": [
       "https://newsletter.pragmaticengineer.com/feed",
       "https://garymarcus.substack.com/feed"
-    ]
+    ],
+    "substack:podcast": "https://api.substack.com/feed/podcast/1055993.rss",
+    "substack:podcast-section": "https://api.substack.com/feed/podcast/1047751/s/25347.rss"
   },
   "svbtle": {
     "svbtle:posts": "https://dcurt.is/feed"
