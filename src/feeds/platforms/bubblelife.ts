@@ -1,4 +1,4 @@
-import { getQueryParam, hasQueryParam, includesAnyOf, isSubdomainOf, parseUrl } from 'trousse'
+import { getQueryParam, includesAnyOf, isSubdomainOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, findElement } from '../../common/utils.js'
@@ -17,9 +17,11 @@ const communityRegex =
   /^\/community\/(?<community>[a-z0-9_]+)(?:\/library\/(?<libraryId>\d+))?(?:\/|$)/i
 const feedHrefRegex = /^\/rss\?c=(\d+)$/i
 
-// A community's posts feed is its first library's feed, so a feed URL reads back as a library.
+// A community's posts feed is its first library's feed, so a feed URL reads back as a library. A
+// topic feed narrows a library to one topic.
 const feeds = definePlatformFeeds(
   [
+    { key: 'bubblelife:topic', template: '{scheme}://{host}/rss?c={id}&t={topic}' },
     { key: 'bubblelife:library', template: '{scheme}://{host}/rss?c={id}' },
     { key: 'bubblelife:posts', template: '{scheme}://{host}/rss?c={id}' },
   ],
@@ -113,8 +115,8 @@ export const bubblelifeHandler: PlatformHandler = {
   getFeedHint: (url) => {
     const parsedUrl = parseUrl(url)
 
-    // A topic feed adds `t` and a news alert feed suffixes its id, and the handler builds neither.
-    if (hasQueryParam(parsedUrl, 't') || !digitsRegex.test(getQueryParam(parsedUrl, 'c') ?? '')) {
+    // A news alert feed suffixes its id, and the handler does not build it.
+    if (!digitsRegex.test(getQueryParam(parsedUrl, 'c') ?? '')) {
       return
     }
 

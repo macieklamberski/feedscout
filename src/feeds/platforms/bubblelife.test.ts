@@ -337,10 +337,18 @@ describe('bubblelifeHandler', () => {
       expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a topic feed', () => {
-      const value = 'https://grandprairie.bubblelife.com/rss?c=35671234&t=357400'
+    it('should return the topic hint for a topic feed', () => {
+      const value = 'https://example.bubblelife.com/rss?c=12345&t=67890'
+      const expected: DiscoverUriHint = { key: 'bubblelife:topic', label: 'Topic' }
 
-      expect(bubblelifeHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the topic hint for a topic feed with the parameters reordered', () => {
+      const value = 'http://example.bubblelife.com/rss?t=67890&c=12345'
+      const expected: DiscoverUriHint = { key: 'bubblelife:topic', label: 'Topic' }
+
+      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a news alert feed', () => {
@@ -377,6 +385,10 @@ describe('bubblelifeHandler', () => {
       [
         'http://mckinney.bubblelife.com/rss?c=35660530',
         { key: 'bubblelife:library', label: 'Library' },
+      ],
+      [
+        'https://example.bubblelife.com/rss?c=12345&t=67890',
+        { key: 'bubblelife:topic', label: 'Topic' },
       ],
     ]
 
