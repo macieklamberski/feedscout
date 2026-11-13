@@ -2786,7 +2786,7 @@ Discovers the RSS 1.0 and Atom feeds of new products in a Color Me Shop store. S
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{shop}.shop-pro.jp` | Products (RSS 1.0 + Atom) |
-| `{domain}`, a shop on its own domain | Products (RSS 1.0 + Atom) |
+| `{host}`, a shop on its own domain | Products (RSS 1.0 + Atom) |
 
 ### PRLog
 
