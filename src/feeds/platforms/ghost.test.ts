@@ -29,6 +29,12 @@ describe('parseGhostUrl', () => {
   it('should return undefined for another host', () => {
     expect(parseGhostUrl('https://example.com/')).toBeUndefined()
   })
+
+  it('should return undefined for a file on the upload host', () => {
+    const value = 'https://storage.ghost.io/c/12/34/1234abcd/content/images/2024/01/photo.jpg'
+
+    expect(parseGhostUrl(value)).toBeUndefined()
+  })
 })
 
 describe('ghostHandler', () => {
@@ -37,6 +43,7 @@ describe('ghostHandler', () => {
       [true, 'https://alice.ghost.io'],
       [false, 'https://blog.example.ghost.io'],
       [false, 'https://ghost.io'],
+      [false, 'https://storage.ghost.io/c/12/34/1234abcd/content/files/2024/01/episode.mp3'],
       [false, 'https://www.ghost.io'],
       [false, 'https://example.com'],
     ]

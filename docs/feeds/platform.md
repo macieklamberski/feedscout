@@ -1025,9 +1025,9 @@ Discovers RSS feeds for Ghost-hosted blogs, including tag and author feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.ghost.io` | Blog |
-| `*.ghost.io/tag/{slug}` | Tag · blog |
-| `*.ghost.io/author/{slug}` | Author · blog |
+| `{blog}.ghost.io` | Blog |
+| `{blog}.ghost.io/tag/{slug}` | Tag · blog |
+| `{blog}.ghost.io/author/{slug}` | Author · blog |
 
 ### Hearthis.at
 
