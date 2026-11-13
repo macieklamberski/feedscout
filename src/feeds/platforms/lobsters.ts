@@ -1,4 +1,4 @@
-import { hasQueryParam, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
@@ -32,6 +32,8 @@ const feeds = definePlatformFeeds([
   { key: 'lobsters:domain', template: 'https://lobste.rs/domains/{domain}.rss' },
   { key: 'lobsters:stories', template: 'https://lobste.rs/~{username}/stories.rss' },
   { key: 'lobsters:stories', template: 'https://lobste.rs/rss' },
+  // A reader's private feed, filtered by their settings, is claimed and never built.
+  { key: 'lobsters:private', template: 'https://lobste.rs/rss?token={token}' },
   { key: 'lobsters:top', template: 'https://lobste.rs/top/{period}/rss' },
   { key: 'lobsters:top', template: 'https://lobste.rs/top/{period}.rss' },
   { key: 'lobsters:top', template: 'https://lobste.rs/top/rss' },
@@ -128,14 +130,5 @@ export const lobstersHandler: PlatformHandler = {
     return [feeds.getFeedEntry('lobsters:stories'), feeds.getFeedEntry('lobsters:comments')]
   },
 
-  // A token feed is the reader's private feed, filtered by their settings, not the site feed.
-  getFeedHint: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl || hasQueryParam(parsedUrl, 'token')) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

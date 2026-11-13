@@ -421,11 +421,11 @@ describe('lobstersHandler', () => {
       expect(lobstersHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a private token feed', () => {
-      const value =
-        'https://lobste.rs/rss?token=0hovl39ZKFZbNNkhlZMBJwh43PhM7FbCque1ctVxn4yMpNCurENnjnKFpzCi'
+    it('should return the private hint for a private token feed', () => {
+      const value = 'https://lobste.rs/rss?token=abc123'
+      const expected: DiscoverUriHint = { key: 'lobsters:private', label: 'Private feed' }
 
-      expect(lobstersHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a tag feed path on another host', () => {
@@ -443,6 +443,7 @@ describe('lobstersHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['http://www.lobste.rs/rss?token=abc123', { key: 'lobsters:private', label: 'Private feed' }],
       ['https://lobste.rs/t/kotlin.rss', { key: 'lobsters:tag', label: 'Tag' }],
       ['https://lobste.rs/domains/github.com.rss', { key: 'lobsters:domain', label: 'Domain' }],
       [

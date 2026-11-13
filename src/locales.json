@@ -96,6 +96,7 @@
     "lobsters:top": "Top stories",
     "lobsters:newest": "Newest",
     "lobsters:comments": "Comments",
+    "lobsters:private": "Private feed",
     "mastodon:posts": "Posts",
     "mastodon:tag": "Tag",
     "mastodon:tagged": "Tagged",
