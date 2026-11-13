@@ -1248,7 +1248,7 @@ Discovers the RSS feed of a Podhome show, on `serve.podhome.fm` or a custom doma
 |-------------|-----------------|
 | `serve.podhome.fm/{show}` | Podcast (RSS)* |
 | `serve.podhome.fm/episodepage/{show}/{episode}` | Podcast (RSS)* |
-| Any page of a show on a custom domain | Podcast (RSS)* |
+| `{host}` | Podcast (RSS)* |
 
 \* *Requires HTML content to read the feed URL.*
 
