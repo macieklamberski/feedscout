@@ -1,5 +1,4 @@
 import { getQueryParam, isHostOrSubdomainOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, getTenantSubdomain, hasMarker } from '../../common/utils.js'
@@ -95,15 +94,16 @@ export const sportsregionsHandler: PlatformHandler = {
     }
 
     const filters = getEventFilters(url)
-    const uris: Array<DiscoverUriEntry> = []
 
     if (filters) {
-      uris.push(page.getFeedEntry('sportsregions:filtered-events', filters))
+      return [
+        page.getFeedEntry('sportsregions:filtered-events', filters),
+        page.getFeedEntry('sportsregions:news'),
+        page.getFeedEntry('sportsregions:events'),
+      ]
     }
 
-    uris.push(page.getFeedEntry('sportsregions:news'), page.getFeedEntry('sportsregions:events'))
-
-    return uris
+    return [page.getFeedEntry('sportsregions:news'), page.getFeedEntry('sportsregions:events')]
   },
 
   getFeedHint: feeds.getFeedHint,
