@@ -139,7 +139,11 @@ describe('jiraHandler', () => {
 
     it('should return the project and site feeds for a capitalized browse segment', () => {
       const value = 'https://example.atlassian.net/Browse/ABC-1'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.atlassian.net/si/jira.issueviews:issue-xml/ABC-1/ABC-1.xml',
+          hint: { key: 'jira:issue', label: 'Issue', format: 'rss' },
+        },
         {
           uri: 'https://example.atlassian.net/plugins/servlet/streams?key=ABC',
           hint: { key: 'jira:project', label: 'Project' },
@@ -155,7 +159,11 @@ describe('jiraHandler', () => {
 
     it('should return the project and site streams for an issue path', () => {
       const value = 'https://jira.example.org/browse/ABC-1'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://jira.example.org/si/jira.issueviews:issue-xml/ABC-1/ABC-1.xml',
+          hint: { key: 'jira:issue', label: 'Issue', format: 'rss' },
+        },
         {
           uri: 'https://jira.example.org/plugins/servlet/streams?key=ABC',
           hint: { key: 'jira:project', label: 'Project' },
@@ -187,7 +195,11 @@ describe('jiraHandler', () => {
 
     it('should prefix the context path', () => {
       const value = 'https://example.org/jira/browse/ABC-1'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.org/jira/si/jira.issueviews:issue-xml/ABC-1/ABC-1.xml',
+          hint: { key: 'jira:issue', label: 'Issue', format: 'rss' },
+        },
         {
           uri: 'https://example.org/jira/plugins/servlet/streams?key=ABC',
           hint: { key: 'jira:project', label: 'Project' },
@@ -215,7 +227,11 @@ describe('jiraHandler', () => {
 
     it('should return the feeds under the page scheme for an http Cloud page', () => {
       const value = 'http://example.atlassian.net/browse/ABC-1'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.atlassian.net/si/jira.issueviews:issue-xml/ABC-1/ABC-1.xml',
+          hint: { key: 'jira:issue', label: 'Issue', format: 'rss' },
+        },
         {
           uri: 'http://example.atlassian.net/plugins/servlet/streams?key=ABC',
           hint: { key: 'jira:project', label: 'Project' },
@@ -277,6 +293,13 @@ describe('jiraHandler', () => {
       expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the issue hint for an issue XML view', () => {
+      const value = 'https://alice.atlassian.net/si/jira.issueviews:issue-xml/ABC-12/ABC-12.xml'
+      const expected: DiscoverUriHint = { key: 'jira:issue', label: 'Issue', format: 'rss' }
+
+      expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for an issue page', () => {
       const value = 'https://dcosjira.atlassian.net/browse/DCOS-1'
 
@@ -333,6 +356,10 @@ describe('jiraHandler', () => {
         { key: 'jira:site', label: 'Site activity' },
       ],
       ['https://alice.atlassian.net/activity', { key: 'jira:site', label: 'Site activity' }],
+      [
+        'http://alice.atlassian.net/si/jira.issueviews:issue-xml/ABC-12/ABC-12.xml',
+        { key: 'jira:issue', label: 'Issue', format: 'rss' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

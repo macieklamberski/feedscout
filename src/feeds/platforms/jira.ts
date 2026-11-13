@@ -15,6 +15,7 @@ const domains = ['atlassian.net']
 // Data Center installs sit under a context path such as `/jira`, so none of
 // these can anchor at the start of the pathname.
 const issueRegex = /\/browse\/([A-Za-z][A-Za-z0-9_]+)-\d+/i
+const issueKeyRegex = /\/browse\/([A-Za-z][A-Za-z0-9_]+-\d+)/i
 const projectRegex = /\/projects\/([A-Za-z][A-Za-z0-9_]+)(?:\/(?!repos\b)|$)/i
 const jiraPathRegex = /\/(?:jira|secure|issues)(?:\/|$)/i
 const trailingSlashRegex = /\/$/
@@ -27,6 +28,12 @@ const feeds = definePlatformFeeds(
     { key: 'jira:project', template: '{root}/activity?key={key}' },
     { key: 'jira:site', template: '{root}/plugins/servlet/streams' },
     { key: 'jira:site', template: '{root}/activity' },
+    // An issue's XML view is an RSS document of that one issue.
+    {
+      key: 'jira:issue',
+      template: '{root}/si/jira.issueviews:issue-xml/{issue}/{issue}.xml',
+      format: 'rss',
+    },
   ],
   { domains },
 )
@@ -47,7 +54,12 @@ export const isJiraHtml = (content: string): boolean => {
   )
 }
 
-export type JiraPage = { baseUrl: string; tenant?: string; projectKey?: string }
+export type JiraPage = {
+  baseUrl: string
+  tenant?: string
+  projectKey?: string
+  issueKey?: string
+}
 
 const getJiraPage = (url: string, content: string | undefined): JiraPage | undefined => {
   const { origin, pathname } = new URL(url)
@@ -63,6 +75,7 @@ const getJiraPage = (url: string, content: string | undefined): JiraPage | undef
     baseUrl: `${origin}${contextPath}`.replace(trailingSlashRegex, ''),
     tenant: getTenantSubdomain(url, domains),
     projectKey: pathKey ?? getMetaContent(content ?? '', 'ajs-project-key'),
+    issueKey: pathname.match(issueKeyRegex)?.[1],
   }
 }
 
@@ -93,9 +106,17 @@ export const jiraHandler: PlatformHandler = {
       return []
     }
 
-    const { baseUrl, tenant, projectKey } = jiraPage
+    const { baseUrl, tenant, projectKey, issueKey } = jiraPage
     // A cloud site serves from its origin.
     const root = tenant ? undefined : baseUrl
+    if (issueKey) {
+      return [
+        page.getFeedEntry('jira:issue', { root, issue: issueKey }, 'rss'),
+        page.getFeedEntry('jira:project', { root, key: projectKey }),
+        page.getFeedEntry('jira:site', { root }),
+      ]
+    }
+
     if (projectKey) {
       return [
         page.getFeedEntry('jira:project', { root, key: projectKey }),
