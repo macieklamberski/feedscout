@@ -1501,8 +1501,8 @@ Discovers the Atom activity streams of a Jira site. Cloud is detected by the `at
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{host}/browse/{KEY}-{n}` | Issue (RSS) · project stream<sup>†</sup> · site stream<sup>†</sup> (Atom) |
-| `{host}/projects/{KEY}` | Project stream<sup>†</sup> · site stream<sup>†</sup> (Atom) |
+| `{root}/browse/{KEY}-{n}` | Issue (RSS) · project stream<sup>†</sup> · site stream<sup>†</sup> (Atom) |
+| `{root}/projects/{KEY}` | Project stream<sup>†</sup> · site stream<sup>†</sup> (Atom) |
 | Any other Jira page | Site stream<sup>†</sup> (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
