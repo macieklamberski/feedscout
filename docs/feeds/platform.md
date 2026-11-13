@@ -1360,8 +1360,8 @@ Discovers the audio podcast feed of every channel a church page lists, or of the
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.sermon.net` | Channel podcasts (RSS)*, or the church feed when no channel is listed |
-| `*.sermon.net/{mediaCentre}/{channel}` | That channel's podcast<sup>†</sup> (RSS)* |
+| `{church}.sermon.net` | Channel podcasts (RSS)*, or the church feed when no channel is listed |
+| `{church}.sermon.net/{mediaCentre}/{channel}` | That channel's podcast<sup>†</sup> (RSS)* |
 
 \* *Requires HTML content to read the channels the page lists.*
 
