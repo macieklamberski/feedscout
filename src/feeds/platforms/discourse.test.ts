@@ -298,6 +298,19 @@ describe('discourseHandler', () => {
       expect(discourseHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the nested category feed under the sub-path the setup meta names', () => {
+      const value = 'http://example.com/forum/c/contribute/feature/2'
+      const content = '<meta id="data-discourse-setup" data-base-uri="/forum">'
+      const expected = [
+        {
+          uri: 'http://example.com/forum/c/contribute/feature/2.rss',
+          hint: { key: 'discourse:category', label: 'Category' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return category feed for a category list filter path', () => {
       const value = 'https://forum.example.org/c/support/6/l/latest'
       const expected = [
