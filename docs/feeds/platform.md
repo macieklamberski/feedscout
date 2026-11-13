@@ -2668,7 +2668,7 @@ Discovers the blog feed of a Jimdo site. Detected by the `x-jimdo-wid` response 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page | Blog (RSS) |
+| `{site}.jimdofree.com`, `{host}` | Blog (RSS) |
 
 > [!NOTE]
 > Only sites with a blog have the feed.
