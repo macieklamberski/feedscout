@@ -982,12 +982,12 @@ Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{host}/u/{user}` | User activity<sup>†</sup> (RSS) |
-| `{host}/c/{slug}` | Category (RSS) |
-| `{host}/tag/{slug}` or `/tag/{slug}/{id}` | Tag (RSS) |
-| `{host}/t/{slug}/{id}` | Topic (RSS) |
-| `{host}/top` or `/top/{period}` | Top topics (RSS) |
-| `{host}/` (or any other path) | Latest topics · latest posts (RSS) |
+| `{root}/u/{user}` | User activity<sup>†</sup> (RSS) |
+| `{root}/c/{slug}` | Category (RSS) |
+| `{root}/tag/{slug}` or `/tag/{slug}/{id}` | Tag (RSS) |
+| `{root}/t/{slug}/{id}` | Topic (RSS) |
+| `{root}/top` or `/top/{period}` | Top topics (RSS) |
+| `{root}/` (or any other path) | Latest topics · latest posts (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
