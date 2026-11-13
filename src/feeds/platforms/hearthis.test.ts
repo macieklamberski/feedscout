@@ -83,6 +83,21 @@ describe('hearthisHandler', () => {
   })
 
   describe('getFeedHint', () => {
+    const setFeeds: Array<string> = [
+      'https://hearthis.at/set/12345-67890/podcast/',
+      'http://www.hearthis.at/set/12345-67890/podcast',
+      'https://hearthis.at/set/12345-67890/podcast/feed/',
+      'https://hearthis.at/set/12345-67890/podcast/.rss/',
+      'https://hearthis.at/set/12345-67890/podcast/rss.xml/',
+      'https://hearthis.at/set/12345-67890/podcast/rss/',
+    ]
+
+    it.each(setFeeds)('should return the set key for %s', (value) => {
+      const expected: DiscoverUriHint = { key: 'hearthis:set', label: 'Set' }
+
+      expect(hearthisHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the tracks key for a user feed', () => {
       const value = 'https://hearthis.at/alice/podcast/'
       const expected: DiscoverUriHint = { key: 'hearthis:tracks', label: 'Tracks' }
@@ -134,12 +149,15 @@ describe('hearthisHandler', () => {
   describe('own feeds through the Platform method', () => {
     const tracksHint: DiscoverUriHint = { key: 'hearthis:tracks', label: 'Tracks' }
     const newTracksHint: DiscoverUriHint = { key: 'hearthis:new-tracks', label: 'New tracks' }
+    const setHint: DiscoverUriHint = { key: 'hearthis:set', label: 'Set' }
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://hearthis.at/alice/podcast/', tracksHint],
       ['http://www.hearthis.at/alice/podcast', tracksHint],
       ['https://hearthis.at/alice/podcast.xml', tracksHint],
       ['https://hearthis.at/new_tracks.rss', newTracksHint],
       ['http://www.hearthis.at/new_tracks.rss', newTracksHint],
+      ['https://hearthis.at/set/12345-67890/podcast/', setHint],
+      ['https://hearthis.at/set/12345-67890/podcast/.rss/', setHint],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
