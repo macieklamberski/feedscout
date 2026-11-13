@@ -31,11 +31,7 @@ const feeds = definePlatformFeeds(
     { key: 'bearblog:tag', template: '{scheme}://{host}/atom.xml?q={tag}', format: 'atom' },
     { key: 'bearblog:tag', template: '{scheme}://{host}/rss/?q={tag}', format: 'rss' },
     { key: 'bearblog:tag', template: '{scheme}://{host}/feed.xml?q={tag}', format: 'atom' },
-    {
-      key: 'bearblog:tag',
-      template: '{scheme}://{host}/index.xml?q={tag}',
-      format: 'atom',
-    },
+    { key: 'bearblog:tag', template: '{scheme}://{host}/index.xml?q={tag}', format: 'atom' },
     { key: 'bearblog:tag', template: '{scheme}://{host}/rss.xml?q={tag}', format: 'rss' },
     { key: 'bearblog:posts', template: '{scheme}://{host}/feed/', format: 'atom' },
     { key: 'bearblog:posts', template: '{scheme}://{host}/feed/?type=rss', format: 'rss' },
