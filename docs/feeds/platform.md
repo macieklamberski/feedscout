@@ -491,17 +491,19 @@ Discovers RSS feeds for Steam game news and community groups.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `store.steampowered.com` | Global news<sup>†</sup> · daily deals<sup>†</sup> · new releases · weekly top sellers |
-| `store.steampowered.com/news` | Global news<sup>†</sup> · daily deals<sup>†</sup> · new releases · weekly top sellers |
+| `store.steampowered.com` | Global news<sup>†</sup> · daily deals<sup>†</sup> · new releases<sup>†</sup> · weekly top sellers<sup>†</sup> |
+| `store.steampowered.com/news` | Global news<sup>†</sup> · daily deals<sup>†</sup> · new releases<sup>†</sup> · weekly top sellers<sup>†</sup> |
 | `store.steampowered.com/news/group/{id}` | Group news |
 | `store.steampowered.com/news/collection/{name}` | News collection |
-| `store.steampowered.com/app/{id}` | Game news<sup>†</sup> · community news |
-| `store.steampowered.com/news/app/{id}` | Game news<sup>†</sup> · community news |
+| `store.steampowered.com/app/{id}` | Game news<sup>†</sup> · community news<sup>?</sup> |
+| `store.steampowered.com/news/app/{id}` | Game news<sup>†</sup> · community news<sup>?</sup> |
 | `store.steampowered.com/newshub/app/{id}` | Game news · community news |
-| `steamcommunity.com/app/{id}` | Game news<sup>†</sup> · community news |
+| `steamcommunity.com/app/{id}` | Game news<sup>†</sup> · community news<sup>?</sup> |
 | `steamcommunity.com/groups/{name}` | Group<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
+
+<sup>?</sup> *Not measured, the feed failed to load during the run.*
 
 ### Stack Exchange
 
