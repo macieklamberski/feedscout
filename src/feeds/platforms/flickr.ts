@@ -60,6 +60,22 @@ const feeds = definePlatformFeeds(
     },
     // The pool photos that carry a location.
     { key: 'flickr:group-geo', template: '{scheme}://{host}/services/feeds/geo/?g={id}' },
+    // Past here the table only claims: a photostream narrowed to a tag, an album, the photos of a
+    // member's contacts, and the photos that carry a location by member or by tag.
+    {
+      key: 'flickr:photos-tag',
+      template: '{scheme}://{host}/services/feeds/photos_public.gne?id={id}&tags={tags}',
+    },
+    {
+      key: 'flickr:photoset',
+      template: '{scheme}://{host}/services/feeds/photoset.gne?nsid={id}&set={set}',
+    },
+    {
+      key: 'flickr:contacts',
+      template: '{scheme}://{host}/services/feeds/photos_friends.gne?user_id={id}',
+    },
+    { key: 'flickr:photos-geo', template: '{scheme}://{host}/services/feeds/geo?id={id}' },
+    { key: 'flickr:tag-geo', template: '{scheme}://{host}/services/feeds/geo?tags={tags}' },
   ],
   { hosts: feedHosts },
 )
@@ -194,8 +210,12 @@ export const flickrHandler: PlatformHandler = {
       return hint
     }
 
-    // Flickr narrows a photostream or a group location feed to one tag when `tags` sits beside a
-    // non-empty `id` or `g`, a feed resolve never builds. An empty `id=` leaves the tag feed.
+    if (hint?.key === 'flickr:photos-tag') {
+      return hint
+    }
+
+    // Flickr narrows a location feed to one tag when `tags` sits beside a non-empty `id` or `g`, a
+    // feed no row names. An empty `id=` leaves the tag feed.
     if (
       getQueryParam(parsedUrl, 'tags') &&
       (getQueryParam(parsedUrl, 'id') || getQueryParam(parsedUrl, 'g'))

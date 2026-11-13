@@ -517,13 +517,18 @@
     "firstory:podcast": "https://feed.firstory.me/rss/user/cklqae6gy388f0892i2qmv851"
   },
   "flickr": {
+    "flickr:contacts": "https://api.flickr.com/services/feeds/photos_friends.gne?display_all=1&format=rss_200&friends=0&user_id=49583869%40N00",
     "flickr:faves": "https://www.flickr.com/services/feeds/photos_faves.gne?id=24662369@N07",
     "flickr:forum": "https://www.flickr.com/services/feeds/forums.gne",
     "flickr:group-discuss": "https://www.flickr.com/services/feeds/groups_discuss.gne?id=42097308@N00",
     "flickr:group-geo": "https://www.flickr.com/services/feeds/geo/?g=42097308@N00",
     "flickr:group-pool": "https://www.flickr.com/services/feeds/groups_pool.gne?id=42097308@N00",
     "flickr:photos": "https://www.flickr.com/services/feeds/photos_public.gne?id=24662369@N07",
-    "flickr:tag": "https://www.flickr.com/services/feeds/photos_public.gne?tags=cats"
+    "flickr:photos-geo": "https://api.flickr.com/services/feeds/geo?format=rss_200&id=49672816%40N00&lang=en-us",
+    "flickr:photos-tag": "https://api.flickr.com/services/feeds/photos_public.gne?format=rss_200&id=33423327%40N00&tags=drawing",
+    "flickr:photoset": "https://api.flickr.com/services/feeds/photoset.gne?lang=en-us&nsid=35237096496%40N01&set=72157608099040748",
+    "flickr:tag": "https://www.flickr.com/services/feeds/photos_public.gne?tags=cats",
+    "flickr:tag-geo": "https://api.flickr.com/services/feeds/geo?tags=astronomy"
   },
   "flipboard": {
     "flipboard:magazine": "https://flipboard.com/@theverge/business-arsskhdiz.rss",

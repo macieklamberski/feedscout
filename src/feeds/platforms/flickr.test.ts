@@ -470,11 +470,12 @@ describe('flickrHandler', () => {
       expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a photostream feed narrowed to a tag', () => {
+    it('should return the tagged photostream hint for a photostream feed narrowed to a tag', () => {
       const value =
         'https://api.flickr.com/services/feeds/photos_public.gne?id=24662369@N07&tags=cats&format=atom'
+      const expected: DiscoverUriHint = { key: 'flickr:photos-tag', label: 'Tagged photostream' }
 
-      expect(flickrHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a group location feed narrowed to a tag', () => {
@@ -489,25 +490,38 @@ describe('flickrHandler', () => {
       expect(flickrHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a user location feed', () => {
+    it('should return the photostream location hint for a user location feed', () => {
       const value =
         'https://api.flickr.com/services/feeds/geo?format=rss_200&id=24662369%40N07&lang=en-us'
+      const expected: DiscoverUriHint = {
+        key: 'flickr:photos-geo',
+        label: 'Photostream with location',
+      }
 
-      expect(flickrHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for an album feed', () => {
+    it('should return the tag location hint for a tag location feed', () => {
+      const value = 'https://api.flickr.com/services/feeds/geo/?tags=cats'
+      const expected: DiscoverUriHint = { key: 'flickr:tag-geo', label: 'Tag with location' }
+
+      expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the album hint for an album feed', () => {
       const value =
         'https://api.flickr.com/services/feeds/photoset.gne?set=72157594208548823&nsid=24662369@N07&lang=en-us'
+      const expected: DiscoverUriHint = { key: 'flickr:photoset', label: 'Album' }
 
-      expect(flickrHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a friends feed', () => {
+    it('should return the contacts hint for a friends feed', () => {
       const value =
         'https://api.flickr.com/services/feeds/photos_friends.gne?user_id=24662369@N07&friends=0&display_all=1&format=rss_200'
+      const expected: DiscoverUriHint = { key: 'flickr:contacts', label: 'Contacts' }
 
-      expect(flickrHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a photostream page', () => {
@@ -567,6 +581,26 @@ describe('flickrHandler', () => {
       [
         'https://www.flickr.com/services/feeds/photos_faves.gne?id=24662369@N07&tags=cats',
         { key: 'flickr:faves', label: 'Favorites' },
+      ],
+      [
+        'http://api.flickr.com/services/feeds/photos_public.gne?format=rss_200&id=12345%40N00&tags=cats',
+        { key: 'flickr:photos-tag', label: 'Tagged photostream' },
+      ],
+      [
+        'https://api.flickr.com/services/feeds/photoset.gne?lang=en-us&nsid=12345%40N00&set=72157600000000000',
+        { key: 'flickr:photoset', label: 'Album' },
+      ],
+      [
+        'https://www.flickr.com/services/feeds/photos_friends.gne?display_all=1&format=rss_200&friends=0&user_id=12345%40N00',
+        { key: 'flickr:contacts', label: 'Contacts' },
+      ],
+      [
+        'https://api.flickr.com/services/feeds/geo?format=rss_200&id=12345%40N00&lang=en-us',
+        { key: 'flickr:photos-geo', label: 'Photostream with location' },
+      ],
+      [
+        'https://api.flickr.com/services/feeds/geo?tags=cats',
+        { key: 'flickr:tag-geo', label: 'Tag with location' },
       ],
     ]
 
