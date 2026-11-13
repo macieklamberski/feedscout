@@ -10,7 +10,6 @@ import {
   findElements,
   getCookieNames,
   getMetaContent,
-  getTenantSubdomain,
   hasClass,
   hasMarker,
 } from '../../common/utils.js'
@@ -323,18 +322,11 @@ export const redmineHandler: PlatformHandler = {
     return uris
   },
 
-  // The table reads any host under the domains, so only a site's own subdomain is claimed, not the
-  // apex, www or a nested host.
   getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
     const parsedUrl = parseUrl(url)
 
-    if (!parsedUrl || !getTenantSubdomain(parsedUrl, domains)) {
-      return
-    }
-
-    const hint = feeds.getFeedHint(url)
-
-    if (!hint || !isAnyOf(hint.key, ['redmine:issues', 'redmine:project-issues'])) {
+    if (!hint || !parsedUrl || !isAnyOf(hint.key, ['redmine:issues', 'redmine:project-issues'])) {
       return hint
     }
 
