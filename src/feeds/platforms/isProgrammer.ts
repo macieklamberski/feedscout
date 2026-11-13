@@ -1,5 +1,4 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -76,20 +75,22 @@ export const isProgrammerHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.kind === 'post') {
-      uris.push(page.getFeedEntry('is-programmer:post-comments', { postId: parsed.postId }))
+      return [
+        page.getFeedEntry('is-programmer:post-comments', { postId: parsed.postId }),
+        page.getFeedEntry('is-programmer:posts'),
+        page.getFeedEntry('is-programmer:comments'),
+        page.getFeedEntry('is-programmer:messages'),
+        page.getFeedEntry('is-programmer:site'),
+      ]
     }
 
-    uris.push(
+    return [
       page.getFeedEntry('is-programmer:posts'),
       page.getFeedEntry('is-programmer:comments'),
       page.getFeedEntry('is-programmer:messages'),
       page.getFeedEntry('is-programmer:site'),
-    )
-
-    return uris
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
