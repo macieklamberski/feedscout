@@ -174,23 +174,25 @@ export const squarespaceHandler: PlatformHandler = {
       return []
     }
 
-    const collectionFeed = page.getFeedEntry('squarespace:collection', {
-      collection: parsed.collection,
-    })
-
     if (parsed.kind === 'category') {
       const params = { collection: parsed.collection, category: parsed.category }
 
-      return [page.getFeedEntry('squarespace:category', params), collectionFeed]
+      return [
+        page.getFeedEntry('squarespace:category', params),
+        page.getFeedEntry('squarespace:collection', { collection: parsed.collection }),
+      ]
     }
 
     if (parsed.kind === 'tag') {
       const params = { collection: parsed.collection, tag: parsed.tag }
 
-      return [page.getFeedEntry('squarespace:tag', params), collectionFeed]
+      return [
+        page.getFeedEntry('squarespace:tag', params),
+        page.getFeedEntry('squarespace:collection', { collection: parsed.collection }),
+      ]
     }
 
-    return [collectionFeed]
+    return [page.getFeedEntry('squarespace:collection', { collection: parsed.collection })]
   },
 
   getFeedHint: ownFeeds.getFeedHint,

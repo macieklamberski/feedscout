@@ -1559,7 +1559,7 @@ Discovers the RSS feed of a Squarespace collection. Detected by the `Server: Squ
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/{collection}` | Collection (RSS) |
+| `{host}/{collection}` | Collection (RSS) |
 
 > [!NOTE]
 > The collection slug is operator-chosen, commonly `blog`, `news` or `journal`, so it is taken from the first path segment. The site root is not matched: it answers `?format=rss` with a 400.
