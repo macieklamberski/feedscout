@@ -1652,8 +1652,8 @@ Discovers the article feeds of a Webnode site. Detected by the classic editor's 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/{page}/` | Section articles<sup>†</sup> · all articles (RSS) |
-| `{site}/news/{article}/` | All articles (RSS) |
+| `{host}/{page}/` | Section articles<sup>†</sup> · all articles (RSS) |
+| `{host}/news/{article}/` | All articles (RSS) |
 | Any other page | All articles (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*

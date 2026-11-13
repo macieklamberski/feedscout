@@ -1,5 +1,4 @@
 import { getPathSegments, isAnyOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -66,19 +65,19 @@ export const webnodeHandler: PlatformHandler = {
   resolve: (url) => {
     const parsed = parseWebnodeUrl(url)
     const page = feeds.forUrl(url)
-    const uris: Array<DiscoverUriEntry> = []
 
     if (!page) {
-      return uris
+      return []
     }
 
     if (parsed.kind === 'section') {
-      uris.push(page.getFeedEntry('webnode:section', { section: parsed.section }))
+      return [
+        page.getFeedEntry('webnode:section', { section: parsed.section }),
+        page.getFeedEntry('webnode:articles'),
+      ]
     }
 
-    uris.push(page.getFeedEntry('webnode:articles'))
-
-    return uris
+    return [page.getFeedEntry('webnode:articles')]
   },
 
   getFeedHint: feeds.getFeedHint,
