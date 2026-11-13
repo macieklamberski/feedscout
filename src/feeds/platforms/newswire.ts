@@ -1,5 +1,4 @@
 import { getAnyOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -68,28 +67,27 @@ export const newswireHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     // A made-up beat redirects to the newsroom's /browse page, which validation drops.
     if (parsed.kind === 'beat') {
-      uris.push(page.getFeedEntry('newswire:beat', { beat: parsed.beat }))
+      return [
+        page.getFeedEntry('newswire:beat', { beat: parsed.beat }),
+        page.getFeedEntry('newswire:newsroom'),
+      ]
     }
 
     if (parsed.kind === 'contentType' && parsed.contentType === 'news') {
-      uris.push(page.getFeedEntry('newswire:news'))
+      return [page.getFeedEntry('newswire:news'), page.getFeedEntry('newswire:newsroom')]
     }
 
     if (parsed.kind === 'contentType' && parsed.contentType === 'pr') {
-      uris.push(page.getFeedEntry('newswire:press-releases'))
+      return [page.getFeedEntry('newswire:press-releases'), page.getFeedEntry('newswire:newsroom')]
     }
 
     if (parsed.kind === 'contentType' && parsed.contentType === 'social') {
-      uris.push(page.getFeedEntry('newswire:social'))
+      return [page.getFeedEntry('newswire:social'), page.getFeedEntry('newswire:newsroom')]
     }
 
-    uris.push(page.getFeedEntry('newswire:newsroom'))
-
-    return uris
+    return [page.getFeedEntry('newswire:newsroom')]
   },
 
   getFeedHint: feeds.getFeedHint,
