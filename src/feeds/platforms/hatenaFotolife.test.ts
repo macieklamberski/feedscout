@@ -317,6 +317,40 @@ describe('hatenaFotolifeHandler', () => {
       expect(hatenaFotolifeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the recent hint for the newest photos feed', () => {
+      const value = 'https://f.hatena.ne.jp/userlist?mode=rss'
+      const expected: DiscoverUriHint = { key: 'hatena-fotolife:recent', label: 'Recent photos' }
+
+      expect(hatenaFotolifeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the site model hint for a site-wide camera model feed', () => {
+      const value = 'https://f.hatena.ne.jp/model/Example%20Camera?mode=rss'
+      const expected: DiscoverUriHint = {
+        key: 'hatena-fotolife:site-model',
+        label: 'Photos by camera model',
+      }
+
+      expect(hatenaFotolifeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the focal length hint for a focal length feed', () => {
+      const value = 'https://f.hatena.ne.jp/focallength/14.30?mode=rss'
+      const expected: DiscoverUriHint = {
+        key: 'hatena-fotolife:focal-length',
+        label: 'Photos by focal length',
+      }
+
+      expect(hatenaFotolifeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the color hint for a color feed', () => {
+      const value = 'https://f.hatena.ne.jp/fotocolor/wg?mode=rss'
+      const expected: DiscoverUriHint = { key: 'hatena-fotolife:color', label: 'Photos by color' }
+
+      expect(hatenaFotolifeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the model hint for a camera model feed', () => {
       const value = 'https://f.hatena.ne.jp/kakashibennett/rss?model=SC%2D04F'
       const expected: DiscoverUriHint = { key: 'hatena-fotolife:model', label: 'Camera model' }
@@ -413,6 +447,22 @@ describe('hatenaFotolifeHandler', () => {
       [
         'https://f.hatena.ne.jp/aiken_makiss/starfriends?mode=rss',
         { key: 'hatena-fotolife:star-friends', label: 'Star Friends' },
+      ],
+      [
+        'http://f.hatena.ne.jp/userlist?mode=rss',
+        { key: 'hatena-fotolife:recent', label: 'Recent photos' },
+      ],
+      [
+        'http://f.hatena.ne.jp/model/Example%20Camera?mode=rss',
+        { key: 'hatena-fotolife:site-model', label: 'Photos by camera model' },
+      ],
+      [
+        'http://f.hatena.ne.jp/focallength/14.30?mode=rss',
+        { key: 'hatena-fotolife:focal-length', label: 'Photos by focal length' },
+      ],
+      [
+        'http://f.hatena.ne.jp/fotocolor/wg?mode=rss',
+        { key: 'hatena-fotolife:color', label: 'Photos by color' },
       ],
     ]
 

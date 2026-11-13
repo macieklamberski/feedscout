@@ -39,6 +39,18 @@ const feeds = definePlatformFeeds(
       key: 'hatena-fotolife:star-friends',
       template: 'https://f.hatena.ne.jp/{username}/starfriends?mode=rss',
     },
+    // Site-wide listings: the newest photos, and photos by camera model, focal length or color.
+    // The page parser reads these paths as a user, so `resolve` never builds them.
+    { key: 'hatena-fotolife:recent', template: 'https://f.hatena.ne.jp/userlist?mode=rss' },
+    {
+      key: 'hatena-fotolife:site-model',
+      template: 'https://f.hatena.ne.jp/model/{model}?mode=rss',
+    },
+    {
+      key: 'hatena-fotolife:focal-length',
+      template: 'https://f.hatena.ne.jp/focallength/{focalLength}?mode=rss',
+    },
+    { key: 'hatena-fotolife:color', template: 'https://f.hatena.ne.jp/fotocolor/{color}?mode=rss' },
   ],
   { hosts },
 )
