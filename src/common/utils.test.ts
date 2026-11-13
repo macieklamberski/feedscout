@@ -31,6 +31,7 @@ import {
 } from './utils.js'
 
 const idRegex = /\/topic\/(?<id>[^/]+)/
+const exampleDomainRegex = /^example\.(?:com|co\.[a-z]{2}|[a-z]{2})$/
 
 describe('getNumericId', () => {
   it('should return an id of digits', () => {
@@ -622,6 +623,49 @@ describe('getTenantSubdomain', () => {
 
   it('should return undefined for another domain', () => {
     expect(getTenantSubdomain('https://alice.example.org/', domains)).toBeUndefined()
+  })
+
+  describe('with a domain pattern', () => {
+    const patternDomains = ['example.net', exampleDomainRegex]
+
+    it('should return the subdomain under a domain the pattern matches', () => {
+      const value = 'https://alice.example.co.uk/'
+      const expected = 'alice'
+
+      expect(getTenantSubdomain(value, patternDomains)).toBe(expected)
+    })
+
+    it('should return the subdomain under a plain domain beside the pattern', () => {
+      const value = 'https://alice.example.net/'
+      const expected = 'alice'
+
+      expect(getTenantSubdomain(value, patternDomains)).toBe(expected)
+    })
+
+    it('should return the subdomain on a port', () => {
+      const value = 'https://alice.example.de:8080/'
+      const expected = 'alice'
+
+      expect(getTenantSubdomain(value, patternDomains)).toBe(expected)
+    })
+
+    it('should return undefined for www', () => {
+      const value = 'https://www.example.co.uk/'
+
+      expect(getTenantSubdomain(value, patternDomains)).toBeUndefined()
+    })
+
+    it('should return undefined for the apex', () => {
+      const value = 'https://example.co.uk/'
+
+      expect(getTenantSubdomain(value, patternDomains)).toBeUndefined()
+    })
+
+    it('should return undefined for a nested subdomain', () => {
+      const value = 'https://blog.alice.example.co.uk/'
+
+      expect(getTenantSubdomain(value, patternDomains)).toBeUndefined()
+    })
   })
 })
 
