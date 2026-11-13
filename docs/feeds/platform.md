@@ -1320,7 +1320,7 @@ Discovers RSS 2.0 and RDF feeds for Sakura blog.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.sblo.jp` | Posts (RSS 2.0 + RDF) |
+| `{blog}.sblo.jp` | Posts (RSS 2.0 + RDF) |
 
 ### SAPO Blogs
 
