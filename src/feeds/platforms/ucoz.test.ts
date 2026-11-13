@@ -111,11 +111,14 @@ describe('parseUcozUrl', () => {
 describe('ucozHandler', () => {
   describe('match', () => {
     const hostCases: Array<[boolean, string]> = [
-      [true, 'https://example.at.ua/'],
       [true, 'https://example.ucoz.ru/news/'],
-      [true, 'https://example.narod.ru/'],
+      [true, 'https://example.ucoz.ua/'],
+      [true, 'https://example.ucoz.club/'],
+      [true, 'https://example.ucoz.site/'],
       [true, 'http://example.ucoz.pl/'],
       [true, 'http://example.ucoz.co.uk/'],
+      [false, 'https://example.at.ua/'],
+      [false, 'https://example.narod.ru/'],
       [false, 'https://www.ucoz.ru/'],
       [false, 'https://ucoz.ru/'],
       [false, 'https://example.com/'],
@@ -129,6 +132,12 @@ describe('ucozHandler', () => {
       const headers = new Headers({ 'set-cookie': '8exampleuCoz=; path=/' })
 
       expect(ucozHandler.match('https://www.example.com/', '', headers)).toBe(true)
+    })
+
+    it('should return true for a site on a free domain with the uCoz cookie', () => {
+      const headers = new Headers({ 'set-cookie': '7exampleuCoz=; path=/' })
+
+      expect(ucozHandler.match('https://example.at.ua/', '', headers)).toBe(true)
     })
 
     it('should return false for a custom domain without the uCoz cookie', () => {
@@ -243,14 +252,14 @@ describe('ucozHandler', () => {
   describe('getFeedHint', () => {
     const moduleFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://example.ucoz.ru/news/rss', { key: 'ucoz:news', label: 'News' }],
-      ['https://example.at.ua/publ/rss', { key: 'ucoz:publ', label: 'Articles' }],
-      ['https://example.narod.ru/load/rss', { key: 'ucoz:load', label: 'Files' }],
+      ['https://example.ucoz.ua/publ/rss', { key: 'ucoz:publ', label: 'Articles' }],
+      ['https://example.ucoz.org/load/rss', { key: 'ucoz:load', label: 'Files' }],
       ['https://example.ucoz.net/photo/rss', { key: 'ucoz:photo', label: 'Photos' }],
       ['https://example.ucoz.com.br/blog/rss', { key: 'ucoz:blog', label: 'Blog' }],
-      ['https://example.my1.ru/dir/rss', { key: 'ucoz:dir', label: 'Site catalog' }],
-      ['https://example.do.am/board/rss', { key: 'ucoz:board', label: 'Classifieds' }],
-      ['https://example.3dn.ru/stuff/rss', { key: 'ucoz:stuff', label: 'Online games' }],
-      ['https://example.clan.su/forum/rss', { key: 'ucoz:forum', label: 'Forum' }],
+      ['https://example.ucoz.de/dir/rss', { key: 'ucoz:dir', label: 'Site catalog' }],
+      ['https://example.ucoz.es/board/rss', { key: 'ucoz:board', label: 'Classifieds' }],
+      ['https://example.ucoz.club/stuff/rss', { key: 'ucoz:stuff', label: 'Online games' }],
+      ['https://example.ucoz.site/forum/rss', { key: 'ucoz:forum', label: 'Forum' }],
     ]
 
     it.each(moduleFeeds)('should return the module hint for %s', (value, expected) => {
@@ -258,7 +267,7 @@ describe('ucozHandler', () => {
     })
 
     it('should return the forum hint for the forum feed as section 0', () => {
-      const value = 'https://example.moy.su/forum/0-0-0-37'
+      const value = 'https://example.ucoz.kz/forum/0-0-0-37'
       const expected: DiscoverUriHint = { key: 'ucoz:forum', label: 'Forum' }
 
       expect(ucozHandler.getFeedHint?.(value)).toEqual(expected)
@@ -309,6 +318,12 @@ describe('ucozHandler', () => {
       expect(ucozHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
+    it('should return undefined for a feed on a free domain', () => {
+      const value = 'https://example.at.ua/publ/rss'
+
+      expect(ucozHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for the news feed of a custom domain', () => {
       const value = 'https://example.com/news/rss'
 
@@ -319,15 +334,15 @@ describe('ucozHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://example.ucoz.ru/news/rss/', { key: 'ucoz:news', label: 'News' }],
-      ['https://example.at.ua/publ/rss/', { key: 'ucoz:publ', label: 'Articles' }],
+      ['https://example.ucoz.ua/publ/rss/', { key: 'ucoz:publ', label: 'Articles' }],
       ['http://www.example.ucoz.ru/load/rss', { key: 'ucoz:load', label: 'Files' }],
-      ['https://example.narod.ru/photo/rss/', { key: 'ucoz:photo', label: 'Photos' }],
+      ['https://example.ucoz.org/photo/rss/', { key: 'ucoz:photo', label: 'Photos' }],
       ['https://example.ucoz.com.br/blog/rss/', { key: 'ucoz:blog', label: 'Blog' }],
-      ['https://example.my1.ru/dir/rss/', { key: 'ucoz:dir', label: 'Site catalog' }],
-      ['https://example.do.am/board/rss/', { key: 'ucoz:board', label: 'Classifieds' }],
-      ['https://example.3dn.ru/stuff/rss/', { key: 'ucoz:stuff', label: 'Online games' }],
-      ['https://example.clan.su/forum/rss/', { key: 'ucoz:forum', label: 'Forum' }],
-      ['https://example.moy.su/forum/0-0-0-37', { key: 'ucoz:forum', label: 'Forum' }],
+      ['https://example.ucoz.de/dir/rss/', { key: 'ucoz:dir', label: 'Site catalog' }],
+      ['https://example.ucoz.es/board/rss/', { key: 'ucoz:board', label: 'Classifieds' }],
+      ['https://example.ucoz.club/stuff/rss/', { key: 'ucoz:stuff', label: 'Online games' }],
+      ['https://example.ucoz.site/forum/rss/', { key: 'ucoz:forum', label: 'Forum' }],
+      ['https://example.ucoz.kz/forum/0-0-0-37', { key: 'ucoz:forum', label: 'Forum' }],
       [
         'https://example.ucoz.net/forum/12-0-0-37',
         { key: 'ucoz:forum-section', label: 'Forum section' },

@@ -1,9 +1,5 @@
 import { getAnyOf, getPathSegments, isHostOrSubdomainOf, parseUrl } from 'trousse'
-import {
-  definePlatformFeeds,
-  type PlatformFeedParams,
-  type PlatformFeedTemplate,
-} from '../../common/uris/platform/feeds.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
@@ -16,35 +12,12 @@ export type UcozUrl =
   | { kind: 'module'; module: UcozModule }
   | { kind: 'forumSection'; sectionId: string }
 
-const domains = [
-  '3dn.ru',
-  'at.ua',
-  'clan.su',
-  'do.am',
-  'moy.su',
-  'my1.ru',
-  'narod.ru',
-  'ucoz.ae',
-  'ucoz.club',
-  'ucoz.co.uk',
-  'ucoz.com',
-  'ucoz.com.br',
-  'ucoz.de',
-  'ucoz.es',
-  'ucoz.hu',
-  'ucoz.kz',
-  'ucoz.lv',
-  'ucoz.net',
-  'ucoz.org',
-  'ucoz.pl',
-  'ucoz.ru',
-  'ucoz.site',
-  'ucoz.ua',
-  'usite.pro',
-]
+// uCoz's own `ucoz.*` domains. A site on uCoz's free domains, such as at.ua or narod.ru, or on its
+// own domain is known only by its marker, so its feeds are built but not claimed.
+const domains = [/^ucoz\.(?:[a-z]{2}|co\.uk|com\.br|com|net|org|club|site)$/]
 
-// uCoz names its cookie `{cluster}{site}uCoz` after the site's system subdomain, custom domains too,
-// where the cluster is a digit or, on narod.ru, a letter.
+// uCoz names its cookie `{cluster}{site}uCoz` after the site's system subdomain, custom domains
+// too, where the cluster is a digit or, on narod.ru, a letter.
 const cookieNameRegex = /^[\da-z][\w-]*uCoz$/
 // A forum page is `/forum/{section}-{topic}-{page}`, and section 0 is the forum index.
 const forumSectionRegex = /^([1-9]\d*)(?:-|$)/
@@ -63,20 +36,18 @@ const moduleHints: Record<UcozModule, string> = {
   stuff: 'ucoz:stuff',
 }
 
-const getFeedTemplates = (origin: string): Array<PlatformFeedTemplate> => {
-  return [
-    ...modules.map((module) => ({ key: moduleHints[module], template: `${origin}/${module}/rss` })),
+const feeds = definePlatformFeeds(
+  [
+    ...modules.map((module) => ({
+      key: moduleHints[module],
+      template: `{scheme}://{host}/${module}/rss`,
+    })),
     // uCoz serves the forum feed as section 0 too.
-    { key: 'ucoz:forum', template: `${origin}/forum/0-0-0-37` },
-    { key: 'ucoz:forum-section', template: `${origin}/forum/{sectionId}-0-0-37` },
-  ]
-}
-
-const tenantFeeds = definePlatformFeeds(getFeedTemplates('{scheme}://{site}.{domain}'), {
-  domains,
-})
-// A site on its own domain is known only by its markers, so its feeds are built but not claimed.
-const siteFeeds = definePlatformFeeds(getFeedTemplates('{scheme}://{host}'), { domains })
+    { key: 'ucoz:forum', template: '{scheme}://{host}/forum/0-0-0-37' },
+    { key: 'ucoz:forum-section', template: '{scheme}://{host}/forum/{sectionId}-0-0-37' },
+  ],
+  { domains },
+)
 
 export const isUcozHeaders = (headers: Headers): boolean => {
   return getCookieNames(headers).some((name) => cookieNameRegex.test(name))
@@ -130,33 +101,26 @@ export const ucozHandler: PlatformHandler = {
       return []
     }
 
-    const site = getTenantSubdomain(url, domains)
-    const pageFeeds = (site ? tenantFeeds : siteFeeds).forUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
     if (!pageFeeds) {
       return []
     }
 
-    const params: PlatformFeedParams = {}
-
-    if (site) {
-      params.site = site
-    }
-
     if (parsed.kind === 'forumSection') {
       return [
-        pageFeeds.getFeedEntry('ucoz:forum-section', { ...params, sectionId: parsed.sectionId }),
-        pageFeeds.getFeedEntry('ucoz:forum', params),
+        pageFeeds.getFeedEntry('ucoz:forum-section', { sectionId: parsed.sectionId }),
+        pageFeeds.getFeedEntry('ucoz:forum'),
       ]
     }
 
     if (parsed.kind === 'module') {
-      return [pageFeeds.getFeedEntry(moduleHints[parsed.module], params)]
+      return [pageFeeds.getFeedEntry(moduleHints[parsed.module])]
     }
 
     // Every site runs the news module, and the home page lists its news.
-    return [pageFeeds.getFeedEntry('ucoz:news', params)]
+    return [pageFeeds.getFeedEntry('ucoz:news')]
   },
 
-  getFeedHint: tenantFeeds.getFeedHint,
+  getFeedHint: feeds.getFeedHint,
 }
