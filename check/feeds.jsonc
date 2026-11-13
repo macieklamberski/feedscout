@@ -854,7 +854,7 @@
     "kktix:events": "https://kafka.kktix.cc/events.atom?locale=zh-TW"
   },
   "koha": {
-    "koha:comments": "https://opac.northsouth.edu/cgi-bin/koha/opac-showreviews.pl?format=rss",
+    "koha:comments": "https://library.hekima.ac.ke/cgi-bin/koha/opac-showreviews.pl?format=rss",
     "koha:list": "https://koha.ffzg.hr/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber=6649",
     "koha:search": "https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-search.pl?q=agua&count=50&sort_by=acqdate_dsc&format=rss"
   },
