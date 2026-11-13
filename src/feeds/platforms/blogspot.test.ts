@@ -143,6 +143,14 @@ describe('blogspotHandler', () => {
           hint: { key: 'blogspot:label', label: 'Label', format: 'rss' },
         },
         {
+          uri: 'https://example.com/feeds/posts/summary/-/Chris%20Rossini',
+          hint: { key: 'blogspot:label-summary', label: 'Label summary', format: 'atom' },
+        },
+        {
+          uri: 'https://example.com/feeds/posts/summary/-/Chris%20Rossini?alt=rss',
+          hint: { key: 'blogspot:label-summary', label: 'Label summary', format: 'rss' },
+        },
+        {
           uri: 'https://example.com/feeds/posts/default',
           hint: { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
         },
@@ -166,6 +174,14 @@ describe('blogspotHandler', () => {
           uri: 'https://example.com/feeds/comments/default?alt=rss',
           hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
         },
+        {
+          uri: 'https://example.com/feeds/comments/summary',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'atom' },
+        },
+        {
+          uri: 'https://example.com/feeds/comments/summary?alt=rss',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'rss' },
+        },
       ]
 
       expect(blogspotHandler.resolve(value)).toEqual(expected)
@@ -181,6 +197,14 @@ describe('blogspotHandler', () => {
         {
           uri: 'https://example.blogspot.com/feeds/posts/default/-/technology?alt=rss',
           hint: { key: 'blogspot:label', label: 'Label', format: 'rss' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/posts/summary/-/technology',
+          hint: { key: 'blogspot:label-summary', label: 'Label summary', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/posts/summary/-/technology?alt=rss',
+          hint: { key: 'blogspot:label-summary', label: 'Label summary', format: 'rss' },
         },
         {
           uri: 'https://example.blogspot.com/feeds/posts/default',
@@ -205,6 +229,14 @@ describe('blogspotHandler', () => {
         {
           uri: 'https://example.blogspot.com/feeds/comments/default?alt=rss',
           hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary?alt=rss',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'rss' },
         },
       ]
 
@@ -238,6 +270,14 @@ describe('blogspotHandler', () => {
           uri: 'https://example.blogspot.com/feeds/comments/default?alt=rss',
           hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
         },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary?alt=rss',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'rss' },
+        },
       ]
 
       expect(blogspotHandler.resolve(value)).toEqual(expected)
@@ -270,6 +310,14 @@ describe('blogspotHandler', () => {
           uri: 'https://example.blogspot.zz/feeds/comments/default?alt=rss',
           hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
         },
+        {
+          uri: 'https://example.blogspot.zz/feeds/comments/summary',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.zz/feeds/comments/summary?alt=rss',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'rss' },
+        },
       ]
 
       expect(blogspotHandler.resolve(value)).toEqual(expected)
@@ -301,6 +349,14 @@ describe('blogspotHandler', () => {
         {
           uri: 'https://example.blogspot.com/feeds/comments/default?alt=rss',
           hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary?alt=rss',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'rss' },
         },
       ]
 
@@ -348,6 +404,14 @@ describe('blogspotHandler', () => {
           uri: 'https://example.blogspot.com/feeds/comments/default?alt=rss',
           hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
         },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary?alt=rss',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'rss' },
+        },
       ]
 
       expect(blogspotHandler.resolve(value, content)).toEqual(expected)
@@ -393,6 +457,14 @@ describe('blogspotHandler', () => {
         {
           uri: 'https://example.blogspot.com/feeds/comments/default?alt=rss',
           hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary?alt=rss',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'rss' },
         },
       ]
 
@@ -444,6 +516,14 @@ describe('blogspotHandler', () => {
           uri: 'https://example.blogspot.com/feeds/comments/default?alt=rss',
           hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
         },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary?alt=rss',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'rss' },
+        },
       ]
 
       expect(blogspotHandler.resolve(value, content)).toEqual(expected)
@@ -477,6 +557,14 @@ describe('blogspotHandler', () => {
           uri: 'https://example.blogspot.com/feeds/comments/default?alt=rss',
           hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
         },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary?alt=rss',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'rss' },
+        },
       ]
 
       expect(blogspotHandler.resolve(value, content)).toEqual(expected)
@@ -492,6 +580,14 @@ describe('blogspotHandler', () => {
         {
           uri: 'https://example.blogspot.com/feeds/posts/default/-/technology?alt=rss',
           hint: { key: 'blogspot:label', label: 'Label', format: 'rss' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/posts/summary/-/technology',
+          hint: { key: 'blogspot:label-summary', label: 'Label summary', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/posts/summary/-/technology?alt=rss',
+          hint: { key: 'blogspot:label-summary', label: 'Label summary', format: 'rss' },
         },
         {
           uri: 'https://example.blogspot.com/feeds/posts/default',
@@ -516,6 +612,14 @@ describe('blogspotHandler', () => {
         {
           uri: 'https://example.blogspot.com/feeds/comments/default?alt=rss',
           hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary?alt=rss',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'rss' },
         },
       ]
 
@@ -649,6 +753,64 @@ describe('blogspotHandler', () => {
       expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the label hint for a feed of two labels', () => {
+      const value = 'https://alice.blogspot.com/feeds/posts/default/-/Books/Comics'
+      const expected: DiscoverUriHint = { key: 'blogspot:label', label: 'Label', format: 'atom' }
+
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the label hint for an RSS feed of two labels', () => {
+      const value = 'https://alice.blogspot.com/feeds/posts/default/-/Books/Comics?alt=rss'
+      const expected: DiscoverUriHint = { key: 'blogspot:label', label: 'Label', format: 'rss' }
+
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the label summary hint for an Atom label summary feed', () => {
+      const value = 'https://alice.blogspot.com/feeds/posts/summary/-/Books'
+      const expected: DiscoverUriHint = {
+        key: 'blogspot:label-summary',
+        label: 'Label summary',
+        format: 'atom',
+      }
+
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the label summary hint for an RSS label summary feed', () => {
+      const value = 'https://alice.blogspot.com/feeds/posts/summary/-/Books?alt=rss'
+      const expected: DiscoverUriHint = {
+        key: 'blogspot:label-summary',
+        label: 'Label summary',
+        format: 'rss',
+      }
+
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the comments summary hint for an Atom comments summary feed', () => {
+      const value = 'https://alice.blogspot.com/feeds/comments/summary'
+      const expected: DiscoverUriHint = {
+        key: 'blogspot:comments-summary',
+        label: 'Comments summary',
+        format: 'atom',
+      }
+
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the comments summary hint for an RSS comments summary feed', () => {
+      const value = 'https://alice.blogspot.com/feeds/comments/summary?alt=rss'
+      const expected: DiscoverUriHint = {
+        key: 'blogspot:comments-summary',
+        label: 'Comments summary',
+        format: 'rss',
+      }
+
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the post comments hint for an Atom post comments feed', () => {
       const value =
         'https://angka-jitu-hoki88.blogspot.com/feeds/53245391660122082/comments/default'
@@ -748,6 +910,18 @@ describe('blogspotHandler', () => {
       [
         'https://angka-jitu-hoki88.blogspot.com/feeds/53245391660122082/comments/default',
         { key: 'blogspot:post-comments', label: 'Post comments', format: 'atom' },
+      ],
+      [
+        'http://alice.blogspot.com/feeds/posts/default/-/Books/Comics',
+        { key: 'blogspot:label', label: 'Label', format: 'atom' },
+      ],
+      [
+        'http://alice.blogspot.com/feeds/posts/summary/-/Books?alt=rss',
+        { key: 'blogspot:label-summary', label: 'Label summary', format: 'rss' },
+      ],
+      [
+        'http://alice.blogspot.com/feeds/comments/summary',
+        { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'atom' },
       ],
     ]
 

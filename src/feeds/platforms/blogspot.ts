@@ -62,6 +62,16 @@ const feeds = definePlatformFeeds(
     },
     { key: 'blogspot:comments', template: '{scheme}://{host}/feeds/comments/full', format: 'atom' },
     {
+      key: 'blogspot:comments-summary',
+      template: '{scheme}://{host}/feeds/comments/summary',
+      format: 'atom',
+    },
+    {
+      key: 'blogspot:comments-summary',
+      template: '{scheme}://{host}/feeds/comments/summary?alt=rss',
+      format: 'rss',
+    },
+    {
       key: 'blogspot:label',
       template: '{scheme}://{host}/feeds/posts/default/-/{label}',
       format: 'atom',
@@ -69,6 +79,38 @@ const feeds = definePlatformFeeds(
     {
       key: 'blogspot:label',
       template: '{scheme}://{host}/feeds/posts/default/-/{label}?alt=rss',
+      format: 'rss',
+    },
+    {
+      key: 'blogspot:label-summary',
+      template: '{scheme}://{host}/feeds/posts/summary/-/{label}',
+      format: 'atom',
+    },
+    {
+      key: 'blogspot:label-summary',
+      template: '{scheme}://{host}/feeds/posts/summary/-/{label}?alt=rss',
+      format: 'rss',
+    },
+    // Several labels, as `/-/{a}/{b}`, give the posts carrying all of them. These rows go after the
+    // single-label ones, which `resolve` builds, since a label can hold a slash.
+    {
+      key: 'blogspot:label',
+      template: '{scheme}://{host}/feeds/posts/default/-/{labels*}',
+      format: 'atom',
+    },
+    {
+      key: 'blogspot:label',
+      template: '{scheme}://{host}/feeds/posts/default/-/{labels*}?alt=rss',
+      format: 'rss',
+    },
+    {
+      key: 'blogspot:label-summary',
+      template: '{scheme}://{host}/feeds/posts/summary/-/{labels*}',
+      format: 'atom',
+    },
+    {
+      key: 'blogspot:label-summary',
+      template: '{scheme}://{host}/feeds/posts/summary/-/{labels*}?alt=rss',
       format: 'rss',
     },
     {
@@ -158,12 +200,16 @@ export const blogspotHandler: PlatformHandler = {
       return [
         pageFeeds.getFeedEntry('blogspot:label', { label: page.label }, 'atom'),
         pageFeeds.getFeedEntry('blogspot:label', { label: page.label }, 'rss'),
+        pageFeeds.getFeedEntry('blogspot:label-summary', { label: page.label }, 'atom'),
+        pageFeeds.getFeedEntry('blogspot:label-summary', { label: page.label }, 'rss'),
         pageFeeds.getFeedEntry('blogspot:posts', {}, 'atom'),
         pageFeeds.getFeedEntry('blogspot:posts', {}, 'rss'),
         pageFeeds.getFeedEntry('blogspot:posts-summary', {}, 'atom'),
         pageFeeds.getFeedEntry('blogspot:posts-summary', {}, 'rss'),
         pageFeeds.getFeedEntry('blogspot:comments', {}, 'atom'),
         pageFeeds.getFeedEntry('blogspot:comments', {}, 'rss'),
+        pageFeeds.getFeedEntry('blogspot:comments-summary', {}, 'atom'),
+        pageFeeds.getFeedEntry('blogspot:comments-summary', {}, 'rss'),
       ]
     }
 
@@ -177,6 +223,8 @@ export const blogspotHandler: PlatformHandler = {
         pageFeeds.getFeedEntry('blogspot:posts-summary', {}, 'rss'),
         pageFeeds.getFeedEntry('blogspot:comments', {}, 'atom'),
         pageFeeds.getFeedEntry('blogspot:comments', {}, 'rss'),
+        pageFeeds.getFeedEntry('blogspot:comments-summary', {}, 'atom'),
+        pageFeeds.getFeedEntry('blogspot:comments-summary', {}, 'rss'),
       ]
     }
 
@@ -187,6 +235,8 @@ export const blogspotHandler: PlatformHandler = {
       pageFeeds.getFeedEntry('blogspot:posts-summary', {}, 'rss'),
       pageFeeds.getFeedEntry('blogspot:comments', {}, 'atom'),
       pageFeeds.getFeedEntry('blogspot:comments', {}, 'rss'),
+      pageFeeds.getFeedEntry('blogspot:comments-summary', {}, 'atom'),
+      pageFeeds.getFeedEntry('blogspot:comments-summary', {}, 'rss'),
     ]
   },
 

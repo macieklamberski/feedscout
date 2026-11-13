@@ -171,9 +171,17 @@
       "https://security.googleblog.com/feeds/comments/default",
       "https://security.googleblog.com/feeds/comments/default?alt=rss"
     ],
+    "blogspot:comments-summary": [
+      "https://security.googleblog.com/feeds/comments/summary",
+      "https://security.googleblog.com/feeds/comments/summary?alt=rss"
+    ],
     "blogspot:label": [
       "https://googleblog.blogspot.com/feeds/posts/default/-/Products",
       "https://googleblog.blogspot.com/feeds/posts/default/-/Products?alt=rss"
+    ],
+    "blogspot:label-summary": [
+      "https://googleblog.blogspot.com/feeds/posts/summary/-/Products",
+      "https://googleblog.blogspot.com/feeds/posts/summary/-/Products?alt=rss"
     ],
     "blogspot:post-comments": [
       "https://security.googleblog.com/feeds/1469360228826887140/comments/default",
