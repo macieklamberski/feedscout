@@ -5,7 +5,7 @@ import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.j
 
 // Discoverability: Discoverable without handler.
 
-export type ShinobiUrl = { kind: 'blog'; blog: string } | { kind: 'customDomain' }
+export type ShinobiUrl = { kind: 'blog'; blog: string }
 
 // Ninja Blog serves its blogs as subdomains of 101 domains. Only its branded one is listed, and a
 // blog on any other is known by the banner its pages print.
@@ -42,10 +42,6 @@ export const isShinobiHtml = (content: string): boolean => {
 }
 
 export const parseShinobiUrl = (url: string): ShinobiUrl | undefined => {
-  if (!isHostOrSubdomainOf(url, domains)) {
-    return { kind: 'customDomain' }
-  }
-
   const blog = getTenantSubdomain(url, domains)
 
   if (!blog) {
@@ -57,20 +53,17 @@ export const parseShinobiUrl = (url: string): ShinobiUrl | undefined => {
 
 export const shinobiHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const parsed = parseShinobiUrl(url)
-
-    if (parsed?.kind === 'customDomain') {
+    if (!isHostOrSubdomainOf(url, domains)) {
       return hasMarker(content, headers, { html: isShinobiHtml })
     }
 
-    return parsed !== undefined
+    return parseShinobiUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const parsed = parseShinobiUrl(url)
     const page = feeds.forUrl(url)
 
-    if (!parsed || !page) {
+    if (!page || (isHostOrSubdomainOf(url, domains) && !parseShinobiUrl(url))) {
       return []
     }
 

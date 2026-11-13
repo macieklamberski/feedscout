@@ -38,18 +38,16 @@ describe('parseShinobiUrl', () => {
     expect(parseShinobiUrl(value)).toEqual(expected)
   })
 
-  it('should return a custom domain for a Ninja Blog domain off the list', () => {
+  it('should return undefined for a Ninja Blog domain off the list', () => {
     const value = 'https://example.3rin.net/'
-    const expected: ShinobiUrl = { kind: 'customDomain' }
 
-    expect(parseShinobiUrl(value)).toEqual(expected)
+    expect(parseShinobiUrl(value)).toBeUndefined()
   })
 
-  it('should return a custom domain for another host', () => {
+  it('should return undefined for another host', () => {
     const value = 'https://example.com/'
-    const expected: ShinobiUrl = { kind: 'customDomain' }
 
-    expect(parseShinobiUrl(value)).toEqual(expected)
+    expect(parseShinobiUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for the www subdomain', () => {
