@@ -80,6 +80,8 @@ const feeds = definePlatformFeeds(
     { key: 'itchio:games', template: 'https://itch.io/games.xml' },
     { key: 'itchio:devlogs', template: 'https://itch.io/devlogs.xml' },
     { key: 'itchio:blog', template: 'https://itch.io/blog.rss' },
+    { key: 'itchio:updates', template: 'https://itch.io/updates.rss' },
+    { key: 'itchio:digest', template: 'https://itch.io/digest.rss' },
     { key: 'itchio:featured', template: 'https://itch.io/feed/featured.xml' },
     { key: 'itchio:new', template: 'https://itch.io/feed/new.xml' },
     { key: 'itchio:sales', template: 'https://itch.io/feed/sales.xml' },
@@ -199,6 +201,8 @@ export const itchioHandler: PlatformHandler = {
       return []
     }
 
+    // The curated feeds, the devlogs, the blog, the platform updates and the digest need no value
+    // from the page, so every page builds them after its own feeds.
     if (parsed.kind === 'game') {
       const pageFeeds = feeds.forUrl(url)
 
@@ -206,51 +210,157 @@ export const itchioHandler: PlatformHandler = {
         return []
       }
 
-      return [pageFeeds.getFeedEntry('itchio:devlog', { game: parsed.game })]
+      return [
+        pageFeeds.getFeedEntry('itchio:devlog', { game: parsed.game }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
+        feeds.getFeedEntry('itchio:updates'),
+        feeds.getFeedEntry('itchio:digest'),
+      ]
     }
 
     if (parsed.kind === 'creator') {
-      return [feeds.getFeedEntry('itchio:creator', { creator: parsed.creator, sort: parsed.sort })]
+      return [
+        feeds.getFeedEntry('itchio:creator', { creator: parsed.creator, sort: parsed.sort }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
+        feeds.getFeedEntry('itchio:updates'),
+        feeds.getFeedEntry('itchio:digest'),
+      ]
     }
 
     if (parsed.kind === 'tag') {
-      return [feeds.getFeedEntry('itchio:tag', { tag: parsed.tag, sort: parsed.sort })]
+      return [
+        feeds.getFeedEntry('itchio:tag', { tag: parsed.tag, sort: parsed.sort }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
+        feeds.getFeedEntry('itchio:updates'),
+        feeds.getFeedEntry('itchio:digest'),
+      ]
     }
 
     if (parsed.kind === 'platform') {
-      return [feeds.getFeedEntry('itchio:platform', { platform: parsed.platform })]
+      return [
+        feeds.getFeedEntry('itchio:platform', { platform: parsed.platform }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
+        feeds.getFeedEntry('itchio:updates'),
+        feeds.getFeedEntry('itchio:digest'),
+      ]
     }
 
     if (parsed.kind === 'genre') {
-      return [feeds.getFeedEntry('itchio:genre', { genre: parsed.genre })]
+      return [
+        feeds.getFeedEntry('itchio:genre', { genre: parsed.genre }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
+        feeds.getFeedEntry('itchio:updates'),
+        feeds.getFeedEntry('itchio:digest'),
+      ]
     }
 
     if (parsed.kind === 'madeWith') {
-      return [feeds.getFeedEntry('itchio:made-with', { engine: parsed.engine })]
+      return [
+        feeds.getFeedEntry('itchio:made-with', { engine: parsed.engine }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
+        feeds.getFeedEntry('itchio:updates'),
+        feeds.getFeedEntry('itchio:digest'),
+      ]
     }
 
     if (parsed.kind === 'listing') {
-      return [feeds.getFeedEntry('itchio:games', { filters: parsed.filters })]
+      return [
+        feeds.getFeedEntry('itchio:games', { filters: parsed.filters }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
+        feeds.getFeedEntry('itchio:updates'),
+        feeds.getFeedEntry('itchio:digest'),
+      ]
     }
 
     if (parsed.kind === 'games' && parsed.sort) {
-      return [feeds.getFeedEntry('itchio:games', { sort: parsed.sort })]
+      return [
+        feeds.getFeedEntry('itchio:games', { sort: parsed.sort }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
+        feeds.getFeedEntry('itchio:updates'),
+        feeds.getFeedEntry('itchio:digest'),
+      ]
     }
 
     if (parsed.kind === 'games') {
-      return [feeds.getFeedEntry('itchio:games')]
+      return [
+        feeds.getFeedEntry('itchio:games'),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
+        feeds.getFeedEntry('itchio:updates'),
+        feeds.getFeedEntry('itchio:digest'),
+      ]
     }
 
     if (parsed.kind === 'devlogs') {
-      return [feeds.getFeedEntry('itchio:devlogs')]
+      return [
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:blog'),
+        feeds.getFeedEntry('itchio:updates'),
+        feeds.getFeedEntry('itchio:digest'),
+      ]
     }
 
     if (parsed.kind === 'blog') {
-      return [feeds.getFeedEntry('itchio:blog')]
+      return [
+        feeds.getFeedEntry('itchio:blog'),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:updates'),
+        feeds.getFeedEntry('itchio:digest'),
+      ]
     }
 
     if (parsed.kind === 'section') {
-      return [feeds.getFeedEntry('itchio:section', { section: parsed.section })]
+      return [
+        feeds.getFeedEntry('itchio:section', { section: parsed.section }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
+        feeds.getFeedEntry('itchio:updates'),
+        feeds.getFeedEntry('itchio:digest'),
+      ]
     }
 
     return [
@@ -259,6 +369,8 @@ export const itchioHandler: PlatformHandler = {
       feeds.getFeedEntry('itchio:sales'),
       feeds.getFeedEntry('itchio:devlogs'),
       feeds.getFeedEntry('itchio:blog'),
+      feeds.getFeedEntry('itchio:updates'),
+      feeds.getFeedEntry('itchio:digest'),
     ]
   },
 
