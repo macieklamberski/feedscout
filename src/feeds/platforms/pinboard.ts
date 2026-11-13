@@ -8,6 +8,7 @@ import { composeHint } from '../../common/utils.js'
 
 export type PinboardUrl =
   | { kind: 'userTag'; username: string; tags: Array<string> }
+  | { kind: 'userSource'; username: string; tags: Array<string>; source: string }
   | { kind: 'user'; username: string }
   | { kind: 'tag'; tags: Array<string> }
   | { kind: 'recent' }
@@ -18,6 +19,7 @@ const feedHosts = ['feeds.pinboard.in']
 
 const userRegex = /^u:(.+)$/i
 const tagRegex = /^t:(.+)$/i
+const sourceRegex = /^from:(.+)$/i
 const recentRegex = /^\/recent\/?$/i
 const tagFeedRegex = /^\/rss\/(?:(?:secret:[^/]+\/)?u:[^/]+\/)?t:[^/]+(?:\/t:[^/]+)*\/?$/i
 
@@ -30,6 +32,22 @@ const feeds = definePlatformFeeds([
   },
   { key: 'pinboard:recent', template: 'https://feeds.pinboard.in/rss/recent/' },
   { key: 'pinboard:popular', template: 'https://feeds.pinboard.in/rss/popular/' },
+  // Bookmarks saved from one source, as `from:twitter`, with or without tags. The row with tags
+  // comes first, so a page with tags builds it.
+  {
+    key: 'pinboard:source',
+    template: 'https://feeds.pinboard.in/rss/u:{username}/t:{tags*}/from:{source}/',
+  },
+  { key: 'pinboard:source', template: 'https://feeds.pinboard.in/rss/u:{username}/from:{source}/' },
+  // The network and starred feeds exist only as private feeds.
+  {
+    key: 'pinboard:network',
+    template: 'https://feeds.pinboard.in/rss/secret:{token}/u:{username}/network/',
+  },
+  {
+    key: 'pinboard:starred',
+    template: 'https://feeds.pinboard.in/rss/secret:{token}/u:{username}/starred/',
+  },
 ])
 
 const composeTagPath = (tags: Array<string>): string => {
@@ -49,6 +67,7 @@ export const parsePinboardUrl = (url: string): PinboardUrl | undefined => {
   // User bookmarks, narrowed by one or more tags: /u:{user}/t:{tag}/t:{tag}/.
   if (username) {
     const tags: Array<string> = []
+    let source: string | undefined
 
     for (const segment of rest) {
       const tag = tagRegex.exec(segment)?.[1]
@@ -56,6 +75,12 @@ export const parsePinboardUrl = (url: string): PinboardUrl | undefined => {
       if (tag) {
         tags.push(tag)
       }
+
+      source = sourceRegex.exec(segment)?.[1] ?? source
+    }
+
+    if (source) {
+      return { kind: 'userSource', username, tags, source }
     }
 
     if (tags.length > 0) {
@@ -97,6 +122,16 @@ export const pinboardHandler: PlatformHandler = {
           uri: `https://feeds.pinboard.in/rss/u:${parsed.username}/${composeTagPath(parsed.tags)}`,
           hint: composeHint('pinboard:tag'),
         },
+      ]
+    }
+
+    if (parsed.kind === 'userSource') {
+      return [
+        feeds.getFeedEntry('pinboard:source', {
+          username: parsed.username,
+          tags: parsed.tags.join('/t:'),
+          source: parsed.source,
+        }),
       ]
     }
 

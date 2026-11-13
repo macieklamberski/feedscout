@@ -17,6 +17,18 @@ describe('parsePinboardUrl', () => {
     expect(parsePinboardUrl('https://pinboard.in/u:example/t:rss/t:atom/')).toEqual(expected)
   })
 
+  it('should return the user tags and source for a user source page', () => {
+    const value = 'https://pinboard.in/u:example/t:rss/from:twitter/'
+    const expected: PinboardUrl = {
+      kind: 'userSource',
+      username: 'example',
+      tags: ['rss'],
+      source: 'twitter',
+    }
+
+    expect(parsePinboardUrl(value)).toEqual(expected)
+  })
+
   it('should return the tags for a site-wide tag page', () => {
     const expected: PinboardUrl = { kind: 'tag', tags: ['rss'] }
 
@@ -62,6 +74,30 @@ describe('pinboardHandler', () => {
         {
           uri: 'https://feeds.pinboard.in/rss/u:example/',
           hint: { key: 'pinboard:bookmarks', label: 'Bookmarks' },
+        },
+      ]
+
+      expect(pinboardHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the source feed for a user source page', () => {
+      const value = 'https://pinboard.in/u:example/from:twitter/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://feeds.pinboard.in/rss/u:example/from:twitter/',
+          hint: { key: 'pinboard:source', label: 'Source' },
+        },
+      ]
+
+      expect(pinboardHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the source feed with tags for a user source page with tags', () => {
+      const value = 'https://pinboard.in/u:example/t:rss/t:atom/from:twitter/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://feeds.pinboard.in/rss/u:example/t:rss/t:atom/from:twitter/',
+          hint: { key: 'pinboard:source', label: 'Source' },
         },
       ]
 
@@ -297,10 +333,32 @@ describe('pinboardHandler', () => {
       expect(pinboardHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a tag feed narrowed by source', () => {
+    it('should return the source hint for a tag feed narrowed by source', () => {
       const value = 'https://feeds.pinboard.in/rss/u:example/t:programming/from:twitter'
+      const expected: DiscoverUriHint = { key: 'pinboard:source', label: 'Source' }
 
-      expect(pinboardHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the source hint for a user feed narrowed by source', () => {
+      const value = 'https://feeds.pinboard.in/rss/u:example/from:twitter'
+      const expected: DiscoverUriHint = { key: 'pinboard:source', label: 'Source' }
+
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the network hint for a private network feed', () => {
+      const value = 'https://feeds.pinboard.in/rss/secret:abc123/u:example/network'
+      const expected: DiscoverUriHint = { key: 'pinboard:network', label: 'Network' }
+
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the starred hint for a private starred feed', () => {
+      const value = 'https://feeds.pinboard.in/rss/secret:abc123/u:example/starred'
+      const expected: DiscoverUriHint = { key: 'pinboard:starred', label: 'Starred' }
+
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a tag feed path on another host', () => {
@@ -337,6 +395,18 @@ describe('pinboardHandler', () => {
       ],
       ['https://feeds.pinboard.in/rss/recent/', { key: 'pinboard:recent', label: 'Recent' }],
       ['https://feeds.pinboard.in/rss/popular/', { key: 'pinboard:popular', label: 'Popular' }],
+      [
+        'http://feeds.pinboard.in/rss/u:example/from:twitter',
+        { key: 'pinboard:source', label: 'Source' },
+      ],
+      [
+        'https://feeds.pinboard.in/rss/secret:abc123/u:example/network',
+        { key: 'pinboard:network', label: 'Network' },
+      ],
+      [
+        'https://feeds.pinboard.in/rss/secret:abc123/u:example/starred/',
+        { key: 'pinboard:starred', label: 'Starred' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

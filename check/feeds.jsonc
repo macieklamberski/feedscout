@@ -1274,8 +1274,11 @@
   },
   "pinboard": {
     "pinboard:bookmarks": "https://feeds.pinboard.in/rss/u:pinboard/",
+    "pinboard:network": { "skip": "A private feed, served only under its owner's token" },
     "pinboard:popular": "https://feeds.pinboard.in/rss/popular/",
     "pinboard:recent": "https://feeds.pinboard.in/rss/recent/",
+    "pinboard:source": "https://feeds.pinboard.in/rss/u:friedelitis/from:twitter",
+    "pinboard:starred": { "skip": "A private feed, served only under its owner's token" },
     "pinboard:tag": [
       "https://feeds.pinboard.in/rss/u:mshook/t:llm/"
       // The site-wide tag feed answered 500 on 2026-09-26 while Pinboard's search backend was down.
