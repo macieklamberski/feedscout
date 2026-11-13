@@ -128,11 +128,12 @@ describe('omnystudioHandler', () => {
       expect(omnystudioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a show feed carrying an access token', () => {
+    it('should return the show hint for a show feed carrying an access token', () => {
       const value =
         'https://omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss?accessToken=example'
+      const expected: DiscoverUriHint = { key: 'omnystudio:show', label: 'Show' }
 
-      expect(omnystudioHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(omnystudioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a show page', () => {
@@ -164,6 +165,8 @@ describe('omnystudioHandler', () => {
       'https://omny.fm/Shows/example-show/playlists/podcast.rss',
       'https://www.omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss',
       'https://omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss',
+      'https://omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss?accessToken=example',
+      'https://omny.fm/shows/example-show/playlists/podcast.rss?accessToken=example',
     ]
 
     it.each(values)('should return %s as itself', async (value) => {
