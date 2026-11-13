@@ -2823,13 +2823,13 @@ Discovers the products or services feed of an ExportersIndia business site, buil
 
 ### Wild Apricot
 
-Discovers the blog and events feeds of a Wild Apricot site. Detected by the `x-lb-server` response header, so `*.wildapricot.org` sites and custom domains are both covered.
+Discovers the blog and events feeds of a Wild Apricot site. Detected by the `x-lb-server` response header, so `{tenant}.wildapricot.org` sites and custom domains are both covered.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/{blog-page}` | Blog (RSS) |
-| `{site}/{blog-page}/{post-id}` | Blog (RSS), from the post's back link |
-| `{site}/{events-page}` | Events (RSS), in the list and calendar views |
+| `{host}/{blog-page}` | Blog (RSS) |
+| `{host}/{blog-page}/{post-id}` | Blog (RSS), from the post's back link |
+| `{host}/{events-page}` | Events (RSS), in the list and calendar views |
 
 > [!NOTE]
 > A post page links `/page-{id}/RSS` as its feed, which answers 404. An event page links no events page, so it gets no feed.
