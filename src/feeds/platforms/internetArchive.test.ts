@@ -176,6 +176,43 @@ describe('internetArchiveHandler', () => {
       expect(internetArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    const otherFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://archive.org/advancedsearch.php?fl%5B%5D=identifier&output=rss&q=creator%3Aalice&rows=50',
+        { key: 'internet-archive:search', label: 'Search' },
+      ],
+      [
+        'http://archive.org/services/collection-rss.php?mediatype=audio',
+        { key: 'internet-archive:mediatype', label: 'Media type' },
+      ],
+      [
+        'https://cors.archive.org/services/collection-rss.php?mediatype=movies',
+        { key: 'internet-archive:mediatype', label: 'Media type' },
+      ],
+      [
+        'https://archive.org/iathreads/posts-display-new.php?forum=example&mode=rss',
+        { key: 'internet-archive:forum', label: 'Forum' },
+      ],
+      [
+        'https://cors.archive.org/iathreads/posts-display-new.php?forum=example&mode=rss',
+        { key: 'internet-archive:forum', label: 'Forum' },
+      ],
+      [
+        'https://archive.org/bookmarks/alice?output=rss',
+        { key: 'internet-archive:bookmarks', label: 'Bookmarks' },
+      ],
+    ]
+
+    it.each(otherFeeds)('should return the hint for %s', (value, expected) => {
+      expect(internetArchiveHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for the feed of every item', () => {
+      const value = 'https://archive.org/services/collection-rss.php'
+
+      expect(internetArchiveHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a feed with an empty query', () => {
       const value = 'https://archive.org/services/collection-rss.php?query='
 
@@ -226,6 +263,19 @@ describe('internetArchiveHandler', () => {
       ],
       ['http://www.archive.org/services/collection-rss.php?query=subject%3Atrance', searchHint],
       ['https://cors.archive.org/services/collection-rss.php?collection=Film_Noir', collectionHint],
+      ['http://archive.org/advancedsearch.php?output=rss&q=creator%3Aalice', searchHint],
+      [
+        'http://www.archive.org/services/collection-rss.php?mediatype=audio',
+        { key: 'internet-archive:mediatype', label: 'Media type' },
+      ],
+      [
+        'http://archive.org/iathreads/posts-display-new.php?forum=example&mode=rss',
+        { key: 'internet-archive:forum', label: 'Forum' },
+      ],
+      [
+        'https://www.archive.org/bookmarks/alice?output=rss',
+        { key: 'internet-archive:bookmarks', label: 'Bookmarks' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

@@ -774,7 +774,10 @@
     ]
   },
   "internetArchive": {
+    "internet-archive:bookmarks": "https://archive.org/bookmarks/despond?output=rss",
     "internet-archive:collection": "https://archive.org/services/collection-rss.php?collection=oldtimeradio",
+    "internet-archive:forum": "https://archive.org/iathreads/posts-display-new.php?forum=prelinger&mode=rss",
+    "internet-archive:mediatype": "https://archive.org/services/collection-rss.php?mediatype=etree",
     "internet-archive:search": "https://archive.org/services/collection-rss.php?query=subject%3Atrance"
   },
   "isProgrammer": {

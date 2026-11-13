@@ -27,6 +27,32 @@ const feeds = definePlatformFeeds([
     key: 'internet-archive:search',
     template: 'https://cors.archive.org/services/collection-rss.php?query={query}',
   },
+  // Claimed only: the advanced search serves the same items as the search feed, and the media
+  // type, forum and bookmarks feeds name values no page here gives.
+  {
+    key: 'internet-archive:search',
+    template: 'https://archive.org/advancedsearch.php?output=rss&q={query}',
+  },
+  {
+    key: 'internet-archive:mediatype',
+    template: 'https://archive.org/services/collection-rss.php?mediatype={mediatype}',
+  },
+  {
+    key: 'internet-archive:mediatype',
+    template: 'https://cors.archive.org/services/collection-rss.php?mediatype={mediatype}',
+  },
+  {
+    key: 'internet-archive:forum',
+    template: 'https://archive.org/iathreads/posts-display-new.php?forum={forum}&mode=rss',
+  },
+  {
+    key: 'internet-archive:forum',
+    template: 'https://cors.archive.org/iathreads/posts-display-new.php?forum={forum}&mode=rss',
+  },
+  {
+    key: 'internet-archive:bookmarks',
+    template: 'https://archive.org/bookmarks/{user}?output=rss',
+  },
 ])
 
 export type InternetArchivePage =
