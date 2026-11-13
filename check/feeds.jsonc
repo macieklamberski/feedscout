@@ -786,11 +786,11 @@
   },
   "itchio": {
     "itchio:blog": "https://itch.io/blog.rss",
+    "itchio:creator": "https://itch.io/games/by-leafo.xml",
     "itchio:devlog": "https://qeresi.itch.io/a-tale-of-crowns/devlog.rss",
     "itchio:devlogs": "https://itch.io/devlogs.xml",
     "itchio:featured": "https://itch.io/feed/featured.xml",
     "itchio:games": [
-      "https://itch.io/games/by-leafo.xml",
       "https://itch.io/games/newest.xml",
       "https://itch.io/games/top-rated.xml",
       "https://itch.io/games/top-sellers.xml",

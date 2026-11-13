@@ -1,5 +1,5 @@
-import { getAnyOf, isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getAnyOf, isAnyOf, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
@@ -9,17 +9,17 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 export type ItchioUrl =
   | { kind: 'game'; creator: string; game: string }
-  | { kind: 'creator'; creator: string }
-  | { kind: 'tag'; tag: string }
+  | { kind: 'creator'; creator: string; sort?: string }
+  | { kind: 'tag'; tag: string; sort?: string }
   | { kind: 'platform'; platform: string }
   | { kind: 'genre'; genre: string }
   | { kind: 'madeWith'; engine: string }
   | { kind: 'games'; sort?: string }
-  | { kind: 'listing'; path: string }
+  | { kind: 'listing'; filters: string }
   | { kind: 'devlogs' }
   | { kind: 'blog' }
   | { kind: 'section'; section: string }
-  | { kind: 'home'; path: string }
+  | { kind: 'home' }
 
 const domains = ['itch.io']
 const mainHosts = ['itch.io', 'www.itch.io']
@@ -31,13 +31,16 @@ const genreRegex = /^\/games\/genre-([^/]+)/i
 const madeWithRegex = /^\/games\/made-with-([^/]+)/i
 const sortRegex = /^\/games\/([^/]+)/i
 // A listing with two or more filters, such as /games/newest/tag-horror, has its feed at its path.
-// length: keeps a single-filter listing out
-const combinedListingRegex = /^\/games(?:\/[^/]+){2,}/i
+const combinedListingRegex = /^\/games\/([^/]+(?:\/[^/]+)+)/i
+// A listing of one sort and one tag or creator, such as newest/tag-horror.
+const sortedListingRegex = /^(?<sort>[^/]+)\/(?<filter>tag|by)-(?<value>[^/]+)$/i
+// The first filter of a feed under the sorted tag and creator rows.
+const listingSortRegex = /^\/games\/([^/]+)\/[^/]/i
 const firstSegmentRegex = /^\/([^/]+)/
 const gamesRegex = /^\/games\/?$/i
 const devlogsRegex = /^\/devlogs\/?$/i
 const blogRegex = /^\/blog\/?$/i
-const feedSuffixRegex = /\.xml$/i
+const sectionFeedRegex = /^\/([^/]+)\.xml\/?$/i
 
 const sections = [
   'tools',
@@ -57,6 +60,33 @@ const sorts = [
   'released',
   'in-development',
 ]
+
+// A URL takes the key of the first row it matches, so the /games/{sort}.xml, /games/{filters*}.xml
+// and /{section}.xml rows come after the rows whose feeds they also match. A sort keeps the key of
+// the listing it sorts, so a sorted tag or creator listing is that tag's or creator's feed, and a
+// listing with any other filters is a games listing.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'itchio:devlog', template: '{scheme}://{host}/{game}/devlog.rss' },
+    { key: 'itchio:creator', template: 'https://itch.io/games/{sort}/by-{creator}.xml' },
+    { key: 'itchio:creator', template: 'https://itch.io/games/by-{creator}.xml' },
+    { key: 'itchio:tag', template: 'https://itch.io/games/{sort}/tag-{tag}.xml' },
+    { key: 'itchio:tag', template: 'https://itch.io/games/tag-{tag}.xml' },
+    { key: 'itchio:platform', template: 'https://itch.io/games/platform-{platform}.xml' },
+    { key: 'itchio:genre', template: 'https://itch.io/games/genre-{genre}.xml' },
+    { key: 'itchio:made-with', template: 'https://itch.io/games/made-with-{engine}.xml' },
+    { key: 'itchio:games', template: 'https://itch.io/games/{sort}.xml' },
+    { key: 'itchio:games', template: 'https://itch.io/games/{filters*}.xml' },
+    { key: 'itchio:games', template: 'https://itch.io/games.xml' },
+    { key: 'itchio:devlogs', template: 'https://itch.io/devlogs.xml' },
+    { key: 'itchio:blog', template: 'https://itch.io/blog.rss' },
+    { key: 'itchio:featured', template: 'https://itch.io/feed/featured.xml' },
+    { key: 'itchio:new', template: 'https://itch.io/feed/new.xml' },
+    { key: 'itchio:sales', template: 'https://itch.io/feed/sales.xml' },
+    { key: 'itchio:section', template: 'https://itch.io/{section}.xml' },
+  ],
+  { domains },
+)
 
 export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
   if (!isHostOf(url, mainHosts) && !isSubdomainOf(url, domains)) {
@@ -82,70 +112,79 @@ export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
     return { kind: 'creator', creator }
   }
 
-  // A listing's feed URL, such as /games/tag-horror.xml, names its page too.
-  const listingPath = pathname.replace(feedSuffixRegex, '')
-  const combinedListing = listingPath.match(combinedListingRegex)?.[0]
+  const filters = pathname.match(combinedListingRegex)?.[1]
 
-  if (combinedListing) {
-    return { kind: 'listing', path: combinedListing }
+  if (filters) {
+    const sorted = sortedListingRegex.exec(filters)?.groups
+    const sort = getAnyOf(sorted?.sort, sorts)
+
+    if (sorted && sort && isAnyOf(sorted.filter, 'tag')) {
+      return { kind: 'tag', tag: sorted.value, sort }
+    }
+
+    if (sorted && sort) {
+      return { kind: 'creator', creator: sorted.value, sort }
+    }
+
+    return { kind: 'listing', filters }
   }
 
-  const creator = listingPath.match(byUserRegex)?.[1]
+  const creator = pathname.match(byUserRegex)?.[1]
 
   if (creator) {
     return { kind: 'creator', creator }
   }
 
-  const tag = listingPath.match(tagRegex)?.[1]
+  const tag = pathname.match(tagRegex)?.[1]
 
   if (tag) {
     return { kind: 'tag', tag }
   }
 
-  const platform = listingPath.match(platformRegex)?.[1]
+  const platform = pathname.match(platformRegex)?.[1]
 
   if (platform) {
     return { kind: 'platform', platform }
   }
 
-  const genre = listingPath.match(genreRegex)?.[1]
+  const genre = pathname.match(genreRegex)?.[1]
 
   if (genre) {
     return { kind: 'genre', genre }
   }
 
-  const engine = listingPath.match(madeWithRegex)?.[1]
+  const engine = pathname.match(madeWithRegex)?.[1]
 
   if (engine) {
     return { kind: 'madeWith', engine }
   }
 
-  const sort = getAnyOf(listingPath.match(sortRegex)?.[1], sorts)
+  const sort = getAnyOf(pathname.match(sortRegex)?.[1], sorts)
 
   if (sort) {
     return { kind: 'games', sort }
   }
 
-  if (gamesRegex.test(listingPath)) {
+  if (gamesRegex.test(pathname)) {
     return { kind: 'games' }
   }
 
-  if (devlogsRegex.test(listingPath)) {
+  if (devlogsRegex.test(pathname)) {
     return { kind: 'devlogs' }
   }
 
-  if (blogRegex.test(listingPath)) {
+  if (blogRegex.test(pathname)) {
     return { kind: 'blog' }
   }
 
   // /{section} (tools, game-assets, soundtracks, physical-games, books, comics, misc)
-  const section = getAnyOf(listingPath.match(firstSegmentRegex)?.[1], sections)
+  const section = getAnyOf(pathname.match(firstSegmentRegex)?.[1], sections)
 
   if (section) {
     return { kind: 'section', section }
   }
 
-  return { kind: 'home', path: pathname }
+  return { kind: 'home' }
 }
 
 export const itchioHandler: PlatformHandler = {
@@ -161,109 +200,91 @@ export const itchioHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'game') {
-      return [
-        {
-          uri: `https://${parsed.creator}.itch.io/${parsed.game}/devlog.rss`,
-          hint: composeHint('itchio:devlog'),
-        },
-      ]
+      const pageFeeds = feeds.forUrl(url)
+
+      if (!pageFeeds) {
+        return []
+      }
+
+      return [pageFeeds.getFeedEntry('itchio:devlog', { game: parsed.game })]
     }
 
     if (parsed.kind === 'creator') {
-      return [
-        {
-          uri: `https://itch.io/games/by-${parsed.creator}.xml`,
-          hint: composeHint('itchio:games'),
-        },
-      ]
+      return [feeds.getFeedEntry('itchio:creator', { creator: parsed.creator, sort: parsed.sort })]
     }
 
     if (parsed.kind === 'tag') {
-      return [
-        {
-          uri: `https://itch.io/games/tag-${parsed.tag}.xml`,
-          hint: composeHint('itchio:tag'),
-        },
-      ]
+      return [feeds.getFeedEntry('itchio:tag', { tag: parsed.tag, sort: parsed.sort })]
     }
 
     if (parsed.kind === 'platform') {
-      return [
-        {
-          uri: `https://itch.io/games/platform-${parsed.platform}.xml`,
-          hint: composeHint('itchio:platform'),
-        },
-      ]
+      return [feeds.getFeedEntry('itchio:platform', { platform: parsed.platform })]
     }
 
     if (parsed.kind === 'genre') {
-      return [
-        {
-          uri: `https://itch.io/games/genre-${parsed.genre}.xml`,
-          hint: composeHint('itchio:genre'),
-        },
-      ]
+      return [feeds.getFeedEntry('itchio:genre', { genre: parsed.genre })]
     }
 
     if (parsed.kind === 'madeWith') {
-      return [
-        {
-          uri: `https://itch.io/games/made-with-${parsed.engine}.xml`,
-          hint: composeHint('itchio:made-with'),
-        },
-      ]
+      return [feeds.getFeedEntry('itchio:made-with', { engine: parsed.engine })]
     }
 
     if (parsed.kind === 'listing') {
-      return [{ uri: `https://itch.io${parsed.path}.xml`, hint: composeHint('itchio:games') }]
+      return [feeds.getFeedEntry('itchio:games', { filters: parsed.filters })]
     }
 
     if (parsed.kind === 'games' && parsed.sort) {
-      return [
-        {
-          uri: `https://itch.io/games/${parsed.sort}.xml`,
-          hint: composeHint('itchio:games'),
-        },
-      ]
+      return [feeds.getFeedEntry('itchio:games', { sort: parsed.sort })]
     }
 
     if (parsed.kind === 'games') {
-      return [{ uri: 'https://itch.io/games.xml', hint: composeHint('itchio:games') }]
+      return [feeds.getFeedEntry('itchio:games')]
     }
 
     if (parsed.kind === 'devlogs') {
-      return [{ uri: 'https://itch.io/devlogs.xml', hint: composeHint('itchio:devlogs') }]
+      return [feeds.getFeedEntry('itchio:devlogs')]
     }
 
     if (parsed.kind === 'blog') {
-      return [{ uri: 'https://itch.io/blog.rss', hint: composeHint('itchio:blog') }]
+      return [feeds.getFeedEntry('itchio:blog')]
     }
 
     if (parsed.kind === 'section') {
-      return [
-        {
-          uri: `https://itch.io/${parsed.section}.xml`,
-          hint: composeHint('itchio:section'),
-        },
-      ]
+      return [feeds.getFeedEntry('itchio:section', { section: parsed.section })]
     }
 
-    // Root page: curated feeds + itch.io blog.
-    const uris: Array<DiscoverUriEntry> = []
+    return [
+      feeds.getFeedEntry('itchio:featured'),
+      feeds.getFeedEntry('itchio:new'),
+      feeds.getFeedEntry('itchio:sales'),
+      feeds.getFeedEntry('itchio:devlogs'),
+      feeds.getFeedEntry('itchio:blog'),
+    ]
+  },
 
-    uris.push({ uri: 'https://itch.io/feed/featured.xml', hint: composeHint('itchio:featured') })
-    uris.push({ uri: 'https://itch.io/feed/new.xml', hint: composeHint('itchio:new') })
-    uris.push({ uri: 'https://itch.io/feed/sales.xml', hint: composeHint('itchio:sales') })
-    uris.push({ uri: 'https://itch.io/devlogs.xml', hint: composeHint('itchio:devlogs') })
-    uris.push({ uri: 'https://itch.io/blog.rss', hint: composeHint('itchio:blog') })
+  // itch.io serves its sitemap at /sitemap.xml, so a single-segment feed is a section feed only
+  // for a section the platform lists. A sorted tag or creator row takes any first filter, and one
+  // that is no sort makes the feed a games listing.
+  getFeedHint: (url) => {
+    const parsedUrl = parseUrl(url)
+    const hint = feeds.getFeedHint(url)
 
-    // A site feed URL, such as /feed/featured.xml, names only itself.
-    const siteFeed = uris.find((entry) => isAnyOf(`https://itch.io${parsed.path}`, entry.uri))
-
-    if (siteFeed) {
-      return [siteFeed]
+    if (!parsedUrl || !hint) {
+      return
     }
 
-    return uris
+    const section = parsedUrl.pathname.match(sectionFeedRegex)?.[1]
+
+    if (hint.key === 'itchio:section' && !isAnyOf(section, sections)) {
+      return
+    }
+
+    const sort = parsedUrl.pathname.match(listingSortRegex)?.[1]
+
+    if (isAnyOf(hint.key, ['itchio:tag', 'itchio:creator']) && sort && !getAnyOf(sort, sorts)) {
+      return composeHint('itchio:games')
+    }
+
+    return hint
   },
 }
