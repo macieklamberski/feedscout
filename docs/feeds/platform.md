@@ -745,7 +745,7 @@ Discovers RSS and JSON feeds for Fireside.fm-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.fireside.fm` | Podcast (RSS + JSON) |
+| `{podcast}.fireside.fm` | Podcast (RSS + JSON) |
 
 ### Firstory
 
