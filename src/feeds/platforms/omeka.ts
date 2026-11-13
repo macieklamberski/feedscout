@@ -1,5 +1,4 @@
 import { decodePercent, isAnyOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -207,9 +206,8 @@ export const omekaHandler: PlatformHandler = {
       return []
     }
 
-    const browseUrl = `${page.rootUrl}/items/browse`
-
     if (page.kind === 'browse') {
+      const browseUrl = `${page.rootUrl}/items/browse`
       const key = hasFilter(new URLSearchParams(page.query))
         ? 'omeka:filtered-items'
         : 'omeka:items'
@@ -229,27 +227,25 @@ export const omekaHandler: PlatformHandler = {
       ]
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (page.kind === 'item') {
-      uris.push({
-        uri: `${page.rootUrl}/items/show/${page.id}?output=atom`,
-        hint: composeHint('omeka:item', 'atom'),
-      })
+      return [
+        feeds.getFeedEntry('omeka:item', { root: page.rootUrl, id: page.id }, 'atom'),
+        feeds.getFeedEntry('omeka:items', { root: page.rootUrl }, 'rss'),
+        feeds.getFeedEntry('omeka:items', { root: page.rootUrl }, 'atom'),
+      ]
     }
 
-    uris.push(
-      { uri: `${browseUrl}?output=rss2`, hint: composeHint('omeka:items', 'rss') },
-      { uri: `${browseUrl}?output=atom`, hint: composeHint('omeka:items', 'atom') },
-    )
-
-    return uris
+    return [
+      feeds.getFeedEntry('omeka:items', { root: page.rootUrl }, 'rss'),
+      feeds.getFeedEntry('omeka:items', { root: page.rootUrl }, 'atom'),
+    ]
   },
 
   getFeedHint: (url) => {
     const hint = feeds.getFeedHint(url)
+    const parsedUrl = parseUrl(url)
 
-    if (hint?.key !== 'omeka:items' || !hasFilter(new URL(url).searchParams)) {
+    if (hint?.key !== 'omeka:items' || !parsedUrl || !hasFilter(parsedUrl.searchParams)) {
       return hint
     }
 
