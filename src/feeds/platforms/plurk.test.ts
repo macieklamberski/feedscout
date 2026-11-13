@@ -72,7 +72,7 @@ describe('plurkHandler', () => {
       const value = 'https://www.plurk.com/alice'
       const expected = [
         {
-          uri: 'https://www.plurk.com/alice.xml',
+          uri: 'https://www.plurk.com/user/alice.xml',
           hint: { key: 'plurk:plurks', label: 'Plurks' },
         },
       ]
@@ -84,7 +84,7 @@ describe('plurkHandler', () => {
       const value = 'https://plurk.com/alice/'
       const expected = [
         {
-          uri: 'https://www.plurk.com/alice.xml',
+          uri: 'https://www.plurk.com/user/alice.xml',
           hint: { key: 'plurk:plurks', label: 'Plurks' },
         },
       ]
@@ -96,7 +96,7 @@ describe('plurkHandler', () => {
       const value = 'https://www.plurk.com/u/alice'
       const expected = [
         {
-          uri: 'https://www.plurk.com/alice.xml',
+          uri: 'https://www.plurk.com/user/alice.xml',
           hint: { key: 'plurk:plurks', label: 'Plurks' },
         },
       ]
@@ -108,7 +108,7 @@ describe('plurkHandler', () => {
       const value = 'https://www.plurk.com/m/alice/friends'
       const expected = [
         {
-          uri: 'https://www.plurk.com/alice.xml',
+          uri: 'https://www.plurk.com/user/alice.xml',
           hint: { key: 'plurk:plurks', label: 'Plurks' },
         },
       ]
@@ -179,8 +179,12 @@ describe('plurkHandler', () => {
   })
 
   describe('discoverUrisFromPlatform', () => {
-    it('should return a user feed under /user/ as itself', async () => {
-      const value = 'https://www.plurk.com/user/alice.xml'
+    const ownFeeds: Array<string> = [
+      'https://www.plurk.com/user/alice.xml',
+      'https://www.plurk.com/alice.xml',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [plurkHandler],
