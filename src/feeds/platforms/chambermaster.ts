@@ -1,5 +1,5 @@
 import { getPathSegments, isAnyOf, isSubdomainOf } from 'trousse'
-import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
@@ -10,8 +10,8 @@ export type ChambermasterUrl = {
   kind: 'events' | 'directory' | 'jobs' | 'hotDeals' | 'marketSpace' | 'news' | 'memberToMember'
 }
 
-// A chamber on its platform subdomain serves the feeds only over http. Over https every feed
-// redirects to the sign-in page.
+// A chamber's feeds on its chambermaster.com or memberzone.com subdomain redirect to the sign-in
+// page over http and https alike, so the table only claims them there.
 const domains = ['chambermaster.com', 'memberzone.com']
 // A preview host keeps the page's own scheme, and serves the feeds over both. It is one label
 // under gochambermaster.com or under its preview subdomain.
@@ -99,12 +99,11 @@ export const chambermasterHandler: PlatformHandler = {
     const parsed = parseChambermasterUrl(url)
     const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed || !pageFeeds) {
+    if (!parsed || !pageFeeds || isSubdomainOf(url, domains)) {
       return []
     }
 
-    const params: PlatformFeedParams = isSubdomainOf(url, domains) ? { scheme: 'http' } : {}
-    const feedEntry = (key: string) => pageFeeds.getFeedEntry(key, params)
+    const feedEntry = (key: string) => pageFeeds.getFeedEntry(key)
 
     if (parsed.kind === 'events') {
       return [

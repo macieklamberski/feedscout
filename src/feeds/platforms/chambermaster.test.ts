@@ -152,40 +152,16 @@ describe('chambermasterHandler', () => {
       expect(chambermasterHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the event feeds over http on a memberzone.com subdomain', () => {
+    it('should return empty array on a memberzone.com subdomain', () => {
       const value = 'https://examplechamber.memberzone.com/events'
-      const expected = [
-        {
-          uri: 'http://examplechamber.memberzone.com/Feed/rss/UpcomingEvents.rss',
-          hint: { key: 'chambermaster:upcoming-events', label: 'Upcoming events' },
-        },
-        {
-          uri: 'http://examplechamber.memberzone.com/Feed/rss/NewEvents.rss',
-          hint: { key: 'chambermaster:new-events', label: 'New events' },
-        },
-        {
-          uri: 'http://examplechamber.memberzone.com/Feed/rss/FeaturedEvents.rss',
-          hint: { key: 'chambermaster:featured-events', label: 'Featured events' },
-        },
-      ]
 
-      expect(chambermasterHandler.resolve(value)).toEqual(expected)
+      expect(chambermasterHandler.resolve(value)).toEqual([])
     })
 
-    it('should return the member feeds over http on a chambermaster.com subdomain', () => {
-      const value = 'https://examplechamber.chambermaster.com/list/searchalpha/a'
-      const expected = [
-        {
-          uri: 'http://examplechamber.chambermaster.com/Feed/rss/NewMembers.rss',
-          hint: { key: 'chambermaster:new-members', label: 'New members' },
-        },
-        {
-          uri: 'http://examplechamber.chambermaster.com/Feed/rss/FeaturedMembers.rss',
-          hint: { key: 'chambermaster:featured-members', label: 'Featured members' },
-        },
-      ]
+    it('should return empty array on a chambermaster.com subdomain', () => {
+      const value = 'http://examplechamber.chambermaster.com/list/searchalpha/a'
 
-      expect(chambermasterHandler.resolve(value)).toEqual(expected)
+      expect(chambermasterHandler.resolve(value)).toEqual([])
     })
 
     it('should keep the page origin on a gochambermaster.com preview host', () => {
