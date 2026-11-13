@@ -42,32 +42,32 @@ const feeds = definePlatformFeeds(
   [
     {
       key: 'omeka:items',
-      template: '{scheme}://{tenant}.{domain}/items/browse?output=rss2',
+      template: '{root}/items/browse?output=rss2',
       format: 'rss',
     },
     {
       key: 'omeka:items',
-      template: '{scheme}://{tenant}.{domain}/items/browse?output=atom',
+      template: '{root}/items/browse?output=atom',
       format: 'atom',
     },
     {
       key: 'omeka:items',
-      template: '{scheme}://{tenant}.{domain}/items?output=rss2',
+      template: '{root}/items?output=rss2',
       format: 'rss',
     },
     {
       key: 'omeka:items',
-      template: '{scheme}://{tenant}.{domain}/items?output=atom',
+      template: '{root}/items?output=atom',
       format: 'atom',
     },
     {
       key: 'omeka:item',
-      template: '{scheme}://{tenant}.{domain}/items/show/{id}?output=atom',
+      template: '{root}/items/show/{id}?output=atom',
       format: 'atom',
     },
     {
       key: 'omeka:item',
-      template: '{scheme}://{tenant}.{domain}/exhibits/show/{exhibit}/item/{id}?output=atom',
+      template: '{root}/exhibits/show/{exhibit}/item/{id}?output=atom',
       format: 'atom',
     },
   ],
