@@ -54,19 +54,28 @@ export const niconicoHandler: PlatformHandler = {
     }
 
     const params = { channel: parsed.channel }
-    const video = feeds.getFeedEntry('niconico:videos', params)
-    const live = feeds.getFeedEntry('niconico:live', params)
-    const blog = feeds.getFeedEntry('niconico:blog', params)
 
     if (parsed.kind === 'live') {
-      return [live, video, blog]
+      return [
+        feeds.getFeedEntry('niconico:live', params),
+        feeds.getFeedEntry('niconico:videos', params),
+        feeds.getFeedEntry('niconico:blog', params),
+      ]
     }
 
     if (parsed.kind === 'blomaga') {
-      return [blog, video, live]
+      return [
+        feeds.getFeedEntry('niconico:blog', params),
+        feeds.getFeedEntry('niconico:videos', params),
+        feeds.getFeedEntry('niconico:live', params),
+      ]
     }
 
-    return [video, live, blog]
+    return [
+      feeds.getFeedEntry('niconico:videos', params),
+      feeds.getFeedEntry('niconico:live', params),
+      feeds.getFeedEntry('niconico:blog', params),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
