@@ -14,7 +14,8 @@ const domains = ['blog.2nt.com', 'fc2.net']
 const numberedSubdomainRegex = /^(?<blog>[^.]+)\.blog\d*$/i
 // A blog on fc2.com is one label under blog.fc2.com or a numbered blog{n}.fc2.com.
 const blogDomainRegex = /^blog\d*\.fc2\.com$/i
-const categoryPathRegex = /^\/blog-category-(\d+)\.html$/i
+// A category page past the first is /blog-category-{n}-{page}.html.
+const categoryPathRegex = /^\/blog-category-(\d+)(?:-\d+)?\.html$/i
 
 const feeds = definePlatformFeeds(
   [

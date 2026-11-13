@@ -36,6 +36,13 @@ describe('parseFc2Url', () => {
     expect(parseFc2Url(value)).toEqual(expected)
   })
 
+  it('should return the category for a later page of a category', () => {
+    const value = 'https://someone.blog.fc2.com/blog-category-5-1.html'
+    const expected: Fc2Url = { kind: 'blog', category: '5' }
+
+    expect(parseFc2Url(value)).toEqual(expected)
+  })
+
   it('should return the category for a category query', () => {
     const value = 'http://someone.blog26.fc2.com/?cat=5'
     const expected: Fc2Url = { kind: 'blog', category: '5' }
