@@ -652,6 +652,30 @@ describe('githubHandler', () => {
 
       expect(githubHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should build the directory history feed without the trailing slash of the page', () => {
+      const value = 'https://github.com/alice/example/commits/main/src/'
+      const expected = [
+        {
+          uri: 'https://github.com/alice/example/releases.atom',
+          hint: { key: 'github:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://github.com/alice/example/commits.atom',
+          hint: { key: 'github:commits', label: 'Commits' },
+        },
+        {
+          uri: 'https://github.com/alice/example/tags.atom',
+          hint: { key: 'github:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://github.com/alice/example/commits/main/src.atom',
+          hint: { key: 'github:file-history', label: 'File history' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
   })
 
   describe('getFeedHint', () => {

@@ -1,9 +1,6 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
-import type { PlatformFeedParams } from '../../common/uris/platform/feeds.js'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -27,9 +24,9 @@ const wikiRegex = /^\/[^/]+\/[^/]+\/wiki(?:\/|$)/i
 const discussionsRegex = /^\/[^/]+\/[^/]+\/discussions(?:\/|$)/i
 const discussionCategoryRegex = /^\/[^/]+\/[^/]+\/discussions\/categories\/([^/]+)/i
 const branchRegex = /^\/[^/]+\/[^/]+\/(?:tree|commits)\/([^/]+)\/?$/i
-const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/(.+)/i
+const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/([^/].*?)\/*$/i
+// suffixes: GitHub's own user routes, a name with .atom, .gpg, .keys or .png
 const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png)$/i
-const fileHistoryFeedRegex = /^\/[^/]+\/[^/]+\/commits\/[^/]+\/.+\.atom\/?$/i
 
 const feeds = definePlatformFeeds([
   { key: 'github:activity', template: 'https://github.com/{owner}.atom' },
@@ -51,20 +48,11 @@ const feeds = definePlatformFeeds([
     key: 'github:branch-commits',
     template: 'https://github.com/{owner}/{repo}/commits/{branch}.atom',
   },
+  {
+    key: 'github:file-history',
+    template: 'https://github.com/{owner}/{repo}/commits/{branch}/{path*}.atom',
+  },
 ])
-
-const getDiscussionFeeds = (
-  params: PlatformFeedParams,
-  category?: string,
-): Array<DiscoverUriEntry> => {
-  const uris = [feeds.getFeedEntry('github:discussions', params)]
-
-  if (category) {
-    uris.push(feeds.getFeedEntry('github:discussion-category', { ...params, category }))
-  }
-
-  return uris
-}
 
 const getRepoSection = (pathname: string): 'wiki' | 'discussions' | undefined => {
   if (wikiRegex.test(pathname)) {
@@ -137,51 +125,80 @@ export const githubHandler: PlatformHandler = {
 
     // Organization discussions page: /orgs/{org}/discussions.
     if (parsed.kind === 'discussions') {
-      return getDiscussionFeeds({ org: parsed.org }, parsed.discussionCategory)
+      const { org, discussionCategory } = parsed
+
+      if (discussionCategory) {
+        return [
+          feeds.getFeedEntry('github:discussions', { org }),
+          feeds.getFeedEntry('github:discussion-category', { org, category: discussionCategory }),
+        ]
+      }
+
+      return [feeds.getFeedEntry('github:discussions', { org })]
     }
 
     const { owner, repo, section, discussionCategory, branch, file } = parsed
-    const uris = [
-      feeds.getFeedEntry('github:releases', { owner, repo }),
-      feeds.getFeedEntry('github:commits', { owner, repo }),
-      feeds.getFeedEntry('github:tags', { owner, repo }),
-    ]
+    const params = { owner, repo }
 
     if (section === 'wiki') {
-      uris.push(feeds.getFeedEntry('github:wiki', { owner, repo }))
+      return [
+        feeds.getFeedEntry('github:releases', params),
+        feeds.getFeedEntry('github:commits', params),
+        feeds.getFeedEntry('github:tags', params),
+        feeds.getFeedEntry('github:wiki', params),
+      ]
+    }
+
+    if (section === 'discussions' && discussionCategory) {
+      return [
+        feeds.getFeedEntry('github:releases', params),
+        feeds.getFeedEntry('github:commits', params),
+        feeds.getFeedEntry('github:tags', params),
+        feeds.getFeedEntry('github:discussions', params),
+        feeds.getFeedEntry('github:discussion-category', {
+          ...params,
+          category: discussionCategory,
+        }),
+      ]
     }
 
     if (section === 'discussions') {
-      uris.push(...getDiscussionFeeds({ owner, repo }, discussionCategory))
+      return [
+        feeds.getFeedEntry('github:releases', params),
+        feeds.getFeedEntry('github:commits', params),
+        feeds.getFeedEntry('github:tags', params),
+        feeds.getFeedEntry('github:discussions', params),
+      ]
     }
 
     if (branch) {
-      uris.push(feeds.getFeedEntry('github:branch-commits', { owner, repo, branch }))
+      return [
+        feeds.getFeedEntry('github:releases', params),
+        feeds.getFeedEntry('github:commits', params),
+        feeds.getFeedEntry('github:tags', params),
+        feeds.getFeedEntry('github:branch-commits', { ...params, branch }),
+      ]
     }
 
-    // The file path keeps its slashes, so it is written outside the table.
     if (file) {
-      uris.push({
-        uri: `https://github.com/${owner}/${repo}/commits/${file.branch}/${file.path}.atom`,
-        hint: composeHint('github:file-history'),
-      })
+      return [
+        feeds.getFeedEntry('github:releases', params),
+        feeds.getFeedEntry('github:commits', params),
+        feeds.getFeedEntry('github:tags', params),
+        feeds.getFeedEntry('github:file-history', {
+          ...params,
+          branch: file.branch,
+          path: file.path,
+        }),
+      ]
     }
 
-    return uris
+    return [
+      feeds.getFeedEntry('github:releases', params),
+      feeds.getFeedEntry('github:commits', params),
+      feeds.getFeedEntry('github:tags', params),
+    ]
   },
 
-  getFeedHint: (url) => {
-    const hint = feeds.getFeedHint(url)
-
-    if (hint) {
-      return hint
-    }
-
-    const parsedUrl = parseUrl(url)
-
-    // A file history feed carries a file path of any depth, which a template segment cannot hold.
-    if (parsedUrl && isHostOf(parsedUrl, hosts) && fileHistoryFeedRegex.test(parsedUrl.pathname)) {
-      return composeHint('github:file-history')
-    }
-  },
+  getFeedHint: feeds.getFeedHint,
 }
