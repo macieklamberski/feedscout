@@ -1,16 +1,6 @@
-import {
-  composeQuery,
-  decodeSegment,
-  getAnyOf,
-  getQueryParam,
-  isAnyOf,
-  isHostOf,
-  parseUrl,
-} from 'trousse'
-import type { DiscoverUriHint } from '../../common/types.js'
+import { decodeSegment, getAnyOf, getQueryParam, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers category, home, newEntriesCategory, user (html).
@@ -20,7 +10,7 @@ export type HatenaBookmarkUrl =
   | { kind: 'hotentry'; category?: string }
   | { kind: 'entrylist'; category?: string }
   | { kind: 'search'; query: string; params: Record<string, string> }
-  | { kind: 'site'; site: string; params: Record<string, string> }
+  | { kind: 'site'; site: string; sort?: string }
   | { kind: 'user'; username: string }
   | { kind: 'home' }
 
@@ -29,7 +19,7 @@ const hosts = ['b.hatena.ne.jp']
 const listRegex = /^\/(hotentry|entrylist)(?:\/([a-z]+))?\/?$/i
 const queryRegex = /^\/q(?:\/(.*))?$/i
 const searchRegex = /^\/search\/(tag|text|title)\/?$/i
-const siteRegex = /^\/site\/([^/].*)/i
+const siteRegex = /^\/site\/([^/].*?)\/*$/i
 
 // A Hatena ID starts with a letter. The user feed at /{id}.rss carries the ID too.
 const userRegex = /^\/([a-z][\w-]*?)(?:\.rss)?(?:\/|$)/i
@@ -56,8 +46,7 @@ const searchFilters = ['target', 'sort', 'users', 'date_range', 'safe']
 
 // The first search row names every filter the page carries. `resolve` passes a filter the page
 // lacks as empty, which the query leaves out, and the bare row reads a feed without all of them.
-// A site feed carries the site's whole path, more segments than a placeholder holds, so
-// `getSiteFeedHint` reads it.
+// A site feed carries the site's whole path, and answers the same with or without a trailing slash.
 const feeds = definePlatformFeeds([
   { key: 'hatena-bookmark:hot', template: 'https://b.hatena.ne.jp/hotentry.rss' },
   { key: 'hatena-bookmark:hot', template: 'https://b.hatena.ne.jp/hotentry/all.rss' },
@@ -82,6 +71,11 @@ const feeds = definePlatformFeeds([
     key: 'hatena-bookmark:user-tag',
     template: 'https://b.hatena.ne.jp/{username}/bookmark.rss?tag={tag}',
   },
+  {
+    key: 'hatena-bookmark:site',
+    template: 'https://b.hatena.ne.jp/site/{site*}?sort={sort}&mode=rss',
+  },
+  { key: 'hatena-bookmark:site', template: 'https://b.hatena.ne.jp/site/{site*}?mode=rss' },
 ])
 
 const copySearchFilters = (
@@ -151,10 +145,7 @@ export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefin
 
   // The site page keeps only its sort order in its own feed link.
   if (site) {
-    const sort = getQueryParam(searchParams, 'sort')
-    const params: Record<string, string> = sort ? { sort } : {}
-
-    return { kind: 'site', site, params }
+    return { kind: 'site', site, sort: getQueryParam(searchParams, 'sort') }
   }
 
   const username = pathname.match(userRegex)?.[1]
@@ -164,21 +155,6 @@ export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefin
   }
 
   return { kind: 'user', username }
-}
-
-// A site feed is the site page with `mode=rss`, whatever else its query carries.
-const getSiteFeedHint = (url: string): DiscoverUriHint | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts) || !siteRegex.test(parsedUrl.pathname)) {
-    return
-  }
-
-  if (!isAnyOf(getQueryParam(parsedUrl, 'mode'), 'rss')) {
-    return
-  }
-
-  return composeHint('hatena-bookmark:site')
 }
 
 export const hatenaBookmarkHandler: PlatformHandler = {
@@ -226,14 +202,7 @@ export const hatenaBookmarkHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'site') {
-      const query = composeQuery({ ...parsed.params, mode: 'rss' })
-
-      return [
-        {
-          uri: `https://b.hatena.ne.jp/site/${parsed.site}${query}`,
-          hint: composeHint('hatena-bookmark:site'),
-        },
-      ]
+      return [feeds.getFeedEntry('hatena-bookmark:site', { site: parsed.site, sort: parsed.sort })]
     }
 
     // User bookmarks: /{username} or /{username}/bookmark.
@@ -244,7 +213,5 @@ export const hatenaBookmarkHandler: PlatformHandler = {
     return [feeds.getFeedEntry('hatena-bookmark:hot')]
   },
 
-  getFeedHint: (url) => {
-    return feeds.getFeedHint(url) ?? getSiteFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

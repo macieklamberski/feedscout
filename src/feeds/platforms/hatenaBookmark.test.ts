@@ -99,11 +99,10 @@ describe('parseHatenaBookmarkUrl', () => {
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/search/tag')).toEqual(home)
   })
 
-  it('should return a site for a domain page', () => {
+  it('should return a site without its trailing slash for a domain page', () => {
     const expected: HatenaBookmarkUrl = {
       kind: 'site',
-      site: 'example.com/',
-      params: {},
+      site: 'example.com',
     }
 
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/site/example.com/')).toEqual(expected)
@@ -113,8 +112,8 @@ describe('parseHatenaBookmarkUrl', () => {
     const value = 'https://b.hatena.ne.jp/site/example.com/?page=2&sort=eid'
     const expected: HatenaBookmarkUrl = {
       kind: 'site',
-      site: 'example.com/',
-      params: { sort: 'eid' },
+      site: 'example.com',
+      sort: 'eid',
     }
 
     expect(parseHatenaBookmarkUrl(value)).toEqual(expected)
@@ -123,8 +122,7 @@ describe('parseHatenaBookmarkUrl', () => {
   it('should return a site for a domain page with a capitalized site segment', () => {
     const expected: HatenaBookmarkUrl = {
       kind: 'site',
-      site: 'example.com/',
-      params: {},
+      site: 'example.com',
     }
 
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/Site/example.com/')).toEqual(expected)
@@ -399,6 +397,30 @@ describe('hatenaBookmarkHandler', () => {
       ]
 
       expect(hatenaBookmarkHandler.resolve(`${base}/site/example.com`)).toEqual(expected)
+    })
+
+    it('should return a site feed without the trailing slash of a site page', () => {
+      const value = `${base}/site/example.com/news/`
+      const expected = [
+        {
+          uri: `${base}/site/example.com/news?mode=rss`,
+          hint: { key: 'hatena-bookmark:site', label: 'Site' },
+        },
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return a site feed with the sort order of a site page', () => {
+      const value = `${base}/site/example.com/?sort=eid&page=2`
+      const expected = [
+        {
+          uri: `${base}/site/example.com?sort=eid&mode=rss`,
+          hint: { key: 'hatena-bookmark:site', label: 'Site' },
+        },
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
     })
 
     const userBookmarks: Array<DiscoverUriEntry> = [
