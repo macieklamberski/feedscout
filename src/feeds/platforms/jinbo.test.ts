@@ -11,8 +11,8 @@ describe('parseJinboUrl', () => {
     expect(parseJinboUrl('https://blog.jinbo.net/alice')).toEqual(expected)
   })
 
-  it('should return the blog for a post page', () => {
-    const expected: JinboUrl = { kind: 'blog', username: 'alice' }
+  it('should return the post for a post page', () => {
+    const expected: JinboUrl = { kind: 'post', username: 'alice', postId: '123' }
 
     expect(parseJinboUrl('https://blog.jinbo.net/alice/123')).toEqual(expected)
   })
@@ -107,8 +107,48 @@ describe('jinboHandler', () => {
     })
 
     it('should return https posts and responses feeds for a blog', () => {
+      const value = 'http://blog.jinbo.net/alice'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://blog.jinbo.net/alice/rss',
+          hint: { key: 'jinbo:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom',
+          hint: { key: 'jinbo:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/response',
+          hint: { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/response',
+          hint: { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'atom' },
+        },
+      ]
+
+      expect(jinboHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the responses feeds of a post first for a post page', () => {
       const value = 'http://blog.jinbo.net/alice/123'
       const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/response/123',
+          hint: {
+            key: 'jinbo:post-responses',
+            label: 'Post comments and trackbacks',
+            format: 'rss',
+          },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/response/123',
+          hint: {
+            key: 'jinbo:post-responses',
+            label: 'Post comments and trackbacks',
+            format: 'atom',
+          },
+        },
         {
           uri: 'https://blog.jinbo.net/alice/rss',
           hint: { key: 'jinbo:posts', label: 'Posts', format: 'rss' },
@@ -393,10 +433,41 @@ describe('jinboHandler', () => {
       expect(jinboHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for the responses feed of one post', () => {
-      const value = 'https://blog.jinbo.net/hongsili/rss/response/1234'
-
-      expect(jinboHandler.getFeedHint?.(value)).toBeUndefined()
+    it.each([
+      [
+        'https://blog.jinbo.net/alice/rss/response/1234',
+        { key: 'jinbo:post-responses', label: 'Post comments and trackbacks', format: 'rss' },
+      ],
+      [
+        'http://blog.jinbo.net/alice/atom/response/1234',
+        { key: 'jinbo:post-responses', label: 'Post comments and trackbacks', format: 'atom' },
+      ],
+      [
+        'https://blog.jinbo.net/alice/rss/comment',
+        { key: 'jinbo:comments', label: 'Comments', format: 'rss' },
+      ],
+      [
+        'https://blog.jinbo.net/alice/atom/comment',
+        { key: 'jinbo:comments', label: 'Comments', format: 'atom' },
+      ],
+      [
+        'https://blog.jinbo.net/alice/rss/trackback',
+        { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'rss' },
+      ],
+      [
+        'https://blog.jinbo.net/alice/atom/trackback',
+        { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'atom' },
+      ],
+      [
+        'http://blog.jinbo.net/alice/rss/line',
+        { key: 'jinbo:lines', label: 'Lines', format: 'rss' },
+      ],
+      [
+        'https://blog.jinbo.net/alice/atom/line',
+        { key: 'jinbo:lines', label: 'Lines', format: 'atom' },
+      ],
+    ] as Array<[string, DiscoverUriHint]>)('should return the hint for %s', (value, expected) => {
+      expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for another host', () => {
@@ -431,6 +502,22 @@ describe('jinboHandler', () => {
       [
         'https://blog.jinbo.net/hongsili/atom/response',
         { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'atom' },
+      ],
+      [
+        'http://blog.jinbo.net/alice/rss/response/1234',
+        { key: 'jinbo:post-responses', label: 'Post comments and trackbacks', format: 'rss' },
+      ],
+      [
+        'http://blog.jinbo.net/alice/rss/comment',
+        { key: 'jinbo:comments', label: 'Comments', format: 'rss' },
+      ],
+      [
+        'https://blog.jinbo.net/alice/atom/trackback',
+        { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'atom' },
+      ],
+      [
+        'http://blog.jinbo.net/alice/atom/line',
+        { key: 'jinbo:lines', label: 'Lines', format: 'atom' },
       ],
     ]
 

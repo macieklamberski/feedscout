@@ -824,9 +824,25 @@
   },
   "jinbo": {
     "jinbo:category": "https://blog.jinbo.net/homocultura/atom/category/9",
+    "jinbo:comments": [
+      "https://blog.jinbo.net/manic/rss/comment",
+      "https://blog.jinbo.net/manic/atom/comment"
+    ],
+    "jinbo:lines": [
+      "https://blog.jinbo.net/support/rss/line",
+      "https://blog.jinbo.net/icecat/atom/line"
+    ],
+    "jinbo:post-responses": [
+      "https://blog.jinbo.net/diary/rss/response/56",
+      "https://blog.jinbo.net/house/atom/response/141"
+    ],
     "jinbo:posts": ["https://blog.jinbo.net/isogai/rss", "https://blog.jinbo.net/onscar/atom"],
     "jinbo:responses": "https://blog.jinbo.net/isogai/rss/response",
-    "jinbo:tag": "https://blog.jinbo.net/ysj40/atom/tag/56918"
+    "jinbo:tag": "https://blog.jinbo.net/ysj40/atom/tag/56918",
+    "jinbo:trackbacks": [
+      "https://blog.jinbo.net/pulip41/rss/trackback",
+      "https://blog.jinbo.net/pulip41/atom/trackback"
+    ]
   },
   "jira": {
     "jira:project": "https://jira.atlassian.com/plugins/servlet/streams?key=JRASERVER",

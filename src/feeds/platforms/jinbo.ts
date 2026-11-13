@@ -9,6 +9,7 @@ export type JinboUrl =
   | { kind: 'blog'; username: string }
   | { kind: 'category'; username: string; categoryId: string }
   | { kind: 'tag'; username: string; tag: string }
+  | { kind: 'post'; username: string; postId: string }
 
 const hosts = ['blog.jinbo.net']
 
@@ -39,6 +40,38 @@ const feeds = definePlatformFeeds([
     template: 'https://blog.jinbo.net/{username}/atom/response',
     format: 'atom',
   },
+  {
+    key: 'jinbo:post-responses',
+    template: 'https://blog.jinbo.net/{username}/rss/response/{postId}',
+    format: 'rss',
+  },
+  {
+    key: 'jinbo:post-responses',
+    template: 'https://blog.jinbo.net/{username}/atom/response/{postId}',
+    format: 'atom',
+  },
+  {
+    key: 'jinbo:comments',
+    template: 'https://blog.jinbo.net/{username}/rss/comment',
+    format: 'rss',
+  },
+  {
+    key: 'jinbo:comments',
+    template: 'https://blog.jinbo.net/{username}/atom/comment',
+    format: 'atom',
+  },
+  {
+    key: 'jinbo:trackbacks',
+    template: 'https://blog.jinbo.net/{username}/rss/trackback',
+    format: 'rss',
+  },
+  {
+    key: 'jinbo:trackbacks',
+    template: 'https://blog.jinbo.net/{username}/atom/trackback',
+    format: 'atom',
+  },
+  { key: 'jinbo:lines', template: 'https://blog.jinbo.net/{username}/rss/line', format: 'rss' },
+  { key: 'jinbo:lines', template: 'https://blog.jinbo.net/{username}/atom/line', format: 'atom' },
 ])
 
 export const parseJinboUrl = (url: string): JinboUrl | undefined => {
@@ -59,6 +92,11 @@ export const parseJinboUrl = (url: string): JinboUrl | undefined => {
 
   if (isAnyOf(section, 'tag') && value) {
     return { kind: 'tag', username, tag: value }
+  }
+
+  // A post page, /{username}/{postId}, links the comments and trackbacks of that post.
+  if (section && digitsRegex.test(section)) {
+    return { kind: 'post', username, postId: section }
   }
 
   return { kind: 'blog', username }
@@ -117,6 +155,17 @@ export const jinboHandler: PlatformHandler = {
     if (page.kind === 'tag') {
       return [
         feeds.getFeedEntry('jinbo:tag', { username, tag: page.tag }, 'atom'),
+        feeds.getFeedEntry('jinbo:posts', { username }, 'rss'),
+        feeds.getFeedEntry('jinbo:posts', { username }, 'atom'),
+        feeds.getFeedEntry('jinbo:responses', { username }, 'rss'),
+        feeds.getFeedEntry('jinbo:responses', { username }, 'atom'),
+      ]
+    }
+
+    if (page.kind === 'post') {
+      return [
+        feeds.getFeedEntry('jinbo:post-responses', { username, postId: page.postId }, 'rss'),
+        feeds.getFeedEntry('jinbo:post-responses', { username, postId: page.postId }, 'atom'),
         feeds.getFeedEntry('jinbo:posts', { username }, 'rss'),
         feeds.getFeedEntry('jinbo:posts', { username }, 'atom'),
         feeds.getFeedEntry('jinbo:responses', { username }, 'rss'),
