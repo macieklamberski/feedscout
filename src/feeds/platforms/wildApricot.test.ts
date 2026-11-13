@@ -193,6 +193,40 @@ describe('wildApricotHandler', () => {
       expect(wildApricotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the page hint for a site root feed', () => {
+      const value = 'https://alice.wildapricot.org/RSS'
+      const expected: DiscoverUriHint = { key: 'wild-apricot:page', label: 'Page feed' }
+
+      expect(wildApricotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the page hint for a page feed under its friendly path', () => {
+      const value = 'https://alice.wildapricot.org/news/RSS'
+      const expected: DiscoverUriHint = { key: 'wild-apricot:page', label: 'Page feed' }
+
+      expect(wildApricotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the page hint for a page feed in its widget view', () => {
+      const value = 'https://alice.wildapricot.org/widget/Events/RSS'
+      const expected: DiscoverUriHint = { key: 'wild-apricot:page', label: 'Page feed' }
+
+      expect(wildApricotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the page hint for the site root feed in its widget view', () => {
+      const value = 'https://alice.wildapricot.org/widget/RSS'
+      const expected: DiscoverUriHint = { key: 'wild-apricot:page', label: 'Page feed' }
+
+      expect(wildApricotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a friendly path feed on a custom domain', () => {
+      const value = 'https://example.com/news/RSS'
+
+      expect(wildApricotHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a page feed on a custom domain', () => {
       const value = 'https://example.com/page-12345/RSS'
 
@@ -230,6 +264,12 @@ describe('wildApricotHandler', () => {
       ],
       [
         'http://alice.wildapricot.org/page-12345/RSS',
+        { key: 'wild-apricot:page', label: 'Page feed' },
+      ],
+      ['https://alice.wildapricot.org/RSS', { key: 'wild-apricot:page', label: 'Page feed' }],
+      ['http://alice.wildapricot.org/news/RSS', { key: 'wild-apricot:page', label: 'Page feed' }],
+      [
+        'https://alice.wildapricot.org/widget/page-12345/RSS',
         { key: 'wild-apricot:page', label: 'Page feed' },
       ],
     ]
