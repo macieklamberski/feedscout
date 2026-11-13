@@ -25,6 +25,9 @@ const feeds = definePlatformFeeds([
   { key: 'sveriges-radio:program', template: 'https://public-api.sr.se/rss/{slug}' },
   { key: 'sveriges-radio:program', template: 'https://api.sr.se/api/rss/pod/{podId}' },
   { key: 'sveriges-radio:program', template: 'https://api.sr.se/api/rss/pod/itunes/{podId}' },
+  // A group of programs, and a region's traffic reports, which no page the handler reads names.
+  { key: 'sveriges-radio:group', template: 'https://api.sr.se/api/rss/group/{groupId}' },
+  { key: 'sveriges-radio:traffic', template: 'https://api.sr.se/api/rss/traffic/{areaId}' },
 ])
 
 export const parseSverigesRadioUrl = (url: string): SverigesRadioUrl | undefined => {

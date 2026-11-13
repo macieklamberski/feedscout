@@ -22,6 +22,8 @@ const feedCases: Array<[string, DiscoverUriHint]> = [
   ['http://public-api.sr.se/rss/example-program/', programHint],
   ['https://api.sr.se/api/rss/pod/12345', programHint],
   ['http://api.sr.se/api/rss/pod/itunes/12345', programHint],
+  ['https://api.sr.se/api/rss/group/12345', { key: 'sveriges-radio:group', label: 'Group' }],
+  ['http://api.sr.se/api/rss/traffic/12345', { key: 'sveriges-radio:traffic', label: 'Traffic' }],
 ]
 
 describe('parseSverigesRadioUrl', () => {
@@ -179,6 +181,20 @@ describe('sverigesRadioHandler', () => {
   })
 
   describe('getFeedHint', () => {
+    it('should return the group hint for a group feed', () => {
+      const value = 'https://api.sr.se/api/rss/group/12345'
+      const expected: DiscoverUriHint = { key: 'sveriges-radio:group', label: 'Group' }
+
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the traffic hint for a traffic feed', () => {
+      const value = 'https://api.sr.se/api/rss/traffic/12345'
+      const expected: DiscoverUriHint = { key: 'sveriges-radio:traffic', label: 'Traffic' }
+
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the program hint for a program feed', () => {
       const value = 'https://api.sr.se/api/rss/program/12345'
       const expected: DiscoverUriHint = { key: 'sveriges-radio:program', label: 'Program' }
@@ -238,12 +254,6 @@ describe('sverigesRadioHandler', () => {
 
     it('should return undefined for a file in place of the program slug', () => {
       const value = 'https://public-api.sr.se/rss/robots.txt'
-
-      expect(sverigesRadioHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a traffic feed', () => {
-      const value = 'https://api.sr.se/api/rss/traffic/12345'
 
       expect(sverigesRadioHandler.getFeedHint?.(value)).toBeUndefined()
     })
