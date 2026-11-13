@@ -99,13 +99,14 @@ export const vimeoHandler: PlatformHandler = {
       return [feeds.getFeedEntry('vimeo:album', { albumId: parsed.albumId })]
     }
 
-    const videos = feeds.getFeedEntry('vimeo:videos', { username: parsed.username })
-
     if (parsed.kind === 'likes') {
-      return [feeds.getFeedEntry('vimeo:likes', { username: parsed.username }), videos]
+      return [
+        feeds.getFeedEntry('vimeo:likes', { username: parsed.username }),
+        feeds.getFeedEntry('vimeo:videos', { username: parsed.username }),
+      ]
     }
 
-    return [videos]
+    return [feeds.getFeedEntry('vimeo:videos', { username: parsed.username })]
   },
 
   getFeedHint: (url) => {
