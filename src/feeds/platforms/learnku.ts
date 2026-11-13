@@ -1,5 +1,4 @@
 import { getPathSegments, isHostOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -41,15 +40,14 @@ export const learnkuHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.kind === 'community') {
-      uris.push(feeds.getFeedEntry('learnku:community', { community: parsed.community }))
+      return [
+        feeds.getFeedEntry('learnku:community', { community: parsed.community }),
+        feeds.getFeedEntry('learnku:site'),
+      ]
     }
 
-    uris.push(feeds.getFeedEntry('learnku:site'))
-
-    return uris
+    return [feeds.getFeedEntry('learnku:site')]
   },
 
   getFeedHint: feeds.getFeedHint,
