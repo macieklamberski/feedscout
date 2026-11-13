@@ -2917,8 +2917,8 @@ Discovers RSS feeds for Bloggo blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.bloggo.nu` | Posts |
-| `*.bloggo.nu/{slug}` | Post comments · posts |
+| `{blog}.bloggo.nu` | Posts |
+| `{blog}.bloggo.nu/{slug}` | Post comments · posts |
 
 ### podCloud
 

@@ -1,5 +1,4 @@
 import { getPathSegments, isAnyOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -70,15 +69,14 @@ export const bloggoHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (page.kind === 'post') {
-      uris.push(pageFeeds.getFeedEntry('bloggo:post-comments', { slug: page.slug }))
+      return [
+        pageFeeds.getFeedEntry('bloggo:post-comments', { slug: page.slug }),
+        pageFeeds.getFeedEntry('bloggo:posts'),
+      ]
     }
 
-    uris.push(pageFeeds.getFeedEntry('bloggo:posts'))
-
-    return uris
+    return [pageFeeds.getFeedEntry('bloggo:posts')]
   },
 
   getFeedHint: feeds.getFeedHint,
