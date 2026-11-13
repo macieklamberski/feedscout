@@ -23,8 +23,8 @@ const journalRegex = /^\/[^/]+\/journal(?:\/|$)/i
 const dailyDeviationsRegex = /^\/daily-deviations\/?$/i
 
 // A user's deviations serve the same items with or without the sort and meta terms, under
-// `type=gallery`, without a type and as `gallery:{username}`. The journals are also `type=journal`
-// over the same `by:` query.
+// `type=gallery`, without a type and as `gallery:{username}`. The journals are `type=journal` over
+// the same `by:` query, as `q=journal:{username}` serves the site-wide Popular feed.
 const feeds = definePlatformFeeds([
   {
     key: 'deviantart:deviations',
@@ -59,10 +59,6 @@ const feeds = definePlatformFeeds([
   {
     key: 'deviantart:tag',
     template: 'https://backend.deviantart.com/rss.xml?type=deviation&q=tag:{tag}',
-  },
-  {
-    key: 'deviantart:journal',
-    template: 'https://backend.deviantart.com/rss.xml?q=journal:{username}',
   },
   {
     key: 'deviantart:journal',

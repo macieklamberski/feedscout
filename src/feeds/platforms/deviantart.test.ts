@@ -219,7 +219,7 @@ describe('deviantartHandler', () => {
       const value = 'https://deviantart.com/yuumei/journal'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?q=journal:yuumei',
+          uri: 'https://backend.deviantart.com/rss.xml?type=journal&q=by:yuumei',
           hint: { key: 'deviantart:journal', label: 'Journal' },
         },
       ]
@@ -340,25 +340,23 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the journal hint for an encoded journal feed', () => {
-      const value = 'https://backend.deviantart.com/rss.xml?q=journal%3Aaxeraider70'
-      const expected: DiscoverUriHint = { key: 'deviantart:journal', label: 'Journal' }
-
-      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the journal hint for a plain journal feed', () => {
-      const value = 'https://backend.deviantart.com/rss.xml?q=journal:kuschelirmel-stock'
+      const value = 'https://backend.deviantart.com/rss.xml?type=journal&q=by:alice'
       const expected: DiscoverUriHint = { key: 'deviantart:journal', label: 'Journal' }
 
       expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the journal hint for a journal feed with the deviation type', () => {
-      const value = 'https://backend.deviantart.com/rss.xml?type=deviation&q=journal:axeraider70'
-      const expected: DiscoverUriHint = { key: 'deviantart:journal', label: 'Journal' }
+    it('should return undefined for the journal query that serves the Popular feed', () => {
+      const value = 'https://backend.deviantart.com/rss.xml?q=journal:alice'
 
-      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
+      expect(deviantartHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an encoded journal query with the deviation type', () => {
+      const value = 'https://backend.deviantart.com/rss.xml?type=deviation&q=journal%3Aalice'
+
+      expect(deviantartHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return the daily deviations hint for the daily deviations feed', () => {
@@ -442,11 +440,6 @@ describe('discoverUrisFromPlatform', () => {
       'https://backend.deviantart.com/rss.xml?type=deviation&q=tag%3Aaliens',
       'deviantart:tag',
       'Tag',
-    ],
-    [
-      'https://backend.deviantart.com/rss.xml?q=journal%3Aaxeraider70',
-      'deviantart:journal',
-      'Journal',
     ],
     [
       'https://backend.deviantart.com/rss.xml?q=special:dd',
