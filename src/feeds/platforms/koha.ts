@@ -21,20 +21,20 @@ const ownFeeds = definePlatformFeeds(
   [
     {
       key: 'koha:search',
-      template: '{scheme}://{library}.{domain}/cgi-bin/koha/opac-search.pl?format=rss',
+      template: '{scheme}://{host}/cgi-bin/koha/opac-search.pl?format=rss',
     },
     {
       key: 'koha:search',
-      template: '{scheme}://{library}.{domain}/cgi-bin/koha/opac-search.pl?format=rss2',
+      template: '{scheme}://{host}/cgi-bin/koha/opac-search.pl?format=rss2',
     },
     {
       key: 'koha:list',
       template:
-        '{scheme}://{library}.{domain}/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber={shelfNumber}',
+        '{scheme}://{host}/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber={shelfNumber}',
     },
     {
       key: 'koha:comments',
-      template: '{scheme}://{library}.{domain}/cgi-bin/koha/opac-showreviews.pl?format=rss',
+      template: '{scheme}://{host}/cgi-bin/koha/opac-showreviews.pl?format=rss',
     },
   ],
   { domains },
