@@ -17,6 +17,13 @@ describe('parseViablogaUrl', () => {
     expect(parseViablogaUrl('http://alice.viabloga.com/news/canal-du-midi')).toEqual(expected)
   })
 
+  it('should return the category for a category page', () => {
+    const value = 'http://alice.viabloga.com/cinema.shtml'
+    const expected: ViablogaUrl = { kind: 'category', category: 'cinema' }
+
+    expect(parseViablogaUrl(value)).toEqual(expected)
+  })
+
   const otherUrls = [
     'http://www.viabloga.com/',
     'http://www.alice.viabloga.com/',
@@ -44,6 +51,38 @@ describe('viablogaHandler', () => {
     it('should return the posts, comments and wiki feeds for blog', () => {
       const value = 'http://alice.viabloga.com/news/canal-du-midi'
       const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://alice.viabloga.com/index.xml',
+          hint: { key: 'viabloga:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'http://alice.viabloga.com/atom.xml',
+          hint: { key: 'viabloga:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'http://alice.viabloga.com/index.rdf',
+          hint: { key: 'viabloga:posts', label: 'Posts', format: 'rdf' },
+        },
+        {
+          uri: 'http://alice.viabloga.com/comments.xml',
+          hint: { key: 'viabloga:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'http://alice.viabloga.com/wiki.rdf',
+          hint: { key: 'viabloga:wiki', label: 'Wiki', format: 'rdf' },
+        },
+      ]
+
+      expect(viablogaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the category feed and the blog feeds for a category page', () => {
+      const value = 'http://alice.viabloga.com/cinema.shtml'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://alice.viabloga.com/cinema.xml',
+          hint: { key: 'viabloga:category', label: 'Category', format: 'rss' },
+        },
         {
           uri: 'http://alice.viabloga.com/index.xml',
           hint: { key: 'viabloga:posts', label: 'Posts', format: 'rss' },
@@ -120,6 +159,28 @@ describe('viablogaHandler', () => {
       expect(viablogaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the category key for a category feed', () => {
+      const value = 'http://alice.viabloga.com/cinema.xml'
+      const expected: DiscoverUriHint = {
+        key: 'viabloga:category',
+        label: 'Category',
+        format: 'rss',
+      }
+
+      expect(viablogaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the category key for a full text category feed', () => {
+      const value = 'http://alice.viabloga.com/cinema_full.xml'
+      const expected: DiscoverUriHint = {
+        key: 'viabloga:category',
+        label: 'Category',
+        format: 'rss',
+      }
+
+      expect(viablogaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for a post page', () => {
       const value = 'http://alice.viabloga.com/news/canal-du-midi'
 
@@ -183,6 +244,10 @@ describe('viablogaHandler', () => {
       [
         'https://critico-blog.viabloga.com/wiki.rdf',
         { key: 'viabloga:wiki', label: 'Wiki', format: 'rdf' },
+      ],
+      [
+        'https://alice.viabloga.com/cinema_full.xml',
+        { key: 'viabloga:category', label: 'Category', format: 'rss' },
       ],
     ]
 
