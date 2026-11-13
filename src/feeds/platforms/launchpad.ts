@@ -1,5 +1,4 @@
 import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
@@ -198,39 +197,46 @@ export const launchpadHandler: PlatformHandler = {
       return [feeds.getFeedEntry('launchpad:package-bugs', parsed)]
     }
 
-    const entries: Array<DiscoverUriEntry> = []
-
     if (parsed.kind === 'project') {
       const { application, project } = parsed
 
-      if (application === 'main') {
-        entries.push(feeds.getFeedEntry('launchpad:project-announcements', { project }))
+      if (application === 'bugs') {
+        return [feeds.getFeedEntry('launchpad:project-bugs', { project })]
       }
 
-      if (application !== 'code') {
-        entries.push(feeds.getFeedEntry('launchpad:project-bugs', { project }))
+      if (application === 'code') {
+        return [
+          feeds.getFeedEntry('launchpad:project-branches', { project }),
+          feeds.getFeedEntry('launchpad:project-revisions', { project }),
+        ]
       }
 
-      if (application !== 'bugs') {
-        entries.push(feeds.getFeedEntry('launchpad:project-branches', { project }))
-        entries.push(feeds.getFeedEntry('launchpad:project-revisions', { project }))
-      }
-
-      return entries
+      return [
+        feeds.getFeedEntry('launchpad:project-announcements', { project }),
+        feeds.getFeedEntry('launchpad:project-bugs', { project }),
+        feeds.getFeedEntry('launchpad:project-branches', { project }),
+        feeds.getFeedEntry('launchpad:project-revisions', { project }),
+      ]
     }
 
     const { application, username } = parsed
 
-    if (application !== 'code') {
-      entries.push(feeds.getFeedEntry('launchpad:person-bugs', { username }))
+    if (application === 'bugs') {
+      return [feeds.getFeedEntry('launchpad:person-bugs', { username })]
     }
 
-    if (application !== 'bugs') {
-      entries.push(feeds.getFeedEntry('launchpad:person-branches', { username }))
-      entries.push(feeds.getFeedEntry('launchpad:person-revisions', { username }))
+    if (application === 'code') {
+      return [
+        feeds.getFeedEntry('launchpad:person-branches', { username }),
+        feeds.getFeedEntry('launchpad:person-revisions', { username }),
+      ]
     }
 
-    return entries
+    return [
+      feeds.getFeedEntry('launchpad:person-bugs', { username }),
+      feeds.getFeedEntry('launchpad:person-branches', { username }),
+      feeds.getFeedEntry('launchpad:person-revisions', { username }),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
