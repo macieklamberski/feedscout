@@ -201,8 +201,8 @@ export const itchioHandler: PlatformHandler = {
       return []
     }
 
-    // The platform updates and the digest need no value from the page, so every page builds them
-    // after its own feeds.
+    // The curated feeds, the devlogs, the blog, the platform updates and the digest need no value
+    // from the page, so every page builds them after its own feeds.
     if (parsed.kind === 'game') {
       const pageFeeds = feeds.forUrl(url)
 
@@ -212,6 +212,11 @@ export const itchioHandler: PlatformHandler = {
 
       return [
         pageFeeds.getFeedEntry('itchio:devlog', { game: parsed.game }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
         feeds.getFeedEntry('itchio:updates'),
         feeds.getFeedEntry('itchio:digest'),
       ]
@@ -220,6 +225,11 @@ export const itchioHandler: PlatformHandler = {
     if (parsed.kind === 'creator') {
       return [
         feeds.getFeedEntry('itchio:creator', { creator: parsed.creator, sort: parsed.sort }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
         feeds.getFeedEntry('itchio:updates'),
         feeds.getFeedEntry('itchio:digest'),
       ]
@@ -228,6 +238,11 @@ export const itchioHandler: PlatformHandler = {
     if (parsed.kind === 'tag') {
       return [
         feeds.getFeedEntry('itchio:tag', { tag: parsed.tag, sort: parsed.sort }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
         feeds.getFeedEntry('itchio:updates'),
         feeds.getFeedEntry('itchio:digest'),
       ]
@@ -236,6 +251,11 @@ export const itchioHandler: PlatformHandler = {
     if (parsed.kind === 'platform') {
       return [
         feeds.getFeedEntry('itchio:platform', { platform: parsed.platform }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
         feeds.getFeedEntry('itchio:updates'),
         feeds.getFeedEntry('itchio:digest'),
       ]
@@ -244,6 +264,11 @@ export const itchioHandler: PlatformHandler = {
     if (parsed.kind === 'genre') {
       return [
         feeds.getFeedEntry('itchio:genre', { genre: parsed.genre }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
         feeds.getFeedEntry('itchio:updates'),
         feeds.getFeedEntry('itchio:digest'),
       ]
@@ -252,6 +277,11 @@ export const itchioHandler: PlatformHandler = {
     if (parsed.kind === 'madeWith') {
       return [
         feeds.getFeedEntry('itchio:made-with', { engine: parsed.engine }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
         feeds.getFeedEntry('itchio:updates'),
         feeds.getFeedEntry('itchio:digest'),
       ]
@@ -260,6 +290,11 @@ export const itchioHandler: PlatformHandler = {
     if (parsed.kind === 'listing') {
       return [
         feeds.getFeedEntry('itchio:games', { filters: parsed.filters }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
         feeds.getFeedEntry('itchio:updates'),
         feeds.getFeedEntry('itchio:digest'),
       ]
@@ -268,6 +303,11 @@ export const itchioHandler: PlatformHandler = {
     if (parsed.kind === 'games' && parsed.sort) {
       return [
         feeds.getFeedEntry('itchio:games', { sort: parsed.sort }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
         feeds.getFeedEntry('itchio:updates'),
         feeds.getFeedEntry('itchio:digest'),
       ]
@@ -276,6 +316,11 @@ export const itchioHandler: PlatformHandler = {
     if (parsed.kind === 'games') {
       return [
         feeds.getFeedEntry('itchio:games'),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
         feeds.getFeedEntry('itchio:updates'),
         feeds.getFeedEntry('itchio:digest'),
       ]
@@ -284,6 +329,10 @@ export const itchioHandler: PlatformHandler = {
     if (parsed.kind === 'devlogs') {
       return [
         feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:blog'),
         feeds.getFeedEntry('itchio:updates'),
         feeds.getFeedEntry('itchio:digest'),
       ]
@@ -292,6 +341,10 @@ export const itchioHandler: PlatformHandler = {
     if (parsed.kind === 'blog') {
       return [
         feeds.getFeedEntry('itchio:blog'),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
         feeds.getFeedEntry('itchio:updates'),
         feeds.getFeedEntry('itchio:digest'),
       ]
@@ -300,6 +353,11 @@ export const itchioHandler: PlatformHandler = {
     if (parsed.kind === 'section') {
       return [
         feeds.getFeedEntry('itchio:section', { section: parsed.section }),
+        feeds.getFeedEntry('itchio:featured'),
+        feeds.getFeedEntry('itchio:new'),
+        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('itchio:blog'),
         feeds.getFeedEntry('itchio:updates'),
         feeds.getFeedEntry('itchio:digest'),
       ]
