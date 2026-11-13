@@ -12,6 +12,9 @@ const feeds = definePlatformFeeds(
   [
     { key: 'sakura-blog:posts', template: '{scheme}://{host}/index20.rdf', format: 'rss' },
     { key: 'sakura-blog:posts', template: '{scheme}://{host}/index.rdf', format: 'rdf' },
+    // A blog made since the platform's redesign serves its posts at `/rss.xml` alone, and an older
+    // blog answers 404 there, so `resolve` keeps building the older files.
+    { key: 'sakura-blog:posts', template: '{scheme}://{host}/rss.xml', format: 'rss' },
   ],
   { domains },
 )

@@ -72,6 +72,13 @@ describe('sakuraBlogHandler', () => {
   })
 
   describe('getFeedHint', () => {
+    it('should return the posts hint for the rss.xml feed of a newer blog', () => {
+      const value = 'https://alice.sblo.jp/rss.xml'
+      const expected: DiscoverUriHint = { key: 'sakura-blog:posts', label: 'Posts', format: 'rss' }
+
+      expect(sakuraBlogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the posts hint for an RSS 2.0 feed', () => {
       const value = 'http://alice.sblo.jp/index20.rdf'
       const expected: DiscoverUriHint = { key: 'sakura-blog:posts', label: 'Posts', format: 'rss' }
@@ -126,6 +133,10 @@ describe('sakuraBlogHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://alice.sblo.jp/rss.xml',
+        { key: 'sakura-blog:posts', label: 'Posts', format: 'rss' },
+      ],
       [
         'http://alice.sblo.jp/index20.rdf',
         { key: 'sakura-blog:posts', label: 'Posts', format: 'rss' },
