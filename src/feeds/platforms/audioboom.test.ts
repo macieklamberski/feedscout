@@ -19,6 +19,13 @@ describe('parseAudioboomUrl', () => {
     )
   })
 
+  it('should return the playlist for a playlist page with its slug', () => {
+    const value = 'https://audioboom.com/playlists/12345-example'
+    const expected: AudioboomUrl = { kind: 'playlist', playlistId: '12345' }
+
+    expect(parseAudioboomUrl(value)).toEqual(expected)
+  })
+
   it('should return a one-digit channel id whole', () => {
     const expected: AudioboomUrl = { kind: 'channel', channelId: '1' }
 
@@ -59,6 +66,18 @@ describe('audioboomHandler', () => {
   describe('resolve', () => {
     it('should return empty array for a URL outside the platform', () => {
       expect(audioboomHandler.resolve('https://example.com/')).toEqual([])
+    })
+
+    it('should return the playlist feed for a playlist page', () => {
+      const value = 'https://audioboom.com/playlists/12345-example'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://audioboom.com/playlists/12345.rss',
+          hint: { key: 'audioboom:playlist', label: 'Playlist' },
+        },
+      ]
+
+      expect(audioboomHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return podcast feed for channel', () => {
@@ -111,6 +130,13 @@ describe('audioboomHandler', () => {
   })
 
   describe('getFeedHint', () => {
+    it('should return the playlist hint for a playlist feed', () => {
+      const value = 'https://audioboom.com/playlists/12345.rss'
+      const expected: DiscoverUriHint = { key: 'audioboom:playlist', label: 'Playlist' }
+
+      expect(audioboomHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the podcast hint for a channel feed', () => {
       const value = 'https://audioboom.com/channels/5016155.rss'
       const expected: DiscoverUriHint = { key: 'audioboom:podcast', label: 'Podcast' }
@@ -127,12 +153,6 @@ describe('audioboomHandler', () => {
 
     it('should return undefined for a channel page', () => {
       const value = 'https://audioboom.com/channels/5016155'
-
-      expect(audioboomHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a playlist feed', () => {
-      const value = 'https://audioboom.com/playlists/1303121.rss'
 
       expect(audioboomHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -156,6 +176,23 @@ describe('audioboomHandler', () => {
         {
           uri: value,
           hint: { key: 'audioboom:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should return a playlist feed as itself', async () => {
+      const value = 'http://www.audioboom.com/playlists/12345.rss'
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [audioboomHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: value,
+          hint: { key: 'audioboom:playlist', label: 'Playlist' },
         },
       ]
 

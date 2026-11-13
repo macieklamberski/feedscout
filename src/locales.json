@@ -237,6 +237,7 @@
     "arena:channel": "Channel",
     "arena:editorial": "Editorial",
     "audioboom:podcast": "Podcast",
+    "audioboom:playlist": "Playlist",
     "bookwyrm:activity": "Activity",
     "bookwyrm:reviews": "Reviews",
     "bookwyrm:quotes": "Quotes",
