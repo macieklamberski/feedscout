@@ -1,5 +1,4 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -61,24 +60,22 @@ export const exblogHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     // Category page: /i{N}.
     if (parsed.kind === 'category') {
       const params = { category: parsed.category }
 
-      uris.push(
+      return [
         page.getFeedEntry('exblog:category', params, 'rss'),
         page.getFeedEntry('exblog:category', params, 'atom'),
-      )
+        page.getFeedEntry('exblog:posts', {}, 'rss'),
+        page.getFeedEntry('exblog:posts', {}, 'atom'),
+      ]
     }
 
-    uris.push(
+    return [
       page.getFeedEntry('exblog:posts', {}, 'rss'),
       page.getFeedEntry('exblog:posts', {}, 'atom'),
-    )
-
-    return uris
+    ]
   },
 
   getFeedHint: (url) => {
