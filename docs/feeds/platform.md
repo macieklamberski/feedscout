@@ -2688,8 +2688,8 @@ Discovers the feeds of a Forumotion forum, also branded Forumactif, Foroactivo, 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{forum}/f{id}-{slug}` | Forum<sup>†</sup> · latest topics (RSS + Atom<sup>†</sup>) |
-| `{forum}/t{id}-{slug}` | The topic's forum<sup>†</sup> · latest topics (RSS + Atom<sup>†</sup>) |
+| `{host}/f{id}-{slug}` | Forum<sup>†</sup> · latest topics (RSS + Atom<sup>†</sup>) |
+| `{host}/t{id}-{slug}` | The topic's forum<sup>†</sup> · latest topics (RSS + Atom<sup>†</sup>) |
 | Any other page | Latest topics (RSS + Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
