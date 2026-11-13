@@ -1,5 +1,4 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -85,19 +84,21 @@ export const alloforumHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.kind === 'subcategory') {
-      uris.push(page.getFeedEntry('alloforum:subcategory', parsed))
+      return [
+        page.getFeedEntry('alloforum:subcategory', parsed),
+        page.getFeedEntry('alloforum:latest-topics'),
+      ]
     }
 
     if (parsed.kind === 'category') {
-      uris.push(page.getFeedEntry('alloforum:category', parsed))
+      return [
+        page.getFeedEntry('alloforum:category', parsed),
+        page.getFeedEntry('alloforum:latest-topics'),
+      ]
     }
 
-    uris.push(page.getFeedEntry('alloforum:latest-topics'))
-
-    return uris
+    return [page.getFeedEntry('alloforum:latest-topics')]
   },
 
   getFeedHint: feeds.getFeedHint,
