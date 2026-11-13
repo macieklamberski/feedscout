@@ -49,10 +49,14 @@ describe('blogiaHandler', () => {
   describe('resolve', () => {
     it('should keep the scheme of an http page', () => {
       const value = 'http://alice.blogia.com/temas/reflexiones/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'http://alice.blogia.com/feed.xml',
           hint: { key: 'blogia:posts', label: 'Posts' },
+        },
+        {
+          uri: 'http://alice.blogia.com/comentarios.xml',
+          hint: { key: 'blogia:comments', label: 'Comments' },
         },
       ]
 
@@ -97,6 +101,13 @@ describe('blogiaHandler', () => {
       expect(blogiaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
+    it('should return the comments hint for a comments feed', () => {
+      const value = 'https://alice.blogia.com/comentarios.xml'
+      const expected: DiscoverUriHint = { key: 'blogia:comments', label: 'Comments' }
+
+      expect(blogiaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for another host', () => {
       const value = 'https://example.com/feed.xml'
 
@@ -118,6 +129,20 @@ describe('blogiaHandler', () => {
         baseUrl: value,
       })
       const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should return a comments feed as itself', async () => {
+      const value = 'http://alice.blogia.com/comentarios.xml'
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [blogiaHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'blogia:comments', label: 'Comments' } },
+      ]
 
       expect(result).toEqual(expected)
     })

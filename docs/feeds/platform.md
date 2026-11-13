@@ -2979,11 +2979,11 @@ Discovers the RSS 1.0 feed of new products in an Ochanoko Net shop. A shop on a 
 
 ### Blogia
 
-Discovers the RSS feed for blogs hosted on Blogia.
+Discovers the RSS feeds for blogs hosted on Blogia.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.blogia.com` | Posts (RSS) |
+| `*.blogia.com` | Posts (RSS) · comments (RSS) |
 
 ### Parsiblog
 
