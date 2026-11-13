@@ -84,11 +84,11 @@ describe('dasaugeHandler', () => {
       expect(dasaugeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the profile feed over https for an http page', () => {
+    it('should keep the scheme of an http page', () => {
       const value = 'http://dasauge.de/-alice/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://dasauge.de/-alice/?rss',
+          uri: 'http://dasauge.de/-alice/?rss',
           hint: { key: 'dasauge:profile', label: 'Profile' },
         },
       ]

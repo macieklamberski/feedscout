@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -14,7 +14,7 @@ const profileRegex = /^-(.+)$/
 // The feed is the `rss` query with no value, linked as `?rss`. A stored copy of a `?rss=` URL is
 // the same RSS feed, so `?rss=` serves it too.
 const feeds = definePlatformFeeds(
-  [{ key: 'dasauge:profile', template: 'https://{host}/-{username}/?rss' }],
+  [{ key: 'dasauge:profile', template: '{scheme}://{host}/-{username}/?rss' }],
   { hosts },
 )
 
@@ -40,14 +40,13 @@ export const dasaugeHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseDasaugeUrl(url)
-    const host = parseUrl(url)?.hostname
+    const page = feeds.forUrl(url)
 
-    if (!parsed || !host) {
+    if (!parsed || !page) {
       return []
     }
 
-    // The site redirects http to https.
-    return [feeds.getFeedEntry('dasauge:profile', { host, username: parsed.username })]
+    return [page.getFeedEntry('dasauge:profile', { username: parsed.username })]
   },
 
   getFeedHint: feeds.getFeedHint,
