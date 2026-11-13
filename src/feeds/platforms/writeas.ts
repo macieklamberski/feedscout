@@ -53,18 +53,14 @@ export const writeasHandler: PlatformHandler = {
       return []
     }
 
-    const blogFeed = feeds.getFeedEntry('writeas:blog', { username: parsed.username })
-
     if (parsed.kind === 'tag') {
-      const tagFeed = feeds.getFeedEntry('writeas:tag', {
-        username: parsed.username,
-        tag: parsed.tag,
-      })
-
-      return [tagFeed, blogFeed]
+      return [
+        feeds.getFeedEntry('writeas:tag', { username: parsed.username, tag: parsed.tag }),
+        feeds.getFeedEntry('writeas:blog', { username: parsed.username }),
+      ]
     }
 
-    return [blogFeed]
+    return [feeds.getFeedEntry('writeas:blog', { username: parsed.username })]
   },
 
   // The table reads any first segment as a name, so a dotted one, a file of the site, is refused
