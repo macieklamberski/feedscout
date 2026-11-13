@@ -9,11 +9,8 @@ import { digitsRegex, formatSuffixRegex } from '../../common/utils.js'
 export type SyosetuUrl = { kind: 'writer'; writerId: string }
 
 const hosts = ['mypage.syosetu.com']
-const adultHosts = ['xmypage.syosetu.com']
 
 const writerRegex = /^\/(?<writerId>[^/]+)/
-// An adult-site writer id is x, digits and optional letters, such as x5287p or x1235.
-const adultWriterIdRegex = /^x\d+[a-z]*$/i
 
 const feeds = definePlatformFeeds([
   { key: 'syosetu:author', template: 'https://api.syosetu.com/writernovel/{writerId}.Atom' },
@@ -24,20 +21,13 @@ const feeds = definePlatformFeeds([
 export const parseSyosetuUrl = (url: string): SyosetuUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
-  if (!parsedUrl) {
-    return
-  }
-
-  const isAdultHost = isHostOf(parsedUrl, adultHosts)
-
-  if (!isAdultHost && !isHostOf(parsedUrl, hosts)) {
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
     return
   }
 
   const writerId = parsedUrl.pathname.match(writerRegex)?.groups?.writerId
-  const writerIdRegex = isAdultHost ? adultWriterIdRegex : digitsRegex
 
-  if (!writerId || !writerIdRegex.test(writerId)) {
+  if (!writerId || !digitsRegex.test(writerId)) {
     return
   }
 
@@ -62,17 +52,18 @@ export const syosetuHandler: PlatformHandler = {
     ]
   },
 
-  // The page parser builds writer feeds only for a digits or adult-site writer id, so a writer
-  // feed URL with another id gets no key.
+  // The page parser builds writer feeds only for a digits writer id, so a writer feed URL with
+  // another id gets no key.
   getFeedHint: (url) => {
     const hint = feeds.getFeedHint(url)
-    const writerId = getPathSegments(url).at(-1)?.replace(formatSuffixRegex, '') ?? ''
 
     if (hint?.key === 'syosetu:all-novels') {
       return hint
     }
 
-    if (!digitsRegex.test(writerId) && !adultWriterIdRegex.test(writerId)) {
+    const writerId = getPathSegments(url).at(-1)?.replace(formatSuffixRegex, '')
+
+    if (!writerId || !digitsRegex.test(writerId)) {
       return
     }
 

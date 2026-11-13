@@ -12,9 +12,6 @@ const feedCases: Array<[string, DiscoverUriHint]> = [
   ['http://api.syosetu.com/writernovel/12345.atom', authorHint],
   ['https://api.syosetu.com/writer/12345.Atom', activityHint],
   ['https://api.syosetu.com/writer/12345.Atom/', activityHint],
-  ['https://api.syosetu.com/writernovel/x1234a.Atom', authorHint],
-  ['https://api.syosetu.com/writer/x1234a.Atom', activityHint],
-  ['https://api.syosetu.com/writernovel/x1235.Atom', authorHint],
   ['https://api.syosetu.com/allnovel.Atom', allNovelsHint],
   ['http://api.syosetu.com/allnovel.atom', allNovelsHint],
 ]
@@ -30,32 +27,6 @@ describe('parseSyosetuUrl', () => {
     const expected: SyosetuUrl = { kind: 'writer', writerId: '1' }
 
     expect(parseSyosetuUrl('https://mypage.syosetu.com/1/')).toEqual(expected)
-  })
-
-  it('should return the writer for an adult-site writer page', () => {
-    const value = 'https://xmypage.syosetu.com/x1234a/'
-    const expected: SyosetuUrl = { kind: 'writer', writerId: 'x1234a' }
-
-    expect(parseSyosetuUrl(value)).toEqual(expected)
-  })
-
-  it('should return the writer for an adult-site writer id without a letter', () => {
-    const value = 'https://xmypage.syosetu.com/x1235/'
-    const expected: SyosetuUrl = { kind: 'writer', writerId: 'x1235' }
-
-    expect(parseSyosetuUrl(value)).toEqual(expected)
-  })
-
-  it('should return undefined for a digits writer id on the adult site', () => {
-    const value = 'https://xmypage.syosetu.com/12345/'
-
-    expect(parseSyosetuUrl(value)).toBeUndefined()
-  })
-
-  it('should return undefined for an adult-site writer id on the main site', () => {
-    const value = 'https://mypage.syosetu.com/x1234a/'
-
-    expect(parseSyosetuUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for a writer id with a letter', () => {
@@ -111,22 +82,6 @@ describe('syosetuHandler', () => {
       expect(syosetuHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the author and activity feeds for an adult-site writer', () => {
-      const value = 'https://xmypage.syosetu.com/x1234a/'
-      const expected: Array<DiscoverUriEntry> = [
-        {
-          uri: 'https://api.syosetu.com/writernovel/x1234a.Atom',
-          hint: { key: 'syosetu:author', label: 'Author' },
-        },
-        {
-          uri: 'https://api.syosetu.com/writer/x1234a.Atom',
-          hint: { key: 'syosetu:activity', label: 'Activity' },
-        },
-      ]
-
-      expect(syosetuHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should return an empty array without an author id', () => {
       expect(syosetuHandler.resolve('https://mypage.syosetu.com/')).toEqual([])
     })
@@ -156,20 +111,6 @@ describe('syosetuHandler', () => {
 
     it('should return the activity hint for an activity feed with a trailing slash', () => {
       const value = 'https://api.syosetu.com/writer/12345.Atom/'
-      const expected: DiscoverUriHint = { key: 'syosetu:activity', label: 'Activity' }
-
-      expect(syosetuHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the author hint for an adult-site author feed', () => {
-      const value = 'https://api.syosetu.com/writernovel/x1234a.Atom'
-      const expected: DiscoverUriHint = { key: 'syosetu:author', label: 'Author' }
-
-      expect(syosetuHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the activity hint for an adult-site activity feed', () => {
-      const value = 'https://api.syosetu.com/writer/x1234a.Atom'
       const expected: DiscoverUriHint = { key: 'syosetu:activity', label: 'Activity' }
 
       expect(syosetuHandler.getFeedHint?.(value)).toEqual(expected)
