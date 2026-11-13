@@ -507,11 +507,11 @@ Discovers Atom feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, M
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}` | Site-wide newest questions |
-| `{site}/questions/tagged/{tag}` | Tag<sup>†</sup> |
-| `{site}/questions/{id}` | Question |
-| `{site}/users/{id}` | User<sup>†</sup> |
-| `{site}/collectives/{name}` | Collective<sup>†</sup> |
+| `{host}` | Site-wide newest questions |
+| `{host}/questions/tagged/{tag}` | Tag<sup>†</sup> |
+| `{host}/questions/{id}` | Question |
+| `{host}/users/{id}` | User<sup>†</sup> |
+| `{host}/collectives/{name}` | Collective<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
