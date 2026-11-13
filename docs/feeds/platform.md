@@ -1425,7 +1425,7 @@ Discovers RSS, Atom, and JSON feeds for weblog.lol blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.weblog.lol` | Posts (RSS + Atom + JSON) |
+| `{address}.weblog.lol` | Posts (RSS + Atom + JSON) |
 
 ### Weebly
 
