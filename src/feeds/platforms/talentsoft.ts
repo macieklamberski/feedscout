@@ -1,14 +1,7 @@
 import { getQueryParam, isAnyOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  findElement,
-  getTenantSubdomain,
-  hasClass,
-  hasMarker,
-} from '../../common/utils.js'
+import { composeHint, findElement, hasClass, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers search.
@@ -99,29 +92,23 @@ export const talentsoftHandler: PlatformHandler = {
   resolve: (url, content) => {
     const page = getTalentsoftPage(url, content)
     const pageFeeds = feeds.forUrl(url)
-    const uris: Array<DiscoverUriEntry> = []
 
     if (!pageFeeds) {
-      return uris
+      return []
     }
 
     if (page.kind === 'search') {
-      uris.push({ uri: page.searchFeedUrl, hint: composeHint('talentsoft:search') })
+      return [
+        { uri: page.searchFeedUrl, hint: composeHint('talentsoft:search') },
+        pageFeeds.getFeedEntry('talentsoft:offers', { lcid: page.lcid }),
+      ]
     }
 
-    uris.push(pageFeeds.getFeedEntry('talentsoft:offers', page.lcid ? { lcid: page.lcid } : {}))
-
-    return uris
+    return [pageFeeds.getFeedEntry('talentsoft:offers', { lcid: page.lcid })]
   },
 
-  // The table reads any host under the domain, so the apex, which redirects to the vendor's site,
-  // and the www host, which does not resolve, are refused first. A criterion beyond the language
-  // makes it a search feed.
+  // A criterion beyond the language makes it a search feed.
   getFeedHint: (url) => {
-    if (!getTenantSubdomain(url, domains)) {
-      return
-    }
-
     // Feed lists can print the path after a doubled slash, which the server reads the same.
     const hint = feeds.getFeedHint(url.replace(leadingSlashesRegex, '$1/'))
 

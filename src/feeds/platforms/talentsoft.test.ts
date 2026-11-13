@@ -343,6 +343,19 @@ describe('talentsoftHandler', () => {
       expect(talentsoftHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
+    it('should return the offers hint for a feed on the www host of a tenant', () => {
+      const value = 'https://www.alice.talent-soft.com/handlers/offerRss.ashx'
+      const expected: DiscoverUriHint = { key: 'talentsoft:offers', label: 'Job offers' }
+
+      expect(talentsoftHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://a.alice.talent-soft.com/handlers/offerRss.ashx'
+
+      expect(talentsoftHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a feed on a custom domain', () => {
       const value = 'https://example.com/handlers/offerRss.ashx?LCID=1036'
 
