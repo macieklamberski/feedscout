@@ -3000,7 +3000,7 @@ Discovers RDF and RSS 2.0 feeds for Blogalia blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.blogalia.com` | Posts (RDF + RSS 2.0<sup>†</sup>) |
+| `{tenant}.blogalia.com` | Posts (RDF + RSS 2.0<sup>†</sup>) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
