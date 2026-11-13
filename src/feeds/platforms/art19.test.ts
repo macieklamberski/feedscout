@@ -93,6 +93,13 @@ describe('art19Handler', () => {
       expect(art19Handler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the show hint for a private feed', () => {
+      const value = 'https://rss.art19.com/alternate_feeds/user/example-show/abc123'
+      const expected: DiscoverUriHint = { key: 'art19:show', label: 'Show' }
+
+      expect(art19Handler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the show hint for a show feed under its uuid', () => {
       const value = 'https://rss.art19.com/3399916b-c0b3-4c58-89e3-4572f197d6f1'
       const expected: DiscoverUriHint = { key: 'art19:show', label: 'Show' }
@@ -134,6 +141,10 @@ describe('art19Handler', () => {
         { key: 'art19:show', label: 'Show' },
       ],
       ['https://rss.art19.com/Podcast-gids-in-gezondheid', { key: 'art19:show', label: 'Show' }],
+      [
+        'https://rss.art19.com/alternate_feeds/user/example-show/abc123',
+        { key: 'art19:show', label: 'Show' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

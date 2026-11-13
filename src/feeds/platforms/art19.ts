@@ -12,7 +12,14 @@ const hosts = ['art19.com', 'www.art19.com']
 const showPathRegex = /^\/shows\/([^/]+)/i
 
 // Stored feeds also name a show by its uuid, and the one segment placeholder claims both spellings.
-const feeds = definePlatformFeeds([{ key: 'art19:show', template: 'https://rss.art19.com/{slug}' }])
+const feeds = definePlatformFeeds([
+  { key: 'art19:show', template: 'https://rss.art19.com/{slug}' },
+  // A listener's private feed, such as an ad-free one, under a token no page gives.
+  {
+    key: 'art19:show',
+    template: 'https://rss.art19.com/alternate_feeds/user/{slug}/{token}',
+  },
+])
 
 export const parseArt19Url = (url: string): Art19Url | undefined => {
   if (!isHostOf(url, hosts)) {
