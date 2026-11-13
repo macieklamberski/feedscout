@@ -1,5 +1,4 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, wordRegex } from '../../common/utils.js'
@@ -52,20 +51,17 @@ export const pchomeHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.kind === 'category') {
-      uris.push(
+      return [
         feeds.getFeedEntry('pchome:category', {
           username: parsed.username,
           category: parsed.category,
         }),
-      )
+        feeds.getFeedEntry('pchome:posts', { username: parsed.username }),
+      ]
     }
 
-    uris.push(feeds.getFeedEntry('pchome:posts', { username: parsed.username }))
-
-    return uris
+    return [feeds.getFeedEntry('pchome:posts', { username: parsed.username })]
   },
 
   getFeedHint: feeds.getFeedHint,
