@@ -1,5 +1,4 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -58,18 +57,18 @@ export const livedoorBlogHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.kind === 'category') {
-      uris.push(page.getFeedEntry('livedoor-blog:category', { category: parsed.category }, 'rdf'))
+      return [
+        page.getFeedEntry('livedoor-blog:category', { category: parsed.category }, 'rdf'),
+        page.getFeedEntry('livedoor-blog:posts', {}, 'rdf'),
+        page.getFeedEntry('livedoor-blog:posts', {}, 'atom'),
+      ]
     }
 
-    uris.push(
+    return [
       page.getFeedEntry('livedoor-blog:posts', {}, 'rdf'),
       page.getFeedEntry('livedoor-blog:posts', {}, 'atom'),
-    )
-
-    return uris
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
