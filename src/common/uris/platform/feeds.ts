@@ -32,7 +32,9 @@ export type PlatformFeedParams = Record<string, string | undefined>
 export type PlatformFeedTableOptions = {
   // The hosts a `{host}` placeholder stands for, with every host under `domains`. `getFeedHint`
   // claims a host under `domains` only for a single tenant label.
-  hosts?: Array<string>
+  // A pattern stands for one name across suffixes, such as `/^example\.(?:com|de)$/`, anchored at
+  // both ends, and matches the host as given or without `www`.
+  hosts?: Array<string | RegExp>
   // The domains a `{domain}` placeholder stands for. A pattern stands for a family of domains, such
   // as `/^blogspot\.(?:com|com\.[a-z]{2})$/`, anchored at both ends.
   domains?: Array<string | RegExp>
@@ -118,6 +120,11 @@ const decodePath = (path: string): string => {
     .join('/')
 }
 
+// A host or domain entry as a regex source: a string as a literal, a pattern without its anchors.
+const toEntrySource = (entry: string | RegExp): string => {
+  return isString(entry) ? escapeRegex(entry) : `(?:${entry.source.replace(anchorsRegex, '')})`
+}
+
 // A placeholder becomes the capture, the text around it a literal, decoded for a path so an
 // encoded brace in it stays a literal.
 const toRegexSource = (
@@ -156,9 +163,7 @@ const compileTemplate = (
   const [, scheme, host, path = '', queryText = ''] = match
   const query = [...new URLSearchParams(queryText)]
   const hosts = options.hosts ?? []
-  const domains = (options.domains ?? []).map((domain) => {
-    return isString(domain) ? escapeRegex(domain) : `(?:${domain.source.replace(anchorsRegex, '')})`
-  })
+  const domains = (options.domains ?? []).map((domain) => toEntrySource(domain))
   const domainSource = `(?:${domains.join('|')})`
 
   const hasHosts = hosts.length > 0 || domains.length > 0
@@ -184,7 +189,7 @@ const compileTemplate = (
   )
   const toHostPathRegex = (normalize: (value: string) => string): RegExp => {
     const hostSources = [
-      ...hosts.map((value) => escapeRegex(normalize(value))),
+      ...hosts.map((value) => toEntrySource(isString(value) ? normalize(value) : value)),
       ...(domains.length > 0 ? [`[^./]+\\.${domainSource}`] : []),
     ]
     const hostSource = toRegexSource(normalize(host), '[^.]+', {
