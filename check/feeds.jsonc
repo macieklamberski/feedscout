@@ -909,6 +909,10 @@
     "librivox:audiobook": "https://librivox.org/rss/253"
   },
   "libsyn": {
+    "libsyn:category": [
+      "https://roundersradio.libsyn.com/rss/category/Poker+Talk+Beyond+The+Books",
+      "https://sites.libsyn.com/36312/rss/category/the_haunted_artist"
+    ],
     "libsyn:podcast": "https://thefeed.libsyn.com/rss"
   },
   "lichess": {

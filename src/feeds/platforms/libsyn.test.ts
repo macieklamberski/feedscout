@@ -15,6 +15,16 @@ describe('parseLibsynUrl', () => {
     expect(parseLibsynUrl('https://feeds.libsyn.com/about')).toBeUndefined()
   })
 
+  it('should return the site for a sites host show', () => {
+    const expected: LibsynUrl = { kind: 'site', showId: '12345' }
+
+    expect(parseLibsynUrl('https://sites.libsyn.com/12345/example-episode')).toEqual(expected)
+  })
+
+  it('should return undefined for a sites host page without a numeric show', () => {
+    expect(parseLibsynUrl('https://sites.libsyn.com/about')).toBeUndefined()
+  })
+
   it('should return the podcast for a show subdomain', () => {
     const expected: LibsynUrl = { kind: 'podcast', slug: 'myshow' }
 
@@ -104,6 +114,18 @@ describe('libsynHandler', () => {
       expect(libsynHandler.resolve(value)).toEqual([])
     })
 
+    it('should return the show feed for a sites host page', () => {
+      const value = 'https://sites.libsyn.com/12345/example-episode'
+      const expected = [
+        {
+          uri: 'https://feeds.libsyn.com/12345/rss',
+          hint: { key: 'libsyn:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(libsynHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the feed under the page scheme for an http podcast page', () => {
       const value = 'http://alice.libsyn.com/website'
       const expected = [
@@ -166,8 +188,49 @@ describe('libsynHandler', () => {
       expect(libsynHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for another feed under a show', () => {
+    it('should return the podcast hint for a show feed cut to its last episodes', () => {
       const value = 'https://feeds.libsyn.com/12345/last100'
+      const expected: DiscoverUriHint = { key: 'libsyn:podcast', label: 'Podcast' }
+
+      expect(libsynHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for a podcast feed cut to its last episodes', () => {
+      const value = 'https://alice.libsyn.com/rss/last150'
+      const expected: DiscoverUriHint = { key: 'libsyn:podcast', label: 'Podcast' }
+
+      expect(libsynHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for a show feed on the sites host', () => {
+      const value = 'https://sites.libsyn.com/12345/rss/'
+      const expected: DiscoverUriHint = { key: 'libsyn:podcast', label: 'Podcast' }
+
+      expect(libsynHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the category hint for a category feed', () => {
+      const value = 'https://alice.libsyn.com/rss/category/Example+Category'
+      const expected: DiscoverUriHint = { key: 'libsyn:category', label: 'Category' }
+
+      expect(libsynHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the category hint for a category feed on the sites host', () => {
+      const value = 'https://sites.libsyn.com/12345/rss/category/example_category'
+      const expected: DiscoverUriHint = { key: 'libsyn:category', label: 'Category' }
+
+      expect(libsynHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for another feed under a show', () => {
+      const value = 'https://feeds.libsyn.com/12345/example'
+
+      expect(libsynHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on the sites host without a numeric show', () => {
+      const value = 'https://sites.libsyn.com/rss/category/example'
 
       expect(libsynHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -213,6 +276,9 @@ describe('libsynHandler', () => {
       'https://alice.libsyn.com/rss/',
       'http://alice.libsyn.com/rss',
       'https://rss.libsyn.com/shows/12345/destinations/67890.xml',
+      'https://sites.libsyn.com/12345/rss',
+      'https://feeds.libsyn.com/12345/last100',
+      'http://alice.libsyn.com/rss/last150',
     ]
 
     it.each(values)('should return %s as itself', async (value) => {
@@ -222,6 +288,23 @@ describe('libsynHandler', () => {
         baseUrl: value,
       })
       const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
+    })
+
+    const categoryHint: DiscoverUriHint = { key: 'libsyn:category', label: 'Category' }
+    const categoryValues = [
+      'https://alice.libsyn.com/rss/category/Example+Category/',
+      'https://sites.libsyn.com/12345/rss/category/example_category',
+    ]
+
+    it.each(categoryValues)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [libsynHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint: categoryHint }]
 
       expect(result).toEqual(expected)
     })
