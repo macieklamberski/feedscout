@@ -2965,9 +2965,9 @@ Discovers the news and events feeds of a Sportsregions club site. A club on its 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{club}.sportsregions.fr/*` | News · events |
+| `{club}.sportsregions.fr/…` | News · events |
 | `{club}.sportsregions.fr/evenements?type_id={type}&groupe_id={group}` | Filtered events · news · events |
-| `{custom-domain}/*` | News · events |
+| `{host}/…` | News · events |
 
 ### Ochanoko Net
 
@@ -3755,6 +3755,10 @@ type PlatformHandler = {
 An entry of `domains` can be a pattern standing for a family of domains, anchored at both ends, such as `/^blogspot\.(?:com|com\.[a-z]{2}|[a-z]{2})$/` for `blogspot.com`, `blogspot.de` and `blogspot.com.br`. `{host}` and `{domain}` then stand for any domain the pattern matches, and `forUrl` fills `{domain}` with the one the page's host is under.
 
 A template can open with `{root}`, which stands for the scheme, the host with its port and an optional base path, as `https://example.com/forum`, written as given. `getFeedHint` reads a `{root}` row as a `{host}` row, on the origin of a host in `hosts` or a tenant under `domains`, never under a base path, since a tenant serves from its origin. A table with neither builds the row without claiming it.
+
+A path placeholder written `{name*}` stands for one or more segments, filled from the `name` value, so `https://{host}/{owner}/{repo}/commits/{branch}/{path*}.atom` with `{ path: 'src/lib/index.ts' }` builds the history of that file. Each segment is encoded on its own and the slashes are kept. A value that is empty or holds an empty segment, such as `docs//api`, counts as no value. `getFeedHint` claims any path with one or more non-empty segments there.
+
+`getFeedHint` tries the rows with more query parameters first and, at the same count, in table order. A `{name*}` row overlaps every row with fewer segments in its place, so it goes after them: with `/t/{tag}/feed` listed before `/{path*}/feed`, `/t/news/feed` reads as the tag feed.
 
 `getFeedHint` ignores a leading `www` in the URL's host. On a platform where `www` can be a tenant, set `isWwwTenant: true`: a row is then tried on the host as given first, so `www.example.com/rss` reads as the tenant `www` on a `{username}.example.com/rss` row, and the host without `www` only when no row matches.
 
