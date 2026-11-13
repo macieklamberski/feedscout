@@ -1,5 +1,4 @@
 import { getAnyOf, getPathSegments, isString, parseUrl, resolveUrl, stripWww } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -152,24 +151,30 @@ export const hubspotHandler: PlatformHandler = {
     }
 
     const root = parsed.blog ? `${origin}/${parsed.blog}` : origin
-    const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.kind === 'author') {
-      uris.push(page.getFeedEntry('hubspot:author', { root, name: parsed.name }))
+      return [
+        page.getFeedEntry('hubspot:author', { root, name: parsed.name }),
+        page.getFeedEntry('hubspot:blog', { root }),
+      ]
     }
 
     // A topic listing takes its own row, so the name goes under the topic placeholder.
     if (parsed.kind === 'tag' && parsed.route === 'topic') {
-      uris.push(page.getFeedEntry('hubspot:tag', { root, topic: parsed.name }))
+      return [
+        page.getFeedEntry('hubspot:tag', { root, topic: parsed.name }),
+        page.getFeedEntry('hubspot:blog', { root }),
+      ]
     }
 
-    if (parsed.kind === 'tag' && parsed.route !== 'topic') {
-      uris.push(page.getFeedEntry('hubspot:tag', { root, name: parsed.name }))
+    if (parsed.kind === 'tag') {
+      return [
+        page.getFeedEntry('hubspot:tag', { root, name: parsed.name }),
+        page.getFeedEntry('hubspot:blog', { root }),
+      ]
     }
 
-    uris.push(page.getFeedEntry('hubspot:blog', { root }))
-
-    return uris
+    return [page.getFeedEntry('hubspot:blog', { root })]
   },
 
   getFeedHint: feeds.getFeedHint,
