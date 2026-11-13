@@ -7,9 +7,9 @@ import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.j
 
 export type ShinobiUrl = { kind: 'blog'; blog: string } | { kind: 'customDomain' }
 
-// Ninja Blog serves its blogs as subdomains of 101 domains. These hold at least 1% of its stored
-// feeds each, and a blog on any other is known by the banner its pages print.
-const domains = ['3rin.net', 'blog.shinobi.jp', 'iku4.com', 'ni-3.net', 'ria10.com']
+// Ninja Blog serves its blogs as subdomains of 101 domains. Only its branded one is listed, and a
+// blog on any other is known by the banner its pages print.
+const domains = ['blog.shinobi.jp']
 
 const bannerLogoRegex = /^\/admin\/img\/blogheader_logo\.png$/i
 

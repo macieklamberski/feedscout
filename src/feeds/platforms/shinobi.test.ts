@@ -38,15 +38,8 @@ describe('parseShinobiUrl', () => {
     expect(parseShinobiUrl(value)).toEqual(expected)
   })
 
-  it('should return the blog for a subdomain of another Ninja Blog domain', () => {
-    const value = 'https://example.ni-3.net/'
-    const expected: ShinobiUrl = { kind: 'blog', blog: 'example' }
-
-    expect(parseShinobiUrl(value)).toEqual(expected)
-  })
-
   it('should return a custom domain for a Ninja Blog domain off the list', () => {
-    const value = 'https://example.syoyu.net/'
+    const value = 'https://example.3rin.net/'
     const expected: ShinobiUrl = { kind: 'customDomain' }
 
     expect(parseShinobiUrl(value)).toEqual(expected)
@@ -76,12 +69,6 @@ describe('parseShinobiUrl', () => {
 
     expect(parseShinobiUrl(value)).toBeUndefined()
   })
-
-  it('should return undefined for the bare domain of a Ninja Blog domain', () => {
-    const value = 'https://ni-3.net/'
-
-    expect(parseShinobiUrl(value)).toBeUndefined()
-  })
 })
 
 describe('shinobiHandler', () => {
@@ -89,9 +76,7 @@ describe('shinobiHandler', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://example.blog.shinobi.jp'],
       [true, 'https://another.blog.shinobi.jp/Entry/1/'],
-      [true, 'https://example.3rin.net/'],
-      [true, 'https://another.ria10.com/Entry/1/'],
-      [false, 'https://3rin.net/'],
+      [false, 'https://example.3rin.net/'],
       [false, 'https://example.ninja.co.jp/'],
       [false, 'https://blog.shinobi.jp'],
       [false, 'https://example.com'],
@@ -102,13 +87,13 @@ describe('shinobiHandler', () => {
     })
 
     it('should return true for a blog on a Ninja Blog domain off the list carrying the marker', () => {
-      const value = 'https://example.syoyu.net/'
+      const value = 'https://example.3rin.net/'
 
       expect(shinobiHandler.match(value, bannerHtml)).toBe(true)
     })
 
     it('should return false for a blog on a Ninja Blog domain off the list without the marker', () => {
-      const value = 'https://example.syoyu.net/'
+      const value = 'https://example.3rin.net/'
 
       expect(shinobiHandler.match(value, '<html></html>')).toBe(false)
     })
@@ -143,31 +128,15 @@ describe('shinobiHandler', () => {
       expect(shinobiHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return RSS and Atom feeds for a blog on another Ninja Blog domain', () => {
-      const value = 'https://example.ni-3.net/Entry/1/'
-      const expected: Array<DiscoverUriEntry> = [
-        {
-          uri: 'https://example.ni-3.net/RSS/',
-          hint: { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
-        },
-        {
-          uri: 'https://example.ni-3.net/ATOM/',
-          hint: { key: 'shinobi:posts', label: 'Posts', format: 'atom' },
-        },
-      ]
-
-      expect(shinobiHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should return RSS and Atom feeds for a blog on a Ninja Blog domain off the list', () => {
-      const value = 'https://example.syoyu.net/Entry/1/'
+      const value = 'https://example.3rin.net/Entry/1/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.syoyu.net/RSS/',
+          uri: 'https://example.3rin.net/RSS/',
           hint: { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://example.syoyu.net/ATOM/',
+          uri: 'https://example.3rin.net/ATOM/',
           hint: { key: 'shinobi:posts', label: 'Posts', format: 'atom' },
         },
       ]
@@ -270,13 +239,6 @@ describe('shinobiHandler', () => {
       expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts hint for a feed on another Ninja Blog domain', () => {
-      const value = 'http://example.ni-3.net/RSS/'
-      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rss' }
-
-      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return undefined for an entry page', () => {
       const value = 'https://example.blog.shinobi.jp/Entry/1/'
 
@@ -289,20 +251,14 @@ describe('shinobiHandler', () => {
       expect(shinobiHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a feed path on the bare domain of a Ninja Blog domain', () => {
-      const value = 'https://ni-3.net/RSS/'
-
-      expect(shinobiHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
     it('should return undefined for a feed path on a nested subdomain', () => {
-      const value = 'https://blog.example.ni-3.net/RSS/'
+      const value = 'https://blog.example.blog.shinobi.jp/RSS/'
 
       expect(shinobiHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a Ninja Blog domain off the list', () => {
-      const value = 'https://example.syoyu.net/RSS/'
+      const value = 'https://example.3rin.net/RSS/'
 
       expect(shinobiHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -316,7 +272,7 @@ describe('shinobiHandler', () => {
 
   describe('pages through the Platform method', () => {
     it('should return the feeds of a blog on a Ninja Blog domain off the list', async () => {
-      const value = 'https://example.syoyu.net/Entry/1/'
+      const value = 'https://example.3rin.net/Entry/1/'
       const result = await discoverUrisFromPlatform(bannerHtml, undefined, {
         ...defaultPlatformOptions,
         handlers: [shinobiHandler],
@@ -324,11 +280,11 @@ describe('shinobiHandler', () => {
       })
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.syoyu.net/RSS/',
+          uri: 'https://example.3rin.net/RSS/',
           hint: { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://example.syoyu.net/ATOM/',
+          uri: 'https://example.3rin.net/ATOM/',
           hint: { key: 'shinobi:posts', label: 'Posts', format: 'atom' },
         },
       ]
@@ -387,7 +343,6 @@ describe('shinobiHandler', () => {
         'https://example.blog.shinobi.jp/OPML',
         { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
       ],
-      ['http://example.ni-3.net/rss', { key: 'shinobi:posts', label: 'Posts', format: 'rss' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
