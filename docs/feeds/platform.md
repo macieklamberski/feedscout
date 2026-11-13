@@ -615,6 +615,8 @@ Discovers RSS feeds for Itch.io games, creators, devlogs, and browse pages.
 
 <sup>†</sup> *Found only by the Platform method.*
 
+> Every page above also gets the site-wide feeds after its own: the itch.io updates and the itch.io digest. Only `itch.io/updates` links one of them, so elsewhere they are found only by the Platform method.
+
 ### CSDN
 
 Discovers RSS feeds for CSDN user blogs.
