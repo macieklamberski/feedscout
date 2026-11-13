@@ -1,5 +1,4 @@
 import { isPlainObject, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getJsonLd, hasMarker } from '../../common/utils.js'
@@ -121,28 +120,27 @@ export const forumotionHandler: PlatformHandler = {
   resolve: (url, content) => {
     const page = getForumotionPage(url, content)
     const pageFeeds = feeds.forUrl(url)
-    const uris: Array<DiscoverUriEntry> = []
 
     if (!pageFeeds) {
-      return uris
+      return []
     }
 
     // Forumotion serves no topic feed and ignores `?t=`, so a topic page gets its forum's feed.
     if (page.kind === 'forum' || page.kind === 'topic') {
       const params = { forumId: page.forumId }
 
-      uris.push(
+      return [
         pageFeeds.getFeedEntry('forumotion:forum', params, 'rss'),
         pageFeeds.getFeedEntry('forumotion:forum', params, 'atom'),
-      )
+        pageFeeds.getFeedEntry('forumotion:latest-topics', {}, 'rss'),
+        pageFeeds.getFeedEntry('forumotion:latest-topics', {}, 'atom'),
+      ]
     }
 
-    uris.push(
+    return [
       pageFeeds.getFeedEntry('forumotion:latest-topics', {}, 'rss'),
       pageFeeds.getFeedEntry('forumotion:latest-topics', {}, 'atom'),
-    )
-
-    return uris
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
