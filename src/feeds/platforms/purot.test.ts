@@ -203,29 +203,53 @@ describe('purotHandler', () => {
           uri: 'https://example.purot.net/changes/all?mode=rss',
           hint: { key: 'purot:recent-changes', label: 'Recent changes' },
         },
+        {
+          uri: 'https://example.purot.net/changes/all?mode=rss&messages=0',
+          hint: { key: 'purot:recent-page-changes', label: 'Recent page changes' },
+        },
+        {
+          uri: 'https://example.purot.net/changes/all?mode=rss&pages=0',
+          hint: { key: 'purot:recent-discussions', label: 'Recent discussions' },
+        },
       ]
 
       expect(purotHandler.resolve(value, pageHtml)).toEqual(expected)
     })
 
-    it('should return the wiki feed for a profile page', () => {
+    it('should return the wiki feeds for a profile page', () => {
       const value = 'https://example.purot.net/profile/alice'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.purot.net/changes/all?mode=rss',
           hint: { key: 'purot:recent-changes', label: 'Recent changes' },
         },
+        {
+          uri: 'https://example.purot.net/changes/all?mode=rss&messages=0',
+          hint: { key: 'purot:recent-page-changes', label: 'Recent page changes' },
+        },
+        {
+          uri: 'https://example.purot.net/changes/all?mode=rss&pages=0',
+          hint: { key: 'purot:recent-discussions', label: 'Recent discussions' },
+        },
       ]
 
       expect(purotHandler.resolve(value, missingProfileHtml)).toEqual(expected)
     })
 
-    it('should return the wiki feed under the page scheme for an http profile page', () => {
+    it('should return the wiki feeds under the page scheme for an http profile page', () => {
       const value = 'http://example.purot.net/profile/alice'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'http://example.purot.net/changes/all?mode=rss',
           hint: { key: 'purot:recent-changes', label: 'Recent changes' },
+        },
+        {
+          uri: 'http://example.purot.net/changes/all?mode=rss&messages=0',
+          hint: { key: 'purot:recent-page-changes', label: 'Recent page changes' },
+        },
+        {
+          uri: 'http://example.purot.net/changes/all?mode=rss&pages=0',
+          hint: { key: 'purot:recent-discussions', label: 'Recent discussions' },
         },
       ]
 

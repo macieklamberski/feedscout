@@ -38,7 +38,8 @@ const feeds = definePlatformFeeds(
       template: '{scheme}://{host}/changes/{page}?mode=rss&pages=0',
     },
     { key: 'purot:page-activity', template: '{scheme}://{host}/changes/{page}?mode=rss' },
-    // Only a missing user's profile page links these, with every user's profile changes in them.
+    // A real user's profile feeds hold that user's own changes. Only a missing user's feeds list
+    // every user's profile changes.
     {
       key: 'purot:user-changes',
       template: '{scheme}://{host}/changes/profile/{user}?mode=rss&messages=0',
@@ -107,10 +108,16 @@ export const purotHandler: PlatformHandler = {
         pageFeeds.getFeedEntry('purot:page-discussions', params),
         pageFeeds.getFeedEntry('purot:page-activity', params),
         pageFeeds.getFeedEntry('purot:recent-changes'),
+        pageFeeds.getFeedEntry('purot:recent-page-changes'),
+        pageFeeds.getFeedEntry('purot:recent-discussions'),
       ]
     }
 
-    return [pageFeeds.getFeedEntry('purot:recent-changes')]
+    return [
+      pageFeeds.getFeedEntry('purot:recent-changes'),
+      pageFeeds.getFeedEntry('purot:recent-page-changes'),
+      pageFeeds.getFeedEntry('purot:recent-discussions'),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
