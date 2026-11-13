@@ -111,7 +111,9 @@ export const habrHandler: PlatformHandler = {
 
       return [
         feeds.getFeedEntry('habr:hub', params),
+        feeds.getFeedEntry('habr:hub-posts', params),
         feeds.getFeedEntry('habr:articles', { language: parsed.language }),
+        feeds.getFeedEntry('habr:news', { language: parsed.language }),
       ]
     }
 
@@ -121,6 +123,7 @@ export const habrHandler: PlatformHandler = {
       return [
         feeds.getFeedEntry('habr:user', params),
         feeds.getFeedEntry('habr:articles', { language: parsed.language }),
+        feeds.getFeedEntry('habr:news', { language: parsed.language }),
       ]
     }
 
@@ -130,10 +133,14 @@ export const habrHandler: PlatformHandler = {
       return [
         feeds.getFeedEntry('habr:company', params),
         feeds.getFeedEntry('habr:articles', { language: parsed.language }),
+        feeds.getFeedEntry('habr:news', { language: parsed.language }),
       ]
     }
 
-    return [feeds.getFeedEntry('habr:articles', { language: parsed.language })]
+    return [
+      feeds.getFeedEntry('habr:articles', { language: parsed.language }),
+      feeds.getFeedEntry('habr:news', { language: parsed.language }),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,

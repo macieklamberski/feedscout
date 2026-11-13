@@ -111,7 +111,7 @@ describe('habrHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return the hub and articles feeds for a hub page', () => {
+    it('should return the hub, hub posts, articles and news feeds for a hub page', () => {
       const value = 'https://habr.com/ru/hubs/programming/articles/'
       const expected = [
         {
@@ -119,8 +119,16 @@ describe('habrHandler', () => {
           hint: { key: 'habr:hub', label: 'Hub' },
         },
         {
+          uri: 'https://habr.com/ru/rss/hubs/programming/posts/',
+          hint: { key: 'habr:hub-posts', label: 'Hub posts' },
+        },
+        {
           uri: 'https://habr.com/ru/rss/articles/',
           hint: { key: 'habr:articles', label: 'Articles' },
+        },
+        {
+          uri: 'https://habr.com/ru/rss/news/',
+          hint: { key: 'habr:news', label: 'News' },
         },
       ]
 
@@ -138,6 +146,10 @@ describe('habrHandler', () => {
           uri: 'https://habr.com/en/rss/articles/',
           hint: { key: 'habr:articles', label: 'Articles' },
         },
+        {
+          uri: 'https://habr.com/en/rss/news/',
+          hint: { key: 'habr:news', label: 'News' },
+        },
       ]
 
       expect(habrHandler.resolve(value)).toEqual(expected)
@@ -153,6 +165,10 @@ describe('habrHandler', () => {
         {
           uri: 'https://habr.com/en/rss/articles/',
           hint: { key: 'habr:articles', label: 'Articles' },
+        },
+        {
+          uri: 'https://habr.com/en/rss/news/',
+          hint: { key: 'habr:news', label: 'News' },
         },
       ]
 
@@ -170,6 +186,10 @@ describe('habrHandler', () => {
           uri: 'https://habr.com/ru/rss/articles/',
           hint: { key: 'habr:articles', label: 'Articles' },
         },
+        {
+          uri: 'https://habr.com/ru/rss/news/',
+          hint: { key: 'habr:news', label: 'News' },
+        },
       ]
 
       expect(habrHandler.resolve(value)).toEqual(expected)
@@ -186,6 +206,10 @@ describe('habrHandler', () => {
           uri: 'https://habr.com/ru/rss/articles/',
           hint: { key: 'habr:articles', label: 'Articles' },
         },
+        {
+          uri: 'https://habr.com/ru/rss/news/',
+          hint: { key: 'habr:news', label: 'News' },
+        },
       ]
 
       expect(habrHandler.resolve(value)).toEqual(expected)
@@ -197,6 +221,10 @@ describe('habrHandler', () => {
         {
           uri: 'https://habr.com/ru/rss/articles/',
           hint: { key: 'habr:articles', label: 'Articles' },
+        },
+        {
+          uri: 'https://habr.com/ru/rss/news/',
+          hint: { key: 'habr:news', label: 'News' },
         },
       ]
 
@@ -210,63 +238,63 @@ describe('habrHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the user hint for a user feed', () => {
-      const value = 'https://habr.com/en/rss/users/app-z/posts/'
+      const value = 'https://habr.com/en/rss/users/alice/posts/'
       const expected: DiscoverUriHint = { key: 'habr:user', label: 'User' }
 
       expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the user hint for a user articles feed', () => {
-      const value = 'https://habr.com/en/rss/users/app-z/articles/?fl=en'
+      const value = 'https://habr.com/en/rss/users/alice/articles/?fl=en'
       const expected: DiscoverUriHint = { key: 'habr:user', label: 'User' }
 
       expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the user hint for a user publications feed', () => {
-      const value = 'https://habr.com/ru/rss/users/b0fh/publications/articles/'
+      const value = 'https://habr.com/ru/rss/users/bob/publications/articles/'
       const expected: DiscoverUriHint = { key: 'habr:user', label: 'User' }
 
       expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the user hint for a user publications posts feed', () => {
-      const value = 'https://habr.com/ru/rss/users/alizar/publications/posts/'
+      const value = 'https://habr.com/ru/rss/users/carol/publications/posts/'
       const expected: DiscoverUriHint = { key: 'habr:user', label: 'User' }
 
       expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the company hint for a company feed of all articles', () => {
-      const value = 'https://habr.com/ru/rss/companies/yandex/articles/all/'
+      const value = 'https://habr.com/ru/rss/companies/example/articles/all/'
       const expected: DiscoverUriHint = { key: 'habr:company', label: 'Company' }
 
       expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the company hint for a company blog feed', () => {
-      const value = 'https://habr.com/ru/rss/company/yandex/blog/'
+      const value = 'https://habr.com/ru/rss/company/example/blog/'
       const expected: DiscoverUriHint = { key: 'habr:company', label: 'Company' }
 
       expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the company hint for a company feed', () => {
-      const value = 'https://habr.com/en/rss/companies/comptek/articles/'
+      const value = 'https://habr.com/en/rss/companies/acme/articles/'
       const expected: DiscoverUriHint = { key: 'habr:company', label: 'Company' }
 
       expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the company hint for a company feed with its language query', () => {
-      const value = 'https://habr.com/ru/rss/companies/kingservers/articles/?fl=ru'
+      const value = 'https://habr.com/ru/rss/companies/example/articles/?fl=ru'
       const expected: DiscoverUriHint = { key: 'habr:company', label: 'Company' }
 
       expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the hub hint for a hub feed', () => {
-      const value = 'https://habr.com/ru/rss/hub/office365dev/'
+      const value = 'https://habr.com/ru/rss/hub/example/'
       const expected: DiscoverUriHint = { key: 'habr:hub', label: 'Hub' }
 
       expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
@@ -308,14 +336,14 @@ describe('habrHandler', () => {
     })
 
     it('should return the user hint for a feed on the www host', () => {
-      const value = 'https://www.habr.com/en/rss/users/b0fh/posts/'
+      const value = 'https://www.habr.com/en/rss/users/bob/posts/'
       const expected: DiscoverUriHint = { key: 'habr:user', label: 'User' }
 
       expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the user hint for a feed over http', () => {
-      const value = 'http://habr.com/en/rss/users/b0fh/posts/'
+      const value = 'http://habr.com/en/rss/users/bob/posts/'
       const expected: DiscoverUriHint = { key: 'habr:user', label: 'User' }
 
       expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
@@ -328,13 +356,13 @@ describe('habrHandler', () => {
     })
 
     it('should return undefined for a user page', () => {
-      const value = 'https://habr.com/en/users/app-z/posts/'
+      const value = 'https://habr.com/en/users/alice/posts/'
 
       expect(habrHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a company page', () => {
-      const value = 'https://habr.com/ru/companies/kingservers/articles/'
+      const value = 'https://habr.com/ru/companies/example/articles/'
 
       expect(habrHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -367,7 +395,7 @@ describe('habrHandler', () => {
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/en/rss/users/app-z/posts/'
+      const value = 'https://example.com/en/rss/users/alice/posts/'
 
       expect(habrHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -375,28 +403,28 @@ describe('habrHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://habr.com/en/rss/users/app-z/posts/', { key: 'habr:user', label: 'User' }],
-      ['https://habr.com/en/rss/users/app-z/articles/?fl=en', { key: 'habr:user', label: 'User' }],
+      ['https://habr.com/en/rss/users/alice/posts/', { key: 'habr:user', label: 'User' }],
+      ['https://habr.com/en/rss/users/alice/articles/?fl=en', { key: 'habr:user', label: 'User' }],
       [
-        'https://habr.com/en/rss/companies/comptek/articles/',
+        'https://habr.com/en/rss/companies/acme/articles/',
         { key: 'habr:company', label: 'Company' },
       ],
-      ['https://habr.com/ru/rss/hub/office365dev/', { key: 'habr:hub', label: 'Hub' }],
+      ['https://habr.com/ru/rss/hub/example/', { key: 'habr:hub', label: 'Hub' }],
       ['https://habr.com/ru/rss/hubs/python/articles/', { key: 'habr:hub', label: 'Hub' }],
       ['https://habr.com/ru/rss/hubs/python/articles/all/', { key: 'habr:hub', label: 'Hub' }],
       [
-        'https://habr.com/ru/rss/users/b0fh/publications/articles/',
+        'https://habr.com/ru/rss/users/bob/publications/articles/',
         { key: 'habr:user', label: 'User' },
       ],
       [
-        'https://habr.com/ru/rss/users/alizar/publications/posts/',
+        'https://habr.com/ru/rss/users/carol/publications/posts/',
         { key: 'habr:user', label: 'User' },
       ],
       [
-        'https://habr.com/ru/rss/companies/yandex/articles/all/',
+        'https://habr.com/ru/rss/companies/example/articles/all/',
         { key: 'habr:company', label: 'Company' },
       ],
-      ['https://habr.com/ru/rss/company/yandex/blog/', { key: 'habr:company', label: 'Company' }],
+      ['https://habr.com/ru/rss/company/example/blog/', { key: 'habr:company', label: 'Company' }],
       ['https://habr.com/ru/rss/articles/', { key: 'habr:articles', label: 'Articles' }],
       ['https://habr.com/ru/rss/articles/top/', { key: 'habr:articles', label: 'Articles' }],
       ['http://habr.com/ru/rss/articles/top/weekly/', { key: 'habr:articles', label: 'Articles' }],
