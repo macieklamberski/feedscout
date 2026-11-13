@@ -1064,11 +1064,11 @@ Discovers RSS and Atom feeds for InsaneJournal journals.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.insanejournal.com` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
+| `{user}.insanejournal.com` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 | `insanejournal.com/users/{user}` or `insanejournal.com/~{user}` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 | `asylums.insanejournal.com/{asylum}`, `insanejournal.com/asylum/{asylum}` or `insanejournal.com/community/{asylum}` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 | `feeds.insanejournal.com/{feed}` | Posts<sup>†</sup> (RSS + Atom) · userpics<sup>?</sup> (Atom) |
-| `*.insanejournal.com/tag/{tag}` | Tag (RSS + Atom) · posts (RSS + Atom) · userpics (Atom) |
+| `{user}.insanejournal.com/tag/{tag}` | Tag (RSS + Atom) · posts (RSS + Atom) · userpics (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
