@@ -137,7 +137,7 @@ export const chambermasterHandler: PlatformHandler = {
     return [feedEntry('chambermaster:new-m2m-deals')]
   },
 
-  // The table reads any host under the domains, so the apex and www, whose feeds answer 404 or
-  // 500 or a page, are refused first. A preview host can nest, as in `example.preview`.
+  // The table claims only one tenant label under the domains, so the apex and www, whose feeds
+  // answer 404 or 500 or a page, get no hint. A preview host can nest, as in `example.preview`.
   getFeedHint: feeds.getFeedHint,
 }
