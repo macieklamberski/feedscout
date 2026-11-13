@@ -1803,7 +1803,7 @@ Discovers the Atom feeds of a Syosetu author.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `mypage.syosetu.com/{writerId}` | Author novels<sup>†</sup> · activity (Atom) |
+| `mypage.syosetu.com/{writerId}` | Author novels<sup>†</sup> · activity · all novels<sup>†</sup> (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 

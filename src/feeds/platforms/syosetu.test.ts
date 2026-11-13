@@ -6,11 +6,14 @@ import { parseSyosetuUrl, type SyosetuUrl, syosetuHandler } from './syosetu.js'
 
 const authorHint: DiscoverUriHint = { key: 'syosetu:author', label: 'Author' }
 const activityHint: DiscoverUriHint = { key: 'syosetu:activity', label: 'Activity' }
+const allNovelsHint: DiscoverUriHint = { key: 'syosetu:all-novels', label: 'All novels' }
 const feedCases: Array<[string, DiscoverUriHint]> = [
   ['https://api.syosetu.com/writernovel/12345.Atom', authorHint],
   ['http://api.syosetu.com/writernovel/12345.atom', authorHint],
   ['https://api.syosetu.com/writer/12345.Atom', activityHint],
   ['https://api.syosetu.com/writer/12345.Atom/', activityHint],
+  ['https://api.syosetu.com/allnovel.Atom', allNovelsHint],
+  ['http://api.syosetu.com/allnovel.atom', allNovelsHint],
 ]
 
 describe('parseSyosetuUrl', () => {
@@ -63,7 +66,7 @@ describe('syosetuHandler', () => {
       expect(syosetuHandler.resolve('https://example.com/')).toEqual([])
     })
 
-    it('should return the author and activity feeds', () => {
+    it('should return the author, activity and all novels feeds', () => {
       const value = 'https://mypage.syosetu.com/372556/'
       const expected = [
         {
@@ -73,6 +76,10 @@ describe('syosetuHandler', () => {
         {
           uri: 'https://api.syosetu.com/writer/372556.Atom',
           hint: { key: 'syosetu:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://api.syosetu.com/allnovel.Atom',
+          hint: { key: 'syosetu:all-novels', label: 'All novels' },
         },
       ]
 
@@ -109,6 +116,13 @@ describe('syosetuHandler', () => {
     it('should return the activity hint for an activity feed with a trailing slash', () => {
       const value = 'https://api.syosetu.com/writer/12345.Atom/'
       const expected: DiscoverUriHint = { key: 'syosetu:activity', label: 'Activity' }
+
+      expect(syosetuHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the all novels hint for the all novels feed', () => {
+      const value = 'https://api.syosetu.com/allnovel.Atom'
+      const expected: DiscoverUriHint = { key: 'syosetu:all-novels', label: 'All novels' }
 
       expect(syosetuHandler.getFeedHint?.(value)).toEqual(expected)
     })
