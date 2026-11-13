@@ -23,11 +23,11 @@ const feeds = definePlatformFeeds(
   [
     {
       key: 'wild-apricot:blog',
-      template: '{scheme}://{tenant}.{domain}/page-{page}/BlogPost/{id}/RSS',
+      template: '{root}/page-{page}/BlogPost/{id}/RSS',
     },
     {
       key: 'wild-apricot:events',
-      template: '{scheme}://{tenant}.{domain}/page-{page}/EventModule/{id}/RSS',
+      template: '{root}/page-{page}/EventModule/{id}/RSS',
     },
     { key: 'wild-apricot:page', template: '{scheme}://{host}/page-{page}/RSS' },
   ],
