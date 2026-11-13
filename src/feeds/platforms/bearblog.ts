@@ -1,5 +1,4 @@
 import { getQueryParam, isHostOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -89,23 +88,21 @@ export const bearblogHandler: PlatformHandler = {
       ]
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.tag) {
       const params = { tag: parsed.tag }
 
-      uris.push(
+      return [
         page.getFeedEntry('bearblog:tag', params, 'atom'),
         page.getFeedEntry('bearblog:tag', params, 'rss'),
-      )
+        page.getFeedEntry('bearblog:posts', {}, 'atom'),
+        page.getFeedEntry('bearblog:posts', {}, 'rss'),
+      ]
     }
 
-    uris.push(
+    return [
       page.getFeedEntry('bearblog:posts', {}, 'atom'),
       page.getFeedEntry('bearblog:posts', {}, 'rss'),
-    )
-
-    return uris
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
