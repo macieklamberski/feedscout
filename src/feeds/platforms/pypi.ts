@@ -18,9 +18,6 @@ const feeds = definePlatformFeeds([
   { key: 'pypi:updates', template: 'https://pypi.org/rss/updates.xml' },
 ])
 
-// Every page links the two site-wide feeds.
-const siteFeeds = [feeds.getFeedEntry('pypi:new-packages'), feeds.getFeedEntry('pypi:updates')]
-
 export const parsePypiUrl = (url: string): PypiUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -50,12 +47,17 @@ export const pypiHandler: PlatformHandler = {
       return []
     }
 
-    // The feed path answers for any case and any of `-`, `_` and `.` in the project name.
+    // Every page links the two site-wide feeds. The feed path answers for any case and any of
+    // `-`, `_` and `.` in the project name.
     if (parsed.kind === 'project') {
-      return [feeds.getFeedEntry('pypi:releases', { project: parsed.project }), ...siteFeeds]
+      return [
+        feeds.getFeedEntry('pypi:releases', { project: parsed.project }),
+        feeds.getFeedEntry('pypi:new-packages'),
+        feeds.getFeedEntry('pypi:updates'),
+      ]
     }
 
-    return siteFeeds
+    return [feeds.getFeedEntry('pypi:new-packages'), feeds.getFeedEntry('pypi:updates')]
   },
 
   getFeedHint: feeds.getFeedHint,
