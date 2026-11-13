@@ -2983,7 +2983,7 @@ Discovers the RSS feeds for blogs hosted on Blogia.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.blogia.com` | Posts (RSS) · comments (RSS) |
+| `{blog}.blogia.com` | Posts (RSS) · comments (RSS) |
 
 ### Parsiblog
 
