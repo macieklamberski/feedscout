@@ -457,6 +457,8 @@
     "podomatic:show": "Show",
     "powerpress:podcast": "Podcast",
     "ivoox:podcast": "Podcast",
+    "ivoox:group": "Group",
+    "ivoox:playlist": "Playlist",
     "atypon:journal": "Journal",
     "atypon:most-cited": "Most cited",
     "soundon:podcast": "Podcast",

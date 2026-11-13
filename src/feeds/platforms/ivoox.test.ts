@@ -154,6 +154,20 @@ describe('ivooxHandler', () => {
   })
 
   describe('getFeedHint', () => {
+    it('should return the group hint for a group feed', () => {
+      const value = 'https://www.ivoox.com/en/feed_fl_12345_1.xml'
+      const expected: DiscoverUriHint = { key: 'ivoox:group', label: 'Group' }
+
+      expect(ivooxHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the playlist hint for a playlist feed', () => {
+      const value = 'https://www.ivoox.com/en/itunes-feed_fp_12345-_24062013_1.xml'
+      const expected: DiscoverUriHint = { key: 'ivoox:playlist', label: 'Playlist' }
+
+      expect(ivooxHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the podcast hint for a podcast feed', () => {
       const value = 'https://feeds.ivoox.com/feed_fg_f1317588_filtro_1.xml'
       const expected: DiscoverUriHint = { key: 'ivoox:podcast', label: 'Podcast' }
@@ -188,12 +202,6 @@ describe('ivooxHandler', () => {
       expect(ivooxHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a list feed', () => {
-      const value = 'https://www.ivoox.com/en/feed_fl_281_1.xml'
-
-      expect(ivooxHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/feed_fg_f1317588_filtro_1.xml'
 
@@ -210,6 +218,25 @@ describe('ivooxHandler', () => {
       'https://www.ivoox.com/example_fg_f12345_filtro_1.xml',
       'https://www.ivoox.com/en/example_fg_f12345_filtro_1.xml',
     ]
+
+    const otherFeeds: Array<[string, DiscoverUriHint]> = [
+      ['http://www.ivoox.com/en/feed_fl_12345_1.xml', { key: 'ivoox:group', label: 'Group' }],
+      [
+        'https://ivoox.com/en/itunes-feed_fp_12345-_24062013_1.xml',
+        { key: 'ivoox:playlist', label: 'Playlist' },
+      ],
+    ]
+
+    it.each(otherFeeds)('should return %s as itself with its hint', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [ivooxHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
+    })
 
     it.each(ownFeeds)('should return %s as itself', async (value) => {
       const result = await discoverUrisFromPlatform(undefined, undefined, {

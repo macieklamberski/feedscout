@@ -24,6 +24,12 @@ const feeds = definePlatformFeeds([
     key: 'ivoox:podcast',
     template: 'https://www.ivoox.com/{locale}/{slug}_fg_f{podcastId}_filtro_1.xml',
   },
+  // A group of shows, and a listener's playlist, under ids only their own pages give.
+  { key: 'ivoox:group', template: 'https://www.ivoox.com/{locale}/feed_fl_{groupId}_{page}.xml' },
+  {
+    key: 'ivoox:playlist',
+    template: 'https://www.ivoox.com/{locale}/itunes-feed_fp_{playlistId}-_{date}_{page}.xml',
+  },
 ])
 
 export const parseIvooxUrl = (url: string): IvooxUrl | undefined => {
