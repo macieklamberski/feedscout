@@ -50,13 +50,14 @@ export const posthavenHandler: PlatformHandler = {
       return []
     }
 
-    const posts = page.getFeedEntry('posthaven:posts')
-
     if (parsed.kind === 'tag') {
-      return [page.getFeedEntry('posthaven:tag', { tag: parsed.tag }), posts]
+      return [
+        page.getFeedEntry('posthaven:tag', { tag: parsed.tag }),
+        page.getFeedEntry('posthaven:posts'),
+      ]
     }
 
-    return [posts]
+    return [page.getFeedEntry('posthaven:posts')]
   },
 
   getFeedHint: feeds.getFeedHint,
