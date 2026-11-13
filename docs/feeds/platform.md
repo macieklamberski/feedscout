@@ -2637,8 +2637,8 @@ Discovers the posts and comments feeds of an Eklablog blog. A blog on any other 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.eklablog.com` | Posts · comments<sup>†</sup> |
-| Any page on another domain | Posts · comments<sup>†</sup> |
+| `{blog}.eklablog.com` | Posts · comments<sup>†</sup> |
+| `{host}` | Posts · comments<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
