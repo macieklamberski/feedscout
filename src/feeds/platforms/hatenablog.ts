@@ -1,4 +1,3 @@
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -84,32 +83,32 @@ export const hatenablogHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.kind === 'category') {
       const params = { category: parsed.category }
 
-      uris.push(
+      return [
         page.getFeedEntry('hatenablog:category', params, 'rss'),
         page.getFeedEntry('hatenablog:category', params, 'atom'),
-      )
+        page.getFeedEntry('hatenablog:posts', {}, 'rss'),
+        page.getFeedEntry('hatenablog:posts', {}, 'atom'),
+      ]
     }
 
     if (parsed.kind === 'author') {
       const params = { author: parsed.author }
 
-      uris.push(
+      return [
         page.getFeedEntry('hatenablog:author', params, 'rss'),
         page.getFeedEntry('hatenablog:author', params, 'atom'),
-      )
+        page.getFeedEntry('hatenablog:posts', {}, 'rss'),
+        page.getFeedEntry('hatenablog:posts', {}, 'atom'),
+      ]
     }
 
-    uris.push(
+    return [
       page.getFeedEntry('hatenablog:posts', {}, 'rss'),
       page.getFeedEntry('hatenablog:posts', {}, 'atom'),
-    )
-
-    return uris
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,

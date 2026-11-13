@@ -583,14 +583,14 @@ Discovers RSS and Atom feeds for Hatena Blog on `*.hatenablog.com`, `*.hatenablo
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.hatenablog.com` | Posts (RSS + Atom) |
-| `*.hatenablog.jp` | Posts (RSS + Atom) |
-| `*.hateblo.jp` | Posts (RSS + Atom) |
-| `*.hatenadiary.com` | Posts (RSS + Atom) |
-| `*.hatenadiary.jp` | Posts (RSS + Atom) |
-| `*.hatenadiary.org` | Posts (RSS + Atom) |
-| `*/archive/category/{category}` | Category (RSS + Atom) · posts |
-| `*/archive/author/{author}` | Author (RSS + Atom) · posts |
+| `{blog}.hatenablog.com` | Posts (RSS + Atom) |
+| `{blog}.hatenablog.jp` | Posts (RSS + Atom) |
+| `{blog}.hateblo.jp` | Posts (RSS + Atom) |
+| `{blog}.hatenadiary.com` | Posts (RSS + Atom) |
+| `{blog}.hatenadiary.jp` | Posts (RSS + Atom) |
+| `{blog}.hatenadiary.org` | Posts (RSS + Atom) |
+| `{host}/archive/category/{category}` | Category (RSS + Atom) · posts |
+| `{host}/archive/author/{author}` | Author (RSS + Atom) · posts |
 
 ### Itch.io
 
