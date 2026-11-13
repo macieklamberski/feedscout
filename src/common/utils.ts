@@ -245,7 +245,7 @@ const trailingSlashRegex = /\/$/
 // platform's own site everywhere.
 export const getTenantSubdomain = (
   url: string | URL,
-  domains: Array<string>,
+  domains: Array<string | RegExp>,
 ): string | undefined => {
   const subdomain = getSubdomain(url, domains)
 
