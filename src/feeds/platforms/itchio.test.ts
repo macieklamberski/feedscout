@@ -5,10 +5,18 @@ import { defaultPlatformOptions } from '../defaults.js'
 import { type ItchioUrl, itchioHandler, parseItchioUrl } from './itchio.js'
 
 describe('parseItchioUrl', () => {
-  it('should return the whole listing for a listing with two filters', () => {
-    const expected: ItchioUrl = { kind: 'listing', path: '/games/newest/tag-horror' }
+  it('should return the filters for a listing with two filters', () => {
+    const value = 'https://itch.io/games/tag-horror/tag-pixel-art'
+    const expected: ItchioUrl = { kind: 'listing', filters: 'tag-horror/tag-pixel-art' }
 
-    expect(parseItchioUrl('https://itch.io/games/newest/tag-horror')).toEqual(expected)
+    expect(parseItchioUrl(value)).toEqual(expected)
+  })
+
+  it('should return the tag and its sort for a sorted tag listing', () => {
+    const value = 'https://itch.io/games/newest/tag-horror'
+    const expected: ItchioUrl = { kind: 'tag', tag: 'horror', sort: 'newest' }
+
+    expect(parseItchioUrl(value)).toEqual(expected)
   })
 
   it('should return the game for a game page', () => {
@@ -89,10 +97,11 @@ describe('parseItchioUrl', () => {
     expect(parseItchioUrl('https://itch.io/')).toEqual(expected)
   })
 
-  it('should return the whole listing for a listing whose filter has a dot', () => {
-    const expected: ItchioUrl = { kind: 'listing', path: '/games/newest/tag-foo.bar' }
+  it('should return the whole tag for a sorted tag listing whose tag has a dot', () => {
+    const value = 'https://itch.io/games/newest/tag-foo.bar'
+    const expected: ItchioUrl = { kind: 'tag', tag: 'foo.bar', sort: 'newest' }
 
-    expect(parseItchioUrl('https://itch.io/games/newest/tag-foo.bar')).toEqual(expected)
+    expect(parseItchioUrl(value)).toEqual(expected)
   })
 
   it('should return the whole platform for a platform with a dot', () => {
@@ -218,6 +227,18 @@ describe('itchioHandler', () => {
       const expected = [
         {
           uri: 'https://alice.itch.io/x-moon/devlog.rss',
+          hint: { key: 'itchio:devlog', label: 'Devlog' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the scheme of an http game page in its devlog feed', () => {
+      const value = 'http://alice.itch.io/x-moon'
+      const expected = [
+        {
+          uri: 'http://alice.itch.io/x-moon/devlog.rss',
           hint: { key: 'itchio:devlog', label: 'Devlog' },
         },
       ]
@@ -682,6 +703,20 @@ describe('itchioHandler', () => {
     it('should return the creator hint for a sorted creator listing feed', () => {
       const value = 'https://itch.io/games/newest/by-alice.xml'
       const expected: DiscoverUriHint = { key: 'itchio:creator', label: 'Creator' }
+
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the games hint for a creator listing feed with another filter', () => {
+      const value = 'https://itch.io/games/tag-horror/by-alice.xml'
+      const expected: DiscoverUriHint = { key: 'itchio:games', label: 'Games' }
+
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a sorted tag listing feed whose tag has a dot', () => {
+      const value = 'https://itch.io/games/newest/tag-foo.bar.xml'
+      const expected: DiscoverUriHint = { key: 'itchio:tag', label: 'Tag' }
 
       expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
