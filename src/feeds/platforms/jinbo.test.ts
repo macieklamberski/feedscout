@@ -433,7 +433,7 @@ describe('jinboHandler', () => {
       expect(jinboHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it.each([
+    const feedHints: Array<[string, DiscoverUriHint]> = [
       [
         'https://blog.jinbo.net/alice/rss/response/1234',
         { key: 'jinbo:post-responses', label: 'Post comments and trackbacks', format: 'rss' },
@@ -466,7 +466,9 @@ describe('jinboHandler', () => {
         'https://blog.jinbo.net/alice/atom/line',
         { key: 'jinbo:lines', label: 'Lines', format: 'atom' },
       ],
-    ] as Array<[string, DiscoverUriHint]>)('should return the hint for %s', (value, expected) => {
+    ]
+
+    it.each(feedHints)('should return the hint for %s', (value, expected) => {
       expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
