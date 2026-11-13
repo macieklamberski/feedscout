@@ -14,6 +14,8 @@ const feedHosts = ['feed.podbean.com']
 const feeds = definePlatformFeeds(
   [
     { key: 'podbean:podcast', template: 'https://feed.podbean.com/{show}/feed.xml' },
+    // The same feed cut to its latest episodes, such as `/last1/feed.xml`.
+    { key: 'podbean:podcast', template: 'https://feed.podbean.com/{show}/{latest}/feed.xml' },
     // The feed host's S3 bucket serves the same feed. S3 is shared, so the bucket segment is
     // literal.
     {

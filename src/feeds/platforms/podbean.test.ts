@@ -106,6 +106,13 @@ describe('podbeanHandler', () => {
       expect(podbeanHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the podcast hint for a podcast feed cut to its latest episode', () => {
+      const value = 'https://feed.podbean.com/alice/last1/feed.xml'
+      const expected: DiscoverUriHint = { key: 'podbean:podcast', label: 'Podcast' }
+
+      expect(podbeanHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for a feed path in another S3 bucket', () => {
       const value = 'https://s3.amazonaws.com/other-bucket/startupnotes/feed.xml'
 
@@ -146,6 +153,10 @@ describe('podbeanHandler', () => {
         { key: 'podbean:podcast', label: 'Podcast' },
       ],
       ['https://pcgcck1show.podbean.com/feed.xml', { key: 'podbean:podcast', label: 'Podcast' }],
+      [
+        'http://feed.podbean.com/alice/last1/feed.xml',
+        { key: 'podbean:podcast', label: 'Podcast' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
