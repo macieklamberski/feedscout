@@ -1,5 +1,6 @@
 import { getPathSegments } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds, type PlatformFeedTable } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -20,13 +21,29 @@ const domains = ['sermon.net']
 // one the church owns serves a feed.
 const channelRegex = /"is_series":(?:false|true),"url":"([^"]+)"/g
 
+// A channel serves four feeds: its audio, all its media, its video, and its audio with its PDFs.
 const feeds = definePlatformFeeds(
   [
     { key: 'sermon-net:channel', template: '{scheme}://{host}/rss/{channel}/audio' },
+    { key: 'sermon-net:channel-media', template: '{scheme}://{host}/rss/{channel}' },
+    { key: 'sermon-net:channel-video', template: '{scheme}://{host}/rss/{channel}/video' },
+    { key: 'sermon-net:channel-audio-pdf', template: '{scheme}://{host}/rss/{channel}/audio_pdf' },
     { key: 'sermon-net:church', template: '{scheme}://{host}/rss' },
   ],
   { domains },
 )
+
+const getChannelFeeds = (
+  pageFeeds: Pick<PlatformFeedTable, 'getFeedEntry'>,
+  channel: string,
+): Array<DiscoverUriEntry> => {
+  return [
+    pageFeeds.getFeedEntry('sermon-net:channel', { channel }),
+    pageFeeds.getFeedEntry('sermon-net:channel-media', { channel }),
+    pageFeeds.getFeedEntry('sermon-net:channel-video', { channel }),
+    pageFeeds.getFeedEntry('sermon-net:channel-audio-pdf', { channel }),
+  ]
+}
 
 export const parseSermonNetUrl = (url: string): SermonNetUrl | undefined => {
   const tenant = getTenantSubdomain(url, domains)
@@ -85,13 +102,18 @@ export const sermonNetHandler: PlatformHandler = {
     }
 
     if (page.kind === 'channel') {
-      return [pageFeeds.getFeedEntry('sermon-net:channel', { channel: page.channel })]
+      return [
+        pageFeeds.getFeedEntry('sermon-net:channel', { channel: page.channel }),
+        pageFeeds.getFeedEntry('sermon-net:channel-media', { channel: page.channel }),
+        pageFeeds.getFeedEntry('sermon-net:channel-video', { channel: page.channel }),
+        pageFeeds.getFeedEntry('sermon-net:channel-audio-pdf', { channel: page.channel }),
+      ]
     }
 
     if (page.channels.length > 0) {
       // The channel is page text, which can hold a `/`, and the table escapes it.
-      return page.channels.map((channel) => {
-        return pageFeeds.getFeedEntry('sermon-net:channel', { channel })
+      return page.channels.flatMap((channel) => {
+        return getChannelFeeds(pageFeeds, channel)
       })
     }
 
