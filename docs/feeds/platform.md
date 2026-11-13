@@ -1128,9 +1128,9 @@ Discovers RSS and Atom feeds for LiveJournal blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.livejournal.com` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
+| `{user}.livejournal.com` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 | `www.livejournal.com/users/{user}`, `www.livejournal.com/~{user}`, `users.livejournal.com/{user}` or `community.livejournal.com/{user}` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
-| `*.livejournal.com/tag/{tag}` | Tag (RSS + Atom<sup>†</sup>) · posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
+| `{user}.livejournal.com/tag/{tag}` | Tag (RSS + Atom<sup>†</sup>) · posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
