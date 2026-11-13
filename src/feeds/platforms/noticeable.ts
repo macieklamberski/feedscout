@@ -1,5 +1,4 @@
 import { isHostOrSubdomainOf, isSubdomainOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
@@ -70,25 +69,24 @@ export const noticeableHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.kind === 'label') {
       const labelParams = { label: parsed.label }
 
-      uris.push(
+      return [
         page.getFeedEntry('noticeable:label', labelParams, 'rss'),
         page.getFeedEntry('noticeable:label', labelParams, 'atom'),
         page.getFeedEntry('noticeable:label', labelParams, 'json'),
-      )
+        page.getFeedEntry('noticeable:posts', {}, 'rss'),
+        page.getFeedEntry('noticeable:posts', {}, 'atom'),
+        page.getFeedEntry('noticeable:posts', {}, 'json'),
+      ]
     }
 
-    uris.push(
+    return [
       page.getFeedEntry('noticeable:posts', {}, 'rss'),
       page.getFeedEntry('noticeable:posts', {}, 'atom'),
       page.getFeedEntry('noticeable:posts', {}, 'json'),
-    )
-
-    return uris
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
