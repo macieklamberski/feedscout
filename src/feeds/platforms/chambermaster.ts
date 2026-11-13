@@ -92,6 +92,11 @@ export const chambermasterHandler: PlatformHandler = {
       return false
     }
 
+    // A platform subdomain gets no feeds, so its page goes on to the other methods.
+    if (isSubdomainOf(url, domains)) {
+      return false
+    }
+
     return parseChambermasterUrl(url) !== undefined
   },
 

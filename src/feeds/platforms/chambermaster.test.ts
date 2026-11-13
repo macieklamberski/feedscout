@@ -125,6 +125,12 @@ describe('chambermasterHandler', () => {
 
       expect(chambermasterHandler.match(value, '', chambermasterHeaders)).toBe(false)
     })
+
+    it('should not match a page on a platform subdomain', () => {
+      const value = 'https://examplechamber.memberzone.com/events'
+
+      expect(chambermasterHandler.match(value, '', chambermasterHeaders)).toBe(false)
+    })
   })
 
   describe('resolve', () => {
@@ -154,14 +160,16 @@ describe('chambermasterHandler', () => {
 
     it('should return empty array on a memberzone.com subdomain', () => {
       const value = 'https://examplechamber.memberzone.com/events'
+      const expected: Array<DiscoverUriEntry> = []
 
-      expect(chambermasterHandler.resolve(value)).toEqual([])
+      expect(chambermasterHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return empty array on a chambermaster.com subdomain', () => {
       const value = 'http://examplechamber.chambermaster.com/list/searchalpha/a'
+      const expected: Array<DiscoverUriEntry> = []
 
-      expect(chambermasterHandler.resolve(value)).toEqual([])
+      expect(chambermasterHandler.resolve(value)).toEqual(expected)
     })
 
     it('should keep the page origin on a gochambermaster.com preview host', () => {
