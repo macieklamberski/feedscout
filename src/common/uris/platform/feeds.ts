@@ -19,7 +19,8 @@ export type PlatformFeedTemplate = {
   key: string
   // A feed URL with `{name}` placeholders, each one host label, path segment or query value, and
   // `{scheme}` for a feed served under the page's own scheme. A template opening with `{root}`
-  // takes the scheme, the host and an optional base path, as `https://example.com/forum`.
+  // takes the scheme, the host and an optional base path, as `https://example.com/forum`. A
+  // `{name*}` path placeholder takes one or more segments, filled from `name` as `docs/api`.
   template: string
   format?: DiscoverUriHint['format']
 }
@@ -65,11 +66,43 @@ type CompiledTemplate = {
 }
 
 const templateRegex = /^(https?|\{scheme\}):\/\/([^/?#]+)(\/[^?#]*)?(?:\?([^#]*))?$/i
-const placeholderRegex = /\{(\w+)\}/g
+const placeholderRegex = /\{(\w+\*?)\}/g
 const trailingSlashRegex = /\/$/
 const anchorsRegex = /^\^|\$$/g
 
 const rootPlaceholder = '{root}'
+const multiSegmentCapture = '[^/]+(?:/[^/]+)*'
+
+const isMultiSegment = (placeholder: string): boolean => {
+  return placeholder.endsWith('*')
+}
+
+// A `{name*}` value is one or more segments joined by `/`, and one with an empty segment is no
+// value, as no feed URL claimed by the row carries one.
+const getPlaceholderValue = (
+  params: PlatformFeedParams,
+  placeholder: string,
+): string | undefined => {
+  if (!isMultiSegment(placeholder)) {
+    return params[placeholder]
+  }
+
+  const value = params[placeholder.slice(0, -1)]
+
+  if (value === undefined || value.split('/').some((segment) => !segment)) {
+    return
+  }
+
+  return value
+}
+
+const encodePath = (value: string, placeholder: string): string => {
+  if (!isMultiSegment(placeholder)) {
+    return encodePathSegment(value)
+  }
+
+  return value.split('/').map(encodePathSegment).join('/')
+}
 
 // A path decoded segment by segment, so `%40` and `@` compare equal. A decoded `%` and `/` are
 // written back as `%25` and `%2F`, so `%252F` stays apart from `%2F` and no segment splits.
@@ -136,8 +169,18 @@ const compileTemplate = (
     throw new Error(t(locales.errors.missingFeedHosts, { key }))
   }
 
+  const names = [...template.matchAll(placeholderRegex)].map(([, name]) => name)
+  const multiSegmentCaptures = Object.fromEntries(
+    names.filter(isMultiSegment).map((name) => [name, multiSegmentCapture]),
+  )
+
   // Matched on the decoded path without its trailing slash.
-  const pathSource = toRegexSource(path.replace(trailingSlashRegex, ''), '[^/]+', {}, true)
+  const pathSource = toRegexSource(
+    path.replace(trailingSlashRegex, ''),
+    '[^/]+',
+    multiSegmentCaptures,
+    true,
+  )
   const toHostPathRegex = (normalize: (value: string) => string): RegExp => {
     const hostSources = [
       ...hosts.map((value) => escapeRegex(normalize(value))),
@@ -185,11 +228,14 @@ const compileTemplate = (
 
   // A placeholder with no value stays in the URL, as in trousse's `t`.
   const getUrl = (params: PlatformFeedParams = {}): string => {
-    const fillPlaceholders = (text: string, encode = (value: string) => value): string => {
+    const fillPlaceholders = (
+      text: string,
+      encode = (value: string, _name: string) => value,
+    ): string => {
       return text.replace(placeholderRegex, (placeholder, name: string) => {
-        const value = params[name]
+        const value = getPlaceholderValue(params, name)
 
-        return value === undefined ? placeholder : encode(value)
+        return value === undefined ? placeholder : encode(value, name)
       })
     }
     const builtQuery = composeQuery(
@@ -201,10 +247,8 @@ const compileTemplate = (
       ? fillPlaceholders(rootPlaceholder).replace(trailingSlashRegex, '')
       : `${fillPlaceholders(scheme)}://${fillPlaceholders(host)}`
 
-    return `${origin}${fillPlaceholders(path, encodePathSegment)}${builtQuery}`
+    return `${origin}${fillPlaceholders(path, encodePath)}${builtQuery}`
   }
-
-  const names = [...template.matchAll(placeholderRegex)].map(([, name]) => name)
 
   return { key, format, queryCount: query.length, names, isFeedUrl, isFeedUrlWithoutWww, getUrl }
 }
@@ -216,7 +260,8 @@ export const definePlatformFeeds = (
   options: PlatformFeedTableOptions = {},
 ): PlatformFeedTable => {
   const compiled = templates.map((template) => compileTemplate(template, options))
-  // A template with more query parameters is the more specific one, so it is read first.
+  // A template with more query parameters is the more specific one, so it is read first. At the
+  // same count the earlier row wins, so a `{name*}` row goes after the rows its paths overlap.
   const bySpecificity = [...compiled].sort((a, b) => b.queryCount - a.queryCount)
 
   const getFeedUrl: PlatformFeedTable['getFeedUrl'] = (key, params, format) => {
@@ -226,7 +271,7 @@ export const definePlatformFeeds = (
     // A key with several shapes builds the first one whose placeholders the values fill.
     const template =
       candidates.find((candidate) =>
-        candidate.names.every((name) => params?.[name] !== undefined),
+        candidate.names.every((name) => getPlaceholderValue(params ?? {}, name) !== undefined),
       ) ?? candidates[0]
 
     if (!template) {
