@@ -524,8 +524,8 @@ Discovers RSS feeds for Hashnode blogs on `*.hashnode.dev` and `*.hashnode.com`.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.hashnode.dev` | Blog |
-| `*.hashnode.com` | Blog |
+| `{blog}.hashnode.dev` | Blog |
+| `{blog}.hashnode.com` | Blog |
 
 ### Paragraph
 
