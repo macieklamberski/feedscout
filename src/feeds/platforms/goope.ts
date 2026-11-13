@@ -17,6 +17,7 @@ export type GoopeUrl = {
   site?: string
   templateId?: string
   isMemberPage: boolean
+  isAssociationPage: boolean
 }
 
 const hosts = ['r.goope.jp']
@@ -44,6 +45,12 @@ const freeSiteFeeds = definePlatformFeeds([
     format: 'rdf',
   },
   { key: 'goope:news', template: 'https://r.goope.jp/{site}/feed.rss', format: 'rdf' },
+  // A federation of chambers of commerce collects its chambers' news under /shokokai.
+  {
+    key: 'goope:association-news',
+    template: 'https://r.goope.jp/{site}/shokokai/feed.rss',
+    format: 'rdf',
+  },
 ])
 
 // A site on its own domain is known only by its markers, so its feeds are built but not claimed.
@@ -62,6 +69,11 @@ const siteFeeds = definePlatformFeeds(
     },
     { key: 'goope:news', template: '{scheme}://{host}/t_{templateId}/feed.rss', format: 'rdf' },
     { key: 'goope:news', template: '{scheme}://{host}/feed.rss', format: 'rdf' },
+    {
+      key: 'goope:association-news',
+      template: '{scheme}://{host}/shokokai/feed.rss',
+      format: 'rdf',
+    },
   ],
   { hosts },
 )
@@ -131,9 +143,10 @@ export const parseGoopeUrl = (url: string): GoopeUrl | undefined => {
   }
 
   const [section, page] = segments
-  const isMemberPage = isAnyOf(section, 'shokokai') && isAnyOf(page, 'member')
+  const isAssociationPage = isAnyOf(section, 'shokokai')
+  const isMemberPage = isAssociationPage && isAnyOf(page, 'member')
 
-  return { kind, site, templateId, isMemberPage }
+  return { kind, site, templateId, isMemberPage, isAssociationPage }
 }
 
 export const goopeHandler: PlatformHandler = {
@@ -166,6 +179,13 @@ export const goopeHandler: PlatformHandler = {
     if (parsed.isMemberPage) {
       return [
         pageFeeds.getFeedEntry('goope:member-news', params, 'rdf'),
+        pageFeeds.getFeedEntry('goope:news', params, 'rdf'),
+      ]
+    }
+
+    if (parsed.isAssociationPage) {
+      return [
+        pageFeeds.getFeedEntry('goope:association-news', params, 'rdf'),
         pageFeeds.getFeedEntry('goope:news', params, 'rdf'),
       ]
     }

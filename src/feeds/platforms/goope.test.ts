@@ -45,7 +45,12 @@ describe('isGoopeHtml', () => {
 describe('parseGoopeUrl', () => {
   it('should return the free site for a path on r.goope.jp', () => {
     const value = 'https://r.goope.jp/example/info/1234567'
-    const expected: GoopeUrl = { kind: 'freeSite', site: 'example', isMemberPage: false }
+    const expected: GoopeUrl = {
+      kind: 'freeSite',
+      site: 'example',
+      isMemberPage: false,
+      isAssociationPage: false,
+    }
 
     expect(parseGoopeUrl(value)).toEqual(expected)
   })
@@ -57,6 +62,7 @@ describe('parseGoopeUrl', () => {
       site: 'example',
       templateId: '123456',
       isMemberPage: false,
+      isAssociationPage: false,
     }
 
     expect(parseGoopeUrl(value)).toEqual(expected)
@@ -64,35 +70,45 @@ describe('parseGoopeUrl', () => {
 
   it('should return the member page of a free site', () => {
     const value = 'https://r.goope.jp/example/shokokai/member/info/'
-    const expected: GoopeUrl = { kind: 'freeSite', site: 'example', isMemberPage: true }
+    const expected: GoopeUrl = {
+      kind: 'freeSite',
+      site: 'example',
+      isMemberPage: true,
+      isAssociationPage: true,
+    }
 
     expect(parseGoopeUrl(value)).toEqual(expected)
   })
 
   it('should return the site for a custom domain', () => {
     const value = 'https://example.com/info/1234567'
-    const expected: GoopeUrl = { kind: 'site', isMemberPage: false }
+    const expected: GoopeUrl = { kind: 'site', isMemberPage: false, isAssociationPage: false }
 
     expect(parseGoopeUrl(value)).toEqual(expected)
   })
 
   it('should return the template path for a custom domain', () => {
     const value = 'https://example.com/t_123456'
-    const expected: GoopeUrl = { kind: 'site', templateId: '123456', isMemberPage: false }
+    const expected: GoopeUrl = {
+      kind: 'site',
+      templateId: '123456',
+      isMemberPage: false,
+      isAssociationPage: false,
+    }
 
     expect(parseGoopeUrl(value)).toEqual(expected)
   })
 
   it('should return the member page of a custom domain', () => {
     const value = 'https://example.com/shokokai/member/2/'
-    const expected: GoopeUrl = { kind: 'site', isMemberPage: true }
+    const expected: GoopeUrl = { kind: 'site', isMemberPage: true, isAssociationPage: true }
 
     expect(parseGoopeUrl(value)).toEqual(expected)
   })
 
-  it('should return the site for a shokokai page outside the members', () => {
+  it('should return the association page for a shokokai page outside the members', () => {
     const value = 'https://example.com/shokokai/'
-    const expected: GoopeUrl = { kind: 'site', isMemberPage: false }
+    const expected: GoopeUrl = { kind: 'site', isMemberPage: false, isAssociationPage: true }
 
     expect(parseGoopeUrl(value)).toEqual(expected)
   })
@@ -130,6 +146,22 @@ describe('goopeHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return the association news feed for an association page', () => {
+      const value = 'https://r.goope.jp/example/shokokai/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://r.goope.jp/example/shokokai/feed.rss',
+          hint: { key: 'goope:association-news', label: 'Association news', format: 'rdf' },
+        },
+        {
+          uri: 'https://r.goope.jp/example/feed.rss',
+          hint: { key: 'goope:news', label: 'News', format: 'rdf' },
+        },
+      ]
+
+      expect(goopeHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for the root of r.goope.jp', () => {
       expect(goopeHandler.resolve('https://r.goope.jp/')).toEqual([])
     })
@@ -277,6 +309,17 @@ describe('goopeHandler', () => {
       expect(goopeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
+    it('should return the association news hint for an association news feed', () => {
+      const value = 'https://r.goope.jp/example/shokokai/feed.rss'
+      const expected: DiscoverUriHint = {
+        key: 'goope:association-news',
+        label: 'Association news',
+        format: 'rdf',
+      }
+
+      expect(goopeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for a member news path with no site in front', () => {
       const value = 'https://r.goope.jp/shokokai/member/feed.rss'
 
@@ -298,6 +341,10 @@ describe('goopeHandler', () => {
       format: 'rdf',
     }
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'http://r.goope.jp/example/shokokai/feed.rss',
+        { key: 'goope:association-news', label: 'Association news', format: 'rdf' },
+      ],
       ['https://r.goope.jp/example/feed.rss/', newsHint],
       ['https://r.goope.jp/example/t_123456/feed.rss/', newsHint],
       ['https://r.goope.jp/example/shokokai/member/feed.rss', memberNewsHint],
