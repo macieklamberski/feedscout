@@ -144,6 +144,28 @@ describe('cocologHandler', () => {
   })
 
   describe('getFeedHint', () => {
+    it('should return the comments hint for an RDF comments feed', () => {
+      const value = 'https://example.cocolog-nifty.com/blog/comment-index.rdf'
+      const expected: DiscoverUriHint = {
+        key: 'cocolog:comments',
+        label: 'Comments',
+        format: 'rdf',
+      }
+
+      expect(cocologHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the comments hint for an RSS comments feed', () => {
+      const value = 'https://example.cocolog-nifty.com/blog/comments.xml'
+      const expected: DiscoverUriHint = {
+        key: 'cocolog:comments',
+        label: 'Comments',
+        format: 'rss',
+      }
+
+      expect(cocologHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the posts hint for an Atom feed', () => {
       const value = 'https://example.cocolog-nifty.com/blog/atom.xml'
       const expected: DiscoverUriHint = { key: 'cocolog:posts', label: 'Posts', format: 'atom' }
@@ -216,6 +238,10 @@ describe('cocologHandler', () => {
       [
         'https://alice.moe-nifty.com/diary/rss.xml',
         { key: 'cocolog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'http://example.cocolog-nifty.com/blog/comment-index.rdf',
+        { key: 'cocolog:comments', label: 'Comments', format: 'rdf' },
       ],
     ]
 

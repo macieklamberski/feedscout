@@ -39,6 +39,18 @@ const feeds = definePlatformFeeds(
       template: '{scheme}://{host}/{blog}/rss.xml',
       format: 'rss',
     },
+    // A blog's newest comments, which its skin names `comment-index.rdf` or `comments.xml`, so
+    // `resolve` cannot tell which one a blog serves.
+    {
+      key: 'cocolog:comments',
+      template: '{scheme}://{host}/{blog}/comment-index.rdf',
+      format: 'rdf',
+    },
+    {
+      key: 'cocolog:comments',
+      template: '{scheme}://{host}/{blog}/comments.xml',
+      format: 'rss',
+    },
   ],
   { domains },
 )
