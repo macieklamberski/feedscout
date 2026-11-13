@@ -170,6 +170,17 @@ describe('getOmekaPage', () => {
     expect(getOmekaPage(value, omekaSubPathHtml)).toEqual(expected)
   })
 
+  it('should return the tag of a tag route page', () => {
+    const value = 'https://example.com/biblioteca/items/browse/tag/Hyde+Park%20Maps'
+    const expected: OmekaPage = {
+      kind: 'tag',
+      rootUrl: 'https://example.com/biblioteca',
+      tag: 'Hyde+Park Maps',
+    }
+
+    expect(getOmekaPage(value, omekaSubPathHtml)).toEqual(expected)
+  })
+
   it('should return the query of a collection browse page', () => {
     const expected: OmekaPage = {
       kind: 'browse',
@@ -283,6 +294,46 @@ describe('omekaHandler', () => {
         {
           uri: 'https://example.com/biblioteca/items/browse?tags=poes%C3%ADa&output=atom',
           hint: { key: 'omeka:filtered-items', label: 'Filtered items', format: 'atom' },
+        },
+      ]
+
+      expect(omekaHandler.resolve(value, omekaSubPathHtml)).toEqual(expected)
+    })
+
+    it('should return the items feeds for a browse page with only a sort', () => {
+      const value = 'https://example.com/items/browse?sort_field=added&sort_dir=d'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/items/browse?sort_field=added&sort_dir=d&output=rss2',
+          hint: { key: 'omeka:items', label: 'Items', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/items/browse?sort_field=added&sort_dir=d&output=atom',
+          hint: { key: 'omeka:items', label: 'Items', format: 'atom' },
+        },
+      ]
+
+      expect(omekaHandler.resolve(value, omekaHtml)).toEqual(expected)
+    })
+
+    it('should return the tag feeds and the items feeds for a tag route page', () => {
+      const value = 'https://example.com/biblioteca/items/browse/tag/Hyde+Park'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/biblioteca/items/browse/tag/Hyde+Park?output=rss2',
+          hint: { key: 'omeka:filtered-items', label: 'Filtered items', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/biblioteca/items/browse/tag/Hyde+Park?output=atom',
+          hint: { key: 'omeka:filtered-items', label: 'Filtered items', format: 'atom' },
+        },
+        {
+          uri: 'https://example.com/biblioteca/items/browse?output=rss2',
+          hint: { key: 'omeka:items', label: 'Items', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/biblioteca/items/browse?output=atom',
+          hint: { key: 'omeka:items', label: 'Items', format: 'atom' },
         },
       ]
 
@@ -404,13 +455,9 @@ describe('omekaHandler', () => {
       expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the filtered items hint for an Atom feed on the short route', () => {
+    it('should return the items hint for a sorted Atom feed on the short route', () => {
       const value = 'https://alice.omeka.net/items?output=atom&sort_dir=a&sort_field=added'
-      const expected: DiscoverUriHint = {
-        key: 'omeka:filtered-items',
-        label: 'Filtered items',
-        format: 'atom',
-      }
+      const expected: DiscoverUriHint = { key: 'omeka:items', label: 'Items', format: 'atom' }
 
       expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -495,6 +542,30 @@ describe('omekaHandler', () => {
       [
         'https://alice.omeka.net/items/show/123?output=atom',
         { key: 'omeka:item', label: 'Item', format: 'atom' },
+      ],
+      [
+        'http://alice.omeka.net/?output=rss2',
+        { key: 'omeka:items', label: 'Items', format: 'rss' },
+      ],
+      [
+        'https://alice.omeka.net/?output=atom&sort_dir=a&sort_field=added',
+        { key: 'omeka:items', label: 'Items', format: 'atom' },
+      ],
+      [
+        'https://alice.omeka.net/items/browse?output=rss2&sort_field=Dublin+Core%2CTitle',
+        { key: 'omeka:items', label: 'Items', format: 'rss' },
+      ],
+      [
+        'https://alice.omeka.net/items/browse/2?output=atom',
+        { key: 'omeka:items', label: 'Items', format: 'atom' },
+      ],
+      [
+        'https://alice.omeka.net/items/browse/1?output=rss2&search=maps&submit_search=Search',
+        { key: 'omeka:filtered-items', label: 'Filtered items', format: 'rss' },
+      ],
+      [
+        'https://alice.omeka.net/items/browse/tag/Hyde+Park?output=atom',
+        { key: 'omeka:filtered-items', label: 'Filtered items', format: 'atom' },
       ],
       [
         'https://alice.omeka.net/exhibits/show/maps/item/123?output=atom',

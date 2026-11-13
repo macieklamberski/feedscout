@@ -1,4 +1,4 @@
-import { isAnyOf, parseUrl } from 'trousse'
+import { decodePercent, isAnyOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
@@ -15,6 +15,7 @@ import {
 export type OmekaPage =
   | { kind: 'browse'; rootUrl: string; query: string }
   | { kind: 'item'; rootUrl: string; id: string }
+  | { kind: 'tag'; rootUrl: string; tag: string }
   | { kind: 'page'; rootUrl: string }
 
 // Omeka Classic serves plugin views and core scripts from under the install root, as in
@@ -25,12 +26,15 @@ export type OmekaPage =
 const assetRootRegex =
   /^((?:(?!\/wp-content\/)[^\s])*?)\/(?:plugins\/[^/\s]+\/views\/(?:public|shared)\/|application\/views\/scripts\/(?:css\/(?:public|iconfonts)\.css|javascripts\/globals\.js))/i
 const itemsBrowseRegex = /^\/items(?:\/browse)?\/?$/i
+const tagBrowseRegex = /^\/items\/browse\/tag\/(?<tag>[^/]+)\/?$/i
 // An item is shown on its own page or inside an exhibit, under the same id.
 const itemShowRegex = /^\/(?:items\/show|exhibits\/show\/[^/]+\/item)\/(?<id>\d+)\/?$/i
 const trailingSlashRegex = /\/$/
 
 // Omeka drops these from the browse query when it prints the page's feed links.
 const excludedQueryParams = ['page', 'submit_search', 'output']
+// A sorted feed stays the items feed, so these do not make a browse query a filter either.
+const sortQueryParams = ['sort_dir', 'sort_field']
 
 const domains = ['omeka.net']
 
@@ -60,6 +64,38 @@ const feeds = definePlatformFeeds(
       template: '{root}/items?output=atom',
       format: 'atom',
     },
+    // A site whose homepage is the items browse serves the items feed at its root too, and the
+    // browse serves it page by page.
+    {
+      key: 'omeka:items',
+      template: '{root}/?output=rss2',
+      format: 'rss',
+    },
+    {
+      key: 'omeka:items',
+      template: '{root}/?output=atom',
+      format: 'atom',
+    },
+    {
+      key: 'omeka:items',
+      template: '{root}/items/browse/{page}?output=rss2',
+      format: 'rss',
+    },
+    {
+      key: 'omeka:items',
+      template: '{root}/items/browse/{page}?output=atom',
+      format: 'atom',
+    },
+    {
+      key: 'omeka:filtered-items',
+      template: '{root}/items/browse/tag/{tag}?output=rss2',
+      format: 'rss',
+    },
+    {
+      key: 'omeka:filtered-items',
+      template: '{root}/items/browse/tag/{tag}?output=atom',
+      format: 'atom',
+    },
     {
       key: 'omeka:item',
       template: '{root}/items/show/{id}?output=atom',
@@ -84,6 +120,12 @@ const getBrowseQuery = (searchParams: URLSearchParams): string => {
   }
 
   return queryParams.toString()
+}
+
+const hasFilter = (searchParams: URLSearchParams): boolean => {
+  return [...searchParams.keys()].some((name) => {
+    return !isAnyOf(name, excludedQueryParams) && !isAnyOf(name, sortQueryParams)
+  })
 }
 
 const getAssetPath = (element: Element): string => {
@@ -130,6 +172,12 @@ export const getOmekaPage = (url: string, content: string | undefined): OmekaPag
     return { kind: 'item', rootUrl, id: itemId }
   }
 
+  const tag = tagBrowseRegex.exec(routePath)?.groups?.tag
+
+  if (tag) {
+    return { kind: 'tag', rootUrl, tag: decodePercent(tag) }
+  }
+
   if (!itemsBrowseRegex.test(routePath)) {
     return { kind: 'page', rootUrl }
   }
@@ -162,15 +210,22 @@ export const omekaHandler: PlatformHandler = {
     const browseUrl = `${page.rootUrl}/items/browse`
 
     if (page.kind === 'browse') {
+      const key = hasFilter(new URLSearchParams(page.query))
+        ? 'omeka:filtered-items'
+        : 'omeka:items'
+
       return [
-        {
-          uri: `${browseUrl}?${page.query}&output=rss2`,
-          hint: composeHint('omeka:filtered-items', 'rss'),
-        },
-        {
-          uri: `${browseUrl}?${page.query}&output=atom`,
-          hint: composeHint('omeka:filtered-items', 'atom'),
-        },
+        { uri: `${browseUrl}?${page.query}&output=rss2`, hint: composeHint(key, 'rss') },
+        { uri: `${browseUrl}?${page.query}&output=atom`, hint: composeHint(key, 'atom') },
+      ]
+    }
+
+    if (page.kind === 'tag') {
+      return [
+        feeds.getFeedEntry('omeka:filtered-items', { root: page.rootUrl, tag: page.tag }, 'rss'),
+        feeds.getFeedEntry('omeka:filtered-items', { root: page.rootUrl, tag: page.tag }, 'atom'),
+        feeds.getFeedEntry('omeka:items', { root: page.rootUrl }, 'rss'),
+        feeds.getFeedEntry('omeka:items', { root: page.rootUrl }, 'atom'),
       ]
     }
 
@@ -194,7 +249,7 @@ export const omekaHandler: PlatformHandler = {
   getFeedHint: (url) => {
     const hint = feeds.getFeedHint(url)
 
-    if (hint?.key !== 'omeka:items' || !getBrowseQuery(new URL(url).searchParams)) {
+    if (hint?.key !== 'omeka:items' || !hasFilter(new URL(url).searchParams)) {
       return hint
     }
 
