@@ -55,20 +55,16 @@ export const pikaHandler: PlatformHandler = {
       return []
     }
 
-    const posts = [
-      page.getFeedEntry('pika:posts', {}, 'atom'),
-      page.getFeedEntry('pika:posts', {}, 'rss'),
-    ]
-
     if (parsed.kind === 'tag') {
       return [
         page.getFeedEntry('pika:tag', { tag: parsed.tag }, 'atom'),
         page.getFeedEntry('pika:tag', { tag: parsed.tag }, 'rss'),
-        ...posts,
+        page.getFeedEntry('pika:posts', {}, 'atom'),
+        page.getFeedEntry('pika:posts', {}, 'rss'),
       ]
     }
 
-    return posts
+    return [page.getFeedEntry('pika:posts', {}, 'atom'), page.getFeedEntry('pika:posts', {}, 'rss')]
   },
 
   getFeedHint: feeds.getFeedHint,
