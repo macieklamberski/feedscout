@@ -245,6 +245,13 @@ describe('mediumHandler', () => {
       expect(mediumHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the posts hint for a user feed with the feed segment last', () => {
+      const value = 'https://medium.com/@alice.example/feed'
+      const expected: DiscoverUriHint = { key: 'medium:posts', label: 'Posts' }
+
+      expect(mediumHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the tag hint for a tag feed', () => {
       const value = 'https://medium.com/feed/tag/fake-news'
       const expected: DiscoverUriHint = { key: 'medium:tag', label: 'Tag' }
@@ -327,6 +334,8 @@ describe('mediumHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://medium.com/feed/@anngivens', { key: 'medium:posts', label: 'Posts' }],
+      ['https://medium.com/@alice.example/feed', { key: 'medium:posts', label: 'Posts' }],
+      ['http://www.medium.com/@alice/feed/', { key: 'medium:posts', label: 'Posts' }],
       ['https://medium.com/feed/tag/fake-news', { key: 'medium:tag', label: 'Tag' }],
       [
         'https://medium.com/feed/towards-data-science/tagged/machine-learning',
