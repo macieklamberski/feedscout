@@ -1071,7 +1071,10 @@
     ]
   },
   "newswire": {
+    "newswire:audio": "https://rrventuresllc.newswire.com/browse/rss/audio",
     "newswire:beat": "https://hubstor.newswire.com/browse/rss/beat/information-technology",
+    "newswire:events": "https://rrventuresllc.newswire.com/browse/rss/event",
+    "newswire:images": "https://rrventuresllc.newswire.com/browse/rss/image",
     "newswire:news": {
       "skip": "the host rate-limits feed requests, so three newswire urls stay"
     },
@@ -1079,7 +1082,9 @@
       "skip": "generic discovery finds it, and the host rate-limits feed requests"
     },
     "newswire:press-releases": "https://orthoatlanta.newswire.com/browse/rss/pr",
-    "newswire:social": "https://aespire.newswire.com/browse/rss/social"
+    "newswire:social": "https://aespire.newswire.com/browse/rss/social",
+    "newswire:social-network": "https://highperformancecounsel.newswire.com/browse/rss/social/vimeo",
+    "newswire:videos": "https://rrventuresllc.newswire.com/browse/rss/video"
   },
   "niconico": {
     "niconico:blog": "https://ch.nicovideo.jp/yoshikiofficial/blomaga/nico/feed",

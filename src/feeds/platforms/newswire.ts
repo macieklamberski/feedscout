@@ -18,7 +18,17 @@ const domains = ['newswire.com']
 const beatPathRegex = /^\/browse\/beat\/([a-z0-9-]+)\/?$/i
 const contentTypePathRegex = /^\/browse\/([^/]+)\/?$/i
 
-const contentTypes = ['news', 'pr', 'social'] as const
+const contentTypes = ['news', 'pr', 'social', 'image', 'video', 'audio', 'event'] as const
+
+const contentTypeKeys: Record<NewswireContentType, string> = {
+  news: 'newswire:news',
+  pr: 'newswire:press-releases',
+  social: 'newswire:social',
+  image: 'newswire:images',
+  video: 'newswire:videos',
+  audio: 'newswire:audio',
+  event: 'newswire:events',
+}
 
 const feeds = definePlatformFeeds(
   [
@@ -26,6 +36,12 @@ const feeds = definePlatformFeeds(
     { key: 'newswire:news', template: '{scheme}://{host}/browse/rss/news' },
     { key: 'newswire:press-releases', template: '{scheme}://{host}/browse/rss/pr' },
     { key: 'newswire:social', template: '{scheme}://{host}/browse/rss/social' },
+    { key: 'newswire:images', template: '{scheme}://{host}/browse/rss/image' },
+    { key: 'newswire:videos', template: '{scheme}://{host}/browse/rss/video' },
+    { key: 'newswire:audio', template: '{scheme}://{host}/browse/rss/audio' },
+    { key: 'newswire:events', template: '{scheme}://{host}/browse/rss/event' },
+    // The social posts from one network, which no newsroom page names.
+    { key: 'newswire:social-network', template: '{scheme}://{host}/browse/rss/social/{network}' },
     { key: 'newswire:newsroom', template: '{scheme}://{host}/browse/rss' },
   ],
   { domains },
@@ -75,16 +91,11 @@ export const newswireHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed.kind === 'contentType' && parsed.contentType === 'news') {
-      return [page.getFeedEntry('newswire:news'), page.getFeedEntry('newswire:newsroom')]
-    }
-
-    if (parsed.kind === 'contentType' && parsed.contentType === 'pr') {
-      return [page.getFeedEntry('newswire:press-releases'), page.getFeedEntry('newswire:newsroom')]
-    }
-
-    if (parsed.kind === 'contentType' && parsed.contentType === 'social') {
-      return [page.getFeedEntry('newswire:social'), page.getFeedEntry('newswire:newsroom')]
+    if (parsed.kind === 'contentType') {
+      return [
+        page.getFeedEntry(contentTypeKeys[parsed.contentType]),
+        page.getFeedEntry('newswire:newsroom'),
+      ]
     }
 
     return [page.getFeedEntry('newswire:newsroom')]
