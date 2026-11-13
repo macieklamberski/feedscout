@@ -995,7 +995,7 @@ Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator 
 
 ### Flickr
 
-Discovers Atom feeds for Flickr photostreams, favorites, tags, groups and the help forum.
+Discovers Atom and RSS feeds for Flickr photostreams, favorites, tags, groups and the help forum.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -1009,7 +1009,7 @@ Discovers Atom feeds for Flickr photostreams, favorites, tags, groups and the he
 
 <sup>†</sup> *Found only by the Platform method.*
 
-> Every page above also gets the site-wide feeds after its own: the forum, the uploads from everyone and the uploads from everyone with location, all found only by the Platform method. Every feed is Atom, and RSS 2.0 under `format=rss_200`.
+> Every page above also gets the site-wide feeds after its own: the forum, the uploads from everyone and the uploads from everyone with location, all found only by the Platform method. Every feed comes as Atom and as its RSS 2.0 twin under `format=rss_200`.
 
 > The photo and group feeds take an NSID such as `24662369@N07`, never a vanity alias: `photos_public.gne?id={alias}` answers 404. A URL carrying an alias is left to the other methods, and the page itself links the right feed.
 

@@ -276,6 +276,8 @@
     "flickr:contacts": "Contacts",
     "flickr:photos-geo": "Photostream with location",
     "flickr:tag-geo": "Tag with location",
+    "flickr:photos-tag-geo": "Tagged photostream with location",
+    "flickr:group-tag-geo": "Tagged group pool with location",
     "flickr:recent": "Uploads from everyone",
     "flickr:recent-geo": "Uploads from everyone with location",
     "friendica:posts": "Posts",

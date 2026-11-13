@@ -114,7 +114,8 @@ const feeds = definePlatformFeeds(
       format: 'rss',
     },
     // Past here the table only claims: a photostream narrowed to a tag, an album, the photos of a
-    // member's contacts, and the photos that carry a location by member or by tag.
+    // member's contacts, and the photos that carry a location by member, by tag, or by member or
+    // group pool narrowed to a tag.
     {
       key: 'flickr:photos-tag',
       template: '{scheme}://{host}/services/feeds/photos_public.gne?id={id}&tags={tags}',
@@ -153,6 +154,24 @@ const feeds = definePlatformFeeds(
     {
       key: 'flickr:tag-geo',
       template: '{scheme}://{host}/services/feeds/geo?tags={tags}&format=rss_200',
+      format: 'rss',
+    },
+    {
+      key: 'flickr:photos-tag-geo',
+      template: '{scheme}://{host}/services/feeds/geo?id={id}&tags={tags}',
+    },
+    {
+      key: 'flickr:photos-tag-geo',
+      template: '{scheme}://{host}/services/feeds/geo?id={id}&tags={tags}&format=rss_200',
+      format: 'rss',
+    },
+    {
+      key: 'flickr:group-tag-geo',
+      template: '{scheme}://{host}/services/feeds/geo/?g={id}&tags={tags}',
+    },
+    {
+      key: 'flickr:group-tag-geo',
+      template: '{scheme}://{host}/services/feeds/geo/?g={id}&tags={tags}&format=rss_200',
       format: 'rss',
     },
   ],
@@ -235,12 +254,15 @@ export const flickrHandler: PlatformHandler = {
     }
 
     // The forum and the uploads from everyone, with or without a location, need no value from the
-    // page, so every page builds them after its own feeds.
+    // page, so every page builds them after its own feeds. Each feed comes in Atom and then in RSS.
     if (parsed.kind === 'forum') {
       return [
         page.getFeedEntry('flickr:forum', { host }),
+        page.getFeedEntry('flickr:forum', { host }, 'rss'),
         page.getFeedEntry('flickr:recent', { host }),
+        page.getFeedEntry('flickr:recent', { host }, 'rss'),
         page.getFeedEntry('flickr:recent-geo', { host }),
+        page.getFeedEntry('flickr:recent-geo', { host }, 'rss'),
       ]
     }
 
@@ -250,9 +272,13 @@ export const flickrHandler: PlatformHandler = {
 
       return [
         page.getFeedEntry('flickr:tag', { host, tags }),
+        page.getFeedEntry('flickr:tag', { host, tags }, 'rss'),
         page.getFeedEntry('flickr:forum', { host }),
+        page.getFeedEntry('flickr:forum', { host }, 'rss'),
         page.getFeedEntry('flickr:recent', { host }),
+        page.getFeedEntry('flickr:recent', { host }, 'rss'),
         page.getFeedEntry('flickr:recent-geo', { host }),
+        page.getFeedEntry('flickr:recent-geo', { host }, 'rss'),
       ]
     }
 
@@ -263,29 +289,44 @@ export const flickrHandler: PlatformHandler = {
       if (parsed.section === 'discuss') {
         return [
           page.getFeedEntry('flickr:group-discuss', params),
+          page.getFeedEntry('flickr:group-discuss', params, 'rss'),
           page.getFeedEntry('flickr:forum', { host }),
+          page.getFeedEntry('flickr:forum', { host }, 'rss'),
           page.getFeedEntry('flickr:recent', { host }),
+          page.getFeedEntry('flickr:recent', { host }, 'rss'),
           page.getFeedEntry('flickr:recent-geo', { host }),
+          page.getFeedEntry('flickr:recent-geo', { host }, 'rss'),
         ]
       }
 
       if (parsed.section === 'pool') {
         return [
           page.getFeedEntry('flickr:group-pool', params),
+          page.getFeedEntry('flickr:group-pool', params, 'rss'),
           page.getFeedEntry('flickr:group-geo', params),
+          page.getFeedEntry('flickr:group-geo', params, 'rss'),
           page.getFeedEntry('flickr:forum', { host }),
+          page.getFeedEntry('flickr:forum', { host }, 'rss'),
           page.getFeedEntry('flickr:recent', { host }),
+          page.getFeedEntry('flickr:recent', { host }, 'rss'),
           page.getFeedEntry('flickr:recent-geo', { host }),
+          page.getFeedEntry('flickr:recent-geo', { host }, 'rss'),
         ]
       }
 
       return [
         page.getFeedEntry('flickr:group-pool', params),
+        page.getFeedEntry('flickr:group-pool', params, 'rss'),
         page.getFeedEntry('flickr:group-discuss', params),
+        page.getFeedEntry('flickr:group-discuss', params, 'rss'),
         page.getFeedEntry('flickr:group-geo', params),
+        page.getFeedEntry('flickr:group-geo', params, 'rss'),
         page.getFeedEntry('flickr:forum', { host }),
+        page.getFeedEntry('flickr:forum', { host }, 'rss'),
         page.getFeedEntry('flickr:recent', { host }),
+        page.getFeedEntry('flickr:recent', { host }, 'rss'),
         page.getFeedEntry('flickr:recent-geo', { host }),
+        page.getFeedEntry('flickr:recent-geo', { host }, 'rss'),
       ]
     }
 
@@ -298,39 +339,33 @@ export const flickrHandler: PlatformHandler = {
     if (parsed.kind === 'favorites') {
       return [
         page.getFeedEntry('flickr:faves', params),
+        page.getFeedEntry('flickr:faves', params, 'rss'),
         page.getFeedEntry('flickr:forum', { host }),
+        page.getFeedEntry('flickr:forum', { host }, 'rss'),
         page.getFeedEntry('flickr:recent', { host }),
+        page.getFeedEntry('flickr:recent', { host }, 'rss'),
         page.getFeedEntry('flickr:recent-geo', { host }),
+        page.getFeedEntry('flickr:recent-geo', { host }, 'rss'),
       ]
     }
 
     return [
       page.getFeedEntry('flickr:photos', params),
+      page.getFeedEntry('flickr:photos', params, 'rss'),
       page.getFeedEntry('flickr:forum', { host }),
+      page.getFeedEntry('flickr:forum', { host }, 'rss'),
       page.getFeedEntry('flickr:recent', { host }),
+      page.getFeedEntry('flickr:recent', { host }, 'rss'),
       page.getFeedEntry('flickr:recent-geo', { host }),
+      page.getFeedEntry('flickr:recent-geo', { host }, 'rss'),
     ]
   },
 
   getFeedHint: (url) => {
-    const parsedUrl = parseUrl(url)
     const hint = feeds.getFeedHint(url)
 
-    // Flickr ignores `tags` on a group pool or favorites feed, so the feed stays the same.
-    if (isAnyOf(hint?.key, ['flickr:group-pool', 'flickr:faves'])) {
-      return hint
-    }
-
-    if (hint?.key === 'flickr:photos-tag') {
-      return hint
-    }
-
-    // Flickr narrows a location feed to one tag when `tags` sits beside a non-empty `id` or `g`, a
-    // feed no row names. An empty `id=` leaves the tag feed.
-    if (
-      getQueryParam(parsedUrl, 'tags') &&
-      (getQueryParam(parsedUrl, 'id') || getQueryParam(parsedUrl, 'g'))
-    ) {
+    // Flickr narrows the tag feed to a group pool when `g` sits beside `tags`, a feed no row names.
+    if (hint?.key === 'flickr:tag' && getQueryParam(parseUrl(url), 'g')) {
       return
     }
 
