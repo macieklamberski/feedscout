@@ -6,7 +6,6 @@ import {
   isInteger,
   isSameText,
   isString,
-  isSubdomainOf,
   parseUrl,
   stripWww,
 } from 'trousse'
@@ -242,53 +241,13 @@ export const getCookieNames = (headers: Headers): Array<string> => {
 const scriptSegmentRegex = /\/[^/]*\.(?:php(?:\/.*)?|html?)$/i
 const trailingSlashRegex = /\/$/
 
-// The entry of `domains` a host is a subdomain of. A pattern stands for a family of domains, as
-// `/^blogspot\.(?:com|com\.[a-z]{2})$/`, and gives the one the host is under, so
-// `alice.blogspot.com.br` gives `blogspot.com.br`.
-export const getPlatformDomain = (
-  url: string | URL,
-  domains: Array<string | RegExp>,
-): string | undefined => {
-  const hostname = parseUrl(url)?.hostname
-
-  if (!hostname) {
-    return
-  }
-
-  // The domains a subdomain of the host can sit under, longest first.
-  const labels = hostname.split('.')
-  const parents = labels.slice(1).map((_, index) => labels.slice(index + 1).join('.'))
-
-  for (const domain of domains) {
-    if (isString(domain)) {
-      if (isSubdomainOf(url, domain)) {
-        return domain
-      }
-
-      continue
-    }
-
-    const parent = parents.find((candidate) => domain.test(candidate))
-
-    if (parent) {
-      return parent
-    }
-  }
-}
-
 // The subdomain a platform gives one of its users: a single label other than `www`, which is the
 // platform's own site everywhere.
 export const getTenantSubdomain = (
   url: string | URL,
   domains: Array<string | RegExp>,
 ): string | undefined => {
-  const domain = getPlatformDomain(url, domains)
-
-  if (!domain) {
-    return
-  }
-
-  const subdomain = getSubdomain(url, domain)
+  const subdomain = getSubdomain(url, domains)
 
   if (!subdomain || subdomain.includes('.')) {
     return
