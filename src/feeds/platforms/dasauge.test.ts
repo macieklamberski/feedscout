@@ -14,21 +14,24 @@ const workspacesHint: DiscoverUriHint = {
 
 describe('parseDasaugeUrl', () => {
   it('should return home for the home page', () => {
+    const value = 'https://dasauge.de/'
     const expected: DasaugeUrl = { kind: 'home' }
 
-    expect(parseDasaugeUrl('https://dasauge.de/')).toEqual(expected)
+    expect(parseDasaugeUrl(value)).toEqual(expected)
   })
 
   it('should return home for a profile page', () => {
+    const value = 'https://dasauge.de/-abstrusa'
     const expected: DasaugeUrl = { kind: 'home' }
 
-    expect(parseDasaugeUrl('https://dasauge.de/-abstrusa')).toEqual(expected)
+    expect(parseDasaugeUrl(value)).toEqual(expected)
   })
 
   it('should return home for a page on another dasauge host', () => {
+    const value = 'https://dasauge.co.uk/jobs/'
     const expected: DasaugeUrl = { kind: 'home' }
 
-    expect(parseDasaugeUrl('https://dasauge.co.uk/jobs/')).toEqual(expected)
+    expect(parseDasaugeUrl(value)).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {
