@@ -11,9 +11,40 @@ export type NaverBlogUrl = { kind: 'blog'; blogId: string } | { kind: 'post'; bl
 export const hosts = ['blog.naver.com', 'm.blog.naver.com']
 
 // The feed host serves feeds only, so it stays out of `hosts` and its pages are not read as blogs.
+// The bare path and the old `blogRss.nhn` script serve the same items as `.xml`, and each serves
+// RSS 1.0 under `rss=1.0` and Atom under `atom=0.3`.
 const feeds = definePlatformFeeds([
-  { key: 'naver-blog:blog', template: 'https://rss.blog.naver.com/{blogId}.xml' },
+  { key: 'naver-blog:blog', template: 'https://rss.blog.naver.com/{blogId}.xml', format: 'rss' },
+  { key: 'naver-blog:blog', template: 'https://rss.blog.naver.com/{blogId}', format: 'rss' },
+  {
+    key: 'naver-blog:blog',
+    template: 'https://rss.blog.naver.com/rss/blogRss.nhn?blogId={blogId}',
+    format: 'rss',
+  },
+  {
+    key: 'naver-blog:blog',
+    template: 'https://rss.blog.naver.com/{blogId}?rss=1.0',
+    format: 'rdf',
+  },
+  {
+    key: 'naver-blog:blog',
+    template: 'https://rss.blog.naver.com/rss/blogRss.nhn?blogId={blogId}&rss=1.0',
+    format: 'rdf',
+  },
+  {
+    key: 'naver-blog:blog',
+    template: 'https://rss.blog.naver.com/{blogId}?atom=0.3',
+    format: 'atom',
+  },
+  {
+    key: 'naver-blog:blog',
+    template: 'https://rss.blog.naver.com/rss/blogRss.nhn?atom=0.3&blogId={blogId}',
+    format: 'atom',
+  },
 ])
+
+// A blog id carries no dot, so a file on the feed host such as `/robots.txt` is no blog's feed.
+const feedHostFileRegex = /^\/[^/]*\.(?!xml\/?$)[^/]*\/?$/i
 
 export const parseNaverBlogUrl = (url: string): NaverBlogUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -58,8 +89,20 @@ export const naverBlogHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('naver-blog:blog', { blogId: parsed.blogId })]
+    return [
+      feeds.getFeedEntry('naver-blog:blog', { blogId: parsed.blogId }, 'rss'),
+      feeds.getFeedEntry('naver-blog:blog', { blogId: parsed.blogId }, 'rdf'),
+      feeds.getFeedEntry('naver-blog:blog', { blogId: parsed.blogId }, 'atom'),
+    ]
   },
 
-  getFeedHint: feeds.getFeedHint,
+  getFeedHint: (url) => {
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl || feedHostFileRegex.test(parsedUrl.pathname)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
+  },
 }
