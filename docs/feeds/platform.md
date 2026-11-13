@@ -2749,8 +2749,8 @@ Discovers the module and forum feeds of a uCoz site. Covers sites on the uCoz do
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/{module}/…` | Module (RSS) for `news`, `publ`, `load`, `photo`, `blog`, `dir`, `board`, `stuff` and `forum` |
-| `{site}/forum/{section}…` | Forum section · forum (RSS) |
+| `{host}/{module}/…` | Module (RSS) for `news`, `publ`, `load`, `photo`, `blog`, `dir`, `board`, `stuff` and `forum` |
+| `{host}/forum/{section}…` | Forum section · forum (RSS) |
 | Any other page | News (RSS) |
 
 > [!NOTE]
