@@ -1,5 +1,4 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
@@ -155,37 +154,40 @@ export const blogspotHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (page.kind === 'label') {
-      const labelParams = { label: page.label }
-
-      uris.push(
-        pageFeeds.getFeedEntry('blogspot:label', labelParams, 'atom'),
-        pageFeeds.getFeedEntry('blogspot:label', labelParams, 'rss'),
-      )
+      return [
+        pageFeeds.getFeedEntry('blogspot:label', { label: page.label }, 'atom'),
+        pageFeeds.getFeedEntry('blogspot:label', { label: page.label }, 'rss'),
+        pageFeeds.getFeedEntry('blogspot:posts', {}, 'atom'),
+        pageFeeds.getFeedEntry('blogspot:posts', {}, 'rss'),
+        pageFeeds.getFeedEntry('blogspot:posts-summary', {}, 'atom'),
+        pageFeeds.getFeedEntry('blogspot:posts-summary', {}, 'rss'),
+        pageFeeds.getFeedEntry('blogspot:comments', {}, 'atom'),
+        pageFeeds.getFeedEntry('blogspot:comments', {}, 'rss'),
+      ]
     }
 
     if (page.kind === 'post' && page.postId) {
-      const postParams = { postId: page.postId }
-
-      uris.push(
-        pageFeeds.getFeedEntry('blogspot:post-comments', postParams, 'atom'),
-        pageFeeds.getFeedEntry('blogspot:post-comments', postParams, 'rss'),
-      )
+      return [
+        pageFeeds.getFeedEntry('blogspot:post-comments', { postId: page.postId }, 'atom'),
+        pageFeeds.getFeedEntry('blogspot:post-comments', { postId: page.postId }, 'rss'),
+        pageFeeds.getFeedEntry('blogspot:posts', {}, 'atom'),
+        pageFeeds.getFeedEntry('blogspot:posts', {}, 'rss'),
+        pageFeeds.getFeedEntry('blogspot:posts-summary', {}, 'atom'),
+        pageFeeds.getFeedEntry('blogspot:posts-summary', {}, 'rss'),
+        pageFeeds.getFeedEntry('blogspot:comments', {}, 'atom'),
+        pageFeeds.getFeedEntry('blogspot:comments', {}, 'rss'),
+      ]
     }
 
-    // Always include main blog feeds.
-    uris.push(
+    return [
       pageFeeds.getFeedEntry('blogspot:posts', {}, 'atom'),
       pageFeeds.getFeedEntry('blogspot:posts', {}, 'rss'),
       pageFeeds.getFeedEntry('blogspot:posts-summary', {}, 'atom'),
       pageFeeds.getFeedEntry('blogspot:posts-summary', {}, 'rss'),
       pageFeeds.getFeedEntry('blogspot:comments', {}, 'atom'),
       pageFeeds.getFeedEntry('blogspot:comments', {}, 'rss'),
-    )
-
-    return uris
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
