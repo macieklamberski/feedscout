@@ -257,12 +257,12 @@ Discovers Atom feeds for Gitea users, repositories, releases, tags, branch commi
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/{user}` or `{instance}/{user}.keys` | User activity |
-| `{instance}/{user}/{repo}` | Releases<sup>†</sup> · tags<sup>†</sup> · activity |
-| `{instance}/{user}/{repo}/src/branch/{branch}` | Branch commits<sup>†</sup>, plus the feeds above |
-| `{instance}/{user}/{repo}/src/branch/{branch}/{path}` | File history<sup>†</sup>, plus the feeds above |
-| `{instance}/{user}/{repo}/commits/branch/{branch}` | Branch commits<sup>†</sup>, plus the feeds above |
-| `{instance}/{user}/{repo}/commits/branch/{branch}/{path}` | File history<sup>†</sup>, plus the feeds above |
+| `{host}/{user}` or `{host}/{user}.keys` | User activity |
+| `{host}/{user}/{repo}` | Releases<sup>†</sup> · tags<sup>†</sup> · activity |
+| `{host}/{user}/{repo}/src/branch/{branch}` | Branch commits<sup>†</sup>, plus the feeds above |
+| `{host}/{user}/{repo}/src/branch/{branch}/{path}` | File history<sup>†</sup>, plus the feeds above |
+| `{host}/{user}/{repo}/commits/branch/{branch}` | Branch commits<sup>†</sup>, plus the feeds above |
+| `{host}/{user}/{repo}/commits/branch/{branch}/{path}` | File history<sup>†</sup>, plus the feeds above |
 
 <sup>†</sup> *Found only by the Platform method.*
 
