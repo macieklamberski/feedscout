@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers log.
-// Handler needed for: repo, project.
+// Handler needed for: repo.
 
 export type SourcehutUrl =
   | { kind: 'user'; owner: string }
