@@ -1,5 +1,4 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -90,33 +89,45 @@ export const microblogHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.kind === 'category') {
       const params = { category: parsed.category }
 
-      uris.push(
+      return [
         page.getFeedEntry('microblog:category', params, 'rss'),
         page.getFeedEntry('microblog:category', params, 'json'),
-      )
+        page.getFeedEntry('microblog:posts', {}, 'rss'),
+        page.getFeedEntry('microblog:posts', {}, 'json'),
+        page.getFeedEntry('microblog:podcast', {}, 'rss'),
+        page.getFeedEntry('microblog:podcast', {}, 'json'),
+      ]
     }
 
     if (parsed.kind === 'archive') {
-      uris.push(page.getFeedEntry('microblog:archive'))
+      return [
+        page.getFeedEntry('microblog:archive'),
+        page.getFeedEntry('microblog:posts', {}, 'rss'),
+        page.getFeedEntry('microblog:posts', {}, 'json'),
+        page.getFeedEntry('microblog:podcast', {}, 'rss'),
+        page.getFeedEntry('microblog:podcast', {}, 'json'),
+      ]
     }
 
     if (parsed.kind === 'photos') {
-      uris.push(page.getFeedEntry('microblog:photos'))
+      return [
+        page.getFeedEntry('microblog:photos'),
+        page.getFeedEntry('microblog:posts', {}, 'rss'),
+        page.getFeedEntry('microblog:posts', {}, 'json'),
+        page.getFeedEntry('microblog:podcast', {}, 'rss'),
+        page.getFeedEntry('microblog:podcast', {}, 'json'),
+      ]
     }
 
-    uris.push(
+    return [
       page.getFeedEntry('microblog:posts', {}, 'rss'),
       page.getFeedEntry('microblog:posts', {}, 'json'),
       page.getFeedEntry('microblog:podcast', {}, 'rss'),
       page.getFeedEntry('microblog:podcast', {}, 'json'),
-    )
-
-    return uris
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
