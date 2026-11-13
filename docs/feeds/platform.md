@@ -2375,9 +2375,9 @@ Discovers the Atom feeds of a public-inbox mailing list archive. Detected by the
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{host}/{inbox}/` | Messages (Atom) |
-| `{host}/{inbox}/{message-id}/` | Thread · messages (Atom) |
-| `{host}/{inbox}/{message-id}/T/` | Thread · messages (Atom) |
+| `{root}/` | Messages (Atom) |
+| `{root}/{message-id}/` | Thread · messages (Atom) |
+| `{root}/{message-id}/T/` | Thread · messages (Atom) |
 
 ### CivicPlus
 
