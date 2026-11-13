@@ -527,6 +527,8 @@
     "flickr:photos-geo": "https://api.flickr.com/services/feeds/geo?format=rss_200&id=49672816%40N00&lang=en-us",
     "flickr:photos-tag": "https://api.flickr.com/services/feeds/photos_public.gne?format=rss_200&id=33423327%40N00&tags=drawing",
     "flickr:photoset": "https://api.flickr.com/services/feeds/photoset.gne?lang=en-us&nsid=35237096496%40N01&set=72157608099040748",
+    "flickr:recent": "https://www.flickr.com/services/feeds/photos_public.gne",
+    "flickr:recent-geo": "https://www.flickr.com/services/feeds/geo",
     "flickr:tag": "https://www.flickr.com/services/feeds/photos_public.gne?tags=cats",
     "flickr:tag-geo": "https://api.flickr.com/services/feeds/geo?tags=astronomy"
   },
