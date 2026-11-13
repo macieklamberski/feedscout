@@ -1,5 +1,4 @@
 import { getQueryParam, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
@@ -85,15 +84,14 @@ export const sportadminHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (page.kind === 'team') {
-      uris.push(pageFeeds.getFeedEntry('sportadmin:team', { sectionId: page.sectionId }))
+      return [
+        pageFeeds.getFeedEntry('sportadmin:team', { sectionId: page.sectionId }),
+        pageFeeds.getFeedEntry('sportadmin:news'),
+      ]
     }
 
-    uris.push(pageFeeds.getFeedEntry('sportadmin:news'))
-
-    return uris
+    return [pageFeeds.getFeedEntry('sportadmin:news')]
   },
 
   getFeedHint: feeds.getFeedHint,
