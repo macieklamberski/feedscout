@@ -342,6 +342,41 @@ describe('dailymotionHandler', () => {
       expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the videos hint for a legacy user feed with a page', () => {
+      const value = 'https://www.dailymotion.com/rss/user/alice/1/'
+      const expected: DiscoverUriHint = { key: 'dailymotion:videos', label: 'Videos' }
+
+      expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the videos hint for a legacy user feed with enclosures', () => {
+      const value = 'https://www.dailymotion.com/rss/user/alice/1?withEnclosure=1'
+      const expected: DiscoverUriHint = { key: 'dailymotion:videos', label: 'Videos' }
+
+      expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the playlist hint for a playlist feed with a page', () => {
+      const value = 'https://www.dailymotion.com/rss/playlist/x5rwtk_example/1/'
+      const expected: DiscoverUriHint = { key: 'dailymotion:playlist', label: 'Playlist' }
+
+      expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the search hint for a sorted search feed in one language', () => {
+      const value = 'https://www.dailymotion.com/rss/relevance/lang/es/search/cats/0?af=1'
+      const expected: DiscoverUriHint = { key: 'dailymotion:search', label: 'Search' }
+
+      expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the group hint for a group feed', () => {
+      const value = 'https://www.dailymotion.com/rss/group/12345/1?withEnclosure=1'
+      const expected: DiscoverUriHint = { key: 'dailymotion:group', label: 'Group' }
+
+      expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for a user page', () => {
       const value = 'https://www.dailymotion.com/adamtas'
 
@@ -395,6 +430,22 @@ describe('dailymotionHandler', () => {
       [
         'https://www.dailymotion.com/rss/trending',
         { key: 'dailymotion:trending', label: 'Trending' },
+      ],
+      [
+        'https://www.dailymotion.com/rss/user/alice/1',
+        { key: 'dailymotion:videos', label: 'Videos' },
+      ],
+      [
+        'https://www.dailymotion.com/rss/playlist/x5rwtk/1/',
+        { key: 'dailymotion:playlist', label: 'Playlist' },
+      ],
+      [
+        'https://www.dailymotion.com/rss/relevance/lang/es/search/cats/0/?af=1',
+        { key: 'dailymotion:search', label: 'Search' },
+      ],
+      [
+        'https://www.dailymotion.com/rss/group/12345/1',
+        { key: 'dailymotion:group', label: 'Group' },
       ],
     ]
 

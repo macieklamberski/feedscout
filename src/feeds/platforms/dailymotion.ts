@@ -31,6 +31,19 @@ const feeds = definePlatformFeeds([
   { key: 'dailymotion:channel', template: 'https://www.dailymotion.com/rss/channel/{channel}' },
   { key: 'dailymotion:videos', template: 'https://www.dailymotion.com/rss/{username}' },
   { key: 'dailymotion:videos', template: 'https://www.dailymotion.com/rss/user/{username}' },
+  // The legacy routes take a page number, and the first page serves the same videos as the feed
+  // without one. A search there also names its sort and language.
+  {
+    key: 'dailymotion:videos',
+    template: 'https://www.dailymotion.com/rss/user/{username}/{page}',
+  },
+  { key: 'dailymotion:playlist', template: 'https://www.dailymotion.com/rss/playlist/{id}/{page}' },
+  {
+    key: 'dailymotion:search',
+    template: 'https://www.dailymotion.com/rss/{sort}/lang/{language}/search/{query}/{page}',
+  },
+  // A group feed, which no page links since groups left the site.
+  { key: 'dailymotion:group', template: 'https://www.dailymotion.com/rss/group/{id}/{page}' },
 ])
 
 export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => {
