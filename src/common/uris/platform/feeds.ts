@@ -63,9 +63,20 @@ type CompiledTemplate = {
   queryCount: number
   // The placeholder names the template fills.
   names: Array<string>
-  isFeedUrl: (url: URL) => boolean
-  isFeedUrlWithoutWww: (url: URL) => boolean
+  // The host and path a URL the template claims matches, as given and without `www`.
+  asGivenRegex: RegExp
+  withoutWwwRegex: RegExp
+  isFeedUrl: (feedUrl: FeedUrl) => boolean
+  isFeedUrlWithoutWww: (feedUrl: FeedUrl) => boolean
   getUrl: (params?: PlatformFeedParams) => string
+}
+
+// A URL as the templates read it: the host joined to the decoded path without its trailing slash,
+// with and without `www`.
+type FeedUrl = {
+  url: URL
+  hostPath: string
+  hostPathWithoutWww: string
 }
 
 const templateRegex = /^(https?|\{scheme\}):\/\/([^/?#]+)(\/[^?#]*)?(?:\?([^#]*))?$/i
@@ -118,6 +129,39 @@ const decodePath = (path: string): string => {
     .split('/')
     .map((segment) => decodePercent(segment).replaceAll('%', '%25').replaceAll('/', '%2F'))
     .join('/')
+}
+
+// Every table is asked about the same URL in turn, so the last URL read is kept for the next one.
+let lastFeedUrl: { url: string; feedUrl: FeedUrl | undefined } | undefined
+
+const readFeedUrl = (url: string): FeedUrl | undefined => {
+  if (lastFeedUrl?.url === url) {
+    return lastFeedUrl.feedUrl
+  }
+
+  const parsedUrl = parseUrl(url)
+  let feedUrl: FeedUrl | undefined
+
+  if (parsedUrl && isHttpUrl(parsedUrl)) {
+    const pathname = decodePath(parsedUrl.pathname).replace(trailingSlashRegex, '')
+
+    feedUrl = {
+      url: parsedUrl,
+      hostPath: parsedUrl.hostname + pathname,
+      hostPathWithoutWww: stripWww(parsedUrl.hostname) + pathname,
+    }
+  }
+
+  lastFeedUrl = { url, feedUrl }
+
+  return feedUrl
+}
+
+// One pattern any of the patterns matches, so a table reads a URL on none of its feeds at once.
+const joinRegexes = (regexes: Array<RegExp>): RegExp => {
+  const sources = regexes.map((regex) => `(?:${regex.source})`)
+
+  return new RegExp(sources.join('|') || '(?!)', 'i')
 }
 
 // A host or domain entry as a regex source: a string as a literal, a pattern without its anchors.
@@ -205,15 +249,11 @@ const compileTemplate = (
     return [name, new RegExp(`^${toRegexSource(value, '.+')}$`, 'i')]
   })
 
-  const matchesUrl = (url: URL, hostPathRegex: RegExp, hostname: string): boolean => {
-    // A `{root}` table without hosts serves any site, so nothing in its URL names the platform.
-    if (isRootTemplate && !hasHosts) {
-      return false
-    }
+  // A `{root}` table without hosts serves any site, so nothing in its URL names the platform.
+  const claimsUrls = !isRootTemplate || hasHosts
 
-    const pathname = decodePath(url.pathname).replace(trailingSlashRegex, '')
-
-    if (!hostPathRegex.test(hostname + pathname)) {
+  const matchesUrl = (url: URL, hostPathRegex: RegExp, hostPath: string): boolean => {
+    if (!claimsUrls || !hostPathRegex.test(hostPath)) {
       return false
     }
 
@@ -224,12 +264,12 @@ const compileTemplate = (
     })
   }
 
-  const isFeedUrl = (url: URL): boolean => {
-    return matchesUrl(url, asGivenRegex, url.hostname)
+  const isFeedUrl = ({ url, hostPath }: FeedUrl): boolean => {
+    return matchesUrl(url, asGivenRegex, hostPath)
   }
 
-  const isFeedUrlWithoutWww = (url: URL): boolean => {
-    return matchesUrl(url, withoutWwwRegex, stripWww(url.hostname))
+  const isFeedUrlWithoutWww = ({ url, hostPathWithoutWww }: FeedUrl): boolean => {
+    return matchesUrl(url, withoutWwwRegex, hostPathWithoutWww)
   }
 
   // A placeholder with no value stays in the URL, as in trousse's `t`.
@@ -256,7 +296,17 @@ const compileTemplate = (
     return `${origin}${fillPlaceholders(path, encodePath)}${builtQuery}`
   }
 
-  return { key, format, queryCount: query.length, names, isFeedUrl, isFeedUrlWithoutWww, getUrl }
+  return {
+    key,
+    format,
+    queryCount: query.length,
+    names,
+    asGivenRegex,
+    withoutWwwRegex,
+    isFeedUrl,
+    isFeedUrlWithoutWww,
+    getUrl,
+  }
 }
 
 // One table of a handler's feed URLs, keyed by hint key. `getFeedUrl` writes a feed from the values
@@ -269,6 +319,9 @@ export const definePlatformFeeds = (
   // A template with more query parameters is the more specific one, so it is read first. At the
   // same count the earlier row wins, so a `{name*}` row goes after the rows its paths overlap.
   const bySpecificity = [...compiled].sort((a, b) => b.queryCount - a.queryCount)
+  // A URL whose host and path no template takes is none of the feeds, whatever its query.
+  const asGivenRegex = joinRegexes(compiled.map((candidate) => candidate.asGivenRegex))
+  const withoutWwwRegex = joinRegexes(compiled.map((candidate) => candidate.withoutWwwRegex))
 
   const getFeedUrl: PlatformFeedTable['getFeedUrl'] = (key, params, format) => {
     const candidates = compiled.filter((candidate) => {
@@ -292,23 +345,27 @@ export const definePlatformFeeds = (
   }
 
   const getFeedHint: PlatformFeedTable['getFeedHint'] = (url) => {
-    const parsedUrl = parseUrl(url)
+    const feedUrl = readFeedUrl(url)
 
-    if (!parsedUrl || !isHttpUrl(parsedUrl)) {
+    if (!feedUrl) {
       return
     }
 
     // With `www` a tenant, a host as given wins, so `www.example.com` is the tenant `www` and
     // `www.alice.example.com` falls back to the host without `www`.
-    if (options.isWwwTenant) {
-      const template = bySpecificity.find((candidate) => candidate.isFeedUrl(parsedUrl))
+    if (options.isWwwTenant && asGivenRegex.test(feedUrl.hostPath)) {
+      const template = bySpecificity.find((candidate) => candidate.isFeedUrl(feedUrl))
 
       if (template) {
         return composeHint(template.key, template.format)
       }
     }
 
-    const template = bySpecificity.find((candidate) => candidate.isFeedUrlWithoutWww(parsedUrl))
+    if (!withoutWwwRegex.test(feedUrl.hostPathWithoutWww)) {
+      return
+    }
+
+    const template = bySpecificity.find((candidate) => candidate.isFeedUrlWithoutWww(feedUrl))
 
     if (!template) {
       return
