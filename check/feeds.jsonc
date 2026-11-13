@@ -674,6 +674,7 @@
     "habr:hub-posts": "https://habr.com/en/rss/hubs/javascript/posts",
     "habr:news": "https://habr.com/ru/rss/news/",
     "habr:search": "https://habr.com/ru/rss/search/?order=date&q=%5BJabber%5D&target_type=posts",
+    "habr:subscriptions": { "skip": "A private feed, served only under its owner's token" },
     "habr:tag": "https://habr.com/ru/rss/tag/haskell/",
     "habr:user": "https://habr.com/ru/rss/users/alizar/articles/"
   },
