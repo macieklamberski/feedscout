@@ -6,14 +6,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type DasaugeUrl = { kind: 'profile'; username: string }
 
-const hosts = [
-  'dasauge.at',
-  'dasauge.ch',
-  'dasauge.co.uk',
-  'dasauge.com',
-  'dasauge.de',
-  'dasauge.es',
-]
+// dasauge's country domains.
+const hosts = [/^dasauge\.(?:at|ch|co\.uk|com|de|es)$/]
 
 const profileRegex = /^-(.+)$/
 
