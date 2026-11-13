@@ -2356,6 +2356,7 @@ Discovers the item feeds of an Omeka Classic site, self-hosted or on `omeka.net`
 |-------------|-----------------|
 | `{root}/items/browse?{filters}` | Filtered items for the same tags, collection or search (RSS + Atom). A sort alone gives the items feed in that order |
 | `{root}/items/browse/tag/{tag}` | Filtered items for the tag (RSS + Atom) · items (RSS + Atom) |
+| `{root}/items/show/{id}` or `{root}/exhibits/show/{exhibit}/item/{id}` | Item (Atom) · items (RSS + Atom) |
 | Any other page | Items (RSS + Atom) |
 
 ### Koha
