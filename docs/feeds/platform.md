@@ -2518,13 +2518,13 @@ Discovers the RSS feeds of a ChamberMaster (GrowthZone) chamber of commerce dire
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/events/…` | Upcoming events<sup>†</sup> · new events<sup>†</sup> · featured events<sup>†</sup> |
-| `{site}/list/…` | New members<sup>†</sup> · featured members<sup>†</sup> |
-| `{site}/jobs/…` | New jobs<sup>†</sup> |
-| `{site}/hotdeals/…` | New coupons<sup>†</sup> |
-| `{site}/marketspace/…`, `{site}/marketplace/…` | New marketplace items<sup>†</sup> |
-| `{site}/news/…` | News releases<sup>†</sup> |
-| `{site}/MemberToMember/…` | New member to member deals<sup>†</sup> |
+| `{host}/events/…` | Upcoming events<sup>†</sup> · new events<sup>†</sup> · featured events<sup>†</sup> |
+| `{host}/list/…` | New members<sup>†</sup> · featured members<sup>†</sup> |
+| `{host}/jobs/…` | New jobs<sup>†</sup> |
+| `{host}/hotdeals/…` | New coupons<sup>†</sup> |
+| `{host}/marketspace/…`, `{host}/marketplace/…` | New marketplace items<sup>†</sup> |
+| `{host}/news/…` | News releases<sup>†</sup> |
+| `{host}/MemberToMember/…` | New member to member deals<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
