@@ -8,31 +8,24 @@ import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.j
 
 export type EklablogUrl = { kind: 'blog' } | { kind: 'customDomain' }
 
+// The domains holding at least 1% of Eklablog's stored feeds each. A blog on another one, or on a
+// custom domain, is known by its marker.
 const domains = [
   'blogg.org',
-  'blogueuse.fr',
-  'blogy.fr',
   'cd.st',
-  'doremiblog.com',
   'ek.la',
   'eklablog.com',
   'eklablog.fr',
   'eklablog.net',
-  'fatalblog.com',
   'id.st',
-  'jeblog.fr',
   'kazeo.com',
-  'kif.fr',
-  'kilariblog.com',
   'lo.gs',
   'revolublog.com',
-  'shojoblog.com',
-  'shonenblog.com',
   'zic.fr',
 ]
 const connectHosts = ['connect.eklablog.com']
 
-// A custom domain is known only by its marker, so its feeds are built here but not claimed.
+// A blog off the domains is known only by its marker, so its feeds are built here but not claimed.
 const feeds = definePlatformFeeds(
   [
     { key: 'eklablog:posts', template: '{scheme}://{host}/rss' },
