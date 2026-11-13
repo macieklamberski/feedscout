@@ -1,5 +1,4 @@
 import { encodePathSegment } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getTenantSubdomain } from '../../common/utils.js'
@@ -79,19 +78,18 @@ export const purotHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (page.kind === 'page') {
       const params = { page: page.page }
 
-      uris.push(pageFeeds.getFeedEntry('purot:page-changes', params))
-      uris.push(pageFeeds.getFeedEntry('purot:page-discussions', params))
-      uris.push(pageFeeds.getFeedEntry('purot:page-activity', params))
+      return [
+        pageFeeds.getFeedEntry('purot:page-changes', params),
+        pageFeeds.getFeedEntry('purot:page-discussions', params),
+        pageFeeds.getFeedEntry('purot:page-activity', params),
+        pageFeeds.getFeedEntry('purot:recent-changes'),
+      ]
     }
 
-    uris.push(pageFeeds.getFeedEntry('purot:recent-changes'))
-
-    return uris
+    return [pageFeeds.getFeedEntry('purot:recent-changes')]
   },
 
   getFeedHint: feeds.getFeedHint,
