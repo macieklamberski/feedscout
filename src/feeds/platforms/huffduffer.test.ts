@@ -47,6 +47,24 @@ describe('parseHuffdufferUrl', () => {
     expect(parseHuffdufferUrl('https://huffduffer.com/alice/12345abc')).toEqual(expected)
   })
 
+  it('should return the collective for a collective page', () => {
+    const expected: HuffdufferUrl = { kind: 'collective', username: 'alice' }
+
+    expect(parseHuffdufferUrl('https://huffduffer.com/alice/collective')).toEqual(expected)
+  })
+
+  it('should return the popular page', () => {
+    const expected: HuffdufferUrl = { kind: 'popular' }
+
+    expect(parseHuffdufferUrl('https://huffduffer.com/popular')).toEqual(expected)
+  })
+
+  it('should return the search with its query', () => {
+    const expected: HuffdufferUrl = { kind: 'search', query: 'example query' }
+
+    expect(parseHuffdufferUrl('https://huffduffer.com/search?q=example+query')).toEqual(expected)
+  })
+
   it('should return the home page for the root', () => {
     const expected: HuffdufferUrl = { kind: 'home' }
 
@@ -129,6 +147,70 @@ describe('huffdufferHandler', () => {
         {
           uri: 'https://huffduffer.com/new/json',
           hint: { key: 'huffduffer:new', label: 'New huffduffs', format: 'json' },
+        },
+      ]
+
+      expect(huffdufferHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the popular feeds for the popular page', () => {
+      const value = 'https://huffduffer.com/popular'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://huffduffer.com/popular/rss',
+          hint: { key: 'huffduffer:popular', label: 'Popular', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/popular/atom',
+          hint: { key: 'huffduffer:popular', label: 'Popular', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/popular/json',
+          hint: { key: 'huffduffer:popular', label: 'Popular', format: 'json' },
+        },
+      ]
+
+      expect(huffdufferHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the search feeds for a search page', () => {
+      const value = 'https://huffduffer.com/search?q=example+query'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://huffduffer.com/search/rss?q=example%20query',
+          hint: { key: 'huffduffer:search', label: 'Search', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/search/atom?q=example%20query',
+          hint: { key: 'huffduffer:search', label: 'Search', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/search/json?q=example%20query',
+          hint: { key: 'huffduffer:search', label: 'Search', format: 'json' },
+        },
+      ]
+
+      expect(huffdufferHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return empty array for a search page without a query', () => {
+      expect(huffdufferHandler.resolve('https://huffduffer.com/search')).toEqual([])
+    })
+
+    it('should return the collective feeds for a collective page', () => {
+      const value = 'https://huffduffer.com/alice/collective'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://huffduffer.com/alice/collective/rss',
+          hint: { key: 'huffduffer:collective', label: 'Collective', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/collective/atom',
+          hint: { key: 'huffduffer:collective', label: 'Collective', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/collective/json',
+          hint: { key: 'huffduffer:collective', label: 'Collective', format: 'json' },
         },
       ]
 
@@ -328,44 +410,51 @@ describe('huffdufferHandler', () => {
       expect(huffdufferHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for the search feed', () => {
-      const value = 'https://huffduffer.com/search/rss?q=Edward+Dutton'
+    const siteFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://huffduffer.com/popular/rss',
+        { key: 'huffduffer:popular', label: 'Popular', format: 'rss' },
+      ],
+      [
+        'https://huffduffer.com/popular/atom',
+        { key: 'huffduffer:popular', label: 'Popular', format: 'atom' },
+      ],
+      [
+        'https://huffduffer.com/popular/json',
+        { key: 'huffduffer:popular', label: 'Popular', format: 'json' },
+      ],
+      [
+        'https://huffduffer.com/search/rss?q=example+query',
+        { key: 'huffduffer:search', label: 'Search', format: 'rss' },
+      ],
+      [
+        'https://huffduffer.com/search/atom?q=example',
+        { key: 'huffduffer:search', label: 'Search', format: 'atom' },
+      ],
+      [
+        'https://huffduffer.com/search/json?q=example',
+        { key: 'huffduffer:search', label: 'Search', format: 'json' },
+      ],
+      [
+        'https://huffduffer.com/alice/collective/rss',
+        { key: 'huffduffer:collective', label: 'Collective', format: 'rss' },
+      ],
+      [
+        'https://huffduffer.com/alice/collective/atom',
+        { key: 'huffduffer:collective', label: 'Collective', format: 'atom' },
+      ],
+      [
+        'https://huffduffer.com/alice/collective/json',
+        { key: 'huffduffer:collective', label: 'Collective', format: 'json' },
+      ],
+    ]
 
-      expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
+    it.each(siteFeeds)('should return the hint for %s', (value, expected) => {
+      expect(huffdufferHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for the popular feed', () => {
-      const value = 'https://huffduffer.com/popular/rss'
-
-      expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the search atom feed', () => {
-      const value = 'https://huffduffer.com/search/atom?q=Edward+Dutton'
-
-      expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the search json feed', () => {
-      const value = 'https://huffduffer.com/search/json?q=Edward+Dutton'
-
-      expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the popular atom feed', () => {
-      const value = 'https://huffduffer.com/popular/atom'
-
-      expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the popular json feed', () => {
-      const value = 'https://huffduffer.com/popular/json'
-
-      expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a collective feed', () => {
-      const value = 'https://huffduffer.com/adactio/collective/rss'
+    it('should return undefined for the search feed without a query', () => {
+      const value = 'https://huffduffer.com/search/rss'
 
       expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -418,6 +507,18 @@ describe('huffdufferHandler', () => {
       [
         'https://huffduffer.com/new/json',
         { key: 'huffduffer:new', label: 'New huffduffs', format: 'json' },
+      ],
+      [
+        'http://www.huffduffer.com/popular/atom',
+        { key: 'huffduffer:popular', label: 'Popular', format: 'atom' },
+      ],
+      [
+        'https://huffduffer.com/search/rss?q=example+query',
+        { key: 'huffduffer:search', label: 'Search', format: 'rss' },
+      ],
+      [
+        'https://huffduffer.com/alice/collective/rss/',
+        { key: 'huffduffer:collective', label: 'Collective', format: 'rss' },
       ],
     ]
 
