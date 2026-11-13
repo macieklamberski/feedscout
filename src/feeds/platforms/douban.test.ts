@@ -160,6 +160,14 @@ describe('doubanHandler', () => {
           uri: 'https://www.douban.com/feed/review/drama',
           hint: { key: 'douban:drama-reviews', label: 'Drama reviews' },
         },
+        {
+          uri: 'https://www.douban.com/feed/review/movie_new',
+          hint: { key: 'douban:new-movie-reviews', label: 'New movie reviews' },
+        },
+        {
+          uri: 'https://www.douban.com/feed/review/best',
+          hint: { key: 'douban:popular-reviews', label: 'Popular reviews' },
+        },
       ]
 
       expect(doubanHandler.resolve(value)).toEqual(expected)
@@ -254,6 +262,23 @@ describe('doubanHandler', () => {
       expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the new movie reviews hint for the new movie reviews feed', () => {
+      const value = 'https://www.douban.com/feed/review/movie_new'
+      const expected: DiscoverUriHint = {
+        key: 'douban:new-movie-reviews',
+        label: 'New movie reviews',
+      }
+
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the popular reviews hint for the popular reviews feed', () => {
+      const value = 'https://www.douban.com/feed/review/best'
+      const expected: DiscoverUriHint = { key: 'douban:popular-reviews', label: 'Popular reviews' }
+
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the drama reviews hint for the drama reviews feed', () => {
       const value = 'https://www.douban.com/feed/review/drama'
       const expected: DiscoverUriHint = { key: 'douban:drama-reviews', label: 'Drama reviews' }
@@ -289,6 +314,14 @@ describe('doubanHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'http://douban.com/feed/review/movie_new',
+        { key: 'douban:new-movie-reviews', label: 'New movie reviews' },
+      ],
+      [
+        'https://www.douban.com/feed/review/best',
+        { key: 'douban:popular-reviews', label: 'Popular reviews' },
+      ],
       [
         'https://www.douban.com/feed/people/mockee/interests',
         { key: 'douban:interests', label: 'Interests' },

@@ -41,6 +41,8 @@ const feeds = definePlatformFeeds([
   { key: 'douban:movie-reviews', template: 'https://www.douban.com/feed/review/movie' },
   { key: 'douban:music-reviews', template: 'https://www.douban.com/feed/review/music' },
   { key: 'douban:drama-reviews', template: 'https://www.douban.com/feed/review/drama' },
+  { key: 'douban:new-movie-reviews', template: 'https://www.douban.com/feed/review/movie_new' },
+  { key: 'douban:popular-reviews', template: 'https://www.douban.com/feed/review/best' },
 ])
 
 export const parseDoubanUrl = (url: string): DoubanUrl | undefined => {
@@ -100,6 +102,8 @@ export const doubanHandler: PlatformHandler = {
       feeds.getFeedEntry('douban:movie-reviews'),
       feeds.getFeedEntry('douban:music-reviews'),
       feeds.getFeedEntry('douban:drama-reviews'),
+      feeds.getFeedEntry('douban:new-movie-reviews'),
+      feeds.getFeedEntry('douban:popular-reviews'),
     ]
   },
 
