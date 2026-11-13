@@ -43,6 +43,10 @@ describe('parseSubstackUrl', () => {
     expect(parseSubstackUrl('https://open.substack.com/pub/myname/p/post-slug')).toBeUndefined()
   })
 
+  it('should return undefined for the API host', () => {
+    expect(parseSubstackUrl('https://api.substack.com/feed/podcast/12345.rss')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseSubstackUrl('https://example.com/@example')).toBeUndefined()
   })
@@ -96,6 +100,7 @@ describe('substackHandler', () => {
       [true, 'https://example.substack.com'],
       [false, 'https://blog.example.substack.com'],
       [true, 'https://assets.substack.com'],
+      [false, 'https://api.substack.com/feed/podcast/12345.rss'],
       [true, 'https://substack.com/@alice'],
       [true, 'https://substack.com/@bob'],
       [true, 'https://substack.com/@user-name'],
@@ -226,6 +231,94 @@ describe('substackHandler', () => {
     it('should return empty array for an apex URL without a profile path', () => {
       expect(substackHandler.resolve('https://substack.com/home')).toEqual([])
     })
+
+    it('should return empty array for a page on the API host', () => {
+      expect(substackHandler.resolve('https://api.substack.com/p/post')).toEqual([])
+    })
+
+    it('should return the podcast feed of a publication with a podcast', () => {
+      const value = 'https://example.substack.com/podcast'
+      const content =
+        '{"pub":{"author_id":678,"id":12345,"podcast_enabled":true,"podcast_feed_url":null}}'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+        { uri: 'https://api.substack.com/feed/podcast/12345.rss', hint: podcastHint },
+      ]
+
+      expect(substackHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should return the podcast section feed of each podcast section once', () => {
+      const value = 'https://example.substack.com/s/episodes'
+      const content =
+        '{"pub":{"author_id":678,"id":12345,"podcast_enabled":false},"sections":[{"id":111,"podcastSettings":{"section_id":111}},{"id":222,"podcastSettings":null},{"id":333,"podcastSettings":{"section_id":333}}],"section":{"id":111,"podcastSettings":{"section_id":111}}}'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+        {
+          uri: 'https://api.substack.com/feed/podcast/12345/s/111.rss',
+          hint: { key: 'substack:podcast-section', label: 'Podcast section' },
+        },
+        {
+          uri: 'https://api.substack.com/feed/podcast/12345/s/333.rss',
+          hint: { key: 'substack:podcast-section', label: 'Podcast section' },
+        },
+      ]
+
+      expect(substackHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should leave out the podcast feed of a publication that names its own', () => {
+      const value = 'https://example.substack.com/podcast'
+      const content =
+        '{"pub":{"id":12345,"podcast_enabled":true,"podcast_feed_url":"https://api.substack.com/feed/podcast/12345/s/111.rss","sections":[{"id":111,"podcastSettings":{"section_id":111}}]}}'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+        {
+          uri: 'https://api.substack.com/feed/podcast/12345/s/111.rss',
+          hint: { key: 'substack:podcast-section', label: 'Podcast section' },
+        },
+      ]
+
+      expect(substackHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should read the podcast from the publication record, not from a quoted string', () => {
+      const value = 'https://example.substack.com/p/post'
+      const content =
+        '{"headline":"\\"pub\\":{\\"id\\":999,\\"podcast_enabled\\":true}"}' +
+        '{"pub":{"id":12345,"podcast_enabled":true}}'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+        { uri: 'https://api.substack.com/feed/podcast/12345.rss', hint: podcastHint },
+      ]
+
+      expect(substackHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should return the newsletter feed alone for a publication without a podcast', () => {
+      const value = 'https://example.substack.com'
+      const content = '{"pub":{"author_id":678,"id":12345,"podcast_enabled":false}}'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+      ]
+
+      expect(substackHandler.resolve(value, content)).toEqual(expected)
+    })
   })
 
   describe('getFeedHint', () => {
@@ -272,6 +365,12 @@ describe('substackHandler', () => {
 
     it.each(podcastFeeds)('should return the podcast hint for %s', (value, expected) => {
       expect(substackHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a newsletter feed on the API host', () => {
+      const value = 'https://api.substack.com/feed'
+
+      expect(substackHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
