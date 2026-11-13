@@ -1,4 +1,3 @@
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -97,15 +96,14 @@ export const jiraHandler: PlatformHandler = {
     const { baseUrl, tenant, projectKey } = jiraPage
     // A cloud site serves from its origin.
     const root = tenant ? undefined : baseUrl
-    const uris: Array<DiscoverUriEntry> = []
-
     if (projectKey) {
-      uris.push(page.getFeedEntry('jira:project', { root, key: projectKey }))
+      return [
+        page.getFeedEntry('jira:project', { root, key: projectKey }),
+        page.getFeedEntry('jira:site', { root }),
+      ]
     }
 
-    uris.push(page.getFeedEntry('jira:site', { root }))
-
-    return uris
+    return [page.getFeedEntry('jira:site', { root })]
   },
 
   getFeedHint: feeds.getFeedHint,
