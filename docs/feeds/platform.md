@@ -119,7 +119,7 @@ Discovers RSS feeds for Substack newsletters.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.substack.com` | Newsletter |
+| `{publication}.substack.com` | Newsletter |
 | `substack.com/@{user}` | Newsletter<sup>†</sup>* |
 
 \* *The publication can differ from the handle and can sit on a custom domain. It is read from the page content when available, with the handle as the fallback.*

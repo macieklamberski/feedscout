@@ -27,6 +27,8 @@ const feeds = definePlatformFeeds(
     { key: 'substack:newsletter', template: '{scheme}://{host}/feed' },
     { key: 'substack:newsletter', template: '{scheme}://{host}/feed.xml' },
     { key: 'substack:newsletter', template: '{scheme}://{host}/feed.rss' },
+    // One section of the newsletter, which holds only that section's posts.
+    { key: 'substack:newsletter-section', template: '{scheme}://{host}/feed?sectionId={section}' },
     // A publication's podcast, mostly linked on api.substack.com, and one section of it, under ids
     // no page URL gives. A private or Spotify feed adds a listener token.
     { key: 'substack:podcast', template: '{scheme}://{host}/feed/podcast/{publication}.rss' },

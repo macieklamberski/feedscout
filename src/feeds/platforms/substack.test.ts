@@ -243,9 +243,12 @@ describe('substackHandler', () => {
       expect(substackHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the newsletter hint for a section feed', () => {
-      const value = 'https://biggersisterchannel.substack.com/feed?sectionId=194387'
-      const expected: DiscoverUriHint = { key: 'substack:newsletter', label: 'Newsletter' }
+    it('should return the newsletter section hint for a section feed', () => {
+      const value = 'https://alice.substack.com/feed?sectionId=12345'
+      const expected: DiscoverUriHint = {
+        key: 'substack:newsletter-section',
+        label: 'Newsletter section',
+      }
 
       expect(substackHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -308,10 +311,13 @@ describe('substackHandler', () => {
       'https://piratewires.substack.com/feed.xml',
       'https://piratewires.substack.com/feed.rss',
       'https://DASMEEOK.substack.com/feed',
-      'https://biggersisterchannel.substack.com/feed?sectionId=194387',
     ]
 
     const podcastFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://alice.substack.com/feed?sectionId=12345',
+        { key: 'substack:newsletter-section', label: 'Newsletter section' },
+      ],
       ['http://api.substack.com/feed/podcast/12345.rss', podcastHint],
       [
         'https://api.substack.com/feed/podcast/12345/s/678.rss',
