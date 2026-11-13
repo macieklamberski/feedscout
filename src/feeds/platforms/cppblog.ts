@@ -1,5 +1,4 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
@@ -87,20 +86,27 @@ export const cppblogHandler: PlatformHandler = {
     }
 
     const { username } = page
-    const uris: Array<DiscoverUriEntry> = []
 
     if (page.kind === 'category') {
-      uris.push(feeds.getFeedEntry('cppblog:category', { username, categoryId: page.categoryId }))
+      return [
+        feeds.getFeedEntry('cppblog:category', { username, categoryId: page.categoryId }),
+        feeds.getFeedEntry('cppblog:posts', { username }),
+        feeds.getFeedEntry('cppblog:comments', { username }),
+      ]
     }
 
     if (page.kind === 'favorite') {
-      uris.push(feeds.getFeedEntry('cppblog:favorites', { username, favoriteId: page.favoriteId }))
+      return [
+        feeds.getFeedEntry('cppblog:favorites', { username, favoriteId: page.favoriteId }),
+        feeds.getFeedEntry('cppblog:posts', { username }),
+        feeds.getFeedEntry('cppblog:comments', { username }),
+      ]
     }
 
-    uris.push(feeds.getFeedEntry('cppblog:posts', { username }))
-    uris.push(feeds.getFeedEntry('cppblog:comments', { username }))
-
-    return uris
+    return [
+      feeds.getFeedEntry('cppblog:posts', { username }),
+      feeds.getFeedEntry('cppblog:comments', { username }),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
