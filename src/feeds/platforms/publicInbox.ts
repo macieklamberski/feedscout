@@ -91,15 +91,17 @@ export const publicInboxHandler: PlatformHandler = {
     }
 
     const root = page.inboxUrl
-    const inboxEntry = pageFeeds.getFeedEntry('public-inbox:messages', { root })
 
     if (page.kind === 'message') {
       const params = { root, messageId: page.messageId }
 
-      return [pageFeeds.getFeedEntry('public-inbox:thread', params), inboxEntry]
+      return [
+        pageFeeds.getFeedEntry('public-inbox:thread', params),
+        pageFeeds.getFeedEntry('public-inbox:messages', { root }),
+      ]
     }
 
-    return [inboxEntry]
+    return [pageFeeds.getFeedEntry('public-inbox:messages', { root })]
   },
 
   getFeedHint: feeds.getFeedHint,
