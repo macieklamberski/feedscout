@@ -254,7 +254,7 @@ describe('substackHandler', () => {
     it('should return the podcast section feed of each podcast section once', () => {
       const value = 'https://example.substack.com/s/episodes'
       const content =
-        '{"pub":{"author_id":678,"id":12345,"podcast_enabled":false},"sections":[{"id":111,"podcastSettings":{"section_id":111}},{"id":222,"podcastSettings":null},{"id":333,"podcastSettings":{"section_id":333}}],"section":{"id":111,"podcastSettings":{"section_id":111}}}'
+        '{"pub":{"author_id":678,"id":12345,"podcast_enabled":false},"sections":[{"id":111,"publication_id":12345,"podcastSettings":{"section_id":111}},{"id":222,"publication_id":12345,"podcastSettings":null},{"id":333,"publication_id":12345,"podcastSettings":{"section_id":333}}],"section":{"id":111,"publication_id":12345,"podcastSettings":{"section_id":111}}}'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.substack.com/feed',
@@ -273,10 +273,24 @@ describe('substackHandler', () => {
       expect(substackHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should leave out the podcast section feed of another publication', () => {
+      const value = 'https://example.substack.com/'
+      const content =
+        '{"pub":{"id":12345,"podcast_enabled":false},"sections":[{"id":444,"publication_id":67890,"podcastSettings":{"section_id":444}}]}'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+      ]
+
+      expect(substackHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should leave out the podcast feed of a publication that names its own', () => {
       const value = 'https://example.substack.com/podcast'
       const content =
-        '{"pub":{"id":12345,"podcast_enabled":true,"podcast_feed_url":"https://api.substack.com/feed/podcast/12345/s/111.rss","sections":[{"id":111,"podcastSettings":{"section_id":111}}]}}'
+        '{"pub":{"id":12345,"podcast_enabled":true,"podcast_feed_url":"https://api.substack.com/feed/podcast/12345/s/111.rss","sections":[{"id":111,"publication_id":12345,"podcastSettings":{"section_id":111}}]}}'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.substack.com/feed',

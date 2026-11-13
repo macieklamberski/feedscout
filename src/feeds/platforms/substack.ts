@@ -29,7 +29,9 @@ const pubRecordRegex = /"pub":\{(?<record>[^{}]*)/
 const pubIdRegex = /"id":(?<publication>\d+),/
 const podcastEnabledRegex = /"podcast_enabled":true\b/
 const podcastFeedUrlRegex = /"podcast_feed_url":"/
-const podcastSectionRegex = /"podcastSettings":\{"section_id":(\d+)/g
+// A section record names its publication before its podcast settings.
+const podcastSectionRegex =
+  /"publication_id":(?<owner>\d+)|"podcastSettings":\{"section_id":(?<section>\d+)/g
 
 // A custom domain is read only from a profile page, so its feed is built here but not claimed.
 // The same feed answers at feed.xml and feed.rss.
@@ -59,8 +61,24 @@ const feeds = definePlatformFeeds(
   { domains },
 )
 
-const getPodcastSections = (content: string): Array<string> => {
-  return [...new Set([...content.matchAll(podcastSectionRegex)].map(([, section]) => section))]
+const getPodcastSections = (content: string, publication: string): Array<string> => {
+  const sections: Array<string> = []
+  let owner: string | undefined
+
+  for (const match of content.matchAll(podcastSectionRegex)) {
+    const { owner: matchedOwner, section } = match.groups ?? {}
+
+    if (matchedOwner) {
+      owner = matchedOwner
+      continue
+    }
+
+    if (section && owner === publication && !sections.includes(section)) {
+      sections.push(section)
+    }
+  }
+
+  return sections
 }
 
 const getPublicationOrigin = (content: string | undefined): string | undefined => {
@@ -139,7 +157,7 @@ export const substackHandler: PlatformHandler = {
     const record = content?.match(pubRecordRegex)?.groups?.record
     const publication = record?.match(pubIdRegex)?.groups?.publication
 
-    if (!content || !record || !publication) {
+    if (!record || !publication) {
       return [pageFeeds.getFeedEntry('substack:newsletter')]
     }
 
@@ -150,7 +168,7 @@ export const substackHandler: PlatformHandler = {
     return [
       pageFeeds.getFeedEntry('substack:newsletter'),
       ...(hasPodcast ? [pageFeeds.getFeedEntry('substack:podcast', params)] : []),
-      ...getPodcastSections(content).map((section) => {
+      ...getPodcastSections(content, publication).map((section) => {
         return pageFeeds.getFeedEntry('substack:podcast-section', { ...params, section })
       }),
     ]
