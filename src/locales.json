@@ -270,6 +270,8 @@
     "flickr:group-pool": "Group pool",
     "flickr:group-discuss": "Group discussions",
     "flickr:group-geo": "Group pool with location",
+    "flickr:group-photos": "Group photos",
+    "flickr:group-photos-tag": "Tagged group photos",
     "flickr:forum": "Forum",
     "flickr:photos-tag": "Tagged photostream",
     "flickr:photoset": "Album",

@@ -1,12 +1,4 @@
-import {
-  decodeSegment,
-  getAnyOf,
-  getPathSegments,
-  getQueryParam,
-  isAnyOf,
-  isHostOf,
-  parseUrl,
-} from 'trousse'
+import { decodeSegment, getAnyOf, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -106,6 +98,16 @@ const feeds = definePlatformFeeds(
       template: '{scheme}://{host}/services/feeds/groups_discuss.gne?id={id}&format=rss_200',
       format: 'rss',
     },
+    // The pool photos through the uploads feed, which reads `g` as the group.
+    {
+      key: 'flickr:group-photos',
+      template: '{scheme}://{host}/services/feeds/photos_public.gne?g={id}',
+    },
+    {
+      key: 'flickr:group-photos',
+      template: '{scheme}://{host}/services/feeds/photos_public.gne?g={id}&format=rss_200',
+      format: 'rss',
+    },
     // The pool photos that carry a location.
     { key: 'flickr:group-geo', template: '{scheme}://{host}/services/feeds/geo/?g={id}' },
     {
@@ -113,9 +115,9 @@ const feeds = definePlatformFeeds(
       template: '{scheme}://{host}/services/feeds/geo/?g={id}&format=rss_200',
       format: 'rss',
     },
-    // Past here the table only claims: a photostream narrowed to a tag, an album, the photos of a
-    // member's contacts, and the photos that carry a location by member, by tag, or by member or
-    // group pool narrowed to a tag.
+    // Past here the table only claims: a photostream or group pool narrowed to a tag, an album, the
+    // photos of a member's contacts, and the photos that carry a location by member, by tag, or by
+    // member or group pool narrowed to a tag.
     {
       key: 'flickr:photos-tag',
       template: '{scheme}://{host}/services/feeds/photos_public.gne?id={id}&tags={tags}',
@@ -154,6 +156,16 @@ const feeds = definePlatformFeeds(
     {
       key: 'flickr:tag-geo',
       template: '{scheme}://{host}/services/feeds/geo?tags={tags}&format=rss_200',
+      format: 'rss',
+    },
+    {
+      key: 'flickr:group-photos-tag',
+      template: '{scheme}://{host}/services/feeds/photos_public.gne?g={id}&tags={tags}',
+    },
+    {
+      key: 'flickr:group-photos-tag',
+      template:
+        '{scheme}://{host}/services/feeds/photos_public.gne?g={id}&tags={tags}&format=rss_200',
       format: 'rss',
     },
     {
@@ -303,6 +315,8 @@ export const flickrHandler: PlatformHandler = {
         return [
           page.getFeedEntry('flickr:group-pool', params),
           page.getFeedEntry('flickr:group-pool', params, 'rss'),
+          page.getFeedEntry('flickr:group-photos', params),
+          page.getFeedEntry('flickr:group-photos', params, 'rss'),
           page.getFeedEntry('flickr:group-geo', params),
           page.getFeedEntry('flickr:group-geo', params, 'rss'),
           page.getFeedEntry('flickr:forum', { host }),
@@ -317,6 +331,8 @@ export const flickrHandler: PlatformHandler = {
       return [
         page.getFeedEntry('flickr:group-pool', params),
         page.getFeedEntry('flickr:group-pool', params, 'rss'),
+        page.getFeedEntry('flickr:group-photos', params),
+        page.getFeedEntry('flickr:group-photos', params, 'rss'),
         page.getFeedEntry('flickr:group-discuss', params),
         page.getFeedEntry('flickr:group-discuss', params, 'rss'),
         page.getFeedEntry('flickr:group-geo', params),
@@ -361,14 +377,5 @@ export const flickrHandler: PlatformHandler = {
     ]
   },
 
-  getFeedHint: (url) => {
-    const hint = feeds.getFeedHint(url)
-
-    // Flickr narrows the tag feed to a group pool when `g` sits beside `tags`, a feed no row names.
-    if (hint?.key === 'flickr:tag' && getQueryParam(parseUrl(url), 'g')) {
-      return
-    }
-
-    return hint
-  },
+  getFeedHint: feeds.getFeedHint,
 }

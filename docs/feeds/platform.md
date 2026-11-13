@@ -1002,8 +1002,8 @@ Discovers Atom and RSS feeds for Flickr photostreams, favorites, tags, groups an
 | `flickr.com/photos/tags/{tag}` | Tag<sup>†</sup> |
 | `flickr.com/photos/{nsid}` | Photostream |
 | `flickr.com/photos/{nsid}/favorites` | Favorites |
-| `flickr.com/groups/{nsid}` | Group pool<sup>†</sup> · discussions · pool with location |
-| `flickr.com/groups/{nsid}/pool` | Group pool<sup>†</sup> · pool with location |
+| `flickr.com/groups/{nsid}` | Group pool<sup>†</sup> · group photos<sup>†</sup> · discussions · pool with location |
+| `flickr.com/groups/{nsid}/pool` | Group pool<sup>†</sup> · group photos<sup>†</sup> · pool with location |
 | `flickr.com/groups/{nsid}/discuss` | Group discussions |
 | `flickr.com/help/forum` | Forum<sup>†</sup> · uploads from everyone<sup>†</sup> · uploads from everyone with location<sup>†</sup> |
 

@@ -522,6 +522,8 @@
     "flickr:forum": "https://www.flickr.com/services/feeds/forums.gne",
     "flickr:group-discuss": "https://www.flickr.com/services/feeds/groups_discuss.gne?id=42097308@N00",
     "flickr:group-geo": "https://www.flickr.com/services/feeds/geo/?g=42097308@N00",
+    "flickr:group-photos": "https://www.flickr.com/services/feeds/photos_public.gne?g=42097308@N00",
+    "flickr:group-photos-tag": "https://www.flickr.com/services/feeds/photos_public.gne?g=42097308@N00&tags=sunset",
     "flickr:group-pool": "https://www.flickr.com/services/feeds/groups_pool.gne?id=42097308@N00",
     "flickr:group-tag-geo": "https://www.flickr.com/services/feeds/geo/?g=42097308@N00&tags=sunset",
     "flickr:photos": "https://www.flickr.com/services/feeds/photos_public.gne?id=24662369@N07",

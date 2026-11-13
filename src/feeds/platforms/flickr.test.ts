@@ -489,6 +489,14 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:group-pool', label: 'Group pool', format: 'rss' },
         },
         {
+          uri: `${feedsBase}/photos_public.gne?g=42097308@N00`,
+          hint: { key: 'flickr:group-photos', label: 'Group photos' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne?g=42097308@N00&format=rss_200`,
+          hint: { key: 'flickr:group-photos', label: 'Group photos', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/groups_discuss.gne?id=42097308@N00`,
           hint: { key: 'flickr:group-discuss', label: 'Group discussions' },
         },
@@ -547,6 +555,14 @@ describe('flickrHandler', () => {
         {
           uri: `${feedsBase}/groups_pool.gne?id=42097308@N00&format=rss_200`,
           hint: { key: 'flickr:group-pool', label: 'Group pool', format: 'rss' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne?g=42097308@N00`,
+          hint: { key: 'flickr:group-photos', label: 'Group photos' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne?g=42097308@N00&format=rss_200`,
+          hint: { key: 'flickr:group-photos', label: 'Group photos', format: 'rss' },
         },
         {
           uri: `${feedsBase}/geo/?g=42097308@N00`,
@@ -845,11 +861,22 @@ describe('flickrHandler', () => {
       expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a tag feed narrowed to a group pool', () => {
+    it('should return the tagged group photos hint for a tag feed narrowed to a group pool', () => {
       const value =
         'https://www.flickr.com/services/feeds/photos_public.gne?tags=cats&g=42097308@N00'
+      const expected: DiscoverUriHint = {
+        key: 'flickr:group-photos-tag',
+        label: 'Tagged group photos',
+      }
 
-      expect(flickrHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the group photos hint for an uploads feed naming a group', () => {
+      const value = 'https://www.flickr.com/services/feeds/photos_public.gne?g=42097308@N00'
+      const expected: DiscoverUriHint = { key: 'flickr:group-photos', label: 'Group photos' }
+
+      expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the uploads hint for the feed of every public photo', () => {
@@ -1035,6 +1062,14 @@ describe('flickrHandler', () => {
       [
         'https://www.flickr.com/services/feeds/geo/?g=42097308@N00&tags=cats',
         { key: 'flickr:group-tag-geo', label: 'Tagged group pool with location' },
+      ],
+      [
+        'https://api.flickr.com/services/feeds/photos_public.gne?format=rss_200&g=42097308%40N00',
+        { key: 'flickr:group-photos', label: 'Group photos', format: 'rss' },
+      ],
+      [
+        'https://www.flickr.com/services/feeds/photos_public.gne?g=42097308@N00&tags=cats',
+        { key: 'flickr:group-photos-tag', label: 'Tagged group photos' },
       ],
     ]
 
