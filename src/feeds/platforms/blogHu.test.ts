@@ -13,7 +13,18 @@ describe('parseBlogHuUrl', () => {
 
   it('should return the blog for a post on a blog subdomain', () => {
     const value = 'https://egyatucatbol.blog.hu/2026/09/30/blog_vs_imdb'
-    const expected: BlogHuUrl = { kind: 'blog', blog: 'egyatucatbol' }
+    const expected: BlogHuUrl = {
+      kind: 'blog',
+      blog: 'egyatucatbol',
+      post: { year: '2026', month: '09', day: '30', slug: 'blog_vs_imdb' },
+    }
+
+    expect(parseBlogHuUrl(value)).toEqual(expected)
+  })
+
+  it('should return the tag for a tag page', () => {
+    const value = 'https://example.blog.hu/tags/example%20tag'
+    const expected: BlogHuUrl = { kind: 'blog', blog: 'example', tag: 'example tag' }
 
     expect(parseBlogHuUrl(value)).toEqual(expected)
   })
@@ -88,6 +99,70 @@ describe('blogHuHandler', () => {
         },
         {
           uri: 'https://kertbuvolo.blog.hu/comments/atom',
+          hint: { key: 'blog-hu:comments', label: 'Comments', format: 'atom' },
+        },
+      ]
+
+      expect(blogHuHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the post comments feeds first for a post page', () => {
+      const value = 'https://example.blog.hu/2013/06/30/example_post'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.blog.hu/2013/06/30/example_post/rss2',
+          hint: { key: 'blog-hu:post-comments', label: 'Post comments', format: 'rss' },
+        },
+        {
+          uri: 'https://example.blog.hu/2013/06/30/example_post/atom',
+          hint: { key: 'blog-hu:post-comments', label: 'Post comments', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blog.hu/rss2',
+          hint: { key: 'blog-hu:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.blog.hu/atom',
+          hint: { key: 'blog-hu:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blog.hu/comments/rss2',
+          hint: { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://example.blog.hu/comments/atom',
+          hint: { key: 'blog-hu:comments', label: 'Comments', format: 'atom' },
+        },
+      ]
+
+      expect(blogHuHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the tag feeds first for a tag page', () => {
+      const value = 'http://example.blog.hu/tags/example%20tag'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.blog.hu/rss/tags/example%20tag',
+          hint: { key: 'blog-hu:tag', label: 'Tag', format: 'rss' },
+        },
+        {
+          uri: 'http://example.blog.hu/atom/tags/example%20tag',
+          hint: { key: 'blog-hu:tag', label: 'Tag', format: 'atom' },
+        },
+        {
+          uri: 'http://example.blog.hu/rss2',
+          hint: { key: 'blog-hu:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'http://example.blog.hu/atom',
+          hint: { key: 'blog-hu:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'http://example.blog.hu/comments/rss2',
+          hint: { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'http://example.blog.hu/comments/atom',
           hint: { key: 'blog-hu:comments', label: 'Comments', format: 'atom' },
         },
       ]
@@ -176,14 +251,45 @@ describe('blogHuHandler', () => {
       ['http://kertbuvolo.blog.hu/rss2', { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }],
       ['https://blog.hu/user/1264714/rss', { key: 'blog-hu:user', label: 'User activity' }],
       ['https://www.blog.hu/user/1264714/rss', { key: 'blog-hu:user', label: 'User activity' }],
+      [
+        'https://blog.hu/user/12345/rss?token=0123456789abcdef',
+        { key: 'blog-hu:user', label: 'User activity' },
+      ],
+      ['https://example.blog.hu/xml/rss2', { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }],
+      [
+        'https://example.blog.hu/2013/06/30/example_post/rss2',
+        { key: 'blog-hu:post-comments', label: 'Post comments', format: 'rss' },
+      ],
+      [
+        'https://example.blog.hu/2013/06/30/example_post/atom',
+        { key: 'blog-hu:post-comments', label: 'Post comments', format: 'atom' },
+      ],
+      [
+        'https://example.blog.hu/rss/tags/example%20tag',
+        { key: 'blog-hu:tag', label: 'Tag', format: 'rss' },
+      ],
+      [
+        'https://example.blog.hu/rss/tags/example/',
+        { key: 'blog-hu:tag', label: 'Tag', format: 'rss' },
+      ],
+      [
+        'https://example.blog.hu/atom/tags/example',
+        { key: 'blog-hu:tag', label: 'Tag', format: 'atom' },
+      ],
     ]
 
     it.each(feedKeys)('should return the hint for %s', (value, expected) => {
       expect(blogHuHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a user feed carrying a token', () => {
-      const value = 'https://blog.hu/user/1264505/rss?token=0123456789abcdef'
+    it('should return undefined for a feed under four segments that are not a dated post', () => {
+      const value = 'https://example.blog.hu/comments/comments/comments/comments/rss2'
+
+      expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a tag page', () => {
+      const value = 'https://example.blog.hu/tags/example'
 
       expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -245,6 +351,19 @@ describe('blogHuHandler', () => {
         { key: 'blog-hu:comments', label: 'Comments', format: 'atom' },
       ],
       ['https://blog.hu/user/1264714/rss', { key: 'blog-hu:user', label: 'User activity' }],
+      [
+        'https://blog.hu/user/12345/rss?token=0123456789abcdef',
+        { key: 'blog-hu:user', label: 'User activity' },
+      ],
+      ['https://example.blog.hu/xml/rss2', { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }],
+      [
+        'http://example.blog.hu/2013/06/30/example_post/atom',
+        { key: 'blog-hu:post-comments', label: 'Post comments', format: 'atom' },
+      ],
+      [
+        'https://example.blog.hu/rss/tags/example/',
+        { key: 'blog-hu:tag', label: 'Tag', format: 'rss' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

@@ -144,7 +144,15 @@
       "https://kertbuvolo.blog.hu/comments/rss2",
       "https://kertbuvolo.blog.hu/comments/atom"
     ],
+    "blog-hu:post-comments": [
+      "https://bit.blog.hu/2013/06/30/google_reader_mentes/rss2",
+      "https://bit.blog.hu/2013/06/30/google_reader_mentes/atom"
+    ],
     "blog-hu:posts": ["https://kertbuvolo.blog.hu/rss2", "https://kertbuvolo.blog.hu/atom"],
+    "blog-hu:tag": [
+      "https://csibemesek.blog.hu/rss/tags/tinder",
+      "https://csibemesek.blog.hu/atom/tags/tinder"
+    ],
     "blog-hu:user": "https://blog.hu/user/821883/rss"
   },
   "blogalia": {
