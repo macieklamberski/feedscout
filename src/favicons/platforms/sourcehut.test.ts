@@ -62,6 +62,13 @@ describe('sourcehutHandler', () => {
 
         expect(sourcehutHandler.resolve(value)).toEqual(expected)
       })
+
+      it('should return a ref to the owner for a repository feed', () => {
+        const value = 'https://git.sr.ht/~example/project/log/rss.xml'
+        const expected = [{ platform: 'sourcehut', id: 'example', url: value }]
+
+        expect(sourcehutHandler.resolve(value)).toEqual(expected)
+      })
     })
 
     describe('sad paths', () => {
