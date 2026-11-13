@@ -16,6 +16,7 @@ const hosts = ['plurk.com', 'www.plurk.com']
 const feeds = definePlatformFeeds([
   { key: 'plurk:responses', template: 'https://www.plurk.com/p/{postId}.xml' },
   { key: 'plurk:plurks', template: 'https://www.plurk.com/{username}.xml' },
+  { key: 'plurk:plurks', template: 'https://www.plurk.com/user/{username}.xml' },
 ])
 
 export const parsePlurkUrl = (url: string): PlurkUrl | undefined => {
