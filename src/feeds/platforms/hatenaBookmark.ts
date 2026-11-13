@@ -11,7 +11,7 @@ export type HatenaBookmarkUrl =
   | { kind: 'entrylist'; category?: string }
   | { kind: 'search'; query: string; params: Record<string, string> }
   | { kind: 'site'; site: string; sort?: string }
-  | { kind: 'user'; username: string }
+  | { kind: 'user'; username: string; tag?: string }
   | { kind: 'home' }
 
 const hosts = ['b.hatena.ne.jp']
@@ -154,7 +154,8 @@ export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefin
     return { kind: 'home' }
   }
 
-  return { kind: 'user', username }
+  // A user page filtered by tag links the feed of that tag.
+  return { kind: 'user', username, tag: getQueryParam(searchParams, 'tag') }
 }
 
 export const hatenaBookmarkHandler: PlatformHandler = {
@@ -205,9 +206,15 @@ export const hatenaBookmarkHandler: PlatformHandler = {
       return [feeds.getFeedEntry('hatena-bookmark:site', { site: parsed.site, sort: parsed.sort })]
     }
 
-    // User bookmarks: /{username} or /{username}/bookmark.
+    // User bookmarks: /{username} or /{username}/bookmark, with an optional tag.
     if (parsed.kind === 'user') {
-      return [feeds.getFeedEntry('hatena-bookmark:bookmarks', { username: parsed.username })]
+      const { username, tag } = parsed
+
+      if (tag) {
+        return [feeds.getFeedEntry('hatena-bookmark:user-tag', { username, tag })]
+      }
+
+      return [feeds.getFeedEntry('hatena-bookmark:bookmarks', { username })]
     }
 
     return [feeds.getFeedEntry('hatena-bookmark:hot')]

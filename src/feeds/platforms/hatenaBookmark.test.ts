@@ -158,6 +158,13 @@ describe('parseHatenaBookmarkUrl', () => {
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/JKondo')).toEqual(expected)
   })
 
+  it('should return the user and tag for a user page filtered by tag', () => {
+    const value = 'https://b.hatena.ne.jp/alice/bookmark?tag=javascript'
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'alice', tag: 'javascript' }
+
+    expect(parseHatenaBookmarkUrl(value)).toEqual(expected)
+  })
+
   it('should return the user for a user feed URL', () => {
     const expected: HatenaBookmarkUrl = { kind: 'user', username: 'jkondo' }
 
@@ -432,6 +439,18 @@ describe('hatenaBookmarkHandler', () => {
 
     it('should return bookmarks for a user page', () => {
       expect(hatenaBookmarkHandler.resolve(`${base}/mizdra/`)).toEqual(userBookmarks)
+    })
+
+    it('should return the tag feed for a user page filtered by tag', () => {
+      const value = `${base}/alice/bookmark?tag=javascript`
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${base}/alice/bookmark.rss?tag=javascript`,
+          hint: { key: 'hatena-bookmark:user-tag', label: 'User tag' },
+        },
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return an https feed for an http page', () => {
