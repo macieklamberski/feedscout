@@ -1,5 +1,4 @@
 import { decodeSegment, getQueryParam, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -100,23 +99,30 @@ export const sapoBlogsHandler: PlatformHandler = {
     }
 
     const { blog } = page
-    const uris: Array<DiscoverUriEntry> = []
 
     if (page.kind === 'post') {
-      uris.push(pageFeeds.getFeedEntry('sapo-blogs:post-comments', { blog, postId: page.postId }))
+      return [
+        pageFeeds.getFeedEntry('sapo-blogs:post-comments', { blog, postId: page.postId }),
+        pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'rss'),
+        pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'atom'),
+        pageFeeds.getFeedEntry('sapo-blogs:comments', { blog }),
+      ]
     }
 
     if (page.kind === 'tag') {
-      uris.push(pageFeeds.getFeedEntry('sapo-blogs:tag', { tag: page.tag }))
+      return [
+        pageFeeds.getFeedEntry('sapo-blogs:tag', { tag: page.tag }),
+        pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'rss'),
+        pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'atom'),
+        pageFeeds.getFeedEntry('sapo-blogs:comments', { blog }),
+      ]
     }
 
-    uris.push(
+    return [
       pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'rss'),
       pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'atom'),
       pageFeeds.getFeedEntry('sapo-blogs:comments', { blog }),
-    )
-
-    return uris
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
