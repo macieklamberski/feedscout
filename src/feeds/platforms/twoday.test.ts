@@ -67,6 +67,14 @@ describe('twodayHandler', () => {
           uri: 'https://alice.twoday.net/index.rdf',
           hint: { key: 'twoday:posts', label: 'Posts' },
         },
+        {
+          uri: 'https://alice.twoday.net/latestcomments.rdf',
+          hint: { key: 'twoday:comments', label: 'Comments' },
+        },
+        {
+          uri: 'https://alice.twoday.net/comments.rdf',
+          hint: { key: 'twoday:commented', label: 'Recently commented' },
+        },
       ]
 
       expect(twodayHandler.resolve(value)).toEqual(expected)
@@ -83,6 +91,14 @@ describe('twodayHandler', () => {
           uri: 'https://alice.twoday.net/index.rdf',
           hint: { key: 'twoday:posts', label: 'Posts' },
         },
+        {
+          uri: 'https://alice.twoday.net/latestcomments.rdf',
+          hint: { key: 'twoday:comments', label: 'Comments' },
+        },
+        {
+          uri: 'https://alice.twoday.net/comments.rdf',
+          hint: { key: 'twoday:commented', label: 'Recently commented' },
+        },
       ]
 
       expect(twodayHandler.resolve(value)).toEqual(expected)
@@ -94,6 +110,14 @@ describe('twodayHandler', () => {
         {
           uri: 'http://alice.twoday.net/index.rdf',
           hint: { key: 'twoday:posts', label: 'Posts' },
+        },
+        {
+          uri: 'http://alice.twoday.net/latestcomments.rdf',
+          hint: { key: 'twoday:comments', label: 'Comments' },
+        },
+        {
+          uri: 'http://alice.twoday.net/comments.rdf',
+          hint: { key: 'twoday:commented', label: 'Recently commented' },
         },
       ]
 
@@ -110,6 +134,14 @@ describe('twodayHandler', () => {
         {
           uri: 'http://alice.twoday.net/index.rdf',
           hint: { key: 'twoday:posts', label: 'Posts' },
+        },
+        {
+          uri: 'http://alice.twoday.net/latestcomments.rdf',
+          hint: { key: 'twoday:comments', label: 'Comments' },
+        },
+        {
+          uri: 'http://alice.twoday.net/comments.rdf',
+          hint: { key: 'twoday:commented', label: 'Recently commented' },
         },
       ]
 
@@ -187,10 +219,18 @@ describe('twodayHandler', () => {
       expect(twodayHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for the comments feed', () => {
-      const value = 'https://alice.twoday.net/comments.rdf'
+    it('should return the comments hint for the latest comments feed', () => {
+      const value = 'https://alice.twoday.net/latestcomments.rdf'
+      const expected: DiscoverUriHint = { key: 'twoday:comments', label: 'Comments' }
 
-      expect(twodayHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(twodayHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the commented hint for the commented stories feed', () => {
+      const value = 'https://alice.twoday.net/comments.rdf'
+      const expected: DiscoverUriHint = { key: 'twoday:commented', label: 'Recently commented' }
+
+      expect(twodayHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a feed on the apex', () => {
@@ -226,6 +266,14 @@ describe('twodayHandler', () => {
       'https://alice.twoday.net/topics/Wo+der+Hase+hinlief/rss',
     ]
 
+    const commentsFeeds: Array<[string, DiscoverUriHint]> = [
+      ['http://alice.twoday.net/latestcomments.rdf', { key: 'twoday:comments', label: 'Comments' }],
+      [
+        'http://alice.twoday.net/comments.rdf',
+        { key: 'twoday:commented', label: 'Recently commented' },
+      ],
+    ]
+
     it.each(postsFeeds)('should return %s as itself with the posts hint', async (value) => {
       const options = {
         ...defaultPlatformOptions,
@@ -241,6 +289,20 @@ describe('twodayHandler', () => {
 
       expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
+
+    it.each(commentsFeeds)(
+      'should return %s as itself with its comments hint',
+      async (value, hint) => {
+        const options = {
+          ...defaultPlatformOptions,
+          handlers: [twodayHandler],
+          baseUrl: value,
+        }
+        const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+        expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+      },
+    )
 
     it.each(topicFeeds)('should return %s as itself with the topic hint', async (value) => {
       const options = {

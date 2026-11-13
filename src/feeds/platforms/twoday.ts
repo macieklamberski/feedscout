@@ -23,6 +23,9 @@ const feeds = definePlatformFeeds(
     { key: 'twoday:posts', template: '{scheme}://{host}/summary.rdf' },
     { key: 'twoday:topic', template: '{scheme}://{host}/topics/{topic}/index.rdf' },
     { key: 'twoday:topic', template: '{scheme}://{host}/topics/{topic}/rss' },
+    // Every blog serves its newest comments, and its stories by their newest comment.
+    { key: 'twoday:comments', template: '{scheme}://{host}/latestcomments.rdf' },
+    { key: 'twoday:commented', template: '{scheme}://{host}/comments.rdf' },
   ],
   { domains },
 )
@@ -66,10 +69,16 @@ export const twodayHandler: PlatformHandler = {
       return [
         page.getFeedEntry('twoday:topic', { topic: parsed.topic }),
         page.getFeedEntry('twoday:posts'),
+        page.getFeedEntry('twoday:comments'),
+        page.getFeedEntry('twoday:commented'),
       ]
     }
 
-    return [page.getFeedEntry('twoday:posts')]
+    return [
+      page.getFeedEntry('twoday:posts'),
+      page.getFeedEntry('twoday:comments'),
+      page.getFeedEntry('twoday:commented'),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
