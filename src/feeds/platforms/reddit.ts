@@ -269,18 +269,23 @@ export const redditHandler: PlatformHandler = {
       return [feeds.getFeedEntry('reddit:post-comments', { subreddit, postId })]
     }
 
+    if (parsed.kind === 'subreddit') {
+      const { subreddit, sort, timeframe } = parsed
+
+      return [
+        feeds.getFeedEntry('reddit:subreddit', { subreddit, sort, timeframe }),
+        feeds.getFeedEntry('reddit:comments', { subreddit }),
+      ]
+    }
+
     // A subreddit search without a query shows the subreddit.
-    if (parsed.kind === 'subreddit' || parsed.kind === 'search') {
+    if (parsed.kind === 'search') {
       const { subreddit } = parsed
-      const comments = feeds.getFeedEntry('reddit:comments', { subreddit })
 
-      if (parsed.kind === 'subreddit') {
-        const { sort, timeframe } = parsed
-
-        return [feeds.getFeedEntry('reddit:subreddit', { subreddit, sort, timeframe }), comments]
-      }
-
-      return [feeds.getFeedEntry('reddit:subreddit', { subreddit }), comments]
+      return [
+        feeds.getFeedEntry('reddit:subreddit', { subreddit }),
+        feeds.getFeedEntry('reddit:comments', { subreddit }),
+      ]
     }
 
     if (parsed.kind === 'multireddit') {
