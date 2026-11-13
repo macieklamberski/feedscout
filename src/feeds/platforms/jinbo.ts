@@ -1,5 +1,4 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, findElement } from '../../common/utils.js'
@@ -104,24 +103,33 @@ export const jinboHandler: PlatformHandler = {
     }
 
     const { username } = page
-    const uris: Array<DiscoverUriEntry> = []
 
     if (page.kind === 'category') {
-      uris.push(
+      return [
         feeds.getFeedEntry('jinbo:category', { username, categoryId: page.categoryId }, 'atom'),
-      )
+        feeds.getFeedEntry('jinbo:posts', { username }, 'rss'),
+        feeds.getFeedEntry('jinbo:posts', { username }, 'atom'),
+        feeds.getFeedEntry('jinbo:responses', { username }, 'rss'),
+        feeds.getFeedEntry('jinbo:responses', { username }, 'atom'),
+      ]
     }
 
     if (page.kind === 'tag') {
-      uris.push(feeds.getFeedEntry('jinbo:tag', { username, tag: page.tag }, 'atom'))
+      return [
+        feeds.getFeedEntry('jinbo:tag', { username, tag: page.tag }, 'atom'),
+        feeds.getFeedEntry('jinbo:posts', { username }, 'rss'),
+        feeds.getFeedEntry('jinbo:posts', { username }, 'atom'),
+        feeds.getFeedEntry('jinbo:responses', { username }, 'rss'),
+        feeds.getFeedEntry('jinbo:responses', { username }, 'atom'),
+      ]
     }
 
-    uris.push(feeds.getFeedEntry('jinbo:posts', { username }, 'rss'))
-    uris.push(feeds.getFeedEntry('jinbo:posts', { username }, 'atom'))
-    uris.push(feeds.getFeedEntry('jinbo:responses', { username }, 'rss'))
-    uris.push(feeds.getFeedEntry('jinbo:responses', { username }, 'atom'))
-
-    return uris
+    return [
+      feeds.getFeedEntry('jinbo:posts', { username }, 'rss'),
+      feeds.getFeedEntry('jinbo:posts', { username }, 'atom'),
+      feeds.getFeedEntry('jinbo:responses', { username }, 'rss'),
+      feeds.getFeedEntry('jinbo:responses', { username }, 'atom'),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
