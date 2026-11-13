@@ -1,5 +1,4 @@
 import { getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -63,19 +62,24 @@ export const nebulaHandler: PlatformHandler = {
 
     if (parsed.kind === 'explore') {
       const { category } = parsed
-      const uris: Array<DiscoverUriEntry> = []
 
       if (category) {
-        uris.push(feeds.getFeedEntry('nebula:category', { category }))
-        uris.push(feeds.getFeedEntry('nebula:category-plus', { category }))
+        return [
+          feeds.getFeedEntry('nebula:category', { category }),
+          feeds.getFeedEntry('nebula:category-plus', { category }),
+          feeds.getFeedEntry('nebula:videos-all'),
+          feeds.getFeedEntry('nebula:videos-all-plus'),
+          feeds.getFeedEntry('nebula:originals'),
+          feeds.getFeedEntry('nebula:channels'),
+        ]
       }
 
-      uris.push(feeds.getFeedEntry('nebula:videos-all'))
-      uris.push(feeds.getFeedEntry('nebula:videos-all-plus'))
-      uris.push(feeds.getFeedEntry('nebula:originals'))
-      uris.push(feeds.getFeedEntry('nebula:channels'))
-
-      return uris
+      return [
+        feeds.getFeedEntry('nebula:videos-all'),
+        feeds.getFeedEntry('nebula:videos-all-plus'),
+        feeds.getFeedEntry('nebula:originals'),
+        feeds.getFeedEntry('nebula:channels'),
+      ]
     }
 
     const { slug } = parsed
