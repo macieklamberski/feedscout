@@ -1140,7 +1140,7 @@ Discovers RSS feeds for Mataroa blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.mataroa.blog` | Blog |
+| `{blog}.mataroa.blog` | Blog |
 
 ### Megaphone
 
