@@ -64,6 +64,11 @@ const domainPatternOptions = {
 
 const domainPatternFeeds = definePlatformFeeds(domainPatternTemplates, domainPatternOptions)
 
+const hostPatternFeeds = definePlatformFeeds(
+  [{ key: 'example:profile', template: 'https://{host}/-{username}/feed' }],
+  { hosts: ['example.org', /^example\.(?:com|co\.[a-z]{2}|[a-z]{2})$/] },
+)
+
 const rootTemplates = [
   { key: 'example:latest', template: '{root}/latest.rss' },
   { key: 'example:search', template: '{root}/search.rss?q={query}' },
@@ -717,6 +722,47 @@ describe('definePlatformFeeds', () => {
         const value = 'https://alice.example.de.example.org/feed'
 
         expect(domainPatternFeeds.getFeedHint(value)).toBeUndefined()
+      })
+    })
+
+    describe('with a host pattern', () => {
+      it('should return the key of a feed on a host the pattern matches', () => {
+        const value = 'https://example.co.uk/-alice/feed'
+        const expected = 'example:profile'
+
+        expect(hostPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+      })
+
+      it('should return the key of a feed on a plain host beside the pattern', () => {
+        const value = 'https://example.org/-alice/feed'
+        const expected = 'example:profile'
+
+        expect(hostPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+      })
+
+      it('should return the key of a feed on www before a host the pattern matches', () => {
+        const value = 'https://www.example.de/-alice/feed'
+        const expected = 'example:profile'
+
+        expect(hostPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+      })
+
+      it('should return undefined for a suffix outside the pattern', () => {
+        const value = 'https://example.info/-alice/feed'
+
+        expect(hostPatternFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return undefined for a subdomain of a host the pattern matches', () => {
+        const value = 'https://alice.example.de/-alice/feed'
+
+        expect(hostPatternFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return undefined for a matching host inside another host', () => {
+        const value = 'https://example.de.example.net/-alice/feed'
+
+        expect(hostPatternFeeds.getFeedHint(value)).toBeUndefined()
       })
     })
 
