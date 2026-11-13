@@ -74,12 +74,12 @@
       "http://agal-gz.org/blogues/index.php/gomes/?tempskin=_atom&disp=comments"
     ],
     "b2evolution:post-comments": [
-      "http://blogs.kleineisel.de/b2evolution/index.php/brotundrosen/?tempskin=_rss2&disp=comments&p=2060",
+      "https://www.foolforfood.de/index.php?tempskin=_rss2&disp=comments&p=914",
       "https://loobynet.co.uk/?tempskin=_rss2&disp=comments&p=44"
     ],
     "b2evolution:posts": [
       "https://gold.kowsarblog.ir/?tempskin=_rss2",
-      "http://blogs.kleineisel.de/b2evolution/index.php/brotundrosen/?tempskin=_atom"
+      "https://sylvestre.ledru.info/blog/?tempskin=_atom"
     ]
   },
   "bearblog": {
@@ -486,7 +486,7 @@
   "exportersIndia": {
     "exporters-india:products": [
       "https://www.targetchem.in/products.rss",
-      "https://www.umasonssteelfab.net/products.rss"
+      "https://www.makerwine.com/products.rss"
     ],
     "exporters-india:services": [
       "https://www.lawyersdelhi.in/services.rss",
@@ -1625,7 +1625,7 @@
     "spip:article-comments": "https://www.comitecerezo.org/spip.php?page=comments-rss&id_article=25",
     "spip:articles": "https://www.comitecerezo.org/spip.php?page=backend",
     "spip:author": "https://trektic.org/spip.php?page=backend&id_auteur=75",
-    "spip:keyword": "https://stuut.info/spip.php?page=backend&id_mot=169",
+    "spip:keyword": "https://www.lestaxinomes.org/spip.php?page=backend&id_mot=430",
     "spip:section": "https://www.comitecerezo.org/spip.php?page=backend&id_rubrique=17"
   },
   "sportadmin": {
@@ -2115,7 +2115,7 @@
     "writeas:tag": "https://write.as/matt/tag:reading/feed/"
   },
   "writefreely": {
-    "writefreely:blog": "https://people.kernel.org/monsieuricon/feed/",
+    "writefreely:blog": "https://blog.kaisbettaieb.dev/feed/",
     "writefreely:reader": "https://people.kernel.org/read/feed/",
     "writefreely:tag": "https://blog.kaisbettaieb.dev/tag:coolify/feed/"
   },
