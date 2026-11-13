@@ -726,7 +726,7 @@ Discovers RSS and Atom feeds for Dreamwidth blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.dreamwidth.org` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
+| `{journal}.dreamwidth.org` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 

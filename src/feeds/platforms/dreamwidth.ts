@@ -1,5 +1,4 @@
 import { decodeSegment, isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
@@ -100,20 +99,24 @@ export const dreamwidthHandler: PlatformHandler = {
 
     // A journal named in the path lives on its own host, a journal page serves from its own.
     const host = parsed.username ? `${journal}.dreamwidth.org` : undefined
-    const entries: Array<DiscoverUriEntry> = []
 
     if (parsed.tag) {
       const tag = decodeSegment(parsed.tag) ?? parsed.tag
 
-      entries.push(page.getFeedEntry('dreamwidth:posts-tag', { host, tag }, 'rss'))
-      entries.push(page.getFeedEntry('dreamwidth:posts-tag', { host, tag }, 'atom'))
+      return [
+        page.getFeedEntry('dreamwidth:posts-tag', { host, tag }, 'rss'),
+        page.getFeedEntry('dreamwidth:posts-tag', { host, tag }, 'atom'),
+        page.getFeedEntry('dreamwidth:posts', { host }, 'rss'),
+        page.getFeedEntry('dreamwidth:posts', { host }, 'atom'),
+        page.getFeedEntry('dreamwidth:userpics', { host }, 'atom'),
+      ]
     }
 
-    entries.push(page.getFeedEntry('dreamwidth:posts', { host }, 'rss'))
-    entries.push(page.getFeedEntry('dreamwidth:posts', { host }, 'atom'))
-    entries.push(page.getFeedEntry('dreamwidth:userpics', { host }, 'atom'))
-
-    return entries
+    return [
+      page.getFeedEntry('dreamwidth:posts', { host }, 'rss'),
+      page.getFeedEntry('dreamwidth:posts', { host }, 'atom'),
+      page.getFeedEntry('dreamwidth:userpics', { host }, 'atom'),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
