@@ -2725,7 +2725,7 @@ Discovers the news and articles feeds of a Nethouse site. Custom domains are det
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.nethouse.ru`, `*.nethouse.me` | News · articles (RSS) |
+| `{site}.nethouse.ru`, `{site}.nethouse.me` | News · articles (RSS) |
 | Any other Nethouse page | News · articles (RSS) |
 
 > [!NOTE]
