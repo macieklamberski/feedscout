@@ -1,7 +1,6 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -15,13 +14,11 @@ export type PinboardUrl =
   | { kind: 'popular' }
 
 const hosts = ['pinboard.in', 'www.pinboard.in']
-const feedHosts = ['feeds.pinboard.in']
 
 const userRegex = /^u:(.+)$/i
 const tagRegex = /^t:(.+)$/i
 const sourceRegex = /^from:(.+)$/i
 const recentRegex = /^\/recent\/?$/i
-const tagFeedRegex = /^\/rss\/(?:(?:secret:[^/]+\/)?u:[^/]+\/)?t:[^/]+(?:\/t:[^/]+)*\/?$/i
 
 const feeds = definePlatformFeeds([
   { key: 'pinboard:bookmarks', template: 'https://feeds.pinboard.in/rss/u:{username}/' },
@@ -39,6 +36,14 @@ const feeds = definePlatformFeeds([
     template: 'https://feeds.pinboard.in/rss/u:{username}/t:{tags*}/from:{source}/',
   },
   { key: 'pinboard:source', template: 'https://feeds.pinboard.in/rss/u:{username}/from:{source}/' },
+  // A tag feed repeats `t:{tag}` once per tag, so `tags` holds them joined by `/t:`. These rows go
+  // after the source rows their paths overlap.
+  { key: 'pinboard:tag', template: 'https://feeds.pinboard.in/rss/u:{username}/t:{tags*}/' },
+  {
+    key: 'pinboard:tag',
+    template: 'https://feeds.pinboard.in/rss/secret:{token}/u:{username}/t:{tags*}/',
+  },
+  { key: 'pinboard:tag', template: 'https://feeds.pinboard.in/rss/t:{tags*}/' },
   // The network and starred feeds exist only as private feeds.
   {
     key: 'pinboard:network',
@@ -50,8 +55,8 @@ const feeds = definePlatformFeeds([
   },
 ])
 
-const composeTagPath = (tags: Array<string>): string => {
-  return tags.map((tag) => `t:${tag}/`).join('')
+const joinTags = (tags: Array<string>): string => {
+  return tags.join('/t:')
 }
 
 export const parsePinboardUrl = (url: string): PinboardUrl | undefined => {
@@ -118,10 +123,10 @@ export const pinboardHandler: PlatformHandler = {
 
     if (parsed.kind === 'userTag') {
       return [
-        {
-          uri: `https://feeds.pinboard.in/rss/u:${parsed.username}/${composeTagPath(parsed.tags)}`,
-          hint: composeHint('pinboard:tag'),
-        },
+        feeds.getFeedEntry('pinboard:tag', {
+          username: parsed.username,
+          tags: joinTags(parsed.tags),
+        }),
       ]
     }
 
@@ -129,7 +134,7 @@ export const pinboardHandler: PlatformHandler = {
       return [
         feeds.getFeedEntry('pinboard:source', {
           username: parsed.username,
-          tags: parsed.tags.join('/t:'),
+          tags: joinTags(parsed.tags),
           source: parsed.source,
         }),
       ]
@@ -142,12 +147,7 @@ export const pinboardHandler: PlatformHandler = {
     // It answered 500 on 2026-09-26 while Pinboard's search backend was down, and validation
     // drops it until the backend is back.
     if (parsed.kind === 'tag') {
-      return [
-        {
-          uri: `https://feeds.pinboard.in/rss/${composeTagPath(parsed.tags)}`,
-          hint: composeHint('pinboard:tag'),
-        },
-      ]
+      return [feeds.getFeedEntry('pinboard:tag', { tags: joinTags(parsed.tags) })]
     }
 
     if (parsed.kind === 'recent') {
@@ -157,19 +157,5 @@ export const pinboardHandler: PlatformHandler = {
     return [feeds.getFeedEntry('pinboard:popular')]
   },
 
-  getFeedHint: (url) => {
-    const hint = feeds.getFeedHint(url)
-
-    if (hint) {
-      return hint
-    }
-
-    const parsedUrl = parseUrl(url)
-
-    // A tag feed carries any number of tag segments, which a template segment cannot hold. A
-    // private one opens with its owner's token.
-    if (parsedUrl && isHostOf(parsedUrl, feedHosts) && tagFeedRegex.test(parsedUrl.pathname)) {
-      return composeHint('pinboard:tag')
-    }
-  },
+  getFeedHint: feeds.getFeedHint,
 }
