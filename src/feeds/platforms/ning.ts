@@ -14,7 +14,7 @@ const topicRegex = /^\/forum\/topics\/([^/]+)\/?$/i
 const domains = ['ning.com']
 
 // A network on its own domain is known only by its marker, so its feeds are built here but not
-// claimed. Past the four feeds `resolve` builds, the table only claims. A topic in a group, or one
+// claimed. Past the feeds `resolve` builds, the table only claims. A topic in a group, or one
 // named by its id, is still that one topic.
 const feeds = definePlatformFeeds(
   [
@@ -279,12 +279,25 @@ export const ningHandler: PlatformHandler = {
       return []
     }
 
+    // The member, photo, video, event, group, page and notes lists need no value from the page, so
+    // every page builds them after its own feeds.
     if (parsed.kind === 'topic') {
       return [
         page.getFeedEntry('ning:topic', { topic: parsed.topic }),
         page.getFeedEntry('ning:activity'),
         page.getFeedEntry('ning:blog'),
         page.getFeedEntry('ning:forum'),
+        page.getFeedEntry('ning:members'),
+        page.getFeedEntry('ning:members-featured'),
+        page.getFeedEntry('ning:photos'),
+        page.getFeedEntry('ning:photos-featured'),
+        page.getFeedEntry('ning:videos'),
+        page.getFeedEntry('ning:videos-featured'),
+        page.getFeedEntry('ning:events'),
+        page.getFeedEntry('ning:groups'),
+        page.getFeedEntry('ning:groups-featured'),
+        page.getFeedEntry('ning:pages'),
+        page.getFeedEntry('ning:notes'),
       ]
     }
 
@@ -292,6 +305,17 @@ export const ningHandler: PlatformHandler = {
       page.getFeedEntry('ning:activity'),
       page.getFeedEntry('ning:blog'),
       page.getFeedEntry('ning:forum'),
+      page.getFeedEntry('ning:members'),
+      page.getFeedEntry('ning:members-featured'),
+      page.getFeedEntry('ning:photos'),
+      page.getFeedEntry('ning:photos-featured'),
+      page.getFeedEntry('ning:videos'),
+      page.getFeedEntry('ning:videos-featured'),
+      page.getFeedEntry('ning:events'),
+      page.getFeedEntry('ning:groups'),
+      page.getFeedEntry('ning:groups-featured'),
+      page.getFeedEntry('ning:pages'),
+      page.getFeedEntry('ning:notes'),
     ]
   },
 

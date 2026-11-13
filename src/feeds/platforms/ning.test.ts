@@ -86,7 +86,7 @@ describe('ningHandler', () => {
       expect(ningHandler.resolve('not-a-url')).toEqual([])
     })
 
-    it('should return the site feeds for the home page', () => {
+    it('should return the site feeds and the site-wide lists for the home page', () => {
       const value = 'https://example.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -101,12 +101,56 @@ describe('ningHandler', () => {
           uri: 'https://example.com/forum/topic/list?feed=yes&xn_auth=no',
           hint: { key: 'ning:forum', label: 'Forum' },
         },
+        {
+          uri: 'https://example.com/profiles/friend/feed?xn_auth=no',
+          hint: { key: 'ning:members', label: 'Members' },
+        },
+        {
+          uri: 'https://example.com/profiles/friend/feed?featured=1&xn_auth=no',
+          hint: { key: 'ning:members-featured', label: 'Featured members' },
+        },
+        {
+          uri: 'https://example.com/photo/photo/rss?xn_auth=no',
+          hint: { key: 'ning:photos', label: 'Photos' },
+        },
+        {
+          uri: 'https://example.com/photo/photo/listFeatured?rss=yes&xn_auth=no',
+          hint: { key: 'ning:photos-featured', label: 'Featured photos' },
+        },
+        {
+          uri: 'https://example.com/video/video/rss?xn_auth=no',
+          hint: { key: 'ning:videos', label: 'Videos' },
+        },
+        {
+          uri: 'https://example.com/video/video/rss?featured=1&xn_auth=no',
+          hint: { key: 'ning:videos-featured', label: 'Featured videos' },
+        },
+        {
+          uri: 'https://example.com/events/event/feed?xn_auth=no',
+          hint: { key: 'ning:events', label: 'Events' },
+        },
+        {
+          uri: 'https://example.com/groups/group/feed?xn_auth=no',
+          hint: { key: 'ning:groups', label: 'Groups' },
+        },
+        {
+          uri: 'https://example.com/groups/group/feed?featured=1&xn_auth=no',
+          hint: { key: 'ning:groups-featured', label: 'Featured groups' },
+        },
+        {
+          uri: 'https://example.com/page/page/list?feed=yes&xn_auth=no',
+          hint: { key: 'ning:pages', label: 'Pages' },
+        },
+        {
+          uri: 'https://example.com/notes/index/feed?xn_auth=no',
+          hint: { key: 'ning:notes', label: 'Notes' },
+        },
       ]
 
       expect(ningHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the topic feed before the site feeds for a topic page', () => {
+    it('should return the topic feed before the site feeds and lists for a topic page', () => {
       const value = 'https://example.ning.com/forum/topics/tour-and-travel'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -124,6 +168,50 @@ describe('ningHandler', () => {
         {
           uri: 'https://example.ning.com/forum/topic/list?feed=yes&xn_auth=no',
           hint: { key: 'ning:forum', label: 'Forum' },
+        },
+        {
+          uri: 'https://example.ning.com/profiles/friend/feed?xn_auth=no',
+          hint: { key: 'ning:members', label: 'Members' },
+        },
+        {
+          uri: 'https://example.ning.com/profiles/friend/feed?featured=1&xn_auth=no',
+          hint: { key: 'ning:members-featured', label: 'Featured members' },
+        },
+        {
+          uri: 'https://example.ning.com/photo/photo/rss?xn_auth=no',
+          hint: { key: 'ning:photos', label: 'Photos' },
+        },
+        {
+          uri: 'https://example.ning.com/photo/photo/listFeatured?rss=yes&xn_auth=no',
+          hint: { key: 'ning:photos-featured', label: 'Featured photos' },
+        },
+        {
+          uri: 'https://example.ning.com/video/video/rss?xn_auth=no',
+          hint: { key: 'ning:videos', label: 'Videos' },
+        },
+        {
+          uri: 'https://example.ning.com/video/video/rss?featured=1&xn_auth=no',
+          hint: { key: 'ning:videos-featured', label: 'Featured videos' },
+        },
+        {
+          uri: 'https://example.ning.com/events/event/feed?xn_auth=no',
+          hint: { key: 'ning:events', label: 'Events' },
+        },
+        {
+          uri: 'https://example.ning.com/groups/group/feed?xn_auth=no',
+          hint: { key: 'ning:groups', label: 'Groups' },
+        },
+        {
+          uri: 'https://example.ning.com/groups/group/feed?featured=1&xn_auth=no',
+          hint: { key: 'ning:groups-featured', label: 'Featured groups' },
+        },
+        {
+          uri: 'https://example.ning.com/page/page/list?feed=yes&xn_auth=no',
+          hint: { key: 'ning:pages', label: 'Pages' },
+        },
+        {
+          uri: 'https://example.ning.com/notes/index/feed?xn_auth=no',
+          hint: { key: 'ning:notes', label: 'Notes' },
         },
       ]
 
