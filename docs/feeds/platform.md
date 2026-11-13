@@ -2637,7 +2637,7 @@ Discovers the posts and comments feeds of an Eklablog blog. A blog on any other 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.blogg.org`, `*.cd.st`, `*.ek.la`, `*.eklablog.com`, `*.eklablog.fr`, `*.eklablog.net`, `*.id.st`, `*.kazeo.com`, `*.lo.gs`, `*.revolublog.com`, `*.zic.fr` | Posts · comments<sup>†</sup> |
+| `*.eklablog.com` | Posts · comments<sup>†</sup> |
 | Any page on another domain | Posts · comments<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*

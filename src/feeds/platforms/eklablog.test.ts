@@ -40,16 +40,6 @@ describe('parseEklablogUrl', () => {
   const blogUrls: Array<string> = [
     'https://enaelyork.eklablog.com/',
     'https://enaelyork.eklablog.com/critique-en-serie-a129920826',
-    'https://obraska.eklablog.fr/',
-    'https://randoacgv.eklablog.net/',
-    'https://huilerie-beaucaire.blogg.org/',
-    'https://harbelita.cd.st/',
-    'https://forrawamu.ek.la/',
-    'https://frasa.id.st/',
-    'https://igre.kazeo.com/',
-    'https://hungmcleon.lo.gs/',
-    'https://dudu-village.revolublog.com/',
-    'https://half-dead-pigs.zic.fr/',
   ]
 
   it.each(blogUrls)('should return the blog for %s', (url) => {
@@ -69,7 +59,7 @@ describe('parseEklablogUrl', () => {
   })
 
   it('should return a custom domain for an Eklablog domain off the list', () => {
-    const value = 'https://alice.kif.fr/'
+    const value = 'https://alice.kazeo.com/'
     const expected: EklablogUrl = { kind: 'customDomain' }
 
     expect(parseEklablogUrl(value)).toEqual(expected)
@@ -93,13 +83,13 @@ describe('eklablogHandler', () => {
     })
 
     it('should return true for a blog on an Eklablog domain off the list carrying the marker', () => {
-      const value = 'https://alice.kif.fr/'
+      const value = 'https://alice.kazeo.com/'
 
       expect(eklablogHandler.match(value, pingHtml)).toBe(true)
     })
 
     it('should return false for a blog on an Eklablog domain off the list without the marker', () => {
-      const value = 'https://alice.kif.fr/'
+      const value = 'https://alice.kazeo.com/'
 
       expect(eklablogHandler.match(value, '<html></html>')).toBe(false)
     })
@@ -151,14 +141,14 @@ describe('eklablogHandler', () => {
     })
 
     it('should return posts and comments feeds for a blog on an Eklablog domain off the list', () => {
-      const value = 'https://alice.kif.fr/critique-en-serie-a129920826'
+      const value = 'https://alice.kazeo.com/critique-en-serie-a129920826'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.kif.fr/rss',
+          uri: 'https://alice.kazeo.com/rss',
           hint: { key: 'eklablog:posts', label: 'Posts' },
         },
         {
-          uri: 'https://alice.kif.fr/rss/comments',
+          uri: 'https://alice.kazeo.com/rss/comments',
           hint: { key: 'eklablog:comments', label: 'Comments' },
         },
       ]
@@ -167,14 +157,14 @@ describe('eklablogHandler', () => {
     })
 
     it('should keep the http scheme of the blog', () => {
-      const value = 'http://alice.eklablog.fr/'
+      const value = 'http://alice.eklablog.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://alice.eklablog.fr/rss',
+          uri: 'http://alice.eklablog.com/rss',
           hint: { key: 'eklablog:posts', label: 'Posts' },
         },
         {
-          uri: 'http://alice.eklablog.fr/rss/comments',
+          uri: 'http://alice.eklablog.com/rss/comments',
           hint: { key: 'eklablog:comments', label: 'Comments' },
         },
       ]
@@ -199,28 +189,21 @@ describe('eklablogHandler', () => {
     })
 
     it('should return the posts hint for an http posts feed', () => {
-      const value = 'http://alice.eklablog.fr/rss'
+      const value = 'http://alice.eklablog.com/rss'
       const expected: DiscoverUriHint = { key: 'eklablog:posts', label: 'Posts' }
 
       expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the comments hint for an http comments feed', () => {
-      const value = 'http://alice.eklablog.fr/rss/comments'
+      const value = 'http://alice.eklablog.com/rss/comments'
       const expected: DiscoverUriHint = { key: 'eklablog:comments', label: 'Comments' }
 
       expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts hint for a feed on another domain', () => {
-      const value = 'https://example.ek.la/rss'
-      const expected: DiscoverUriHint = { key: 'eklablog:posts', label: 'Posts' }
-
-      expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return undefined for a feed on an Eklablog domain off the list', () => {
-      const value = 'https://alice.fatalblog.com/rss'
+      const value = 'https://alice.kazeo.com/rss'
 
       expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -271,7 +254,7 @@ describe('eklablogHandler', () => {
 
   describe('pages through the Platform method', () => {
     it('should return the feeds of a blog on an Eklablog domain off the list', async () => {
-      const value = 'https://alice.kif.fr/critique-en-serie-a129920826'
+      const value = 'https://alice.kazeo.com/critique-en-serie-a129920826'
       const result = await discoverUrisFromPlatform(pingHtml, undefined, {
         ...defaultPlatformOptions,
         handlers: [eklablogHandler],
@@ -279,11 +262,11 @@ describe('eklablogHandler', () => {
       })
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.kif.fr/rss',
+          uri: 'https://alice.kazeo.com/rss',
           hint: { key: 'eklablog:posts', label: 'Posts' },
         },
         {
-          uri: 'https://alice.kif.fr/rss/comments',
+          uri: 'https://alice.kazeo.com/rss/comments',
           hint: { key: 'eklablog:comments', label: 'Comments' },
         },
       ]
@@ -296,11 +279,9 @@ describe('eklablogHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://alice.eklablog.com/rss', { key: 'eklablog:posts', label: 'Posts' }],
       ['https://alice.eklablog.com/rss/comments', { key: 'eklablog:comments', label: 'Comments' }],
-      ['http://alice.eklablog.fr/rss', { key: 'eklablog:posts', label: 'Posts' }],
-      ['http://alice.eklablog.fr/rss/comments', { key: 'eklablog:comments', label: 'Comments' }],
-      ['https://example.ek.la/rss/', { key: 'eklablog:posts', label: 'Posts' }],
-      ['https://alice.blogg.org/rss', { key: 'eklablog:posts', label: 'Posts' }],
-      ['https://alice.kazeo.com/rss/comments', { key: 'eklablog:comments', label: 'Comments' }],
+      ['http://alice.eklablog.com/rss', { key: 'eklablog:posts', label: 'Posts' }],
+      ['http://alice.eklablog.com/rss/comments', { key: 'eklablog:comments', label: 'Comments' }],
+      ['https://alice.eklablog.com/rss/', { key: 'eklablog:posts', label: 'Posts' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

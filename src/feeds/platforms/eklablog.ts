@@ -8,21 +8,9 @@ import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.j
 
 export type EklablogUrl = { kind: 'blog' } | { kind: 'customDomain' }
 
-// The domains holding at least 1% of Eklablog's stored feeds each. A blog on another one, or on a
-// custom domain, is known by its marker.
-const domains = [
-  'blogg.org',
-  'cd.st',
-  'ek.la',
-  'eklablog.com',
-  'eklablog.fr',
-  'eklablog.net',
-  'id.st',
-  'kazeo.com',
-  'lo.gs',
-  'revolublog.com',
-  'zic.fr',
-]
+// Eklablog serves blogs on 20 domains. Only its branded one is listed, and a blog on another one or
+// on a custom domain is known by its marker.
+const domains = ['eklablog.com']
 const connectHosts = ['connect.eklablog.com']
 
 // A blog off the domains is known only by its marker, so its feeds are built here but not claimed.
