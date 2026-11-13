@@ -610,7 +610,7 @@ Discovers RSS feeds for Itch.io games, creators, devlogs, and browse pages.
 | `itch.io/games/{filter}/{filter}` | Games<sup>†</sup>, for a listing with two or more filters |
 | `itch.io/{section}` | Section<sup>†</sup> (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
 | `itch.io/devlogs` | All devlogs |
-| `itch.io` | Featured · new<sup>†</sup> · sales<sup>†</sup> · all devlogs · itch.io blog |
+| `itch.io` | Featured · new<sup>†</sup> · sales<sup>†</sup> · all devlogs · itch.io blog · itch.io updates<sup>†</sup> · itch.io digest<sup>†</sup> |
 | `itch.io/blog` | itch.io blog |
 
 <sup>†</sup> *Found only by the Platform method.*
