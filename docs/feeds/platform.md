@@ -2850,8 +2850,8 @@ Discovers the news feed of a Goope site, and the member news feed of a chamber o
 |-------------|-----------------|
 | `r.goope.jp/{site}/…` | News (RDF) |
 | `r.goope.jp/{site}/shokokai/member/…` | Member news · news (RDF) |
-| `{domain}/shokokai/member/…` | Member news · news (RDF) |
-| `{domain}/…` | News (RDF) |
+| `{host}/shokokai/member/…` | Member news · news (RDF) |
+| `{host}/…` | News (RDF) |
 
 > [!NOTE]
 > A page under a `t_{id}` template segment gets its feeds under that segment, as the page links them.
