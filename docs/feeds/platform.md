@@ -108,8 +108,8 @@ Discovers RSS feeds for Medium user profiles, publications, tags, and subdomains
 | `medium.com/{publication}` | Publication |
 | `medium.com/tag/{tag}` | Tag<sup>†</sup> |
 | `medium.com/{publication}/tagged/{tag}` | Tagged publication |
-| `*.medium.com` | Subdomain publication |
-| `*.medium.com/tagged/{tag}` | Subdomain tagged |
+| `{publication}.medium.com` | Subdomain publication |
+| `{publication}.medium.com/tagged/{tag}` | Subdomain tagged |
 
 <sup>†</sup> *Found only by the Platform method.*
 
