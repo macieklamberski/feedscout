@@ -66,7 +66,7 @@ describe('syosetuHandler', () => {
       expect(syosetuHandler.resolve('https://example.com/')).toEqual([])
     })
 
-    it('should return the author and activity feeds', () => {
+    it('should return the author, activity and all novels feeds', () => {
       const value = 'https://mypage.syosetu.com/372556/'
       const expected = [
         {
@@ -76,6 +76,10 @@ describe('syosetuHandler', () => {
         {
           uri: 'https://api.syosetu.com/writer/372556.Atom',
           hint: { key: 'syosetu:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://api.syosetu.com/allnovel.Atom',
+          hint: { key: 'syosetu:all-novels', label: 'All novels' },
         },
       ]
 

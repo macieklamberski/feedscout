@@ -49,6 +49,7 @@ export const syosetuHandler: PlatformHandler = {
     return [
       feeds.getFeedEntry('syosetu:author', { writerId: parsed.writerId }),
       feeds.getFeedEntry('syosetu:activity', { writerId: parsed.writerId }),
+      feeds.getFeedEntry('syosetu:all-novels'),
     ]
   },
 
