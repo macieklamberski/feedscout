@@ -651,9 +651,15 @@
     ]
   },
   "goodreads": {
-    "goodreads:reviews": "https://www.goodreads.com/review/list_rss/1",
-    "goodreads:shelf": "https://www.goodreads.com/review/list_rss/1?shelf=read",
-    "goodreads:updates": "https://www.goodreads.com/user/updates_rss/1"
+    "goodreads:reviews": {
+      "skip": "Goodreads removed RSS in October 2026, so every feed answers 404"
+    },
+    "goodreads:shelf": {
+      "skip": "Goodreads removed RSS in October 2026, so every feed answers 404"
+    },
+    "goodreads:updates": {
+      "skip": "Goodreads removed RSS in October 2026, so every feed answers 404"
+    }
   },
   "goope": {
     "goope:member-news": [
