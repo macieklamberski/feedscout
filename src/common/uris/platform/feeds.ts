@@ -4,11 +4,13 @@ import {
   encodePathSegment,
   escapeRegex,
   getQueryParam,
+  getSubdomain,
   isHttpUrl,
-  isSubdomainOf,
+  isString,
   parseUrl,
   stripWww,
   t,
+  trimObject,
 } from 'trousse'
 import locales from '../../../locales.json' with { type: 'json' }
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../types.js'
@@ -17,18 +19,25 @@ import { composeHint } from '../../utils.js'
 export type PlatformFeedTemplate = {
   key: string
   // A feed URL with `{name}` placeholders, each one host label, path segment or query value, and
-  // `{scheme}` for a feed served under the page's own scheme.
+  // `{scheme}` for a feed served under the page's own scheme. A template opening with `{root}`
+  // takes the scheme, the host and an optional base path, as `https://example.com/forum`. A
+  // `{name*}` path placeholder takes one or more segments, filled from `name` as `docs/api`.
   template: string
   format?: DiscoverUriHint['format']
 }
 
-export type PlatformFeedParams = Record<string, string>
+// A value left undefined is no value, so the row it would fill is skipped.
+export type PlatformFeedParams = Record<string, string | undefined>
 
 export type PlatformFeedTableOptions = {
-  // The hosts a `{host}` placeholder stands for, with every host under `domains`.
-  hosts?: Array<string>
-  // The domains a `{domain}` placeholder stands for.
-  domains?: Array<string>
+  // The hosts a `{host}` placeholder stands for, with every host under `domains`. `getFeedHint`
+  // claims a host under `domains` only for a single tenant label.
+  // A pattern stands for one name across suffixes, such as `/^example\.(?:com|de)$/`, anchored at
+  // both ends, and matches the host as given or without `www`.
+  hosts?: Array<string | RegExp>
+  // The domains a `{domain}` placeholder stands for. A pattern stands for a family of domains, such
+  // as `/^blogspot\.(?:com|com\.[a-z]{2})$/`, anchored at both ends.
+  domains?: Array<string | RegExp>
   // Whether `www` can be a tenant, so `www.example.com` matches a `{user}.example.com` row.
   isWwwTenant?: boolean
 }
@@ -60,8 +69,43 @@ type CompiledTemplate = {
 }
 
 const templateRegex = /^(https?|\{scheme\}):\/\/([^/?#]+)(\/[^?#]*)?(?:\?([^#]*))?$/i
-const placeholderRegex = /\{(\w+)\}/g
+const placeholderRegex = /\{(\w+\*?)\}/g
 const trailingSlashRegex = /\/$/
+const anchorsRegex = /^\^|\$$/g
+
+const rootPlaceholder = '{root}'
+const multiSegmentCapture = '[^/]+(?:/[^/]+)*'
+
+const isMultiSegment = (placeholder: string): boolean => {
+  return placeholder.endsWith('*')
+}
+
+// A `{name*}` value is one or more segments joined by `/`, and one with an empty segment is no
+// value, as no feed URL claimed by the row carries one.
+const getPlaceholderValue = (
+  params: PlatformFeedParams,
+  placeholder: string,
+): string | undefined => {
+  if (!isMultiSegment(placeholder)) {
+    return params[placeholder]
+  }
+
+  const value = params[placeholder.slice(0, -1)]
+
+  if (value === undefined || value.split('/').some((segment) => !segment)) {
+    return
+  }
+
+  return value
+}
+
+const encodePath = (value: string, placeholder: string): string => {
+  if (!isMultiSegment(placeholder)) {
+    return encodePathSegment(value)
+  }
+
+  return value.split('/').map(encodePathSegment).join('/')
+}
 
 // A path decoded segment by segment, so `%40` and `@` compare equal. A decoded `%` and `/` are
 // written back as `%25` and `%2F`, so `%252F` stays apart from `%2F` and no segment splits.
@@ -74,6 +118,11 @@ const decodePath = (path: string): string => {
     .split('/')
     .map((segment) => decodePercent(segment).replaceAll('%', '%25').replaceAll('/', '%2F'))
     .join('/')
+}
+
+// A host or domain entry as a regex source: a string as a literal, a pattern without its anchors.
+const toEntrySource = (entry: string | RegExp): string => {
+  return isString(entry) ? escapeRegex(entry) : `(?:${entry.source.replace(anchorsRegex, '')})`
 }
 
 // A placeholder becomes the capture, the text around it a literal, decoded for a path so an
@@ -101,7 +150,11 @@ const compileTemplate = (
   { key, format, template }: PlatformFeedTemplate,
   options: PlatformFeedTableOptions,
 ): CompiledTemplate => {
-  const match = templateRegex.exec(template)
+  const isRootTemplate = template.startsWith(rootPlaceholder)
+  // A `{root}` template reads as one on `{host}`: a tenant serves from its origin.
+  const match = templateRegex.exec(
+    isRootTemplate ? template.replace(rootPlaceholder, 'https://{host}') : template,
+  )
 
   if (!match) {
     throw new Error(t(locales.errors.invalidFeedTemplate, { template }))
@@ -110,22 +163,34 @@ const compileTemplate = (
   const [, scheme, host, path = '', queryText = ''] = match
   const query = [...new URLSearchParams(queryText)]
   const hosts = options.hosts ?? []
-  const domains = (options.domains ?? []).map(escapeRegex)
+  const domains = (options.domains ?? []).map((domain) => toEntrySource(domain))
   const domainSource = `(?:${domains.join('|')})`
 
+  const hasHosts = hosts.length > 0 || domains.length > 0
+
   if (
-    (host.includes('{host}') && hosts.length === 0 && domains.length === 0) ||
+    (!isRootTemplate && host.includes('{host}') && !hasHosts) ||
     (host.includes('{domain}') && domains.length === 0)
   ) {
     throw new Error(t(locales.errors.missingFeedHosts, { key }))
   }
 
+  const names = [...template.matchAll(placeholderRegex)].map(([, name]) => name)
+  const multiSegmentCaptures = Object.fromEntries(
+    names.filter(isMultiSegment).map((name) => [name, multiSegmentCapture]),
+  )
+
   // Matched on the decoded path without its trailing slash.
-  const pathSource = toRegexSource(path.replace(trailingSlashRegex, ''), '[^/]+', {}, true)
+  const pathSource = toRegexSource(
+    path.replace(trailingSlashRegex, ''),
+    '[^/]+',
+    multiSegmentCaptures,
+    true,
+  )
   const toHostPathRegex = (normalize: (value: string) => string): RegExp => {
     const hostSources = [
-      ...hosts.map((value) => escapeRegex(normalize(value))),
-      ...(domains.length > 0 ? [`(?:[^/]+\\.)?${domainSource}`] : []),
+      ...hosts.map((value) => toEntrySource(isString(value) ? normalize(value) : value)),
+      ...(domains.length > 0 ? [`[^./]+\\.${domainSource}`] : []),
     ]
     const hostSource = toRegexSource(normalize(host), '[^.]+', {
       host: `(?:${hostSources.join('|')})`,
@@ -141,6 +206,11 @@ const compileTemplate = (
   })
 
   const matchesUrl = (url: URL, hostPathRegex: RegExp, hostname: string): boolean => {
+    // A `{root}` table without hosts serves any site, so nothing in its URL names the platform.
+    if (isRootTemplate && !hasHosts) {
+      return false
+    }
+
     const pathname = decodePath(url.pathname).replace(trailingSlashRegex, '')
 
     if (!hostPathRegex.test(hostname + pathname)) {
@@ -164,19 +234,27 @@ const compileTemplate = (
 
   // A placeholder with no value stays in the URL, as in trousse's `t`.
   const getUrl = (params: PlatformFeedParams = {}): string => {
-    const fillPlaceholders = (text: string, encode = (value: string) => value): string => {
+    const fillPlaceholders = (
+      text: string,
+      encode = (value: string, _name: string) => value,
+    ): string => {
       return text.replace(placeholderRegex, (placeholder, name: string) => {
-        return Object.hasOwn(params, name) ? encode(params[name]) : placeholder
+        const value = getPlaceholderValue(params, name)
+
+        return value === undefined ? placeholder : encode(value, name)
       })
     }
     const builtQuery = composeQuery(
       Object.fromEntries(query.map(([name, value]) => [name, fillPlaceholders(value)])),
     )
 
-    return `${fillPlaceholders(scheme)}://${fillPlaceholders(host)}${fillPlaceholders(path, encodePathSegment)}${builtQuery}`
-  }
+    // A root is written as given, without the trailing slash the path brings.
+    const origin = isRootTemplate
+      ? fillPlaceholders(rootPlaceholder).replace(trailingSlashRegex, '')
+      : `${fillPlaceholders(scheme)}://${fillPlaceholders(host)}`
 
-  const names = [...template.matchAll(placeholderRegex)].map(([, name]) => name)
+    return `${origin}${fillPlaceholders(path, encodePath)}${builtQuery}`
+  }
 
   return { key, format, queryCount: query.length, names, isFeedUrl, isFeedUrlWithoutWww, getUrl }
 }
@@ -188,7 +266,8 @@ export const definePlatformFeeds = (
   options: PlatformFeedTableOptions = {},
 ): PlatformFeedTable => {
   const compiled = templates.map((template) => compileTemplate(template, options))
-  // A template with more query parameters is the more specific one, so it is read first.
+  // A template with more query parameters is the more specific one, so it is read first. At the
+  // same count the earlier row wins, so a `{name*}` row goes after the rows its paths overlap.
   const bySpecificity = [...compiled].sort((a, b) => b.queryCount - a.queryCount)
 
   const getFeedUrl: PlatformFeedTable['getFeedUrl'] = (key, params, format) => {
@@ -198,7 +277,7 @@ export const definePlatformFeeds = (
     // A key with several shapes builds the first one whose placeholders the values fill.
     const template =
       candidates.find((candidate) =>
-        candidate.names.every((name) => params?.[name] !== undefined),
+        candidate.names.every((name) => getPlaceholderValue(params ?? {}, name) !== undefined),
       ) ?? candidates[0]
 
     if (!template) {
@@ -238,8 +317,9 @@ export const definePlatformFeeds = (
     return composeHint(template.key, template.format)
   }
 
-  // The table for one page: `{scheme}` and `{host}` come from the page URL, and `{domain}` from the
-  // entry of `domains` its host is under. A value the handler passes wins.
+  // The table for one page: `{scheme}`, `{host}` and `{root}` come from the page URL, and `{domain}`
+  // is its host without the subdomain under `domains`, `example.co.uk` for `alice.example.co.uk`. A
+  // value the handler passes wins, so a handler passes a root with the base path the page names.
   const forUrl: PlatformFeedTable['forUrl'] = (url) => {
     const parsedUrl = parseUrl(url)
 
@@ -247,19 +327,21 @@ export const definePlatformFeeds = (
       return
     }
 
+    const subdomain = getSubdomain(parsedUrl, options.domains ?? [])
     const urlParams: PlatformFeedParams = {
       scheme: parsedUrl.protocol.slice(0, -1),
       host: parsedUrl.host,
+      root: parsedUrl.origin,
+      domain: subdomain ? parsedUrl.hostname.slice(subdomain.length + 1) : undefined,
     }
-    const domain = options.domains?.find((candidate) => isSubdomainOf(parsedUrl, candidate))
-
-    if (domain) {
-      urlParams.domain = domain
+    // An undefined value the handler passes leaves the one of the page in place.
+    const withUrlParams = (params: PlatformFeedParams = {}): PlatformFeedParams => {
+      return { ...urlParams, ...trimObject(params) }
     }
 
     return {
-      getFeedUrl: (key, params, format) => getFeedUrl(key, { ...urlParams, ...params }, format),
-      getFeedEntry: (key, params, format) => getFeedEntry(key, { ...urlParams, ...params }, format),
+      getFeedUrl: (key, params, format) => getFeedUrl(key, withUrlParams(params), format),
+      getFeedEntry: (key, params, format) => getFeedEntry(key, withUrlParams(params), format),
     }
   }
 
