@@ -667,8 +667,14 @@
   },
   "habr": {
     "habr:articles": "https://habr.com/ru/rss/articles/",
+    "habr:comments": "https://habr.com/ru/rss/publications/440736/",
     "habr:company": "https://habr.com/ru/rss/companies/yandex/articles/",
+    "habr:flow": "https://habr.com/ru/rss/flows/develop/articles/",
     "habr:hub": "https://habr.com/ru/rss/hubs/programming/articles/",
+    "habr:hub-posts": "https://habr.com/en/rss/hubs/javascript/posts",
+    "habr:news": "https://habr.com/ru/rss/news/",
+    "habr:search": "https://habr.com/ru/rss/search/?order=date&q=%5BJabber%5D&target_type=posts",
+    "habr:tag": "https://habr.com/ru/rss/tag/haskell/",
     "habr:user": "https://habr.com/ru/rss/users/alizar/articles/"
   },
   "hackernews": {

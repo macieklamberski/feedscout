@@ -20,9 +20,25 @@ const userRegex = new RegExp(`^${languagePrefix}/users/([^/]+)`, 'i')
 const companyRegex = new RegExp(`^${languagePrefix}/compan(?:y|ies)/([^/]+)`, 'i')
 
 // The first row of a key is the feed `resolve` emits, the one Habr's pages link. Habr serves the
-// same items under the hub and user spellings below it, which readers store.
+// same items under the hub and user spellings below it, which readers store. A top listing is the
+// same feed sorted, and a tag without its language prefix is the same tag. A subscription feed
+// carries the reader's private token, so the table only claims it.
 const feeds = definePlatformFeeds([
   { key: 'habr:articles', template: 'https://habr.com/{language}/rss/articles/' },
+  { key: 'habr:articles', template: 'https://habr.com/{language}/rss/articles/top/' },
+  { key: 'habr:articles', template: 'https://habr.com/{language}/rss/articles/top/{period}/' },
+  { key: 'habr:news', template: 'https://habr.com/{language}/rss/news/' },
+  { key: 'habr:news', template: 'https://habr.com/{language}/rss/news/top/{period}/' },
+  { key: 'habr:hub-posts', template: 'https://habr.com/{language}/rss/hubs/{hub}/posts/' },
+  { key: 'habr:flow', template: 'https://habr.com/{language}/rss/flows/{flow}/articles/' },
+  { key: 'habr:tag', template: 'https://habr.com/{language}/rss/tag/{tag}/' },
+  { key: 'habr:tag', template: 'https://habr.com/rss/tag/{tag}/' },
+  {
+    key: 'habr:search',
+    template: 'https://habr.com/{language}/rss/search/?q={query}&target_type=posts',
+  },
+  { key: 'habr:comments', template: 'https://habr.com/{language}/rss/publications/{post}/' },
+  { key: 'habr:subscriptions', template: 'https://habr.com/{language}/rss/feed/{token}/' },
   { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hubs/{hub}/articles/' },
   { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hubs/{hub}/articles/all/' },
   { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hub/{hub}/' },

@@ -339,6 +339,33 @@ describe('habrHandler', () => {
       expect(habrHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
+    const otherFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://habr.com/ru/rss/articles/top/', { key: 'habr:articles', label: 'Articles' }],
+      ['https://habr.com/ru/rss/articles/top/weekly/', { key: 'habr:articles', label: 'Articles' }],
+      ['https://habr.com/en/rss/news/?fl=en', { key: 'habr:news', label: 'News' }],
+      ['https://habr.com/ru/rss/news/top/weekly/', { key: 'habr:news', label: 'News' }],
+      [
+        'https://habr.com/en/rss/hubs/javascript/posts',
+        { key: 'habr:hub-posts', label: 'Hub posts' },
+      ],
+      ['https://habr.com/ru/rss/flows/develop/articles', { key: 'habr:flow', label: 'Flow' }],
+      ['https://habr.com/ru/rss/tag/haskell/', { key: 'habr:tag', label: 'Tag' }],
+      ['https://habr.com/rss/tag/emacs/', { key: 'habr:tag', label: 'Tag' }],
+      [
+        'https://habr.com/ru/rss/search/?order=date&q=%5BJabber%5D&target_type=posts',
+        { key: 'habr:search', label: 'Search' },
+      ],
+      ['https://habr.com/en/rss/publications/12345/', { key: 'habr:comments', label: 'Comments' }],
+      [
+        'https://habr.com/ru/rss/feed/0123456789abcdef0123456789abcdef/?types%5B%5D=post',
+        { key: 'habr:subscriptions', label: 'Subscriptions' },
+      ],
+    ]
+
+    it.each(otherFeeds)('should return the hint for %s', (value, expected) => {
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for another host', () => {
       const value = 'https://example.com/en/rss/users/app-z/posts/'
 
@@ -371,6 +398,26 @@ describe('habrHandler', () => {
       ],
       ['https://habr.com/ru/rss/company/yandex/blog/', { key: 'habr:company', label: 'Company' }],
       ['https://habr.com/ru/rss/articles/', { key: 'habr:articles', label: 'Articles' }],
+      ['https://habr.com/ru/rss/articles/top/', { key: 'habr:articles', label: 'Articles' }],
+      ['http://habr.com/ru/rss/articles/top/weekly/', { key: 'habr:articles', label: 'Articles' }],
+      ['https://habr.com/en/rss/news/?fl=en', { key: 'habr:news', label: 'News' }],
+      ['http://habr.com/ru/rss/news/top/weekly/', { key: 'habr:news', label: 'News' }],
+      [
+        'https://habr.com/en/rss/hubs/javascript/posts/',
+        { key: 'habr:hub-posts', label: 'Hub posts' },
+      ],
+      ['http://habr.com/ru/rss/flows/develop/articles', { key: 'habr:flow', label: 'Flow' }],
+      ['https://habr.com/ru/rss/tag/haskell/', { key: 'habr:tag', label: 'Tag' }],
+      ['http://habr.com/rss/tag/emacs/', { key: 'habr:tag', label: 'Tag' }],
+      [
+        'https://habr.com/ru/rss/search/?order=date&q=%5BJabber%5D&target_type=posts',
+        { key: 'habr:search', label: 'Search' },
+      ],
+      ['http://habr.com/en/rss/publications/12345/', { key: 'habr:comments', label: 'Comments' }],
+      [
+        'https://habr.com/ru/rss/feed/0123456789abcdef0123456789abcdef/?types%5B%5D=post',
+        { key: 'habr:subscriptions', label: 'Subscriptions' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
