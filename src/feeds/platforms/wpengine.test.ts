@@ -636,7 +636,7 @@ describe('wpengineHandler', () => {
     })
 
     it('should return undefined for a plugin feed under the feed path', () => {
-      const value = 'https://wondersandwdev.wpengine.com/feed/podcast/'
+      const value = 'https://example.wpengine.com/feed/podcast/'
 
       expect(wpengineHandler.getFeedHint?.(value)).toBeUndefined()
     })
