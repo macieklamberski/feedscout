@@ -2482,7 +2482,7 @@ Discovers the product and blog feeds of a BigCommerce store. Detected by the `SH
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | Category page | Category new products · category popular products · new products · popular products · featured products<sup>†</sup> · blog (RSS + Atom) |
-| `{store}/search.php?search_query={query}` | Product search · new products · popular products · featured products<sup>†</sup> · blog (RSS + Atom) |
+| `{host}/search.php?search_query={query}` | Product search · new products · popular products · featured products<sup>†</sup> · blog (RSS + Atom) |
 | Any other page | New products · popular products · featured products<sup>†</sup> · blog (RSS + Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
