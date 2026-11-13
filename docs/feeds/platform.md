@@ -2570,10 +2570,10 @@ Discovers the posts feed of a ProBoards forum. A forum on a custom domain is det
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.proboards.com` | Posts (RSS) |
-| `*.freeforums.net` | Posts (RSS) |
-| `*.boards.net` | Posts (RSS) |
-| Any page on a custom domain | Posts (RSS) |
+| `{forum}.proboards.com` | Posts (RSS) |
+| `{forum}.freeforums.net` | Posts (RSS) |
+| `{forum}.boards.net` | Posts (RSS) |
+| `{host}` | Posts (RSS) |
 
 > [!NOTE]
 > On a ProBoards domain, a request with a browser user agent gets a proof-of-work challenge instead of the page, so the feed is built from the forum host alone. The feed answers 406 to a bare `Mozilla/5.0` or an empty user agent.
