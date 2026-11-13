@@ -1,5 +1,4 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -74,18 +73,19 @@ export const hautetfortHandler: PlatformHandler = {
 
     // Blog subdomains serve no certificate for their own name, so the feeds stay on http.
     const params = { scheme: 'http' }
-    const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.kind === 'category') {
-      uris.push(page.getFeedEntry('hautetfort:category', { ...params, category: parsed.category }))
+      return [
+        page.getFeedEntry('hautetfort:category', { ...params, category: parsed.category }),
+        page.getFeedEntry('hautetfort:posts', params, 'atom'),
+        page.getFeedEntry('hautetfort:posts', params, 'rss'),
+      ]
     }
 
-    uris.push(
+    return [
       page.getFeedEntry('hautetfort:posts', params, 'atom'),
       page.getFeedEntry('hautetfort:posts', params, 'rss'),
-    )
-
-    return uris
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
