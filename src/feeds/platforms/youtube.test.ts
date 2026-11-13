@@ -337,72 +337,72 @@ describe('youtubeHandler', () => {
 
     const uploadsPlaylistPages: Array<[string, DiscoverUriEntry]> = [
       [
-        'https://www.youtube.com/playlist?list=UUh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/playlist?list=UUaBcDeFgHiJkLmNoPqRsTuV',
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUh63NPM0o2atIXHQQjqfIqA',
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUaBcDeFgHiJkLmNoPqRsTuV',
           hint: { key: 'youtube:all', label: 'All uploads' },
         },
       ],
       [
-        'https://www.youtube.com/playlist?list=UULFh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/playlist?list=UULFaBcDeFgHiJkLmNoPqRsTuV',
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFh63NPM0o2atIXHQQjqfIqA',
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFaBcDeFgHiJkLmNoPqRsTuV',
           hint: { key: 'youtube:videos', label: 'Videos' },
         },
       ],
       [
-        'https://www.youtube.com/playlist?list=UUSHh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/playlist?list=UUSHaBcDeFgHiJkLmNoPqRsTuV',
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHh63NPM0o2atIXHQQjqfIqA',
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHaBcDeFgHiJkLmNoPqRsTuV',
           hint: { key: 'youtube:shorts', label: 'Shorts' },
         },
       ],
       [
-        'https://www.youtube.com/playlist?list=UULVh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/playlist?list=UULVaBcDeFgHiJkLmNoPqRsTuV',
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULVh63NPM0o2atIXHQQjqfIqA',
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULVaBcDeFgHiJkLmNoPqRsTuV',
           hint: { key: 'youtube:live', label: 'Live streams' },
         },
       ],
       [
-        'https://www.youtube.com/playlist?list=UULPh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/playlist?list=UULPaBcDeFgHiJkLmNoPqRsTuV',
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULPh63NPM0o2atIXHQQjqfIqA',
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULPaBcDeFgHiJkLmNoPqRsTuV',
           hint: { key: 'youtube:popular-videos', label: 'Popular videos' },
         },
       ],
       [
-        'https://www.youtube.com/playlist?list=UUPSh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/playlist?list=UUPSaBcDeFgHiJkLmNoPqRsTuV',
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPSh63NPM0o2atIXHQQjqfIqA',
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPSaBcDeFgHiJkLmNoPqRsTuV',
           hint: { key: 'youtube:popular-shorts', label: 'Popular shorts' },
         },
       ],
       [
-        'https://www.youtube.com/playlist?list=UUPVh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/playlist?list=UUPVaBcDeFgHiJkLmNoPqRsTuV',
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPVh63NPM0o2atIXHQQjqfIqA',
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPVaBcDeFgHiJkLmNoPqRsTuV',
           hint: { key: 'youtube:popular-live', label: 'Popular live streams' },
         },
       ],
       [
-        'https://www.youtube.com/playlist?list=UUMOh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/playlist?list=UUMOaBcDeFgHiJkLmNoPqRsTuV',
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMOh63NPM0o2atIXHQQjqfIqA',
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMOaBcDeFgHiJkLmNoPqRsTuV',
           hint: { key: 'youtube:member-videos', label: 'Member videos' },
         },
       ],
       [
-        'https://www.youtube.com/playlist?list=UUMSh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/playlist?list=UUMSaBcDeFgHiJkLmNoPqRsTuV',
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMSh63NPM0o2atIXHQQjqfIqA',
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMSaBcDeFgHiJkLmNoPqRsTuV',
           hint: { key: 'youtube:member-shorts', label: 'Member shorts' },
         },
       ],
       [
-        'https://www.youtube.com/playlist?list=UUMVh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/playlist?list=UUMVaBcDeFgHiJkLmNoPqRsTuV',
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMVh63NPM0o2atIXHQQjqfIqA',
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMVaBcDeFgHiJkLmNoPqRsTuV',
           hint: { key: 'youtube:member-live', label: 'Member live streams' },
         },
       ],
@@ -418,10 +418,10 @@ describe('youtubeHandler', () => {
     )
 
     it('should return the playlist key for an uploads list with a malformed channel ID', () => {
-      const value = 'https://www.youtube.com/playlist?list=UUOGFVzj8CefByxicwh4etbwu'
+      const value = 'https://www.youtube.com/playlist?list=UUaBcDeFgHiJkLmNoPqRsTuVw'
       const expected = [
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUOGFVzj8CefByxicwh4etbwu',
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUaBcDeFgHiJkLmNoPqRsTuVw',
           hint: { key: 'youtube:playlist', label: 'Playlist' },
         },
       ]
@@ -500,47 +500,47 @@ describe('youtubeHandler', () => {
   describe('getFeedHint', () => {
     const channelFeedHints: Array<[string, DiscoverUriHint]> = [
       [
-        'https://www.youtube.com/feeds/videos.xml?channel_id=UCh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/feeds/videos.xml?channel_id=UCaBcDeFgHiJkLmNoPqRsTuV',
         { key: 'youtube:all', label: 'All uploads' },
       ],
       [
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUaBcDeFgHiJkLmNoPqRsTuV',
         { key: 'youtube:all', label: 'All uploads' },
       ],
       [
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFaBcDeFgHiJkLmNoPqRsTuV',
         { key: 'youtube:videos', label: 'Videos' },
       ],
       [
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHaBcDeFgHiJkLmNoPqRsTuV',
         { key: 'youtube:shorts', label: 'Shorts' },
       ],
       [
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULVh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULVaBcDeFgHiJkLmNoPqRsTuV',
         { key: 'youtube:live', label: 'Live streams' },
       ],
       [
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULPh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULPaBcDeFgHiJkLmNoPqRsTuV',
         { key: 'youtube:popular-videos', label: 'Popular videos' },
       ],
       [
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPSh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPSaBcDeFgHiJkLmNoPqRsTuV',
         { key: 'youtube:popular-shorts', label: 'Popular shorts' },
       ],
       [
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPVh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPVaBcDeFgHiJkLmNoPqRsTuV',
         { key: 'youtube:popular-live', label: 'Popular live streams' },
       ],
       [
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMOh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMOaBcDeFgHiJkLmNoPqRsTuV',
         { key: 'youtube:member-videos', label: 'Member videos' },
       ],
       [
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMSh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMSaBcDeFgHiJkLmNoPqRsTuV',
         { key: 'youtube:member-shorts', label: 'Member shorts' },
       ],
       [
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMVh63NPM0o2atIXHQQjqfIqA',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMVaBcDeFgHiJkLmNoPqRsTuV',
         { key: 'youtube:member-live', label: 'Member live streams' },
       ],
     ]
@@ -553,7 +553,7 @@ describe('youtubeHandler', () => {
     )
 
     it('should return the hint of a channel feed with a capitalized path and no www', () => {
-      const value = 'https://youtube.com/Feeds/Videos.xml?playlist_id=UULFh63NPM0o2atIXHQQjqfIqA'
+      const value = 'https://youtube.com/Feeds/Videos.xml?playlist_id=UULFaBcDeFgHiJkLmNoPqRsTuV'
       const expected: DiscoverUriHint = { key: 'youtube:videos', label: 'Videos' }
 
       expect(youtubeHandler.getFeedHint?.(value)).toEqual(expected)
@@ -561,14 +561,14 @@ describe('youtubeHandler', () => {
 
     it('should return the playlist hint for a playlist feed', () => {
       const value =
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=OLAK5uy_lmKuYKcDhQg3fS7o3Ql9Q41XabFKm02_M'
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=OLAK5uy_aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456'
       const expected: DiscoverUriHint = { key: 'youtube:playlist', label: 'Playlist' }
 
       expect(youtubeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the channel hint for an uploads list whose channel ID starts with a prefix', () => {
-      const value = 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFHVgbSwvTgM1PcsOCvHjw'
+      const value = 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFaBcDeFgHiJkLmNoPqRsT'
       const expected: DiscoverUriHint = { key: 'youtube:all', label: 'All uploads' }
 
       expect(youtubeHandler.getFeedHint?.(value)).toEqual(expected)
@@ -576,7 +576,7 @@ describe('youtubeHandler', () => {
 
     it('should return the videos hint for a videos list whose channel ID starts with a prefix', () => {
       const value =
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFLFHVgbSwvTgM1PcsOCvHjw'
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFLFaBcDeFgHiJkLmNoPqRsT'
       const expected: DiscoverUriHint = { key: 'youtube:videos', label: 'Videos' }
 
       expect(youtubeHandler.getFeedHint?.(value)).toEqual(expected)
@@ -590,9 +590,9 @@ describe('youtubeHandler', () => {
     })
 
     const notUploadsFeedValues: Array<string> = [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=PLmxmP8p3bUU34kLdPVeYn3taksN_hOH6L',
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=uulfh63NPM0o2atIXHQQjqfIqA',
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUOGFVzj8CefByxicwh4etbwu',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=PLaBcDeFgHUU34kLmNoPqRsTuVwXyZ_012',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=uulfaBcDeFgHiJkLmNoPqRsTuV',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUaBcDeFgHiJkLmNoPqRsTuVw',
     ]
 
     it.each(notUploadsFeedValues)('should return the playlist hint for %s', (value) => {
@@ -614,13 +614,13 @@ describe('youtubeHandler', () => {
     })
 
     it('should return undefined for a channel page', () => {
-      const value = 'https://www.youtube.com/channel/UCh63NPM0o2atIXHQQjqfIqA'
+      const value = 'https://www.youtube.com/channel/UCaBcDeFgHiJkLmNoPqRsTuV'
 
       expect(youtubeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/feeds/videos.xml?channel_id=UCh63NPM0o2atIXHQQjqfIqA'
+      const value = 'https://example.com/feeds/videos.xml?channel_id=UCaBcDeFgHiJkLmNoPqRsTuV'
 
       expect(youtubeHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -630,51 +630,51 @@ describe('youtubeHandler', () => {
 describe('discoverUrisFromPlatform', () => {
   const ownFeeds: Array<[string, DiscoverUriHint]> = [
     [
-      'https://www.youtube.com/feeds/videos.xml?channel_id=UCh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?channel_id=UCaBcDeFgHiJkLmNoPqRsTuV',
       { key: 'youtube:all', label: 'All uploads' },
     ],
     [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUaBcDeFgHiJkLmNoPqRsTuV',
       { key: 'youtube:all', label: 'All uploads' },
     ],
     [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFaBcDeFgHiJkLmNoPqRsTuV',
       { key: 'youtube:videos', label: 'Videos' },
     ],
     [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHaBcDeFgHiJkLmNoPqRsTuV',
       { key: 'youtube:shorts', label: 'Shorts' },
     ],
     [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UULVh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UULVaBcDeFgHiJkLmNoPqRsTuV',
       { key: 'youtube:live', label: 'Live streams' },
     ],
     [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UULPh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UULPaBcDeFgHiJkLmNoPqRsTuV',
       { key: 'youtube:popular-videos', label: 'Popular videos' },
     ],
     [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPSh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPSaBcDeFgHiJkLmNoPqRsTuV',
       { key: 'youtube:popular-shorts', label: 'Popular shorts' },
     ],
     [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPVh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPVaBcDeFgHiJkLmNoPqRsTuV',
       { key: 'youtube:popular-live', label: 'Popular live streams' },
     ],
     [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMOh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMOaBcDeFgHiJkLmNoPqRsTuV',
       { key: 'youtube:member-videos', label: 'Member videos' },
     ],
     [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMSh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMSaBcDeFgHiJkLmNoPqRsTuV',
       { key: 'youtube:member-shorts', label: 'Member shorts' },
     ],
     [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMVh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMVaBcDeFgHiJkLmNoPqRsTuV',
       { key: 'youtube:member-live', label: 'Member live streams' },
     ],
     [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=OLAK5uy_lmKuYKcDhQg3fS7o3Ql9Q41XabFKm02_M',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=OLAK5uy_aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456',
       { key: 'youtube:playlist', label: 'Playlist' },
     ],
     [
