@@ -387,10 +387,24 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a deviations query without its sort', () => {
-      const value = 'https://backend.deviantart.com/rss.xml?type=deviation&q=by:yuumei'
+    const deviationsSpellings: Array<string> = [
+      'https://backend.deviantart.com/rss.xml?type=deviation&q=by:alice',
+      'https://backend.deviantart.com/rss.xml?q=by%3Aalice&type=gallery',
+      'https://backend.deviantart.com/rss.xml?order=5&q=by%3Aalice',
+      'https://backend.deviantart.com/rss.xml?q=gallery%3Aalice',
+    ]
 
-      expect(deviantartHandler.getFeedHint?.(value)).toBeUndefined()
+    it.each(deviationsSpellings)('should return the deviations hint for %s', (value) => {
+      const expected: DiscoverUriHint = { key: 'deviantart:deviations', label: 'Deviations' }
+
+      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the journal hint for a journal feed of the by query', () => {
+      const value = 'https://backend.deviantart.com/rss.xml?formatted=1&q=by%3Aalice&type=journal'
+      const expected: DiscoverUriHint = { key: 'deviantart:journal', label: 'Journal' }
+
+      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for the feed path on the www host', () => {
@@ -438,6 +452,16 @@ describe('discoverUrisFromPlatform', () => {
       'https://backend.deviantart.com/rss.xml?q=special:dd',
       'deviantart:daily-deviations',
       'Daily Deviations',
+    ],
+    [
+      'http://backend.deviantart.com/rss.xml?q=by%3Aalice&type=gallery',
+      'deviantart:deviations',
+      'Deviations',
+    ],
+    [
+      'https://backend.deviantart.com/rss.xml?q=by%3Aalice&type=journal',
+      'deviantart:journal',
+      'Journal',
     ],
   ]
 

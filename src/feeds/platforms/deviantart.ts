@@ -22,11 +22,30 @@ const folderRegex = /^\/[^/]+\/gallery\/(\d+)(?:\/|$)/i
 const journalRegex = /^\/[^/]+\/journal(?:\/|$)/i
 const dailyDeviationsRegex = /^\/daily-deviations\/?$/i
 
+// A user's deviations serve the same items with or without the sort and meta terms, under
+// `type=gallery`, without a type and as `gallery:{username}`. The journals are also `type=journal`
+// over the same `by:` query.
 const feeds = definePlatformFeeds([
   {
     key: 'deviantart:deviations',
     template:
       'https://backend.deviantart.com/rss.xml?type=deviation&q=by:{username} sort:time meta:all',
+  },
+  {
+    key: 'deviantart:deviations',
+    template: 'https://backend.deviantart.com/rss.xml?type=deviation&q=by:{username}',
+  },
+  {
+    key: 'deviantart:deviations',
+    template: 'https://backend.deviantart.com/rss.xml?type=gallery&q=by:{username}',
+  },
+  {
+    key: 'deviantart:deviations',
+    template: 'https://backend.deviantart.com/rss.xml?q=by:{username}',
+  },
+  {
+    key: 'deviantart:deviations',
+    template: 'https://backend.deviantart.com/rss.xml?q=gallery:{username}',
   },
   {
     key: 'deviantart:gallery',
@@ -44,6 +63,10 @@ const feeds = definePlatformFeeds([
   {
     key: 'deviantart:journal',
     template: 'https://backend.deviantart.com/rss.xml?q=journal:{username}',
+  },
+  {
+    key: 'deviantart:journal',
+    template: 'https://backend.deviantart.com/rss.xml?type=journal&q=by:{username}',
   },
   {
     key: 'deviantart:daily-deviations',
