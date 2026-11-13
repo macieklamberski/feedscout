@@ -62,13 +62,14 @@ export const twodayHandler: PlatformHandler = {
       return []
     }
 
-    const posts = page.getFeedEntry('twoday:posts')
-
     if (parsed.kind === 'topic') {
-      return [page.getFeedEntry('twoday:topic', { topic: parsed.topic }), posts]
+      return [
+        page.getFeedEntry('twoday:topic', { topic: parsed.topic }),
+        page.getFeedEntry('twoday:posts'),
+      ]
     }
 
-    return [posts]
+    return [page.getFeedEntry('twoday:posts')]
   },
 
   getFeedHint: feeds.getFeedHint,
