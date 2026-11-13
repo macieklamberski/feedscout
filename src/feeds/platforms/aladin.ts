@@ -1,5 +1,4 @@
 import { escapeRegex, getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
@@ -72,21 +71,18 @@ export const aladinHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (page.kind === 'category') {
       // Only the blog's subscribe page links a category feed, as an http url that redirects here.
-      uris.push(
+      return [
         feeds.getFeedEntry('aladin:category', {
           username: page.username,
           categoryId: page.categoryId,
         }),
-      )
+        feeds.getFeedEntry('aladin:posts', { username: page.username }),
+      ]
     }
 
-    uris.push(feeds.getFeedEntry('aladin:posts', { username: page.username }))
-
-    return uris
+    return [feeds.getFeedEntry('aladin:posts', { username: page.username })]
   },
 
   // The table reads any first segment as a username, so the page parser refuses a dotted one, a
