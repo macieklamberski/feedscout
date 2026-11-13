@@ -102,7 +102,12 @@ export const sermonNetHandler: PlatformHandler = {
     }
 
     if (page.kind === 'channel') {
-      return getChannelFeeds(pageFeeds, page.channel)
+      return [
+        pageFeeds.getFeedEntry('sermon-net:channel', { channel: page.channel }),
+        pageFeeds.getFeedEntry('sermon-net:channel-media', { channel: page.channel }),
+        pageFeeds.getFeedEntry('sermon-net:channel-video', { channel: page.channel }),
+        pageFeeds.getFeedEntry('sermon-net:channel-audio-pdf', { channel: page.channel }),
+      ]
     }
 
     if (page.channels.length > 0) {
