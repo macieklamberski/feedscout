@@ -582,6 +582,13 @@ describe('youtubeHandler', () => {
       expect(youtubeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the channel hint for a legacy user feed', () => {
+      const value = 'https://www.youtube.com/feeds/videos.xml?user=alice'
+      const expected: DiscoverUriHint = { key: 'youtube:all', label: 'All uploads' }
+
+      expect(youtubeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     const notUploadsFeedValues: Array<string> = [
       'https://www.youtube.com/feeds/videos.xml?playlist_id=PLmxmP8p3bUU34kLdPVeYn3taksN_hOH6L',
       'https://www.youtube.com/feeds/videos.xml?playlist_id=uulfh63NPM0o2atIXHQQjqfIqA',
@@ -669,6 +676,10 @@ describe('discoverUrisFromPlatform', () => {
     [
       'https://www.youtube.com/feeds/videos.xml?playlist_id=OLAK5uy_lmKuYKcDhQg3fS7o3Ql9Q41XabFKm02_M',
       { key: 'youtube:playlist', label: 'Playlist' },
+    ],
+    [
+      'http://youtube.com/feeds/videos.xml?user=alice',
+      { key: 'youtube:all', label: 'All uploads' },
     ],
   ]
 

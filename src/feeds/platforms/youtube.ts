@@ -69,9 +69,11 @@ const uploadsPlaylistKeys: Record<string, string> = {
 }
 // YouTube also supports a legacy ?user=username feed parameter, but it only works with old-style
 // usernames (not modern @handles) and returns the same Atom content as ?channel_id=. YouTube's own
-// autodiscovery always uses channel_id, so we treat it as the canonical format.
+// autodiscovery always uses channel_id, so we treat it as the canonical format and only claim the
+// legacy one.
 const feeds = definePlatformFeeds([
   { key: 'youtube:all', template: `${feedUrl}?channel_id={channelId}` },
+  { key: 'youtube:all', template: `${feedUrl}?user={user}` },
   { key: 'youtube:playlist', template: `${feedUrl}?playlist_id={playlistId}` },
   ...Object.values(uploadsPlaylistKeys).map((key) => {
     return { key, template: `${feedUrl}?playlist_id={playlistId}` }
@@ -218,8 +220,9 @@ export const youtubeHandler: PlatformHandler = {
 
   getFeedHint: (url) => {
     const parsedUrl = parseUrl(url)
+    const hint = feeds.getFeedHint(url)
 
-    if (!parsedUrl || !feeds.getFeedHint(url)) {
+    if (!parsedUrl || !hint) {
       return
     }
 
@@ -233,6 +236,13 @@ export const youtubeHandler: PlatformHandler = {
       return
     }
 
-    return composeHint(getPlaylistKey(getQueryParam(parsedUrl, 'playlist_id')))
+    const playlistId = getQueryParam(parsedUrl, 'playlist_id')
+
+    // The legacy user feed names neither a channel ID nor a playlist.
+    if (!playlistId) {
+      return hint
+    }
+
+    return composeHint(getPlaylistKey(playlistId))
   },
 }
