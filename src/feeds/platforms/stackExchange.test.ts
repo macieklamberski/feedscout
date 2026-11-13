@@ -492,8 +492,15 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the newest hint for the site feed of a site meta', () => {
+      const value = 'https://music.meta.stackexchange.com/feeds'
+      const expected: DiscoverUriHint = { key: 'stackexchange:newest', label: 'Newest questions' }
+
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for the site feed on a nested subdomain', () => {
-      const value = 'https://chat.meta.stackexchange.com/feeds'
+      const value = 'https://chat.music.meta.stackexchange.com/feeds'
 
       expect(stackExchangeHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -517,10 +524,43 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for the weekly feed', () => {
-      const value = 'https://apple.stackexchange.com/feeds/week'
+    const otherFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://apple.stackexchange.com/feeds/week',
+        { key: 'stackexchange:newest', label: 'Newest questions' },
+      ],
+      [
+        'https://apple.stackexchange.com/feeds/month',
+        { key: 'stackexchange:newest', label: 'Newest questions' },
+      ],
+      [
+        'https://stackoverflow.com/feeds/tag?sort=newest&tagnames=javascript',
+        { key: 'stackexchange:tag', label: 'Tag' },
+      ],
+      [
+        'https://ru.meta.stackoverflow.com/feeds/question/12345',
+        { key: 'stackexchange:question', label: 'Question' },
+      ],
+      [
+        'https://music.meta.stackexchange.com/feeds/user/12345',
+        { key: 'stackexchange:user', label: 'User' },
+      ],
+      [
+        'https://chat.stackexchange.com/feeds/rooms/starred/12345',
+        { key: 'stackexchange:chat-starred', label: 'Starred chat messages' },
+      ],
+      [
+        'https://area51.stackexchange.com/feeds/proposal/12345',
+        { key: 'stackexchange:proposal', label: 'Area 51 proposal' },
+      ],
+      [
+        'https://stackexchange.com/feeds/tagsets/12345/example?sort=newest',
+        { key: 'stackexchange:tagset', label: 'Tag set' },
+      ],
+    ]
 
-      expect(stackExchangeHandler.getFeedHint?.(value)).toBeUndefined()
+    it.each(otherFeeds)('should return the hint for %s', (value, expected) => {
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a page', () => {
@@ -540,6 +580,28 @@ describe('discoverUrisFromPlatform', () => {
     ['https://stackoverflow.com/feeds/collectives/aws', 'stackexchange:collective', 'Collective'],
     ['https://askubuntu.com/feeds', 'stackexchange:newest', 'Newest questions'],
     ['https://stackexchange.com/feeds', 'stackexchange:newest', 'Newest questions'],
+    ['http://apple.stackexchange.com/feeds/week/', 'stackexchange:newest', 'Newest questions'],
+    ['https://stackoverflow.com/feeds/tag?tagnames=c%2B%2B', 'stackexchange:tag', 'Tag'],
+    [
+      'https://ru.meta.stackoverflow.com/feeds/question/12345',
+      'stackexchange:question',
+      'Question',
+    ],
+    [
+      'http://chat.stackexchange.com/feeds/rooms/starred/12345',
+      'stackexchange:chat-starred',
+      'Starred chat messages',
+    ],
+    [
+      'https://area51.stackexchange.com/feeds/proposal/12345',
+      'stackexchange:proposal',
+      'Area 51 proposal',
+    ],
+    [
+      'https://stackexchange.com/feeds/tagsets/12345/example?sort=newest',
+      'stackexchange:tagset',
+      'Tag set',
+    ],
   ]
 
   it.each(ownFeeds)('should return %s itself as %s', async (value, key, label) => {
