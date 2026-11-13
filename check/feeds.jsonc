@@ -330,9 +330,33 @@
     "dailymotion:videos": "https://www.dailymotion.com/rss/Euronews-en"
   },
   "dasauge": {
+    "dasauge:jobs": [
+      "https://dasauge.at/jobs/feed",
+      "https://dasauge.ch/jobs/feed",
+      "https://dasauge.co.uk/jobs/feed",
+      "https://dasauge.com/jobs/feed",
+      "https://dasauge.de/jobs/feed",
+      "https://dasauge.es/jobs/feed"
+    ],
+    "dasauge:news": [
+      "https://dasauge.at/news/feed",
+      "https://dasauge.ch/news/feed",
+      "https://dasauge.co.uk/news/feed",
+      "https://dasauge.com/news/feed",
+      "https://dasauge.de/news/feed",
+      "https://dasauge.es/news/feed"
+    ],
     "dasauge:profile": {
-      "skip": "every profile's ?rss redirects to the profile page, which serves HTML"
-    }
+      "skip": "claim-only since the 2026-10-26 relaunch, every profile's ?rss serves the profile page"
+    },
+    "dasauge:workspaces": [
+      "https://dasauge.at/workspaces/feed",
+      "https://dasauge.ch/workspaces/feed",
+      "https://dasauge.co.uk/workspaces/feed",
+      "https://dasauge.com/workspaces/feed",
+      "https://dasauge.de/workspaces/feed",
+      "https://dasauge.es/workspaces/feed"
+    ]
   },
   "deviantart": {
     "deviantart:daily-deviations": "https://backend.deviantart.com/rss.xml?q=special:dd",

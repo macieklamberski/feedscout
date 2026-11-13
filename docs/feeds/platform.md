@@ -2758,12 +2758,12 @@ Discovers the module and forum feeds of a uCoz site. Covers sites on the uCoz do
 
 ### dasauge
 
-Discovers the RSS feed of a dasauge member profile on any of the dasauge country domains.
+Discovers the site-wide Atom feeds of dasauge on any of its country domains.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `dasauge.de/-{member}` | Profile |
-| `dasauge.de/-{member}/{page}` | Profile |
+| `dasauge.de` | News · jobs · workspaces |
+| `dasauge.de/{page}` | News · jobs · workspaces |
 
 ### Estranky
 
