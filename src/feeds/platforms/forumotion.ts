@@ -15,7 +15,6 @@ const forumPathRegex = /^\/f(\d+)(?:p\d+)?-/i
 const topicPathRegex = /^\/t\d+(?:p\d+)?-/i
 
 // One pattern per brand, each over its generic and country domains.
-// length: keeps any suffix but a two-letter country code out
 const domains = [
   '1fr1.net',
   'actieforum.com',
