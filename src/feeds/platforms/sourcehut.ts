@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -9,15 +9,28 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 export type SourcehutUrl =
   | { kind: 'user'; owner: string }
   | { kind: 'repo'; owner: string; repo: string }
+  | { kind: 'project'; owner: string; project: string }
 
 export const hosts = ['git.sr.ht']
-const userHosts = ['sr.ht', 'todo.sr.ht', ...hosts]
+const projectHosts = ['sr.ht']
+const userHosts = [...projectHosts, 'todo.sr.ht', ...hosts]
 
 const feeds = definePlatformFeeds([
   { key: 'sourcehut:commits', template: 'https://git.sr.ht/~{owner}/{repo}/log/rss.xml' },
   { key: 'sourcehut:commits', template: 'https://git.sr.ht/~{owner}/{repo}/log/{ref}/rss.xml' },
   { key: 'sourcehut:refs', template: 'https://git.sr.ht/~{owner}/{repo}/refs/rss.xml' },
+  { key: 'sourcehut:project', template: 'https://sr.ht/~{owner}/{project}/feed.rss' },
 ])
+
+// A log at a full commit hash is the history up to that commit, which never changes, not the log
+// of a branch. No page links it, so `resolve` never builds it.
+const commitHistoryFeeds = definePlatformFeeds([
+  {
+    key: 'sourcehut:commit-history',
+    template: 'https://git.sr.ht/~{owner}/{repo}/log/{hash}/rss.xml',
+  },
+])
+const commitHashRegex = /^[0-9a-f]{40}$/i
 
 export const parseSourcehutUrl = (url: string): SourcehutUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -39,6 +52,10 @@ export const parseSourcehutUrl = (url: string): SourcehutUrl | undefined => {
     return { kind: 'repo', owner, repo }
   }
 
+  if (repo && isHostOf(parsedUrl, projectHosts)) {
+    return { kind: 'project', owner, project: repo }
+  }
+
   if (!repo && isHostOf(parsedUrl, userHosts)) {
     return { kind: 'user', owner }
   }
@@ -46,11 +63,19 @@ export const parseSourcehutUrl = (url: string): SourcehutUrl | undefined => {
 
 export const sourcehutHandler: PlatformHandler = {
   match: (url) => {
-    return parseSourcehutUrl(url)?.kind === 'repo'
+    const kind = parseSourcehutUrl(url)?.kind
+
+    return isAnyOf(kind, ['repo', 'project'])
   },
 
   resolve: (url) => {
     const parsed = parseSourcehutUrl(url)
+
+    if (parsed?.kind === 'project') {
+      return [
+        feeds.getFeedEntry('sourcehut:project', { owner: parsed.owner, project: parsed.project }),
+      ]
+    }
 
     if (parsed?.kind !== 'repo') {
       return []
@@ -64,5 +89,17 @@ export const sourcehutHandler: PlatformHandler = {
     ]
   },
 
-  getFeedHint: feeds.getFeedHint,
+  getFeedHint: (url) => {
+    const [, , , ref] = getPathSegments(url)
+
+    if (commitHashRegex.test(ref ?? '')) {
+      const hint = commitHistoryFeeds.getFeedHint(url)
+
+      if (hint) {
+        return hint
+      }
+    }
+
+    return feeds.getFeedHint(url)
+  },
 }

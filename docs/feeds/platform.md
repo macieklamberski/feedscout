@@ -1545,11 +1545,12 @@ Discovers RSS feeds for Postype channels. Channel pages carry no feed link.
 
 ### Sourcehut
 
-Discovers the commit and ref feeds of a Sourcehut repository. Repository pages carry no feed link.
+Discovers the commit and ref feeds of a Sourcehut repository and the activity feed of a project. Repository pages carry no feed link.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `git.sr.ht/~{user}/{repo}` | Commits · refs<sup>†</sup> (RSS) |
+| `sr.ht/~{user}/{project}` | Project (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
