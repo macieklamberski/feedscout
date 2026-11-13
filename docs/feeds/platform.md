@@ -2763,7 +2763,9 @@ Discovers the site-wide Atom feeds of dasauge on any of its country domains.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `dasauge.de` | News · jobs · workspaces |
-| `dasauge.de/{page}` | News · jobs · workspaces |
+| `dasauge.de/{page}` | News · jobs<sup>†</sup> · workspaces<sup>†</sup> |
+
+<sup>†</sup> *Found only by the Platform method.*
 
 ### Estranky
 
