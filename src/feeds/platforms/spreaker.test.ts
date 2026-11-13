@@ -9,6 +9,7 @@ const feedCases: Array<[string, DiscoverUriHint]> = [
   ['https://www.spreaker.com/show/12345/episodes/feed', podcastHint],
   ['https://spreaker.com/show/12345/episodes/feed', podcastHint],
   ['http://www.spreaker.com/show/12345/episodes/feed', podcastHint],
+  ['https://www.spreaker.com/show/12345/episodes/feed/items/3', podcastHint],
 ]
 
 describe('parseSpreakerUrl', () => {
@@ -174,10 +175,11 @@ describe('spreakerHandler', () => {
       expect(spreakerHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for the one-item feed path', () => {
+    it('should return the podcast hint for the feed cut to its newest episodes', () => {
       const value = 'https://spreaker.com/show/12345/episodes/feed/items/1'
+      const expected: DiscoverUriHint = { key: 'spreaker:podcast', label: 'Podcast' }
 
-      expect(spreakerHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(spreakerHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for another host', () => {
