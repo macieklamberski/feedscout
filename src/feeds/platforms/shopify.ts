@@ -5,7 +5,7 @@ import { formatSuffixRegex, hasMarker, letterGroupsRegex } from '../../common/ut
 
 // Discoverability: Discoverable without handler.
 
-export type ShopifyUrl = { kind: 'blog'; handle: string; locale?: string }
+export type ShopifyUrl = { kind: 'blog'; handle: string }
 
 const shopifyRegex = /shopify/i
 
@@ -54,7 +54,7 @@ export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {
     return
   }
 
-  return { kind: 'blog', handle, locale }
+  return { kind: 'blog', handle }
 }
 
 export const shopifyHandler: PlatformHandler = {
@@ -74,7 +74,7 @@ export const shopifyHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('shopify:blog', { locale: parsed.locale, handle: parsed.handle })]
+    return [page.getFeedEntry('shopify:blog', { handle: parsed.handle })]
   },
 
   getFeedHint: feeds.getFeedHint,

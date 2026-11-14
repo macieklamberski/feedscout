@@ -30,20 +30,20 @@ describe('parseShopifyUrl', () => {
     expect(parseShopifyUrl('https://shop.example/blogs/news/first-post')).toEqual(expected)
   })
 
-  it('should return the blog with its locale for a market page', () => {
-    const expected: ShopifyUrl = { kind: 'blog', handle: 'news', locale: 'en-us' }
+  it('should return the blog for a market page', () => {
+    const expected: ShopifyUrl = { kind: 'blog', handle: 'news' }
 
     expect(parseShopifyUrl('https://shop.example/en-us/blogs/news/first-post')).toEqual(expected)
   })
 
-  it('should return the blog with a three-letter language', () => {
-    const expected: ShopifyUrl = { kind: 'blog', handle: 'news', locale: 'fil' }
+  it('should return the blog under a three-letter language', () => {
+    const expected: ShopifyUrl = { kind: 'blog', handle: 'news' }
 
     expect(parseShopifyUrl('https://shop.example/fil/blogs/news')).toEqual(expected)
   })
 
-  it('should return the blog with a language, script and country', () => {
-    const expected: ShopifyUrl = { kind: 'blog', handle: 'videos', locale: 'zh-hant-hk' }
+  it('should return the blog under a language, script and country', () => {
+    const expected: ShopifyUrl = { kind: 'blog', handle: 'videos' }
 
     expect(parseShopifyUrl('https://shop.example/zh-hant-hk/blogs/videos')).toEqual(expected)
   })
@@ -55,7 +55,7 @@ describe('parseShopifyUrl', () => {
   })
 
   it('should drop the format from the handle of a market blog feed', () => {
-    const expected: ShopifyUrl = { kind: 'blog', handle: 'news', locale: 'en-us' }
+    const expected: ShopifyUrl = { kind: 'blog', handle: 'news' }
 
     expect(parseShopifyUrl('https://shop.example/en-us/blogs/news.atom')).toEqual(expected)
   })
