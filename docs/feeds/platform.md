@@ -1240,7 +1240,7 @@ Discovers RSS feeds for Podbean-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.podbean.com` | Podcast |
+| `{show}.podbean.com` | Podcast · latest episode |
 
 ### Podhome
 
