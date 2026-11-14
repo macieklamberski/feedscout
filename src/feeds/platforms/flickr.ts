@@ -82,11 +82,13 @@ const feeds = definePlatformFeeds(
     {
       key: 'flickr:faves',
       template: '{scheme}://{host}/services/feeds/photos_faves.gne?nsid={id}',
+      isAlias: true,
     },
     {
       key: 'flickr:faves',
       template: '{scheme}://{host}/services/feeds/photos_faves.gne?nsid={id}&format=rss_200',
       format: 'rss',
+      isAlias: true,
     },
     {
       key: 'flickr:group-pool',
