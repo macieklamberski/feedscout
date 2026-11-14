@@ -47,6 +47,7 @@
     "gitlab:issues": "Issues",
     "gitlab:merge-requests": "Merge requests",
     "gitlab:branch-commits": "Branch commits",
+    "gitlab:dashboard": "Dashboard",
     "gitea:activity": "Activity",
     "gitea:releases": "Releases",
     "gitea:tags": "Tags",

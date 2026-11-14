@@ -172,10 +172,20 @@ export const gitlabHandler: PlatformHandler = {
     }
 
     const segments = getPathSegments(parsedUrl)
-    const [prefixOrNamespace] = segments
+    const [prefixOrNamespace, dashboardFile] = segments
 
     if (isAnyOf(prefixOrNamespace, accountPrefixes)) {
       return
+    }
+
+    // The signed-in user's dashboard feed answers only with their `feed_token`, so it is claimed
+    // under its own key and never built.
+    if (
+      segments.length === 2 &&
+      isAnyOf(prefixOrNamespace, 'dashboard') &&
+      isAnyOf(dashboardFile, 'projects.atom')
+    ) {
+      return composeHint('gitlab:dashboard')
     }
 
     const dashIndex = segments.indexOf('-')

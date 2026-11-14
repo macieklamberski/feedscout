@@ -427,6 +427,13 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the dashboard hint for a dashboard feed with a token', () => {
+      const value = 'https://gitlab.com/dashboard/projects.atom?feed_token=glft-12345'
+      const expected: DiscoverUriHint = { key: 'gitlab:dashboard', label: 'Dashboard' }
+
+      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the releases hint for a releases feed', () => {
       const value = 'https://gitlab.com/erinapp/erinapp/-/releases.atom'
       const expected: DiscoverUriHint = { key: 'gitlab:releases', label: 'Releases' }
@@ -622,6 +629,10 @@ describe('gitlabHandler', () => {
         { key: 'gitlab:branch-commits', label: 'Branch commits' },
       ],
       ['https://gitlab.com/0xa.atom/', { key: 'gitlab:activity', label: 'Activity' }],
+      [
+        'https://gitlab.com/dashboard/projects.atom?feed_token=glft-12345',
+        { key: 'gitlab:dashboard', label: 'Dashboard' },
+      ],
       [
         'https://gitlab.com/erinapp/erinapp/-/releases.atom/',
         { key: 'gitlab:releases', label: 'Releases' },
