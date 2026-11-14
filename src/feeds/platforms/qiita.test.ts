@@ -216,21 +216,21 @@ describe('qiitaHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the posts hint for a user feed', () => {
-      const value = 'https://qiita.com/najeira/feed.atom'
+      const value = 'https://qiita.com/alice/feed.atom'
       const expected: DiscoverUriHint = { key: 'qiita:posts', label: 'Posts' }
 
       expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a user feed without the extension', () => {
-      const value = 'https://qiita.com/najeira/feed'
+      const value = 'https://qiita.com/alice/feed'
       const expected: DiscoverUriHint = { key: 'qiita:posts', label: 'Posts' }
 
       expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a user feed on the www host over http', () => {
-      const value = 'http://www.qiita.com/najeira/feed'
+      const value = 'http://www.qiita.com/alice/feed'
       const expected: DiscoverUriHint = { key: 'qiita:posts', label: 'Posts' }
 
       expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
@@ -265,7 +265,7 @@ describe('qiitaHandler', () => {
     })
 
     it('should return the organization hint for an organization feed', () => {
-      const value = 'https://qiita.com/organizations/nid-kt/activities.atom'
+      const value = 'https://qiita.com/organizations/example/activities.atom'
       const expected: DiscoverUriHint = { key: 'qiita:organization', label: 'Organization' }
 
       expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
@@ -300,7 +300,7 @@ describe('qiitaHandler', () => {
     })
 
     it('should return undefined for a user page', () => {
-      const value = 'https://qiita.com/najeira'
+      const value = 'https://qiita.com/alice'
 
       expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -312,19 +312,19 @@ describe('qiitaHandler', () => {
     })
 
     it('should return undefined for an organization page', () => {
-      const value = 'https://qiita.com/organizations/nid-kt'
+      const value = 'https://qiita.com/organizations/example'
 
       expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an article page', () => {
-      const value = 'https://qiita.com/najeira/items/0123456789abcdef0123'
+      const value = 'https://qiita.com/alice/items/0123456789abcdef0123'
 
       expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a user feed path on another host', () => {
-      const value = 'https://example.com/najeira/feed'
+      const value = 'https://example.com/alice/feed'
 
       expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -344,15 +344,15 @@ describe('qiitaHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://qiita.com/najeira/feed.atom', { key: 'qiita:posts', label: 'Posts' }],
-      ['https://qiita.com/najeira/feed', { key: 'qiita:posts', label: 'Posts' }],
-      ['http://www.qiita.com/najeira/feed', { key: 'qiita:posts', label: 'Posts' }],
+      ['https://qiita.com/alice/feed.atom', { key: 'qiita:posts', label: 'Posts' }],
+      ['https://qiita.com/alice/feed', { key: 'qiita:posts', label: 'Posts' }],
+      ['http://www.qiita.com/alice/feed', { key: 'qiita:posts', label: 'Posts' }],
       ['https://qiita.com/tags/cloudformation/feed.atom', { key: 'qiita:tag', label: 'Tag' }],
       ['https://qiita.com/tags/iac/feed', { key: 'qiita:tag', label: 'Tag' }],
       ['https://qiita.com/tags/green%E9%96%A2%E6%95%B0/feed', { key: 'qiita:tag', label: 'Tag' }],
       ['https://qiita.com/Tags/iac/Feed', { key: 'qiita:tag', label: 'Tag' }],
       [
-        'https://qiita.com/organizations/nid-kt/activities.atom',
+        'https://qiita.com/organizations/example/activities.atom',
         { key: 'qiita:organization', label: 'Organization' },
       ],
       [
