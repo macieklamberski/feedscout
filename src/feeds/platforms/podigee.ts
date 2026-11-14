@@ -4,7 +4,7 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type PodigeeUrl = { kind: 'podcast'; podcast: string }
+export type PodigeeUrl = { kind: 'podcast' }
 
 const domains = ['podigee.io']
 
@@ -25,13 +25,11 @@ const feeds = definePlatformFeeds(
 )
 
 export const parsePodigeeUrl = (url: string): PodigeeUrl | undefined => {
-  const podcast = getTenantSubdomain(url, domains)
-
-  if (!podcast) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 
-  return { kind: 'podcast', podcast }
+  return { kind: 'podcast' }
 }
 
 export const podigeeHandler: PlatformHandler = {

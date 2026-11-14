@@ -7,7 +7,7 @@ import { type PodigeeUrl, parsePodigeeUrl, podigeeHandler } from './podigee.js'
 describe('parsePodigeeUrl', () => {
   it('should return the podcast for a show subdomain', () => {
     const value = 'https://example.podigee.io/'
-    const expected: PodigeeUrl = { kind: 'podcast', podcast: 'example' }
+    const expected: PodigeeUrl = { kind: 'podcast' }
 
     expect(parsePodigeeUrl(value)).toEqual(expected)
   })
