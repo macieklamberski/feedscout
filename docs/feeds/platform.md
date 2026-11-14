@@ -1282,7 +1282,7 @@ Discovers Atom feeds for Postach.io sites.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.postach.io` | Posts (Atom) |
+| `{site}.postach.io` | Posts (Atom) |
 
 ### Posthaven
 
