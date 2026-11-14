@@ -974,7 +974,7 @@ Discovers RSS feeds for podcasts with a Castos-hosted website.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.castos.com` | Podcast (RSS) |
+| `{podcast}.castos.com` | Podcast (RSS) |
 
 ### Discourse
 
