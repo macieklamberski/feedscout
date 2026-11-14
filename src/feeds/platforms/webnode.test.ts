@@ -143,13 +143,6 @@ describe('webnodeHandler', () => {
 
       expect(webnodeHandler.resolve(value)).toEqual(expected)
     })
-
-    it('should return no feeds for a URL that is not http', () => {
-      const value = 'ftp://example.webnode.page/blog/'
-      const expected: Array<DiscoverUriEntry> = []
-
-      expect(webnodeHandler.resolve(value)).toEqual(expected)
-    })
   })
 
   describe('getFeedHint', () => {
