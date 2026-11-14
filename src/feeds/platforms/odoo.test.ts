@@ -37,13 +37,13 @@ describe('isOdooHeaders', () => {
 
 describe('parseOdooUrl', () => {
   it('should return the blog of a blog page', () => {
-    const expected: OdooUrl = { kind: 'blog', languagePath: '', blog: 'news-1' }
+    const expected: OdooUrl = { kind: 'blog', blog: 'news-1' }
 
     expect(parseOdooUrl('https://example.com/blog/news-1')).toEqual(expected)
   })
 
   it('should return the blog of a post page', () => {
-    const expected: OdooUrl = { kind: 'blog', languagePath: '', blog: 'news-1' }
+    const expected: OdooUrl = { kind: 'blog', blog: 'news-1' }
 
     expect(parseOdooUrl('https://example.com/blog/news-1/ubuntu-touch-q-a-199-4013')).toEqual(
       expected,
@@ -51,25 +51,25 @@ describe('parseOdooUrl', () => {
   })
 
   it('should return the blog of a post page on Odoo 13 and earlier', () => {
-    const expected: OdooUrl = { kind: 'blog', languagePath: '', blog: 'news-1' }
+    const expected: OdooUrl = { kind: 'blog', blog: 'news-1' }
 
     expect(parseOdooUrl('https://example.com/blog/news-1/post/a-post-12')).toEqual(expected)
   })
 
   it('should return the blog of a tag page', () => {
-    const expected: OdooUrl = { kind: 'blog', languagePath: '', blog: 'news-1' }
+    const expected: OdooUrl = { kind: 'blog', blog: 'news-1' }
 
     expect(parseOdooUrl('https://example.com/blog/news-1/tag/audiocast-1')).toEqual(expected)
   })
 
   it('should return the language prefix of a translated page', () => {
-    const expected: OdooUrl = { kind: 'blog', languagePath: '/fr_FR', blog: 'actualites-5' }
+    const expected: OdooUrl = { kind: 'blog', language: 'fr_FR', blog: 'actualites-5' }
 
     expect(parseOdooUrl('https://example.com/fr_FR/blog/actualites-5')).toEqual(expected)
   })
 
   it('should return a language prefix longer than three letters', () => {
-    const expected: OdooUrl = { kind: 'blog', languagePath: '/abcd', blog: 'news-1' }
+    const expected: OdooUrl = { kind: 'blog', language: 'abcd', blog: 'news-1' }
 
     expect(parseOdooUrl('https://example.com/abcd/blog/news-1')).toEqual(expected)
   })
