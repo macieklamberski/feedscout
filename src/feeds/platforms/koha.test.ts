@@ -97,27 +97,50 @@ describe('parseKohaUrl', () => {
     expect(parseKohaUrl(value)).toEqual(expected)
   })
 
-  it('should return undefined for a search page without a query', () => {
+  it('should return an OPAC page for a search page without a query', () => {
     const value = 'https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-search.pl?q=&idx=kw'
+    const expected: KohaUrl = { kind: 'opac', root: '' }
 
-    expect(parseKohaUrl(value)).toBeUndefined()
+    expect(parseKohaUrl(value)).toEqual(expected)
   })
 
-  it('should return undefined for the list of public lists', () => {
+  it('should return an OPAC page for the list of public lists', () => {
     const value = 'https://library-search.nics.gov.uk/cgi-bin/koha/opac-shelves.pl?op=list&public=1'
+    const expected: KohaUrl = { kind: 'opac', root: '' }
 
-    expect(parseKohaUrl(value)).toBeUndefined()
+    expect(parseKohaUrl(value)).toEqual(expected)
   })
 
-  it('should return undefined for a list page with a non-numeric shelf number', () => {
+  it('should return an OPAC page for a list page with a non-numeric shelf number', () => {
     const value =
       'https://library-search.nics.gov.uk/cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber=abc'
+    const expected: KohaUrl = { kind: 'opac', root: '' }
+
+    expect(parseKohaUrl(value)).toEqual(expected)
+  })
+
+  it('should return an OPAC page for the OPAC home page', () => {
+    const value = 'https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-main.pl'
+    const expected: KohaUrl = { kind: 'opac', root: '' }
+
+    expect(parseKohaUrl(value)).toEqual(expected)
+  })
+
+  it('should return an OPAC page for a record page under a base path', () => {
+    const value = 'https://example.edu/library/cgi-bin/koha/opac-detail.pl?biblionumber=1'
+    const expected: KohaUrl = { kind: 'opac', root: '/library' }
+
+    expect(parseKohaUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for a staff interface page', () => {
+    const value = 'https://biblioteca.unach.edu.ec/cgi-bin/koha/mainpage.pl'
 
     expect(parseKohaUrl(value)).toBeUndefined()
   })
 
-  it('should return undefined for the OPAC home page', () => {
-    const value = 'https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-main.pl'
+  it('should return undefined for a page outside the scripts', () => {
+    const value = 'https://biblioteca.unach.edu.ec/'
 
     expect(parseKohaUrl(value)).toBeUndefined()
   })
@@ -147,16 +170,46 @@ describe('kohaHandler', () => {
       expect(kohaHandler.match(value, otherHtml)).toBe(false)
     })
 
-    it('should not match a Koha page that names no feed', () => {
+    it('should match the OPAC home page', () => {
       const value = 'https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-main.pl'
+
+      expect(kohaHandler.match(value, kohaHtml)).toBe(true)
+    })
+
+    it('should not match a staff interface page', () => {
+      const value = 'https://biblioteca.unach.edu.ec/cgi-bin/koha/mainpage.pl'
 
       expect(kohaHandler.match(value, kohaHtml)).toBe(false)
     })
   })
 
   describe('resolve', () => {
-    it('should return empty array for a Koha page that names no feed', () => {
+    it('should return the news feed for the OPAC home page', () => {
       const value = 'https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-main.pl'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-news-rss.pl',
+          hint: { key: 'koha:news', label: 'News' },
+        },
+      ]
+
+      expect(kohaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the news feed for a search page without a query', () => {
+      const value = 'https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-search.pl?q=&idx=kw'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-news-rss.pl',
+          hint: { key: 'koha:news', label: 'News' },
+        },
+      ]
+
+      expect(kohaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return an empty array for a staff interface page', () => {
+      const value = 'https://biblioteca.unach.edu.ec/cgi-bin/koha/mainpage.pl'
 
       expect(kohaHandler.resolve(value)).toEqual([])
     })

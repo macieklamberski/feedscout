@@ -2463,6 +2463,7 @@ Discovers the feeds of a Koha library catalogue. Detected by the `/opac-tmpl/` a
 | `{root}/cgi-bin/koha/opac-search.pl?q={query}` | Search results, newest acquisitions first (RSS) · news<sup>†</sup> (RSS) |
 | `{root}/cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber={id}` | List<sup>†</sup> (RSS) · news<sup>†</sup> (RSS) |
 | `{root}/cgi-bin/koha/opac-showreviews.pl` | Recent comments (RSS) · news<sup>†</sup> (RSS) |
+| Any other `{root}/cgi-bin/koha/opac-{page}.pl`, as `opac-main.pl` | News<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 

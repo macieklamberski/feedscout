@@ -9,8 +9,8 @@ import { composeHint, digitsRegex, hasMarker } from '../../common/utils.js'
 
 const domains = ['kohacatalog.com']
 
-const scriptRegex =
-  /^(?<root>.*)\/cgi-bin\/koha\/(?<script>opac-search|opac-shelves|opac-showreviews)\.pl$/i
+// Every OPAC page is a script under /cgi-bin/koha/, as opac-main.pl or opac-detail.pl.
+const scriptRegex = /^(?<root>.*)\/cgi-bin\/koha\/(?<script>opac-[\w-]+)\.pl$/i
 
 // The feed link Koha prints drops the page's paging and sort for the newest acquisitions.
 const searchPageParams = ['count', 'format', 'offset', 'sort_by']
@@ -47,6 +47,7 @@ export type KohaUrl =
   | { kind: 'search'; root: string; params: string }
   | { kind: 'list'; root: string; shelfNumber: string }
   | { kind: 'comments'; root: string }
+  | { kind: 'opac'; root: string }
 
 // Every OPAC theme loads its assets from the install's `/opac-tmpl/` directory.
 export const isKohaHtml = (content: string): boolean => {
@@ -68,7 +69,7 @@ export const parseKohaUrl = (url: string): KohaUrl | undefined => {
     const terms = [...getQueryParamValues(params, 'q'), ...getQueryParamValues(params, 'limit')]
 
     if (terms.length === 0) {
-      return
+      return { kind: 'opac', root }
     }
 
     const searchParams = new URLSearchParams()
@@ -86,13 +87,17 @@ export const parseKohaUrl = (url: string): KohaUrl | undefined => {
     const shelfNumber = getQueryParam(params, 'shelfnumber')
 
     if (!shelfNumber || !digitsRegex.test(shelfNumber)) {
-      return
+      return { kind: 'opac', root }
     }
 
     return { kind: 'list', root, shelfNumber }
   }
 
-  return { kind: 'comments', root }
+  if (page === 'opac-showreviews') {
+    return { kind: 'comments', root }
+  }
+
+  return { kind: 'opac', root }
 }
 
 export const kohaHandler: PlatformHandler = {
@@ -140,7 +145,14 @@ export const kohaHandler: PlatformHandler = {
       ]
     }
 
-    return [page.getFeedEntry('koha:comments', { root }), page.getFeedEntry('koha:news', { root })]
+    if (parsed.kind === 'comments') {
+      return [
+        page.getFeedEntry('koha:comments', { root }),
+        page.getFeedEntry('koha:news', { root }),
+      ]
+    }
+
+    return [page.getFeedEntry('koha:news', { root })]
   },
 
   getFeedHint: ownFeeds.getFeedHint,
