@@ -59,14 +59,14 @@ describe('atyponHandler', () => {
 
     it('should return journal feed for journal page', () => {
       const value = 'https://www.tandfonline.com/toc/tprs20/current'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.tandfonline.com/action/showFeed?type=etoc&feed=rss&jc=tprs20',
-          hint: { key: 'atypon:journal', label: 'Journal' },
+          hint: { key: 'atypon:journal', label: 'Journal', format: 'rdf' },
         },
         {
           uri: 'https://www.tandfonline.com/action/showFeed?type=axatoc&feed=rss&jc=tprs20',
-          hint: { key: 'atypon:ahead-of-print', label: 'Ahead of print' },
+          hint: { key: 'atypon:ahead-of-print', label: 'Ahead of print', format: 'rdf' },
         },
       ]
 
@@ -75,18 +75,18 @@ describe('atyponHandler', () => {
 
     it('should return journal and most cited feeds for Wiley journal page', () => {
       const value = 'https://onlinelibrary.wiley.com/journal/15406261'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://onlinelibrary.wiley.com/action/showFeed?type=etoc&feed=rss&jc=15406261',
-          hint: { key: 'atypon:journal', label: 'Journal' },
+          hint: { key: 'atypon:journal', label: 'Journal', format: 'rss' },
         },
         {
           uri: 'https://onlinelibrary.wiley.com/action/showFeed?type=axatoc&feed=rss&jc=15406261',
-          hint: { key: 'atypon:ahead-of-print', label: 'Ahead of print' },
+          hint: { key: 'atypon:ahead-of-print', label: 'Ahead of print', format: 'rdf' },
         },
         {
           uri: 'https://onlinelibrary.wiley.com/feed/15406261/most-cited',
-          hint: { key: 'atypon:most-cited', label: 'Most cited' },
+          hint: { key: 'atypon:most-cited', label: 'Most cited', format: 'rss' },
         },
       ]
 
@@ -98,11 +98,11 @@ describe('atyponHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'http://www.tandfonline.com/action/showFeed?type=etoc&feed=rss&jc=tprs20',
-          hint: { key: 'atypon:journal', label: 'Journal' },
+          hint: { key: 'atypon:journal', label: 'Journal', format: 'rdf' },
         },
         {
           uri: 'http://www.tandfonline.com/action/showFeed?type=axatoc&feed=rss&jc=tprs20',
-          hint: { key: 'atypon:ahead-of-print', label: 'Ahead of print' },
+          hint: { key: 'atypon:ahead-of-print', label: 'Ahead of print', format: 'rdf' },
         },
       ]
 
@@ -120,48 +120,51 @@ describe('atyponHandler', () => {
     const values: Array<[string, DiscoverUriHint]> = [
       [
         'https://www.tandfonline.com/action/showFeed?type=etoc&feed=rss&jc=rdis20',
-        { key: 'atypon:journal', label: 'Journal' },
+        { key: 'atypon:journal', label: 'Journal', format: 'rdf' },
       ],
       [
         'https://onlinelibrary.wiley.com/action/showFeed?type=etoc&feed=rss&jc=14429993',
-        { key: 'atypon:journal', label: 'Journal' },
+        { key: 'atypon:journal', label: 'Journal', format: 'rss' },
       ],
       [
         'https://www.tandfonline.com/action/showFeed?ai=2a7&feed=rss&jc=pcem20&mi=3dg6fv&type=etoc&ui=0',
-        { key: 'atypon:journal', label: 'Journal' },
+        { key: 'atypon:journal', label: 'Journal', format: 'rdf' },
       ],
       [
         'https://www.science.org/action/showFeed/feed?jc=science&type=etoc',
-        { key: 'atypon:journal', label: 'Journal' },
+        { key: 'atypon:journal', label: 'Journal', format: 'rdf' },
       ],
-      ['https://www.tandfonline.com/feed/rss/uann20', { key: 'atypon:journal', label: 'Journal' }],
+      [
+        'https://www.tandfonline.com/feed/rss/uann20',
+        { key: 'atypon:journal', label: 'Journal', format: 'rdf' },
+      ],
       [
         'https://onlinelibrary.wiley.com/feed/16136829/most-recent',
-        { key: 'atypon:journal', label: 'Journal' },
+        { key: 'atypon:journal', label: 'Journal', format: 'rss' },
       ],
       [
         'https://onlinelibrary.wiley.com/feed/14429993/most-cited',
-        { key: 'atypon:most-cited', label: 'Most cited' },
+        { key: 'atypon:most-cited', label: 'Most cited', format: 'rss' },
       ],
       [
         'https://onlinelibrary.wiley.com/action/showMostCitedArticlesFeed?journalCode=14429993',
-        { key: 'atypon:most-cited', label: 'Most cited' },
+        { key: 'atypon:most-cited', label: 'Most cited', format: 'rss' },
       ],
       [
         'https://www.science.org/action/showFeed?feed=rss&jc=example&type=axatoc',
-        { key: 'atypon:ahead-of-print', label: 'Ahead of print' },
+        { key: 'atypon:ahead-of-print', label: 'Ahead of print', format: 'rdf' },
       ],
       [
         'https://www.science.org/action/showFeed/feed?jc=example&type=axatoc',
-        { key: 'atypon:ahead-of-print', label: 'Ahead of print' },
+        { key: 'atypon:ahead-of-print', label: 'Ahead of print', format: 'rdf' },
       ],
       [
         'https://dl.acm.org/action/showFeed?feed=rss&mi=abc123&query=%2526AllField%253Dexample&type=search&ui=0',
-        { key: 'atypon:search', label: 'Saved search' },
+        { key: 'atypon:search', label: 'Saved search', format: 'rdf' },
       ],
       [
         'https://dl.acm.org/action/showFeed/feed?mi=abc123&query=%2526AllField%253Dexample&type=search&ui=0',
-        { key: 'atypon:search', label: 'Saved search' },
+        { key: 'atypon:search', label: 'Saved search', format: 'rdf' },
       ],
       [
         'https://epubs.siam.org/action/showFeed?tagCode=topic-example&taxonomyCode=topics&type=searchTopic',
@@ -193,13 +196,18 @@ describe('atyponHandler', () => {
   })
 
   describe('own feeds through the Platform method', () => {
-    const journal: DiscoverUriHint = { key: 'atypon:journal', label: 'Journal' }
-    const mostCited: DiscoverUriHint = { key: 'atypon:most-cited', label: 'Most cited' }
+    const journal: DiscoverUriHint = { key: 'atypon:journal', label: 'Journal', format: 'rdf' }
+    const wileyJournal: DiscoverUriHint = { key: 'atypon:journal', label: 'Journal', format: 'rss' }
+    const mostCited: DiscoverUriHint = {
+      key: 'atypon:most-cited',
+      label: 'Most cited',
+      format: 'rss',
+    }
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://www.tandfonline.com/action/showFeed?type=etoc&feed=rss&jc=rdis20', journal],
       ['https://www.science.org/action/showFeed/feed?jc=science&type=etoc', journal],
       ['https://www.tandfonline.com/feed/rss/uann20', journal],
-      ['https://onlinelibrary.wiley.com/feed/16136829/most-recent', journal],
+      ['https://onlinelibrary.wiley.com/feed/16136829/most-recent', wileyJournal],
       ['https://onlinelibrary.wiley.com/feed/14429993/most-cited', mostCited],
       [
         'https://onlinelibrary.wiley.com/action/showMostCitedArticlesFeed?journalCode=14429993',
@@ -207,11 +215,11 @@ describe('atyponHandler', () => {
       ],
       [
         'http://www.science.org/action/showFeed?feed=rss&jc=example&type=axatoc',
-        { key: 'atypon:ahead-of-print', label: 'Ahead of print' },
+        { key: 'atypon:ahead-of-print', label: 'Ahead of print', format: 'rdf' },
       ],
       [
         'https://dl.acm.org/action/showFeed?feed=rss&mi=abc123&query=%2526AllField%253Dexample&type=search&ui=0',
-        { key: 'atypon:search', label: 'Saved search' },
+        { key: 'atypon:search', label: 'Saved search', format: 'rdf' },
       ],
       [
         'https://epubs.siam.org/action/showFeed?tagCode=topic-example&taxonomyCode=topics&type=searchTopic',
