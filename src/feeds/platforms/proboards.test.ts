@@ -47,7 +47,7 @@ describe('parseProboardsUrl', () => {
   ]
 
   it.each(forumUrls)('should return the forum for %s', (value) => {
-    const expected: ProboardsUrl = { kind: 'forum', forum: 'example' }
+    const expected: ProboardsUrl = { kind: 'forum' }
 
     expect(parseProboardsUrl(value)).toEqual(expected)
   })

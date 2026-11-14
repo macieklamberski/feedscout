@@ -5,7 +5,7 @@ import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type ProboardsUrl = { kind: 'forum'; forum: string } | { kind: 'customDomain' }
+export type ProboardsUrl = { kind: 'forum' } | { kind: 'customDomain' }
 
 const domains = ['proboards.com', 'freeforums.net', 'boards.net']
 
@@ -26,13 +26,11 @@ export const parseProboardsUrl = (url: string): ProboardsUrl | undefined => {
     return { kind: 'customDomain' }
   }
 
-  const forum = getTenantSubdomain(url, domains)
-
-  if (!forum) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 
-  return { kind: 'forum', forum }
+  return { kind: 'forum' }
 }
 
 export const proboardsHandler: PlatformHandler = {
