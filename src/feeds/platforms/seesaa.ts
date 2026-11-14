@@ -8,15 +8,7 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type SeesaaUrl = { kind: 'blog' }
 
-const domains = [
-  'seesaa.net',
-  'iiblog.jp',
-  'seesaa.blog',
-  'seesaa.space',
-  'sokuho.org',
-  'stablo.jp',
-  'xblog.jp',
-]
+const domains = [/^(?:seesaa\.(?:net|blog|space)|iiblog\.jp|sokuho\.org|stablo\.jp|xblog\.jp)$/]
 
 const feeds = definePlatformFeeds(
   [
