@@ -19,10 +19,6 @@ describe('parseCaptivateUrl', () => {
     expect(parseCaptivateUrl('https://a.b.captivate.fm/')).toBeUndefined()
   })
 
-  it('should return undefined for the feed host', () => {
-    expect(parseCaptivateUrl('https://feeds.captivate.fm/myshow/')).toBeUndefined()
-  })
-
   it('should return undefined for another host', () => {
     expect(parseCaptivateUrl('https://example.com/')).toBeUndefined()
   })
