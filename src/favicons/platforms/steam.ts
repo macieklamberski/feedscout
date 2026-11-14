@@ -1,4 +1,4 @@
-import { composeQuery, isNonEmptyString } from 'trousse'
+import { composeQuery, isAnyOf, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getMetaContent, hasClass } from '../../common/utils.js'
 import { parseSteamUrl } from '../../feeds/platforms/steam.js'
@@ -21,10 +21,8 @@ const findAppIcon = (content: string | undefined): string | undefined => {
 
 export const steamHandler: PlatformHandler = {
   match: (url) => {
-    const parsed = parseSteamUrl(url)
-
-    // The store front has no app or group whose icon it could show.
-    return parsed !== undefined && parsed.kind !== 'news'
+    // Only an app or a group has an icon to show.
+    return isAnyOf(parseSteamUrl(url)?.kind, ['app', 'group'])
   },
 
   // Age-gated store pages and store app news pages carry no app icon in their markup.
