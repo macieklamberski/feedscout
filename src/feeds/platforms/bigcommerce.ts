@@ -20,10 +20,17 @@ const domains = ['mybigcommerce.com']
 // claimed only on BigCommerce's own domain.
 const feeds = definePlatformFeeds(
   [
+    // Without `type`, each feed answers its RSS twin.
     {
       key: 'bigcommerce:category-new-products',
       template: '{scheme}://{host}/rss.php?categoryid={categoryId}&type=rss',
       format: 'rss',
+    },
+    {
+      key: 'bigcommerce:category-new-products',
+      template: '{scheme}://{host}/rss.php?categoryid={categoryId}',
+      format: 'rss',
+      isAlias: true,
     },
     {
       key: 'bigcommerce:category-new-products',
@@ -34,6 +41,12 @@ const feeds = definePlatformFeeds(
       key: 'bigcommerce:category-popular-products',
       template: '{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}&type=rss',
       format: 'rss',
+    },
+    {
+      key: 'bigcommerce:category-popular-products',
+      template: '{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}',
+      format: 'rss',
+      isAlias: true,
     },
     {
       key: 'bigcommerce:category-popular-products',
@@ -48,6 +61,12 @@ const feeds = definePlatformFeeds(
     },
     {
       key: 'bigcommerce:search',
+      template: '{scheme}://{host}/rss.php?action=searchproducts&search_query={query}',
+      format: 'rss',
+      isAlias: true,
+    },
+    {
+      key: 'bigcommerce:search',
       template: '{scheme}://{host}/rss.php?action=searchproducts&search_query={query}&type=atom',
       format: 'atom',
     },
@@ -55,6 +74,12 @@ const feeds = definePlatformFeeds(
       key: 'bigcommerce:new-products',
       template: '{scheme}://{host}/rss.php?type=rss',
       format: 'rss',
+    },
+    {
+      key: 'bigcommerce:new-products',
+      template: '{scheme}://{host}/rss.php',
+      format: 'rss',
+      isAlias: true,
     },
     {
       key: 'bigcommerce:new-products',
@@ -68,6 +93,12 @@ const feeds = definePlatformFeeds(
     },
     {
       key: 'bigcommerce:popular-products',
+      template: '{scheme}://{host}/rss.php?action=popularproducts',
+      format: 'rss',
+      isAlias: true,
+    },
+    {
+      key: 'bigcommerce:popular-products',
       template: '{scheme}://{host}/rss.php?action=popularproducts&type=atom',
       format: 'atom',
     },
@@ -75,6 +106,12 @@ const feeds = definePlatformFeeds(
       key: 'bigcommerce:featured-products',
       template: '{scheme}://{host}/rss.php?action=featuredproducts&type=rss',
       format: 'rss',
+    },
+    {
+      key: 'bigcommerce:featured-products',
+      template: '{scheme}://{host}/rss.php?action=featuredproducts',
+      format: 'rss',
+      isAlias: true,
     },
     {
       key: 'bigcommerce:featured-products',
@@ -88,51 +125,14 @@ const feeds = definePlatformFeeds(
     },
     {
       key: 'bigcommerce:blog',
-      template: '{scheme}://{host}/rss.php?action=newblogs&type=atom',
-      format: 'atom',
-    },
-    // Without `type`, each feed answers its RSS twin.
-    {
-      key: 'bigcommerce:category-new-products',
-      template: '{scheme}://{host}/rss.php?categoryid={categoryId}',
-      format: 'rss',
-      isAlias: true,
-    },
-    {
-      key: 'bigcommerce:category-popular-products',
-      template: '{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}',
-      format: 'rss',
-      isAlias: true,
-    },
-    {
-      key: 'bigcommerce:search',
-      template: '{scheme}://{host}/rss.php?action=searchproducts&search_query={query}',
-      format: 'rss',
-      isAlias: true,
-    },
-    {
-      key: 'bigcommerce:popular-products',
-      template: '{scheme}://{host}/rss.php?action=popularproducts',
-      format: 'rss',
-      isAlias: true,
-    },
-    {
-      key: 'bigcommerce:featured-products',
-      template: '{scheme}://{host}/rss.php?action=featuredproducts',
-      format: 'rss',
-      isAlias: true,
-    },
-    {
-      key: 'bigcommerce:blog',
       template: '{scheme}://{host}/rss.php?action=newblogs',
       format: 'rss',
       isAlias: true,
     },
     {
-      key: 'bigcommerce:new-products',
-      template: '{scheme}://{host}/rss.php',
-      format: 'rss',
-      isAlias: true,
+      key: 'bigcommerce:blog',
+      template: '{scheme}://{host}/rss.php?action=newblogs&type=atom',
+      format: 'atom',
     },
   ],
   { domains },
