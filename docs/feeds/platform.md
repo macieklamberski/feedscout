@@ -2684,7 +2684,7 @@ Discovers the Bazar entry feeds and the recent changes feed of a YesWiki wiki. D
 
 ### Forumotion
 
-Discovers the feeds of a Forumotion forum, also branded Forumactif, Foroactivo, Forumeiros and Ahlamontada. Detected by the `_userdata` script every page prints, so custom domains are covered. The forum comes from the page's breadcrumb.
+Discovers the feeds of a Forumotion forum, also branded Actieforum, Ahlamontada, Foroactivo, Forumactif, Forumattivo and Forumeiros. Detected by the `_userdata` script every page prints, so custom domains are covered. The forum comes from the page's breadcrumb.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|

@@ -214,8 +214,28 @@ describe('forumotionHandler', () => {
         { key: 'forumotion:forum', label: 'Forum', format: 'rss' },
       ],
       [
-        'https://example.1fr1.net/feed/?f=12&type=atom',
+        'https://example.ahlamontada.com/feed/?f=12&type=atom',
         { key: 'forumotion:forum', label: 'Forum', format: 'atom' },
+      ],
+      [
+        'https://example.ahlamontada.net/feed/',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
+      ],
+      [
+        'https://example.foroactivo.com/feed/?f=12',
+        { key: 'forumotion:forum', label: 'Forum', format: 'rss' },
+      ],
+      [
+        'https://example.foroactivo.com.es/feed/',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
+      ],
+      [
+        'https://example.forumattivo.it/feed/?type=atom',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'atom' },
+      ],
+      [
+        'https://example.actieforum.com/feed/',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
       ],
       [
         'https://example.forumactif.com/rss',
@@ -301,8 +321,14 @@ describe('forumotionHandler', () => {
       expect(forumotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return undefined for a feed on a free domain without the brand name', () => {
+      const value = 'https://example.1fr1.net/feed/'
+
+      expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a suffix outside the domain patterns', () => {
-      const value = 'https://example.forumgratuit.net/feed/'
+      const value = 'https://example.forumeiros.org/feed/'
 
       expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -315,7 +341,7 @@ describe('forumotionHandler', () => {
         { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
       ],
       [
-        'https://example.forumgratuit.ro/feed/?type=atom',
+        'https://example.ahlamontada.com/feed/?type=atom',
         { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'atom' },
       ],
       [
