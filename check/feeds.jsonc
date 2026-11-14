@@ -28,7 +28,7 @@
   "arena": {
     "arena:channel": "https://www.are.na/meg-miller/good-sign-offs/feed/rss",
     "arena:editorial": "https://www.are.na/editorial/feed/rss",
-    "arena:profile": "https://www.are.na/charles-broskoski/feed/rss"
+    "arena:profile": "https://www.are.na/cab/feed/rss"
   },
   "art19": {
     "art19:show": "https://rss.art19.com/american-scandal"
@@ -1562,7 +1562,7 @@
     "podlove:podcast": ["https://freakshow.fm/feed/mp3", "https://cre.fm/feed/opus"]
   },
   "podomatic": {
-    "podomatic:show": "https://asquaredpodcast10.podomatic.com/rss2.xml"
+    "podomatic:show": "https://0282.podomatic.com/rss2.xml"
   },
   "postachio": {
     "postachio:posts": "https://help.postach.io/feed.xml"
