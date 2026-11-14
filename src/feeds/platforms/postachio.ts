@@ -11,7 +11,7 @@ const domains = ['postach.io']
 const feeds = definePlatformFeeds(
   [
     { key: 'postachio:posts', template: '{scheme}://{host}/feed.xml' },
-    { key: 'postachio:posts', template: '{scheme}://{host}/feed' },
+    { key: 'postachio:posts', template: '{scheme}://{host}/feed', isAlias: true },
   ],
   { domains },
 )
