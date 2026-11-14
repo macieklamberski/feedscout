@@ -203,11 +203,10 @@ describe('webnodeHandler', () => {
       expect(webnodeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return the hint for a feed on www in front of a site', () => {
+    it('should return undefined for a feed on www in front of a site', () => {
       const value = 'https://www.example.webnode.page/rss/all.xml'
-      const expected: DiscoverUriHint = { key: 'webnode:articles', label: 'All articles' }
 
-      expect(webnodeHandler.getFeedHint?.(value)).toEqual(expected)
+      expect(webnodeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return the hint for a country domain outside the stored ones', () => {
@@ -217,10 +216,11 @@ describe('webnodeHandler', () => {
       expect(webnodeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a suffix outside the domain pattern', () => {
+    it('should return the hint for a feed on a co. country domain', () => {
       const value = 'https://example.webnode.co.uk/rss/all.xml'
+      const expected: DiscoverUriHint = { key: 'webnode:articles', label: 'All articles' }
 
-      expect(webnodeHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(webnodeHandler.getFeedHint?.(value)).toEqual(expected)
     })
   })
 

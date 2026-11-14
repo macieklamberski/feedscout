@@ -1,16 +1,15 @@
 import { getPathSegments, isAnyOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, hasMarker } from '../../common/utils.js'
+import { findElement, getBrandDomainRegex, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers article, site (html), partly covers section.
 
 export type WebnodeUrl = { kind: 'section'; section: string } | { kind: 'site' }
 
-// Webnode's two-letter and `com.xx` country domains, with `webnode.page` and `webnode.cat`.
-// length: keeps any suffix but a two-letter country code out
-const domains = [/^webnode\.(?:[a-z]{2}|com\.[a-z]{2}|page|cat)$/]
+// Webnode's country domains, with `webnode.page` and `webnode.cat`.
+const domains = [getBrandDomainRegex('webnode')]
 
 const clientScriptPrefix = 'https://d11bh4d8fhuq47.cloudfront.net/_system/client/'
 
