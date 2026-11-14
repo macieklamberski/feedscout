@@ -343,6 +343,7 @@ describe('ucozHandler', () => {
       ['https://example.ucoz.club/stuff/rss/', { key: 'ucoz:stuff', label: 'Online games' }],
       ['https://example.ucoz.site/forum/rss/', { key: 'ucoz:forum', label: 'Forum' }],
       ['https://example.ucoz.kz/forum/0-0-0-37', { key: 'ucoz:forum', label: 'Forum' }],
+      ['http://www.example.ucoz.ru/news/rss', { key: 'ucoz:news', label: 'News' }],
       [
         'https://example.ucoz.net/forum/12-0-0-37',
         { key: 'ucoz:forum-section', label: 'Forum section' },
