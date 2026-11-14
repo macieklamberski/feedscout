@@ -66,6 +66,42 @@ describe('parseHabrUrl', () => {
     expect(parseHabrUrl('https://habr.com/ru/companies/users/articles/')).toEqual(expected)
   })
 
+  it('should return the article for an article page', () => {
+    const expected: HabrUrl = { kind: 'article', language: 'ru', post: '123456' }
+
+    expect(parseHabrUrl('https://habr.com/ru/articles/123456/')).toEqual(expected)
+  })
+
+  it('should return the article and its company for a company article page', () => {
+    const value = 'https://habr.com/ru/companies/example/articles/123456/'
+    const expected: HabrUrl = {
+      kind: 'article',
+      language: 'ru',
+      post: '123456',
+      company: 'example',
+    }
+
+    expect(parseHabrUrl(value)).toEqual(expected)
+  })
+
+  it('should return the article for a legacy company blog post', () => {
+    const value = 'https://habr.com/ru/company/example/blog/123456/'
+    const expected: HabrUrl = {
+      kind: 'article',
+      language: 'ru',
+      post: '123456',
+      company: 'example',
+    }
+
+    expect(parseHabrUrl(value)).toEqual(expected)
+  })
+
+  it('should return the flow for a flow page', () => {
+    const expected: HabrUrl = { kind: 'flow', language: 'ru', flow: 'develop' }
+
+    expect(parseHabrUrl('https://habr.com/ru/flows/develop/articles/')).toEqual(expected)
+  })
+
   it('should return the home page with its language for site-wide pages', () => {
     const expected: HabrUrl = { kind: 'home', language: 'en' }
 
@@ -215,6 +251,70 @@ describe('habrHandler', () => {
       expect(habrHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the comments feed for an article page', () => {
+      const value = 'https://habr.com/ru/articles/123456/'
+      const expected = [
+        {
+          uri: 'https://habr.com/ru/rss/publications/123456/',
+          hint: { key: 'habr:comments', label: 'Comments' },
+        },
+        {
+          uri: 'https://habr.com/ru/rss/articles/',
+          hint: { key: 'habr:articles', label: 'Articles' },
+        },
+        {
+          uri: 'https://habr.com/ru/rss/news/',
+          hint: { key: 'habr:news', label: 'News' },
+        },
+      ]
+
+      expect(habrHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the comments and company feeds for a company article page', () => {
+      const value = 'https://habr.com/en/companies/example/articles/123456/'
+      const expected = [
+        {
+          uri: 'https://habr.com/en/rss/publications/123456/',
+          hint: { key: 'habr:comments', label: 'Comments' },
+        },
+        {
+          uri: 'https://habr.com/en/rss/companies/example/articles/',
+          hint: { key: 'habr:company', label: 'Company' },
+        },
+        {
+          uri: 'https://habr.com/en/rss/articles/',
+          hint: { key: 'habr:articles', label: 'Articles' },
+        },
+        {
+          uri: 'https://habr.com/en/rss/news/',
+          hint: { key: 'habr:news', label: 'News' },
+        },
+      ]
+
+      expect(habrHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the flow feed for a flow page', () => {
+      const value = 'https://habr.com/ru/flows/develop/'
+      const expected = [
+        {
+          uri: 'https://habr.com/ru/rss/flows/develop/articles/',
+          hint: { key: 'habr:flow', label: 'Flow' },
+        },
+        {
+          uri: 'https://habr.com/ru/rss/articles/',
+          hint: { key: 'habr:articles', label: 'Articles' },
+        },
+        {
+          uri: 'https://habr.com/ru/rss/news/',
+          hint: { key: 'habr:news', label: 'News' },
+        },
+      ]
+
+      expect(habrHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should fall back to the default language', () => {
       const value = 'https://habr.com/'
       const expected = [
@@ -237,6 +337,13 @@ describe('habrHandler', () => {
   })
 
   describe('getFeedHint', () => {
+    it('should return the comments hint for the post feed an article page links', () => {
+      const value = 'https://habr.com/ru/rss/post/123456/?fl=ru'
+      const expected: DiscoverUriHint = { key: 'habr:comments', label: 'Comments' }
+
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the user hint for a user feed', () => {
       const value = 'https://habr.com/en/rss/users/alice/posts/'
       const expected: DiscoverUriHint = { key: 'habr:user', label: 'User' }
@@ -435,6 +542,7 @@ describe('habrHandler', () => {
         { key: 'habr:hub-posts', label: 'Hub posts' },
       ],
       ['http://habr.com/ru/rss/flows/develop/articles', { key: 'habr:flow', label: 'Flow' }],
+      ['https://habr.com/ru/rss/post/123456/?fl=ru', { key: 'habr:comments', label: 'Comments' }],
       ['https://habr.com/ru/rss/tag/haskell/', { key: 'habr:tag', label: 'Tag' }],
       ['http://habr.com/rss/tag/emacs/', { key: 'habr:tag', label: 'Tag' }],
       [

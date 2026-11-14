@@ -1877,13 +1877,16 @@ Discovers the feeds of a LearnKu community.
 
 ### Habr
 
-Discovers the feeds of a Habr hub, user or company, plus the site articles and news feeds.
+Discovers the feeds of a Habr hub, user, company, flow or article, plus the site articles and news feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `habr.com/{lang}/hubs/{hub}` | Hub · hub posts<sup>†</sup> · articles · news<sup>†</sup> (RSS) |
 | `habr.com/{lang}/users/{user}` | User · articles · news<sup>†</sup> (RSS) |
 | `habr.com/{lang}/companies/{company}` | Company · articles · news<sup>†</sup> (RSS) |
+| `habr.com/{lang}/articles/{id}` | Comments · articles · news<sup>†</sup> (RSS) |
+| `habr.com/{lang}/companies/{company}/articles/{id}` | Comments · company · articles · news<sup>†</sup> (RSS) |
+| `habr.com/{lang}/flows/{flow}` | Flow · articles · news<sup>†</sup> (RSS) |
 | Any other page | Articles · news<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
