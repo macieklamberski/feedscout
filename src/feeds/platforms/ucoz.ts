@@ -1,7 +1,12 @@
 import { getAnyOf, getPathSegments, isHostOrSubdomainOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import {
+  getBrandDomainRegex,
+  getCookieNames,
+  getTenantSubdomain,
+  hasMarker,
+} from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -14,7 +19,7 @@ export type UcozUrl =
 
 // uCoz's own `ucoz.*` domains. A site on uCoz's free domains, such as at.ua or narod.ru, or on its
 // own domain is known only by its marker, so its feeds are built but not claimed.
-const domains = [/^ucoz\.(?:[a-z]{2}|co\.uk|com\.br|com|net|org|club|site)$/]
+const domains = [getBrandDomainRegex('ucoz')]
 
 // uCoz names its cookie `{cluster}{site}uCoz` after the site's system subdomain, custom domains
 // too, where the cluster is a digit or, on narod.ru, a letter.

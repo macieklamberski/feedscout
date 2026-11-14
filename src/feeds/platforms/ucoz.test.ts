@@ -280,11 +280,10 @@ describe('ucozHandler', () => {
       expect(ucozHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the module hint for a feed on the www host of a site', () => {
+    it('should return undefined for a feed on the www host of a site', () => {
       const value = 'http://www.example.ucoz.ru/load/rss'
-      const expected: DiscoverUriHint = { key: 'ucoz:load', label: 'Files' }
 
-      expect(ucozHandler.getFeedHint?.(value)).toEqual(expected)
+      expect(ucozHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return the module hint for a feed with a trailing slash', () => {
@@ -335,7 +334,7 @@ describe('ucozHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://example.ucoz.ru/news/rss/', { key: 'ucoz:news', label: 'News' }],
       ['https://example.ucoz.ua/publ/rss/', { key: 'ucoz:publ', label: 'Articles' }],
-      ['http://www.example.ucoz.ru/load/rss', { key: 'ucoz:load', label: 'Files' }],
+      ['http://example.ucoz.ru/load/rss/', { key: 'ucoz:load', label: 'Files' }],
       ['https://example.ucoz.org/photo/rss/', { key: 'ucoz:photo', label: 'Photos' }],
       ['https://example.ucoz.com.br/blog/rss/', { key: 'ucoz:blog', label: 'Blog' }],
       ['https://example.ucoz.de/dir/rss/', { key: 'ucoz:dir', label: 'Site catalog' }],
