@@ -164,6 +164,18 @@ describe('definePlatformFeeds', () => {
     expect(throwing).toThrow('No canonical template above the example:posts alias')
   })
 
+  it('should accept an alias row below a canonical row of its key other than the first', () => {
+    const defining = () => {
+      return definePlatformFeeds([
+        { key: 'example:posts', template: 'https://feeds.example.com/{username}/{sort}.rss' },
+        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
+        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
+      ])
+    }
+
+    expect(defining).not.toThrow()
+  })
+
   it('should throw for an alias row below another alias row only', () => {
     const throwing = () => {
       return definePlatformFeeds([
