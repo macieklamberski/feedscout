@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { BehanceUrl } from './behance.js'
 import { behanceHandler, parseBehanceUrl } from './behance.js'
 
@@ -83,6 +86,13 @@ describe('parseBehanceUrl', () => {
     expect(parseBehanceUrl('https://www.behance.net/Galleries/')).toEqual(expected)
   })
 
+  it('should read the bare feeds path as a profile, as Behance has no feed there', () => {
+    const value = 'https://www.behance.net/feeds'
+    const expected: BehanceUrl = { kind: 'profile', username: 'feeds' }
+
+    expect(parseBehanceUrl(value)).toEqual(expected)
+  })
+
   it('should return undefined for another host', () => {
     expect(parseBehanceUrl('https://example.com/johndoe')).toBeUndefined()
   })
@@ -163,5 +173,102 @@ describe('behanceHandler', () => {
 
       expect(behanceHandler.resolve(value)).toEqual(expected)
     })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the portfolio hint for a portfolio feed', () => {
+      const value = 'https://www.behance.net/feeds/user?username=almostblack'
+      const expected: DiscoverUriHint = { key: 'behance:portfolio', label: 'Portfolio' }
+
+      expect(behanceHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the portfolio hint for a portfolio feed without www', () => {
+      const value = 'https://behance.net/feeds/user?username=angshnitul925b'
+      const expected: DiscoverUriHint = { key: 'behance:portfolio', label: 'Portfolio' }
+
+      expect(behanceHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the portfolio hint for a portfolio feed over http', () => {
+      const value = 'http://www.behance.net/feeds/user?username=almostblack'
+      const expected: DiscoverUriHint = { key: 'behance:portfolio', label: 'Portfolio' }
+
+      expect(behanceHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the portfolio hint for a portfolio feed with another parameter', () => {
+      const value = 'https://www.behance.net/feeds/user?username=almostblack&content=appreciated'
+      const expected: DiscoverUriHint = { key: 'behance:portfolio', label: 'Portfolio' }
+
+      expect(behanceHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the projects hint for the projects feed', () => {
+      const value = 'https://www.behance.net/feeds/projects'
+      const expected: DiscoverUriHint = { key: 'behance:projects', label: 'Featured projects' }
+
+      expect(behanceHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a user feed without a username', () => {
+      const value = 'https://www.behance.net/feeds/user'
+
+      expect(behanceHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the bare feeds path', () => {
+      const value = 'https://www.behance.net/feeds'
+
+      expect(behanceHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a profile page', () => {
+      const value = 'https://www.behance.net/almostblack'
+
+      expect(behanceHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the feed path on another host', () => {
+      const value = 'https://example.com/feeds/projects'
+
+      expect(behanceHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+})
+
+describe('discoverUrisFromPlatform', () => {
+  const ownFeeds: Array<[string, string, string]> = [
+    ['https://www.behance.net/feeds/user?username=almostblack', 'behance:portfolio', 'Portfolio'],
+    ['https://behance.net/feeds/user?username=angshnitul925b', 'behance:portfolio', 'Portfolio'],
+    ['https://www.behance.net/feeds/projects', 'behance:projects', 'Featured projects'],
+  ]
+
+  it.each(ownFeeds)('should return %s itself as %s', async (value, key, label) => {
+    const options = {
+      ...defaultPlatformOptions,
+      handlers: [behanceHandler],
+      baseUrl: value,
+    }
+    const expected: Array<DiscoverUriEntry> = [{ uri: value, hint: { key, label } }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it('should read the bare feeds path as a profile page', async () => {
+    const value = 'https://www.behance.net/feeds'
+    const options = {
+      ...defaultPlatformOptions,
+      handlers: [behanceHandler],
+      baseUrl: value,
+    }
+    const expected: Array<DiscoverUriEntry> = [
+      {
+        uri: 'https://www.behance.net/feeds/user?username=feeds',
+        hint: { key: 'behance:portfolio', label: 'Portfolio' },
+      },
+    ]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 })
