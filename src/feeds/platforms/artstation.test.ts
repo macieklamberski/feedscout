@@ -166,21 +166,21 @@ describe('artstationHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the portfolio hint for a portfolio feed', () => {
-      const value = 'https://www.artstation.com/aj3dvfx.rss'
+      const value = 'https://www.artstation.com/alice3dvfx.rss'
       const expected: DiscoverUriHint = { key: 'artstation:portfolio', label: 'Portfolio' }
 
       expect(artstationHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the portfolio hint for a portfolio feed without www', () => {
-      const value = 'https://artstation.com/alexpernau.rss'
+      const value = 'https://artstation.com/bobpainter.rss'
       const expected: DiscoverUriHint = { key: 'artstation:portfolio', label: 'Portfolio' }
 
       expect(artstationHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the portfolio hint for a portfolio feed over http', () => {
-      const value = 'http://www.artstation.com/alexpernau.rss'
+      const value = 'http://www.artstation.com/bobpainter.rss'
       const expected: DiscoverUriHint = { key: 'artstation:portfolio', label: 'Portfolio' }
 
       expect(artstationHandler.getFeedHint?.(value)).toEqual(expected)
@@ -211,7 +211,7 @@ describe('artstationHandler', () => {
     })
 
     it('should return undefined for a portfolio page', () => {
-      const value = 'https://www.artstation.com/aj3dvfx'
+      const value = 'https://www.artstation.com/alice3dvfx'
 
       expect(artstationHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -223,19 +223,19 @@ describe('artstationHandler', () => {
     })
 
     it('should return undefined for a feed path on a portfolio subdomain', () => {
-      const value = 'https://aj3dvfx.artstation.com/aj3dvfx.rss'
+      const value = 'https://alice3dvfx.artstation.com/alice3dvfx.rss'
 
       expect(artstationHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed in a nested path', () => {
-      const value = 'https://www.artstation.com/aj3dvfx/albums.rss'
+      const value = 'https://www.artstation.com/alice3dvfx/albums.rss'
 
       expect(artstationHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/aj3dvfx.rss'
+      const value = 'https://example.com/alice3dvfx.rss'
 
       expect(artstationHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -244,7 +244,7 @@ describe('artstationHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://www.artstation.com/aj3dvfx.rss',
+        'https://www.artstation.com/alice3dvfx.rss',
         { key: 'artstation:portfolio', label: 'Portfolio' },
       ],
       ['https://www.artstation.com/artwork.rss', { key: 'artstation:artwork', label: 'Artwork' }],
