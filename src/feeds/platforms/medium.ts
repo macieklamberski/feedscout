@@ -23,19 +23,16 @@ const publicationRegex = /^\/([^/@][^/]+)/
 const subdomainTagRegex = /^\/tagged\/([^/]+)/i
 
 // The `@` row comes before the publication row, which would read `@{username}` as a publication.
-// A user feed is also served at `/@{username}/feed`.
-const feeds = definePlatformFeeds([
-  { key: 'medium:posts', template: 'https://medium.com/feed/@{username}' },
-  { key: 'medium:posts', template: 'https://medium.com/@{username}/feed' },
-  { key: 'medium:tag', template: 'https://medium.com/feed/tag/{tag}' },
-  { key: 'medium:tagged', template: 'https://medium.com/feed/{publication}/tagged/{tag}' },
-  { key: 'medium:publication', template: 'https://medium.com/feed/{publication}' },
-])
-
-// A table builds the first row of a key, so the subdomain feeds under the same keys get their own.
-const subdomainFeeds = definePlatformFeeds(
+// A user feed is also served at `/@{username}/feed`. A user subdomain serves its feeds on its own
+// host, since medium.com/feed/{subdomain} answers 404.
+const feeds = definePlatformFeeds(
   [
+    { key: 'medium:posts', template: 'https://medium.com/feed/@{username}' },
+    { key: 'medium:posts', template: 'https://medium.com/@{username}/feed' },
+    { key: 'medium:tag', template: 'https://medium.com/feed/tag/{tag}' },
+    { key: 'medium:tagged', template: 'https://medium.com/feed/{publication}/tagged/{tag}' },
     { key: 'medium:tagged', template: '{scheme}://{host}/feed/tagged/{tag}' },
+    { key: 'medium:publication', template: 'https://medium.com/feed/{publication}' },
     { key: 'medium:publication', template: '{scheme}://{host}/feed' },
   ],
   { domains },
@@ -123,9 +120,7 @@ export const mediumHandler: PlatformHandler = {
       return [feeds.getFeedEntry('medium:publication', { publication: parsed.publication })]
     }
 
-    // A user subdomain answers 404 at medium.com/feed/{subdomain}, and its own host serves
-    // the feed.
-    const page = subdomainFeeds.forUrl(url)
+    const page = feeds.forUrl(url)
 
     if (!page) {
       return []
@@ -138,7 +133,5 @@ export const mediumHandler: PlatformHandler = {
     return [page.getFeedEntry('medium:publication')]
   },
 
-  getFeedHint: (url) => {
-    return feeds.getFeedHint(url) ?? subdomainFeeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
