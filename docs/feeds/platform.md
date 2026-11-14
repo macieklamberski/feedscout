@@ -1344,13 +1344,13 @@ Discovers RSS 2.0 and RDF feeds for Seesaa Blog on `*.seesaa.net` and its other 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{blog}.seesaa.net` | Posts (RSS 2.0 + RDF) |
-| `{blog}.iiblog.jp` | Posts (RSS 2.0 + RDF) |
-| `{blog}.seesaa.blog` | Posts (RSS 2.0 + RDF) |
-| `{blog}.seesaa.space` | Posts (RSS 2.0 + RDF) |
-| `{blog}.sokuho.org` | Posts (RSS 2.0 + RDF) |
-| `{blog}.stablo.jp` | Posts (RSS 2.0<sup>†</sup> + RDF) |
-| `{blog}.xblog.jp` | Posts (RSS 2.0 + RDF) |
+| `{blog}.seesaa.net` | Posts (RSS 2.0 + RDF) · podcast |
+| `{blog}.iiblog.jp` | Posts (RSS 2.0 + RDF) · podcast |
+| `{blog}.seesaa.blog` | Posts (RSS 2.0 + RDF) · podcast |
+| `{blog}.seesaa.space` | Posts (RSS 2.0 + RDF) · podcast |
+| `{blog}.sokuho.org` | Posts (RSS 2.0 + RDF) · podcast |
+| `{blog}.stablo.jp` | Posts (RSS 2.0<sup>†</sup> + RDF) · podcast |
+| `{blog}.xblog.jp` | Posts (RSS 2.0 + RDF) · podcast |
 
 <sup>†</sup> *Found only by the Platform method.*
 
