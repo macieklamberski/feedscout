@@ -4,7 +4,7 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type ReformalUrl = { kind: 'project'; project: string; domain: string }
+export type ReformalUrl = { kind: 'project' }
 
 const domains = ['reformal.ru', 'idea.informer.com']
 
@@ -16,13 +16,11 @@ const feeds = definePlatformFeeds(
 )
 
 export const parseReformalUrl = (url: string): ReformalUrl | undefined => {
-  for (const domain of domains) {
-    const project = getTenantSubdomain(url, [domain])
-
-    if (project) {
-      return { kind: 'project', project, domain }
-    }
+  if (!getTenantSubdomain(url, domains)) {
+    return
   }
+
+  return { kind: 'project' }
 }
 
 export const reformalHandler: PlatformHandler = {

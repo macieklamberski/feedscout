@@ -6,23 +6,19 @@ import { parseReformalUrl, type ReformalUrl, reformalHandler } from './reformal.
 
 describe('parseReformalUrl', () => {
   it('should return the project for a reformal.ru subdomain', () => {
-    const expected: ReformalUrl = { kind: 'project', project: 'example', domain: 'reformal.ru' }
+    const expected: ReformalUrl = { kind: 'project' }
 
     expect(parseReformalUrl('https://example.reformal.ru/')).toEqual(expected)
   })
 
   it('should return the project for an idea.informer.com subdomain', () => {
-    const expected: ReformalUrl = {
-      kind: 'project',
-      project: 'example',
-      domain: 'idea.informer.com',
-    }
+    const expected: ReformalUrl = { kind: 'project' }
 
     expect(parseReformalUrl('https://example.idea.informer.com/')).toEqual(expected)
   })
 
   it('should return the project for a page inside the project', () => {
-    const expected: ReformalUrl = { kind: 'project', project: 'example', domain: 'reformal.ru' }
+    const expected: ReformalUrl = { kind: 'project' }
 
     expect(parseReformalUrl('https://example.reformal.ru/proj/?ia=123456')).toEqual(expected)
   })
