@@ -149,7 +149,7 @@ describe('odyseeHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the videos hint for a feed with a full claim ID', () => {
-      const value = 'https://odysee.com/$/rss/@BobRain:2feae5c0e5c62d5533e0dd78e58a7684ca94f215'
+      const value = 'https://odysee.com/$/rss/@BobRain:0a1b2c3d4e5f60718293a4b5c6d7e8f901234567'
       const expected: DiscoverUriHint = { key: 'odysee:videos', label: 'Videos' }
 
       expect(odyseeHandler.getFeedHint?.(value)).toEqual(expected)
@@ -205,7 +205,7 @@ describe('odyseeHandler', () => {
   describe('own feeds through the Platform method', () => {
     const hint: DiscoverUriHint = { key: 'odysee:videos', label: 'Videos' }
     const ownFeeds = [
-      'https://odysee.com/$/rss/@BobRain:2feae5c0e5c62d5533e0dd78e58a7684ca94f215',
+      'https://odysee.com/$/rss/@BobRain:0a1b2c3d4e5f60718293a4b5c6d7e8f901234567',
       'https://odysee.com/$/rss/@alice.example:5',
       'https://odysee.com/$/rss/@CarolAsociaci%C3%B3n:6',
       'https://odysee.com/$/rss/@lbry/3fda836a92faaceedfe398225fb9b2ee2ed1f01a',
