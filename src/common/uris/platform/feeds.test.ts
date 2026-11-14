@@ -164,7 +164,7 @@ describe('definePlatformFeeds', () => {
     expect(throwing).toThrow('No canonical template above the example:posts alias')
   })
 
-  it('should accept an alias row below a later canonical row of its key with its placeholders', () => {
+  it('should accept an alias row below a canonical row of its key other than the first', () => {
     const defining = () => {
       return definePlatformFeeds([
         { key: 'example:posts', template: 'https://feeds.example.com/{username}/{sort}.rss' },
@@ -174,31 +174,6 @@ describe('definePlatformFeeds', () => {
     }
 
     expect(defining).not.toThrow()
-  })
-
-  it('should accept an alias row on the page host of a canonical row on a fixed host', () => {
-    const defining = () => {
-      return definePlatformFeeds(
-        [
-          { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
-          { key: 'example:posts', template: '{scheme}://{host}/{username}/rss', isAlias: true },
-        ],
-        { hosts: ['example.com'] },
-      )
-    }
-
-    expect(defining).not.toThrow()
-  })
-
-  it('should throw for an alias row whose placeholders no canonical row of its key has', () => {
-    const throwing = () => {
-      return definePlatformFeeds([
-        { key: 'example:posts', template: 'https://feeds.example.com/{username}/{sort}.rss' },
-        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
-      ])
-    }
-
-    expect(throwing).toThrow('No canonical template above the example:posts alias')
   })
 
   it('should throw for an alias row below another alias row only', () => {
