@@ -1,6 +1,7 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, wordOrHyphenRegex } from '../../common/utils.js'
+import { wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers article, blomaga, channel, live, video.
@@ -11,6 +12,12 @@ export type NiconicoUrl =
   | { kind: 'blomaga'; channel: string }
 
 export const hosts = ['ch.nicovideo.jp']
+
+const feeds = definePlatformFeeds([
+  { key: 'niconico:videos', template: 'https://ch.nicovideo.jp/{channel}/video?rss=2.0' },
+  { key: 'niconico:live', template: 'https://ch.nicovideo.jp/{channel}/live?rss=2.0' },
+  { key: 'niconico:blog', template: 'https://ch.nicovideo.jp/{channel}/blomaga/nico/feed' },
+])
 
 export const parseNiconicoUrl = (url: string): NiconicoUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -46,27 +53,30 @@ export const niconicoHandler: PlatformHandler = {
       return []
     }
 
-    const video = {
-      uri: `https://ch.nicovideo.jp/${parsed.channel}/video?rss=2.0`,
-      hint: composeHint('niconico:videos'),
-    }
-    const live = {
-      uri: `https://ch.nicovideo.jp/${parsed.channel}/live?rss=2.0`,
-      hint: composeHint('niconico:live'),
-    }
-    const blog = {
-      uri: `https://ch.nicovideo.jp/${parsed.channel}/blomaga/nico/feed`,
-      hint: composeHint('niconico:blog'),
-    }
+    const params = { channel: parsed.channel }
 
     if (parsed.kind === 'live') {
-      return [live, video, blog]
+      return [
+        feeds.getFeedEntry('niconico:live', params),
+        feeds.getFeedEntry('niconico:videos', params),
+        feeds.getFeedEntry('niconico:blog', params),
+      ]
     }
 
     if (parsed.kind === 'blomaga') {
-      return [blog, video, live]
+      return [
+        feeds.getFeedEntry('niconico:blog', params),
+        feeds.getFeedEntry('niconico:videos', params),
+        feeds.getFeedEntry('niconico:live', params),
+      ]
     }
 
-    return [video, live, blog]
+    return [
+      feeds.getFeedEntry('niconico:videos', params),
+      feeds.getFeedEntry('niconico:live', params),
+      feeds.getFeedEntry('niconico:blog', params),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
