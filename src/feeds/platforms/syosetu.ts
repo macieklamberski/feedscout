@@ -15,6 +15,7 @@ const writerRegex = /^\/(?<writerId>[^/]+)/
 const feeds = definePlatformFeeds([
   { key: 'syosetu:author', template: 'https://api.syosetu.com/writernovel/{writerId}.Atom' },
   { key: 'syosetu:activity', template: 'https://api.syosetu.com/writer/{writerId}.Atom' },
+  { key: 'syosetu:all-novels', template: 'https://api.syosetu.com/allnovel.Atom' },
 ])
 
 export const parseSyosetuUrl = (url: string): SyosetuUrl | undefined => {
@@ -48,18 +49,25 @@ export const syosetuHandler: PlatformHandler = {
     return [
       feeds.getFeedEntry('syosetu:author', { writerId: parsed.writerId }),
       feeds.getFeedEntry('syosetu:activity', { writerId: parsed.writerId }),
+      feeds.getFeedEntry('syosetu:all-novels'),
     ]
   },
 
-  // The page parser builds feeds only for a digits writer id, so a feed URL with another id gets
-  // no key.
+  // The page parser builds writer feeds only for a digits writer id, so a writer feed URL with
+  // another id gets no key.
   getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
+
+    if (hint?.key === 'syosetu:all-novels') {
+      return hint
+    }
+
     const writerId = getPathSegments(url).at(-1)?.replace(formatSuffixRegex, '')
 
     if (!writerId || !digitsRegex.test(writerId)) {
       return
     }
 
-    return feeds.getFeedHint(url)
+    return hint
   },
 }
