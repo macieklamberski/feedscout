@@ -21,10 +21,12 @@ const feeds = definePlatformFeeds([
   {
     key: 'openedition:documents',
     template: 'https://journals.openedition.org/{journal}/backend.html?format=rssdocuments',
+    isAlias: true,
   },
   {
     key: 'openedition:documents',
     template: 'https://journals.openedition.org/{journal}/?page=backend&format=rssdocuments',
+    isAlias: true,
   },
   {
     key: 'openedition:entity',
@@ -43,10 +45,12 @@ const feeds = definePlatformFeeds([
   {
     key: 'openedition:issues',
     template: 'https://journals.openedition.org/{journal}/backend.html?format=rssnumeros',
+    isAlias: true,
   },
   {
     key: 'openedition:issues',
     template: 'https://journals.openedition.org/{journal}/?page=backend&format=rssnumeros',
+    isAlias: true,
   },
   {
     key: 'openedition:reviews',
@@ -56,11 +60,13 @@ const feeds = definePlatformFeeds([
     key: 'openedition:reviews',
     template:
       'https://journals.openedition.org/{journal}/backend.html?format=rssdocuments&type=review',
+    isAlias: true,
   },
   {
     key: 'openedition:reviews',
     template:
       'https://journals.openedition.org/{journal}/?page=backend&format=rssdocuments&type=review',
+    isAlias: true,
   },
 ])
 
