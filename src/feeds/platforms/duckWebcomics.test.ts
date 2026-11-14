@@ -74,6 +74,18 @@ describe('duckWebcomicsHandler', () => {
       expect(duckWebcomicsHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep the scheme of an http page', () => {
+      const value = 'http://www.theduckwebcomics.com/Quack_Tales/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://www.theduckwebcomics.com/Quack_Tales/rss/',
+          hint: { key: 'duck-webcomics:comic', label: 'Comic' },
+        },
+      ]
+
+      expect(duckWebcomicsHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should spell the comic as the page links its feed', () => {
       const value = 'https://www.theduckwebcomics.com/quack_tales/'
       const content = '<a href="/Other_Comic/rss/">rss</a><a href="/Quack_Tales/rss/">rss</a>'
@@ -115,6 +127,13 @@ describe('duckWebcomicsHandler', () => {
 
     it('should return the comic hint for a comic feed without the trailing slash', () => {
       const value = 'https://theduckwebcomics.com/hats/rss'
+      const expected: DiscoverUriHint = { key: 'duck-webcomics:comic', label: 'Comic' }
+
+      expect(duckWebcomicsHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the hint for an http comic feed', () => {
+      const value = 'http://theduckwebcomics.com/hats/rss/'
       const expected: DiscoverUriHint = { key: 'duck-webcomics:comic', label: 'Comic' }
 
       expect(duckWebcomicsHandler.getFeedHint?.(value)).toEqual(expected)
