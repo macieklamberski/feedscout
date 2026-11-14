@@ -87,7 +87,7 @@ describe('art19Handler', () => {
 
   describe('getFeedHint', () => {
     it('should return the show hint for a show feed under its slug', () => {
-      const value = 'https://rss.art19.com/business-movers'
+      const value = 'https://rss.art19.com/alice-show'
       const expected: DiscoverUriHint = { key: 'art19:show', label: 'Show' }
 
       expect(art19Handler.getFeedHint?.(value)).toEqual(expected)
@@ -108,7 +108,7 @@ describe('art19Handler', () => {
     })
 
     it('should return the show hint for a show feed with a capitalized slug', () => {
-      const value = 'https://rss.art19.com/Podcast-gids-in-gezondheid'
+      const value = 'https://rss.art19.com/Bob-Health-Show'
       const expected: DiscoverUriHint = { key: 'art19:show', label: 'Show' }
 
       expect(art19Handler.getFeedHint?.(value)).toEqual(expected)
@@ -121,13 +121,13 @@ describe('art19Handler', () => {
     })
 
     it('should return undefined for a show page', () => {
-      const value = 'https://art19.com/shows/business-movers'
+      const value = 'https://art19.com/shows/alice-show'
 
       expect(art19Handler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/business-movers'
+      const value = 'https://example.com/alice-show'
 
       expect(art19Handler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -135,12 +135,12 @@ describe('art19Handler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://rss.art19.com/business-movers', { key: 'art19:show', label: 'Show' }],
+      ['https://rss.art19.com/alice-show', { key: 'art19:show', label: 'Show' }],
       [
         'https://rss.art19.com/3399916b-c0b3-4c58-89e3-4572f197d6f1',
         { key: 'art19:show', label: 'Show' },
       ],
-      ['https://rss.art19.com/Podcast-gids-in-gezondheid', { key: 'art19:show', label: 'Show' }],
+      ['https://rss.art19.com/Bob-Health-Show', { key: 'art19:show', label: 'Show' }],
       [
         'https://rss.art19.com/alternate_feeds/user/example-show/abc123',
         { key: 'art19:show', label: 'Show' },
