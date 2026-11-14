@@ -1,6 +1,7 @@
 import { getPathSegments, isAnyOf, isHostOf, isHostOrSubdomainOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers profileSubdomain (html).
@@ -10,6 +11,16 @@ export type ArtstationUrl = { kind: 'profile'; username: string } | { kind: 'art
 
 const domains = ['artstation.com']
 const hosts = ['artstation.com', 'www.artstation.com']
+
+// `/artwork.rss` reads before `/{username}.rss`, so the site feed never reads as a user's.
+const feeds = definePlatformFeeds([
+  { key: 'artstation:artwork', template: 'https://www.artstation.com/artwork.rss' },
+  {
+    key: 'artstation:artwork-latest',
+    template: 'https://www.artstation.com/artwork.rss?sorting=latest',
+  },
+  { key: 'artstation:portfolio', template: 'https://www.artstation.com/{username}.rss' },
+])
 
 export const parseArtstationUrl = (url: string): ArtstationUrl | undefined => {
   if (!isHostOrSubdomainOf(url, domains)) {
@@ -65,22 +76,13 @@ export const artstationHandler: PlatformHandler = {
 
     if (parsed.kind === 'artwork') {
       return [
-        {
-          uri: 'https://www.artstation.com/artwork.rss',
-          hint: composeHint('artstation:artwork'),
-        },
-        {
-          uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
-          hint: composeHint('artstation:artwork-latest'),
-        },
+        feeds.getFeedEntry('artstation:artwork'),
+        feeds.getFeedEntry('artstation:artwork-latest'),
       ]
     }
 
-    return [
-      {
-        uri: `https://www.artstation.com/${parsed.username}.rss`,
-        hint: composeHint('artstation:portfolio'),
-      },
-    ]
+    return [feeds.getFeedEntry('artstation:portfolio', { username: parsed.username })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
