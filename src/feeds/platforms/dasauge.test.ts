@@ -48,9 +48,9 @@ describe('dasaugeHandler', () => {
       [true, 'https://dasauge.es/-abstrusa/'],
       [true, 'https://dasauge.at/-abstrusa/'],
       [true, 'https://dasauge.co.uk/-abstrusa/'],
+      [true, 'https://dasauge.fr/-abstrusa/'],
       [true, 'https://dasauge.de/'],
       [true, 'https://dasauge.de/jobs/'],
-      [false, 'https://dasauge.fr/-abstrusa/'],
       [false, 'https://www.dasauge.de/-abstrusa/'],
       [false, 'https://shop.dasauge.de/-abstrusa/'],
     ]

@@ -1,14 +1,14 @@
 import { isHostOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { getBrandDomainRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers portfolio, profile.
 
 export type DasaugeUrl = { kind: 'home' }
 
-// dasauge's country domains.
-const hosts = [/^dasauge\.(?:at|ch|co\.uk|com|de|es)$/]
+const hosts = [getBrandDomainRegex('dasauge')]
 
 // The 2026-10-26 relaunch removed the profile feed: `/-{username}?rss` serves the profile page.
 // Its row stays so a stored profile feed is still claimed.
