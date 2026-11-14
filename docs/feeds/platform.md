@@ -981,8 +981,8 @@ Discovers the RSS feed of a podcast hosted on a Castopod instance. Detected by t
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/@{handle}` | Podcast (RSS) |
-| `{instance}/@{handle}/episodes/{slug}` | Podcast (RSS) |
+| `{root}/@{handle}` | Podcast (RSS) |
+| `{root}/@{handle}/episodes/{slug}` | Podcast (RSS) |
 
 ### Castos
 
