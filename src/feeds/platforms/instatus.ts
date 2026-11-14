@@ -19,13 +19,23 @@ const feeds = definePlatformFeeds(
       template: '{scheme}://{host}/{language}/history.rss',
       format: 'rss',
     },
-    { key: 'instatus:history', template: '{scheme}://{host}/history.rss', format: 'rss' },
+    {
+      key: 'instatus:history',
+      template: '{scheme}://{host}/history.rss',
+      format: 'rss',
+      isAlias: true,
+    },
     {
       key: 'instatus:history',
       template: '{scheme}://{host}/{language}/history.atom',
       format: 'atom',
     },
-    { key: 'instatus:history', template: '{scheme}://{host}/history.atom', format: 'atom' },
+    {
+      key: 'instatus:history',
+      template: '{scheme}://{host}/history.atom',
+      format: 'atom',
+      isAlias: true,
+    },
   ],
   { domains },
 )
