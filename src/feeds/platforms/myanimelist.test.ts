@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { MyanimelistUrl } from './myanimelist.js'
 import { myanimelistHandler, parseMyanimelistUrl } from './myanimelist.js'
 
@@ -340,5 +343,103 @@ describe('myanimelistHandler', () => {
 
       expect(myanimelistHandler.resolve(value)).toEqual(expected)
     })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the anime hint for an anime list feed', () => {
+      const value = 'https://myanimelist.net/rss.php?type=rw&u=AliceFox'
+      const expected: DiscoverUriHint = { key: 'myanimelist:anime', label: 'Anime list' }
+
+      expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the manga hint for a manga list feed', () => {
+      const value = 'https://myanimelist.net/rss.php?type=rm&u=AliceFox'
+      const expected: DiscoverUriHint = { key: 'myanimelist:manga', label: 'Manga list' }
+
+      expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the recently-watched hint for a recently watched feed', () => {
+      const value = 'https://myanimelist.net/rss.php?type=rwe&u=AliceFox'
+      const expected: DiscoverUriHint = {
+        key: 'myanimelist:recently-watched',
+        label: 'Recently watched',
+      }
+
+      expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the recently-read hint for a recently read feed', () => {
+      const value = 'https://myanimelist.net/rss.php?type=rrm&u=Bob-san'
+      const expected: DiscoverUriHint = { key: 'myanimelist:recently-read', label: 'Recently read' }
+
+      expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the blog hint for a blog feed', () => {
+      const value = 'https://myanimelist.net/rss.php?type=blog&u=Bob-san'
+      const expected: DiscoverUriHint = { key: 'myanimelist:blog', label: 'Blog' }
+
+      expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the featured hint for the featured feed', () => {
+      const value = 'https://myanimelist.net/rss/featured.xml'
+      const expected: DiscoverUriHint = { key: 'myanimelist:featured', label: 'Featured' }
+
+      expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the news hint for the news feed', () => {
+      const value = 'https://myanimelist.net/rss/news.xml'
+      const expected: DiscoverUriHint = { key: 'myanimelist:news', label: 'News' }
+
+      expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a feed URL without a list type', () => {
+      const value = 'https://myanimelist.net/rss.php?u=AliceFox'
+
+      expect(myanimelistHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a profile page', () => {
+      const value = 'https://myanimelist.net/profile/AliceFox'
+
+      expect(myanimelistHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+})
+
+describe('discoverUrisFromPlatform', () => {
+  const ownFeeds: Array<[string, string, string]> = [
+    ['https://myanimelist.net/rss.php?type=rw&u=AliceFox', 'myanimelist:anime', 'Anime list'],
+    ['https://myanimelist.net/rss.php?type=rm&u=AliceFox', 'myanimelist:manga', 'Manga list'],
+    [
+      'https://myanimelist.net/rss.php?type=rwe&u=AliceFox',
+      'myanimelist:recently-watched',
+      'Recently watched',
+    ],
+    [
+      'https://myanimelist.net/rss.php?type=rrm&u=Bob-san',
+      'myanimelist:recently-read',
+      'Recently read',
+    ],
+    ['https://myanimelist.net/rss.php?type=blog&u=Bob-san', 'myanimelist:blog', 'Blog'],
+    ['https://myanimelist.net/rss/featured.xml', 'myanimelist:featured', 'Featured'],
+    ['https://myanimelist.net/rss/news.xml', 'myanimelist:news', 'News'],
+    ['http://www.myanimelist.net/rss/news.xml', 'myanimelist:news', 'News'],
+  ]
+
+  it.each(ownFeeds)('should return %s itself as %s', async (value, key, label) => {
+    const options = {
+      ...defaultPlatformOptions,
+      handlers: [myanimelistHandler],
+      baseUrl: value,
+    }
+    const expected: Array<DiscoverUriEntry> = [{ uri: value, hint: { key, label } }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 })
