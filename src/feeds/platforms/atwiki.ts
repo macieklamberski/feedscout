@@ -16,7 +16,12 @@ const feeds = definePlatformFeeds([
     template: 'https://w.atwiki.jp/{wiki}/rss10.xml',
     format: 'rdf',
   },
-  { key: 'atwiki:updated-pages', template: 'https://w.atwiki.jp/{wiki}/rss', format: 'rdf' },
+  {
+    key: 'atwiki:updated-pages',
+    template: 'https://w.atwiki.jp/{wiki}/rss',
+    format: 'rdf',
+    isAlias: true,
+  },
   {
     key: 'atwiki:updated-pages',
     template: 'https://w.atwiki.jp/{wiki}/feed.atom',
