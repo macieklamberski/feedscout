@@ -1783,7 +1783,11 @@
     "tumblr:tag": "https://staff.tumblr.com/tagged/updates/rss"
   },
   "twoday": {
-    "twoday:posts": "https://changes.twoday.net/index.rdf",
+    "twoday:commented": "https://safinabianca.twoday.net/comments.rdf",
+    "twoday:comments": "https://safinabianca.twoday.net/latestcomments.rdf",
+    "twoday:platform": "https://www.twoday.net/rss",
+    "twoday:posts": "https://changes.twoday.net/rss",
+    "twoday:summary": "https://hotelmama.twoday.net/summary.rdf",
     "twoday:topic": "https://schmollfisch.twoday.net/topics/Wo+der+Hase+hinlief/index.rdf"
   },
   "typecho": {
