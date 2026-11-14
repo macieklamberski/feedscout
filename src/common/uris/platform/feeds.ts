@@ -40,6 +40,9 @@ export type PlatformFeedTableOptions = {
   domains?: Array<string | RegExp>
   // Whether `www` can be a tenant, so `www.example.com` matches a `{user}.example.com` row.
   isWwwTenant?: boolean
+  // Whether `www` in front of a tenant label is dropped, so `www.alice.example.com` matches as
+  // `alice.example.com`.
+  isWwwTenantPrefix?: boolean
 }
 
 export type PlatformFeedTable = {
@@ -191,24 +194,28 @@ const compileTemplate = (
     multiSegmentCaptures,
     true,
   )
-  // A fixed host matches with or without `www` in front, a tenant label never does, so
-  // `www.alice.example.com` is no tenant's host.
+  // A fixed host matches with or without `www` in front, a tenant label only with
+  // `isWwwTenantPrefix`, so `www.alice.example.com` is otherwise no tenant's host.
   const toHostPathRegex = (isWwwOptional: boolean): RegExp => {
     const wwwSource = isWwwOptional ? '(?:www\\.)?' : ''
+    const tenantWwwSource = options.isWwwTenantPrefix ? wwwSource : ''
     const normalize = (value: string): string => (isWwwOptional ? stripWww(value) : value)
     const hostSources = [
       ...hosts.map((value) => {
         return `${wwwSource}${toEntrySource(isString(value) ? normalize(value) : value)}`
       }),
-      ...(domains.length > 0 ? [`${tenantSource}\\.${domainSource}`] : []),
+      ...(domains.length > 0 ? [`${tenantWwwSource}${tenantSource}\\.${domainSource}`] : []),
     ]
     const isFixedHost = !host.startsWith('{') || host.startsWith('{domain}')
+    const fixedPrefixSource = isFixedHost ? wwwSource : ''
+    const isTenantHost = !isFixedHost && !host.startsWith('{host}')
+    const tenantPrefixSource = isTenantHost ? tenantWwwSource : ''
     const hostSource = toRegexSource(normalize(host), tenantSource, {
       host: `(?:${hostSources.join('|')})`,
       domain: domainSource,
     })
 
-    return new RegExp(`^${isFixedHost ? wwwSource : ''}${hostSource}${pathSource}$`, 'i')
+    return new RegExp(`^${fixedPrefixSource}${tenantPrefixSource}${hostSource}${pathSource}$`, 'i')
   }
   const asGivenRegex = toHostPathRegex(false)
   const optionalWwwRegex = toHostPathRegex(true)
