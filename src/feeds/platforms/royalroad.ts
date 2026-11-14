@@ -19,6 +19,7 @@ const feeds = definePlatformFeeds([
   {
     key: 'royalroad:fiction',
     template: 'https://www.royalroad.com/fiction/syndication/{fictionId}',
+    isAlias: true,
   },
   {
     key: 'royalroad:fiction',
