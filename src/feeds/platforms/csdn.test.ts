@@ -87,14 +87,14 @@ describe('csdnHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the blog hint for a feed on rss.csdn.net', () => {
-      const value = 'https://rss.csdn.net/ziping_0918/rss/map'
+      const value = 'https://rss.csdn.net/bob_0918/rss/map'
       const expected: DiscoverUriHint = { key: 'csdn:blog', label: 'Blog' }
 
       expect(csdnHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the blog hint for a feed on blog.csdn.net', () => {
-      const value = 'https://blog.csdn.net/eastmount/rss/map'
+      const value = 'https://blog.csdn.net/alice_dev/rss/map'
       const expected: DiscoverUriHint = { key: 'csdn:blog', label: 'Blog' }
 
       expect(csdnHandler.getFeedHint?.(value)).toEqual(expected)
@@ -108,26 +108,26 @@ describe('csdnHandler', () => {
     })
 
     it('should return the blog hint for a feed over http', () => {
-      const value = 'http://rss.csdn.net/eastmount/rss/map'
+      const value = 'http://rss.csdn.net/alice_dev/rss/map'
       const expected: DiscoverUriHint = { key: 'csdn:blog', label: 'Blog' }
 
       expect(csdnHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
-      const value = 'https://blog.csdn.net/eastmount/article/details/12345'
+      const value = 'https://blog.csdn.net/alice_dev/article/details/12345'
 
       expect(csdnHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a list path on rss.csdn.net', () => {
-      const value = 'https://rss.csdn.net/eastmount/rss/list'
+      const value = 'https://rss.csdn.net/alice_dev/rss/list'
 
       expect(csdnHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on www.csdn.net', () => {
-      const value = 'https://www.csdn.net/eastmount/rss/map'
+      const value = 'https://www.csdn.net/alice_dev/rss/map'
 
       expect(csdnHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -135,9 +135,9 @@ describe('csdnHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://rss.csdn.net/ziping_0918/rss/map', { key: 'csdn:blog', label: 'Blog' }],
-      ['https://rss.csdn.net/eastmount/rss/map', { key: 'csdn:blog', label: 'Blog' }],
-      ['https://blog.csdn.net/eastmount/rss/map', { key: 'csdn:blog', label: 'Blog' }],
+      ['https://rss.csdn.net/bob_0918/rss/map', { key: 'csdn:blog', label: 'Blog' }],
+      ['https://rss.csdn.net/alice_dev/rss/map', { key: 'csdn:blog', label: 'Blog' }],
+      ['https://blog.csdn.net/alice_dev/rss/map', { key: 'csdn:blog', label: 'Blog' }],
       ['https://blog.csdn.net/csdnnews/rss/list', { key: 'csdn:blog', label: 'Blog' }],
     ]
 
