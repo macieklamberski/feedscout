@@ -11,7 +11,7 @@ const domains = ['lepodcast.fr']
 const feeds = definePlatformFeeds(
   [
     { key: 'podcloud:podcast', template: '{scheme}://{host}/rss' },
-    { key: 'podcloud:podcast', template: '{scheme}://{host}/feed' },
+    { key: 'podcloud:podcast', template: '{scheme}://{host}/feed', isAlias: true },
   ],
   { domains },
 )
