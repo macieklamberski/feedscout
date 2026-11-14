@@ -66,7 +66,7 @@ describe('parseLobstersUrl', () => {
     expect(parseLobstersUrl('https://lobste.rs/top/1d')).toEqual(expected)
   })
 
-  it('should return the all-time top page', () => {
+  it('should return the top page without a period', () => {
     const expected: LobstersUrl = { kind: 'top', period: undefined }
 
     expect(parseLobstersUrl('https://lobste.rs/top')).toEqual(expected)
@@ -237,7 +237,10 @@ describe('lobstersHandler', () => {
     it('should return top stories feed for top page', () => {
       const value = 'https://lobste.rs/top'
       const expected = [
-        { uri: 'https://lobste.rs/top/rss', hint: { key: 'lobsters:top', label: 'Top stories' } },
+        {
+          uri: 'https://lobste.rs/top/1w.rss',
+          hint: { key: 'lobsters:top', label: 'Top stories' },
+        },
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
@@ -369,7 +372,7 @@ describe('lobstersHandler', () => {
       expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the top hint for the all-time top feed', () => {
+    it('should return the top hint for the top feed without a period', () => {
       const value = 'https://lobste.rs/top/rss'
       const expected: DiscoverUriHint = { key: 'lobsters:top', label: 'Top stories' }
 

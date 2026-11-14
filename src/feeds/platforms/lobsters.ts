@@ -26,7 +26,8 @@ const newestRegex = /^\/newest\/?$/i
 const commentsRegex = /^\/comments\/?$/i
 const tagsValueRegex = /^[\w,-]+$/
 
-// A top page links its feed as /top/{period}.rss, which /top/{period}/rss redirects to.
+// A top page links its feed as /top/{period}.rss, which /top/{period}/rss redirects to. /top/rss
+// and /top.rss redirect to the one-week feed, so their rows only claim.
 const feeds = definePlatformFeeds([
   { key: 'lobsters:tag', template: 'https://lobste.rs/t/{tags}.rss' },
   { key: 'lobsters:domain', template: 'https://lobste.rs/domains/{domain}.rss' },
@@ -71,7 +72,7 @@ export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {
 
   const topMatch = pathname.match(topRegex)
 
-  // Top page, all time or for a period: /top or /top/{period}.
+  // Top page, for a period or without one: /top/{period} or /top.
   if (topMatch) {
     return { kind: 'top', period: topMatch.groups?.period }
   }
@@ -111,12 +112,9 @@ export const lobstersHandler: PlatformHandler = {
       return [feeds.getFeedEntry('lobsters:stories', { username: parsed.username })]
     }
 
-    if (parsed.kind === 'top' && parsed.period) {
-      return [feeds.getFeedEntry('lobsters:top', { period: parsed.period })]
-    }
-
+    // The top page without a period redirects to the one-week page.
     if (parsed.kind === 'top') {
-      return [feeds.getFeedEntry('lobsters:top')]
+      return [feeds.getFeedEntry('lobsters:top', { period: parsed.period ?? '1w' })]
     }
 
     if (parsed.kind === 'newest') {
