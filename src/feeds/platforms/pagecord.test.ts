@@ -11,6 +11,13 @@ describe('parsePagecordUrl', () => {
     expect(parsePagecordUrl('https://example.pagecord.com/')).toEqual(expected)
   })
 
+  it('should return the tag for a page filtered by tag', () => {
+    const value = 'https://example.pagecord.com/?tag=photography'
+    const expected: PagecordUrl = { kind: 'tag', tag: 'photography' }
+
+    expect(parsePagecordUrl(value)).toEqual(expected)
+  })
+
   it('should return undefined for the www host', () => {
     expect(parsePagecordUrl('https://www.pagecord.com/')).toBeUndefined()
   })
@@ -72,6 +79,22 @@ describe('pagecordHandler', () => {
       expect(pagecordHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the tag feed for a page filtered by tag', () => {
+      const value = 'https://alice.pagecord.com/?tag=photography'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.pagecord.com/feed.xml?tag=photography',
+          hint: { key: 'pagecord:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://alice.pagecord.com/feed.xml',
+          hint: { key: 'pagecord:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(pagecordHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the feed under the page scheme for an http blog page', () => {
       const value = 'http://alice.pagecord.com/some-post-slug'
       const expected: Array<DiscoverUriEntry> = [
@@ -93,9 +116,16 @@ describe('pagecordHandler', () => {
       expect(pagecordHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog hint for a filtered blog feed', () => {
+    it('should return the tag hint for a feed filtered by tag', () => {
       const value = 'https://alice.pagecord.com/feed.xml?tag=photography&without_tag=personal'
-      const expected: DiscoverUriHint = { key: 'pagecord:blog', label: 'Blog' }
+      const expected: DiscoverUriHint = { key: 'pagecord:tag', label: 'Tag' }
+
+      expect(pagecordHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for the extensionless feed filtered by tag', () => {
+      const value = 'https://alice.pagecord.com/feed?tag=photography'
+      const expected: DiscoverUriHint = { key: 'pagecord:tag', label: 'Tag' }
 
       expect(pagecordHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -156,9 +186,10 @@ describe('pagecordHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://alice.pagecord.com/feed.xml', { key: 'pagecord:blog', label: 'Blog' }],
       ['http://alice.pagecord.com/feed.xml', { key: 'pagecord:blog', label: 'Blog' }],
+      ['http://alice.pagecord.com/feed.xml?tag=photography', { key: 'pagecord:tag', label: 'Tag' }],
       [
-        'https://alice.pagecord.com/feed.xml?tag=photography',
-        { key: 'pagecord:blog', label: 'Blog' },
+        'https://alice.pagecord.com/feed.rss?tag=photography',
+        { key: 'pagecord:tag', label: 'Tag' },
       ],
       ['https://alice.pagecord.com/feed', { key: 'pagecord:blog', label: 'Blog' }],
       ['https://alice.pagecord.com/feed.rss', { key: 'pagecord:blog', label: 'Blog' }],

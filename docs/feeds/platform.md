@@ -685,6 +685,7 @@ Discovers RSS feeds for Pagecord blogs.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{blog}.pagecord.com` | Blog |
+| `{blog}.pagecord.com/?tag={tag}` | Tag · blog |
 
 ### ArtStation
 
