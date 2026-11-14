@@ -31,6 +31,24 @@ describe('parseSmeBlogUrl', () => {
     expect(parseSmeBlogUrl('https://blog.sme.sk/')).toEqual(expected)
   })
 
+  it('should return the topic for a topic page', () => {
+    const expected: SmeBlogUrl = { kind: 'topic' }
+
+    expect(parseSmeBlogUrl('https://blog.sme.sk/t/politika')).toEqual(expected)
+  })
+
+  it('should return the topic for a topic page in another case', () => {
+    const expected: SmeBlogUrl = { kind: 'topic' }
+
+    expect(parseSmeBlogUrl('https://blog.sme.sk/T/politika')).toEqual(expected)
+  })
+
+  it('should return the blog for a username starting with t', () => {
+    const expected: SmeBlogUrl = { kind: 'blog', username: 'tomasvanco' }
+
+    expect(parseSmeBlogUrl('https://blog.sme.sk/tomasvanco/t')).toEqual(expected)
+  })
+
   it('should return undefined for the newspaper host', () => {
     expect(parseSmeBlogUrl('https://www.sme.sk/')).toBeUndefined()
   })
@@ -76,6 +94,17 @@ describe('smeBlogHandler', () => {
       ]
 
       expect(smeBlogHandler.resolve('https://blog.sme.sk/')).toEqual(expected)
+    })
+
+    it('should return the site feed for a topic page', () => {
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://blog.sme.sk/rss',
+          hint: { key: 'sme-blog:site', label: 'Site' },
+        },
+      ]
+
+      expect(smeBlogHandler.resolve('https://blog.sme.sk/t/politika')).toEqual(expected)
     })
 
     it('should return the https site feed for home over http', () => {

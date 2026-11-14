@@ -4,9 +4,12 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Unmeasured, bot wall.
 
-export type SmeBlogUrl = { kind: 'blog'; username: string } | { kind: 'home' }
+export type SmeBlogUrl = { kind: 'blog'; username: string } | { kind: 'topic' } | { kind: 'home' }
 
 const hosts = ['blog.sme.sk']
+
+// A topic page, /t/{topic}, links only the site feed and has no feed of its own.
+const topicRouteRegex = /^t$/i
 
 const feeds = definePlatformFeeds([
   { key: 'sme-blog:site', template: 'https://blog.sme.sk/rss' },
@@ -22,6 +25,10 @@ export const parseSmeBlogUrl = (url: string): SmeBlogUrl | undefined => {
 
   if (!username) {
     return { kind: 'home' }
+  }
+
+  if (topicRouteRegex.test(username)) {
+    return { kind: 'topic' }
   }
 
   return { kind: 'blog', username }
