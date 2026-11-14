@@ -1,5 +1,6 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,6 +10,15 @@ const domains = ['shop-pro.jp']
 
 // Numbered image and access-log hosts, such as img15 and acclog001.
 const numberedHostRegex = /^(acclog|img)\d+$/
+
+// A shop on its own domain is known only by its cookie, so its feeds are built but not claimed.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'color-me-shop:products', template: '{scheme}://{host}/?mode=rss', format: 'rdf' },
+    { key: 'color-me-shop:products', template: '{scheme}://{host}/?mode=atom', format: 'atom' },
+  ],
+  { domains },
+)
 
 // Every shop page sets the session cookie, on shop-pro.jp and on a shop's own domain alike, and
 // the service hosts of shop-pro.jp set none.
@@ -37,11 +47,25 @@ export const colorMeShopHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
+    const page = feeds.forUrl(url)
+
+    if (!page) {
+      return []
+    }
 
     return [
-      { uri: `${origin}/?mode=rss`, hint: composeHint('color-me-shop:products', 'rdf') },
-      { uri: `${origin}/?mode=atom`, hint: composeHint('color-me-shop:products', 'atom') },
+      page.getFeedEntry('color-me-shop:products', {}, 'rdf'),
+      page.getFeedEntry('color-me-shop:products', {}, 'atom'),
     ]
+  },
+
+  // The table reads a numbered host such as img15, and `www.{shop}`, as a shop, so the page parser
+  // refuses them first.
+  getFeedHint: (url) => {
+    if (!parseColorMeShopUrl(url)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }
