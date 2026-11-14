@@ -1,6 +1,6 @@
-import { encodePathSegment, getQueryParam, isHostOf, parseUrl } from 'trousse'
+import { getQueryParam, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -14,6 +14,13 @@ const hosts = ['www.v2ex.com', 'v2ex.com']
 
 const nodeRegex = /^\/go\/([^/]+)/i
 const memberRegex = /^\/member\/([^/]+)/i
+
+const feeds = definePlatformFeeds([
+  { key: 'v2ex:node', template: 'https://www.v2ex.com/feed/{node}.xml' },
+  { key: 'v2ex:member', template: 'https://www.v2ex.com/feed/member/{username}.xml' },
+  { key: 'v2ex:tab', template: 'https://www.v2ex.com/feed/tab/{tab}.xml' },
+  { key: 'v2ex:index', template: 'https://www.v2ex.com/index.xml' },
+])
 
 export const parseV2exUrl = (url: string): V2exUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -57,41 +64,19 @@ export const v2exHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'node') {
-      return [
-        {
-          uri: `https://www.v2ex.com/feed/${parsed.node}.xml`,
-          hint: composeHint('v2ex:node'),
-        },
-      ]
+      return [feeds.getFeedEntry('v2ex:node', { node: parsed.node })]
     }
 
     if (parsed.kind === 'member') {
-      return [
-        {
-          uri: `https://www.v2ex.com/feed/member/${parsed.username}.xml`,
-          hint: composeHint('v2ex:member'),
-        },
-      ]
+      return [feeds.getFeedEntry('v2ex:member', { username: parsed.username })]
     }
 
     if (parsed.kind === 'tab') {
-      // The tab comes out of the query decoded, and it goes into a path.
-      const tab = encodePathSegment(parsed.tab)
-
-      return [
-        {
-          uri: `https://www.v2ex.com/feed/tab/${tab}.xml`,
-          hint: composeHint('v2ex:tab'),
-        },
-        { uri: 'https://www.v2ex.com/index.xml', hint: composeHint('v2ex:index') },
-      ]
+      return [feeds.getFeedEntry('v2ex:tab', { tab: parsed.tab }), feeds.getFeedEntry('v2ex:index')]
     }
 
-    return [
-      {
-        uri: 'https://www.v2ex.com/index.xml',
-        hint: composeHint('v2ex:index'),
-      },
-    ]
+    return [feeds.getFeedEntry('v2ex:index')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
