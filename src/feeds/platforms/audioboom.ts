@@ -14,7 +14,7 @@ const channelRegex = /^\/channels\/(?<segment>[^/]+)/i
 const playlistRegex = /^\/playlists\/(?<segment>[^/]+)/i
 // The page answers at /channels/{id} and at its canonical /channels/{id}-{slug}, and a playlist
 // the same way.
-const channelIdRegex = /^(?<channelId>\d+)(?:-|$)/
+const idRegex = /^(?<id>\d+)(?:-|$)/
 
 const feeds = definePlatformFeeds([
   { key: 'audioboom:podcast', template: 'https://audioboom.com/channels/{channelId}.rss' },
@@ -28,14 +28,14 @@ export const parseAudioboomUrl = (url: string): AudioboomUrl | undefined => {
 
   const { pathname } = new URL(url)
   const playlistSegment = pathname.match(playlistRegex)?.groups?.segment
-  const playlistId = playlistSegment?.match(channelIdRegex)?.groups?.channelId
+  const playlistId = playlistSegment?.match(idRegex)?.groups?.id
 
   if (playlistId) {
     return { kind: 'playlist', playlistId }
   }
 
   const segment = pathname.match(channelRegex)?.groups?.segment
-  const channelId = segment?.match(channelIdRegex)?.groups?.channelId
+  const channelId = segment?.match(idRegex)?.groups?.id
 
   if (!channelId) {
     return
