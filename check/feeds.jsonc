@@ -344,7 +344,7 @@
     "deviantart:deviations": "https://backend.deviantart.com/rss.xml?type=deviation&q=by:yuumei+sort:time+meta:all",
     "deviantart:favorites": "https://backend.deviantart.com/rss.xml?type=deviation&q=favby:yuumei",
     "deviantart:gallery": "https://backend.deviantart.com/rss.xml?type=deviation&q=gallery:yuumei/24250483",
-    "deviantart:journal": "https://backend.deviantart.com/rss.xml?q=journal:yuumei",
+    "deviantart:journal": "https://backend.deviantart.com/rss.xml?type=journal&q=by:yuumei",
     "deviantart:tag": "https://backend.deviantart.com/rss.xml?type=deviation&q=tag:landscape"
   },
   "devto": {
