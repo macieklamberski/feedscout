@@ -3,7 +3,7 @@ import {
   decodePercent,
   encodePathSegment,
   escapeRegex,
-  getQueryParam,
+  getQueryParamValues,
   getSubdomain,
   isAnyOf,
   isHttpUrl,
@@ -308,6 +308,7 @@ const compileTemplate = (
   const queryRegexes = query.map(([name, value]): [string, RegExp] => {
     return [name, new RegExp(`^${toRegexSource(value, '.+')}$`, 'i')]
   })
+  const repeatedNames = ownNames.filter((name, index) => ownNames.indexOf(name) !== index)
 
   // A `{root}` table without hosts serves any site, so nothing in its URL names the platform.
   const claimsUrls = !isRootTemplate || hasHosts
@@ -318,9 +319,11 @@ const compileTemplate = (
     }
 
     return queryRegexes.every(([name, regex]) => {
-      const value = getQueryParam(url, name, { preserveEmptyValues: flags.has(name) })
+      const values = getQueryParamValues(url, name, { preserveEmptyValues: flags.has(name) })
+      // A name the row repeats, as `types=page&types=blogpost`, finds each value in any place.
+      const candidates = repeatedNames.includes(name) ? values : values.slice(0, 1)
 
-      return value !== undefined && regex.test(value)
+      return candidates.some((value) => regex.test(value))
     })
   }
 

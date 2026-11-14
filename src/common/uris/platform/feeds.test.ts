@@ -117,6 +117,21 @@ const passedQueryFeeds = definePlatformFeeds(
   { hosts: ['example.com'] },
 )
 
+const repeatedQueryFeeds = definePlatformFeeds(
+  [
+    {
+      key: 'confluence:space',
+      template:
+        'https://{host}/createrssfeed.action?types=page&types=blogpost&types=comment&spaces={space}',
+    },
+    {
+      key: 'confluence:site',
+      template: 'https://{host}/createrssfeed.action?types=page&spaces=conf_all',
+    },
+  ],
+  { hosts: ['example.com'] },
+)
+
 const directoryFeeds = definePlatformFeeds([
   { key: 'typecho:page', template: 'https://www.example.com/feed/{directory*}/' },
   { key: 'typecho:page', template: 'https://www.example.com/feed/{path*}' },
@@ -1522,6 +1537,64 @@ describe('definePlatformFeeds', () => {
         const value = 'https://example.com/index.php?option=com_content&format=feed'
 
         expect(passedQueryFeeds.getFeedHint(value)).toBeUndefined()
+      })
+    })
+  })
+
+  describe('with a repeated query parameter', () => {
+    describe('getFeedUrl', () => {
+      it('should write every value of the parameter in table order', () => {
+        const value = {
+          host: 'example.com',
+          space: 'DOC',
+        }
+        const expected =
+          'https://example.com/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=DOC'
+
+        expect(repeatedQueryFeeds.getFeedUrl('confluence:space', value)).toBe(expected)
+      })
+    })
+
+    describe('getFeedHint', () => {
+      it('should return the key of a feed with every value of the parameter', () => {
+        const value =
+          'https://example.com/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=DOC'
+        const expected = 'confluence:space'
+        const hint = repeatedQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return the key of a feed with the values in another order', () => {
+        const value =
+          'https://example.com/createrssfeed.action?spaces=DOC&types=comment&types=page&types=blogpost'
+        const expected = 'confluence:space'
+        const hint = repeatedQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return the key of a feed with a value the row does not list', () => {
+        const value =
+          'https://example.com/createrssfeed.action?types=page&types=blogpost&types=comment&types=attachment&spaces=DOC'
+        const expected = 'confluence:space'
+        const hint = repeatedQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return undefined for a feed missing a value of the parameter', () => {
+        const value =
+          'https://example.com/createrssfeed.action?types=page&types=blogpost&spaces=DOC'
+
+        expect(repeatedQueryFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should read the first value of a parameter the row lists once', () => {
+        const value =
+          'https://example.com/createrssfeed.action?types=blogpost&types=page&spaces=conf_all'
+
+        expect(repeatedQueryFeeds.getFeedHint(value)).toBeUndefined()
       })
     })
   })
