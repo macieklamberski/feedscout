@@ -2324,7 +2324,7 @@ Discovers the recent changes feeds of a PmWiki wiki. Detected by the `<!--HTMLHe
 
 ### Ning
 
-Discovers the site feeds of a Ning network and the feed of a forum topic. Detected by the `static.ning.com/socialnetworkmain/` asset path, so `{tenant}.ning.com` networks and custom domains are both covered. Ning 3 networks load their assets from another path and serve none of these feeds, so they are left to generic discovery.
+Discovers the site feeds of a Ning network and the feed of a forum topic. Detected by the `static.ning.com/socialnetworkmain/` asset path, so `{tenant}.ning.com` networks and custom domains are both covered. Ning 3 networks load their assets from another path and serve their own section feeds in place of these, so their pages are left to generic discovery.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
