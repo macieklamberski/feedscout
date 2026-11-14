@@ -16,17 +16,23 @@ const feeds = definePlatformFeeds([
     template: 'https://archive.org/services/collection-rss.php?collection={collection}',
   },
   {
-    key: 'internet-archive:search',
-    template: 'https://archive.org/services/collection-rss.php?query={query}',
-  },
-  {
     key: 'internet-archive:collection',
     template: 'https://cors.archive.org/services/collection-rss.php?collection={collection}',
     isAlias: true,
   },
   {
     key: 'internet-archive:search',
+    template: 'https://archive.org/services/collection-rss.php?query={query}',
+  },
+  {
+    key: 'internet-archive:search',
     template: 'https://cors.archive.org/services/collection-rss.php?query={query}',
+    isAlias: true,
+  },
+  // Claimed only: the advanced search serves the same items as the search feed.
+  {
+    key: 'internet-archive:search',
+    template: 'https://archive.org/advancedsearch.php?output=rss&q={query}',
     isAlias: true,
   },
   // A collection's forum is named by the collection identifier, so `resolve` builds it on the
@@ -40,13 +46,7 @@ const feeds = definePlatformFeeds([
     template: 'https://cors.archive.org/iathreads/posts-display-new.php?forum={forum}&mode=rss',
     isAlias: true,
   },
-  // Claimed only: the advanced search serves the same items as the search feed, and the media
-  // type and bookmarks feeds name values no page here gives.
-  {
-    key: 'internet-archive:search',
-    template: 'https://archive.org/advancedsearch.php?output=rss&q={query}',
-    isAlias: true,
-  },
+  // Claimed only: the media type and bookmarks feeds name values no page here gives.
   {
     key: 'internet-archive:mediatype',
     template: 'https://archive.org/services/collection-rss.php?mediatype={mediatype}',
