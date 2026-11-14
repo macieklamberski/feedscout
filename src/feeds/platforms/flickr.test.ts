@@ -680,7 +680,7 @@ describe('flickrHandler', () => {
 
     it('should return the album hint for an album feed', () => {
       const value =
-        'https://api.flickr.com/services/feeds/photoset.gne?set=72157594208548823&nsid=24662369@N07&lang=en-us'
+        'https://api.flickr.com/services/feeds/photoset.gne?set=72157600000000000&nsid=24662369@N07&lang=en-us'
       const expected: DiscoverUriHint = { key: 'flickr:photoset', label: 'Album' }
 
       expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
