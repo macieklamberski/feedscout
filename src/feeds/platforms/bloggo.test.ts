@@ -207,42 +207,42 @@ describe('bloggoHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the posts hint for a posts feed', () => {
-      const value = 'https://gunwah.bloggo.nu/feed/'
+      const value = 'https://dave.bloggo.nu/feed/'
       const expected: DiscoverUriHint = { key: 'bloggo:posts', label: 'Posts' }
 
       expect(bloggoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for an http posts feed without a trailing slash', () => {
-      const value = 'http://schackelina.bloggo.nu/feed'
+      const value = 'http://bobchess.bloggo.nu/feed'
       const expected: DiscoverUriHint = { key: 'bloggo:posts', label: 'Posts' }
 
       expect(bloggoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the post comments hint for a post comments feed', () => {
-      const value = 'https://gunwah.bloggo.nu/Vitsippan-ute-i-backarna-star-/feed/'
+      const value = 'https://dave.bloggo.nu/Vitsippan-ute-i-backarna-star-/feed/'
       const expected: DiscoverUriHint = { key: 'bloggo:post-comments', label: 'Post comments' }
 
       expect(bloggoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the post comments hint for a post comments feed without a trailing slash', () => {
-      const value = 'https://eva49.bloggo.nu/Atta-nyanser-av-gront-/feed'
+      const value = 'https://carol49.bloggo.nu/Atta-nyanser-av-gront-/feed'
       const expected: DiscoverUriHint = { key: 'bloggo:post-comments', label: 'Post comments' }
 
       expect(bloggoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the post comments hint for a percent-encoded post comments feed', () => {
-      const value = 'http://martasrike.bloggo.nu/M%C3%B6rkbladiga+fl%C3%A4der/feed/'
+      const value = 'http://alicerike.bloggo.nu/M%C3%B6rkbladiga+fl%C3%A4der/feed/'
       const expected: DiscoverUriHint = { key: 'bloggo:post-comments', label: 'Post comments' }
 
       expect(bloggoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a post page', () => {
-      const value = 'https://gunwah.bloggo.nu/Vitsippan-ute-i-backarna-star-/'
+      const value = 'https://dave.bloggo.nu/Vitsippan-ute-i-backarna-star-/'
 
       expect(bloggoHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -276,11 +276,11 @@ describe('bloggoHandler', () => {
     const posts: DiscoverUriHint = { key: 'bloggo:posts', label: 'Posts' }
     const postComments: DiscoverUriHint = { key: 'bloggo:post-comments', label: 'Post comments' }
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://gunwah.bloggo.nu/feed/', posts],
-      ['https://orad.bloggo.nu/feed', posts],
-      ['https://gunwah.bloggo.nu/Vitsippan-ute-i-backarna-star-/feed/', postComments],
-      ['https://eva49.bloggo.nu/Atta-nyanser-av-gront-/feed', postComments],
-      ['http://martasrike.bloggo.nu/M%C3%B6rkbladiga+fl%C3%A4der/feed/', postComments],
+      ['https://dave.bloggo.nu/feed/', posts],
+      ['https://erin.bloggo.nu/feed', posts],
+      ['https://dave.bloggo.nu/Vitsippan-ute-i-backarna-star-/feed/', postComments],
+      ['https://carol49.bloggo.nu/Atta-nyanser-av-gront-/feed', postComments],
+      ['http://alicerike.bloggo.nu/M%C3%B6rkbladiga+fl%C3%A4der/feed/', postComments],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
