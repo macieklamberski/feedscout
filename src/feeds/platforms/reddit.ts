@@ -51,11 +51,23 @@ const feeds = definePlatformFeeds(
       key: 'reddit:post-comments',
       template: 'https://www.reddit.com/r/{subreddit}/comments/{postId}/.rss',
     },
+    // The same feed on old. and new.
+    {
+      key: 'reddit:post-comments',
+      template: '{scheme}://{host}/r/{subreddit}/comments/{postId}/.rss',
+      isAlias: true,
+    },
     {
       key: 'reddit:post-comments',
       template: 'https://www.reddit.com/user/{username}/comments/{postId}/.rss',
     },
     { key: 'reddit:comments', template: 'https://www.reddit.com/r/{subreddit}/comments/.rss' },
+    // The same feed on old. and new.
+    {
+      key: 'reddit:comments',
+      template: '{scheme}://{host}/r/{subreddit}/comments/.rss',
+      isAlias: true,
+    },
     {
       key: 'reddit:multireddit',
       template: 'https://www.reddit.com/user/{username}/m/{multireddit}/.rss',
@@ -69,12 +81,24 @@ const feeds = definePlatformFeeds(
       template: 'https://www.reddit.com/user/{username}/comments/.rss',
     },
     { key: 'reddit:subreddits', template: 'https://www.reddit.com/subreddits/{sort}/.rss' },
+    // The same feed on old. and new.
+    {
+      key: 'reddit:subreddits',
+      template: '{scheme}://{host}/subreddits/{sort}/.rss',
+      isAlias: true,
+    },
     { key: 'reddit:subreddits', template: 'https://www.reddit.com/subreddits/.rss' },
     {
       key: 'reddit:subreddit',
       template: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss?t={timeframe}',
     },
     { key: 'reddit:subreddit', template: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss' },
+    // The same feed on old. and new.
+    {
+      key: 'reddit:subreddit',
+      template: '{scheme}://{host}/r/{subreddit}/{sort}/.rss',
+      isAlias: true,
+    },
     { key: 'reddit:subreddit', template: 'https://www.reddit.com/r/{subreddit}/.rss' },
     {
       key: 'reddit:subreddit',
@@ -100,17 +124,7 @@ const feeds = definePlatformFeeds(
     },
     {
       key: 'reddit:post-comments',
-      template: '{scheme}://{host}/r/{subreddit}/comments/{postId}/.rss',
-      isAlias: true,
-    },
-    {
-      key: 'reddit:post-comments',
       template: '{scheme}://{host}/user/{username}/comments/{postId}/.rss',
-      isAlias: true,
-    },
-    {
-      key: 'reddit:comments',
-      template: '{scheme}://{host}/r/{subreddit}/comments/.rss',
       isAlias: true,
     },
     {
@@ -128,17 +142,7 @@ const feeds = definePlatformFeeds(
       template: '{scheme}://{host}/user/{username}/comments/.rss',
       isAlias: true,
     },
-    {
-      key: 'reddit:subreddits',
-      template: '{scheme}://{host}/subreddits/{sort}/.rss',
-      isAlias: true,
-    },
     { key: 'reddit:subreddits', template: '{scheme}://{host}/subreddits/.rss', isAlias: true },
-    {
-      key: 'reddit:subreddit',
-      template: '{scheme}://{host}/r/{subreddit}/{sort}/.rss',
-      isAlias: true,
-    },
     { key: 'reddit:subreddit', template: '{scheme}://{host}/r/{subreddit}/.rss', isAlias: true },
     { key: 'reddit:subreddit', template: '{scheme}://{host}/r/{subreddit}.rss', isAlias: true },
     { key: 'reddit:user', template: '{scheme}://{host}/user/{username}/.rss', isAlias: true },
