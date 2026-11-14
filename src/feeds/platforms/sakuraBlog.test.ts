@@ -54,7 +54,7 @@ describe('sakuraBlogHandler', () => {
       expect(sakuraBlogHandler.resolve('https://example.com/')).toEqual([])
     })
 
-    it('should return RSS 2.0 and RDF feeds over http for an https blog URL', () => {
+    it('should return the classic feeds over http and rss.xml on the page scheme', () => {
       const value = 'https://alice.sblo.jp/article/123456.html'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -65,6 +65,10 @@ describe('sakuraBlogHandler', () => {
           uri: 'http://alice.sblo.jp/index.rdf',
           hint: { key: 'sakura-blog:posts', label: 'Posts', format: 'rdf' },
         },
+        {
+          uri: 'https://alice.sblo.jp/rss.xml',
+          hint: { key: 'sakura-blog:redesign-posts', label: 'Posts', format: 'rss' },
+        },
       ]
 
       expect(sakuraBlogHandler.resolve(value)).toEqual(expected)
@@ -72,9 +76,13 @@ describe('sakuraBlogHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the posts hint for the rss.xml feed of a newer blog', () => {
+    it('should return the redesign posts hint for the rss.xml feed of a newer blog', () => {
       const value = 'https://alice.sblo.jp/rss.xml'
-      const expected: DiscoverUriHint = { key: 'sakura-blog:posts', label: 'Posts', format: 'rss' }
+      const expected: DiscoverUriHint = {
+        key: 'sakura-blog:redesign-posts',
+        label: 'Posts',
+        format: 'rss',
+      }
 
       expect(sakuraBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -135,7 +143,7 @@ describe('sakuraBlogHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
         'https://alice.sblo.jp/rss.xml',
-        { key: 'sakura-blog:posts', label: 'Posts', format: 'rss' },
+        { key: 'sakura-blog:redesign-posts', label: 'Posts', format: 'rss' },
       ],
       [
         'http://alice.sblo.jp/index20.rdf',

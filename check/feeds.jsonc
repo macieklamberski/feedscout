@@ -1749,7 +1749,8 @@
     "rubygems:versions": "https://rubygems.org/gems/rails/versions.atom"
   },
   "sakuraBlog": {
-    "sakura-blog:posts": ["http://cwtokyo.sblo.jp/index20.rdf", "http://cwtokyo.sblo.jp/index.rdf"]
+    "sakura-blog:posts": ["http://cwtokyo.sblo.jp/index20.rdf", "http://cwtokyo.sblo.jp/index.rdf"],
+    "sakura-blog:redesign-posts": "https://irorimura2026.sblo.jp/rss.xml"
   },
   "sapoBlogs": {
     "sapo-blogs:comments": [
