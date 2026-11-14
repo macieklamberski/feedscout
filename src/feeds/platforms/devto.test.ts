@@ -159,28 +159,28 @@ describe('devtoHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the posts hint for a user feed', () => {
-      const value = 'https://dev.to/feed/antonfrattaroli'
+      const value = 'https://dev.to/feed/carol'
       const expected: DiscoverUriHint = { key: 'devto:posts', label: 'Posts' }
 
       expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a feed with a trailing slash', () => {
-      const value = 'https://dev.to/feed/barbaraulowee/'
+      const value = 'https://dev.to/feed/dave/'
       const expected: DiscoverUriHint = { key: 'devto:posts', label: 'Posts' }
 
       expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a feed on the www host', () => {
-      const value = 'https://www.dev.to/feed/antonfrattaroli'
+      const value = 'https://www.dev.to/feed/carol'
       const expected: DiscoverUriHint = { key: 'devto:posts', label: 'Posts' }
 
       expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a feed over http', () => {
-      const value = 'http://dev.to/feed/antonfrattaroli'
+      const value = 'http://dev.to/feed/carol'
       const expected: DiscoverUriHint = { key: 'devto:posts', label: 'Posts' }
 
       expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
@@ -222,13 +222,13 @@ describe('devtoHandler', () => {
     })
 
     it('should return undefined for a profile page', () => {
-      const value = 'https://dev.to/antonfrattaroli'
+      const value = 'https://dev.to/carol'
 
       expect(devtoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an article page', () => {
-      const value = 'https://dev.to/antonfrattaroli/some-article-1n45'
+      const value = 'https://dev.to/carol/some-article-1n45'
 
       expect(devtoHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -240,7 +240,7 @@ describe('devtoHandler', () => {
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/feed/antonfrattaroli'
+      const value = 'https://example.com/feed/carol'
 
       expect(devtoHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -248,7 +248,7 @@ describe('devtoHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://dev.to/feed/antonfrattaroli', { key: 'devto:posts', label: 'Posts' }],
+      ['https://dev.to/feed/carol', { key: 'devto:posts', label: 'Posts' }],
       ['https://dev.to/feed/tag/log4j2', { key: 'devto:tag', label: 'Tag' }],
       ['https://dev.to/feed/latest', { key: 'devto:latest', label: 'Latest' }],
       ['https://dev.to/feed', { key: 'devto:community', label: 'Community' }],

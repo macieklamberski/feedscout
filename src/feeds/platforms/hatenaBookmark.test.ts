@@ -538,7 +538,7 @@ describe('hatenaBookmarkHandler', () => {
         { key: 'hatena-bookmark:site', label: 'Site' },
       ],
       [
-        'https://b.hatena.ne.jp/t-wada/bookmark.rss',
+        'https://b.hatena.ne.jp/carol/bookmark.rss',
         { key: 'hatena-bookmark:bookmarks', label: 'Bookmarks' },
       ],
       [

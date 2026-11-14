@@ -232,14 +232,14 @@ describe('mediumHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the posts hint for a user feed', () => {
-      const value = 'https://medium.com/feed/@anngivens'
+      const value = 'https://medium.com/feed/@carol'
       const expected: DiscoverUriHint = { key: 'medium:posts', label: 'Posts' }
 
       expect(mediumHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a user feed on the www host', () => {
-      const value = 'https://www.medium.com/feed/@mariandrew'
+      const value = 'https://www.medium.com/feed/@dave'
       const expected: DiscoverUriHint = { key: 'medium:posts', label: 'Posts' }
 
       expect(mediumHandler.getFeedHint?.(value)).toEqual(expected)
@@ -295,7 +295,7 @@ describe('mediumHandler', () => {
     })
 
     it('should return undefined for a profile page', () => {
-      const value = 'https://medium.com/@anngivens'
+      const value = 'https://medium.com/@carol'
 
       expect(mediumHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -333,7 +333,7 @@ describe('mediumHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://medium.com/feed/@anngivens', { key: 'medium:posts', label: 'Posts' }],
+      ['https://medium.com/feed/@carol', { key: 'medium:posts', label: 'Posts' }],
       ['https://medium.com/@alice.example/feed', { key: 'medium:posts', label: 'Posts' }],
       ['http://www.medium.com/@alice/feed/', { key: 'medium:posts', label: 'Posts' }],
       ['https://medium.com/feed/tag/fake-news', { key: 'medium:tag', label: 'Tag' }],
