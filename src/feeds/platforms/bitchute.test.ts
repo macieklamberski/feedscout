@@ -67,7 +67,7 @@ describe('bitchuteHandler', () => {
       const value = 'https://www.bitchute.com/channel/example/'
       const expected = [
         {
-          uri: 'https://www.bitchute.com/feeds/rss/channel/example/',
+          uri: 'https://api.bitchute.com/feeds/rss/channel/example/',
           hint: { key: 'bitchute:channel', label: 'Channel' },
         },
       ]
