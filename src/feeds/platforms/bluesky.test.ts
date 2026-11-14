@@ -38,10 +38,24 @@ describe('parseBlueskyUrl', () => {
     expect(parseBlueskyUrl('https://bsky.app/profile/user.bsky.social/followers')).toEqual(expected)
   })
 
-  it('should return the handle for the www host', () => {
+  it('should return the handle for a profile on deer.social', () => {
+    const value = 'https://deer.social/profile/user.bsky.social'
     const expected: BlueskyUrl = { kind: 'profile', handle: 'user.bsky.social' }
 
-    expect(parseBlueskyUrl('https://www.bsky.app/profile/user.bsky.social')).toEqual(expected)
+    expect(parseBlueskyUrl(value)).toEqual(expected)
+  })
+
+  it('should return the handle for a profile on main.bsky.dev', () => {
+    const value = 'https://main.bsky.dev/profile/user.bsky.social'
+    const expected: BlueskyUrl = { kind: 'profile', handle: 'user.bsky.social' }
+
+    expect(parseBlueskyUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for the www host', () => {
+    const value = 'https://www.bsky.app/profile/user.bsky.social'
+
+    expect(parseBlueskyUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for a profile path without a handle', () => {
@@ -124,6 +138,13 @@ describe('blueskyHandler', () => {
       expect(blueskyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the posts key for a feed on main.bsky.dev', () => {
+      const value = 'https://main.bsky.dev/profile/alice.bsky.social/rss'
+      const expected: DiscoverUriHint = { key: 'bluesky:posts', label: 'Posts' }
+
+      expect(blueskyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the posts key for a handle with percent-encoded spaces', () => {
       const value = 'https://bsky.app/profile/bob.bsky.social%20%20/rss'
       const expected: DiscoverUriHint = { key: 'bluesky:posts', label: 'Posts' }
@@ -163,6 +184,10 @@ describe('blueskyHandler', () => {
       ],
       [
         'https://bsky.app/profile/bob.bsky.social%20%20/rss',
+        { key: 'bluesky:posts', label: 'Posts' },
+      ],
+      [
+        'https://main.bsky.dev/profile/alice.bsky.social/rss',
         { key: 'bluesky:posts', label: 'Posts' },
       ],
     ]

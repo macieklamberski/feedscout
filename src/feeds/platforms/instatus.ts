@@ -1,7 +1,7 @@
-import { getPathSegments, parseUrl } from 'trousse'
+import { getPathSegments, isHostOrSubdomainOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { hasMarker, letterPairsRegex } from '../../common/utils.js'
+import { getTenantSubdomain, hasMarker, letterPairsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -50,6 +50,10 @@ export const parseInstatusUrl = (url: string): InstatusUrl | undefined => {
 
 export const instatusHandler: PlatformHandler = {
   match: (url, content, headers) => {
+    if (isHostOrSubdomainOf(url, domains)) {
+      return getTenantSubdomain(url, domains) !== undefined
+    }
+
     if (!hasMarker(content, headers, { html: isInstatusHtml, headers: isInstatusHeaders })) {
       return false
     }

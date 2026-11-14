@@ -18,10 +18,11 @@ describe('parseNoteUrl', () => {
     expect(parseNoteUrl('https://note.com/tsukasa_yamato/n/some-note')).toEqual(expected)
   })
 
-  it('should return the user for the www host', () => {
+  it('should return the user for the note.mu host', () => {
+    const value = 'https://note.mu/alice'
     const expected: NoteUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseNoteUrl('https://www.note.com/alice')).toEqual(expected)
+    expect(parseNoteUrl(value)).toEqual(expected)
   })
 
   it('should return the magazine for a magazine page', () => {

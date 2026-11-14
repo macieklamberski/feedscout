@@ -1512,7 +1512,7 @@ Discovers the Atom feed of a diaspora* profile. Detected by the `Diaspora.Page` 
 
 ### Instatus
 
-Discovers the incident history feeds of an Instatus status page. Detected by the status page route Instatus names in the `x-matched-path` response header, or by the custom HTML slots of its page template, so custom domains are covered as well as `*.instatus.com` hosts.
+Discovers the incident history feeds of an Instatus status page. Matched by host on `{page}.instatus.com`. A custom domain is detected by the status page route Instatus names in the `x-matched-path` response header, or by the custom HTML slots of its page template.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -2724,7 +2724,7 @@ Discovers the Bazar entry feeds and the recent changes feed of a YesWiki wiki. D
 
 ### Forumotion
 
-Discovers the feeds of a Forumotion forum, under any of the brands Forumotion lists on [forumotion.com/languages](https://www.forumotion.com/languages), such as Forumactif, Foroactivo, Forumeiros, Ahlamontada and Forum2x2. Detected by the `_userdata` script every page prints, so custom domains are covered. The forum comes from the page's breadcrumb.
+Discovers the feeds of a Forumotion forum, under any of the brands Forumotion lists on [forumotion.com/languages](https://www.forumotion.com/languages), such as Forumactif, Foroactivo, Forumeiros, Ahlamontada and Forum2x2. Matched by host on those domains. A custom domain is detected by the `_userdata` script every page prints. The forum comes from the page's breadcrumb.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|

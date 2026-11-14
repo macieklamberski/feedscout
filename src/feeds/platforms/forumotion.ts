@@ -1,7 +1,12 @@
-import { isPlainObject, parseUrl } from 'trousse'
+import { isHostOrSubdomainOf, isPlainObject, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getBrandDomainRegex, getJsonLd, hasMarker } from '../../common/utils.js'
+import {
+  getBrandDomainRegex,
+  getJsonLd,
+  getTenantSubdomain,
+  hasMarker,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home (guess, html), partly covers forum, topic.
@@ -171,7 +176,11 @@ export const getForumotionPage = (url: string, content: string | undefined): For
 }
 
 export const forumotionHandler: PlatformHandler = {
-  match: (_url, content, headers) => {
+  match: (url, content, headers) => {
+    if (isHostOrSubdomainOf(url, domains)) {
+      return getTenantSubdomain(url, domains) !== undefined
+    }
+
     return hasMarker(content, headers, { html: isForumotionHtml })
   },
 

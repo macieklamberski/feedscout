@@ -13,7 +13,7 @@ export type NoteUrl =
   | { kind: 'user'; username: string }
   | { kind: 'home' }
 
-export const hosts = ['note.com', 'www.note.com']
+export const hosts = ['note.com', 'note.mu']
 
 // A hashtag page redirects to `/tag/{tag}`, and the feed stays under `/hashtag`.
 const hashtagRegex = /^\/(?:hashtag|tag)\/([^/]+)/i

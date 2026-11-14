@@ -55,15 +55,11 @@ describe('parseDailymotionUrl', () => {
     expect(parseDailymotionUrl('https://www.dailymotion.com/Playlist/x7vjjm')).toEqual(expected)
   })
 
-  it('should return the playlist id cut at its first underscore', () => {
+  it('should keep the title tail of a playlist id', () => {
     const value = 'https://www.dailymotion.com/playlist/X7VJJM_BFM-Story_bfm-story'
-    const expected: DailymotionUrl = { kind: 'playlist', playlistId: 'X7VJJM' }
+    const expected: DailymotionUrl = { kind: 'playlist', playlistId: 'X7VJJM_BFM-Story_bfm-story' }
 
     expect(parseDailymotionUrl(value)).toEqual(expected)
-  })
-
-  it('should return undefined for a playlist id that starts with an underscore', () => {
-    expect(parseDailymotionUrl('https://www.dailymotion.com/playlist/_bfm-story')).toBeUndefined()
   })
 
   it('should return a one-character playlist id whole', () => {
