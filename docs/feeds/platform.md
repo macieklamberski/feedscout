@@ -766,8 +766,8 @@ Discovers RSS feeds for Hacker News.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `news.ycombinator.com` | Front page (RSS) |
-| `news.ycombinator.com/show` | Show HN (RSS) |
+| `news.ycombinator.com` | Front page (RSS) · full front page (RSS) |
+| `news.ycombinator.com/show` | Show HN (RSS) · full front page (RSS) |
 
 ### Listed
 
