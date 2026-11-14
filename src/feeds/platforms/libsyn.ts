@@ -8,18 +8,9 @@ export type LibsynUrl = { kind: 'feed'; showId: string } | { kind: 'podcast' }
 
 const domains = ['libsyn.com']
 const feedHosts = ['feeds.libsyn.com']
-// Hosts serving every show by path, so they name no show.
-const serviceHosts = [
-  'assets.libsyn.com',
-  'html5-player.libsyn.com',
-  'media.libsyn.com',
-  'oembed.libsyn.com',
-  'play.libsyn.com',
-  'traffic.libsyn.com',
-]
 
 export const parseLibsynUrl = (url: string): LibsynUrl | undefined => {
-  if (!getTenantSubdomain(url, domains, serviceHosts)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

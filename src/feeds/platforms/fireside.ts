@@ -6,11 +6,9 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type FiresideUrl = { kind: 'podcast'; slug: string }
 
 const domains = ['fireside.fm']
-// Hosts serving every show by path, so they name no show.
-const serviceHosts = ['aphid.fireside.fm', 'feeds.fireside.fm', 'player.fireside.fm']
 
 export const parseFiresideUrl = (url: string): FiresideUrl | undefined => {
-  const slug = getTenantSubdomain(url, domains, serviceHosts)
+  const slug = getTenantSubdomain(url, domains)
 
   if (!slug) {
     return

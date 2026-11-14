@@ -9,14 +9,12 @@ export type GhostUrl =
   | { kind: 'blog' }
 
 const domains = ['ghost.io']
-// The upload host, which names no blog.
-const serviceHosts = ['storage.ghost.io']
 
 const tagRegex = /^\/tag\/([^/]+)/i
 const authorRegex = /^\/author\/([^/]+)/i
 
 export const parseGhostUrl = (url: string): GhostUrl | undefined => {
-  if (!getTenantSubdomain(url, domains, serviceHosts)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

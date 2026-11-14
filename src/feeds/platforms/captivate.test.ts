@@ -16,21 +16,8 @@ describe('parseCaptivateUrl', () => {
     expect(parseCaptivateUrl('https://a.b.captivate.fm/')).toBeUndefined()
   })
 
-  it('should return undefined for the feed host', () => {
-    expect(parseCaptivateUrl('https://feeds.captivate.fm/myshow/')).toBeUndefined()
-  })
-
   it('should return undefined for another host', () => {
     expect(parseCaptivateUrl('https://example.com/')).toBeUndefined()
-  })
-
-  const serviceHosts = [
-    'https://player.captivate.fm/episode/1d2e3f40',
-    'https://podcasts.captivate.fm/media/1d2e3f40/episode.mp3',
-  ]
-
-  it.each(serviceHosts)('should return undefined for the service host %s', (value) => {
-    expect(parseCaptivateUrl(value)).toBeUndefined()
   })
 })
 

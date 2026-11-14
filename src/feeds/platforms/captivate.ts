@@ -6,11 +6,9 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type CaptivateUrl = { kind: 'show'; slug: string }
 
 const domains = ['captivate.fm']
-// Hosts serving every show by path, so they name no show.
-const serviceHosts = ['feeds.captivate.fm', 'player.captivate.fm', 'podcasts.captivate.fm']
 
 export const parseCaptivateUrl = (url: string): CaptivateUrl | undefined => {
-  const slug = getTenantSubdomain(url, domains, serviceHosts)
+  const slug = getTenantSubdomain(url, domains)
 
   if (!slug) {
     return

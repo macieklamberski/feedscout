@@ -10,8 +10,6 @@ export type TumblrUrl = { kind: 'blog'; blog: string } | { kind: 'tag'; blog: st
 
 const hosts = ['tumblr.com', 'www.tumblr.com']
 export const domains = ['tumblr.com']
-// Tumblr's embed, media and asset hosts, which name no blog.
-const serviceHosts = ['a.tumblr.com', 'assets.tumblr.com', 'embed.tumblr.com']
 
 const tagRegex = /^\/tagged\/([^/]+)/i
 
@@ -35,7 +33,7 @@ export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
     return { kind: 'blog', blog }
   }
 
-  const blog = getTenantSubdomain(url, domains, serviceHosts)
+  const blog = getTenantSubdomain(url, domains)
 
   if (!blog) {
     return

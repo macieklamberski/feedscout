@@ -13,21 +13,8 @@ describe('parseFiresideUrl', () => {
     expect(parseFiresideUrl('https://www.fireside.fm/')).toBeUndefined()
   })
 
-  it('should return undefined for the feed host', () => {
-    expect(parseFiresideUrl('https://feeds.fireside.fm/myshow/rss')).toBeUndefined()
-  })
-
   it('should return undefined for another host', () => {
     expect(parseFiresideUrl('https://example.com/')).toBeUndefined()
-  })
-
-  const serviceHosts = [
-    'https://aphid.fireside.fm/d/1437767933/episode.mp3',
-    'https://player.fireside.fm/v2/abc123',
-  ]
-
-  it.each(serviceHosts)('should return undefined for the service host %s', (value) => {
-    expect(parseFiresideUrl(value)).toBeUndefined()
   })
 })
 

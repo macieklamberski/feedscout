@@ -3,7 +3,6 @@ import {
   anyWordMatchesAnyOf,
   getSubdomain,
   isAnyOf,
-  isHostOf,
   isInteger,
   isSameText,
   isString,
@@ -243,11 +242,10 @@ const scriptSegmentRegex = /\/[^/]*\.(?:php(?:\/.*)?|html?)$/i
 const trailingSlashRegex = /\/$/
 
 // The subdomain a platform gives one of its users: a single label other than `www`, which is the
-// platform's own site everywhere, on a host other than those the platform serves itself from.
+// platform's own site everywhere.
 export const getTenantSubdomain = (
   url: string | URL,
   domains: Array<string | RegExp>,
-  serviceHosts: Array<string> = [],
 ): string | undefined => {
   const subdomain = getSubdomain(url, domains)
 
@@ -255,7 +253,7 @@ export const getTenantSubdomain = (
     return
   }
 
-  if (isAnyOf(subdomain, 'www') || isHostOf(url, serviceHosts)) {
+  if (isAnyOf(subdomain, 'www')) {
     return
   }
 

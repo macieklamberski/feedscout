@@ -61,19 +61,6 @@ const domainPatternOptions = {
 
 const domainPatternFeeds = definePlatformFeeds(domainPatternTemplates, domainPatternOptions)
 
-const serviceHostTemplates = [
-  { key: 'example:site', template: 'https://{host}/feeds/site' },
-  { key: 'example:blog', template: 'https://{username}.example.org/feed' },
-  { key: 'example:episode', template: 'https://player.example.net/{id}/rss' },
-]
-
-const serviceHostOptions = {
-  domains: ['example.net', 'example.edu'],
-  serviceHosts: ['player.example.net', 'player.example.org'],
-}
-
-const serviceHostFeeds = definePlatformFeeds(serviceHostTemplates, serviceHostOptions)
-
 const hostPatternFeeds = definePlatformFeeds(
   [{ key: 'example:profile', template: 'https://{host}/-{username}/feed' }],
   { hosts: ['example.org', /^example\.(?:com|co\.[a-z]{2}|[a-z]{2})$/] },
@@ -639,64 +626,6 @@ describe('definePlatformFeeds', () => {
       const value = 'ftp://www.example.com/alice/feed.rss'
 
       expect(feeds.getFeedHint(value)).toBeUndefined()
-    })
-
-    describe('with service hosts', () => {
-      it('should return the key of a feed on a tenant of a listed domain', () => {
-        const value = 'https://alice.example.net/feeds/site'
-        const expected = 'example:site'
-
-        expect(serviceHostFeeds.getFeedHint(value)?.key).toBe(expected)
-      })
-
-      it('should return undefined for a feed on a service host of a listed domain', () => {
-        const value = 'https://player.example.net/feeds/site'
-
-        expect(serviceHostFeeds.getFeedHint(value)).toBeUndefined()
-      })
-
-      it('should return undefined for a feed on www of a listed domain', () => {
-        const value = 'https://www.example.net/feeds/site'
-
-        expect(serviceHostFeeds.getFeedHint(value)).toBeUndefined()
-      })
-
-      it('should return the key of a feed on a label starting with a service label', () => {
-        const value = 'https://players.example.net/feeds/site'
-        const expected = 'example:site'
-
-        expect(serviceHostFeeds.getFeedHint(value)?.key).toBe(expected)
-      })
-
-      it('should return the key of a feed on a service label of another listed domain', () => {
-        const value = 'https://player.example.edu/feeds/site'
-        const expected = 'example:site'
-
-        expect(serviceHostFeeds.getFeedHint(value)?.key).toBe(expected)
-      })
-
-      it('should return undefined for a feed on a service host of a tenant placeholder', () => {
-        const value = 'https://player.example.org/feed'
-
-        expect(serviceHostFeeds.getFeedHint(value)).toBeUndefined()
-      })
-
-      it('should return the key of a feed on a row written for the service host', () => {
-        const value = 'https://player.example.net/abc123/rss'
-        const expected = 'example:episode'
-
-        expect(serviceHostFeeds.getFeedHint(value)?.key).toBe(expected)
-      })
-
-      it('should return undefined for a feed on a service host with isWwwTenant', () => {
-        const wwwTenantServiceFeeds = definePlatformFeeds(serviceHostTemplates, {
-          ...serviceHostOptions,
-          isWwwTenant: true,
-        })
-        const value = 'https://player.example.net/feeds/site'
-
-        expect(wwwTenantServiceFeeds.getFeedHint(value)).toBeUndefined()
-      })
     })
 
     describe('with a domain pattern', () => {

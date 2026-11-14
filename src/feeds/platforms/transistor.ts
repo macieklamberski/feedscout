@@ -7,14 +7,12 @@ export type TransistorUrl = { kind: 'show'; slug: string }
 export type TransistorPage = TransistorUrl
 
 const domains = ['transistor.fm']
-// Hosts serving every show by path, so they name no show.
-const serviceHosts = ['feeds.transistor.fm', 'share.transistor.fm']
 
 // The show page links its feed, and the feed slug is not always the subdomain.
 const feedSlugRegex = /https:\/\/feeds\.transistor\.fm\/([^/"'?#\s<>&\\]+)/i
 
 export const parseTransistorUrl = (url: string): TransistorUrl | undefined => {
-  const slug = getTenantSubdomain(url, domains, serviceHosts)
+  const slug = getTenantSubdomain(url, domains)
 
   if (!slug) {
     return

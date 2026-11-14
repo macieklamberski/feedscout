@@ -18,22 +18,12 @@ describe('parseTransistorUrl', () => {
     expect(parseTransistorUrl('https://www.transistor.fm/')).toBeUndefined()
   })
 
-  it('should return undefined for the feed host', () => {
-    expect(parseTransistorUrl('https://feeds.transistor.fm/myshow')).toBeUndefined()
-  })
-
   it('should return undefined for a nested subdomain', () => {
     expect(parseTransistorUrl('https://www.example.transistor.fm/')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
     expect(parseTransistorUrl('https://example.com/')).toBeUndefined()
-  })
-
-  it('should return undefined for a service host', () => {
-    const value = 'https://share.transistor.fm/s/abc123'
-
-    expect(parseTransistorUrl(value)).toBeUndefined()
   })
 })
 
@@ -50,10 +40,6 @@ describe('getTransistorPage', () => {
     const expected: TransistorPage = { kind: 'show', slug: 'my-show' }
 
     expect(getTransistorPage('https://my-show.transistor.fm/', undefined)).toEqual(expected)
-  })
-
-  it('should return undefined for the feed host', () => {
-    expect(getTransistorPage('https://feeds.transistor.fm/my-show', undefined)).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {

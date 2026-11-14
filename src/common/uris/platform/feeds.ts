@@ -40,9 +40,6 @@ export type PlatformFeedTableOptions = {
   domains?: Array<string | RegExp>
   // Whether `www` can be a tenant, so `www.example.com` matches a `{user}.example.com` row.
   isWwwTenant?: boolean
-  // The hosts the platform serves itself from, such as `player.example.com`, which a tenant
-  // placeholder never takes.
-  serviceHosts?: Array<string>
 }
 
 export type PlatformFeedTable = {
@@ -170,13 +167,8 @@ const compileTemplate = (
   const hosts = options.hosts ?? []
   const domains = (options.domains ?? []).map((domain) => toEntrySource(domain))
   const domainSource = `(?:${domains.join('|')})`
-  const serviceHosts = (options.serviceHosts ?? []).map((value) => escapeRegex(value))
-  // One host label, never `www` and never a whole service host.
-  const tenantSource = [
-    options.isWwwTenant ? '' : '(?!www\\.)',
-    serviceHosts.length > 0 ? `(?!(?:${serviceHosts.join('|')})(?:/|$))` : '',
-    '[^./]+',
-  ].join('')
+  // One host label other than `www` unless `www` is a tenant.
+  const tenantSource = options.isWwwTenant ? '[^./]+' : '(?!www\\.)[^./]+'
 
   const hasHosts = hosts.length > 0 || domains.length > 0
 
