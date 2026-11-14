@@ -46,7 +46,11 @@ const feeds = definePlatformFeeds(
   [
     { key: 'stackexchange:tag', template: '{scheme}://{host}/feeds/tag/{tag}?sort={sort}' },
     { key: 'stackexchange:tag', template: '{scheme}://{host}/feeds/tag/{tag}' },
-    { key: 'stackexchange:tag', template: '{scheme}://{host}/feeds/tag?tagnames={tag}' },
+    {
+      key: 'stackexchange:tag',
+      template: '{scheme}://{host}/feeds/tag?tagnames={tag}',
+      isAlias: true,
+    },
     { key: 'stackexchange:question', template: '{scheme}://{host}/feeds/question/{questionId}' },
     { key: 'stackexchange:user', template: '{scheme}://{host}/feeds/user/{userId}' },
     {
