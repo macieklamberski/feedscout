@@ -1274,7 +1274,7 @@ Discovers RSS feeds for Podigee-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.podigee.io` | Podcast (RSS) |
+| `{podcast}.podigee.io` | Podcast (RSS) |
 
 ### Postach.io
 
