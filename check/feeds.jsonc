@@ -1314,7 +1314,7 @@
     ]
   },
   "plurk": {
-    "plurk:plurks": "https://www.plurk.com/plurkoffice.xml",
+    "plurk:plurks": "https://www.plurk.com/user/plurkoffice.xml",
     "plurk:responses": "https://www.plurk.com/p/3j6p8yayds.xml"
   },
   "pmwiki": {

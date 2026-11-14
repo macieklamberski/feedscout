@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriHint } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type PlurkUrl, parsePlurkUrl, plurkHandler } from './plurk.js'
 
 describe('parsePlurkUrl', () => {
@@ -70,7 +72,7 @@ describe('plurkHandler', () => {
       const value = 'https://www.plurk.com/alice'
       const expected = [
         {
-          uri: 'https://www.plurk.com/alice.xml',
+          uri: 'https://www.plurk.com/user/alice.xml',
           hint: { key: 'plurk:plurks', label: 'Plurks' },
         },
       ]
@@ -82,7 +84,7 @@ describe('plurkHandler', () => {
       const value = 'https://plurk.com/alice/'
       const expected = [
         {
-          uri: 'https://www.plurk.com/alice.xml',
+          uri: 'https://www.plurk.com/user/alice.xml',
           hint: { key: 'plurk:plurks', label: 'Plurks' },
         },
       ]
@@ -94,7 +96,7 @@ describe('plurkHandler', () => {
       const value = 'https://www.plurk.com/u/alice'
       const expected = [
         {
-          uri: 'https://www.plurk.com/alice.xml',
+          uri: 'https://www.plurk.com/user/alice.xml',
           hint: { key: 'plurk:plurks', label: 'Plurks' },
         },
       ]
@@ -106,7 +108,7 @@ describe('plurkHandler', () => {
       const value = 'https://www.plurk.com/m/alice/friends'
       const expected = [
         {
-          uri: 'https://www.plurk.com/alice.xml',
+          uri: 'https://www.plurk.com/user/alice.xml',
           hint: { key: 'plurk:plurks', label: 'Plurks' },
         },
       ]
@@ -155,6 +157,13 @@ describe('plurkHandler', () => {
       expect(plurkHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the plurks hint for a user feed under /user/', () => {
+      const value = 'https://www.plurk.com/user/alice.xml'
+      const expected: DiscoverUriHint = { key: 'plurk:plurks', label: 'Plurks' }
+
+      expect(plurkHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the responses hint for a post feed', () => {
       const value = 'https://www.plurk.com/p/abc123.xml'
       const expected: DiscoverUriHint = { key: 'plurk:responses', label: 'Responses' }
@@ -166,6 +175,26 @@ describe('plurkHandler', () => {
       const value = 'https://www.plurk.com/alice'
 
       expect(plurkHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('discoverUrisFromPlatform', () => {
+    const ownFeeds: Array<string> = [
+      'https://www.plurk.com/user/alice.xml',
+      'https://www.plurk.com/alice.xml',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [plurkHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'plurk:plurks', label: 'Plurks' } },
+      ]
+
+      expect(result).toEqual(expected)
     })
   })
 })
