@@ -317,10 +317,7 @@
     "crates-io:updates": "https://static.crates.io/rss/updates.xml"
   },
   "csdn": {
-    "csdn:blog": [
-      "https://rss.csdn.net/csdnnews/rss/map",
-      "https://blog.csdn.net/csdnnews/rss/list"
-    ]
+    "csdn:blog": "https://rss.csdn.net/csdnnews/rss/map"
   },
   "dailymotion": {
     "dailymotion:channel": "https://www.dailymotion.com/rss/channel/news",
