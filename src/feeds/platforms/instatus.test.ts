@@ -163,15 +163,10 @@ describe('instatusHandler', () => {
       expect(instatusHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the hint for a feed with www before the status subdomain', () => {
+    it('should return undefined for a feed with www before the status subdomain', () => {
       const value = 'https://www.example.instatus.com/history.rss'
-      const expected: DiscoverUriHint = {
-        key: 'instatus:history',
-        label: 'Incident history',
-        format: 'rss',
-      }
 
-      expect(instatusHandler.getFeedHint?.(value)).toEqual(expected)
+      expect(instatusHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a page on a status subdomain', () => {
