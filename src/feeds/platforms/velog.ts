@@ -16,8 +16,8 @@ const userRegex = /^\/@([^/]+)/
 const feeds = definePlatformFeeds([
   { key: 'velog:trending', template: 'https://v2.velog.io/rss' },
   { key: 'velog:posts', template: 'https://v2.velog.io/rss/{username}' },
-  { key: 'velog:trending', template: 'https://api.velog.io/rss' },
-  { key: 'velog:posts', template: 'https://api.velog.io/rss/{username}' },
+  { key: 'velog:trending', template: 'https://api.velog.io/rss', isAlias: true },
+  { key: 'velog:posts', template: 'https://api.velog.io/rss/{username}', isAlias: true },
 ])
 
 export const parseVelogUrl = (url: string): VelogUrl | undefined => {
