@@ -1,7 +1,7 @@
-import { composeQuery, decodeSegment, getQueryParam, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { decodeSegment, getQueryParam, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, post, tag, tagQuery.
@@ -13,10 +13,23 @@ export type SapoBlogsUrl =
 export type SapoBlogsPage = SapoBlogsUrl
 
 const domains = ['blogs.sapo.pt']
-const commentsUrl = 'https://blogs.sapo.pt/commentsrss.bml'
 
 const postRegex = /^\/(?:[^/]+-(\d+)|(\d+)\.html)\/?$/i
 const tagRegex = /^\/tag\/(.+?)\/?$/i
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'sapo-blogs:posts', template: '{scheme}://{host}/data/rss', format: 'rss' },
+    { key: 'sapo-blogs:posts', template: '{scheme}://{host}/data/atom', format: 'atom' },
+    { key: 'sapo-blogs:tag', template: '{scheme}://{host}/data/rss?tag={tag}' },
+    { key: 'sapo-blogs:comments', template: 'https://blogs.sapo.pt/commentsrss.bml?blog={blog}' },
+    {
+      key: 'sapo-blogs:post-comments',
+      template: 'https://blogs.sapo.pt/commentsrss.bml?blog={blog}&ditemid={postId}',
+    },
+  ],
+  { domains },
+)
 
 export const parseSapoBlogsUrl = (url: string): SapoBlogsUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -79,35 +92,38 @@ export const sapoBlogsHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getSapoBlogsPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
+    const { blog } = page
 
     if (page.kind === 'post') {
-      uris.push({
-        uri: `${commentsUrl}${composeQuery({ blog: page.blog, ditemid: page.postId })}`,
-        hint: composeHint('sapo-blogs:post-comments'),
-      })
+      return [
+        pageFeeds.getFeedEntry('sapo-blogs:post-comments', { blog, postId: page.postId }),
+        pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'rss'),
+        pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'atom'),
+        pageFeeds.getFeedEntry('sapo-blogs:comments', { blog }),
+      ]
     }
 
     if (page.kind === 'tag') {
-      uris.push({
-        uri: `${origin}/data/rss${composeQuery({ tag: page.tag })}`,
-        hint: composeHint('sapo-blogs:tag'),
-      })
+      return [
+        pageFeeds.getFeedEntry('sapo-blogs:tag', { tag: page.tag }),
+        pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'rss'),
+        pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'atom'),
+        pageFeeds.getFeedEntry('sapo-blogs:comments', { blog }),
+      ]
     }
 
-    uris.push({ uri: `${origin}/data/rss`, hint: composeHint('sapo-blogs:posts', 'rss') })
-    uris.push({ uri: `${origin}/data/atom`, hint: composeHint('sapo-blogs:posts', 'atom') })
-    uris.push({
-      uri: `${commentsUrl}${composeQuery({ blog: page.blog })}`,
-      hint: composeHint('sapo-blogs:comments'),
-    })
-
-    return uris
+    return [
+      pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'rss'),
+      pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'atom'),
+      pageFeeds.getFeedEntry('sapo-blogs:comments', { blog }),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
