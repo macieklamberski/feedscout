@@ -1,6 +1,6 @@
-import { composeQuery, getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers community, home, languageCommunity, officialBlog, userBlog (html).
@@ -16,6 +16,14 @@ const hosts = ['lichess.org']
 
 const userBlogRegex = /^\/@\/([\w-]+)\/blog(?:\/|$)/i
 const communityRegex = /^(?:\/(\w+))?\/blog\/community\/?$/i
+
+const feeds = definePlatformFeeds([
+  { key: 'lichess:blog', template: 'https://lichess.org/@/{username}/blog.atom' },
+  { key: 'lichess:blog', template: 'https://lichess.org/blog.atom', isAlias: true },
+  { key: 'lichess:community', template: 'https://lichess.org/blog/community.atom?lang={language}' },
+  { key: 'lichess:community', template: 'https://lichess.org/blog/community.atom' },
+  { key: 'lichess:updates', template: 'https://lichess.org/feed.atom' },
+])
 
 export const parseLichessUrl = (url: string): LichessUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -62,40 +70,19 @@ export const lichessHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'blog') {
-      return [
-        {
-          uri: `https://lichess.org/@/${parsed.username}/blog.atom`,
-          hint: composeHint('lichess:blog'),
-        },
-      ]
+      return [feeds.getFeedEntry('lichess:blog', { username: parsed.username })]
     }
 
     if (parsed.kind === 'community') {
-      const { language } = parsed
-      const query = language ? composeQuery({ lang: language }) : ''
-
-      return [
-        {
-          uri: `https://lichess.org/blog/community.atom${query}`,
-          hint: composeHint('lichess:community'),
-        },
-      ]
+      return [feeds.getFeedEntry('lichess:community', { language: parsed.language })]
     }
 
     if (parsed.kind === 'officialBlog') {
-      return [
-        {
-          uri: 'https://lichess.org/@/Lichess/blog.atom',
-          hint: composeHint('lichess:blog'),
-        },
-      ]
+      return [feeds.getFeedEntry('lichess:blog', { username: 'Lichess' })]
     }
 
-    return [
-      {
-        uri: 'https://lichess.org/feed.atom',
-        hint: composeHint('lichess:updates'),
-      },
-    ]
+    return [feeds.getFeedEntry('lichess:updates')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
