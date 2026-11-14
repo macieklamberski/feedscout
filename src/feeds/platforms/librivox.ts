@@ -12,6 +12,9 @@ const audiobookRegex = /^\/[^/]+\/?$/
 const feedIdRegex = /href="(?:https?|itpc):\/\/librivox\.org\/rss\/(\d+)"/i
 
 const feeds = definePlatformFeeds([
+  // The site's new releases. It needs no value from the page, so `resolve` builds it on every
+  // page it matches. It goes before the audiobook row, whose placeholder its path also fills.
+  { key: 'librivox:latest', template: 'https://librivox.org/rss/latest_releases' },
   { key: 'librivox:audiobook', template: 'https://librivox.org/rss/{audiobookId}' },
 ])
 
@@ -47,15 +50,18 @@ export const librivoxHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('librivox:audiobook', { audiobookId: page.audiobookId })]
+    return [
+      feeds.getFeedEntry('librivox:audiobook', { audiobookId: page.audiobookId }),
+      feeds.getFeedEntry('librivox:latest'),
+    ]
   },
 
   getFeedHint: (url) => {
     const hint = feeds.getFeedHint(url)
     const [, audiobookId] = getPathSegments(url)
 
-    // An audiobook id is digits, so a named feed such as rss/latest_releases is not one.
-    if (!hint || !digitsRegex.test(audiobookId)) {
+    // An audiobook id is digits, so a file such as rss/robots.txt is not one.
+    if (!hint || (hint.key === 'librivox:audiobook' && !digitsRegex.test(audiobookId))) {
       return
     }
 

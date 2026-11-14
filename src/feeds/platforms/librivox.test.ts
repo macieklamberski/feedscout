@@ -45,6 +45,10 @@ describe('librivoxHandler', () => {
           uri: 'https://librivox.org/rss/253',
           hint: { key: 'librivox:audiobook', label: 'Audiobook' },
         },
+        {
+          uri: 'https://librivox.org/rss/latest_releases',
+          hint: { key: 'librivox:latest', label: 'New releases' },
+        },
       ]
 
       expect(librivoxHandler.resolve(value, audiobookHtml)).toEqual(expected)
@@ -79,8 +83,15 @@ describe('librivoxHandler', () => {
       expect(librivoxHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a named feed under rss', () => {
+    it('should return the new releases hint for the new releases feed', () => {
       const value = 'https://librivox.org/rss/latest_releases'
+      const expected: DiscoverUriHint = { key: 'librivox:latest', label: 'New releases' }
+
+      expect(librivoxHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for another named path under rss', () => {
+      const value = 'https://librivox.org/rss/example'
 
       expect(librivoxHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -111,21 +122,23 @@ describe('librivoxHandler', () => {
   })
 
   describe('own feeds through the Platform method', () => {
-    const values = [
-      'https://librivox.org/rss/12345',
-      'http://librivox.org/rss/12345',
-      'https://librivox.org/rss/12345/',
+    const audiobook: DiscoverUriHint = { key: 'librivox:audiobook', label: 'Audiobook' }
+    const latest: DiscoverUriHint = { key: 'librivox:latest', label: 'New releases' }
+    const values: Array<[string, DiscoverUriHint]> = [
+      ['https://librivox.org/rss/12345', audiobook],
+      ['http://librivox.org/rss/12345', audiobook],
+      ['https://librivox.org/rss/12345/', audiobook],
+      ['https://librivox.org/rss/latest_releases', latest],
+      ['https://librivox.org/rss/latest_releases/', latest],
     ]
 
-    it.each(values)('should return %s as itself', async (value) => {
+    it.each(values)('should return %s as itself', async (value, hint) => {
       const options = {
         ...defaultPlatformOptions,
         handlers: [librivoxHandler],
         baseUrl: value,
       }
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: value, hint: { key: 'librivox:audiobook', label: 'Audiobook' } },
-      ]
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
       expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
