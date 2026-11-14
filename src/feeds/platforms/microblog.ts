@@ -35,7 +35,12 @@ const feeds = definePlatformFeeds(
     { key: 'microblog:posts', template: '{scheme}://{host}/feed.xml', format: 'rss' },
     { key: 'microblog:posts', template: '{scheme}://{host}/feed.json', format: 'json' },
     // replies.xml redirects to feed.xml, so a stored one is the posts feed.
-    { key: 'microblog:posts', template: '{scheme}://{host}/replies.xml', format: 'rss' },
+    {
+      key: 'microblog:posts',
+      template: '{scheme}://{host}/replies.xml',
+      format: 'rss',
+      isAlias: true,
+    },
     {
       key: 'microblog:podcast',
       template: '{scheme}://{host}/podcast.xml',
