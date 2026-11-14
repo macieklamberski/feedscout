@@ -1,11 +1,20 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type TravellerspointUrl = { kind: 'blog'; blog: string }
 
 const domains = ['travellerspoint.com']
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'travellerspoint:posts', template: '{scheme}://{host}/atom.xml' },
+    { key: 'travellerspoint:posts', template: '{scheme}://{host}/rss.xml', isAlias: true },
+  ],
+  { domains },
+)
 
 export const parseTravellerspointUrl = (url: string): TravellerspointUrl | undefined => {
   const blog = getTenantSubdomain(url, domains)
@@ -23,18 +32,14 @@ export const travellerspointHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsed = parseTravellerspointUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parseTravellerspointUrl(url) || !page) {
       return []
     }
 
-    // An http page redirects to https, and the page's alternate link spells the feed with https.
-    return [
-      {
-        uri: `https://${parsed.blog}.travellerspoint.com/atom.xml`,
-        hint: composeHint('travellerspoint:posts'),
-      },
-    ]
+    return [page.getFeedEntry('travellerspoint:posts')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
