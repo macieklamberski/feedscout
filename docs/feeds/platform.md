@@ -2840,7 +2840,7 @@ Discovers RSS feeds for Jellypod-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.jellypod.com` | Podcast (RSS) |
+| `{podcast}.jellypod.com` | Podcast (RSS) |
 
 ### Goope
 
