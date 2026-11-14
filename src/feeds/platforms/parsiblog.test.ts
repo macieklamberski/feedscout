@@ -114,6 +114,10 @@ describe('parsiblogHandler', () => {
         { key: 'parsiblog:posts', label: 'Posts', format: 'atom' },
       ],
       [
+        'http://www.alice.parsiblog.com/rss',
+        { key: 'parsiblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
         'http://alice.parsiblog.com/RSS.aspx',
         { key: 'parsiblog:posts', label: 'Posts', format: 'rss' },
       ],
@@ -163,12 +167,6 @@ describe('parsiblogHandler', () => {
       expect(parsiblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a feed on www in front of a blog', () => {
-      const value = 'http://www.alice.parsiblog.com/rss'
-
-      expect(parsiblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
     it('should return undefined for another host', () => {
       const value = 'http://example.com/rss/'
 
@@ -186,6 +184,10 @@ describe('parsiblogHandler', () => {
       [
         'http://alice.parsiblog.ir/atom',
         { key: 'parsiblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'http://www.alice.parsiblog.com/rss',
+        { key: 'parsiblog:posts', label: 'Posts', format: 'rss' },
       ],
       [
         'http://alice.parsiblog.com/RSS.aspx',

@@ -18,7 +18,7 @@ const feeds = definePlatformFeeds(
     { key: 'parsiblog:posts', template: '{scheme}://{host}/ATOM.aspx', format: 'atom' },
     { key: 'parsiblog:posts', template: '{scheme}://{host}/Mag/RSS.aspx', format: 'rss' },
   ],
-  { domains },
+  { domains, isWwwTenantPrefix: true },
 )
 
 export const parseParsiblogUrl = (url: string): ParsiblogUrl | undefined => {
