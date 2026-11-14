@@ -1,6 +1,5 @@
 import { getPathSegments } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
-import { definePlatformFeeds, type PlatformFeedTable } from '../../common/uris/platform/feeds.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -30,18 +29,6 @@ const feeds = definePlatformFeeds(
   ],
   { domains },
 )
-
-const getChannelFeeds = (
-  pageFeeds: Pick<PlatformFeedTable, 'getFeedEntry'>,
-  channel: string,
-): Array<DiscoverUriEntry> => {
-  return [
-    pageFeeds.getFeedEntry('sermon-net:channel', { channel }),
-    pageFeeds.getFeedEntry('sermon-net:channel-media', { channel }),
-    pageFeeds.getFeedEntry('sermon-net:channel-video', { channel }),
-    pageFeeds.getFeedEntry('sermon-net:channel-audio-pdf', { channel }),
-  ]
-}
 
 export const parseSermonNetUrl = (url: string): SermonNetUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -109,7 +96,12 @@ export const sermonNetHandler: PlatformHandler = {
     if (page.channels.length > 0) {
       // The channel is page text, which can hold a `/`, and the table escapes it.
       return page.channels.flatMap((channel) => {
-        return getChannelFeeds(pageFeeds, channel)
+        return [
+          pageFeeds.getFeedEntry('sermon-net:channel', { channel }),
+          pageFeeds.getFeedEntry('sermon-net:channel-media', { channel }),
+          pageFeeds.getFeedEntry('sermon-net:channel-video', { channel }),
+          pageFeeds.getFeedEntry('sermon-net:channel-audio-pdf', { channel }),
+        ]
       })
     }
 
