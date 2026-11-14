@@ -1,21 +1,22 @@
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getRegistrableDomain } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, iiblog, seesaaBlog, seesaaSpace, sokuho, xblog (html), partly covers stablo.
 
 export type SeesaaUrl = { kind: 'blog' }
 
-const domains = [
-  'seesaa.net',
-  'iiblog.jp',
-  'seesaa.blog',
-  'seesaa.space',
-  'sokuho.org',
-  'stablo.jp',
-  'xblog.jp',
-]
+const domains = [/^(?:seesaa\.(?:net|blog|space)|iiblog\.jp|sokuho\.org|stablo\.jp|xblog\.jp)$/]
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'seesaa:posts', template: '{scheme}://{host}/index20.rdf', format: 'rss' },
+    { key: 'seesaa:posts', template: '{scheme}://{host}/index.rdf', format: 'rdf' },
+  ],
+  { domains },
+)
 
 export const parseSeesaaUrl = (url: string): SeesaaUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -31,18 +32,22 @@ export const seesaaHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsed = parseSeesaaUrl(url)
+    const domain = getRegistrableDomain(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parseSeesaaUrl(url) || !domain || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
+    // The certificate the blogs share leaves out stablo.jp, so its blogs serve feeds over http.
+    // The other domains redirect http to https.
+    const params = { scheme: domain === 'stablo.jp' ? 'http' : 'https' }
 
-    uris.push({ uri: `${origin}/index20.rdf`, hint: composeHint('seesaa:posts', 'rss') })
-    uris.push({ uri: `${origin}/index.rdf`, hint: composeHint('seesaa:posts', 'rdf') })
-
-    return uris
+    return [
+      page.getFeedEntry('seesaa:posts', params, 'rss'),
+      page.getFeedEntry('seesaa:posts', params, 'rdf'),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
