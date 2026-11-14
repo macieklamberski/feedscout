@@ -3026,8 +3026,8 @@ Discovers the product feeds of a Big Cartel store. A store on its own domain is 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.bigcartel.com` | Products |
-| Any page on a store's own domain | Products<sup>†</sup> |
+| `{store}.bigcartel.com` | Products |
+| `{host}` | Products<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
