@@ -1,12 +1,20 @@
 import { parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
+import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type TextpatternPage = { kind: 'site'; siteUrl: string }
 
 const feedPathRegex = /\/(?:atom|rss)\/?$/i
+
+// A site on any host is known only by its generator tag, which a feed URL does not carry, so the
+// feeds are built under the site root and never claimed.
+const feeds = definePlatformFeeds([
+  { key: 'textpattern:posts', template: '{root}/rss', format: 'rss' },
+  { key: 'textpattern:posts', template: '{root}/atom', format: 'atom' },
+])
 
 export const isTextpatternHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Textpattern')
@@ -57,8 +65,8 @@ export const textpatternHandler: PlatformHandler = {
     const page = getTextpatternPage(url, content)
 
     return [
-      { uri: `${page.siteUrl}/rss`, hint: composeHint('textpattern:posts', 'rss') },
-      { uri: `${page.siteUrl}/atom`, hint: composeHint('textpattern:posts', 'atom') },
+      feeds.getFeedEntry('textpattern:posts', { root: page.siteUrl }, 'rss'),
+      feeds.getFeedEntry('textpattern:posts', { root: page.siteUrl }, 'atom'),
     ]
   },
 }
