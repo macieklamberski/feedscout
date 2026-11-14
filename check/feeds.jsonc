@@ -1739,6 +1739,14 @@
       "https://tildes.net/~tildes/topics.rss",
       "https://tildes.net/~tildes/topics.atom"
     ],
+    "tildes:group-tag": [
+      "https://tildes.net/~arts/topics.rss?tag=architecture",
+      "https://tildes.net/~arts/topics.atom?tag=architecture"
+    ],
+    "tildes:tag": [
+      "https://tildes.net/topics.rss?tag=ask.recommendations",
+      "https://tildes.net/topics.atom?tag=ask.recommendations"
+    ],
     "tildes:topics": ["https://tildes.net/topics.rss", "https://tildes.net/topics.atom"]
   },
   "tischtennislive": {
