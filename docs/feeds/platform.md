@@ -132,17 +132,17 @@ Discovers RSS and Atom feeds for WordPress.com and Unblog blogs, with category, 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.wordpress.com` | Posts (RSS + Atom + RDF<sup>†</sup>) · comments (RSS + Atom<sup>†</sup>) |
-| `*.wordpress.com/category/{category}` | Category (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>), plus the feeds above |
-| `*.wordpress.com/category/{parent}/{category}` | Nested category (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>), plus the feeds above |
-| `*.wordpress.com/tag/{tag}` | Tag (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>), plus the feeds above |
-| `*.wordpress.com/author/{author}` | Author (RSS + Atom + RDF<sup>†</sup>), plus the feeds above |
-| `*.unblog.fr` | Same as `*.wordpress.com` (Unblog) |
-| `*.hypotheses.org` | Same as `*.wordpress.com` |
-| `*.hypotheses.org/{post_id}` | Post comments (RSS + Atom<sup>†</sup>), plus the feeds above |
-| `*.home.blog` | Same as `*.wordpress.com` |
-| `*.wpcomstaging.com` | Same as `*.wordpress.com` |
-| `*.edublogs.org` | Same as `*.wordpress.com` |
+| `{blog}.wordpress.com` | Posts (RSS + Atom + RDF<sup>†</sup>) · comments (RSS + Atom<sup>†</sup>) |
+| `{blog}.wordpress.com/category/{category}` | Category (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>), plus the feeds above |
+| `{blog}.wordpress.com/category/{parent}/{category}` | Nested category (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>), plus the feeds above |
+| `{blog}.wordpress.com/tag/{tag}` | Tag (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>), plus the feeds above |
+| `{blog}.wordpress.com/author/{author}` | Author (RSS + Atom + RDF<sup>†</sup>), plus the feeds above |
+| `{blog}.unblog.fr` | Same as `{blog}.wordpress.com` (Unblog) |
+| `{blog}.hypotheses.org` | Same as `{blog}.wordpress.com` |
+| `{blog}.hypotheses.org/{post_id}` | Post comments (RSS + Atom<sup>†</sup>), plus the feeds above |
+| `{blog}.home.blog` | Same as `{blog}.wordpress.com` |
+| `{blog}.wpcomstaging.com` | Same as `{blog}.wordpress.com` |
+| `{blog}.edublogs.org` | Same as `{blog}.wordpress.com` |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -152,8 +152,8 @@ Discovers feeds for WP Engine-hosted WordPress sites. Uses the same feed structu
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.wpenginepowered.com` | Posts (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>) · comments (RSS + Atom<sup>†</sup>) |
-| `*.wpengine.com` | Posts (RSS + Atom + RDF<sup>†</sup>) · comments (RSS<sup>†</sup> + Atom<sup>†</sup>) |
+| `{site}.wpenginepowered.com` | Posts (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>) · comments (RSS + Atom<sup>†</sup>) |
+| `{site}.wpengine.com` | Posts (RSS + Atom + RDF<sup>†</sup>) · comments (RSS<sup>†</sup> + Atom<sup>†</sup>) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
