@@ -203,29 +203,53 @@ describe('purotHandler', () => {
           uri: 'https://example.purot.net/changes/all?mode=rss',
           hint: { key: 'purot:recent-changes', label: 'Recent changes' },
         },
+        {
+          uri: 'https://example.purot.net/changes/all?mode=rss&messages=0',
+          hint: { key: 'purot:recent-page-changes', label: 'Recent page changes' },
+        },
+        {
+          uri: 'https://example.purot.net/changes/all?mode=rss&pages=0',
+          hint: { key: 'purot:recent-discussions', label: 'Recent discussions' },
+        },
       ]
 
       expect(purotHandler.resolve(value, pageHtml)).toEqual(expected)
     })
 
-    it('should return the wiki feed for a profile page', () => {
+    it('should return the wiki feeds for a profile page', () => {
       const value = 'https://example.purot.net/profile/alice'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.purot.net/changes/all?mode=rss',
           hint: { key: 'purot:recent-changes', label: 'Recent changes' },
         },
+        {
+          uri: 'https://example.purot.net/changes/all?mode=rss&messages=0',
+          hint: { key: 'purot:recent-page-changes', label: 'Recent page changes' },
+        },
+        {
+          uri: 'https://example.purot.net/changes/all?mode=rss&pages=0',
+          hint: { key: 'purot:recent-discussions', label: 'Recent discussions' },
+        },
       ]
 
       expect(purotHandler.resolve(value, missingProfileHtml)).toEqual(expected)
     })
 
-    it('should return the wiki feed under the page scheme for an http profile page', () => {
+    it('should return the wiki feeds under the page scheme for an http profile page', () => {
       const value = 'http://example.purot.net/profile/alice'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'http://example.purot.net/changes/all?mode=rss',
           hint: { key: 'purot:recent-changes', label: 'Recent changes' },
+        },
+        {
+          uri: 'http://example.purot.net/changes/all?mode=rss&messages=0',
+          hint: { key: 'purot:recent-page-changes', label: 'Recent page changes' },
+        },
+        {
+          uri: 'http://example.purot.net/changes/all?mode=rss&pages=0',
+          hint: { key: 'purot:recent-discussions', label: 'Recent discussions' },
         },
       ]
 
@@ -269,10 +293,48 @@ describe('purotHandler', () => {
       expect(purotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a profile feed', () => {
-      const value = 'https://example.purot.net/changes/profile/alice?mode=rss'
+    it('should return the recent page changes hint for the wiki page changes feed', () => {
+      const value = 'https://example.purot.net/changes/all?messages=0&mode=rss'
+      const expected: DiscoverUriHint = {
+        key: 'purot:recent-page-changes',
+        label: 'Recent page changes',
+      }
 
-      expect(purotHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(purotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the recent discussions hint for the wiki discussions feed', () => {
+      const value = 'https://example.purot.net/changes/all?mode=rss&pages=0'
+      const expected: DiscoverUriHint = {
+        key: 'purot:recent-discussions',
+        label: 'Recent discussions',
+      }
+
+      expect(purotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the user changes hint for a user changes feed', () => {
+      const value = 'https://example.purot.net/changes/profile/alice?messages=0&mode=rss'
+      const expected: DiscoverUriHint = { key: 'purot:user-changes', label: 'User page changes' }
+
+      expect(purotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the user discussions hint for a user discussions feed', () => {
+      const value = 'https://example.purot.net/changes/profile/alice?mode=rss&pages=0'
+      const expected: DiscoverUriHint = { key: 'purot:user-discussions', label: 'User discussions' }
+
+      expect(purotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the user activity hint for a user activity feed', () => {
+      const value = 'https://example.purot.net/changes/profile/alice?mode=rss'
+      const expected: DiscoverUriHint = {
+        key: 'purot:user-activity',
+        label: 'User changes, discussions and likes',
+      }
+
+      expect(purotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a changes page', () => {
@@ -311,6 +373,26 @@ describe('purotHandler', () => {
       key: 'purot:page-activity',
       label: 'Page changes, discussions and likes',
     }
+    const recentPageChanges = {
+      key: 'purot:recent-page-changes',
+      label: 'Recent page changes',
+    }
+    const recentDiscussions = {
+      key: 'purot:recent-discussions',
+      label: 'Recent discussions',
+    }
+    const userChanges = {
+      key: 'purot:user-changes',
+      label: 'User page changes',
+    }
+    const userDiscussions = {
+      key: 'purot:user-discussions',
+      label: 'User discussions',
+    }
+    const userActivity = {
+      key: 'purot:user-activity',
+      label: 'User changes, discussions and likes',
+    }
     const values: Array<[string, DiscoverUriEntry['hint']]> = [
       ['https://example.purot.net/changes/all?mode=rss', recentChanges],
       ['http://example.purot.net/changes/all?mode=rss', recentChanges],
@@ -318,6 +400,11 @@ describe('purotHandler', () => {
       ['https://example.purot.net/changes/kevatjuhla?messages=0&mode=rss', pageChanges],
       ['https://example.purot.net/changes/kevatjuhla?mode=rss&pages=0', pageDiscussions],
       ['https://example.purot.net/changes/kevatjuhla?mode=rss', pageActivity],
+      ['https://example.purot.net/changes/all?messages=0&mode=rss', recentPageChanges],
+      ['https://example.purot.net/changes/all?mode=rss&pages=0', recentDiscussions],
+      ['https://example.purot.net/changes/profile/alice?messages=0&mode=rss', userChanges],
+      ['https://example.purot.net/changes/profile/alice?mode=rss&pages=0', userDiscussions],
+      ['https://example.purot.net/changes/profile/alice?mode=rss', userActivity],
     ]
 
     it.each(values)('should return %s as itself', async (value, hint) => {
