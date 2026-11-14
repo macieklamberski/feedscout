@@ -20,6 +20,8 @@ const domains = [
   'wpcomstaging.com',
 ]
 const postIdDomains = ['hypotheses.org']
+// WordPress.com's VideoPress and REST API hosts, which name no blog.
+const reservedLabels = ['public-api', 'v', 'v0', 'video']
 
 // A nested category's path holds every parent slug and ends at WordPress's endpoint words.
 const categoryRegex = /^\/category\/(.+?)(?:\/(?:feed|rdf|rss|rss2|atom|embed|page)(?:\/|$)|\/?$)/i
@@ -114,7 +116,7 @@ export const parseWordpressPage = (url: string): WordpressUrl => {
 }
 
 export const parseWordpressUrl = (url: string): WordpressUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  if (!getTenantSubdomain(url, domains, reservedLabels)) {
     return
   }
 

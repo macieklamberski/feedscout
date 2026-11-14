@@ -625,6 +625,25 @@ describe('getTenantSubdomain', () => {
     expect(getTenantSubdomain('https://alice.example.org/', domains)).toBeUndefined()
   })
 
+  it('should return undefined for a reserved label', () => {
+    const value = 'https://player.example.com/'
+
+    expect(getTenantSubdomain(value, domains, ['player'])).toBeUndefined()
+  })
+
+  it('should return undefined for www beside reserved labels', () => {
+    const value = 'https://www.example.com/'
+
+    expect(getTenantSubdomain(value, domains, ['player'])).toBeUndefined()
+  })
+
+  it('should return a tenant beside reserved labels', () => {
+    const value = 'https://alice.example.com/'
+    const expected = 'alice'
+
+    expect(getTenantSubdomain(value, domains, ['player'])).toBe(expected)
+  })
+
   describe('with a domain pattern', () => {
     const patternDomains = ['example.net', exampleDomainRegex]
 

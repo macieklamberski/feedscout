@@ -23,6 +23,12 @@ describe('parseCaptivateUrl', () => {
   it('should return undefined for another host', () => {
     expect(parseCaptivateUrl('https://example.com/')).toBeUndefined()
   })
+
+  it('should return undefined for a service host', () => {
+    const value = 'https://player.captivate.fm/episode/1d2e3f40'
+
+    expect(parseCaptivateUrl(value)).toBeUndefined()
+  })
 })
 
 describe('captivateHandler', () => {

@@ -29,6 +29,12 @@ describe('parseTransistorUrl', () => {
   it('should return undefined for another host', () => {
     expect(parseTransistorUrl('https://example.com/')).toBeUndefined()
   })
+
+  it('should return undefined for a service host', () => {
+    const value = 'https://share.transistor.fm/s/abc123'
+
+    expect(parseTransistorUrl(value)).toBeUndefined()
+  })
 })
 
 describe('getTransistorPage', () => {

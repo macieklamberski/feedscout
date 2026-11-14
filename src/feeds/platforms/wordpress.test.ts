@@ -136,6 +136,17 @@ describe('parseWordpressUrl', () => {
     expect(parseWordpressUrl('https://example.com/')).toBeUndefined()
   })
 
+  const serviceHosts = [
+    'https://public-api.wordpress.com/',
+    'https://v.wordpress.com/abc123',
+    'https://v0.wordpress.com/abc123',
+    'https://video.wordpress.com/embed/abc123',
+  ]
+
+  it.each(serviceHosts)('should return undefined for the service host %s', (value) => {
+    expect(parseWordpressUrl(value)).toBeUndefined()
+  })
+
   it('should return undefined for the platform home page', () => {
     expect(parseWordpressUrl('https://home.blog/')).toBeUndefined()
   })

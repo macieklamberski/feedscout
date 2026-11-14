@@ -23,6 +23,12 @@ describe('parseGhostUrl', () => {
   it('should return undefined for another host', () => {
     expect(parseGhostUrl('https://example.com/')).toBeUndefined()
   })
+
+  it('should return undefined for a service host', () => {
+    const value = 'https://storage.ghost.io/c/ab/cd/image.png'
+
+    expect(parseGhostUrl(value)).toBeUndefined()
+  })
 })
 
 describe('ghostHandler', () => {

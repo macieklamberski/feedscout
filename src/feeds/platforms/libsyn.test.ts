@@ -21,6 +21,16 @@ describe('parseLibsynUrl', () => {
   it('should return undefined for another host', () => {
     expect(parseLibsynUrl('https://example.com/')).toBeUndefined()
   })
+
+  const serviceHosts = [
+    'https://html5-player.libsyn.com/embed/episode/id/12345/',
+    'https://oembed.libsyn.com/',
+    'https://play.libsyn.com/embed/episode/id/12345/',
+  ]
+
+  it.each(serviceHosts)('should return undefined for the service host %s', (value) => {
+    expect(parseLibsynUrl(value)).toBeUndefined()
+  })
 })
 
 describe('libsynHandler', () => {

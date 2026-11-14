@@ -20,6 +20,12 @@ describe('parseFiresideUrl', () => {
   it('should return undefined for another host', () => {
     expect(parseFiresideUrl('https://example.com/')).toBeUndefined()
   })
+
+  it('should return undefined for a service host', () => {
+    const value = 'https://player.fireside.fm/v2/abc123'
+
+    expect(parseFiresideUrl(value)).toBeUndefined()
+  })
 })
 
 describe('firesideHandler', () => {

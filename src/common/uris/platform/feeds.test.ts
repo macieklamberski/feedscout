@@ -61,6 +61,16 @@ const domainPatternOptions = {
 
 const domainPatternFeeds = definePlatformFeeds(domainPatternTemplates, domainPatternOptions)
 
+const reservedLabelTemplates = [
+  { key: 'example:site', template: 'https://{host}/feeds/site' },
+  { key: 'example:blog', template: 'https://{username}.example.org/feed' },
+]
+
+const reservedLabelFeeds = definePlatformFeeds(reservedLabelTemplates, {
+  domains: ['example.net'],
+  reservedLabels: ['player'],
+})
+
 const hostPatternFeeds = definePlatformFeeds(
   [{ key: 'example:profile', template: 'https://{host}/-{username}/feed' }],
   { hosts: ['example.org', /^example\.(?:com|co\.[a-z]{2}|[a-z]{2})$/] },
@@ -336,11 +346,10 @@ describe('definePlatformFeeds', () => {
       expect(feeds.getFeedHint(value)?.key).toBe(expected)
     })
 
-    it('should return the key of a feed on a tenant with www of a listed domain', () => {
+    it('should return undefined for a feed on a tenant with www of a listed domain', () => {
       const value = 'https://www.meta.example.net/feeds/site'
-      const expected = 'example:site'
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(feeds.getFeedHint(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex of a listed domain', () => {
@@ -410,11 +419,10 @@ describe('definePlatformFeeds', () => {
       expect(wwwTenantFeeds.getFeedHint(value)?.key).toBe(expected)
     })
 
-    it('should return the key of a feed on a tenant host with www with isWwwTenant', () => {
+    it('should return undefined for a feed on a tenant host with www with isWwwTenant', () => {
       const value = 'https://www.alice.example.org/feed'
-      const expected = 'example:journal'
 
-      expect(wwwTenantFeeds.getFeedHint(value)?.key).toBe(expected)
+      expect(wwwTenantFeeds.getFeedHint(value)).toBeUndefined()
     })
 
     it('should return the key of a feed on a fixed host with www with isWwwTenant', () => {
@@ -451,11 +459,10 @@ describe('definePlatformFeeds', () => {
       expect(wwwStrippedFeeds.getFeedHint(value)?.key).toBe(expected)
     })
 
-    it('should return the key of a feed on a tenant host with www without isWwwTenant', () => {
+    it('should return undefined for a feed on a tenant host with www without isWwwTenant', () => {
       const value = 'https://www.alice.example.org/feed'
-      const expected = 'example:journal'
 
-      expect(wwwStrippedFeeds.getFeedHint(value)?.key).toBe(expected)
+      expect(wwwStrippedFeeds.getFeedHint(value)).toBeUndefined()
     })
 
     it('should ignore the query order and extra parameters', () => {
@@ -589,6 +596,51 @@ describe('definePlatformFeeds', () => {
       expect(feeds.getFeedHint(value)).toBeUndefined()
     })
 
+    describe('with reserved labels', () => {
+      it('should return the key of a feed on a tenant of a listed domain', () => {
+        const value = 'https://alice.example.net/feeds/site'
+        const expected = 'example:site'
+
+        expect(reservedLabelFeeds.getFeedHint(value)?.key).toBe(expected)
+      })
+
+      it('should return undefined for a feed on a reserved label of a listed domain', () => {
+        const value = 'https://player.example.net/feeds/site'
+
+        expect(reservedLabelFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return undefined for a feed on www of a listed domain', () => {
+        const value = 'https://www.example.net/feeds/site'
+
+        expect(reservedLabelFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return the key of a feed on a label starting with a reserved label', () => {
+        const value = 'https://players.example.net/feeds/site'
+        const expected = 'example:site'
+
+        expect(reservedLabelFeeds.getFeedHint(value)?.key).toBe(expected)
+      })
+
+      it('should return undefined for a feed on a reserved label of a tenant placeholder', () => {
+        const value = 'https://player.example.org/feed'
+
+        expect(reservedLabelFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return undefined for a reserved label with isWwwTenant', () => {
+        const wwwTenantReservedFeeds = definePlatformFeeds(reservedLabelTemplates, {
+          domains: ['example.net'],
+          reservedLabels: ['player'],
+          isWwwTenant: true,
+        })
+        const value = 'https://player.example.net/feeds/site'
+
+        expect(wwwTenantReservedFeeds.getFeedHint(value)).toBeUndefined()
+      })
+    })
+
     describe('with a domain pattern', () => {
       it('should return the key of a feed on a domain the pattern matches', () => {
         const value = 'https://alice.example.co.uk/feed'
@@ -604,11 +656,10 @@ describe('definePlatformFeeds', () => {
         expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
       })
 
-      it('should return the key of a feed with www before the tenant', () => {
+      it('should return undefined for a feed with www before the tenant', () => {
         const value = 'https://www.alice.example.de/feed'
-        const expected = 'example:blog'
 
-        expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(domainPatternFeeds.getFeedHint(value)).toBeUndefined()
       })
 
       it('should return the key of a feed on a port', () => {

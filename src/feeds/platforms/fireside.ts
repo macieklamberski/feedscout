@@ -9,9 +9,11 @@ export type FiresideUrl = { kind: 'podcast'; slug: string }
 const domains = ['fireside.fm']
 // The feed host serves every show by path, so it names no show.
 const feedHosts = ['feeds.fireside.fm']
+// The player host serves every show by path, so it names no show.
+const reservedLabels = ['player']
 
 export const parseFiresideUrl = (url: string): FiresideUrl | undefined => {
-  const slug = getTenantSubdomain(url, domains)
+  const slug = getTenantSubdomain(url, domains, reservedLabels)
 
   if (!slug || isHostOf(url, feedHosts)) {
     return

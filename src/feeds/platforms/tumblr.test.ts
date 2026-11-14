@@ -99,6 +99,12 @@ describe('parseTumblrUrl', () => {
     expect(parseTumblrUrl('https://example.com')).toBeUndefined()
   })
 
+  it('should return undefined for a service host', () => {
+    const value = 'https://embed.tumblr.com/embed/post/abc/123'
+
+    expect(parseTumblrUrl(value)).toBeUndefined()
+  })
+
   it('should return undefined for an invalid URL', () => {
     expect(parseTumblrUrl('not-a-url')).toBeUndefined()
   })
