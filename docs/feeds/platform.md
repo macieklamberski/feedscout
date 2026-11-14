@@ -1613,10 +1613,10 @@ Discovers the RSS feeds of a HubSpot blog. Detected by the `HubSpot` generator m
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/{blog-path}` | Blog (RSS) |
-| `{site}/{blog-path}/author/{slug}` | Author<sup>†</sup> · blog (RSS) |
-| `{site}/{blog-path}/tag/{slug}` | Tag · blog (RSS) |
-| `{site}/{blog-path}/topic/{slug}` | Tag<sup>†</sup> · blog (RSS) |
+| `{root}` | Blog (RSS) |
+| `{root}/author/{slug}` | Author<sup>†</sup> · blog (RSS) |
+| `{root}/tag/{slug}` | Tag · blog (RSS) |
+| `{root}/topic/{slug}` | Tag<sup>†</sup> · blog (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
