@@ -1,7 +1,7 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
+import { getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers topics (html), partly covers node.
@@ -9,6 +9,12 @@ import { composeHint, getCookieNames, hasMarker, hasMetaContent } from '../../co
 export type HomelandUrl = { kind: 'node'; node: string } | { kind: 'topics' }
 
 const nodePathRegex = /\/topics\/node(\d+)(?:\/|$)/i
+
+// A forum is self-hosted on any domain, so the table only builds its feeds.
+const feeds = definePlatformFeeds([
+  { key: 'homeland:node', template: '{root}/topics/node{node}/feed' },
+  { key: 'homeland:topics', template: '{root}/topics/feed' },
+])
 
 export const isHomelandHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Homeland')
@@ -45,23 +51,19 @@ export const homelandHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseHomelandUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.kind === 'node') {
-      uris.push({
-        uri: `${origin}/topics/node${parsed.node}/feed`,
-        hint: composeHint('homeland:node'),
-      })
+      return [
+        page.getFeedEntry('homeland:node', { node: parsed.node }),
+        page.getFeedEntry('homeland:topics'),
+      ]
     }
 
-    uris.push({ uri: `${origin}/topics/feed`, hint: composeHint('homeland:topics') })
-
-    return uris
+    return [page.getFeedEntry('homeland:topics')]
   },
 }
