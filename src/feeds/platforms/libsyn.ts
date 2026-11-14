@@ -18,15 +18,15 @@ const siteHosts = ['sites.libsyn.com']
 const feeds = definePlatformFeeds(
   [
     { key: 'libsyn:podcast', template: 'https://feeds.libsyn.com/{showId}/rss' },
-    { key: 'libsyn:podcast', template: 'https://feeds.libsyn.com/{showId}' },
-    { key: 'libsyn:podcast', template: '{scheme}://{host}/rss' },
+    { key: 'libsyn:podcast', template: 'https://feeds.libsyn.com/{showId}', isAlias: true },
+    { key: 'libsyn:podcast', template: '{scheme}://{host}/rss', isAlias: true },
     // Where feeds.libsyn.com/{showId}/rss redirects. The destination id is not in the show id.
     {
       key: 'libsyn:podcast',
       template: 'https://rss.libsyn.com/shows/{showId}/destinations/{destinationId}.xml',
     },
     // The same show feed on the sites host, and the feed cut to its last episodes, as `last100`.
-    { key: 'libsyn:podcast', template: 'https://sites.libsyn.com/{showId}/rss' },
+    { key: 'libsyn:podcast', template: 'https://sites.libsyn.com/{showId}/rss', isAlias: true },
     { key: 'libsyn:podcast', template: 'https://feeds.libsyn.com/{showId}/last{count}' },
     { key: 'libsyn:podcast', template: '{scheme}://{host}/rss/last{count}' },
     { key: 'libsyn:category', template: '{scheme}://{host}/rss/category/{category}' },
