@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { edlioHandler, isEdlioHtml } from './edlio.js'
 
 const homeHtml = `
@@ -97,7 +100,7 @@ describe('edlioHandler', () => {
       const expected = [
         {
           uri: 'https://example.com/apps/news/rss?categoryid=12345',
-          hint: { key: 'edlio:news', label: 'News' },
+          hint: { key: 'edlio:news-category', label: 'News category' },
         },
       ]
 
@@ -122,7 +125,7 @@ describe('edlioHandler', () => {
       const expected = [
         {
           uri: 'https://example.com/apps/news/rss?categoryid=12345',
-          hint: { key: 'edlio:news', label: 'News' },
+          hint: { key: 'edlio:news-category', label: 'News category' },
         },
       ]
 
@@ -176,6 +179,115 @@ describe('edlioHandler', () => {
       ]
 
       expect(edlioHandler.resolve(value, classHtml)).toEqual(expected)
+    })
+
+    it('should return the news feed of a school on edlio.com', () => {
+      const value = 'https://example.edlio.com/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.edlio.com/apps/news/rss',
+          hint: { key: 'edlio:news', label: 'News' },
+        },
+      ]
+
+      expect(edlioHandler.resolve(value, homeHtml)).toEqual(expected)
+    })
+
+    it('should keep the http scheme of a school on edlio.com', () => {
+      const value = 'http://example.edlio.com/apps/news/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.edlio.com/apps/news/rss?categoryid=12345',
+          hint: { key: 'edlio:news-category', label: 'News category' },
+        },
+      ]
+
+      expect(edlioHandler.resolve(value, newsHtml)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the news hint for a news feed on edlio.com', () => {
+      const value = 'https://example.edlio.com/apps/news/rss'
+      const expected: DiscoverUriHint = { key: 'edlio:news', label: 'News' }
+
+      expect(edlioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the news category hint for a category news feed', () => {
+      const value = 'https://example.edlio.com/apps/news/rss?categoryid=12345'
+      const expected: DiscoverUriHint = { key: 'edlio:news-category', label: 'News category' }
+
+      expect(edlioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the assignments hint for an assignments feed', () => {
+      const value = 'https://example.edlio.com/apps/classes/assignment_rss.jsp?classREC_ID=67890'
+      const expected: DiscoverUriHint = { key: 'edlio:assignments', label: 'Assignments' }
+
+      expect(edlioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the news hint for an http news feed', () => {
+      const value = 'http://example.edlio.com/apps/news/rss'
+      const expected: DiscoverUriHint = { key: 'edlio:news', label: 'News' }
+
+      expect(edlioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a news page', () => {
+      const value = 'https://example.edlio.com/apps/news/'
+
+      expect(edlioHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www host', () => {
+      const value = 'https://www.edlio.com/apps/news/rss'
+
+      expect(edlioHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://edlio.com/apps/news/rss'
+
+      expect(edlioHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://news.example.edlio.com/apps/news/rss'
+
+      expect(edlioHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://example.com/apps/news/rss'
+
+      expect(edlioHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://example.edlio.com/apps/news/rss', { key: 'edlio:news', label: 'News' }],
+      [
+        'https://example.edlio.com/apps/news/rss?categoryid=12345',
+        { key: 'edlio:news-category', label: 'News category' },
+      ],
+      [
+        'https://example.edlio.com/apps/classes/assignment_rss.jsp?classREC_ID=67890',
+        { key: 'edlio:assignments', label: 'Assignments' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [edlioHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
