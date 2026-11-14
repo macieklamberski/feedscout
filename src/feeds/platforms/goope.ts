@@ -48,6 +48,11 @@ const freeSiteFeeds = definePlatformFeeds([
   // A federation of chambers of commerce collects its chambers' news under /shokokai.
   {
     key: 'goope:association-news',
+    template: 'https://r.goope.jp/{site}/t_{templateId}/shokokai/feed.rss',
+    format: 'rdf',
+  },
+  {
+    key: 'goope:association-news',
     template: 'https://r.goope.jp/{site}/shokokai/feed.rss',
     format: 'rdf',
   },
@@ -69,6 +74,11 @@ const siteFeeds = definePlatformFeeds(
     },
     { key: 'goope:news', template: '{scheme}://{host}/t_{templateId}/feed.rss', format: 'rdf' },
     { key: 'goope:news', template: '{scheme}://{host}/feed.rss', format: 'rdf' },
+    {
+      key: 'goope:association-news',
+      template: '{scheme}://{host}/t_{templateId}/shokokai/feed.rss',
+      format: 'rdf',
+    },
     {
       key: 'goope:association-news',
       template: '{scheme}://{host}/shokokai/feed.rss',

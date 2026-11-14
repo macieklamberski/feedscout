@@ -162,6 +162,22 @@ describe('goopeHandler', () => {
       expect(goopeHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the association news feed under the template path of a free site', () => {
+      const value = 'https://r.goope.jp/example/t_123456/shokokai/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://r.goope.jp/example/t_123456/shokokai/feed.rss',
+          hint: { key: 'goope:association-news', label: 'Association news', format: 'rdf' },
+        },
+        {
+          uri: 'https://r.goope.jp/example/t_123456/feed.rss',
+          hint: { key: 'goope:news', label: 'News', format: 'rdf' },
+        },
+      ]
+
+      expect(goopeHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for the root of r.goope.jp', () => {
       expect(goopeHandler.resolve('https://r.goope.jp/')).toEqual([])
     })
@@ -320,6 +336,17 @@ describe('goopeHandler', () => {
       expect(goopeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the association news hint for an association news feed under a template path', () => {
+      const value = 'https://r.goope.jp/example/t_123456/shokokai/feed.rss'
+      const expected: DiscoverUriHint = {
+        key: 'goope:association-news',
+        label: 'Association news',
+        format: 'rdf',
+      }
+
+      expect(goopeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for a member news path with no site in front', () => {
       const value = 'https://r.goope.jp/shokokai/member/feed.rss'
 
@@ -343,6 +370,10 @@ describe('goopeHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
         'http://r.goope.jp/example/shokokai/feed.rss',
+        { key: 'goope:association-news', label: 'Association news', format: 'rdf' },
+      ],
+      [
+        'https://r.goope.jp/example/t_123456/shokokai/feed.rss',
         { key: 'goope:association-news', label: 'Association news', format: 'rdf' },
       ],
       ['https://r.goope.jp/example/feed.rss/', newsHint],

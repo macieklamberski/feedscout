@@ -2844,12 +2844,14 @@ Discovers RSS feeds for Jellypod-hosted podcasts.
 
 ### Goope
 
-Discovers the news feed of a Goope site, and the member news feed of a chamber of commerce site. Sites on a custom domain are detected by the QR code image served from `r.goope.jp` or a favicon on `cdn.goope.jp`.
+Discovers the news feed of a Goope site, the member news feed of a chamber of commerce site, and the association news feed of a federation of chambers. Sites on a custom domain are detected by the QR code image served from `r.goope.jp` or a favicon on `cdn.goope.jp`.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `r.goope.jp/{site}/…` | News (RDF) |
+| `r.goope.jp/{site}/shokokai/…` | Association news · news (RDF) |
 | `r.goope.jp/{site}/shokokai/member/…` | Member news · news (RDF) |
+| `{host}/shokokai/…` | Association news · news (RDF) |
 | `{host}/shokokai/member/…` | Member news · news (RDF) |
 | `{host}/…` | News (RDF) |
 
