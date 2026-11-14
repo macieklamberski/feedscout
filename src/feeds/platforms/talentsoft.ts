@@ -1,5 +1,5 @@
-import { composeQuery, getQueryParam, isAnyOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getQueryParam, isAnyOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasClass, hasMarker } from '../../common/utils.js'
 
@@ -12,9 +12,29 @@ export type TalentsoftPage =
   | { kind: 'site'; origin: string; lcid?: string }
 
 const cookiesScriptPath = '/client/dist/talentsoft-cookies.iife.js'
-const offerFeedPath = '/handlers/offerRss.ashx'
+const domains = ['profils.org', 'talent-soft.com']
 
 const offerFeedPathRegex = /^\/handlers\/offerRss\.ashx$/i
+
+// A career site on a custom domain is known only by its marker, so its feeds are built here but
+// claimed only on Talentsoft's own domains. The site's own feed list spells the language as `LCID`,
+// and the feed answers without it. The feed list page's own link serves the same offers.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'talentsoft:offers', template: '{scheme}://{host}/handlers/offerRss.ashx?LCID={lcid}' },
+    {
+      key: 'talentsoft:offers',
+      template: '{scheme}://{host}/handlers/offerRss.ashx',
+      isAlias: true,
+    },
+    {
+      key: 'talentsoft:offers',
+      template: '{scheme}://{host}/offre-de-emploi/flux-rss.ashx',
+      isAlias: true,
+    },
+  ],
+  { domains },
+)
 
 // Every career site loads the cookie banner script from this path, on every page and theme.
 export const isTalentsoftHtml = (content: string): boolean => {
@@ -78,20 +98,36 @@ export const talentsoftHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getTalentsoftPage(url, content)
-    const uris: Array<DiscoverUriEntry> = []
+    const pageFeeds = feeds.forUrl(url)
 
-    if (page.kind === 'search') {
-      uris.push({ uri: page.searchFeedUrl, hint: composeHint('talentsoft:search') })
+    if (!pageFeeds) {
+      return []
     }
 
-    // The site's own feed list spells the language as `LCID`, and the feed answers without it.
-    const query = page.lcid ? composeQuery({ LCID: page.lcid }) : ''
+    if (page.kind === 'search') {
+      return [
+        { uri: page.searchFeedUrl, hint: composeHint('talentsoft:search') },
+        pageFeeds.getFeedEntry('talentsoft:offers', { lcid: page.lcid }),
+      ]
+    }
 
-    uris.push({
-      uri: `${page.origin}${offerFeedPath}${query}`,
-      hint: composeHint('talentsoft:offers'),
-    })
+    return [pageFeeds.getFeedEntry('talentsoft:offers', { lcid: page.lcid })]
+  },
 
-    return uris
+  // A criterion beyond the language makes it a search feed.
+  getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
+
+    if (!hint) {
+      return
+    }
+
+    for (const name of new URL(url).searchParams.keys()) {
+      if (!isAnyOf(name, 'lcid')) {
+        return composeHint('talentsoft:search')
+      }
+    }
+
+    return hint
   },
 }
