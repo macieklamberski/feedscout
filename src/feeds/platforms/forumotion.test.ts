@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   type ForumotionPage,
   forumotionHandler,
@@ -194,6 +196,190 @@ describe('forumotionHandler', () => {
       ]
 
       expect(forumotionHandler.resolve(value, missingForumHtml)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    const feedUrls: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.forumotion.com/feed/',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
+      ],
+      [
+        'https://example.forumactif.org/feed/?type=atom',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'atom' },
+      ],
+      [
+        'https://example.forumeiros.com/feed/?f=12',
+        { key: 'forumotion:forum', label: 'Forum', format: 'rss' },
+      ],
+      [
+        'https://example.ahlamontada.com/feed/?f=12&type=atom',
+        { key: 'forumotion:forum', label: 'Forum', format: 'atom' },
+      ],
+      [
+        'https://example.ahlamontada.net/feed/',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
+      ],
+      [
+        'https://example.foroactivo.com/feed/?f=12',
+        { key: 'forumotion:forum', label: 'Forum', format: 'rss' },
+      ],
+      [
+        'https://example.foroactivo.com.es/feed/',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
+      ],
+      [
+        'https://example.forumattivo.it/feed/?type=atom',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'atom' },
+      ],
+      [
+        'https://example.forumgratuit.org/feed/?f=12',
+        { key: 'forumotion:forum', label: 'Forum', format: 'rss' },
+      ],
+      [
+        'https://example.forum2x2.ru/feed/',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
+      ],
+      [
+        'https://example.forum.co.ee/feed/',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
+      ],
+      [
+        'https://example.actieforum.com/feed/',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
+      ],
+      [
+        'https://example.forumactif.com/rss',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
+      ],
+      [
+        'https://example.forumactif.com/rss?type=atom',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'atom' },
+      ],
+      [
+        'https://example.forumeiros.com/rss?tt=1',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
+      ],
+      [
+        'https://example.forumotion.com/rss?f=12',
+        { key: 'forumotion:forum', label: 'Forum', format: 'rss' },
+      ],
+      [
+        'https://example.forumotion.com/rss?f=12&type=atom',
+        { key: 'forumotion:forum', label: 'Forum', format: 'atom' },
+      ],
+    ]
+
+    it.each(feedUrls)('should return the hint for %s', (value, expected) => {
+      expect(forumotionHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a page on a forum subdomain', () => {
+      const value = 'https://example.forumotion.com/f12-general'
+
+      expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://example.com/feed/'
+
+      expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an rss path on a custom domain', () => {
+      const value = 'https://example.com/rss'
+
+      expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://forumactif.com/feed/'
+
+      expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www', () => {
+      const value = 'https://www.forumotion.com/feed/'
+
+      expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://cms.example.forumotion.com/feed/'
+
+      expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return the hint for a feed on a co. country domain', () => {
+      const value = 'https://example.forumotion.co.uk/feed/'
+      const expected: DiscoverUriHint = {
+        key: 'forumotion:latest-topics',
+        label: 'Latest topics',
+        format: 'rss',
+      }
+
+      expect(forumotionHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a feed on a domain outside the brands', () => {
+      const value = 'https://example.1fr1.net/feed/'
+
+      expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the forum brand under another domain', () => {
+      const value = 'https://example.forum.com/feed/'
+
+      expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriEntry['hint']]> = [
+      [
+        'https://example.forumotion.net/feed',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
+      ],
+      [
+        'https://example.ahlamontada.com/feed/?type=atom',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'atom' },
+      ],
+      [
+        'https://example.forumotion.com/feed/?f=12',
+        { key: 'forumotion:forum', label: 'Forum', format: 'rss' },
+      ],
+      [
+        'https://example.forumactif.fr/feed/?type=atom&f=12',
+        { key: 'forumotion:forum', label: 'Forum', format: 'atom' },
+      ],
+      [
+        'https://example.forumactif.fr/rss',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
+      ],
+      [
+        'https://example.forumactif.fr/rss?type=atom',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'atom' },
+      ],
+      [
+        'https://example.forumactif.fr/rss?f=12',
+        { key: 'forumotion:forum', label: 'Forum', format: 'rss' },
+      ],
+      [
+        'https://example.forumactif.fr/rss?f=12&type=atom',
+        { key: 'forumotion:forum', label: 'Forum', format: 'atom' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [forumotionHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

@@ -541,11 +541,15 @@
   "forumotion": {
     "forumotion:forum": [
       "https://shingamix.forumotion.com/feed/?f=104",
-      "https://shingamix.forumotion.com/feed/?f=104&type=atom"
+      "https://shingamix.forumotion.com/feed/?f=104&type=atom",
+      "https://amintiridespreviitor.forumgratuit.ro/feed/?f=21",
+      "https://amintiridespreviitor.forumgratuit.ro/feed/?f=21&type=atom"
     ],
     "forumotion:latest-topics": [
       "https://shingamix.forumotion.com/feed/",
-      "https://shingamix.forumotion.com/feed/?type=atom"
+      "https://shingamix.forumotion.com/feed/?type=atom",
+      "https://30-day-photo.forum2x2.ru/feed/",
+      "https://30-day-photo.forum2x2.ru/feed/?type=atom"
     ]
   },
   "friendica": {
