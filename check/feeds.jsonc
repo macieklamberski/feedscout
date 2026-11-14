@@ -1675,16 +1675,24 @@
     ]
   },
   "steam": {
+    "steam:community-news": [
+      "https://steamcommunity.com/games/594570/rss",
+      "https://steamcommunity.com/games/227300/rss"
+    ],
     "steam:daily-deals": "https://store.steampowered.com/feeds/daily_deals.xml",
     "steam:group": [
       "https://steamcommunity.com/groups/Valve/rss",
       "https://steamcommunity.com/groups/SteamClientBeta/rss"
     ],
+    "steam:group-news": "https://store.steampowered.com/feeds/news/group/4145017",
+    "steam:new-releases": "https://store.steampowered.com/feeds/newreleases.xml",
     "steam:news": [
       "https://store.steampowered.com/feeds/news/app/730/",
       "https://store.steampowered.com/feeds/news/app/570/"
     ],
-    "steam:news-global": "https://store.steampowered.com/feeds/news.xml"
+    "steam:news-collection": "https://store.steampowered.com/feeds/news/collection/steam",
+    "steam:news-global": "https://store.steampowered.com/feeds/news.xml",
+    "steam:weekly-top-sellers": "https://store.steampowered.com/feeds/weeklytopsellers.xml"
   },
   "substack": {
     "substack:newsletter": [
