@@ -1504,9 +1504,9 @@ Discovers the Atom feed of a diaspora* profile. Detected by the `Diaspora.Page` 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{pod}/u/{user}` | Posts (Atom) |
-| `{pod}/public/{user}` | Posts (Atom) |
-| `{pod}/people/{guid}` | Posts (Atom)* |
+| `{root}/u/{user}` | Posts (Atom) |
+| `{root}/public/{user}` | Posts (Atom) |
+| `{root}/people/{guid}` | Posts (Atom)* |
 
 \* *Requires HTML content to read the username from the profile's diaspora ID.*
 

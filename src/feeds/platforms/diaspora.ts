@@ -1,6 +1,7 @@
-import { encodePathSegment, isAnyOf } from 'trousse'
+import { isAnyOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, formatSuffixRegex, hasMarker } from '../../common/utils.js'
+import { formatSuffixRegex, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,6 +10,12 @@ const profileRegex = /^\/(?<route>u|public|people)\/(?<segment>[^/]+)/i
 // carries the username in its diaspora ID.
 const peoplePathRegex = /^\/people\//i
 const diasporaIdRegex = /"diaspora_id":"([^"@]+)@/
+
+// A pod runs on its own domain and is known only by its marker, so its feed is built here but not
+// claimed.
+const feeds = definePlatformFeeds([
+  { key: 'diaspora:posts', template: '{root}/public/{username}.atom' },
+])
 
 export const isDiasporaHtml = (content: string): boolean => {
   return content.includes('Diaspora.Page')
@@ -41,8 +48,8 @@ const getDiasporaPage = (url: string, content: string | undefined): DiasporaPage
     return { username: pathUsername }
   }
 
-  // The id is page text, which can hold a `/`.
-  return { username: encodePathSegment(linkedUsername) }
+  // The id is page text, which can hold a `/`, so the table encodes it as one segment.
+  return { username: linkedUsername }
 }
 
 export const diasporaHandler: PlatformHandler = {
@@ -56,18 +63,12 @@ export const diasporaHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getDiasporaPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
-
-    return [
-      {
-        uri: `${origin}/public/${page.username}.atom`,
-        hint: composeHint('diaspora:posts'),
-      },
-    ]
+    return [pageFeeds.getFeedEntry('diaspora:posts', { username: page.username })]
   },
 }
