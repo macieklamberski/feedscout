@@ -234,6 +234,14 @@ describe('forumotionHandler', () => {
         { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'atom' },
       ],
       [
+        'https://example.yoo7.com/feed/?f=12',
+        { key: 'forumotion:forum', label: 'Forum', format: 'rss' },
+      ],
+      [
+        'https://example.7olm.org/feed/',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
+      ],
+      [
         'https://example.actieforum.com/feed/',
         { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
       ],
@@ -321,7 +329,7 @@ describe('forumotionHandler', () => {
       expect(forumotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a feed on a free domain without the brand name', () => {
+    it('should return undefined for a feed on a generic free domain', () => {
       const value = 'https://example.1fr1.net/feed/'
 
       expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()

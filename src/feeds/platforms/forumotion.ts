@@ -14,9 +14,10 @@ export type ForumotionPage =
 const forumPathRegex = /^\/f(\d+)(?:p\d+)?-/i
 const topicPathRegex = /^\/t\d+(?:p\d+)?-/i
 
-// One pattern per brand, each over its generic and country domains. Free domains without the
-// brand's name, such as yoo7.com or 1fr1.net, are left to the marker.
+// One pattern per brand, each over its generic and country domains. Generic free domains, such as
+// 1fr1.net or forumgratuit.org, are left to the marker.
 const domains = [
+  '7olm.org',
   'actieforum.com',
   /^ahlamontada\.(?:com|net)$/,
   /^foroactivo\.(?:com|com\.[a-z]{2}|[a-z]{2})$/,
@@ -24,6 +25,7 @@ const domains = [
   /^forumattivo\.(?:com|[a-z]{2})$/,
   /^forumeiros\.(?:com|net)$/,
   /^forumotion\.(?:asia|com|net|org|co\.[a-z]{2}|[a-z]{2})$/,
+  'yoo7.com',
 ]
 
 // A forum on its own domain is known only by its marker, so its feeds are built here but not
