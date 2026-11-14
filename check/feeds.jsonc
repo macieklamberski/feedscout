@@ -2054,9 +2054,10 @@
     "tistory:blog": "https://notice.tistory.com/rss"
   },
   "togetter": {
-    "togetter:curator": "https://togetter.com/rss/id/tarareba722",
+    "togetter:curator": "https://posfie.com/@tarareba722/rss",
     "togetter:hot": "https://togetter.com/rss/hot",
-    "togetter:news": "https://togetter.com/rss/news"
+    "togetter:news": "https://togetter.com/rss/news",
+    "togetter:recent": "https://togetter.com/rss/recent"
   },
   "tourTravelWorld": {
     "tour-travel-world:tour-packages": "https://www.kirtytours.com/tour-packages.rss"

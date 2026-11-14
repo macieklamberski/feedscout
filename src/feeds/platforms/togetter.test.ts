@@ -24,6 +24,12 @@ describe('parseTogetterUrl', () => {
     expect(parseTogetterUrl('https://www.togetter.com/id/example')).toEqual(expected)
   })
 
+  it('should return the recent page for the recent listing', () => {
+    const expected: TogetterUrl = { kind: 'recent' }
+
+    expect(parseTogetterUrl('https://togetter.com/recent')).toEqual(expected)
+  })
+
   it('should return the home page for a summary page', () => {
     const expected: TogetterUrl = { kind: 'home' }
 
@@ -65,8 +71,21 @@ describe('togetterHandler', () => {
       const value = 'https://togetter.com/id/example'
       const expected = [
         {
-          uri: 'https://togetter.com/rss/id/example',
+          uri: 'https://posfie.com/@example/rss',
           hint: { key: 'togetter:curator', label: 'Curator' },
+        },
+        { uri: 'https://togetter.com/rss/hot', hint: { key: 'togetter:hot', label: 'Popular' } },
+      ]
+
+      expect(togetterHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the recent and popular feeds for the recent listing', () => {
+      const value = 'https://togetter.com/recent'
+      const expected = [
+        {
+          uri: 'https://togetter.com/rss/recent',
+          hint: { key: 'togetter:recent', label: 'Recent' },
         },
         { uri: 'https://togetter.com/rss/hot', hint: { key: 'togetter:hot', label: 'Popular' } },
       ]
@@ -88,7 +107,7 @@ describe('togetterHandler', () => {
       const value = 'https://www.togetter.com/id/example'
       const expected = [
         {
-          uri: 'https://togetter.com/rss/id/example',
+          uri: 'https://posfie.com/@example/rss',
           hint: { key: 'togetter:curator', label: 'Curator' },
         },
         { uri: 'https://togetter.com/rss/hot', hint: { key: 'togetter:hot', label: 'Popular' } },
@@ -99,6 +118,26 @@ describe('togetterHandler', () => {
   })
 
   describe('getFeedHint', () => {
+    it('should return the curator hint for a curator feed on posfie.com', () => {
+      const value = 'https://posfie.com/@example/rss'
+      const expected: DiscoverUriHint = { key: 'togetter:curator', label: 'Curator' }
+
+      expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the recent hint for the recent feed', () => {
+      const value = 'https://togetter.com/rss/recent'
+      const expected: DiscoverUriHint = { key: 'togetter:recent', label: 'Recent' }
+
+      expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a curator page on posfie.com', () => {
+      const value = 'https://posfie.com/@example'
+
+      expect(togetterHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return the curator hint for a curator feed', () => {
       const value = 'https://togetter.com/rss/id/yayoy_amber'
       const expected: DiscoverUriHint = { key: 'togetter:curator', label: 'Curator' }
@@ -169,7 +208,9 @@ describe('togetterHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://posfie.com/@example/rss', { key: 'togetter:curator', label: 'Curator' }],
       ['https://togetter.com/rss/id/yayoy_amber', { key: 'togetter:curator', label: 'Curator' }],
+      ['https://togetter.com/rss/recent', { key: 'togetter:recent', label: 'Recent' }],
       ['https://togetter.com/rss/hot', { key: 'togetter:hot', label: 'Popular' }],
       ['https://www.togetter.com/rss/hot', { key: 'togetter:hot', label: 'Popular' }],
       ['https://togetter.com/rss/news', { key: 'togetter:news', label: 'News' }],

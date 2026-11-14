@@ -1820,11 +1820,12 @@ Discovers the RSS feeds of an FC2 blog.
 
 ### Togetter
 
-Discovers the feeds of a Togetter curator or the site-wide news and popular feeds.
+Discovers the feeds of a Togetter curator or the site-wide news, recent and popular feeds. A curator's feed is built on `posfie.com`, where the `togetter.com` one redirects.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `togetter.com/id/{user}` | Curator<sup>†</sup> · popular<sup>†</sup> (RSS) |
+| `togetter.com/recent` | Recent · popular<sup>†</sup> (RSS) |
 | Any other page | News · popular (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
