@@ -44,7 +44,7 @@ const feeds = definePlatformFeeds(
     { key: 'discourse:activity', template: '{root}/u/{username}/activity.rss' },
     { key: 'discourse:category', template: '{root}/c/{category*}.rss' },
     { key: 'discourse:tag', template: '{root}/tag/{slug}/{id}.rss' },
-    { key: 'discourse:tag', template: '{root}/tag/{slug}.rss' },
+    { key: 'discourse:tag', template: '{root}/tag/{slug}.rss', isAlias: true },
     { key: 'discourse:top', template: '{root}/top.rss?period={period}' },
     { key: 'discourse:top', template: '{root}/top.rss' },
     { key: 'discourse:latest', template: '{root}/latest.rss' },
