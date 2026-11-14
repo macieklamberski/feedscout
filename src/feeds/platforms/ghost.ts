@@ -6,9 +6,9 @@ import { getTenantSubdomain } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 export type GhostUrl =
-  | { kind: 'tag'; blog: string; tag: string }
-  | { kind: 'author'; blog: string; author: string }
-  | { kind: 'blog'; blog: string }
+  | { kind: 'tag'; tag: string }
+  | { kind: 'author'; author: string }
+  | { kind: 'blog' }
 
 const domains = ['ghost.io']
 // Ghost's upload host, which serves the images and files of every site and is no blog.
@@ -41,9 +41,7 @@ export const parseGhostUrl = (url: string): GhostUrl | undefined => {
     return
   }
 
-  const blog = getTenantSubdomain(url, domains)
-
-  if (!blog) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 
@@ -51,16 +49,16 @@ export const parseGhostUrl = (url: string): GhostUrl | undefined => {
   const tag = pathname.match(tagRegex)?.[1]
 
   if (tag) {
-    return { kind: 'tag', blog, tag }
+    return { kind: 'tag', tag }
   }
 
   const author = pathname.match(authorRegex)?.[1]
 
   if (author) {
-    return { kind: 'author', blog, author }
+    return { kind: 'author', author }
   }
 
-  return { kind: 'blog', blog }
+  return { kind: 'blog' }
 }
 
 export const ghostHandler: PlatformHandler = {
