@@ -252,21 +252,21 @@ describe('jiraHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the project hint for a project feed', () => {
-      const value = 'https://xdevsoftware.atlassian.net/plugins/servlet/streams?key=XWS'
+      const value = 'https://carolsoft.atlassian.net/plugins/servlet/streams?key=XWS'
       const expected: DiscoverUriHint = { key: 'jira:project', label: 'Project' }
 
       expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the site hint for a site feed', () => {
-      const value = 'https://dcosjira.atlassian.net/plugins/servlet/streams'
+      const value = 'https://alicejira.atlassian.net/plugins/servlet/streams'
       const expected: DiscoverUriHint = { key: 'jira:site', label: 'Site activity' }
 
       expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the project hint for a project activity feed', () => {
-      const value = 'https://redhat.atlassian.net/activity?key=TORQUE'
+      const value = 'https://bobcorp.atlassian.net/activity?key=TORQUE'
       const expected: DiscoverUriHint = { key: 'jira:project', label: 'Project' }
 
       expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
@@ -280,14 +280,14 @@ describe('jiraHandler', () => {
     })
 
     it('should return the project hint for a project feed with a trailing slash', () => {
-      const value = 'https://dcosjira.atlassian.net/plugins/servlet/streams/?key=DCOS'
+      const value = 'https://alicejira.atlassian.net/plugins/servlet/streams/?key=DCOS'
       const expected: DiscoverUriHint = { key: 'jira:project', label: 'Project' }
 
       expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the project hint for a project feed with another parameter', () => {
-      const value = 'https://dcosjira.atlassian.net/plugins/servlet/streams?key=DCOS&maxResults=10'
+      const value = 'https://alicejira.atlassian.net/plugins/servlet/streams?key=DCOS&maxResults=10'
       const expected: DiscoverUriHint = { key: 'jira:project', label: 'Project' }
 
       expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
@@ -301,19 +301,19 @@ describe('jiraHandler', () => {
     })
 
     it('should return undefined for an issue page', () => {
-      const value = 'https://dcosjira.atlassian.net/browse/DCOS-1'
+      const value = 'https://alicejira.atlassian.net/browse/DCOS-1'
 
       expect(jiraHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a Confluence feed on a Cloud site', () => {
-      const value = 'https://dcosjira.atlassian.net/wiki/plugins/servlet/streams?key=DOCS'
+      const value = 'https://alicejira.atlassian.net/wiki/plugins/servlet/streams?key=DOCS'
 
       expect(jiraHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a Confluence activity feed on a Cloud site', () => {
-      const value = 'https://redhat.atlassian.net/wiki/activity'
+      const value = 'https://bobcorp.atlassian.net/wiki/activity'
 
       expect(jiraHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -325,7 +325,7 @@ describe('jiraHandler', () => {
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://a.dcosjira.atlassian.net/plugins/servlet/streams'
+      const value = 'https://a.alicejira.atlassian.net/plugins/servlet/streams'
 
       expect(jiraHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -340,19 +340,19 @@ describe('jiraHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://xdevsoftware.atlassian.net/plugins/servlet/streams?key=XWS',
+        'https://carolsoft.atlassian.net/plugins/servlet/streams?key=XWS',
         { key: 'jira:project', label: 'Project' },
       ],
       [
-        'https://dcosjira.atlassian.net/plugins/servlet/streams?key=DCOS',
+        'https://alicejira.atlassian.net/plugins/servlet/streams?key=DCOS',
         { key: 'jira:project', label: 'Project' },
       ],
       [
-        'https://redhat.atlassian.net/activity?key=TORQUE',
+        'https://bobcorp.atlassian.net/activity?key=TORQUE',
         { key: 'jira:project', label: 'Project' },
       ],
       [
-        'https://dcosjira.atlassian.net/plugins/servlet/streams',
+        'https://alicejira.atlassian.net/plugins/servlet/streams',
         { key: 'jira:site', label: 'Site activity' },
       ],
       ['https://alice.atlassian.net/activity', { key: 'jira:site', label: 'Site activity' }],
