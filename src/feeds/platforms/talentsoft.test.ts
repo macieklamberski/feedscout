@@ -344,11 +344,10 @@ describe('talentsoftHandler', () => {
       expect(talentsoftHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return the offers hint for a feed on the www host of a tenant', () => {
+    it('should return undefined for a feed on the www host of a tenant', () => {
       const value = 'https://www.alice.talent-soft.com/handlers/offerRss.ashx'
-      const expected: DiscoverUriHint = { key: 'talentsoft:offers', label: 'Job offers' }
 
-      expect(talentsoftHandler.getFeedHint?.(value)).toEqual(expected)
+      expect(talentsoftHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
