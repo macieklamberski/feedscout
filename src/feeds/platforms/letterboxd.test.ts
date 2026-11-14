@@ -172,15 +172,15 @@ describe('letterboxdHandler', () => {
 })
 
 describe('discoverUrisFromPlatform', () => {
-  const diaryHint = {
+  const diaryHint: DiscoverUriHint = {
     key: 'letterboxd:diary',
     label: 'Diary',
   }
-  const journalHint = {
+  const journalHint: DiscoverUriHint = {
     key: 'letterboxd:journal',
     label: 'Journal',
   }
-  const feedUrls: Array<[string, DiscoverUriEntry['hint']]> = [
+  const feedUrls: Array<[string, DiscoverUriHint]> = [
     ['https://letterboxd.com/alice/rss/', diaryHint],
     ['http://letterboxd.com/alice/rss/', diaryHint],
     ['https://www.letterboxd.com/alice/rss', diaryHint],
