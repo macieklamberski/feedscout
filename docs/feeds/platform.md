@@ -2810,7 +2810,7 @@ Discovers the posts feed of an Overblog blog.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.over-blog.com`, `*.over-blog.de`, `*.over-blog.es`, `*.over-blog.fr`, `*.over-blog.it`, `*.over-blog.net`, `*.over-blog.org`, `*.over.blog`, `*.overblog.com`, `*.overblog.fr` | Posts |
+| `{blog}.over-blog.{tld}`, `{blog}.over.blog`, `{blog}.overblog.{tld}` | Posts |
 
 ### ExportersIndia
 
