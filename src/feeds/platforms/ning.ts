@@ -26,6 +26,7 @@ const feeds = definePlatformFeeds(
     {
       key: 'ning:topic',
       template: '{scheme}://{host}/forum/topic/show?feed=yes&id={topic}&xn_auth=no',
+      isAlias: true,
     },
     {
       key: 'ning:topic',
@@ -48,8 +49,12 @@ const feeds = definePlatformFeeds(
     },
     // The bare `/forum?feed=yes` answers with the forum page on some networks.
     { key: 'ning:forum', template: '{scheme}://{host}/forum/topic/list?feed=yes&xn_auth=no' },
-    { key: 'ning:forum', template: '{scheme}://{host}/forum?feed=yes&xn_auth=no' },
-    { key: 'ning:forum', template: '{scheme}://{host}/forum/index?feed=yes&xn_auth=no' },
+    { key: 'ning:forum', template: '{scheme}://{host}/forum?feed=yes&xn_auth=no', isAlias: true },
+    {
+      key: 'ning:forum',
+      template: '{scheme}://{host}/forum/index?feed=yes&xn_auth=no',
+      isAlias: true,
+    },
     {
       key: 'ning:forum-group',
       template: '{scheme}://{host}/forum/topic/list?feed=yes&groupUrl={group}&xn_auth=no',
@@ -61,14 +66,17 @@ const feeds = definePlatformFeeds(
     {
       key: 'ning:forum-group',
       template: '{scheme}://{host}/group/{group}/forum?feed=yes&xn_auth=no',
+      isAlias: true,
     },
     {
       key: 'ning:forum-group',
       template: '{scheme}://{host}/group/{group}/forum/topic/list?feed=yes&xn_auth=no',
+      isAlias: true,
     },
     {
       key: 'ning:forum-group',
       template: '{scheme}://{host}/groups/group/forum?feed=yes&groupUrl={group}&xn_auth=no',
+      isAlias: true,
     },
     {
       key: 'ning:forum-group-featured',
@@ -78,6 +86,7 @@ const feeds = definePlatformFeeds(
       key: 'ning:forum-group-featured',
       template:
         '{scheme}://{host}/forum/topic/list?featured=1&feed=yes&groupUrl={group}&xn_auth=no',
+      isAlias: true,
     },
     {
       key: 'ning:forum-category',
@@ -96,6 +105,7 @@ const feeds = definePlatformFeeds(
       key: 'ning:forum-group-member',
       template:
         '{scheme}://{host}/forum/topic/listForContributor?feed=yes&groupUrl={group}&user={user}&xn_auth=no',
+      isAlias: true,
     },
     {
       key: 'ning:forum-tag',
@@ -110,6 +120,7 @@ const feeds = definePlatformFeeds(
       key: 'ning:forum-group-tag',
       template:
         '{scheme}://{host}/forum/topic/listForTag?feed=yes&groupUrl={group}&tag={tag}&xn_auth=no',
+      isAlias: true,
     },
     {
       key: 'ning:blog-post-comments',
@@ -161,7 +172,7 @@ const feeds = definePlatformFeeds(
       template: '{scheme}://{host}/photo/photo/listTagged?rss=yes&tag={tag}&xn_auth=no',
     },
     { key: 'ning:videos', template: '{scheme}://{host}/video/video/rss?xn_auth=no' },
-    { key: 'ning:videos', template: '{scheme}://{host}/video/video/rss' },
+    { key: 'ning:videos', template: '{scheme}://{host}/video/video/rss', isAlias: true },
     {
       key: 'ning:videos-featured',
       template: '{scheme}://{host}/video/video/rss?featured=1&xn_auth=no',
@@ -189,6 +200,7 @@ const feeds = definePlatformFeeds(
     {
       key: 'ning:pages-group',
       template: '{scheme}://{host}/group/{group}/page/page/list?feed=yes&xn_auth=no',
+      isAlias: true,
     },
     {
       key: 'ning:pages-member',
