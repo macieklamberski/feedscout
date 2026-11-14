@@ -1578,8 +1578,8 @@ Discovers the site and forum feeds of a Wikidot wiki. Detected by the `WIKIDOT.p
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{host}/forum/t-{thread}` | Forum thread · site changes<sup>†</sup> · forum threads<sup>†</sup> · forum posts (RSS) |
-| `{host}/forum/c-{category}` | Forum category threads · forum category posts · site changes<sup>†</sup> · forum threads<sup>†</sup> · forum posts (RSS) |
+| `{host}/forum/t-{thread}` | Forum thread · site changes<sup>†</sup> · forum threads<sup>†</sup> · forum posts<sup>†</sup> (RSS) |
+| `{host}/forum/c-{category}` | Forum category threads · forum category posts · site changes<sup>†</sup> · forum threads<sup>†</sup> · forum posts<sup>†</sup> (RSS) |
 | Any other wiki page | Site changes<sup>†</sup> · forum threads<sup>†</sup> · forum posts (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
