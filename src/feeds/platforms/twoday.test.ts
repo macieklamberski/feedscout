@@ -64,7 +64,7 @@ describe('twodayHandler', () => {
       const value = 'https://alice.twoday.net/stories/1022710479/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.twoday.net/index.rdf',
+          uri: 'https://alice.twoday.net/rss',
           hint: { key: 'twoday:posts', label: 'Posts' },
         },
         {
@@ -96,7 +96,7 @@ describe('twodayHandler', () => {
           hint: { key: 'twoday:topic', label: 'Topic' },
         },
         {
-          uri: 'https://alice.twoday.net/index.rdf',
+          uri: 'https://alice.twoday.net/rss',
           hint: { key: 'twoday:posts', label: 'Posts' },
         },
         {
@@ -124,7 +124,7 @@ describe('twodayHandler', () => {
       const value = 'http://alice.twoday.net/stories/1022710479/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://alice.twoday.net/index.rdf',
+          uri: 'http://alice.twoday.net/rss',
           hint: { key: 'twoday:posts', label: 'Posts' },
         },
         {
@@ -156,7 +156,7 @@ describe('twodayHandler', () => {
           hint: { key: 'twoday:topic', label: 'Topic' },
         },
         {
-          uri: 'http://alice.twoday.net/index.rdf',
+          uri: 'http://alice.twoday.net/rss',
           hint: { key: 'twoday:posts', label: 'Posts' },
         },
         {

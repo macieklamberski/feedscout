@@ -16,8 +16,8 @@ const topicRegex = /^\/topics\/([^/]+)(?:\/|$)/i
 // A blog's skin links its posts feed as `/index.rdf` or `/rss`, the same stories.
 const feeds = definePlatformFeeds(
   [
-    { key: 'twoday:posts', template: '{scheme}://{host}/index.rdf' },
-    { key: 'twoday:posts', template: '{scheme}://{host}/rss', isAlias: true },
+    { key: 'twoday:posts', template: '{scheme}://{host}/rss' },
+    { key: 'twoday:posts', template: '{scheme}://{host}/index.rdf', isAlias: true },
     { key: 'twoday:posts', template: '{scheme}://{host}/rss.xml', isAlias: true },
     // The same stories with shorter text, which some skins serve.
     { key: 'twoday:summary', template: '{scheme}://{host}/summary.rdf' },
