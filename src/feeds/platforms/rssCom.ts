@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -10,6 +10,10 @@ const hosts = ['rss.com', 'www.rss.com']
 
 // An optional locale prefix, e.g. /es/podcasts/, /it/podcasts/.
 const podcastRegex = /^\/(?:[a-z]+\/)?podcasts\/([^/]+)/i
+
+const feeds = definePlatformFeeds([
+  { key: 'rss-com:podcast', template: 'https://media.rss.com/{show}/feed.xml' },
+])
 
 export const parseRssComUrl = (url: string): RssComUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -39,11 +43,8 @@ export const rssComHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://media.rss.com/${parsed.show}/feed.xml`,
-        hint: composeHint('rss-com:podcast'),
-      },
-    ]
+    return [feeds.getFeedEntry('rss-com:podcast', { show: parsed.show })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
