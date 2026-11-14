@@ -667,9 +667,17 @@
   },
   "habr": {
     "habr:articles": "https://habr.com/ru/rss/articles/",
+    "habr:comments": "https://habr.com/ru/rss/publications/440736/",
     "habr:company": "https://habr.com/ru/rss/companies/yandex/articles/",
-    "habr:hub": "https://habr.com/ru/rss/hub/programming/",
-    "habr:user": "https://habr.com/ru/rss/users/alizar/posts/"
+    "habr:flow": "https://habr.com/ru/rss/flows/develop/articles/",
+    "habr:hub": "https://habr.com/ru/rss/hubs/programming/articles/",
+    "habr:hub-posts": "https://habr.com/en/rss/hubs/javascript/posts",
+    "habr:news": "https://habr.com/ru/rss/news/",
+    "habr:search": "https://habr.com/ru/rss/search/?order=date&q=%5BJabber%5D&target_type=posts",
+    // An invented token: the feed is private to its owner, so this sample answers 404.
+    "habr:subscriptions": "https://habr.com/ru/rss/feed/0123456789abcdef0123456789abcdef/",
+    "habr:tag": "https://habr.com/ru/rss/tag/haskell/",
+    "habr:user": "https://habr.com/ru/rss/users/alizar/publications/articles/"
   },
   "hackernews": {
     "hackernews:front": "https://news.ycombinator.com/rss",

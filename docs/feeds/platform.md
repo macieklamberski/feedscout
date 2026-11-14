@@ -1845,14 +1845,16 @@ Discovers the feeds of a LearnKu community.
 
 ### Habr
 
-Discovers the feeds of a Habr hub, user or company, plus the site articles feed.
+Discovers the feeds of a Habr hub, user or company, plus the site articles and news feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `habr.com/{lang}/hubs/{hub}` | Hub · articles (RSS) |
-| `habr.com/{lang}/users/{user}` | User · articles (RSS) |
-| `habr.com/{lang}/companies/{company}` | Company · articles (RSS) |
-| Any other page | Articles (RSS) |
+| `habr.com/{lang}/hubs/{hub}` | Hub · hub posts<sup>†</sup> · articles · news<sup>†</sup> (RSS) |
+| `habr.com/{lang}/users/{user}` | User · articles · news<sup>†</sup> (RSS) |
+| `habr.com/{lang}/companies/{company}` | Company · articles · news<sup>†</sup> (RSS) |
+| Any other page | Articles · news<sup>†</sup> (RSS) |
+
+<sup>†</sup> *Found only by the Platform method.*
 
 > [!NOTE]
 > The language segment is taken from the page URL and every one of these paths needs its trailing slash.
