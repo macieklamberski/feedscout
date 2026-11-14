@@ -146,21 +146,21 @@ describe('firesideHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the podcast hint for an RSS feed', () => {
-      const value = 'https://feeds.fireside.fm/99zueins/rss'
+      const value = 'https://feeds.fireside.fm/alicecast/rss'
       const expected: DiscoverUriHint = { key: 'fireside:podcast', label: 'Podcast', format: 'rss' }
 
       expect(firesideHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the podcast hint for an RSS feed with a trailing slash', () => {
-      const value = 'https://feeds.fireside.fm/podcastmethod/rss/'
+      const value = 'https://feeds.fireside.fm/bobcast/rss/'
       const expected: DiscoverUriHint = { key: 'fireside:podcast', label: 'Podcast', format: 'rss' }
 
       expect(firesideHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the podcast hint for a JSON feed', () => {
-      const value = 'https://99zueins.fireside.fm/json'
+      const value = 'https://alicecast.fireside.fm/json'
       const expected: DiscoverUriHint = {
         key: 'fireside:podcast',
         label: 'Podcast',
@@ -171,13 +171,13 @@ describe('firesideHandler', () => {
     })
 
     it('should return undefined for a show page', () => {
-      const value = 'https://99zueins.fireside.fm/'
+      const value = 'https://alicecast.fireside.fm/'
 
       expect(firesideHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a show path on the feed host', () => {
-      const value = 'https://feeds.fireside.fm/99zueins'
+      const value = 'https://feeds.fireside.fm/alicecast'
 
       expect(firesideHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -224,7 +224,7 @@ describe('firesideHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://feeds.fireside.fm/99zueins/rss',
+        'https://feeds.fireside.fm/alicecast/rss',
         { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
       ],
       [
@@ -232,11 +232,11 @@ describe('firesideHandler', () => {
         { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
       ],
       [
-        'https://feeds.fireside.fm/podcastmethod/rss/',
+        'https://feeds.fireside.fm/bobcast/rss/',
         { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
       ],
       [
-        'https://99zueins.fireside.fm/json',
+        'https://alicecast.fireside.fm/json',
         { key: 'fireside:podcast', label: 'Podcast', format: 'json' },
       ],
       ['http://alice.fireside.fm/tags/example%20tag/rss', { key: 'fireside:tag', label: 'Tag' }],
