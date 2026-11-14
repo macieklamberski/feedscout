@@ -36,7 +36,7 @@ describe('isWixHtml', () => {
 describe('parseWixUrl', () => {
   it('should return the free site for a wixsite.com path', () => {
     const value = 'https://alice.wixsite.com/mysite/blog'
-    const expected: WixUrl = { kind: 'freeSite', account: 'alice', site: 'mysite' }
+    const expected: WixUrl = { kind: 'freeSite', site: 'mysite' }
 
     expect(parseWixUrl(value)).toEqual(expected)
   })

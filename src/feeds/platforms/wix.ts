@@ -1,11 +1,11 @@
-import { getPathSegments, getSubdomain, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type WixUrl = { kind: 'freeSite'; account: string; site: string } | { kind: 'site' }
+export type WixUrl = { kind: 'freeSite'; site: string } | { kind: 'site' }
 
 const domains = ['wixsite.com']
 const assetHosts = ['static.parastorage.com']
@@ -49,11 +49,10 @@ export const parseWixUrl = (url: string): WixUrl | undefined => {
     return
   }
 
-  const account = getSubdomain(parsedUrl, domains)
   const [site] = getPathSegments(parsedUrl)
 
-  if (account && site) {
-    return { kind: 'freeSite', account, site }
+  if (isSubdomainOf(parsedUrl, domains) && site) {
+    return { kind: 'freeSite', site }
   }
 
   return { kind: 'site' }
