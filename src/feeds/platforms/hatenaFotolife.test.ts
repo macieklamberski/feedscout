@@ -101,6 +101,32 @@ describe('parseHatenaFotolifeUrl', () => {
     expect(parseHatenaFotolifeUrl('https://f.hatena.ne.jp/alice/starfriends')).toEqual(expected)
   })
 
+  it('should return the newest photos listing for the userlist page', () => {
+    const expected: HatenaFotolifeUrl = { kind: 'userlist' }
+
+    expect(parseHatenaFotolifeUrl('https://f.hatena.ne.jp/userlist')).toEqual(expected)
+  })
+
+  it('should return the decoded camera model for a site-wide camera model page', () => {
+    const value = 'https://f.hatena.ne.jp/model/Example%20Camera'
+    const expected: HatenaFotolifeUrl = { kind: 'siteModel', model: 'Example Camera' }
+
+    expect(parseHatenaFotolifeUrl(value)).toEqual(expected)
+  })
+
+  it('should return the focal length for a focal length page', () => {
+    const value = 'https://f.hatena.ne.jp/focallength/14.30'
+    const expected: HatenaFotolifeUrl = { kind: 'focalLength', focalLength: '14.30' }
+
+    expect(parseHatenaFotolifeUrl(value)).toEqual(expected)
+  })
+
+  it('should return the color for a color page', () => {
+    const expected: HatenaFotolifeUrl = { kind: 'color', color: 'wg' }
+
+    expect(parseHatenaFotolifeUrl('https://f.hatena.ne.jp/fotocolor/wg')).toEqual(expected)
+  })
+
   it('should return undefined for the home page', () => {
     expect(parseHatenaFotolifeUrl('https://f.hatena.ne.jp/')).toBeUndefined()
   })
@@ -145,6 +171,66 @@ describe('hatenaFotolifeHandler', () => {
       ]
 
       expect(hatenaFotolifeHandler.resolve('https://f.hatena.ne.jp/alice/')).toEqual(expected)
+    })
+
+    it('should return the newest photos feed for the userlist page', () => {
+      const value = 'https://f.hatena.ne.jp/userlist'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
+        },
+      ]
+
+      expect(hatenaFotolifeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the site-wide camera model feed for a camera model page', () => {
+      const value = 'https://f.hatena.ne.jp/model/Example%20Camera'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://f.hatena.ne.jp/model/Example%20Camera?mode=rss',
+          hint: { key: 'hatena-fotolife:site-model', label: 'Photos by camera model' },
+        },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
+        },
+      ]
+
+      expect(hatenaFotolifeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the focal length feed for a focal length page', () => {
+      const value = 'https://f.hatena.ne.jp/focallength/14.30'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://f.hatena.ne.jp/focallength/14.30?mode=rss',
+          hint: { key: 'hatena-fotolife:focal-length', label: 'Photos by focal length' },
+        },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
+        },
+      ]
+
+      expect(hatenaFotolifeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the color feed for a color page', () => {
+      const value = 'https://f.hatena.ne.jp/fotocolor/wg'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://f.hatena.ne.jp/fotocolor/wg?mode=rss',
+          hint: { key: 'hatena-fotolife:color', label: 'Photos by color' },
+        },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
+        },
+      ]
+
+      expect(hatenaFotolifeHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return the https photos feed for an http user page', () => {

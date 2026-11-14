@@ -575,7 +575,7 @@ Discovers RSS feeds for Hatena Bookmark listings, searches, sites and user bookm
 
 ### Hatena Fotolife
 
-Discovers RSS feeds for Hatena Fotolife users, folders, tags, camera models and stars.
+Discovers RSS feeds for Hatena Fotolife users, folders, tags, camera models and stars, and the site-wide listings by camera model, focal length and color.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -585,6 +585,10 @@ Discovers RSS feeds for Hatena Fotolife users, folders, tags, camera models and 
 | `f.hatena.ne.jp/{user}/t/{tag}` | Tag · recent photos |
 | `f.hatena.ne.jp/{user}/favorite` | Stars · recent photos |
 | `f.hatena.ne.jp/{user}/starfriends` | Star Friends · recent photos |
+| `f.hatena.ne.jp/userlist` | Recent photos |
+| `f.hatena.ne.jp/model/{model}` | Photos by camera model · recent photos |
+| `f.hatena.ne.jp/focallength/{focalLength}` | Photos by focal length · recent photos |
+| `f.hatena.ne.jp/fotocolor/{color}` | Photos by color · recent photos |
 
 ### Hatena Blog
 

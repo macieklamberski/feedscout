@@ -12,6 +12,10 @@ export type HatenaFotolifeUrl =
   | { kind: 'tag'; username: string; tag: string }
   | { kind: 'favorite'; username: string }
   | { kind: 'starfriends'; username: string }
+  | { kind: 'userlist' }
+  | { kind: 'siteModel'; model: string }
+  | { kind: 'focalLength'; focalLength: string }
+  | { kind: 'color'; color: string }
 
 const hosts = ['f.hatena.ne.jp']
 
@@ -40,8 +44,6 @@ const feeds = definePlatformFeeds(
       template: 'https://f.hatena.ne.jp/{username}/starfriends?mode=rss',
     },
     // Site-wide listings: the newest photos, and photos by camera model, focal length or color.
-    // `resolve` builds the newest photos on every page, which need no value from it. The page
-    // parser reads the other paths as a user, so `resolve` never builds them.
     { key: 'hatena-fotolife:recent', template: 'https://f.hatena.ne.jp/userlist?mode=rss' },
     {
       key: 'hatena-fotolife:site-model',
@@ -72,6 +74,25 @@ export const parseHatenaFotolifeUrl = (url: string): HatenaFotolifeUrl | undefin
   }
 
   const [username, section, value] = getPathSegments(parsedUrl)
+
+  // The site-wide listings sit on fixed routes, which also read as a Hatena ID.
+  if (isAnyOf(username, 'userlist')) {
+    return { kind: 'userlist' }
+  }
+
+  const listingValue = decodeSegment(section)
+
+  if (isAnyOf(username, 'model') && listingValue) {
+    return { kind: 'siteModel', model: listingValue }
+  }
+
+  if (isAnyOf(username, 'focallength') && listingValue) {
+    return { kind: 'focalLength', focalLength: listingValue }
+  }
+
+  if (isAnyOf(username, 'fotocolor') && listingValue) {
+    return { kind: 'color', color: listingValue }
+  }
 
   // A Hatena ID starts with a letter. Old IDs such as `kumapu-` end in a hyphen.
   if (!username || !letterThenWordOrHyphenRegex.test(username)) {
@@ -124,6 +145,32 @@ export const hatenaFotolifeHandler: PlatformHandler = {
 
     if (!parsed) {
       return []
+    }
+
+    if (parsed.kind === 'userlist') {
+      return [feeds.getFeedEntry('hatena-fotolife:recent')]
+    }
+
+    // A listing page links its feed with the value as the page URL spells it.
+    if (parsed.kind === 'siteModel') {
+      return [
+        feeds.getFeedEntry('hatena-fotolife:site-model', { model: parsed.model }),
+        feeds.getFeedEntry('hatena-fotolife:recent'),
+      ]
+    }
+
+    if (parsed.kind === 'focalLength') {
+      return [
+        feeds.getFeedEntry('hatena-fotolife:focal-length', { focalLength: parsed.focalLength }),
+        feeds.getFeedEntry('hatena-fotolife:recent'),
+      ]
+    }
+
+    if (parsed.kind === 'color') {
+      return [
+        feeds.getFeedEntry('hatena-fotolife:color', { color: parsed.color }),
+        feeds.getFeedEntry('hatena-fotolife:recent'),
+      ]
     }
 
     const username = escapeSegment(parsed.username)
