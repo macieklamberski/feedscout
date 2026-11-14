@@ -18,6 +18,7 @@ const feeds = definePlatformFeeds([
   {
     key: 'sourceforge:activity',
     template: 'https://sourceforge.net/p/{project}/activity/feed.rss',
+    format: 'rss',
   },
   {
     key: 'sourceforge:activity',
@@ -25,7 +26,11 @@ const feeds = definePlatformFeeds([
     format: 'atom',
   },
   { key: 'sourceforge:project-feed', template: 'https://sourceforge.net/p/{project}/feed' },
-  { key: 'sourceforge:project-feed', template: 'https://sourceforge.net/p/{project}/feed.rss' },
+  {
+    key: 'sourceforge:project-feed',
+    template: 'https://sourceforge.net/p/{project}/feed.rss',
+    format: 'rss',
+  },
   {
     key: 'sourceforge:project-feed',
     template: 'https://sourceforge.net/p/{project}/feed.atom',
@@ -63,7 +68,11 @@ const feeds = definePlatformFeeds([
     format: 'atom',
   },
   { key: 'sourceforge:bugs', template: 'https://sourceforge.net/p/{project}/bugs/feed' },
-  { key: 'sourceforge:bugs', template: 'https://sourceforge.net/p/{project}/bugs/feed.rss' },
+  {
+    key: 'sourceforge:bugs',
+    template: 'https://sourceforge.net/p/{project}/bugs/feed.rss',
+    format: 'rss',
+  },
   {
     key: 'sourceforge:bugs',
     template: 'https://sourceforge.net/p/{project}/bugs/feed.atom',
@@ -72,6 +81,11 @@ const feeds = definePlatformFeeds([
   {
     key: 'sourceforge:activity',
     template: 'https://sourceforge.net/mirror/{project}/activity/feed',
+  },
+  {
+    key: 'sourceforge:activity',
+    template: 'https://sourceforge.net/mirror/{project}/activity/feed.rss',
+    format: 'rss',
   },
   {
     key: 'sourceforge:activity',
