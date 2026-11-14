@@ -6,6 +6,7 @@ import {
   findDescendant,
   findElement,
   findElements,
+  getBrandDomainRegex,
   getCookieNames,
   getHostOrigin,
   getJsonLd,
@@ -31,6 +32,7 @@ import {
 } from './utils.js'
 
 const idRegex = /\/topic\/(?<id>[^/]+)/
+const exampleDomainRegex = /^example\.(?:com|co\.[a-z]{2}|[a-z]{2})$/
 
 describe('getNumericId', () => {
   it('should return an id of digits', () => {
@@ -47,6 +49,79 @@ describe('getNumericId', () => {
 
   it('should return undefined for an undefined value', () => {
     expect(getNumericId(undefined, idRegex)).toBeUndefined()
+  })
+})
+
+describe('getBrandDomainRegex', () => {
+  const regex = getBrandDomainRegex('example')
+
+  it('should match the brand under a two-letter country domain', () => {
+    const value = 'example.de'
+
+    expect(regex.test(value)).toBe(true)
+  })
+
+  it('should match the brand under a longer top-level domain', () => {
+    const value = 'example.cat'
+
+    expect(regex.test(value)).toBe(true)
+  })
+
+  it('should match the brand under a co. country second level', () => {
+    const value = 'example.co.uk'
+
+    expect(regex.test(value)).toBe(true)
+  })
+
+  it('should match the brand under a com. country second level', () => {
+    const value = 'example.com.br'
+
+    expect(regex.test(value)).toBe(true)
+  })
+
+  it('should not match a one-letter top-level domain', () => {
+    const value = 'example.x'
+
+    expect(regex.test(value)).toBe(false)
+  })
+
+  it('should not match a second level other than co. or com.', () => {
+    const value = 'example.org.uk'
+
+    expect(regex.test(value)).toBe(false)
+  })
+
+  it('should not match the brand as the end of a longer label', () => {
+    const value = 'myexample.com'
+
+    expect(regex.test(value)).toBe(false)
+  })
+
+  it('should not match the brand under a subdomain', () => {
+    const value = 'alice.example.com'
+
+    expect(regex.test(value)).toBe(false)
+  })
+
+  it('should match a brand with a hyphen', () => {
+    const hyphenRegex = getBrandDomainRegex('my-example')
+    const value = 'my-example.fr'
+
+    expect(hyphenRegex.test(value)).toBe(true)
+  })
+
+  it('should read a dot in the brand as a literal dot', () => {
+    const dotRegex = getBrandDomainRegex('example.blog')
+    const value = 'examplexblog.fr'
+
+    expect(dotRegex.test(value)).toBe(false)
+  })
+
+  it('should give the tenant subdomain under a country second level', () => {
+    const value = 'https://alice.example.com.br/'
+    const expected = 'alice'
+
+    expect(getTenantSubdomain(value, [regex])).toBe(expected)
   })
 })
 
@@ -622,6 +697,49 @@ describe('getTenantSubdomain', () => {
 
   it('should return undefined for another domain', () => {
     expect(getTenantSubdomain('https://alice.example.org/', domains)).toBeUndefined()
+  })
+
+  describe('with a domain pattern', () => {
+    const patternDomains = ['example.net', exampleDomainRegex]
+
+    it('should return the subdomain under a domain the pattern matches', () => {
+      const value = 'https://alice.example.co.uk/'
+      const expected = 'alice'
+
+      expect(getTenantSubdomain(value, patternDomains)).toBe(expected)
+    })
+
+    it('should return the subdomain under a plain domain beside the pattern', () => {
+      const value = 'https://alice.example.net/'
+      const expected = 'alice'
+
+      expect(getTenantSubdomain(value, patternDomains)).toBe(expected)
+    })
+
+    it('should return the subdomain on a port', () => {
+      const value = 'https://alice.example.de:8080/'
+      const expected = 'alice'
+
+      expect(getTenantSubdomain(value, patternDomains)).toBe(expected)
+    })
+
+    it('should return undefined for www', () => {
+      const value = 'https://www.example.co.uk/'
+
+      expect(getTenantSubdomain(value, patternDomains)).toBeUndefined()
+    })
+
+    it('should return undefined for the apex', () => {
+      const value = 'https://example.co.uk/'
+
+      expect(getTenantSubdomain(value, patternDomains)).toBeUndefined()
+    })
+
+    it('should return undefined for a nested subdomain', () => {
+      const value = 'https://blog.alice.example.co.uk/'
+
+      expect(getTenantSubdomain(value, patternDomains)).toBeUndefined()
+    })
   })
 })
 
