@@ -22,10 +22,12 @@ const feeds = definePlatformFeeds([
   {
     key: 'internet-archive:collection',
     template: 'https://cors.archive.org/services/collection-rss.php?collection={collection}',
+    isAlias: true,
   },
   {
     key: 'internet-archive:search',
     template: 'https://cors.archive.org/services/collection-rss.php?query={query}',
+    isAlias: true,
   },
   // A collection's forum is named by the collection identifier, so `resolve` builds it on the
   // collection page.
@@ -36,12 +38,14 @@ const feeds = definePlatformFeeds([
   {
     key: 'internet-archive:forum',
     template: 'https://cors.archive.org/iathreads/posts-display-new.php?forum={forum}&mode=rss',
+    isAlias: true,
   },
   // Claimed only: the advanced search serves the same items as the search feed, and the media
   // type and bookmarks feeds name values no page here gives.
   {
     key: 'internet-archive:search',
     template: 'https://archive.org/advancedsearch.php?output=rss&q={query}',
+    isAlias: true,
   },
   {
     key: 'internet-archive:mediatype',
@@ -50,6 +54,7 @@ const feeds = definePlatformFeeds([
   {
     key: 'internet-archive:mediatype',
     template: 'https://cors.archive.org/services/collection-rss.php?mediatype={mediatype}',
+    isAlias: true,
   },
   {
     key: 'internet-archive:bookmarks',
