@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { isWixHtml, parseWixUrl, type WixUrl, wixHandler } from './wix.js'
 
 const wixHtml = '<meta name="generator" content="Wix.com Website Builder"/>'
@@ -32,9 +35,17 @@ describe('isWixHtml', () => {
 
 describe('parseWixUrl', () => {
   it('should return the free site for a wixsite.com path', () => {
+    const value = 'https://alice.wixsite.com/mysite/blog'
     const expected: WixUrl = { kind: 'freeSite', site: 'mysite' }
 
-    expect(parseWixUrl('https://alice.wixsite.com/mysite/blog')).toEqual(expected)
+    expect(parseWixUrl(value)).toEqual(expected)
+  })
+
+  it('should return the free site for a wixstudio.com path', () => {
+    const value = 'https://alice.wixstudio.com/mysite/blog'
+    const expected: WixUrl = { kind: 'freeSite', site: 'mysite' }
+
+    expect(parseWixUrl(value)).toEqual(expected)
   })
 
   it('should return the site for a custom domain', () => {
@@ -100,6 +111,132 @@ describe('wixHandler', () => {
       ]
 
       expect(wixHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the blog feed under the site path of a Wix Studio free site', () => {
+      const value = 'https://account.wixstudio.com/mysite/post/hello'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://account.wixstudio.com/mysite/blog-feed.xml',
+          hint: { key: 'wix:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(wixHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the http scheme of a free site opened over http', () => {
+      const value = 'http://account.wixsite.com/mysite/post/hello'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://account.wixsite.com/mysite/blog-feed.xml',
+          hint: { key: 'wix:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(wixHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the http scheme of a site on its own domain', () => {
+      const value = 'http://www.example.com/post/a-post'
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'http://www.example.com/blog-feed.xml', hint: { key: 'wix:blog', label: 'Blog' } },
+      ]
+
+      expect(wixHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the blog hint for the blog feed of a free site', () => {
+      const value = 'https://alice.wixsite.com/mysite/blog-feed.xml'
+      const expected: DiscoverUriHint = { key: 'wix:blog', label: 'Blog' }
+
+      expect(wixHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the blog hint for the blog feed of a Wix Studio free site', () => {
+      const value = 'https://alice.wixstudio.com/mysite/blog-feed.xml'
+      const expected: DiscoverUriHint = { key: 'wix:blog', label: 'Blog' }
+
+      expect(wixHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the blog hint for the blog feed over http', () => {
+      const value = 'http://alice.wixsite.com/mysite/blog-feed.xml'
+      const expected: DiscoverUriHint = { key: 'wix:blog', label: 'Blog' }
+
+      expect(wixHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the blog hint for the blog feed under a language path', () => {
+      const value = 'https://alice.wixsite.com/mysite/de/blog-feed.xml'
+      const expected: DiscoverUriHint = { key: 'wix:blog', label: 'Blog' }
+
+      expect(wixHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the blog hint for the blog feed under the blog path', () => {
+      const value = 'https://alice.wixsite.com/mysite/blog/blog-feed.xml'
+      const expected: DiscoverUriHint = { key: 'wix:blog', label: 'Blog' }
+
+      expect(wixHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the blog hint for the blog feed with a language query', () => {
+      const value = 'https://alice.wixsite.com/mysite/blog-feed.xml?lang=en'
+      const expected: DiscoverUriHint = { key: 'wix:blog', label: 'Blog' }
+
+      expect(wixHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a page of a free site', () => {
+      const value = 'https://alice.wixsite.com/mysite/post/hello'
+
+      expect(wixHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a blog feed at the root of a wixsite.com account', () => {
+      const value = 'https://alice.wixsite.com/blog-feed.xml'
+
+      expect(wixHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a blog feed on www.wixsite.com', () => {
+      const value = 'https://www.wixsite.com/mysite/blog-feed.xml'
+
+      expect(wixHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the blog feed of a custom domain', () => {
+      const value = 'https://www.example.com/blog-feed.xml'
+
+      expect(wixHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const blogHint: DiscoverUriHint = { key: 'wix:blog', label: 'Blog' }
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://alice.wixsite.com/mysite/blog-feed.xml', blogHint],
+      ['http://alice.wixsite.com/mysite/blog-feed.xml', blogHint],
+      ['https://alice.wixsite.com/mysite/blog-feed.xml/', blogHint],
+      ['https://alice.wixsite.com/mysite/blog-feed.xml?lang=en', blogHint],
+      ['https://alice.wixsite.com/mysite/de/blog-feed.xml', blogHint],
+      ['https://alice.wixsite.com/mysite/blog/blog-feed.xml', blogHint],
+      ['https://alice.wixstudio.com/mysite/blog-feed.xml', blogHint],
+      ['http://alice.wixstudio.com/mysite/blog-feed.xml', blogHint],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [wixHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
