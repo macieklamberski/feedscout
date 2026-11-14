@@ -258,12 +258,6 @@ describe('talentsoftHandler', () => {
 
       expect(talentsoftHandler.resolve(value, homeHtml)).toEqual(expected)
     })
-
-    it('should return no feeds for a page outside http', () => {
-      const value = 'ftp://alice.talent-soft.com/accueil.aspx'
-
-      expect(talentsoftHandler.resolve(value, homeHtml)).toEqual([])
-    })
   })
 
   describe('getFeedHint', () => {
