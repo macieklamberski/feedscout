@@ -687,42 +687,42 @@ describe('githubHandler', () => {
     })
 
     it('should return the releases hint for a releases feed', () => {
-      const value = 'https://github.com/BishopFox/sliver/releases.atom'
+      const value = 'https://github.com/AliceCorp/alicetool/releases.atom'
       const expected: DiscoverUriHint = { key: 'github:releases', label: 'Releases' }
 
       expect(githubHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the commits hint for a commits feed', () => {
-      const value = 'https://github.com/BishopFox/sliver/commits.atom'
+      const value = 'https://github.com/AliceCorp/alicetool/commits.atom'
       const expected: DiscoverUriHint = { key: 'github:commits', label: 'Commits' }
 
       expect(githubHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the tags hint for a tags feed', () => {
-      const value = 'https://github.com/BishopFox/sliver/tags.atom'
+      const value = 'https://github.com/AliceCorp/alicetool/tags.atom'
       const expected: DiscoverUriHint = { key: 'github:tags', label: 'Tags' }
 
       expect(githubHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the wiki hint for a wiki feed', () => {
-      const value = 'https://github.com/BishopFox/sliver/wiki.atom'
+      const value = 'https://github.com/AliceCorp/alicetool/wiki.atom'
       const expected: DiscoverUriHint = { key: 'github:wiki', label: 'Wiki' }
 
       expect(githubHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the wiki hint for the wiki feed of a repository named wiki', () => {
-      const value = 'https://github.com/ethereum/wiki/wiki.atom'
+      const value = 'https://github.com/dave/wiki/wiki.atom'
       const expected: DiscoverUriHint = { key: 'github:wiki', label: 'Wiki' }
 
       expect(githubHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the discussions hint for a repository discussions feed', () => {
-      const value = 'https://github.com/MusicPlayerDaemon/MPD/discussions.atom'
+      const value = 'https://github.com/ErinPlayer/EPD/discussions.atom'
       const expected: DiscoverUriHint = { key: 'github:discussions', label: 'Discussions' }
 
       expect(githubHandler.getFeedHint?.(value)).toEqual(expected)
@@ -737,7 +737,7 @@ describe('githubHandler', () => {
 
     it('should return the discussion category hint for a repository category feed', () => {
       const value =
-        'https://github.com/Security-Onion-Solutions/securityonion/discussions/categories/quick-malware-analysis.atom'
+        'https://github.com/Frank-Solutions/franksecurity/discussions/categories/quick-malware-analysis.atom'
       const expected: DiscoverUriHint = {
         key: 'github:discussion-category',
         label: 'Discussion category',
@@ -764,7 +764,7 @@ describe('githubHandler', () => {
     })
 
     it('should return the file history hint for a file at the repository root', () => {
-      const value = 'https://github.com/hajimehoshi/ebiten/commits/main/LICENSE.atom'
+      const value = 'https://github.com/bobdev/bobengine/commits/main/LICENSE.atom'
       const expected: DiscoverUriHint = { key: 'github:file-history', label: 'File history' }
 
       expect(githubHandler.getFeedHint?.(value)).toEqual(expected)
@@ -772,28 +772,28 @@ describe('githubHandler', () => {
 
     it('should return the file history hint for a nested file', () => {
       const value =
-        'https://github.com/combine-org/combine-specifications/commits/main/specifications/sbml.level-3.version-1.render.version-1.release-1.md.atom'
+        'https://github.com/carol-org/carol-specifications/commits/main/specifications/sbml.level-3.version-1.render.version-1.release-1.md.atom'
       const expected: DiscoverUriHint = { key: 'github:file-history', label: 'File history' }
 
       expect(githubHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the file history hint for a feed with a trailing slash', () => {
-      const value = 'https://github.com/hajimehoshi/ebiten/commits/main/LICENSE.atom/'
+      const value = 'https://github.com/bobdev/bobengine/commits/main/LICENSE.atom/'
       const expected: DiscoverUriHint = { key: 'github:file-history', label: 'File history' }
 
       expect(githubHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the file history hint for a feed on the www host', () => {
-      const value = 'https://www.github.com/hajimehoshi/ebiten/commits/main/LICENSE.atom'
+      const value = 'https://www.github.com/bobdev/bobengine/commits/main/LICENSE.atom'
       const expected: DiscoverUriHint = { key: 'github:file-history', label: 'File history' }
 
       expect(githubHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the wiki hint for a feed on the www host', () => {
-      const value = 'https://www.github.com/BishopFox/sliver/wiki.atom'
+      const value = 'https://www.github.com/AliceCorp/alicetool/wiki.atom'
       const expected: DiscoverUriHint = { key: 'github:wiki', label: 'Wiki' }
 
       expect(githubHandler.getFeedHint?.(value)).toEqual(expected)
@@ -807,37 +807,37 @@ describe('githubHandler', () => {
     })
 
     it('should return undefined for a repository page', () => {
-      const value = 'https://github.com/BishopFox/sliver'
+      const value = 'https://github.com/AliceCorp/alicetool'
 
       expect(githubHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a wiki page', () => {
-      const value = 'https://github.com/BishopFox/sliver/wiki'
+      const value = 'https://github.com/AliceCorp/alicetool/wiki'
 
       expect(githubHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a file blob page', () => {
-      const value = 'https://github.com/hajimehoshi/ebiten/blob/main/LICENSE'
+      const value = 'https://github.com/bobdev/bobengine/blob/main/LICENSE'
 
       expect(githubHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a file history page', () => {
-      const value = 'https://github.com/hajimehoshi/ebiten/commits/main/LICENSE'
+      const value = 'https://github.com/bobdev/bobengine/commits/main/LICENSE'
 
       expect(githubHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a file history feed on another host', () => {
-      const value = 'https://example.com/hajimehoshi/ebiten/commits/main/LICENSE.atom'
+      const value = 'https://example.com/bobdev/bobengine/commits/main/LICENSE.atom'
 
       expect(githubHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/BishopFox/sliver/wiki.atom'
+      const value = 'https://example.com/AliceCorp/alicetool/wiki.atom'
 
       expect(githubHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -847,17 +847,17 @@ describe('githubHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://github.com/a99f.atom', { key: 'github:activity', label: 'Activity' }],
       [
-        'https://github.com/BishopFox/sliver/releases.atom',
+        'https://github.com/AliceCorp/alicetool/releases.atom',
         { key: 'github:releases', label: 'Releases' },
       ],
       [
-        'https://github.com/BishopFox/sliver/commits.atom',
+        'https://github.com/AliceCorp/alicetool/commits.atom',
         { key: 'github:commits', label: 'Commits' },
       ],
-      ['https://github.com/BishopFox/sliver/tags.atom', { key: 'github:tags', label: 'Tags' }],
-      ['https://github.com/BishopFox/sliver/wiki.atom', { key: 'github:wiki', label: 'Wiki' }],
+      ['https://github.com/AliceCorp/alicetool/tags.atom', { key: 'github:tags', label: 'Tags' }],
+      ['https://github.com/AliceCorp/alicetool/wiki.atom', { key: 'github:wiki', label: 'Wiki' }],
       [
-        'https://github.com/MusicPlayerDaemon/MPD/discussions.atom',
+        'https://github.com/ErinPlayer/EPD/discussions.atom',
         { key: 'github:discussions', label: 'Discussions' },
       ],
       [
@@ -865,7 +865,7 @@ describe('githubHandler', () => {
         { key: 'github:discussions', label: 'Discussions' },
       ],
       [
-        'https://github.com/Security-Onion-Solutions/securityonion/discussions/categories/quick-malware-analysis.atom',
+        'https://github.com/Frank-Solutions/franksecurity/discussions/categories/quick-malware-analysis.atom',
         { key: 'github:discussion-category', label: 'Discussion category' },
       ],
       [
@@ -877,11 +877,11 @@ describe('githubHandler', () => {
         { key: 'github:branch-commits', label: 'Branch commits' },
       ],
       [
-        'https://github.com/hajimehoshi/ebiten/commits/main/LICENSE.atom',
+        'https://github.com/bobdev/bobengine/commits/main/LICENSE.atom',
         { key: 'github:file-history', label: 'File history' },
       ],
       [
-        'https://github.com/combine-org/combine-specifications/commits/main/specifications/sbml.level-3.version-1.render.version-1.release-1.md.atom',
+        'https://github.com/carol-org/carol-specifications/commits/main/specifications/sbml.level-3.version-1.render.version-1.release-1.md.atom',
         { key: 'github:file-history', label: 'File history' },
       ],
     ]
