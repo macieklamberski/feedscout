@@ -1,3 +1,4 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasClass, hasMarker } from '../../common/utils.js'
 
@@ -11,6 +12,33 @@ export type WildApricotPage =
 const trailingSlashRegex = /\/$/
 
 const eventsModeLinkClasses = ['calendarModeLink', 'listModeLink']
+
+const domains = ['wildapricot.org']
+
+// A site on a custom domain is known only by its load balancer header, so its feeds are built in
+// resolve and claimed only on Wild Apricot's own domain. A module's feed also answers under the
+// module's id, which names the blog or the events. A page's own `/RSS` can be either, so it is
+// claimed under a key that names neither.
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'wild-apricot:blog',
+      template: '{root}/page-{page}/BlogPost/{id}/RSS',
+    },
+    {
+      key: 'wild-apricot:events',
+      template: '{root}/page-{page}/EventModule/{id}/RSS',
+    },
+    { key: 'wild-apricot:page', template: '{scheme}://{host}/page-{page}/RSS' },
+    // A page's feed answers under its friendly path too, and in its widget view, as `/news/RSS`
+    // and `/widget/Events/RSS`. Each names its module feed as its self link.
+    { key: 'wild-apricot:page', template: '{root}/RSS', isAlias: true },
+    { key: 'wild-apricot:page', template: '{root}/widget/RSS', isAlias: true },
+    { key: 'wild-apricot:page', template: '{root}/{path}/RSS', isAlias: true },
+    { key: 'wild-apricot:page', template: '{root}/widget/{path}/RSS', isAlias: true },
+  ],
+  { domains },
+)
 
 // Wild Apricot answers every page through its load balancer, on its own hosts and on custom
 // domains alike.
@@ -89,4 +117,6 @@ export const wildApricotHandler: PlatformHandler = {
 
     return [{ uri: `${page.eventsUrl}/RSS`, hint: composeHint('wild-apricot:events') }]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
