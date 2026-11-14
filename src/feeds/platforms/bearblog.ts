@@ -27,12 +27,42 @@ const feeds = definePlatformFeeds(
       format: 'rss',
     },
     // A tag feed answers under these paths of the posts feed too, which the page does not link.
-    { key: 'bearblog:tag', template: '{scheme}://{host}/atom/?q={tag}', format: 'atom' },
-    { key: 'bearblog:tag', template: '{scheme}://{host}/atom.xml?q={tag}', format: 'atom' },
-    { key: 'bearblog:tag', template: '{scheme}://{host}/rss/?q={tag}', format: 'rss' },
-    { key: 'bearblog:tag', template: '{scheme}://{host}/feed.xml?q={tag}', format: 'atom' },
-    { key: 'bearblog:tag', template: '{scheme}://{host}/index.xml?q={tag}', format: 'atom' },
-    { key: 'bearblog:tag', template: '{scheme}://{host}/rss.xml?q={tag}', format: 'rss' },
+    {
+      key: 'bearblog:tag',
+      template: '{scheme}://{host}/atom/?q={tag}',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'bearblog:tag',
+      template: '{scheme}://{host}/atom.xml?q={tag}',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'bearblog:tag',
+      template: '{scheme}://{host}/rss/?q={tag}',
+      format: 'rss',
+      isAlias: true,
+    },
+    {
+      key: 'bearblog:tag',
+      template: '{scheme}://{host}/feed.xml?q={tag}',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'bearblog:tag',
+      template: '{scheme}://{host}/index.xml?q={tag}',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'bearblog:tag',
+      template: '{scheme}://{host}/rss.xml?q={tag}',
+      format: 'rss',
+      isAlias: true,
+    },
     { key: 'bearblog:posts', template: '{scheme}://{host}/feed/', format: 'atom' },
     { key: 'bearblog:posts', template: '{scheme}://{host}/feed/?type=rss', format: 'rss' },
     // Every blog serves the same two feeds under these paths too, which the page does not link.
