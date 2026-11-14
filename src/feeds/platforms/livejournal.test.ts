@@ -220,11 +220,11 @@ describe('livejournalHandler', () => {
       const value = 'https://alice.livejournal.com/tag/caf%C3%A9'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.livejournal.com/data/rss?tag=café',
+          uri: 'https://alice.livejournal.com/data/rss?tag=caf%C3%A9',
           hint: { key: 'livejournal:posts-tag', label: 'Tag', format: 'rss' },
         },
         {
-          uri: 'https://alice.livejournal.com/data/atom?tag=café',
+          uri: 'https://alice.livejournal.com/data/atom?tag=caf%C3%A9',
           hint: { key: 'livejournal:posts-tag', label: 'Tag', format: 'atom' },
         },
         {
@@ -395,6 +395,17 @@ describe('livejournalHandler', () => {
 
     it('should return the tag hint for a tag feed', () => {
       const value = 'https://alice.livejournal.com/data/rss?tag=music'
+      const expected: DiscoverUriHint = {
+        key: 'livejournal:posts-tag',
+        label: 'Tag',
+        format: 'rss',
+      }
+
+      expect(livejournalHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a tag feed with a raw non-ASCII tag', () => {
+      const value = 'https://alice.livejournal.com/data/rss?tag=café'
       const expected: DiscoverUriHint = {
         key: 'livejournal:posts-tag',
         label: 'Tag',
