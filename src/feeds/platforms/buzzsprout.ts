@@ -12,8 +12,12 @@ const hosts = ['buzzsprout.com', 'www.buzzsprout.com']
 const feeds = definePlatformFeeds([
   { key: 'buzzsprout:podcast', template: 'https://rss.buzzsprout.com/{podcastId}.rss' },
   // Served spellings, which redirect to the one above. Claimed, never built.
-  { key: 'buzzsprout:podcast', template: 'https://feeds.buzzsprout.com/{podcastId}.rss' },
-  { key: 'buzzsprout:podcast', template: 'https://buzzsprout.com/{podcastId}.rss' },
+  {
+    key: 'buzzsprout:podcast',
+    template: 'https://feeds.buzzsprout.com/{podcastId}.rss',
+    isAlias: true,
+  },
+  { key: 'buzzsprout:podcast', template: 'https://buzzsprout.com/{podcastId}.rss', isAlias: true },
 ])
 
 export const parseBuzzsproutUrl = (url: string): BuzzsproutUrl | undefined => {
