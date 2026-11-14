@@ -8,6 +8,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 const hosts = ['archive.org', 'www.archive.org']
 
 const detailsRegex = /^\/details\/([^/@][^/]*)\/?$/i
+const accountRegex = /^\/details\/@([^/]+)/i
 const searchRegex = /^\/search\/?$/i
 
 const feeds = definePlatformFeeds([
@@ -46,7 +47,7 @@ const feeds = definePlatformFeeds([
     template: 'https://cors.archive.org/iathreads/posts-display-new.php?forum={forum}&mode=rss',
     isAlias: true,
   },
-  // Claimed only: the media type and bookmarks feeds name values no page here gives.
+  // Claimed only: the media type feed names a value no page here gives.
   {
     key: 'internet-archive:mediatype',
     template: 'https://archive.org/services/collection-rss.php?mediatype={mediatype}',
@@ -56,6 +57,8 @@ const feeds = definePlatformFeeds([
     template: 'https://cors.archive.org/services/collection-rss.php?mediatype={mediatype}',
     isAlias: true,
   },
+  // An account page names the account, and the feed answers where the account's screen name is
+  // its handle.
   {
     key: 'internet-archive:bookmarks',
     template: 'https://archive.org/bookmarks/{user}?output=rss',
@@ -65,6 +68,7 @@ const feeds = definePlatformFeeds([
 export type InternetArchivePage =
   | { kind: 'collection'; collection: string }
   | { kind: 'search'; query: string }
+  | { kind: 'account'; user: string }
 
 const getInternetArchivePage = (
   url: string,
@@ -73,12 +77,18 @@ const getInternetArchivePage = (
   const { pathname, searchParams } = new URL(url)
 
   // Collections, accounts and search serve one app shell loading `/offshoot_assets/`, while
-  // items serve full HTML without it. Accounts are `/details/@{user}`, which the path excludes.
+  // items serve full HTML without it. Accounts are `/details/@{user}`.
   if (content?.includes('/offshoot_assets/')) {
     const collection = pathname.match(detailsRegex)?.[1]
 
     if (collection) {
       return { kind: 'collection', collection }
+    }
+
+    const user = pathname.match(accountRegex)?.[1]
+
+    if (user) {
+      return { kind: 'account', user }
     }
   }
 
@@ -113,6 +123,10 @@ export const internetArchiveHandler: PlatformHandler = {
         feeds.getFeedEntry('internet-archive:collection', { collection: page.collection }),
         feeds.getFeedEntry('internet-archive:forum', { forum: page.collection }),
       ]
+    }
+
+    if (page.kind === 'account') {
+      return [feeds.getFeedEntry('internet-archive:bookmarks', { user: page.user })]
     }
 
     return [feeds.getFeedEntry('internet-archive:search', { query: page.query })]

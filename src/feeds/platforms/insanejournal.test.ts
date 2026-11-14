@@ -21,6 +21,20 @@ describe('parseInsanejournalUrl', () => {
     expect(parseInsanejournalUrl('https://www.insanejournal.com/users/jane')).toEqual(expected)
   })
 
+  it('should return the user and tag for a tag page on a www users path', () => {
+    const value = 'https://www.insanejournal.com/users/jane/tag/books'
+    const expected: InsanejournalUrl = { kind: 'journal', username: 'jane', tag: 'books' }
+
+    expect(parseInsanejournalUrl(value)).toEqual(expected)
+  })
+
+  it('should return the asylum and tag for a tag page on the asylums host', () => {
+    const value = 'https://asylums.insanejournal.com/club/tag/books'
+    const expected: InsanejournalUrl = { kind: 'asylum', asylum: 'club', tag: 'books' }
+
+    expect(parseInsanejournalUrl(value)).toEqual(expected)
+  })
+
   it('should return the asylum for a www asylum path', () => {
     const expected: InsanejournalUrl = { kind: 'asylum', asylum: 'club' }
 
