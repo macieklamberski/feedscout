@@ -114,15 +114,10 @@ describe('statuspageHandler', () => {
       expect(statuspageHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return the history hint for a feed on www in front of a tenant', () => {
+    it('should return undefined for a feed on www in front of a tenant', () => {
       const value = 'https://www.example.statuspage.io/history.rss'
-      const expected: DiscoverUriHint = {
-        key: 'statuspage:history',
-        label: 'Incident history',
-        format: 'rss',
-      }
 
-      expect(statuspageHandler.getFeedHint?.(value)).toEqual(expected)
+      expect(statuspageHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
