@@ -12,10 +12,11 @@ const showPathRegex = /^\/shows\/([^/]+)/i
 
 const feeds = definePlatformFeeds([
   { key: 'omnystudio:show', template: 'https://omny.fm/shows/{show}/playlists/podcast.rss' },
+  // The show feed answers 302 to its playlist here, and every other playlist of the show, with
+  // items of its own, is served here too. No URL tells the show's playlist apart.
   {
     key: 'omnystudio:show',
     template: 'https://www.omnycontent.com/d/playlist/{orgId}/{programId}/{playlistId}/podcast.rss',
-    isAlias: true,
   },
 ])
 

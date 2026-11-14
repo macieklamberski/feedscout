@@ -114,6 +114,13 @@ describe('captivateHandler', () => {
       expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the podcast hint for a feed on the show host', () => {
+      const value = 'https://bluntdissection.captivate.fm/feed'
+      const expected: DiscoverUriHint = { key: 'captivate:podcast', label: 'Podcast' }
+
+      expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for a show page', () => {
       const value = 'https://bluntdissection.captivate.fm/'
 
@@ -169,6 +176,10 @@ describe('captivateHandler', () => {
       ],
       [
         'https://feeds.captivate.fm/flies-in-the-jar/',
+        { key: 'captivate:podcast', label: 'Podcast' },
+      ],
+      [
+        'https://flies-in-the-jar.captivate.fm/feed',
         { key: 'captivate:podcast', label: 'Podcast' },
       ],
       [

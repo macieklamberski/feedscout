@@ -167,6 +167,13 @@ describe('acastHandler', () => {
       expect(acastHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the podcast hint for a show feed on the legacy feed host', () => {
+      const value = 'http://rss.acast.com/bobseapodcast'
+      const expected: DiscoverUriHint = { key: 'acast:podcast', label: 'Podcast' }
+
+      expect(acastHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for a show page', () => {
       const value = 'https://shows.acast.com/bob-sea-podcast'
 
@@ -204,6 +211,7 @@ describe('acastHandler', () => {
         'https://feeds.acast.com/public/shows/5cd07163ad694b18367aeb03',
         { key: 'acast:podcast', label: 'Podcast' },
       ],
+      ['https://rss.acast.com/bobseapodcast', { key: 'acast:podcast', label: 'Podcast' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

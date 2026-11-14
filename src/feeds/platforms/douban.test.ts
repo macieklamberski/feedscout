@@ -293,6 +293,27 @@ describe('doubanHandler', () => {
       expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the subject reviews hint for a feed on the book host', () => {
+      const value = 'https://book.douban.com/feed/subject/1084336/reviews'
+      const expected: DiscoverUriHint = { key: 'douban:subject-reviews', label: 'Subject reviews' }
+
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the subject reviews hint for a feed on the movie host', () => {
+      const value = 'https://movie.douban.com/feed/subject/1092183/reviews'
+      const expected: DiscoverUriHint = { key: 'douban:subject-reviews', label: 'Subject reviews' }
+
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the subject reviews hint for a feed on the music host', () => {
+      const value = 'https://music.douban.com/feed/subject/1401853/reviews'
+      const expected: DiscoverUriHint = { key: 'douban:subject-reviews', label: 'Subject reviews' }
+
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for a user page', () => {
       const value = 'https://www.douban.com/people/alicebean/'
 
@@ -336,6 +357,10 @@ describe('doubanHandler', () => {
       ],
       [
         'https://www.douban.com/feed/subject/1092183/reviews',
+        { key: 'douban:subject-reviews', label: 'Subject reviews' },
+      ],
+      [
+        'https://movie.douban.com/feed/subject/1092183/reviews',
         { key: 'douban:subject-reviews', label: 'Subject reviews' },
       ],
       [

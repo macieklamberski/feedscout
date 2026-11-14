@@ -22,6 +22,17 @@ const assetTags = ['link', 'script']
 const feeds = definePlatformFeeds(
   [
     { key: 'estranky:posts', template: '{scheme}://{host}/rss/articles/data.xml' },
+    // Any file name under `/rss/articles/` serves the posts feed.
+    {
+      key: 'estranky:posts',
+      template: '{scheme}://{host}/rss/articles/photos.xml',
+      isAlias: true,
+    },
+    {
+      key: 'estranky:posts',
+      template: '{scheme}://{host}/rss/articles/comments.xml',
+      isAlias: true,
+    },
     { key: 'estranky:posts', template: '{scheme}://{host}/rss/{language}/articles/data.xml' },
     { key: 'estranky:photos', template: '{scheme}://{host}/rss/photos/data.xml' },
     { key: 'estranky:photos', template: '{scheme}://{host}/rss/{language}/photos/data.xml' },

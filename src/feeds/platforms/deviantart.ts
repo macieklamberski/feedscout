@@ -28,6 +28,18 @@ const dailyDeviationsRegex = /^\/daily-deviations\/?$/i
 // daily deviations feeds serve the same popular pool whatever the query, so they are claimed and
 // never built.
 const feeds = definePlatformFeeds([
+  // A folder feed serves the same items without a type. Its rows come first, since the
+  // `gallery:{username}` row below takes a folder path too.
+  {
+    key: 'deviantart:gallery',
+    template:
+      'https://backend.deviantart.com/rss.xml?type=deviation&q=gallery:{username}/{folderId}',
+  },
+  {
+    key: 'deviantart:gallery',
+    template: 'https://backend.deviantart.com/rss.xml?q=gallery:{username}/{folderId}',
+    isAlias: true,
+  },
   {
     key: 'deviantart:deviations',
     template:
@@ -52,11 +64,6 @@ const feeds = definePlatformFeeds([
     key: 'deviantart:deviations',
     template: 'https://backend.deviantart.com/rss.xml?q=gallery:{username}',
     isAlias: true,
-  },
-  {
-    key: 'deviantart:gallery',
-    template:
-      'https://backend.deviantart.com/rss.xml?type=deviation&q=gallery:{username}/{folderId}',
   },
   {
     key: 'deviantart:favorites',

@@ -28,14 +28,26 @@ const widgetsScriptRegex = /^(?:https?:)?\/\/www\.blogger\.com\/static\/v1\/widg
 
 // A custom domain is known only by its markup, so its feeds are built here but not claimed.
 // Blogger serves the posts feed at /feeds/posts/full and /atom.xml too, and the comments feed at
-// /feeds/comments/full.
+// /feeds/comments/full. Both are served on www.blogger.com too, under the blog's id.
 const feeds = definePlatformFeeds(
   [
     { key: 'blogspot:posts', template: '{scheme}://{host}/feeds/posts/default', format: 'atom' },
     {
       key: 'blogspot:posts',
+      template: 'https://www.blogger.com/feeds/{blogId}/posts/default',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'blogspot:posts',
       template: '{scheme}://{host}/feeds/posts/default?alt=rss',
       format: 'rss',
+    },
+    {
+      key: 'blogspot:posts',
+      template: 'https://www.blogger.com/feeds/{blogId}/posts/default?alt=rss',
+      format: 'rss',
+      isAlias: true,
     },
     {
       key: 'blogspot:posts',
@@ -72,8 +84,20 @@ const feeds = definePlatformFeeds(
     },
     {
       key: 'blogspot:comments',
+      template: 'https://www.blogger.com/feeds/{blogId}/comments/default',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'blogspot:comments',
       template: '{scheme}://{host}/feeds/comments/default?alt=rss',
       format: 'rss',
+    },
+    {
+      key: 'blogspot:comments',
+      template: 'https://www.blogger.com/feeds/{blogId}/comments/default?alt=rss',
+      format: 'rss',
+      isAlias: true,
     },
     {
       key: 'blogspot:comments',
