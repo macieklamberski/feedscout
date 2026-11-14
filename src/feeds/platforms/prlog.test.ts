@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   getPrlogPage,
   type PrlogPage,
@@ -94,8 +96,87 @@ describe('prlogHandler', () => {
       expect(prlogHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the https feed for an http pressroom page', () => {
+      const value = 'http://pressroom.prlog.org/Example_Co/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://pressroom.prlog.org/Example_Co/latest.xml',
+          hint: { key: 'prlog:press-releases', label: 'Press releases' },
+        },
+      ]
+
+      expect(prlogHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for a URL outside a pressroom', () => {
       expect(prlogHandler.resolve('https://pressroom.prlog.org/')).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the press releases hint for a pressroom feed', () => {
+      const value = 'https://pressroom.prlog.org/Example_Co/latest.xml'
+      const expected: DiscoverUriHint = { key: 'prlog:press-releases', label: 'Press releases' }
+
+      expect(prlogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the press releases hint for an http pressroom feed', () => {
+      const value = 'http://pressroom.prlog.org/Example_Co/latest.xml'
+      const expected: DiscoverUriHint = { key: 'prlog:press-releases', label: 'Press releases' }
+
+      expect(prlogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the press releases hint for a pressroom feed with a tracking query', () => {
+      const value = 'https://pressroom.prlog.org/Example_Co/latest.xml?utm_source=example'
+      const expected: DiscoverUriHint = { key: 'prlog:press-releases', label: 'Press releases' }
+
+      expect(prlogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a pressroom page', () => {
+      const value = 'https://pressroom.prlog.org/Example_Co/'
+
+      expect(prlogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on the pressroom directory', () => {
+      const value = 'https://pressroom.prlog.org/latest.xml'
+
+      expect(prlogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the main site', () => {
+      const value = 'https://www.prlog.org/news/rss.xml'
+
+      expect(prlogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/Example_Co/latest.xml'
+
+      expect(prlogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const hint: DiscoverUriHint = { key: 'prlog:press-releases', label: 'Press releases' }
+    const ownFeeds: Array<string> = [
+      'https://pressroom.prlog.org/Example_Co/latest.xml',
+      'http://pressroom.prlog.org/Example_Co/latest.xml',
+      'https://pressroom.prlog.org/Example_Co/latest.xml?utm_source=example',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [prlogHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
