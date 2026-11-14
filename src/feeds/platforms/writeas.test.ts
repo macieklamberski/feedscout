@@ -118,21 +118,21 @@ describe('writeasHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the blog hint for a blog feed', () => {
-      const value = 'https://write.as/matt/feed/'
+      const value = 'https://write.as/quietquill/feed/'
       const expected: DiscoverUriHint = { key: 'writeas:blog', label: 'Blog' }
 
       expect(writeasHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the blog hint for a blog feed without a trailing slash', () => {
-      const value = 'https://write.as/matt/feed'
+      const value = 'https://write.as/quietquill/feed'
       const expected: DiscoverUriHint = { key: 'writeas:blog', label: 'Blog' }
 
       expect(writeasHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the blog hint for a blog feed over http', () => {
-      const value = 'http://write.as/matt/feed/'
+      const value = 'http://write.as/quietquill/feed/'
       const expected: DiscoverUriHint = { key: 'writeas:blog', label: 'Blog' }
 
       expect(writeasHandler.getFeedHint?.(value)).toEqual(expected)
@@ -153,7 +153,7 @@ describe('writeasHandler', () => {
     })
 
     it('should return undefined for a blog page', () => {
-      const value = 'https://write.as/matt'
+      const value = 'https://write.as/quietquill'
 
       expect(writeasHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -171,7 +171,7 @@ describe('writeasHandler', () => {
     })
 
     it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/matt/feed/'
+      const value = 'https://example.com/quietquill/feed/'
 
       expect(writeasHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -179,7 +179,7 @@ describe('writeasHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://write.as/matt/feed/', { key: 'writeas:blog', label: 'Blog' }],
+      ['https://write.as/quietquill/feed/', { key: 'writeas:blog', label: 'Blog' }],
       ['https://write.as/carol/tag:mindset/feed/', { key: 'writeas:tag', label: 'Tag' }],
     ]
 
