@@ -49,13 +49,21 @@ const searchFilters = ['target', 'sort', 'users', 'date_range', 'safe']
 // A site feed carries the site's whole path, and answers the same with or without a trailing slash.
 const feeds = definePlatformFeeds([
   { key: 'hatena-bookmark:hot', template: 'https://b.hatena.ne.jp/hotentry.rss' },
-  { key: 'hatena-bookmark:hot', template: 'https://b.hatena.ne.jp/hotentry/all.rss' },
+  {
+    key: 'hatena-bookmark:hot',
+    template: 'https://b.hatena.ne.jp/hotentry/all.rss',
+    isAlias: true,
+  },
   {
     key: 'hatena-bookmark:hot-category',
     template: 'https://b.hatena.ne.jp/hotentry/{category}.rss',
   },
   { key: 'hatena-bookmark:new', template: 'https://b.hatena.ne.jp/entrylist.rss' },
-  { key: 'hatena-bookmark:new', template: 'https://b.hatena.ne.jp/entrylist/all.rss' },
+  {
+    key: 'hatena-bookmark:new',
+    template: 'https://b.hatena.ne.jp/entrylist/all.rss',
+    isAlias: true,
+  },
   {
     key: 'hatena-bookmark:new-category',
     template: 'https://b.hatena.ne.jp/entrylist/{category}.rss',
