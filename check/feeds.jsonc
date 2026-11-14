@@ -844,7 +844,8 @@
       "https://info.jugem.jp/?mode=atom",
       "https://dos.jugem.cc/?mode=atom",
       "http://blog.marbely.com/?mode=atom"
-    ]
+    ],
+    "jugem:theme": "http://jugem.jp/theme/c189/7233/rss"
   },
   "kickstarter": {
     "kickstarter:projects": "https://www.kickstarter.com/projects/feed.atom",

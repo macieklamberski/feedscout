@@ -1082,6 +1082,7 @@ Discovers RSS 1.0 and Atom feeds for JUGEM blogs. A blog on a custom domain is d
 |-------------|-----------------|
 | `{blog}.jugem.jp` | Posts (RSS 1.0 + Atom) |
 | `{blog}.jugem.cc` | Posts (RSS 1.0 + Atom) |
+| `jugem.jp/theme/{category}/{theme}` | Theme (RSS 1.0) |
 | `{host}` | Posts (RSS 1.0 + Atom) |
 
 ### Lemmy

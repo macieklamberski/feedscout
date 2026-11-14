@@ -72,6 +72,19 @@ describe('parseJugemUrl', () => {
   it('should return undefined for the apex portal', () => {
     expect(parseJugemUrl('https://jugem.jp/')).toBeUndefined()
   })
+
+  it('should return the theme for a portal theme page', () => {
+    const value = 'http://jugem.jp/theme/c12/3456/'
+    const expected: JugemUrl = { kind: 'theme', category: 'c12', theme: '3456' }
+
+    expect(parseJugemUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for a theme path without a category prefix', () => {
+    const value = 'http://jugem.jp/theme/12/3456/'
+
+    expect(parseJugemUrl(value)).toBeUndefined()
+  })
 })
 
 describe('jugemHandler', () => {
@@ -80,6 +93,7 @@ describe('jugemHandler', () => {
       [true, 'https://alice.jugem.jp'],
       [true, 'https://alice.jugem.jp/?eid=123'],
       [true, 'https://alice.jugem.cc'],
+      [true, 'http://jugem.jp/theme/c12/3456/'],
       [false, 'https://www.jugem.jp'],
       [false, 'https://blog.alice.jugem.jp'],
       [false, 'https://jugem.jp'],
@@ -114,6 +128,18 @@ describe('jugemHandler', () => {
         {
           uri: 'https://alice.jugem.jp/?mode=atom',
           hint: { key: 'jugem:posts', label: 'Posts', format: 'atom' },
+        },
+      ]
+
+      expect(jugemHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the theme feed for a portal theme page', () => {
+      const value = 'https://jugem.jp/theme/c12/3456/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://jugem.jp/theme/c12/3456/rss',
+          hint: { key: 'jugem:theme', label: 'Theme', format: 'rdf' },
         },
       ]
 
@@ -173,6 +199,19 @@ describe('jugemHandler', () => {
       expect(jugemHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the theme hint for a theme feed', () => {
+      const value = 'https://jugem.jp/theme/c12/3456/rss'
+      const expected: DiscoverUriHint = { key: 'jugem:theme', label: 'Theme', format: 'rdf' }
+
+      expect(jugemHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a theme page', () => {
+      const value = 'http://jugem.jp/theme/c12/3456/'
+
+      expect(jugemHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a post page', () => {
       const value = 'https://alice.jugem.jp/?eid=123'
 
@@ -211,6 +250,7 @@ describe('jugemHandler', () => {
       ['https://alice.jugem.cc/?mode=atom', { key: 'jugem:posts', label: 'Posts', format: 'atom' }],
       ['https://alice.jugem.jp/index.rdf', { key: 'jugem:posts', label: 'Posts', format: 'rdf' }],
       ['http://alice.jugem.jp/atom.xml', { key: 'jugem:posts', label: 'Posts', format: 'atom' }],
+      ['http://jugem.jp/theme/c12/3456/rss', { key: 'jugem:theme', label: 'Theme', format: 'rdf' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
