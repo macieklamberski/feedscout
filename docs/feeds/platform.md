@@ -1356,12 +1356,12 @@ Discovers RSS 2.0 and RDF feeds for Seesaa Blog on `*.seesaa.net` and its other 
 
 ### Sermon.net
 
-Discovers the audio podcast feed of every channel a church page lists, or of the one channel a channel page names.
+Discovers the audio, all-media, video, and audio with PDF feeds of every channel a church page lists, or of the one channel a channel page names.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{church}.sermon.net` | Channel podcasts (RSS)*, or the church feed when no channel is listed |
-| `{church}.sermon.net/{mediaCentre}/{channel}` | That channel's podcast<sup>†</sup> (RSS)* |
+| `{church}.sermon.net` | Channel podcasts, media, video podcasts, and podcasts with PDFs (RSS)*, or the church feed when no channel is listed |
+| `{church}.sermon.net/{mediaCentre}/{channel}` | That channel's podcast<sup>†</sup>, media<sup>†</sup>, video podcast<sup>†</sup>, and podcast with PDFs<sup>†</sup> (RSS)* |
 
 \* *Requires HTML content to read the channels the page lists.*
 

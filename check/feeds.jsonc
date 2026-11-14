@@ -1551,6 +1551,9 @@
       "https://faithchapelchurch.sermon.net/rss/faithchapel/audio",
       "https://bcf.sermon.net/rss/main/audio"
     ],
+    "sermon-net:channel-audio-pdf": "https://bcf.sermon.net/rss/main/audio_pdf",
+    "sermon-net:channel-media": "https://bcf.sermon.net/rss/main",
+    "sermon-net:channel-video": "https://bcf.sermon.net/rss/main/video",
     "sermon-net:church": "https://bcf.sermon.net/rss"
   },
   "shaarli": {
