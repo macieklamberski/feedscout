@@ -22,9 +22,10 @@ const feeds = definePlatformFeeds(
     {
       key: 'podbean:podcast',
       template: 'https://s3.amazonaws.com/feed.podbean.com/{show}/feed.xml',
+      isAlias: true,
     },
     // The show's old feed path, which redirects to the feed host.
-    { key: 'podbean:podcast', template: '{scheme}://{host}/feed.xml' },
+    { key: 'podbean:podcast', template: '{scheme}://{host}/feed.xml', isAlias: true },
   ],
   { domains },
 )
