@@ -17,8 +17,8 @@
   },
   "ameblo": {
     "ameblo:posts": [
-      "https://ameblo.jp/shibuya/rss20.xml",
-      "https://ameblo.jp/shibuya/atom.xml",
+      "https://rssblog.ameba.jp/shibuya/rss20.xml",
+      "https://rssblog.ameba.jp/shibuya/atom.xml",
       "https://rssblog.ameba.jp/shibuya/rss.html"
     ]
   },
