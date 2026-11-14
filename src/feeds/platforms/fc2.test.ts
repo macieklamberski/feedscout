@@ -23,6 +23,20 @@ describe('parseFc2Url', () => {
     expect(parseFc2Url('https://someone.fc2.net/')).toEqual(expected)
   })
 
+  it('should return the category for a category page', () => {
+    const value = 'https://someone.blog.fc2.com/blog-category-12-2.html'
+    const expected: Fc2Url = { kind: 'category', category: '12' }
+
+    expect(parseFc2Url(value)).toEqual(expected)
+  })
+
+  it('should return the tag for a tag page', () => {
+    const value = 'https://someone.fc2.net/?tag=%E6%97%85'
+    const expected: Fc2Url = { kind: 'tag', tag: '旅' }
+
+    expect(parseFc2Url(value)).toEqual(expected)
+  })
+
   it('should return undefined for a dotted subdomain of a blog host', () => {
     expect(parseFc2Url('https://www.someone.blog.fc2.com/')).toBeUndefined()
   })
@@ -86,6 +100,48 @@ describe('fc2Handler', () => {
         },
         {
           uri: 'https://example.blog.fc2.com/?xml&trackback',
+          hint: { key: 'fc2:trackbacks', label: 'Trackbacks' },
+        },
+      ]
+
+      expect(fc2Handler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the category feed for a category page', () => {
+      const value = 'http://example.blog26.fc2.com/blog-category-12.html'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.blog26.fc2.com/?xml&category=12',
+          hint: { key: 'fc2:category', label: 'Category' },
+        },
+        { uri: 'http://example.blog26.fc2.com/?xml', hint: { key: 'fc2:posts', label: 'Posts' } },
+        {
+          uri: 'http://example.blog26.fc2.com/?xml&comment',
+          hint: { key: 'fc2:comments', label: 'Comments' },
+        },
+        {
+          uri: 'http://example.blog26.fc2.com/?xml&trackback',
+          hint: { key: 'fc2:trackbacks', label: 'Trackbacks' },
+        },
+      ]
+
+      expect(fc2Handler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the tag feed for a tag page', () => {
+      const value = 'https://example.fc2.net/?tag=example'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.fc2.net/?xml&utag=example',
+          hint: { key: 'fc2:tag', label: 'Tag' },
+        },
+        { uri: 'https://example.fc2.net/?xml', hint: { key: 'fc2:posts', label: 'Posts' } },
+        {
+          uri: 'https://example.fc2.net/?xml&comment',
+          hint: { key: 'fc2:comments', label: 'Comments' },
+        },
+        {
+          uri: 'https://example.fc2.net/?xml&trackback',
           hint: { key: 'fc2:trackbacks', label: 'Trackbacks' },
         },
       ]
@@ -168,6 +224,20 @@ describe('fc2Handler', () => {
       expect(fc2Handler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the category hint for a category feed', () => {
+      const value = 'https://example.blog.fc2.com/?xml&category=12'
+      const expected: DiscoverUriHint = { key: 'fc2:category', label: 'Category' }
+
+      expect(fc2Handler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a tag feed', () => {
+      const value = 'https://example.blog.fc2.com/?xml&utag=example'
+      const expected: DiscoverUriHint = { key: 'fc2:tag', label: 'Tag' }
+
+      expect(fc2Handler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for a blog page', () => {
       const value = 'https://example.blog.fc2.com/blog-entry-1.html'
 
@@ -204,6 +274,11 @@ describe('fc2Handler', () => {
       ['https://example.blog.fc2.com/?xml=', { key: 'fc2:posts', label: 'Posts' }],
       ['http://example.blog26.fc2.com/?comment=&xml=', { key: 'fc2:comments', label: 'Comments' }],
       ['https://example.fc2.net/?trackback=&xml=', { key: 'fc2:trackbacks', label: 'Trackbacks' }],
+      [
+        'http://example.blog26.fc2.com/?xml&category=12',
+        { key: 'fc2:category', label: 'Category' },
+      ],
+      ['https://example.fc2.net/?utag=example&xml', { key: 'fc2:tag', label: 'Tag' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

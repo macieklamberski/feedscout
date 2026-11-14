@@ -494,11 +494,13 @@
     ]
   },
   "fc2": {
+    "fc2:category": "http://fc2blogmanual.blog60.fc2.com/?xml&category=1",
     "fc2:comments": [
       "https://tetsujin.blog.fc2.com/?xml&comment",
       "https://kagiana.fc2.net/?xml&comment"
     ],
     "fc2:posts": ["https://tetsujin.blog.fc2.com/?xml", "https://kagiana.fc2.net/?xml"],
+    "fc2:tag": "http://fc2blogmanual.blog60.fc2.com/?xml&utag=TB",
     "fc2:trackbacks": [
       "https://marsee101.blog.fc2.com/?xml&trackback",
       "http://alohakozo.fc2.net/?xml&trackback"
