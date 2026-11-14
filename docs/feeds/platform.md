@@ -2215,7 +2215,8 @@ Discovers the RSS feed of a LibriVox audiobook, read from the feed link on the a
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `librivox.org/{slug}` | Audiobook (RSS)* · new releases (RSS)* |
+| `librivox.org/{slug}` | Audiobook (RSS)* · new releases (RSS) |
+| `librivox.org/…` | New releases (RSS) |
 
 \* *Requires HTML content to read the audiobook ID.*
 
