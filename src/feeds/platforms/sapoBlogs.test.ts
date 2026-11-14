@@ -255,7 +255,7 @@ describe('sapoBlogsHandler', () => {
       const value = 'https://alice.blogs.sapo.pt/tag/ant%C3%B3nio+costa'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.blogs.sapo.pt/data/rss?tag=antónio%20costa',
+          uri: 'https://alice.blogs.sapo.pt/data/rss?tag=ant%C3%B3nio%20costa',
           hint: { key: 'sapo-blogs:tag', label: 'Tag' },
         },
         {
@@ -348,6 +348,13 @@ describe('sapoBlogsHandler', () => {
 
     it('should return the tag hint for a tag spelled with a plus and an escape', () => {
       const value = 'https://alice.blogs.sapo.pt/data/rss?tag=ant%C3%B3nio+costa'
+      const expected: DiscoverUriHint = { key: 'sapo-blogs:tag', label: 'Tag' }
+
+      expect(sapoBlogsHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a tag spelled raw', () => {
+      const value = 'https://alice.blogs.sapo.pt/data/rss?tag=antónio%20costa'
       const expected: DiscoverUriHint = { key: 'sapo-blogs:tag', label: 'Tag' }
 
       expect(sapoBlogsHandler.getFeedHint?.(value)).toEqual(expected)
