@@ -168,63 +168,63 @@ describe('noticeableHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the posts hint for a newspage RSS feed', () => {
-      const value = 'https://bcdevchangelog.noticeable.news/feed.rss'
+      const value = 'https://example.noticeable.news/feed.rss'
       const expected: DiscoverUriHint = { key: 'noticeable:posts', label: 'Posts', format: 'rss' }
 
       expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a newspage Atom feed', () => {
-      const value = 'https://synthesia.noticeable.news/feed.atom'
+      const value = 'https://acme.noticeable.news/feed.atom'
       const expected: DiscoverUriHint = { key: 'noticeable:posts', label: 'Posts', format: 'atom' }
 
       expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a newspage JSON feed', () => {
-      const value = 'https://bcdevchangelog.noticeable.news/feed.json'
+      const value = 'https://example.noticeable.news/feed.json'
       const expected: DiscoverUriHint = { key: 'noticeable:posts', label: 'Posts', format: 'json' }
 
       expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a newspage feed over http', () => {
-      const value = 'http://bcdevchangelog.noticeable.news/feed.rss'
+      const value = 'http://example.noticeable.news/feed.rss'
       const expected: DiscoverUriHint = { key: 'noticeable:posts', label: 'Posts', format: 'rss' }
 
       expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a newspage feed with an embed parameter', () => {
-      const value = 'https://bcdevchangelog.noticeable.news/feed.rss?embed=true'
+      const value = 'https://example.noticeable.news/feed.rss?embed=true'
       const expected: DiscoverUriHint = { key: 'noticeable:posts', label: 'Posts', format: 'rss' }
 
       expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the label hint for a label RSS feed', () => {
-      const value = 'https://bcdevchangelog.noticeable.news/cornerstone.rss'
+      const value = 'https://example.noticeable.news/releases.rss'
       const expected: DiscoverUriHint = { key: 'noticeable:label', label: 'Label', format: 'rss' }
 
       expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the label hint for a label Atom feed', () => {
-      const value = 'https://synthesia.noticeable.news/templates.atom'
+      const value = 'https://acme.noticeable.news/templates.atom'
       const expected: DiscoverUriHint = { key: 'noticeable:label', label: 'Label', format: 'atom' }
 
       expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the label hint for a label JSON feed', () => {
-      const value = 'https://bcdevchangelog.noticeable.news/cornerstone.json'
+      const value = 'https://example.noticeable.news/releases.json'
       const expected: DiscoverUriHint = { key: 'noticeable:label', label: 'Label', format: 'json' }
 
       expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a label page', () => {
-      const value = 'https://bcdevchangelog.noticeable.news/labels/cornerstone'
+      const value = 'https://example.noticeable.news/labels/releases'
 
       expect(noticeableHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -248,7 +248,7 @@ describe('noticeableHandler', () => {
     })
 
     it('should return undefined for a feed on a custom domain', () => {
-      const value = 'https://acme.noticeable.io/feed.rss'
+      const value = 'https://example.noticeable.io/feed.rss'
 
       expect(noticeableHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -257,27 +257,27 @@ describe('noticeableHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://bcdevchangelog.noticeable.news/feed.rss',
+        'https://example.noticeable.news/feed.rss',
         { key: 'noticeable:posts', label: 'Posts', format: 'rss' },
       ],
       [
-        'https://bcdevchangelog.noticeable.news/feed.atom',
+        'https://example.noticeable.news/feed.atom',
         { key: 'noticeable:posts', label: 'Posts', format: 'atom' },
       ],
       [
-        'https://bcdevchangelog.noticeable.news/feed.json',
+        'https://example.noticeable.news/feed.json',
         { key: 'noticeable:posts', label: 'Posts', format: 'json' },
       ],
       [
-        'https://bcdevchangelog.noticeable.news/cornerstone.rss',
+        'https://example.noticeable.news/releases.rss',
         { key: 'noticeable:label', label: 'Label', format: 'rss' },
       ],
       [
-        'https://bcdevchangelog.noticeable.news/cornerstone.atom',
+        'https://example.noticeable.news/releases.atom',
         { key: 'noticeable:label', label: 'Label', format: 'atom' },
       ],
       [
-        'https://bcdevchangelog.noticeable.news/cornerstone.json',
+        'https://example.noticeable.news/releases.json',
         { key: 'noticeable:label', label: 'Label', format: 'json' },
       ],
     ]
