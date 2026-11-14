@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   type InstatusUrl,
   instatusHandler,
@@ -120,20 +122,119 @@ describe('instatusHandler', () => {
       expect(instatusHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the translated incident history feeds', () => {
+    it('should return the incident history feeds on a translated page', () => {
       const value = 'https://status.example.com/zh-tw/history/1'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://status.example.com/zh-tw/history.rss',
+          uri: 'https://status.example.com/history.rss',
           hint: { key: 'instatus:history', label: 'Incident history', format: 'rss' },
         },
         {
-          uri: 'https://status.example.com/zh-tw/history.atom',
+          uri: 'https://status.example.com/history.atom',
           hint: { key: 'instatus:history', label: 'Incident history', format: 'atom' },
         },
       ]
 
       expect(instatusHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    const feedUrls: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.instatus.com/history.rss',
+        { key: 'instatus:history', label: 'Incident history', format: 'rss' },
+      ],
+      [
+        'https://example.instatus.com/history.atom',
+        { key: 'instatus:history', label: 'Incident history', format: 'atom' },
+      ],
+      [
+        'https://example.instatus.com/en-us/history.rss',
+        { key: 'instatus:history', label: 'Incident history', format: 'rss' },
+      ],
+      [
+        'https://example.instatus.com/de/history.atom',
+        { key: 'instatus:history', label: 'Incident history', format: 'atom' },
+      ],
+    ]
+
+    it.each(feedUrls)('should return the hint for %s', (value, expected) => {
+      expect(instatusHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a feed with www before the status subdomain', () => {
+      const value = 'https://www.example.instatus.com/history.rss'
+
+      expect(instatusHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a page on a status subdomain', () => {
+      const value = 'https://example.instatus.com/history'
+
+      expect(instatusHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed under a segment that is not a language', () => {
+      const value = 'https://example.instatus.com/incidents/history.rss'
+
+      expect(instatusHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://status.example.com/history.rss'
+
+      expect(instatusHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://instatus.com/history.rss'
+
+      expect(instatusHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www', () => {
+      const value = 'https://www.instatus.com/history.rss'
+
+      expect(instatusHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.example.instatus.com/history.rss'
+
+      expect(instatusHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriEntry['hint']]> = [
+      [
+        'https://example.instatus.com/history.rss',
+        { key: 'instatus:history', label: 'Incident history', format: 'rss' },
+      ],
+      [
+        'https://example.instatus.com/history.atom',
+        { key: 'instatus:history', label: 'Incident history', format: 'atom' },
+      ],
+      [
+        'https://example.instatus.com/en-us/history.rss',
+        { key: 'instatus:history', label: 'Incident history', format: 'rss' },
+      ],
+      [
+        'https://example.instatus.com/en-us/history.atom',
+        { key: 'instatus:history', label: 'Incident history', format: 'atom' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [instatusHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

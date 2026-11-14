@@ -1493,7 +1493,6 @@ Discovers the incident history feeds of an Instatus status page. Detected by the
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | Any status page | Incident history (RSS + Atom) |
-| `{page}/{language}/...` | Translated incident history (RSS + Atom) |
 
 ### Jira
 
