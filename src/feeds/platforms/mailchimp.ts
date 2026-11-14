@@ -1,6 +1,6 @@
-import { composeQuery, getQueryParam, isSubdomainOf } from 'trousse'
+import { getQueryParam, isSubdomainOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -14,6 +14,11 @@ const domains = ['campaign-archive.com']
 const archivePathRegex = /^\/home\/?$/i
 // A campaign page links its archive and feed, whose id is the list the campaign went to.
 const listLinkRegex = /campaign-archive\.com\/(?:home\/|feed)\?u=\w+&(?:amp;)?id=(?<listId>\w+)/i
+
+const feeds = definePlatformFeeds(
+  [{ key: 'mailchimp:archive', template: '{scheme}://{host}/feed?u={userId}&id={listId}' }],
+  { domains },
+)
 
 export const parseMailchimpUrl = (url: string): MailchimpUrl | undefined => {
   if (!isSubdomainOf(url, domains)) {
@@ -66,18 +71,19 @@ export const mailchimpHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getMailchimpPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
+    const params = {
+      userId: page.userId,
+      listId: page.listId,
+    }
 
-    return [
-      {
-        uri: `${origin}/feed${composeQuery({ u: page.userId, id: page.listId })}`,
-        hint: composeHint('mailchimp:archive'),
-      },
-    ]
+    return [pageFeeds.getFeedEntry('mailchimp:archive', params)]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
