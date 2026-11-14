@@ -215,49 +215,49 @@ describe('goodreadsHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the reviews hint for a review list feed', () => {
-      const value = 'https://www.goodreads.com/review/list_rss/7259651'
+      const value = 'https://www.goodreads.com/review/list_rss/12345'
       const expected: DiscoverUriHint = { key: 'goodreads:reviews', label: 'Reviews' }
 
       expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the reviews hint for a review list feed with a page parameter', () => {
-      const value = 'https://www.goodreads.com/review/list_rss/50196372?page=6'
+      const value = 'https://www.goodreads.com/review/list_rss/12345?page=6'
       const expected: DiscoverUriHint = { key: 'goodreads:reviews', label: 'Reviews' }
 
       expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the reviews hint for a review list feed on the bare host over http', () => {
-      const value = 'http://goodreads.com/review/list_rss/7259651'
+      const value = 'http://goodreads.com/review/list_rss/12345'
       const expected: DiscoverUriHint = { key: 'goodreads:reviews', label: 'Reviews' }
 
       expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the shelf hint for a shelf feed', () => {
-      const value = 'https://www.goodreads.com/review/list_rss/6585469?shelf=currently-reading'
+      const value = 'https://www.goodreads.com/review/list_rss/12345?shelf=currently-reading'
       const expected: DiscoverUriHint = { key: 'goodreads:shelf', label: 'Shelf' }
 
       expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the shelf hint for a shelf feed with an encoded shelf and a page', () => {
-      const value = 'https://www.goodreads.com/review/list_rss/3725895?page=1&shelf=%23ALL%23'
+      const value = 'https://www.goodreads.com/review/list_rss/12345?page=1&shelf=%23ALL%23'
       const expected: DiscoverUriHint = { key: 'goodreads:shelf', label: 'Shelf' }
 
       expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the updates hint for an updates feed', () => {
-      const value = 'https://www.goodreads.com/user/updates_rss/4484461'
+      const value = 'https://www.goodreads.com/user/updates_rss/12345'
       const expected: DiscoverUriHint = { key: 'goodreads:updates', label: 'Updates' }
 
       expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the updates hint for an updates feed with a v parameter', () => {
-      const value = 'https://www.goodreads.com/user/updates_rss/6585469?v=as'
+      const value = 'https://www.goodreads.com/user/updates_rss/12345?v=as'
       const expected: DiscoverUriHint = { key: 'goodreads:updates', label: 'Updates' }
 
       expect(goodreadsHandler.getFeedHint?.(value)).toEqual(expected)
@@ -291,13 +291,13 @@ describe('goodreadsHandler', () => {
     })
 
     it('should return undefined for a quotes feed', () => {
-      const value = 'https://www.goodreads.com/quotes/list_rss/319473-sean-perry'
+      const value = 'https://www.goodreads.com/quotes/list_rss/12345-alice'
 
       expect(goodreadsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a review list feed path on another host', () => {
-      const value = 'https://example.com/review/list_rss/7259651'
+      const value = 'https://example.com/review/list_rss/12345'
 
       expect(goodreadsHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -312,15 +312,15 @@ describe('goodreadsHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://www.goodreads.com/review/list_rss/7259651',
+        'https://www.goodreads.com/review/list_rss/12345',
         { key: 'goodreads:reviews', label: 'Reviews' },
       ],
       [
-        'https://www.goodreads.com/review/list_rss/14070425?shelf=read',
+        'https://www.goodreads.com/review/list_rss/12345?shelf=read',
         { key: 'goodreads:shelf', label: 'Shelf' },
       ],
       [
-        'https://www.goodreads.com/user/updates_rss/4484461',
+        'https://www.goodreads.com/user/updates_rss/12345',
         { key: 'goodreads:updates', label: 'Updates' },
       ],
       [
