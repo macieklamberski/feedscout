@@ -13,7 +13,11 @@ const hosts = ['bitchute.com', 'www.bitchute.com']
 // stored at, so the table reads both and builds the first.
 const feeds = definePlatformFeeds([
   { key: 'bitchute:channel', template: 'https://www.bitchute.com/feeds/rss/channel/{channel}/' },
-  { key: 'bitchute:channel', template: 'https://api.bitchute.com/feeds/rss/channel/{channel}/' },
+  {
+    key: 'bitchute:channel',
+    template: 'https://api.bitchute.com/feeds/rss/channel/{channel}/',
+    isAlias: true,
+  },
 ])
 
 export const parseBitchuteUrl = (url: string): BitchuteUrl | undefined => {
