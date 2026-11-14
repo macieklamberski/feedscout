@@ -14,10 +14,15 @@ export const domains = ['tumblr.com']
 
 const tagRegex = /^\/tagged\/([^/]+)/i
 
+// `?format=rss` holds the posts as the theme renders them, `/podcast` the audio posts. Both
+// answer a plain request with a browser check. `/podcast/rss` is a spelling of the podcast.
 const feeds = definePlatformFeeds(
   [
     { key: 'tumblr:tag', template: '{scheme}://{host}/tagged/{tag}/rss' },
     { key: 'tumblr:posts', template: '{scheme}://{host}/rss' },
+    { key: 'tumblr:theme-posts', template: '{scheme}://{host}/?format=rss' },
+    { key: 'tumblr:podcast', template: '{scheme}://{host}/podcast' },
+    { key: 'tumblr:podcast', template: '{scheme}://{host}/podcast/rss', isAlias: true },
   ],
   { domains },
 )
@@ -82,7 +87,11 @@ export const tumblrHandler: PlatformHandler = {
       return [page.getFeedEntry('tumblr:tag', { host, tag: parsed.tag })]
     }
 
-    return [page.getFeedEntry('tumblr:posts', { host })]
+    return [
+      page.getFeedEntry('tumblr:posts', { host }),
+      page.getFeedEntry('tumblr:theme-posts', { host }),
+      page.getFeedEntry('tumblr:podcast', { host }),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
