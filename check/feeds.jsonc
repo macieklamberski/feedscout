@@ -511,7 +511,9 @@
     ]
   },
   "fireside": {
-    "fireside:podcast": ["https://feeds.fireside.fm/office/rss", "https://office.fireside.fm/json"]
+    "fireside:blog": "https://nintendodispatch.fireside.fm/articles/rss",
+    "fireside:podcast": ["https://feeds.fireside.fm/office/rss", "https://office.fireside.fm/json"],
+    "fireside:tag": "https://fathermikehomilies.fireside.fm/tags/what/rss"
   },
   "firstory": {
     "firstory:podcast": "https://feed.firstory.me/rss/user/cklqae6gy388f0892i2qmv851"
