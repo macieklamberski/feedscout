@@ -130,15 +130,15 @@ describe('hackernewsHandler', () => {
   })
 
   describe('discoverUrisFromPlatform', () => {
-    const front = {
+    const front: DiscoverUriHint = {
       key: 'hackernews:front',
       label: 'Front page',
     }
-    const show = {
+    const show: DiscoverUriHint = {
       key: 'hackernews:show',
       label: 'Show HN',
     }
-    const values: Array<[string, DiscoverUriEntry['hint']]> = [
+    const values: Array<[string, DiscoverUriHint]> = [
       ['https://news.ycombinator.com/rss', front],
       ['http://news.ycombinator.com/rss', front],
       ['https://news.ycombinator.com/showrss', show],
