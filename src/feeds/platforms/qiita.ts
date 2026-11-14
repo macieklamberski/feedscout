@@ -26,15 +26,15 @@ const feeds = definePlatformFeeds([
   { key: 'qiita:zine', template: 'https://qiita.com/official-columns/feed/', format: 'rss' },
   { key: 'qiita:zine', template: 'https://qiita.com/official-columns/feed/atom/', format: 'atom' },
   { key: 'qiita:popular', template: 'https://qiita.com/popular-items/feed.atom' },
-  { key: 'qiita:popular', template: 'https://qiita.com/popular-items/feed' },
+  { key: 'qiita:popular', template: 'https://qiita.com/popular-items/feed', isAlias: true },
   {
     key: 'qiita:organization',
     template: 'https://qiita.com/organizations/{organization}/activities.atom',
   },
   { key: 'qiita:tag', template: 'https://qiita.com/tags/{tag}/feed.atom' },
-  { key: 'qiita:tag', template: 'https://qiita.com/tags/{tag}/feed' },
+  { key: 'qiita:tag', template: 'https://qiita.com/tags/{tag}/feed', isAlias: true },
   { key: 'qiita:posts', template: 'https://qiita.com/{username}/feed.atom' },
-  { key: 'qiita:posts', template: 'https://qiita.com/{username}/feed' },
+  { key: 'qiita:posts', template: 'https://qiita.com/{username}/feed', isAlias: true },
 ])
 
 export const parseQiitaUrl = (url: string): QiitaUrl | undefined => {
