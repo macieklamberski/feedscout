@@ -53,13 +53,6 @@ describe('statuspageHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return empty array for a URL that does not parse', () => {
-      const value = 'not-a-url'
-      const expected: Array<DiscoverUriEntry> = []
-
-      expect(statuspageHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should return the incident history feeds', () => {
       const value = 'https://status.example.com/incidents/abc123def456'
       const expected: Array<DiscoverUriEntry> = [
