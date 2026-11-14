@@ -138,6 +138,13 @@ describe('definePlatformFeeds', () => {
       expect(value).toBe(expected)
     })
 
+    it('should percent-encode a non-ASCII query value', () => {
+      const value = feeds.getFeedUrl('example:tag', { tag: '技術' })
+      const expected = 'https://feeds.example.com/rss.xml?q=tag:%E6%8A%80%E8%A1%93'
+
+      expect(value).toBe(expected)
+    })
+
     it('should write a host value as given', () => {
       const value = feeds.getFeedUrl('example:site', { host: 'example.com' })
       const expected = 'https://example.com/feeds/site'
@@ -302,6 +309,20 @@ describe('definePlatformFeeds', () => {
       expect(feeds.getFeedHint(value)?.key).toBe(expected)
     })
 
+    it('should return the key of a feed with a percent-encoded non-ASCII query value', () => {
+      const value = 'https://feeds.example.com/rss.xml?q=tag:%E6%8A%80%E8%A1%93'
+      const expected = 'example:tag'
+
+      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed with a raw non-ASCII query value', () => {
+      const value = 'https://feeds.example.com/rss.xml?q=tag:技術'
+      const expected = 'example:tag'
+
+      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
     it('should return the key of the template with more query parameters first', () => {
       const value = 'https://feeds.example.com/rss.xml?type=item&q=by%3Aalice%20sort%3Atime'
 
@@ -456,6 +477,27 @@ describe('definePlatformFeeds', () => {
       const expected = 'example:journal'
 
       expect(wwwStrippedFeeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed with a doubled slash after the host', () => {
+      const value = 'https://www.example.com//alice/feed.rss'
+      const expected = 'example:posts'
+
+      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed on a tenant with a doubled slash after the host', () => {
+      const value = 'https://meta.example.net//feeds/site'
+      const expected = 'example:site'
+
+      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a root feed with a doubled slash after the host', () => {
+      const value = 'https://example.com//latest.rss'
+      const expected = 'example:latest'
+
+      expect(rootFeeds.getFeedHint(value)?.key).toBe(expected)
     })
 
     it('should ignore the query order and extra parameters', () => {
