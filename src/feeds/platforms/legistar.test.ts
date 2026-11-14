@@ -445,7 +445,9 @@ describe('legistarHandler', () => {
     })
 
     it('should return undefined for an invalid URL', () => {
-      expect(legistarHandler.getFeedHint?.('not a url')).toBeUndefined()
+      const value = 'not a url'
+
+      expect(legistarHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
