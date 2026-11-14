@@ -74,9 +74,7 @@ export const lichessHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'community') {
-      const params = parsed.language ? { language: parsed.language } : undefined
-
-      return [feeds.getFeedEntry('lichess:community', params)]
+      return [feeds.getFeedEntry('lichess:community', { language: parsed.language })]
     }
 
     if (parsed.kind === 'officialBlog') {

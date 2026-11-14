@@ -218,7 +218,7 @@ describe('lichessHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the blog hint for a user blog feed', () => {
-      const value = 'https://lichess.org/@/A-T_A-S/blog.atom'
+      const value = 'https://lichess.org/@/Al-I_Ce/blog.atom'
       const expected: DiscoverUriHint = { key: 'lichess:blog', label: 'Blog' }
 
       expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
@@ -260,14 +260,14 @@ describe('lichessHandler', () => {
     })
 
     it('should return the blog hint for a feed on the www host', () => {
-      const value = 'https://www.lichess.org/@/ambrona/blog.atom'
+      const value = 'https://www.lichess.org/@/alice/blog.atom'
       const expected: DiscoverUriHint = { key: 'lichess:blog', label: 'Blog' }
 
       expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a user blog page', () => {
-      const value = 'https://lichess.org/@/ambrona/blog'
+      const value = 'https://lichess.org/@/alice/blog'
 
       expect(lichessHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -279,13 +279,13 @@ describe('lichessHandler', () => {
     })
 
     it('should return undefined for a profile page', () => {
-      const value = 'https://lichess.org/@/ambrona'
+      const value = 'https://lichess.org/@/alice'
 
       expect(lichessHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a blog feed on another host', () => {
-      const value = 'https://example.com/@/ambrona/blog.atom'
+      const value = 'https://example.com/@/alice/blog.atom'
 
       expect(lichessHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -293,7 +293,7 @@ describe('lichessHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://lichess.org/@/A-T_A-S/blog.atom', { key: 'lichess:blog', label: 'Blog' }],
+      ['https://lichess.org/@/Al-I_Ce/blog.atom', { key: 'lichess:blog', label: 'Blog' }],
       ['https://lichess.org/@/Lichess/blog.atom', { key: 'lichess:blog', label: 'Blog' }],
       ['https://lichess.org/blog.atom', { key: 'lichess:blog', label: 'Blog' }],
       [
