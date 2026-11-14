@@ -2884,8 +2884,8 @@ Discovers RSS 1.0 feeds for blogs on `*.twoday.net`. A blog's skin links its pos
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{blog}.twoday.net` | Posts · comments · recently commented |
-| `{blog}.twoday.net/topics/{topic}` | Topic · posts · comments · recently commented |
+| `{blog}.twoday.net` | Posts · summaries · comments · recently commented · platform news |
+| `{blog}.twoday.net/topics/{topic}` | Topic · posts · summaries · comments · recently commented · platform news |
 
 ### cppblog
 

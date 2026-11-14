@@ -609,6 +609,8 @@
     "twoday:topic": "Topic",
     "twoday:comments": "Comments",
     "twoday:commented": "Recently commented",
+    "twoday:summary": "Summaries",
+    "twoday:platform": "Platform news",
     "cppblog:posts": "Posts",
     "cppblog:comments": "Comments",
     "cppblog:category": "Category",

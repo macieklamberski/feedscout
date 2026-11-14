@@ -13,19 +13,22 @@ const domains = ['twoday.net']
 
 const topicRegex = /^\/topics\/([^/]+)(?:\/|$)/i
 
-// A blog's skin links its posts feed as `/index.rdf` or `/rss`, the same stories. Some skins
-// also serve them as `/summary.rdf`, with shorter text.
+// A blog's skin links its posts feed as `/index.rdf` or `/rss`, the same stories.
 const feeds = definePlatformFeeds(
   [
     { key: 'twoday:posts', template: '{scheme}://{host}/index.rdf' },
     { key: 'twoday:posts', template: '{scheme}://{host}/rss' },
     { key: 'twoday:posts', template: '{scheme}://{host}/rss.xml' },
-    { key: 'twoday:posts', template: '{scheme}://{host}/summary.rdf' },
+    // The same stories with shorter text, which some skins serve.
+    { key: 'twoday:summary', template: '{scheme}://{host}/summary.rdf' },
     { key: 'twoday:topic', template: '{scheme}://{host}/topics/{topic}/index.rdf' },
     { key: 'twoday:topic', template: '{scheme}://{host}/topics/{topic}/rss' },
     // Every blog serves its newest comments, and its stories by their newest comment.
     { key: 'twoday:comments', template: '{scheme}://{host}/latestcomments.rdf' },
     { key: 'twoday:commented', template: '{scheme}://{host}/comments.rdf' },
+    // The platform's own news. It needs no value from the page, so `resolve` builds it on every
+    // page.
+    { key: 'twoday:platform', template: 'https://www.twoday.net/rss' },
   ],
   { domains },
 )
@@ -69,15 +72,19 @@ export const twodayHandler: PlatformHandler = {
       return [
         page.getFeedEntry('twoday:topic', { topic: parsed.topic }),
         page.getFeedEntry('twoday:posts'),
+        page.getFeedEntry('twoday:summary'),
         page.getFeedEntry('twoday:comments'),
         page.getFeedEntry('twoday:commented'),
+        feeds.getFeedEntry('twoday:platform'),
       ]
     }
 
     return [
       page.getFeedEntry('twoday:posts'),
+      page.getFeedEntry('twoday:summary'),
       page.getFeedEntry('twoday:comments'),
       page.getFeedEntry('twoday:commented'),
+      feeds.getFeedEntry('twoday:platform'),
     ]
   },
 
