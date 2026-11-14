@@ -1,4 +1,4 @@
-import { getPathSegments, getQueryParam, isAnyOf, parseUrl } from 'trousse'
+import { decodeSegment, getPathSegments, getQueryParam, isAnyOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
@@ -14,22 +14,10 @@ const domains = ['squarespace.com']
 
 const squarespaceRegex = /squarespace/i
 
-const feeds = definePlatformFeeds(
-  [
-    { key: 'squarespace:collection', template: '{scheme}://{host}/{collection}?format=rss' },
-    {
-      key: 'squarespace:category',
-      template: '{scheme}://{host}/{collection}?category={category}&format=rss',
-    },
-    { key: 'squarespace:tag', template: '{scheme}://{host}/{collection}?tag={tag}&format=rss' },
-  ],
-  { domains },
-)
-
 // A site on its own domain is known only by its marker, so only a feed on a squarespace.com site
 // is claimed. A Squarespace 5 site serves the `.xml` feeds, redirects them from https to http with
 // a jsessionid, and answers `?format=rss` with a page.
-const ownFeeds = definePlatformFeeds(
+const feeds = definePlatformFeeds(
   [
     { key: 'squarespace:collection', template: '{scheme}://{host}/{collection}?format=rss' },
     { key: 'squarespace:collection', template: '{scheme}://{host}/?format=rss' },
@@ -142,13 +130,16 @@ export const parseSquarespaceUrl = (url: string): SquarespaceUrl | undefined => 
     return
   }
 
-  const category = isAnyOf(route, 'category') ? value : getQueryParam(parsedUrl, 'category')
+  // A path value reads as a query value does, `+` as a space, since the feed names it in the query:
+  // `/category/Bible%20Talks` and `/category/Bible+Talks` both list `Bible Talks`.
+  const pathValue = decodeSegment(value?.replaceAll('+', ' '))
+  const category = isAnyOf(route, 'category') ? pathValue : getQueryParam(parsedUrl, 'category')
 
   if (category) {
     return { kind: 'category', collection, category }
   }
 
-  const tag = isAnyOf(route, 'tag') ? value : getQueryParam(parsedUrl, 'tag')
+  const tag = isAnyOf(route, 'tag') ? pathValue : getQueryParam(parsedUrl, 'tag')
 
   if (tag) {
     return { kind: 'tag', collection, tag }
@@ -195,5 +186,5 @@ export const squarespaceHandler: PlatformHandler = {
     return [page.getFeedEntry('squarespace:collection', { collection: parsed.collection })]
   },
 
-  getFeedHint: ownFeeds.getFeedHint,
+  getFeedHint: feeds.getFeedHint,
 }

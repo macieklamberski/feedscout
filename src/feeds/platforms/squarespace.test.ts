@@ -57,6 +57,17 @@ describe('parseSquarespaceUrl', () => {
     expect(parseSquarespaceUrl(value)).toEqual(expected)
   })
 
+  it('should return the category of a category page with a plus in the name', () => {
+    const value = 'https://site.example/blog/category/Example+Talks'
+    const expected: SquarespaceUrl = {
+      kind: 'category',
+      collection: 'blog',
+      category: 'Example Talks',
+    }
+
+    expect(parseSquarespaceUrl(value)).toEqual(expected)
+  })
+
   it('should return the tag of a tag page', () => {
     const value = 'https://site.example/blog/tag/podcast'
     const expected: SquarespaceUrl = { kind: 'tag', collection: 'blog', tag: 'podcast' }
@@ -168,6 +179,22 @@ describe('squarespaceHandler', () => {
         },
         {
           uri: 'https://example.com/blog?format=rss',
+          hint: { key: 'squarespace:collection', label: 'Collection' },
+        },
+      ]
+
+      expect(squarespaceHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should decode an encoded category of a category page', () => {
+      const value = 'https://alice.squarespace.com/blog/category/Example%20Talks'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.squarespace.com/blog?category=Example%20Talks&format=rss',
+          hint: { key: 'squarespace:category', label: 'Category' },
+        },
+        {
+          uri: 'https://alice.squarespace.com/blog?format=rss',
           hint: { key: 'squarespace:collection', label: 'Collection' },
         },
       ]
