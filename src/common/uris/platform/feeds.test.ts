@@ -126,6 +126,56 @@ describe('definePlatformFeeds', () => {
     expect(throwing).toThrow('No hosts for the example:blog feed')
   })
 
+  it('should accept an alias row below the canonical row of its key and format', () => {
+    const defining = () => {
+      return definePlatformFeeds([
+        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
+        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
+      ])
+    }
+
+    expect(defining).not.toThrow()
+  })
+
+  it('should throw for an alias row above the canonical row of its key', () => {
+    const throwing = () => {
+      return definePlatformFeeds([
+        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
+        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
+      ])
+    }
+
+    expect(throwing).toThrow('No canonical template above the example:posts alias')
+  })
+
+  it('should throw for an alias row whose key has a canonical row of another format only', () => {
+    const throwing = () => {
+      return definePlatformFeeds([
+        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
+        {
+          key: 'example:posts',
+          template: 'https://example.com/{username}/atom',
+          format: 'atom',
+          isAlias: true,
+        },
+      ])
+    }
+
+    expect(throwing).toThrow('No canonical template above the example:posts alias')
+  })
+
+  it('should throw for an alias row below another alias row only', () => {
+    const throwing = () => {
+      return definePlatformFeeds([
+        { key: 'example:other', template: 'https://feeds.example.com/{username}.rss' },
+        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
+        { key: 'example:posts', template: 'https://example.com/{username}.rss', isAlias: true },
+      ])
+    }
+
+    expect(throwing).toThrow('No canonical template above the example:posts alias')
+  })
+
   describe('getFeedUrl', () => {
     it('should write a path value into the template', () => {
       const value = feeds.getFeedUrl('example:posts', { username: 'alice' })
@@ -296,6 +346,17 @@ describe('definePlatformFeeds', () => {
       const expected: DiscoverUriHint = { key: 'youtube:videos', label: 'Videos' }
 
       expect(hintFeeds.getFeedHint(value)).toEqual(expected)
+    })
+
+    it('should return the hint of the key for a feed on an alias row', () => {
+      const aliasFeeds = definePlatformFeeds([
+        { key: 'youtube:videos', template: 'https://feeds.example.com/{username}.xml' },
+        { key: 'youtube:videos', template: 'https://example.com/{username}/rss', isAlias: true },
+      ])
+      const value = 'https://example.com/alice/rss'
+      const expected: DiscoverUriHint = { key: 'youtube:videos', label: 'Videos' }
+
+      expect(aliasFeeds.getFeedHint(value)).toEqual(expected)
     })
 
     it('should return the key of a feed URL', () => {
