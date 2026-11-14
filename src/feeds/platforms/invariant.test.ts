@@ -537,6 +537,6 @@ describe('platform handler invariant', () => {
     const entries = await discoverUrisFromPlatform(value, undefined, options)
     const keys = entries.map((entry) => entry.hint?.key)
 
-    expect(keys).toEqual(['reddit:posts'])
+    expect(keys).toEqual(['reddit:user'])
   })
 })

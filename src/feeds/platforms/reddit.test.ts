@@ -621,7 +621,7 @@ describe('redditHandler', () => {
       const expected = [
         {
           uri: 'https://www.reddit.com/r/programming/search.rss?q=rust&restrict_sr=on',
-          hint: { key: 'reddit:search', label: 'Search' },
+          hint: { key: 'reddit:subreddit-search', label: 'Subreddit search' },
         },
       ]
 
@@ -735,7 +735,7 @@ describe('redditHandler', () => {
       const expected = [
         {
           uri: 'https://www.reddit.com/domain/example.com/.rss',
-          hint: { key: 'reddit:posts', label: 'Posts' },
+          hint: { key: 'reddit:domain', label: 'Domain' },
         },
       ]
 
@@ -747,7 +747,7 @@ describe('redditHandler', () => {
       const expected = [
         {
           uri: 'https://www.reddit.com/user/spez/.rss',
-          hint: { key: 'reddit:posts', label: 'Posts' },
+          hint: { key: 'reddit:user', label: 'User' },
         },
       ]
 
@@ -763,7 +763,7 @@ describe('redditHandler', () => {
         },
         {
           uri: 'https://www.reddit.com/user/spez/.rss',
-          hint: { key: 'reddit:posts', label: 'Posts' },
+          hint: { key: 'reddit:user', label: 'User' },
         },
       ]
 
@@ -779,7 +779,7 @@ describe('redditHandler', () => {
         },
         {
           uri: 'https://www.reddit.com/user/spez/.rss',
-          hint: { key: 'reddit:posts', label: 'Posts' },
+          hint: { key: 'reddit:user', label: 'User' },
         },
       ]
 
@@ -891,14 +891,14 @@ describe('redditHandler', () => {
 
     it('should return the posts hint for a user feed', () => {
       const value = 'https://www.reddit.com/user/carolj/.rss'
-      const expected: DiscoverUriHint = { key: 'reddit:posts', label: 'Posts' }
+      const expected: DiscoverUriHint = { key: 'reddit:user', label: 'User' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a domain feed', () => {
       const value = 'https://www.reddit.com/domain/github.com/.rss'
-      const expected: DiscoverUriHint = { key: 'reddit:posts', label: 'Posts' }
+      const expected: DiscoverUriHint = { key: 'reddit:domain', label: 'Domain' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -940,7 +940,10 @@ describe('redditHandler', () => {
 
     it('should return the search hint for a subreddit search feed', () => {
       const value = 'https://www.reddit.com/r/programming/search.rss?q=rust&restrict_sr=on'
-      const expected: DiscoverUriHint = { key: 'reddit:search', label: 'Search' }
+      const expected: DiscoverUriHint = {
+        key: 'reddit:subreddit-search',
+        label: 'Subreddit search',
+      }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -1045,8 +1048,8 @@ describe('redditHandler', () => {
         'https://www.reddit.com/r/devops/top/.rss?_=1782881925',
         { key: 'reddit:subreddit', label: 'Subreddit' },
       ],
-      ['https://www.reddit.com/user/carolj/.rss', { key: 'reddit:posts', label: 'Posts' }],
-      ['https://www.reddit.com/domain/github.com/.rss', { key: 'reddit:posts', label: 'Posts' }],
+      ['https://www.reddit.com/user/carolj/.rss', { key: 'reddit:user', label: 'User' }],
+      ['https://www.reddit.com/domain/github.com/.rss', { key: 'reddit:domain', label: 'Domain' }],
       [
         'https://www.reddit.com/r/longevity/comments/.rss',
         { key: 'reddit:comments', label: 'Comments' },
@@ -1069,7 +1072,7 @@ describe('redditHandler', () => {
       ],
       [
         'https://www.reddit.com/r/programming/search.rss?q=rust&restrict_sr=on',
-        { key: 'reddit:search', label: 'Search' },
+        { key: 'reddit:subreddit-search', label: 'Subreddit search' },
       ],
       [
         'https://www.reddit.com/r/problemgambling/wiki/index.rss',
@@ -1103,8 +1106,8 @@ describe('redditHandler', () => {
         { key: 'reddit:subreddit', label: 'Subreddit' },
       ],
       ['https://old.reddit.com/r/devops/top/.rss', { key: 'reddit:subreddit', label: 'Subreddit' }],
-      ['https://old.reddit.com/user/carolj/.rss', { key: 'reddit:posts', label: 'Posts' }],
-      ['https://old.reddit.com/domain/github.com/.rss', { key: 'reddit:posts', label: 'Posts' }],
+      ['https://old.reddit.com/user/carolj/.rss', { key: 'reddit:user', label: 'User' }],
+      ['https://old.reddit.com/domain/github.com/.rss', { key: 'reddit:domain', label: 'Domain' }],
       [
         'https://old.reddit.com/r/ansible/comments/y7v2ed/.rss',
         { key: 'reddit:post-comments', label: 'Post comments' },
@@ -1115,7 +1118,7 @@ describe('redditHandler', () => {
       ],
       [
         'https://old.reddit.com/r/programming/search.rss?q=rust&restrict_sr=on',
-        { key: 'reddit:search', label: 'Search' },
+        { key: 'reddit:subreddit-search', label: 'Subreddit search' },
       ],
       [
         'https://old.reddit.com/r/problemgambling/wiki/index.rss',

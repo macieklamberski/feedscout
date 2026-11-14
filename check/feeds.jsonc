@@ -1447,13 +1447,10 @@
   },
   "reddit": {
     "reddit:comments": "https://www.reddit.com/r/programming/comments/.rss",
+    "reddit:domain": "https://www.reddit.com/domain/github.com/.rss",
     "reddit:multireddit": "https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss",
     "reddit:post-comments": "https://www.reddit.com/r/programming/comments/1qoxwdt/.rss",
-    "reddit:posts": [
-      "https://www.reddit.com/.rss",
-      "https://www.reddit.com/user/spez/.rss",
-      "https://www.reddit.com/domain/github.com/.rss"
-    ],
+    "reddit:posts": "https://www.reddit.com/.rss",
     "reddit:search": "https://www.reddit.com/search.rss?q=typescript",
     "reddit:subreddit": [
       "https://www.reddit.com/r/programming/.rss",
@@ -1461,7 +1458,9 @@
       "https://www.reddit.com/r/programming/top/.rss?t=week",
       "https://www.reddit.com/r/programming+javascript/.rss"
     ],
+    "reddit:subreddit-search": "https://www.reddit.com/r/programming/search.rss?q=rust&restrict_sr=on",
     "reddit:subreddits": "https://www.reddit.com/subreddits/.rss",
+    "reddit:user": "https://www.reddit.com/user/spez/.rss",
     "reddit:user-comments": "https://www.reddit.com/user/spez/comments/.rss",
     "reddit:user-submitted": "https://www.reddit.com/user/spez/submitted/.rss",
     "reddit:wiki": {

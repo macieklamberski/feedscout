@@ -42,7 +42,7 @@ const userPrefixes = ['u', 'user']
 const feeds = definePlatformFeeds(
   [
     {
-      key: 'reddit:search',
+      key: 'reddit:subreddit-search',
       template: 'https://www.reddit.com/r/{subreddit}/search.rss?q={query}&restrict_sr=on',
     },
     { key: 'reddit:search', template: 'https://www.reddit.com/search.rss?q={query}' },
@@ -77,15 +77,15 @@ const feeds = definePlatformFeeds(
     { key: 'reddit:subreddit', template: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss' },
     { key: 'reddit:subreddit', template: 'https://www.reddit.com/r/{subreddit}/.rss' },
     { key: 'reddit:subreddit', template: 'https://www.reddit.com/r/{subreddit}.rss' },
-    { key: 'reddit:posts', template: 'https://www.reddit.com/user/{username}/.rss' },
-    { key: 'reddit:posts', template: 'https://www.reddit.com/domain/{domain}/.rss' },
+    { key: 'reddit:user', template: 'https://www.reddit.com/user/{username}/.rss' },
+    { key: 'reddit:domain', template: 'https://www.reddit.com/domain/{domain}/.rss' },
     { key: 'reddit:posts', template: 'https://www.reddit.com/{sort}/.rss?t={timeframe}' },
     { key: 'reddit:posts', template: 'https://www.reddit.com/{sort}/.rss' },
     { key: 'reddit:posts', template: 'https://www.reddit.com/.rss' },
     // The same feeds on old. and new., which the page parser reads as pages. `resolve` passes no
     // `host`, so it builds on www.
     {
-      key: 'reddit:search',
+      key: 'reddit:subreddit-search',
       template: '{scheme}://{host}/r/{subreddit}/search.rss?q={query}&restrict_sr=on',
     },
     { key: 'reddit:wiki', template: '{scheme}://{host}/r/{subreddit}/wiki/index.rss' },
@@ -109,8 +109,8 @@ const feeds = definePlatformFeeds(
     { key: 'reddit:subreddit', template: '{scheme}://{host}/r/{subreddit}/{sort}/.rss' },
     { key: 'reddit:subreddit', template: '{scheme}://{host}/r/{subreddit}/.rss' },
     { key: 'reddit:subreddit', template: '{scheme}://{host}/r/{subreddit}.rss' },
-    { key: 'reddit:posts', template: '{scheme}://{host}/user/{username}/.rss' },
-    { key: 'reddit:posts', template: '{scheme}://{host}/domain/{domain}/.rss' },
+    { key: 'reddit:user', template: '{scheme}://{host}/user/{username}/.rss' },
+    { key: 'reddit:domain', template: '{scheme}://{host}/domain/{domain}/.rss' },
   ],
   { hosts: mirrorHosts },
 )
@@ -255,7 +255,10 @@ export const redditHandler: PlatformHandler = {
 
     if (parsed.kind === 'search' && parsed.query) {
       return [
-        feeds.getFeedEntry('reddit:search', { subreddit: parsed.subreddit, query: parsed.query }),
+        feeds.getFeedEntry('reddit:subreddit-search', {
+          subreddit: parsed.subreddit,
+          query: parsed.query,
+        }),
       ]
     }
 
@@ -299,7 +302,7 @@ export const redditHandler: PlatformHandler = {
 
       return [
         feeds.getFeedEntry('reddit:user-submitted', { username }),
-        feeds.getFeedEntry('reddit:posts', { username }),
+        feeds.getFeedEntry('reddit:user', { username }),
       ]
     }
 
@@ -314,15 +317,15 @@ export const redditHandler: PlatformHandler = {
 
       return [
         feeds.getFeedEntry('reddit:user-comments', { username }),
-        feeds.getFeedEntry('reddit:posts', { username }),
+        feeds.getFeedEntry('reddit:user', { username }),
       ]
     }
 
     if (parsed.kind === 'user') {
-      return [feeds.getFeedEntry('reddit:posts', { username: parsed.username })]
+      return [feeds.getFeedEntry('reddit:user', { username: parsed.username })]
     }
 
-    return [feeds.getFeedEntry('reddit:posts', { domain: parsed.domain })]
+    return [feeds.getFeedEntry('reddit:domain', { domain: parsed.domain })]
   },
 
   getFeedHint: feeds.getFeedHint,
