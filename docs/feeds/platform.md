@@ -3206,8 +3206,8 @@ Discovers the discussion feeds of a Tender Support site, hosted on `tenderapp.co
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{host}/discussions/{category}/{discussion}` | Discussion comments (Atom) |
-| `{host}/`, any other page | All discussions · recent comments (Atom) |
+| `{root}/discussions/{category}/{discussion}` | Discussion comments (Atom) |
+| `{root}/`, any other page | All discussions · recent comments (Atom) |
 
 ### AlloForum
 
