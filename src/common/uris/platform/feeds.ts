@@ -50,6 +50,9 @@ export type PlatformFeedTableOptions = {
   // Whether `www` in front of a tenant label is dropped, so `www.alice.example.com` matches as
   // `alice.example.com`.
   isWwwTenantPrefix?: boolean
+  // How a query value is written: `minimal`, the default, escapes only what would change the URL's
+  // structure, and `form` encodes as `URLSearchParams` does, `:` as `%3A` and a space as `+`.
+  queryEncoding?: 'minimal' | 'form'
 }
 
 export type PlatformFeedTable = {
@@ -235,6 +238,19 @@ const compileTemplate = (
   // A passed query names no parameter of the row, so it is neither matched nor counted.
   const query = queryEntries.filter((entry) => getPassedQueryName(entry) === undefined)
   const ownNames = query.map(([name]) => name)
+  const encodeQueryParameter = (name: string, value: string | true): string => {
+    if (value === true || options.queryEncoding !== 'form') {
+      return composeQuery({ [name]: value }).slice(1)
+    }
+
+    // An empty value writes no parameter, as `composeQuery` does.
+    if (!value) {
+      return ''
+    }
+
+    // biome-ignore lint/plugin/useComposeQuery: The form option asks for what URLSearchParams writes.
+    return new URLSearchParams([[name, value]]).toString()
+  }
   // A passed query is written as given, without its `?` and the parameters the row sets itself.
   const passQuery = (text: string): string => {
     const parts = text.replace(leadingQuestionMarkRegex, '').split('&')
@@ -365,7 +381,7 @@ const compileTemplate = (
         return passQuery(values[passedQueryName])
       }
 
-      return composeQuery({ [name]: flags.has(name) ? true : fillPlaceholders(value) }).slice(1)
+      return encodeQueryParameter(name, flags.has(name) ? true : fillPlaceholders(value))
     })
     // Pages link a query value percent-encoded, as `?tag=%E6%8A%80%E8%A1%93` for `技術`.
     const joinedQuery = queryParts

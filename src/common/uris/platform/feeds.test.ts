@@ -132,6 +132,23 @@ const repeatedQueryFeeds = definePlatformFeeds(
   { hosts: ['example.com'] },
 )
 
+const formQueryFeeds = definePlatformFeeds(
+  [
+    {
+      key: 'mediawiki:history',
+      template: '{root}/index.php?title={title}&action=history&feed=atom',
+      format: 'atom',
+    },
+    {
+      key: 'mediawiki:recent-changes',
+      template: '{root}/index.php?title=Special:RecentChanges&feed=atom&{query}',
+      format: 'atom',
+    },
+    { key: 'example:profile', template: '{root}/index.php?title={title}&rss' },
+  ],
+  { hosts: ['example.com'], queryEncoding: 'form' },
+)
+
 const directoryFeeds = definePlatformFeeds([
   { key: 'typecho:page', template: 'https://www.example.com/feed/{directory*}/' },
   { key: 'typecho:page', template: 'https://www.example.com/feed/{path*}' },
@@ -1595,6 +1612,91 @@ describe('definePlatformFeeds', () => {
           'https://example.com/createrssfeed.action?types=blogpost&types=page&spaces=conf_all'
 
         expect(repeatedQueryFeeds.getFeedHint(value)).toBeUndefined()
+      })
+    })
+  })
+
+  describe('with form query encoding', () => {
+    describe('getFeedUrl', () => {
+      it('should encode a query value as URLSearchParams does', () => {
+        const value = {
+          root: 'https://example.com',
+          title: 'Talk:Main Page',
+        }
+        const expected =
+          'https://example.com/index.php?title=Talk%3AMain+Page&action=history&feed=atom'
+
+        expect(formQueryFeeds.getFeedUrl('mediawiki:history', value)).toBe(expected)
+      })
+
+      it('should encode the text of the template in a query value', () => {
+        const value = {
+          root: 'https://example.com',
+          query: '',
+        }
+        const expected = 'https://example.com/index.php?title=Special%3ARecentChanges&feed=atom'
+
+        expect(formQueryFeeds.getFeedUrl('mediawiki:recent-changes', value)).toBe(expected)
+      })
+
+      it('should percent-encode a non-ASCII query value', () => {
+        const value = {
+          root: 'https://example.com',
+          title: '技術',
+        }
+        const expected =
+          'https://example.com/index.php?title=%E6%8A%80%E8%A1%93&action=history&feed=atom'
+
+        expect(formQueryFeeds.getFeedUrl('mediawiki:history', value)).toBe(expected)
+      })
+
+      it('should write no parameter for an empty value', () => {
+        const value = {
+          root: 'https://example.com',
+          title: '',
+        }
+        const expected = 'https://example.com/index.php?action=history&feed=atom'
+
+        expect(formQueryFeeds.getFeedUrl('mediawiki:history', value)).toBe(expected)
+      })
+
+      it('should write a query flag with no value', () => {
+        const value = {
+          root: 'https://example.com',
+          title: 'User:Alice',
+        }
+        const expected = 'https://example.com/index.php?title=User%3AAlice&rss'
+
+        expect(formQueryFeeds.getFeedUrl('example:profile', value)).toBe(expected)
+      })
+
+      it('should write a passed query as given', () => {
+        const value = {
+          root: 'https://example.com',
+          query: 'days=7&namespace=0:1',
+        }
+        const expected =
+          'https://example.com/index.php?title=Special%3ARecentChanges&feed=atom&days=7&namespace=0:1'
+
+        expect(formQueryFeeds.getFeedUrl('mediawiki:recent-changes', value)).toBe(expected)
+      })
+    })
+
+    describe('getFeedHint', () => {
+      it('should return the key of a feed with a form-encoded value', () => {
+        const value = 'https://example.com/index.php?title=Special%3ARecentChanges&feed=atom'
+        const expected = 'mediawiki:recent-changes'
+        const hint = formQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return the key of a feed with the value as written', () => {
+        const value = 'https://example.com/index.php?title=Special:RecentChanges&feed=atom'
+        const expected = 'mediawiki:recent-changes'
+        const hint = formQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
       })
     })
   })

@@ -3813,6 +3813,8 @@ A placeholder standing as a whole query parameter, as `{query}` in `{root}/index
 
 A row can list one parameter several times, as `?types=page&types=blogpost&types=comment`. It is built with every value in table order, and `getFeedHint` claims a URL that holds each of the values, in any order. A parameter the row lists once is read from its first value in the URL, as before.
 
+A query value is written with only the characters that would change the URL's structure escaped, so `?q=by:alice sort:time` builds `?q=by:alice%20sort:time`. On a platform whose pages link their feeds encoded as a form, set `queryEncoding: 'form'`: every query value of the table, the template's own text included, is then encoded as `URLSearchParams` does, so `?title={title}` with `Talk:Main Page` builds `?title=Talk%3AMain+Page`. A flag and a passed query are written as before. `getFeedHint` reads a value decoded, so it claims either spelling.
+
 A feed the platform serves under several spellings, such as a legacy host, has one row per spelling under its key. The spelling `getFeedEntry` builds is the canonical row, and each other spelling sits directly under it marked `isAlias: true`. An alias row belongs to the nearest row above it with the same key and format and no `isAlias`, so a key holding several feeds keeps each feed's spellings under its own canonical row. `getFeedHint` reads an alias row back to the same hint. `definePlatformFeeds` throws for an alias row with no canonical row above it, so a reorder that would build the alias fails at once. The table cannot tell whether two rows are one feed: that rests on a probe or a comment beside the row, and the placement on review. Keep `isAlias` off a row that is a different feed under the same key.
 
 ```typescript
