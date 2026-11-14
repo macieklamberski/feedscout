@@ -18,6 +18,27 @@ describe('parseAmebloUrl', () => {
     expect(parseAmebloUrl('https://ameblo.jp/shibuya/entry-12345678901.html')).toEqual(expected)
   })
 
+  it('should return the blog of a reblog card', () => {
+    const value = 'https://ameblo.jp/s/embed/reblog-card/alice/entry-12345678901.html'
+    const expected: AmebloUrl = { kind: 'blog', username: 'alice' }
+
+    expect(parseAmebloUrl(value)).toEqual(expected)
+  })
+
+  it('should return the blog of an image page', () => {
+    const value = 'https://ameblo.jp/p/embed/alice/image-12345678901-12345678901.html'
+    const expected: AmebloUrl = { kind: 'blog', username: 'alice' }
+
+    expect(parseAmebloUrl(value)).toEqual(expected)
+  })
+
+  it('should return the blog of an image page with an uppercase route', () => {
+    const value = 'https://ameblo.jp/P/Embed/alice/Image-12345678901-12345678901.html'
+    const expected: AmebloUrl = { kind: 'blog', username: 'alice' }
+
+    expect(parseAmebloUrl(value)).toEqual(expected)
+  })
+
   it('should return the username for the www host', () => {
     const expected: AmebloUrl = { kind: 'blog', username: 'shibuya' }
 
@@ -69,6 +90,26 @@ describe('amebloHandler', () => {
         },
         {
           uri: 'https://rssblog.ameba.jp/shibuya/rss.html',
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'rdf' },
+        },
+      ]
+
+      expect(amebloHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the feeds of the blog a reblog card names', () => {
+      const value = 'https://ameblo.jp/s/embed/reblog-card/alice/entry-12345678901.html'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://rssblog.ameba.jp/alice/rss20.xml',
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://rssblog.ameba.jp/alice/atom.xml',
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://rssblog.ameba.jp/alice/rss.html',
           hint: { key: 'ameblo:posts', label: 'Posts', format: 'rdf' },
         },
       ]
