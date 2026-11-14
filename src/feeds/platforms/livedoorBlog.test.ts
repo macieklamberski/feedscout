@@ -145,7 +145,7 @@ describe('livedoorBlogHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the category hint for a category feed on blog.jp', () => {
-      const value = 'https://atrpg.blog.jp/archives/cat_601340.xml'
+      const value = 'https://alice.blog.jp/archives/cat_601340.xml'
       const expected: DiscoverUriHint = {
         key: 'livedoor-blog:category',
         label: 'Category',
@@ -156,7 +156,7 @@ describe('livedoorBlogHandler', () => {
     })
 
     it('should return the category hint for a category feed with a hyphenated blog name', () => {
-      const value = 'https://digimonlinkz-matome.blog.jp/archives/cat_103964.xml'
+      const value = 'https://bob-matome.blog.jp/archives/cat_103964.xml'
       const expected: DiscoverUriHint = {
         key: 'livedoor-blog:category',
         label: 'Category',
@@ -250,11 +250,11 @@ describe('livedoorBlogHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://atrpg.blog.jp/archives/cat_601340.xml',
+        'https://alice.blog.jp/archives/cat_601340.xml',
         { key: 'livedoor-blog:category', label: 'Category', format: 'rdf' },
       ],
       [
-        'https://digimonlinkz-matome.blog.jp/archives/cat_103964.xml',
+        'https://bob-matome.blog.jp/archives/cat_103964.xml',
         { key: 'livedoor-blog:category', label: 'Category', format: 'rdf' },
       ],
       [

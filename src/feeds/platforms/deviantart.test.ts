@@ -242,7 +242,7 @@ describe('deviantartHandler', () => {
 
     it('should return the deviations hint for a deviations feed with the parameters reordered', () => {
       const value =
-        'https://backend.deviantart.com/rss.xml?q=by%3Aadochka%20sort%3Atime%20meta%3Aall&type=deviation'
+        'https://backend.deviantart.com/rss.xml?q=by%3Abob%20sort%3Atime%20meta%3Aall&type=deviation'
       const expected: DiscoverUriHint = { key: 'deviantart:deviations', label: 'Deviations' }
 
       expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)

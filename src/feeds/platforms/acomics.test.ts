@@ -5,16 +5,16 @@ import { defaultPlatformOptions } from '../defaults.js'
 import { type AcomicsUrl, acomicsHandler, parseAcomicsUrl } from './acomics.js'
 
 const feedCases: Array<[string, DiscoverUriHint]> = [
-  ['https://acomics.ru/~TheSweetBerries/rss', { key: 'acomics:issues', label: 'Issues' }], // Comic
+  ['https://acomics.ru/~DaveComic/rss', { key: 'acomics:issues', label: 'Issues' }], // Comic
   ['https://acomics.ru/-Alicecomic/rss', { key: 'acomics:subscriptions', label: 'Subscriptions' }], // User
   ['http://www.acomics.ru/~Example/rss', { key: 'acomics:issues', label: 'Issues' }], // Comic, www
 ]
 
 describe('parseAcomicsUrl', () => {
   it('should return the comic for a comic page', () => {
-    const expected: AcomicsUrl = { kind: 'comic', comic: 'TheSweetBerries' }
+    const expected: AcomicsUrl = { kind: 'comic', comic: 'DaveComic' }
 
-    expect(parseAcomicsUrl('https://acomics.ru/~TheSweetBerries')).toEqual(expected)
+    expect(parseAcomicsUrl('https://acomics.ru/~DaveComic')).toEqual(expected)
   })
 
   it('should return the comic for an issue page', () => {
@@ -36,9 +36,9 @@ describe('parseAcomicsUrl', () => {
   })
 
   it('should return the comic on the www host', () => {
-    const expected: AcomicsUrl = { kind: 'comic', comic: 'TheSweetBerries' }
+    const expected: AcomicsUrl = { kind: 'comic', comic: 'DaveComic' }
 
-    expect(parseAcomicsUrl('https://www.acomics.ru/~TheSweetBerries')).toEqual(expected)
+    expect(parseAcomicsUrl('https://www.acomics.ru/~DaveComic')).toEqual(expected)
   })
 
   it('should return undefined for a bare prefix', () => {
@@ -54,14 +54,14 @@ describe('parseAcomicsUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseAcomicsUrl('https://example.com/~TheSweetBerries')).toBeUndefined()
+    expect(parseAcomicsUrl('https://example.com/~DaveComic')).toBeUndefined()
   })
 })
 
 describe('acomicsHandler', () => {
   describe('match', () => {
     it('should return true for a comic page', () => {
-      expect(acomicsHandler.match('https://acomics.ru/~TheSweetBerries')).toBe(true)
+      expect(acomicsHandler.match('https://acomics.ru/~DaveComic')).toBe(true)
     })
 
     it('should return false for the home page', () => {
@@ -77,12 +77,12 @@ describe('acomicsHandler', () => {
     it('should return the issues feed for a comic', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://acomics.ru/~TheSweetBerries/rss',
+          uri: 'https://acomics.ru/~DaveComic/rss',
           hint: { key: 'acomics:issues', label: 'Issues' },
         },
       ]
 
-      expect(acomicsHandler.resolve('https://www.acomics.ru/~TheSweetBerries/1')).toEqual(expected)
+      expect(acomicsHandler.resolve('https://www.acomics.ru/~DaveComic/1')).toEqual(expected)
     })
 
     it('should return the subscriptions feed for a user', () => {
@@ -99,7 +99,7 @@ describe('acomicsHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the issues key for a comic feed', () => {
-      const value = 'https://acomics.ru/~TheSweetBerries/rss'
+      const value = 'https://acomics.ru/~DaveComic/rss'
       const expected: DiscoverUriHint = { key: 'acomics:issues', label: 'Issues' }
 
       expect(acomicsHandler.getFeedHint?.(value)).toEqual(expected)
@@ -120,13 +120,13 @@ describe('acomicsHandler', () => {
     })
 
     it('should return undefined for a comic page', () => {
-      const value = 'https://acomics.ru/~TheSweetBerries'
+      const value = 'https://acomics.ru/~DaveComic'
 
       expect(acomicsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an issue page', () => {
-      const value = 'https://acomics.ru/~TheSweetBerries/1'
+      const value = 'https://acomics.ru/~DaveComic/1'
 
       expect(acomicsHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -138,7 +138,7 @@ describe('acomicsHandler', () => {
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/~TheSweetBerries/rss'
+      const value = 'https://example.com/~DaveComic/rss'
 
       expect(acomicsHandler.getFeedHint?.(value)).toBeUndefined()
     })

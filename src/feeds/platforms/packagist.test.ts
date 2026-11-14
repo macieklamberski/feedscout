@@ -270,7 +270,7 @@ describe('packagistHandler', () => {
     })
 
     it('should return the vendor hint for an RSS vendor feed', () => {
-      const value = 'https://packagist.org/feeds/vendor.gladyshev.rss'
+      const value = 'https://packagist.org/feeds/vendor.alice.rss'
       const expected: DiscoverUriHint = {
         key: 'packagist:vendor',
         label: 'Vendor releases',
@@ -281,7 +281,7 @@ describe('packagistHandler', () => {
     })
 
     it('should return the vendor hint for an Atom vendor feed', () => {
-      const value = 'https://packagist.org/feeds/vendor.gladyshev.atom'
+      const value = 'https://packagist.org/feeds/vendor.alice.atom'
       const expected: DiscoverUriHint = {
         key: 'packagist:vendor',
         label: 'Vendor releases',
@@ -393,11 +393,11 @@ describe('packagistHandler', () => {
         { key: 'packagist:releases', label: 'Releases', format: 'atom' },
       ],
       [
-        'https://packagist.org/feeds/vendor.gladyshev.rss',
+        'https://packagist.org/feeds/vendor.alice.rss',
         { key: 'packagist:vendor', label: 'Vendor releases', format: 'rss' },
       ],
       [
-        'https://packagist.org/feeds/vendor.gladyshev.atom',
+        'https://packagist.org/feeds/vendor.alice.atom',
         { key: 'packagist:vendor', label: 'Vendor releases', format: 'atom' },
       ],
       [

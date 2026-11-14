@@ -177,7 +177,7 @@ describe('behanceHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the portfolio hint for a portfolio feed', () => {
-      const value = 'https://www.behance.net/feeds/user?username=almostblack'
+      const value = 'https://www.behance.net/feeds/user?username=alice'
       const expected: DiscoverUriHint = { key: 'behance:portfolio', label: 'Portfolio' }
 
       expect(behanceHandler.getFeedHint?.(value)).toEqual(expected)
@@ -191,14 +191,14 @@ describe('behanceHandler', () => {
     })
 
     it('should return the portfolio hint for a portfolio feed over http', () => {
-      const value = 'http://www.behance.net/feeds/user?username=almostblack'
+      const value = 'http://www.behance.net/feeds/user?username=alice'
       const expected: DiscoverUriHint = { key: 'behance:portfolio', label: 'Portfolio' }
 
       expect(behanceHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the portfolio hint for a portfolio feed with another parameter', () => {
-      const value = 'https://www.behance.net/feeds/user?username=almostblack&content=appreciated'
+      const value = 'https://www.behance.net/feeds/user?username=alice&content=appreciated'
       const expected: DiscoverUriHint = { key: 'behance:portfolio', label: 'Portfolio' }
 
       expect(behanceHandler.getFeedHint?.(value)).toEqual(expected)
@@ -224,7 +224,7 @@ describe('behanceHandler', () => {
     })
 
     it('should return undefined for a profile page', () => {
-      const value = 'https://www.behance.net/almostblack'
+      const value = 'https://www.behance.net/alice'
 
       expect(behanceHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -239,7 +239,7 @@ describe('behanceHandler', () => {
 
 describe('discoverUrisFromPlatform', () => {
   const ownFeeds: Array<[string, string, string]> = [
-    ['https://www.behance.net/feeds/user?username=almostblack', 'behance:portfolio', 'Portfolio'],
+    ['https://www.behance.net/feeds/user?username=alice', 'behance:portfolio', 'Portfolio'],
     ['https://behance.net/feeds/user?username=angshnitul925b', 'behance:portfolio', 'Portfolio'],
     ['https://www.behance.net/feeds/projects', 'behance:projects', 'Featured projects'],
   ]

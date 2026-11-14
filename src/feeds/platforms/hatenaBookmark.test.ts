@@ -530,7 +530,7 @@ describe('hatenaBookmarkHandler', () => {
         { key: 'hatena-bookmark:site', label: 'Site' },
       ],
       [
-        'https://b.hatena.ne.jp/site/blog.livedoor.jp/itsoku?mode=rss',
+        'https://b.hatena.ne.jp/site/blog.livedoor.jp/erin?mode=rss',
         { key: 'hatena-bookmark:site', label: 'Site' },
       ],
       [
@@ -562,7 +562,7 @@ describe('hatenaBookmarkHandler', () => {
     })
 
     it('should return undefined for a site page', () => {
-      const value = 'https://b.hatena.ne.jp/site/blog.livedoor.jp/itsoku?sort=eid'
+      const value = 'https://b.hatena.ne.jp/site/blog.livedoor.jp/erin?sort=eid'
 
       expect(hatenaBookmarkHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -609,7 +609,7 @@ describe('hatenaBookmarkHandler', () => {
         'https://b.hatena.ne.jp/q/game?date_range=5y&mode=rss&safe=on&sort=popular&target=tag&users=5',
         search,
       ],
-      ['https://b.hatena.ne.jp/site/blog.livedoor.jp/nwknews?mode=rss', site],
+      ['https://b.hatena.ne.jp/site/blog.livedoor.jp/dave?mode=rss', site],
       ['https://b.hatena.ne.jp/site/bookmark.rss', bookmarks],
       [
         'https://b.hatena.ne.jp/alice/bookmark.rss?tag=%E4%BD%90%E8%97%A4%E4%BA%9C%E7%B4%80',

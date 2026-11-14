@@ -100,28 +100,28 @@ describe('togetterHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the curator hint for a curator feed', () => {
-      const value = 'https://togetter.com/rss/id/yayoy_amber'
+      const value = 'https://togetter.com/rss/id/alice_blue'
       const expected: DiscoverUriHint = { key: 'togetter:curator', label: 'Curator' }
 
       expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the curator hint for a curator feed with digits in the name', () => {
-      const value = 'https://togetter.com/rss/id/henohen54465820'
+      const value = 'https://togetter.com/rss/id/bob54465820'
       const expected: DiscoverUriHint = { key: 'togetter:curator', label: 'Curator' }
 
       expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the curator hint for a curator feed on the www host', () => {
-      const value = 'https://www.togetter.com/rss/id/yayoy_amber'
+      const value = 'https://www.togetter.com/rss/id/alice_blue'
       const expected: DiscoverUriHint = { key: 'togetter:curator', label: 'Curator' }
 
       expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the curator hint for a curator feed over http', () => {
-      const value = 'http://togetter.com/rss/id/yayoy_amber'
+      const value = 'http://togetter.com/rss/id/alice_blue'
       const expected: DiscoverUriHint = { key: 'togetter:curator', label: 'Curator' }
 
       expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
@@ -149,7 +149,7 @@ describe('togetterHandler', () => {
     })
 
     it('should return undefined for a curator page', () => {
-      const value = 'https://togetter.com/id/yayoy_amber'
+      const value = 'https://togetter.com/id/alice_blue'
 
       expect(togetterHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -161,7 +161,7 @@ describe('togetterHandler', () => {
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/rss/id/yayoy_amber'
+      const value = 'https://example.com/rss/id/alice_blue'
 
       expect(togetterHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -169,7 +169,7 @@ describe('togetterHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://togetter.com/rss/id/yayoy_amber', { key: 'togetter:curator', label: 'Curator' }],
+      ['https://togetter.com/rss/id/alice_blue', { key: 'togetter:curator', label: 'Curator' }],
       ['https://togetter.com/rss/hot', { key: 'togetter:hot', label: 'Popular' }],
       ['https://www.togetter.com/rss/hot', { key: 'togetter:hot', label: 'Popular' }],
       ['https://togetter.com/rss/news', { key: 'togetter:news', label: 'News' }],

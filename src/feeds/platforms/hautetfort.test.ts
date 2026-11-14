@@ -103,14 +103,14 @@ describe('hautetfortHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the category hint for a category feed', () => {
-      const value = 'http://pourunefranceforteetcatholique.hautetfort.com/web/index.rss'
+      const value = 'http://frank.hautetfort.com/web/index.rss'
       const expected: DiscoverUriHint = { key: 'hautetfort:category', label: 'Category' }
 
       expect(hautetfortHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the category hint for a category feed on blogspirit.com', () => {
-      const value = 'http://actionbarbes.blogspirit.com/dans-le-18eme/index.rss'
+      const value = 'http://grace.blogspirit.com/dans-le-18eme/index.rss'
       const expected: DiscoverUriHint = { key: 'hautetfort:category', label: 'Category' }
 
       expect(hautetfortHandler.getFeedHint?.(value)).toEqual(expected)
@@ -165,11 +165,11 @@ describe('hautetfortHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'http://pourunefranceforteetcatholique.hautetfort.com/web/index.rss',
+        'http://frank.hautetfort.com/web/index.rss',
         { key: 'hautetfort:category', label: 'Category' },
       ],
       [
-        'http://actionbarbes.blogspirit.com/dans-le-18eme/index.rss',
+        'http://grace.blogspirit.com/dans-le-18eme/index.rss',
         { key: 'hautetfort:category', label: 'Category' },
       ],
       [

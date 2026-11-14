@@ -143,7 +143,7 @@ describe('transistorHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the podcast hint for a podcast feed', () => {
-      const value = 'https://feeds.transistor.fm/wearechildfree'
+      const value = 'https://feeds.transistor.fm/bob-podcast'
       const expected: DiscoverUriHint = { key: 'transistor:podcast', label: 'Podcast' }
 
       expect(transistorHandler.getFeedHint?.(value)).toEqual(expected)
@@ -157,7 +157,7 @@ describe('transistorHandler', () => {
     })
 
     it('should return undefined for a show page', () => {
-      const value = 'https://wearechildfree.transistor.fm/'
+      const value = 'https://bob-podcast.transistor.fm/'
 
       expect(transistorHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -169,13 +169,13 @@ describe('transistorHandler', () => {
     })
 
     it('should return undefined for a nested path on the feed host', () => {
-      const value = 'https://feeds.transistor.fm/wearechildfree/episodes'
+      const value = 'https://feeds.transistor.fm/bob-podcast/episodes'
 
       expect(transistorHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/wearechildfree'
+      const value = 'https://example.com/bob-podcast'
 
       expect(transistorHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -183,11 +183,11 @@ describe('transistorHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://feeds.transistor.fm/bob-podcast', { key: 'transistor:podcast', label: 'Podcast' }],
       [
-        'https://feeds.transistor.fm/wearechildfree',
+        'https://feeds.transistor.fm/carol-podcast',
         { key: 'transistor:podcast', label: 'Podcast' },
       ],
-      ['https://feeds.transistor.fm/westendgeeks', { key: 'transistor:podcast', label: 'Podcast' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

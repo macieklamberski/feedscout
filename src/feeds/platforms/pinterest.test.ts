@@ -182,7 +182,7 @@ describe('pinterestHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the pins hint for a pins feed', () => {
-      const value = 'https://www.pinterest.com/videodred/feed.rss'
+      const value = 'https://www.pinterest.com/alice/feed.rss'
       const expected: DiscoverUriHint = { key: 'pinterest:pins', label: 'Pins' }
 
       expect(pinterestHandler.getFeedHint?.(value)).toEqual(expected)
@@ -204,7 +204,7 @@ describe('pinterestHandler', () => {
     })
 
     it('should return the pins hint for a pins feed on the bare host', () => {
-      const value = 'https://pinterest.com/videodred/feed.rss'
+      const value = 'https://pinterest.com/alice/feed.rss'
       const expected: DiscoverUriHint = { key: 'pinterest:pins', label: 'Pins' }
 
       expect(pinterestHandler.getFeedHint?.(value)).toEqual(expected)
@@ -243,7 +243,7 @@ describe('pinterestHandler', () => {
     })
 
     it('should return undefined for a profile page', () => {
-      const value = 'https://www.pinterest.com/videodred/'
+      const value = 'https://www.pinterest.com/alice/'
 
       expect(pinterestHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -252,7 +252,7 @@ describe('pinterestHandler', () => {
 
 describe('discoverUrisFromPlatform', () => {
   const ownFeeds: Array<[string, string, string]> = [
-    ['https://www.pinterest.com/videodred/feed.rss', 'pinterest:pins', 'Pins'],
+    ['https://www.pinterest.com/alice/feed.rss', 'pinterest:pins', 'Pins'],
     [
       'https://www.pinterest.com/VisitStA/tour-st-augustine-from-water-land-and-air.rss',
       'pinterest:board',

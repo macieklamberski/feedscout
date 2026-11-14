@@ -87,35 +87,35 @@ describe('captivateHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the podcast hint for a feed', () => {
-      const value = 'https://feeds.captivate.fm/bluntdissection/'
+      const value = 'https://feeds.captivate.fm/bobcast/'
       const expected: DiscoverUriHint = { key: 'captivate:podcast', label: 'Podcast' }
 
       expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the podcast hint for a feed with a hyphenated slug', () => {
-      const value = 'https://feeds.captivate.fm/flies-in-the-jar/'
+      const value = 'https://feeds.captivate.fm/carol-podcast/'
       const expected: DiscoverUriHint = { key: 'captivate:podcast', label: 'Podcast' }
 
       expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the podcast hint for a feed without the trailing slash', () => {
-      const value = 'https://feeds.captivate.fm/bluntdissection'
+      const value = 'https://feeds.captivate.fm/bobcast'
       const expected: DiscoverUriHint = { key: 'captivate:podcast', label: 'Podcast' }
 
       expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the podcast hint for a feed over http', () => {
-      const value = 'http://feeds.captivate.fm/bluntdissection/'
+      const value = 'http://feeds.captivate.fm/bobcast/'
       const expected: DiscoverUriHint = { key: 'captivate:podcast', label: 'Podcast' }
 
       expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a show page', () => {
-      const value = 'https://bluntdissection.captivate.fm/'
+      const value = 'https://bobcast.captivate.fm/'
 
       expect(captivateHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -155,7 +155,7 @@ describe('captivateHandler', () => {
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/bluntdissection/'
+      const value = 'https://example.com/bobcast/'
 
       expect(captivateHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -163,14 +163,8 @@ describe('captivateHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://feeds.captivate.fm/bluntdissection/',
-        { key: 'captivate:podcast', label: 'Podcast' },
-      ],
-      [
-        'https://feeds.captivate.fm/flies-in-the-jar/',
-        { key: 'captivate:podcast', label: 'Podcast' },
-      ],
+      ['https://feeds.captivate.fm/bobcast/', { key: 'captivate:podcast', label: 'Podcast' }],
+      ['https://feeds.captivate.fm/carol-podcast/', { key: 'captivate:podcast', label: 'Podcast' }],
       [
         'https://feeds.captivate.fm/example/latest',
         { key: 'captivate:latest', label: 'Latest episode' },
