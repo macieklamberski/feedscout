@@ -957,7 +957,7 @@ Discovers RSS feeds for Captivate-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.captivate.fm` | Podcast (RSS) |
+| `{show}.captivate.fm` | Podcast · latest episode (RSS) |
 
 ### Castopod
 

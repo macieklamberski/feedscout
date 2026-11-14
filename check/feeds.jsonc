@@ -218,6 +218,9 @@
     ]
   },
   "captivate": {
+    "captivate:collection": "https://feeds.captivate.fm/theknurdproject/jcast/",
+    "captivate:latest": "https://feeds.captivate.fm/theknurdproject/latest/",
+    "captivate:network": "https://feeds.captivate.fm/n/iacast-network/",
     "captivate:podcast": "https://feeds.captivate.fm/school-of-podcasting/"
   },
   "castopod": {
