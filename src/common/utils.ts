@@ -1,6 +1,7 @@
 import { DomUtils, parseDocument } from 'htmlparser2'
 import {
   anyWordMatchesAnyOf,
+  escapeRegex,
   getSubdomain,
   isAnyOf,
   isInteger,
@@ -43,6 +44,12 @@ export const letterPairsRegex = /^[a-z]{2}(?:-[a-z]{2})?$/i
 export const letterGroupsRegex = /^[a-z]{2,3}(?:-[a-z]{4})?(?:-[a-z]{2})?$/i
 // A format extension after a value that cannot hold a dot, as `.rss` or `.html`.
 export const formatSuffixRegex = /\.[a-z]+$/i
+
+// A brand's domain under any top-level domain of two or more letters, or under a `co.` or `com.`
+// country second level, as `blogspot.de`, `blogspot.cat`, `blogspot.co.uk` and `blogspot.com.br`.
+export const getBrandDomainRegex = (brand: string): RegExp => {
+  return new RegExp(`^${escapeRegex(brand)}\\.(?:[a-z]{2,}|(?:co|com)\\.[a-z]{2})$`)
+}
 
 // The `id` group the regex reads from the value, when it is all digits.
 export const getNumericId = (value: string | undefined, regex: RegExp): string | undefined => {
@@ -245,7 +252,7 @@ const trailingSlashRegex = /\/$/
 // platform's own site everywhere.
 export const getTenantSubdomain = (
   url: string | URL,
-  domains: Array<string>,
+  domains: Array<string | RegExp>,
 ): string | undefined => {
   const subdomain = getSubdomain(url, domains)
 
