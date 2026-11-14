@@ -2374,11 +2374,11 @@ Discovers the feeds of a vBulletin 3 to 6 forum. Detected by the `clientscript/v
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{forum}/forumdisplay.php?f={id}` | Forum · site (RSS) |
-| `{forum}/forumdisplay.php?{id}-{title}` | Forum · site (RSS) |
+| `{root}/forumdisplay.php?f={id}` | Forum · site (RSS) |
+| `{root}/forumdisplay.php?{id}-{title}` | Forum · site (RSS) |
 | Any other page | Site (RSS) |
 | Any vBulletin 5 or 6 channel page | Channel · site (RSS) |
-| Any vBulletin 5 or 6 page | Site at `{forum}/external?type=rss2` (RSS) |
+| Any vBulletin 5 or 6 page | Site at `{root}/external?type=rss2` (RSS) |
 
 > [!NOTE]
 > The forum root is read from the core script's URL, or the page's `<base>` on vBulletin 5 and 6, so a forum under a sub-path or behind rewritten page URLs gets its feeds there. A vBulletin 3 or 4 forum with feeds turned off answers these URLs with an empty page.
