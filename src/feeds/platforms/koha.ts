@@ -28,6 +28,7 @@ const ownFeeds = definePlatformFeeds(
     {
       key: 'koha:search',
       template: '{scheme}://{host}/cgi-bin/koha/opac-search.pl?format=rss2',
+      isAlias: true,
     },
     {
       key: 'koha:list',
