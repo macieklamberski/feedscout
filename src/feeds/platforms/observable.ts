@@ -1,6 +1,6 @@
 import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -19,6 +19,16 @@ const ownerRegex = /^\/@([^/]+)/
 const publicRegex = /^\/public\/?$/i
 const recentRegex = /^\/recent\/?$/i
 const trendingRegex = /^\/trending\/?$/i
+
+const feeds = definePlatformFeeds([
+  { key: 'observable:recent', template: 'https://api.observablehq.com/documents/public.rss' },
+  { key: 'observable:trending', template: 'https://api.observablehq.com/documents/trending.rss' },
+  {
+    key: 'observable:collection',
+    template: 'https://api.observablehq.com/collection/@{owner}/{collection}.rss',
+  },
+  { key: 'observable:notebooks', template: 'https://api.observablehq.com/documents/@{owner}.rss' },
+])
 
 export const parseObservableUrl = (url: string): ObservableUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -68,37 +78,21 @@ export const observableHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'recent') {
-      return [
-        {
-          uri: 'https://api.observablehq.com/documents/public.rss',
-          hint: composeHint('observable:recent'),
-        },
-      ]
+      return [feeds.getFeedEntry('observable:recent')]
     }
 
     if (parsed.kind === 'trending') {
-      return [
-        {
-          uri: 'https://api.observablehq.com/documents/trending.rss',
-          hint: composeHint('observable:trending'),
-        },
-      ]
+      return [feeds.getFeedEntry('observable:trending')]
     }
 
     if (parsed.kind === 'collection') {
-      return [
-        {
-          uri: `https://api.observablehq.com/collection/@${parsed.owner}/${parsed.collection}.rss`,
-          hint: composeHint('observable:collection'),
-        },
-      ]
+      const params = { owner: parsed.owner, collection: parsed.collection }
+
+      return [feeds.getFeedEntry('observable:collection', params)]
     }
 
-    return [
-      {
-        uri: `https://api.observablehq.com/documents/@${parsed.owner}.rss`,
-        hint: composeHint('observable:notebooks'),
-      },
-    ]
+    return [feeds.getFeedEntry('observable:notebooks', { owner: parsed.owner })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
