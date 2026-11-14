@@ -11,7 +11,11 @@ const hosts = ['bsky.app', 'www.bsky.app']
 // web-cdn.bsky.app serves the same app and the same feeds under the same paths.
 const feeds = definePlatformFeeds([
   { key: 'bluesky:posts', template: 'https://bsky.app/profile/{handle}/rss' },
-  { key: 'bluesky:posts', template: 'https://web-cdn.bsky.app/profile/{handle}/rss' },
+  {
+    key: 'bluesky:posts',
+    template: 'https://web-cdn.bsky.app/profile/{handle}/rss',
+    isAlias: true,
+  },
 ])
 
 export const parseBlueskyUrl = (url: string): BlueskyUrl | undefined => {
