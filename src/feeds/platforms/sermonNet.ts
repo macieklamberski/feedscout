@@ -55,6 +55,12 @@ export const getSermonNetPage = (
     return
   }
 
+  // Without the page only the URL names the channel, and the church feed is another channel on
+  // some sites.
+  if (parsed.kind === 'channel' && !content) {
+    return parsed
+  }
+
   const channels: Array<string> = []
 
   for (const [, channel] of content?.matchAll(channelRegex) ?? []) {
