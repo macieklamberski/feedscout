@@ -1779,11 +1779,12 @@ Discovers the RSS feeds of an FC2 blog.
 | `{user}.blog.fc2.com` | Posts · comments · trackbacks (RSS) |
 | `{user}.blog{n}.fc2.com` | Posts · comments · trackbacks (RSS) |
 | `{user}.fc2.net` | Posts · comments · trackbacks (RSS) |
-| `{user}.blog.2nt.com` | Posts · comments<sup>†</sup> · trackbacks<sup>†</sup> (RSS) |
-
-<sup>†</sup> *Found only by the Platform method.*
+| `{user}.blog.fc2.com/blog-category-{n}.html` | Category · posts · comments · trackbacks (RSS) |
+| `{user}.blog.fc2.com/?tag={tag}` | Tag · posts · comments · trackbacks (RSS) |
 
 > [!NOTE]
+> A category or tag page on a `blog{n}.fc2.com` or `fc2.net` host gives the same feeds.
+>
 > The canonical host redirects to a numbered host from the old sharding scheme, so both shapes are matched and the feed is built from whichever host answers.
 
 ### Togetter
