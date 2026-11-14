@@ -79,28 +79,28 @@ describe('podbeanHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the podcast hint for a podcast feed', () => {
-      const value = 'https://feed.podbean.com/ambitchious/feed.xml'
+      const value = 'https://feed.podbean.com/carolcast/feed.xml'
       const expected: DiscoverUriHint = { key: 'podbean:podcast', label: 'Podcast' }
 
       expect(podbeanHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the podcast hint for a podcast feed over http', () => {
-      const value = 'http://feed.podbean.com/amoutdoors/feed.xml'
+      const value = 'http://feed.podbean.com/bobdoors/feed.xml'
       const expected: DiscoverUriHint = { key: 'podbean:podcast', label: 'Podcast' }
 
       expect(podbeanHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the podcast hint for a podcast feed on the S3 bucket', () => {
-      const value = 'https://s3.amazonaws.com/feed.podbean.com/startupnotes/feed.xml'
+      const value = 'https://s3.amazonaws.com/feed.podbean.com/erinnotes/feed.xml'
       const expected: DiscoverUriHint = { key: 'podbean:podcast', label: 'Podcast' }
 
       expect(podbeanHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the podcast hint for a podcast feed on the show subdomain', () => {
-      const value = 'https://pcgcck1show.podbean.com/feed.xml'
+      const value = 'https://dave1show.podbean.com/feed.xml'
       const expected: DiscoverUriHint = { key: 'podbean:podcast', label: 'Podcast' }
 
       expect(podbeanHandler.getFeedHint?.(value)).toEqual(expected)
@@ -114,25 +114,25 @@ describe('podbeanHandler', () => {
     })
 
     it('should return undefined for a feed path in another S3 bucket', () => {
-      const value = 'https://s3.amazonaws.com/other-bucket/startupnotes/feed.xml'
+      const value = 'https://s3.amazonaws.com/other-bucket/erinnotes/feed.xml'
 
       expect(podbeanHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a show page', () => {
-      const value = 'https://ambitchious.podbean.com/'
+      const value = 'https://carolcast.podbean.com/'
 
       expect(podbeanHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a show path on the feed host without the feed file', () => {
-      const value = 'https://feed.podbean.com/ambitchious/'
+      const value = 'https://feed.podbean.com/carolcast/'
 
       expect(podbeanHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/ambitchious/feed.xml'
+      const value = 'https://example.com/carolcast/feed.xml'
 
       expect(podbeanHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -140,19 +140,13 @@ describe('podbeanHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://feed.podbean.com/carolcast/feed.xml', { key: 'podbean:podcast', label: 'Podcast' }],
+      ['https://feed.podbean.com/bobdoors/feed.xml', { key: 'podbean:podcast', label: 'Podcast' }],
       [
-        'https://feed.podbean.com/ambitchious/feed.xml',
+        'https://s3.amazonaws.com/feed.podbean.com/erinnotes/feed.xml',
         { key: 'podbean:podcast', label: 'Podcast' },
       ],
-      [
-        'https://feed.podbean.com/amoutdoors/feed.xml',
-        { key: 'podbean:podcast', label: 'Podcast' },
-      ],
-      [
-        'https://s3.amazonaws.com/feed.podbean.com/startupnotes/feed.xml',
-        { key: 'podbean:podcast', label: 'Podcast' },
-      ],
-      ['https://pcgcck1show.podbean.com/feed.xml', { key: 'podbean:podcast', label: 'Podcast' }],
+      ['https://dave1show.podbean.com/feed.xml', { key: 'podbean:podcast', label: 'Podcast' }],
       [
         'http://feed.podbean.com/alice/last1/feed.xml',
         { key: 'podbean:podcast', label: 'Podcast' },
