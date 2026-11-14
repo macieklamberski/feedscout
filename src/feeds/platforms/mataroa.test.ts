@@ -7,7 +7,7 @@ import { type MataroaUrl, mataroaHandler, parseMataroaUrl } from './mataroa.js'
 describe('parseMataroaUrl', () => {
   it('should return the blog for a blog subdomain', () => {
     const value = 'https://jane.mataroa.blog/'
-    const expected: MataroaUrl = { kind: 'blog', blog: 'jane' }
+    const expected: MataroaUrl = { kind: 'blog' }
 
     expect(parseMataroaUrl(value)).toEqual(expected)
   })

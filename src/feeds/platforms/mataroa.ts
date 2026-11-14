@@ -4,7 +4,7 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type MataroaUrl = { kind: 'blog'; blog: string }
+export type MataroaUrl = { kind: 'blog' }
 
 const domains = ['mataroa.blog']
 
@@ -13,13 +13,11 @@ const feeds = definePlatformFeeds([{ key: 'mataroa:blog', template: '{scheme}://
 })
 
 export const parseMataroaUrl = (url: string): MataroaUrl | undefined => {
-  const blog = getTenantSubdomain(url, domains)
-
-  if (!blog) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 
-  return { kind: 'blog', blog }
+  return { kind: 'blog' }
 }
 
 export const mataroaHandler: PlatformHandler = {
