@@ -1,6 +1,7 @@
 import { isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, wordOrHyphenRegex } from '../../common/utils.js'
+import { wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers comments, domain, home, multiTag, newest, tag, top (guess, html).
@@ -24,6 +25,23 @@ const topRegex = /^\/top(?:\/(?<period>\d+[dwmy]))?\/?$/i
 const newestRegex = /^\/newest\/?$/i
 const commentsRegex = /^\/comments\/?$/i
 const tagsValueRegex = /^[\w,-]+$/
+
+// A top page links its feed as /top/{period}.rss, which /top/{period}/rss redirects to. /top/rss
+// and /top.rss redirect to the one-week feed, so their rows only claim.
+const feeds = definePlatformFeeds([
+  { key: 'lobsters:tag', template: 'https://lobste.rs/t/{tags}.rss' },
+  { key: 'lobsters:domain', template: 'https://lobste.rs/domains/{domain}.rss' },
+  { key: 'lobsters:stories', template: 'https://lobste.rs/~{username}/stories.rss' },
+  { key: 'lobsters:stories', template: 'https://lobste.rs/rss' },
+  // A reader's private feed, filtered by their settings, is claimed and never built.
+  { key: 'lobsters:private', template: 'https://lobste.rs/rss?token={token}' },
+  { key: 'lobsters:top', template: 'https://lobste.rs/top/{period}.rss' },
+  { key: 'lobsters:top', template: 'https://lobste.rs/top/{period}/rss', isAlias: true },
+  { key: 'lobsters:top', template: 'https://lobste.rs/top/rss', isAlias: true },
+  { key: 'lobsters:top', template: 'https://lobste.rs/top.rss', isAlias: true },
+  { key: 'lobsters:newest', template: 'https://lobste.rs/newest.rss' },
+  { key: 'lobsters:comments', template: 'https://lobste.rs/comments.rss' },
+])
 
 export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -54,7 +72,7 @@ export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {
 
   const topMatch = pathname.match(topRegex)
 
-  // Top page, all time or for a period: /top or /top/{period}.
+  // Top page, for a period or without one: /top/{period} or /top.
   if (topMatch) {
     return { kind: 'top', period: topMatch.groups?.period }
   }
@@ -83,56 +101,32 @@ export const lobstersHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'tag') {
-      return [{ uri: `https://lobste.rs/t/${parsed.tags}.rss`, hint: composeHint('lobsters:tag') }]
+      return [feeds.getFeedEntry('lobsters:tag', { tags: parsed.tags })]
     }
 
     if (parsed.kind === 'domain') {
-      return [
-        {
-          uri: `https://lobste.rs/domains/${parsed.domain}.rss`,
-          hint: composeHint('lobsters:domain'),
-        },
-      ]
+      return [feeds.getFeedEntry('lobsters:domain', { domain: parsed.domain })]
     }
 
     if (parsed.kind === 'user') {
-      return [
-        {
-          uri: `https://lobste.rs/~${parsed.username}/stories.rss`,
-          hint: composeHint('lobsters:stories'),
-        },
-      ]
+      return [feeds.getFeedEntry('lobsters:stories', { username: parsed.username })]
     }
 
-    if (parsed.kind === 'top' && parsed.period) {
-      return [
-        {
-          uri: `https://lobste.rs/top/${parsed.period}/rss`,
-          hint: composeHint('lobsters:top'),
-        },
-      ]
-    }
-
+    // The top page without a period redirects to the one-week page.
     if (parsed.kind === 'top') {
-      return [{ uri: 'https://lobste.rs/top/rss', hint: composeHint('lobsters:top') }]
+      return [feeds.getFeedEntry('lobsters:top', { period: parsed.period ?? '1w' })]
     }
 
     if (parsed.kind === 'newest') {
-      return [{ uri: 'https://lobste.rs/newest.rss', hint: composeHint('lobsters:newest') }]
+      return [feeds.getFeedEntry('lobsters:newest')]
     }
 
     if (parsed.kind === 'comments') {
-      return [
-        {
-          uri: 'https://lobste.rs/comments.rss',
-          hint: composeHint('lobsters:comments'),
-        },
-      ]
+      return [feeds.getFeedEntry('lobsters:comments')]
     }
 
-    return [
-      { uri: 'https://lobste.rs/rss', hint: composeHint('lobsters:stories') },
-      { uri: 'https://lobste.rs/comments.rss', hint: composeHint('lobsters:comments') },
-    ]
+    return [feeds.getFeedEntry('lobsters:stories'), feeds.getFeedEntry('lobsters:comments')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
