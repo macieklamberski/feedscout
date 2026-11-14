@@ -867,19 +867,18 @@
     ]
   },
   "launchpad": {
-    "launchpad:announcements": [
-      "http://feeds.launchpad.net/announcements.atom",
-      "http://feeds.launchpad.net/launchpad/announcements.atom"
-    ],
+    "launchpad:announcements": "http://feeds.launchpad.net/announcements.atom",
     "launchpad:branch": "http://feeds.launchpad.net/~bzr-pqm/bzr/bzr.dev/branch.atom",
-    "launchpad:branches": "http://feeds.launchpad.net/launchpad/branches.atom",
     "launchpad:bug": "http://feeds.launchpad.net/bugs/1/bug.atom",
-    "launchpad:bugs": [
-      "http://feeds.launchpad.net/bugs/latest-bugs.atom",
-      "http://feeds.launchpad.net/launchpad/latest-bugs.atom",
-      "http://feeds.launchpad.net/ubuntu/+source/bash/latest-bugs.atom"
-    ],
-    "launchpad:revisions": "http://feeds.launchpad.net/launchpad/revisions.atom"
+    "launchpad:bugs": "http://feeds.launchpad.net/bugs/latest-bugs.atom",
+    "launchpad:package-bugs": "http://feeds.launchpad.net/ubuntu/+source/bash/latest-bugs.atom",
+    "launchpad:person-branches": "http://feeds.launchpad.net/~cjwatson/branches.atom",
+    "launchpad:person-bugs": "http://feeds.launchpad.net/~cjwatson/latest-bugs.atom",
+    "launchpad:person-revisions": "http://feeds.launchpad.net/~cjwatson/revisions.atom",
+    "launchpad:project-announcements": "http://feeds.launchpad.net/launchpad/announcements.atom",
+    "launchpad:project-branches": "http://feeds.launchpad.net/launchpad/branches.atom",
+    "launchpad:project-bugs": "http://feeds.launchpad.net/launchpad/latest-bugs.atom",
+    "launchpad:project-revisions": "http://feeds.launchpad.net/launchpad/revisions.atom"
   },
   "learnku": {
     "learnku:community": "https://learnku.com/laravel/feed",
