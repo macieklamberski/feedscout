@@ -32,10 +32,10 @@ const feeds = definePlatformFeeds(
     { key: 'wild-apricot:page', template: '{scheme}://{host}/page-{page}/RSS' },
     // A page's feed answers under its friendly path too, and in its widget view, as `/news/RSS`
     // and `/widget/Events/RSS`. Each names its module feed as its self link.
-    { key: 'wild-apricot:page', template: '{root}/RSS' },
-    { key: 'wild-apricot:page', template: '{root}/widget/RSS' },
-    { key: 'wild-apricot:page', template: '{root}/{path}/RSS' },
-    { key: 'wild-apricot:page', template: '{root}/widget/{path}/RSS' },
+    { key: 'wild-apricot:page', template: '{root}/RSS', isAlias: true },
+    { key: 'wild-apricot:page', template: '{root}/widget/RSS', isAlias: true },
+    { key: 'wild-apricot:page', template: '{root}/{path}/RSS', isAlias: true },
+    { key: 'wild-apricot:page', template: '{root}/widget/{path}/RSS', isAlias: true },
   ],
   { domains },
 )
