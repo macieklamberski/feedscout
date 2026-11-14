@@ -139,14 +139,14 @@ describe('writeasHandler', () => {
     })
 
     it('should return the tag hint for a tag feed', () => {
-      const value = 'https://write.as/jasonpettus/tag:mindset/feed/'
+      const value = 'https://write.as/carol/tag:mindset/feed/'
       const expected: DiscoverUriHint = { key: 'writeas:tag', label: 'Tag' }
 
       expect(writeasHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the tag hint for a tag feed with an encoded tag', () => {
-      const value = 'https://write.as/andreas/tag:s%C3%B6dermalm/feed/'
+      const value = 'https://write.as/bob/tag:s%C3%B6dermalm/feed/'
       const expected: DiscoverUriHint = { key: 'writeas:tag', label: 'Tag' }
 
       expect(writeasHandler.getFeedHint?.(value)).toEqual(expected)
@@ -159,13 +159,13 @@ describe('writeasHandler', () => {
     })
 
     it('should return undefined for a tag page', () => {
-      const value = 'https://write.as/jasonpettus/tag:mindset'
+      const value = 'https://write.as/carol/tag:mindset'
 
       expect(writeasHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path under a dotted first segment', () => {
-      const value = 'https://write.as/z6hpeu0fqc6a7.md/feed/'
+      const value = 'https://write.as/abcde12345fgh.md/feed/'
 
       expect(writeasHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -180,7 +180,7 @@ describe('writeasHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://write.as/matt/feed/', { key: 'writeas:blog', label: 'Blog' }],
-      ['https://write.as/jasonpettus/tag:mindset/feed/', { key: 'writeas:tag', label: 'Tag' }],
+      ['https://write.as/carol/tag:mindset/feed/', { key: 'writeas:tag', label: 'Tag' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
