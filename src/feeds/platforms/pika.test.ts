@@ -6,13 +6,13 @@ import { type PikaUrl, parsePikaUrl, pikaHandler } from './pika.js'
 
 describe('parsePikaUrl', () => {
   it('should return the tag for a tag page', () => {
-    const expected: PikaUrl = { kind: 'tag', blog: 'example', tag: 'books' }
+    const expected: PikaUrl = { kind: 'tag', tag: 'books' }
 
     expect(parsePikaUrl('https://example.pika.page/tag/books')).toEqual(expected)
   })
 
   it('should return the blog for any other page', () => {
-    const expected: PikaUrl = { kind: 'blog', blog: 'example' }
+    const expected: PikaUrl = { kind: 'blog' }
 
     expect(parsePikaUrl('https://example.pika.page/posts/hello')).toEqual(expected)
   })
