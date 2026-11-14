@@ -310,21 +310,21 @@ describe('bubblelifeHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the library hint for a feed', () => {
-      const value = 'https://mckinney.bubblelife.com/rss?c=35660530'
+      const value = 'https://alice.bubblelife.com/rss?c=12345'
       const expected: DiscoverUriHint = { key: 'bubblelife:library', label: 'Library' }
 
       expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the library hint for a feed on a tenant with underscores', () => {
-      const value = 'https://highland_park_dental.bubblelife.com/rss?c=3568411'
+      const value = 'https://alice_bob.bubblelife.com/rss?c=1234567'
       const expected: DiscoverUriHint = { key: 'bubblelife:library', label: 'Library' }
 
       expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the library hint for a feed over http', () => {
-      const value = 'http://mckinney.bubblelife.com/rss?c=35660530'
+      const value = 'http://alice.bubblelife.com/rss?c=12345'
       const expected: DiscoverUriHint = { key: 'bubblelife:library', label: 'Library' }
 
       expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
@@ -370,7 +370,7 @@ describe('bubblelifeHandler', () => {
     })
 
     it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/rss?c=35660530'
+      const value = 'https://example.com/rss?c=12345'
 
       expect(bubblelifeHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -378,14 +378,8 @@ describe('bubblelifeHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://mckinney.bubblelife.com/rss?c=35660530',
-        { key: 'bubblelife:library', label: 'Library' },
-      ],
-      [
-        'http://mckinney.bubblelife.com/rss?c=35660530',
-        { key: 'bubblelife:library', label: 'Library' },
-      ],
+      ['https://alice.bubblelife.com/rss?c=12345', { key: 'bubblelife:library', label: 'Library' }],
+      ['http://alice.bubblelife.com/rss?c=12345', { key: 'bubblelife:library', label: 'Library' }],
       [
         'https://example.bubblelife.com/rss?c=12345&t=67890',
         { key: 'bubblelife:topic', label: 'Topic' },
