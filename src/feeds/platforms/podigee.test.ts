@@ -1,11 +1,15 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type PodigeeUrl, parsePodigeeUrl, podigeeHandler } from './podigee.js'
 
 describe('parsePodigeeUrl', () => {
   it('should return the podcast for a show subdomain', () => {
+    const value = 'https://example.podigee.io/'
     const expected: PodigeeUrl = { kind: 'podcast' }
 
-    expect(parsePodigeeUrl('https://example.podigee.io/')).toEqual(expected)
+    expect(parsePodigeeUrl(value)).toEqual(expected)
   })
 
   it('should return undefined for a nested subdomain', () => {
@@ -63,6 +67,121 @@ describe('podigeeHandler', () => {
       ]
 
       expect(podigeeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the feed under the page scheme for a show opened over http', () => {
+      const value = 'http://alice.podigee.io/episodes'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://alice.podigee.io/feed/mp3',
+          hint: { key: 'podigee:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(podigeeHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for the mp3 feed', () => {
+      const value = 'https://alice.podigee.io/feed/mp3'
+      const expected: DiscoverUriHint = { key: 'podigee:podcast', label: 'Podcast' }
+
+      expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for the aac feed', () => {
+      const value = 'https://alice.podigee.io/feed/aac'
+      const expected: DiscoverUriHint = { key: 'podigee:podcast', label: 'Podcast' }
+
+      expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for the opus feed', () => {
+      const value = 'https://alice.podigee.io/feed/opus'
+      const expected: DiscoverUriHint = { key: 'podigee:podcast', label: 'Podcast' }
+
+      expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for the vorbis feed', () => {
+      const value = 'https://alice.podigee.io/feed/vorbis'
+      const expected: DiscoverUriHint = { key: 'podigee:podcast', label: 'Podcast' }
+
+      expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for the mp3 feed with a trailing slash', () => {
+      const value = 'https://alice.podigee.io/feed/mp3/'
+      const expected: DiscoverUriHint = { key: 'podigee:podcast', label: 'Podcast' }
+
+      expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for the mp3 feed with a source parameter', () => {
+      const value = 'https://alice.podigee.io/feed/mp3?source=itunes'
+      const expected: DiscoverUriHint = { key: 'podigee:podcast', label: 'Podcast' }
+
+      expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for the mp3 feed with an auth token', () => {
+      const value = 'https://alice.podigee.io/feed/mp3?auth=abc123'
+      const expected: DiscoverUriHint = { key: 'podigee:podcast', label: 'Podcast' }
+
+      expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the feed hint for a further mp3 feed of a show', () => {
+      const value = 'https://alice.podigee.io/feeds/new_feed_12345/mp3'
+      const expected: DiscoverUriHint = { key: 'podigee:feed', label: 'Feed' }
+
+      expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the feed hint for a further aac feed of a show', () => {
+      const value = 'https://alice.podigee.io/feeds/new_feed_12345/aac'
+      const expected: DiscoverUriHint = { key: 'podigee:feed', label: 'Feed' }
+
+      expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a page of a show', () => {
+      const value = 'https://alice.podigee.io/episodes'
+
+      expect(podigeeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the feed of a network', () => {
+      const value = 'https://alice.network.podigee.io/feed/mp3'
+
+      expect(podigeeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const podcastHint: DiscoverUriHint = { key: 'podigee:podcast', label: 'Podcast' }
+    const feedHint: DiscoverUriHint = { key: 'podigee:feed', label: 'Feed' }
+    const values: Array<[string, DiscoverUriHint]> = [
+      ['https://alice.podigee.io/feed/aac', podcastHint],
+      ['https://alice.podigee.io/feed/opus', podcastHint],
+      ['https://alice.podigee.io/feed/vorbis', podcastHint],
+      ['https://alice.podigee.io/feed/mp3/', podcastHint],
+      ['https://alice.podigee.io/feed/mp3?source=itunes', podcastHint],
+      ['https://alice.podigee.io/feeds/new_feed_12345/mp3', feedHint],
+      ['https://alice.podigee.io/feeds/new_feed_12345/opus', feedHint],
+      ['https://alice.podigee.io/feeds/new_feed_12345/vorbis', feedHint],
+    ]
+
+    it.each(values)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [podigeeHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
