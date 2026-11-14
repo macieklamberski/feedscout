@@ -731,6 +731,7 @@
   "hearthis": {
     "hearthis:new-tracks": "https://hearthis.at/new_tracks.rss",
     "hearthis:set": "https://hearthis.at/set/79712-8940590/podcast/",
+    "hearthis:track-list": "https://hearthis.at/respectmusic/rss/",
     "hearthis:tracks": "https://hearthis.at/james-monty-montgomery/podcast/"
   },
   "heyWorld": {

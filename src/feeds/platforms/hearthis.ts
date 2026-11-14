@@ -13,6 +13,8 @@ const feeds = definePlatformFeeds([
   { key: 'hearthis:tracks', template: 'https://hearthis.at/{username}/podcast/' },
   // The same feed, byte for byte, under a second spelling.
   { key: 'hearthis:tracks', template: 'https://hearthis.at/{username}/podcast.xml' },
+  // The same tracks as a plain list, with no audio enclosures.
+  { key: 'hearthis:track-list', template: 'https://hearthis.at/{username}/rss/' },
   // A set's feed, which its page links. The set id is not in the page URL. Any one segment after
   // `podcast/`, such as `feed/` or `.rss/`, serves the same items.
   { key: 'hearthis:set', template: 'https://hearthis.at/set/{setId}/podcast/' },
@@ -47,6 +49,7 @@ export const hearthisHandler: PlatformHandler = {
 
     return [
       feeds.getFeedEntry('hearthis:tracks', { username: parsed.username }),
+      feeds.getFeedEntry('hearthis:track-list', { username: parsed.username }),
       feeds.getFeedEntry('hearthis:new-tracks'),
     ]
   },

@@ -51,6 +51,10 @@ describe('hearthisHandler', () => {
           hint: { key: 'hearthis:tracks', label: 'Tracks' },
         },
         {
+          uri: 'https://hearthis.at/james-monty-montgomery/rss/',
+          hint: { key: 'hearthis:track-list', label: 'Track list' },
+        },
+        {
           uri: 'https://hearthis.at/new_tracks.rss',
           hint: { key: 'hearthis:new-tracks', label: 'New tracks' },
         },
@@ -65,6 +69,10 @@ describe('hearthisHandler', () => {
         {
           uri: 'https://hearthis.at/james-monty-montgomery/podcast/',
           hint: { key: 'hearthis:tracks', label: 'Tracks' },
+        },
+        {
+          uri: 'https://hearthis.at/james-monty-montgomery/rss/',
+          hint: { key: 'hearthis:track-list', label: 'Track list' },
         },
         {
           uri: 'https://hearthis.at/new_tracks.rss',
@@ -126,6 +134,13 @@ describe('hearthisHandler', () => {
       expect(hearthisHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the track list key for a user track list feed', () => {
+      const value = 'https://hearthis.at/alice/rss/'
+      const expected: DiscoverUriHint = { key: 'hearthis:track-list', label: 'Track list' }
+
+      expect(hearthisHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the new tracks key for the new tracks feed', () => {
       const value = 'https://hearthis.at/new_tracks.rss'
       const expected: DiscoverUriHint = { key: 'hearthis:new-tracks', label: 'New tracks' }
@@ -150,10 +165,13 @@ describe('hearthisHandler', () => {
     const tracksHint: DiscoverUriHint = { key: 'hearthis:tracks', label: 'Tracks' }
     const newTracksHint: DiscoverUriHint = { key: 'hearthis:new-tracks', label: 'New tracks' }
     const setHint: DiscoverUriHint = { key: 'hearthis:set', label: 'Set' }
+    const trackListHint: DiscoverUriHint = { key: 'hearthis:track-list', label: 'Track list' }
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://hearthis.at/alice/podcast/', tracksHint],
       ['http://www.hearthis.at/alice/podcast', tracksHint],
       ['https://hearthis.at/alice/podcast.xml', tracksHint],
+      ['https://hearthis.at/alice/rss/', trackListHint],
+      ['http://www.hearthis.at/alice/rss', trackListHint],
       ['https://hearthis.at/new_tracks.rss', newTracksHint],
       ['http://www.hearthis.at/new_tracks.rss', newTracksHint],
       ['https://hearthis.at/set/12345-67890/podcast/', setHint],
