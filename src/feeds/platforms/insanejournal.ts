@@ -31,6 +31,7 @@ const pathHosts = [...asylumHosts, ...feedHosts, ...userHosts]
 const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/i
 const firstSegmentRegex = /^\/([^/]+)/
+const pathTagRegex = /^\/[^/]+\/tag\/([^/]+)/i
 
 const journalFeeds = definePlatformFeeds(
   [
@@ -85,6 +86,8 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
   }
 
   const tag = pathname.match(journalTagRegex)?.[1]
+  // A path host names the journal first, so a tag page sits under its name.
+  const pathTag = pathname.match(pathTagRegex)?.[1]
 
   if (isHostOf(url, wwwHosts)) {
     const username = getJournalName(pathname, wwwUsersPathRegex)
@@ -109,7 +112,7 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
       return
     }
 
-    return { kind: 'asylum', asylum, tag }
+    return { kind: 'asylum', asylum, tag: pathTag }
   }
 
   if (isHostOf(url, feedHosts)) {
@@ -119,7 +122,17 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
       return
     }
 
-    return { kind: 'syndicated', feed, tag }
+    return { kind: 'syndicated', feed, tag: pathTag }
+  }
+
+  if (isHostOf(url, userHosts)) {
+    const username = getJournalName(pathname, firstSegmentRegex)
+
+    if (!username) {
+      return
+    }
+
+    return { kind: 'journal', username, tag: pathTag }
   }
 
   if (!getTenantSubdomain(url, domains)) {
@@ -183,6 +196,17 @@ export const insanejournalHandler: PlatformHandler = {
       }
 
       return getFeeds(pageFeeds, { journal: parsed.feed }, parsed.tag)
+    }
+
+    // A journal the users host serves by path keeps its feeds there.
+    if (parsed.username && isHostOf(url, userHosts)) {
+      const pageFeeds = pathFeeds.forUrl(url)
+
+      if (!pageFeeds) {
+        return []
+      }
+
+      return getFeeds(pageFeeds, { journal: parsed.username }, parsed.tag)
     }
 
     const journalUrl = parsed.username ? getHostOrigin(`${parsed.username}.insanejournal.com`) : url

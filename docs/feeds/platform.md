@@ -1090,7 +1090,9 @@ Discovers RSS and Atom feeds for InsaneJournal journals.
 | `insanejournal.com/users/{user}` or `insanejournal.com/~{user}` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 | `asylums.insanejournal.com/{asylum}`, `insanejournal.com/asylum/{asylum}` or `insanejournal.com/community/{asylum}` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 | `feeds.insanejournal.com/{feed}` | Posts<sup>†</sup> (RSS + Atom) · userpics<sup>?</sup> (Atom) |
+| `users.insanejournal.com/{journal}` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 | `{user}.insanejournal.com/tag/{tag}` | Tag (RSS + Atom) · posts (RSS + Atom) · userpics (Atom) |
+| `users.insanejournal.com/{journal}/tag/{tag}`, `asylums.insanejournal.com/{asylum}/tag/{tag}` or `feeds.insanejournal.com/{feed}/tag/{tag}` | Tag (RSS + Atom) · posts (RSS + Atom) · userpics (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
