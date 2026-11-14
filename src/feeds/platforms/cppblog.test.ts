@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type CppblogUrl, cppblogHandler, parseCppblogUrl } from './cppblog.js'
 
 describe('parseCppblogUrl', () => {
@@ -214,6 +216,86 @@ describe('cppblogHandler', () => {
       ]
 
       expect(cppblogHandler.resolve(value, content)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the posts key for a posts feed', () => {
+      const value = 'http://www.cppblog.com/alice/rss.aspx'
+      const expected: DiscoverUriHint = { key: 'cppblog:posts', label: 'Posts' }
+
+      expect(cppblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts key for a capitalized posts feed on the https apex', () => {
+      const value = 'https://cppblog.com/alice/Rss.aspx'
+      const expected: DiscoverUriHint = { key: 'cppblog:posts', label: 'Posts' }
+
+      expect(cppblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the comments key for a comments feed', () => {
+      const value = 'https://www.cppblog.com/alice/CommentsRSS.aspx'
+      const expected: DiscoverUriHint = { key: 'cppblog:comments', label: 'Comments' }
+
+      expect(cppblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the category key for a category feed', () => {
+      const value = 'http://cppblog.com/alice/category/5356.html/rss'
+      const expected: DiscoverUriHint = { key: 'cppblog:category', label: 'Category' }
+
+      expect(cppblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the favorites key for a favorite feed', () => {
+      const value = 'https://www.cppblog.com/alice/favorite/1914.html/rss'
+      const expected: DiscoverUriHint = { key: 'cppblog:favorites', label: 'Favorites' }
+
+      expect(cppblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a category page', () => {
+      const value = 'http://www.cppblog.com/alice/category/5356.html'
+
+      expect(cppblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the site feed', () => {
+      const value = 'http://www.cppblog.com/rss.aspx'
+
+      expect(cppblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on another subdomain', () => {
+      const value = 'http://m.cppblog.com/alice/rss.aspx'
+
+      expect(cppblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const posts: DiscoverUriHint = { key: 'cppblog:posts', label: 'Posts' }
+    const comments: DiscoverUriHint = { key: 'cppblog:comments', label: 'Comments' }
+    const category: DiscoverUriHint = { key: 'cppblog:category', label: 'Category' }
+    const favorites: DiscoverUriHint = { key: 'cppblog:favorites', label: 'Favorites' }
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['http://www.cppblog.com/alice/rss.aspx', posts],
+      ['https://cppblog.com/alice/Rss.aspx', posts],
+      ['https://www.cppblog.com/alice/CommentsRSS.aspx', comments],
+      ['http://cppblog.com/alice/category/5356.html/rss', category],
+      ['https://www.cppblog.com/alice/favorite/1914.html/rss', favorites],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [cppblogHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
