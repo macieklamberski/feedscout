@@ -815,11 +815,10 @@ describe('redmineHandler', () => {
       expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return the news hint for a feed on the www host of a tenant', () => {
+    it('should return undefined for a feed on the www host of a tenant', () => {
       const value = 'https://www.example.plan.io/news.atom'
-      const expected: DiscoverUriHint = { key: 'redmine:news', label: 'News' }
 
-      expect(redmineHandler.getFeedHint?.(value)).toEqual(expected)
+      expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
