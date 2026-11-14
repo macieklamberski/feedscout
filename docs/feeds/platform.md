@@ -446,13 +446,14 @@ Discovers RSS feeds for SourceForge project activity, file releases, news, and d
 
 ### Kickstarter
 
-Discovers Atom feeds for Kickstarter projects and global new projects.
+Discovers Atom feeds for Kickstarter projects, curated pages, global new projects and the blog.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `kickstarter.com` | Global new projects<sup>†</sup> |
-| `kickstarter.com/discover` | Global new projects |
-| `kickstarter.com/projects/{creator}/{project}` | Project updates |
+| `kickstarter.com` | Global new projects<sup>†</sup> · blog |
+| `kickstarter.com/discover` | Global new projects · blog |
+| `kickstarter.com/pages/{name}` | Curated projects · blog |
+| `kickstarter.com/projects/{creator}/{project}` | Project updates · blog |
 
 <sup>†</sup> *Found only by the Platform method.*
 

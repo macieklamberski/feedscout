@@ -88,6 +88,8 @@
     "github-gist:discover": "Discover",
     "kickstarter:updates": "Updates",
     "kickstarter:projects": "Projects",
+    "kickstarter:page": "Curated projects",
+    "kickstarter:blog": "Blog",
     "letterboxd:diary": "Diary",
     "letterboxd:journal": "Journal",
     "lobsters:tag": "Tag",

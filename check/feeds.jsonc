@@ -847,6 +847,8 @@
     ]
   },
   "kickstarter": {
+    "kickstarter:blog": "https://www.kickstarter.com/blog.atom",
+    "kickstarter:page": "https://www.kickstarter.com/pages/tees.atom",
     "kickstarter:projects": "https://www.kickstarter.com/projects/feed.atom",
     "kickstarter:updates": "https://www.kickstarter.com/projects/elanlee/exploding-kittens/posts.atom"
   },

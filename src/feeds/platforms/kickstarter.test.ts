@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type KickstarterUrl, kickstarterHandler, parseKickstarterUrl } from './kickstarter.js'
 
 describe('parseKickstarterUrl', () => {
@@ -8,6 +11,12 @@ describe('parseKickstarterUrl', () => {
     expect(parseKickstarterUrl('https://www.kickstarter.com/projects/creator/project')).toEqual(
       expected,
     )
+  })
+
+  it('should return the curated page for a pages path', () => {
+    const expected: KickstarterUrl = { kind: 'page', name: 'example' }
+
+    expect(parseKickstarterUrl('https://www.kickstarter.com/pages/example')).toEqual(expected)
   })
 
   it('should return the home page for any other page', () => {
@@ -52,6 +61,10 @@ describe('kickstarterHandler', () => {
           uri: 'https://www.kickstarter.com/projects/reinnesplace/reinnes-place/posts.atom',
           hint: { key: 'kickstarter:updates', label: 'Updates' },
         },
+        {
+          uri: 'https://www.kickstarter.com/blog.atom',
+          hint: { key: 'kickstarter:blog', label: 'Blog' },
+        },
       ]
 
       expect(kickstarterHandler.resolve(value)).toEqual(expected)
@@ -63,6 +76,10 @@ describe('kickstarterHandler', () => {
         {
           uri: 'https://www.kickstarter.com/projects/reinnesplace/reinnes-place/posts.atom',
           hint: { key: 'kickstarter:updates', label: 'Updates' },
+        },
+        {
+          uri: 'https://www.kickstarter.com/blog.atom',
+          hint: { key: 'kickstarter:blog', label: 'Blog' },
         },
       ]
 
@@ -76,6 +93,10 @@ describe('kickstarterHandler', () => {
           uri: 'https://www.kickstarter.com/projects/reinnesplace/reinnes-place/posts.atom',
           hint: { key: 'kickstarter:updates', label: 'Updates' },
         },
+        {
+          uri: 'https://www.kickstarter.com/blog.atom',
+          hint: { key: 'kickstarter:blog', label: 'Blog' },
+        },
       ]
 
       expect(kickstarterHandler.resolve(value)).toEqual(expected)
@@ -87,6 +108,10 @@ describe('kickstarterHandler', () => {
         {
           uri: 'https://www.kickstarter.com/projects/feed.atom',
           hint: { key: 'kickstarter:projects', label: 'Projects' },
+        },
+        {
+          uri: 'https://www.kickstarter.com/blog.atom',
+          hint: { key: 'kickstarter:blog', label: 'Blog' },
         },
       ]
 
@@ -100,6 +125,10 @@ describe('kickstarterHandler', () => {
           uri: 'https://www.kickstarter.com/projects/feed.atom',
           hint: { key: 'kickstarter:projects', label: 'Projects' },
         },
+        {
+          uri: 'https://www.kickstarter.com/blog.atom',
+          hint: { key: 'kickstarter:blog', label: 'Blog' },
+        },
       ]
 
       expect(kickstarterHandler.resolve(value)).toEqual(expected)
@@ -111,6 +140,26 @@ describe('kickstarterHandler', () => {
         {
           uri: 'https://www.kickstarter.com/projects/feed.atom',
           hint: { key: 'kickstarter:projects', label: 'Projects' },
+        },
+        {
+          uri: 'https://www.kickstarter.com/blog.atom',
+          hint: { key: 'kickstarter:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(kickstarterHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return curated page feed for a curated page', () => {
+      const value = 'https://www.kickstarter.com/pages/example'
+      const expected = [
+        {
+          uri: 'https://www.kickstarter.com/pages/example.atom',
+          hint: { key: 'kickstarter:page', label: 'Curated projects' },
+        },
+        {
+          uri: 'https://www.kickstarter.com/blog.atom',
+          hint: { key: 'kickstarter:blog', label: 'Blog' },
         },
       ]
 
@@ -124,6 +173,10 @@ describe('kickstarterHandler', () => {
           uri: 'https://www.kickstarter.com/projects/creator/project/posts.atom',
           hint: { key: 'kickstarter:updates', label: 'Updates' },
         },
+        {
+          uri: 'https://www.kickstarter.com/blog.atom',
+          hint: { key: 'kickstarter:blog', label: 'Blog' },
+        },
       ]
 
       expect(kickstarterHandler.resolve(value)).toEqual(expected)
@@ -136,9 +189,119 @@ describe('kickstarterHandler', () => {
           uri: 'https://www.kickstarter.com/projects/creator/project/posts.atom',
           hint: { key: 'kickstarter:updates', label: 'Updates' },
         },
+        {
+          uri: 'https://www.kickstarter.com/blog.atom',
+          hint: { key: 'kickstarter:blog', label: 'Blog' },
+        },
       ]
 
       expect(kickstarterHandler.resolve(value)).toEqual(expected)
     })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the updates hint for a project updates feed', () => {
+      const value = 'https://www.kickstarter.com/projects/alice/example/posts.atom'
+      const expected: DiscoverUriHint = { key: 'kickstarter:updates', label: 'Updates' }
+
+      expect(kickstarterHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the updates hint for a project updates feed with a numeric creator', () => {
+      const value = 'https://www.kickstarter.com/projects/12345/example/posts.atom'
+      const expected: DiscoverUriHint = { key: 'kickstarter:updates', label: 'Updates' }
+
+      expect(kickstarterHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the updates hint for a project updates feed without www', () => {
+      const value = 'https://kickstarter.com/projects/alice/example/posts.atom'
+      const expected: DiscoverUriHint = { key: 'kickstarter:updates', label: 'Updates' }
+
+      expect(kickstarterHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the updates hint for a project updates feed over http', () => {
+      const value = 'http://www.kickstarter.com/projects/alice/example/posts.atom'
+      const expected: DiscoverUriHint = { key: 'kickstarter:updates', label: 'Updates' }
+
+      expect(kickstarterHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the projects hint for the projects feed', () => {
+      const value = 'https://www.kickstarter.com/projects/feed.atom'
+      const expected: DiscoverUriHint = { key: 'kickstarter:projects', label: 'Projects' }
+
+      expect(kickstarterHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the projects hint for the projects feed without www', () => {
+      const value = 'https://kickstarter.com/projects/feed.atom'
+      const expected: DiscoverUriHint = { key: 'kickstarter:projects', label: 'Projects' }
+
+      expect(kickstarterHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the page hint for a curated page feed', () => {
+      const value = 'https://www.kickstarter.com/pages/example.atom'
+      const expected: DiscoverUriHint = { key: 'kickstarter:page', label: 'Curated projects' }
+
+      expect(kickstarterHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the blog hint for the blog feed', () => {
+      const value = 'https://www.kickstarter.com/blog.atom'
+      const expected: DiscoverUriHint = { key: 'kickstarter:blog', label: 'Blog' }
+
+      expect(kickstarterHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a curated page', () => {
+      const value = 'https://www.kickstarter.com/pages/example'
+
+      expect(kickstarterHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a project page', () => {
+      const value = 'https://www.kickstarter.com/projects/alice/example'
+
+      expect(kickstarterHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the updates feed path on another host', () => {
+      const value = 'https://example.com/projects/alice/example/posts.atom'
+
+      expect(kickstarterHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+})
+
+describe('discoverUrisFromPlatform', () => {
+  const updatesHint: DiscoverUriHint = { key: 'kickstarter:updates', label: 'Updates' }
+  const projectsHint: DiscoverUriHint = { key: 'kickstarter:projects', label: 'Projects' }
+  const pageHint: DiscoverUriHint = { key: 'kickstarter:page', label: 'Curated projects' }
+  const blogHint: DiscoverUriHint = { key: 'kickstarter:blog', label: 'Blog' }
+  const values: Array<[string, DiscoverUriHint]> = [
+    ['https://www.kickstarter.com/projects/alice/example/posts.atom', updatesHint],
+    ['https://kickstarter.com/projects/alice/example/posts.atom', updatesHint],
+    ['http://www.kickstarter.com/projects/alice/example/posts.atom', updatesHint],
+    ['https://www.kickstarter.com/projects/feed.atom', projectsHint],
+    ['https://kickstarter.com/projects/feed.atom', projectsHint],
+    ['http://www.kickstarter.com/projects/feed.atom', projectsHint],
+    ['https://www.kickstarter.com/pages/example.atom', pageHint],
+    ['http://kickstarter.com/pages/example.atom', pageHint],
+    ['https://www.kickstarter.com/blog.atom', blogHint],
+    ['http://kickstarter.com/blog.atom', blogHint],
+  ]
+
+  it.each(values)('should return %s itself', async (value, hint) => {
+    const options = {
+      ...defaultPlatformOptions,
+      handlers: [kickstarterHandler],
+      baseUrl: value,
+    }
+    const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 })
