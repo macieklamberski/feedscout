@@ -24,6 +24,9 @@ export type PlatformFeedTemplate = {
   // `{name*}` path placeholder takes one or more segments, filled from `name` as `docs/api`.
   template: string
   format?: DiscoverUriHint['format']
+  // Another spelling of one feed, such as a legacy host. Its canonical row is the first row above it
+  // with the same key and format and no `isAlias`, and the table throws when there is none.
+  isAlias?: boolean
 }
 
 // A value left undefined is no value, so the row it would fill is skipped.
@@ -40,6 +43,9 @@ export type PlatformFeedTableOptions = {
   domains?: Array<string | RegExp>
   // Whether `www` can be a tenant, so `www.example.com` matches a `{user}.example.com` row.
   isWwwTenant?: boolean
+  // Whether `www` in front of a tenant label is dropped, so `www.alice.example.com` matches as
+  // `alice.example.com`.
+  isWwwTenantPrefix?: boolean
 }
 
 export type PlatformFeedTable = {
@@ -191,24 +197,28 @@ const compileTemplate = (
     multiSegmentCaptures,
     true,
   )
-  // A fixed host matches with or without `www` in front, a tenant label never does, so
-  // `www.alice.example.com` is no tenant's host.
+  // A fixed host matches with or without `www` in front, a tenant label only with
+  // `isWwwTenantPrefix`, so `www.alice.example.com` is otherwise no tenant's host.
   const toHostPathRegex = (isWwwOptional: boolean): RegExp => {
     const wwwSource = isWwwOptional ? '(?:www\\.)?' : ''
+    const tenantWwwSource = options.isWwwTenantPrefix ? wwwSource : ''
     const normalize = (value: string): string => (isWwwOptional ? stripWww(value) : value)
     const hostSources = [
       ...hosts.map((value) => {
         return `${wwwSource}${toEntrySource(isString(value) ? normalize(value) : value)}`
       }),
-      ...(domains.length > 0 ? [`${tenantSource}\\.${domainSource}`] : []),
+      ...(domains.length > 0 ? [`${tenantWwwSource}${tenantSource}\\.${domainSource}`] : []),
     ]
     const isFixedHost = !host.startsWith('{') || host.startsWith('{domain}')
+    const fixedPrefixSource = isFixedHost ? wwwSource : ''
+    const isTenantHost = !isFixedHost && !host.startsWith('{host}')
+    const tenantPrefixSource = isTenantHost ? tenantWwwSource : ''
     const hostSource = toRegexSource(normalize(host), tenantSource, {
       host: `(?:${hostSources.join('|')})`,
       domain: domainSource,
     })
 
-    return new RegExp(`^${isFixedHost ? wwwSource : ''}${hostSource}${pathSource}$`, 'i')
+    return new RegExp(`^${fixedPrefixSource}${tenantPrefixSource}${hostSource}${pathSource}$`, 'i')
   }
   const asGivenRegex = toHostPathRegex(false)
   const optionalWwwRegex = toHostPathRegex(true)
@@ -288,6 +298,20 @@ export const definePlatformFeeds = (
   templates: Array<PlatformFeedTemplate>,
   options: PlatformFeedTableOptions = {},
 ): PlatformFeedTable => {
+  for (const [index, { key, format, isAlias }] of templates.entries()) {
+    if (!isAlias) {
+      continue
+    }
+
+    const hasCanonical = templates.slice(0, index).some((row) => {
+      return !row.isAlias && row.key === key && row.format === format
+    })
+
+    if (!hasCanonical) {
+      throw new Error(t(locales.errors.missingCanonicalFeedTemplate, { key }))
+    }
+  }
+
   const compiled = templates.map((template) => compileTemplate(template, options))
   // A template with more query parameters is the more specific one, so it is read first. At the
   // same count the earlier row wins, so a `{name*}` row goes after the rows its paths overlap.
