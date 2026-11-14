@@ -14,9 +14,6 @@ const feedHosts = ['feed.podbean.com']
 const feeds = definePlatformFeeds(
   [
     { key: 'podbean:podcast', template: 'https://feed.podbean.com/{show}/feed.xml' },
-    // The show's feed cut to its latest episode. No other count is served: `last2` and `last5`
-    // redirect away.
-    { key: 'podbean:latest', template: 'https://feed.podbean.com/{show}/last1/feed.xml' },
     // The feed host's S3 bucket serves the same feed. S3 is shared, so the bucket segment is
     // literal.
     {
@@ -26,6 +23,9 @@ const feeds = definePlatformFeeds(
     },
     // The show's old feed path, which redirects to the feed host.
     { key: 'podbean:podcast', template: '{scheme}://{host}/feed.xml', isAlias: true },
+    // The show's feed cut to its latest episode. No other count is served: `last2` and `last5`
+    // redirect away.
+    { key: 'podbean:latest', template: 'https://feed.podbean.com/{show}/last1/feed.xml' },
   ],
   { domains },
 )
