@@ -2700,7 +2700,8 @@ Discovers the feeds of a Noticeable newspage. Newspages on `noticeable.news` are
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{newspage}/labels/{label}` | Label<sup>†</sup> · newspage (RSS + Atom<sup>†</sup> + JSON Feed) |
+| `{newspage}.noticeable.news/labels/{label}` | Label<sup>†</sup> · newspage (RSS + Atom<sup>†</sup> + JSON Feed) |
+| `{host}/labels/{label}` | Label<sup>†</sup> · newspage (RSS + Atom<sup>†</sup> + JSON Feed) |
 | Any other page | Newspage (RSS + Atom<sup>†</sup> + JSON Feed) |
 
 <sup>†</sup> *Found only by the Platform method.*

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   isNoticeableHtml,
   type NoticeableUrl,
@@ -161,6 +163,134 @@ describe('noticeableHandler', () => {
 
     it('should return empty array for an invalid URL', () => {
       expect(noticeableHandler.resolve('not-a-url')).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a newspage RSS feed', () => {
+      const value = 'https://example.noticeable.news/feed.rss'
+      const expected: DiscoverUriHint = { key: 'noticeable:posts', label: 'Posts', format: 'rss' }
+
+      expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a newspage Atom feed', () => {
+      const value = 'https://acme.noticeable.news/feed.atom'
+      const expected: DiscoverUriHint = { key: 'noticeable:posts', label: 'Posts', format: 'atom' }
+
+      expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a newspage JSON feed', () => {
+      const value = 'https://example.noticeable.news/feed.json'
+      const expected: DiscoverUriHint = { key: 'noticeable:posts', label: 'Posts', format: 'json' }
+
+      expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a newspage feed over http', () => {
+      const value = 'http://example.noticeable.news/feed.rss'
+      const expected: DiscoverUriHint = { key: 'noticeable:posts', label: 'Posts', format: 'rss' }
+
+      expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a newspage feed with an embed parameter', () => {
+      const value = 'https://example.noticeable.news/feed.rss?embed=true'
+      const expected: DiscoverUriHint = { key: 'noticeable:posts', label: 'Posts', format: 'rss' }
+
+      expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the label hint for a label RSS feed', () => {
+      const value = 'https://example.noticeable.news/releases.rss'
+      const expected: DiscoverUriHint = { key: 'noticeable:label', label: 'Label', format: 'rss' }
+
+      expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the label hint for a label Atom feed', () => {
+      const value = 'https://acme.noticeable.news/templates.atom'
+      const expected: DiscoverUriHint = { key: 'noticeable:label', label: 'Label', format: 'atom' }
+
+      expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the label hint for a label JSON feed', () => {
+      const value = 'https://example.noticeable.news/releases.json'
+      const expected: DiscoverUriHint = { key: 'noticeable:label', label: 'Label', format: 'json' }
+
+      expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a label page', () => {
+      const value = 'https://example.noticeable.news/labels/releases'
+
+      expect(noticeableHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a publication page', () => {
+      const value = 'https://example.noticeable.news/publications/new-billing-api'
+
+      expect(noticeableHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on the Noticeable site', () => {
+      const value = 'https://noticeable.news/feed.rss'
+
+      expect(noticeableHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on a nested subdomain', () => {
+      const value = 'https://news.example.noticeable.news/feed.rss'
+
+      expect(noticeableHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://example.noticeable.io/feed.rss'
+
+      expect(noticeableHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.noticeable.news/feed.rss',
+        { key: 'noticeable:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://example.noticeable.news/feed.atom',
+        { key: 'noticeable:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://example.noticeable.news/feed.json',
+        { key: 'noticeable:posts', label: 'Posts', format: 'json' },
+      ],
+      [
+        'https://example.noticeable.news/releases.rss',
+        { key: 'noticeable:label', label: 'Label', format: 'rss' },
+      ],
+      [
+        'https://example.noticeable.news/releases.atom',
+        { key: 'noticeable:label', label: 'Label', format: 'atom' },
+      ],
+      [
+        'https://example.noticeable.news/releases.json',
+        { key: 'noticeable:label', label: 'Label', format: 'json' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [noticeableHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
