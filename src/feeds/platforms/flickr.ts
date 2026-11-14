@@ -1,14 +1,14 @@
 import {
-  composeQuery,
   decodeSegment,
   getAnyOf,
   getPathSegments,
+  getQueryParam,
   isAnyOf,
   isHostOf,
   parseUrl,
 } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers favorites, groupDiscuss, photostream (html), partly covers group, groupPool.
@@ -25,7 +25,9 @@ export type FlickrUrl =
   | { kind: 'forum' }
 
 const hosts = ['flickr.com', 'www.flickr.com']
-const feedsBase = 'https://www.flickr.com/services/feeds'
+// The API host serves every feed the www host serves. Every feed is Atom by default and RSS 2.0
+// under `format=rss_200`.
+const feedHosts = [...hosts, 'api.flickr.com']
 
 const tagRegex = /^\/photos\/tags\/([^/]+)/i
 const groupRegex = /^\/groups\/([^/]+)(?:\/([^/]+))?/i
@@ -33,6 +35,131 @@ const forumRegex = /^\/help\/forum(?:\/|$)/i
 const nsidRegex = /^\d+@N\d+$/
 
 const groupSections = ['pool', 'discuss']
+const feeds = definePlatformFeeds(
+  [
+    { key: 'flickr:forum', template: '{scheme}://{host}/services/feeds/forums.gne' },
+    {
+      key: 'flickr:forum',
+      template: '{scheme}://{host}/services/feeds/forums.gne?format=rss_200',
+      format: 'rss',
+    },
+    { key: 'flickr:recent', template: '{scheme}://{host}/services/feeds/photos_public.gne' },
+    {
+      key: 'flickr:recent',
+      template: '{scheme}://{host}/services/feeds/photos_public.gne?format=rss_200',
+      format: 'rss',
+    },
+    { key: 'flickr:recent-geo', template: '{scheme}://{host}/services/feeds/geo' },
+    {
+      key: 'flickr:recent-geo',
+      template: '{scheme}://{host}/services/feeds/geo?format=rss_200',
+      format: 'rss',
+    },
+    {
+      key: 'flickr:tag',
+      template: '{scheme}://{host}/services/feeds/photos_public.gne?tags={tags}',
+    },
+    {
+      key: 'flickr:tag',
+      template: '{scheme}://{host}/services/feeds/photos_public.gne?tags={tags}&format=rss_200',
+      format: 'rss',
+    },
+    {
+      key: 'flickr:photos',
+      template: '{scheme}://{host}/services/feeds/photos_public.gne?id={id}',
+    },
+    {
+      key: 'flickr:photos',
+      template: '{scheme}://{host}/services/feeds/photos_public.gne?id={id}&format=rss_200',
+      format: 'rss',
+    },
+    { key: 'flickr:faves', template: '{scheme}://{host}/services/feeds/photos_faves.gne?id={id}' },
+    {
+      key: 'flickr:faves',
+      template: '{scheme}://{host}/services/feeds/photos_faves.gne?id={id}&format=rss_200',
+      format: 'rss',
+    },
+    {
+      key: 'flickr:faves',
+      template: '{scheme}://{host}/services/feeds/photos_faves.gne?nsid={id}',
+      isAlias: true,
+    },
+    {
+      key: 'flickr:faves',
+      template: '{scheme}://{host}/services/feeds/photos_faves.gne?nsid={id}&format=rss_200',
+      format: 'rss',
+      isAlias: true,
+    },
+    {
+      key: 'flickr:group-pool',
+      template: '{scheme}://{host}/services/feeds/groups_pool.gne?id={id}',
+    },
+    {
+      key: 'flickr:group-pool',
+      template: '{scheme}://{host}/services/feeds/groups_pool.gne?id={id}&format=rss_200',
+      format: 'rss',
+    },
+    {
+      key: 'flickr:group-discuss',
+      template: '{scheme}://{host}/services/feeds/groups_discuss.gne?id={id}',
+    },
+    {
+      key: 'flickr:group-discuss',
+      template: '{scheme}://{host}/services/feeds/groups_discuss.gne?id={id}&format=rss_200',
+      format: 'rss',
+    },
+    // The pool photos that carry a location.
+    { key: 'flickr:group-geo', template: '{scheme}://{host}/services/feeds/geo/?g={id}' },
+    {
+      key: 'flickr:group-geo',
+      template: '{scheme}://{host}/services/feeds/geo/?g={id}&format=rss_200',
+      format: 'rss',
+    },
+    // Past here the table only claims: a photostream narrowed to a tag, an album, the photos of a
+    // member's contacts, and the photos that carry a location by member or by tag.
+    {
+      key: 'flickr:photos-tag',
+      template: '{scheme}://{host}/services/feeds/photos_public.gne?id={id}&tags={tags}',
+    },
+    {
+      key: 'flickr:photos-tag',
+      template:
+        '{scheme}://{host}/services/feeds/photos_public.gne?id={id}&tags={tags}&format=rss_200',
+      format: 'rss',
+    },
+    {
+      key: 'flickr:photoset',
+      template: '{scheme}://{host}/services/feeds/photoset.gne?nsid={id}&set={set}',
+    },
+    {
+      key: 'flickr:photoset',
+      template: '{scheme}://{host}/services/feeds/photoset.gne?nsid={id}&set={set}&format=rss_200',
+      format: 'rss',
+    },
+    {
+      key: 'flickr:contacts',
+      template: '{scheme}://{host}/services/feeds/photos_friends.gne?user_id={id}',
+    },
+    {
+      key: 'flickr:contacts',
+      template: '{scheme}://{host}/services/feeds/photos_friends.gne?user_id={id}&format=rss_200',
+      format: 'rss',
+    },
+    { key: 'flickr:photos-geo', template: '{scheme}://{host}/services/feeds/geo?id={id}' },
+    {
+      key: 'flickr:photos-geo',
+      template: '{scheme}://{host}/services/feeds/geo?id={id}&format=rss_200',
+      format: 'rss',
+    },
+    { key: 'flickr:tag-geo', template: '{scheme}://{host}/services/feeds/geo?tags={tags}' },
+    {
+      key: 'flickr:tag-geo',
+      template: '{scheme}://{host}/services/feeds/geo?tags={tags}&format=rss_200',
+      format: 'rss',
+    },
+  ],
+  { hosts: feedHosts },
+)
 
 export const parseFlickrUrl = (url: string): FlickrUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -102,73 +229,113 @@ export const flickrHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseFlickrUrl(url)
+    const page = feeds.forUrl(url)
+    const host = 'www.flickr.com'
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
+    // The forum and the uploads from everyone, with or without a location, need no value from the
+    // page, so every page builds them after its own feeds.
     if (parsed.kind === 'forum') {
-      return [{ uri: `${feedsBase}/forums.gne`, hint: composeHint('flickr:forum') }]
+      return [
+        page.getFeedEntry('flickr:forum', { host }),
+        page.getFeedEntry('flickr:recent', { host }),
+        page.getFeedEntry('flickr:recent-geo', { host }),
+      ]
     }
 
     // Tag page: /photos/tags/{tag}
     if (parsed.kind === 'tag') {
-      const query = composeQuery({ tags: decodeSegment(parsed.tag) ?? parsed.tag })
+      const tags = decodeSegment(parsed.tag) ?? parsed.tag
 
       return [
-        {
-          uri: `${feedsBase}/photos_public.gne${query}`,
-          hint: composeHint('flickr:tag'),
-        },
+        page.getFeedEntry('flickr:tag', { host, tags }),
+        page.getFeedEntry('flickr:forum', { host }),
+        page.getFeedEntry('flickr:recent', { host }),
+        page.getFeedEntry('flickr:recent-geo', { host }),
       ]
     }
 
     // Group pool or discussion: /groups/{nsid}, /groups/{nsid}/pool, /groups/{nsid}/discuss
     if (parsed.kind === 'group') {
-      const { group: nsid, section } = parsed
-      const pool = {
-        uri: `${feedsBase}/groups_pool.gne${composeQuery({ id: nsid })}`,
-        hint: composeHint('flickr:group-pool'),
-      }
-      const discuss = {
-        uri: `${feedsBase}/groups_discuss.gne${composeQuery({ id: nsid })}`,
-        hint: composeHint('flickr:group-discuss'),
-      }
-      // The pool photos that carry a location.
-      const geo = {
-        uri: `${feedsBase}/geo/${composeQuery({ g: nsid })}`,
-        hint: composeHint('flickr:group-geo'),
+      const params = { host, id: parsed.group }
+
+      if (parsed.section === 'discuss') {
+        return [
+          page.getFeedEntry('flickr:group-discuss', params),
+          page.getFeedEntry('flickr:forum', { host }),
+          page.getFeedEntry('flickr:recent', { host }),
+          page.getFeedEntry('flickr:recent-geo', { host }),
+        ]
       }
 
-      if (section === 'discuss') {
-        return [discuss]
+      if (parsed.section === 'pool') {
+        return [
+          page.getFeedEntry('flickr:group-pool', params),
+          page.getFeedEntry('flickr:group-geo', params),
+          page.getFeedEntry('flickr:forum', { host }),
+          page.getFeedEntry('flickr:recent', { host }),
+          page.getFeedEntry('flickr:recent-geo', { host }),
+        ]
       }
 
-      if (section === 'pool') {
-        return [pool, geo]
-      }
-
-      return [pool, discuss, geo]
+      return [
+        page.getFeedEntry('flickr:group-pool', params),
+        page.getFeedEntry('flickr:group-discuss', params),
+        page.getFeedEntry('flickr:group-geo', params),
+        page.getFeedEntry('flickr:forum', { host }),
+        page.getFeedEntry('flickr:recent', { host }),
+        page.getFeedEntry('flickr:recent-geo', { host }),
+      ]
     }
 
     if (!nsidRegex.test(parsed.userId)) {
       return []
     }
 
+    const params = { host, id: parsed.userId }
+
     if (parsed.kind === 'favorites') {
       return [
-        {
-          uri: `${feedsBase}/photos_faves.gne${composeQuery({ id: parsed.userId })}`,
-          hint: composeHint('flickr:faves'),
-        },
+        page.getFeedEntry('flickr:faves', params),
+        page.getFeedEntry('flickr:forum', { host }),
+        page.getFeedEntry('flickr:recent', { host }),
+        page.getFeedEntry('flickr:recent-geo', { host }),
       ]
     }
 
     return [
-      {
-        uri: `${feedsBase}/photos_public.gne${composeQuery({ id: parsed.userId })}`,
-        hint: composeHint('flickr:photos'),
-      },
+      page.getFeedEntry('flickr:photos', params),
+      page.getFeedEntry('flickr:forum', { host }),
+      page.getFeedEntry('flickr:recent', { host }),
+      page.getFeedEntry('flickr:recent-geo', { host }),
     ]
+  },
+
+  getFeedHint: (url) => {
+    const parsedUrl = parseUrl(url)
+    const hint = feeds.getFeedHint(url)
+
+    // Flickr ignores `tags` on a group pool or favorites feed, so the feed stays the same.
+    if (isAnyOf(hint?.key, ['flickr:group-pool', 'flickr:faves'])) {
+      return hint
+    }
+
+    if (hint?.key === 'flickr:photos-tag') {
+      return hint
+    }
+
+    // Flickr narrows a location feed to one tag when `tags` sits beside a non-empty `id` or `g`, a
+    // feed no row names. An empty `id=` leaves the tag feed.
+    if (
+      getQueryParam(parsedUrl, 'tags') &&
+      (getQueryParam(parsedUrl, 'id') || getQueryParam(parsedUrl, 'g'))
+    ) {
+      return
+    }
+
+    return hint
   },
 }
