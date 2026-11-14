@@ -6,13 +6,19 @@ import {
   parseUrl,
   resolveUrl,
 } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type GoopeUrl = { kind: 'freeSite' | 'site'; sitePath: string; isMemberPage: boolean }
+export type GoopeUrl = {
+  kind: 'freeSite' | 'site'
+  site?: string
+  templateId?: string
+  isMemberPage: boolean
+  isAssociationPage: boolean
+}
 
 const hosts = ['r.goope.jp']
 const domains = ['goope.jp']
@@ -20,6 +26,76 @@ const assetHosts = ['cdn.goope.jp']
 
 const templateRegex = /^t_(\d+)$/i
 const qrCodePathRegex = /^\/qr\//i
+
+// A key's template row comes before its plain row, so a page with a template id builds under it.
+const freeSiteFeeds = definePlatformFeeds([
+  {
+    key: 'goope:member-news',
+    template: 'https://r.goope.jp/{site}/t_{templateId}/shokokai/member/feed.rss',
+    format: 'rdf',
+  },
+  {
+    key: 'goope:member-news',
+    template: 'https://r.goope.jp/{site}/shokokai/member/feed.rss',
+    format: 'rdf',
+    isAlias: true,
+  },
+  {
+    key: 'goope:news',
+    template: 'https://r.goope.jp/{site}/t_{templateId}/feed.rss',
+    format: 'rdf',
+  },
+  {
+    key: 'goope:news',
+    template: 'https://r.goope.jp/{site}/feed.rss',
+    format: 'rdf',
+    isAlias: true,
+  },
+  // A federation of chambers of commerce collects its chambers' news under /shokokai.
+  {
+    key: 'goope:association-news',
+    template: 'https://r.goope.jp/{site}/t_{templateId}/shokokai/feed.rss',
+    format: 'rdf',
+  },
+  {
+    key: 'goope:association-news',
+    template: 'https://r.goope.jp/{site}/shokokai/feed.rss',
+    format: 'rdf',
+    isAlias: true,
+  },
+])
+
+// A site on its own domain is known only by its markers, so its feeds are built but not claimed.
+// Claimed, these rows would read r.goope.jp/shokokai/member/feed.rss, a redirect to goope.jp.
+const siteFeeds = definePlatformFeeds(
+  [
+    {
+      key: 'goope:member-news',
+      template: '{scheme}://{host}/t_{templateId}/shokokai/member/feed.rss',
+      format: 'rdf',
+    },
+    {
+      key: 'goope:member-news',
+      template: '{scheme}://{host}/shokokai/member/feed.rss',
+      format: 'rdf',
+      isAlias: true,
+    },
+    { key: 'goope:news', template: '{scheme}://{host}/t_{templateId}/feed.rss', format: 'rdf' },
+    { key: 'goope:news', template: '{scheme}://{host}/feed.rss', format: 'rdf', isAlias: true },
+    {
+      key: 'goope:association-news',
+      template: '{scheme}://{host}/t_{templateId}/shokokai/feed.rss',
+      format: 'rdf',
+    },
+    {
+      key: 'goope:association-news',
+      template: '{scheme}://{host}/shokokai/feed.rss',
+      format: 'rdf',
+      isAlias: true,
+    },
+  ],
+  { hosts },
+)
 
 const isQrCode = (src: string | undefined): boolean => {
   const qrCodeUrl = parseUrl(resolveUrl(src ?? ''))
@@ -62,10 +138,10 @@ export const parseGoopeUrl = (url: string): GoopeUrl | undefined => {
 
   const segments = getPathSegments(parsedUrl)
   let kind: GoopeUrl['kind'] = 'site'
-  let sitePath = ''
+  let site: string | undefined
 
   if (isHostOf(parsedUrl, hosts)) {
-    const site = segments.shift()
+    site = segments.shift()
 
     // The root of r.goope.jp redirects to goope.jp.
     if (!site) {
@@ -73,7 +149,6 @@ export const parseGoopeUrl = (url: string): GoopeUrl | undefined => {
     }
 
     kind = 'freeSite'
-    sitePath = `/${site}`
   } else if (isHostOrSubdomainOf(parsedUrl, domains)) {
     return
   }
@@ -84,13 +159,13 @@ export const parseGoopeUrl = (url: string): GoopeUrl | undefined => {
 
   if (templateId) {
     segments.shift()
-    sitePath = `${sitePath}/t_${templateId}`
   }
 
   const [section, page] = segments
-  const isMemberPage = isAnyOf(section, 'shokokai') && isAnyOf(page, 'member')
+  const isAssociationPage = isAnyOf(section, 'shokokai')
+  const isMemberPage = isAssociationPage && isAnyOf(page, 'member')
 
-  return { kind, sitePath, isMemberPage }
+  return { kind, site, templateId, isMemberPage, isAssociationPage }
 }
 
 export const goopeHandler: PlatformHandler = {
@@ -111,19 +186,31 @@ export const goopeHandler: PlatformHandler = {
       return []
     }
 
-    const siteUrl = `${new URL(url).origin}${parsed.sitePath}`
-    const uris: Array<DiscoverUriEntry> = []
+    const pageFeeds = (parsed.kind === 'freeSite' ? freeSiteFeeds : siteFeeds).forUrl(url)
+
+    if (!pageFeeds) {
+      return []
+    }
+
+    const params = { site: parsed.site, templateId: parsed.templateId }
 
     // A chamber of commerce site collects its members' news under /shokokai/member.
     if (parsed.isMemberPage) {
-      uris.push({
-        uri: `${siteUrl}/shokokai/member/feed.rss`,
-        hint: composeHint('goope:member-news', 'rdf'),
-      })
+      return [
+        pageFeeds.getFeedEntry('goope:member-news', params, 'rdf'),
+        pageFeeds.getFeedEntry('goope:news', params, 'rdf'),
+      ]
     }
 
-    uris.push({ uri: `${siteUrl}/feed.rss`, hint: composeHint('goope:news', 'rdf') })
+    if (parsed.isAssociationPage) {
+      return [
+        pageFeeds.getFeedEntry('goope:association-news', params, 'rdf'),
+        pageFeeds.getFeedEntry('goope:news', params, 'rdf'),
+      ]
+    }
 
-    return uris
+    return [pageFeeds.getFeedEntry('goope:news', params, 'rdf')]
   },
+
+  getFeedHint: freeSiteFeeds.getFeedHint,
 }
