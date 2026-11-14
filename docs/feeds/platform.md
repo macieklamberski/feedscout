@@ -3278,6 +3278,7 @@ Discovers the feeds of a blog on Jinbonet's blog host, `blog.jinbo.net/{user}`. 
 | `blog.jinbo.net/{user}` | Posts · comments and trackbacks (RSS and Atom) |
 | `blog.jinbo.net/{user}/category/{id}` | Category (Atom), plus the blog feeds |
 | `blog.jinbo.net/{user}/tag/{tag}` | Tag (Atom), plus the blog feeds |
+| `blog.jinbo.net/{user}/{postId}` | Post comments and trackbacks (RSS and Atom), plus the blog feeds |
 
 ### TischtennisLive
 
