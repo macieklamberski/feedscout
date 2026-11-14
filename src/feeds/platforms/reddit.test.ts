@@ -861,42 +861,42 @@ describe('redditHandler', () => {
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts hint for a subreddit feed', () => {
+    it('should return the subreddit hint for a subreddit feed', () => {
       const value = 'https://www.reddit.com/r/dns/.rss'
       const expected: DiscoverUriHint = { key: 'reddit:subreddit', label: 'Subreddit' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts hint for a subreddit feed without the slash before the extension', () => {
+    it('should return the subreddit hint for a subreddit feed without the slash before the extension', () => {
       const value = 'https://www.reddit.com/r/emacs.rss'
       const expected: DiscoverUriHint = { key: 'reddit:subreddit', label: 'Subreddit' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts hint for a subreddit sort feed with its timeframe', () => {
+    it('should return the subreddit hint for a subreddit sort feed with its timeframe', () => {
       const value = 'https://www.reddit.com/r/OpenAI/top/.rss?t=month'
       const expected: DiscoverUriHint = { key: 'reddit:subreddit', label: 'Subreddit' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts hint for a subreddit sort feed with a cache-busting parameter', () => {
+    it('should return the subreddit hint for a subreddit sort feed with a cache-busting parameter', () => {
       const value = 'https://www.reddit.com/r/devops/top/.rss?_=1782881925'
       const expected: DiscoverUriHint = { key: 'reddit:subreddit', label: 'Subreddit' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts hint for a user feed', () => {
+    it('should return the user hint for a user feed', () => {
       const value = 'https://www.reddit.com/user/carolj/.rss'
       const expected: DiscoverUriHint = { key: 'reddit:user', label: 'User' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts hint for a domain feed', () => {
+    it('should return the domain hint for a domain feed', () => {
       const value = 'https://www.reddit.com/domain/github.com/.rss'
       const expected: DiscoverUriHint = { key: 'reddit:domain', label: 'Domain' }
 
@@ -938,7 +938,7 @@ describe('redditHandler', () => {
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the search hint for a subreddit search feed', () => {
+    it('should return the subreddit search hint for a subreddit search feed', () => {
       const value = 'https://www.reddit.com/r/programming/search.rss?q=rust&restrict_sr=on'
       const expected: DiscoverUriHint = {
         key: 'reddit:subreddit-search',
