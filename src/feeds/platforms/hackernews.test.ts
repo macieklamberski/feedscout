@@ -53,6 +53,10 @@ describe('hackernewsHandler', () => {
           uri: 'https://news.ycombinator.com/rss',
           hint: { key: 'hackernews:front', label: 'Front page' },
         },
+        {
+          uri: 'https://news.ycombinator.com/bigrss',
+          hint: { key: 'hackernews:front-full', label: 'Full front page' },
+        },
       ]
 
       expect(hackernewsHandler.resolve(value)).toEqual(expected)
@@ -64,6 +68,10 @@ describe('hackernewsHandler', () => {
         {
           uri: 'https://news.ycombinator.com/rss',
           hint: { key: 'hackernews:front', label: 'Front page' },
+        },
+        {
+          uri: 'https://news.ycombinator.com/bigrss',
+          hint: { key: 'hackernews:front-full', label: 'Full front page' },
         },
       ]
 
@@ -83,6 +91,10 @@ describe('hackernewsHandler', () => {
           uri: 'https://news.ycombinator.com/showrss',
           hint: { key: 'hackernews:show', label: 'Show HN' },
         },
+        {
+          uri: 'https://news.ycombinator.com/bigrss',
+          hint: { key: 'hackernews:front-full', label: 'Full front page' },
+        },
       ]
 
       expect(hackernewsHandler.resolve(value)).toEqual(expected)
@@ -94,6 +106,10 @@ describe('hackernewsHandler', () => {
         {
           uri: 'https://news.ycombinator.com/showrss',
           hint: { key: 'hackernews:show', label: 'Show HN' },
+        },
+        {
+          uri: 'https://news.ycombinator.com/bigrss',
+          hint: { key: 'hackernews:front-full', label: 'Full front page' },
         },
       ]
 
@@ -122,10 +138,11 @@ describe('hackernewsHandler', () => {
       expect(hackernewsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a feed resolve never builds', () => {
+    it('should return the full front key for the full front page feed', () => {
       const value = 'https://news.ycombinator.com/bigrss'
+      const expected: DiscoverUriHint = { key: 'hackernews:front-full', label: 'Full front page' }
 
-      expect(hackernewsHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(hackernewsHandler.getFeedHint?.(value)).toEqual(expected)
     })
   })
 
@@ -138,11 +155,17 @@ describe('hackernewsHandler', () => {
       key: 'hackernews:show',
       label: 'Show HN',
     }
+    const frontFull: DiscoverUriHint = {
+      key: 'hackernews:front-full',
+      label: 'Full front page',
+    }
     const values: Array<[string, DiscoverUriHint]> = [
       ['https://news.ycombinator.com/rss', front],
       ['http://news.ycombinator.com/rss', front],
       ['https://news.ycombinator.com/showrss', show],
       ['http://news.ycombinator.com/showrss', show],
+      ['https://news.ycombinator.com/bigrss', frontFull],
+      ['http://news.ycombinator.com/bigrss/', frontFull],
     ]
 
     it.each(values)('should return %s as given with its key', async (value, hint) => {

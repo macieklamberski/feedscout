@@ -673,6 +673,7 @@
   },
   "hackernews": {
     "hackernews:front": "https://news.ycombinator.com/rss",
+    "hackernews:front-full": "https://news.ycombinator.com/bigrss",
     "hackernews:show": "https://news.ycombinator.com/showrss"
   },
   "haleyJobs": {
