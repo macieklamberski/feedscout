@@ -3065,8 +3065,8 @@ Discovers the news release, SEC filing and event feeds of a company investor rel
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.gcs-web.com` | News releases<sup>†</sup> · SEC filings<sup>†</sup> · events<sup>†</sup> |
-| Any page on a company's own domain | News releases<sup>†</sup> · SEC filings<sup>†</sup> · events<sup>†</sup> |
+| `{company}.gcs-web.com` | News releases<sup>†</sup> · SEC filings<sup>†</sup> · events<sup>†</sup> |
+| `{host}` | News releases<sup>†</sup> · SEC filings<sup>†</sup> · events<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 

@@ -572,10 +572,12 @@
       "https://upwork.gcs-web.com/rss/news-releases.xml",
       "https://ir.labcorp.com/rss/news-releases.xml"
     ],
+    "gcs-web:news-releases-category": "https://investor.lilly.com/rss/news-releases.xml?category=Corporate",
     "gcs-web:sec-filings": [
       "https://upwork.gcs-web.com/rss/sec-filings.xml",
       "https://ir.labcorp.com/rss/sec-filings.xml"
-    ]
+    ],
+    "gcs-web:sec-filings-group": "https://www.cmcsa.com/rss/sec-filings.xml?items=15&sub_group=4"
   },
   "geoblog": {
     "geoblog:trip": "http://zielonagora.geoblog.pl/podroz/rss/27449.xml"
