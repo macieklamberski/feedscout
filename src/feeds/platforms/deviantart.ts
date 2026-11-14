@@ -24,7 +24,9 @@ const dailyDeviationsRegex = /^\/daily-deviations\/?$/i
 
 // A user's deviations serve the same items with or without the sort and meta terms, under
 // `type=gallery`, without a type and as `gallery:{username}`. The journals are `type=journal` over
-// the same `by:` query, as `q=journal:{username}` serves the site-wide Popular feed.
+// the same `by:` query, as `q=journal:{username}` serves the site-wide Popular feed. The tag and
+// daily deviations feeds serve the same popular pool whatever the query, so they are claimed and
+// never built.
 const feeds = definePlatformFeeds([
   {
     key: 'deviantart:deviations',
@@ -124,12 +126,8 @@ export const deviantartHandler: PlatformHandler = {
       return []
     }
 
-    if (parsed.kind === 'dailyDeviations') {
-      return [feeds.getFeedEntry('deviantart:daily-deviations')]
-    }
-
-    if (parsed.kind === 'tag') {
-      return [feeds.getFeedEntry('deviantart:tag', { tag: parsed.tag })]
+    if (parsed.kind === 'dailyDeviations' || parsed.kind === 'tag') {
+      return []
     }
 
     if (parsed.kind === 'favourites') {

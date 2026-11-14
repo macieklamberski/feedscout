@@ -339,7 +339,7 @@ Discovers RSS feeds for Dailymotion users, playlists, channels, searches, and th
 
 ### DeviantArt
 
-Discovers RSS feeds for DeviantArt user portfolios, gallery folders, favourites, and tags.
+Discovers RSS feeds for DeviantArt user portfolios, gallery folders, favourites, and journals.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -348,8 +348,6 @@ Discovers RSS feeds for DeviantArt user portfolios, gallery folders, favourites,
 | `deviantart.com/{username}/gallery/{id}` | Gallery folder<sup>†</sup> |
 | `deviantart.com/{username}/favourites` | User favourites<sup>†</sup> |
 | `deviantart.com/{username}/journal` | Journal |
-| `deviantart.com/tag/{tag}` | Tag<sup>†</sup> |
-| `deviantart.com/daily-deviations` | Daily deviations<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 

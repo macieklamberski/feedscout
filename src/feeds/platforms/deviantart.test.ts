@@ -191,28 +191,10 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return RSS feed URL for tag page', () => {
+    it('should return empty array for tag page', () => {
       const value = 'https://deviantart.com/tag/photography'
-      const expected = [
-        {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=tag:photography',
-          hint: { key: 'deviantart:tag', label: 'Tag' },
-        },
-      ]
 
-      expect(deviantartHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should keep a percent-encoded tag encoded once', () => {
-      const value = 'https://deviantart.com/tag/caf%C3%A9'
-      const expected = [
-        {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=tag:café',
-          hint: { key: 'deviantart:tag', label: 'Tag' },
-        },
-      ]
-
-      expect(deviantartHandler.resolve(value)).toEqual(expected)
+      expect(deviantartHandler.resolve(value)).toEqual([])
     })
 
     it('should return RSS feed URL for journal page', () => {
@@ -227,40 +209,10 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return curated daily-deviations feed', () => {
+    it('should return empty array for the daily deviations page', () => {
       const value = 'https://deviantart.com/daily-deviations'
-      const expected = [
-        {
-          uri: 'https://backend.deviantart.com/rss.xml?q=special:dd',
-          hint: { key: 'deviantart:daily-deviations', label: 'Daily Deviations' },
-        },
-      ]
 
-      expect(deviantartHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return curated daily-deviations feed with a capitalized daily-deviations segment', () => {
-      const value = 'https://deviantart.com/Daily-Deviations'
-      const expected = [
-        {
-          uri: 'https://backend.deviantart.com/rss.xml?q=special:dd',
-          hint: { key: 'deviantart:daily-deviations', label: 'Daily Deviations' },
-        },
-      ]
-
-      expect(deviantartHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return curated daily-deviations feed for trailing slash', () => {
-      const value = 'https://deviantart.com/daily-deviations/'
-      const expected = [
-        {
-          uri: 'https://backend.deviantart.com/rss.xml?q=special:dd',
-          hint: { key: 'deviantart:daily-deviations', label: 'Daily Deviations' },
-        },
-      ]
-
-      expect(deviantartHandler.resolve(value)).toEqual(expected)
+      expect(deviantartHandler.resolve(value)).toEqual([])
     })
 
     it('should return no feeds for a page outside DeviantArt', () => {
