@@ -16,7 +16,7 @@ const domains = ['kktix.cc']
 const feeds = definePlatformFeeds(
   [
     { key: 'kktix:events', template: '{scheme}://{host}/events.atom?locale=zh-TW' },
-    { key: 'kktix:events', template: '{scheme}://{host}/events.atom' },
+    { key: 'kktix:events', template: '{scheme}://{host}/events.atom', isAlias: true },
   ],
   { domains },
 )
