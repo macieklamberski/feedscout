@@ -16,7 +16,7 @@ const feeds = definePlatformFeeds([
 ])
 
 // A comic lives under /~{comic} and a user under /-{user}, and both keep their case in the feed
-// URL, since /~oglaf/rss answers 404 where /~Oglaf/rss serves the comic.
+// URL, since /~thesweetberries/rss answers 404 where /~TheSweetBerries/rss serves the comic.
 export const parseAcomicsUrl = (url: string): AcomicsUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
