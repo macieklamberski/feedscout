@@ -4,21 +4,21 @@ import { nebulaHandler, parseNebulaUrl } from './nebula.js'
 
 describe('parseNebulaUrl', () => {
   it('should return the slug for a channel page', () => {
-    const expected: NebulaUrl = { kind: 'channel', slug: 'realengineering' }
+    const expected: NebulaUrl = { kind: 'channel', slug: 'alicescience' }
 
-    expect(parseNebulaUrl('https://nebula.tv/realengineering')).toEqual(expected)
+    expect(parseNebulaUrl('https://nebula.tv/alicescience')).toEqual(expected)
   })
 
   it('should return the slug for a channel subpage', () => {
-    const value = 'https://nebula.tv/realengineering/videos/some-video'
-    const expected: NebulaUrl = { kind: 'channel', slug: 'realengineering' }
+    const value = 'https://nebula.tv/alicescience/videos/some-video'
+    const expected: NebulaUrl = { kind: 'channel', slug: 'alicescience' }
 
     expect(parseNebulaUrl(value)).toEqual(expected)
   })
 
   it('should return the slug for the www host', () => {
-    const value = 'https://www.nebula.tv/realengineering'
-    const expected: NebulaUrl = { kind: 'channel', slug: 'realengineering' }
+    const value = 'https://www.nebula.tv/alicescience'
+    const expected: NebulaUrl = { kind: 'channel', slug: 'alicescience' }
 
     expect(parseNebulaUrl(value)).toEqual(expected)
   })
@@ -33,7 +33,7 @@ describe('parseNebulaUrl', () => {
     const expected: NebulaUrl = { kind: 'explore' }
 
     expect(parseNebulaUrl('https://nebula.tv/videos')).toEqual(expected)
-    expect(parseNebulaUrl('https://nebula.tv/videos/realengineering-why-ships-float')).toEqual(
+    expect(parseNebulaUrl('https://nebula.tv/videos/alicescience-why-ships-float')).toEqual(
       expected,
     )
   })
@@ -51,7 +51,7 @@ describe('parseNebulaUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseNebulaUrl('https://example.com/realengineering')).toBeUndefined()
+    expect(parseNebulaUrl('https://example.com/alicescience')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -72,14 +72,14 @@ describe('nebulaHandler', () => {
 
   describe('resolve', () => {
     it('should return free and Plus feeds for channel', () => {
-      const value = 'https://nebula.tv/realengineering'
+      const value = 'https://nebula.tv/alicescience'
       const expected = [
         {
-          uri: 'https://rss.nebula.app/video/channels/realengineering.rss',
+          uri: 'https://rss.nebula.app/video/channels/alicescience.rss',
           hint: { key: 'nebula:videos', label: 'Videos' },
         },
         {
-          uri: 'https://rss.nebula.app/video/channels/realengineering.rss?plus=true',
+          uri: 'https://rss.nebula.app/video/channels/alicescience.rss?plus=true',
           hint: { key: 'nebula:videos-plus', label: 'Videos (Plus)' },
         },
       ]

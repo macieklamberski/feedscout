@@ -4,36 +4,36 @@ import { type ComicfuryUrl, comicfuryHandler, parseComicfuryUrl } from './comicf
 
 describe('parseComicfuryUrl', () => {
   const comicUrls: Array<string> = [
-    'https://cardiac.thecomicseries.com/',
-    'https://cardiac.thecomicstrip.org/',
-    'https://cardiac.the-comic.org/comics/1',
-    'https://cardiac.webcomic.ws/archive',
-    'https://cardiac.cfw.me/',
+    'https://carolcomic.thecomicseries.com/',
+    'https://carolcomic.thecomicstrip.org/',
+    'https://carolcomic.the-comic.org/comics/1',
+    'https://carolcomic.webcomic.ws/archive',
+    'https://carolcomic.cfw.me/',
   ]
 
   it.each(comicUrls)('should return the comic for %s', (url) => {
-    const expected: ComicfuryUrl = { kind: 'comic', comic: 'cardiac' }
+    const expected: ComicfuryUrl = { kind: 'comic', comic: 'carolcomic' }
 
     expect(parseComicfuryUrl(url)).toEqual(expected)
   })
 
   it('should return the profile for a profile page', () => {
-    const value = 'https://comicfury.com/comicprofile.php?url=spacecaptainpriya'
-    const expected: ComicfuryUrl = { kind: 'profile', comic: 'spacecaptainpriya' }
+    const value = 'https://comicfury.com/comicprofile.php?url=bobcomic'
+    const expected: ComicfuryUrl = { kind: 'profile', comic: 'bobcomic' }
 
     expect(parseComicfuryUrl(value)).toEqual(expected)
   })
 
   it('should return the reader for a reader page', () => {
-    const value = 'https://comicfury.com/read/lurkinthedark/comics/1'
-    const expected: ComicfuryUrl = { kind: 'reader', comic: 'lurkinthedark' }
+    const value = 'https://comicfury.com/read/alicecomic/comics/1'
+    const expected: ComicfuryUrl = { kind: 'reader', comic: 'alicecomic' }
 
     expect(parseComicfuryUrl(value)).toEqual(expected)
   })
 
   it('should return the reader on the www host', () => {
-    const value = 'https://www.comicfury.com/read/lurkinthedark'
-    const expected: ComicfuryUrl = { kind: 'reader', comic: 'lurkinthedark' }
+    const value = 'https://www.comicfury.com/read/alicecomic'
+    const expected: ComicfuryUrl = { kind: 'reader', comic: 'alicecomic' }
 
     expect(parseComicfuryUrl(value)).toEqual(expected)
   })
@@ -43,7 +43,7 @@ describe('parseComicfuryUrl', () => {
   })
 
   it('should return undefined for a nested subdomain of a comic domain', () => {
-    expect(parseComicfuryUrl('https://a.cardiac.thecomicseries.com/')).toBeUndefined()
+    expect(parseComicfuryUrl('https://a.carolcomic.thecomicseries.com/')).toBeUndefined()
   })
 
   it('should return undefined for a profile page without a comic', () => {
@@ -61,11 +61,11 @@ describe('parseComicfuryUrl', () => {
   })
 
   it('should return undefined for a reader path below another segment', () => {
-    expect(parseComicfuryUrl('https://comicfury.com/forum/read/cardiac')).toBeUndefined()
+    expect(parseComicfuryUrl('https://comicfury.com/forum/read/carolcomic')).toBeUndefined()
   })
 
   it('should return undefined for a profile path below another segment', () => {
-    const value = 'https://comicfury.com/forum/comicprofile.php?url=cardiac'
+    const value = 'https://comicfury.com/forum/comicprofile.php?url=carolcomic'
 
     expect(parseComicfuryUrl(value)).toBeUndefined()
   })
@@ -75,7 +75,7 @@ describe('parseComicfuryUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseComicfuryUrl('https://example.com/read/cardiac')).toBeUndefined()
+    expect(parseComicfuryUrl('https://example.com/read/carolcomic')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -86,7 +86,7 @@ describe('parseComicfuryUrl', () => {
 describe('comicfuryHandler', () => {
   describe('match', () => {
     it('should match a comic page', () => {
-      expect(comicfuryHandler.match('https://cardiac.thecomicstrip.org/')).toBe(true)
+      expect(comicfuryHandler.match('https://carolcomic.thecomicstrip.org/')).toBe(true)
     })
 
     it('should not match another host', () => {
@@ -96,10 +96,10 @@ describe('comicfuryHandler', () => {
 
   describe('resolve', () => {
     it('should return the comic feed on the comic domain', () => {
-      const value = 'https://cardiac.thecomicstrip.org/comics/1'
+      const value = 'https://carolcomic.thecomicstrip.org/comics/1'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://cardiac.thecomicstrip.org/rss',
+          uri: 'https://carolcomic.thecomicstrip.org/rss',
           hint: { key: 'comicfury:comic', label: 'Comic' },
         },
       ]
@@ -108,10 +108,10 @@ describe('comicfuryHandler', () => {
     })
 
     it('should return the comic feed on thecomicseries.com for a profile', () => {
-      const value = 'https://comicfury.com/comicprofile.php?url=spacecaptainpriya'
+      const value = 'https://comicfury.com/comicprofile.php?url=bobcomic'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://spacecaptainpriya.thecomicseries.com/rss',
+          uri: 'https://bobcomic.thecomicseries.com/rss',
           hint: { key: 'comicfury:comic', label: 'Comic' },
         },
       ]
@@ -120,10 +120,10 @@ describe('comicfuryHandler', () => {
     })
 
     it('should return the reader feed for a reader page', () => {
-      const value = 'https://comicfury.com/read/lurkinthedark/archive'
+      const value = 'https://comicfury.com/read/alicecomic/archive'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://comicfury.com/read/lurkinthedark/rss',
+          uri: 'https://comicfury.com/read/alicecomic/rss',
           hint: { key: 'comicfury:reader', label: 'Comic in the ComicFury reader' },
         },
       ]

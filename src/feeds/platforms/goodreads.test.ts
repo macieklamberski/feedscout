@@ -4,21 +4,21 @@ import { goodreadsHandler, parseGoodreadsUrl } from './goodreads.js'
 
 describe('parseGoodreadsUrl', () => {
   it('should return the user for a user page with a slug', () => {
-    const value = 'https://www.goodreads.com/user/show/1-otis-chandler'
+    const value = 'https://www.goodreads.com/user/show/1-alice-smith'
     const expected: GoodreadsUrl = { kind: 'user', userId: '1' }
 
     expect(parseGoodreadsUrl(value)).toEqual(expected)
   })
 
   it('should return the user for a user page with a slug with a capitalized user segment', () => {
-    const value = 'https://www.goodreads.com/User/show/1-otis-chandler'
+    const value = 'https://www.goodreads.com/User/show/1-alice-smith'
     const expected: GoodreadsUrl = { kind: 'user', userId: '1' }
 
     expect(parseGoodreadsUrl(value)).toEqual(expected)
   })
 
   it('should return the user for a user page with a slug with a capitalized show segment', () => {
-    const value = 'https://www.goodreads.com/user/Show/1-otis-chandler'
+    const value = 'https://www.goodreads.com/user/Show/1-alice-smith'
     const expected: GoodreadsUrl = { kind: 'user', userId: '1' }
 
     expect(parseGoodreadsUrl(value)).toEqual(expected)
@@ -37,21 +37,21 @@ describe('parseGoodreadsUrl', () => {
   })
 
   it('should return the reviews for a review list page with a slug', () => {
-    const value = 'https://www.goodreads.com/review/list/1-otis-chandler'
+    const value = 'https://www.goodreads.com/review/list/1-alice-smith'
     const expected: GoodreadsUrl = { kind: 'reviews', userId: '1' }
 
     expect(parseGoodreadsUrl(value)).toEqual(expected)
   })
 
   it('should return the reviews for a review list page with a capitalized review segment', () => {
-    const value = 'https://www.goodreads.com/Review/list/1-otis-chandler'
+    const value = 'https://www.goodreads.com/Review/list/1-alice-smith'
     const expected: GoodreadsUrl = { kind: 'reviews', userId: '1' }
 
     expect(parseGoodreadsUrl(value)).toEqual(expected)
   })
 
   it('should return the reviews for a review list page with a capitalized list segment', () => {
-    const value = 'https://www.goodreads.com/review/List/1-otis-chandler'
+    const value = 'https://www.goodreads.com/review/List/1-alice-smith'
     const expected: GoodreadsUrl = { kind: 'reviews', userId: '1' }
 
     expect(parseGoodreadsUrl(value)).toEqual(expected)
@@ -64,18 +64,18 @@ describe('parseGoodreadsUrl', () => {
   })
 
   it('should return the shelf of a review list page', () => {
-    const value = 'https://www.goodreads.com/review/list/1-otis?shelf=read'
+    const value = 'https://www.goodreads.com/review/list/1-alice?shelf=read'
     const expected: GoodreadsUrl = { kind: 'reviews', userId: '1', shelf: 'read' }
 
     expect(parseGoodreadsUrl(value)).toEqual(expected)
   })
 
   it('should return undefined for a user page with a non-numeric id', () => {
-    expect(parseGoodreadsUrl('https://www.goodreads.com/user/show/abc-otis')).toBeUndefined()
+    expect(parseGoodreadsUrl('https://www.goodreads.com/user/show/abc-alice')).toBeUndefined()
   })
 
   it('should return undefined for a review list page with a non-numeric id', () => {
-    expect(parseGoodreadsUrl('https://www.goodreads.com/review/list/abc-otis')).toBeUndefined()
+    expect(parseGoodreadsUrl('https://www.goodreads.com/review/list/abc-alice')).toBeUndefined()
   })
 
   const otherPageValues: Array<string> = [
@@ -106,7 +106,7 @@ describe('parseGoodreadsUrl', () => {
 describe('goodreadsHandler', () => {
   describe('match', () => {
     it('should match a Goodreads URL', () => {
-      expect(goodreadsHandler.match('https://www.goodreads.com/user/show/1-otis')).toBe(true)
+      expect(goodreadsHandler.match('https://www.goodreads.com/user/show/1-alice')).toBe(true)
     })
 
     it('should not match another host', () => {
@@ -116,7 +116,7 @@ describe('goodreadsHandler', () => {
 
   describe('resolve', () => {
     it('should return updates and reviews feeds for user page', () => {
-      const value = 'https://www.goodreads.com/user/show/1-otis-chandler'
+      const value = 'https://www.goodreads.com/user/show/1-alice-smith'
       const expected = [
         {
           uri: 'https://www.goodreads.com/user/updates_rss/1',
@@ -132,7 +132,7 @@ describe('goodreadsHandler', () => {
     })
 
     it('should return reviews and updates feeds for review list page', () => {
-      const value = 'https://www.goodreads.com/review/list/1-otis-chandler'
+      const value = 'https://www.goodreads.com/review/list/1-alice-smith'
       const expected = [
         {
           uri: 'https://www.goodreads.com/review/list_rss/1',
@@ -148,7 +148,7 @@ describe('goodreadsHandler', () => {
     })
 
     it('should include shelf feed when shelf query param is set', () => {
-      const value = 'https://www.goodreads.com/review/list/1-otis?shelf=read'
+      const value = 'https://www.goodreads.com/review/list/1-alice?shelf=read'
       const expected = [
         {
           uri: 'https://www.goodreads.com/review/list_rss/1?shelf=read',

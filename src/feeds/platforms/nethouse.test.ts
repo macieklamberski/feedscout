@@ -33,8 +33,8 @@ describe('nethouseHandler', () => {
       [false, 'https://www.nethouse.ru/'],
       [false, 'https://www.nethouse.me/'],
       [false, 'https://www.geography.nethouse.ru/'],
-      [true, 'https://jivoirodnik.nethouse.ru/articles'],
-      [true, 'https://errorfreeled.nethouse.me/'],
+      [true, 'https://alice.nethouse.ru/articles'],
+      [true, 'https://bob.nethouse.me/'],
       [false, 'https://nethouse.ru/'],
       [false, 'https://example.com/'],
     ]
@@ -52,14 +52,14 @@ describe('nethouseHandler', () => {
 
   describe('resolve', () => {
     it('should return the news and articles feeds for a site', () => {
-      const value = 'https://jivoirodnik.nethouse.ru/articles/223023'
+      const value = 'https://alice.nethouse.ru/articles/223023'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://jivoirodnik.nethouse.ru/posts/rss',
+          uri: 'https://alice.nethouse.ru/posts/rss',
           hint: { key: 'nethouse:news', label: 'News' },
         },
         {
-          uri: 'https://jivoirodnik.nethouse.ru/articles/rss',
+          uri: 'https://alice.nethouse.ru/articles/rss',
           hint: { key: 'nethouse:articles', label: 'Articles' },
         },
       ]

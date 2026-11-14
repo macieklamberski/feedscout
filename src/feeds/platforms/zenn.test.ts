@@ -4,21 +4,21 @@ import { parseZennUrl, zennHandler } from './zenn.js'
 
 describe('parseZennUrl', () => {
   it('should return the user for a profile page', () => {
-    const expected: ZennUrl = { kind: 'user', username: 'catnose99' }
+    const expected: ZennUrl = { kind: 'user', username: 'alice99' }
 
-    expect(parseZennUrl('https://zenn.dev/catnose99')).toEqual(expected)
+    expect(parseZennUrl('https://zenn.dev/alice99')).toEqual(expected)
   })
 
   it('should return the post for an article page', () => {
-    const expected: ZennUrl = { kind: 'post', username: 'catnose99' }
+    const expected: ZennUrl = { kind: 'post', username: 'alice99' }
 
-    expect(parseZennUrl('https://zenn.dev/catnose99/articles/some-article')).toEqual(expected)
+    expect(parseZennUrl('https://zenn.dev/alice99/articles/some-article')).toEqual(expected)
   })
 
   it('should return the user for the www host', () => {
-    const expected: ZennUrl = { kind: 'user', username: 'catnose99' }
+    const expected: ZennUrl = { kind: 'user', username: 'alice99' }
 
-    expect(parseZennUrl('https://www.zenn.dev/catnose99')).toEqual(expected)
+    expect(parseZennUrl('https://www.zenn.dev/alice99')).toEqual(expected)
   })
 
   it('should return the topic for a topic page', () => {
@@ -58,7 +58,7 @@ describe('parseZennUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseZennUrl('https://example.com/catnose99')).toBeUndefined()
+    expect(parseZennUrl('https://example.com/alice99')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -79,10 +79,10 @@ describe('zennHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for user', () => {
-      const value = 'https://zenn.dev/catnose99'
+      const value = 'https://zenn.dev/alice99'
       const expected = [
         {
-          uri: 'https://zenn.dev/catnose99/feed',
+          uri: 'https://zenn.dev/alice99/feed',
           hint: { key: 'zenn:posts', label: 'Posts' },
         },
       ]
@@ -91,10 +91,10 @@ describe('zennHandler', () => {
     })
 
     it('should return the user feed URL for an article page', () => {
-      const value = 'https://zenn.dev/catnose99/articles/some-article'
+      const value = 'https://zenn.dev/alice99/articles/some-article'
       const expected = [
         {
-          uri: 'https://zenn.dev/catnose99/feed',
+          uri: 'https://zenn.dev/alice99/feed',
           hint: { key: 'zenn:posts', label: 'Posts' },
         },
       ]

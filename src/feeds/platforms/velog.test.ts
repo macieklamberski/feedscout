@@ -4,30 +4,30 @@ import { parseVelogUrl, velogHandler } from './velog.js'
 
 describe('parseVelogUrl', () => {
   it('should return the username for a profile page', () => {
-    const expected: VelogUrl = { kind: 'user', username: 'velopert' }
+    const expected: VelogUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseVelogUrl('https://velog.io/@velopert')).toEqual(expected)
+    expect(parseVelogUrl('https://velog.io/@alice')).toEqual(expected)
   })
 
   it('should return the username for profile subpages', () => {
-    const expected: VelogUrl = { kind: 'user', username: 'velopert' }
+    const expected: VelogUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseVelogUrl('https://velog.io/@velopert/posts')).toEqual(expected)
-    expect(parseVelogUrl('https://velog.io/@velopert/series')).toEqual(expected)
-    expect(parseVelogUrl('https://velog.io/@velopert/about')).toEqual(expected)
+    expect(parseVelogUrl('https://velog.io/@alice/posts')).toEqual(expected)
+    expect(parseVelogUrl('https://velog.io/@alice/series')).toEqual(expected)
+    expect(parseVelogUrl('https://velog.io/@alice/about')).toEqual(expected)
   })
 
   it('should return the username for a post page', () => {
-    const value = 'https://velog.io/@velopert/some-post-slug'
-    const expected: VelogUrl = { kind: 'user', username: 'velopert' }
+    const value = 'https://velog.io/@alice/some-post-slug'
+    const expected: VelogUrl = { kind: 'user', username: 'alice' }
 
     expect(parseVelogUrl(value)).toEqual(expected)
   })
 
   it('should return the username for the www host', () => {
-    const expected: VelogUrl = { kind: 'user', username: 'velopert' }
+    const expected: VelogUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseVelogUrl('https://www.velog.io/@velopert')).toEqual(expected)
+    expect(parseVelogUrl('https://www.velog.io/@alice')).toEqual(expected)
   })
 
   it('should decode an encoded username', () => {
@@ -59,7 +59,7 @@ describe('parseVelogUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseVelogUrl('https://example.com/@velopert')).toBeUndefined()
+    expect(parseVelogUrl('https://example.com/@alice')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -80,10 +80,10 @@ describe('velogHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for user', () => {
-      const value = 'https://velog.io/@velopert'
+      const value = 'https://velog.io/@alice'
       const expected = [
         {
-          uri: 'https://v2.velog.io/rss/velopert',
+          uri: 'https://v2.velog.io/rss/alice',
           hint: { key: 'velog:posts', label: 'Posts' },
         },
       ]

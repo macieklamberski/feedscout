@@ -129,21 +129,21 @@ describe('parseHatenaBookmarkUrl', () => {
   })
 
   it('should return the user for a user page', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'jkondo' }
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/jkondo/')).toEqual(expected)
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/alice/')).toEqual(expected)
   })
 
   it('should return the user for a user page without a trailing slash', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'jkondo' }
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/jkondo')).toEqual(expected)
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/alice')).toEqual(expected)
   })
 
   it('should return the user for a user subpage', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'jkondo' }
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/jkondo/bookmark')).toEqual(expected)
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/alice/bookmark')).toEqual(expected)
   })
 
   it('should return a user ID with hyphens and underscores', () => {
@@ -153,21 +153,21 @@ describe('parseHatenaBookmarkUrl', () => {
   })
 
   it('should keep the user ID case', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'JKondo' }
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'ALice' }
 
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/JKondo')).toEqual(expected)
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/ALice')).toEqual(expected)
   })
 
   it('should return the user for a user feed URL', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'jkondo' }
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/jkondo.rss')).toEqual(expected)
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/alice.rss')).toEqual(expected)
   })
 
   it('should return the user for a user feed URL with a capitalized rss extension', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'jkondo' }
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/jkondo.RSS')).toEqual(expected)
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/alice.RSS')).toEqual(expected)
   })
 
   it('should return the hot entries of a category', () => {
@@ -224,9 +224,9 @@ describe('parseHatenaBookmarkUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseHatenaBookmarkUrl('https://hatena.ne.jp/jkondo')).toBeUndefined()
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp.example.com/jkondo')).toBeUndefined()
-    expect(parseHatenaBookmarkUrl('https://example.com/jkondo')).toBeUndefined()
+    expect(parseHatenaBookmarkUrl('https://hatena.ne.jp/alice')).toBeUndefined()
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp.example.com/alice')).toBeUndefined()
+    expect(parseHatenaBookmarkUrl('https://example.com/alice')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {

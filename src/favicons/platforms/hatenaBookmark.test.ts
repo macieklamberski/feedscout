@@ -3,14 +3,14 @@ import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { hatenaBookmarkEnricher, hatenaBookmarkHandler } from './hatenaBookmark.js'
 
-const avatarUrl = 'https://cdn.profile-image.st-hatena.com/users/jkondo/profile_256x256.png'
+const avatarUrl = 'https://cdn.profile-image.st-hatena.com/users/alice/profile_256x256.png'
 const defaultAvatarUrl =
   'https://cdn.profile-image.st-hatena.com/default_profile_images/profile_256x256.png'
 
 const ref: DiscoverRef = {
   platform: 'hatenaBookmark',
-  id: 'jkondo',
-  url: 'https://b.hatena.ne.jp/jkondo/',
+  id: 'alice',
+  url: 'https://b.hatena.ne.jp/alice/',
 }
 
 // Maps a requested URL to the URL the response ends at, after redirects.
@@ -28,7 +28,7 @@ const createContext = (finalUrls: Record<string, string>): FaviconEnricherContex
 describe('hatenaBookmarkHandler', () => {
   describe('match', () => {
     it('should match user page URLs', () => {
-      expect(hatenaBookmarkHandler.match('https://b.hatena.ne.jp/jkondo/')).toBe(true)
+      expect(hatenaBookmarkHandler.match('https://b.hatena.ne.jp/alice/')).toBe(true)
     })
 
     it('should not match category pages', () => {
@@ -38,7 +38,7 @@ describe('hatenaBookmarkHandler', () => {
 
   describe('resolve', () => {
     it('should return a ref for a user page', async () => {
-      expect(await hatenaBookmarkHandler.resolve('https://b.hatena.ne.jp/jkondo/')).toEqual([ref])
+      expect(await hatenaBookmarkHandler.resolve('https://b.hatena.ne.jp/alice/')).toEqual([ref])
     })
 
     it('should return empty array for category pages', async () => {
@@ -68,7 +68,7 @@ describe('hatenaBookmarkEnricher', () => {
   })
 
   it('should return undefined for a ref of another platform', async () => {
-    const otherRef: DiscoverRef = { platform: 'mastodon', id: 'jkondo', url: 'https://example.com' }
+    const otherRef: DiscoverRef = { platform: 'mastodon', id: 'alice', url: 'https://example.com' }
 
     expect(await hatenaBookmarkEnricher(otherRef, createContext({}))).toBeUndefined()
   })

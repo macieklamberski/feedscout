@@ -22,8 +22,8 @@ const subredditRef: DiscoverRef = {
 
 const userRef: DiscoverRef = {
   platform: 'reddit',
-  id: 'user/spez',
-  url: 'https://reddit.com/u/spez',
+  id: 'user/alice',
+  url: 'https://reddit.com/u/alice',
 }
 
 describe('redditHandler', () => {
@@ -43,12 +43,12 @@ describe('redditHandler', () => {
     })
 
     it('should return a user ref for /u/ paths', async () => {
-      expect(await redditHandler.resolve('https://reddit.com/u/spez')).toEqual([userRef])
+      expect(await redditHandler.resolve('https://reddit.com/u/alice')).toEqual([userRef])
     })
 
     it('should return the owner ref for a multireddit', async () => {
-      const url = 'https://reddit.com/user/spez/m/news'
-      const expected = [{ platform: 'reddit', id: 'user/spez', url }]
+      const url = 'https://reddit.com/user/alice/m/news'
+      const expected = [{ platform: 'reddit', id: 'user/alice', url }]
 
       expect(await redditHandler.resolve(url)).toEqual(expected)
     })
@@ -86,7 +86,7 @@ describe('redditEnricher', () => {
 
   it('should resolve user icon from icon_img', async () => {
     const context = createContext({
-      'https://www.reddit.com/user/spez/about.json': JSON.stringify({
+      'https://www.reddit.com/user/alice/about.json': JSON.stringify({
         data: { icon_img: 'https://styles.redditmedia.com/user-icon.png' },
       }),
     })
@@ -98,7 +98,7 @@ describe('redditEnricher', () => {
 
   it('should resolve user icon from snoovatar_img when icon_img is empty', async () => {
     const context = createContext({
-      'https://www.reddit.com/user/spez/about.json': JSON.stringify({
+      'https://www.reddit.com/user/alice/about.json': JSON.stringify({
         data: { icon_img: '', snoovatar_img: 'https://i.redd.it/snoovatar/snoo.png' },
       }),
     })
@@ -132,7 +132,7 @@ describe('redditEnricher', () => {
 
   it('should return empty array when user icon fields are empty', async () => {
     const context = createContext({
-      'https://www.reddit.com/user/spez/about.json': JSON.stringify({
+      'https://www.reddit.com/user/alice/about.json': JSON.stringify({
         data: { icon_img: '', snoovatar_img: '' },
       }),
     })
@@ -142,7 +142,7 @@ describe('redditEnricher', () => {
 
   it('should return empty array when user data fields are missing', async () => {
     const context = createContext({
-      'https://www.reddit.com/user/spez/about.json': JSON.stringify({ data: {} }),
+      'https://www.reddit.com/user/alice/about.json': JSON.stringify({ data: {} }),
     })
 
     expect(await redditEnricher(userRef, context)).toEqual([])

@@ -4,21 +4,21 @@ import { parseSmeBlogUrl, type SmeBlogUrl, smeBlogHandler } from './smeBlog.js'
 
 describe('parseSmeBlogUrl', () => {
   it('should return the blog for a profile without a trailing slash', () => {
-    const expected: SmeBlogUrl = { kind: 'blog', username: 'tomasvanco' }
+    const expected: SmeBlogUrl = { kind: 'blog', username: 'alice' }
 
-    expect(parseSmeBlogUrl('https://blog.sme.sk/tomasvanco')).toEqual(expected)
+    expect(parseSmeBlogUrl('https://blog.sme.sk/alice')).toEqual(expected)
   })
 
   it('should return the blog for a profile with a trailing slash', () => {
-    const expected: SmeBlogUrl = { kind: 'blog', username: 'hreno' }
+    const expected: SmeBlogUrl = { kind: 'blog', username: 'bob' }
 
-    expect(parseSmeBlogUrl('https://blog.sme.sk/hreno/')).toEqual(expected)
+    expect(parseSmeBlogUrl('https://blog.sme.sk/bob/')).toEqual(expected)
   })
 
   it('should return the blog for a post', () => {
     const value =
-      'https://blog.sme.sk/tomasvanco/cestovanie/nove-zazitky-mestskeho-chlapca-z-rakuskeho-gazdovstva-4-4'
-    const expected: SmeBlogUrl = { kind: 'blog', username: 'tomasvanco' }
+      'https://blog.sme.sk/alice/cestovanie/nove-zazitky-mestskeho-chlapca-z-rakuskeho-gazdovstva-4-4'
+    const expected: SmeBlogUrl = { kind: 'blog', username: 'alice' }
 
     expect(parseSmeBlogUrl(value)).toEqual(expected)
   })
@@ -34,18 +34,18 @@ describe('parseSmeBlogUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseSmeBlogUrl('https://example.com/tomasvanco')).toBeUndefined()
+    expect(parseSmeBlogUrl('https://example.com/alice')).toBeUndefined()
   })
 })
 
 describe('smeBlogHandler', () => {
   describe('match', () => {
     it('should return true for a profile', () => {
-      expect(smeBlogHandler.match('https://blog.sme.sk/tomasvanco')).toBe(true)
+      expect(smeBlogHandler.match('https://blog.sme.sk/alice')).toBe(true)
     })
 
     it('should return false for another host', () => {
-      expect(smeBlogHandler.match('https://example.com/tomasvanco')).toBe(false)
+      expect(smeBlogHandler.match('https://example.com/alice')).toBe(false)
     })
   })
 
@@ -57,12 +57,12 @@ describe('smeBlogHandler', () => {
     it('should return the posts feed for a blog', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://blog.sme.sk/tomasvanco/rss',
+          uri: 'https://blog.sme.sk/alice/rss',
           hint: { key: 'sme-blog:posts', label: 'Posts' },
         },
       ]
 
-      expect(smeBlogHandler.resolve('https://blog.sme.sk/tomasvanco')).toEqual(expected)
+      expect(smeBlogHandler.resolve('https://blog.sme.sk/alice')).toEqual(expected)
     })
 
     it('should return the site feed for home', () => {

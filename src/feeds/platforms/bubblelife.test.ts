@@ -10,22 +10,22 @@ import {
 
 describe('parseBubblelifeUrl', () => {
   it('should return the community for a community page', () => {
-    const value = 'https://sandysprings.bubblelife.com/community/idealplotter'
-    const expected: BubblelifeUrl = { kind: 'community', community: 'idealplotter' }
+    const value = 'https://sandysprings.bubblelife.com/community/superplotter'
+    const expected: BubblelifeUrl = { kind: 'community', community: 'superplotter' }
 
     expect(parseBubblelifeUrl(value)).toEqual(expected)
   })
 
   it('should return the community for a page under the community', () => {
-    const value = 'https://sandysprings.bubblelife.com/community/idealplotter/type/rssinfo'
-    const expected: BubblelifeUrl = { kind: 'community', community: 'idealplotter' }
+    const value = 'https://sandysprings.bubblelife.com/community/superplotter/type/rssinfo'
+    const expected: BubblelifeUrl = { kind: 'community', community: 'superplotter' }
 
     expect(parseBubblelifeUrl(value)).toEqual(expected)
   })
 
   it('should keep the case of the community name', () => {
-    const value = 'https://sandysprings.bubblelife.com/Community/IdealPlotter'
-    const expected: BubblelifeUrl = { kind: 'community', community: 'IdealPlotter' }
+    const value = 'https://sandysprings.bubblelife.com/Community/SuperPlotter'
+    const expected: BubblelifeUrl = { kind: 'community', community: 'SuperPlotter' }
 
     expect(parseBubblelifeUrl(value)).toEqual(expected)
   })
@@ -58,26 +58,26 @@ describe('parseBubblelifeUrl', () => {
   })
 
   it('should return undefined for a path sharing the community prefix', () => {
-    const value = 'https://coppell.bubblelife.com/communitys/hall_law_pc_56'
+    const value = 'https://coppell.bubblelife.com/communitys/acme_law_pc_56'
 
     expect(parseBubblelifeUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for the apex domain', () => {
-    expect(parseBubblelifeUrl('https://bubblelife.com/community/idealplotter')).toBeUndefined()
+    expect(parseBubblelifeUrl('https://bubblelife.com/community/superplotter')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
-    expect(parseBubblelifeUrl('https://example.com/community/idealplotter')).toBeUndefined()
+    expect(parseBubblelifeUrl('https://example.com/community/superplotter')).toBeUndefined()
   })
 })
 
 describe('getBubblelifePage', () => {
   const libraryLinkHtml =
-    '<a href="/community/idealplotter/library/3569381092" title="News" class="blMobileItem">'
+    '<a href="/community/superplotter/library/3569381092" title="News" class="blMobileItem">'
 
   it('should return the community feed from its first library link', () => {
-    const value = 'https://sandysprings.bubblelife.com/community/idealplotter'
+    const value = 'https://sandysprings.bubblelife.com/community/superplotter'
     const expected: BubblelifePage = { kind: 'community', feedId: '3569381092' }
 
     expect(getBubblelifePage(value, libraryLinkHtml)).toEqual(expected)
@@ -105,14 +105,14 @@ describe('getBubblelifePage', () => {
   })
 
   it('should fall back to the community for a library id the footer does not name', () => {
-    const value = 'https://sandysprings.bubblelife.com/community/idealplotter/library/1'
+    const value = 'https://sandysprings.bubblelife.com/community/superplotter/library/1'
     const expected: BubblelifePage = { kind: 'community', feedId: '3569381092' }
 
     expect(getBubblelifePage(value, libraryLinkHtml)).toEqual(expected)
   })
 
   it('should return undefined without content', () => {
-    const value = 'https://sandysprings.bubblelife.com/community/idealplotter'
+    const value = 'https://sandysprings.bubblelife.com/community/superplotter'
 
     expect(getBubblelifePage(value, undefined)).toBeUndefined()
   })
@@ -121,7 +121,7 @@ describe('getBubblelifePage', () => {
 describe('bubblelifeHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://coppell.bubblelife.com/community/hall_law_pc_56'],
+      [true, 'https://coppell.bubblelife.com/community/acme_law_pc_56'],
       [false, 'https://coppell.bubblelife.com/'],
     ]
 
@@ -132,11 +132,11 @@ describe('bubblelifeHandler', () => {
 
   describe('resolve', () => {
     it('should return the posts feed from the community library link', () => {
-      const value = 'https://sandysprings.bubblelife.com/community/idealplotter'
+      const value = 'https://sandysprings.bubblelife.com/community/superplotter'
       const content = `
         <link id="ctl00_linkRSS" rel="alternate" type="application/rss+xml" />
-        <a href="/community/idealplotter/library/3569381092" title="News" class="blMobileItem">
-        <a href="/community/idealplotter/library/3569381003" title="Calendar" class="blMobileItem">
+        <a href="/community/superplotter/library/3569381092" title="News" class="blMobileItem">
+        <a href="/community/superplotter/library/3569381003" title="Calendar" class="blMobileItem">
       `
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -165,9 +165,9 @@ describe('bubblelifeHandler', () => {
     })
 
     it('should match the community name ignoring case', () => {
-      const value = 'https://sandysprings.bubblelife.com/community/IdealPlotter'
+      const value = 'https://sandysprings.bubblelife.com/community/SuperPlotter'
       const content =
-        '<a href="/community/idealplotter/library/3569381092" title="News" class="blMobileItem">'
+        '<a href="/community/superplotter/library/3569381092" title="News" class="blMobileItem">'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://sandysprings.bubblelife.com/rss?c=3569381092',
@@ -189,7 +189,7 @@ describe('bubblelifeHandler', () => {
     })
 
     it('should return empty array without content', () => {
-      const value = 'https://sandysprings.bubblelife.com/community/idealplotter'
+      const value = 'https://sandysprings.bubblelife.com/community/superplotter'
 
       expect(bubblelifeHandler.resolve(value)).toEqual([])
     })
@@ -276,10 +276,10 @@ describe('bubblelifeHandler', () => {
     })
 
     it('should return the posts feed for a library id the footer does not name', () => {
-      const value = 'https://sandysprings.bubblelife.com/community/idealplotter/library/1'
+      const value = 'https://sandysprings.bubblelife.com/community/superplotter/library/1'
       const content = `
-        <a href="/community/idealplotter/library/3569381092" title="News" class="blMobileItem">
-        <a id="ctl00_CtrlPageFooter1_hlRSS" title="RSS" href="/community/idealplotter/type/rssinfo">
+        <a href="/community/superplotter/library/3569381092" title="News" class="blMobileItem">
+        <a id="ctl00_CtrlPageFooter1_hlRSS" title="RSS" href="/community/superplotter/type/rssinfo">
       `
       const expected: Array<DiscoverUriEntry> = [
         {

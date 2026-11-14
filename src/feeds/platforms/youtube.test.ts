@@ -73,21 +73,21 @@ describe('parseYoutubeUrl', () => {
   it('should return a channel for handle, legacy user and custom URL pages', () => {
     const expected: YoutubeUrl = { kind: 'channel' }
 
-    expect(parseYoutubeUrl('https://youtube.com/@veritasium')).toEqual(expected)
-    expect(parseYoutubeUrl('https://youtube.com/user/pewdiepie')).toEqual(expected)
-    expect(parseYoutubeUrl('https://youtube.com/c/mkbhd')).toEqual(expected)
+    expect(parseYoutubeUrl('https://youtube.com/@carol')).toEqual(expected)
+    expect(parseYoutubeUrl('https://youtube.com/user/bob')).toEqual(expected)
+    expect(parseYoutubeUrl('https://youtube.com/c/alice')).toEqual(expected)
   })
 
   it('should return a channel for a capitalized channel path', () => {
     const expected: YoutubeUrl = { kind: 'channel' }
 
-    expect(parseYoutubeUrl('https://youtube.com/User/pewdiepie')).toEqual(expected)
+    expect(parseYoutubeUrl('https://youtube.com/User/bob')).toEqual(expected)
   })
 
   it('should return a channel for a custom URL page with a capitalized c segment', () => {
     const expected: YoutubeUrl = { kind: 'channel' }
 
-    expect(parseYoutubeUrl('https://youtube.com/C/mkbhd')).toEqual(expected)
+    expect(parseYoutubeUrl('https://youtube.com/C/alice')).toEqual(expected)
   })
 
   it('should return undefined for a channel ID without the uppercase UC prefix', () => {
@@ -104,7 +104,7 @@ describe('parseYoutubeUrl', () => {
   it('should return a channel with its playlist', () => {
     const expected: YoutubeUrl = { kind: 'channel', playlistId: 'PL1234567890' }
 
-    expect(parseYoutubeUrl('https://youtube.com/@veritasium?list=PL1234567890')).toEqual(expected)
+    expect(parseYoutubeUrl('https://youtube.com/@carol?list=PL1234567890')).toEqual(expected)
   })
 
   it('should return a watch page for a watch URL', () => {
@@ -345,7 +345,7 @@ describe('youtubeHandler', () => {
     })
 
     it('should extract channel ID from @handle page content', () => {
-      const value = 'https://youtube.com/@veritasium'
+      const value = 'https://youtube.com/@carol'
       const content = '{"channelId":"UC1234567890"}'
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)

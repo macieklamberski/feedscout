@@ -110,11 +110,11 @@ describe('getPublicInboxPage', () => {
 
   it('should return the message of a message page', () => {
     const value =
-      'https://public-inbox.gentoo.org/gentoo-dev/20261003070146.686610-1-mgorny@gentoo.org/'
+      'https://public-inbox.gentoo.org/gentoo-dev/20261003070146.686610-1-alice@gentoo.org/'
     const expected: PublicInboxPage = {
       kind: 'message',
       inboxUrl: 'https://public-inbox.gentoo.org/gentoo-dev/',
-      messageId: '20261003070146.686610-1-mgorny@gentoo.org',
+      messageId: '20261003070146.686610-1-alice@gentoo.org',
     }
 
     expect(getPublicInboxPage(value, messageHtml)).toEqual(expected)
@@ -122,11 +122,11 @@ describe('getPublicInboxPage', () => {
 
   it('should return the message of a thread page', () => {
     const value =
-      'https://public-inbox.gentoo.org/gentoo-dev/20261003070146.686610-1-mgorny@gentoo.org/T/'
+      'https://public-inbox.gentoo.org/gentoo-dev/20261003070146.686610-1-alice@gentoo.org/T/'
     const expected: PublicInboxPage = {
       kind: 'message',
       inboxUrl: 'https://public-inbox.gentoo.org/gentoo-dev/',
-      messageId: '20261003070146.686610-1-mgorny@gentoo.org',
+      messageId: '20261003070146.686610-1-alice@gentoo.org',
     }
 
     expect(getPublicInboxPage(value, threadHtml)).toEqual(expected)
@@ -157,11 +157,11 @@ describe('getPublicInboxPage', () => {
 
   it('should keep a percent-encoded message id as it is', () => {
     const value =
-      'https://inbox.kyleam.com/snakemake-mode/kyleam%2Fsnakemake-mode%2Fissues%2F11%2F211507107@github.com/'
+      'https://inbox.example.com/snakemake-mode/alice%2Fsnakemake-mode%2Fissues%2F11%2F211507107@github.com/'
     const expected: PublicInboxPage = {
       kind: 'message',
-      inboxUrl: 'https://inbox.kyleam.com/snakemake-mode/',
-      messageId: 'kyleam%2Fsnakemake-mode%2Fissues%2F11%2F211507107@github.com',
+      inboxUrl: 'https://inbox.example.com/snakemake-mode/',
+      messageId: 'alice%2Fsnakemake-mode%2Fissues%2F11%2F211507107@github.com',
     }
 
     expect(getPublicInboxPage(value, messageHtml)).toEqual(expected)

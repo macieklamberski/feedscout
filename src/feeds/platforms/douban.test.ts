@@ -3,9 +3,9 @@ import { type DoubanUrl, doubanHandler, parseDoubanUrl } from './douban.js'
 
 describe('parseDoubanUrl', () => {
   it('should return the user for a user page', () => {
-    const expected: DoubanUrl = { kind: 'user', username: 'ahbei' }
+    const expected: DoubanUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseDoubanUrl('https://www.douban.com/people/ahbei/')).toEqual(expected)
+    expect(parseDoubanUrl('https://www.douban.com/people/alice/')).toEqual(expected)
   })
 
   it('should return the subject for a subject page on a subdomain', () => {
@@ -35,12 +35,12 @@ describe('parseDoubanUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseDoubanUrl('https://example.com/people/ahbei/')).toBeUndefined()
+    expect(parseDoubanUrl('https://example.com/people/alice/')).toBeUndefined()
   })
 
   const otherHostValues: Array<string> = [
     'https://accounts.douban.com/',
-    'https://api.douban.com/people/ahbei/',
+    'https://api.douban.com/people/alice/',
     'https://a.movie.douban.com/subject/1292052/',
   ]
 
@@ -75,18 +75,18 @@ describe('doubanHandler', () => {
     })
 
     it('should return interests, reviews, and notes feeds for user page', () => {
-      const value = 'https://www.douban.com/people/ahbei/'
+      const value = 'https://www.douban.com/people/alice/'
       const expected = [
         {
-          uri: 'https://www.douban.com/feed/people/ahbei/interests',
+          uri: 'https://www.douban.com/feed/people/alice/interests',
           hint: { key: 'douban:interests', label: 'Interests' },
         },
         {
-          uri: 'https://www.douban.com/feed/people/ahbei/reviews',
+          uri: 'https://www.douban.com/feed/people/alice/reviews',
           hint: { key: 'douban:reviews', label: 'Reviews' },
         },
         {
-          uri: 'https://www.douban.com/feed/people/ahbei/notes',
+          uri: 'https://www.douban.com/feed/people/alice/notes',
           hint: { key: 'douban:notes', label: 'Notes' },
         },
       ]
@@ -95,18 +95,18 @@ describe('doubanHandler', () => {
     })
 
     it('should return interests, reviews, and notes feeds for user page with a capitalized people segment', () => {
-      const value = 'https://www.douban.com/People/ahbei/'
+      const value = 'https://www.douban.com/People/alice/'
       const expected = [
         {
-          uri: 'https://www.douban.com/feed/people/ahbei/interests',
+          uri: 'https://www.douban.com/feed/people/alice/interests',
           hint: { key: 'douban:interests', label: 'Interests' },
         },
         {
-          uri: 'https://www.douban.com/feed/people/ahbei/reviews',
+          uri: 'https://www.douban.com/feed/people/alice/reviews',
           hint: { key: 'douban:reviews', label: 'Reviews' },
         },
         {
-          uri: 'https://www.douban.com/feed/people/ahbei/notes',
+          uri: 'https://www.douban.com/feed/people/alice/notes',
           hint: { key: 'douban:notes', label: 'Notes' },
         },
       ]
@@ -169,18 +169,18 @@ describe('doubanHandler', () => {
     })
 
     it('should handle user page from subdomain', () => {
-      const value = 'https://movie.douban.com/people/ahbei/'
+      const value = 'https://movie.douban.com/people/alice/'
       const expected = [
         {
-          uri: 'https://www.douban.com/feed/people/ahbei/interests',
+          uri: 'https://www.douban.com/feed/people/alice/interests',
           hint: { key: 'douban:interests', label: 'Interests' },
         },
         {
-          uri: 'https://www.douban.com/feed/people/ahbei/reviews',
+          uri: 'https://www.douban.com/feed/people/alice/reviews',
           hint: { key: 'douban:reviews', label: 'Reviews' },
         },
         {
-          uri: 'https://www.douban.com/feed/people/ahbei/notes',
+          uri: 'https://www.douban.com/feed/people/alice/notes',
           hint: { key: 'douban:notes', label: 'Notes' },
         },
       ]

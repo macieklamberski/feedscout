@@ -34,27 +34,27 @@ describe('parseLobstersUrl', () => {
   })
 
   it('should return the user for a user page', () => {
-    const expected: LobstersUrl = { kind: 'user', username: 'jcs' }
+    const expected: LobstersUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseLobstersUrl('https://lobste.rs/~jcs')).toEqual(expected)
+    expect(parseLobstersUrl('https://lobste.rs/~alice')).toEqual(expected)
   })
 
   it('should return the user for a user page with a trailing slash', () => {
-    const expected: LobstersUrl = { kind: 'user', username: 'pushcx' }
+    const expected: LobstersUrl = { kind: 'user', username: 'bob' }
 
-    expect(parseLobstersUrl('https://lobste.rs/~pushcx/')).toEqual(expected)
+    expect(parseLobstersUrl('https://lobste.rs/~bob/')).toEqual(expected)
   })
 
   it('should return the user for a user subpage', () => {
-    const expected: LobstersUrl = { kind: 'user', username: 'pushcx' }
+    const expected: LobstersUrl = { kind: 'user', username: 'bob' }
 
-    expect(parseLobstersUrl('https://lobste.rs/~pushcx/stories')).toEqual(expected)
+    expect(parseLobstersUrl('https://lobste.rs/~bob/stories')).toEqual(expected)
   })
 
   it('should keep the username case', () => {
-    const expected: LobstersUrl = { kind: 'user', username: 'PushCX' }
+    const expected: LobstersUrl = { kind: 'user', username: 'Bob' }
 
-    expect(parseLobstersUrl('https://lobste.rs/~PushCX')).toEqual(expected)
+    expect(parseLobstersUrl('https://lobste.rs/~Bob')).toEqual(expected)
   })
 
   it('should return the top page with its period', () => {
@@ -102,7 +102,7 @@ describe('parseLobstersUrl', () => {
   it('should return the home page for a username with a dot', () => {
     const expected: LobstersUrl = { kind: 'home' }
 
-    expect(parseLobstersUrl('https://lobste.rs/~jcs.old')).toEqual(expected)
+    expect(parseLobstersUrl('https://lobste.rs/~alice.old')).toEqual(expected)
   })
 
   it('should return the newest page', () => {
@@ -130,7 +130,7 @@ describe('parseLobstersUrl', () => {
   })
 
   it('should return undefined for the www host', () => {
-    expect(parseLobstersUrl('https://www.lobste.rs/~jcs')).toBeUndefined()
+    expect(parseLobstersUrl('https://www.lobste.rs/~alice')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -220,10 +220,10 @@ describe('lobstersHandler', () => {
     })
 
     it('should return user stories feed for user page', () => {
-      const value = 'https://lobste.rs/~pushcx'
+      const value = 'https://lobste.rs/~bob'
       const expected = [
         {
-          uri: 'https://lobste.rs/~pushcx/stories.rss',
+          uri: 'https://lobste.rs/~bob/stories.rss',
           hint: { key: 'lobsters:stories', label: 'Stories' },
         },
       ]

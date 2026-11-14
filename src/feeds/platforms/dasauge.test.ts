@@ -4,28 +4,28 @@ import { type DasaugeUrl, dasaugeHandler, parseDasaugeUrl } from './dasauge.js'
 
 describe('parseDasaugeUrl', () => {
   it('should return the username for a profile page', () => {
-    const expected: DasaugeUrl = { kind: 'profile', username: 'abstrusa' }
+    const expected: DasaugeUrl = { kind: 'profile', username: 'alice' }
 
-    expect(parseDasaugeUrl('https://dasauge.de/-abstrusa/')).toEqual(expected)
+    expect(parseDasaugeUrl('https://dasauge.de/-alice/')).toEqual(expected)
   })
 
   it('should return the username for a portfolio page under a profile', () => {
-    const value = 'https://dasauge.de/-abstrusa/wilde-m%C3%B6hre-festival-logo-design/'
-    const expected: DasaugeUrl = { kind: 'profile', username: 'abstrusa' }
+    const value = 'https://dasauge.de/-alice/wilde-m%C3%B6hre-festival-logo-design/'
+    const expected: DasaugeUrl = { kind: 'profile', username: 'alice' }
 
     expect(parseDasaugeUrl(value)).toEqual(expected)
   })
 
   it('should return the username for a profile on another dasauge host', () => {
-    const expected: DasaugeUrl = { kind: 'profile', username: 'abstrusa' }
+    const expected: DasaugeUrl = { kind: 'profile', username: 'alice' }
 
-    expect(parseDasaugeUrl('https://dasauge.co.uk/-abstrusa/')).toEqual(expected)
+    expect(parseDasaugeUrl('https://dasauge.co.uk/-alice/')).toEqual(expected)
   })
 
   it('should keep the percent-encoding of the username', () => {
-    const expected: DasaugeUrl = { kind: 'profile', username: 'alisia-sch%C3%A4fer' }
+    const expected: DasaugeUrl = { kind: 'profile', username: 'bob-m%c3%bcLleR' }
 
-    expect(parseDasaugeUrl('https://dasauge.de/-alisia-sch%C3%A4fer/')).toEqual(expected)
+    expect(parseDasaugeUrl('https://dasauge.de/-bob-m%c3%bcLleR/')).toEqual(expected)
   })
 
   it('should return undefined for a directory listing', () => {
@@ -41,17 +41,17 @@ describe('parseDasaugeUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseDasaugeUrl('https://example.com/-abstrusa/')).toBeUndefined()
+    expect(parseDasaugeUrl('https://example.com/-alice/')).toBeUndefined()
   })
 })
 
 describe('dasaugeHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://dasauge.de/-abstrusa/'],
-      [true, 'https://dasauge.ch/-abstrusa/'],
-      [true, 'https://dasauge.com/-abstrusa/'],
-      [true, 'https://dasauge.es/-abstrusa/'],
+      [true, 'https://dasauge.de/-alice/'],
+      [true, 'https://dasauge.ch/-alice/'],
+      [true, 'https://dasauge.com/-alice/'],
+      [true, 'https://dasauge.es/-alice/'],
       [false, 'https://dasauge.de/jobs/'],
     ]
 
@@ -62,14 +62,14 @@ describe('dasaugeHandler', () => {
 
   describe('resolve', () => {
     it('should return empty array for a URL outside dasauge', () => {
-      expect(dasaugeHandler.resolve('https://example.com/-abstrusa/')).toEqual([])
+      expect(dasaugeHandler.resolve('https://example.com/-alice/')).toEqual([])
     })
 
     it('should return the profile feed on the page host', () => {
-      const value = 'https://dasauge.at/-elmar-theurer/industriefotografie/'
+      const value = 'https://dasauge.at/-carol-jones/industriefotografie/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://dasauge.at/-elmar-theurer/?rss',
+          uri: 'https://dasauge.at/-carol-jones/?rss',
           hint: { key: 'dasauge:profile', label: 'Profile' },
         },
       ]

@@ -30,7 +30,7 @@ describe('parseSyosetuUrl', () => {
 describe('syosetuHandler', () => {
   describe('match', () => {
     it('should match an author page', () => {
-      expect(syosetuHandler.match('https://mypage.syosetu.com/372556/')).toBe(true)
+      expect(syosetuHandler.match('https://mypage.syosetu.com/135790/')).toBe(true)
     })
 
     it('should not match a novel page', () => {
@@ -52,14 +52,14 @@ describe('syosetuHandler', () => {
     })
 
     it('should return the author and activity feeds', () => {
-      const value = 'https://mypage.syosetu.com/372556/'
+      const value = 'https://mypage.syosetu.com/135790/'
       const expected = [
         {
-          uri: 'https://api.syosetu.com/writernovel/372556.Atom',
+          uri: 'https://api.syosetu.com/writernovel/135790.Atom',
           hint: { key: 'syosetu:author', label: 'Author' },
         },
         {
-          uri: 'https://api.syosetu.com/writer/372556.Atom',
+          uri: 'https://api.syosetu.com/writer/135790.Atom',
           hint: { key: 'syosetu:activity', label: 'Activity' },
         },
       ]

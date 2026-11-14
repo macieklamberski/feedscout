@@ -4,21 +4,21 @@ import { observableHandler, parseObservableUrl } from './observable.js'
 
 describe('parseObservableUrl', () => {
   it('should return the user for a profile page', () => {
-    const expected: ObservableUrl = { kind: 'user', owner: 'mbostock' }
+    const expected: ObservableUrl = { kind: 'user', owner: 'alice' }
 
-    expect(parseObservableUrl('https://observablehq.com/@mbostock')).toEqual(expected)
+    expect(parseObservableUrl('https://observablehq.com/@alice')).toEqual(expected)
   })
 
   it('should return the user for a notebook page', () => {
-    const expected: ObservableUrl = { kind: 'user', owner: 'mbostock' }
+    const expected: ObservableUrl = { kind: 'user', owner: 'alice' }
 
-    expect(parseObservableUrl('https://observablehq.com/@mbostock/some-notebook')).toEqual(expected)
+    expect(parseObservableUrl('https://observablehq.com/@alice/some-notebook')).toEqual(expected)
   })
 
   it('should return the user for the www host', () => {
-    const expected: ObservableUrl = { kind: 'user', owner: 'mbostock' }
+    const expected: ObservableUrl = { kind: 'user', owner: 'alice' }
 
-    expect(parseObservableUrl('https://www.observablehq.com/@mbostock')).toEqual(expected)
+    expect(parseObservableUrl('https://www.observablehq.com/@alice')).toEqual(expected)
   })
 
   it('should return the collection for a collection page', () => {
@@ -83,7 +83,7 @@ describe('parseObservableUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseObservableUrl('https://example.com/@mbostock')).toBeUndefined()
+    expect(parseObservableUrl('https://example.com/@alice')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -94,7 +94,7 @@ describe('parseObservableUrl', () => {
 describe('observableHandler', () => {
   describe('match', () => {
     it('should match an observablehq.com URL', () => {
-      expect(observableHandler.match('https://observablehq.com/@mbostock')).toBe(true)
+      expect(observableHandler.match('https://observablehq.com/@alice')).toBe(true)
     })
 
     it('should not match another host', () => {
@@ -104,10 +104,10 @@ describe('observableHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for user', () => {
-      const value = 'https://observablehq.com/@mbostock'
+      const value = 'https://observablehq.com/@alice'
       const expected = [
         {
-          uri: 'https://api.observablehq.com/documents/@mbostock.rss',
+          uri: 'https://api.observablehq.com/documents/@alice.rss',
           hint: { key: 'observable:notebooks', label: 'Notebooks' },
         },
       ]

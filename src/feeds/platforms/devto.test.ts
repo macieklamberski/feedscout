@@ -52,9 +52,9 @@ describe('parseDevtoUrl', () => {
   })
 
   it('should return a hyphenated name', () => {
-    const expected: DevtoUrl = { kind: 'profile', owner: 'maame-codes' }
+    const expected: DevtoUrl = { kind: 'profile', owner: 'bob-codes' }
 
-    expect(parseDevtoUrl('https://dev.to/maame-codes')).toEqual(expected)
+    expect(parseDevtoUrl('https://dev.to/bob-codes')).toEqual(expected)
   })
 
   it('should return the home page', () => {

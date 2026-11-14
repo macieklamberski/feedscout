@@ -9,9 +9,9 @@ describe('parseV2exUrl', () => {
   })
 
   it('should return the member for a member page', () => {
-    const expected: V2exUrl = { kind: 'member', username: 'Livid' }
+    const expected: V2exUrl = { kind: 'member', username: 'Alice' }
 
-    expect(parseV2exUrl('https://www.v2ex.com/member/Livid')).toEqual(expected)
+    expect(parseV2exUrl('https://www.v2ex.com/member/Alice')).toEqual(expected)
   })
 
   it('should return the tab for a tab query', () => {
@@ -108,10 +108,10 @@ describe('v2exHandler', () => {
     })
 
     it('should return member feed for member page', () => {
-      const value = 'https://www.v2ex.com/member/livid'
+      const value = 'https://www.v2ex.com/member/alice'
       const expected = [
         {
-          uri: 'https://www.v2ex.com/feed/member/livid.xml',
+          uri: 'https://www.v2ex.com/feed/member/alice.xml',
           hint: { key: 'v2ex:member', label: 'Member' },
         },
       ]
@@ -120,10 +120,10 @@ describe('v2exHandler', () => {
     })
 
     it('should return member feed for member page with a capitalized member segment', () => {
-      const value = 'https://www.v2ex.com/Member/livid'
+      const value = 'https://www.v2ex.com/Member/alice'
       const expected = [
         {
-          uri: 'https://www.v2ex.com/feed/member/livid.xml',
+          uri: 'https://www.v2ex.com/feed/member/alice.xml',
           hint: { key: 'v2ex:member', label: 'Member' },
         },
       ]

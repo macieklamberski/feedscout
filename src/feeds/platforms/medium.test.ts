@@ -4,21 +4,21 @@ import { mediumHandler, parseMediumUrl } from './medium.js'
 
 describe('parseMediumUrl', () => {
   it('should return the user for a profile', () => {
-    const expected: MediumUrl = { kind: 'user', username: 'ev' }
+    const expected: MediumUrl = { kind: 'user', username: 'bob' }
 
-    expect(parseMediumUrl('https://medium.com/@ev')).toEqual(expected)
+    expect(parseMediumUrl('https://medium.com/@bob')).toEqual(expected)
   })
 
   it('should return the user for a profile article', () => {
-    const expected: MediumUrl = { kind: 'user', username: 'ev' }
+    const expected: MediumUrl = { kind: 'user', username: 'bob' }
 
-    expect(parseMediumUrl('https://medium.com/@ev/some-article')).toEqual(expected)
+    expect(parseMediumUrl('https://medium.com/@bob/some-article')).toEqual(expected)
   })
 
   it('should return the user for the www host', () => {
-    const expected: MediumUrl = { kind: 'user', username: 'ev' }
+    const expected: MediumUrl = { kind: 'user', username: 'bob' }
 
-    expect(parseMediumUrl('https://www.medium.com/@ev')).toEqual(expected)
+    expect(parseMediumUrl('https://www.medium.com/@bob')).toEqual(expected)
   })
 
   it('should return the tag for a tag page', () => {
@@ -119,7 +119,7 @@ describe('parseMediumUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseMediumUrl('https://example.com/@ev')).toBeUndefined()
+    expect(parseMediumUrl('https://example.com/@bob')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -130,19 +130,19 @@ describe('parseMediumUrl', () => {
 describe('mediumHandler', () => {
   describe('match', () => {
     it('should match a medium.com URL', () => {
-      expect(mediumHandler.match('https://medium.com/@ev')).toBe(true)
+      expect(mediumHandler.match('https://medium.com/@bob')).toBe(true)
     })
 
     it('should not match another host', () => {
-      expect(mediumHandler.match('https://example.com/@ev')).toBe(false)
+      expect(mediumHandler.match('https://example.com/@bob')).toBe(false)
     })
   })
 
   describe('resolve', () => {
     it('should return RSS feed URL for user profile', () => {
-      const value = 'https://medium.com/@ev'
+      const value = 'https://medium.com/@bob'
       const expected = [
-        { uri: 'https://medium.com/feed/@ev', hint: { key: 'medium:posts', label: 'Posts' } },
+        { uri: 'https://medium.com/feed/@bob', hint: { key: 'medium:posts', label: 'Posts' } },
       ]
 
       expect(mediumHandler.resolve(value)).toEqual(expected)

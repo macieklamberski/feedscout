@@ -4,61 +4,61 @@ import { arenaHandler, parseArenaUrl } from './arena.js'
 
 describe('parseArenaUrl', () => {
   const profileViewValues: Array<string> = [
-    'https://www.are.na/meg-miller/followers',
-    'https://www.are.na/meg-miller/Following',
-    'https://www.are.na/meg-miller/channels',
-    'https://www.are.na/meg-miller/blocks',
-    'https://www.are.na/meg-miller/table',
+    'https://www.are.na/bob-jones/followers',
+    'https://www.are.na/bob-jones/Following',
+    'https://www.are.na/bob-jones/channels',
+    'https://www.are.na/bob-jones/blocks',
+    'https://www.are.na/bob-jones/table',
   ]
 
   it.each(profileViewValues)('should return the profile for the profile view %s', (value) => {
-    const expected: ArenaUrl = { kind: 'profile', username: 'meg-miller' }
+    const expected: ArenaUrl = { kind: 'profile', username: 'bob-jones' }
 
     expect(parseArenaUrl(value)).toEqual(expected)
   })
 
   it('should return the profile for a profile page', () => {
-    const expected: ArenaUrl = { kind: 'profile', username: 'charles-broskoski' }
+    const expected: ArenaUrl = { kind: 'profile', username: 'alice-smith' }
 
-    expect(parseArenaUrl('https://www.are.na/charles-broskoski')).toEqual(expected)
+    expect(parseArenaUrl('https://www.are.na/alice-smith')).toEqual(expected)
   })
 
   it('should return the profile for the host without www', () => {
-    const expected: ArenaUrl = { kind: 'profile', username: 'charles-broskoski' }
+    const expected: ArenaUrl = { kind: 'profile', username: 'alice-smith' }
 
-    expect(parseArenaUrl('https://are.na/charles-broskoski')).toEqual(expected)
+    expect(parseArenaUrl('https://are.na/alice-smith')).toEqual(expected)
   })
 
   it('should return the channel for a channel page', () => {
     const expected: ArenaUrl = {
       kind: 'channel',
-      username: 'meg-miller',
+      username: 'bob-jones',
       channel: 'good-sign-offs',
     }
 
-    expect(parseArenaUrl('https://www.are.na/meg-miller/good-sign-offs')).toEqual(expected)
+    expect(parseArenaUrl('https://www.are.na/bob-jones/good-sign-offs')).toEqual(expected)
   })
 
   it('should return the channel for a channel subpage', () => {
     const expected: ArenaUrl = {
       kind: 'channel',
-      username: 'meg-miller',
+      username: 'bob-jones',
       channel: 'good-sign-offs',
     }
 
-    expect(parseArenaUrl('https://www.are.na/meg-miller/good-sign-offs/table')).toEqual(expected)
+    expect(parseArenaUrl('https://www.are.na/bob-jones/good-sign-offs/table')).toEqual(expected)
   })
 
   it('should return the profile for the profile feed URL', () => {
-    const expected: ArenaUrl = { kind: 'profile', username: 'meg-miller' }
+    const expected: ArenaUrl = { kind: 'profile', username: 'bob-jones' }
 
-    expect(parseArenaUrl('https://www.are.na/meg-miller/feed/rss')).toEqual(expected)
+    expect(parseArenaUrl('https://www.are.na/bob-jones/feed/rss')).toEqual(expected)
   })
 
   it('should return the profile for the profile feed URL with a capitalized feed segment', () => {
-    const expected: ArenaUrl = { kind: 'profile', username: 'meg-miller' }
+    const expected: ArenaUrl = { kind: 'profile', username: 'bob-jones' }
 
-    expect(parseArenaUrl('https://www.are.na/meg-miller/Feed/rss')).toEqual(expected)
+    expect(parseArenaUrl('https://www.are.na/bob-jones/Feed/rss')).toEqual(expected)
   })
 
   it('should return the editorial section', () => {
@@ -79,7 +79,7 @@ describe('parseArenaUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseArenaUrl('https://example.com/charles-broskoski')).toBeUndefined()
+    expect(parseArenaUrl('https://example.com/alice-smith')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -90,7 +90,7 @@ describe('parseArenaUrl', () => {
 describe('arenaHandler', () => {
   describe('match', () => {
     it('should match an Are.na profile URL', () => {
-      expect(arenaHandler.match('https://are.na/meg-miller')).toBe(true)
+      expect(arenaHandler.match('https://are.na/bob-jones')).toBe(true)
     })
 
     it('should not match other hosts', () => {
@@ -100,10 +100,10 @@ describe('arenaHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for user profile', () => {
-      const value = 'https://www.are.na/charles-broskoski'
+      const value = 'https://www.are.na/alice-smith'
       const expected = [
         {
-          uri: 'https://www.are.na/charles-broskoski/feed/rss',
+          uri: 'https://www.are.na/alice-smith/feed/rss',
           hint: { key: 'arena:profile', label: 'Profile' },
         },
       ]
@@ -112,10 +112,10 @@ describe('arenaHandler', () => {
     })
 
     it('should return feed URL for channel', () => {
-      const value = 'https://www.are.na/meg-miller/good-sign-offs'
+      const value = 'https://www.are.na/bob-jones/good-sign-offs'
       const expected = [
         {
-          uri: 'https://www.are.na/meg-miller/good-sign-offs/feed/rss',
+          uri: 'https://www.are.na/bob-jones/good-sign-offs/feed/rss',
           hint: { key: 'arena:channel', label: 'Channel' },
         },
       ]
