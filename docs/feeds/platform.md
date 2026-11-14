@@ -2773,7 +2773,7 @@ Discovers the site feeds of an Estranky site. A site serves the article feeds, t
 |-------------|-----------------|
 | `{site}.estranky.cz/…` | Posts · photos<sup>†</sup> · comments<sup>†</sup> · home page slice · photo album slice<sup>†</sup> |
 | `{site}.estranky.sk/…` | Posts · photos<sup>†</sup> · comments<sup>†</sup> · home page slice<sup>?</sup> · photo album slice<sup>?</sup> |
-| Any other page | Posts · photos<sup>†</sup> · comments<sup>†</sup> · home page slice · photo album slice<sup>†</sup> |
+| `{host}/…` | Posts · photos<sup>†</sup> · comments<sup>†</sup> · home page slice · photo album slice<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
