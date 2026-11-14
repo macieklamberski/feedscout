@@ -64,15 +64,15 @@ describe('parsiblogHandler', () => {
       expect(parsiblogHandler.resolve('http://example.com/')).toEqual([])
     })
 
-    it('should return RSS and Atom feeds under the page scheme for a blog page', () => {
+    it('should return RSS and Atom feeds over http for a blog page', () => {
       const value = 'https://Alice.ParsiBlog.com/Posts/12/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.parsiblog.com/rss/',
+          uri: 'http://alice.parsiblog.com/rss/',
           hint: { key: 'parsiblog:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://alice.parsiblog.com/atom/',
+          uri: 'http://alice.parsiblog.com/atom/',
           hint: { key: 'parsiblog:posts', label: 'Posts', format: 'atom' },
         },
       ]
