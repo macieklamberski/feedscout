@@ -37,13 +37,24 @@ const feeds = definePlatformFeeds(
       template: '{scheme}://{host}/feeds/posts/default?alt=rss',
       format: 'rss',
     },
-    { key: 'blogspot:posts', template: '{scheme}://{host}/feeds/posts/full', format: 'atom' },
+    {
+      key: 'blogspot:posts',
+      template: '{scheme}://{host}/feeds/posts/full',
+      format: 'atom',
+      isAlias: true,
+    },
     {
       key: 'blogspot:posts',
       template: '{scheme}://{host}/feeds/posts/full?alt=rss',
       format: 'rss',
+      isAlias: true,
     },
-    { key: 'blogspot:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
+    {
+      key: 'blogspot:posts',
+      template: '{scheme}://{host}/atom.xml',
+      format: 'atom',
+      isAlias: true,
+    },
     {
       key: 'blogspot:posts-summary',
       template: '{scheme}://{host}/feeds/posts/summary',
@@ -64,7 +75,12 @@ const feeds = definePlatformFeeds(
       template: '{scheme}://{host}/feeds/comments/default?alt=rss',
       format: 'rss',
     },
-    { key: 'blogspot:comments', template: '{scheme}://{host}/feeds/comments/full', format: 'atom' },
+    {
+      key: 'blogspot:comments',
+      template: '{scheme}://{host}/feeds/comments/full',
+      format: 'atom',
+      isAlias: true,
+    },
     {
       key: 'blogspot:comments-summary',
       template: '{scheme}://{host}/feeds/comments/summary',
