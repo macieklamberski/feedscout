@@ -146,14 +146,6 @@ export const estrankyHandler: PlatformHandler = {
     ]
   },
 
-  // A custom domain is known only by its markers, so its feeds are built but not claimed. The
-  // table reads any host under the domains, so the page parser refuses the apex and www first,
-  // where Estranky runs itself and a feed path answers 500.
-  getFeedHint: (url) => {
-    if (!parseEstrankyUrl(url)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  // A custom domain is known only by its markers, so its feeds are built but not claimed.
+  getFeedHint: feeds.getFeedHint,
 }

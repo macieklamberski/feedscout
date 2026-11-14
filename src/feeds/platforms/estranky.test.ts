@@ -398,7 +398,7 @@ describe('estrankyHandler', () => {
     })
 
     it('should return the home page slice hint for a home page slice feed', () => {
-      const value = 'http://www.example.estranky.cz/rss/slices/l/homepage/data.xml'
+      const value = 'http://example.estranky.cz/rss/slices/l/homepage/data.xml'
       const expected: DiscoverUriHint = {
         key: 'estranky:homepage-slice',
         label: 'Home page (Web Slice)',
@@ -498,7 +498,7 @@ describe('estrankyHandler', () => {
     })
 
     it('should return the photo folder slice hint for a photo folder slice feed', () => {
-      const value = 'http://www.example.estranky.sk/rss/slices/d/9/data.xml'
+      const value = 'http://example.estranky.sk/rss/slices/d/9/data.xml'
       const expected: DiscoverUriHint = {
         key: 'estranky:photo-folder-slice',
         label: 'Photo folder (Web Slice)',
@@ -519,6 +519,12 @@ describe('estrankyHandler', () => {
 
     it('should return undefined for a feed on the www host', () => {
       const value = 'https://www.estranky.cz/rss/articles/data.xml'
+
+      expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www in front of a site', () => {
+      const value = 'http://www.example.estranky.cz/rss/articles/data.xml'
 
       expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -563,7 +569,7 @@ describe('estrankyHandler', () => {
         { key: 'estranky:comments', label: 'Comments' },
       ],
       [
-        'http://www.example.estranky.cz/rss/slices/l/homepage/data.xml',
+        'http://example.estranky.cz/rss/slices/l/homepage/data.xml',
         { key: 'estranky:homepage-slice', label: 'Home page (Web Slice)' },
       ],
       [
@@ -591,7 +597,7 @@ describe('estrankyHandler', () => {
         { key: 'estranky:section-slice', label: 'Section (Web Slice)' },
       ],
       [
-        'http://www.example.estranky.sk/rss/slices/d/9/data.xml',
+        'http://example.estranky.sk/rss/slices/d/9/data.xml',
         { key: 'estranky:photo-folder-slice', label: 'Photo folder (Web Slice)' },
       ],
     ]
