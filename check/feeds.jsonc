@@ -1529,6 +1529,7 @@
     ]
   },
   "seesaa": {
+    "seesaa:podcast": "https://potcast-inami01.seesaa.net/index_custom.rdf",
     "seesaa:posts": [
       "https://info.seesaa.net/index.rdf",
       "https://kawaiibacon.iiblog.jp/index.rdf",
