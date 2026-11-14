@@ -280,10 +280,11 @@ describe('ucozHandler', () => {
       expect(ucozHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a feed on the www host of a site', () => {
+    it('should return the module hint for a feed on the www host of a site', () => {
       const value = 'http://www.example.ucoz.ru/load/rss'
+      const expected: DiscoverUriHint = { key: 'ucoz:load', label: 'Files' }
 
-      expect(ucozHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(ucozHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the module hint for a feed with a trailing slash', () => {
