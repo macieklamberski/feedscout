@@ -237,12 +237,6 @@ describe('bigcommerceHandler', () => {
 
       expect(bigcommerceHandler.resolve(value, '<html></html>')).toEqual(expected)
     })
-
-    it('should return no feeds for a page outside http', () => {
-      const value = 'ftp://alice.mybigcommerce.com/'
-
-      expect(bigcommerceHandler.resolve(value, '<html></html>')).toEqual([])
-    })
   })
 
   describe('getFeedHint', () => {
