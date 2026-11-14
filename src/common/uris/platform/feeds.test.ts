@@ -107,6 +107,16 @@ const pathFeeds = definePlatformFeeds(
   { hosts: ['example.com', 'www.example.com'] },
 )
 
+const passedQueryFeeds = definePlatformFeeds(
+  [
+    { key: 'joomla:view', template: '{root}/index.php?{query}&format=feed&type=rss' },
+    { key: 'b2evolution:posts', template: '{root}/index.php?{query}&tempskin=_rss2' },
+    { key: 'example:search', template: '{root}/jobs/feed?sort=date&{query}' },
+    { key: 'example:site', template: '{root}/index.php?format=feed&type=atom' },
+  ],
+  { hosts: ['example.com'] },
+)
+
 const directoryFeeds = definePlatformFeeds([
   { key: 'typecho:page', template: 'https://www.example.com/feed/{directory*}/' },
   { key: 'typecho:page', template: 'https://www.example.com/feed/{path*}' },
@@ -1378,6 +1388,141 @@ describe('definePlatformFeeds', () => {
       const value = 'ftp://www.example.com/'
 
       expect(siteFeeds.forUrl(value)).toBeUndefined()
+    })
+  })
+
+  describe('with a passed query', () => {
+    describe('getFeedUrl', () => {
+      it('should write the passed query in place of the placeholder', () => {
+        const value = {
+          root: 'https://example.com',
+          query: 'option=com_content&view=category&id=12',
+        }
+        const expected =
+          'https://example.com/index.php?option=com_content&view=category&id=12&format=feed&type=rss'
+
+        expect(passedQueryFeeds.getFeedUrl('joomla:view', value)).toBe(expected)
+      })
+
+      it('should write the passed query after the parameters before it', () => {
+        const value = {
+          root: 'https://example.com',
+          query: 'keywords=nurse',
+        }
+        const expected = 'https://example.com/jobs/feed?sort=date&keywords=nurse'
+
+        expect(passedQueryFeeds.getFeedUrl('example:search', value)).toBe(expected)
+      })
+
+      it('should drop the question mark in front of the passed query', () => {
+        const value = {
+          root: 'https://example.com',
+          query: '?blog=2',
+        }
+        const expected = 'https://example.com/index.php?blog=2&tempskin=_rss2'
+
+        expect(passedQueryFeeds.getFeedUrl('b2evolution:posts', value)).toBe(expected)
+      })
+
+      it('should drop a parameter of the passed query the row sets itself', () => {
+        const value = {
+          root: 'https://example.com',
+          query: 'option=com_content&format=html',
+        }
+        const expected = 'https://example.com/index.php?option=com_content&format=feed&type=rss'
+
+        expect(passedQueryFeeds.getFeedUrl('joomla:view', value)).toBe(expected)
+      })
+
+      it('should drop a parameter the row sets itself in another case', () => {
+        const value = {
+          root: 'https://example.com',
+          query: 'option=com_content&Format=html',
+        }
+        const expected = 'https://example.com/index.php?option=com_content&format=feed&type=rss'
+
+        expect(passedQueryFeeds.getFeedUrl('joomla:view', value)).toBe(expected)
+      })
+
+      it('should drop an empty parameter of the passed query', () => {
+        const value = {
+          root: 'https://example.com',
+          query: 'blog=2&&page=3&',
+        }
+        const expected = 'https://example.com/index.php?blog=2&page=3&tempskin=_rss2'
+
+        expect(passedQueryFeeds.getFeedUrl('b2evolution:posts', value)).toBe(expected)
+      })
+
+      it('should write the passed query as given', () => {
+        const value = {
+          root: 'https://example.com',
+          query: 'keywords=caf%C3%A9+nurse&where=a:b',
+        }
+        const expected =
+          'https://example.com/jobs/feed?sort=date&keywords=caf%C3%A9+nurse&where=a:b'
+
+        expect(passedQueryFeeds.getFeedUrl('example:search', value)).toBe(expected)
+      })
+
+      it('should percent-encode a non-ASCII character of the passed query', () => {
+        const value = {
+          root: 'https://example.com',
+          query: 'keywords=技術',
+        }
+        const expected = 'https://example.com/jobs/feed?sort=date&keywords=%E6%8A%80%E8%A1%93'
+
+        expect(passedQueryFeeds.getFeedUrl('example:search', value)).toBe(expected)
+      })
+
+      it('should write the parameters of the row alone for an empty passed query', () => {
+        const value = {
+          root: 'https://example.com',
+          query: '',
+        }
+        const expected = 'https://example.com/index.php?format=feed&type=rss'
+
+        expect(passedQueryFeeds.getFeedUrl('joomla:view', value)).toBe(expected)
+      })
+
+      it('should return undefined for a passed query with no value', () => {
+        const value = { root: 'https://example.com' }
+
+        expect(passedQueryFeeds.getFeedUrl('joomla:view', value)).toBeUndefined()
+      })
+    })
+
+    describe('getFeedHint', () => {
+      it('should return the key of a feed with a passed query', () => {
+        const value =
+          'https://example.com/index.php?option=com_content&view=category&id=12&format=feed&type=rss'
+        const expected = 'joomla:view'
+        const hint = passedQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return the key of a feed without the parameters of a passed query', () => {
+        const value = 'https://example.com/index.php?format=feed&type=rss'
+        const expected = 'joomla:view'
+        const hint = passedQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should not count a passed query as a parameter of the row', () => {
+        const value = 'https://example.com/index.php?format=feed&type=atom'
+        const expected = 'example:site'
+        const hint = passedQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return undefined for a feed missing a parameter of the row', () => {
+        const value = 'https://example.com/index.php?option=com_content&format=feed'
+
+        expect(passedQueryFeeds.getFeedHint(value)).toBeUndefined()
+      })
     })
   })
 

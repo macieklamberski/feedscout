@@ -5,6 +5,7 @@ import {
   escapeRegex,
   getQueryParam,
   getSubdomain,
+  isAnyOf,
   isHttpUrl,
   isString,
   parseUrl,
@@ -21,7 +22,9 @@ export type PlatformFeedTemplate = {
   // A feed URL with `{name}` placeholders, each one host label, path segment or query value, and
   // `{scheme}` for a feed served under the page's own scheme. A template opening with `{root}`
   // takes the scheme, the host and an optional base path, as `https://example.com/forum`. A
-  // `{name*}` path placeholder takes one or more segments, filled from `name` as `docs/api`.
+  // `{name*}` path placeholder takes one or more segments, filled from `name` as `docs/api`. A
+  // placeholder standing as a whole query parameter, as in `?{query}&format=feed`, takes a query
+  // the page passes, written as given.
   template: string
   format?: DiscoverUriHint['format']
   // Another spelling of one feed, such as a legacy host, directly under the row it spells. Its
@@ -96,6 +99,8 @@ const trailingSlashRegex = /\/$/
 const nonAsciiRegex = /\P{ASCII}+/gu
 const leadingSlashesRegex = /^\/{2,}/
 const anchorsRegex = /^\^|\$$/g
+const passedQueryRegex = /^\{(\w+)\}$/
+const leadingQuestionMarkRegex = /^\?/
 
 const rootPlaceholder = '{root}'
 const multiSegmentCapture = '[^/]+(?:/[^/]+)*'
@@ -219,7 +224,33 @@ const compileTemplate = (
   }
 
   const [, scheme, host, path = '', queryText = ''] = match
-  const query = [...new URLSearchParams(queryText)]
+  const queryEntries = [...new URLSearchParams(queryText)]
+  const getPassedQueryName = ([name, value]: [string, string]): string | undefined => {
+    if (value) {
+      return
+    }
+
+    return passedQueryRegex.exec(name)?.[1]
+  }
+  // A passed query names no parameter of the row, so it is neither matched nor counted.
+  const query = queryEntries.filter((entry) => getPassedQueryName(entry) === undefined)
+  const ownNames = query.map(([name]) => name)
+  // A passed query is written as given, without its `?` and the parameters the row sets itself.
+  const passQuery = (text: string): string => {
+    const parts = text.replace(leadingQuestionMarkRegex, '').split('&')
+
+    return parts
+      .filter((part) => {
+        const [name] = part.split('=')
+
+        if (!name) {
+          return false
+        }
+
+        return !isAnyOf(decodePercent(name), ownNames)
+      })
+      .join('&')
+  }
   // A name with no value, such as `?rss`, is a flag, built with no value.
   const flags = new Set(query.filter(([, value]) => !value).map(([name]) => name))
   const hosts = options.hosts ?? []
@@ -323,13 +354,22 @@ const compileTemplate = (
         return encode(values[name], name)
       })
     }
-    const queryParams = Object.fromEntries(
-      query.map(([name, value]): [string, string | true] => {
-        return [name, flags.has(name) ? true : fillPlaceholders(value)]
-      }),
-    )
+    const queryParts = queryEntries.map((entry) => {
+      const [name, value] = entry
+      const passedQueryName = getPassedQueryName(entry)
+
+      if (passedQueryName !== undefined) {
+        return passQuery(values[passedQueryName])
+      }
+
+      return composeQuery({ [name]: flags.has(name) ? true : fillPlaceholders(value) }).slice(1)
+    })
     // Pages link a query value percent-encoded, as `?tag=%E6%8A%80%E8%A1%93` for `技術`.
-    const builtQuery = composeQuery(queryParams).replace(nonAsciiRegex, encodeURIComponent)
+    const joinedQuery = queryParts
+      .filter((part) => part)
+      .join('&')
+      .replace(nonAsciiRegex, encodeURIComponent)
+    const builtQuery = joinedQuery ? `?${joinedQuery}` : ''
 
     // A root is written as given, without the trailing slash the path brings.
     const origin = isRootTemplate
