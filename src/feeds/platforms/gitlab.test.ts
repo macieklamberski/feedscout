@@ -389,6 +389,25 @@ describe('gitlabHandler', () => {
 
       expect(gitlabHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return no feeds for the site root', () => {
+      const value = 'https://gitlab.com/'
+      const expected: Array<DiscoverUriEntry> = []
+
+      expect(gitlabHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the scheme of a self-hosted page served over http', () => {
+      const value = 'http://gitlab.example.com:8080/team'
+      const expected = [
+        {
+          uri: 'http://gitlab.example.com:8080/team.atom',
+          hint: { key: 'gitlab:activity', label: 'Activity' },
+        },
+      ]
+
+      expect(gitlabHandler.resolve(value)).toEqual(expected)
+    })
   })
 
   describe('getFeedHint', () => {
