@@ -2492,12 +2492,12 @@ Discovers the product and blog feeds of a BigCommerce store. Detected by the `SH
 
 ### Cocolog
 
-Discovers the posts feeds of a Cocolog blog on `cocolog-nifty.com` and its sibling domains. One account can host several blogs, each under its own path. The home page names its blog only in its feed links, so a home page URL needs the page content.
+Discovers the posts and comments feeds of a Cocolog blog on `cocolog-nifty.com` and its sibling domains. One account can host several blogs, each under its own path. The home page names its blog only in its feed links, so a home page URL needs the page content.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{user}.cocolog-nifty.com/{blog}/…` | Posts (Atom + RDF + RSS) |
-| `{user}.cocolog-nifty.com` | Posts of the blog the page links (Atom + RDF + RSS)* |
+| `{user}.cocolog-nifty.com/{blog}/…` | Posts (Atom + RDF + RSS) · comments (RDF + RSS) |
+| `{user}.cocolog-nifty.com` | Posts and comments of the blog the page links (Atom + RDF + RSS)* |
 
 \* *Requires HTML content to read the blog from the feed links.*
 

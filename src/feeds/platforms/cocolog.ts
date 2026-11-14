@@ -39,8 +39,8 @@ const feeds = definePlatformFeeds(
       template: '{scheme}://{host}/{blog}/rss.xml',
       format: 'rss',
     },
-    // A blog's newest comments, which its skin names `comment-index.rdf` or `comments.xml`, so
-    // `resolve` cannot tell which one a blog serves.
+    // A blog's newest comments, which its skin names `comment-index.rdf` or `comments.xml`.
+    // `resolve` cannot tell which one a blog serves, so it builds both.
     {
       key: 'cocolog:comments',
       template: '{scheme}://{host}/{blog}/comment-index.rdf',
@@ -111,6 +111,8 @@ export const cocologHandler: PlatformHandler = {
       pageFeeds.getFeedEntry('cocolog:posts', params, 'atom'),
       pageFeeds.getFeedEntry('cocolog:posts', params, 'rdf'),
       pageFeeds.getFeedEntry('cocolog:posts', params, 'rss'),
+      pageFeeds.getFeedEntry('cocolog:comments', params, 'rdf'),
+      pageFeeds.getFeedEntry('cocolog:comments', params, 'rss'),
     ]
   },
 

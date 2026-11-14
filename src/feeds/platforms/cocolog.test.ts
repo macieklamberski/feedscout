@@ -93,6 +93,14 @@ describe('cocologHandler', () => {
           uri: 'https://example.cocolog-nifty.com/consulting/rss.xml',
           hint: { key: 'cocolog:posts', label: 'Posts', format: 'rss' },
         },
+        {
+          uri: 'https://example.cocolog-nifty.com/consulting/comment-index.rdf',
+          hint: { key: 'cocolog:comments', label: 'Comments', format: 'rdf' },
+        },
+        {
+          uri: 'https://example.cocolog-nifty.com/consulting/comments.xml',
+          hint: { key: 'cocolog:comments', label: 'Comments', format: 'rss' },
+        },
       ]
 
       expect(cocologHandler.resolve(value)).toEqual(expected)
@@ -113,6 +121,14 @@ describe('cocologHandler', () => {
           uri: 'http://example.cocolog-nifty.com/consulting/rss.xml',
           hint: { key: 'cocolog:posts', label: 'Posts', format: 'rss' },
         },
+        {
+          uri: 'http://example.cocolog-nifty.com/consulting/comment-index.rdf',
+          hint: { key: 'cocolog:comments', label: 'Comments', format: 'rdf' },
+        },
+        {
+          uri: 'http://example.cocolog-nifty.com/consulting/comments.xml',
+          hint: { key: 'cocolog:comments', label: 'Comments', format: 'rss' },
+        },
       ]
 
       expect(cocologHandler.resolve(value)).toEqual(expected)
@@ -132,6 +148,14 @@ describe('cocologHandler', () => {
         {
           uri: 'https://example.cocolog-nifty.com/index/rss.xml',
           hint: { key: 'cocolog:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.cocolog-nifty.com/index/comment-index.rdf',
+          hint: { key: 'cocolog:comments', label: 'Comments', format: 'rdf' },
+        },
+        {
+          uri: 'https://example.cocolog-nifty.com/index/comments.xml',
+          hint: { key: 'cocolog:comments', label: 'Comments', format: 'rss' },
         },
       ]
 
