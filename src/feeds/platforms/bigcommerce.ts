@@ -1,7 +1,7 @@
-import { composeQuery, getQueryParam } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getQueryParam } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
+import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers category, home, search.
@@ -13,6 +13,130 @@ export type BigcommercePage =
   | { kind: 'category'; categoryId: string }
   | { kind: 'search'; query: string }
   | { kind: 'home' }
+
+const domains = ['mybigcommerce.com']
+
+// A store on a custom domain is known only by its session cookie, so its feeds are built here but
+// claimed only on BigCommerce's own domain.
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'bigcommerce:category-new-products',
+      template: '{scheme}://{host}/rss.php?categoryid={categoryId}&type=rss',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:category-new-products',
+      template: '{scheme}://{host}/rss.php?categoryid={categoryId}&type=atom',
+      format: 'atom',
+    },
+    {
+      key: 'bigcommerce:category-popular-products',
+      template: '{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}&type=rss',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:category-popular-products',
+      template:
+        '{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}&type=atom',
+      format: 'atom',
+    },
+    {
+      key: 'bigcommerce:search',
+      template: '{scheme}://{host}/rss.php?action=searchproducts&search_query={query}&type=rss',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:search',
+      template: '{scheme}://{host}/rss.php?action=searchproducts&search_query={query}&type=atom',
+      format: 'atom',
+    },
+    {
+      key: 'bigcommerce:new-products',
+      template: '{scheme}://{host}/rss.php?type=rss',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:new-products',
+      template: '{scheme}://{host}/rss.php?type=atom',
+      format: 'atom',
+    },
+    {
+      key: 'bigcommerce:popular-products',
+      template: '{scheme}://{host}/rss.php?action=popularproducts&type=rss',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:popular-products',
+      template: '{scheme}://{host}/rss.php?action=popularproducts&type=atom',
+      format: 'atom',
+    },
+    {
+      key: 'bigcommerce:featured-products',
+      template: '{scheme}://{host}/rss.php?action=featuredproducts&type=rss',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:featured-products',
+      template: '{scheme}://{host}/rss.php?action=featuredproducts&type=atom',
+      format: 'atom',
+    },
+    {
+      key: 'bigcommerce:blog',
+      template: '{scheme}://{host}/rss.php?action=newblogs&type=rss',
+      format: 'rss',
+    },
+    {
+      key: 'bigcommerce:blog',
+      template: '{scheme}://{host}/rss.php?action=newblogs&type=atom',
+      format: 'atom',
+    },
+    // Without `type`, each feed answers its RSS twin.
+    {
+      key: 'bigcommerce:category-new-products',
+      template: '{scheme}://{host}/rss.php?categoryid={categoryId}',
+      format: 'rss',
+      isAlias: true,
+    },
+    {
+      key: 'bigcommerce:category-popular-products',
+      template: '{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}',
+      format: 'rss',
+      isAlias: true,
+    },
+    {
+      key: 'bigcommerce:search',
+      template: '{scheme}://{host}/rss.php?action=searchproducts&search_query={query}',
+      format: 'rss',
+      isAlias: true,
+    },
+    {
+      key: 'bigcommerce:popular-products',
+      template: '{scheme}://{host}/rss.php?action=popularproducts',
+      format: 'rss',
+      isAlias: true,
+    },
+    {
+      key: 'bigcommerce:featured-products',
+      template: '{scheme}://{host}/rss.php?action=featuredproducts',
+      format: 'rss',
+      isAlias: true,
+    },
+    {
+      key: 'bigcommerce:blog',
+      template: '{scheme}://{host}/rss.php?action=newblogs',
+      format: 'rss',
+      isAlias: true,
+    },
+    {
+      key: 'bigcommerce:new-products',
+      template: '{scheme}://{host}/rss.php',
+      format: 'rss',
+      isAlias: true,
+    },
+  ],
+  { domains },
+)
 
 export const isBigcommerceHeaders = (headers: Headers): boolean => {
   return getCookieNames(headers).includes('SHOP_SESSION_TOKEN')
@@ -52,76 +176,57 @@ export const bigcommerceHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getBigcommercePage(url, content)
-    const feedUrl = `${new URL(url).origin}/rss.php`
-    const uris: Array<DiscoverUriEntry> = []
+    const pageFeeds = feeds.forUrl(url)
+
+    if (!pageFeeds) {
+      return []
+    }
 
     if (page.kind === 'category') {
-      const { categoryId } = page
+      const params = { categoryId: page.categoryId }
 
-      uris.push(
-        {
-          uri: `${feedUrl}${composeQuery({ categoryid: categoryId, type: 'rss' })}`,
-          hint: composeHint('bigcommerce:category-new-products', 'rss'),
-        },
-        {
-          uri: `${feedUrl}${composeQuery({ categoryid: categoryId, type: 'atom' })}`,
-          hint: composeHint('bigcommerce:category-new-products', 'atom'),
-        },
-        {
-          uri: `${feedUrl}${composeQuery({ action: 'popularproducts', categoryid: categoryId, type: 'rss' })}`,
-          hint: composeHint('bigcommerce:category-popular-products', 'rss'),
-        },
-        {
-          uri: `${feedUrl}${composeQuery({ action: 'popularproducts', categoryid: categoryId, type: 'atom' })}`,
-          hint: composeHint('bigcommerce:category-popular-products', 'atom'),
-        },
-      )
+      return [
+        pageFeeds.getFeedEntry('bigcommerce:category-new-products', params, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:category-new-products', params, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:category-popular-products', params, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:category-popular-products', params, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:new-products', undefined, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:new-products', undefined, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:popular-products', undefined, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:popular-products', undefined, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:featured-products', undefined, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:featured-products', undefined, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:blog', undefined, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:blog', undefined, 'atom'),
+      ]
     }
 
     if (page.kind === 'search') {
-      const params = { action: 'searchproducts', search_query: page.query }
-
-      uris.push(
-        {
-          uri: `${feedUrl}${composeQuery({ ...params, type: 'rss' })}`,
-          hint: composeHint('bigcommerce:search', 'rss'),
-        },
-        {
-          uri: `${feedUrl}${composeQuery({ ...params, type: 'atom' })}`,
-          hint: composeHint('bigcommerce:search', 'atom'),
-        },
-      )
+      return [
+        pageFeeds.getFeedEntry('bigcommerce:search', { query: page.query }, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:search', { query: page.query }, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:new-products', undefined, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:new-products', undefined, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:popular-products', undefined, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:popular-products', undefined, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:featured-products', undefined, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:featured-products', undefined, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:blog', undefined, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:blog', undefined, 'atom'),
+      ]
     }
 
-    uris.push(
-      { uri: `${feedUrl}?type=rss`, hint: composeHint('bigcommerce:new-products', 'rss') },
-      { uri: `${feedUrl}?type=atom`, hint: composeHint('bigcommerce:new-products', 'atom') },
-      {
-        uri: `${feedUrl}?action=popularproducts&type=rss`,
-        hint: composeHint('bigcommerce:popular-products', 'rss'),
-      },
-      {
-        uri: `${feedUrl}?action=popularproducts&type=atom`,
-        hint: composeHint('bigcommerce:popular-products', 'atom'),
-      },
-      {
-        uri: `${feedUrl}?action=featuredproducts&type=rss`,
-        hint: composeHint('bigcommerce:featured-products', 'rss'),
-      },
-      {
-        uri: `${feedUrl}?action=featuredproducts&type=atom`,
-        hint: composeHint('bigcommerce:featured-products', 'atom'),
-      },
-      {
-        uri: `${feedUrl}?action=newblogs&type=rss`,
-        hint: composeHint('bigcommerce:blog', 'rss'),
-      },
-      {
-        uri: `${feedUrl}?action=newblogs&type=atom`,
-        hint: composeHint('bigcommerce:blog', 'atom'),
-      },
-    )
-
-    return uris
+    return [
+      pageFeeds.getFeedEntry('bigcommerce:new-products', undefined, 'rss'),
+      pageFeeds.getFeedEntry('bigcommerce:new-products', undefined, 'atom'),
+      pageFeeds.getFeedEntry('bigcommerce:popular-products', undefined, 'rss'),
+      pageFeeds.getFeedEntry('bigcommerce:popular-products', undefined, 'atom'),
+      pageFeeds.getFeedEntry('bigcommerce:featured-products', undefined, 'rss'),
+      pageFeeds.getFeedEntry('bigcommerce:featured-products', undefined, 'atom'),
+      pageFeeds.getFeedEntry('bigcommerce:blog', undefined, 'rss'),
+      pageFeeds.getFeedEntry('bigcommerce:blog', undefined, 'atom'),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
