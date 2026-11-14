@@ -96,7 +96,7 @@ describe('seesaaHandler', () => {
         },
         {
           uri: 'https://alice.seesaa.net/index_custom.rdf',
-          hint: { key: 'seesaa:podcast', label: 'Podcast' },
+          hint: { key: 'seesaa:podcast', label: 'Podcast', format: 'rss' },
         },
       ]
 
@@ -116,7 +116,7 @@ describe('seesaaHandler', () => {
         },
         {
           uri: 'https://alice.seesaa.net/index_custom.rdf',
-          hint: { key: 'seesaa:podcast', label: 'Podcast' },
+          hint: { key: 'seesaa:podcast', label: 'Podcast', format: 'rss' },
         },
       ]
 
@@ -136,7 +136,7 @@ describe('seesaaHandler', () => {
         },
         {
           uri: 'https://alice.seesaa.net/index_custom.rdf',
-          hint: { key: 'seesaa:podcast', label: 'Podcast' },
+          hint: { key: 'seesaa:podcast', label: 'Podcast', format: 'rss' },
         },
       ]
 
@@ -156,7 +156,7 @@ describe('seesaaHandler', () => {
         },
         {
           uri: 'http://alice.stablo.jp/index_custom.rdf',
-          hint: { key: 'seesaa:podcast', label: 'Podcast' },
+          hint: { key: 'seesaa:podcast', label: 'Podcast', format: 'rss' },
         },
       ]
 
@@ -194,7 +194,7 @@ describe('seesaaHandler', () => {
 
     it('should return the podcast hint for a podcast feed', () => {
       const value = 'https://alice.seesaa.space/index_custom.rdf'
-      const expected: DiscoverUriHint = { key: 'seesaa:podcast', label: 'Podcast' }
+      const expected: DiscoverUriHint = { key: 'seesaa:podcast', label: 'Podcast', format: 'rss' }
 
       expect(seesaaHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -236,7 +236,10 @@ describe('seesaaHandler', () => {
         { key: 'seesaa:posts', label: 'Posts', format: 'rss' },
       ],
       ['http://alice.stablo.jp/index.rdf', { key: 'seesaa:posts', label: 'Posts', format: 'rdf' }],
-      ['https://alice.seesaa.net/index_custom.rdf', { key: 'seesaa:podcast', label: 'Podcast' }],
+      [
+        'https://alice.seesaa.net/index_custom.rdf',
+        { key: 'seesaa:podcast', label: 'Podcast', format: 'rss' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
