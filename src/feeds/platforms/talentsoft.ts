@@ -22,8 +22,16 @@ const offerFeedPathRegex = /^\/handlers\/offerRss\.ashx$/i
 const feeds = definePlatformFeeds(
   [
     { key: 'talentsoft:offers', template: '{scheme}://{host}/handlers/offerRss.ashx?LCID={lcid}' },
-    { key: 'talentsoft:offers', template: '{scheme}://{host}/handlers/offerRss.ashx' },
-    { key: 'talentsoft:offers', template: '{scheme}://{host}/offre-de-emploi/flux-rss.ashx' },
+    {
+      key: 'talentsoft:offers',
+      template: '{scheme}://{host}/handlers/offerRss.ashx',
+      isAlias: true,
+    },
+    {
+      key: 'talentsoft:offers',
+      template: '{scheme}://{host}/offre-de-emploi/flux-rss.ashx',
+      isAlias: true,
+    },
   ],
   { domains },
 )
