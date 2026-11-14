@@ -177,6 +177,30 @@ describe('bearblogHandler', () => {
         { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
       ],
       [
+        'https://example.bearblog.dev/atom/?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
+      ],
+      [
+        'https://example.bearblog.dev/atom.xml?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
+      ],
+      [
+        'http://example.bearblog.dev/rss/?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
+      ],
+      [
+        'https://example.bearblog.dev/feed.xml?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
+      ],
+      [
+        'https://example.bearblog.dev/index.xml?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
+      ],
+      [
+        'https://example.bearblog.dev/rss.xml?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
+      ],
+      [
         'https://alice.bearblog.dev/feed/',
         { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
       ],
@@ -281,6 +305,30 @@ describe('bearblogHandler', () => {
       [
         'https://alice.bearblog.dev/atom.xml',
         { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://example.bearblog.dev/atom/?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
+      ],
+      [
+        'https://example.bearblog.dev/atom.xml?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
+      ],
+      [
+        'https://example.bearblog.dev/rss/?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
+      ],
+      [
+        'https://example.bearblog.dev/feed.xml?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
+      ],
+      [
+        'https://example.bearblog.dev/index.xml?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
+      ],
+      [
+        'https://example.bearblog.dev/rss.xml?q=example',
+        { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
       ],
     ]
 
