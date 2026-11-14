@@ -40,8 +40,8 @@ export const isEdlioHtml = (content: string): boolean => {
   return script !== undefined
 }
 
-// The news page links its category's feed, which serves what the feed without a category serves,
-// so the category id is read from that link. A made-up `categoryid` answers 200 with an HTML page.
+// The news page links its category's feed, which serves only that category's news, so the
+// category id is read from that link. A made-up `categoryid` answers 200 with an HTML page.
 // A class page links its assignment feed by an anchor only, and the id is taken from the page url
 // only when the page links that class's feed.
 const getEdlioPage = (url: string, content: string | undefined): EdlioPage => {
