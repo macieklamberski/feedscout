@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   parseStackExchangeUrl,
   type StackExchangeUrl,
@@ -431,5 +433,185 @@ describe('stackExchangeHandler', () => {
     it('should return empty array for unrecognized path', () => {
       expect(stackExchangeHandler.resolve('https://stackoverflow.com/company')).toEqual([])
     })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the tag hint for a tag feed', () => {
+      const value = 'https://askubuntu.com/feeds/tag/shadow'
+      const expected: DiscoverUriHint = { key: 'stackexchange:tag', label: 'Tag' }
+
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a sorted tag feed', () => {
+      const value = 'https://stackoverflow.com/feeds/tag/javascript?sort=newest'
+      const expected: DiscoverUriHint = { key: 'stackexchange:tag', label: 'Tag' }
+
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a percent-encoded tag feed', () => {
+      const value = 'https://stackoverflow.com/feeds/tag/c%23'
+      const expected: DiscoverUriHint = { key: 'stackexchange:tag', label: 'Tag' }
+
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the question hint for a question feed', () => {
+      const value = 'https://askubuntu.com/feeds/question/282319'
+      const expected: DiscoverUriHint = { key: 'stackexchange:question', label: 'Question' }
+
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the user hint for a user feed', () => {
+      const value = 'https://askubuntu.com/feeds/user/1193941'
+      const expected: DiscoverUriHint = { key: 'stackexchange:user', label: 'User' }
+
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the collective hint for a collective feed', () => {
+      const value = 'https://stackoverflow.com/feeds/collectives/aws'
+      const expected: DiscoverUriHint = { key: 'stackexchange:collective', label: 'Collective' }
+
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the newest hint for the site feed', () => {
+      const value = 'https://askubuntu.com/feeds'
+      const expected: DiscoverUriHint = { key: 'stackexchange:newest', label: 'Newest questions' }
+
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the newest hint for the site feed on a subdomain of an apex site', () => {
+      const value = 'https://meta.stackoverflow.com/feeds'
+      const expected: DiscoverUriHint = { key: 'stackexchange:newest', label: 'Newest questions' }
+
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the newest hint for the site feed of a site meta', () => {
+      const value = 'https://music.meta.stackexchange.com/feeds'
+      const expected: DiscoverUriHint = { key: 'stackexchange:newest', label: 'Newest questions' }
+
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for the site feed on a nested subdomain', () => {
+      const value = 'https://chat.music.meta.stackexchange.com/feeds'
+
+      expect(stackExchangeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return the newest hint for the network feed', () => {
+      const value = 'https://stackexchange.com/feeds'
+      const expected: DiscoverUriHint = { key: 'stackexchange:newest', label: 'Newest questions' }
+
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a user feed on the network host', () => {
+      const value = 'https://stackexchange.com/feeds/user/12345'
+
+      expect(stackExchangeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed below a user feed', () => {
+      const value = 'https://askubuntu.com/feeds/user/93023/responses'
+
+      expect(stackExchangeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    const otherFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://apple.stackexchange.com/feeds/week',
+        { key: 'stackexchange:newest', label: 'Newest questions' },
+      ],
+      [
+        'https://apple.stackexchange.com/feeds/month',
+        { key: 'stackexchange:newest', label: 'Newest questions' },
+      ],
+      [
+        'https://stackoverflow.com/feeds/tag?sort=newest&tagnames=javascript',
+        { key: 'stackexchange:tag', label: 'Tag' },
+      ],
+      [
+        'https://ru.meta.stackoverflow.com/feeds/question/12345',
+        { key: 'stackexchange:question', label: 'Question' },
+      ],
+      [
+        'https://music.meta.stackexchange.com/feeds/user/12345',
+        { key: 'stackexchange:user', label: 'User' },
+      ],
+      [
+        'https://chat.stackexchange.com/feeds/rooms/starred/12345',
+        { key: 'stackexchange:chat-starred', label: 'Starred chat messages' },
+      ],
+      [
+        'https://area51.stackexchange.com/feeds/proposal/12345',
+        { key: 'stackexchange:proposal', label: 'Area 51 proposal' },
+      ],
+      [
+        'https://stackexchange.com/feeds/tagsets/12345/example?sort=newest',
+        { key: 'stackexchange:tagset', label: 'Tag set' },
+      ],
+    ]
+
+    it.each(otherFeeds)('should return the hint for %s', (value, expected) => {
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a page', () => {
+      const value = 'https://askubuntu.com/questions/282319'
+
+      expect(stackExchangeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+})
+
+describe('discoverUrisFromPlatform', () => {
+  const ownFeeds: Array<[string, string, string]> = [
+    ['https://askubuntu.com/feeds/question/282319', 'stackexchange:question', 'Question'],
+    ['https://askubuntu.com/feeds/user/1193941', 'stackexchange:user', 'User'],
+    ['https://askubuntu.com/feeds/tag/shadow', 'stackexchange:tag', 'Tag'],
+    ['https://stackoverflow.com/feeds/tag/javascript?sort=newest', 'stackexchange:tag', 'Tag'],
+    ['https://stackoverflow.com/feeds/collectives/aws', 'stackexchange:collective', 'Collective'],
+    ['https://askubuntu.com/feeds', 'stackexchange:newest', 'Newest questions'],
+    ['https://stackexchange.com/feeds', 'stackexchange:newest', 'Newest questions'],
+    ['http://apple.stackexchange.com/feeds/week/', 'stackexchange:newest', 'Newest questions'],
+    ['https://stackoverflow.com/feeds/tag?tagnames=c%2B%2B', 'stackexchange:tag', 'Tag'],
+    [
+      'https://ru.meta.stackoverflow.com/feeds/question/12345',
+      'stackexchange:question',
+      'Question',
+    ],
+    [
+      'http://chat.stackexchange.com/feeds/rooms/starred/12345',
+      'stackexchange:chat-starred',
+      'Starred chat messages',
+    ],
+    [
+      'https://area51.stackexchange.com/feeds/proposal/12345',
+      'stackexchange:proposal',
+      'Area 51 proposal',
+    ],
+    [
+      'https://stackexchange.com/feeds/tagsets/12345/example?sort=newest',
+      'stackexchange:tagset',
+      'Tag set',
+    ],
+  ]
+
+  it.each(ownFeeds)('should return %s itself as %s', async (value, key, label) => {
+    const options = {
+      ...defaultPlatformOptions,
+      handlers: [stackExchangeHandler],
+      baseUrl: value,
+    }
+    const expected: Array<DiscoverUriEntry> = [{ uri: value, hint: { key, label } }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 })
