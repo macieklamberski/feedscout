@@ -2441,10 +2441,10 @@ Discovers the Atom feed of a blog on an Odoo website. Detected by the `frontend_
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/blog/{blog}-{id}` | Blog (Atom) |
-| `{site}/blog/{blog}-{id}/{post}-{id}` | Blog (Atom) |
-| `{site}/blog/{blog}-{id}/post/{post}-{id}` | Blog (Atom) |
-| `{site}/blog/{blog}-{id}/tag/{tag}-{id}` | Blog (Atom) |
+| `{host}/blog/{blog}-{id}` | Blog (Atom) |
+| `{host}/blog/{blog}-{id}/{post}-{id}` | Blog (Atom) |
+| `{host}/blog/{blog}-{id}/post/{post}-{id}` | Blog (Atom) |
+| `{host}/blog/{blog}-{id}/tag/{tag}-{id}` | Blog (Atom) |
 
 ### Zenfolio
 
