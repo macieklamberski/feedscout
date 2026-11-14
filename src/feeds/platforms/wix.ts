@@ -15,7 +15,11 @@ const assetHosts = ['static.parastorage.com']
 const freeSiteFeeds = definePlatformFeeds(
   [
     { key: 'wix:blog', template: '{scheme}://{host}/{site}/blog-feed.xml' },
-    { key: 'wix:blog', template: '{scheme}://{host}/{site}/{section}/blog-feed.xml' },
+    {
+      key: 'wix:blog',
+      template: '{scheme}://{host}/{site}/{section}/blog-feed.xml',
+      isAlias: true,
+    },
   ],
   { domains },
 )
