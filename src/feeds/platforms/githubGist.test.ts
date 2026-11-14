@@ -1,6 +1,21 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { GithubGistUrl } from './githubGist.js'
 import { githubGistHandler, parseGithubGistUrl } from './githubGist.js'
+
+const feedCases: Array<[string, DiscoverUriHint]> = [
+  ['https://gist.github.com/alice.atom', { key: 'github-gist:gists', label: 'Gists' }],
+  ['http://gist.github.com/alice.atom', { key: 'github-gist:gists', label: 'Gists' }],
+  ['https://gist.github.com/alice/starred.atom', { key: 'github-gist:starred', label: 'Starred' }],
+  ['http://gist.github.com/alice/starred.atom', { key: 'github-gist:starred', label: 'Starred' }],
+  ['https://gist.github.com/alice/forked.atom', { key: 'github-gist:forks', label: 'Forks' }],
+  ['http://gist.github.com/alice/forked.atom', { key: 'github-gist:forks', label: 'Forks' }],
+  ['https://gist.github.com/alice/forks.atom', { key: 'github-gist:gists', label: 'Gists' }],
+  ['https://gist.github.com/discover.atom', { key: 'github-gist:discover', label: 'Discover' }],
+  ['http://gist.github.com/discover.atom', { key: 'github-gist:discover', label: 'Discover' }],
+]
 
 describe('parseGithubGistUrl', () => {
   it('should return the user for a user page', () => {
@@ -28,9 +43,17 @@ describe('parseGithubGistUrl', () => {
   })
 
   it('should strip the feed suffix from a user feed URL', () => {
-    const expected: GithubGistUrl = { kind: 'user', username: 'octocat' }
+    const value = 'https://gist.github.com/alice.atom'
+    const expected: GithubGistUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseGithubGistUrl('https://gist.github.com/octocat.atom')).toEqual(expected)
+    expect(parseGithubGistUrl(value)).toEqual(expected)
+  })
+
+  it('should return the discover page for the discover feed URL', () => {
+    const value = 'https://gist.github.com/discover.atom'
+    const expected: GithubGistUrl = { kind: 'discover' }
+
+    expect(parseGithubGistUrl(value)).toEqual(expected)
   })
 
   it('should return the starred gists for a starred page', () => {
@@ -45,23 +68,10 @@ describe('parseGithubGistUrl', () => {
     expect(parseGithubGistUrl('https://gist.github.com/defunkt/Starred')).toEqual(expected)
   })
 
-  it('should return the starred gists for the starred feed URL', () => {
-    const expected: GithubGistUrl = { kind: 'starred', username: 'defunkt' }
-
-    expect(parseGithubGistUrl('https://gist.github.com/defunkt/starred.atom')).toEqual(expected)
-  })
-
-  it('should return the starred gists for a capitalized starred feed suffix', () => {
-    const expected: GithubGistUrl = { kind: 'starred', username: 'defunkt' }
-
-    expect(parseGithubGistUrl('https://gist.github.com/defunkt/starred.ATOM')).toEqual(expected)
-  })
-
   const forksValues: Array<string> = [
     'https://gist.github.com/defunkt/forks',
     'https://gist.github.com/defunkt/forked',
     'https://gist.github.com/defunkt/forks/',
-    'https://gist.github.com/defunkt/forked.atom',
     'https://gist.github.com/defunkt/Forks',
   ]
 
@@ -124,7 +134,6 @@ describe('githubGistHandler', () => {
     })
 
     const gainedValues: Array<string> = [
-      'https://gist.github.com/defunkt.atom',
       'https://gist.github.com/defunkt/public',
       'https://gist.github.com/defunkt/secret',
     ]
@@ -198,6 +207,110 @@ describe('githubGistHandler', () => {
       ]
 
       expect(githubGistHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return nothing for the homepage', () => {
+      const value = 'https://gist.github.com/'
+      const expected: Array<DiscoverUriEntry> = []
+
+      expect(githubGistHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the gists hint for a user feed', () => {
+      const value = 'https://gist.github.com/alice.atom'
+      const expected: DiscoverUriHint = { key: 'github-gist:gists', label: 'Gists' }
+
+      expect(githubGistHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the starred hint for a starred feed', () => {
+      const value = 'https://gist.github.com/alice/starred.atom'
+      const expected: DiscoverUriHint = { key: 'github-gist:starred', label: 'Starred' }
+
+      expect(githubGistHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the forks hint for a forked feed', () => {
+      const value = 'https://gist.github.com/alice/forked.atom'
+      const expected: DiscoverUriHint = { key: 'github-gist:forks', label: 'Forks' }
+
+      expect(githubGistHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the discover hint for the discover feed', () => {
+      const value = 'https://gist.github.com/discover.atom'
+      const expected: DiscoverUriHint = { key: 'github-gist:discover', label: 'Discover' }
+
+      expect(githubGistHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the gists hint for a user feed with a trailing slash', () => {
+      const value = 'https://gist.github.com/alice.atom/'
+      const expected: DiscoverUriHint = { key: 'github-gist:gists', label: 'Gists' }
+
+      expect(githubGistHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    const discoverValues: Array<string> = [
+      'https://gist.github.com/discover/starred.atom',
+      'https://gist.github.com/Discover/forked.atom',
+      'https://gist.github.com/discover/forks.atom',
+    ]
+
+    it.each(discoverValues)('should return undefined for %s', (value) => {
+      expect(githubGistHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a dotted name', () => {
+      const value = 'https://gist.github.com/alice.example.atom'
+
+      expect(githubGistHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a user page', () => {
+      const value = 'https://gist.github.com/alice'
+
+      expect(githubGistHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return the gists hint for the forks path the site serves as the user gists', () => {
+      const value = 'https://gist.github.com/alice/forks.atom'
+      const expected: DiscoverUriHint = { key: 'github-gist:gists', label: 'Gists' }
+
+      expect(githubGistHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for the homepage', () => {
+      const value = 'https://gist.github.com/'
+
+      expect(githubGistHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://github.com/alice.atom'
+
+      expect(githubGistHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an invalid URL', () => {
+      const value = 'not-a-url'
+
+      expect(githubGistHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('as a feed URL input', () => {
+    it.each(feedCases)('should return %s as given', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [githubGistHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })
