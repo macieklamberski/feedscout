@@ -23,6 +23,7 @@ const feeds = definePlatformFeeds([
   {
     key: 'soundcloud:tracks',
     template: 'https://feeds.soundcloud.com/users/soundcloud:users:{userId}',
+    isAlias: true,
   },
 ])
 
