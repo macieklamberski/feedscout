@@ -182,11 +182,11 @@ describe('insanejournalHandler', () => {
       const value = 'https://alice.insanejournal.com/tag/caf%C3%A9'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.insanejournal.com/data/rss?tag=café',
+          uri: 'https://alice.insanejournal.com/data/rss?tag=caf%C3%A9',
           hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'rss' },
         },
         {
-          uri: 'https://alice.insanejournal.com/data/atom?tag=café',
+          uri: 'https://alice.insanejournal.com/data/atom?tag=caf%C3%A9',
           hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'atom' },
         },
         {
@@ -411,15 +411,10 @@ describe('insanejournalHandler', () => {
       expect(insanejournalHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts hint for a journal feed with www before the journal', () => {
+    it('should return undefined for a journal feed with www before the journal', () => {
       const value = 'https://www.alice.insanejournal.com/data/rss'
-      const expected: DiscoverUriHint = {
-        key: 'insanejournal:posts',
-        label: 'Posts',
-        format: 'rss',
-      }
 
-      expect(insanejournalHandler.getFeedHint?.(value)).toEqual(expected)
+      expect(insanejournalHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return the posts hint for a journal Atom feed', () => {
@@ -446,6 +441,17 @@ describe('insanejournalHandler', () => {
 
     it('should return the tag hint for a journal tag RSS feed', () => {
       const value = 'https://alice.insanejournal.com/data/rss?tag=alice+bob'
+      const expected: DiscoverUriHint = {
+        key: 'insanejournal:posts-tag',
+        label: 'Tag',
+        format: 'rss',
+      }
+
+      expect(insanejournalHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a tag feed with a raw non-ASCII tag', () => {
+      const value = 'https://alice.insanejournal.com/data/rss?tag=café'
       const expected: DiscoverUriHint = {
         key: 'insanejournal:posts-tag',
         label: 'Tag',
