@@ -2856,7 +2856,7 @@ Discovers the news feed of a Goope site, the member news feed of a chamber of co
 | `{host}/…` | News (RDF) |
 
 > [!NOTE]
-> A page under a `t_{id}` template segment gets its feeds under that segment, as the page links them.
+> A page under a `t_{id}` template segment gets the plain feeds, as the page links them. The feeds under the segment are recognised too.
 
 ### Duck Webcomics
 

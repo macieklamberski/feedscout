@@ -55,12 +55,11 @@ describe('parseGoopeUrl', () => {
     expect(parseGoopeUrl(value)).toEqual(expected)
   })
 
-  it('should return the template path for a free site', () => {
+  it('should read past the template segment of a free site', () => {
     const value = 'https://r.goope.jp/example/t_123456/menu'
     const expected: GoopeUrl = {
       kind: 'freeSite',
       site: 'example',
-      templateId: '123456',
       isMemberPage: false,
       isAssociationPage: false,
     }
@@ -87,11 +86,10 @@ describe('parseGoopeUrl', () => {
     expect(parseGoopeUrl(value)).toEqual(expected)
   })
 
-  it('should return the template path for a custom domain', () => {
+  it('should read past the template segment of a custom domain', () => {
     const value = 'https://example.com/t_123456'
     const expected: GoopeUrl = {
       kind: 'site',
-      templateId: '123456',
       isMemberPage: false,
       isAssociationPage: false,
     }
@@ -162,15 +160,15 @@ describe('goopeHandler', () => {
       expect(goopeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the association news feed under the template path of a free site', () => {
+    it('should return the plain association news feed for a template page of a free site', () => {
       const value = 'https://r.goope.jp/example/t_123456/shokokai/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://r.goope.jp/example/t_123456/shokokai/feed.rss',
+          uri: 'https://r.goope.jp/example/shokokai/feed.rss',
           hint: { key: 'goope:association-news', label: 'Association news', format: 'rdf' },
         },
         {
-          uri: 'https://r.goope.jp/example/t_123456/feed.rss',
+          uri: 'https://r.goope.jp/example/feed.rss',
           hint: { key: 'goope:news', label: 'News', format: 'rdf' },
         },
       ]
@@ -206,11 +204,11 @@ describe('goopeHandler', () => {
       expect(goopeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the news feed under the template path of a free site', () => {
+    it('should return the plain news feed for a template page of a free site', () => {
       const value = 'https://r.goope.jp/example/t_123456/menu'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://r.goope.jp/example/t_123456/feed.rss',
+          uri: 'https://r.goope.jp/example/feed.rss',
           hint: { key: 'goope:news', label: 'News', format: 'rdf' },
         },
       ]
@@ -230,11 +228,11 @@ describe('goopeHandler', () => {
       expect(goopeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the news feed under the template path', () => {
+    it('should return the plain news feed for a template page of a custom domain', () => {
       const value = 'https://example.com/t_123456/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/t_123456/feed.rss',
+          uri: 'https://example.com/feed.rss',
           hint: { key: 'goope:news', label: 'News', format: 'rdf' },
         },
       ]
@@ -258,15 +256,15 @@ describe('goopeHandler', () => {
       expect(goopeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the member news feed under the template path of a custom domain', () => {
+    it('should return the plain member news feed for a template page of a custom domain', () => {
       const value = 'https://example.com/t_123456/shokokai/member/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/t_123456/shokokai/member/feed.rss',
+          uri: 'https://example.com/shokokai/member/feed.rss',
           hint: { key: 'goope:member-news', label: 'Member news', format: 'rdf' },
         },
         {
-          uri: 'https://example.com/t_123456/feed.rss',
+          uri: 'https://example.com/feed.rss',
           hint: { key: 'goope:news', label: 'News', format: 'rdf' },
         },
       ]

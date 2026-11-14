@@ -15,7 +15,6 @@ import { findElement, hasMarker } from '../../common/utils.js'
 export type GoopeUrl = {
   kind: 'freeSite' | 'site'
   site?: string
-  templateId?: string
   isMemberPage: boolean
   isAssociationPage: boolean
 }
@@ -24,42 +23,38 @@ const hosts = ['r.goope.jp']
 const domains = ['goope.jp']
 const assetHosts = ['cdn.goope.jp']
 
-const templateRegex = /^t_(\d+)$/i
+const templateRegex = /^t_\d+$/i
 const qrCodePathRegex = /^\/qr\//i
 
-// A key's template row comes before its plain row, so a page with a template id builds under it.
+// A page under a `t_{id}` template segment links the plain feeds, so the template rows only claim.
 const freeSiteFeeds = definePlatformFeeds([
-  {
-    key: 'goope:member-news',
-    template: 'https://r.goope.jp/{site}/t_{templateId}/shokokai/member/feed.rss',
-    format: 'rdf',
-  },
   {
     key: 'goope:member-news',
     template: 'https://r.goope.jp/{site}/shokokai/member/feed.rss',
     format: 'rdf',
+  },
+  {
+    key: 'goope:member-news',
+    template: 'https://r.goope.jp/{site}/t_{templateId}/shokokai/member/feed.rss',
+    format: 'rdf',
     isAlias: true,
   },
+  { key: 'goope:news', template: 'https://r.goope.jp/{site}/feed.rss', format: 'rdf' },
   {
     key: 'goope:news',
     template: 'https://r.goope.jp/{site}/t_{templateId}/feed.rss',
-    format: 'rdf',
-  },
-  {
-    key: 'goope:news',
-    template: 'https://r.goope.jp/{site}/feed.rss',
     format: 'rdf',
     isAlias: true,
   },
   // A federation of chambers of commerce collects its chambers' news under /shokokai.
   {
     key: 'goope:association-news',
-    template: 'https://r.goope.jp/{site}/t_{templateId}/shokokai/feed.rss',
+    template: 'https://r.goope.jp/{site}/shokokai/feed.rss',
     format: 'rdf',
   },
   {
     key: 'goope:association-news',
-    template: 'https://r.goope.jp/{site}/shokokai/feed.rss',
+    template: 'https://r.goope.jp/{site}/t_{templateId}/shokokai/feed.rss',
     format: 'rdf',
     isAlias: true,
   },
@@ -71,25 +66,30 @@ const siteFeeds = definePlatformFeeds(
   [
     {
       key: 'goope:member-news',
-      template: '{scheme}://{host}/t_{templateId}/shokokai/member/feed.rss',
+      template: '{scheme}://{host}/shokokai/member/feed.rss',
       format: 'rdf',
     },
     {
       key: 'goope:member-news',
-      template: '{scheme}://{host}/shokokai/member/feed.rss',
+      template: '{scheme}://{host}/t_{templateId}/shokokai/member/feed.rss',
       format: 'rdf',
       isAlias: true,
     },
-    { key: 'goope:news', template: '{scheme}://{host}/t_{templateId}/feed.rss', format: 'rdf' },
-    { key: 'goope:news', template: '{scheme}://{host}/feed.rss', format: 'rdf', isAlias: true },
+    { key: 'goope:news', template: '{scheme}://{host}/feed.rss', format: 'rdf' },
     {
-      key: 'goope:association-news',
-      template: '{scheme}://{host}/t_{templateId}/shokokai/feed.rss',
+      key: 'goope:news',
+      template: '{scheme}://{host}/t_{templateId}/feed.rss',
       format: 'rdf',
+      isAlias: true,
     },
     {
       key: 'goope:association-news',
       template: '{scheme}://{host}/shokokai/feed.rss',
+      format: 'rdf',
+    },
+    {
+      key: 'goope:association-news',
+      template: '{scheme}://{host}/t_{templateId}/shokokai/feed.rss',
       format: 'rdf',
       isAlias: true,
     },
@@ -153,11 +153,10 @@ export const parseGoopeUrl = (url: string): GoopeUrl | undefined => {
     return
   }
 
-  // A `t_{id}` segment serves the site in another template, and its pages link the feed under it.
+  // A `t_{id}` segment serves the site in another template.
   const [templateOrSection] = segments
-  const templateId = templateOrSection?.match(templateRegex)?.[1]
 
-  if (templateId) {
+  if (templateRegex.test(templateOrSection ?? '')) {
     segments.shift()
   }
 
@@ -165,7 +164,7 @@ export const parseGoopeUrl = (url: string): GoopeUrl | undefined => {
   const isAssociationPage = isAnyOf(section, 'shokokai')
   const isMemberPage = isAssociationPage && isAnyOf(page, 'member')
 
-  return { kind, site, templateId, isMemberPage, isAssociationPage }
+  return { kind, site, isMemberPage, isAssociationPage }
 }
 
 export const goopeHandler: PlatformHandler = {
@@ -192,7 +191,7 @@ export const goopeHandler: PlatformHandler = {
       return []
     }
 
-    const params = { site: parsed.site, templateId: parsed.templateId }
+    const params = { site: parsed.site }
 
     // A chamber of commerce site collects its members' news under /shokokai/member.
     if (parsed.isMemberPage) {
