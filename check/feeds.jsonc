@@ -1328,6 +1328,7 @@
     ]
   },
   "podbean": {
+    "podbean:latest": "https://feed.podbean.com/matthewndg/last1/feed.xml",
     "podbean:podcast": "https://feed.podbean.com/podcast/feed.xml"
   },
   "podcloud": {
