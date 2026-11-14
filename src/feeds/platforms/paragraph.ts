@@ -10,9 +10,15 @@ const hosts = ['paragraph.com', 'www.paragraph.com']
 
 const userRegex = /^\/@([^/]+)/
 
+// A blog page links `/@{username}/rss.xml`. The api.paragraph.com feed holds the same posts under
+// other guids, and `/api/blogs/rss/` answers 308 to the linked feed.
 const feeds = definePlatformFeeds([
-  { key: 'paragraph:blog', template: 'https://api.paragraph.com/blogs/rss/@{username}' },
-  // A blog page links this one with %40, and it answers 308 to the api.paragraph.com feed.
+  { key: 'paragraph:blog', template: 'https://paragraph.com/@{username}/rss.xml' },
+  {
+    key: 'paragraph:blog',
+    template: 'https://api.paragraph.com/blogs/rss/@{username}',
+    isAlias: true,
+  },
   {
     key: 'paragraph:blog',
     template: 'https://paragraph.com/api/blogs/rss/@{username}',

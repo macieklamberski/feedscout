@@ -43,7 +43,7 @@ describe('paragraphHandler', () => {
       const value = 'https://paragraph.com/@blog'
       const expected = [
         {
-          uri: 'https://api.paragraph.com/blogs/rss/@blog',
+          uri: 'https://paragraph.com/@blog/rss.xml',
           hint: { key: 'paragraph:blog', label: 'Blog' },
         },
       ]
@@ -55,7 +55,7 @@ describe('paragraphHandler', () => {
       const value = 'https://paragraph.com/@optimism/some-post-slug'
       const expected = [
         {
-          uri: 'https://api.paragraph.com/blogs/rss/@optimism',
+          uri: 'https://paragraph.com/@optimism/rss.xml',
           hint: { key: 'paragraph:blog', label: 'Blog' },
         },
       ]
@@ -67,7 +67,7 @@ describe('paragraphHandler', () => {
       const value = 'https://www.paragraph.com/@user'
       const expected = [
         {
-          uri: 'https://api.paragraph.com/blogs/rss/@user',
+          uri: 'https://paragraph.com/@user/rss.xml',
           hint: { key: 'paragraph:blog', label: 'Blog' },
         },
       ]
@@ -89,6 +89,13 @@ describe('paragraphHandler', () => {
   })
 
   describe('getFeedHint', () => {
+    it('should return the blog hint for the feed a blog page links', () => {
+      const value = 'https://paragraph.com/@alice/rss.xml'
+      const expected: DiscoverUriHint = { key: 'paragraph:blog', label: 'Blog' }
+
+      expect(paragraphHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the blog hint for a blog feed', () => {
       const value = 'https://api.paragraph.com/blogs/rss/@alice'
       const expected: DiscoverUriHint = { key: 'paragraph:blog', label: 'Blog' }
@@ -138,6 +145,7 @@ describe('paragraphHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://paragraph.com/@alice/rss.xml', { key: 'paragraph:blog', label: 'Blog' }],
       ['https://api.paragraph.com/blogs/rss/@alice', { key: 'paragraph:blog', label: 'Blog' }],
       ['http://api.paragraph.com/blogs/rss/@alice', { key: 'paragraph:blog', label: 'Blog' }],
       ['https://paragraph.com/api/blogs/rss/%40alice', { key: 'paragraph:blog', label: 'Blog' }],
