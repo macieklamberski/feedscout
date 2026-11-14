@@ -1,6 +1,7 @@
 import { parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasAnyMeta, hasElementWithId, hasMarker } from '../../common/utils.js'
+import { hasAnyMeta, hasElementWithId, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -9,6 +10,14 @@ export type MisskeyUrl = { kind: 'profile'; username: string }
 
 const profileRegex = /^\/@(?<segment>[^/]+)/
 const feedSuffixRegex = /\.(?:atom|rss|json)$/i
+
+// Misskey is self-hosted and known only by its page marker, so nothing in a feed URL names it and
+// the table only builds.
+const feeds = definePlatformFeeds([
+  { key: 'misskey:posts', template: '{root}/@{username}.atom', format: 'atom' },
+  { key: 'misskey:posts', template: '{root}/@{username}.rss', format: 'rss' },
+  { key: 'misskey:posts', template: '{root}/@{username}.json', format: 'json' },
+])
 
 const metaMarkers: Array<[string, string]> = [
   ['application-name', 'Misskey'],
@@ -42,26 +51,16 @@ export const misskeyHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseMisskeyUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
-
     return [
-      {
-        uri: `${origin}/@${parsed.username}.atom`,
-        hint: composeHint('misskey:posts', 'atom'),
-      },
-      {
-        uri: `${origin}/@${parsed.username}.rss`,
-        hint: composeHint('misskey:posts', 'rss'),
-      },
-      {
-        uri: `${origin}/@${parsed.username}.json`,
-        hint: composeHint('misskey:posts', 'json'),
-      },
+      pageFeeds.getFeedEntry('misskey:posts', { username: parsed.username }, 'atom'),
+      pageFeeds.getFeedEntry('misskey:posts', { username: parsed.username }, 'rss'),
+      pageFeeds.getFeedEntry('misskey:posts', { username: parsed.username }, 'json'),
     ]
   },
 }
