@@ -1,6 +1,7 @@
 import { parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
+import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -10,6 +11,11 @@ export type SkycmsUrl = { kind: 'page'; pageId: string; slug: string }
 const pageRegex = /^\/(\d+)\/([^/]+)\.html$/i
 const rssListRegex = /\/\d+\/lista-kanalow-rss\.html$/i
 const templateRegex = /\/(?:cms\/public|clients\/cms_[^/]+)\/image\/default\/bip(?:_v\d+)?\//i
+
+// A site is known only by its marker, so its feed is built here but not claimed.
+const feeds = definePlatformFeeds([
+  { key: 'skycms:page', template: '{root}/rss/{pageId}/{slug}.html', format: 'rss' },
+])
 
 // SkyCMS sets its counter cookie whenever the page differs from the one the cookie holds.
 export const isSkycmsHeaders = (headers: Headers): boolean => {
@@ -73,12 +79,8 @@ export const skycmsHandler: PlatformHandler = {
     }
 
     const { origin } = new URL(url)
+    const { pageId, slug } = skycmsUrl
 
-    return [
-      {
-        uri: `${origin}/rss/${skycmsUrl.pageId}/${skycmsUrl.slug}.html`,
-        hint: composeHint('skycms:page', 'rss'),
-      },
-    ]
+    return [feeds.getFeedEntry('skycms:page', { root: origin, pageId, slug }, 'rss')]
   },
 }
