@@ -16,16 +16,6 @@ const feeds = definePlatformFeeds([
     key: 'omnystudio:show',
     template: 'https://www.omnycontent.com/d/playlist/{orgId}/{programId}/{playlistId}/podcast.rss',
   },
-  // A feed carrying an access token is private to its subscriber, so it is claimed and never built.
-  {
-    key: 'omnystudio:show',
-    template: 'https://omny.fm/shows/{show}/playlists/podcast.rss?accessToken={token}',
-  },
-  {
-    key: 'omnystudio:show',
-    template:
-      'https://www.omnycontent.com/d/playlist/{orgId}/{programId}/{playlistId}/podcast.rss?accessToken={token}',
-  },
 ])
 
 export const parseOmnystudioUrl = (url: string): OmnystudioUrl | undefined => {
