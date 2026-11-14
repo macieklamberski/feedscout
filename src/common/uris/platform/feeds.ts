@@ -24,8 +24,9 @@ export type PlatformFeedTemplate = {
   // `{name*}` path placeholder takes one or more segments, filled from `name` as `docs/api`.
   template: string
   format?: DiscoverUriHint['format']
-  // Another spelling of one feed, such as a legacy host. Its canonical row is the first row above it
-  // with the same key and format and no `isAlias`, and the table throws when there is none.
+  // Another spelling of one feed, such as a legacy host. Its canonical row is the nearest row above
+  // it with the same key, format and value placeholders and no `isAlias`, and the table throws when
+  // there is none. `{scheme}`, `{host}`, `{root}` and `{domain}` are no value placeholders.
   isAlias?: boolean
 }
 
@@ -82,6 +83,8 @@ const leadingSlashesRegex = /^\/{2,}/
 const anchorsRegex = /^\^|\$$/g
 
 const rootPlaceholder = '{root}'
+// The placeholders `forUrl` fills from the page URL, which two spellings of one feed may differ in.
+const pageNames = ['scheme', 'host', 'root', 'domain']
 const multiSegmentCapture = '[^/]+(?:/[^/]+)*'
 
 const isMultiSegment = (placeholder: string): boolean => {
@@ -126,6 +129,15 @@ const decodePath = (path: string): string => {
     .split('/')
     .map((segment) => decodePercent(segment).replaceAll('%', '%25').replaceAll('/', '%2F'))
     .join('/')
+}
+
+// The value placeholders of a template, which tell the feeds under one key apart.
+const getValueNames = (template: string): string => {
+  const names = [...template.matchAll(placeholderRegex)].map(([, name]) => name)
+
+  return [...new Set(names.filter((name) => !pageNames.includes(name)))]
+    .sort((a, b) => a.localeCompare(b))
+    .join(' ')
 }
 
 // A host or domain entry as a regex source: a string as a literal, a pattern without its anchors.
@@ -298,13 +310,19 @@ export const definePlatformFeeds = (
   templates: Array<PlatformFeedTemplate>,
   options: PlatformFeedTableOptions = {},
 ): PlatformFeedTable => {
-  for (const [index, { key, format, isAlias }] of templates.entries()) {
+  for (const [index, { key, format, template, isAlias }] of templates.entries()) {
     if (!isAlias) {
       continue
     }
 
+    const valueNames = getValueNames(template)
     const hasCanonical = templates.slice(0, index).some((row) => {
-      return !row.isAlias && row.key === key && row.format === format
+      return (
+        !row.isAlias &&
+        row.key === key &&
+        row.format === format &&
+        getValueNames(row.template) === valueNames
+      )
     })
 
     if (!hasCanonical) {
