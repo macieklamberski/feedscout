@@ -2131,11 +2131,11 @@ Discovers Atom feeds for Plurk users and single plurks.
 
 ### Internet Archive
 
-Discovers the RSS feeds of Internet Archive collections and searches. A collection page is told from an item page by its markup: collections serve the app shell that loads `/offshoot_assets/`, and items serve full HTML. Item pages resolve nothing.
+Discovers the RSS feeds of Internet Archive collections, their forums and searches. A collection page is told from an item page by its markup: collections serve the app shell that loads `/offshoot_assets/`, and items serve full HTML. Item pages resolve nothing.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `archive.org/details/{collection}` | Collection<sup>†</sup> (RSS)* |
+| `archive.org/details/{collection}` | Collection<sup>†</sup> (RSS)* · forum<sup>†</sup> (RSS)* |
 | `archive.org/search?query={query}` | Search<sup>†</sup> (RSS) |
 
 \* *Requires HTML content to tell a collection from an item.*
