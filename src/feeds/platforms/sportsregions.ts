@@ -1,12 +1,22 @@
 import { isHostOrSubdomainOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type SportsregionsUrl = { kind: 'club' }
 
 const domains = ['sportsregions.fr']
+
+// A club on its own domain is known only by its markers, so its feeds are built but not claimed.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'sportsregions:news', template: '{scheme}://{host}/rss/news' },
+    { key: 'sportsregions:events', template: '{scheme}://{host}/rss/evenement' },
+  ],
+  { domains },
+)
 
 // The footer of every club site links the platform's abuse report form, on custom domains too.
 export const isSportsregionsHtml = (content: string): boolean => {
@@ -36,11 +46,14 @@ export const sportsregionsHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
+    const page = feeds.forUrl(url)
 
-    return [
-      { uri: `${origin}/rss/news`, hint: composeHint('sportsregions:news') },
-      { uri: `${origin}/rss/evenement`, hint: composeHint('sportsregions:events') },
-    ]
+    if (!page) {
+      return []
+    }
+
+    return [page.getFeedEntry('sportsregions:news'), page.getFeedEntry('sportsregions:events')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
