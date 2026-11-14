@@ -1895,8 +1895,14 @@
     "weebly:blog": ["https://ukiyaseed.weebly.com/1/feed", "https://ukiyaseed.weebly.com/blog/feed"]
   },
   "wikidot": {
+    "wikidot:forum-category-posts": "https://0-eetstoornissen-0.wikidot.com/feed/forum/cp-126694.xml",
+    "wikidot:forum-category-threads": "https://0-eetstoornissen-0.wikidot.com/feed/forum/ct-126694.xml",
     "wikidot:forum-posts": "https://scpwiki.com/feed/forum/posts.xml",
+    "wikidot:forum-thread": "https://0-eetstoornissen-0.wikidot.com/feed/forum/t-300450.xml",
     "wikidot:forum-threads": "https://scpwiki.com/feed/forum/threads.xml",
+    "wikidot:front-forum": "https://epla.wikidot.com/feed/front/start/news.xml",
+    "wikidot:page-comments": "https://wmui.wikidot.com/feed/page/comments-3094202.xml",
+    "wikidot:pages": "https://conceptspace.wikidot.com/feed/pages/category/blog/t/ConceptSpace+blog+feed",
     "wikidot:site-changes": "https://scpwiki.com/feed/site-changes.xml"
   },
   "wildApricot": {
