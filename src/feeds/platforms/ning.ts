@@ -13,7 +13,7 @@ export type NingUrl =
   | { kind: 'home' }
 
 const topicRegex = /^\/forum\/topics\/([^/]+)\/?$/i
-const groupTopicRegex = /^\/group\/([^/]+)\/forum\/topics\/([^/]+)\/?$/i
+const groupTopicRegex = /^\/group\/(?<group>[^/]+)\/forum\/topics\/(?<topic>[^/]+)\/?$/i
 const groupRegex = /^\/group\/([^/]+)/i
 
 const domains = ['ning.com']
@@ -284,10 +284,10 @@ export const parseNingUrl = (url: string): NingUrl | undefined => {
     return { kind: 'topic', topic }
   }
 
-  const groupTopic = pathname.match(groupTopicRegex)
+  const groupTopic = pathname.match(groupTopicRegex)?.groups
 
-  if (groupTopic?.[1] && groupTopic[2]) {
-    return { kind: 'topic', topic: groupTopic[2], group: groupTopic[1] }
+  if (groupTopic?.group && groupTopic.topic) {
+    return { kind: 'topic', topic: groupTopic.topic, group: groupTopic.group }
   }
 
   const group = pathname.match(groupRegex)?.[1]
