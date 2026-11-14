@@ -633,7 +633,7 @@ Discovers RSS feeds for Douban user interests, reviews, notes, and subject revie
 |-------------|-----------------|
 | `www.douban.com/people/{user}` | Interests · reviews<sup>†</sup> · notes<sup>†</sup> |
 | `{book,movie,music}.douban.com/subject/{id}` | Subject reviews |
-| `www.douban.com` | Book<sup>†</sup> · movie<sup>†</sup> · music<sup>†</sup> · drama<sup>†</sup> reviews |
+| `www.douban.com` | Book<sup>†</sup> · movie<sup>†</sup> · music<sup>†</sup> · drama<sup>†</sup> reviews · new movie reviews · popular reviews |
 
 <sup>†</sup> *Found only by the Platform method.*
 
