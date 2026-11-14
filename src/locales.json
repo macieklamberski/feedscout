@@ -278,6 +278,7 @@
     "ghost:blog": "Blog",
     "ghost:tag": "Tag",
     "ghost:author": "Author",
+    "ghost:collection": "Collection",
     "hatena-antenna:antenna": "Antenna",
     "hatena-antenna:group": "Group",
     "hatena-bookmark:hot": "Hot entries",
