@@ -116,15 +116,21 @@ describe('kktixHandler', () => {
     })
 
     it('should return undefined for an organizer page', () => {
-      expect(kktixHandler.getFeedHint?.('https://example.kktix.cc/events')).toBeUndefined()
+      const value = 'https://example.kktix.cc/events'
+
+      expect(kktixHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the events feed on the www subdomain', () => {
-      expect(kktixHandler.getFeedHint?.('https://www.kktix.cc/events.atom')).toBeUndefined()
+      const value = 'https://www.kktix.cc/events.atom'
+
+      expect(kktixHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the events feed on a nested subdomain', () => {
-      expect(kktixHandler.getFeedHint?.('https://a.example.kktix.cc/events.atom')).toBeUndefined()
+      const value = 'https://a.example.kktix.cc/events.atom'
+
+      expect(kktixHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 })
