@@ -157,7 +157,6 @@ describe('proboardsHandler', () => {
       'https://example.boards.net/rss/public',
       'http://example.proboards.com/rss/public',
       'https://example.proboards.com/rss/public/',
-      'https://www.example.boards.net/rss/public',
     ]
 
     it.each(feedValues)('should return the posts hint for %s', (value) => {
@@ -172,6 +171,7 @@ describe('proboardsHandler', () => {
       'https://example.proboards.com/rss',
       'https://proboards.com/rss/public',
       'https://www.proboards.com/rss/public',
+      'https://www.example.boards.net/rss/public',
       'https://m.example.boards.net/rss/public',
       'https://forum.example.com/rss/public',
     ]
@@ -187,7 +187,6 @@ describe('proboardsHandler', () => {
       'https://example.proboards.com/rss/public',
       'http://example.freeforums.net/rss/public',
       'https://example.boards.net/rss/public/',
-      'https://www.example.proboards.com/rss/public',
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value) => {
