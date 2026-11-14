@@ -333,18 +333,18 @@ describe('livejournalHandler', () => {
     })
 
     it('should keep the http scheme of a journal subdomain page', () => {
-      const value = 'http://deni-didro.livejournal.com/'
+      const value = 'http://foo-bar.livejournal.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://deni-didro.livejournal.com/data/rss',
+          uri: 'http://foo-bar.livejournal.com/data/rss',
           hint: { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'http://deni-didro.livejournal.com/data/atom',
+          uri: 'http://foo-bar.livejournal.com/data/atom',
           hint: { key: 'livejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'http://deni-didro.livejournal.com/data/userpics',
+          uri: 'http://foo-bar.livejournal.com/data/userpics',
           hint: { key: 'livejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
@@ -355,35 +355,35 @@ describe('livejournalHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the posts hint for an RSS feed', () => {
-      const value = 'https://deni-didro.livejournal.com/data/rss'
+      const value = 'https://foo-bar.livejournal.com/data/rss'
       const expected: DiscoverUriHint = { key: 'livejournal:posts', label: 'Posts', format: 'rss' }
 
       expect(livejournalHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for an Atom feed', () => {
-      const value = 'https://dyork.livejournal.com/data/atom'
+      const value = 'https://alice.livejournal.com/data/atom'
       const expected: DiscoverUriHint = { key: 'livejournal:posts', label: 'Posts', format: 'atom' }
 
       expect(livejournalHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for an RSS feed with a trailing slash', () => {
-      const value = 'https://lleo.livejournal.com/data/rss/'
+      const value = 'https://alice.livejournal.com/data/rss/'
       const expected: DiscoverUriHint = { key: 'livejournal:posts', label: 'Posts', format: 'rss' }
 
       expect(livejournalHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for an RSS feed over http', () => {
-      const value = 'http://deni-didro.livejournal.com/data/rss'
+      const value = 'http://foo-bar.livejournal.com/data/rss'
       const expected: DiscoverUriHint = { key: 'livejournal:posts', label: 'Posts', format: 'rss' }
 
       expect(livejournalHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the userpics hint for a userpics feed', () => {
-      const value = 'https://deni-didro.livejournal.com/data/userpics'
+      const value = 'https://foo-bar.livejournal.com/data/userpics'
       const expected: DiscoverUriHint = {
         key: 'livejournal:userpics',
         label: 'Userpics',
@@ -394,7 +394,7 @@ describe('livejournalHandler', () => {
     })
 
     it('should return the tag hint for a tag feed', () => {
-      const value = 'https://mrpet.livejournal.com/data/rss?tag=djpet'
+      const value = 'https://alice.livejournal.com/data/rss?tag=music'
       const expected: DiscoverUriHint = {
         key: 'livejournal:posts-tag',
         label: 'Tag',
@@ -405,14 +405,14 @@ describe('livejournalHandler', () => {
     })
 
     it('should return the posts hint for a feed on the users host', () => {
-      const value = 'https://users.livejournal.com/-volta-/data/rss'
+      const value = 'https://users.livejournal.com/-bob-/data/rss'
       const expected: DiscoverUriHint = { key: 'livejournal:posts', label: 'Posts', format: 'rss' }
 
       expect(livejournalHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for an Atom feed on the users host', () => {
-      const value = 'https://users.livejournal.com/-adanel-/data/atom'
+      const value = 'https://users.livejournal.com/-alice-/data/atom'
       const expected: DiscoverUriHint = { key: 'livejournal:posts', label: 'Posts', format: 'atom' }
 
       expect(livejournalHandler.getFeedHint?.(value)).toEqual(expected)
@@ -420,7 +420,7 @@ describe('livejournalHandler', () => {
 
     it('should return the tag hint for a percent-encoded tag feed on the users host', () => {
       const value =
-        'https://users.livejournal.com/-volta-/data/rss?tag=%D1%84%D0%B8%D0%BB%D1%8C%D0%BC%D1%8B'
+        'https://users.livejournal.com/-bob-/data/rss?tag=%D1%84%D0%B8%D0%BB%D1%8C%D0%BC%D1%8B'
       const expected: DiscoverUriHint = {
         key: 'livejournal:posts-tag',
         label: 'Tag',
@@ -431,8 +431,7 @@ describe('livejournalHandler', () => {
     })
 
     it('should return the tag hint for a tag feed on the community host', () => {
-      const value =
-        'https://community.livejournal.com/-imitatinglife/data/rss?tag=title%3A+the+consequences+of+falling'
+      const value = 'https://community.livejournal.com/-alice/data/rss?tag=title%3A+example'
       const expected: DiscoverUriHint = {
         key: 'livejournal:posts-tag',
         label: 'Tag',
@@ -443,13 +442,13 @@ describe('livejournalHandler', () => {
     })
 
     it('should return undefined for a journal page', () => {
-      const value = 'https://deni-didro.livejournal.com/'
+      const value = 'https://foo-bar.livejournal.com/'
 
       expect(livejournalHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a tag page', () => {
-      const value = 'https://mrpet.livejournal.com/tag/djpet'
+      const value = 'https://alice.livejournal.com/tag/music'
 
       expect(livejournalHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -488,35 +487,35 @@ describe('livejournalHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://deni-didro.livejournal.com/data/rss',
+        'https://foo-bar.livejournal.com/data/rss',
         { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
       ],
       [
-        'https://dyork.livejournal.com/data/atom',
+        'https://alice.livejournal.com/data/atom',
         { key: 'livejournal:posts', label: 'Posts', format: 'atom' },
       ],
       [
-        'https://lleo.livejournal.com/data/rss/',
+        'https://alice.livejournal.com/data/rss/',
         { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
       ],
       [
-        'https://deni-didro.livejournal.com/data/userpics',
+        'https://foo-bar.livejournal.com/data/userpics',
         { key: 'livejournal:userpics', label: 'Userpics', format: 'atom' },
       ],
       [
-        'https://mrpet.livejournal.com/data/rss?tag=djpet',
+        'https://alice.livejournal.com/data/rss?tag=music',
         { key: 'livejournal:posts-tag', label: 'Tag', format: 'rss' },
       ],
       [
-        'https://users.livejournal.com/-volta-/data/rss',
+        'https://users.livejournal.com/-bob-/data/rss',
         { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
       ],
       [
-        'https://users.livejournal.com/--marcelo/data/atom?tag=herzog',
+        'https://users.livejournal.com/--alice/data/atom?tag=film',
         { key: 'livejournal:posts-tag', label: 'Tag', format: 'atom' },
       ],
       [
-        'https://community.livejournal.com/-imitatinglife/data/rss?tag=title%3A+the+consequences+of+falling',
+        'https://community.livejournal.com/-alice/data/rss?tag=title%3A+example',
         { key: 'livejournal:posts-tag', label: 'Tag', format: 'rss' },
       ],
     ]
