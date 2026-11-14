@@ -122,15 +122,5 @@ export const jugemHandler: PlatformHandler = {
     ]
   },
 
-  // The table ignores www, so it would read www.{blog}.jugem.jp, a host with no DNS record, as a
-  // blog. The page parser refuses it first.
-  getFeedHint: (url) => {
-    const parsed = parseJugemUrl(url)
-
-    if (!parsed || parsed.kind === 'customDomain') {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
