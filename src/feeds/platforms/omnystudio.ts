@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,6 +9,15 @@ export type OmnystudioUrl = { kind: 'show'; show: string }
 const hosts = ['omny.fm', 'www.omny.fm']
 
 const showPathRegex = /^\/shows\/([^/]+)/i
+
+const feeds = definePlatformFeeds([
+  { key: 'omnystudio:show', template: 'https://omny.fm/shows/{show}/playlists/podcast.rss' },
+  {
+    key: 'omnystudio:show',
+    template: 'https://www.omnycontent.com/d/playlist/{orgId}/{programId}/{playlistId}/podcast.rss',
+    isAlias: true,
+  },
+])
 
 export const parseOmnystudioUrl = (url: string): OmnystudioUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -38,13 +47,8 @@ export const omnystudioHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-
-    return [
-      {
-        uri: `${origin}/shows/${parsed.show}/playlists/podcast.rss`,
-        hint: composeHint('omnystudio:show'),
-      },
-    ]
+    return [feeds.getFeedEntry('omnystudio:show', { show: parsed.show })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
