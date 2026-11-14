@@ -137,7 +137,7 @@
     ]
   },
   "bitchute": {
-    "bitchute:channel": "https://www.bitchute.com/feeds/rss/channel/bcsupport/"
+    "bitchute:channel": "https://api.bitchute.com/feeds/rss/channel/bcsupport/"
   },
   "blogHu": {
     "blog-hu:comments": [
