@@ -128,7 +128,7 @@ const feeds = definePlatformFeeds(
       format: 'rss',
     },
   ],
-  { domains },
+  { domains, isWwwTenantPrefix: true },
 )
 
 // Blogger loads its widget script from this path on blogspot.com and custom domains alike,
