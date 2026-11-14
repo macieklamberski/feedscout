@@ -15,7 +15,7 @@ const channelRegex = /^\/@(?<name>[^/:]+)(?::(?<claimId>[^/]+))?/
 const feeds = definePlatformFeeds([
   { key: 'odysee:videos', template: 'https://odysee.com/$/rss/@{name}:{claimId}' },
   // The same feed with the claim ID as its own path segment.
-  { key: 'odysee:videos', template: 'https://odysee.com/$/rss/@{name}/{claimId}' },
+  { key: 'odysee:videos', template: 'https://odysee.com/$/rss/@{name}/{claimId}', isAlias: true },
 ])
 
 export const parseOdyseeUrl = (url: string): OdyseeUrl | undefined => {
