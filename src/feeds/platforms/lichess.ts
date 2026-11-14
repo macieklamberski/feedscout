@@ -10,7 +10,6 @@ export type LichessUrl =
   | { kind: 'blog'; username: string }
   | { kind: 'community'; language?: string }
   | { kind: 'officialBlog' }
-  | { kind: 'home' }
 
 const hosts = ['lichess.org']
 
@@ -22,7 +21,6 @@ const feeds = definePlatformFeeds([
   { key: 'lichess:blog', template: 'https://lichess.org/blog.atom', isAlias: true },
   { key: 'lichess:community', template: 'https://lichess.org/blog/community.atom?lang={language}' },
   { key: 'lichess:community', template: 'https://lichess.org/blog/community.atom' },
-  { key: 'lichess:updates', template: 'https://lichess.org/feed.atom' },
 ])
 
 export const parseLichessUrl = (url: string): LichessUrl | undefined => {
@@ -48,13 +46,13 @@ export const parseLichessUrl = (url: string): LichessUrl | undefined => {
   const isOfficialBlog = isAnyOf(section, 'blog') && !id
   const isLegacyPost = isAnyOf(section, 'blog') && slug && !rest && !isAnyOf(id, 'topic')
 
-  // Lichess redirects /blog and the old /blog/{id}/{slug} post URLs to the @/Lichess blog.
-  if (isOfficialBlog || isLegacyPost) {
-    return { kind: 'officialBlog' }
+  // Every other page links only the site-wide updates feed, the platform's own news.
+  if (!isOfficialBlog && !isLegacyPost) {
+    return
   }
 
-  // Every other page, profiles included, advertises the site-wide updates feed.
-  return { kind: 'home' }
+  // Lichess redirects /blog and the old /blog/{id}/{slug} post URLs to the @/Lichess blog.
+  return { kind: 'officialBlog' }
 }
 
 export const lichessHandler: PlatformHandler = {
@@ -77,11 +75,7 @@ export const lichessHandler: PlatformHandler = {
       return [feeds.getFeedEntry('lichess:community', { language: parsed.language })]
     }
 
-    if (parsed.kind === 'officialBlog') {
-      return [feeds.getFeedEntry('lichess:blog', { username: 'Lichess' })]
-    }
-
-    return [feeds.getFeedEntry('lichess:updates')]
+    return [feeds.getFeedEntry('lichess:blog', { username: 'Lichess' })]
   },
 
   getFeedHint: feeds.getFeedHint,

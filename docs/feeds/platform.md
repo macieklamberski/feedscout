@@ -449,14 +449,14 @@ Discovers RSS feeds for SourceForge project activity, file releases, news, and d
 
 ### Kickstarter
 
-Discovers Atom feeds for Kickstarter projects, curated pages, global new projects and the blog.
+Discovers Atom feeds for Kickstarter projects, curated pages and global new projects.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `kickstarter.com` | Global new projects<sup>†</sup> · blog |
-| `kickstarter.com/discover` | Global new projects · blog |
-| `kickstarter.com/pages/{name}` | Curated projects · blog |
-| `kickstarter.com/projects/{creator}/{project}` | Project updates · blog |
+| `kickstarter.com` | Global new projects<sup>†</sup> |
+| `kickstarter.com/discover` | Global new projects |
+| `kickstarter.com/pages/{name}` | Curated projects |
+| `kickstarter.com/projects/{creator}/{project}` | Project updates |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -619,12 +619,11 @@ Discovers RSS feeds for Itch.io games, creators, devlogs, and browse pages.
 | `itch.io/games/{filter}/{filter}` | Games<sup>†</sup>, for a listing with two or more filters |
 | `itch.io/{section}` | Section<sup>†</sup> (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
 | `itch.io/devlogs` | All devlogs |
-| `itch.io` | Featured · new<sup>†</sup> · sales<sup>†</sup> · all devlogs · itch.io blog · itch.io updates<sup>†</sup> · itch.io digest<sup>†</sup> |
-| `itch.io/blog` | itch.io blog |
+| `itch.io` | Featured · new<sup>†</sup> · sales<sup>†</sup> · all devlogs |
 
 <sup>†</sup> *Found only by the Platform method.*
 
-> Every page above also gets the site-wide feeds after its own: featured, new, sales, all devlogs, the itch.io blog, the itch.io updates and the itch.io digest. Most pages link none of them, so there they are found only by the Platform method.
+> Every page above also gets the site-wide feeds after its own: featured, new, sales and all devlogs. Most pages link none of them, so there they are found only by the Platform method. The itch.io blog, updates and digest are the platform's own news, so the handler neither builds nor claims them.
 
 ### CSDN
 
@@ -2321,7 +2320,6 @@ Discovers Atom feeds for Lichess user blogs, the official blog and the community
 | `lichess.org/@/{user}/blog` or `lichess.org/@/{user}/blog/{slug}/{id}` | User blog |
 | `lichess.org/blog` or `lichess.org/blog/{id}/{slug}` | Official Lichess blog |
 | `lichess.org/blog/community` or `lichess.org/{lang}/blog/community` | Community blogs, in that language when the URL names one |
-| Any other page | Site-wide updates |
 
 ### @wiki
 
@@ -2929,8 +2927,8 @@ Discovers RSS 1.0 feeds for blogs on `*.twoday.net`. A blog's skin links its pos
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{blog}.twoday.net` | Posts · summaries · comments · recently commented · platform news |
-| `{blog}.twoday.net/topics/{topic}` | Topic · posts · summaries · comments · recently commented · platform news |
+| `{blog}.twoday.net` | Posts · summaries · comments · recently commented |
+| `{blog}.twoday.net/topics/{topic}` | Topic · posts · summaries · comments · recently commented |
 
 ### cppblog
 

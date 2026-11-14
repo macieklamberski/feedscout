@@ -35,10 +35,16 @@ describe('parseLichessUrl', () => {
     expect(parseLichessUrl('https://lichess.org/blog')).toEqual(expected)
   })
 
-  it('should return the home page for any other page', () => {
-    const expected: LichessUrl = { kind: 'home' }
+  it('should return undefined for a profile page', () => {
+    expect(parseLichessUrl('https://lichess.org/@/thibault')).toBeUndefined()
+  })
 
-    expect(parseLichessUrl('https://lichess.org/@/thibault')).toEqual(expected)
+  it('should return undefined for the home page', () => {
+    expect(parseLichessUrl('https://lichess.org/')).toBeUndefined()
+  })
+
+  it('should return undefined for a blog topic page', () => {
+    expect(parseLichessUrl('https://lichess.org/blog/topic/Chess')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -54,6 +60,10 @@ describe('lichessHandler', () => {
 
     it('should not match another host', () => {
       expect(lichessHandler.match('https://example.com/@/thibault/blog')).toBe(false)
+    })
+
+    it('should not match a page whose only feed is the site updates feed', () => {
+      expect(lichessHandler.match('https://lichess.org/@/thibault')).toBe(false)
     })
   })
 
@@ -157,63 +167,6 @@ describe('lichessHandler', () => {
 
       expect(lichessHandler.resolve(value)).toEqual(expected)
     })
-
-    it('should return the updates feed for a monthly blog archive page', () => {
-      const value = 'https://lichess.org/blog/monthly/2026/9'
-      const expected = [
-        {
-          uri: 'https://lichess.org/feed.atom',
-          hint: { key: 'lichess:updates', label: 'Updates' },
-        },
-      ]
-
-      expect(lichessHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return the updates feed for a blog topic page', () => {
-      const value = 'https://lichess.org/blog/topic/Chess'
-      const expected = [
-        {
-          uri: 'https://lichess.org/feed.atom',
-          hint: { key: 'lichess:updates', label: 'Updates' },
-        },
-      ]
-
-      expect(lichessHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return the updates feed for the blog topics page', () => {
-      const expected = [
-        {
-          uri: 'https://lichess.org/feed.atom',
-          hint: { key: 'lichess:updates', label: 'Updates' },
-        },
-      ]
-
-      expect(lichessHandler.resolve('https://lichess.org/blog/topic')).toEqual(expected)
-    })
-
-    it('should return the updates feed for a profile page', () => {
-      const expected = [
-        {
-          uri: 'https://lichess.org/feed.atom',
-          hint: { key: 'lichess:updates', label: 'Updates' },
-        },
-      ]
-
-      expect(lichessHandler.resolve('https://lichess.org/@/thibault')).toEqual(expected)
-    })
-
-    it('should return the updates feed for the home page', () => {
-      const expected = [
-        {
-          uri: 'https://lichess.org/feed.atom',
-          hint: { key: 'lichess:updates', label: 'Updates' },
-        },
-      ]
-
-      expect(lichessHandler.resolve('https://lichess.org/')).toEqual(expected)
-    })
   })
 
   describe('getFeedHint', () => {
@@ -252,11 +205,10 @@ describe('lichessHandler', () => {
       expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the updates hint for the updates feed', () => {
+    it('should return undefined for the site updates feed', () => {
       const value = 'https://lichess.org/feed.atom'
-      const expected: DiscoverUriHint = { key: 'lichess:updates', label: 'Updates' }
 
-      expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
+      expect(lichessHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return the blog hint for a feed on the www host', () => {
@@ -304,7 +256,6 @@ describe('lichessHandler', () => {
         'https://lichess.org/blog/community.atom',
         { key: 'lichess:community', label: 'Community blogs' },
       ],
-      ['https://lichess.org/feed.atom', { key: 'lichess:updates', label: 'Updates' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
