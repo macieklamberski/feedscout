@@ -43,7 +43,8 @@ const commentsFeedRegex = /^\/comments\/feed(?:\/(?:rss|rss2|atom|rdf))?\/?$/i
 // The word right after a bare archive route is its slug: /tag/embed/ is the tag named embed.
 const postEndpointRegex =
   /(?<=[^/])(?<!^\/(?:category|tag|author))\/(?:amp|embed|trackback|comment-page-\d+)\/?$/i
-// WordPress's own scripts and folders, the search results, and an archive route without its slug.
+// suffixes: WordPress's own scripts and folders, the search results, and an archive route
+// without its slug.
 const reservedPathRegex =
   /^\/(?:wp-(?:admin|content|includes|json)|[^/]*\.(?:php|xml)|search|category|tag|author)(?:\/|$)/i
 
