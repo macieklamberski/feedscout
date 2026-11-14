@@ -63,6 +63,7 @@
     "atypon:most-cited": "https://onlinelibrary.wiley.com/feed/15406261/most-cited"
   },
   "audioboom": {
+    "audioboom:playlist": "https://audioboom.com/playlists/1303121.rss",
     "audioboom:podcast": "https://audioboom.com/channels/5071123.rss"
   },
   "ausha": {
