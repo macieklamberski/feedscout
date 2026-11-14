@@ -11,14 +11,27 @@ export type SubstackUrl = { kind: 'newsletter' } | { kind: 'profile'; username: 
 export type SubstackPage = { kind: 'newsletter' | 'profile'; origin: string }
 
 const domains = ['substack.com']
-// The app host names a publication in the path, so it is no publication itself.
-const appHosts = ['open.substack.com']
+// The app host names a publication in the path and the API host serves podcast feeds, so neither
+// is a publication itself.
+const appHosts = ['open.substack.com', 'api.substack.com']
 
 const profileRegex = /^\/@(?<username>[^/]+)/
 // A profile page embeds its primary publication as escaped JSON. The publication
 // subdomain is not always the handle, and a custom domain replaces it.
 const publicationRegex =
   /primaryPublication\\?":\{[^{}]*?\\?"subdomain\\?":\\?"(?<subdomain>[\w-]+)\\?",\\?"custom_domain\\?":(?:\\?"(?<customDomain>[^"\\]+)\\?"|null)/
+// A publication page embeds its own record as raw JSON, with the id its podcast feeds are named by
+// and the settings of each section that is a podcast. A publication or section without a podcast
+// answers 404 there, so only those feeds are built. A publication that names a feed URL of its own
+// redirects its publication feed there, so that feed is left out. An escaped quote is text inside a
+// string, so a quoted record never matches.
+const pubRecordRegex = /"pub":\{(?<record>[^{}]*)/
+const pubIdRegex = /"id":(?<publication>\d+),/
+const podcastEnabledRegex = /"podcast_enabled":true\b/
+const podcastFeedUrlRegex = /"podcast_feed_url":"/
+// A section record names its publication before its podcast settings.
+const podcastSectionRegex =
+  /"publication_id":(?<owner>\d+)|"podcastSettings":\{"section_id":(?<section>\d+)/g
 
 // A custom domain is read only from a profile page, so its feed is built here but not claimed.
 // The same feed answers at feed.xml and feed.rss.
@@ -47,6 +60,26 @@ const feeds = definePlatformFeeds(
   ],
   { domains },
 )
+
+const getPodcastSections = (content: string, publication: string): Array<string> => {
+  const sections: Array<string> = []
+  let owner: string | undefined
+
+  for (const match of content.matchAll(podcastSectionRegex)) {
+    const { owner: matchedOwner, section } = match.groups ?? {}
+
+    if (matchedOwner) {
+      owner = matchedOwner
+      continue
+    }
+
+    if (section && owner === publication && !sections.includes(section)) {
+      sections.push(section)
+    }
+  }
+
+  return sections
+}
 
 const getPublicationOrigin = (content: string | undefined): string | undefined => {
   const { subdomain, customDomain } = content?.match(publicationRegex)?.groups ?? {}
@@ -121,16 +154,36 @@ export const substackHandler: PlatformHandler = {
       return []
     }
 
-    return [pageFeeds.getFeedEntry('substack:newsletter')]
+    const record = content?.match(pubRecordRegex)?.groups?.record
+    const publication = record?.match(pubIdRegex)?.groups?.publication
+
+    if (!record || !publication) {
+      return [pageFeeds.getFeedEntry('substack:newsletter')]
+    }
+
+    const hasPodcast = podcastEnabledRegex.test(record) && !podcastFeedUrlRegex.test(record)
+    // A podcast feed answers on the publication host too, but names the API host as its self link.
+    const params = { host: 'api.substack.com', publication }
+
+    return [
+      pageFeeds.getFeedEntry('substack:newsletter'),
+      ...(hasPodcast ? [pageFeeds.getFeedEntry('substack:podcast', params)] : []),
+      ...getPodcastSections(content, publication).map((section) => {
+        return pageFeeds.getFeedEntry('substack:podcast-section', { ...params, section })
+      }),
+    ]
   },
 
-  // The table reads any single-label host under substack.com, so the page parser refuses the app
-  // host first, whose /feed answers 404.
+  // The table reads any single-label host under substack.com, so the page parser refuses a
+  // newsletter feed on the app hosts, whose /feed answers 404. Podcast feeds are served from the
+  // API host.
   getFeedHint: (url) => {
-    if (!parseSubstackUrl(url)) {
+    const hint = feeds.getFeedHint(url)
+
+    if (hint?.key.startsWith('substack:newsletter') && !parseSubstackUrl(url)) {
       return
     }
 
-    return feeds.getFeedHint(url)
+    return hint
   },
 }
