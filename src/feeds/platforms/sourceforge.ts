@@ -46,6 +46,7 @@ const feeds = definePlatformFeeds([
     key: 'sourceforge:news',
     template: 'https://sourceforge.net/p/{project}/news/feed',
     format: 'rss',
+    isAlias: true,
   },
   {
     key: 'sourceforge:news',
@@ -61,6 +62,7 @@ const feeds = definePlatformFeeds([
     key: 'sourceforge:discussion',
     template: 'https://sourceforge.net/p/{project}/discussion/feed.rss',
     format: 'rss',
+    isAlias: true,
   },
   {
     key: 'sourceforge:discussion',
@@ -101,6 +103,7 @@ const feeds = definePlatformFeeds([
     key: 'sourceforge:discussion-thread',
     template: 'https://sourceforge.net/p/{project}/discussion/{forum}/thread/{thread}/feed.rss',
     format: 'rss',
+    isAlias: true,
   },
   {
     key: 'sourceforge:discussion-thread',
@@ -116,6 +119,7 @@ const feeds = definePlatformFeeds([
     key: 'sourceforge:discussion-forum',
     template: 'https://sourceforge.net/p/{project}/discussion/{forum}/feed.rss',
     format: 'rss',
+    isAlias: true,
   },
   {
     key: 'sourceforge:discussion-forum',
@@ -133,6 +137,7 @@ const feeds = definePlatformFeeds([
     key: 'sourceforge:tool',
     template: 'https://sourceforge.net/p/{project}/{tool}/feed.rss',
     format: 'rss',
+    isAlias: true,
   },
   {
     key: 'sourceforge:tool',
@@ -148,6 +153,7 @@ const feeds = definePlatformFeeds([
     key: 'sourceforge:tool-page',
     template: 'https://sourceforge.net/p/{project}/{tool}/{page}/feed.rss',
     format: 'rss',
+    isAlias: true,
   },
   {
     key: 'sourceforge:tool-page',
@@ -163,6 +169,7 @@ const feeds = definePlatformFeeds([
     key: 'sourceforge:user',
     template: 'https://sourceforge.net/u/{user}/feed.rss',
     format: 'rss',
+    isAlias: true,
   },
   {
     key: 'sourceforge:user',
@@ -178,6 +185,7 @@ const feeds = definePlatformFeeds([
     key: 'sourceforge:user-tool',
     template: 'https://sourceforge.net/u/{user}/{tool}/feed.rss',
     format: 'rss',
+    isAlias: true,
   },
   {
     key: 'sourceforge:user-tool',
