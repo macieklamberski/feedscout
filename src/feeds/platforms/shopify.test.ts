@@ -125,11 +125,11 @@ describe('shopifyHandler', () => {
       expect(shopifyHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should keep the locale folder of a market page', () => {
+    it('should return the bare blog feed for a market page', () => {
       const value = 'https://example.com/en-us/blogs/news/a-post'
       const expected = [
         {
-          uri: 'https://example.com/en-us/blogs/news.atom',
+          uri: 'https://example.com/blogs/news.atom',
           hint: { key: 'shopify:blog', label: 'Blog' },
         },
       ]
@@ -137,11 +137,11 @@ describe('shopifyHandler', () => {
       expect(shopifyHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should keep a language, script and country folder', () => {
+    it('should return the bare blog feed for a language, script and country folder', () => {
       const value = 'https://example.com/zh-hant-hk/blogs/videos/a-post'
       const expected = [
         {
-          uri: 'https://example.com/zh-hant-hk/blogs/videos.atom',
+          uri: 'https://example.com/blogs/videos.atom',
           hint: { key: 'shopify:blog', label: 'Blog' },
         },
       ]
@@ -173,11 +173,11 @@ describe('shopifyHandler', () => {
       expect(shopifyHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the market blog feed itself for a market blog feed', () => {
+    it('should return the bare blog feed for a market blog feed', () => {
       const value = 'https://example.com/en-us/blogs/news.atom'
       const expected = [
         {
-          uri: 'https://example.com/en-us/blogs/news.atom',
+          uri: 'https://example.com/blogs/news.atom',
           hint: { key: 'shopify:blog', label: 'Blog' },
         },
       ]
