@@ -1,4 +1,4 @@
-import { getQueryParam, isHostOf, parseUrl } from 'trousse'
+import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
@@ -12,10 +12,15 @@ export type YoutubeUrl =
   | { kind: 'channel'; channelId?: string; playlistId?: string }
   | { kind: 'watch'; playlistId?: string }
   | { kind: 'short'; playlistId?: string }
-  | { kind: 'player'; playlistId?: string }
+  | { kind: 'player'; channelId?: string; username?: string; playlistId?: string }
   | { kind: 'playlist'; playlistId: string }
 export type YoutubePage =
-  | { kind: 'channel' | 'watch' | 'short' | 'player'; channelId?: string; playlistId?: string }
+  | {
+      kind: 'channel' | 'watch' | 'short' | 'player'
+      channelId?: string
+      username?: string
+      playlistId?: string
+    }
   | { kind: 'playlist'; playlistId: string }
 
 export const hosts = [
@@ -43,6 +48,7 @@ const channelRegex = /^\/channel\/([^/]+)/i
 const shortsRegex = /^\/shorts\/[\w-]+/i
 const liveRegex = /^\/live\/[\w-]+/i
 const watchRegex = /^\/watch\/?$/i
+const liveStreamEmbedRegex = /^\/embed\/live_stream\/?$/i
 const channelPrefixRegex = /^UC/
 // Channel IDs are case-sensitive, so the ID is checked apart from the case-insensitive route.
 const channelIdFormatRegex = /^UC[\w-]+$/
@@ -69,8 +75,8 @@ const uploadsPlaylistKeys: Record<string, string> = {
 }
 // YouTube also supports a legacy ?user=username feed parameter, but it only works with old-style
 // usernames (not modern @handles) and returns the same Atom content as ?channel_id=. YouTube's own
-// autodiscovery always uses channel_id, so we treat it as the canonical format and only claim the
-// legacy one.
+// autodiscovery always uses channel_id, so we treat it as the canonical format and build the legacy
+// one only for an embed that names a username and no channel ID.
 const feeds = definePlatformFeeds([
   { key: 'youtube:all', template: `${feedUrl}?channel_id={channelId}` },
   { key: 'youtube:all', template: `${feedUrl}?user={user}`, isAlias: true },
@@ -132,14 +138,30 @@ export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
   }
 
   const { pathname, searchParams } = parsedUrl
+  const listType = getQueryParam(searchParams, 'listType')
   const listId = getQueryParam(searchParams, 'list')
-  const playlistId = listId && !feedlessListRegex.test(listId) ? listId : undefined
+  // An embed's `listType=user_uploads` names a legacy username in `list`, and `listType=search` a
+  // search query, so only a bare or `playlist` list is a playlist ID.
+  const isPlaylistList = listType === undefined || isAnyOf(listType, 'playlist')
+  const playlistId =
+    listId && isPlaylistList && !feedlessListRegex.test(listId) ? listId : undefined
+  const username = isAnyOf(listType, 'user_uploads') ? listId : undefined
   const rawChannelId = pathname.match(channelRegex)?.[1]?.replace(formatSuffixRegex, '')
   const channelId =
     rawChannelId && channelIdFormatRegex.test(rawChannelId) ? rawChannelId : undefined
 
   if (channelId) {
     return { kind: 'channel', channelId, playlistId }
+  }
+
+  if (liveStreamEmbedRegex.test(pathname)) {
+    const embedChannelId = getQueryParam(searchParams, 'channel')
+
+    if (!embedChannelId || !channelIdFormatRegex.test(embedChannelId)) {
+      return
+    }
+
+    return { kind: 'player', channelId: embedChannelId }
   }
 
   if (channelPathRegexes.some((regex) => regex.test(pathname))) {
@@ -165,6 +187,10 @@ export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
   if (playlistId) {
     return { kind: 'playlist', playlistId }
   }
+
+  if (username) {
+    return { kind: 'player', username }
+  }
 }
 
 export const getYoutubePage = (
@@ -182,6 +208,11 @@ export const getYoutubePage = (
   }
 
   if (parsed.kind === 'channel' && parsed.channelId) {
+    return parsed
+  }
+
+  // An embed names its channel or legacy username in the query, and its page carries neither.
+  if (parsed.kind === 'player' && (parsed.channelId || parsed.username)) {
     return parsed
   }
 
@@ -204,9 +235,11 @@ export const youtubeHandler: PlatformHandler = {
     }
 
     const channelId = page.kind === 'playlist' ? undefined : page.channelId
+    const username = page.kind === 'playlist' ? undefined : page.username
 
     return [
       ...(channelId ? getChannelUris(channelId) : []),
+      ...(username ? [feeds.getFeedEntry('youtube:all', { user: username })] : []),
       ...(page.playlistId
         ? [
             {

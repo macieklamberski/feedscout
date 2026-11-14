@@ -65,6 +65,8 @@ Discovers Atom feeds for channels and playlists. Generates ten feed variants for
 | `youtu.be/{id}` | All uploads<sup>†</sup> · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
 | `youtube.com/shorts/{id}` | All uploads<sup>†</sup> · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
 | `youtube.com/live/{id}` | All uploads<sup>†</sup> · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
+| `youtube.com/embed/live_stream?channel={id}` | All uploads<sup>†</sup> · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>†</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup> |
+| `youtube.com/embed?listType=user_uploads&list={name}` | All uploads<sup>†</sup> |
 | `youtube.com/playlist?list={id}` | Playlist<sup>†</sup>, or for a channel's uploads list the channel feed of its prefix: all uploads<sup>†</sup> for `UU{id}`, videos<sup>†</sup> for `UULF{id}` and so on |
 
 \* *Requires HTML content to extract channel ID.*
