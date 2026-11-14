@@ -675,8 +675,8 @@ Discovers Atom feeds for Prose.sh blogs.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `prose.sh` | Discovery |
-| `*.prose.sh` | Blog |
-| `*.prose.sh/?tag={tag}` | Tag |
+| `{user}.prose.sh` | Blog |
+| `{user}.prose.sh/?tag={tag}` | Tag |
 
 ### Pagecord
 
