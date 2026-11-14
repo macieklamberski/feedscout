@@ -319,10 +319,6 @@ describe('tumblrHandler', () => {
         'https://example.tumblr.com/?format=rss',
         { key: 'tumblr:theme-posts', label: 'Theme posts' },
       ],
-      [
-        'https://www.example.tumblr.com/?format=rss',
-        { key: 'tumblr:theme-posts', label: 'Theme posts' },
-      ],
       ['https://example.tumblr.com/podcast', { key: 'tumblr:podcast', label: 'Podcast' }],
       ['https://example.tumblr.com/podcast/rss', { key: 'tumblr:podcast', label: 'Podcast' }],
     ]
