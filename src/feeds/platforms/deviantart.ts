@@ -36,18 +36,22 @@ const feeds = definePlatformFeeds([
   {
     key: 'deviantart:deviations',
     template: 'https://backend.deviantart.com/rss.xml?type=deviation&q=by:{username}',
+    isAlias: true,
   },
   {
     key: 'deviantart:deviations',
     template: 'https://backend.deviantart.com/rss.xml?type=gallery&q=by:{username}',
+    isAlias: true,
   },
   {
     key: 'deviantart:deviations',
     template: 'https://backend.deviantart.com/rss.xml?q=by:{username}',
+    isAlias: true,
   },
   {
     key: 'deviantart:deviations',
     template: 'https://backend.deviantart.com/rss.xml?q=gallery:{username}',
+    isAlias: true,
   },
   {
     key: 'deviantart:gallery',
