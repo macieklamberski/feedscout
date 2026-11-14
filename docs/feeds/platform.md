@@ -878,6 +878,8 @@ Discovers RSS, Atom, and RDF feeds for Ameba Blog.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `ameblo.jp/{user}` | Posts (RSS + Atom + RDF<sup>†</sup>) |
+| `ameblo.jp/s/embed/reblog-card/{user}/entry-{id}.html` | Posts<sup>†</sup> (RSS + Atom + RDF) |
+| `ameblo.jp/p/embed/{user}/image-{id}.html` | Posts<sup>†</sup> (RSS + Atom + RDF) |
 
 <sup>†</sup> *Found only by the Platform method.*
 

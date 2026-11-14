@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { AmebloUrl } from './ameblo.js'
 import { amebloHandler, parseAmebloUrl } from './ameblo.js'
 
@@ -14,6 +16,27 @@ describe('parseAmebloUrl', () => {
     const expected: AmebloUrl = { kind: 'blog', username: 'shibuya' }
 
     expect(parseAmebloUrl('https://ameblo.jp/shibuya/entry-12345678901.html')).toEqual(expected)
+  })
+
+  it('should return the blog of a reblog card', () => {
+    const value = 'https://ameblo.jp/s/embed/reblog-card/alice/entry-12345678901.html'
+    const expected: AmebloUrl = { kind: 'blog', username: 'alice' }
+
+    expect(parseAmebloUrl(value)).toEqual(expected)
+  })
+
+  it('should return the blog of an image page', () => {
+    const value = 'https://ameblo.jp/p/embed/alice/image-12345678901-12345678901.html'
+    const expected: AmebloUrl = { kind: 'blog', username: 'alice' }
+
+    expect(parseAmebloUrl(value)).toEqual(expected)
+  })
+
+  it('should return the blog of an image page with an uppercase route', () => {
+    const value = 'https://ameblo.jp/P/Embed/alice/Image-12345678901-12345678901.html'
+    const expected: AmebloUrl = { kind: 'blog', username: 'alice' }
+
+    expect(parseAmebloUrl(value)).toEqual(expected)
   })
 
   it('should return the username for the www host', () => {
@@ -58,11 +81,11 @@ describe('amebloHandler', () => {
       const value = 'https://ameblo.jp/shibuya'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://ameblo.jp/shibuya/rss20.xml',
+          uri: 'https://rssblog.ameba.jp/shibuya/rss20.xml',
           hint: { key: 'ameblo:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://ameblo.jp/shibuya/atom.xml',
+          uri: 'https://rssblog.ameba.jp/shibuya/atom.xml',
           hint: { key: 'ameblo:posts', label: 'Posts', format: 'atom' },
         },
         {
@@ -74,8 +97,165 @@ describe('amebloHandler', () => {
       expect(amebloHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the feeds of the blog a reblog card names', () => {
+      const value = 'https://ameblo.jp/s/embed/reblog-card/alice/entry-12345678901.html'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://rssblog.ameba.jp/alice/rss20.xml',
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://rssblog.ameba.jp/alice/atom.xml',
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://rssblog.ameba.jp/alice/rss.html',
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'rdf' },
+        },
+      ]
+
+      expect(amebloHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the scheme of an http blog page', () => {
+      const value = 'http://ameblo.jp/shibuya'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://rssblog.ameba.jp/shibuya/rss20.xml',
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'http://rssblog.ameba.jp/shibuya/atom.xml',
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'http://rssblog.ameba.jp/shibuya/rss.html',
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'rdf' },
+        },
+      ]
+
+      expect(amebloHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array when the URL names no blog', () => {
       expect(amebloHandler.resolve('https://ameblo.jp/')).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the posts hint for an RSS 2.0 feed', () => {
+      const value = 'https://ameblo.jp/6262sm/rss20.xml'
+      const expected: DiscoverUriHint = { key: 'ameblo:posts', label: 'Posts', format: 'rss' }
+
+      expect(amebloHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for an Atom feed', () => {
+      const value = 'https://ameblo.jp/a-retro/atom.xml'
+      const expected: DiscoverUriHint = { key: 'ameblo:posts', label: 'Posts', format: 'atom' }
+
+      expect(amebloHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for an RDF feed on rssblog.ameba.jp', () => {
+      const value = 'https://rssblog.ameba.jp/6262sm/rss.html'
+      const expected: DiscoverUriHint = { key: 'ameblo:posts', label: 'Posts', format: 'rdf' }
+
+      expect(amebloHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for an RDF feed over http', () => {
+      const value = 'http://rssblog.ameba.jp/a-retro/rss.html'
+      const expected: DiscoverUriHint = { key: 'ameblo:posts', label: 'Posts', format: 'rdf' }
+
+      expect(amebloHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for an RSS 2.0 feed on rssblog.ameba.jp', () => {
+      const value = 'https://rssblog.ameba.jp/6262sm/rss20.xml'
+      const expected: DiscoverUriHint = { key: 'ameblo:posts', label: 'Posts', format: 'rss' }
+
+      expect(amebloHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for an Atom feed on rssblog.ameba.jp', () => {
+      const value = 'https://rssblog.ameba.jp/6262sm/atom.xml'
+      const expected: DiscoverUriHint = { key: 'ameblo:posts', label: 'Posts', format: 'atom' }
+
+      expect(amebloHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for an RDF feed on ameblo.jp', () => {
+      const value = 'https://ameblo.jp/6262sm/rss.html'
+      const expected: DiscoverUriHint = { key: 'ameblo:posts', label: 'Posts', format: 'rdf' }
+
+      expect(amebloHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a feed on the www host', () => {
+      const value = 'https://www.ameblo.jp/6262sm/rss20.xml'
+      const expected: DiscoverUriHint = { key: 'ameblo:posts', label: 'Posts', format: 'rss' }
+
+      expect(amebloHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://ameblo.jp/6262sm/entry-12345678901.html'
+
+      expect(amebloHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a page on rssblog.ameba.jp', () => {
+      const value = 'https://rssblog.ameba.jp/6262sm/'
+
+      expect(amebloHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/6262sm/rss.html'
+
+      expect(amebloHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://ameblo.jp/6262sm/rss20.xml',
+        { key: 'ameblo:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://ameblo.jp/a-retro/atom.xml',
+        { key: 'ameblo:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://rssblog.ameba.jp/6262sm/rss.html',
+        { key: 'ameblo:posts', label: 'Posts', format: 'rdf' },
+      ],
+      [
+        'https://rssblog.ameba.jp/a-retro/rss.html',
+        { key: 'ameblo:posts', label: 'Posts', format: 'rdf' },
+      ],
+      [
+        'https://rssblog.ameba.jp/6262sm/rss20.xml',
+        { key: 'ameblo:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://rssblog.ameba.jp/6262sm/atom.xml',
+        { key: 'ameblo:posts', label: 'Posts', format: 'atom' },
+      ],
+      ['https://ameblo.jp/6262sm/rss.html', { key: 'ameblo:posts', label: 'Posts', format: 'rdf' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [amebloHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
