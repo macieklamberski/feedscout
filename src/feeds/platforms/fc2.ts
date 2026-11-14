@@ -4,12 +4,12 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers blog, fc2Net, numberedBlog (html), partly covers 2nt.
+// Generic covers blog, fc2Net, numberedBlog (html).
 
 export type Fc2Url = { kind: 'blog' }
 
-// A blog is one label under these domains.
-const domains = ['blog.2nt.com', 'fc2.net']
+// A blog is one label under fc2.net.
+const domains = ['fc2.net']
 
 const numberedSubdomainRegex = /^(?<blog>[^.]+)\.blog\d*$/i
 // A blog on fc2.com is one label under blog.fc2.com or a numbered blog{n}.fc2.com.

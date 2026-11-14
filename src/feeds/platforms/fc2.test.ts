@@ -23,22 +23,12 @@ describe('parseFc2Url', () => {
     expect(parseFc2Url('https://someone.fc2.net/')).toEqual(expected)
   })
 
-  it('should return the blog for a 2nt.com host', () => {
-    const expected: Fc2Url = { kind: 'blog' }
-
-    expect(parseFc2Url('http://someone.blog.2nt.com/')).toEqual(expected)
-  })
-
   it('should return undefined for a dotted subdomain of a blog host', () => {
     expect(parseFc2Url('https://www.someone.blog.fc2.com/')).toBeUndefined()
   })
 
   it('should return undefined for a dotted subdomain of an fc2.net blog host', () => {
     expect(parseFc2Url('https://www.someone.fc2.net/')).toBeUndefined()
-  })
-
-  it('should return undefined for a dotted subdomain of a 2nt.com blog host', () => {
-    expect(parseFc2Url('http://www.someone.blog.2nt.com/')).toBeUndefined()
   })
 
   it('should return undefined for the www host of a blog host', () => {
@@ -145,13 +135,6 @@ describe('fc2Handler', () => {
 
     it('should return the posts hint for a posts feed on an fc2.net host', () => {
       const value = 'https://example.fc2.net/?xml'
-      const expected: DiscoverUriHint = { key: 'fc2:posts', label: 'Posts' }
-
-      expect(fc2Handler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a posts feed on a 2nt.com host', () => {
-      const value = 'https://example.blog.2nt.com/?xml='
       const expected: DiscoverUriHint = { key: 'fc2:posts', label: 'Posts' }
 
       expect(fc2Handler.getFeedHint?.(value)).toEqual(expected)

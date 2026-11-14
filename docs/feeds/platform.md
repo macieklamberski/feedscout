@@ -1779,9 +1779,6 @@ Discovers the RSS feeds of an FC2 blog.
 | `{user}.blog.fc2.com` | Posts · comments · trackbacks (RSS) |
 | `{user}.blog{n}.fc2.com` | Posts · comments · trackbacks (RSS) |
 | `{user}.fc2.net` | Posts · comments · trackbacks (RSS) |
-| `{user}.blog.2nt.com` | Posts · comments<sup>†</sup> · trackbacks<sup>†</sup> (RSS) |
-
-<sup>†</sup> *Found only by the Platform method.*
 
 > [!NOTE]
 > The canonical host redirects to a numbered host from the old sharding scheme, so both shapes are matched and the feed is built from whichever host answers.
