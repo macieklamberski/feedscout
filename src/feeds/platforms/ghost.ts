@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -11,8 +11,6 @@ export type GhostUrl =
   | { kind: 'blog' }
 
 const domains = ['ghost.io']
-// Ghost's upload host, which serves the images and files of every site and is no blog.
-const storageHosts = ['storage.ghost.io']
 
 const tagRegex = /^\/tag\/([^/]+)/i
 const authorRegex = /^\/author\/([^/]+)/i
@@ -37,10 +35,6 @@ const privateFeeds = definePlatformFeeds(
 )
 
 export const parseGhostUrl = (url: string): GhostUrl | undefined => {
-  if (isHostOf(url, storageHosts)) {
-    return
-  }
-
   if (!getTenantSubdomain(url, domains)) {
     return
   }
