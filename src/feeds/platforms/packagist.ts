@@ -1,6 +1,5 @@
 import { isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
-import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -84,10 +83,6 @@ const feeds = definePlatformFeeds([
   },
 ])
 
-const getFeedEntries = (key: string, params?: PlatformFeedParams): Array<DiscoverUriEntry> => {
-  return [feeds.getFeedEntry(key, params, 'rss'), feeds.getFeedEntry(key, params, 'atom')]
-}
-
 export const parsePackagistUrl = (url: string): PackagistUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -135,31 +130,49 @@ export const packagistHandler: PlatformHandler = {
 
     // Every page gets the site-wide feeds after its own, the extension pages included, which do
     // not link them.
-    const siteFeeds = [
-      ...getFeedEntries('packagist:new-packages'),
-      ...getFeedEntries('packagist:new-releases'),
-    ]
-
     if (parsed.kind === 'package') {
+      const params = { vendor: parsed.vendor, name: parsed.name }
+
       return [
-        ...getFeedEntries('packagist:releases', { vendor: parsed.vendor, name: parsed.name }),
-        ...siteFeeds,
+        feeds.getFeedEntry('packagist:releases', params, 'rss'),
+        feeds.getFeedEntry('packagist:releases', params, 'atom'),
+        feeds.getFeedEntry('packagist:new-packages', undefined, 'rss'),
+        feeds.getFeedEntry('packagist:new-packages', undefined, 'atom'),
+        feeds.getFeedEntry('packagist:new-releases', undefined, 'rss'),
+        feeds.getFeedEntry('packagist:new-releases', undefined, 'atom'),
       ]
     }
 
     if (parsed.kind === 'vendor') {
-      return [...getFeedEntries('packagist:vendor', { vendor: parsed.vendor }), ...siteFeeds]
+      return [
+        feeds.getFeedEntry('packagist:vendor', { vendor: parsed.vendor }, 'rss'),
+        feeds.getFeedEntry('packagist:vendor', { vendor: parsed.vendor }, 'atom'),
+        feeds.getFeedEntry('packagist:new-packages', undefined, 'rss'),
+        feeds.getFeedEntry('packagist:new-packages', undefined, 'atom'),
+        feeds.getFeedEntry('packagist:new-releases', undefined, 'rss'),
+        feeds.getFeedEntry('packagist:new-releases', undefined, 'atom'),
+      ]
     }
 
     if (parsed.kind === 'extensions') {
       return [
-        ...getFeedEntries('packagist:new-extensions'),
-        ...getFeedEntries('packagist:extension-releases'),
-        ...siteFeeds,
+        feeds.getFeedEntry('packagist:new-extensions', undefined, 'rss'),
+        feeds.getFeedEntry('packagist:new-extensions', undefined, 'atom'),
+        feeds.getFeedEntry('packagist:extension-releases', undefined, 'rss'),
+        feeds.getFeedEntry('packagist:extension-releases', undefined, 'atom'),
+        feeds.getFeedEntry('packagist:new-packages', undefined, 'rss'),
+        feeds.getFeedEntry('packagist:new-packages', undefined, 'atom'),
+        feeds.getFeedEntry('packagist:new-releases', undefined, 'rss'),
+        feeds.getFeedEntry('packagist:new-releases', undefined, 'atom'),
       ]
     }
 
-    return siteFeeds
+    return [
+      feeds.getFeedEntry('packagist:new-packages', undefined, 'rss'),
+      feeds.getFeedEntry('packagist:new-packages', undefined, 'atom'),
+      feeds.getFeedEntry('packagist:new-releases', undefined, 'rss'),
+      feeds.getFeedEntry('packagist:new-releases', undefined, 'atom'),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
