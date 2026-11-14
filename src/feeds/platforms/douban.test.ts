@@ -221,7 +221,7 @@ describe('doubanHandler', () => {
     })
 
     it('should return the reviews hint for a user reviews feed', () => {
-      const value = 'https://www.douban.com/feed/people/29610886/reviews'
+      const value = 'https://www.douban.com/feed/people/12345678/reviews'
       const expected: DiscoverUriHint = { key: 'douban:reviews', label: 'Reviews' }
 
       expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
@@ -327,7 +327,7 @@ describe('doubanHandler', () => {
         { key: 'douban:interests', label: 'Interests' },
       ],
       [
-        'https://www.douban.com/feed/people/29610886/reviews',
+        'https://www.douban.com/feed/people/12345678/reviews',
         { key: 'douban:reviews', label: 'Reviews' },
       ],
       [
