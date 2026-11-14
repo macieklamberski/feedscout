@@ -29,12 +29,27 @@ const feeds = definePlatformFeeds(
     { key: 'bearblog:posts', template: '{scheme}://{host}/feed/', format: 'atom' },
     { key: 'bearblog:posts', template: '{scheme}://{host}/feed/?type=rss', format: 'rss' },
     // Every blog serves the same two feeds under these paths too, which the page does not link.
-    { key: 'bearblog:posts', template: '{scheme}://{host}/atom/', format: 'atom' },
-    { key: 'bearblog:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
-    { key: 'bearblog:posts', template: '{scheme}://{host}/feed.xml', format: 'atom' },
-    { key: 'bearblog:posts', template: '{scheme}://{host}/index.xml', format: 'atom' },
-    { key: 'bearblog:posts', template: '{scheme}://{host}/rss/', format: 'rss' },
-    { key: 'bearblog:posts', template: '{scheme}://{host}/rss.xml', format: 'rss' },
+    { key: 'bearblog:posts', template: '{scheme}://{host}/atom/', format: 'atom', isAlias: true },
+    {
+      key: 'bearblog:posts',
+      template: '{scheme}://{host}/atom.xml',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'bearblog:posts',
+      template: '{scheme}://{host}/feed.xml',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'bearblog:posts',
+      template: '{scheme}://{host}/index.xml',
+      format: 'atom',
+      isAlias: true,
+    },
+    { key: 'bearblog:posts', template: '{scheme}://{host}/rss/', format: 'rss', isAlias: true },
+    { key: 'bearblog:posts', template: '{scheme}://{host}/rss.xml', format: 'rss', isAlias: true },
   ],
   { domains },
 )
