@@ -207,22 +207,42 @@ describe('flickrHandler', () => {
   describe('resolve', () => {
     it('should keep the scheme of an http page', () => {
       const value = 'http://flickr.com/photos/tags/rock'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'http://www.flickr.com/services/feeds/photos_public.gne?tags=rock',
           hint: { key: 'flickr:tag', label: 'Tag' },
+        },
+        {
+          uri: 'http://www.flickr.com/services/feeds/photos_public.gne?tags=rock&format=rss_200',
+          hint: { key: 'flickr:tag', label: 'Tag', format: 'rss' },
         },
         {
           uri: 'http://www.flickr.com/services/feeds/forums.gne',
           hint: { key: 'flickr:forum', label: 'Forum' },
         },
         {
+          uri: 'http://www.flickr.com/services/feeds/forums.gne?format=rss_200',
+          hint: { key: 'flickr:forum', label: 'Forum', format: 'rss' },
+        },
+        {
           uri: 'http://www.flickr.com/services/feeds/photos_public.gne',
           hint: { key: 'flickr:recent', label: 'Uploads from everyone' },
         },
         {
+          uri: 'http://www.flickr.com/services/feeds/photos_public.gne?format=rss_200',
+          hint: { key: 'flickr:recent', label: 'Uploads from everyone', format: 'rss' },
+        },
+        {
           uri: 'http://www.flickr.com/services/feeds/geo',
           hint: { key: 'flickr:recent-geo', label: 'Uploads from everyone with location' },
+        },
+        {
+          uri: 'http://www.flickr.com/services/feeds/geo?format=rss_200',
+          hint: {
+            key: 'flickr:recent-geo',
+            label: 'Uploads from everyone with location',
+            format: 'rss',
+          },
         },
       ]
 
@@ -231,22 +251,42 @@ describe('flickrHandler', () => {
 
     it('should keep a tag with & inside the tags query value', () => {
       const value = 'https://www.flickr.com/photos/tags/rock&roll'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.flickr.com/services/feeds/photos_public.gne?tags=rock%26roll',
           hint: { key: 'flickr:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?tags=rock%26roll&format=rss_200',
+          hint: { key: 'flickr:tag', label: 'Tag', format: 'rss' },
         },
         {
           uri: `${feedsBase}/forums.gne`,
           hint: { key: 'flickr:forum', label: 'Forum' },
         },
         {
+          uri: `${feedsBase}/forums.gne?format=rss_200`,
+          hint: { key: 'flickr:forum', label: 'Forum', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/photos_public.gne`,
           hint: { key: 'flickr:recent', label: 'Uploads from everyone' },
         },
         {
+          uri: `${feedsBase}/photos_public.gne?format=rss_200`,
+          hint: { key: 'flickr:recent', label: 'Uploads from everyone', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/geo`,
           hint: { key: 'flickr:recent-geo', label: 'Uploads from everyone with location' },
+        },
+        {
+          uri: `${feedsBase}/geo?format=rss_200`,
+          hint: {
+            key: 'flickr:recent-geo',
+            label: 'Uploads from everyone with location',
+            format: 'rss',
+          },
         },
       ]
 
@@ -255,22 +295,42 @@ describe('flickrHandler', () => {
 
     it('should keep an escaped tag escaped once in the tags query value', () => {
       const value = 'https://www.flickr.com/photos/tags/c%2B%2B'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.flickr.com/services/feeds/photos_public.gne?tags=c%2B%2B',
           hint: { key: 'flickr:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?tags=c%2B%2B&format=rss_200',
+          hint: { key: 'flickr:tag', label: 'Tag', format: 'rss' },
         },
         {
           uri: `${feedsBase}/forums.gne`,
           hint: { key: 'flickr:forum', label: 'Forum' },
         },
         {
+          uri: `${feedsBase}/forums.gne?format=rss_200`,
+          hint: { key: 'flickr:forum', label: 'Forum', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/photos_public.gne`,
           hint: { key: 'flickr:recent', label: 'Uploads from everyone' },
         },
         {
+          uri: `${feedsBase}/photos_public.gne?format=rss_200`,
+          hint: { key: 'flickr:recent', label: 'Uploads from everyone', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/geo`,
           hint: { key: 'flickr:recent-geo', label: 'Uploads from everyone with location' },
+        },
+        {
+          uri: `${feedsBase}/geo?format=rss_200`,
+          hint: {
+            key: 'flickr:recent-geo',
+            label: 'Uploads from everyone with location',
+            format: 'rss',
+          },
         },
       ]
 
@@ -279,22 +339,42 @@ describe('flickrHandler', () => {
 
     it('should return tag feed for a tag page', () => {
       const value = 'https://www.flickr.com/photos/tags/cats'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${feedsBase}/photos_public.gne?tags=cats`,
           hint: { key: 'flickr:tag', label: 'Tag' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne?tags=cats&format=rss_200`,
+          hint: { key: 'flickr:tag', label: 'Tag', format: 'rss' },
         },
         {
           uri: `${feedsBase}/forums.gne`,
           hint: { key: 'flickr:forum', label: 'Forum' },
         },
         {
+          uri: `${feedsBase}/forums.gne?format=rss_200`,
+          hint: { key: 'flickr:forum', label: 'Forum', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/photos_public.gne`,
           hint: { key: 'flickr:recent', label: 'Uploads from everyone' },
         },
         {
+          uri: `${feedsBase}/photos_public.gne?format=rss_200`,
+          hint: { key: 'flickr:recent', label: 'Uploads from everyone', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/geo`,
           hint: { key: 'flickr:recent-geo', label: 'Uploads from everyone with location' },
+        },
+        {
+          uri: `${feedsBase}/geo?format=rss_200`,
+          hint: {
+            key: 'flickr:recent-geo',
+            label: 'Uploads from everyone with location',
+            format: 'rss',
+          },
         },
       ]
 
@@ -303,22 +383,42 @@ describe('flickrHandler', () => {
 
     it('should return photostream feed for an NSID photostream page', () => {
       const value = 'https://www.flickr.com/photos/24662369@N07/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${feedsBase}/photos_public.gne?id=24662369@N07`,
           hint: { key: 'flickr:photos', label: 'Photostream' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne?id=24662369@N07&format=rss_200`,
+          hint: { key: 'flickr:photos', label: 'Photostream', format: 'rss' },
         },
         {
           uri: `${feedsBase}/forums.gne`,
           hint: { key: 'flickr:forum', label: 'Forum' },
         },
         {
+          uri: `${feedsBase}/forums.gne?format=rss_200`,
+          hint: { key: 'flickr:forum', label: 'Forum', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/photos_public.gne`,
           hint: { key: 'flickr:recent', label: 'Uploads from everyone' },
         },
         {
+          uri: `${feedsBase}/photos_public.gne?format=rss_200`,
+          hint: { key: 'flickr:recent', label: 'Uploads from everyone', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/geo`,
           hint: { key: 'flickr:recent-geo', label: 'Uploads from everyone with location' },
+        },
+        {
+          uri: `${feedsBase}/geo?format=rss_200`,
+          hint: {
+            key: 'flickr:recent-geo',
+            label: 'Uploads from everyone with location',
+            format: 'rss',
+          },
         },
       ]
 
@@ -327,22 +427,42 @@ describe('flickrHandler', () => {
 
     it('should return favorites feed for an NSID favorites page', () => {
       const value = 'https://www.flickr.com/photos/24662369@N07/favorites'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${feedsBase}/photos_faves.gne?id=24662369@N07`,
           hint: { key: 'flickr:faves', label: 'Favorites' },
+        },
+        {
+          uri: `${feedsBase}/photos_faves.gne?id=24662369@N07&format=rss_200`,
+          hint: { key: 'flickr:faves', label: 'Favorites', format: 'rss' },
         },
         {
           uri: `${feedsBase}/forums.gne`,
           hint: { key: 'flickr:forum', label: 'Forum' },
         },
         {
+          uri: `${feedsBase}/forums.gne?format=rss_200`,
+          hint: { key: 'flickr:forum', label: 'Forum', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/photos_public.gne`,
           hint: { key: 'flickr:recent', label: 'Uploads from everyone' },
         },
         {
+          uri: `${feedsBase}/photos_public.gne?format=rss_200`,
+          hint: { key: 'flickr:recent', label: 'Uploads from everyone', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/geo`,
           hint: { key: 'flickr:recent-geo', label: 'Uploads from everyone with location' },
+        },
+        {
+          uri: `${feedsBase}/geo?format=rss_200`,
+          hint: {
+            key: 'flickr:recent-geo',
+            label: 'Uploads from everyone with location',
+            format: 'rss',
+          },
         },
       ]
 
@@ -359,30 +479,66 @@ describe('flickrHandler', () => {
 
     it('should return pool, discussion and location feeds for a group page', () => {
       const value = 'https://www.flickr.com/groups/42097308@N00/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${feedsBase}/groups_pool.gne?id=42097308@N00`,
           hint: { key: 'flickr:group-pool', label: 'Group pool' },
+        },
+        {
+          uri: `${feedsBase}/groups_pool.gne?id=42097308@N00&format=rss_200`,
+          hint: { key: 'flickr:group-pool', label: 'Group pool', format: 'rss' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne?g=42097308@N00`,
+          hint: { key: 'flickr:group-photos', label: 'Group photos' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne?g=42097308@N00&format=rss_200`,
+          hint: { key: 'flickr:group-photos', label: 'Group photos', format: 'rss' },
         },
         {
           uri: `${feedsBase}/groups_discuss.gne?id=42097308@N00`,
           hint: { key: 'flickr:group-discuss', label: 'Group discussions' },
         },
         {
+          uri: `${feedsBase}/groups_discuss.gne?id=42097308@N00&format=rss_200`,
+          hint: { key: 'flickr:group-discuss', label: 'Group discussions', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/geo/?g=42097308@N00`,
           hint: { key: 'flickr:group-geo', label: 'Group pool with location' },
+        },
+        {
+          uri: `${feedsBase}/geo/?g=42097308@N00&format=rss_200`,
+          hint: { key: 'flickr:group-geo', label: 'Group pool with location', format: 'rss' },
         },
         {
           uri: `${feedsBase}/forums.gne`,
           hint: { key: 'flickr:forum', label: 'Forum' },
         },
         {
+          uri: `${feedsBase}/forums.gne?format=rss_200`,
+          hint: { key: 'flickr:forum', label: 'Forum', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/photos_public.gne`,
           hint: { key: 'flickr:recent', label: 'Uploads from everyone' },
         },
         {
+          uri: `${feedsBase}/photos_public.gne?format=rss_200`,
+          hint: { key: 'flickr:recent', label: 'Uploads from everyone', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/geo`,
           hint: { key: 'flickr:recent-geo', label: 'Uploads from everyone with location' },
+        },
+        {
+          uri: `${feedsBase}/geo?format=rss_200`,
+          hint: {
+            key: 'flickr:recent-geo',
+            label: 'Uploads from everyone with location',
+            format: 'rss',
+          },
         },
       ]
 
@@ -391,26 +547,58 @@ describe('flickrHandler', () => {
 
     it('should return the pool and location feeds for a group pool page', () => {
       const value = 'https://www.flickr.com/groups/42097308@N00/pool/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${feedsBase}/groups_pool.gne?id=42097308@N00`,
           hint: { key: 'flickr:group-pool', label: 'Group pool' },
+        },
+        {
+          uri: `${feedsBase}/groups_pool.gne?id=42097308@N00&format=rss_200`,
+          hint: { key: 'flickr:group-pool', label: 'Group pool', format: 'rss' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne?g=42097308@N00`,
+          hint: { key: 'flickr:group-photos', label: 'Group photos' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne?g=42097308@N00&format=rss_200`,
+          hint: { key: 'flickr:group-photos', label: 'Group photos', format: 'rss' },
         },
         {
           uri: `${feedsBase}/geo/?g=42097308@N00`,
           hint: { key: 'flickr:group-geo', label: 'Group pool with location' },
         },
         {
+          uri: `${feedsBase}/geo/?g=42097308@N00&format=rss_200`,
+          hint: { key: 'flickr:group-geo', label: 'Group pool with location', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/forums.gne`,
           hint: { key: 'flickr:forum', label: 'Forum' },
+        },
+        {
+          uri: `${feedsBase}/forums.gne?format=rss_200`,
+          hint: { key: 'flickr:forum', label: 'Forum', format: 'rss' },
         },
         {
           uri: `${feedsBase}/photos_public.gne`,
           hint: { key: 'flickr:recent', label: 'Uploads from everyone' },
         },
         {
+          uri: `${feedsBase}/photos_public.gne?format=rss_200`,
+          hint: { key: 'flickr:recent', label: 'Uploads from everyone', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/geo`,
           hint: { key: 'flickr:recent-geo', label: 'Uploads from everyone with location' },
+        },
+        {
+          uri: `${feedsBase}/geo?format=rss_200`,
+          hint: {
+            key: 'flickr:recent-geo',
+            label: 'Uploads from everyone with location',
+            format: 'rss',
+          },
         },
       ]
 
@@ -419,22 +607,42 @@ describe('flickrHandler', () => {
 
     it('should return the discussion and site-wide feeds for a group discuss page', () => {
       const value = 'https://www.flickr.com/groups/42097308@N00/discuss/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${feedsBase}/groups_discuss.gne?id=42097308@N00`,
           hint: { key: 'flickr:group-discuss', label: 'Group discussions' },
+        },
+        {
+          uri: `${feedsBase}/groups_discuss.gne?id=42097308@N00&format=rss_200`,
+          hint: { key: 'flickr:group-discuss', label: 'Group discussions', format: 'rss' },
         },
         {
           uri: `${feedsBase}/forums.gne`,
           hint: { key: 'flickr:forum', label: 'Forum' },
         },
         {
+          uri: `${feedsBase}/forums.gne?format=rss_200`,
+          hint: { key: 'flickr:forum', label: 'Forum', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/photos_public.gne`,
           hint: { key: 'flickr:recent', label: 'Uploads from everyone' },
         },
         {
+          uri: `${feedsBase}/photos_public.gne?format=rss_200`,
+          hint: { key: 'flickr:recent', label: 'Uploads from everyone', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/geo`,
           hint: { key: 'flickr:recent-geo', label: 'Uploads from everyone with location' },
+        },
+        {
+          uri: `${feedsBase}/geo?format=rss_200`,
+          hint: {
+            key: 'flickr:recent-geo',
+            label: 'Uploads from everyone with location',
+            format: 'rss',
+          },
         },
       ]
 
@@ -443,18 +651,34 @@ describe('flickrHandler', () => {
 
     it('should return the forum feed for a help forum page', () => {
       const value = 'https://www.flickr.com/help/forum/en-us/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${feedsBase}/forums.gne`,
           hint: { key: 'flickr:forum', label: 'Forum' },
+        },
+        {
+          uri: `${feedsBase}/forums.gne?format=rss_200`,
+          hint: { key: 'flickr:forum', label: 'Forum', format: 'rss' },
         },
         {
           uri: `${feedsBase}/photos_public.gne`,
           hint: { key: 'flickr:recent', label: 'Uploads from everyone' },
         },
         {
+          uri: `${feedsBase}/photos_public.gne?format=rss_200`,
+          hint: { key: 'flickr:recent', label: 'Uploads from everyone', format: 'rss' },
+        },
+        {
           uri: `${feedsBase}/geo`,
           hint: { key: 'flickr:recent-geo', label: 'Uploads from everyone with location' },
+        },
+        {
+          uri: `${feedsBase}/geo?format=rss_200`,
+          hint: {
+            key: 'flickr:recent-geo',
+            label: 'Uploads from everyone with location',
+            format: 'rss',
+          },
         },
       ]
 
@@ -602,10 +826,57 @@ describe('flickrHandler', () => {
       expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a group location feed narrowed to a tag', () => {
+    it('should return the tagged group location hint for a group location feed narrowed to a tag', () => {
       const value = 'https://www.flickr.com/services/feeds/geo/?g=42097308@N00&tags=cats'
+      const expected: DiscoverUriHint = {
+        key: 'flickr:group-tag-geo',
+        label: 'Tagged group pool with location',
+      }
 
-      expect(flickrHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tagged photostream location hint for a user location feed narrowed to a tag', () => {
+      const value = 'https://www.flickr.com/services/feeds/geo?id=24662369@N07&tags=cats'
+      const expected: DiscoverUriHint = {
+        key: 'flickr:photos-tag-geo',
+        label: 'Tagged photostream with location',
+      }
+
+      expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag location hint for a tag location feed with an empty id', () => {
+      const value = 'https://www.flickr.com/services/feeds/geo?id=&tags=cats'
+      const expected: DiscoverUriHint = { key: 'flickr:tag-geo', label: 'Tag with location' }
+
+      expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the group discussion hint for a group discussion feed with a tag it ignores', () => {
+      const value =
+        'https://www.flickr.com/services/feeds/groups_discuss.gne?id=42097308@N00&tags=cats'
+      const expected: DiscoverUriHint = { key: 'flickr:group-discuss', label: 'Group discussions' }
+
+      expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tagged group photos hint for a tag feed narrowed to a group pool', () => {
+      const value =
+        'https://www.flickr.com/services/feeds/photos_public.gne?tags=cats&g=42097308@N00'
+      const expected: DiscoverUriHint = {
+        key: 'flickr:group-photos-tag',
+        label: 'Tagged group photos',
+      }
+
+      expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the group photos hint for an uploads feed naming a group', () => {
+      const value = 'https://www.flickr.com/services/feeds/photos_public.gne?g=42097308@N00'
+      const expected: DiscoverUriHint = { key: 'flickr:group-photos', label: 'Group photos' }
+
+      expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the uploads hint for the feed of every public photo', () => {
@@ -783,6 +1054,22 @@ describe('flickrHandler', () => {
       [
         'https://api.flickr.com/services/feeds/geo?tags=cats',
         { key: 'flickr:tag-geo', label: 'Tag with location' },
+      ],
+      [
+        'https://api.flickr.com/services/feeds/geo?format=rss_200&id=12345%40N00&tags=cats',
+        { key: 'flickr:photos-tag-geo', label: 'Tagged photostream with location', format: 'rss' },
+      ],
+      [
+        'https://www.flickr.com/services/feeds/geo/?g=42097308@N00&tags=cats',
+        { key: 'flickr:group-tag-geo', label: 'Tagged group pool with location' },
+      ],
+      [
+        'https://api.flickr.com/services/feeds/photos_public.gne?format=rss_200&g=42097308%40N00',
+        { key: 'flickr:group-photos', label: 'Group photos', format: 'rss' },
+      ],
+      [
+        'https://www.flickr.com/services/feeds/photos_public.gne?g=42097308@N00&tags=cats',
+        { key: 'flickr:group-photos-tag', label: 'Tagged group photos' },
       ],
     ]
 
