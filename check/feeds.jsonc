@@ -1618,7 +1618,9 @@
     "sourceforge:project-feed": "https://sourceforge.net/p/filezilla/feed"
   },
   "sourcehut": {
+    "sourcehut:commit-history": "https://git.sr.ht/~amavect/makeu/log/b6f6785f804b8f37745fdeff16f2e707c3a25664/rss.xml",
     "sourcehut:commits": "https://git.sr.ht/~sircmpwn/hare/log/rss.xml",
+    "sourcehut:project": "https://sr.ht/~sircmpwn/hare/feed.rss",
     "sourcehut:refs": "https://git.sr.ht/~sircmpwn/hare/refs/rss.xml"
   },
   "spip": {
