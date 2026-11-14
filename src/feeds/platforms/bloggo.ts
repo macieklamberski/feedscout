@@ -10,7 +10,7 @@ export type BloggoPage = BloggoUrl
 
 const domains = ['bloggo.nu']
 
-const postBodyRegex = /<body[^>]*\bpost-id-\d+/
+const postBodyRegex = /<body[^<>]*\bpost-id-\d+/
 
 const feeds = definePlatformFeeds(
   [
