@@ -12,26 +12,15 @@ const hosts = ['rubygems.org', 'www.rubygems.org']
 
 const gemRegex = /^\/gems\/([\w.-]+)(?:\/|$)/i
 
-// The index and bundler hosts serve the same feeds as rubygems.org.
+// The index and bundler hosts serve the same entries as rubygems.org, with links and ids on their
+// own host.
 const feeds = definePlatformFeeds([
   { key: 'rubygems:versions', template: 'https://rubygems.org/gems/{gem}/versions.atom' },
-  {
-    key: 'rubygems:versions',
-    template: 'https://index.rubygems.org/gems/{gem}/versions.atom',
-    isAlias: true,
-  },
-  {
-    key: 'rubygems:versions',
-    template: 'https://bundler.rubygems.org/gems/{gem}/versions.atom',
-    isAlias: true,
-  },
+  { key: 'rubygems:versions', template: 'https://index.rubygems.org/gems/{gem}/versions.atom' },
+  { key: 'rubygems:versions', template: 'https://bundler.rubygems.org/gems/{gem}/versions.atom' },
   { key: 'rubygems:latest-gems', template: 'https://rubygems.org/gems.atom' },
-  { key: 'rubygems:latest-gems', template: 'https://index.rubygems.org/gems.atom', isAlias: true },
-  {
-    key: 'rubygems:latest-gems',
-    template: 'https://bundler.rubygems.org/gems.atom',
-    isAlias: true,
-  },
+  { key: 'rubygems:latest-gems', template: 'https://index.rubygems.org/gems.atom' },
+  { key: 'rubygems:latest-gems', template: 'https://bundler.rubygems.org/gems.atom' },
 ])
 
 export const parseRubygemsUrl = (url: string): RubygemsUrl | undefined => {
