@@ -165,23 +165,23 @@ describe('bearblogHandler', () => {
         { key: 'bearblog:discover', label: 'Trending', format: 'atom' },
       ],
       [
-        'https://tiramisu.bearblog.dev/feed/?q=psychology',
+        'https://alice.bearblog.dev/feed/?q=psychology',
         { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
       ],
       [
-        'https://tiramisu.bearblog.dev/feed/?type=rss&q=psychology',
+        'https://alice.bearblog.dev/feed/?type=rss&q=psychology',
         { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
       ],
       [
-        'https://reedybear.bearblog.dev/feed/?q=bearblog&type=rss',
+        'https://alice.bearblog.dev/feed/?q=bearblog&type=rss',
         { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
       ],
       [
-        'https://docs.bearblog.dev/feed/',
+        'https://alice.bearblog.dev/feed/',
         { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
       ],
       [
-        'https://docs.bearblog.dev/feed/?type=rss',
+        'https://alice.bearblog.dev/feed/?type=rss',
         { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
       ],
       [
@@ -189,27 +189,24 @@ describe('bearblogHandler', () => {
         { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
       ],
       [
-        'https://gabrielcornish.bearblog.dev/atom/',
+        'https://alice.bearblog.dev/atom/',
         { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
       ],
       [
-        'https://achyut.bearblog.dev/atom.xml',
+        'https://alice.bearblog.dev/atom.xml',
         { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
       ],
       [
-        'https://nikspyratos.bearblog.dev/feed.xml',
+        'https://alice.bearblog.dev/feed.xml',
         { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
       ],
       [
-        'https://reedybear.bearblog.dev/index.xml',
+        'https://alice.bearblog.dev/index.xml',
         { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
       ],
+      ['https://alice.bearblog.dev/rss/', { key: 'bearblog:posts', label: 'Posts', format: 'rss' }],
       [
-        'https://ludwigabap.bearblog.dev/rss/',
-        { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
-      ],
-      [
-        'https://tbr.bearblog.dev/rss.xml',
+        'https://alice.bearblog.dev/rss.xml',
         { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
       ],
     ]
@@ -266,23 +263,23 @@ describe('bearblogHandler', () => {
         { key: 'bearblog:discover', label: 'Trending', format: 'rss' },
       ],
       [
-        'https://tiramisu.bearblog.dev/feed/?q=psychology',
+        'https://alice.bearblog.dev/feed/?q=psychology',
         { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
       ],
       [
-        'https://tiramisu.bearblog.dev/feed/?type=rss&q=psychology',
+        'https://alice.bearblog.dev/feed/?type=rss&q=psychology',
         { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
       ],
       [
-        'https://docs.bearblog.dev/feed/',
+        'https://alice.bearblog.dev/feed/',
         { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
       ],
       [
-        'https://docs.bearblog.dev/feed/?type=rss',
+        'https://alice.bearblog.dev/feed/?type=rss',
         { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
       ],
       [
-        'https://achyut.bearblog.dev/atom.xml',
+        'https://alice.bearblog.dev/atom.xml',
         { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
       ],
     ]
