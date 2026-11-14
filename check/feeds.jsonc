@@ -1607,6 +1607,8 @@
       "https://sourceforge.net/p/sevenzip/discussion/feed",
       "https://sourceforge.net/p/sevenzip/discussion/feed.atom"
     ],
+    "sourceforge:discussion-forum": "https://sourceforge.net/p/lzmautils/discussion/708858/feed.rss",
+    "sourceforge:discussion-thread": "https://sourceforge.net/p/lzmautils/discussion/708858/thread/96520b67/feed.rss",
     "sourceforge:files": [
       "https://sourceforge.net/projects/filezilla/rss",
       "https://sourceforge.net/projects/nmap/rss"
@@ -1615,7 +1617,11 @@
       "https://sourceforge.net/p/sevenzip/news/feed.rss",
       "https://sourceforge.net/p/sevenzip/news/feed.atom"
     ],
-    "sourceforge:project-feed": "https://sourceforge.net/p/filezilla/feed"
+    "sourceforge:project-feed": "https://sourceforge.net/p/filezilla/feed",
+    "sourceforge:tool": "https://sourceforge.net/p/openlte/wiki/feed.rss",
+    "sourceforge:tool-page": "https://sourceforge.net/p/openlte/wiki/Home/feed.atom",
+    "sourceforge:user": "https://sourceforge.net/u/boruch-baum/feed.rss",
+    "sourceforge:user-tool": "https://sourceforge.net/u/boruch-baum/blog/feed.rss"
   },
   "sourcehut": {
     "sourcehut:commits": "https://git.sr.ht/~sircmpwn/hare/log/rss.xml",
