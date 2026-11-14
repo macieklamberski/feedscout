@@ -259,49 +259,49 @@ describe('dailymotionHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the videos hint for a user feed', () => {
-      const value = 'https://www.dailymotion.com/rss/adamtas'
+      const value = 'https://www.dailymotion.com/rss/alicetv'
       const expected: DiscoverUriHint = { key: 'dailymotion:videos', label: 'Videos' }
 
       expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the videos hint for a user feed with an underscore', () => {
-      const value = 'https://www.dailymotion.com/rss/254_official'
+      const value = 'https://www.dailymotion.com/rss/bob_official'
       const expected: DiscoverUriHint = { key: 'dailymotion:videos', label: 'Videos' }
 
       expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the videos hint for a feed on the host without www', () => {
-      const value = 'https://dailymotion.com/rss/adamtas'
+      const value = 'https://dailymotion.com/rss/alicetv'
       const expected: DiscoverUriHint = { key: 'dailymotion:videos', label: 'Videos' }
 
       expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the videos hint for a feed over http', () => {
-      const value = 'http://www.dailymotion.com/rss/adamtas'
+      const value = 'http://www.dailymotion.com/rss/alicetv'
       const expected: DiscoverUriHint = { key: 'dailymotion:videos', label: 'Videos' }
 
       expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the videos hint for a feed with a trailing slash', () => {
-      const value = 'https://www.dailymotion.com/rss/adamtas/'
+      const value = 'https://www.dailymotion.com/rss/alicetv/'
       const expected: DiscoverUriHint = { key: 'dailymotion:videos', label: 'Videos' }
 
       expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the videos hint for a feed with a capitalized route', () => {
-      const value = 'https://www.dailymotion.com/RSS/adamtas'
+      const value = 'https://www.dailymotion.com/RSS/alicetv'
       const expected: DiscoverUriHint = { key: 'dailymotion:videos', label: 'Videos' }
 
       expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the videos hint for a legacy user feed', () => {
-      const value = 'https://www.dailymotion.com/rss/user/20Minutes'
+      const value = 'https://www.dailymotion.com/rss/user/CarolNews'
       const expected: DiscoverUriHint = { key: 'dailymotion:videos', label: 'Videos' }
 
       expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
@@ -378,7 +378,7 @@ describe('dailymotionHandler', () => {
     })
 
     it('should return undefined for a user page', () => {
-      const value = 'https://www.dailymotion.com/adamtas'
+      const value = 'https://www.dailymotion.com/alicetv'
 
       expect(dailymotionHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -402,7 +402,7 @@ describe('dailymotionHandler', () => {
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/rss/adamtas'
+      const value = 'https://example.com/rss/alicetv'
 
       expect(dailymotionHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -410,9 +410,9 @@ describe('dailymotionHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://www.dailymotion.com/rss/adamtas', { key: 'dailymotion:videos', label: 'Videos' }],
+      ['https://www.dailymotion.com/rss/alicetv', { key: 'dailymotion:videos', label: 'Videos' }],
       [
-        'https://www.dailymotion.com/rss/user/20Minutes',
+        'https://www.dailymotion.com/rss/user/CarolNews',
         { key: 'dailymotion:videos', label: 'Videos' },
       ],
       [
