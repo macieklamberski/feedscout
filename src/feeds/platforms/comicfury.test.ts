@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type ComicfuryUrl, comicfuryHandler, parseComicfuryUrl } from './comicfury.js'
 
 describe('parseComicfuryUrl', () => {
@@ -107,6 +109,18 @@ describe('comicfuryHandler', () => {
       expect(comicfuryHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep the scheme of an http comic page', () => {
+      const value = 'http://alice.thecomicseries.com/comics/1'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://alice.thecomicseries.com/rss',
+          hint: { key: 'comicfury:comic', label: 'Comic' },
+        },
+      ]
+
+      expect(comicfuryHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the comic feed on thecomicseries.com for a profile', () => {
       const value = 'https://comicfury.com/comicprofile.php?url=spacecaptainpriya'
       const expected: Array<DiscoverUriEntry> = [
@@ -133,6 +147,105 @@ describe('comicfuryHandler', () => {
 
     it('should return an empty array for a URL outside ComicFury', () => {
       expect(comicfuryHandler.resolve('https://example.com/')).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the comic hint for a comic feed', () => {
+      const value = 'https://alice.thecomicseries.com/rss'
+      const expected: DiscoverUriHint = { key: 'comicfury:comic', label: 'Comic' }
+
+      expect(comicfuryHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the comic hint for a comic feed with a trailing slash', () => {
+      const value = 'https://alice.webcomic.ws/rss/'
+      const expected: DiscoverUriHint = { key: 'comicfury:comic', label: 'Comic' }
+
+      expect(comicfuryHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the comic hint for a comic feed on cfw.me', () => {
+      const value = 'https://alice.cfw.me/rss'
+      const expected: DiscoverUriHint = { key: 'comicfury:comic', label: 'Comic' }
+
+      expect(comicfuryHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the reader hint for a reader feed', () => {
+      const value = 'https://comicfury.com/read/alice/rss'
+      const expected: DiscoverUriHint = {
+        key: 'comicfury:reader',
+        label: 'Comic in the ComicFury reader',
+      }
+
+      expect(comicfuryHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the reader hint for a reader feed on the www host', () => {
+      const value = 'https://www.comicfury.com/read/alice/rss'
+      const expected: DiscoverUriHint = {
+        key: 'comicfury:reader',
+        label: 'Comic in the ComicFury reader',
+      }
+
+      expect(comicfuryHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a comic page', () => {
+      const value = 'https://alice.thecomicseries.com/comics/1'
+
+      expect(comicfuryHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a reader page', () => {
+      const value = 'https://comicfury.com/read/alice/archive'
+
+      expect(comicfuryHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a reader feed naming an invalid comic', () => {
+      const value = 'https://comicfury.com/read/example.com/rss'
+
+      expect(comicfuryHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www subdomain of a comic domain', () => {
+      const value = 'https://www.thecomicseries.com/rss'
+
+      expect(comicfuryHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on another host', () => {
+      const value = 'https://example.com/rss'
+
+      expect(comicfuryHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const comicHint: DiscoverUriHint = { key: 'comicfury:comic', label: 'Comic' }
+    const readerHint: DiscoverUriHint = {
+      key: 'comicfury:reader',
+      label: 'Comic in the ComicFury reader',
+    }
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://alice.thecomicseries.com/rss', comicHint],
+      ['https://alice.thecomicseries.com/rss/', comicHint],
+      ['https://alice.the-comic.org/rss/', comicHint],
+      ['https://comicfury.com/read/alice/rss', readerHint],
+      ['https://www.comicfury.com/read/alice/rss', readerHint],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [comicfuryHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
