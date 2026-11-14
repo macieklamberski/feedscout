@@ -164,6 +164,8 @@ const compileTemplate = (
 
   const [, scheme, host, path = '', queryText = ''] = match
   const query = [...new URLSearchParams(queryText)]
+  // A name with no value, such as `?rss`, is a flag, built with no value.
+  const flags = new Set(query.filter(([, value]) => !value).map(([name]) => name))
   const hosts = options.hosts ?? []
   const domains = (options.domains ?? []).map((domain) => toEntrySource(domain))
   const domainSource = `(?:${domains.join('|')})`
@@ -231,7 +233,7 @@ const compileTemplate = (
     }
 
     return queryRegexes.every(([name, regex]) => {
-      const value = getQueryParam(url, name)
+      const value = getQueryParam(url, name, { preserveEmptyValues: flags.has(name) })
 
       return value !== undefined && regex.test(value)
     })
@@ -258,7 +260,9 @@ const compileTemplate = (
       })
     }
     const queryParams = Object.fromEntries(
-      query.map(([name, value]) => [name, fillPlaceholders(value)]),
+      query.map(([name, value]): [string, string | true] => {
+        return [name, flags.has(name) ? true : fillPlaceholders(value)]
+      }),
     )
     // Pages link a query value percent-encoded, as `?tag=%E6%8A%80%E8%A1%93` for `技術`.
     const builtQuery = composeQuery(queryParams).replace(nonAsciiRegex, encodeURIComponent)
