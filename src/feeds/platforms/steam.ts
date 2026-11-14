@@ -33,8 +33,13 @@ const feeds = definePlatformFeeds([
   {
     key: 'steam:news',
     template: 'https://store.steampowered.com/feeds/news/app/{appId}/{appName}',
+    isAlias: true,
   },
-  { key: 'steam:news', template: 'https://store.steampowered.com/feeds/newshub/app/{appId}' },
+  {
+    key: 'steam:news',
+    template: 'https://store.steampowered.com/feeds/newshub/app/{appId}',
+    isAlias: true,
+  },
   { key: 'steam:community-news', template: 'https://steamcommunity.com/games/{appId}/rss' },
   { key: 'steam:group', template: 'https://steamcommunity.com/groups/{group}/rss' },
   {
