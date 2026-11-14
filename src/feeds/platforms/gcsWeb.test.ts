@@ -196,16 +196,29 @@ describe('gcsWebHandler', () => {
       expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the SEC filings hint for a feed filtered by item count and group', () => {
+    it('should return the SEC filings group hint for a feed filtered by item count and group', () => {
       const value = 'https://example.gcs-web.com/rss/sec-filings.xml?items=15&sub_group=4'
-      const expected: DiscoverUriHint = { key: 'gcs-web:sec-filings', label: 'SEC filings' }
+      const expected: DiscoverUriHint = {
+        key: 'gcs-web:sec-filings-group',
+        label: 'SEC filings group',
+      }
 
       expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the news releases hint for a feed filtered by category', () => {
+    it('should return the news releases category hint for a feed filtered by category', () => {
       const value =
         'https://example.gcs-web.com/rss/news-releases.xml?category=Corporate%2FFinancial'
+      const expected: DiscoverUriHint = {
+        key: 'gcs-web:news-releases-category',
+        label: 'News releases category',
+      }
+
+      expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the news releases hint for a feed sized by item count', () => {
+      const value = 'https://example.gcs-web.com/rss/news-releases.xml?items=15'
       const expected: DiscoverUriHint = { key: 'gcs-web:news-releases', label: 'News releases' }
 
       expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
@@ -248,7 +261,11 @@ describe('gcsWebHandler', () => {
       ],
       [
         'http://example.gcs-web.com/rss/sec-filings.xml?items=15&sub_group=4',
-        { key: 'gcs-web:sec-filings', label: 'SEC filings' },
+        { key: 'gcs-web:sec-filings-group', label: 'SEC filings group' },
+      ],
+      [
+        'https://example.gcs-web.com/rss/news-releases.xml?category=Student+Loans&items=15',
+        { key: 'gcs-web:news-releases-category', label: 'News releases category' },
       ],
       ['http://example.gcs-web.com/rss/events.xml', { key: 'gcs-web:events', label: 'Events' }],
     ]
