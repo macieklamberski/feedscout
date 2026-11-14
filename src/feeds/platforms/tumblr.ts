@@ -22,7 +22,7 @@ const feeds = definePlatformFeeds(
     { key: 'tumblr:posts', template: '{scheme}://{host}/rss' },
     { key: 'tumblr:theme-posts', template: '{scheme}://{host}/?format=rss' },
     { key: 'tumblr:podcast', template: '{scheme}://{host}/podcast' },
-    { key: 'tumblr:podcast', template: '{scheme}://{host}/podcast/rss' },
+    { key: 'tumblr:podcast', template: '{scheme}://{host}/podcast/rss', isAlias: true },
   ],
   { domains },
 )
