@@ -570,12 +570,12 @@ Discovers RSS feeds for Hatena Fotolife users, folders, tags, camera models and 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `f.hatena.ne.jp/{user}` | Photos |
-| `f.hatena.ne.jp/{user}?model={model}` | Camera model |
-| `f.hatena.ne.jp/{user}/{folder}/` | Folder |
-| `f.hatena.ne.jp/{user}/t/{tag}` | Tag |
-| `f.hatena.ne.jp/{user}/favorite` | Stars |
-| `f.hatena.ne.jp/{user}/starfriends` | Star Friends |
+| `f.hatena.ne.jp/{user}` | Photos · recent photos |
+| `f.hatena.ne.jp/{user}?model={model}` | Camera model · recent photos |
+| `f.hatena.ne.jp/{user}/{folder}/` | Folder · recent photos |
+| `f.hatena.ne.jp/{user}/t/{tag}` | Tag · recent photos |
+| `f.hatena.ne.jp/{user}/favorite` | Stars · recent photos |
+| `f.hatena.ne.jp/{user}/starfriends` | Star Friends · recent photos |
 
 ### Hatena Blog
 
