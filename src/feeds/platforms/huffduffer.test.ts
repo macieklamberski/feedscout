@@ -316,7 +316,7 @@ describe('huffdufferHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the huffduffs hint for a user feed', () => {
-      const value = 'https://huffduffer.com/joeross/rss'
+      const value = 'https://huffduffer.com/alice/rss'
       const expected: DiscoverUriHint = {
         key: 'huffduffer:huffduffs',
         label: 'Huffduffs',
@@ -327,7 +327,7 @@ describe('huffdufferHandler', () => {
     })
 
     it('should return the huffduffs hint for a user feed with a capitalized username', () => {
-      const value = 'https://huffduffer.com/BlueTyson/rss'
+      const value = 'https://huffduffer.com/AliceSmith/rss'
       const expected: DiscoverUriHint = {
         key: 'huffduffer:huffduffs',
         label: 'Huffduffs',
@@ -338,7 +338,7 @@ describe('huffdufferHandler', () => {
     })
 
     it('should return the huffduffs hint for a user feed on the www host over http', () => {
-      const value = 'http://www.huffduffer.com/joeross/rss'
+      const value = 'http://www.huffduffer.com/alice/rss'
       const expected: DiscoverUriHint = {
         key: 'huffduffer:huffduffs',
         label: 'Huffduffs',
@@ -349,7 +349,7 @@ describe('huffdufferHandler', () => {
     })
 
     it('should return the huffduffs hint for a user atom feed', () => {
-      const value = 'https://huffduffer.com/plindberg/atom'
+      const value = 'https://huffduffer.com/alice/atom'
       const expected: DiscoverUriHint = {
         key: 'huffduffer:huffduffs',
         label: 'Huffduffs',
@@ -360,7 +360,7 @@ describe('huffdufferHandler', () => {
     })
 
     it('should return the huffduffs hint for a user json feed', () => {
-      const value = 'https://huffduffer.com/psd/json'
+      const value = 'https://huffduffer.com/alice/json'
       const expected: DiscoverUriHint = {
         key: 'huffduffer:huffduffs',
         label: 'Huffduffs',
@@ -371,7 +371,7 @@ describe('huffdufferHandler', () => {
     })
 
     it('should return the related hint for a related feed', () => {
-      const value = 'https://huffduffer.com/adactio/12345/related/rss'
+      const value = 'https://huffduffer.com/alice/12345/related/rss'
       const expected: DiscoverUriHint = { key: 'huffduffer:related', label: 'Possibly related' }
 
       expect(huffdufferHandler.getFeedHint?.(value)).toEqual(expected)
@@ -460,19 +460,19 @@ describe('huffdufferHandler', () => {
     })
 
     it('should return undefined for a profile page', () => {
-      const value = 'https://huffduffer.com/adactio'
+      const value = 'https://huffduffer.com/alice'
 
       expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an episode page', () => {
-      const value = 'https://huffduffer.com/adactio/12345'
+      const value = 'https://huffduffer.com/alice/12345'
 
       expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/joeross/rss'
+      const value = 'https://example.com/alice/rss'
 
       expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -481,19 +481,19 @@ describe('huffdufferHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://huffduffer.com/joeross/rss',
+        'https://huffduffer.com/alice/rss',
         { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'rss' },
       ],
       [
-        'https://huffduffer.com/plindberg/atom',
+        'https://huffduffer.com/alice/atom',
         { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'atom' },
       ],
       [
-        'https://huffduffer.com/psd/json',
+        'https://huffduffer.com/alice/json',
         { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'json' },
       ],
       [
-        'https://huffduffer.com/adactio/12345/related/rss',
+        'https://huffduffer.com/alice/12345/related/rss',
         { key: 'huffduffer:related', label: 'Possibly related' },
       ],
       [
