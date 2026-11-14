@@ -155,7 +155,7 @@ describe('noteHandler', () => {
     })
 
     it('should return the blog hint for a blog feed whose name ends in an encoded space', () => {
-      const value = 'https://note.com/yuonkanpo%20/rss'
+      const value = 'https://note.com/alice%20/rss'
       const expected: DiscoverUriHint = { key: 'note:blog', label: 'Blog' }
 
       expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
@@ -209,7 +209,7 @@ describe('noteHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://note.com/yuonkanpo%20/rss', { key: 'note:blog', label: 'Blog' }],
+      ['https://note.com/alice%20/rss', { key: 'note:blog', label: 'Blog' }],
       ['https://note.com/hashtag/AI/rss', { key: 'note:hashtag', label: 'Hashtag' }],
       ['https://note.com/notemag/m/m7244518f06ae/rss', { key: 'note:magazine', label: 'Magazine' }],
       ['https://note.com/rss', { key: 'note:featured', label: 'Featured' }],
