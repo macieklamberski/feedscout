@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type PosthavenUrl, parsePosthavenUrl, posthavenHandler } from './posthaven.js'
 
 describe('parsePosthavenUrl', () => {
@@ -68,6 +71,18 @@ describe('posthavenHandler', () => {
       expect(posthavenHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the feeds under the page scheme for an http page', () => {
+      const value = 'http://alice.posthaven.com'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://alice.posthaven.com/posts.atom',
+          hint: { key: 'posthaven:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(posthavenHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return tag and posts feeds for /tag/{tag}', () => {
       const value = 'https://alice.posthaven.com/tag/Feature%20Releases'
       const expected = [
@@ -98,6 +113,93 @@ describe('posthavenHandler', () => {
       ]
 
       expect(posthavenHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a posts feed', () => {
+      const value = 'https://10thdot.posthaven.com/posts.atom'
+      const expected: DiscoverUriHint = { key: 'posthaven:posts', label: 'Posts' }
+
+      expect(posthavenHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a tag feed', () => {
+      const value = 'https://kathykavan.posthaven.com/tag/webapp.atom'
+      const expected: DiscoverUriHint = { key: 'posthaven:tag', label: 'Tag' }
+
+      expect(posthavenHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a tag feed with a capitalized tag', () => {
+      const value = 'https://paulbrooker.posthaven.com/tag/Kurd.atom'
+      const expected: DiscoverUriHint = { key: 'posthaven:tag', label: 'Tag' }
+
+      expect(posthavenHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a percent-encoded tag feed', () => {
+      const value = "https://4cp.posthaven.com/tag/Cosmic%20Debris:%20Kirby%20in%20the%20'70s.atom"
+      const expected: DiscoverUriHint = { key: 'posthaven:tag', label: 'Tag' }
+
+      expect(posthavenHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a tag feed with a dot in the tag', () => {
+      const value = 'https://aliabunimah.posthaven.com/tag/NEST%20U.S.A.atom'
+      const expected: DiscoverUriHint = { key: 'posthaven:tag', label: 'Tag' }
+
+      expect(posthavenHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a tag page', () => {
+      const value = 'https://kathykavan.posthaven.com/tag/webapp'
+
+      expect(posthavenHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.example.posthaven.com/posts.atom'
+
+      expect(posthavenHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://posthaven.com/posts.atom'
+
+      expect(posthavenHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www', () => {
+      const value = 'https://www.posthaven.com/posts.atom'
+
+      expect(posthavenHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/tag/webapp.atom'
+
+      expect(posthavenHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://10thdot.posthaven.com/posts.atom', { key: 'posthaven:posts', label: 'Posts' }],
+      ['https://kathykavan.posthaven.com/tag/webapp.atom', { key: 'posthaven:tag', label: 'Tag' }],
+      ['https://paulbrooker.posthaven.com/tag/Kurd.atom', { key: 'posthaven:tag', label: 'Tag' }],
+      ['https://4cp.posthaven.com/tag/Bill%20Everett.atom', { key: 'posthaven:tag', label: 'Tag' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [posthavenHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

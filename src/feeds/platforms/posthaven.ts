@@ -1,7 +1,7 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (html), partly covers tag.
@@ -11,6 +11,15 @@ export type PosthavenUrl = { kind: 'tag'; tag: string } | { kind: 'blog' }
 const domains = ['posthaven.com']
 
 const tagRegex = /^\/tag\/([^/]+)/i
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'posthaven:posts', template: '{scheme}://{host}/posts.atom' },
+    // Posthaven serves an undocumented per-tag Atom feed.
+    { key: 'posthaven:tag', template: '{scheme}://{host}/tag/{tag}.atom' },
+  ],
+  { domains },
+)
 
 export const parsePosthavenUrl = (url: string): PosthavenUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -35,25 +44,21 @@ export const posthavenHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePosthavenUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const posts: DiscoverUriEntry = {
-      uri: `${origin}/posts.atom`,
-      hint: composeHint('posthaven:posts'),
-    }
-
-    // Posthaven serves an undocumented per-tag Atom feed.
     if (parsed.kind === 'tag') {
       return [
-        { uri: `${origin}/tag/${parsed.tag}.atom`, hint: composeHint('posthaven:tag') },
-        posts,
+        page.getFeedEntry('posthaven:tag', { tag: parsed.tag }),
+        page.getFeedEntry('posthaven:posts'),
       ]
     }
 
-    return [posts]
+    return [page.getFeedEntry('posthaven:posts')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

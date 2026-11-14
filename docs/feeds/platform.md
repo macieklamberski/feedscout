@@ -1274,8 +1274,8 @@ Discovers Atom feeds for Posthaven blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.posthaven.com` | Posts (Atom) |
-| `*.posthaven.com/tag/{tag}` | Tag<sup>†</sup> (Atom) · posts (Atom) |
+| `{blog}.posthaven.com` | Posts (Atom) |
+| `{blog}.posthaven.com/tag/{tag}` | Tag<sup>†</sup> (Atom) · posts (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
