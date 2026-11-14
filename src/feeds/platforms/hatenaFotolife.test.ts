@@ -138,6 +138,10 @@ describe('hatenaFotolifeHandler', () => {
           uri: 'https://f.hatena.ne.jp/alice/rss',
           hint: { key: 'hatena-fotolife:photos', label: 'Photos' },
         },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
+        },
       ]
 
       expect(hatenaFotolifeHandler.resolve('https://f.hatena.ne.jp/alice/')).toEqual(expected)
@@ -150,6 +154,10 @@ describe('hatenaFotolifeHandler', () => {
           uri: 'https://f.hatena.ne.jp/alice/rss',
           hint: { key: 'hatena-fotolife:photos', label: 'Photos' },
         },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
+        },
       ]
 
       expect(hatenaFotolifeHandler.resolve(value)).toEqual(expected)
@@ -160,6 +168,10 @@ describe('hatenaFotolifeHandler', () => {
         {
           uri: 'https://f.hatena.ne.jp/alice%2D/rss',
           hint: { key: 'hatena-fotolife:photos', label: 'Photos' },
+        },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
         },
       ]
 
@@ -173,6 +185,10 @@ describe('hatenaFotolifeHandler', () => {
           uri: 'https://f.hatena.ne.jp/alice/rss?model=FinePixViewer%20Lite%20Ver.4.2',
           hint: { key: 'hatena-fotolife:model', label: 'Camera model' },
         },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
+        },
       ]
 
       expect(hatenaFotolifeHandler.resolve(value)).toEqual(expected)
@@ -183,6 +199,10 @@ describe('hatenaFotolifeHandler', () => {
         {
           uri: 'https://f.hatena.ne.jp/alice/anime/rss',
           hint: { key: 'hatena-fotolife:folder', label: 'Folder' },
+        },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
         },
       ]
 
@@ -196,6 +216,10 @@ describe('hatenaFotolifeHandler', () => {
           uri: 'https://f.hatena.ne.jp/alice/Arabia%2Ciittala/rss',
           hint: { key: 'hatena-fotolife:folder', label: 'Folder' },
         },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
+        },
       ]
 
       expect(hatenaFotolifeHandler.resolve(value)).toEqual(expected)
@@ -207,6 +231,10 @@ describe('hatenaFotolifeHandler', () => {
         {
           uri: 'https://f.hatena.ne.jp/alice/anime/rss',
           hint: { key: 'hatena-fotolife:folder', label: 'Folder' },
+        },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
         },
       ]
 
@@ -220,6 +248,10 @@ describe('hatenaFotolifeHandler', () => {
           uri: 'https://f.hatena.ne.jp/alice/t/sky?mode=rss',
           hint: { key: 'hatena-fotolife:tag', label: 'Tag' },
         },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
+        },
       ]
 
       expect(hatenaFotolifeHandler.resolve(value, withoutPhoto)).toEqual(expected)
@@ -231,6 +263,10 @@ describe('hatenaFotolifeHandler', () => {
         {
           uri: 'https://f.hatena.ne.jp/alice/rss?model=E-PL5',
           hint: { key: 'hatena-fotolife:model', label: 'Camera model' },
+        },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
         },
       ]
 
@@ -244,6 +280,10 @@ describe('hatenaFotolifeHandler', () => {
           uri: 'https://f.hatena.ne.jp/alice/t/%E3%82%A4%E3%83%A9%E3%82%B9%E3%83%88?mode=rss',
           hint: { key: 'hatena-fotolife:tag', label: 'Tag' },
         },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
+        },
       ]
 
       expect(hatenaFotolifeHandler.resolve(value)).toEqual(expected)
@@ -254,6 +294,10 @@ describe('hatenaFotolifeHandler', () => {
         {
           uri: 'https://f.hatena.ne.jp/alice/favorite?mode=rss',
           hint: { key: 'hatena-fotolife:stars', label: 'Stars' },
+        },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
         },
       ]
 
@@ -268,6 +312,10 @@ describe('hatenaFotolifeHandler', () => {
           uri: 'https://f.hatena.ne.jp/alice-/favorite?mode=rss',
           hint: { key: 'hatena-fotolife:stars', label: 'Stars' },
         },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
+        },
       ]
 
       expect(hatenaFotolifeHandler.resolve('https://f.hatena.ne.jp/alice-/favorite')).toEqual(
@@ -280,6 +328,10 @@ describe('hatenaFotolifeHandler', () => {
         {
           uri: 'https://f.hatena.ne.jp/alice-/starfriends?mode=rss',
           hint: { key: 'hatena-fotolife:star-friends', label: 'Star Friends' },
+        },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
         },
       ]
 
@@ -294,6 +346,10 @@ describe('hatenaFotolifeHandler', () => {
           uri: 'https://f.hatena.ne.jp/alice/starfriends?mode=rss',
           hint: { key: 'hatena-fotolife:star-friends', label: 'Star Friends' },
         },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
+        },
       ]
 
       expect(hatenaFotolifeHandler.resolve('https://f.hatena.ne.jp/alice/starfriends')).toEqual(
@@ -304,14 +360,14 @@ describe('hatenaFotolifeHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the photos hint for a photos feed', () => {
-      const value = 'https://f.hatena.ne.jp/aiken_makiss/rss'
+      const value = 'https://f.hatena.ne.jp/alice_photos/rss'
       const expected: DiscoverUriHint = { key: 'hatena-fotolife:photos', label: 'Photos' }
 
       expect(hatenaFotolifeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the photos hint for a user with an escaped hyphen', () => {
-      const value = 'https://f.hatena.ne.jp/bon%2Dku%2Dra/rss'
+      const value = 'https://f.hatena.ne.jp/bob%2Dcam/rss'
       const expected: DiscoverUriHint = { key: 'hatena-fotolife:photos', label: 'Photos' }
 
       expect(hatenaFotolifeHandler.getFeedHint?.(value)).toEqual(expected)
@@ -352,7 +408,7 @@ describe('hatenaFotolifeHandler', () => {
     })
 
     it('should return the model hint for a camera model feed', () => {
-      const value = 'https://f.hatena.ne.jp/kakashibennett/rss?model=SC%2D04F'
+      const value = 'https://f.hatena.ne.jp/carolshots/rss?model=SC%2D04F'
       const expected: DiscoverUriHint = { key: 'hatena-fotolife:model', label: 'Camera model' }
 
       expect(hatenaFotolifeHandler.getFeedHint?.(value)).toEqual(expected)
@@ -360,7 +416,7 @@ describe('hatenaFotolifeHandler', () => {
 
     it('should return the folder hint for a folder feed', () => {
       const value =
-        'https://f.hatena.ne.jp/yotsuba%2Drope%2Dsystem/%E3%83%AD%E3%83%BC%E3%83%97%E3%82%AC%E3%83%BC%E3%83%89/rss'
+        'https://f.hatena.ne.jp/erin%2Drope%2Dworks/%E3%83%AD%E3%83%BC%E3%83%97%E3%82%AC%E3%83%BC%E3%83%89/rss'
       const expected: DiscoverUriHint = { key: 'hatena-fotolife:folder', label: 'Folder' }
 
       expect(hatenaFotolifeHandler.getFeedHint?.(value)).toEqual(expected)
@@ -368,21 +424,21 @@ describe('hatenaFotolifeHandler', () => {
 
     it('should return the tag hint for a tag feed', () => {
       const value =
-        'https://f.hatena.ne.jp/one%2Dseater/t/%E3%82%BF%E3%82%A4%E3%83%88%E3%83%AB?mode=rss'
+        'https://f.hatena.ne.jp/dave%2Dlens/t/%E3%82%BF%E3%82%A4%E3%83%88%E3%83%AB?mode=rss'
       const expected: DiscoverUriHint = { key: 'hatena-fotolife:tag', label: 'Tag' }
 
       expect(hatenaFotolifeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the stars hint for a stars feed', () => {
-      const value = 'https://f.hatena.ne.jp/aiken_makiss/favorite?mode=rss'
+      const value = 'https://f.hatena.ne.jp/alice_photos/favorite?mode=rss'
       const expected: DiscoverUriHint = { key: 'hatena-fotolife:stars', label: 'Stars' }
 
       expect(hatenaFotolifeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the Star Friends hint for a Star Friends feed', () => {
-      const value = 'https://f.hatena.ne.jp/aiken_makiss/starfriends?mode=rss'
+      const value = 'https://f.hatena.ne.jp/alice_photos/starfriends?mode=rss'
       const expected: DiscoverUriHint = {
         key: 'hatena-fotolife:star-friends',
         label: 'Star Friends',
@@ -392,31 +448,31 @@ describe('hatenaFotolifeHandler', () => {
     })
 
     it('should return undefined for a user page', () => {
-      const value = 'https://f.hatena.ne.jp/aiken_makiss/'
+      const value = 'https://f.hatena.ne.jp/alice_photos/'
 
       expect(hatenaFotolifeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a camera model page', () => {
-      const value = 'https://f.hatena.ne.jp/aiken_makiss/?model=DMC%2DGX7MK2'
+      const value = 'https://f.hatena.ne.jp/alice_photos/?model=DMC%2DGX7MK2'
 
       expect(hatenaFotolifeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a tag page', () => {
-      const value = 'https://f.hatena.ne.jp/one%2Dseater/t/%E3%82%BF%E3%82%A4%E3%83%88%E3%83%AB'
+      const value = 'https://f.hatena.ne.jp/dave%2Dlens/t/%E3%82%BF%E3%82%A4%E3%83%88%E3%83%AB'
 
       expect(hatenaFotolifeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a stars page', () => {
-      const value = 'https://f.hatena.ne.jp/aiken_makiss/favorite'
+      const value = 'https://f.hatena.ne.jp/alice_photos/favorite'
 
       expect(hatenaFotolifeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/aiken_makiss/rss'
+      const value = 'https://example.com/alice_photos/rss'
 
       expect(hatenaFotolifeHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -424,28 +480,25 @@ describe('hatenaFotolifeHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://f.hatena.ne.jp/bob%2Dcam/rss', { key: 'hatena-fotolife:photos', label: 'Photos' }],
       [
-        'https://f.hatena.ne.jp/bon%2Dku%2Dra/rss',
-        { key: 'hatena-fotolife:photos', label: 'Photos' },
-      ],
-      [
-        'https://f.hatena.ne.jp/kakashibennett/rss?model=SC%2D04F',
+        'https://f.hatena.ne.jp/carolshots/rss?model=SC%2D04F',
         { key: 'hatena-fotolife:model', label: 'Camera model' },
       ],
       [
-        'https://f.hatena.ne.jp/one%2Dseater/%E3%83%96%E3%83%AD%E6%B4%BB/rss',
+        'https://f.hatena.ne.jp/dave%2Dlens/%E3%83%96%E3%83%AD%E6%B4%BB/rss',
         { key: 'hatena-fotolife:folder', label: 'Folder' },
       ],
       [
-        'https://f.hatena.ne.jp/one%2Dseater/t/%E3%82%BF%E3%82%A4%E3%83%88%E3%83%AB?mode=rss',
+        'https://f.hatena.ne.jp/dave%2Dlens/t/%E3%82%BF%E3%82%A4%E3%83%88%E3%83%AB?mode=rss',
         { key: 'hatena-fotolife:tag', label: 'Tag' },
       ],
       [
-        'https://f.hatena.ne.jp/aiken_makiss/favorite?mode=rss',
+        'https://f.hatena.ne.jp/alice_photos/favorite?mode=rss',
         { key: 'hatena-fotolife:stars', label: 'Stars' },
       ],
       [
-        'https://f.hatena.ne.jp/aiken_makiss/starfriends?mode=rss',
+        'https://f.hatena.ne.jp/alice_photos/starfriends?mode=rss',
         { key: 'hatena-fotolife:star-friends', label: 'Star Friends' },
       ],
       [
