@@ -88,8 +88,8 @@ export const jugemHandler: PlatformHandler = {
     ]
   },
 
-  // The table reads any host under the domains, so the page parser refuses the portal and a nested
-  // subdomain first.
+  // The table ignores www, so it would read www.{blog}.jugem.jp, a host with no DNS record, as a
+  // blog. The page parser refuses it first.
   getFeedHint: (url) => {
     if (parseJugemUrl(url)?.kind !== 'blog') {
       return
