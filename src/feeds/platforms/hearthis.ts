@@ -1,12 +1,29 @@
 import { getPathSegments, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type HearthisUrl = { kind: 'profile'; username: string }
 
 const hosts = ['hearthis.at', 'www.hearthis.at']
+
+const feeds = definePlatformFeeds([
+  { key: 'hearthis:new-tracks', template: 'https://hearthis.at/new_tracks.rss' },
+  { key: 'hearthis:tracks', template: 'https://hearthis.at/{username}/podcast/' },
+  // The same feed, byte for byte, under a second spelling.
+  { key: 'hearthis:tracks', template: 'https://hearthis.at/{username}/podcast.xml', isAlias: true },
+  // The same tracks as a plain list, with no audio enclosures.
+  { key: 'hearthis:track-list', template: 'https://hearthis.at/{username}/rss/' },
+  // A set's feed, which its page links. The set id is not in the page URL. Any one segment after
+  // `podcast/`, such as `feed/` or `.rss/`, serves the same items.
+  { key: 'hearthis:set', template: 'https://hearthis.at/set/{setId}/podcast/' },
+  {
+    key: 'hearthis:set',
+    template: 'https://hearthis.at/set/{setId}/podcast/{spelling}/',
+    isAlias: true,
+  },
+])
 
 export const parseHearthisUrl = (url: string): HearthisUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -35,11 +52,11 @@ export const hearthisHandler: PlatformHandler = {
     }
 
     return [
-      {
-        uri: `https://hearthis.at/${parsed.username}/podcast/`,
-        hint: composeHint('hearthis:tracks'),
-      },
-      { uri: 'https://hearthis.at/new_tracks.rss', hint: composeHint('hearthis:new-tracks') },
+      feeds.getFeedEntry('hearthis:tracks', { username: parsed.username }),
+      feeds.getFeedEntry('hearthis:track-list', { username: parsed.username }),
+      feeds.getFeedEntry('hearthis:new-tracks'),
     ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

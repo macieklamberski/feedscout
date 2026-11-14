@@ -1035,7 +1035,7 @@ Discovers RSS feeds for Hearthis.at user profiles, plus the site-wide new tracks
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `hearthis.at/{user}` | Tracks · new tracks |
+| `hearthis.at/{user}` | Tracks · track list · new tracks |
 
 ### HEY World
 
