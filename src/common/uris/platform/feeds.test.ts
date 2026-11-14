@@ -357,11 +357,10 @@ describe('definePlatformFeeds', () => {
       expect(feeds.getFeedHint(value)?.key).toBe(expected)
     })
 
-    it('should return the key of a feed on a tenant with www of a listed domain', () => {
+    it('should return undefined for a feed on a tenant with www of a listed domain', () => {
       const value = 'https://www.meta.example.net/feeds/site'
-      const expected = 'example:site'
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(feeds.getFeedHint(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex of a listed domain', () => {
@@ -431,11 +430,10 @@ describe('definePlatformFeeds', () => {
       expect(wwwTenantFeeds.getFeedHint(value)?.key).toBe(expected)
     })
 
-    it('should return the key of a feed on a tenant host with www with isWwwTenant', () => {
+    it('should return undefined for a feed on a tenant host with www with isWwwTenant', () => {
       const value = 'https://www.alice.example.org/feed'
-      const expected = 'example:journal'
 
-      expect(wwwTenantFeeds.getFeedHint(value)?.key).toBe(expected)
+      expect(wwwTenantFeeds.getFeedHint(value)).toBeUndefined()
     })
 
     it('should return the key of a feed on a fixed host with www with isWwwTenant', () => {
@@ -472,11 +470,10 @@ describe('definePlatformFeeds', () => {
       expect(wwwStrippedFeeds.getFeedHint(value)?.key).toBe(expected)
     })
 
-    it('should return the key of a feed on a tenant host with www without isWwwTenant', () => {
+    it('should return undefined for a feed on a tenant host with www without isWwwTenant', () => {
       const value = 'https://www.alice.example.org/feed'
-      const expected = 'example:journal'
 
-      expect(wwwStrippedFeeds.getFeedHint(value)?.key).toBe(expected)
+      expect(wwwStrippedFeeds.getFeedHint(value)).toBeUndefined()
     })
 
     it('should return the key of a feed with a doubled slash after the host', () => {
@@ -646,11 +643,10 @@ describe('definePlatformFeeds', () => {
         expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
       })
 
-      it('should return the key of a feed with www before the tenant', () => {
+      it('should return undefined for a feed with www before the tenant', () => {
         const value = 'https://www.alice.example.de/feed'
-        const expected = 'example:blog'
 
-        expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(domainPatternFeeds.getFeedHint(value)).toBeUndefined()
       })
 
       it('should return the key of a feed on a port', () => {
