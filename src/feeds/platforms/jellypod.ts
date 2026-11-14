@@ -38,13 +38,5 @@ export const jellypodHandler: PlatformHandler = {
     return [page.getFeedEntry('jellypod:podcast')]
   },
 
-  // The table ignores `www`, so it would read `www.{show}.jellypod.com`, a host the page parser
-  // refuses, as a show.
-  getFeedHint: (url) => {
-    if (!parseJellypodUrl(url)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
