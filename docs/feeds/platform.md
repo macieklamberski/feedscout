@@ -834,7 +834,7 @@ Discovers RSS feeds for Tistory blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.tistory.com` | Blog |
+| `{blog}.tistory.com` | Blog |
 
 ### Transistor
 
