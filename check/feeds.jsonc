@@ -200,6 +200,7 @@
   },
   "bubblelife": {
     "bubblelife:library": "https://denver.bubblelife.com/rss?c=35828711",
+    "bubblelife:news-alerts": "https://plano.bubblelife.com/rss?c=35600714,nofriends",
     "bubblelife:posts": "https://coppell.bubblelife.com/rss?c=3562544",
     "bubblelife:topic": "https://grandprairie.bubblelife.com/rss?c=35671234&t=357400"
   },

@@ -2466,7 +2466,8 @@ Discovers the RSS feed of a BubbleLife community. The page's alternate link has 
 |-------------|-----------------|
 | `{city}.bubblelife.com/community/{name}` | Posts<sup>†</sup> (RSS)* |
 | `{city}.bubblelife.com/community/{name}/library/{id}` | Library<sup>†</sup> (RSS)* |
-| `{city}.bubblelife.com/community/{name}/type/rssinfo` | Posts<sup>†</sup> (RSS)* |
+| `{city}.bubblelife.com/community/{name}/library/{id}/type/rssinfo` | Library<sup>†</sup> · news alerts<sup>†</sup> (RSS)* |
+| `{city}.bubblelife.com/community/{name}/type/rssinfo` | Posts<sup>†</sup> · news alerts<sup>†</sup> (RSS)* |
 
 \* *Requires HTML content to read the feed ID.*
 

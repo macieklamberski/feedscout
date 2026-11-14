@@ -106,6 +106,21 @@ describe('getBubblelifePage', () => {
     expect(getBubblelifePage(value, content)).toEqual(expected)
   })
 
+  it('should return the news alert feed an rssinfo page links', () => {
+    const value = 'https://plano.bubblelife.com/community/plano_news/type/rssinfo'
+    const content = `
+      <a href="/rss?c=35671970">All Posts</a>
+      <a href="/rss?c=35600714,nofriends">Flash News Alerts</a>
+    `
+    const expected: BubblelifePage = {
+      kind: 'community',
+      feedId: '35671970',
+      alertId: '35600714',
+    }
+
+    expect(getBubblelifePage(value, content)).toEqual(expected)
+  })
+
   it('should fall back to the community for a library id the footer does not name', () => {
     const value = 'https://sandysprings.bubblelife.com/community/idealplotter/library/1'
     const expected: BubblelifePage = { kind: 'community', feedId: '3569381092' }
@@ -241,7 +256,7 @@ describe('bubblelifeHandler', () => {
       expect(bubblelifeHandler.resolve(value, content)).toEqual(expected)
     })
 
-    it('should return the posts feed from the rssinfo page', () => {
+    it('should return the posts and news alert feeds from the rssinfo page', () => {
       const value = 'https://plano.bubblelife.com/community/plano_news/type/rssinfo'
       const content = `
         <a href="/rss?c=35660940">All Posts</a>
@@ -251,6 +266,10 @@ describe('bubblelifeHandler', () => {
         {
           uri: 'https://plano.bubblelife.com/rss?c=35660940',
           hint: { key: 'bubblelife:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://plano.bubblelife.com/rss?c=35600714,nofriends',
+          hint: { key: 'bubblelife:news-alerts', label: 'News alerts' },
         },
       ]
 
@@ -265,6 +284,27 @@ describe('bubblelifeHandler', () => {
         {
           uri: 'https://denver.bubblelife.com/rss?c=35828711',
           hint: { key: 'bubblelife:library', label: 'Library' },
+        },
+      ]
+
+      expect(bubblelifeHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should return the library and news alert feeds from the library rssinfo page', () => {
+      const value =
+        'https://plano.bubblelife.com/community/plano_news/library/35660940/type/rssinfo'
+      const content = `
+        <a href="/rss?c=35660940">All Posts</a>
+        <a href="/rss?c=35600714,nofriends">Flash News Alerts</a>
+      `
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://plano.bubblelife.com/rss?c=35660940',
+          hint: { key: 'bubblelife:library', label: 'Library' },
+        },
+        {
+          uri: 'https://plano.bubblelife.com/rss?c=35600714,nofriends',
+          hint: { key: 'bubblelife:news-alerts', label: 'News alerts' },
         },
       ]
 
@@ -351,8 +391,22 @@ describe('bubblelifeHandler', () => {
       expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a news alert feed', () => {
-      const value = 'https://plano.bubblelife.com/rss?c=35600714,nofriends'
+    it('should return the news alerts hint for a news alert feed', () => {
+      const value = 'https://example.bubblelife.com/rss?c=12345,nofriends'
+      const expected: DiscoverUriHint = { key: 'bubblelife:news-alerts', label: 'News alerts' }
+
+      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the news alerts hint for a news alert feed with an encoded comma', () => {
+      const value = 'https://example.bubblelife.com/rss?c=12345%2Cnofriends'
+      const expected: DiscoverUriHint = { key: 'bubblelife:news-alerts', label: 'News alerts' }
+
+      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for an id with another suffix', () => {
+      const value = 'https://example.bubblelife.com/rss?c=12345,friends'
 
       expect(bubblelifeHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -383,6 +437,10 @@ describe('bubblelifeHandler', () => {
       [
         'https://example.bubblelife.com/rss?c=12345&t=67890',
         { key: 'bubblelife:topic', label: 'Topic' },
+      ],
+      [
+        'https://example.bubblelife.com/rss?c=12345,nofriends',
+        { key: 'bubblelife:news-alerts', label: 'News alerts' },
       ],
     ]
 
