@@ -1,5 +1,6 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
+import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -11,6 +12,13 @@ const stylesheetRegex = /(?:^|\/)pukiwiki\.css(?:\.php)?(?:[?#]|$)/i
 const sessionCookieRegex = /^QHMSSID\d*$/
 const skinRootRegex = /^(.*?\/)skin\//i
 const scriptPathRegex = /\.php$/i
+
+// A wiki of any domain is known only by its marker, so its feed is built here but not claimed. A
+// wiki served from its directory names no script in its URLs.
+const feeds = definePlatformFeeds([
+  { key: 'pukiwiki:recent-changes', template: '{root}/{script}?cmd=rss' },
+  { key: 'pukiwiki:recent-changes', template: '{root}/?cmd=rss' },
+])
 
 export const isPukiwikiHtml = (content: string): boolean => {
   const stylesheet = findElement(content, (element) => {
@@ -52,12 +60,9 @@ export const pukiwikiHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getPukiwikiPage(url, content)
+    const directoryUrl = new URL('./', page.scriptUrl).href
+    const script = page.scriptUrl.slice(directoryUrl.length) || undefined
 
-    return [
-      {
-        uri: `${page.scriptUrl}?cmd=rss`,
-        hint: composeHint('pukiwiki:recent-changes'),
-      },
-    ]
+    return [feeds.getFeedEntry('pukiwiki:recent-changes', { root: directoryUrl, script })]
   },
 }
