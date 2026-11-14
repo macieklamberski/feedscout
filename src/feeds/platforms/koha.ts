@@ -38,6 +38,7 @@ const ownFeeds = definePlatformFeeds(
       key: 'koha:comments',
       template: '{root}/cgi-bin/koha/opac-showreviews.pl?format=rss',
     },
+    { key: 'koha:news', template: '{root}/cgi-bin/koha/opac-news-rss.pl' },
   ],
   { domains },
 )
@@ -112,7 +113,12 @@ export const kohaHandler: PlatformHandler = {
     }
 
     const { origin } = new URL(url)
+    // The table drops one trailing slash from a root, so a root printed with a doubled slash, as
+    // `https://example.edu//cgi-bin/koha/`, keeps it.
+    const root = `${origin}${parsed.root}/`
 
+    // The library's news feed needs no value from the page, so every page builds it after its own
+    // feeds.
     if (parsed.kind === 'search') {
       // 50 is the default of numSearchRSSResults, the preference Koha prints as the feed's count.
       const searchUrl = `${origin}${parsed.root}/cgi-bin/koha/opac-search.pl?${parsed.params}&count=50&sort_by=acqdate_dsc`
@@ -123,18 +129,18 @@ export const kohaHandler: PlatformHandler = {
           uri: [`${searchUrl}&format=rss`, `${searchUrl}&format=rss2`],
           hint: composeHint('koha:search'),
         },
+        page.getFeedEntry('koha:news', { root }),
       ]
     }
 
-    // The table drops one trailing slash from a root, so a root printed with a doubled slash, as
-    // `https://example.edu//cgi-bin/koha/`, keeps it.
-    const root = `${origin}${parsed.root}/`
-
     if (parsed.kind === 'list') {
-      return [page.getFeedEntry('koha:list', { root, shelfNumber: parsed.shelfNumber })]
+      return [
+        page.getFeedEntry('koha:list', { root, shelfNumber: parsed.shelfNumber }),
+        page.getFeedEntry('koha:news', { root }),
+      ]
     }
 
-    return [page.getFeedEntry('koha:comments', { root })]
+    return [page.getFeedEntry('koha:comments', { root }), page.getFeedEntry('koha:news', { root })]
   },
 
   getFeedHint: ownFeeds.getFeedHint,

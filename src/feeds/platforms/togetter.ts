@@ -46,9 +46,12 @@ export const togetterHandler: PlatformHandler = {
       return []
     }
 
+    // The news and hot feeds need no value from the page, so every page builds them after its own
+    // feeds.
     if (parsed.kind === 'user') {
       return [
         feeds.getFeedEntry('togetter:curator', { username: parsed.username }),
+        feeds.getFeedEntry('togetter:news'),
         feeds.getFeedEntry('togetter:hot'),
       ]
     }

@@ -121,12 +121,16 @@ export const pinboardHandler: PlatformHandler = {
       return []
     }
 
+    // The recent and popular lists need no value from the page, so every page builds them after its
+    // own feeds.
     if (parsed.kind === 'userTag') {
       return [
         feeds.getFeedEntry('pinboard:tag', {
           username: parsed.username,
           tags: joinTags(parsed.tags),
         }),
+        feeds.getFeedEntry('pinboard:recent'),
+        feeds.getFeedEntry('pinboard:popular'),
       ]
     }
 
@@ -137,24 +141,34 @@ export const pinboardHandler: PlatformHandler = {
           tags: joinTags(parsed.tags),
           source: parsed.source,
         }),
+        feeds.getFeedEntry('pinboard:recent'),
+        feeds.getFeedEntry('pinboard:popular'),
       ]
     }
 
     if (parsed.kind === 'user') {
-      return [feeds.getFeedEntry('pinboard:bookmarks', { username: parsed.username })]
+      return [
+        feeds.getFeedEntry('pinboard:bookmarks', { username: parsed.username }),
+        feeds.getFeedEntry('pinboard:recent'),
+        feeds.getFeedEntry('pinboard:popular'),
+      ]
     }
 
     // It answered 500 on 2026-09-26 while Pinboard's search backend was down, and validation
     // drops it until the backend is back.
     if (parsed.kind === 'tag') {
-      return [feeds.getFeedEntry('pinboard:tag', { tags: joinTags(parsed.tags) })]
+      return [
+        feeds.getFeedEntry('pinboard:tag', { tags: joinTags(parsed.tags) }),
+        feeds.getFeedEntry('pinboard:recent'),
+        feeds.getFeedEntry('pinboard:popular'),
+      ]
     }
 
     if (parsed.kind === 'recent') {
-      return [feeds.getFeedEntry('pinboard:recent')]
+      return [feeds.getFeedEntry('pinboard:recent'), feeds.getFeedEntry('pinboard:popular')]
     }
 
-    return [feeds.getFeedEntry('pinboard:popular')]
+    return [feeds.getFeedEntry('pinboard:popular'), feeds.getFeedEntry('pinboard:recent')]
   },
 
   getFeedHint: feeds.getFeedHint,

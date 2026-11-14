@@ -72,13 +72,18 @@ export const behanceHandler: PlatformHandler = {
       return []
     }
 
+    // The featured projects feed needs no value from the page, so every page builds it after its
+    // own feeds.
     if (parsed.kind === 'home') {
       return [feeds.getFeedEntry('behance:projects')]
     }
 
     // The appreciated page gets the portfolio feed: Behance ignores
     // `content=appreciated` and serves the user's own projects for it.
-    return [feeds.getFeedEntry('behance:portfolio', { username: parsed.username })]
+    return [
+      feeds.getFeedEntry('behance:portfolio', { username: parsed.username }),
+      feeds.getFeedEntry('behance:projects'),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,

@@ -136,11 +136,16 @@ export const huffdufferHandler: PlatformHandler = {
       return []
     }
 
+    // The new and popular lists need no value from the page, so every page builds them after its
+    // own feeds.
     if (page.kind === 'home') {
       return [
         feeds.getFeedEntry('huffduffer:new', undefined, 'rss'),
         feeds.getFeedEntry('huffduffer:new', undefined, 'atom'),
         feeds.getFeedEntry('huffduffer:new', undefined, 'json'),
+        feeds.getFeedEntry('huffduffer:popular', undefined, 'rss'),
+        feeds.getFeedEntry('huffduffer:popular', undefined, 'atom'),
+        feeds.getFeedEntry('huffduffer:popular', undefined, 'json'),
       ]
     }
 
@@ -149,18 +154,34 @@ export const huffdufferHandler: PlatformHandler = {
         feeds.getFeedEntry('huffduffer:popular', undefined, 'rss'),
         feeds.getFeedEntry('huffduffer:popular', undefined, 'atom'),
         feeds.getFeedEntry('huffduffer:popular', undefined, 'json'),
+        feeds.getFeedEntry('huffduffer:new', undefined, 'rss'),
+        feeds.getFeedEntry('huffduffer:new', undefined, 'atom'),
+        feeds.getFeedEntry('huffduffer:new', undefined, 'json'),
       ]
     }
 
     if (page.kind === 'search') {
       if (!page.query) {
-        return []
+        return [
+          feeds.getFeedEntry('huffduffer:new', undefined, 'rss'),
+          feeds.getFeedEntry('huffduffer:new', undefined, 'atom'),
+          feeds.getFeedEntry('huffduffer:new', undefined, 'json'),
+          feeds.getFeedEntry('huffduffer:popular', undefined, 'rss'),
+          feeds.getFeedEntry('huffduffer:popular', undefined, 'atom'),
+          feeds.getFeedEntry('huffduffer:popular', undefined, 'json'),
+        ]
       }
 
       return [
         feeds.getFeedEntry('huffduffer:search', { query: page.query }, 'rss'),
         feeds.getFeedEntry('huffduffer:search', { query: page.query }, 'atom'),
         feeds.getFeedEntry('huffduffer:search', { query: page.query }, 'json'),
+        feeds.getFeedEntry('huffduffer:new', undefined, 'rss'),
+        feeds.getFeedEntry('huffduffer:new', undefined, 'atom'),
+        feeds.getFeedEntry('huffduffer:new', undefined, 'json'),
+        feeds.getFeedEntry('huffduffer:popular', undefined, 'rss'),
+        feeds.getFeedEntry('huffduffer:popular', undefined, 'atom'),
+        feeds.getFeedEntry('huffduffer:popular', undefined, 'json'),
       ]
     }
 
@@ -169,20 +190,48 @@ export const huffdufferHandler: PlatformHandler = {
         feeds.getFeedEntry('huffduffer:collective', { username: page.username }, 'rss'),
         feeds.getFeedEntry('huffduffer:collective', { username: page.username }, 'atom'),
         feeds.getFeedEntry('huffduffer:collective', { username: page.username }, 'json'),
+        feeds.getFeedEntry('huffduffer:new', undefined, 'rss'),
+        feeds.getFeedEntry('huffduffer:new', undefined, 'atom'),
+        feeds.getFeedEntry('huffduffer:new', undefined, 'json'),
+        feeds.getFeedEntry('huffduffer:popular', undefined, 'rss'),
+        feeds.getFeedEntry('huffduffer:popular', undefined, 'atom'),
+        feeds.getFeedEntry('huffduffer:popular', undefined, 'json'),
       ]
     }
 
     if (page.kind === 'profile') {
-      return [feeds.getFeedEntry('huffduffer:huffduffs', { username: page.username })]
+      return [
+        feeds.getFeedEntry('huffduffer:huffduffs', { username: page.username }),
+        feeds.getFeedEntry('huffduffer:new', undefined, 'rss'),
+        feeds.getFeedEntry('huffduffer:new', undefined, 'atom'),
+        feeds.getFeedEntry('huffduffer:new', undefined, 'json'),
+        feeds.getFeedEntry('huffduffer:popular', undefined, 'rss'),
+        feeds.getFeedEntry('huffduffer:popular', undefined, 'atom'),
+        feeds.getFeedEntry('huffduffer:popular', undefined, 'json'),
+      ]
     }
 
     if (page.kind === 'related') {
-      return [feeds.getFeedEntry('huffduffer:related', { username: page.username, id: page.id })]
+      return [
+        feeds.getFeedEntry('huffduffer:related', { username: page.username, id: page.id }),
+        feeds.getFeedEntry('huffduffer:new', undefined, 'rss'),
+        feeds.getFeedEntry('huffduffer:new', undefined, 'atom'),
+        feeds.getFeedEntry('huffduffer:new', undefined, 'json'),
+        feeds.getFeedEntry('huffduffer:popular', undefined, 'rss'),
+        feeds.getFeedEntry('huffduffer:popular', undefined, 'atom'),
+        feeds.getFeedEntry('huffduffer:popular', undefined, 'json'),
+      ]
     }
 
     return [
       feeds.getFeedEntry('huffduffer:related', { username: page.username, id: page.id }),
       feeds.getFeedEntry('huffduffer:huffduffs', { username: page.username }),
+      feeds.getFeedEntry('huffduffer:new', undefined, 'rss'),
+      feeds.getFeedEntry('huffduffer:new', undefined, 'atom'),
+      feeds.getFeedEntry('huffduffer:new', undefined, 'json'),
+      feeds.getFeedEntry('huffduffer:popular', undefined, 'rss'),
+      feeds.getFeedEntry('huffduffer:popular', undefined, 'atom'),
+      feeds.getFeedEntry('huffduffer:popular', undefined, 'json'),
     ]
   },
 

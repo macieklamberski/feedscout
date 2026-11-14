@@ -153,6 +153,10 @@ describe('sermonNetHandler', () => {
           uri: 'https://faithchapelchurch.sermon.net/rss/main/audio_pdf',
           hint: { key: 'sermon-net:channel-audio-pdf', label: 'Channel podcast with PDFs' },
         },
+        {
+          uri: 'https://faithchapelchurch.sermon.net/rss',
+          hint: { key: 'sermon-net:church', label: 'Church' },
+        },
       ]
 
       expect(sermonNetHandler.resolve(value, content)).toEqual(expected)
@@ -177,6 +181,10 @@ describe('sermonNetHandler', () => {
           uri: 'https://faithchapelchurch.sermon.net/rss/faithchapel/audio_pdf',
           hint: { key: 'sermon-net:channel-audio-pdf', label: 'Channel podcast with PDFs' },
         },
+        {
+          uri: 'https://faithchapelchurch.sermon.net/rss',
+          hint: { key: 'sermon-net:church', label: 'Church' },
+        },
       ]
 
       expect(sermonNetHandler.resolve(value, faithChapelHtml)).toEqual(expected)
@@ -185,7 +193,7 @@ describe('sermonNetHandler', () => {
     it('should return every listed channel when a channel page names an unlisted one', () => {
       const value = 'https://faithchapelchurch.sermon.net/main/shared'
 
-      expect(sermonNetHandler.resolve(value, faithChapelHtml)).toHaveLength(8)
+      expect(sermonNetHandler.resolve(value, faithChapelHtml)).toHaveLength(9)
     })
 
     it('should return the church feed for a page that lists no channel', () => {
@@ -222,6 +230,10 @@ describe('sermonNetHandler', () => {
           uri: 'https://faithchapelchurch.sermon.net/rss/main%2Fextra/audio_pdf',
           hint: { key: 'sermon-net:channel-audio-pdf', label: 'Channel podcast with PDFs' },
         },
+        {
+          uri: 'https://faithchapelchurch.sermon.net/rss',
+          hint: { key: 'sermon-net:church', label: 'Church' },
+        },
       ]
 
       expect(sermonNetHandler.resolve(value, content)).toEqual(expected)
@@ -246,6 +258,10 @@ describe('sermonNetHandler', () => {
         {
           uri: 'http://example.sermon.net/rss/sermons/audio_pdf',
           hint: { key: 'sermon-net:channel-audio-pdf', label: 'Channel podcast with PDFs' },
+        },
+        {
+          uri: 'http://example.sermon.net/rss',
+          hint: { key: 'sermon-net:church', label: 'Church' },
         },
       ]
 

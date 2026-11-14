@@ -122,12 +122,6 @@ describe('parseKohaUrl', () => {
     expect(parseKohaUrl(value)).toBeUndefined()
   })
 
-  it('should return undefined for the news feed', () => {
-    const value = 'https://library.imar.ro/cgi-bin/koha/opac-news-rss.pl'
-
-    expect(parseKohaUrl(value)).toBeUndefined()
-  })
-
   it('should return undefined for an unparsable URL', () => {
     expect(parseKohaUrl('not-a-url')).toBeUndefined()
   })
@@ -170,13 +164,17 @@ describe('kohaHandler', () => {
     it('should return the search feed for a search page', () => {
       const value =
         'https://opac.iub.edu.bd/cgi-bin/koha/opac-search.pl?idx=kw&q=water&sort_by=title_az'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: [
             'https://opac.iub.edu.bd/cgi-bin/koha/opac-search.pl?idx=kw&q=water&count=50&sort_by=acqdate_dsc&format=rss',
             'https://opac.iub.edu.bd/cgi-bin/koha/opac-search.pl?idx=kw&q=water&count=50&sort_by=acqdate_dsc&format=rss2',
           ],
           hint: { key: 'koha:search', label: 'Search' },
+        },
+        {
+          uri: 'https://opac.iub.edu.bd/cgi-bin/koha/opac-news-rss.pl',
+          hint: { key: 'koha:news', label: 'News' },
         },
       ]
 
@@ -186,10 +184,14 @@ describe('kohaHandler', () => {
     it('should return the list feed for a list page', () => {
       const value =
         'https://library-search.nics.gov.uk/cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber=309'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://library-search.nics.gov.uk/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber=309',
           hint: { key: 'koha:list', label: 'List' },
+        },
+        {
+          uri: 'https://library-search.nics.gov.uk/cgi-bin/koha/opac-news-rss.pl',
+          hint: { key: 'koha:news', label: 'News' },
         },
       ]
 
@@ -204,6 +206,10 @@ describe('kohaHandler', () => {
           uri: 'https://library.example.edu//cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber=309',
           hint: { key: 'koha:list', label: 'List' },
         },
+        {
+          uri: 'https://library.example.edu//cgi-bin/koha/opac-news-rss.pl',
+          hint: { key: 'koha:news', label: 'News' },
+        },
       ]
 
       expect(kohaHandler.resolve(value)).toEqual(expected)
@@ -216,6 +222,10 @@ describe('kohaHandler', () => {
           uri: 'http://library.example.edu/opac/cgi-bin/koha/opac-showreviews.pl?format=rss',
           hint: { key: 'koha:comments', label: 'Recent comments' },
         },
+        {
+          uri: 'http://library.example.edu/opac/cgi-bin/koha/opac-news-rss.pl',
+          hint: { key: 'koha:news', label: 'News' },
+        },
       ]
 
       expect(kohaHandler.resolve(value)).toEqual(expected)
@@ -223,10 +233,14 @@ describe('kohaHandler', () => {
 
     it('should return the comments feed for the comments page', () => {
       const value = 'https://opac.northsouth.edu/cgi-bin/koha/opac-showreviews.pl'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://opac.northsouth.edu/cgi-bin/koha/opac-showreviews.pl?format=rss',
           hint: { key: 'koha:comments', label: 'Recent comments' },
+        },
+        {
+          uri: 'https://opac.northsouth.edu/cgi-bin/koha/opac-news-rss.pl',
+          hint: { key: 'koha:news', label: 'News' },
         },
       ]
 
@@ -262,6 +276,13 @@ describe('kohaHandler', () => {
     it('should return the comments hint for a comments feed', () => {
       const value = 'https://example.kohacatalog.com/cgi-bin/koha/opac-showreviews.pl?format=rss'
       const expected: DiscoverUriHint = { key: 'koha:comments', label: 'Recent comments' }
+
+      expect(kohaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the news hint for a news feed', () => {
+      const value = 'https://example.kohacatalog.com/cgi-bin/koha/opac-news-rss.pl'
+      const expected: DiscoverUriHint = { key: 'koha:news', label: 'News' }
 
       expect(kohaHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -324,6 +345,10 @@ describe('kohaHandler', () => {
       [
         'https://example.kohacatalog.com/cgi-bin/koha/opac-showreviews.pl?format=rss',
         { key: 'koha:comments', label: 'Recent comments' },
+      ],
+      [
+        'http://example.kohacatalog.com/cgi-bin/koha/opac-news-rss.pl',
+        { key: 'koha:news', label: 'News' },
       ],
     ]
 

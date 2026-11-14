@@ -66,6 +66,7 @@ export const arenaHandler: PlatformHandler = {
       return []
     }
 
+    // The editorial feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'editorial') {
       return [feeds.getFeedEntry('arena:editorial')]
     }
@@ -73,10 +74,13 @@ export const arenaHandler: PlatformHandler = {
     if (parsed.kind === 'channel') {
       const params = { username: parsed.username, channel: parsed.channel }
 
-      return [feeds.getFeedEntry('arena:channel', params)]
+      return [feeds.getFeedEntry('arena:channel', params), feeds.getFeedEntry('arena:editorial')]
     }
 
-    return [feeds.getFeedEntry('arena:profile', { username: parsed.username })]
+    return [
+      feeds.getFeedEntry('arena:profile', { username: parsed.username }),
+      feeds.getFeedEntry('arena:editorial'),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,

@@ -209,7 +209,24 @@ describe('steamHandler', () => {
   describe('resolve', () => {
     it('should return news and community news feeds for store app page', () => {
       const value = 'https://store.steampowered.com/app/730/Counter_Strike_2/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://store.steampowered.com/feeds/news/app/730/',
+          hint: { key: 'steam:news', label: 'News' },
+        },
+        {
+          uri: 'https://steamcommunity.com/games/730/rss',
+          hint: { key: 'steam:community-news', label: 'Community news' },
+        },
+        ...globalEntries,
+      ]
+
+      expect(steamHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return news and community news feeds without the store feeds for a community app page', () => {
+      const value = 'https://steamcommunity.com/app/730'
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://store.steampowered.com/feeds/news/app/730/',
           hint: { key: 'steam:news', label: 'News' },
@@ -267,6 +284,7 @@ describe('steamHandler', () => {
       const value = 'https://store.steampowered.com/news/group/12345/'
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://store.steampowered.com/feeds/news/group/12345', hint: groupNewsHint },
+        ...globalEntries,
       ]
 
       expect(steamHandler.resolve(value)).toEqual(expected)
@@ -276,6 +294,7 @@ describe('steamHandler', () => {
       const value = 'https://store.steampowered.com/news/collection/steam'
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://store.steampowered.com/feeds/news/collection/steam', hint: collectionHint },
+        ...globalEntries,
       ]
 
       expect(steamHandler.resolve(value)).toEqual(expected)

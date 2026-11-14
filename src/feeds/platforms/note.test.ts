@@ -87,10 +87,14 @@ describe('noteHandler', () => {
   describe('resolve', () => {
     it('should return feed URL for blog', () => {
       const value = 'https://note.com/tsukasa_yamato'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://note.com/tsukasa_yamato/rss',
           hint: { key: 'note:blog', label: 'Blog' },
+        },
+        {
+          uri: 'https://note.com/rss',
+          hint: { key: 'note:featured', label: 'Featured' },
         },
       ]
 
@@ -99,10 +103,14 @@ describe('noteHandler', () => {
 
     it('should return the author blog feed for a note', () => {
       const value = 'https://note.com/tsukasa_yamato/n/n1234567890ab'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://note.com/tsukasa_yamato/rss',
           hint: { key: 'note:blog', label: 'Blog' },
+        },
+        {
+          uri: 'https://note.com/rss',
+          hint: { key: 'note:featured', label: 'Featured' },
         },
       ]
 
@@ -111,10 +119,14 @@ describe('noteHandler', () => {
 
     it('should return feed URL for hashtag page', () => {
       const value = 'https://note.com/hashtag/AI'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://note.com/hashtag/AI/rss',
           hint: { key: 'note:hashtag', label: 'Hashtag' },
+        },
+        {
+          uri: 'https://note.com/rss',
+          hint: { key: 'note:featured', label: 'Featured' },
         },
       ]
 
@@ -123,10 +135,14 @@ describe('noteHandler', () => {
 
     it('should return feed URL for magazine page', () => {
       const value = 'https://note.com/notemag/m/m7244518f06ae'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://note.com/notemag/m/m7244518f06ae/rss',
           hint: { key: 'note:magazine', label: 'Magazine' },
+        },
+        {
+          uri: 'https://note.com/rss',
+          hint: { key: 'note:featured', label: 'Featured' },
         },
       ]
 

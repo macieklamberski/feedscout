@@ -50,11 +50,15 @@ export const letterboxdHandler: PlatformHandler = {
       return []
     }
 
+    // The journal feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'journal') {
       return [feeds.getFeedEntry('letterboxd:journal')]
     }
 
-    return [feeds.getFeedEntry('letterboxd:diary', { username: parsed.username })]
+    return [
+      feeds.getFeedEntry('letterboxd:diary', { username: parsed.username }),
+      feeds.getFeedEntry('letterboxd:journal'),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,

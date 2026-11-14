@@ -110,35 +110,110 @@ export const chambermasterHandler: PlatformHandler = {
 
     const feedEntry = (key: string) => pageFeeds.getFeedEntry(key)
 
+    // The chamber's lists need no value from the page, so every page builds them after its own
+    // feeds.
     if (parsed.kind === 'events') {
       return [
         feedEntry('chambermaster:upcoming-events'),
         feedEntry('chambermaster:new-events'),
         feedEntry('chambermaster:featured-events'),
+        feedEntry('chambermaster:new-members'),
+        feedEntry('chambermaster:featured-members'),
+        feedEntry('chambermaster:new-jobs'),
+        feedEntry('chambermaster:new-coupons'),
+        feedEntry('chambermaster:new-market-items'),
+        feedEntry('chambermaster:news-releases'),
+        feedEntry('chambermaster:new-m2m-deals'),
       ]
     }
 
     if (parsed.kind === 'directory') {
-      return [feedEntry('chambermaster:new-members'), feedEntry('chambermaster:featured-members')]
+      return [
+        feedEntry('chambermaster:new-members'),
+        feedEntry('chambermaster:featured-members'),
+        feedEntry('chambermaster:upcoming-events'),
+        feedEntry('chambermaster:new-events'),
+        feedEntry('chambermaster:featured-events'),
+        feedEntry('chambermaster:new-jobs'),
+        feedEntry('chambermaster:new-coupons'),
+        feedEntry('chambermaster:new-market-items'),
+        feedEntry('chambermaster:news-releases'),
+        feedEntry('chambermaster:new-m2m-deals'),
+      ]
     }
 
     if (parsed.kind === 'jobs') {
-      return [feedEntry('chambermaster:new-jobs')]
+      return [
+        feedEntry('chambermaster:new-jobs'),
+        feedEntry('chambermaster:upcoming-events'),
+        feedEntry('chambermaster:new-events'),
+        feedEntry('chambermaster:featured-events'),
+        feedEntry('chambermaster:new-members'),
+        feedEntry('chambermaster:featured-members'),
+        feedEntry('chambermaster:new-coupons'),
+        feedEntry('chambermaster:new-market-items'),
+        feedEntry('chambermaster:news-releases'),
+        feedEntry('chambermaster:new-m2m-deals'),
+      ]
     }
 
     if (parsed.kind === 'hotDeals') {
-      return [feedEntry('chambermaster:new-coupons')]
+      return [
+        feedEntry('chambermaster:new-coupons'),
+        feedEntry('chambermaster:upcoming-events'),
+        feedEntry('chambermaster:new-events'),
+        feedEntry('chambermaster:featured-events'),
+        feedEntry('chambermaster:new-members'),
+        feedEntry('chambermaster:featured-members'),
+        feedEntry('chambermaster:new-jobs'),
+        feedEntry('chambermaster:new-market-items'),
+        feedEntry('chambermaster:news-releases'),
+        feedEntry('chambermaster:new-m2m-deals'),
+      ]
     }
 
     if (parsed.kind === 'marketSpace') {
-      return [feedEntry('chambermaster:new-market-items')]
+      return [
+        feedEntry('chambermaster:new-market-items'),
+        feedEntry('chambermaster:upcoming-events'),
+        feedEntry('chambermaster:new-events'),
+        feedEntry('chambermaster:featured-events'),
+        feedEntry('chambermaster:new-members'),
+        feedEntry('chambermaster:featured-members'),
+        feedEntry('chambermaster:new-jobs'),
+        feedEntry('chambermaster:new-coupons'),
+        feedEntry('chambermaster:news-releases'),
+        feedEntry('chambermaster:new-m2m-deals'),
+      ]
     }
 
     if (parsed.kind === 'news') {
-      return [feedEntry('chambermaster:news-releases')]
+      return [
+        feedEntry('chambermaster:news-releases'),
+        feedEntry('chambermaster:upcoming-events'),
+        feedEntry('chambermaster:new-events'),
+        feedEntry('chambermaster:featured-events'),
+        feedEntry('chambermaster:new-members'),
+        feedEntry('chambermaster:featured-members'),
+        feedEntry('chambermaster:new-jobs'),
+        feedEntry('chambermaster:new-coupons'),
+        feedEntry('chambermaster:new-market-items'),
+        feedEntry('chambermaster:new-m2m-deals'),
+      ]
     }
 
-    return [feedEntry('chambermaster:new-m2m-deals')]
+    return [
+      feedEntry('chambermaster:new-m2m-deals'),
+      feedEntry('chambermaster:upcoming-events'),
+      feedEntry('chambermaster:new-events'),
+      feedEntry('chambermaster:featured-events'),
+      feedEntry('chambermaster:new-members'),
+      feedEntry('chambermaster:featured-members'),
+      feedEntry('chambermaster:new-jobs'),
+      feedEntry('chambermaster:new-coupons'),
+      feedEntry('chambermaster:new-market-items'),
+      feedEntry('chambermaster:news-releases'),
+    ]
   },
 
   // The table claims only one tenant label under the domains, so the apex and www, whose feeds

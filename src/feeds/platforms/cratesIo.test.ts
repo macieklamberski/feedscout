@@ -44,10 +44,18 @@ describe('cratesIoHandler', () => {
 
     it('should return the releases feed for a crate page', () => {
       const value = 'https://crates.io/crates/example_crate'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://static.crates.io/rss/crates/example_crate.xml',
           hint: { key: 'crates-io:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://static.crates.io/rss/crates.xml',
+          hint: { key: 'crates-io:new-crates', label: 'New crates' },
+        },
+        {
+          uri: 'https://static.crates.io/rss/updates.xml',
+          hint: { key: 'crates-io:updates', label: 'Recent updates' },
         },
       ]
 
@@ -56,10 +64,18 @@ describe('cratesIoHandler', () => {
 
     it('should return the releases feed for a crate version page', () => {
       const value = 'https://crates.io/crates/example-crate/1.0.0'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://static.crates.io/rss/crates/example-crate.xml',
           hint: { key: 'crates-io:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://static.crates.io/rss/crates.xml',
+          hint: { key: 'crates-io:new-crates', label: 'New crates' },
+        },
+        {
+          uri: 'https://static.crates.io/rss/updates.xml',
+          hint: { key: 'crates-io:updates', label: 'Recent updates' },
         },
       ]
 
@@ -68,10 +84,18 @@ describe('cratesIoHandler', () => {
 
     it('should keep the case of the crate name', () => {
       const value = 'https://crates.io/Crates/Example'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://static.crates.io/rss/crates/Example.xml',
           hint: { key: 'crates-io:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://static.crates.io/rss/crates.xml',
+          hint: { key: 'crates-io:new-crates', label: 'New crates' },
+        },
+        {
+          uri: 'https://static.crates.io/rss/updates.xml',
+          hint: { key: 'crates-io:updates', label: 'Recent updates' },
         },
       ]
 

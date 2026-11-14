@@ -178,24 +178,40 @@ export const hatenaBookmarkHandler: PlatformHandler = {
       return []
     }
 
+    // The hot and new entry lists need no value from the page, so every page builds them after its
+    // own feeds.
     if (parsed.kind === 'hotentry') {
       const { category } = parsed
 
       if (!category) {
-        return [feeds.getFeedEntry('hatena-bookmark:hot')]
+        return [
+          feeds.getFeedEntry('hatena-bookmark:hot'),
+          feeds.getFeedEntry('hatena-bookmark:new'),
+        ]
       }
 
-      return [feeds.getFeedEntry('hatena-bookmark:hot-category', { category })]
+      return [
+        feeds.getFeedEntry('hatena-bookmark:hot-category', { category }),
+        feeds.getFeedEntry('hatena-bookmark:hot'),
+        feeds.getFeedEntry('hatena-bookmark:new'),
+      ]
     }
 
     if (parsed.kind === 'entrylist') {
       const { category } = parsed
 
       if (!category) {
-        return [feeds.getFeedEntry('hatena-bookmark:new')]
+        return [
+          feeds.getFeedEntry('hatena-bookmark:new'),
+          feeds.getFeedEntry('hatena-bookmark:hot'),
+        ]
       }
 
-      return [feeds.getFeedEntry('hatena-bookmark:new-category', { category })]
+      return [
+        feeds.getFeedEntry('hatena-bookmark:new-category', { category }),
+        feeds.getFeedEntry('hatena-bookmark:hot'),
+        feeds.getFeedEntry('hatena-bookmark:new'),
+      ]
     }
 
     // Search and per-site listings answer with RSS when `mode=rss` is set.
@@ -207,11 +223,17 @@ export const hatenaBookmarkHandler: PlatformHandler = {
           query: parsed.query,
           ...Object.fromEntries(filters),
         }),
+        feeds.getFeedEntry('hatena-bookmark:hot'),
+        feeds.getFeedEntry('hatena-bookmark:new'),
       ]
     }
 
     if (parsed.kind === 'site') {
-      return [feeds.getFeedEntry('hatena-bookmark:site', { site: parsed.site, sort: parsed.sort })]
+      return [
+        feeds.getFeedEntry('hatena-bookmark:site', { site: parsed.site, sort: parsed.sort }),
+        feeds.getFeedEntry('hatena-bookmark:hot'),
+        feeds.getFeedEntry('hatena-bookmark:new'),
+      ]
     }
 
     // User bookmarks: /{username} or /{username}/bookmark, with an optional tag.
@@ -219,13 +241,21 @@ export const hatenaBookmarkHandler: PlatformHandler = {
       const { username, tag } = parsed
 
       if (tag) {
-        return [feeds.getFeedEntry('hatena-bookmark:user-tag', { username, tag })]
+        return [
+          feeds.getFeedEntry('hatena-bookmark:user-tag', { username, tag }),
+          feeds.getFeedEntry('hatena-bookmark:hot'),
+          feeds.getFeedEntry('hatena-bookmark:new'),
+        ]
       }
 
-      return [feeds.getFeedEntry('hatena-bookmark:bookmarks', { username })]
+      return [
+        feeds.getFeedEntry('hatena-bookmark:bookmarks', { username }),
+        feeds.getFeedEntry('hatena-bookmark:hot'),
+        feeds.getFeedEntry('hatena-bookmark:new'),
+      ]
     }
 
-    return [feeds.getFeedEntry('hatena-bookmark:hot')]
+    return [feeds.getFeedEntry('hatena-bookmark:hot'), feeds.getFeedEntry('hatena-bookmark:new')]
   },
 
   getFeedHint: feeds.getFeedHint,

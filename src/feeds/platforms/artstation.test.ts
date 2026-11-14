@@ -69,10 +69,18 @@ describe('artstationHandler', () => {
 
     it('should return feed URL for portfolio', () => {
       const value = 'https://www.artstation.com/alice'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.artstation.com/alice.rss',
           hint: { key: 'artstation:portfolio', label: 'Portfolio' },
+        },
+        {
+          uri: 'https://www.artstation.com/artwork.rss',
+          hint: { key: 'artstation:artwork', label: 'Artwork' },
+        },
+        {
+          uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
+          hint: { key: 'artstation:artwork-latest', label: 'Artwork (Latest)' },
         },
       ]
 
@@ -81,10 +89,18 @@ describe('artstationHandler', () => {
 
     it('should return feed URL regardless of subpath', () => {
       const value = 'https://www.artstation.com/alice/albums/all'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.artstation.com/alice.rss',
           hint: { key: 'artstation:portfolio', label: 'Portfolio' },
+        },
+        {
+          uri: 'https://www.artstation.com/artwork.rss',
+          hint: { key: 'artstation:artwork', label: 'Artwork' },
+        },
+        {
+          uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
+          hint: { key: 'artstation:artwork-latest', label: 'Artwork (Latest)' },
         },
       ]
 
@@ -93,10 +109,18 @@ describe('artstationHandler', () => {
 
     it('should return feed URL for subdomain form', () => {
       const value = 'https://alice.artstation.com'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.artstation.com/alice.rss',
           hint: { key: 'artstation:portfolio', label: 'Portfolio' },
+        },
+        {
+          uri: 'https://www.artstation.com/artwork.rss',
+          hint: { key: 'artstation:artwork', label: 'Artwork' },
+        },
+        {
+          uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
+          hint: { key: 'artstation:artwork-latest', label: 'Artwork (Latest)' },
         },
       ]
 
@@ -105,10 +129,18 @@ describe('artstationHandler', () => {
 
     it('should return feed URL for subdomain form regardless of subpath', () => {
       const value = 'https://alice.artstation.com/albums/all'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.artstation.com/alice.rss',
           hint: { key: 'artstation:portfolio', label: 'Portfolio' },
+        },
+        {
+          uri: 'https://www.artstation.com/artwork.rss',
+          hint: { key: 'artstation:artwork', label: 'Artwork' },
+        },
+        {
+          uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
+          hint: { key: 'artstation:artwork-latest', label: 'Artwork (Latest)' },
         },
       ]
 

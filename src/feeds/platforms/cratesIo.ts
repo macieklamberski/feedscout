@@ -46,10 +46,15 @@ export const cratesIoHandler: PlatformHandler = {
       return []
     }
 
-    // The feed path takes the crate name in its canonical case and separator, and any other
-    // spelling answers 403, while the page URL accepts both.
+    // The new crates and updates feeds need no value from the page, so every page builds them after
+    // its own feeds. The feed path takes the crate name in its canonical case and separator, and
+    // any other spelling answers 403, while the page URL accepts both.
     if (parsed.kind === 'crate') {
-      return [feeds.getFeedEntry('crates-io:releases', { crate: parsed.crate })]
+      return [
+        feeds.getFeedEntry('crates-io:releases', { crate: parsed.crate }),
+        feeds.getFeedEntry('crates-io:new-crates'),
+        feeds.getFeedEntry('crates-io:updates'),
+      ]
     }
 
     return [feeds.getFeedEntry('crates-io:new-crates'), feeds.getFeedEntry('crates-io:updates')]

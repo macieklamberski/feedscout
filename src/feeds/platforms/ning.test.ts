@@ -98,8 +98,16 @@ describe('ningHandler', () => {
           hint: { key: 'ning:blog', label: 'Blog posts' },
         },
         {
+          uri: 'https://example.com/profiles/blog/feed?promoted=1&xn_auth=no',
+          hint: { key: 'ning:blog-featured', label: 'Featured blog posts' },
+        },
+        {
           uri: 'https://example.com/forum/topic/list?feed=yes&xn_auth=no',
           hint: { key: 'ning:forum', label: 'Forum' },
+        },
+        {
+          uri: 'https://example.com/forum/topic/list?featured=1&feed=yes&xn_auth=no',
+          hint: { key: 'ning:forum-featured', label: 'Featured topics' },
         },
         {
           uri: 'https://example.com/profiles/friend/feed?xn_auth=no',
@@ -166,8 +174,16 @@ describe('ningHandler', () => {
           hint: { key: 'ning:blog', label: 'Blog posts' },
         },
         {
+          uri: 'https://example.ning.com/profiles/blog/feed?promoted=1&xn_auth=no',
+          hint: { key: 'ning:blog-featured', label: 'Featured blog posts' },
+        },
+        {
           uri: 'https://example.ning.com/forum/topic/list?feed=yes&xn_auth=no',
           hint: { key: 'ning:forum', label: 'Forum' },
+        },
+        {
+          uri: 'https://example.ning.com/forum/topic/list?featured=1&feed=yes&xn_auth=no',
+          hint: { key: 'ning:forum-featured', label: 'Featured topics' },
         },
         {
           uri: 'https://example.ning.com/profiles/friend/feed?xn_auth=no',

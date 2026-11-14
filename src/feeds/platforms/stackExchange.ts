@@ -134,20 +134,34 @@ export const stackExchangeHandler: PlatformHandler = {
       return []
     }
 
+    // The newest questions feed needs no value from the page, so every page builds it after its own
+    // feeds.
     if (parsed.kind === 'tag') {
-      return [page.getFeedEntry('stackexchange:tag', { tag: parsed.tag, sort: parsed.sort })]
+      return [
+        page.getFeedEntry('stackexchange:tag', { tag: parsed.tag, sort: parsed.sort }),
+        page.getFeedEntry('stackexchange:newest'),
+      ]
     }
 
     if (parsed.kind === 'question') {
-      return [page.getFeedEntry('stackexchange:question', { questionId: parsed.questionId })]
+      return [
+        page.getFeedEntry('stackexchange:question', { questionId: parsed.questionId }),
+        page.getFeedEntry('stackexchange:newest'),
+      ]
     }
 
     if (parsed.kind === 'user') {
-      return [page.getFeedEntry('stackexchange:user', { userId: parsed.userId })]
+      return [
+        page.getFeedEntry('stackexchange:user', { userId: parsed.userId }),
+        page.getFeedEntry('stackexchange:newest'),
+      ]
     }
 
     if (parsed.kind === 'collective') {
-      return [page.getFeedEntry('stackexchange:collective', { collective: parsed.collective })]
+      return [
+        page.getFeedEntry('stackexchange:collective', { collective: parsed.collective }),
+        page.getFeedEntry('stackexchange:newest'),
+      ]
     }
 
     return [page.getFeedEntry('stackexchange:newest')]

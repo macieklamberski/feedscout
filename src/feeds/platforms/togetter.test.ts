@@ -61,13 +61,14 @@ describe('togetterHandler', () => {
       expect(togetterHandler.resolve('https://example.com/')).toEqual([])
     })
 
-    it('should return the curator and popular feeds for a curator page', () => {
+    it('should return the curator, news and popular feeds for a curator page', () => {
       const value = 'https://togetter.com/id/example'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://togetter.com/rss/id/example',
           hint: { key: 'togetter:curator', label: 'Curator' },
         },
+        { uri: 'https://togetter.com/rss/news', hint: { key: 'togetter:news', label: 'News' } },
         { uri: 'https://togetter.com/rss/hot', hint: { key: 'togetter:hot', label: 'Popular' } },
       ]
 
@@ -86,11 +87,12 @@ describe('togetterHandler', () => {
 
     it('should return the feeds on the apex host for a page on the www host', () => {
       const value = 'https://www.togetter.com/id/example'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://togetter.com/rss/id/example',
           hint: { key: 'togetter:curator', label: 'Curator' },
         },
+        { uri: 'https://togetter.com/rss/news', hint: { key: 'togetter:news', label: 'News' } },
         { uri: 'https://togetter.com/rss/hot', hint: { key: 'togetter:hot', label: 'Popular' } },
       ]
 

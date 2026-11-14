@@ -175,6 +175,10 @@ describe('ucozHandler', () => {
           uri: 'https://example.ucoz.ru/publ/rss',
           hint: { key: 'ucoz:publ', label: 'Articles' },
         },
+        {
+          uri: 'https://example.ucoz.ru/news/rss',
+          hint: { key: 'ucoz:news', label: 'News' },
+        },
       ]
 
       expect(ucozHandler.resolve(value)).toEqual(expected)
@@ -186,6 +190,10 @@ describe('ucozHandler', () => {
         {
           uri: 'https://example.ucoz.ru/forum/rss',
           hint: { key: 'ucoz:forum', label: 'Forum' },
+        },
+        {
+          uri: 'https://example.ucoz.ru/news/rss',
+          hint: { key: 'ucoz:news', label: 'News' },
         },
       ]
 
@@ -202,6 +210,10 @@ describe('ucozHandler', () => {
         {
           uri: 'https://example.at.ua/forum/rss',
           hint: { key: 'ucoz:forum', label: 'Forum' },
+        },
+        {
+          uri: 'https://example.at.ua/news/rss',
+          hint: { key: 'ucoz:news', label: 'News' },
         },
       ]
 
@@ -242,6 +254,10 @@ describe('ucozHandler', () => {
         {
           uri: 'https://example.com/forum/rss',
           hint: { key: 'ucoz:forum', label: 'Forum' },
+        },
+        {
+          uri: 'https://example.com/news/rss',
+          hint: { key: 'ucoz:news', label: 'News' },
         },
       ]
 

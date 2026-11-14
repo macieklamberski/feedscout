@@ -76,15 +76,22 @@ export const edlioHandler: PlatformHandler = {
       return []
     }
 
+    // The school's news needs no value from the page, so every page builds it after its own feeds.
     if (page.kind === 'class') {
-      return [pageFeeds.getFeedEntry('edlio:assignments', { classId: page.classId })]
+      return [
+        pageFeeds.getFeedEntry('edlio:assignments', { classId: page.classId }),
+        pageFeeds.getFeedEntry('edlio:news'),
+      ]
     }
 
     if (!page.categoryId) {
       return [pageFeeds.getFeedEntry('edlio:news')]
     }
 
-    return [pageFeeds.getFeedEntry('edlio:news-category', { categoryId: page.categoryId })]
+    return [
+      pageFeeds.getFeedEntry('edlio:news-category', { categoryId: page.categoryId }),
+      pageFeeds.getFeedEntry('edlio:news'),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,

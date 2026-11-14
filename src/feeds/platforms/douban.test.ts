@@ -73,13 +73,40 @@ describe('doubanHandler', () => {
   })
 
   describe('resolve', () => {
+    const reviewFeeds: Array<DiscoverUriEntry> = [
+      {
+        uri: 'https://www.douban.com/feed/review/book',
+        hint: { key: 'douban:book-reviews', label: 'Book reviews' },
+      },
+      {
+        uri: 'https://www.douban.com/feed/review/movie',
+        hint: { key: 'douban:movie-reviews', label: 'Movie reviews' },
+      },
+      {
+        uri: 'https://www.douban.com/feed/review/music',
+        hint: { key: 'douban:music-reviews', label: 'Music reviews' },
+      },
+      {
+        uri: 'https://www.douban.com/feed/review/drama',
+        hint: { key: 'douban:drama-reviews', label: 'Drama reviews' },
+      },
+      {
+        uri: 'https://www.douban.com/feed/review/movie_new',
+        hint: { key: 'douban:new-movie-reviews', label: 'New movie reviews' },
+      },
+      {
+        uri: 'https://www.douban.com/feed/review/best',
+        hint: { key: 'douban:popular-reviews', label: 'Popular reviews' },
+      },
+    ]
+
     it('should return empty array for a URL outside the platform', () => {
       expect(doubanHandler.resolve('https://example.com/')).toEqual([])
     })
 
     it('should return interests, reviews, and notes feeds for user page', () => {
       const value = 'https://www.douban.com/people/ahbei/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.douban.com/feed/people/ahbei/interests',
           hint: { key: 'douban:interests', label: 'Interests' },
@@ -92,6 +119,7 @@ describe('doubanHandler', () => {
           uri: 'https://www.douban.com/feed/people/ahbei/notes',
           hint: { key: 'douban:notes', label: 'Notes' },
         },
+        ...reviewFeeds,
       ]
 
       expect(doubanHandler.resolve(value)).toEqual(expected)
@@ -99,7 +127,7 @@ describe('doubanHandler', () => {
 
     it('should return interests, reviews, and notes feeds for user page with a capitalized people segment', () => {
       const value = 'https://www.douban.com/People/ahbei/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.douban.com/feed/people/ahbei/interests',
           hint: { key: 'douban:interests', label: 'Interests' },
@@ -112,6 +140,7 @@ describe('doubanHandler', () => {
           uri: 'https://www.douban.com/feed/people/ahbei/notes',
           hint: { key: 'douban:notes', label: 'Notes' },
         },
+        ...reviewFeeds,
       ]
 
       expect(doubanHandler.resolve(value)).toEqual(expected)
@@ -119,11 +148,12 @@ describe('doubanHandler', () => {
 
     it('should return subject reviews feed for subject page', () => {
       const value = 'https://book.douban.com/subject/1084336/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.douban.com/feed/subject/1084336/reviews',
           hint: { key: 'douban:subject-reviews', label: 'Subject reviews' },
         },
+        ...reviewFeeds,
       ]
 
       expect(doubanHandler.resolve(value)).toEqual(expected)
@@ -131,11 +161,12 @@ describe('doubanHandler', () => {
 
     it('should return subject reviews feed for subject page with a capitalized subject segment', () => {
       const value = 'https://book.douban.com/Subject/1084336/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.douban.com/feed/subject/1084336/reviews',
           hint: { key: 'douban:subject-reviews', label: 'Subject reviews' },
         },
+        ...reviewFeeds,
       ]
 
       expect(doubanHandler.resolve(value)).toEqual(expected)
@@ -181,7 +212,7 @@ describe('doubanHandler', () => {
 
     it('should handle user page from subdomain', () => {
       const value = 'https://movie.douban.com/people/ahbei/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.douban.com/feed/people/ahbei/interests',
           hint: { key: 'douban:interests', label: 'Interests' },
@@ -194,6 +225,7 @@ describe('doubanHandler', () => {
           uri: 'https://www.douban.com/feed/people/ahbei/notes',
           hint: { key: 'douban:notes', label: 'Notes' },
         },
+        ...reviewFeeds,
       ]
 
       expect(doubanHandler.resolve(value)).toEqual(expected)
@@ -201,11 +233,12 @@ describe('doubanHandler', () => {
 
     it('should handle subject page from movie subdomain', () => {
       const value = 'https://movie.douban.com/subject/36873464/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.douban.com/feed/subject/36873464/reviews',
           hint: { key: 'douban:subject-reviews', label: 'Subject reviews' },
         },
+        ...reviewFeeds,
       ]
 
       expect(doubanHandler.resolve(value)).toEqual(expected)

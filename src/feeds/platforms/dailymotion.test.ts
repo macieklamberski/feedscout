@@ -155,10 +155,14 @@ describe('dailymotionHandler', () => {
   describe('resolve', () => {
     it('should return RSS feed for user page', () => {
       const value = 'https://www.dailymotion.com/bfmtv'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.dailymotion.com/rss/bfmtv',
           hint: { key: 'dailymotion:videos', label: 'Videos' },
+        },
+        {
+          uri: 'https://www.dailymotion.com/rss/trending',
+          hint: { key: 'dailymotion:trending', label: 'Trending' },
         },
       ]
 
@@ -167,10 +171,14 @@ describe('dailymotionHandler', () => {
 
     it('should return RSS feed for playlist page', () => {
       const value = 'https://www.dailymotion.com/playlist/x7vjjm'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.dailymotion.com/rss/playlist/x7vjjm',
           hint: { key: 'dailymotion:playlist', label: 'Playlist' },
+        },
+        {
+          uri: 'https://www.dailymotion.com/rss/trending',
+          hint: { key: 'dailymotion:trending', label: 'Trending' },
         },
       ]
 
@@ -179,10 +187,14 @@ describe('dailymotionHandler', () => {
 
     it('should return RSS feed for channel page', () => {
       const value = 'https://www.dailymotion.com/channel/news'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.dailymotion.com/rss/channel/news',
           hint: { key: 'dailymotion:channel', label: 'Channel' },
+        },
+        {
+          uri: 'https://www.dailymotion.com/rss/trending',
+          hint: { key: 'dailymotion:trending', label: 'Trending' },
         },
       ]
 
@@ -239,10 +251,14 @@ describe('dailymotionHandler', () => {
 
     it('should return search feed for /search/{query}', () => {
       const value = 'https://www.dailymotion.com/search/cats'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.dailymotion.com/rss/search/cats',
           hint: { key: 'dailymotion:search', label: 'Search' },
+        },
+        {
+          uri: 'https://www.dailymotion.com/rss/trending',
+          hint: { key: 'dailymotion:trending', label: 'Trending' },
         },
       ]
 

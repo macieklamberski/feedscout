@@ -80,12 +80,14 @@ export const myanimelistHandler: PlatformHandler = {
       return []
     }
 
+    // The news and featured articles feeds need no value from the page, so every page builds them
+    // after its own feeds.
     if (parsed.kind === 'news') {
-      return [feeds.getFeedEntry('myanimelist:news')]
+      return [feeds.getFeedEntry('myanimelist:news'), feeds.getFeedEntry('myanimelist:featured')]
     }
 
     if (parsed.kind === 'featured') {
-      return [feeds.getFeedEntry('myanimelist:featured')]
+      return [feeds.getFeedEntry('myanimelist:featured'), feeds.getFeedEntry('myanimelist:news')]
     }
 
     const username = decodeSegment(parsed.username) ?? parsed.username
@@ -96,6 +98,8 @@ export const myanimelistHandler: PlatformHandler = {
       feeds.getFeedEntry('myanimelist:recently-watched', { username }),
       feeds.getFeedEntry('myanimelist:recently-read', { username }),
       feeds.getFeedEntry('myanimelist:blog', { username }),
+      feeds.getFeedEntry('myanimelist:news'),
+      feeds.getFeedEntry('myanimelist:featured'),
     ]
   },
 

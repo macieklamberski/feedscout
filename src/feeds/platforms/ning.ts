@@ -292,14 +292,16 @@ export const ningHandler: PlatformHandler = {
       return []
     }
 
-    // The member, photo, video, event, group, page and notes lists need no value from the page, so
-    // every page builds them after its own feeds.
+    // The featured posts and topics and the member, photo, video, event, group, page and notes
+    // lists need no value from the page, so every page builds them after its own feeds.
     if (parsed.kind === 'topic') {
       return [
         page.getFeedEntry('ning:topic', { topic: parsed.topic }),
         page.getFeedEntry('ning:activity'),
         page.getFeedEntry('ning:blog'),
+        page.getFeedEntry('ning:blog-featured'),
         page.getFeedEntry('ning:forum'),
+        page.getFeedEntry('ning:forum-featured'),
         page.getFeedEntry('ning:members'),
         page.getFeedEntry('ning:members-featured'),
         page.getFeedEntry('ning:photos'),
@@ -317,7 +319,9 @@ export const ningHandler: PlatformHandler = {
     return [
       page.getFeedEntry('ning:activity'),
       page.getFeedEntry('ning:blog'),
+      page.getFeedEntry('ning:blog-featured'),
       page.getFeedEntry('ning:forum'),
+      page.getFeedEntry('ning:forum-featured'),
       page.getFeedEntry('ning:members'),
       page.getFeedEntry('ning:members-featured'),
       page.getFeedEntry('ning:photos'),
