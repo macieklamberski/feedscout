@@ -271,7 +271,7 @@ describe('observableHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the notebooks hint for a user feed', () => {
-      const value = 'https://api.observablehq.com/documents/@chaosalchemist.rss'
+      const value = 'https://api.observablehq.com/documents/@alicedraws.rss'
       const expected: DiscoverUriHint = { key: 'observable:notebooks', label: 'Notebooks' }
 
       expect(observableHandler.getFeedHint?.(value)).toEqual(expected)
@@ -299,32 +299,32 @@ describe('observableHandler', () => {
     })
 
     it('should return the notebooks hint for a user feed over http', () => {
-      const value = 'http://api.observablehq.com/documents/@civicdatadesign.rss'
+      const value = 'http://api.observablehq.com/documents/@bobdata.rss'
       const expected: DiscoverUriHint = { key: 'observable:notebooks', label: 'Notebooks' }
 
       expect(observableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a profile page', () => {
-      const value = 'https://observablehq.com/@chaosalchemist'
+      const value = 'https://observablehq.com/@alicedraws'
 
       expect(observableHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a user feed path on the page host', () => {
-      const value = 'https://observablehq.com/documents/@chaosalchemist.rss'
+      const value = 'https://observablehq.com/documents/@alicedraws.rss'
 
       expect(observableHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a user document without the rss extension', () => {
-      const value = 'https://api.observablehq.com/documents/@chaosalchemist'
+      const value = 'https://api.observablehq.com/documents/@alicedraws'
 
       expect(observableHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/documents/@chaosalchemist.rss'
+      const value = 'https://example.com/documents/@alicedraws.rss'
 
       expect(observableHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -333,11 +333,11 @@ describe('observableHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://api.observablehq.com/documents/@chaosalchemist.rss',
+        'https://api.observablehq.com/documents/@alicedraws.rss',
         { key: 'observable:notebooks', label: 'Notebooks' },
       ],
       [
-        'https://api.observablehq.com/documents/@civicdatadesign.rss',
+        'https://api.observablehq.com/documents/@bobdata.rss',
         { key: 'observable:notebooks', label: 'Notebooks' },
       ],
       [
@@ -345,7 +345,7 @@ describe('observableHandler', () => {
         { key: 'observable:collection', label: 'Collection' },
       ],
       [
-        'https://api.observablehq.com/collection/@rreusser/math.rss',
+        'https://api.observablehq.com/collection/@carolmath/math.rss',
         { key: 'observable:collection', label: 'Collection' },
       ],
       [
