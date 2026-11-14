@@ -68,8 +68,8 @@ export const gcsWebHandler: PlatformHandler = {
     ]
   },
 
-  // The table reads any host under gcs-web.com, so the page parser refuses the apex, which does not
-  // answer, and a nested subdomain, which has no DNS record.
+  // The table reads `www.{site}` as the site, while that host has no DNS record, so the page parser
+  // refuses it.
   getFeedHint: (url) => {
     if (!parseGcsWebUrl(url)) {
       return
