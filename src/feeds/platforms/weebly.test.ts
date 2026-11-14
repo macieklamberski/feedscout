@@ -206,10 +206,10 @@ describe('weeblyHandler', () => {
     })
 
     it('should keep the http scheme of the page', () => {
-      const value = 'http://aeheideman.weebly.com/5'
+      const value = 'http://alice.weebly.com/5'
       const expected = [
         {
-          uri: 'http://aeheideman.weebly.com/5/feed',
+          uri: 'http://alice.weebly.com/5/feed',
           hint: { key: 'weebly:blog', label: 'Blog' },
         },
       ]
@@ -220,66 +220,66 @@ describe('weeblyHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the blog hint for a blog id feed', () => {
-      const value = 'https://bmsavid.weebly.com/1/feed'
+      const value = 'https://example.weebly.com/1/feed'
       const expected: DiscoverUriHint = { key: 'weebly:blog', label: 'Blog' }
 
       expect(weeblyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the blog hint for a blog id feed over http', () => {
-      const value = 'http://aeheideman.weebly.com/5/feed'
+      const value = 'http://alice.weebly.com/5/feed'
       const expected: DiscoverUriHint = { key: 'weebly:blog', label: 'Blog' }
 
       expect(weeblyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the blog hint for a page slug feed', () => {
-      const value = 'https://bmsavid.weebly.com/wish-you-were-here/feed'
+      const value = 'https://example.weebly.com/wish-you-were-here/feed'
       const expected: DiscoverUriHint = { key: 'weebly:blog', label: 'Blog' }
 
       expect(weeblyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the blog hint for the default blog feed', () => {
-      const value = 'https://sounditoutphonics.weebly.com/blog/feed'
+      const value = 'https://dave.weebly.com/blog/feed'
       const expected: DiscoverUriHint = { key: 'weebly:blog', label: 'Blog' }
 
       expect(weeblyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the blog hint for a feed with a capitalised route word', () => {
-      const value = 'https://bmsavid.weebly.com/1/FEED'
+      const value = 'https://example.weebly.com/1/FEED'
       const expected: DiscoverUriHint = { key: 'weebly:blog', label: 'Blog' }
 
       expect(weeblyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a feed path under a robots file', () => {
-      const value = 'https://ondertschuim.weebly.com/robots.txt/feed'
+      const value = 'https://carol.weebly.com/robots.txt/feed'
 
       expect(weeblyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path under a sitemap file', () => {
-      const value = 'https://istanbulservis.weebly.com/sitemap.xml/feed'
+      const value = 'https://bob.weebly.com/sitemap.xml/feed'
 
       expect(weeblyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a blog page', () => {
-      const value = 'https://bmsavid.weebly.com/wish-you-were-here'
+      const value = 'https://example.weebly.com/wish-you-were-here'
 
       expect(weeblyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the root', () => {
-      const value = 'https://bmsavid.weebly.com/'
+      const value = 'https://example.weebly.com/'
 
       expect(weeblyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://blog.bmsavid.weebly.com/1/feed'
+      const value = 'https://blog.example.weebly.com/1/feed'
 
       expect(weeblyHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -299,11 +299,11 @@ describe('weeblyHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://bmsavid.weebly.com/1/feed', { key: 'weebly:blog', label: 'Blog' }],
-      ['http://aeheideman.weebly.com/5/feed', { key: 'weebly:blog', label: 'Blog' }],
-      ['https://bmsavid.weebly.com/wish-you-were-here/feed', { key: 'weebly:blog', label: 'Blog' }],
-      ['https://sounditoutphonics.weebly.com/blog/feed', { key: 'weebly:blog', label: 'Blog' }],
-      ['https://bmsavid.weebly.com/1/FEED', { key: 'weebly:blog', label: 'Blog' }],
+      ['https://example.weebly.com/1/feed', { key: 'weebly:blog', label: 'Blog' }],
+      ['http://alice.weebly.com/5/feed', { key: 'weebly:blog', label: 'Blog' }],
+      ['https://example.weebly.com/wish-you-were-here/feed', { key: 'weebly:blog', label: 'Blog' }],
+      ['https://dave.weebly.com/blog/feed', { key: 'weebly:blog', label: 'Blog' }],
+      ['https://example.weebly.com/1/FEED', { key: 'weebly:blog', label: 'Blog' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
