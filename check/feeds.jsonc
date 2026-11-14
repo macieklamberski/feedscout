@@ -2168,6 +2168,7 @@
     ]
   },
   "zenn": {
+    "zenn:all-posts": "https://zenn.dev/manase/feed?all=1",
     "zenn:posts": "https://zenn.dev/zenn/feed",
     "zenn:publication": "https://zenn.dev/p/team_zenn/feed",
     "zenn:topic": "https://zenn.dev/topics/react/feed",

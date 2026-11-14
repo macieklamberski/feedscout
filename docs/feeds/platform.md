@@ -1442,7 +1442,7 @@ Discovers RSS feeds for Zenn users, topics, publications, and the platform-wide 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `zenn.dev/{user}` | User posts |
+| `zenn.dev/{user}` | User posts · all user posts, with those in publications |
 | `zenn.dev/topics/{topic}` | Topic |
 | `zenn.dev/p/{pub}` | Publication |
 | `zenn.dev` | Trending posts |

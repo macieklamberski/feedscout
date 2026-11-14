@@ -88,6 +88,10 @@ describe('zennHandler', () => {
           uri: 'https://zenn.dev/catnose99/feed',
           hint: { key: 'zenn:posts', label: 'Posts' },
         },
+        {
+          uri: 'https://zenn.dev/catnose99/feed?all=1',
+          hint: { key: 'zenn:all-posts', label: 'All posts' },
+        },
       ]
 
       expect(zennHandler.resolve(value)).toEqual(expected)
@@ -99,6 +103,10 @@ describe('zennHandler', () => {
         {
           uri: 'https://zenn.dev/catnose99/feed',
           hint: { key: 'zenn:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://zenn.dev/catnose99/feed?all=1',
+          hint: { key: 'zenn:all-posts', label: 'All posts' },
         },
       ]
 
@@ -171,9 +179,9 @@ describe('zennHandler', () => {
       expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts hint for a user feed with all posts', () => {
+    it('should return the all posts hint for a user feed with all posts', () => {
       const value = 'https://zenn.dev/alice/feed?all=1'
-      const expected: DiscoverUriHint = { key: 'zenn:posts', label: 'Posts' }
+      const expected: DiscoverUriHint = { key: 'zenn:all-posts', label: 'All posts' }
 
       expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -194,6 +202,12 @@ describe('zennHandler', () => {
 
     it('should return undefined for the page of a topic named feed', () => {
       const value = 'https://zenn.dev/topics/feed'
+
+      expect(zennHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the page of a topic named feed with all posts', () => {
+      const value = 'https://zenn.dev/topics/feed?all=1'
 
       expect(zennHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -227,6 +241,7 @@ describe('zennHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://zenn.dev/feed', { key: 'zenn:trending', label: 'Trending' }],
       ['https://zenn.dev/catnose99/feed', { key: 'zenn:posts', label: 'Posts' }],
+      ['http://zenn.dev/alice/feed?all=1', { key: 'zenn:all-posts', label: 'All posts' }],
       ['https://zenn.dev/topics/react/feed', { key: 'zenn:topic', label: 'Topic' }],
       ['https://zenn.dev/p/team_zenn/feed', { key: 'zenn:publication', label: 'Publication' }],
     ]

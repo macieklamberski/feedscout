@@ -16,10 +16,13 @@ export const hosts = ['zenn.dev', 'www.zenn.dev']
 const topicRegex = /^\/topics\/([^/]+)/i
 const publicationRegex = /^\/p\/([^/]+)/i
 
+// A user's feed lists only the posts on their own page. With `all=1` it adds their posts in
+// publications.
 const feeds = definePlatformFeeds([
   { key: 'zenn:topic', template: 'https://zenn.dev/topics/{topic}/feed' },
   { key: 'zenn:publication', template: 'https://zenn.dev/p/{publication}/feed' },
   { key: 'zenn:posts', template: 'https://zenn.dev/{username}/feed' },
+  { key: 'zenn:all-posts', template: 'https://zenn.dev/{username}/feed?all=1' },
   { key: 'zenn:trending', template: 'https://zenn.dev/feed' },
 ])
 
@@ -77,18 +80,22 @@ export const zennHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'user' || parsed.kind === 'post') {
-      return [feeds.getFeedEntry('zenn:posts', { username: parsed.username })]
+      return [
+        feeds.getFeedEntry('zenn:posts', { username: parsed.username }),
+        feeds.getFeedEntry('zenn:all-posts', { username: parsed.username }),
+      ]
     }
 
     return [feeds.getFeedEntry('zenn:trending')]
   },
 
-  // The posts row reads any first segment as a name, so zenn.dev/topics/feed, the page of a topic
+  // The user rows read any first segment as a name, so zenn.dev/topics/feed, the page of a topic
   // named feed, is refused when the page parser reads it as a topic or publication.
   getFeedHint: (url) => {
     const hint = feeds.getFeedHint(url)
+    const isUserFeed = hint?.key === 'zenn:posts' || hint?.key === 'zenn:all-posts'
 
-    if (hint?.key === 'zenn:posts' && parseZennUrl(url)?.kind !== 'post') {
+    if (isUserFeed && parseZennUrl(url)?.kind !== 'post') {
       return
     }
 
