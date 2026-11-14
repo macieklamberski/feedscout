@@ -17,12 +17,12 @@ const topicRegex = /^\/topics\/([^/]+)(?:\/|$)/i
 const feeds = definePlatformFeeds(
   [
     { key: 'twoday:posts', template: '{scheme}://{host}/index.rdf' },
-    { key: 'twoday:posts', template: '{scheme}://{host}/rss' },
-    { key: 'twoday:posts', template: '{scheme}://{host}/rss.xml' },
+    { key: 'twoday:posts', template: '{scheme}://{host}/rss', isAlias: true },
+    { key: 'twoday:posts', template: '{scheme}://{host}/rss.xml', isAlias: true },
     // The same stories with shorter text, which some skins serve.
     { key: 'twoday:summary', template: '{scheme}://{host}/summary.rdf' },
     { key: 'twoday:topic', template: '{scheme}://{host}/topics/{topic}/index.rdf' },
-    { key: 'twoday:topic', template: '{scheme}://{host}/topics/{topic}/rss' },
+    { key: 'twoday:topic', template: '{scheme}://{host}/topics/{topic}/rss', isAlias: true },
     // Every blog serves its newest comments, and its stories by their newest comment.
     { key: 'twoday:comments', template: '{scheme}://{host}/latestcomments.rdf' },
     { key: 'twoday:commented', template: '{scheme}://{host}/comments.rdf' },
