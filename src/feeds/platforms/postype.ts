@@ -18,7 +18,7 @@ export const hosts = ['postype.com', 'www.postype.com']
 const feeds = definePlatformFeeds(
   [
     { key: 'postype:posts', template: 'https://www.postype.com/@{channel}/rss' },
-    { key: 'postype:posts', template: '{scheme}://{host}/rss' },
+    { key: 'postype:posts', template: '{scheme}://{host}/rss', isAlias: true },
   ],
   { domains },
 )
