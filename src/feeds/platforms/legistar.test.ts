@@ -444,6 +444,13 @@ describe('legistarHandler', () => {
       expect(legistarHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
+    it('should return undefined for a feed on the www host', () => {
+      const value =
+        'https://www.legistar.com/Feed.ashx?M=LD&ID=12345&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D'
+
+      expect(legistarHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for an invalid URL', () => {
       const value = 'not a url'
 
