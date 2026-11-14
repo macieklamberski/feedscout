@@ -1,7 +1,12 @@
 import { parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import {
+  findElement,
+  getBrandDomainRegex,
+  getTenantSubdomain,
+  hasMarker,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, blogPost, customDomainBlog, customDomainLabel, label.
@@ -14,8 +19,7 @@ export type BlogspotPage =
 
 // blogspot.com and Blogger's country domains like .co.uk, .com.br and .de, which still serve
 // feeds. getTenantSubdomain then refuses www and nested subdomains.
-// length: keeps any suffix but a two-letter country code out
-const domains = [/^blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2})$/]
+const domains = [getBrandDomainRegex('blogspot')]
 
 const labelRegex = /^\/search\/label\/([^/]+)/i
 const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
