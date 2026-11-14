@@ -164,21 +164,21 @@ describe('flipboardHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the profile hint for a profile feed', () => {
-      const value = 'https://flipboard.com/@JawadDogar.rss'
+      const value = 'https://flipboard.com/@BobWrites.rss'
       const expected: DiscoverUriHint = { key: 'flipboard:profile', label: 'Profile' }
 
       expect(flipboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the profile hint for a profile feed on the www host', () => {
-      const value = 'https://www.flipboard.com/@HinFahren.rss'
+      const value = 'https://www.flipboard.com/@AliceDrives.rss'
       const expected: DiscoverUriHint = { key: 'flipboard:profile', label: 'Profile' }
 
       expect(flipboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the profile hint for a profile feed over http', () => {
-      const value = 'http://flipboard.com/@HinFahren.rss'
+      const value = 'http://flipboard.com/@AliceDrives.rss'
       const expected: DiscoverUriHint = { key: 'flipboard:profile', label: 'Profile' }
 
       expect(flipboardHandler.getFeedHint?.(value)).toEqual(expected)
@@ -186,7 +186,7 @@ describe('flipboardHandler', () => {
 
     it('should return the magazine hint for a magazine feed', () => {
       const value =
-        'https://flipboard.com/@gobankingrates/the-most-affordable-places-to-retire-that-have-great-weather-too-tjt3fnf55qlfnd84.rss'
+        'https://flipboard.com/@davesaves/the-most-affordable-places-to-retire-that-have-great-weather-too-tjt3fnf55qlfnd84.rss'
       const expected: DiscoverUriHint = { key: 'flipboard:magazine', label: 'Magazine' }
 
       expect(flipboardHandler.getFeedHint?.(value)).toEqual(expected)
@@ -194,7 +194,7 @@ describe('flipboardHandler', () => {
 
     it('should return the magazine hint for a magazine feed with an encoded slug', () => {
       const value =
-        'https://flipboard.com/@andresloren3alr/construcci%C3%B3n-en-espa%C3%B1a-noviembre-23-7c2jllgiz.rss'
+        'https://flipboard.com/@carol3abc/construcci%C3%B3n-en-espa%C3%B1a-noviembre-23-7c2jllgiz.rss'
       const expected: DiscoverUriHint = { key: 'flipboard:magazine', label: 'Magazine' }
 
       expect(flipboardHandler.getFeedHint?.(value)).toEqual(expected)
@@ -215,13 +215,13 @@ describe('flipboardHandler', () => {
     })
 
     it('should return undefined for a profile page', () => {
-      const value = 'https://flipboard.com/@JawadDogar'
+      const value = 'https://flipboard.com/@BobWrites'
 
       expect(flipboardHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a magazine page', () => {
-      const value = 'https://flipboard.com/@hildasterner/pizza-ah07s77kz'
+      const value = 'https://flipboard.com/@erincooks/pizza-ah07s77kz'
 
       expect(flipboardHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -233,13 +233,13 @@ describe('flipboardHandler', () => {
     })
 
     it('should return undefined for an article page', () => {
-      const value = 'https://flipboard.com/@hildasterner/pizza-ah07s77kz/a-lx3ygqVrTUGLodLkg_7x2g'
+      const value = 'https://flipboard.com/@erincooks/pizza-ah07s77kz/a-lx3ygqVrTUGLodLkg_7x2g'
 
       expect(flipboardHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on another host', () => {
-      const value = 'https://example.com/@JawadDogar.rss'
+      const value = 'https://example.com/@BobWrites.rss'
 
       expect(flipboardHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -247,9 +247,9 @@ describe('flipboardHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://flipboard.com/@JawadDogar.rss', { key: 'flipboard:profile', label: 'Profile' }],
+      ['https://flipboard.com/@BobWrites.rss', { key: 'flipboard:profile', label: 'Profile' }],
       [
-        'https://flipboard.com/@andresloren3alr/construcci%C3%B3n-en-espa%C3%B1a-noviembre-23-7c2jllgiz.rss',
+        'https://flipboard.com/@carol3abc/construcci%C3%B3n-en-espa%C3%B1a-noviembre-23-7c2jllgiz.rss',
         { key: 'flipboard:magazine', label: 'Magazine' },
       ],
       [
