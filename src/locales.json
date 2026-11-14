@@ -9,7 +9,8 @@
     "unexpectedStatus": "Unexpected status {{status}} from {{url}}",
     "invalidFeedTemplate": "Not a feed URL template: {{template}}",
     "missingFeedTemplate": "No feed template for {{key}}",
-    "missingFeedHosts": "No hosts for the {{key}} feed"
+    "missingFeedHosts": "No hosts for the {{key}} feed",
+    "missingCanonicalFeedTemplate": "No canonical template above the {{key}} alias"
   },
   "hints": {
     "youtube:all": "All uploads",
