@@ -21,7 +21,7 @@ describe('parseDasaugeUrl', () => {
   })
 
   it('should return home for a profile page', () => {
-    const value = 'https://dasauge.de/-abstrusa'
+    const value = 'https://dasauge.de/-alice'
     const expected: DasaugeUrl = { kind: 'home' }
 
     expect(parseDasaugeUrl(value)).toEqual(expected)
@@ -35,24 +35,24 @@ describe('parseDasaugeUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseDasaugeUrl('https://example.com/-abstrusa/')).toBeUndefined()
+    expect(parseDasaugeUrl('https://example.com/-alice/')).toBeUndefined()
   })
 })
 
 describe('dasaugeHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://dasauge.de/-abstrusa/'],
-      [true, 'https://dasauge.ch/-abstrusa/'],
-      [true, 'https://dasauge.com/-abstrusa/'],
-      [true, 'https://dasauge.es/-abstrusa/'],
-      [true, 'https://dasauge.at/-abstrusa/'],
-      [true, 'https://dasauge.co.uk/-abstrusa/'],
-      [true, 'https://dasauge.fr/-abstrusa/'],
+      [true, 'https://dasauge.de/-alice/'],
+      [true, 'https://dasauge.ch/-alice/'],
+      [true, 'https://dasauge.com/-alice/'],
+      [true, 'https://dasauge.es/-alice/'],
+      [true, 'https://dasauge.at/-alice/'],
+      [true, 'https://dasauge.co.uk/-alice/'],
+      [true, 'https://dasauge.fr/-alice/'],
       [true, 'https://dasauge.de/'],
       [true, 'https://dasauge.de/jobs/'],
-      [false, 'https://www.dasauge.de/-abstrusa/'],
-      [false, 'https://shop.dasauge.de/-abstrusa/'],
+      [false, 'https://www.dasauge.de/-alice/'],
+      [false, 'https://shop.dasauge.de/-alice/'],
     ]
 
     it.each(values)('should return %s for %s', (expected, url) => {
@@ -62,11 +62,11 @@ describe('dasaugeHandler', () => {
 
   describe('resolve', () => {
     it('should return empty array for a URL outside dasauge', () => {
-      expect(dasaugeHandler.resolve('https://example.com/-abstrusa/')).toEqual([])
+      expect(dasaugeHandler.resolve('https://example.com/-alice/')).toEqual([])
     })
 
     it('should return the site-wide feeds on the page host', () => {
-      const value = 'https://dasauge.at/-elmar-theurer'
+      const value = 'https://dasauge.at/-carol-jones'
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://dasauge.at/news/feed', hint: newsHint },
         { uri: 'https://dasauge.at/jobs/feed', hint: jobsHint },
