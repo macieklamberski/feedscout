@@ -167,6 +167,38 @@ describe('openeditionHandler', () => {
       expect(openeditionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the entity hint for the backend.html spelling of one entity', () => {
+      const value =
+        'https://journals.openedition.org/example/backend.html?format=rssdocuments&identity=12345'
+      const expected: DiscoverUriHint = { key: 'openedition:entity', label: 'Entity' }
+
+      expect(openeditionHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the entity hint for the page=backend spelling of one entity', () => {
+      const value =
+        'https://journals.openedition.org/example/?page=backend&format=rssdocuments&identity=12345'
+      const expected: DiscoverUriHint = { key: 'openedition:entity', label: 'Entity' }
+
+      expect(openeditionHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the index entry hint for the backend.html spelling of one index entry', () => {
+      const value =
+        'https://journals.openedition.org/example/backend.html?format=rssdocuments&idcontainer=12345'
+      const expected: DiscoverUriHint = { key: 'openedition:index-entry', label: 'Index entry' }
+
+      expect(openeditionHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the index entry hint for the page=backend spelling of one index entry', () => {
+      const value =
+        'https://journals.openedition.org/example/?page=backend&format=rssdocuments&idcontainer=12345'
+      const expected: DiscoverUriHint = { key: 'openedition:index-entry', label: 'Index entry' }
+
+      expect(openeditionHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the issues hint for the issues feed', () => {
       const value = 'https://journals.openedition.org/example/backend?format=rssnumeros'
       const expected: DiscoverUriHint = { key: 'openedition:issues', label: 'Issues' }
@@ -263,6 +295,14 @@ describe('openeditionHandler', () => {
       ],
       [
         'https://journals.openedition.org/example/backend?class=noticesbiblios&descriptionlength=800&format=rssdocuments&idcontainer=12345',
+        indexEntryHint,
+      ],
+      [
+        'https://journals.openedition.org/example/backend.html?format=rssdocuments&identity=12345',
+        entityHint,
+      ],
+      [
+        'https://journals.openedition.org/example/?page=backend&format=rssdocuments&idcontainer=12345',
         indexEntryHint,
       ],
     ]
