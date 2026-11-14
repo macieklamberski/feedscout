@@ -10,7 +10,11 @@ const hosts = ['promodj.com', 'www.promodj.com']
 
 const feeds = definePlatformFeeds([
   { key: 'promodj:podcast', template: 'https://promodj.com/{username}/podcast.xml' },
-  { key: 'promodj:podcast', template: 'https://promodj.com/{username}/podcast_alt.xml' },
+  {
+    key: 'promodj:podcast',
+    template: 'https://promodj.com/{username}/podcast_alt.xml',
+    isAlias: true,
+  },
   { key: 'promodj:content', template: 'https://promodj.com/{username}/rss.xml' },
   { key: 'promodj:blog', template: 'https://promodj.com/{username}/blog.xml' },
   { key: 'promodj:favorites', template: 'https://promodj.com/{username}/bookmarks.xml' },
