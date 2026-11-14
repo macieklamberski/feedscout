@@ -1,6 +1,6 @@
 import { getPathSegments, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,6 +8,31 @@ export type AtwikiUrl = { kind: 'wiki'; wiki: string }
 
 // Legacy wwwNN.atwiki.jp hosts redirect every wiki path to w.atwiki.jp.
 const hosts = ['w.atwiki.jp']
+
+// The wiki also serves its rss10.xml at /rss, a spelling feeds are stored under but never built.
+const feeds = definePlatformFeeds([
+  {
+    key: 'atwiki:updated-pages',
+    template: 'https://w.atwiki.jp/{wiki}/rss10.xml',
+    format: 'rdf',
+  },
+  {
+    key: 'atwiki:updated-pages',
+    template: 'https://w.atwiki.jp/{wiki}/rss',
+    format: 'rdf',
+    isAlias: true,
+  },
+  {
+    key: 'atwiki:updated-pages',
+    template: 'https://w.atwiki.jp/{wiki}/feed.atom',
+    format: 'atom',
+  },
+  {
+    key: 'atwiki:new-pages',
+    template: 'https://w.atwiki.jp/{wiki}/rss10_new.xml',
+    format: 'rdf',
+  },
+])
 
 export const parseAtwikiUrl = (url: string): AtwikiUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -38,18 +63,11 @@ export const atwikiHandler: PlatformHandler = {
     const { wiki } = parsed
 
     return [
-      {
-        uri: `https://w.atwiki.jp/${wiki}/rss10.xml`,
-        hint: composeHint('atwiki:updated-pages', 'rdf'),
-      },
-      {
-        uri: `https://w.atwiki.jp/${wiki}/feed.atom`,
-        hint: composeHint('atwiki:updated-pages', 'atom'),
-      },
-      {
-        uri: `https://w.atwiki.jp/${wiki}/rss10_new.xml`,
-        hint: composeHint('atwiki:new-pages', 'rdf'),
-      },
+      feeds.getFeedEntry('atwiki:updated-pages', { wiki }, 'rdf'),
+      feeds.getFeedEntry('atwiki:updated-pages', { wiki }, 'atom'),
+      feeds.getFeedEntry('atwiki:new-pages', { wiki }, 'rdf'),
     ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
