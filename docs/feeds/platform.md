@@ -1559,6 +1559,10 @@ Discovers the RSS feed of a Squarespace collection. Detected by the `Server: Squ
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
+| `{host}/{collection}/category/{category}` | Category · collection (RSS) |
+| `{host}/{collection}?category={category}` | Category · collection (RSS) |
+| `{host}/{collection}/tag/{tag}` | Tag · collection (RSS) |
+| `{host}/{collection}?tag={tag}` | Tag · collection (RSS) |
 | `{host}/{collection}` | Collection (RSS) |
 
 > [!NOTE]
