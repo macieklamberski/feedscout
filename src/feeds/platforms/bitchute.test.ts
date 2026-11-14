@@ -89,27 +89,27 @@ describe('bitchuteHandler', () => {
     })
 
     it('should return the channel hint for a channel feed named by a slug', () => {
-      const value = 'https://www.bitchute.com/feeds/rss/channel/clemens/'
+      const value = 'https://www.bitchute.com/feeds/rss/channel/alicechannel/'
       const expected: DiscoverUriHint = { key: 'bitchute:channel', label: 'Channel' }
 
       expect(bitchuteHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the channel hint for a channel feed on the api host', () => {
-      const value = 'https://api.bitchute.com/feeds/rss/channel/sean_last/'
+      const value = 'https://api.bitchute.com/feeds/rss/channel/bob_channel/'
       const expected: DiscoverUriHint = { key: 'bitchute:channel', label: 'Channel' }
 
       expect(bitchuteHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a channel page', () => {
-      const value = 'https://www.bitchute.com/channel/clemens/'
+      const value = 'https://www.bitchute.com/channel/alicechannel/'
 
       expect(bitchuteHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a channel feed path on another host', () => {
-      const value = 'https://example.com/feeds/rss/channel/clemens/'
+      const value = 'https://example.com/feeds/rss/channel/alicechannel/'
 
       expect(bitchuteHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -122,11 +122,11 @@ describe('bitchuteHandler', () => {
         { key: 'bitchute:channel', label: 'Channel' },
       ],
       [
-        'https://www.bitchute.com/feeds/rss/channel/clemens/',
+        'https://www.bitchute.com/feeds/rss/channel/alicechannel/',
         { key: 'bitchute:channel', label: 'Channel' },
       ],
       [
-        'https://api.bitchute.com/feeds/rss/channel/sean_last/',
+        'https://api.bitchute.com/feeds/rss/channel/bob_channel/',
         { key: 'bitchute:channel', label: 'Channel' },
       ],
     ]
