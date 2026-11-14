@@ -2660,7 +2660,7 @@ Discovers the RSS feeds of blogs on SME Blog, the blog platform of the Slovak da
 | `blog.sme.sk/{user}` | Posts |
 | `blog.sme.sk/{user}/{category}/{slug}` | Posts |
 | `blog.sme.sk` | Site |
-| `blog.sme.sk/t/{topic}` | Posts at `blog.sme.sk/t/rss`, since the first segment is read as the blog |
+| `blog.sme.sk/t/{topic}` | Site |
 
 ### Acomics
 
