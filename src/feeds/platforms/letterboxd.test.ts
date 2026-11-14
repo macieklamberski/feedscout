@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { LetterboxdUrl } from './letterboxd.js'
 import { letterboxdHandler, parseLetterboxdUrl } from './letterboxd.js'
 
@@ -123,5 +126,77 @@ describe('letterboxdHandler', () => {
 
       expect(letterboxdHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return empty array for the homepage', () => {
+      const value = 'https://letterboxd.com/'
+      const expected: Array<DiscoverUriEntry> = []
+
+      expect(letterboxdHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the diary hint for a member feed', () => {
+      const value = 'https://letterboxd.com/alice/rss/'
+      const expected: DiscoverUriHint = { key: 'letterboxd:diary', label: 'Diary' }
+
+      expect(letterboxdHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the diary hint for a member feed on the embed host', () => {
+      const value = 'https://embed.letterboxd.com/alice/rss/'
+      const expected: DiscoverUriHint = { key: 'letterboxd:diary', label: 'Diary' }
+
+      expect(letterboxdHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the journal hint for the journal feed', () => {
+      const value = 'https://letterboxd.com/journal/rss/'
+      const expected: DiscoverUriHint = { key: 'letterboxd:journal', label: 'Journal' }
+
+      expect(letterboxdHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a member page', () => {
+      const value = 'https://letterboxd.com/alice/'
+
+      expect(letterboxdHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a member feed on another host', () => {
+      const value = 'https://example.com/alice/rss/'
+
+      expect(letterboxdHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+})
+
+describe('discoverUrisFromPlatform', () => {
+  const diaryHint: DiscoverUriHint = {
+    key: 'letterboxd:diary',
+    label: 'Diary',
+  }
+  const journalHint: DiscoverUriHint = {
+    key: 'letterboxd:journal',
+    label: 'Journal',
+  }
+  const feedUrls: Array<[string, DiscoverUriHint]> = [
+    ['https://letterboxd.com/alice/rss/', diaryHint],
+    ['http://letterboxd.com/alice/rss/', diaryHint],
+    ['https://www.letterboxd.com/alice/rss', diaryHint],
+    ['https://embed.letterboxd.com/alice/rss/', diaryHint],
+    ['https://letterboxd.com/journal/rss/', journalHint],
+    ['http://www.letterboxd.com/journal/rss', journalHint],
+  ]
+
+  it.each(feedUrls)('should return the feed URL as given for %s', async (value, hint) => {
+    const options = {
+      ...defaultPlatformOptions,
+      handlers: [letterboxdHandler],
+      baseUrl: value,
+    }
+    const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 })

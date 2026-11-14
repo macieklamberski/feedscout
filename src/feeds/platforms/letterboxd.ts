@@ -1,12 +1,22 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type LetterboxdUrl = { kind: 'member'; username: string } | { kind: 'journal' }
 
 const hosts = ['letterboxd.com', 'www.letterboxd.com']
+
+const feeds = definePlatformFeeds([
+  { key: 'letterboxd:journal', template: 'https://letterboxd.com/journal/rss/' },
+  { key: 'letterboxd:diary', template: 'https://letterboxd.com/{username}/rss/' },
+  {
+    key: 'letterboxd:diary',
+    template: 'https://embed.letterboxd.com/{username}/rss/',
+    isAlias: true,
+  },
+])
 
 export const parseLetterboxdUrl = (url: string): LetterboxdUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -41,19 +51,11 @@ export const letterboxdHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'journal') {
-      return [
-        {
-          uri: 'https://letterboxd.com/journal/rss/',
-          hint: composeHint('letterboxd:journal'),
-        },
-      ]
+      return [feeds.getFeedEntry('letterboxd:journal')]
     }
 
-    return [
-      {
-        uri: `https://letterboxd.com/${parsed.username}/rss/`,
-        hint: composeHint('letterboxd:diary'),
-      },
-    ]
+    return [feeds.getFeedEntry('letterboxd:diary', { username: parsed.username })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
