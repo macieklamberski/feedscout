@@ -1,6 +1,7 @@
 import { isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
+import { findElement, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -20,6 +21,39 @@ const domains = [
 // A first segment with a dot is an uploaded file or the `.shared` assets, never a blog.
 const blogRegex = /^\/([^/.]+)(?:\/|$)/
 const feedPathRegex = /^\/([^/.]+)\/(?:atom\.xml|index\.rdf|rss\.xml)$/i
+
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'cocolog:posts',
+      template: '{scheme}://{host}/{blog}/atom.xml',
+      format: 'atom',
+    },
+    {
+      key: 'cocolog:posts',
+      template: '{scheme}://{host}/{blog}/index.rdf',
+      format: 'rdf',
+    },
+    {
+      key: 'cocolog:posts',
+      template: '{scheme}://{host}/{blog}/rss.xml',
+      format: 'rss',
+    },
+    // A blog's newest comments, which its skin names `comment-index.rdf` or `comments.xml`.
+    // `resolve` cannot tell which one a blog serves, so it builds both.
+    {
+      key: 'cocolog:comments',
+      template: '{scheme}://{host}/{blog}/comment-index.rdf',
+      format: 'rdf',
+    },
+    {
+      key: 'cocolog:comments',
+      template: '{scheme}://{host}/{blog}/comments.xml',
+      format: 'rss',
+    },
+  ],
+  { domains },
+)
 
 const getCocologPage = (url: string, content: string | undefined): CocologPage | undefined => {
   // A nested label such as app.f.cocolog-nifty.com is a service host, never a blog.
@@ -65,17 +99,30 @@ export const cocologHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getCocologPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const blogUrl = `${new URL(url).origin}/${page.blog}`
+    const params = { blog: page.blog }
 
     return [
-      { uri: `${blogUrl}/atom.xml`, hint: composeHint('cocolog:posts', 'atom') },
-      { uri: `${blogUrl}/index.rdf`, hint: composeHint('cocolog:posts', 'rdf') },
-      { uri: `${blogUrl}/rss.xml`, hint: composeHint('cocolog:posts', 'rss') },
+      pageFeeds.getFeedEntry('cocolog:posts', params, 'atom'),
+      pageFeeds.getFeedEntry('cocolog:posts', params, 'rdf'),
+      pageFeeds.getFeedEntry('cocolog:posts', params, 'rss'),
+      pageFeeds.getFeedEntry('cocolog:comments', params, 'rdf'),
+      pageFeeds.getFeedEntry('cocolog:comments', params, 'rss'),
     ]
+  },
+
+  // A first segment with a dot is an uploaded file or the `.shared` assets, which the table's
+  // `{blog}` placeholder would match.
+  getFeedHint: (url) => {
+    if (!getCocologPage(url, undefined)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }

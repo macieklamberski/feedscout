@@ -266,6 +266,10 @@
     "cnblogs:posts": "https://www.cnblogs.com/vamei/rss"
   },
   "cocolog": {
+    "cocolog:comments": [
+      "https://jrf.cocolog-nifty.com/column/comment-index.rdf",
+      "https://kage3.cocolog-nifty.com/blog/comments.xml"
+    ],
     "cocolog:posts": [
       "http://dolphin-kaji.cocolog-nifty.com/blog/atom.xml",
       "http://dolphin-kaji.cocolog-nifty.com/blog/index.rdf",
