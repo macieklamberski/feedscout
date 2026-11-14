@@ -2975,7 +2975,7 @@ Discovers the RSS 1.0 feed of new products in an Ochanoko Net shop. A shop on a 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{shop}.ocnk.net` | Products (RSS 1.0) |
-| Any page on a custom domain | Products (RSS 1.0) |
+| `{host}` | Products (RSS 1.0) |
 
 ### Blogia
 
