@@ -1,4 +1,3 @@
-import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
@@ -8,18 +7,16 @@ export type TransistorUrl = { kind: 'show'; slug: string }
 export type TransistorPage = TransistorUrl
 
 const domains = ['transistor.fm']
-// The feed host serves every show by path, so it names no show.
-const feedHosts = ['feeds.transistor.fm']
-// The player host serves every show by path, so it names no show.
-const reservedLabels = ['share']
+// Hosts serving every show by path, so they name no show.
+const serviceHosts = ['feeds.transistor.fm', 'share.transistor.fm']
 
 // The show page links its feed, and the feed slug is not always the subdomain.
 const feedSlugRegex = /https:\/\/feeds\.transistor\.fm\/([^/"'?#\s<>&\\]+)/i
 
 export const parseTransistorUrl = (url: string): TransistorUrl | undefined => {
-  const slug = getTenantSubdomain(url, domains, reservedLabels)
+  const slug = getTenantSubdomain(url, domains, serviceHosts)
 
-  if (!slug || isHostOf(url, feedHosts)) {
+  if (!slug) {
     return
   }
 

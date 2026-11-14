@@ -99,9 +99,13 @@ describe('parseTumblrUrl', () => {
     expect(parseTumblrUrl('https://example.com')).toBeUndefined()
   })
 
-  it('should return undefined for a service host', () => {
-    const value = 'https://embed.tumblr.com/embed/post/abc/123'
+  const serviceHosts = [
+    'https://a.tumblr.com/tumblr_abc123.mp3',
+    'https://assets.tumblr.com/post.js',
+    'https://embed.tumblr.com/embed/post/abc/123',
+  ]
 
+  it.each(serviceHosts)('should return undefined for the service host %s', (value) => {
     expect(parseTumblrUrl(value)).toBeUndefined()
   })
 

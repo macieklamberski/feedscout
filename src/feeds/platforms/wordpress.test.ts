@@ -137,7 +137,9 @@ describe('parseWordpressUrl', () => {
   })
 
   const serviceHosts = [
+    'https://jetpack.wordpress.com/jetpack-comment/',
     'https://public-api.wordpress.com/',
+    'https://stats.wordpress.com/b.gif',
     'https://v.wordpress.com/abc123',
     'https://v0.wordpress.com/abc123',
     'https://video.wordpress.com/embed/abc123',
@@ -145,6 +147,13 @@ describe('parseWordpressUrl', () => {
 
   it.each(serviceHosts)('should return undefined for the service host %s', (value) => {
     expect(parseWordpressUrl(value)).toBeUndefined()
+  })
+
+  it('should return the home page for a service label on another domain', () => {
+    const value = 'https://v.edublogs.org/'
+    const expected: WordpressUrl = { kind: 'home' }
+
+    expect(parseWordpressUrl(value)).toEqual(expected)
   })
 
   it('should return undefined for the platform home page', () => {

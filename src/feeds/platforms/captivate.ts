@@ -7,10 +7,10 @@ export type CaptivateUrl = { kind: 'show'; slug: string }
 
 const domains = ['captivate.fm']
 // Hosts serving every show by path, so they name no show.
-const reservedLabels = ['feeds', 'player']
+const serviceHosts = ['feeds.captivate.fm', 'player.captivate.fm', 'podcasts.captivate.fm']
 
 export const parseCaptivateUrl = (url: string): CaptivateUrl | undefined => {
-  const slug = getTenantSubdomain(url, domains, reservedLabels)
+  const slug = getTenantSubdomain(url, domains, serviceHosts)
 
   if (!slug) {
     return

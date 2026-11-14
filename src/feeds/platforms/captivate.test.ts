@@ -24,9 +24,12 @@ describe('parseCaptivateUrl', () => {
     expect(parseCaptivateUrl('https://example.com/')).toBeUndefined()
   })
 
-  it('should return undefined for a service host', () => {
-    const value = 'https://player.captivate.fm/episode/1d2e3f40'
+  const serviceHosts = [
+    'https://player.captivate.fm/episode/1d2e3f40',
+    'https://podcasts.captivate.fm/media/1d2e3f40/episode.mp3',
+  ]
 
+  it.each(serviceHosts)('should return undefined for the service host %s', (value) => {
     expect(parseCaptivateUrl(value)).toBeUndefined()
   })
 })

@@ -600,6 +600,7 @@ describe('getCookieNames', () => {
 
 describe('getTenantSubdomain', () => {
   const domains = ['example.com']
+  const serviceHosts = ['player.example.com']
 
   it('should return the subdomain of a tenant', () => {
     expect(getTenantSubdomain('https://alice.example.com/', domains)).toBe('alice')
@@ -625,23 +626,31 @@ describe('getTenantSubdomain', () => {
     expect(getTenantSubdomain('https://alice.example.org/', domains)).toBeUndefined()
   })
 
-  it('should return undefined for a reserved label', () => {
+  it('should return undefined for a service host', () => {
     const value = 'https://player.example.com/'
 
-    expect(getTenantSubdomain(value, domains, ['player'])).toBeUndefined()
+    expect(getTenantSubdomain(value, domains, serviceHosts)).toBeUndefined()
   })
 
-  it('should return undefined for www beside reserved labels', () => {
+  it('should return undefined for www beside service hosts', () => {
     const value = 'https://www.example.com/'
 
-    expect(getTenantSubdomain(value, domains, ['player'])).toBeUndefined()
+    expect(getTenantSubdomain(value, domains, serviceHosts)).toBeUndefined()
   })
 
-  it('should return a tenant beside reserved labels', () => {
+  it('should return a tenant beside service hosts', () => {
     const value = 'https://alice.example.com/'
     const expected = 'alice'
 
-    expect(getTenantSubdomain(value, domains, ['player'])).toBe(expected)
+    expect(getTenantSubdomain(value, domains, serviceHosts)).toBe(expected)
+  })
+
+  it('should return the label of a service host on another domain', () => {
+    const value = 'https://player.example.org/'
+    const tenantDomains = ['example.com', 'example.org']
+    const expected = 'player'
+
+    expect(getTenantSubdomain(value, tenantDomains, serviceHosts)).toBe(expected)
   })
 
   describe('with a domain pattern', () => {

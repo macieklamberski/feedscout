@@ -23,9 +23,12 @@ describe('parseLibsynUrl', () => {
   })
 
   const serviceHosts = [
+    'https://assets.libsyn.com/images/player.png',
     'https://html5-player.libsyn.com/embed/episode/id/12345/',
+    'https://media.libsyn.com/_static/play/player.swf',
     'https://oembed.libsyn.com/',
     'https://play.libsyn.com/embed/episode/id/12345/',
+    'https://traffic.libsyn.com/show/episode.mp3',
   ]
 
   it.each(serviceHosts)('should return undefined for the service host %s', (value) => {
