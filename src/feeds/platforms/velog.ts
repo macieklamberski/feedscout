@@ -12,9 +12,12 @@ export const hosts = ['velog.io', 'www.velog.io']
 const userRegex = /^\/@([^/]+)/
 
 // v2.velog.io serves the same feed at `/rss/@{username}`, which the `{username}` row reads too.
+// api.velog.io serves the same bytes as v2.velog.io, so its rows only claim.
 const feeds = definePlatformFeeds([
   { key: 'velog:trending', template: 'https://v2.velog.io/rss' },
   { key: 'velog:posts', template: 'https://v2.velog.io/rss/{username}' },
+  { key: 'velog:trending', template: 'https://api.velog.io/rss' },
+  { key: 'velog:posts', template: 'https://api.velog.io/rss/{username}' },
 ])
 
 export const parseVelogUrl = (url: string): VelogUrl | undefined => {

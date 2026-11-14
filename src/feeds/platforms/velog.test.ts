@@ -176,6 +176,20 @@ describe('velogHandler', () => {
       expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the posts hint for a user feed on the api host', () => {
+      const value = 'https://api.velog.io/rss/alice'
+      const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
+
+      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the trending hint for the trending feed on the api host', () => {
+      const value = 'https://api.velog.io/rss'
+      const expected: DiscoverUriHint = { key: 'velog:trending', label: 'Trending' }
+
+      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for a profile page', () => {
       const value = 'https://velog.io/@jay_be'
 
@@ -206,6 +220,8 @@ describe('velogHandler', () => {
       ['https://v2.velog.io/rss/jay_be', { key: 'velog:posts', label: 'Posts' }],
       ['https://v2.velog.io/rss/@minzami1215', { key: 'velog:posts', label: 'Posts' }],
       ['https://v2.velog.io/rss', { key: 'velog:trending', label: 'Trending' }],
+      ['https://api.velog.io/rss/alice', { key: 'velog:posts', label: 'Posts' }],
+      ['https://api.velog.io/rss', { key: 'velog:trending', label: 'Trending' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
