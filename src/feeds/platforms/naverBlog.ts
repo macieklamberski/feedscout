@@ -15,11 +15,17 @@ export const hosts = ['blog.naver.com', 'm.blog.naver.com']
 // RSS 1.0 under `rss=1.0` and Atom under `atom=0.3`. The `.xml` path is the one blog pages link.
 const feeds = definePlatformFeeds([
   { key: 'naver-blog:blog', template: 'https://rss.blog.naver.com/{blogId}.xml', format: 'rss' },
-  { key: 'naver-blog:blog', template: 'https://rss.blog.naver.com/{blogId}', format: 'rss' },
+  {
+    key: 'naver-blog:blog',
+    template: 'https://rss.blog.naver.com/{blogId}',
+    format: 'rss',
+    isAlias: true,
+  },
   {
     key: 'naver-blog:blog',
     template: 'https://rss.blog.naver.com/rss/blogRss.nhn?blogId={blogId}',
     format: 'rss',
+    isAlias: true,
   },
   {
     key: 'naver-blog:blog',
@@ -30,11 +36,13 @@ const feeds = definePlatformFeeds([
     key: 'naver-blog:blog',
     template: 'https://rss.blog.naver.com/{blogId}?rss=1.0',
     format: 'rdf',
+    isAlias: true,
   },
   {
     key: 'naver-blog:blog',
     template: 'https://rss.blog.naver.com/rss/blogRss.nhn?blogId={blogId}&rss=1.0',
     format: 'rdf',
+    isAlias: true,
   },
   {
     key: 'naver-blog:blog',
@@ -45,11 +53,13 @@ const feeds = definePlatformFeeds([
     key: 'naver-blog:blog',
     template: 'https://rss.blog.naver.com/{blogId}?atom=0.3',
     format: 'atom',
+    isAlias: true,
   },
   {
     key: 'naver-blog:blog',
     template: 'https://rss.blog.naver.com/rss/blogRss.nhn?atom=0.3&blogId={blogId}',
     format: 'atom',
+    isAlias: true,
   },
 ])
 
