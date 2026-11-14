@@ -104,7 +104,7 @@ export const chambermasterHandler: PlatformHandler = {
     const parsed = parseChambermasterUrl(url)
     const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed || !pageFeeds || isSubdomainOf(url, domains)) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
