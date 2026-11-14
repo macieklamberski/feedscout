@@ -26,7 +26,11 @@ const feeds = definePlatformFeeds([
   { key: 'github-gist:starred', template: 'https://gist.github.com/{username}/starred.atom' },
   { key: 'github-gist:forks', template: 'https://gist.github.com/{username}/forked.atom' },
   { key: 'github-gist:gists', template: 'https://gist.github.com/{username}.atom' },
-  { key: 'github-gist:gists', template: 'https://gist.github.com/{username}/forks.atom' },
+  {
+    key: 'github-gist:gists',
+    template: 'https://gist.github.com/{username}/forks.atom',
+    isAlias: true,
+  },
 ])
 
 // A gist page, /{username}/{gist-id}, and the /public and /secret listings belong to the
