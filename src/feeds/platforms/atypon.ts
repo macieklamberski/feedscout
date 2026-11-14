@@ -35,9 +35,18 @@ const feeds = definePlatformFeeds(
     {
       key: 'atypon:journal',
       template: '{scheme}://{host}/action/showFeed/feed?type=etoc&jc={code}',
+      isAlias: true,
     },
-    { key: 'atypon:journal', template: 'https://www.tandfonline.com/feed/rss/{code}' },
-    { key: 'atypon:journal', template: 'https://onlinelibrary.wiley.com/feed/{code}/most-recent' },
+    {
+      key: 'atypon:journal',
+      template: 'https://www.tandfonline.com/feed/rss/{code}',
+      isAlias: true,
+    },
+    {
+      key: 'atypon:journal',
+      template: 'https://onlinelibrary.wiley.com/feed/{code}/most-recent',
+      isAlias: true,
+    },
     {
       key: 'atypon:most-cited',
       template: 'https://onlinelibrary.wiley.com/feed/{code}/most-cited',
@@ -46,6 +55,7 @@ const feeds = definePlatformFeeds(
       key: 'atypon:most-cited',
       template:
         'https://onlinelibrary.wiley.com/action/showMostCitedArticlesFeed?journalCode={code}',
+      isAlias: true,
     },
     {
       key: 'atypon:ahead-of-print',
@@ -54,6 +64,7 @@ const feeds = definePlatformFeeds(
     {
       key: 'atypon:ahead-of-print',
       template: '{scheme}://{host}/action/showFeed/feed?type=axatoc&jc={code}',
+      isAlias: true,
     },
     // A saved search or a topic feed names its query in values no page URL gives.
     {
@@ -63,6 +74,7 @@ const feeds = definePlatformFeeds(
     {
       key: 'atypon:search',
       template: '{scheme}://{host}/action/showFeed/feed?type=search&query={query}',
+      isAlias: true,
     },
     {
       key: 'atypon:topic',
