@@ -2745,12 +2745,12 @@ Discovers RSS and Atom feeds for blogs on `*.hautetfort.com`, `*.blogspirit.com`
 
 ### uCoz
 
-Discovers the module and forum feeds of a uCoz site. Covers sites on the uCoz domains, such as `*.ucoz.ru`, `*.at.ua` and `*.narod.ru`, and custom domains through the `{n}{site}uCoz` cookie every uCoz page sets.
+Discovers the module and forum feeds of a uCoz site. Covers sites on uCoz's own domains, such as `{site}.ucoz.ru`, and every other domain through the `{n}{site}uCoz` cookie every uCoz page sets, uCoz's free domains such as `at.ua` and `narod.ru` included.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/{module}/…` | Module (RSS) for `news`, `publ`, `load`, `photo`, `blog`, `dir`, `board`, `stuff` and `forum` |
-| `{site}/forum/{section}…` | Forum section · forum (RSS) |
+| `{host}/{module}/…` | Module (RSS) for `news`, `publ`, `load`, `photo`, `blog`, `dir`, `board`, `stuff` and `forum` |
+| `{host}/forum/{section}…` | Forum section · forum (RSS) |
 | Any other page | News (RSS) |
 
 > [!NOTE]
