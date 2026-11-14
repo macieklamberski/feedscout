@@ -1592,6 +1592,7 @@
     "snac:posts": "https://comam.es/snac/grunfink.rss"
   },
   "soundcloud": {
+    "soundcloud:playlist": "https://feeds.soundcloud.com/playlists/soundcloud:sets:90883409/sounds.rss",
     "soundcloud:tracks": "https://feeds.soundcloud.com/users/soundcloud:users:1613713/sounds.rss"
   },
   "soundon": {
