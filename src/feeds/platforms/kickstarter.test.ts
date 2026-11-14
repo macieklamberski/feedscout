@@ -203,30 +203,24 @@ describe('kickstarterHandler', () => {
 })
 
 describe('discoverUrisFromPlatform', () => {
-  const values: Array<[string, string, string]> = [
-    [
-      'https://www.kickstarter.com/projects/alice/example/posts.atom',
-      'kickstarter:updates',
-      'Updates',
-    ],
-    ['https://kickstarter.com/projects/alice/example/posts.atom', 'kickstarter:updates', 'Updates'],
-    [
-      'http://www.kickstarter.com/projects/alice/example/posts.atom',
-      'kickstarter:updates',
-      'Updates',
-    ],
-    ['https://www.kickstarter.com/projects/feed.atom', 'kickstarter:projects', 'Projects'],
-    ['https://kickstarter.com/projects/feed.atom', 'kickstarter:projects', 'Projects'],
-    ['http://www.kickstarter.com/projects/feed.atom', 'kickstarter:projects', 'Projects'],
+  const updatesHint: DiscoverUriHint = { key: 'kickstarter:updates', label: 'Updates' }
+  const projectsHint: DiscoverUriHint = { key: 'kickstarter:projects', label: 'Projects' }
+  const values: Array<[string, DiscoverUriHint]> = [
+    ['https://www.kickstarter.com/projects/alice/example/posts.atom', updatesHint],
+    ['https://kickstarter.com/projects/alice/example/posts.atom', updatesHint],
+    ['http://www.kickstarter.com/projects/alice/example/posts.atom', updatesHint],
+    ['https://www.kickstarter.com/projects/feed.atom', projectsHint],
+    ['https://kickstarter.com/projects/feed.atom', projectsHint],
+    ['http://www.kickstarter.com/projects/feed.atom', projectsHint],
   ]
 
-  it.each(values)('should return %s itself as %s', async (value, key, label) => {
+  it.each(values)('should return %s itself', async (value, hint) => {
     const options = {
       ...defaultPlatformOptions,
       handlers: [kickstarterHandler],
       baseUrl: value,
     }
-    const expected: Array<DiscoverUriEntry> = [{ uri: value, hint: { key, label } }]
+    const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
