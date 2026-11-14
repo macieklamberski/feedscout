@@ -748,13 +748,28 @@
     "hubzilla:channel": "https://zotum.net/feed/hub"
   },
   "huffduffer": {
+    "huffduffer:collective": [
+      "https://huffduffer.com/iamdanw/collective/rss",
+      "https://huffduffer.com/iamdanw/collective/atom",
+      "https://huffduffer.com/iamdanw/collective/json"
+    ],
     "huffduffer:huffduffs": "https://huffduffer.com/wjt/rss",
     "huffduffer:new": [
       "https://huffduffer.com/new/rss",
       "https://huffduffer.com/new/atom",
       "https://huffduffer.com/new/json"
     ],
-    "huffduffer:related": "https://huffduffer.com/robby/56876/related/rss"
+    "huffduffer:popular": [
+      "https://huffduffer.com/popular/rss",
+      "https://huffduffer.com/popular/atom",
+      "https://huffduffer.com/popular/json"
+    ],
+    "huffduffer:related": "https://huffduffer.com/robby/56876/related/rss",
+    "huffduffer:search": [
+      "https://huffduffer.com/search/rss?q=Edward+Dutton",
+      "https://huffduffer.com/search/atom?q=Edward+Dutton",
+      "https://huffduffer.com/search/json?q=podcast"
+    ]
   },
   "insanejournal": {
     "insanejournal:posts": [
