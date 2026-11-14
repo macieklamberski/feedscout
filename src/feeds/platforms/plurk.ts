@@ -6,17 +6,15 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 // Generic covers post, user, userPath (guess, html).
 // Handler needed for: mobile, mobilePost.
 
-export type PlurkUrl =
-  | { kind: 'post'; postId: string }
-  | { kind: 'user'; username: string }
-  | { kind: 'page' }
+export type PlurkUrl = { kind: 'post'; postId: string } | { kind: 'user'; username: string }
 
 const hosts = ['plurk.com', 'www.plurk.com']
 
 const feeds = definePlatformFeeds([
   { key: 'plurk:responses', template: 'https://www.plurk.com/p/{postId}.xml' },
-  { key: 'plurk:plurks', template: 'https://www.plurk.com/user/{username}.xml' },
+  // A user page links this spelling, and the feed names the `/user/` one as its self link.
   { key: 'plurk:plurks', template: 'https://www.plurk.com/{username}.xml' },
+  { key: 'plurk:plurks', template: 'https://www.plurk.com/user/{username}.xml', isAlias: true },
 ])
 
 export const parsePlurkUrl = (url: string): PlurkUrl | undefined => {
@@ -31,7 +29,7 @@ export const parsePlurkUrl = (url: string): PlurkUrl | undefined => {
 
   if (isAnyOf(route, 'p')) {
     if (!value) {
-      return { kind: 'page' }
+      return
     }
 
     return { kind: 'post', postId: value }
@@ -41,7 +39,7 @@ export const parsePlurkUrl = (url: string): PlurkUrl | undefined => {
 
   // Plurk names carry no dots, so a dotted segment such as robots.txt is a file of the site.
   if (!username || username.includes('.')) {
-    return { kind: 'page' }
+    return
   }
 
   return { kind: 'user', username }
@@ -63,11 +61,7 @@ export const plurkHandler: PlatformHandler = {
       return [feeds.getFeedEntry('plurk:responses', { postId: parsed.postId })]
     }
 
-    if (parsed.kind === 'user') {
-      return [feeds.getFeedEntry('plurk:plurks', { username: parsed.username })]
-    }
-
-    return []
+    return [feeds.getFeedEntry('plurk:plurks', { username: parsed.username })]
   },
 
   getFeedHint: feeds.getFeedHint,
