@@ -140,7 +140,7 @@ describe('acastHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the podcast hint for a show feed by slug', () => {
-      const value = 'https://feeds.acast.com/public/shows/the-mariners-mirror-podcast'
+      const value = 'https://feeds.acast.com/public/shows/bob-sea-podcast'
       const expected: DiscoverUriHint = { key: 'acast:podcast', label: 'Podcast' }
 
       expect(acastHandler.getFeedHint?.(value)).toEqual(expected)
@@ -161,14 +161,14 @@ describe('acastHandler', () => {
     })
 
     it('should return the podcast hint for a show feed over http with a trailing slash', () => {
-      const value = 'http://feeds.acast.com/public/shows/thetraveldiaries/'
+      const value = 'http://feeds.acast.com/public/shows/alicetravels/'
       const expected: DiscoverUriHint = { key: 'acast:podcast', label: 'Podcast' }
 
       expect(acastHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a show page', () => {
-      const value = 'https://shows.acast.com/the-mariners-mirror-podcast'
+      const value = 'https://shows.acast.com/bob-sea-podcast'
 
       expect(acastHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -180,7 +180,7 @@ describe('acastHandler', () => {
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/public/shows/thetraveldiaries'
+      const value = 'https://example.com/public/shows/alicetravels'
 
       expect(acastHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -189,11 +189,11 @@ describe('acastHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://feeds.acast.com/public/shows/the-mariners-mirror-podcast',
+        'https://feeds.acast.com/public/shows/bob-sea-podcast',
         { key: 'acast:podcast', label: 'Podcast' },
       ],
       [
-        'https://feeds.acast.com/public/shows/thetraveldiaries',
+        'https://feeds.acast.com/public/shows/alicetravels',
         { key: 'acast:podcast', label: 'Podcast' },
       ],
       [
