@@ -1431,9 +1431,9 @@
   },
   "qiita": {
     "qiita:organization": "https://qiita.com/organizations/qiita-inc/activities.atom",
-    "qiita:popular": "https://qiita.com/popular-items/feed.atom",
-    "qiita:posts": "https://qiita.com/Qiita/feed.atom",
-    "qiita:tag": "https://qiita.com/tags/javascript/feed.atom",
+    "qiita:popular": "https://qiita.com/popular-items/feed",
+    "qiita:posts": "https://qiita.com/Qiita/feed",
+    "qiita:tag": "https://qiita.com/tags/javascript/feed",
     "qiita:zine": "https://qiita.com/official-columns/feed/"
   },
   "rakutenBlog": {
