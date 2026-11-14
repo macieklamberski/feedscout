@@ -309,14 +309,14 @@ describe('nebulaHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the videos hint for a channel feed', () => {
-      const value = 'https://rss.nebula.app/video/channels/royal-ocean-film-society.rss'
+      const value = 'https://rss.nebula.app/video/channels/alice-film-club.rss'
       const expected: DiscoverUriHint = { key: 'nebula:videos', label: 'Videos' }
 
       expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the videos plus hint for a channel Plus feed', () => {
-      const value = 'https://rss.nebula.app/video/channels/extremities.rss?plus=true'
+      const value = 'https://rss.nebula.app/video/channels/bob-explores.rss?plus=true'
       const expected: DiscoverUriHint = { key: 'nebula:videos-plus', label: 'Videos (Plus)' }
 
       expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
@@ -368,13 +368,13 @@ describe('nebulaHandler', () => {
     })
 
     it('should return undefined for a channel page', () => {
-      const value = 'https://nebula.tv/royal-ocean-film-society'
+      const value = 'https://nebula.tv/alice-film-club'
 
       expect(nebulaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a channel feed path on nebula.tv', () => {
-      const value = 'https://nebula.tv/video/channels/extremities.rss'
+      const value = 'https://nebula.tv/video/channels/bob-explores.rss'
 
       expect(nebulaHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -383,11 +383,11 @@ describe('nebulaHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://rss.nebula.app/video/channels/royal-ocean-film-society.rss',
+        'https://rss.nebula.app/video/channels/alice-film-club.rss',
         { key: 'nebula:videos', label: 'Videos' },
       ],
       [
-        'https://rss.nebula.app/video/channels/extremities.rss?plus=true',
+        'https://rss.nebula.app/video/channels/bob-explores.rss?plus=true',
         { key: 'nebula:videos-plus', label: 'Videos (Plus)' },
       ],
       [
