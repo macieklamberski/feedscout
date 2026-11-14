@@ -50,6 +50,16 @@ const wwwTenantFeeds = definePlatformFeeds(wwwTenantTemplates, { isWwwTenant: tr
 
 const wwwStrippedFeeds = definePlatformFeeds(wwwTenantTemplates)
 
+const wwwPrefixFeeds = definePlatformFeeds(wwwTenantTemplates, { isWwwTenantPrefix: true })
+
+const wwwPrefixDomainFeeds = definePlatformFeeds(
+  [
+    { key: 'example:blog', template: '{scheme}://{username}.{domain}/feed' },
+    { key: 'example:site', template: 'https://{host}/feeds/site' },
+  ],
+  { domains: ['example.net'], isWwwTenantPrefix: true },
+)
+
 const domainPatternTemplates = [
   { key: 'example:blog', template: '{scheme}://{username}.{domain}/feed' },
   { key: 'example:site', template: 'https://{host}/feeds/site' },
@@ -494,6 +504,56 @@ describe('definePlatformFeeds', () => {
       const value = 'https://www.alice.example.org/feed'
 
       expect(wwwStrippedFeeds.getFeedHint(value)).toBeUndefined()
+    })
+
+    it('should return the key of a feed on a tenant host with www with isWwwTenantPrefix', () => {
+      const value = 'https://www.alice.example.org/feed'
+      const expected = 'example:journal'
+      const hint = wwwPrefixFeeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return undefined for a tenant named www with isWwwTenantPrefix', () => {
+      const value = 'https://www.example.org/feed'
+
+      expect(wwwPrefixFeeds.getFeedHint(value)).toBeUndefined()
+    })
+
+    it('should return the key of an apex row for a www host with isWwwTenantPrefix', () => {
+      const value = 'https://www.example.org/rss'
+      const expected = 'example:site'
+      const hint = wwwPrefixFeeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return undefined for a feed on a tenant host with two www with isWwwTenantPrefix', () => {
+      const value = 'https://www.www.alice.example.org/feed'
+
+      expect(wwwPrefixFeeds.getFeedHint(value)).toBeUndefined()
+    })
+
+    it('should return the key of a feed on a tenant with www of a domain with isWwwTenantPrefix', () => {
+      const value = 'https://www.alice.example.net/feed'
+      const expected = 'example:blog'
+      const hint = wwwPrefixDomainFeeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed on a host with www of a domain with isWwwTenantPrefix', () => {
+      const value = 'https://www.meta.example.net/feeds/site'
+      const expected = 'example:site'
+      const hint = wwwPrefixDomainFeeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return undefined for a feed on www of a domain with isWwwTenantPrefix', () => {
+      const value = 'https://www.example.net/feeds/site'
+
+      expect(wwwPrefixDomainFeeds.getFeedHint(value)).toBeUndefined()
     })
 
     it('should return the key of a feed with a doubled slash after the host', () => {
