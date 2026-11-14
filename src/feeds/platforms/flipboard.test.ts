@@ -186,7 +186,7 @@ describe('flipboardHandler', () => {
 
     it('should return the magazine hint for a magazine feed', () => {
       const value =
-        'https://flipboard.com/@davesaves/the-most-affordable-places-to-retire-that-have-great-weather-too-tjt3fnf55qlfnd84.rss'
+        'https://flipboard.com/@davesaves/quiet-coastal-towns-worth-a-long-weekend-m7q2xk9vd4rt8bn3.rss'
       const expected: DiscoverUriHint = { key: 'flipboard:magazine', label: 'Magazine' }
 
       expect(flipboardHandler.getFeedHint?.(value)).toEqual(expected)
@@ -194,7 +194,7 @@ describe('flipboardHandler', () => {
 
     it('should return the magazine hint for a magazine feed with an encoded slug', () => {
       const value =
-        'https://flipboard.com/@carol3abc/construcci%C3%B3n-en-espa%C3%B1a-noviembre-23-7c2jllgiz.rss'
+        'https://flipboard.com/@carol3abc/cocina-espa%C3%B1ola-de-invierno-q4v8kz2mw.rss'
       const expected: DiscoverUriHint = { key: 'flipboard:magazine', label: 'Magazine' }
 
       expect(flipboardHandler.getFeedHint?.(value)).toEqual(expected)
@@ -221,7 +221,7 @@ describe('flipboardHandler', () => {
     })
 
     it('should return undefined for a magazine page', () => {
-      const value = 'https://flipboard.com/@erincooks/pizza-ah07s77kz'
+      const value = 'https://flipboard.com/@erincooks/sourdough-k3w8q2xvr'
 
       expect(flipboardHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -233,7 +233,7 @@ describe('flipboardHandler', () => {
     })
 
     it('should return undefined for an article page', () => {
-      const value = 'https://flipboard.com/@erincooks/pizza-ah07s77kz/a-lx3ygqVrTUGLodLkg_7x2g'
+      const value = 'https://flipboard.com/@erincooks/sourdough-k3w8q2xvr/a-lx3ygqVrTUGLodLkg_7x2g'
 
       expect(flipboardHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -249,7 +249,7 @@ describe('flipboardHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://flipboard.com/@BobWrites.rss', { key: 'flipboard:profile', label: 'Profile' }],
       [
-        'https://flipboard.com/@carol3abc/construcci%C3%B3n-en-espa%C3%B1a-noviembre-23-7c2jllgiz.rss',
+        'https://flipboard.com/@carol3abc/cocina-espa%C3%B1ola-de-invierno-q4v8kz2mw.rss',
         { key: 'flipboard:magazine', label: 'Magazine' },
       ],
       [
