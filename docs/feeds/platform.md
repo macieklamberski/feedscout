@@ -2991,8 +2991,8 @@ Discovers RSS and Atom feeds for Parsiblog blogs. Parsiblog serves no HTTPS, so 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.parsiblog.com` | Posts (RSS + Atom) |
-| `*.parsiblog.ir` | Posts (RSS + Atom), on the .com host |
+| `{blog}.parsiblog.com` | Posts (RSS + Atom) |
+| `{blog}.parsiblog.ir` | Posts (RSS + Atom), on the .com host |
 
 ### Blogalia
 
