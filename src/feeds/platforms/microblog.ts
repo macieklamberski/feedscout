@@ -1,7 +1,7 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers archive, blog, category, photos, replies.
@@ -17,6 +17,43 @@ export const domains = ['micro.blog']
 const categoryRegex = /^\/categories\/([^/]+)/i
 const archiveRegex = /^\/archive(?:\/|$)/i
 const photosRegex = /^\/photos(?:\/|$)/i
+
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'microblog:category',
+      template: '{scheme}://{host}/categories/{category}/feed.xml',
+      format: 'rss',
+    },
+    {
+      key: 'microblog:category',
+      template: '{scheme}://{host}/categories/{category}/feed.json',
+      format: 'json',
+    },
+    { key: 'microblog:archive', template: '{scheme}://{host}/archive/index.json' },
+    { key: 'microblog:photos', template: '{scheme}://{host}/photos/index.json' },
+    { key: 'microblog:posts', template: '{scheme}://{host}/feed.xml', format: 'rss' },
+    { key: 'microblog:posts', template: '{scheme}://{host}/feed.json', format: 'json' },
+    // replies.xml redirects to feed.xml, so a stored one is the posts feed.
+    {
+      key: 'microblog:posts',
+      template: '{scheme}://{host}/replies.xml',
+      format: 'rss',
+      isAlias: true,
+    },
+    {
+      key: 'microblog:podcast',
+      template: '{scheme}://{host}/podcast.xml',
+      format: 'rss',
+    },
+    {
+      key: 'microblog:podcast',
+      template: '{scheme}://{host}/podcast.json',
+      format: 'json',
+    },
+  ],
+  { domains },
+)
 
 export const parseMicroblogUrl = (url: string): MicroblogUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -51,40 +88,52 @@ export const microblogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseMicroblogUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.kind === 'category') {
-      const { category } = parsed
+      const params = { category: parsed.category }
 
-      uris.push({
-        uri: `${origin}/categories/${category}/feed.xml`,
-        hint: composeHint('microblog:category', 'rss'),
-      })
-      uris.push({
-        uri: `${origin}/categories/${category}/feed.json`,
-        hint: composeHint('microblog:category', 'json'),
-      })
+      return [
+        page.getFeedEntry('microblog:category', params, 'rss'),
+        page.getFeedEntry('microblog:category', params, 'json'),
+        page.getFeedEntry('microblog:posts', {}, 'rss'),
+        page.getFeedEntry('microblog:posts', {}, 'json'),
+        page.getFeedEntry('microblog:podcast', {}, 'rss'),
+        page.getFeedEntry('microblog:podcast', {}, 'json'),
+      ]
     }
 
     if (parsed.kind === 'archive') {
-      uris.push({ uri: `${origin}/archive/index.json`, hint: composeHint('microblog:archive') })
+      return [
+        page.getFeedEntry('microblog:archive'),
+        page.getFeedEntry('microblog:posts', {}, 'rss'),
+        page.getFeedEntry('microblog:posts', {}, 'json'),
+        page.getFeedEntry('microblog:podcast', {}, 'rss'),
+        page.getFeedEntry('microblog:podcast', {}, 'json'),
+      ]
     }
 
     if (parsed.kind === 'photos') {
-      uris.push({ uri: `${origin}/photos/index.json`, hint: composeHint('microblog:photos') })
+      return [
+        page.getFeedEntry('microblog:photos'),
+        page.getFeedEntry('microblog:posts', {}, 'rss'),
+        page.getFeedEntry('microblog:posts', {}, 'json'),
+        page.getFeedEntry('microblog:podcast', {}, 'rss'),
+        page.getFeedEntry('microblog:podcast', {}, 'json'),
+      ]
     }
 
-    uris.push({ uri: `${origin}/feed.xml`, hint: composeHint('microblog:posts', 'rss') })
-    uris.push({ uri: `${origin}/feed.json`, hint: composeHint('microblog:posts', 'json') })
-    uris.push({ uri: `${origin}/podcast.xml`, hint: composeHint('microblog:podcast', 'rss') })
-    uris.push({ uri: `${origin}/podcast.json`, hint: composeHint('microblog:podcast', 'json') })
-
-    return uris
+    return [
+      page.getFeedEntry('microblog:posts', {}, 'rss'),
+      page.getFeedEntry('microblog:posts', {}, 'json'),
+      page.getFeedEntry('microblog:podcast', {}, 'rss'),
+      page.getFeedEntry('microblog:podcast', {}, 'json'),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

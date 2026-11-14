@@ -1161,10 +1161,10 @@ Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including ca
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.micro.blog` | Posts (RSS + JSON) · podcast (RSS + JSON<sup>†</sup>) |
-| `*.micro.blog/categories/{slug}` | Category (RSS + JSON), plus the feeds above |
-| `*.micro.blog/archive` | Archive<sup>†</sup>, plus the feeds above |
-| `*.micro.blog/photos` | Photos<sup>†</sup>, plus the feeds above |
+| `{blog}.micro.blog` | Posts (RSS + JSON) · podcast (RSS + JSON<sup>†</sup>) |
+| `{blog}.micro.blog/categories/{slug}` | Category (RSS + JSON), plus the feeds above |
+| `{blog}.micro.blog/archive` | Archive<sup>†</sup>, plus the feeds above |
+| `{blog}.micro.blog/photos` | Photos<sup>†</sup>, plus the feeds above |
 
 <sup>†</sup> *Found only by the Platform method.*
 

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { MicroblogUrl } from './microblog.js'
 import { microblogHandler, parseMicroblogUrl } from './microblog.js'
 
@@ -68,6 +70,20 @@ describe('parseMicroblogUrl', () => {
 })
 
 describe('microblogHandler', () => {
+  describe('match', () => {
+    it('should match a blog page', () => {
+      const value = 'https://alice.micro.blog/'
+
+      expect(microblogHandler.match(value)).toBe(true)
+    })
+
+    it('should not match the micro.blog apex', () => {
+      const value = 'https://micro.blog/alice'
+
+      expect(microblogHandler.match(value)).toBe(false)
+    })
+  })
+
   describe('resolve', () => {
     it('should return empty array for a URL outside Micro.blog', () => {
       expect(microblogHandler.resolve('https://example.com/')).toEqual([])
@@ -363,6 +379,196 @@ describe('microblogHandler', () => {
       ]
 
       expect(microblogHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the feeds under the page scheme for an http blog page', () => {
+      const value = 'http://alice.micro.blog/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://alice.micro.blog/feed.xml',
+          hint: { key: 'microblog:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'http://alice.micro.blog/feed.json',
+          hint: { key: 'microblog:posts', label: 'Posts', format: 'json' },
+        },
+        {
+          uri: 'http://alice.micro.blog/podcast.xml',
+          hint: { key: 'microblog:podcast', label: 'Podcast', format: 'rss' },
+        },
+        {
+          uri: 'http://alice.micro.blog/podcast.json',
+          hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
+        },
+      ]
+
+      expect(microblogHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the posts key for an RSS feed', () => {
+      const value = 'https://alice.micro.blog/feed.xml'
+      const expected: DiscoverUriHint = { key: 'microblog:posts', label: 'Posts', format: 'rss' }
+
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts key for a JSON feed', () => {
+      const value = 'https://alice.micro.blog/feed.json'
+      const expected: DiscoverUriHint = { key: 'microblog:posts', label: 'Posts', format: 'json' }
+
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts key for a replies feed', () => {
+      const value = 'https://frank.micro.blog/replies.xml'
+      const expected: DiscoverUriHint = { key: 'microblog:posts', label: 'Posts', format: 'rss' }
+
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast key for an RSS podcast feed', () => {
+      const value = 'https://bob.micro.blog/podcast.xml'
+      const expected: DiscoverUriHint = {
+        key: 'microblog:podcast',
+        label: 'Podcast',
+        format: 'rss',
+      }
+
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast key for a JSON podcast feed', () => {
+      const value = 'https://bob.micro.blog/podcast.json'
+      const expected: DiscoverUriHint = {
+        key: 'microblog:podcast',
+        label: 'Podcast',
+        format: 'json',
+      }
+
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the category key for an RSS category feed', () => {
+      const value = 'https://erin.micro.blog/categories/public-health/feed.xml'
+      const expected: DiscoverUriHint = {
+        key: 'microblog:category',
+        label: 'Category',
+        format: 'rss',
+      }
+
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the category key for a JSON category feed', () => {
+      const value = 'https://bob.micro.blog/categories/long-covid/feed.json'
+      const expected: DiscoverUriHint = {
+        key: 'microblog:category',
+        label: 'Category',
+        format: 'json',
+      }
+
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the archive key for an archive feed', () => {
+      const value = 'https://carol1.micro.blog/archive/index.json'
+      const expected: DiscoverUriHint = { key: 'microblog:archive', label: 'Archive' }
+
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the photos key for a photos feed', () => {
+      const value = 'https://dave.micro.blog/photos/index.json'
+      const expected: DiscoverUriHint = { key: 'microblog:photos', label: 'Photos' }
+
+      expect(microblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://alice.micro.blog/'
+
+      expect(microblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a category page', () => {
+      const value = 'https://alice.micro.blog/categories/books/'
+
+      expect(microblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www.micro.blog', () => {
+      const value = 'https://www.micro.blog/feed.xml'
+
+      expect(microblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.example.micro.blog/feed.xml'
+
+      expect(microblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://micro.blog/feed.xml'
+
+      expect(microblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/feed.xml'
+
+      expect(microblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://alice.micro.blog/feed.xml',
+        { key: 'microblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://alice.micro.blog/feed.json',
+        { key: 'microblog:posts', label: 'Posts', format: 'json' },
+      ],
+      [
+        'https://frank.micro.blog/replies.xml',
+        { key: 'microblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://bob.micro.blog/podcast.xml',
+        { key: 'microblog:podcast', label: 'Podcast', format: 'rss' },
+      ],
+      [
+        'https://bob.micro.blog/podcast.json',
+        { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
+      ],
+      [
+        'https://erin.micro.blog/categories/public-health/feed.xml',
+        { key: 'microblog:category', label: 'Category', format: 'rss' },
+      ],
+      [
+        'https://bob.micro.blog/categories/long-covid/feed.json',
+        { key: 'microblog:category', label: 'Category', format: 'json' },
+      ],
+      [
+        'https://carol1.micro.blog/archive/index.json',
+        { key: 'microblog:archive', label: 'Archive' },
+      ],
+      ['https://dave.micro.blog/photos/index.json', { key: 'microblog:photos', label: 'Photos' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [microblogHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
