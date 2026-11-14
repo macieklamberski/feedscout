@@ -71,6 +71,8 @@ type CompiledTemplate = {
 const templateRegex = /^(https?|\{scheme\}):\/\/([^/?#]+)(\/[^?#]*)?(?:\?([^#]*))?$/i
 const placeholderRegex = /\{(\w+\*?)\}/g
 const trailingSlashRegex = /\/$/
+const nonAsciiRegex = /\P{ASCII}+/gu
+const leadingSlashesRegex = /^\/{2,}/
 const anchorsRegex = /^\^|\$$/g
 
 const rootPlaceholder = '{root}'
@@ -211,7 +213,9 @@ const compileTemplate = (
       return false
     }
 
-    const pathname = decodePath(url.pathname).replace(trailingSlashRegex, '')
+    // A doubled slash after the host names the same feed: pages link `host//feed` for `host/feed`.
+    const path = url.pathname.replace(leadingSlashesRegex, '/')
+    const pathname = decodePath(path).replace(trailingSlashRegex, '')
 
     if (!hostPathRegex.test(hostname + pathname)) {
       return false
@@ -244,9 +248,11 @@ const compileTemplate = (
         return value === undefined ? placeholder : encode(value, name)
       })
     }
-    const builtQuery = composeQuery(
-      Object.fromEntries(query.map(([name, value]) => [name, fillPlaceholders(value)])),
+    const queryParams = Object.fromEntries(
+      query.map(([name, value]) => [name, fillPlaceholders(value)]),
     )
+    // Pages link a query value percent-encoded, as `?tag=%E6%8A%80%E8%A1%93` for `技術`.
+    const builtQuery = composeQuery(queryParams).replace(nonAsciiRegex, encodeURIComponent)
 
     // A root is written as given, without the trailing slash the path brings.
     const origin = isRootTemplate
