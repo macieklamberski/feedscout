@@ -138,6 +138,13 @@ describe('definePlatformFeeds', () => {
       expect(value).toBe(expected)
     })
 
+    it('should percent-encode a non-ASCII query value', () => {
+      const value = feeds.getFeedUrl('example:tag', { tag: '技術' })
+      const expected = 'https://feeds.example.com/rss.xml?q=tag:%E6%8A%80%E8%A1%93'
+
+      expect(value).toBe(expected)
+    })
+
     it('should write a host value as given', () => {
       const value = feeds.getFeedUrl('example:site', { host: 'example.com' })
       const expected = 'https://example.com/feeds/site'
@@ -297,6 +304,20 @@ describe('definePlatformFeeds', () => {
 
     it('should return the key of a feed named by its query', () => {
       const value = 'https://feeds.example.com/rss.xml?q=tag%3Acats'
+      const expected = 'example:tag'
+
+      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed with a percent-encoded non-ASCII query value', () => {
+      const value = 'https://feeds.example.com/rss.xml?q=tag:%E6%8A%80%E8%A1%93'
+      const expected = 'example:tag'
+
+      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed with a raw non-ASCII query value', () => {
+      const value = 'https://feeds.example.com/rss.xml?q=tag:技術'
       const expected = 'example:tag'
 
       expect(feeds.getFeedHint(value)?.key).toBe(expected)
