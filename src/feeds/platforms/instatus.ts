@@ -5,7 +5,7 @@ import { hasMarker, letterPairsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type InstatusUrl = { kind: 'status'; language?: string }
+export type InstatusUrl = { kind: 'status' }
 
 const pageMarkers = ['custom-html-above-header', 'custom-html-below-footer']
 const domains = ['instatus.com']
@@ -40,18 +40,9 @@ export const isInstatusHeaders = (headers: Headers): boolean => {
   return headers.get('x-matched-path')?.startsWith('/[lang]/[url]/[type]/[userId]') ?? false
 }
 
-// A page in a translation (`/de`, `/zh-tw`) links the history feeds translated to it.
 export const parseInstatusUrl = (url: string): InstatusUrl | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl) {
+  if (!parseUrl(url)) {
     return
-  }
-
-  const [language] = getPathSegments(parsedUrl)
-
-  if (language && letterPairsRegex.test(language)) {
-    return { kind: 'status', language }
   }
 
   return { kind: 'status' }
@@ -74,11 +65,9 @@ export const instatusHandler: PlatformHandler = {
       return []
     }
 
-    const params = { language: parsed.language }
-
     return [
-      pageFeeds.getFeedEntry('instatus:history', params, 'rss'),
-      pageFeeds.getFeedEntry('instatus:history', params, 'atom'),
+      pageFeeds.getFeedEntry('instatus:history', {}, 'rss'),
+      pageFeeds.getFeedEntry('instatus:history', {}, 'atom'),
     ]
   },
 

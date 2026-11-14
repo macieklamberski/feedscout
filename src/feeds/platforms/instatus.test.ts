@@ -25,25 +25,19 @@ const incidentHeaders = new Headers({ 'x-matched-path': '/[lang]/[url]/[type]/[u
 const otherHeaders = new Headers({ 'x-matched-path': '/[slug]' })
 
 describe('parseInstatusUrl', () => {
-  it('should return the status page with its language', () => {
-    const expected: InstatusUrl = { kind: 'status', language: 'zh-tw' }
+  it('should return the status page for a translated page', () => {
+    const expected: InstatusUrl = { kind: 'status' }
 
     expect(parseInstatusUrl('https://status.example.com/zh-tw')).toEqual(expected)
   })
 
-  it('should return the status page without a language for a script code', () => {
-    const expected: InstatusUrl = { kind: 'status' }
-
-    expect(parseInstatusUrl('https://status.example.com/zh-hant')).toEqual(expected)
-  })
-
-  it('should return the status page without a language for the root', () => {
+  it('should return the status page for the root', () => {
     const expected: InstatusUrl = { kind: 'status' }
 
     expect(parseInstatusUrl('https://status.example.com/')).toEqual(expected)
   })
 
-  it('should return the status page without a language for another path', () => {
+  it('should return the status page for another path', () => {
     const expected: InstatusUrl = { kind: 'status' }
 
     expect(parseInstatusUrl('https://status.example.com/history')).toEqual(expected)
