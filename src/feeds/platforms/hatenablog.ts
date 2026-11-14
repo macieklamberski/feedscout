@@ -1,6 +1,6 @@
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -20,6 +20,34 @@ const domains = [
 
 const categoryRegex = /^\/archive\/category\/([^/]+)/i
 const authorRegex = /^\/archive\/author\/([^/]+)/i
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'hatenablog:posts', template: '{scheme}://{host}/rss', format: 'rss' },
+    { key: 'hatenablog:posts', template: '{scheme}://{host}/feed', format: 'atom' },
+    {
+      key: 'hatenablog:category',
+      template: '{scheme}://{host}/rss/category/{category}',
+      format: 'rss',
+    },
+    {
+      key: 'hatenablog:category',
+      template: '{scheme}://{host}/feed/category/{category}',
+      format: 'atom',
+    },
+    {
+      key: 'hatenablog:author',
+      template: '{scheme}://{host}/rss/author/{author}',
+      format: 'rss',
+    },
+    {
+      key: 'hatenablog:author',
+      template: '{scheme}://{host}/feed/author/{author}',
+      format: 'atom',
+    },
+  ],
+  { domains },
+)
 
 export const parseHatenablogUrl = (url: string): HatenablogUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -49,39 +77,39 @@ export const hatenablogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseHatenablogUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.kind === 'category') {
-      uris.push({
-        uri: `${origin}/rss/category/${parsed.category}`,
-        hint: composeHint('hatenablog:category', 'rss'),
-      })
-      uris.push({
-        uri: `${origin}/feed/category/${parsed.category}`,
-        hint: composeHint('hatenablog:category', 'atom'),
-      })
+      const params = { category: parsed.category }
+
+      return [
+        page.getFeedEntry('hatenablog:category', params, 'rss'),
+        page.getFeedEntry('hatenablog:category', params, 'atom'),
+        page.getFeedEntry('hatenablog:posts', {}, 'rss'),
+        page.getFeedEntry('hatenablog:posts', {}, 'atom'),
+      ]
     }
 
     if (parsed.kind === 'author') {
-      uris.push({
-        uri: `${origin}/rss/author/${parsed.author}`,
-        hint: composeHint('hatenablog:author', 'rss'),
-      })
-      uris.push({
-        uri: `${origin}/feed/author/${parsed.author}`,
-        hint: composeHint('hatenablog:author', 'atom'),
-      })
+      const params = { author: parsed.author }
+
+      return [
+        page.getFeedEntry('hatenablog:author', params, 'rss'),
+        page.getFeedEntry('hatenablog:author', params, 'atom'),
+        page.getFeedEntry('hatenablog:posts', {}, 'rss'),
+        page.getFeedEntry('hatenablog:posts', {}, 'atom'),
+      ]
     }
 
-    uris.push({ uri: `${origin}/rss`, hint: composeHint('hatenablog:posts', 'rss') })
-    uris.push({ uri: `${origin}/feed`, hint: composeHint('hatenablog:posts', 'atom') })
-
-    return uris
+    return [
+      page.getFeedEntry('hatenablog:posts', {}, 'rss'),
+      page.getFeedEntry('hatenablog:posts', {}, 'atom'),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
