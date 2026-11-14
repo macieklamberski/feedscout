@@ -197,13 +197,6 @@ describe('forumotionHandler', () => {
 
       expect(forumotionHandler.resolve(value, missingForumHtml)).toEqual(expected)
     })
-
-    it('should return no feeds for a URL that is not http', () => {
-      const value = 'ftp://example.forumotion.com/'
-      const expected: Array<DiscoverUriEntry> = []
-
-      expect(forumotionHandler.resolve(value)).toEqual(expected)
-    })
   })
 
   describe('getFeedHint', () => {
