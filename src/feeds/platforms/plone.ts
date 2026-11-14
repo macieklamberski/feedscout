@@ -1,4 +1,5 @@
 import { anyWordMatchesAnyOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, type Element, findElement, hasMarker } from '../../common/utils.js'
 
@@ -24,6 +25,18 @@ const itemPortalTypes = [
   'portaltype-link',
   'portaltype-news-item',
 ]
+
+// A site is known only by its markup, so its feeds are built under the portal or folder URL the
+// page prints and claimed on no host. The search feed carries the search page's query as it is,
+// so resolve builds it by hand.
+const feeds = definePlatformFeeds([
+  { key: 'plone:site', template: '{root}/RSS', format: 'rdf' },
+  { key: 'plone:site', template: '{root}/rss.xml', format: 'rss' },
+  { key: 'plone:site', template: '{root}/atom.xml', format: 'atom' },
+  { key: 'plone:folder', template: '{root}/RSS', format: 'rdf' },
+  { key: 'plone:folder', template: '{root}/rss.xml', format: 'rss' },
+  { key: 'plone:folder', template: '{root}/atom.xml', format: 'atom' },
+])
 
 const findBody = (content: string | undefined) => {
   return findElement(content, (element) => {
@@ -120,8 +133,9 @@ export const ploneHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getPlonePage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
@@ -132,17 +146,21 @@ export const ploneHandler: PlatformHandler = {
     }
 
     if (page.kind === 'site') {
+      const params = { root: page.portalUrl }
+
       return [
-        { uri: `${page.portalUrl}/RSS`, hint: composeHint('plone:site', 'rdf') },
-        { uri: `${page.portalUrl}/rss.xml`, hint: composeHint('plone:site', 'rss') },
-        { uri: `${page.portalUrl}/atom.xml`, hint: composeHint('plone:site', 'atom') },
+        pageFeeds.getFeedEntry('plone:site', params, 'rdf'),
+        pageFeeds.getFeedEntry('plone:site', params, 'rss'),
+        pageFeeds.getFeedEntry('plone:site', params, 'atom'),
       ]
     }
 
+    const params = { root: page.folderUrl }
+
     return [
-      { uri: `${page.folderUrl}/RSS`, hint: composeHint('plone:folder', 'rdf') },
-      { uri: `${page.folderUrl}/rss.xml`, hint: composeHint('plone:folder', 'rss') },
-      { uri: `${page.folderUrl}/atom.xml`, hint: composeHint('plone:folder', 'atom') },
+      pageFeeds.getFeedEntry('plone:folder', params, 'rdf'),
+      pageFeeds.getFeedEntry('plone:folder', params, 'rss'),
+      pageFeeds.getFeedEntry('plone:folder', params, 'atom'),
     ]
   },
 }
