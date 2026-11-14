@@ -119,6 +119,13 @@ describe('rubygemsHandler', () => {
       expect(rubygemsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the dashboard hint for a dashboard feed with an API key', () => {
+      const value = 'https://rubygems.org/dashboard.atom?api_key=0123456789abcdef'
+      const expected: DiscoverUriHint = { key: 'rubygems:dashboard', label: 'Dashboard' }
+
+      expect(rubygemsHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     const pages: Array<string> = [
       'https://rubygems.org/',
       'https://rubygems.org/gems',
@@ -175,6 +182,20 @@ describe('rubygemsHandler', () => {
       })
       const expected: Array<DiscoverUriEntry> = [
         { uri: value, hint: { key: 'rubygems:latest-gems', label: 'Latest gems' } },
+      ]
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should return a dashboard feed as itself', async () => {
+      const value = 'https://rubygems.org/dashboard.atom?api_key=0123456789abcdef'
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [rubygemsHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'rubygems:dashboard', label: 'Dashboard' } },
       ]
 
       expect(result).toEqual(expected)

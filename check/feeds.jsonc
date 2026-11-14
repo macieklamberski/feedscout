@@ -666,6 +666,8 @@
     "ghost:author": "https://demo.ghost.io/author/ghost/rss/",
     "ghost:blog": "https://demo.ghost.io/rss/",
     "ghost:collection": "https://unprecedented.ghost.io/archive/rss/",
+    // An invented token: the site is private to its members, so this sample answers 404.
+    "ghost:private": "https://demo.ghost.io/0123456789abcdef0123456789abcd/rss/",
     "ghost:tag": "https://demo.ghost.io/tag/getting-started/rss/"
   },
   "gitea": {
@@ -1490,6 +1492,9 @@
     "pinboard:bookmarks": "https://feeds.pinboard.in/rss/u:pinboard/",
     "pinboard:network": "https://feeds.pinboard.in/rss/secret:0123456789abcdef/u:pinboard/network/",
     "pinboard:popular": "https://feeds.pinboard.in/rss/popular/",
+    // Invented tokens: the feeds are private to their owner, so these samples answer 401.
+    "pinboard:private-bookmarks": "https://feeds.pinboard.in/rss/secret:0123456789abcdef/u:pinboard/",
+    "pinboard:private-tag": "https://feeds.pinboard.in/rss/secret:0123456789abcdef/u:pinboard/t:llm/",
     "pinboard:recent": "https://feeds.pinboard.in/rss/recent/",
     "pinboard:source": "https://feeds.pinboard.in/rss/u:friedelitis/from:twitter",
     "pinboard:starred": "https://feeds.pinboard.in/rss/secret:0123456789abcdef/u:pinboard/starred/",
@@ -1745,6 +1750,8 @@
     "rss-com:podcast": "https://media.rss.com/podcasting101/feed.xml"
   },
   "rubygems": {
+    // An invented key: the feed is private to its owner, so this sample redirects to the sign-in page.
+    "rubygems:dashboard": "https://rubygems.org/dashboard.atom?api_key=0123456789abcdef0123456789abcdef",
     "rubygems:latest-gems": "https://rubygems.org/gems.atom",
     "rubygems:versions": "https://rubygems.org/gems/rails/versions.atom"
   },

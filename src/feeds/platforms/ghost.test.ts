@@ -196,9 +196,9 @@ describe('ghostHandler', () => {
       expect(ghostHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the blog key for a private site feed', () => {
+    it('should return the private key for a private site feed', () => {
       const value = 'https://alice.ghost.io/0123456789abcdef0123456789abcd/rss/'
-      const expected: DiscoverUriHint = { key: 'ghost:blog', label: 'Blog' }
+      const expected: DiscoverUriHint = { key: 'ghost:private', label: 'Private feed' }
 
       expect(ghostHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -244,7 +244,7 @@ describe('ghostHandler', () => {
       ['http://alice.ghost.io/archive/rss', { key: 'ghost:collection', label: 'Collection' }],
       [
         'https://alice.ghost.io/0123456789abcdef0123456789abcd/rss/',
-        { key: 'ghost:blog', label: 'Blog' },
+        { key: 'ghost:private', label: 'Private feed' },
       ],
     ]
 

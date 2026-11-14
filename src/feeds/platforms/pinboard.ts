@@ -24,7 +24,7 @@ const feeds = definePlatformFeeds([
   { key: 'pinboard:bookmarks', template: 'https://feeds.pinboard.in/rss/u:{username}/' },
   // A private feed, whose token only its owner knows, so it is claimed and never built.
   {
-    key: 'pinboard:bookmarks',
+    key: 'pinboard:private-bookmarks',
     template: 'https://feeds.pinboard.in/rss/secret:{token}/u:{username}/',
   },
   { key: 'pinboard:recent', template: 'https://feeds.pinboard.in/rss/recent/' },
@@ -40,7 +40,7 @@ const feeds = definePlatformFeeds([
   // after the source rows their paths overlap.
   { key: 'pinboard:tag', template: 'https://feeds.pinboard.in/rss/u:{username}/t:{tags*}/' },
   {
-    key: 'pinboard:tag',
+    key: 'pinboard:private-tag',
     template: 'https://feeds.pinboard.in/rss/secret:{token}/u:{username}/t:{tags*}/',
   },
   { key: 'pinboard:tag', template: 'https://feeds.pinboard.in/rss/t:{tags*}/' },
