@@ -501,7 +501,7 @@ describe('giteaHandler', () => {
     })
 
     it('should return the branch commits hint for a branch Atom feed', () => {
-      const value = 'https://gitea.com/noerw/tea/atom/branch/print-issue-label'
+      const value = 'https://gitea.com/carol/tea/atom/branch/print-issue-label'
       const expected: DiscoverUriHint = { key: 'gitea:branch-commits', label: 'Branch commits' }
 
       expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
@@ -515,14 +515,14 @@ describe('giteaHandler', () => {
     })
 
     it('should return the file history hint for a file history feed', () => {
-      const value = 'https://gitea.com/noerw/unidiff-comments/atom/branch/master/types/hunk.go'
+      const value = 'https://gitea.com/carol/unidiff-comments/atom/branch/master/types/hunk.go'
       const expected: DiscoverUriHint = { key: 'gitea:file-history', label: 'File history' }
 
       expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the file history hint for a folder history feed', () => {
-      const value = 'https://gitea.com/jolheiser/theme/atom/branch/master/i18n'
+      const value = 'https://gitea.com/bob/theme/atom/branch/master/i18n'
       const expected: DiscoverUriHint = { key: 'gitea:file-history', label: 'File history' }
 
       expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
@@ -530,7 +530,7 @@ describe('giteaHandler', () => {
 
     it('should return the file history hint for a percent-encoded file path', () => {
       const value =
-        'https://gitea.com/CyberShell/Health-PDFS/atom/branch/master/Vaccine-Binder-Research.zip%20%28Unzipped%20Files%29/Vaccine-Binder-Research'
+        'https://gitea.com/AliceShell/Health-Docs/atom/branch/master/Vaccine-Binder-Research.zip%20%28Unzipped%20Files%29/Vaccine-Binder-Research'
       const expected: DiscoverUriHint = { key: 'gitea:file-history', label: 'File history' }
 
       expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
@@ -551,7 +551,7 @@ describe('giteaHandler', () => {
     })
 
     it('should return the branch commits hint for feed routes in another case', () => {
-      const value = 'https://gitea.com/noerw/tea/Atom/Branch/print-issue-label'
+      const value = 'https://gitea.com/carol/tea/Atom/Branch/print-issue-label'
       const expected: DiscoverUriHint = { key: 'gitea:branch-commits', label: 'Branch commits' }
 
       expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
@@ -586,14 +586,14 @@ describe('giteaHandler', () => {
     })
 
     it('should return the branch commits hint for a branch feed with a trailing slash', () => {
-      const value = 'https://gitea.com/noerw/tea/atom/branch/print-issue-label/'
+      const value = 'https://gitea.com/carol/tea/atom/branch/print-issue-label/'
       const expected: DiscoverUriHint = { key: 'gitea:branch-commits', label: 'Branch commits' }
 
       expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the file history hint for a file history feed with a trailing slash', () => {
-      const value = 'https://gitea.com/noerw/unidiff-comments/atom/branch/master/types/hunk.go/'
+      const value = 'https://gitea.com/carol/unidiff-comments/atom/branch/master/types/hunk.go/'
       const expected: DiscoverUriHint = { key: 'gitea:file-history', label: 'File history' }
 
       expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
@@ -649,17 +649,17 @@ describe('giteaHandler', () => {
       ['https://gitea.com/gitea/blog/releases.atom', { key: 'gitea:releases', label: 'Releases' }],
       ['https://gitea.com/gitea/blog/tags.atom', { key: 'gitea:tags', label: 'Tags' }],
       [
-        'https://gitea.com/noerw/tea/atom/branch/print-issue-label',
+        'https://gitea.com/carol/tea/atom/branch/print-issue-label',
         { key: 'gitea:branch-commits', label: 'Branch commits' },
       ],
       [
-        'https://gitea.com/noerw/unidiff-comments/atom/branch/master/types/hunk.go',
+        'https://gitea.com/carol/unidiff-comments/atom/branch/master/types/hunk.go',
         { key: 'gitea:file-history', label: 'File history' },
       ],
       ['https://codeberg.org/forgejo.atom/', { key: 'gitea:activity', label: 'Activity' }],
       ['https://gitea.com/gitea/blog/releases.atom/', { key: 'gitea:releases', label: 'Releases' }],
       [
-        'https://gitea.com/noerw/tea/atom/branch/print-issue-label/',
+        'https://gitea.com/carol/tea/atom/branch/print-issue-label/',
         { key: 'gitea:branch-commits', label: 'Branch commits' },
       ],
     ]

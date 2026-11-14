@@ -15,8 +15,7 @@ export type GiteaPage = GiteaUrl & { root: string }
 const hosts = ['codeberg.org', 'www.codeberg.org', 'gitea.com', 'www.gitea.com']
 
 const giteaCookieRegex = /(?:^|[;,\s])[\w-]*gitea=/
-// Gitea reserves these suffixes for routes of a user, such as /{user}.rss, so no username ends
-// with one.
+// suffixes: Gitea's own user routes, such as /{user}.rss, so no username ends with one
 const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png|rss)$/i
 // suffixes: Gitea's own user and repo feeds, which Gitea also reserves on repo names
 const activityFeedRegex = /.\.(?:atom|rss)$/i
