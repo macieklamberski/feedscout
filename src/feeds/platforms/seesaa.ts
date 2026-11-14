@@ -1,14 +1,14 @@
 import { getRegistrableDomain } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
+import { getBrandDomainRegex, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, iiblog, seesaaBlog, seesaaSpace, sokuho, xblog (html), partly covers stablo.
 
 export type SeesaaUrl = { kind: 'blog' }
 
-const domains = [/^(?:seesaa\.(?:net|blog|space)|iiblog\.jp|sokuho\.org|stablo\.jp|xblog\.jp)$/]
+const domains = [getBrandDomainRegex('seesaa'), 'iiblog.jp', 'sokuho.org', 'stablo.jp', 'xblog.jp']
 
 const feeds = definePlatformFeeds(
   [
