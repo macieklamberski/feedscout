@@ -180,11 +180,11 @@ describe('dreamwidthHandler', () => {
       const value = 'https://bob.dreamwidth.org/tag/caf%C3%A9'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://bob.dreamwidth.org/data/rss?tag=café',
+          uri: 'https://bob.dreamwidth.org/data/rss?tag=caf%C3%A9',
           hint: { key: 'dreamwidth:posts-tag', label: 'Tag', format: 'rss' },
         },
         {
-          uri: 'https://bob.dreamwidth.org/data/atom?tag=café',
+          uri: 'https://bob.dreamwidth.org/data/atom?tag=caf%C3%A9',
           hint: { key: 'dreamwidth:posts-tag', label: 'Tag', format: 'atom' },
         },
         {
@@ -301,6 +301,17 @@ describe('dreamwidthHandler', () => {
     it('should return the tag key for an RSS tag feed', () => {
       const value = 'https://alice.dreamwidth.org/data/rss?tag=feedback'
       const expected: DiscoverUriHint = { key: 'dreamwidth:posts-tag', label: 'Tag', format: 'rss' }
+
+      expect(dreamwidthHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a tag feed with a raw non-ASCII tag', () => {
+      const value = 'https://bob.dreamwidth.org/data/rss?tag=café'
+      const expected: DiscoverUriHint = {
+        key: 'dreamwidth:posts-tag',
+        label: 'Tag',
+        format: 'rss',
+      }
 
       expect(dreamwidthHandler.getFeedHint?.(value)).toEqual(expected)
     })
