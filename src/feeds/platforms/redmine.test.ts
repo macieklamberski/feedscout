@@ -84,6 +84,12 @@ const formErrorProjectHtml = projectHtml.replace(
   '<a class="home" href="/">Home</a>',
   '<a class="home" href="/">Home</a><div id="errorExplanation"><ul><li>Invalid</li></ul></div>',
 )
+const userHtml = `
+  <body class="controller-users action-show avatars-on">
+    <a class="home" href="/">Home</a>
+    ${footerHtml}
+  </body>
+`
 const notFoundHtml = `
   <body class="has-main-menu controller-users action-show avatars-on">
     <a class="home" href="/">Home</a>
@@ -288,6 +294,18 @@ describe('getRedminePage', () => {
     expect(getRedminePage('https://example.com/issues/4521', projectHtml)).toEqual(expected)
   })
 
+  it('should return the user of a user page', () => {
+    const value = 'https://example.com/users/42'
+    const expected: RedminePage = {
+      kind: 'user',
+      root: 'https://example.com',
+      alternateHrefs: [],
+      userId: '42',
+    }
+
+    expect(getRedminePage(value, userHtml)).toEqual(expected)
+  })
+
   it('should return the site issues', () => {
     const expected: RedminePage = {
       kind: 'issues',
@@ -346,7 +364,7 @@ describe('getRedminePage', () => {
   it('should return the home page for a page outside any project', () => {
     const expected: RedminePage = { kind: 'home', root: 'https://example.com', alternateHrefs: [] }
 
-    expect(getRedminePage('https://example.com/users/7', siteHtml)).toEqual(expected)
+    expect(getRedminePage('https://example.com/search', siteHtml)).toEqual(expected)
   })
 
   it('should return the root of an install under a sub-path', () => {
@@ -638,6 +656,18 @@ describe('redmineHandler', () => {
       )
     })
 
+    it('should return the user activity feed for a user page', () => {
+      const value = 'https://example.com/users/42'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/activity.atom?user_id=42',
+          hint: { key: 'redmine:user-activity', label: 'User activity' },
+        },
+      ]
+
+      expect(redmineHandler.resolve(value, userHtml)).toEqual(expected)
+    })
+
     it('should return the site issues feed for the issues page', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -726,6 +756,14 @@ describe('redmineHandler', () => {
       [
         'https://example.plan.io/projects/acme/activity.atom',
         { key: 'redmine:project-activity', label: 'Project activity' },
+      ],
+      [
+        'https://example.plan.io/activity.atom?user_id=42',
+        { key: 'redmine:user-activity', label: 'User activity' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/activity.atom?user_id=42',
+        { key: 'redmine:project-user-activity', label: 'Project user activity' },
       ],
       ['https://example.plan.io/projects.atom', { key: 'redmine:projects', label: 'Projects' }],
       ['https://example.plan.io/issues.atom', { key: 'redmine:issues', label: 'Issues' }],
@@ -843,6 +881,14 @@ describe('redmineHandler', () => {
       [
         'https://example.plan.io/projects/acme/activity.atom',
         { key: 'redmine:project-activity', label: 'Project activity' },
+      ],
+      [
+        'https://example.plan.io/activity.atom?user_id=42',
+        { key: 'redmine:user-activity', label: 'User activity' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/activity.atom?user_id=42',
+        { key: 'redmine:project-user-activity', label: 'Project user activity' },
       ],
       ['https://example.plan.io/projects.atom', { key: 'redmine:projects', label: 'Projects' }],
       [

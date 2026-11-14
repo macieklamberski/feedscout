@@ -38,7 +38,7 @@ const feeds = definePlatformFeeds([
   { key: 'pinboard:source', template: 'https://feeds.pinboard.in/rss/u:{username}/from:{source}/' },
   // A tag feed repeats `t:{tag}` once per tag, so `tags` holds them joined by `/t:`. These rows go
   // after the source rows their paths overlap.
-  { key: 'pinboard:tag', template: 'https://feeds.pinboard.in/rss/u:{username}/t:{tags*}/' },
+  { key: 'pinboard:user-tag', template: 'https://feeds.pinboard.in/rss/u:{username}/t:{tags*}/' },
   {
     key: 'pinboard:tag',
     template: 'https://feeds.pinboard.in/rss/secret:{token}/u:{username}/t:{tags*}/',
@@ -123,7 +123,7 @@ export const pinboardHandler: PlatformHandler = {
 
     if (parsed.kind === 'userTag') {
       return [
-        feeds.getFeedEntry('pinboard:tag', {
+        feeds.getFeedEntry('pinboard:user-tag', {
           username: parsed.username,
           tags: joinTags(parsed.tags),
         }),

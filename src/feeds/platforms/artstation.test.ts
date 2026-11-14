@@ -124,7 +124,7 @@ describe('artstationHandler', () => {
         },
         {
           uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
-          hint: { key: 'artstation:artwork-latest', label: 'Artwork (Latest)' },
+          hint: { key: 'artstation:artwork', label: 'Artwork' },
         },
       ]
 
@@ -140,7 +140,7 @@ describe('artstationHandler', () => {
         },
         {
           uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
-          hint: { key: 'artstation:artwork-latest', label: 'Artwork (Latest)' },
+          hint: { key: 'artstation:artwork', label: 'Artwork' },
         },
       ]
 
@@ -156,7 +156,7 @@ describe('artstationHandler', () => {
         },
         {
           uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
-          hint: { key: 'artstation:artwork-latest', label: 'Artwork (Latest)' },
+          hint: { key: 'artstation:artwork', label: 'Artwork' },
         },
       ]
 
@@ -200,12 +200,9 @@ describe('artstationHandler', () => {
       expect(artstationHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the latest hint for the artwork feed sorted by latest', () => {
+    it('should return the artwork hint for the artwork feed sorted by latest', () => {
       const value = 'https://www.artstation.com/artwork.rss?sorting=latest'
-      const expected: DiscoverUriHint = {
-        key: 'artstation:artwork-latest',
-        label: 'Artwork (Latest)',
-      }
+      const expected: DiscoverUriHint = { key: 'artstation:artwork', label: 'Artwork' }
 
       expect(artstationHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -250,7 +247,7 @@ describe('artstationHandler', () => {
       ['https://www.artstation.com/artwork.rss', { key: 'artstation:artwork', label: 'Artwork' }],
       [
         'https://www.artstation.com/artwork.rss?sorting=latest',
-        { key: 'artstation:artwork-latest', label: 'Artwork (Latest)' },
+        { key: 'artstation:artwork', label: 'Artwork' },
       ],
     ]
 

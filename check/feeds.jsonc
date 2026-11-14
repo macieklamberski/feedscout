@@ -34,8 +34,10 @@
     "art19:show": "https://rss.art19.com/american-scandal"
   },
   "artstation": {
-    "artstation:artwork": "https://www.artstation.com/artwork.rss",
-    "artstation:artwork-latest": "https://www.artstation.com/artwork.rss?sorting=latest",
+    "artstation:artwork": [
+      "https://www.artstation.com/artwork.rss",
+      "https://www.artstation.com/artwork.rss?sorting=latest"
+    ],
     "artstation:portfolio": "https://www.artstation.com/rossdraws.rss"
   },
   "atwiki": {
@@ -1115,9 +1117,10 @@
     "lobsters:domain": "https://lobste.rs/domains/github.com.rss",
     "lobsters:newest": "https://lobste.rs/newest.rss",
     "lobsters:private": "https://lobste.rs/rss?token=0123456789abcdef",
-    "lobsters:stories": ["https://lobste.rs/~pushcx/stories.rss", "https://lobste.rs/rss"],
+    "lobsters:stories": "https://lobste.rs/rss",
     "lobsters:tag": "https://lobste.rs/t/programming.rss",
-    "lobsters:top": ["https://lobste.rs/top/rss", "https://lobste.rs/top/1w/rss"]
+    "lobsters:top": ["https://lobste.rs/top/rss", "https://lobste.rs/top/1w/rss"],
+    "lobsters:user-stories": "https://lobste.rs/~pushcx/stories.rss"
   },
   "mailArchive": {
     "mail-archive:list": [
@@ -1493,12 +1496,10 @@
     "pinboard:recent": "https://feeds.pinboard.in/rss/recent/",
     "pinboard:source": "https://feeds.pinboard.in/rss/u:friedelitis/from:twitter",
     "pinboard:starred": "https://feeds.pinboard.in/rss/secret:0123456789abcdef/u:pinboard/starred/",
-    "pinboard:tag": [
-      "https://feeds.pinboard.in/rss/u:mshook/t:llm/"
-      // The site-wide tag feed answered 500 on 2026-09-26 while Pinboard's search backend was down.
-      // Uncomment once it answers 200 again.
-      // "https://feeds.pinboard.in/rss/t:llm/"
-    ]
+    "pinboard:tag": {
+      "skip": "Every site-wide tag feed, as https://feeds.pinboard.in/rss/t:llm/, answered 500 on 2026-09-26 and 2026-11-14 while Pinboard's search backend was down"
+    },
+    "pinboard:user-tag": "https://feeds.pinboard.in/rss/u:mshook/t:llm/"
   },
   "pinterest": {
     "pinterest:board": "https://www.pinterest.com/nasa/hubble-space-telescope.rss",
@@ -1729,8 +1730,10 @@
       "https://pulp.plan.io/projects/pulp/issues.atom"
     ],
     "redmine:project-news": "https://www.redmine.org/projects/redmine/news.atom",
+    "redmine:project-user-activity": "https://www.redmine.org/projects/redmine/activity.atom?user_id=1",
     "redmine:projects": "https://www.redmine.org/projects.atom",
-    "redmine:revisions": "https://www.redmine.org/projects/redmine/repository/svn/revisions.atom"
+    "redmine:revisions": "https://www.redmine.org/projects/redmine/repository/svn/revisions.atom",
+    "redmine:user-activity": "https://www.redmine.org/activity.atom?user_id=1"
   },
   "reformal": {
     "reformal:feedback": [
