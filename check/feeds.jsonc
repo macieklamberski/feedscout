@@ -330,14 +330,9 @@
     "dailymotion:videos": "https://www.dailymotion.com/rss/Euronews-en"
   },
   "dasauge": {
-    "dasauge:profile": [
-      "https://dasauge.at/-abstrusa/?rss",
-      "https://dasauge.ch/-abstrusa/?rss",
-      "https://dasauge.co.uk/-abstrusa/?rss",
-      "https://dasauge.com/-abstrusa/?rss",
-      "https://dasauge.de/-abstrusa/?rss",
-      "https://dasauge.es/-abstrusa/?rss"
-    ]
+    "dasauge:profile": {
+      "skip": "every profile's ?rss redirects to the profile page, which serves HTML"
+    }
   },
   "deviantart": {
     "deviantart:daily-deviations": "https://backend.deviantart.com/rss.xml?q=special:dd",
