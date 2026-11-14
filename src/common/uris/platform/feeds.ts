@@ -71,6 +71,7 @@ type CompiledTemplate = {
 const templateRegex = /^(https?|\{scheme\}):\/\/([^/?#]+)(\/[^?#]*)?(?:\?([^#]*))?$/i
 const placeholderRegex = /\{(\w+\*?)\}/g
 const trailingSlashRegex = /\/$/
+const nonAsciiRegex = /\P{ASCII}+/gu
 const anchorsRegex = /^\^|\$$/g
 
 const rootPlaceholder = '{root}'
@@ -244,9 +245,11 @@ const compileTemplate = (
         return value === undefined ? placeholder : encode(value, name)
       })
     }
-    const builtQuery = composeQuery(
-      Object.fromEntries(query.map(([name, value]) => [name, fillPlaceholders(value)])),
+    const queryParams = Object.fromEntries(
+      query.map(([name, value]) => [name, fillPlaceholders(value)]),
     )
+    // Pages link a query value percent-encoded, as `?tag=%E6%8A%80%E8%A1%93` for `技術`.
+    const builtQuery = composeQuery(queryParams).replace(nonAsciiRegex, encodeURIComponent)
 
     // A root is written as given, without the trailing slash the path brings.
     const origin = isRootTemplate
