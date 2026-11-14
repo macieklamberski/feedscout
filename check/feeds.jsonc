@@ -324,6 +324,7 @@
   },
   "dailymotion": {
     "dailymotion:channel": "https://www.dailymotion.com/rss/channel/news",
+    "dailymotion:group": "https://www.dailymotion.com/rss/group/128992/1",
     "dailymotion:playlist": "https://www.dailymotion.com/rss/playlist/x5e4h5",
     "dailymotion:search": "https://www.dailymotion.com/rss/search/news",
     "dailymotion:trending": "https://www.dailymotion.com/rss/trending",
