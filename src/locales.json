@@ -648,6 +648,7 @@
     "sapo-blogs:tag": "Tag",
     "edlio:assignments": "Assignments",
     "edlio:news": "News",
+    "edlio:news-category": "News category",
     "talentsoft:offers": "Job offers",
     "talentsoft:search": "Search results",
     "plone:folder": "Folder",

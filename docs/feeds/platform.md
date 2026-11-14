@@ -3100,9 +3100,9 @@ Discovers the news and class assignment feeds of an Edlio school website. Detect
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/apps/news/`, `{site}/apps/news/category/{id}` | News of the category the page links (RSS) |
-| `{site}/apps/classes/{id}/assignments/` | Assignments of the class the page links (RSS) |
-| `{site}/`, any other page | News (RSS) |
+| `{host}/apps/news/`, `{host}/apps/news/category/{id}` | News of the category the page links (RSS) |
+| `{host}/apps/classes/{id}/assignments/` | Assignments of the class the page links (RSS) |
+| `{host}/`, any other page | News (RSS) |
 
 ### Talentsoft
 
