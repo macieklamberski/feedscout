@@ -842,7 +842,7 @@ Discovers RSS feeds for Transistor-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.transistor.fm` | Podcast* |
+| `{show}.transistor.fm` | Podcast* |
 
 \* *The feed slug can differ from the subdomain. It is read from the page content when available, with the subdomain as the fallback.*
 
