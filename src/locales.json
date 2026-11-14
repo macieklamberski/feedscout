@@ -132,6 +132,7 @@
     "producthunt:products": "Products",
     "producthunt:category": "Category",
     "soundcloud:tracks": "Tracks",
+    "soundcloud:playlist": "Playlist",
     "stackexchange:tag": "Tag",
     "stackexchange:question": "Question",
     "stackexchange:user": "User",
