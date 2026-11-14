@@ -62,14 +62,14 @@ describe('parseOdooUrl', () => {
     expect(parseOdooUrl('https://example.com/blog/news-1/tag/audiocast-1')).toEqual(expected)
   })
 
-  it('should return the language prefix of a translated page', () => {
-    const expected: OdooUrl = { kind: 'blog', language: 'fr_FR', blog: 'actualites-5' }
+  it('should return the blog of a translated page', () => {
+    const expected: OdooUrl = { kind: 'blog', blog: 'actualites-5' }
 
     expect(parseOdooUrl('https://example.com/fr_FR/blog/actualites-5')).toEqual(expected)
   })
 
-  it('should return a language prefix longer than three letters', () => {
-    const expected: OdooUrl = { kind: 'blog', language: 'abcd', blog: 'news-1' }
+  it('should return the blog under a language prefix longer than three letters', () => {
+    const expected: OdooUrl = { kind: 'blog', blog: 'news-1' }
 
     expect(parseOdooUrl('https://example.com/abcd/blog/news-1')).toEqual(expected)
   })

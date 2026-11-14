@@ -2437,7 +2437,7 @@ Discovers the feeds of a SPIP site. Detected by the `Composed-By` or `X-Spip-Cac
 
 ### Odoo
 
-Discovers the Atom feed of a blog on an Odoo website. Detected by the `frontend_lang` and `session_id` cookies Odoo sets on every website page, so any domain is covered. A page under a language prefix gets the feed in that language.
+Discovers the Atom feed of a blog on an Odoo website. Detected by the `frontend_lang` and `session_id` cookies Odoo sets on every website page, so any domain is covered. A page under a language prefix gets the blog's feed at the root, without the prefix.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|

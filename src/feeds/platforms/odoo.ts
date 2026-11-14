@@ -5,10 +5,10 @@ import { getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type OdooUrl = { kind: 'blog'; language?: string; blog: string }
+export type OdooUrl = { kind: 'blog'; blog: string }
 
 // The blog segment is `{slug}-{id}`, after an optional language prefix such as `/fr` or `/en_GB`.
-const blogRegex = /^(?:\/([a-z]+(?:_[a-z\d]+)?))?\/blog\/([^/]+-\d+)(?:\/|$)/i
+const blogRegex = /^(?:\/[a-z]+(?:_[a-z\d]+)?)?\/blog\/([^/]+-\d+)(?:\/|$)/i
 
 // Odoo's own site runs on www.odoo.com, and a database on its own domain is known only by its
 // cookies, so feeds on either are built here but not claimed.
@@ -38,11 +38,11 @@ export const parseOdooUrl = (url: string): OdooUrl | undefined => {
 
   const match = parsedUrl.pathname.match(blogRegex)
 
-  if (!match?.[2]) {
+  if (!match?.[1]) {
     return
   }
 
-  return { kind: 'blog', language: match[1], blog: match[2] }
+  return { kind: 'blog', blog: match[1] }
 }
 
 export const odooHandler: PlatformHandler = {
@@ -62,9 +62,7 @@ export const odooHandler: PlatformHandler = {
       return []
     }
 
-    const { language, blog } = odooUrl
-
-    return [page.getFeedEntry('odoo:blog', { language, blog }, 'atom')]
+    return [page.getFeedEntry('odoo:blog', { blog: odooUrl.blog }, 'atom')]
   },
 
   getFeedHint: feeds.getFeedHint,
