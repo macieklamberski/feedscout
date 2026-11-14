@@ -1,4 +1,11 @@
-import { isHttpUrl, type NormalizeOptions, normalizeUrl, stripWww, trimUrlValues } from 'trousse'
+import {
+  isHttpUrl,
+  isPresent,
+  type NormalizeOptions,
+  normalizeUrl,
+  stripWww,
+  trimUrlValues,
+} from 'trousse'
 import { reportError } from '../../discover/utils.js'
 import type {
   DiscoverInputObject,
@@ -127,7 +134,8 @@ export const discoverUrisFromPlatform = async (
           }
         }
 
-        const resolved = await handler.resolve(page.url, page.content, page.headers, fetchFn)
+        const items = await handler.resolve(page.url, page.content, page.headers, fetchFn)
+        const resolved = items.filter(isPresent)
 
         // A handler that matched but found nothing leaves the page to the handlers after it.
         if (resolved.length === 0) {
