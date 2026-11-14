@@ -2422,16 +2422,16 @@ Discovers the module feeds of a CivicPlus government website. Detected by the `C
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/CivicAlerts.aspx`, `{site}/m/newsflash` | News Flash<sup>†</sup> (RSS) |
-| `{site}/Blog.aspx` | Blog<sup>†</sup> (RSS) |
-| `{site}/Gallery.aspx` | Photo Gallery<sup>†</sup> (RSS) |
-| `{site}/Calendar.aspx`, `{site}/m/calendar` | Calendar<sup>†</sup> (RSS) |
-| `{site}/AlertCenter.aspx` | Alert Center<sup>†</sup> (RSS) |
-| `{site}/RealEstate.aspx` | Real Estate Locator<sup>†</sup> (RSS) |
-| `{site}/AgendaCenter` | Agenda Center<sup>†</sup> (RSS) |
-| `{site}/Jobs.aspx` | Jobs<sup>†</sup> (RSS) |
-| `{site}/CivicMedia.aspx` | Media Center<sup>†</sup> (RSS) |
-| `{site}/`, any other page | Pages<sup>†</sup> (RSS) |
+| `{root}/CivicAlerts.aspx`, `{root}/m/newsflash` | News Flash<sup>†</sup> (RSS) |
+| `{root}/Blog.aspx` | Blog<sup>†</sup> (RSS) |
+| `{root}/Gallery.aspx` | Photo Gallery<sup>†</sup> (RSS) |
+| `{root}/Calendar.aspx`, `{root}/m/calendar` | Calendar<sup>†</sup> (RSS) |
+| `{root}/AlertCenter.aspx` | Alert Center<sup>†</sup> (RSS) |
+| `{root}/RealEstate.aspx` | Real Estate Locator<sup>†</sup> (RSS) |
+| `{root}/AgendaCenter` | Agenda Center<sup>†</sup> (RSS) |
+| `{root}/Jobs.aspx` | Jobs<sup>†</sup> (RSS) |
+| `{root}/CivicMedia.aspx` | Media Center<sup>†</sup> (RSS) |
+| `{root}/`, any other page | Pages<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
