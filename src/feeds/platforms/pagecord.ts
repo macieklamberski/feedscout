@@ -4,7 +4,7 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type PagecordUrl = { kind: 'blog'; blog: string }
+export type PagecordUrl = { kind: 'blog' }
 
 const domains = ['pagecord.com']
 
@@ -18,13 +18,11 @@ const feeds = definePlatformFeeds(
 )
 
 export const parsePagecordUrl = (url: string): PagecordUrl | undefined => {
-  const blog = getTenantSubdomain(url, domains)
-
-  if (!blog) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 
-  return { kind: 'blog', blog }
+  return { kind: 'blog' }
 }
 
 export const pagecordHandler: PlatformHandler = {

@@ -6,7 +6,7 @@ import { type PagecordUrl, pagecordHandler, parsePagecordUrl } from './pagecord.
 
 describe('parsePagecordUrl', () => {
   it('should return the blog for a subdomain', () => {
-    const expected: PagecordUrl = { kind: 'blog', blog: 'example' }
+    const expected: PagecordUrl = { kind: 'blog' }
 
     expect(parsePagecordUrl('https://example.pagecord.com/')).toEqual(expected)
   })
