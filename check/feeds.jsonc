@@ -1337,6 +1337,7 @@
     "podhome:podcast": "https://serve.podhome.fm/rss/6d610788-42f7-4cc8-9184-7e651cf101e2"
   },
   "podigee": {
+    "podigee:feed": "https://lorenz-lauscht.podigee.io/feeds/neuer_feed_1696850635/mp3",
     "podigee:podcast": "https://cui-bono.podigee.io/feed/mp3"
   },
   "podlove": {

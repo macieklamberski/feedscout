@@ -132,16 +132,16 @@ describe('podigeeHandler', () => {
       expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast hint for a further mp3 feed of a show', () => {
+    it('should return the feed hint for a further mp3 feed of a show', () => {
       const value = 'https://alice.podigee.io/feeds/new_feed_12345/mp3'
-      const expected: DiscoverUriHint = { key: 'podigee:podcast', label: 'Podcast' }
+      const expected: DiscoverUriHint = { key: 'podigee:feed', label: 'Feed' }
 
       expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast hint for a further aac feed of a show', () => {
+    it('should return the feed hint for a further aac feed of a show', () => {
       const value = 'https://alice.podigee.io/feeds/new_feed_12345/aac'
-      const expected: DiscoverUriHint = { key: 'podigee:podcast', label: 'Podcast' }
+      const expected: DiscoverUriHint = { key: 'podigee:feed', label: 'Feed' }
 
       expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -160,19 +160,20 @@ describe('podigeeHandler', () => {
   })
 
   describe('own feeds through the Platform method', () => {
-    const hint: DiscoverUriHint = { key: 'podigee:podcast', label: 'Podcast' }
-    const values = [
-      'https://alice.podigee.io/feed/aac',
-      'https://alice.podigee.io/feed/opus',
-      'https://alice.podigee.io/feed/vorbis',
-      'https://alice.podigee.io/feed/mp3/',
-      'https://alice.podigee.io/feed/mp3?source=itunes',
-      'https://alice.podigee.io/feeds/new_feed_12345/mp3',
-      'https://alice.podigee.io/feeds/new_feed_12345/opus',
-      'https://alice.podigee.io/feeds/new_feed_12345/vorbis',
+    const podcastHint: DiscoverUriHint = { key: 'podigee:podcast', label: 'Podcast' }
+    const feedHint: DiscoverUriHint = { key: 'podigee:feed', label: 'Feed' }
+    const values: Array<[string, DiscoverUriHint]> = [
+      ['https://alice.podigee.io/feed/aac', podcastHint],
+      ['https://alice.podigee.io/feed/opus', podcastHint],
+      ['https://alice.podigee.io/feed/vorbis', podcastHint],
+      ['https://alice.podigee.io/feed/mp3/', podcastHint],
+      ['https://alice.podigee.io/feed/mp3?source=itunes', podcastHint],
+      ['https://alice.podigee.io/feeds/new_feed_12345/mp3', feedHint],
+      ['https://alice.podigee.io/feeds/new_feed_12345/opus', feedHint],
+      ['https://alice.podigee.io/feeds/new_feed_12345/vorbis', feedHint],
     ]
 
-    it.each(values)('should return %s as itself', async (value) => {
+    it.each(values)('should return %s as itself', async (value, hint) => {
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [podigeeHandler],
