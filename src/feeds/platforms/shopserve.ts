@@ -1,9 +1,13 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 const generatedPathRegex = /^\/hpgen\/hpb\//i
+
+// A shop is known only by its marker, so its feed is built here but not claimed.
+const feeds = definePlatformFeeds([{ key: 'shopserve:news', template: '{root}/hpgen/HPB/rss.xml' }])
 
 const isGeneratedPath = (value: string | undefined): boolean => {
   return generatedPathRegex.test(value ?? '')
@@ -27,6 +31,6 @@ export const shopserveHandler: PlatformHandler = {
   resolve: (url) => {
     const { origin } = new URL(url)
 
-    return [{ uri: `${origin}/hpgen/HPB/rss.xml`, hint: composeHint('shopserve:news') }]
+    return [feeds.getFeedEntry('shopserve:news', { root: origin })]
   },
 }
