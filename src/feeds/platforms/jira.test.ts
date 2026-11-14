@@ -125,11 +125,11 @@ describe('jiraHandler', () => {
       const content = '<meta name="ajs-project-key" content="A&amp;B">'
       const expected = [
         {
-          uri: 'https://jira.example.org/plugins/servlet/streams?key=A%26B',
+          uri: 'https://jira.example.org/activity?key=A%26B',
           hint: { key: 'jira:project', label: 'Project' },
         },
         {
-          uri: 'https://jira.example.org/plugins/servlet/streams',
+          uri: 'https://jira.example.org/activity',
           hint: { key: 'jira:site', label: 'Site activity' },
         },
       ]
@@ -145,11 +145,11 @@ describe('jiraHandler', () => {
           hint: { key: 'jira:issue', label: 'Issue', format: 'rss' },
         },
         {
-          uri: 'https://example.atlassian.net/plugins/servlet/streams?key=ABC',
+          uri: 'https://example.atlassian.net/activity?key=ABC',
           hint: { key: 'jira:project', label: 'Project' },
         },
         {
-          uri: 'https://example.atlassian.net/plugins/servlet/streams',
+          uri: 'https://example.atlassian.net/activity',
           hint: { key: 'jira:site', label: 'Site activity' },
         },
       ]
@@ -165,11 +165,11 @@ describe('jiraHandler', () => {
           hint: { key: 'jira:issue', label: 'Issue', format: 'rss' },
         },
         {
-          uri: 'https://jira.example.org/plugins/servlet/streams?key=ABC',
+          uri: 'https://jira.example.org/activity?key=ABC',
           hint: { key: 'jira:project', label: 'Project' },
         },
         {
-          uri: 'https://jira.example.org/plugins/servlet/streams',
+          uri: 'https://jira.example.org/activity',
           hint: { key: 'jira:site', label: 'Site activity' },
         },
       ]
@@ -181,11 +181,11 @@ describe('jiraHandler', () => {
       const value = 'https://example.atlassian.net/jira/software/projects/ABC/boards/1'
       const expected = [
         {
-          uri: 'https://example.atlassian.net/plugins/servlet/streams?key=ABC',
+          uri: 'https://example.atlassian.net/activity?key=ABC',
           hint: { key: 'jira:project', label: 'Project' },
         },
         {
-          uri: 'https://example.atlassian.net/plugins/servlet/streams',
+          uri: 'https://example.atlassian.net/activity',
           hint: { key: 'jira:site', label: 'Site activity' },
         },
       ]
@@ -201,11 +201,11 @@ describe('jiraHandler', () => {
           hint: { key: 'jira:issue', label: 'Issue', format: 'rss' },
         },
         {
-          uri: 'https://example.org/jira/plugins/servlet/streams?key=ABC',
+          uri: 'https://example.org/jira/activity?key=ABC',
           hint: { key: 'jira:project', label: 'Project' },
         },
         {
-          uri: 'https://example.org/jira/plugins/servlet/streams',
+          uri: 'https://example.org/jira/activity',
           hint: { key: 'jira:site', label: 'Site activity' },
         },
       ]
@@ -217,7 +217,7 @@ describe('jiraHandler', () => {
       const value = 'https://example.atlassian.net/'
       const expected = [
         {
-          uri: 'https://example.atlassian.net/plugins/servlet/streams',
+          uri: 'https://example.atlassian.net/activity',
           hint: { key: 'jira:site', label: 'Site activity' },
         },
       ]
@@ -233,11 +233,11 @@ describe('jiraHandler', () => {
           hint: { key: 'jira:issue', label: 'Issue', format: 'rss' },
         },
         {
-          uri: 'http://example.atlassian.net/plugins/servlet/streams?key=ABC',
+          uri: 'http://example.atlassian.net/activity?key=ABC',
           hint: { key: 'jira:project', label: 'Project' },
         },
         {
-          uri: 'http://example.atlassian.net/plugins/servlet/streams',
+          uri: 'http://example.atlassian.net/activity',
           hint: { key: 'jira:site', label: 'Site activity' },
         },
       ]

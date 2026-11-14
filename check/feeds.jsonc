@@ -830,8 +830,8 @@
   },
   "jira": {
     "jira:issue": "https://sakaiproject.atlassian.net/si/jira.issueviews:issue-xml/SAK-36656/SAK-36656.xml",
-    "jira:project": "https://jira.atlassian.com/plugins/servlet/streams?key=JRASERVER",
-    "jira:site": "https://ecosystem.atlassian.net/plugins/servlet/streams"
+    "jira:project": "https://jira.atlassian.com/activity?key=JRASERVER",
+    "jira:site": "https://ecosystem.atlassian.net/activity"
   },
   "joomla": {
     "joomla:view": [
