@@ -166,11 +166,10 @@ describe('geoblogHandler', () => {
       expect(geoblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the trip key for a trip feed on the www form of a user host', () => {
+    it('should return undefined for a trip feed on the www form of a user host', () => {
       const value = 'http://www.alice.geoblog.pl/podroz/rss/12345.xml'
-      const expected: DiscoverUriHint = { key: 'geoblog:trip', label: 'Trip' }
 
-      expect(geoblogHandler.getFeedHint?.(value)).toEqual(expected)
+      expect(geoblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a trip page', () => {
