@@ -18,13 +18,13 @@ const faithChapelHtml = `
 
 describe('parseSermonNetUrl', () => {
   it('should return the church for a church subdomain', () => {
-    const expected: SermonNetUrl = { kind: 'church', tenant: 'faithchapelchurch' }
+    const expected: SermonNetUrl = { kind: 'church' }
 
     expect(parseSermonNetUrl('https://faithchapelchurch.sermon.net/')).toEqual(expected)
   })
 
   it('should return the channel for a posting page', () => {
-    const expected: SermonNetUrl = { kind: 'channel', tenant: 'faithchapelchurch', channel: 'main' }
+    const expected: SermonNetUrl = { kind: 'channel', channel: 'main' }
 
     expect(parseSermonNetUrl('https://faithchapelchurch.sermon.net/main/main/21538657')).toEqual(
       expected,
@@ -32,13 +32,13 @@ describe('parseSermonNetUrl', () => {
   })
 
   it('should return the channel for a channel page', () => {
-    const expected: SermonNetUrl = { kind: 'channel', tenant: 'waysidechapel', channel: 'joshua' }
+    const expected: SermonNetUrl = { kind: 'channel', channel: 'joshua' }
 
     expect(parseSermonNetUrl('https://waysidechapel.sermon.net/main/joshua')).toEqual(expected)
   })
 
   it('should return the church for a media centre page', () => {
-    const expected: SermonNetUrl = { kind: 'church', tenant: 'upc' }
+    const expected: SermonNetUrl = { kind: 'church' }
 
     expect(parseSermonNetUrl('https://upc.sermon.net/Sermon_Player')).toEqual(expected)
   })
@@ -65,7 +65,6 @@ describe('getSermonNetPage', () => {
     const value = 'https://faithchapelchurch.sermon.net/'
     const expected: SermonNetPage = {
       kind: 'church',
-      tenant: 'faithchapelchurch',
       channels: ['faithchapel', 'main'],
     }
 
@@ -76,7 +75,6 @@ describe('getSermonNetPage', () => {
     const value = 'https://faithchapelchurch.sermon.net/main/faithchapel'
     const expected: SermonNetPage = {
       kind: 'channel',
-      tenant: 'faithchapelchurch',
       channel: 'faithchapel',
     }
 
@@ -87,7 +85,6 @@ describe('getSermonNetPage', () => {
     const value = 'https://faithchapelchurch.sermon.net/main/shared'
     const expected: SermonNetPage = {
       kind: 'church',
-      tenant: 'faithchapelchurch',
       channels: ['faithchapel', 'main'],
     }
 
@@ -96,7 +93,7 @@ describe('getSermonNetPage', () => {
 
   it('should return the church with no channel without content', () => {
     const value = 'https://faithchapelchurch.sermon.net/'
-    const expected: SermonNetPage = { kind: 'church', tenant: 'faithchapelchurch', channels: [] }
+    const expected: SermonNetPage = { kind: 'church', channels: [] }
 
     expect(getSermonNetPage(value, undefined)).toEqual(expected)
   })
