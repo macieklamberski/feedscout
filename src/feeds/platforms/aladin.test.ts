@@ -203,41 +203,41 @@ describe('aladinHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the posts hint for a blog feed', () => {
-      const value = 'https://blog.aladin.co.kr/singri/rss'
+      const value = 'https://blog.aladin.co.kr/alice/rss'
       const expected: DiscoverUriHint = { key: 'aladin:posts', label: 'Posts' }
 
       expect(aladinHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a numeric user feed', () => {
-      const value = 'https://blog.aladin.co.kr/790598133/rss'
+      const value = 'https://blog.aladin.co.kr/712345678/rss'
       const expected: DiscoverUriHint = { key: 'aladin:posts', label: 'Posts' }
 
       expect(aladinHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a blog feed over http', () => {
-      const value = 'http://blog.aladin.co.kr/singri/rss'
+      const value = 'http://blog.aladin.co.kr/alice/rss'
       const expected: DiscoverUriHint = { key: 'aladin:posts', label: 'Posts' }
 
       expect(aladinHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the category hint for a category feed', () => {
-      const value = 'https://blog.aladin.co.kr/729975157/category/28094802/rss'
+      const value = 'https://blog.aladin.co.kr/712345678/category/12345678/rss'
       const expected: DiscoverUriHint = { key: 'aladin:category', label: 'Category' }
 
       expect(aladinHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
-      const value = 'https://blog.aladin.co.kr/singri'
+      const value = 'https://blog.aladin.co.kr/alice'
 
       expect(aladinHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a category page', () => {
-      const value = 'https://blog.aladin.co.kr/singri/category/12345678'
+      const value = 'https://blog.aladin.co.kr/alice/category/12345678'
 
       expect(aladinHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -255,7 +255,7 @@ describe('aladinHandler', () => {
     })
 
     it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/singri/rss'
+      const value = 'https://example.com/alice/rss'
 
       expect(aladinHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -263,9 +263,9 @@ describe('aladinHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://blog.aladin.co.kr/singri/rss', { key: 'aladin:posts', label: 'Posts' }],
+      ['https://blog.aladin.co.kr/alice/rss', { key: 'aladin:posts', label: 'Posts' }],
       [
-        'https://blog.aladin.co.kr/729975157/category/28094802/rss',
+        'https://blog.aladin.co.kr/712345678/category/12345678/rss',
         { key: 'aladin:category', label: 'Category' },
       ],
     ]
