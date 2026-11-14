@@ -814,6 +814,8 @@
     "itchio:tag": "https://itch.io/games/tag-horror.xml"
   },
   "ivoox": {
+    "ivoox:group": "https://www.ivoox.com/en/feed_fl_281_1.xml",
+    "ivoox:playlist": "https://www.ivoox.com/en/itunes-feed_fp_2156902-_24062013_1.xml",
     "ivoox:podcast": "https://feeds.ivoox.com/feed_fg_f1106_filtro_1.xml"
   },
   "jellypod": {
