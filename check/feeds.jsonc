@@ -164,6 +164,7 @@
     "bloggo:posts": "https://larswesterberg.bloggo.nu/feed/"
   },
   "blogia": {
+    "blogia:comments": "https://ecoboletin.blogia.com/comentarios.xml",
     "blogia:posts": "https://39x28.blogia.com/feed.xml"
   },
   "blogspot": {
