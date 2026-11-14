@@ -677,7 +677,7 @@
     // An invented token: the feed is private to its owner, so this sample answers 404.
     "habr:subscriptions": "https://habr.com/ru/rss/feed/0123456789abcdef0123456789abcdef/",
     "habr:tag": "https://habr.com/ru/rss/tag/haskell/",
-    "habr:user": "https://habr.com/ru/rss/users/alizar/articles/"
+    "habr:user": "https://habr.com/ru/rss/users/alizar/publications/articles/"
   },
   "hackernews": {
     "hackernews:front": "https://news.ycombinator.com/rss",

@@ -139,7 +139,7 @@ describe('habrHandler', () => {
       const value = 'https://habr.com/en/users/example/posts/'
       const expected = [
         {
-          uri: 'https://habr.com/en/rss/users/example/articles/',
+          uri: 'https://habr.com/en/rss/users/example/publications/articles/',
           hint: { key: 'habr:user', label: 'User' },
         },
         {
@@ -159,7 +159,7 @@ describe('habrHandler', () => {
       const value = 'https://habr.com/EN/users/example/posts/'
       const expected = [
         {
-          uri: 'https://habr.com/en/rss/users/example/articles/',
+          uri: 'https://habr.com/en/rss/users/example/publications/articles/',
           hint: { key: 'habr:user', label: 'User' },
         },
         {

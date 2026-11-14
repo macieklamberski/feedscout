@@ -19,8 +19,9 @@ const hubRegex = new RegExp(`^${languagePrefix}/hubs?/([^/]+)`, 'i')
 const userRegex = new RegExp(`^${languagePrefix}/users/([^/]+)`, 'i')
 const companyRegex = new RegExp(`^${languagePrefix}/compan(?:y|ies)/([^/]+)`, 'i')
 
-// The first row of a key is the feed `resolve` emits, the one Habr's pages link. Habr serves the
-// same items under the hub and user spellings below it, which readers store. A top listing is the
+// The first row of a key is the feed `resolve` emits, the one Habr's pages link or, for a user, the
+// one that link redirects to. Habr serves the same items under the hub and user spellings below
+// it, which readers store. A top listing is the
 // same feed sorted, and a tag without its language prefix is the same tag. A subscription feed
 // carries the reader's private token, so the table only claims it.
 const feeds = definePlatformFeeds([
@@ -46,15 +47,18 @@ const feeds = definePlatformFeeds([
     isAlias: true,
   },
   { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hub/{hub}/', isAlias: true },
-  { key: 'habr:user', template: 'https://habr.com/{language}/rss/users/{username}/articles/' },
   {
     key: 'habr:user',
-    template: 'https://habr.com/{language}/rss/users/{username}/posts/',
+    template: 'https://habr.com/{language}/rss/users/{username}/publications/articles/',
+  },
+  {
+    key: 'habr:user',
+    template: 'https://habr.com/{language}/rss/users/{username}/articles/',
     isAlias: true,
   },
   {
     key: 'habr:user',
-    template: 'https://habr.com/{language}/rss/users/{username}/publications/articles/',
+    template: 'https://habr.com/{language}/rss/users/{username}/posts/',
     isAlias: true,
   },
   {
