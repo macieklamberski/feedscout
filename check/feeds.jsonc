@@ -622,6 +622,8 @@
       "https://github.com/orgs/community/discussions.atom"
     ],
     "github:file-history": "https://github.com/macieklamberski/feedscout/commits/main/package.json.atom",
+    // An invented token: the feed is private to its owner, so this sample answers 401.
+    "github:private-activity": "https://github.com/macieklamberski.private.atom?token=0123456789abcdef0123456789abcdef",
     "github:releases": "https://github.com/macieklamberski/feedscout/releases.atom",
     "github:tags": "https://github.com/macieklamberski/feedscout/tags.atom",
     "github:wiki": "https://github.com/microsoft/vscode/wiki.atom"
