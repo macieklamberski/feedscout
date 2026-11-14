@@ -401,7 +401,7 @@ describe('insanejournalHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the posts hint for a journal RSS feed', () => {
-      const value = 'https://actuallesbian.insanejournal.com/data/rss'
+      const value = 'https://alice.insanejournal.com/data/rss'
       const expected: DiscoverUriHint = {
         key: 'insanejournal:posts',
         label: 'Posts',
@@ -423,7 +423,7 @@ describe('insanejournalHandler', () => {
     })
 
     it('should return the posts hint for a journal Atom feed', () => {
-      const value = 'https://a-new-dawn.insanejournal.com/data/atom'
+      const value = 'https://foo-bar.insanejournal.com/data/atom'
       const expected: DiscoverUriHint = {
         key: 'insanejournal:posts',
         label: 'Posts',
@@ -445,7 +445,7 @@ describe('insanejournalHandler', () => {
     })
 
     it('should return the tag hint for a journal tag RSS feed', () => {
-      const value = 'https://cantbehave.insanejournal.com/data/rss?tag=casey+donovan'
+      const value = 'https://alice.insanejournal.com/data/rss?tag=alice+bob'
       const expected: DiscoverUriHint = {
         key: 'insanejournal:posts-tag',
         label: 'Tag',
@@ -456,8 +456,7 @@ describe('insanejournalHandler', () => {
     })
 
     it('should return the tag hint for a journal tag Atom feed', () => {
-      const value =
-        'https://desertworship.insanejournal.com/data/atom?tag=set+will+drink+you+under+the+table'
+      const value = 'https://alice.insanejournal.com/data/atom?tag=a+long+example+tag'
       const expected: DiscoverUriHint = {
         key: 'insanejournal:posts-tag',
         label: 'Tag',
@@ -468,7 +467,7 @@ describe('insanejournalHandler', () => {
     })
 
     it('should return the posts hint for an asylum RSS feed', () => {
-      const value = 'https://asylums.insanejournal.com/ainsworthu/data/rss'
+      const value = 'https://asylums.insanejournal.com/example/data/rss'
       const expected: DiscoverUriHint = {
         key: 'insanejournal:posts',
         label: 'Posts',
@@ -479,7 +478,7 @@ describe('insanejournalHandler', () => {
     })
 
     it('should return the userpics hint for an asylum userpics feed', () => {
-      const value = 'https://asylums.insanejournal.com/07refugees/data/userpics'
+      const value = 'https://asylums.insanejournal.com/07example/data/userpics'
       const expected: DiscoverUriHint = {
         key: 'insanejournal:userpics',
         label: 'Userpics',
@@ -490,8 +489,7 @@ describe('insanejournalHandler', () => {
     })
 
     it('should return the tag hint for an asylum tag feed with an encoded tag', () => {
-      const value =
-        'https://asylums.insanejournal.com/adventdrabbles/data/atom?tag=contributor%3A+chamilet'
+      const value = 'https://asylums.insanejournal.com/example/data/atom?tag=contributor%3A+alice'
       const expected: DiscoverUriHint = {
         key: 'insanejournal:posts-tag',
         label: 'Tag',
@@ -513,7 +511,7 @@ describe('insanejournalHandler', () => {
     })
 
     it('should return the posts hint for a feed on the users host', () => {
-      const value = 'https://users.insanejournal.com/_coolguy/data/rss'
+      const value = 'https://users.insanejournal.com/_alice/data/rss'
       const expected: DiscoverUriHint = {
         key: 'insanejournal:posts',
         label: 'Posts',
@@ -524,7 +522,7 @@ describe('insanejournalHandler', () => {
     })
 
     it('should return the tag hint for a tag feed on the users host', () => {
-      const value = 'https://users.insanejournal.com/_jems_/data/atom?tag=dvd+sets'
+      const value = 'https://users.insanejournal.com/_alice_/data/atom?tag=dvd+sets'
       const expected: DiscoverUriHint = {
         key: 'insanejournal:posts-tag',
         label: 'Tag',
@@ -592,15 +590,15 @@ describe('insanejournalHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://actuallesbian.insanejournal.com/data/rss',
+        'https://alice.insanejournal.com/data/rss',
         { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
       ],
       [
-        'https://cantbehave.insanejournal.com/data/rss?tag=casey+donovan',
+        'https://alice.insanejournal.com/data/rss?tag=alice+bob',
         { key: 'insanejournal:posts-tag', label: 'Tag', format: 'rss' },
       ],
       [
-        'https://asylums.insanejournal.com/07refugees/data/userpics',
+        'https://asylums.insanejournal.com/07example/data/userpics',
         { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
       ],
       [
@@ -608,7 +606,7 @@ describe('insanejournalHandler', () => {
         { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
       ],
       [
-        'https://users.insanejournal.com/_jems_/data/atom?tag=dvd+sets',
+        'https://users.insanejournal.com/_alice_/data/atom?tag=dvd+sets',
         { key: 'insanejournal:posts-tag', label: 'Tag', format: 'atom' },
       ],
     ]
