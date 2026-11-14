@@ -9,7 +9,14 @@ describe('parseBloggerDeUrl', () => {
     ['https://alice.blogger.de/', { kind: 'blog', blog: 'alice' }],
     ['https://Alice.blogger.de/', { kind: 'blog', blog: 'alice' }],
     ['https://alice.blogger.de/stories/2918480/', { kind: 'blog', blog: 'alice' }],
-    ['https://alice.blogger.de/topics/Ex Libris', { kind: 'blog', blog: 'alice' }],
+    [
+      'https://alice.blogger.de/topics/Ex Libris',
+      { kind: 'topic', blog: 'alice', topic: 'Ex Libris' },
+    ],
+    [
+      'https://alice.blogger.de/topics/Best+of+2006/',
+      { kind: 'topic', blog: 'alice', topic: 'Best of 2006' },
+    ],
   ]
 
   it.each(values)('should parse %s', (url, expected) => {
@@ -52,6 +59,30 @@ describe('bloggerDeHandler', () => {
           uri: 'https://alice.blogger.de/rss',
           hint: { key: 'blogger-de:posts', label: 'Posts' },
         },
+        {
+          uri: 'https://alice.blogger.de/rss?show=all',
+          hint: { key: 'blogger-de:posts-comments', label: 'Posts and comments' },
+        },
+      ]
+
+      expect(bloggerDeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the topic feed for a topic page', () => {
+      const value = 'https://alice.blogger.de/topics/Best+of+2006/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.blogger.de/rss?topic=Best%20of%202006',
+          hint: { key: 'blogger-de:topic', label: 'Topic' },
+        },
+        {
+          uri: 'https://alice.blogger.de/rss',
+          hint: { key: 'blogger-de:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://alice.blogger.de/rss?show=all',
+          hint: { key: 'blogger-de:posts-comments', label: 'Posts and comments' },
+        },
       ]
 
       expect(bloggerDeHandler.resolve(value)).toEqual(expected)
@@ -63,6 +94,10 @@ describe('bloggerDeHandler', () => {
         {
           uri: 'http://alice.blogger.de/rss',
           hint: { key: 'blogger-de:posts', label: 'Posts' },
+        },
+        {
+          uri: 'http://alice.blogger.de/rss?show=all',
+          hint: { key: 'blogger-de:posts-comments', label: 'Posts and comments' },
         },
       ]
 
@@ -78,9 +113,19 @@ describe('bloggerDeHandler', () => {
       expect(bloggerDeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a feed of stories and comments', () => {
+    it('should return the posts and comments key for a feed of stories and comments', () => {
       const value = 'https://alice.blogger.de/rss?show=all'
-      const expected: DiscoverUriHint = { key: 'blogger-de:posts', label: 'Posts' }
+      const expected: DiscoverUriHint = {
+        key: 'blogger-de:posts-comments',
+        label: 'Posts and comments',
+      }
+
+      expect(bloggerDeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the topic key for a topic feed', () => {
+      const value = 'https://alice.blogger.de/rss?topic=cooking'
+      const expected: DiscoverUriHint = { key: 'blogger-de:topic', label: 'Topic' }
 
       expect(bloggerDeHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -125,24 +170,23 @@ describe('bloggerDeHandler', () => {
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<string> = [
-      'https://alice.blogger.de/rss',
-      'https://alice.blogger.de/rss?show=all',
-      'https://alice.blogger.de/topics/cooking/rss',
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://alice.blogger.de/rss', { key: 'blogger-de:posts', label: 'Posts' }],
+      ['https://alice.blogger.de/topics/cooking/rss', { key: 'blogger-de:posts', label: 'Posts' }],
+      [
+        'http://alice.blogger.de/rss?show=all',
+        { key: 'blogger-de:posts-comments', label: 'Posts and comments' },
+      ],
+      ['http://alice.blogger.de/rss?topic=cooking', { key: 'blogger-de:topic', label: 'Topic' }],
     ]
 
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
       const options = {
         ...defaultPlatformOptions,
         handlers: [bloggerDeHandler],
         baseUrl: value,
       }
-      const expected: Array<DiscoverUriEntry> = [
-        {
-          uri: value,
-          hint: { key: 'blogger-de:posts', label: 'Posts' },
-        },
-      ]
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
       expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
