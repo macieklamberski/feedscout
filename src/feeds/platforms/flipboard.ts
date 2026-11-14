@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -13,6 +13,12 @@ export const hosts = ['flipboard.com', 'www.flipboard.com']
 
 // Flipboard redirects these profile tabs to the profile itself.
 const profileSubpaths = ['followers', 'following', 'magazines']
+
+const feeds = definePlatformFeeds([
+  { key: 'flipboard:profile', template: 'https://flipboard.com/@{username}.rss' },
+  { key: 'flipboard:magazine', template: 'https://flipboard.com/@{username}/{magazine}.rss' },
+  { key: 'flipboard:topic', template: 'https://flipboard.com/topic/{topic}.rss' },
+])
 
 export const parseFlipboardUrl = (url: string): FlipboardUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -62,28 +68,17 @@ export const flipboardHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'profile') {
-      return [
-        {
-          uri: `https://flipboard.com/@${parsed.username}.rss`,
-          hint: composeHint('flipboard:profile'),
-        },
-      ]
+      return [feeds.getFeedEntry('flipboard:profile', { username: parsed.username })]
     }
 
     if (parsed.kind === 'magazine') {
-      return [
-        {
-          uri: `https://flipboard.com/@${parsed.username}/${parsed.magazine}.rss`,
-          hint: composeHint('flipboard:magazine'),
-        },
-      ]
+      const { username, magazine } = parsed
+
+      return [feeds.getFeedEntry('flipboard:magazine', { username, magazine })]
     }
 
-    return [
-      {
-        uri: `https://flipboard.com/topic/${parsed.topic}.rss`,
-        hint: composeHint('flipboard:topic'),
-      },
-    ]
+    return [feeds.getFeedEntry('flipboard:topic', { topic: parsed.topic })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
