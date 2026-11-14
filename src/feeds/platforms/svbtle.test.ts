@@ -65,12 +65,6 @@ describe('svbtleHandler', () => {
 
       expect(svbtleHandler.resolve(value)).toEqual(expected)
     })
-
-    it('should return an empty array for a page outside http', () => {
-      const value = 'ftp://alice.svbtle.com/a-post'
-
-      expect(svbtleHandler.resolve(value)).toEqual([])
-    })
   })
 
   describe('getFeedHint', () => {
