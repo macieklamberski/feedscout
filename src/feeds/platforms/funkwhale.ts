@@ -1,12 +1,7 @@
-import { decodeSegment, encodePathSegment } from 'trousse'
+import { decodeSegment } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  getHostOrigin,
-  hasElementWithId,
-  hasMarker,
-  hasMetaContent,
-} from '../../common/utils.js'
+import { getHostOrigin, hasElementWithId, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -15,6 +10,12 @@ export type FunkwhaleUrl = { kind: 'channel'; channel: string }
 const channelPathRegex = /^\/channels\/([^/]+)/i
 // A remote channel can be written in the fediverse form, `@{name}@{domain}`.
 const leadingAtRegex = /^@/
+
+// A pod is self-hosted on any domain, so the table only builds its feed. v2 answers 404 on some
+// instances that still serve v1.
+const feeds = definePlatformFeeds([
+  { key: 'funkwhale:channel', template: '{root}/api/v1/channels/{channel}/rss' },
+])
 
 export const isFunkwhaleHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Funkwhale') || hasElementWithId(content, 'fake-app')
@@ -59,15 +60,12 @@ export const funkwhaleHandler: PlatformHandler = {
       return []
     }
 
-    // The name comes out of the path decoded, and it goes back into one.
-    const channelUrl = `${channelOrigin}/api/v1/channels/${domain ? encodePathSegment(name) : channel}`
-
+    // The name comes out of the path decoded, and the table encodes it back into one.
     return [
-      {
-        // v2 answers 404 on some instances that still serve v1.
-        uri: `${channelUrl}/rss`,
-        hint: composeHint('funkwhale:channel'),
-      },
+      feeds.getFeedEntry('funkwhale:channel', {
+        root: channelOrigin,
+        channel: domain ? name : channel,
+      }),
     ]
   },
 }
