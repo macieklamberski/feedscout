@@ -12,13 +12,13 @@ export type TalentsoftPage =
   | { kind: 'site'; origin: string; lcid?: string }
 
 const cookiesScriptPath = '/client/dist/talentsoft-cookies.iife.js'
-const domains = ['talent-soft.com']
+const domains = ['profils.org', 'talent-soft.com']
 
 const offerFeedPathRegex = /^\/handlers\/offerRss\.ashx$/i
 const leadingSlashesRegex = /^(https?:\/\/[^/?#]+)\/\/+/i
 
 // A career site on a custom domain is known only by its marker, so its feeds are built here but
-// claimed only on Talentsoft's own domain. The site's own feed list spells the language as `LCID`,
+// claimed only on Talentsoft's own domains. The site's own feed list spells the language as `LCID`,
 // and the feed answers without it. The feed list page's own link serves the same offers.
 const feeds = definePlatformFeeds(
   [

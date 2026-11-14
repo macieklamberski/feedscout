@@ -275,6 +275,13 @@ describe('talentsoftHandler', () => {
       expect(talentsoftHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the offers hint for an offers feed on profils.org', () => {
+      const value = 'https://alice.profils.org/handlers/offerRss.ashx?LCID=1036'
+      const expected: DiscoverUriHint = { key: 'talentsoft:offers', label: 'Job offers' }
+
+      expect(talentsoftHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the offers hint for an offers feed without a language', () => {
       const value = 'https://alice.talent-soft.com/handlers/offerRss.ashx'
       const expected: DiscoverUriHint = { key: 'talentsoft:offers', label: 'Job offers' }
@@ -365,6 +372,10 @@ describe('talentsoftHandler', () => {
       ],
       [
         'https://alice.talent-soft.com/handlers/offerRss.ashx',
+        { key: 'talentsoft:offers', label: 'Job offers' },
+      ],
+      [
+        'https://alice.profils.org/handlers/offerRss.ashx?LCID=1036',
         { key: 'talentsoft:offers', label: 'Job offers' },
       ],
       [
