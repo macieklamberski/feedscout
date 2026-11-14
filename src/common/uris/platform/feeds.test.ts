@@ -22,6 +22,9 @@ const feeds = definePlatformFeeds(
     { key: 'example:site-feed', template: '{scheme}://{host}/feed' },
     { key: 'example:channel', template: 'https://www.example.com/feed/{channel}' },
     { key: 'example:channel', template: 'https://{subdomain}.example.org/feed' },
+    { key: 'example:profile', template: 'https://www.example.com/-{username}/?rss' },
+    { key: 'example:member', template: 'https://www.example.com/members/{username}?rss=' },
+    { key: 'example:page', template: 'https://www.example.com/pages/{username}?rss&page={page}' },
     { key: 'example:handle', template: 'https://www.example.com/rss/@{username}' },
     { key: 'example:topic', template: 'https://www.example.com/topics/tag:{tag}/feed' },
   ],
@@ -210,6 +213,27 @@ describe('definePlatformFeeds', () => {
       expect(value).toBe(expected)
     })
 
+    it('should write a query flag with no value', () => {
+      const value = feeds.getFeedUrl('example:profile', { username: 'alice' })
+      const expected = 'https://www.example.com/-alice/?rss'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should write a query flag written with an empty value as a flag', () => {
+      const value = feeds.getFeedUrl('example:member', { username: 'alice' })
+      const expected = 'https://www.example.com/members/alice?rss'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should write a query flag beside a query value', () => {
+      const value = feeds.getFeedUrl('example:page', { username: 'alice', page: '2' })
+      const expected = 'https://www.example.com/pages/alice?rss&page=2'
+
+      expect(value).toBe(expected)
+    })
+
     it('should percent-encode a non-ASCII query value', () => {
       const value = feeds.getFeedUrl('example:tag', { tag: '技術' })
       const expected = 'https://feeds.example.com/rss.xml?q=tag:%E6%8A%80%E8%A1%93'
@@ -377,6 +401,44 @@ describe('definePlatformFeeds', () => {
       const hint = feeds.getFeedHint(value)
 
       expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed named by a query flag', () => {
+      const value = 'https://www.example.com/-alice/?rss'
+      const expected = 'example:profile'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed named by a query flag with an empty value', () => {
+      const value = 'https://www.example.com/-alice/?rss='
+      const expected = 'example:profile'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed whose template writes the flag with an empty value', () => {
+      const value = 'https://www.example.com/members/alice?rss'
+      const expected = 'example:member'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed named by a query flag beside a query value', () => {
+      const value = 'https://www.example.com/pages/alice?page=2&rss='
+      const expected = 'example:page'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return undefined for a query flag with a value', () => {
+      const value = 'https://www.example.com/-alice/?rss=1'
+
+      expect(feeds.getFeedHint(value)).toBeUndefined()
     })
 
     it('should return the key of a feed with two values', () => {
