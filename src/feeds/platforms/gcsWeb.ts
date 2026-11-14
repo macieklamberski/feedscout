@@ -85,13 +85,5 @@ export const gcsWebHandler: PlatformHandler = {
     ]
   },
 
-  // The table reads `www.{site}` as the site, while that host has no DNS record, so the page parser
-  // refuses it.
-  getFeedHint: (url) => {
-    if (!parseGcsWebUrl(url)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
