@@ -1863,6 +1863,7 @@
     "velog:trending": "https://v2.velog.io/rss"
   },
   "viabloga": {
+    "viabloga:category": "http://critico-blog.viabloga.com/cinema.xml",
     "viabloga:comments": "http://bab.viabloga.com/comments.xml",
     "viabloga:posts": "http://bab.viabloga.com/index.xml",
     "viabloga:wiki": "http://bab.viabloga.com/wiki.rdf"

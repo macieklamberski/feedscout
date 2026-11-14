@@ -1415,7 +1415,8 @@ Discovers RSS, Atom and RDF feeds for Viabloga.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.viabloga.com` | Posts (RSS + Atom + RDF) · comments<sup>†</sup> · wiki<sup>†</sup> |
+| `{blog}.viabloga.com` | Posts (RSS + Atom + RDF) · comments<sup>†</sup> · wiki<sup>†</sup> |
+| `{blog}.viabloga.com/{category}.shtml` | Category · the feeds above |
 
 <sup>†</sup> *Found only by the Platform method.*
 
