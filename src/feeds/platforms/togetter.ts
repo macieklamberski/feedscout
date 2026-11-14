@@ -1,7 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers page (html).
@@ -12,6 +11,12 @@ export type TogetterUrl = { kind: 'user'; username: string } | { kind: 'home' }
 export const hosts = ['togetter.com', 'www.togetter.com']
 
 const userPathRegex = /^\/id\/([^/]+)/i
+
+const feeds = definePlatformFeeds([
+  { key: 'togetter:news', template: 'https://togetter.com/rss/news' },
+  { key: 'togetter:hot', template: 'https://togetter.com/rss/hot' },
+  { key: 'togetter:curator', template: 'https://togetter.com/rss/id/{username}' },
+])
 
 export const parseTogetterUrl = (url: string): TogetterUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -41,16 +46,15 @@ export const togetterHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-    const hot: DiscoverUriEntry = { uri: `${origin}/rss/hot`, hint: composeHint('togetter:hot') }
-
     if (parsed.kind === 'user') {
       return [
-        { uri: `${origin}/rss/id/${parsed.username}`, hint: composeHint('togetter:curator') },
-        hot,
+        feeds.getFeedEntry('togetter:curator', { username: parsed.username }),
+        feeds.getFeedEntry('togetter:hot'),
       ]
     }
 
-    return [{ uri: `${origin}/rss/news`, hint: composeHint('togetter:news') }, hot]
+    return [feeds.getFeedEntry('togetter:news'), feeds.getFeedEntry('togetter:hot')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
