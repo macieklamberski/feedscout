@@ -214,10 +214,14 @@ export const gitlabHandler: PlatformHandler = {
       return
     }
 
-    const [feature, branch] = segments.slice(dashIndex + 1)
+    const featureSegments = segments.slice(dashIndex + 1)
+    const [feature, branch] = featureSegments
     const isAtomFormat = isAnyOf(getQueryParam(parsedUrl, 'format'), 'atom')
+    // `/-/commits/{branch}.atom` serves the bytes `?format=atom` does. Under a file path GitLab
+    // reads the suffix as part of the file and redirects to the tree.
+    const isAtomBranch = featureSegments.length === 2 && feedSuffixRegex.test(branch ?? '')
 
-    if (isAnyOf(feature, 'commits') && branch && isAtomFormat) {
+    if (isAnyOf(feature, 'commits') && branch && (isAtomFormat || isAtomBranch)) {
       return composeHint('gitlab:branch-commits')
     }
 
