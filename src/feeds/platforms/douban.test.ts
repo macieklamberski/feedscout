@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type DoubanUrl, doubanHandler, parseDoubanUrl } from './douban.js'
 
 describe('parseDoubanUrl', () => {
@@ -157,6 +160,14 @@ describe('doubanHandler', () => {
           uri: 'https://www.douban.com/feed/review/drama',
           hint: { key: 'douban:drama-reviews', label: 'Drama reviews' },
         },
+        {
+          uri: 'https://www.douban.com/feed/review/movie_new',
+          hint: { key: 'douban:new-movie-reviews', label: 'New movie reviews' },
+        },
+        {
+          uri: 'https://www.douban.com/feed/review/best',
+          hint: { key: 'douban:popular-reviews', label: 'Popular reviews' },
+        },
       ]
 
       expect(doubanHandler.resolve(value)).toEqual(expected)
@@ -198,6 +209,162 @@ describe('doubanHandler', () => {
       ]
 
       expect(doubanHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the interests hint for a user interests feed', () => {
+      const value = 'https://www.douban.com/feed/people/alicebean/interests'
+      const expected: DiscoverUriHint = { key: 'douban:interests', label: 'Interests' }
+
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the reviews hint for a user reviews feed', () => {
+      const value = 'https://www.douban.com/feed/people/29610886/reviews'
+      const expected: DiscoverUriHint = { key: 'douban:reviews', label: 'Reviews' }
+
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the notes hint for a user notes feed', () => {
+      const value = 'https://www.douban.com/feed/people/alicebean/notes'
+      const expected: DiscoverUriHint = { key: 'douban:notes', label: 'Notes' }
+
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the subject reviews hint for a subject reviews feed', () => {
+      const value = 'https://www.douban.com/feed/subject/1092183/reviews'
+      const expected: DiscoverUriHint = { key: 'douban:subject-reviews', label: 'Subject reviews' }
+
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the book reviews hint for the book reviews feed', () => {
+      const value = 'https://www.douban.com/feed/review/book'
+      const expected: DiscoverUriHint = { key: 'douban:book-reviews', label: 'Book reviews' }
+
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the movie reviews hint for the movie reviews feed', () => {
+      const value = 'https://www.douban.com/feed/review/movie'
+      const expected: DiscoverUriHint = { key: 'douban:movie-reviews', label: 'Movie reviews' }
+
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the music reviews hint for the music reviews feed', () => {
+      const value = 'https://www.douban.com/feed/review/music'
+      const expected: DiscoverUriHint = { key: 'douban:music-reviews', label: 'Music reviews' }
+
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the new movie reviews hint for the new movie reviews feed', () => {
+      const value = 'https://www.douban.com/feed/review/movie_new'
+      const expected: DiscoverUriHint = {
+        key: 'douban:new-movie-reviews',
+        label: 'New movie reviews',
+      }
+
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the popular reviews hint for the popular reviews feed', () => {
+      const value = 'https://www.douban.com/feed/review/best'
+      const expected: DiscoverUriHint = { key: 'douban:popular-reviews', label: 'Popular reviews' }
+
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the drama reviews hint for the drama reviews feed', () => {
+      const value = 'https://www.douban.com/feed/review/drama'
+      const expected: DiscoverUriHint = { key: 'douban:drama-reviews', label: 'Drama reviews' }
+
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the subject reviews hint for a feed on the apex host', () => {
+      const value = 'https://douban.com/feed/subject/1112696/reviews'
+      const expected: DiscoverUriHint = { key: 'douban:subject-reviews', label: 'Subject reviews' }
+
+      expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a user page', () => {
+      const value = 'https://www.douban.com/people/alicebean/'
+
+      expect(doubanHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a subject page', () => {
+      const value = 'https://movie.douban.com/subject/1092183/'
+
+      expect(doubanHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/feed/people/alicebean/notes'
+
+      expect(doubanHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'http://douban.com/feed/review/movie_new',
+        { key: 'douban:new-movie-reviews', label: 'New movie reviews' },
+      ],
+      [
+        'https://www.douban.com/feed/review/best',
+        { key: 'douban:popular-reviews', label: 'Popular reviews' },
+      ],
+      [
+        'https://www.douban.com/feed/people/alicebean/interests',
+        { key: 'douban:interests', label: 'Interests' },
+      ],
+      [
+        'https://www.douban.com/feed/people/29610886/reviews',
+        { key: 'douban:reviews', label: 'Reviews' },
+      ],
+      [
+        'https://www.douban.com/feed/people/alicebean/notes',
+        { key: 'douban:notes', label: 'Notes' },
+      ],
+      [
+        'https://www.douban.com/feed/subject/1092183/reviews',
+        { key: 'douban:subject-reviews', label: 'Subject reviews' },
+      ],
+      [
+        'https://www.douban.com/feed/review/book',
+        { key: 'douban:book-reviews', label: 'Book reviews' },
+      ],
+      [
+        'https://www.douban.com/feed/review/movie',
+        { key: 'douban:movie-reviews', label: 'Movie reviews' },
+      ],
+      [
+        'https://www.douban.com/feed/review/music',
+        { key: 'douban:music-reviews', label: 'Music reviews' },
+      ],
+      [
+        'https://www.douban.com/feed/review/drama',
+        { key: 'douban:drama-reviews', label: 'Drama reviews' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [doubanHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
