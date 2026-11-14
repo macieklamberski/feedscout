@@ -366,6 +366,7 @@
     "instatus:history": "Incident history",
     "jira:project": "Project",
     "jira:site": "Site activity",
+    "jira:issue": "Issue",
     "neocities:updates": "Site updates",
     "netcrew:updates": "Site updates",
     "nethouse:news": "News",
