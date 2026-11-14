@@ -19,7 +19,7 @@ const feeds = definePlatformFeeds(
   [
     { key: 'castos:podcast', template: 'https://feeds.castos.com/{feedId}' },
     // The show site redirects /feed to its feeds.castos.com URL.
-    { key: 'castos:podcast', template: '{scheme}://{host}/feed' },
+    { key: 'castos:podcast', template: '{scheme}://{host}/feed', isAlias: true },
   ],
   { domains },
 )
