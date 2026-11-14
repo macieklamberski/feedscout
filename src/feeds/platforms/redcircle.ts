@@ -1,6 +1,7 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getMetaContent, uuidRegex } from '../../common/utils.js'
+import { getMetaContent, uuidRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,6 +10,10 @@ export type RedcirclePage = { showUuid: string }
 const hosts = ['redcircle.com', 'www.redcircle.com']
 
 const showRegex = /^\/shows\/([^/]+)(?:\/|$)/i
+
+const feeds = definePlatformFeeds([
+  { key: 'redcircle:show', template: 'https://feeds.redcircle.com/{showUuid}' },
+])
 
 const getUuidFromPath = (pathname: string): string | undefined => {
   const segment = showRegex.exec(pathname)?.[1]
@@ -70,11 +75,17 @@ export const redcircleHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://feeds.redcircle.com/${page.showUuid}`,
-        hint: composeHint('redcircle:show'),
-      },
-    ]
+    return [feeds.getFeedEntry('redcircle:show', { showUuid: page.showUuid })]
+  },
+
+  getFeedHint: (url) => {
+    const [showUuid] = getPathSegments(url)
+
+    // Only a uuid names a show feed, so a file such as robots.txt gets no hint.
+    if (!showUuid || !uuidRegex.test(showUuid)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }
