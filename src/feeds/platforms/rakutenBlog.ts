@@ -12,7 +12,11 @@ const hosts = ['plaza.rakuten.co.jp']
 // root too, so the table reads both paths.
 const feeds = definePlatformFeeds([
   { key: 'rakuten-blog:posts', template: 'https://api.plaza.rakuten.ne.jp/{username}/rss/' },
-  { key: 'rakuten-blog:posts', template: 'https://api.plaza.rakuten.ne.jp/{username}/' },
+  {
+    key: 'rakuten-blog:posts',
+    template: 'https://api.plaza.rakuten.ne.jp/{username}/',
+    isAlias: true,
+  },
 ])
 
 export const parseRakutenBlogUrl = (url: string): RakutenBlogUrl | undefined => {
