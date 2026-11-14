@@ -114,6 +114,22 @@ describe('colorMeShopHandler', () => {
       expect(colorMeShopHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep the scheme of an http shop page', () => {
+      const value = 'http://example.shop-pro.jp/?pid=193633107'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.shop-pro.jp/?mode=rss',
+          hint: { key: 'color-me-shop:products', label: 'Products', format: 'rdf' },
+        },
+        {
+          uri: 'http://example.shop-pro.jp/?mode=atom',
+          hint: { key: 'color-me-shop:products', label: 'Products', format: 'atom' },
+        },
+      ]
+
+      expect(colorMeShopHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return feeds at the origin of a shop on its own domain', () => {
       const value = 'https://www.example.com/?mode=cate&cbid=2130010&csid=0'
       const expected: Array<DiscoverUriEntry> = [

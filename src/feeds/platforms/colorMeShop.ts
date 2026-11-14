@@ -59,8 +59,8 @@ export const colorMeShopHandler: PlatformHandler = {
     ]
   },
 
-  // The table reads any host under shop-pro.jp, so the page parser refuses the service hosts and a
-  // JUGEM blog on a nested subdomain first.
+  // The table reads a numbered host such as img15, and `www.{shop}`, as a shop, so the page parser
+  // refuses them first.
   getFeedHint: (url) => {
     if (!parseColorMeShopUrl(url)) {
       return
