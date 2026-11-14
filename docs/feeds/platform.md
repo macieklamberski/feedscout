@@ -1601,8 +1601,8 @@ Discovers the Atom feed of a Shopify store's blog. Detected by the `Powered-By` 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{store}/blogs/{handle}` | Blog (Atom) |
-| `{store}/{locale}/blogs/{handle}` | Blog in that market's locale (Atom) |
+| `{host}/blogs/{handle}` | Blog (Atom) |
+| `{host}/{locale}/blogs/{handle}` | Blog (Atom) |
 
 > [!NOTE]
 > There is no store-wide feed, so the blog handle is required. A missing blog answers 404 with an Atom content type and an empty body.
