@@ -15,7 +15,7 @@ const filesPathRegex = /\/sites\/g\/files\/knoqqb\d+\//i
 // A site on its own domain is known only by its markup, so its feeds are built but not claimed.
 // The news releases narrowed to a category and the SEC filings narrowed to a filing group are
 // claimed only, since no page URL names the category or the group. An `items` count stays under
-// the feed it sizes.
+// the feed it sizes, and its rows come last, so a filter beside it decides the key.
 const feeds = definePlatformFeeds(
   [
     { key: 'gcs-web:news-releases', template: '{scheme}://{host}/rss/news-releases.xml' },
@@ -29,6 +29,12 @@ const feeds = definePlatformFeeds(
       template: '{scheme}://{host}/rss/sec-filings.xml?sub_group={group}',
     },
     { key: 'gcs-web:events', template: '{scheme}://{host}/rss/events.xml' },
+    {
+      key: 'gcs-web:news-releases',
+      template: '{scheme}://{host}/rss/news-releases.xml?items={items}',
+    },
+    { key: 'gcs-web:sec-filings', template: '{scheme}://{host}/rss/sec-filings.xml?items={items}' },
+    { key: 'gcs-web:events', template: '{scheme}://{host}/rss/events.xml?items={items}' },
   ],
   { domains },
 )
