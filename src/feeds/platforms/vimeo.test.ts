@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { parseVimeoUrl, type VimeoUrl, vimeoHandler } from './vimeo.js'
 
 describe('parseVimeoUrl', () => {
@@ -67,6 +70,18 @@ describe('vimeoHandler', () => {
 
     it('should return videos feed for user page', () => {
       const value = 'https://vimeo.com/casey'
+      const expected = [
+        {
+          uri: 'https://vimeo.com/casey/videos/rss',
+          hint: { key: 'vimeo:videos', label: 'Videos' },
+        },
+      ]
+
+      expect(vimeoHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the videos feed on the apex host over https for a www page over http', () => {
+      const value = 'http://www.vimeo.com/casey'
       const expected = [
         {
           uri: 'https://vimeo.com/casey/videos/rss',
@@ -259,6 +274,132 @@ describe('vimeoHandler', () => {
       for (const value of values) {
         expect(vimeoHandler.resolve(value)).toEqual([])
       }
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the videos hint for a user videos feed', () => {
+      const value = 'https://vimeo.com/alice/videos/rss'
+      const expected: DiscoverUriHint = { key: 'vimeo:videos', label: 'Videos' }
+
+      expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the videos hint for a user videos feed on the www host over http', () => {
+      const value = 'http://www.vimeo.com/alice/videos/rss'
+      const expected: DiscoverUriHint = { key: 'vimeo:videos', label: 'Videos' }
+
+      expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the videos hint for a user all videos feed', () => {
+      const value = 'https://vimeo.com/user12345/videos/all/rss'
+      const expected: DiscoverUriHint = { key: 'vimeo:videos', label: 'Videos' }
+
+      expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the likes hint for a user likes feed', () => {
+      const value = 'https://vimeo.com/alice/likes/rss'
+      const expected: DiscoverUriHint = { key: 'vimeo:likes', label: 'Likes' }
+
+      expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the channel hint for a channel feed', () => {
+      const value = 'https://vimeo.com/channels/staffpicks/videos/rss'
+      const expected: DiscoverUriHint = { key: 'vimeo:channel', label: 'Channel' }
+
+      expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the channel hint for a channel feed with a numeric channel', () => {
+      const value = 'https://vimeo.com/channels/12345/videos/rss'
+      const expected: DiscoverUriHint = { key: 'vimeo:channel', label: 'Channel' }
+
+      expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the group hint for a group feed', () => {
+      const value = 'https://vimeo.com/groups/example/videos/rss'
+      const expected: DiscoverUriHint = { key: 'vimeo:group', label: 'Group' }
+
+      expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the album hint for an album feed', () => {
+      const value = 'https://vimeo.com/album/12345/rss'
+      const expected: DiscoverUriHint = { key: 'vimeo:album', label: 'Album' }
+
+      expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a numeric first segment', () => {
+      const value = 'https://vimeo.com/123456/videos/rss'
+
+      expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a likes feed under the channels route', () => {
+      const value = 'https://vimeo.com/channels/likes/rss'
+
+      expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an album feed with a non-numeric id', () => {
+      const value = 'https://vimeo.com/album/not-a-number/rss'
+
+      expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a showcase feed', () => {
+      const value = 'https://vimeo.com/showcase/12345/rss'
+
+      expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the blog feed', () => {
+      const value = 'https://vimeo.com/blog/feed.xml'
+
+      expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a user page', () => {
+      const value = 'https://vimeo.com/alice'
+
+      expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/alice/videos/rss'
+
+      expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const values: Array<[string, DiscoverUriEntry['hint']]> = [
+      ['https://vimeo.com/alice/videos/rss', { key: 'vimeo:videos', label: 'Videos' }],
+      ['https://vimeo.com/user12345/videos/all/rss', { key: 'vimeo:videos', label: 'Videos' }],
+      ['https://vimeo.com/alice/likes/rss', { key: 'vimeo:likes', label: 'Likes' }],
+      [
+        'https://vimeo.com/channels/staffpicks/videos/rss',
+        { key: 'vimeo:channel', label: 'Channel' },
+      ],
+      ['https://vimeo.com/channels/12345/videos/rss', { key: 'vimeo:channel', label: 'Channel' }],
+      ['https://vimeo.com/groups/example/videos/rss', { key: 'vimeo:group', label: 'Group' }],
+      ['https://vimeo.com/album/12345/rss', { key: 'vimeo:album', label: 'Album' }],
+    ]
+
+    it.each(values)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [vimeoHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
