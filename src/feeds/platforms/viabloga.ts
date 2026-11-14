@@ -16,14 +16,19 @@ const feeds = definePlatformFeeds(
   [
     { key: 'viabloga:posts', template: '{scheme}://{host}/index.xml', format: 'rss' },
     { key: 'viabloga:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
-    { key: 'viabloga:posts', template: '{scheme}://{host}/atom', format: 'atom' },
+    { key: 'viabloga:posts', template: '{scheme}://{host}/atom', format: 'atom', isAlias: true },
     { key: 'viabloga:posts', template: '{scheme}://{host}/index.rdf', format: 'rdf' },
     { key: 'viabloga:comments', template: '{scheme}://{host}/comments.xml', format: 'rss' },
     { key: 'viabloga:wiki', template: '{scheme}://{host}/wiki.rdf', format: 'rdf' },
     // A category serves the same items with full text at `{category}_full.xml`. These rows go
     // after the named files above.
     { key: 'viabloga:category', template: '{scheme}://{host}/{category}.xml', format: 'rss' },
-    { key: 'viabloga:category', template: '{scheme}://{host}/{category}_full.xml', format: 'rss' },
+    {
+      key: 'viabloga:category',
+      template: '{scheme}://{host}/{category}_full.xml',
+      format: 'rss',
+      isAlias: true,
+    },
   ],
   { domains },
 )
