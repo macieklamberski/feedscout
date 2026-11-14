@@ -36,10 +36,12 @@ const feeds = definePlatformFeeds([
   {
     key: 'soundcloud:playlist',
     template: 'https://feeds.soundcloud.com/playlists/soundcloud:sets:{playlistId}',
+    isAlias: true,
   },
   {
     key: 'soundcloud:playlist',
     template: 'https://feeds.soundcloud.com/playlists/soundcloud:playlists:{playlistId}/sounds.rss',
+    isAlias: true,
   },
 ])
 
