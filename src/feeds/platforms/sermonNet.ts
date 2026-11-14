@@ -8,12 +8,10 @@ import { getTenantSubdomain } from '../../common/utils.js'
 // Generic partly covers church.
 // Handler needed for: channel.
 
-export type SermonNetUrl =
-  | { kind: 'church'; tenant: string }
-  | { kind: 'channel'; tenant: string; channel: string }
+export type SermonNetUrl = { kind: 'church' } | { kind: 'channel'; channel: string }
 export type SermonNetPage =
-  | { kind: 'church'; tenant: string; channels: Array<string> }
-  | { kind: 'channel'; tenant: string; channel: string }
+  | { kind: 'church'; channels: Array<string> }
+  | { kind: 'channel'; channel: string }
 
 const domains = ['sermon.net']
 
@@ -46,9 +44,7 @@ const getChannelFeeds = (
 }
 
 export const parseSermonNetUrl = (url: string): SermonNetUrl | undefined => {
-  const tenant = getTenantSubdomain(url, domains)
-
-  if (!tenant) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 
@@ -56,10 +52,10 @@ export const parseSermonNetUrl = (url: string): SermonNetUrl | undefined => {
   const [, channel] = getPathSegments(url)
 
   if (channel) {
-    return { kind: 'channel', tenant, channel }
+    return { kind: 'channel', channel }
   }
 
-  return { kind: 'church', tenant }
+  return { kind: 'church' }
 }
 
 export const getSermonNetPage = (
@@ -85,7 +81,7 @@ export const getSermonNetPage = (
     return parsed
   }
 
-  return { kind: 'church', tenant: parsed.tenant, channels }
+  return { kind: 'church', channels }
 }
 
 export const sermonNetHandler: PlatformHandler = {
