@@ -13,7 +13,6 @@ const domains = ['blog.jp', 'doorblog.jp', 'ldblog.jp', 'livedoor.biz']
 
 const categoryRegex = /^\/archives\/cat_(\d+)\.html$/i
 
-// Every blog redirects http to https, and its pages link only the https feeds.
 const feeds = definePlatformFeeds(
   [
     {
