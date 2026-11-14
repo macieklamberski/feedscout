@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { isWebnodeHtml, parseWebnodeUrl, type WebnodeUrl, webnodeHandler } from './webnode.js'
 
 const classicHtml = `
@@ -139,6 +142,109 @@ describe('webnodeHandler', () => {
       ]
 
       expect(webnodeHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    const feedUrls: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.webnode.page/rss/all.xml',
+        { key: 'webnode:articles', label: 'All articles' },
+      ],
+      [
+        'https://example.webnode.page/rss/blog.xml',
+        { key: 'webnode:section', label: 'Section articles' },
+      ],
+      [
+        'http://example.webnode.cz/rss/aktuality.xml',
+        { key: 'webnode:section', label: 'Section articles' },
+      ],
+      [
+        'https://example.webnode.com.br/rss/all.xml',
+        { key: 'webnode:articles', label: 'All articles' },
+      ],
+      [
+        'https://example.webnode.cat/rss/all.xml',
+        { key: 'webnode:articles', label: 'All articles' },
+      ],
+    ]
+
+    it.each(feedUrls)('should return the hint for %s', (value, expected) => {
+      expect(webnodeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a page on a site subdomain', () => {
+      const value = 'https://example.webnode.page/blog/'
+
+      expect(webnodeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://example.com/rss/all.xml'
+
+      expect(webnodeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://webnode.cz/rss/all.xml'
+
+      expect(webnodeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www', () => {
+      const value = 'https://www.webnode.page/rss/all.xml'
+
+      expect(webnodeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://cms.example.webnode.page/rss/all.xml'
+
+      expect(webnodeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www in front of a site', () => {
+      const value = 'https://www.example.webnode.page/rss/all.xml'
+
+      expect(webnodeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return the hint for a country domain outside the stored ones', () => {
+      const value = 'https://example.webnode.de/rss/all.xml'
+      const expected: DiscoverUriHint = { key: 'webnode:articles', label: 'All articles' }
+
+      expect(webnodeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the hint for a feed on a co. country domain', () => {
+      const value = 'https://example.webnode.co.uk/rss/all.xml'
+      const expected: DiscoverUriHint = { key: 'webnode:articles', label: 'All articles' }
+
+      expect(webnodeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriEntry['hint']]> = [
+      [
+        'http://example.webnode.page/rss/all.xml',
+        { key: 'webnode:articles', label: 'All articles' },
+      ],
+      [
+        'https://example.webnode.sk/rss/aktualne.xml',
+        { key: 'webnode:section', label: 'Section articles' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [webnodeHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
