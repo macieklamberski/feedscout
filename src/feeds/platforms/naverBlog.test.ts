@@ -78,11 +78,11 @@ describe('naverBlogHandler', () => {
           hint: { key: 'naver-blog:blog', label: 'Blog', format: 'rss' },
         },
         {
-          uri: 'https://rss.blog.naver.com/prologue?rss=1.0',
+          uri: 'https://rss.blog.naver.com/prologue.xml?rss=1.0',
           hint: { key: 'naver-blog:blog', label: 'Blog', format: 'rdf' },
         },
         {
-          uri: 'https://rss.blog.naver.com/prologue?atom=0.3',
+          uri: 'https://rss.blog.naver.com/prologue.xml?atom=0.3',
           hint: { key: 'naver-blog:blog', label: 'Blog', format: 'atom' },
         },
       ]
@@ -98,11 +98,11 @@ describe('naverBlogHandler', () => {
           hint: { key: 'naver-blog:blog', label: 'Blog', format: 'rss' },
         },
         {
-          uri: 'https://rss.blog.naver.com/prologue?rss=1.0',
+          uri: 'https://rss.blog.naver.com/prologue.xml?rss=1.0',
           hint: { key: 'naver-blog:blog', label: 'Blog', format: 'rdf' },
         },
         {
-          uri: 'https://rss.blog.naver.com/prologue?atom=0.3',
+          uri: 'https://rss.blog.naver.com/prologue.xml?atom=0.3',
           hint: { key: 'naver-blog:blog', label: 'Blog', format: 'atom' },
         },
       ]
@@ -145,6 +145,14 @@ describe('naverBlogHandler', () => {
       [
         'https://rss.blog.naver.com/rss/blogRss.nhn?blogId=alice',
         { key: 'naver-blog:blog', label: 'Blog', format: 'rss' },
+      ],
+      [
+        'https://rss.blog.naver.com/alice.xml?rss=1.0',
+        { key: 'naver-blog:blog', label: 'Blog', format: 'rdf' },
+      ],
+      [
+        'https://rss.blog.naver.com/alice.xml?atom=0.3',
+        { key: 'naver-blog:blog', label: 'Blog', format: 'atom' },
       ],
       [
         'http://rss.blog.naver.com/alice?rss=1.0',
@@ -217,6 +225,14 @@ describe('naverBlogHandler', () => {
       [
         'https://rss.blog.naver.com/rss/blogRss.nhn?blogId=alice',
         { key: 'naver-blog:blog', label: 'Blog', format: 'rss' },
+      ],
+      [
+        'https://rss.blog.naver.com/alice.xml?rss=1.0',
+        { key: 'naver-blog:blog', label: 'Blog', format: 'rdf' },
+      ],
+      [
+        'https://rss.blog.naver.com/alice.xml?atom=0.3',
+        { key: 'naver-blog:blog', label: 'Blog', format: 'atom' },
       ],
       [
         'http://rss.blog.naver.com/alice?rss=1.0',
