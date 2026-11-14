@@ -14,22 +14,32 @@ const projectPrefixes = ['projects', 'p']
 // SourceForge serves each feed at `feed`, `feed.rss` and `feed.atom`. The rows `resolve` never
 // builds claim the other two spellings of each feed it emits.
 const feeds = definePlatformFeeds([
-  { key: 'sourceforge:activity', template: 'https://sourceforge.net/p/{project}/activity/feed' },
+  {
+    key: 'sourceforge:activity',
+    template: 'https://sourceforge.net/p/{project}/activity/feed',
+    format: 'rss',
+  },
   {
     key: 'sourceforge:activity',
     template: 'https://sourceforge.net/p/{project}/activity/feed.rss',
     format: 'rss',
+    isAlias: true,
   },
   {
     key: 'sourceforge:activity',
     template: 'https://sourceforge.net/p/{project}/activity/feed.atom',
     format: 'atom',
   },
-  { key: 'sourceforge:project-feed', template: 'https://sourceforge.net/p/{project}/feed' },
+  {
+    key: 'sourceforge:project-feed',
+    template: 'https://sourceforge.net/p/{project}/feed',
+    format: 'rss',
+  },
   {
     key: 'sourceforge:project-feed',
     template: 'https://sourceforge.net/p/{project}/feed.rss',
     format: 'rss',
+    isAlias: true,
   },
   {
     key: 'sourceforge:project-feed',
@@ -69,11 +79,17 @@ const feeds = definePlatformFeeds([
     template: 'https://sourceforge.net/p/{project}/discussion/feed.atom',
     format: 'atom',
   },
-  { key: 'sourceforge:bugs', template: 'https://sourceforge.net/p/{project}/bugs/feed' },
+  // The bugs page links `feed.rss`, so that spelling is the one `resolve` builds.
   {
     key: 'sourceforge:bugs',
     template: 'https://sourceforge.net/p/{project}/bugs/feed.rss',
     format: 'rss',
+  },
+  {
+    key: 'sourceforge:bugs',
+    template: 'https://sourceforge.net/p/{project}/bugs/feed',
+    format: 'rss',
+    isAlias: true,
   },
   {
     key: 'sourceforge:bugs',
@@ -83,11 +99,13 @@ const feeds = definePlatformFeeds([
   {
     key: 'sourceforge:activity',
     template: 'https://sourceforge.net/mirror/{project}/activity/feed',
+    format: 'rss',
   },
   {
     key: 'sourceforge:activity',
     template: 'https://sourceforge.net/mirror/{project}/activity/feed.rss',
     format: 'rss',
+    isAlias: true,
   },
   {
     key: 'sourceforge:activity',
@@ -235,28 +253,28 @@ export const sourceforgeHandler: PlatformHandler = {
 
     if (thread) {
       return [
-        feeds.getFeedEntry('sourceforge:activity', { project }),
-        feeds.getFeedEntry('sourceforge:project-feed', { project }),
+        feeds.getFeedEntry('sourceforge:activity', { project }, 'rss'),
+        feeds.getFeedEntry('sourceforge:project-feed', { project }, 'rss'),
         feeds.getFeedEntry('sourceforge:files', { project }),
         feeds.getFeedEntry('sourceforge:news', { project }, 'rss'),
         feeds.getFeedEntry('sourceforge:news', { project }, 'atom'),
         feeds.getFeedEntry('sourceforge:discussion', { project }, 'rss'),
         feeds.getFeedEntry('sourceforge:discussion', { project }, 'atom'),
-        feeds.getFeedEntry('sourceforge:bugs', { project }),
+        feeds.getFeedEntry('sourceforge:bugs', { project }, 'rss'),
         feeds.getFeedEntry('sourceforge:discussion-thread', { project, forum, thread }, 'rss'),
         feeds.getFeedEntry('sourceforge:discussion-thread', { project, forum, thread }, 'atom'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('sourceforge:activity', { project }),
-      feeds.getFeedEntry('sourceforge:project-feed', { project }),
+      feeds.getFeedEntry('sourceforge:activity', { project }, 'rss'),
+      feeds.getFeedEntry('sourceforge:project-feed', { project }, 'rss'),
       feeds.getFeedEntry('sourceforge:files', { project }),
       feeds.getFeedEntry('sourceforge:news', { project }, 'rss'),
       feeds.getFeedEntry('sourceforge:news', { project }, 'atom'),
       feeds.getFeedEntry('sourceforge:discussion', { project }, 'rss'),
       feeds.getFeedEntry('sourceforge:discussion', { project }, 'atom'),
-      feeds.getFeedEntry('sourceforge:bugs', { project }),
+      feeds.getFeedEntry('sourceforge:bugs', { project }, 'rss'),
     ]
   },
 

@@ -113,11 +113,11 @@ describe('sourceforgeHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://sourceforge.net/p/filezilla/activity/feed',
-          hint: { key: 'sourceforge:activity', label: 'Recent activity' },
+          hint: { key: 'sourceforge:activity', label: 'Recent activity', format: 'rss' },
         },
         {
           uri: 'https://sourceforge.net/p/filezilla/feed',
-          hint: { key: 'sourceforge:project-feed', label: 'Project feed' },
+          hint: { key: 'sourceforge:project-feed', label: 'Project feed', format: 'rss' },
         },
         {
           uri: 'https://sourceforge.net/projects/filezilla/rss',
@@ -140,8 +140,8 @@ describe('sourceforgeHandler', () => {
           hint: { key: 'sourceforge:discussion', label: 'Discussion', format: 'atom' },
         },
         {
-          uri: 'https://sourceforge.net/p/filezilla/bugs/feed',
-          hint: { key: 'sourceforge:bugs', label: 'Bugs' },
+          uri: 'https://sourceforge.net/p/filezilla/bugs/feed.rss',
+          hint: { key: 'sourceforge:bugs', label: 'Bugs', format: 'rss' },
         },
       ]
 
@@ -153,11 +153,11 @@ describe('sourceforgeHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://sourceforge.net/p/example/activity/feed',
-          hint: { key: 'sourceforge:activity', label: 'Recent activity' },
+          hint: { key: 'sourceforge:activity', label: 'Recent activity', format: 'rss' },
         },
         {
           uri: 'https://sourceforge.net/p/example/feed',
-          hint: { key: 'sourceforge:project-feed', label: 'Project feed' },
+          hint: { key: 'sourceforge:project-feed', label: 'Project feed', format: 'rss' },
         },
         {
           uri: 'https://sourceforge.net/projects/example/rss',
@@ -180,8 +180,8 @@ describe('sourceforgeHandler', () => {
           hint: { key: 'sourceforge:discussion', label: 'Discussion', format: 'atom' },
         },
         {
-          uri: 'https://sourceforge.net/p/example/bugs/feed',
-          hint: { key: 'sourceforge:bugs', label: 'Bugs' },
+          uri: 'https://sourceforge.net/p/example/bugs/feed.rss',
+          hint: { key: 'sourceforge:bugs', label: 'Bugs', format: 'rss' },
         },
         {
           uri: 'https://sourceforge.net/p/example/discussion/12345/thread/abc123/feed',
@@ -207,11 +207,11 @@ describe('sourceforgeHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://sourceforge.net/p/example/activity/feed',
-          hint: { key: 'sourceforge:activity', label: 'Recent activity' },
+          hint: { key: 'sourceforge:activity', label: 'Recent activity', format: 'rss' },
         },
         {
           uri: 'https://sourceforge.net/p/example/feed',
-          hint: { key: 'sourceforge:project-feed', label: 'Project feed' },
+          hint: { key: 'sourceforge:project-feed', label: 'Project feed', format: 'rss' },
         },
         {
           uri: 'https://sourceforge.net/projects/example/rss',
@@ -234,8 +234,8 @@ describe('sourceforgeHandler', () => {
           hint: { key: 'sourceforge:discussion', label: 'Discussion', format: 'atom' },
         },
         {
-          uri: 'https://sourceforge.net/p/example/bugs/feed',
-          hint: { key: 'sourceforge:bugs', label: 'Bugs' },
+          uri: 'https://sourceforge.net/p/example/bugs/feed.rss',
+          hint: { key: 'sourceforge:bugs', label: 'Bugs', format: 'rss' },
         },
       ]
 
@@ -247,11 +247,11 @@ describe('sourceforgeHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://sourceforge.net/p/example/activity/feed',
-          hint: { key: 'sourceforge:activity', label: 'Recent activity' },
+          hint: { key: 'sourceforge:activity', label: 'Recent activity', format: 'rss' },
         },
         {
           uri: 'https://sourceforge.net/p/example/feed',
-          hint: { key: 'sourceforge:project-feed', label: 'Project feed' },
+          hint: { key: 'sourceforge:project-feed', label: 'Project feed', format: 'rss' },
         },
         {
           uri: 'https://sourceforge.net/projects/example/rss',
@@ -274,8 +274,8 @@ describe('sourceforgeHandler', () => {
           hint: { key: 'sourceforge:discussion', label: 'Discussion', format: 'atom' },
         },
         {
-          uri: 'https://sourceforge.net/p/example/bugs/feed',
-          hint: { key: 'sourceforge:bugs', label: 'Bugs' },
+          uri: 'https://sourceforge.net/p/example/bugs/feed.rss',
+          hint: { key: 'sourceforge:bugs', label: 'Bugs', format: 'rss' },
         },
       ]
 
@@ -286,14 +286,22 @@ describe('sourceforgeHandler', () => {
   describe('getFeedHint', () => {
     it('should return the activity key for an activity feed', () => {
       const value = 'https://sourceforge.net/p/example/activity/feed'
-      const expected: DiscoverUriHint = { key: 'sourceforge:activity', label: 'Recent activity' }
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:activity',
+        label: 'Recent activity',
+        format: 'rss',
+      }
 
       expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the project feed key for a project feed', () => {
       const value = 'https://sourceforge.net/p/example/feed'
-      const expected: DiscoverUriHint = { key: 'sourceforge:project-feed', label: 'Project feed' }
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:project-feed',
+        label: 'Project feed',
+        format: 'rss',
+      }
 
       expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -379,7 +387,7 @@ describe('sourceforgeHandler', () => {
 
     it('should return the bugs key for a bugs feed', () => {
       const value = 'https://sourceforge.net/p/example/bugs/feed'
-      const expected: DiscoverUriHint = { key: 'sourceforge:bugs', label: 'Bugs' }
+      const expected: DiscoverUriHint = { key: 'sourceforge:bugs', label: 'Bugs', format: 'rss' }
 
       expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -433,7 +441,11 @@ describe('sourceforgeHandler', () => {
 
     it('should return the activity key for an activity feed over http', () => {
       const value = 'http://sourceforge.net/p/example/activity/feed'
-      const expected: DiscoverUriHint = { key: 'sourceforge:activity', label: 'Recent activity' }
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:activity',
+        label: 'Recent activity',
+        format: 'rss',
+      }
 
       expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -552,7 +564,11 @@ describe('sourceforgeHandler', () => {
 
     it('should return the activity key for a mirror activity feed', () => {
       const value = 'https://sourceforge.net/mirror/example/activity/feed'
-      const expected: DiscoverUriHint = { key: 'sourceforge:activity', label: 'Recent activity' }
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:activity',
+        label: 'Recent activity',
+        format: 'rss',
+      }
 
       expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -585,11 +601,11 @@ describe('sourceforgeHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
         'http://sourceforge.net/p/example/activity/feed',
-        { key: 'sourceforge:activity', label: 'Recent activity' },
+        { key: 'sourceforge:activity', label: 'Recent activity', format: 'rss' },
       ],
       [
         'http://sourceforge.net/p/example/feed',
-        { key: 'sourceforge:project-feed', label: 'Project feed' },
+        { key: 'sourceforge:project-feed', label: 'Project feed', format: 'rss' },
       ],
       [
         'https://sourceforge.net/p/example/feed.atom',
@@ -623,7 +639,10 @@ describe('sourceforgeHandler', () => {
         'http://sourceforge.net/p/example/discussion/feed.atom',
         { key: 'sourceforge:discussion', label: 'Discussion', format: 'atom' },
       ],
-      ['http://sourceforge.net/p/example/bugs/feed', { key: 'sourceforge:bugs', label: 'Bugs' }],
+      [
+        'http://sourceforge.net/p/example/bugs/feed',
+        { key: 'sourceforge:bugs', label: 'Bugs', format: 'rss' },
+      ],
       [
         'http://sourceforge.net/p/example/activity/feed.rss',
         { key: 'sourceforge:activity', label: 'Recent activity', format: 'rss' },

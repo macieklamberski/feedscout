@@ -1602,7 +1602,7 @@
       "https://sourceforge.net/p/filezilla/activity/feed",
       "https://sourceforge.net/p/nmap/activity/feed"
     ],
-    "sourceforge:bugs": "https://sourceforge.net/p/sevenzip/bugs/feed",
+    "sourceforge:bugs": "https://sourceforge.net/p/sevenzip/bugs/feed.rss",
     "sourceforge:discussion": [
       "https://sourceforge.net/p/sevenzip/discussion/feed",
       "https://sourceforge.net/p/sevenzip/discussion/feed.atom"
