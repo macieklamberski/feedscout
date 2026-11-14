@@ -16,7 +16,7 @@ const feeds = definePlatformFeeds(
     // blog answers 404 there, so `resolve` keeps building the older files.
     { key: 'sakura-blog:posts', template: '{scheme}://{host}/rss.xml', format: 'rss' },
   ],
-  { domains },
+  { domains, isWwwTenantPrefix: true },
 )
 
 export const parseSakuraBlogUrl = (url: string): SakuraBlogUrl | undefined => {

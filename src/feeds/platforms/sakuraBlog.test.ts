@@ -93,10 +93,11 @@ describe('sakuraBlogHandler', () => {
       expect(sakuraBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a feed on the www host of a blog', () => {
+    it('should return the posts hint for a feed on the www host of a blog', () => {
       const value = 'http://www.alice.sblo.jp/index20.rdf'
+      const expected: DiscoverUriHint = { key: 'sakura-blog:posts', label: 'Posts', format: 'rss' }
 
-      expect(sakuraBlogHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(sakuraBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for an article page', () => {
