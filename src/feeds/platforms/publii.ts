@@ -1,11 +1,18 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker, hasMetaContent, isRootOfPage } from '../../common/utils.js'
+import { hasMarker, hasMetaContent, isRootOfPage } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 // Publii links its media by absolute URL under the site root, as in
 // `https://example.com/blog/media/posts/12/cover.jpg`.
 const mediaUrlRegex = /["'](?<siteUrl>https?:\/\/[^"'\s]+?)\/media\/(?:website\/|posts\/\d+\/)/i
+
+// A site of any domain is known only by its marker, so its feeds are built here but not claimed.
+const feeds = definePlatformFeeds([
+  { key: 'publii:posts', template: '{root}/feed.xml', format: 'atom' },
+  { key: 'publii:posts', template: '{root}/feed.json', format: 'json' },
+])
 
 const hasGenerator = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Publii')
@@ -61,8 +68,8 @@ export const publiiHandler: PlatformHandler = {
     }
 
     return [
-      { uri: `${page.siteUrl}/feed.xml`, hint: composeHint('publii:posts', 'atom') },
-      { uri: `${page.siteUrl}/feed.json`, hint: composeHint('publii:posts', 'json') },
+      feeds.getFeedEntry('publii:posts', { root: page.siteUrl }, 'atom'),
+      feeds.getFeedEntry('publii:posts', { root: page.siteUrl }, 'json'),
     ]
   },
 }
