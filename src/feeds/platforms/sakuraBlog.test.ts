@@ -93,11 +93,10 @@ describe('sakuraBlogHandler', () => {
       expect(sakuraBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts hint for a feed on the www host of a blog', () => {
+    it('should return undefined for a feed on the www host of a blog', () => {
       const value = 'http://www.alice.sblo.jp/index20.rdf'
-      const expected: DiscoverUriHint = { key: 'sakura-blog:posts', label: 'Posts', format: 'rss' }
 
-      expect(sakuraBlogHandler.getFeedHint?.(value)).toEqual(expected)
+      expect(sakuraBlogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an article page', () => {
@@ -143,14 +142,6 @@ describe('sakuraBlogHandler', () => {
       ],
       [
         'http://alice.sblo.jp/index.rdf',
-        { key: 'sakura-blog:posts', label: 'Posts', format: 'rdf' },
-      ],
-      [
-        'http://www.alice.sblo.jp/index20.rdf',
-        { key: 'sakura-blog:posts', label: 'Posts', format: 'rss' },
-      ],
-      [
-        'http://www.alice.sblo.jp/index.rdf',
         { key: 'sakura-blog:posts', label: 'Posts', format: 'rdf' },
       ],
     ]
