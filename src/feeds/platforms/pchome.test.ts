@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type PchomeUrl, parsePchomeUrl, pchomeHandler } from './pchome.js'
 
 describe('parsePchomeUrl', () => {
@@ -116,6 +118,65 @@ describe('pchomeHandler', () => {
       ]
 
       expect(pchomeHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the category hint for a category feed', () => {
+      const value = 'https://mypaper.pchome.com.tw/encountert/rss?cid=55'
+      const expected: DiscoverUriHint = { key: 'pchome:category', label: 'Category' }
+
+      expect(pchomeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a posts feed', () => {
+      const value = 'https://mypaper.pchome.com.tw/zero123137/rss'
+      const expected: DiscoverUriHint = { key: 'pchome:posts', label: 'Posts' }
+
+      expect(pchomeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a paper page', () => {
+      const value = 'https://mypaper.pchome.com.tw/zero123137'
+
+      expect(pchomeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a category page', () => {
+      const value = 'https://mypaper.pchome.com.tw/zero123137/category/31'
+
+      expect(pchomeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/zero123137/rss?cid=31'
+
+      expect(pchomeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://mypaper.pchome.com.tw/encountert/rss?cid=55',
+        { key: 'pchome:category', label: 'Category' },
+      ],
+      [
+        'https://mypaper.pchome.com.tw/zero123137/rss?cid=31',
+        { key: 'pchome:category', label: 'Category' },
+      ],
+      ['https://mypaper.pchome.com.tw/zero123137/rss', { key: 'pchome:posts', label: 'Posts' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [pchomeHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
