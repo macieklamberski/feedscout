@@ -458,6 +458,27 @@ describe('definePlatformFeeds', () => {
       expect(wwwStrippedFeeds.getFeedHint(value)?.key).toBe(expected)
     })
 
+    it('should return the key of a feed with a doubled slash after the host', () => {
+      const value = 'https://www.example.com//alice/feed.rss'
+      const expected = 'example:posts'
+
+      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed on a tenant with a doubled slash after the host', () => {
+      const value = 'https://meta.example.net//feeds/site'
+      const expected = 'example:site'
+
+      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a root feed with a doubled slash after the host', () => {
+      const value = 'https://example.com//latest.rss'
+      const expected = 'example:latest'
+
+      expect(rootFeeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
     it('should ignore the query order and extra parameters', () => {
       const value =
         'https://feeds.example.com/rss.xml?utm_source=x&q=by%3Aalice%20sort%3Atime&type=item'
