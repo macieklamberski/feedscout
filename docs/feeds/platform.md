@@ -1978,7 +1978,7 @@ Discovers the Atom feed of a Hubzilla channel. Detected by the `hubzilla` genera
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{hub}/channel/{name}`, `{hub}/profile/{name}` or `{hub}/@{name}` | Channel (Atom) |
+| `{root}/channel/{name}`, `{root}/profile/{name}` or `{root}/@{name}` | Channel (Atom) |
 
 > [!NOTE]
 > There is no site-wide feed, so a page outside a channel is not matched.
