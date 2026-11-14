@@ -1,6 +1,5 @@
 import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
-import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -24,7 +23,8 @@ const escapedSlashRegex = /\\\//g
 
 const branchViews = ['src', 'commits']
 
-// Every feed comes as Atom and RSS. The table claims a feed only on Codeberg and gitea.com: a
+// Every feed comes as Atom and RSS, emitted as two entries, so validation keeps the one a host
+// serves. The table claims a feed only on Codeberg and gitea.com: a
 // self-hosted instance is known by its session cookie, which a feed URL does not carry. A slashed
 // branch, such as v11.0/forgejo, reads as the file history, so the one-segment rows come first,
 // and a repo's activity comes before its owner's, so a page with a repo builds the repo's.
@@ -135,17 +135,13 @@ export const giteaHandler: PlatformHandler = {
     }
 
     const { root, owner } = page
-    // One feed in both formats, Atom tried first, under a hint that names no format.
-    const getFeedPair = (key: string, params: PlatformFeedParams): DiscoverUriEntry => {
-      return {
-        ...feeds.getFeedEntry(key, params),
-        uri: [feeds.getFeedUrl(key, params, 'atom'), feeds.getFeedUrl(key, params, 'rss')],
-      }
-    }
 
     // User or organization page: codeberg.org/{owner}.
     if (page.kind === 'user') {
-      return [getFeedPair('gitea:activity', { root, owner })]
+      return [
+        feeds.getFeedEntry('gitea:activity', { root, owner }, 'atom'),
+        feeds.getFeedEntry('gitea:activity', { root, owner }, 'rss'),
+      ]
     }
 
     // Repo page: codeberg.org/{owner}/{repo}.
@@ -153,29 +149,40 @@ export const giteaHandler: PlatformHandler = {
 
     if (!branchPath) {
       return [
-        getFeedPair('gitea:releases', { root, owner, repo }),
-        getFeedPair('gitea:tags', { root, owner, repo }),
-        getFeedPair('gitea:activity', { root, owner, repo }),
+        feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'rss'),
+        feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'rss'),
+        feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'rss'),
       ]
     }
 
     // Branch or file page and its history: {owner}/{repo}/{src|commits}/branch/{branch}/{path}.
     // gitea.com sends an anonymous /rss/branch request to its sign-in page, and Codeberg answers
-    // /atom/branch with a cookie challenge, so both are tried.
+    // /atom/branch with a cookie challenge, so both are emitted.
     if (branchPath.includes('/')) {
       return [
-        getFeedPair('gitea:file-history', { root, owner, repo, path: branchPath }),
-        getFeedPair('gitea:releases', { root, owner, repo }),
-        getFeedPair('gitea:tags', { root, owner, repo }),
-        getFeedPair('gitea:activity', { root, owner, repo }),
+        feeds.getFeedEntry('gitea:file-history', { root, owner, repo, path: branchPath }, 'atom'),
+        feeds.getFeedEntry('gitea:file-history', { root, owner, repo, path: branchPath }, 'rss'),
+        feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'rss'),
+        feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'rss'),
+        feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'rss'),
       ]
     }
 
     return [
-      getFeedPair('gitea:branch-commits', { root, owner, repo, branch: branchPath }),
-      getFeedPair('gitea:releases', { root, owner, repo }),
-      getFeedPair('gitea:tags', { root, owner, repo }),
-      getFeedPair('gitea:activity', { root, owner, repo }),
+      feeds.getFeedEntry('gitea:branch-commits', { root, owner, repo, branch: branchPath }, 'atom'),
+      feeds.getFeedEntry('gitea:branch-commits', { root, owner, repo, branch: branchPath }, 'rss'),
+      feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'atom'),
+      feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'rss'),
+      feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'atom'),
+      feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'rss'),
+      feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'atom'),
+      feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'rss'),
     ]
   },
 
