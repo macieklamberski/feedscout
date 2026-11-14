@@ -52,7 +52,21 @@ const feeds = definePlatformFeeds([
     template: 'https://huffduffer.com/{username}/json',
     format: 'json',
   },
-  { key: 'huffduffer:related', template: 'https://huffduffer.com/{username}/{id}/related/rss' },
+  {
+    key: 'huffduffer:related',
+    template: 'https://huffduffer.com/{username}/{id}/related/rss',
+    format: 'rss',
+  },
+  {
+    key: 'huffduffer:related',
+    template: 'https://huffduffer.com/{username}/{id}/related/atom',
+    format: 'atom',
+  },
+  {
+    key: 'huffduffer:related',
+    template: 'https://huffduffer.com/{username}/{id}/related/json',
+    format: 'json',
+  },
   {
     key: 'huffduffer:collective',
     template: 'https://huffduffer.com/{username}/collective/rss',
@@ -173,16 +187,30 @@ export const huffdufferHandler: PlatformHandler = {
     }
 
     if (page.kind === 'profile') {
-      return [feeds.getFeedEntry('huffduffer:huffduffs', { username: page.username })]
+      return [
+        feeds.getFeedEntry('huffduffer:huffduffs', { username: page.username }, 'rss'),
+        feeds.getFeedEntry('huffduffer:huffduffs', { username: page.username }, 'atom'),
+        feeds.getFeedEntry('huffduffer:huffduffs', { username: page.username }, 'json'),
+      ]
     }
 
+    const params = { username: page.username, id: page.id }
+
     if (page.kind === 'related') {
-      return [feeds.getFeedEntry('huffduffer:related', { username: page.username, id: page.id })]
+      return [
+        feeds.getFeedEntry('huffduffer:related', params, 'rss'),
+        feeds.getFeedEntry('huffduffer:related', params, 'atom'),
+        feeds.getFeedEntry('huffduffer:related', params, 'json'),
+      ]
     }
 
     return [
-      feeds.getFeedEntry('huffduffer:related', { username: page.username, id: page.id }),
-      feeds.getFeedEntry('huffduffer:huffduffs', { username: page.username }),
+      feeds.getFeedEntry('huffduffer:related', params, 'rss'),
+      feeds.getFeedEntry('huffduffer:related', params, 'atom'),
+      feeds.getFeedEntry('huffduffer:related', params, 'json'),
+      feeds.getFeedEntry('huffduffer:huffduffs', params, 'rss'),
+      feeds.getFeedEntry('huffduffer:huffduffs', params, 'atom'),
+      feeds.getFeedEntry('huffduffer:huffduffs', params, 'json'),
     ]
   },
 

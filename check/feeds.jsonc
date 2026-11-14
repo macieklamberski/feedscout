@@ -862,7 +862,11 @@
       "https://huffduffer.com/iamdanw/collective/atom",
       "https://huffduffer.com/iamdanw/collective/json"
     ],
-    "huffduffer:huffduffs": "https://huffduffer.com/wjt/rss",
+    "huffduffer:huffduffs": [
+      "https://huffduffer.com/wjt/rss",
+      "https://huffduffer.com/wjt/atom",
+      "https://huffduffer.com/wjt/json"
+    ],
     "huffduffer:new": [
       "https://huffduffer.com/new/rss",
       "https://huffduffer.com/new/atom",
@@ -873,7 +877,11 @@
       "https://huffduffer.com/popular/atom",
       "https://huffduffer.com/popular/json"
     ],
-    "huffduffer:related": "https://huffduffer.com/robby/56876/related/rss",
+    "huffduffer:related": [
+      "https://huffduffer.com/robby/56876/related/rss",
+      "https://huffduffer.com/robby/56876/related/atom",
+      "https://huffduffer.com/robby/56876/related/json"
+    ],
     "huffduffer:search": [
       "https://huffduffer.com/search/rss?q=Edward+Dutton",
       "https://huffduffer.com/search/atom?q=Edward+Dutton",

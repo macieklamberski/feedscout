@@ -1066,17 +1066,17 @@ Discovers Atom feeds for HEY World blogs.
 
 ### Huffduffer
 
-Discovers RSS feeds for Huffduffer users, their collectives and their huffduffed episodes, searches, and the site-wide new and popular huffduffs.
+Discovers RSS, Atom and JSON feeds for Huffduffer users, their collectives and their huffduffed episodes, searches, and the site-wide new and popular huffduffs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `huffduffer.com` | New huffduffs (RSS · Atom · JSON) |
 | `huffduffer.com/popular` | Popular (RSS · Atom · JSON) |
 | `huffduffer.com/search?q={query}` | Search (RSS · Atom · JSON) |
-| `huffduffer.com/{user}` | Huffduffs |
+| `huffduffer.com/{user}` | Huffduffs (RSS · Atom · JSON) |
 | `huffduffer.com/{user}/collective` | Collective (RSS · Atom · JSON) |
-| `huffduffer.com/{user}/{id}` | Possibly related<sup>†</sup> · huffduffs |
-| `huffduffer.com/{user}/{id}/related` | Possibly related |
+| `huffduffer.com/{user}/{id}` | Possibly related<sup>†</sup> · huffduffs (RSS · Atom · JSON) |
+| `huffduffer.com/{user}/{id}/related` | Possibly related (RSS · Atom · JSON) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
