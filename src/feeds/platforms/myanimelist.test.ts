@@ -347,21 +347,21 @@ describe('myanimelistHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the anime hint for an anime list feed', () => {
-      const value = 'https://myanimelist.net/rss.php?type=rw&u=MoonFox'
+      const value = 'https://myanimelist.net/rss.php?type=rw&u=AliceFox'
       const expected: DiscoverUriHint = { key: 'myanimelist:anime', label: 'Anime list' }
 
       expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the manga hint for a manga list feed', () => {
-      const value = 'https://myanimelist.net/rss.php?type=rm&u=MoonFox'
+      const value = 'https://myanimelist.net/rss.php?type=rm&u=AliceFox'
       const expected: DiscoverUriHint = { key: 'myanimelist:manga', label: 'Manga list' }
 
       expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the recently-watched hint for a recently watched feed', () => {
-      const value = 'https://myanimelist.net/rss.php?type=rwe&u=MoonFox'
+      const value = 'https://myanimelist.net/rss.php?type=rwe&u=AliceFox'
       const expected: DiscoverUriHint = {
         key: 'myanimelist:recently-watched',
         label: 'Recently watched',
@@ -371,14 +371,14 @@ describe('myanimelistHandler', () => {
     })
 
     it('should return the recently-read hint for a recently read feed', () => {
-      const value = 'https://myanimelist.net/rss.php?type=rrm&u=Felix-san'
+      const value = 'https://myanimelist.net/rss.php?type=rrm&u=Bob-san'
       const expected: DiscoverUriHint = { key: 'myanimelist:recently-read', label: 'Recently read' }
 
       expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the blog hint for a blog feed', () => {
-      const value = 'https://myanimelist.net/rss.php?type=blog&u=Felix-san'
+      const value = 'https://myanimelist.net/rss.php?type=blog&u=Bob-san'
       const expected: DiscoverUriHint = { key: 'myanimelist:blog', label: 'Blog' }
 
       expect(myanimelistHandler.getFeedHint?.(value)).toEqual(expected)
@@ -399,13 +399,13 @@ describe('myanimelistHandler', () => {
     })
 
     it('should return undefined for a feed URL without a list type', () => {
-      const value = 'https://myanimelist.net/rss.php?u=MoonFox'
+      const value = 'https://myanimelist.net/rss.php?u=AliceFox'
 
       expect(myanimelistHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a profile page', () => {
-      const value = 'https://myanimelist.net/profile/MoonFox'
+      const value = 'https://myanimelist.net/profile/AliceFox'
 
       expect(myanimelistHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -414,21 +414,22 @@ describe('myanimelistHandler', () => {
 
 describe('discoverUrisFromPlatform', () => {
   const ownFeeds: Array<[string, string, string]> = [
-    ['https://myanimelist.net/rss.php?type=rw&u=MoonFox', 'myanimelist:anime', 'Anime list'],
-    ['https://myanimelist.net/rss.php?type=rm&u=MoonFox', 'myanimelist:manga', 'Manga list'],
+    ['https://myanimelist.net/rss.php?type=rw&u=AliceFox', 'myanimelist:anime', 'Anime list'],
+    ['https://myanimelist.net/rss.php?type=rm&u=AliceFox', 'myanimelist:manga', 'Manga list'],
     [
-      'https://myanimelist.net/rss.php?type=rwe&u=MoonFox',
+      'https://myanimelist.net/rss.php?type=rwe&u=AliceFox',
       'myanimelist:recently-watched',
       'Recently watched',
     ],
     [
-      'https://myanimelist.net/rss.php?type=rrm&u=Felix-san',
+      'https://myanimelist.net/rss.php?type=rrm&u=Bob-san',
       'myanimelist:recently-read',
       'Recently read',
     ],
-    ['https://myanimelist.net/rss.php?type=blog&u=Felix-san', 'myanimelist:blog', 'Blog'],
+    ['https://myanimelist.net/rss.php?type=blog&u=Bob-san', 'myanimelist:blog', 'Blog'],
     ['https://myanimelist.net/rss/featured.xml', 'myanimelist:featured', 'Featured'],
     ['https://myanimelist.net/rss/news.xml', 'myanimelist:news', 'News'],
+    ['http://www.myanimelist.net/rss/news.xml', 'myanimelist:news', 'News'],
   ]
 
   it.each(ownFeeds)('should return %s itself as %s', async (value, key, label) => {
