@@ -248,9 +248,8 @@ export const omekaHandler: PlatformHandler = {
 
   getFeedHint: (url) => {
     const hint = feeds.getFeedHint(url)
-    const parsedUrl = parseUrl(url)
 
-    if (hint?.key !== 'omeka:items' || !parsedUrl || !hasFilter(parsedUrl.searchParams)) {
+    if (hint?.key !== 'omeka:items' || !hasFilter(new URL(url).searchParams)) {
       return hint
     }
 
