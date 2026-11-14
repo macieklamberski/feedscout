@@ -45,7 +45,7 @@ describe('learnkuHandler', () => {
 
     it('should return the community and site feeds for a community page', () => {
       const value = 'https://learnku.com/laravel'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://learnku.com/laravel/feed',
           hint: { key: 'learnku:community', label: 'Community' },
@@ -58,7 +58,7 @@ describe('learnkuHandler', () => {
 
     it('should return the site feed for the home page', () => {
       const value = 'https://learnku.com/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://learnku.com/feed', hint: { key: 'learnku:site', label: 'Site' } },
       ]
 
@@ -67,7 +67,7 @@ describe('learnkuHandler', () => {
 
     it('should return https feeds on the apex for an http www page', () => {
       const value = 'http://www.learnku.com/laravel'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://learnku.com/laravel/feed',
           hint: { key: 'learnku:community', label: 'Community' },
