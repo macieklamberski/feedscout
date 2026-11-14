@@ -172,6 +172,45 @@ describe('parseYoutubeUrl', () => {
     expect(parseYoutubeUrl('https://youtube.com/watch_popup?v=abc123')).toEqual(expected)
   })
 
+  it('should return the channel of a live stream embed', () => {
+    const value = 'https://www.youtube.com/embed/live_stream?channel=UC1234567890'
+    const expected: YoutubeUrl = { kind: 'player', channelId: 'UC1234567890' }
+
+    expect(parseYoutubeUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for a live stream embed without a UC channel ID', () => {
+    const value = 'https://www.youtube.com/embed/live_stream?channel=uc123'
+
+    expect(parseYoutubeUrl(value)).toBeUndefined()
+  })
+
+  it('should return undefined for a live stream embed without a channel', () => {
+    const value = 'https://www.youtube.com/embed/live_stream'
+
+    expect(parseYoutubeUrl(value)).toBeUndefined()
+  })
+
+  it('should return the username of a user uploads embed', () => {
+    const value = 'https://www.youtube.com/embed?listType=user_uploads&list=example'
+    const expected: YoutubeUrl = { kind: 'player', username: 'example' }
+
+    expect(parseYoutubeUrl(value)).toEqual(expected)
+  })
+
+  it('should return the playlist of an embed with the playlist list type', () => {
+    const value = 'https://www.youtube.com/embed?listType=playlist&list=PL1234567890'
+    const expected: YoutubeUrl = { kind: 'playlist', playlistId: 'PL1234567890' }
+
+    expect(parseYoutubeUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for a search embed', () => {
+    const value = 'https://www.youtube.com/embed?listType=search&list=cats'
+
+    expect(parseYoutubeUrl(value)).toBeUndefined()
+  })
+
   it('should return the playlist for a playlist page', () => {
     const expected: YoutubeUrl = { kind: 'playlist', playlistId: 'PL1234567890' }
 
@@ -227,6 +266,13 @@ describe('getYoutubePage', () => {
   it('should leave out the content channel ID for a video in a playlist', () => {
     const value = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=PL1234567890'
     const expected: YoutubePage = { kind: 'watch', playlistId: 'PL1234567890' }
+
+    expect(getYoutubePage(value, channelIdHtml)).toEqual(expected)
+  })
+
+  it('should keep the username of a user uploads embed over the content', () => {
+    const value = 'https://www.youtube.com/embed?listType=user_uploads&list=example'
+    const expected: YoutubePage = { kind: 'player', username: 'example' }
 
     expect(getYoutubePage(value, channelIdHtml)).toEqual(expected)
   })
@@ -321,6 +367,24 @@ describe('youtubeHandler', () => {
       const value = 'https://youtube.com/channel/UC1234567890'
 
       expect(youtubeHandler.resolve(value)).toEqual(expectedChannelFeeds)
+    })
+
+    it('should return all feed variants for a live stream embed', () => {
+      const value = 'https://www.youtube.com/embed/live_stream?channel=UC1234567890'
+
+      expect(youtubeHandler.resolve(value)).toEqual(expectedChannelFeeds)
+    })
+
+    it('should return the legacy user feed for a user uploads embed', () => {
+      const value = 'https://www.youtube.com/embed?listType=user_uploads&list=example'
+      const expected = [
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?user=example',
+          hint: { key: 'youtube:all', label: 'All uploads' },
+        },
+      ]
+
+      expect(youtubeHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return feed URL for playlist', () => {
