@@ -1665,6 +1665,7 @@ Discovers the blog feed of a Wix site. Detected by the `Wix.com` generator meta 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{account}.wixsite.com/{site}/…` | Blog (RSS), under the site path |
+| `{account}.wixstudio.com/{site}/…` | Blog (RSS), under the site path |
 | Any other page | Blog (RSS) |
 
 > [!NOTE]
