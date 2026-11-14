@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { OdyseeUrl } from './odysee.js'
 import { odyseeHandler, parseOdyseeUrl } from './odysee.js'
 
@@ -141,6 +144,82 @@ describe('odyseeHandler', () => {
       const value = 'https://odysee.com/@veritasium'
 
       expect(odyseeHandler.resolve(value)).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the videos hint for a feed with a full claim ID', () => {
+      const value = 'https://odysee.com/$/rss/@BobRain:2feae5c0e5c62d5533e0dd78e58a7684ca94f215'
+      const expected: DiscoverUriHint = { key: 'odysee:videos', label: 'Videos' }
+
+      expect(odyseeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the videos hint for a feed with a short claim ID', () => {
+      const value = 'https://odysee.com/$/rss/@alice.example:5'
+      const expected: DiscoverUriHint = { key: 'odysee:videos', label: 'Videos' }
+
+      expect(odyseeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the videos hint for a feed with an encoded channel name', () => {
+      const value = 'https://odysee.com/$/rss/@CarolAsociaci%C3%B3n:6'
+      const expected: DiscoverUriHint = { key: 'odysee:videos', label: 'Videos' }
+
+      expect(odyseeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the videos hint for a feed on the www host', () => {
+      const value = 'https://www.odysee.com/$/rss/@alice.example:5'
+      const expected: DiscoverUriHint = { key: 'odysee:videos', label: 'Videos' }
+
+      expect(odyseeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the videos hint for a feed with the claim ID as a path segment', () => {
+      const value = 'https://odysee.com/$/rss/@lbry/3fda836a92faaceedfe398225fb9b2ee2ed1f01a'
+      const expected: DiscoverUriHint = { key: 'odysee:videos', label: 'Videos' }
+
+      expect(odyseeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a channel page', () => {
+      const value = 'https://odysee.com/@alice.example:5'
+
+      expect(odyseeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path without a claim ID', () => {
+      const value = 'https://odysee.com/$/rss/@alice.example'
+
+      expect(odyseeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/$/rss/@alice.example:5'
+
+      expect(odyseeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const hint: DiscoverUriHint = { key: 'odysee:videos', label: 'Videos' }
+    const ownFeeds = [
+      'https://odysee.com/$/rss/@BobRain:2feae5c0e5c62d5533e0dd78e58a7684ca94f215',
+      'https://odysee.com/$/rss/@alice.example:5',
+      'https://odysee.com/$/rss/@CarolAsociaci%C3%B3n:6',
+      'https://odysee.com/$/rss/@lbry/3fda836a92faaceedfe398225fb9b2ee2ed1f01a',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [odyseeHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
