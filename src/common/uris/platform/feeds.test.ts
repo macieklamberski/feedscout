@@ -366,6 +366,38 @@ describe('definePlatformFeeds', () => {
 
       expect(feeds.getFeedUrl('example:posts', value)).toBeUndefined()
     })
+
+    it('should return undefined for an empty path segment', () => {
+      const value = { username: '' }
+
+      expect(feeds.getFeedUrl('example:posts', value)).toBeUndefined()
+    })
+
+    it('should return undefined for an empty host label', () => {
+      const value = { username: '' }
+
+      expect(feeds.getFeedUrl('example:blog', value)).toBeUndefined()
+    })
+
+    it('should build the row without the placeholder whose value is empty', () => {
+      const value = {
+        slug: 'news',
+        id: '',
+      }
+      const expected = 'https://www.example.com/c/news.rss'
+
+      expect(categoryFeeds.getFeedUrl('example:category', value)).toBe(expected)
+    })
+
+    it('should write no parameter for an empty query value', () => {
+      const value = {
+        username: 'alice',
+        page: '',
+      }
+      const expected = 'https://www.example.com/pages/alice?rss'
+
+      expect(feeds.getFeedUrl('example:page', value)).toBe(expected)
+    })
   })
 
   describe('getFeedEntry', () => {
