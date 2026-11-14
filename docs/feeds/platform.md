@@ -1748,7 +1748,7 @@ Discovers the feed forms of a Grav listing page. Detected by the `GravCMS` gener
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/` | Site root<sup>†</sup> (RSS + Atom) at `/.rss` and `/.atom` |
+| `{root}/` | Site root<sup>†</sup> (RSS + Atom) at `/.rss` and `/.atom` |
 | Any listing page | Page (RSS + Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
