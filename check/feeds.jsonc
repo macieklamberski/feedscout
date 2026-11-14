@@ -636,6 +636,10 @@
       "https://gitlab.com/gitlab-org/gitlab.atom"
     ],
     "gitlab:branch-commits": "https://gitlab.com/gitlab-org/gitlab/-/commits/master?format=atom",
+    // Invented tokens: the feeds are private to their owner, so these samples answer 401.
+    "gitlab:dashboard": "https://gitlab.com/dashboard/projects.atom?feed_token=0123456789abcdefghij",
+    "gitlab:dashboard-issues": "https://gitlab.com/dashboard/issues.atom?feed_token=0123456789abcdefghij",
+    "gitlab:dashboard-merge-requests": "https://gitlab.com/dashboard/merge_requests.atom?feed_token=0123456789abcdefghij",
     "gitlab:issues": "https://gitlab.com/gitlab-org/gitlab/-/issues.atom",
     "gitlab:merge-requests": "https://gitlab.com/gitlab-org/gitlab/-/merge_requests.atom",
     "gitlab:releases": "https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/releases.atom",
