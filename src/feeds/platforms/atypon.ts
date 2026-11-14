@@ -1,6 +1,6 @@
-import { composeQuery, isHostOf } from 'trousse'
+import { isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Unmeasured, bot wall.
 
@@ -24,6 +24,67 @@ const mostCitedHosts = ['onlinelibrary.wiley.com']
 
 const journalRegex = /^\/(?:toc|journals?|loi|home)\/(\w+)(?:\/|$)/i
 
+// The journal feed is also served at `showFeed/feed`, on Taylor & Francis at `/feed/rss/{code}`
+// and on Wiley at `/feed/{code}/most-recent`, so the table reads those spellings as well.
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'atypon:journal',
+      template: '{scheme}://{host}/action/showFeed?type=etoc&feed=rss&jc={code}',
+    },
+    {
+      key: 'atypon:journal',
+      template: '{scheme}://{host}/action/showFeed/feed?type=etoc&jc={code}',
+      isAlias: true,
+    },
+    {
+      key: 'atypon:journal',
+      template: 'https://www.tandfonline.com/feed/rss/{code}',
+      isAlias: true,
+    },
+    {
+      key: 'atypon:journal',
+      template: 'https://onlinelibrary.wiley.com/feed/{code}/most-recent',
+      isAlias: true,
+    },
+    {
+      key: 'atypon:most-cited',
+      template: 'https://onlinelibrary.wiley.com/feed/{code}/most-cited',
+    },
+    {
+      key: 'atypon:most-cited',
+      template:
+        'https://onlinelibrary.wiley.com/action/showMostCitedArticlesFeed?journalCode={code}',
+      isAlias: true,
+    },
+    {
+      key: 'atypon:ahead-of-print',
+      template: '{scheme}://{host}/action/showFeed?type=axatoc&feed=rss&jc={code}',
+    },
+    {
+      key: 'atypon:ahead-of-print',
+      template: '{scheme}://{host}/action/showFeed/feed?type=axatoc&jc={code}',
+      isAlias: true,
+    },
+    // A saved search or a topic feed names its query in values no page URL gives.
+    {
+      key: 'atypon:search',
+      template: '{scheme}://{host}/action/showFeed?type=search&feed=rss&query={query}',
+    },
+    {
+      key: 'atypon:search',
+      template: '{scheme}://{host}/action/showFeed/feed?type=search&query={query}',
+      isAlias: true,
+    },
+    {
+      key: 'atypon:topic',
+      template:
+        '{scheme}://{host}/action/showFeed?type=searchTopic&taxonomyCode={taxonomy}&tagCode={tag}',
+    },
+  ],
+  { hosts },
+)
+
 export const parseAtyponUrl = (url: string): AtyponUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -46,26 +107,25 @@ export const atyponHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseAtyponUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris = [
-      {
-        uri: `${origin}/action/showFeed${composeQuery({ type: 'etoc', feed: 'rss', jc: parsed.code })}`,
-        hint: composeHint('atypon:journal'),
-      },
-    ]
-
     if (parsed.isWiley) {
-      uris.push({
-        uri: `${origin}/feed/${parsed.code}/most-cited`,
-        hint: composeHint('atypon:most-cited'),
-      })
+      return [
+        page.getFeedEntry('atypon:journal', { code: parsed.code }),
+        page.getFeedEntry('atypon:ahead-of-print', { code: parsed.code }),
+        page.getFeedEntry('atypon:most-cited', { code: parsed.code }),
+      ]
     }
 
-    return uris
+    return [
+      page.getFeedEntry('atypon:journal', { code: parsed.code }),
+      page.getFeedEntry('atypon:ahead-of-print', { code: parsed.code }),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
