@@ -15,7 +15,7 @@ const directoryPathRegex = /^\/podcasts\/([^/]+)/i
 const feeds = definePlatformFeeds(
   [
     { key: 'podomatic:show', template: '{scheme}://{host}/rss2.xml' },
-    { key: 'podomatic:show', template: '{scheme}://{host}/archive/rss2.xml' },
+    { key: 'podomatic:show', template: '{scheme}://{host}/archive/rss2.xml', isAlias: true },
   ],
   { domains },
 )
