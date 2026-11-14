@@ -116,16 +116,16 @@ describe('viablogaHandler', () => {
   describe('getFeedHint', () => {
     const feedHints: Array<[string, DiscoverUriHint]> = [
       [
-        'http://denis-collin.viabloga.com/index.xml',
+        'http://alice.viabloga.com/index.xml',
         { key: 'viabloga:posts', label: 'Posts', format: 'rss' },
       ],
       [
-        'http://denis-collin.viabloga.com/atom.xml',
+        'http://alice.viabloga.com/atom.xml',
         { key: 'viabloga:posts', label: 'Posts', format: 'atom' },
       ],
-      ['http://zen.viabloga.com/atom', { key: 'viabloga:posts', label: 'Posts', format: 'atom' }],
+      ['http://alice.viabloga.com/atom', { key: 'viabloga:posts', label: 'Posts', format: 'atom' }],
       [
-        'http://denis-collin.viabloga.com/index.rdf',
+        'http://alice.viabloga.com/index.rdf',
         { key: 'viabloga:posts', label: 'Posts', format: 'rdf' },
       ],
     ]
@@ -135,7 +135,7 @@ describe('viablogaHandler', () => {
     })
 
     it('should return the comments key for a comments feed', () => {
-      const value = 'http://alain-lefebvre.viabloga.com/comments.xml'
+      const value = 'http://alice.viabloga.com/comments.xml'
       const expected: DiscoverUriHint = {
         key: 'viabloga:comments',
         label: 'Comments',
@@ -146,14 +146,14 @@ describe('viablogaHandler', () => {
     })
 
     it('should return the wiki key for a wiki feed', () => {
-      const value = 'http://aphanese.viabloga.com/wiki.rdf'
+      const value = 'http://alice.viabloga.com/wiki.rdf'
       const expected: DiscoverUriHint = { key: 'viabloga:wiki', label: 'Wiki', format: 'rdf' }
 
       expect(viablogaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the wiki key for a wiki feed over https', () => {
-      const value = 'https://critico-blog.viabloga.com/wiki.rdf'
+      const value = 'https://alice.viabloga.com/wiki.rdf'
       const expected: DiscoverUriHint = { key: 'viabloga:wiki', label: 'Wiki', format: 'rdf' }
 
       expect(viablogaHandler.getFeedHint?.(value)).toEqual(expected)
@@ -188,7 +188,7 @@ describe('viablogaHandler', () => {
     })
 
     it('should return undefined for a theme feed the handler does not build', () => {
-      const value = 'https://denis-collin.viabloga.com/rss/theme/peche.xml'
+      const value = 'https://alice.viabloga.com/rss/theme/example.xml'
 
       expect(viablogaHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -221,28 +221,28 @@ describe('viablogaHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'http://denis-collin.viabloga.com/index.xml',
+        'http://alice.viabloga.com/index.xml',
         { key: 'viabloga:posts', label: 'Posts', format: 'rss' },
       ],
       [
-        'http://denis-collin.viabloga.com/atom.xml',
+        'http://alice.viabloga.com/atom.xml',
         { key: 'viabloga:posts', label: 'Posts', format: 'atom' },
       ],
-      ['http://zen.viabloga.com/atom', { key: 'viabloga:posts', label: 'Posts', format: 'atom' }],
+      ['http://alice.viabloga.com/atom', { key: 'viabloga:posts', label: 'Posts', format: 'atom' }],
       [
-        'http://denis-collin.viabloga.com/index.rdf',
+        'http://alice.viabloga.com/index.rdf',
         { key: 'viabloga:posts', label: 'Posts', format: 'rdf' },
       ],
       [
-        'http://alain-lefebvre.viabloga.com/comments.xml',
+        'http://alice.viabloga.com/comments.xml',
         { key: 'viabloga:comments', label: 'Comments', format: 'rss' },
       ],
       [
-        'http://aphanese.viabloga.com/wiki.rdf',
+        'http://alice.viabloga.com/wiki.rdf',
         { key: 'viabloga:wiki', label: 'Wiki', format: 'rdf' },
       ],
       [
-        'https://critico-blog.viabloga.com/wiki.rdf',
+        'https://alice.viabloga.com/wiki.rdf',
         { key: 'viabloga:wiki', label: 'Wiki', format: 'rdf' },
       ],
       [
