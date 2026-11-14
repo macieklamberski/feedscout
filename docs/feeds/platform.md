@@ -957,7 +957,7 @@ Discovers RSS feeds for Canalblog.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.canalblog.com` | Posts |
+| `{blog}.canalblog.com` | Posts |
 
 ### Captivate
 
