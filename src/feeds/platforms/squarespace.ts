@@ -20,21 +20,11 @@ const squarespaceRegex = /squarespace/i
 const feeds = definePlatformFeeds(
   [
     { key: 'squarespace:collection', template: '{scheme}://{host}/{collection}?format=rss' },
-    { key: 'squarespace:collection', template: '{scheme}://{host}/?format=rss' },
-    {
-      key: 'squarespace:collection',
-      template: '{scheme}://{host}/{parent}/{collection}?format=rss',
-    },
     // One fixed value every site answers with the same feed as `format=rss`. Any other value after
     // `sqsp_rss_` answers the page.
     {
       key: 'squarespace:collection',
       template: '{scheme}://{host}/{collection}?format=sqsp_rss_wceoq1kgqnmf2cn9czutlluofr44tazt',
-      isAlias: true,
-    },
-    {
-      key: 'squarespace:collection',
-      template: '{scheme}://{host}/?format=sqsp_rss_wceoq1kgqnmf2cn9czutlluofr44tazt',
       isAlias: true,
     },
     {
@@ -46,6 +36,16 @@ const feeds = definePlatformFeeds(
       key: 'squarespace:collection',
       template: '{scheme}://{host}/{collection}/rss.xml;jsessionid={session}',
       isAlias: true,
+    },
+    { key: 'squarespace:collection', template: '{scheme}://{host}/?format=rss' },
+    {
+      key: 'squarespace:collection',
+      template: '{scheme}://{host}/?format=sqsp_rss_wceoq1kgqnmf2cn9czutlluofr44tazt',
+      isAlias: true,
+    },
+    {
+      key: 'squarespace:collection',
+      template: '{scheme}://{host}/{parent}/{collection}?format=rss',
     },
     {
       key: 'squarespace:collection',
@@ -73,12 +73,12 @@ const feeds = definePlatformFeeds(
       key: 'squarespace:category',
       template: '{scheme}://{host}/{collection}?category={category}&format=rss',
     },
-    { key: 'squarespace:category', template: '{scheme}://{host}/?category={category}&format=rss' },
     {
       key: 'squarespace:category',
       template: '{scheme}://{host}/{collection}/category/{category}?format=rss',
       isAlias: true,
     },
+    { key: 'squarespace:category', template: '{scheme}://{host}/?category={category}&format=rss' },
     {
       key: 'squarespace:category',
       template: '{scheme}://{host}/{collection}/rss.xml?categoryId={categoryId}',
@@ -113,12 +113,12 @@ const feeds = definePlatformFeeds(
       isAlias: true,
     },
     { key: 'squarespace:tag', template: '{scheme}://{host}/{collection}?tag={tag}&format=rss' },
-    { key: 'squarespace:tag', template: '{scheme}://{host}/?tag={tag}&format=rss' },
     {
       key: 'squarespace:tag',
       template: '{scheme}://{host}/{collection}/tag/{tag}?format=rss',
       isAlias: true,
     },
+    { key: 'squarespace:tag', template: '{scheme}://{host}/?tag={tag}&format=rss' },
     { key: 'squarespace:comments', template: '{scheme}://{host}/{collection}/rss-comments.xml' },
     {
       key: 'squarespace:comments',
