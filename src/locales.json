@@ -24,6 +24,7 @@
     "youtube:member-live": "Member live streams",
     "youtube:playlist": "Playlist",
     "github:activity": "Activity",
+    "github:private-activity": "Private activity",
     "github:releases": "Releases",
     "github:commits": "Commits",
     "github:tags": "Tags",

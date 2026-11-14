@@ -622,6 +622,7 @@
       "https://github.com/orgs/community/discussions.atom"
     ],
     "github:file-history": "https://github.com/macieklamberski/feedscout/commits/main/package.json.atom",
+    "github:private-activity": { "skip": "a private feed, 401 without the signed-in user's token" },
     "github:releases": "https://github.com/macieklamberski/feedscout/releases.atom",
     "github:tags": "https://github.com/macieklamberski/feedscout/tags.atom",
     "github:wiki": "https://github.com/microsoft/vscode/wiki.atom"
