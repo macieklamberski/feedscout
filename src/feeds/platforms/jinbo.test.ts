@@ -343,21 +343,22 @@ describe('jinboHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the category hint for a category feed', () => {
-      const value = 'https://blog.jinbo.net/ljydialogue/atom/category/5'
+      const value = 'https://blog.jinbo.net/erindialogue/atom/category/5'
       const expected: DiscoverUriHint = { key: 'jinbo:category', label: 'Category', format: 'atom' }
 
       expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the category hint for a category feed named by text', () => {
-      const value = 'https://blog.jinbo.net/gilo/atom/category/%EC%A1%B0%EB%AF%B8%EA%B4%80%EA%B3%84'
+      const value =
+        'https://blog.jinbo.net/carol/atom/category/%EC%A1%B0%EB%AF%B8%EA%B4%80%EA%B3%84'
       const expected: DiscoverUriHint = { key: 'jinbo:category', label: 'Category', format: 'atom' }
 
       expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the tag hint for a tag feed', () => {
-      const value = 'https://blog.jinbo.net/ysj40/atom/tag/32745'
+      const value = 'https://blog.jinbo.net/frank40/atom/tag/32745'
       const expected: DiscoverUriHint = { key: 'jinbo:tag', label: 'Tag', format: 'atom' }
 
       expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
@@ -372,35 +373,35 @@ describe('jinboHandler', () => {
     })
 
     it('should return the posts hint for an RSS feed', () => {
-      const value = 'https://blog.jinbo.net/comworld/rss'
+      const value = 'https://blog.jinbo.net/bobworld/rss'
       const expected: DiscoverUriHint = { key: 'jinbo:posts', label: 'Posts', format: 'rss' }
 
       expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for an Atom feed', () => {
-      const value = 'https://blog.jinbo.net/comworld/atom'
+      const value = 'https://blog.jinbo.net/bobworld/atom'
       const expected: DiscoverUriHint = { key: 'jinbo:posts', label: 'Posts', format: 'atom' }
 
       expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for an Atom feed with a trailing slash', () => {
-      const value = 'http://blog.jinbo.net/comworld/atom/'
+      const value = 'http://blog.jinbo.net/bobworld/atom/'
       const expected: DiscoverUriHint = { key: 'jinbo:posts', label: 'Posts', format: 'atom' }
 
       expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a feed over http', () => {
-      const value = 'http://blog.jinbo.net/comworld/rss'
+      const value = 'http://blog.jinbo.net/bobworld/rss'
       const expected: DiscoverUriHint = { key: 'jinbo:posts', label: 'Posts', format: 'rss' }
 
       expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the responses hint for an RSS feed', () => {
-      const value = 'https://blog.jinbo.net/hongsili/rss/response'
+      const value = 'https://blog.jinbo.net/dave/rss/response'
       const expected: DiscoverUriHint = {
         key: 'jinbo:responses',
         label: 'Comments and trackbacks',
@@ -411,7 +412,7 @@ describe('jinboHandler', () => {
     })
 
     it('should return the responses hint for an Atom feed', () => {
-      const value = 'https://blog.jinbo.net/hongsili/atom/response'
+      const value = 'https://blog.jinbo.net/dave/atom/response'
       const expected: DiscoverUriHint = {
         key: 'jinbo:responses',
         label: 'Comments and trackbacks',
@@ -422,13 +423,13 @@ describe('jinboHandler', () => {
     })
 
     it('should return undefined for a blog page', () => {
-      const value = 'https://blog.jinbo.net/comworld'
+      const value = 'https://blog.jinbo.net/bobworld'
 
       expect(jinboHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a category page', () => {
-      const value = 'https://blog.jinbo.net/ljydialogue/category/5'
+      const value = 'https://blog.jinbo.net/erindialogue/category/5'
 
       expect(jinboHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -473,7 +474,7 @@ describe('jinboHandler', () => {
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/comworld/rss'
+      const value = 'https://example.com/bobworld/rss'
 
       expect(jinboHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -482,27 +483,27 @@ describe('jinboHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://blog.jinbo.net/ljydialogue/atom/category/5',
+        'https://blog.jinbo.net/erindialogue/atom/category/5',
         { key: 'jinbo:category', label: 'Category', format: 'atom' },
       ],
       [
-        'https://blog.jinbo.net/ysj40/atom/tag/32745',
+        'https://blog.jinbo.net/frank40/atom/tag/32745',
         { key: 'jinbo:tag', label: 'Tag', format: 'atom' },
       ],
       [
-        'https://blog.jinbo.net/comworld/rss',
+        'https://blog.jinbo.net/bobworld/rss',
         { key: 'jinbo:posts', label: 'Posts', format: 'rss' },
       ],
       [
-        'https://blog.jinbo.net/comworld/atom',
+        'https://blog.jinbo.net/bobworld/atom',
         { key: 'jinbo:posts', label: 'Posts', format: 'atom' },
       ],
       [
-        'https://blog.jinbo.net/hongsili/rss/response',
+        'https://blog.jinbo.net/dave/rss/response',
         { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'rss' },
       ],
       [
-        'https://blog.jinbo.net/hongsili/atom/response',
+        'https://blog.jinbo.net/dave/atom/response',
         { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'atom' },
       ],
       [
