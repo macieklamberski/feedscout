@@ -22,10 +22,6 @@ describe('parseFiresideUrl', () => {
     expect(parseFiresideUrl('https://www.fireside.fm/')).toBeUndefined()
   })
 
-  it('should return undefined for the feed host', () => {
-    expect(parseFiresideUrl('https://feeds.fireside.fm/myshow/rss')).toBeUndefined()
-  })
-
   it('should return undefined for another host', () => {
     expect(parseFiresideUrl('https://example.com/')).toBeUndefined()
   })

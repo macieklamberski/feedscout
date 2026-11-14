@@ -1,4 +1,4 @@
-import { decodePercent, isHostOf, parseUrl } from 'trousse'
+import { decodePercent, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -8,8 +8,6 @@ import { getTenantSubdomain } from '../../common/utils.js'
 export type FiresideUrl = { kind: 'podcast'; slug: string; tag?: string }
 
 const domains = ['fireside.fm']
-// The feed host serves every show by path, so it names no show.
-const feedHosts = ['feeds.fireside.fm']
 
 const tagPathRegex = /^\/tags\/([^/]+)\/?$/i
 
@@ -26,7 +24,7 @@ const feeds = definePlatformFeeds(
 export const parseFiresideUrl = (url: string): FiresideUrl | undefined => {
   const slug = getTenantSubdomain(url, domains)
 
-  if (!slug || isHostOf(url, feedHosts)) {
+  if (!slug) {
     return
   }
 
