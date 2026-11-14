@@ -22,8 +22,8 @@ const feeds = definePlatformFeeds(
   [
     { key: 'jugem:posts', template: '{scheme}://{host}/?mode=rss', format: 'rdf' },
     { key: 'jugem:posts', template: '{scheme}://{host}/?mode=atom', format: 'atom' },
-    { key: 'jugem:posts', template: '{scheme}://{host}/index.rdf', format: 'rdf' },
-    { key: 'jugem:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
+    { key: 'jugem:posts', template: '{scheme}://{host}/index.rdf', format: 'rdf', isAlias: true },
+    { key: 'jugem:posts', template: '{scheme}://{host}/atom.xml', format: 'atom', isAlias: true },
     // The portal answers https with a redirect to http, which the theme feed names as its own URL.
     {
       key: 'jugem:theme',
