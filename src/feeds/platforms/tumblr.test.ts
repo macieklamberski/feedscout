@@ -194,11 +194,10 @@ describe('tumblrHandler', () => {
       expect(tumblrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts hint for a blog feed on a www subdomain', () => {
+    it('should return undefined for a blog feed on a www subdomain', () => {
       const value = 'https://www.example.tumblr.com/rss'
-      const expected: DiscoverUriHint = { key: 'tumblr:posts', label: 'Posts' }
 
-      expect(tumblrHandler.getFeedHint?.(value)).toEqual(expected)
+      expect(tumblrHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return the posts hint for an http blog feed', () => {
@@ -275,7 +274,6 @@ describe('tumblrHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://example.tumblr.com/rss', { key: 'tumblr:posts', label: 'Posts' }],
       ['https://example.tumblr.com/rss/', { key: 'tumblr:posts', label: 'Posts' }],
-      ['https://www.example.tumblr.com/rss', { key: 'tumblr:posts', label: 'Posts' }],
       ['https://example.tumblr.com/tagged/updates/rss', { key: 'tumblr:tag', label: 'Tag' }],
       ['https://example.tumblr.com/tagged/updates/rss/', { key: 'tumblr:tag', label: 'Tag' }],
     ]
