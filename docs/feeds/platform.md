@@ -3123,8 +3123,8 @@ Discovers the feeds of a Typecho blog. Detected by a theme or plugin asset under
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/` | Posts · comments<sup>†</sup> (RSS + RSS 1.0 + Atom) |
-| `{site}/{path}` | Page at `/feed/{path}` · posts (RSS + RSS 1.0<sup>†</sup> + Atom<sup>†</sup>) · comments (RSS + RSS 1.0<sup>†</sup> + Atom<sup>†</sup>) |
+| `{root}/` | Posts · comments<sup>†</sup> (RSS + RSS 1.0 + Atom) |
+| `{root}/{path}` | Page at `/feed/{path}` · posts (RSS + RSS 1.0<sup>†</sup> + Atom<sup>†</sup>) · comments (RSS + RSS 1.0<sup>†</sup> + Atom<sup>†</sup>) |
 
 <sup>†</sup> *Found only by the Platform method.*
 

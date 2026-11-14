@@ -1,5 +1,6 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -23,8 +24,28 @@ const assetUrlRegex = /^(?:https?:)?(?:\/\/[^/]+)?(?<rootPath>.*?)\/usr\/(?:them
 const indexScriptRegex = /^\/index\.php(?=\/|$)/i
 // The home page and its pagination, `/page/2/`, whose own feed redirects to the posts feed.
 const homePathRegex = /^(?:\/|\/page\/\d+\/?)?$/i
+const repeatedSlashRegex = /\/\/+/g
 
 const assetTags = ['link', 'script']
+const formats: Array<DiscoverUriHint['format']> = ['rss', 'rdf', 'atom']
+
+// A blog on any host is known only by its theme or plugin assets, which a feed URL does not carry,
+// so the feeds are built under the site root and never claimed. A page path keeps its trailing
+// slash, as `/archives/13/`, or its lack of one, as `/archives/13.html`, so each has its own row.
+const feeds = definePlatformFeeds([
+  { key: 'typecho:posts', template: '{root}/feed/', format: 'rss' },
+  { key: 'typecho:posts', template: '{root}/feed/rss/', format: 'rdf' },
+  { key: 'typecho:posts', template: '{root}/feed/atom/', format: 'atom' },
+  { key: 'typecho:comments', template: '{root}/feed/comments/', format: 'rss' },
+  { key: 'typecho:comments', template: '{root}/feed/rss/comments/', format: 'rdf' },
+  { key: 'typecho:comments', template: '{root}/feed/atom/comments/', format: 'atom' },
+  { key: 'typecho:page', template: '{root}/feed/{directory*}/', format: 'rss' },
+  { key: 'typecho:page', template: '{root}/feed/{path*}', format: 'rss' },
+  { key: 'typecho:page', template: '{root}/feed/rss/{directory*}/', format: 'rdf' },
+  { key: 'typecho:page', template: '{root}/feed/rss/{path*}', format: 'rdf' },
+  { key: 'typecho:page', template: '{root}/feed/atom/{directory*}/', format: 'atom' },
+  { key: 'typecho:page', template: '{root}/feed/atom/{path*}', format: 'atom' },
+])
 
 const getAssetUrl = (element: Element): string => {
   return element.attribs.href ?? element.attribs.src ?? ''
@@ -62,8 +83,12 @@ export const getTypechoPage = (
   }
 
   const siteUrl = `${origin}${rootPath}`
-  // A site without URL rewriting routes every page through `/index.php`.
-  const path = pathname.slice(rootPath.length).replace(indexScriptRegex, '')
+  // A site without URL rewriting routes every page through `/index.php`. A doubled slash, as in
+  // `/archives//13/`, names the same page as a single one.
+  const path = pathname
+    .slice(rootPath.length)
+    .replace(indexScriptRegex, '')
+    .replace(repeatedSlashRegex, '/')
 
   if (homePathRegex.test(path)) {
     return { kind: 'home', siteUrl }
@@ -72,23 +97,33 @@ export const getTypechoPage = (
   return { kind: 'page', siteUrl, path }
 }
 
+const getPathParams = (path: string): PlatformFeedParams => {
+  const segments = path.slice(1)
+
+  if (segments.endsWith('/')) {
+    return { directory: segments.slice(0, -1) }
+  }
+
+  return { path: segments }
+}
+
 // The `/index.php` spelling answers whether or not the site rewrites URLs, the short one only
-// when it does.
-const getFeedEntries = (siteUrl: string, path: string, key: string): Array<DiscoverUriEntry> => {
-  return [
-    {
-      uri: [`${siteUrl}/feed${path}`, `${siteUrl}/index.php/feed${path}`],
-      hint: composeHint(key, 'rss'),
-    },
-    {
-      uri: [`${siteUrl}/feed/rss${path}`, `${siteUrl}/index.php/feed/rss${path}`],
-      hint: composeHint(key, 'rdf'),
-    },
-    {
-      uri: [`${siteUrl}/feed/atom${path}`, `${siteUrl}/index.php/feed/atom${path}`],
-      hint: composeHint(key, 'atom'),
-    },
-  ]
+// when it does. A site without rewriting routes every page through the script, so the script is
+// the root of its feeds.
+const getFeedEntries = (
+  siteUrl: string,
+  key: string,
+  params?: PlatformFeedParams,
+): Array<DiscoverUriEntry> => {
+  return formats.map((format) => {
+    return {
+      uri: [
+        feeds.getFeedUrl(key, { ...params, root: siteUrl }, format),
+        feeds.getFeedUrl(key, { ...params, root: `${siteUrl}/index.php` }, format),
+      ],
+      hint: composeHint(key, format),
+    }
+  })
 }
 
 export const typechoHandler: PlatformHandler = {
@@ -107,15 +142,17 @@ export const typechoHandler: PlatformHandler = {
       return []
     }
 
-    const postsEntries = [
-      ...getFeedEntries(page.siteUrl, '/', 'typecho:posts'),
-      ...getFeedEntries(page.siteUrl, '/comments/', 'typecho:comments'),
-    ]
-
     if (page.kind === 'home') {
-      return postsEntries
+      return [
+        ...getFeedEntries(page.siteUrl, 'typecho:posts'),
+        ...getFeedEntries(page.siteUrl, 'typecho:comments'),
+      ]
     }
 
-    return [...getFeedEntries(page.siteUrl, page.path, 'typecho:page'), ...postsEntries]
+    return [
+      ...getFeedEntries(page.siteUrl, 'typecho:page', getPathParams(page.path)),
+      ...getFeedEntries(page.siteUrl, 'typecho:posts'),
+      ...getFeedEntries(page.siteUrl, 'typecho:comments'),
+    ]
   },
 }
