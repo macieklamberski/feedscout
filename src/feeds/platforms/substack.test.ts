@@ -230,11 +230,11 @@ describe('substackHandler', () => {
 
   describe('getFeedHint', () => {
     const feedUrls = [
-      'https://piratewires.substack.com/feed',
-      'https://piratewires.substack.com/feed.xml',
-      'https://piratewires.substack.com/feed.rss',
-      'http://piratewires.substack.com/feed',
-      'https://DASMEEOK.substack.com/feed',
+      'https://example.substack.com/feed',
+      'https://example.substack.com/feed.xml',
+      'https://example.substack.com/feed.rss',
+      'http://example.substack.com/feed',
+      'https://EXAMPLE.substack.com/feed',
     ]
 
     it.each(feedUrls)('should return the newsletter hint for %s', (value) => {
@@ -254,7 +254,7 @@ describe('substackHandler', () => {
     })
 
     it('should return undefined for a newsletter page', () => {
-      const value = 'https://piratewires.substack.com/p/some-article'
+      const value = 'https://example.substack.com/p/some-article'
 
       expect(substackHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -293,13 +293,13 @@ describe('substackHandler', () => {
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://blog.piratewires.substack.com/feed'
+      const value = 'https://blog.example.substack.com/feed'
 
       expect(substackHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a custom domain', () => {
-      const value = 'https://www.lennysnewsletter.com/feed'
+      const value = 'https://www.example.com/feed'
 
       expect(substackHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -307,10 +307,10 @@ describe('substackHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds = [
-      'https://piratewires.substack.com/feed',
-      'https://piratewires.substack.com/feed.xml',
-      'https://piratewires.substack.com/feed.rss',
-      'https://DASMEEOK.substack.com/feed',
+      'https://example.substack.com/feed',
+      'https://example.substack.com/feed.xml',
+      'https://example.substack.com/feed.rss',
+      'https://EXAMPLE.substack.com/feed',
     ]
 
     const podcastFeeds: Array<[string, DiscoverUriHint]> = [

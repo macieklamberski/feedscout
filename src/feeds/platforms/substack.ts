@@ -124,8 +124,8 @@ export const substackHandler: PlatformHandler = {
     return [pageFeeds.getFeedEntry('substack:newsletter')]
   },
 
-  // The table reads any host under substack.com, so the page parser refuses the apex and the app
-  // host first, whose /feed answers 404, and a nested subdomain, which fails its TLS handshake.
+  // The table reads any single-label host under substack.com, so the page parser refuses the app
+  // host first, whose /feed answers 404.
   getFeedHint: (url) => {
     if (!parseSubstackUrl(url)) {
       return
