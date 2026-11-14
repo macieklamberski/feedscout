@@ -214,7 +214,7 @@ describe('doubanHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the interests hint for a user interests feed', () => {
-      const value = 'https://www.douban.com/feed/people/mockee/interests'
+      const value = 'https://www.douban.com/feed/people/alicebean/interests'
       const expected: DiscoverUriHint = { key: 'douban:interests', label: 'Interests' }
 
       expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
@@ -228,7 +228,7 @@ describe('doubanHandler', () => {
     })
 
     it('should return the notes hint for a user notes feed', () => {
-      const value = 'https://www.douban.com/feed/people/mockee/notes'
+      const value = 'https://www.douban.com/feed/people/alicebean/notes'
       const expected: DiscoverUriHint = { key: 'douban:notes', label: 'Notes' }
 
       expect(doubanHandler.getFeedHint?.(value)).toEqual(expected)
@@ -294,7 +294,7 @@ describe('doubanHandler', () => {
     })
 
     it('should return undefined for a user page', () => {
-      const value = 'https://www.douban.com/people/mockee/'
+      const value = 'https://www.douban.com/people/alicebean/'
 
       expect(doubanHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -306,7 +306,7 @@ describe('doubanHandler', () => {
     })
 
     it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/feed/people/mockee/notes'
+      const value = 'https://example.com/feed/people/alicebean/notes'
 
       expect(doubanHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -323,14 +323,17 @@ describe('doubanHandler', () => {
         { key: 'douban:popular-reviews', label: 'Popular reviews' },
       ],
       [
-        'https://www.douban.com/feed/people/mockee/interests',
+        'https://www.douban.com/feed/people/alicebean/interests',
         { key: 'douban:interests', label: 'Interests' },
       ],
       [
         'https://www.douban.com/feed/people/29610886/reviews',
         { key: 'douban:reviews', label: 'Reviews' },
       ],
-      ['https://www.douban.com/feed/people/mockee/notes', { key: 'douban:notes', label: 'Notes' }],
+      [
+        'https://www.douban.com/feed/people/alicebean/notes',
+        { key: 'douban:notes', label: 'Notes' },
+      ],
       [
         'https://www.douban.com/feed/subject/1092183/reviews',
         { key: 'douban:subject-reviews', label: 'Subject reviews' },
