@@ -67,7 +67,7 @@ describe('qiitaHandler', () => {
       const value = 'https://qiita.com/Qiita'
       const expected = [
         {
-          uri: 'https://qiita.com/Qiita/feed.atom',
+          uri: 'https://qiita.com/Qiita/feed',
           hint: { key: 'qiita:posts', label: 'Posts' },
         },
       ]
@@ -79,7 +79,7 @@ describe('qiitaHandler', () => {
       const value = 'https://qiita.com/Qiita/items/some-article'
       const expected = [
         {
-          uri: 'https://qiita.com/Qiita/feed.atom',
+          uri: 'https://qiita.com/Qiita/feed',
           hint: { key: 'qiita:posts', label: 'Posts' },
         },
       ]
@@ -91,7 +91,7 @@ describe('qiitaHandler', () => {
       const value = 'https://qiita.com/tags/javascript'
       const expected = [
         {
-          uri: 'https://qiita.com/tags/javascript/feed.atom',
+          uri: 'https://qiita.com/tags/javascript/feed',
           hint: { key: 'qiita:tag', label: 'Tag' },
         },
       ]
@@ -103,7 +103,7 @@ describe('qiitaHandler', () => {
       const value = 'https://qiita.com/tags/feed'
       const expected = [
         {
-          uri: 'https://qiita.com/tags/feed/feed.atom',
+          uri: 'https://qiita.com/tags/feed/feed',
           hint: { key: 'qiita:tag', label: 'Tag' },
         },
       ]
@@ -115,7 +115,7 @@ describe('qiitaHandler', () => {
       const value = 'https://qiita.com/Tags/javascript'
       const expected = [
         {
-          uri: 'https://qiita.com/tags/javascript/feed.atom',
+          uri: 'https://qiita.com/tags/javascript/feed',
           hint: { key: 'qiita:tag', label: 'Tag' },
         },
       ]
@@ -151,7 +151,7 @@ describe('qiitaHandler', () => {
       const value = 'https://qiita.com/popular-items'
       const expected = [
         {
-          uri: 'https://qiita.com/popular-items/feed.atom',
+          uri: 'https://qiita.com/popular-items/feed',
           hint: { key: 'qiita:popular', label: 'Popular items' },
         },
       ]
@@ -163,7 +163,7 @@ describe('qiitaHandler', () => {
       const value = 'https://qiita.com/Popular-Items'
       const expected = [
         {
-          uri: 'https://qiita.com/popular-items/feed.atom',
+          uri: 'https://qiita.com/popular-items/feed',
           hint: { key: 'qiita:popular', label: 'Popular items' },
         },
       ]
@@ -384,7 +384,7 @@ describe('qiitaHandler', () => {
     it('should return the tag feed for the page of a tag named feed', async () => {
       const value = 'https://qiita.com/tags/feed'
       const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://qiita.com/tags/feed/feed.atom', hint: { key: 'qiita:tag', label: 'Tag' } },
+        { uri: 'https://qiita.com/tags/feed/feed', hint: { key: 'qiita:tag', label: 'Tag' } },
       ]
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,

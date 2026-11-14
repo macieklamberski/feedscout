@@ -20,21 +20,21 @@ const organizationRegex = /^\/organizations\/([^/]+)/i
 const popularItemsRegex = /^\/popular-items(\/|$)/i
 const officialColumnsRegex = /^\/official-columns(\/|$)/i
 
-// Qiita serves the user, tag and popular feeds at `/feed` too. The literal rows read before
+// Qiita serves the user, tag and popular feeds at `/feed.atom` too. The literal rows read before
 // `/{username}/feed`, so a user named popular-items or official-columns reads as the site feed.
 const feeds = definePlatformFeeds([
   { key: 'qiita:zine', template: 'https://qiita.com/official-columns/feed/', format: 'rss' },
   { key: 'qiita:zine', template: 'https://qiita.com/official-columns/feed/atom/', format: 'atom' },
-  { key: 'qiita:popular', template: 'https://qiita.com/popular-items/feed.atom' },
-  { key: 'qiita:popular', template: 'https://qiita.com/popular-items/feed', isAlias: true },
+  { key: 'qiita:popular', template: 'https://qiita.com/popular-items/feed' },
+  { key: 'qiita:popular', template: 'https://qiita.com/popular-items/feed.atom', isAlias: true },
   {
     key: 'qiita:organization',
     template: 'https://qiita.com/organizations/{organization}/activities.atom',
   },
-  { key: 'qiita:tag', template: 'https://qiita.com/tags/{tag}/feed.atom' },
-  { key: 'qiita:tag', template: 'https://qiita.com/tags/{tag}/feed', isAlias: true },
-  { key: 'qiita:posts', template: 'https://qiita.com/{username}/feed.atom' },
-  { key: 'qiita:posts', template: 'https://qiita.com/{username}/feed', isAlias: true },
+  { key: 'qiita:tag', template: 'https://qiita.com/tags/{tag}/feed' },
+  { key: 'qiita:tag', template: 'https://qiita.com/tags/{tag}/feed.atom', isAlias: true },
+  { key: 'qiita:posts', template: 'https://qiita.com/{username}/feed' },
+  { key: 'qiita:posts', template: 'https://qiita.com/{username}/feed.atom', isAlias: true },
 ])
 
 export const parseQiitaUrl = (url: string): QiitaUrl | undefined => {
