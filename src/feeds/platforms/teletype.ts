@@ -1,6 +1,6 @@
-import { decodeSegment, encodePathSegment, isHostOf, parseUrl } from 'trousse'
+import { decodeSegment, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (html).
@@ -11,6 +11,11 @@ export type TeletypeUrl = { kind: 'blog'; username: string }
 const hosts = ['teletype.in']
 
 const blogRegex = /^\/@([^/]+)/
+
+const feeds = definePlatformFeeds([
+  { key: 'teletype:posts', template: 'https://teletype.in/rss/{username}', format: 'rss' },
+  { key: 'teletype:posts', template: 'https://teletype.in/atom/{username}', format: 'atom' },
+])
 
 export const parseTeletypeUrl = (url: string): TeletypeUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -41,17 +46,13 @@ export const teletypeHandler: PlatformHandler = {
       return []
     }
 
-    const username = encodePathSegment(teletypeUrl.username)
+    const params = { username: teletypeUrl.username }
 
     return [
-      {
-        uri: `https://teletype.in/rss/${username}`,
-        hint: composeHint('teletype:posts', 'rss'),
-      },
-      {
-        uri: `https://teletype.in/atom/${username}`,
-        hint: composeHint('teletype:posts', 'atom'),
-      },
+      feeds.getFeedEntry('teletype:posts', params, 'rss'),
+      feeds.getFeedEntry('teletype:posts', params, 'atom'),
     ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
