@@ -1696,10 +1696,13 @@
     "svbtle:posts": "https://dcurt.is/feed"
   },
   "sverigesRadio": {
+    "sveriges-radio:group": "https://api.sr.se/api/rss/group/12932",
     "sveriges-radio:program": [
       "https://public-api.sr.se/rss/vetenskapsradion",
       "https://api.sr.se/api/rss/program/412"
-    ]
+    ],
+    "sveriges-radio:program-format": "https://api.sr.se/api/rss/program/83?format=145",
+    "sveriges-radio:traffic": "https://api.sr.se/api/rss/traffic/2863"
   },
   "syosetu": {
     "syosetu:activity": "https://api.syosetu.com/writer/372556.Atom",
