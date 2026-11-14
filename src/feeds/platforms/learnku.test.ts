@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type LearnkuUrl, learnkuHandler, parseLearnkuUrl } from './learnku.js'
 
 describe('parseLearnkuUrl', () => {
@@ -42,7 +45,7 @@ describe('learnkuHandler', () => {
 
     it('should return the community and site feeds for a community page', () => {
       const value = 'https://learnku.com/laravel'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://learnku.com/laravel/feed',
           hint: { key: 'learnku:community', label: 'Community' },
@@ -51,6 +54,84 @@ describe('learnkuHandler', () => {
       ]
 
       expect(learnkuHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the site feed for the home page', () => {
+      const value = 'https://learnku.com/'
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://learnku.com/feed', hint: { key: 'learnku:site', label: 'Site' } },
+      ]
+
+      expect(learnkuHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return https feeds on the apex for an http www page', () => {
+      const value = 'http://www.learnku.com/laravel'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://learnku.com/laravel/feed',
+          hint: { key: 'learnku:community', label: 'Community' },
+        },
+        { uri: 'https://learnku.com/feed', hint: { key: 'learnku:site', label: 'Site' } },
+      ]
+
+      expect(learnkuHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    const feedHints: Array<[string, DiscoverUriHint]> = [
+      ['https://learnku.com/feed', { key: 'learnku:site', label: 'Site' }],
+      ['http://learnku.com/feed', { key: 'learnku:site', label: 'Site' }],
+      ['https://learnku.com/feed/', { key: 'learnku:site', label: 'Site' }],
+      ['https://learnku.com/example/feed', { key: 'learnku:community', label: 'Community' }],
+      ['http://learnku.com/example/feed', { key: 'learnku:community', label: 'Community' }],
+      ['https://learnku.com/example/feed/', { key: 'learnku:community', label: 'Community' }],
+      ['https://www.learnku.com/example/feed', { key: 'learnku:community', label: 'Community' }],
+    ]
+
+    it.each(feedHints)('should return the hint of %s', (value, expected) => {
+      expect(learnkuHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a community page', () => {
+      const value = 'https://learnku.com/example'
+
+      expect(learnkuHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the home page', () => {
+      const value = 'https://learnku.com/'
+
+      expect(learnkuHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/example/feed'
+
+      expect(learnkuHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://learnku.com/feed', { key: 'learnku:site', label: 'Site' }],
+      ['http://learnku.com/feed', { key: 'learnku:site', label: 'Site' }],
+      ['https://learnku.com/feed/', { key: 'learnku:site', label: 'Site' }],
+      ['https://learnku.com/example/feed', { key: 'learnku:community', label: 'Community' }],
+      ['http://learnku.com/example/feed', { key: 'learnku:community', label: 'Community' }],
+      ['https://learnku.com/example/feed/', { key: 'learnku:community', label: 'Community' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [learnkuHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
