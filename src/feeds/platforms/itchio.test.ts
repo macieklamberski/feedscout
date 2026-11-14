@@ -177,6 +177,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/tag-horror/tag-pixel-art.xml',
           hint: { key: 'itchio:games', label: 'Games' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -189,6 +199,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/newest/tag-horror.xml',
           hint: { key: 'itchio:tag', label: 'Tag' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -201,6 +221,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/newest/by-alice.xml',
           hint: { key: 'itchio:creator', label: 'Creator' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -217,6 +247,16 @@ describe('itchioHandler', () => {
           uri: 'https://bob.itch.io/a-tavern-for-tea/devlog.rss',
           hint: { key: 'itchio:devlog', label: 'Devlog' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -229,6 +269,16 @@ describe('itchioHandler', () => {
           uri: 'https://alice.itch.io/x-moon/devlog.rss',
           hint: { key: 'itchio:devlog', label: 'Devlog' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -241,6 +291,16 @@ describe('itchioHandler', () => {
           uri: 'http://alice.itch.io/x-moon/devlog.rss',
           hint: { key: 'itchio:devlog', label: 'Devlog' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -253,6 +313,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/by-alice.xml',
           hint: { key: 'itchio:creator', label: 'Creator' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -265,6 +335,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/by-alice.xml',
           hint: { key: 'itchio:creator', label: 'Creator' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -277,6 +357,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/by-alice.xml',
           hint: { key: 'itchio:creator', label: 'Creator' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -289,6 +379,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/tag-horror.xml',
           hint: { key: 'itchio:tag', label: 'Tag' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -301,6 +401,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/tag-horror.xml',
           hint: { key: 'itchio:tag', label: 'Tag' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -313,6 +423,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/platform-web.xml',
           hint: { key: 'itchio:platform', label: 'Platform' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -325,6 +445,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/platform-web.xml',
           hint: { key: 'itchio:platform', label: 'Platform' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -337,6 +467,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/genre-puzzle.xml',
           hint: { key: 'itchio:genre', label: 'Genre' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -349,6 +489,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/genre-puzzle.xml',
           hint: { key: 'itchio:genre', label: 'Genre' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -361,6 +511,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/made-with-unity.xml',
           hint: { key: 'itchio:made-with', label: 'Made with' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -373,6 +533,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/made-with-unity.xml',
           hint: { key: 'itchio:made-with', label: 'Made with' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -385,6 +555,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/newest.xml',
           hint: { key: 'itchio:games', label: 'Games' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -397,6 +577,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/released.xml',
           hint: { key: 'itchio:games', label: 'Games' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -409,30 +599,58 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/in-development.xml',
           hint: { key: 'itchio:games', label: 'Games' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return only the blog feed for the blog page', () => {
+    it('should return the blog feed and the other site-wide feeds for the blog page', () => {
       const value = 'https://itch.io/blog'
       const expected = [
         {
           uri: 'https://itch.io/blog.rss',
           hint: { key: 'itchio:blog', label: 'Blog' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return only the blog feed for a capitalized blog segment', () => {
+    it('should return the blog feed and the other site-wide feeds for a capitalized blog segment', () => {
       const value = 'https://itch.io/Blog'
       const expected = [
         {
           uri: 'https://itch.io/blog.rss',
           hint: { key: 'itchio:blog', label: 'Blog' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -445,6 +663,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/newest.xml',
           hint: { key: 'itchio:games', label: 'Games' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -457,6 +685,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/top-rated.xml',
           hint: { key: 'itchio:games', label: 'Games' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -469,6 +707,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/top-rated.xml',
           hint: { key: 'itchio:games', label: 'Games' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -481,6 +729,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/games/free.xml',
           hint: { key: 'itchio:games', label: 'Games' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -490,6 +748,16 @@ describe('itchioHandler', () => {
       const value = 'https://itch.io/games'
       const expected = [
         { uri: 'https://itch.io/games.xml', hint: { key: 'itchio:games', label: 'Games' } },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -499,6 +767,16 @@ describe('itchioHandler', () => {
       const value = 'https://itch.io/Games'
       const expected = [
         { uri: 'https://itch.io/games.xml', hint: { key: 'itchio:games', label: 'Games' } },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -508,6 +786,16 @@ describe('itchioHandler', () => {
       const value = 'https://itch.io/games/'
       const expected = [
         { uri: 'https://itch.io/games.xml', hint: { key: 'itchio:games', label: 'Games' } },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -517,6 +805,15 @@ describe('itchioHandler', () => {
       const value = 'https://itch.io/devlogs'
       const expected = [
         { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -526,6 +823,15 @@ describe('itchioHandler', () => {
       const value = 'https://itch.io/Devlogs'
       const expected = [
         { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -535,6 +841,15 @@ describe('itchioHandler', () => {
       const value = 'https://itch.io/devlogs/'
       const expected = [
         { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -544,6 +859,16 @@ describe('itchioHandler', () => {
       const value = 'https://itch.io/tools'
       const expected = [
         { uri: 'https://itch.io/tools.xml', hint: { key: 'itchio:section', label: 'Section' } },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -553,6 +878,16 @@ describe('itchioHandler', () => {
       const value = 'https://itch.io/Tools'
       const expected = [
         { uri: 'https://itch.io/tools.xml', hint: { key: 'itchio:section', label: 'Section' } },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -565,6 +900,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/game-assets.xml',
           hint: { key: 'itchio:section', label: 'Section' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -577,6 +922,16 @@ describe('itchioHandler', () => {
           uri: 'https://itch.io/soundtracks.xml',
           hint: { key: 'itchio:section', label: 'Section' },
         },
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+        { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
+        { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -593,6 +948,8 @@ describe('itchioHandler', () => {
         { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
         { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
         { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -609,6 +966,8 @@ describe('itchioHandler', () => {
         { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
         { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
         { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+        { uri: 'https://itch.io/updates.rss', hint: { key: 'itchio:updates', label: 'Updates' } },
+        { uri: 'https://itch.io/digest.rss', hint: { key: 'itchio:digest', label: 'Digest' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -799,6 +1158,20 @@ describe('itchioHandler', () => {
       expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the updates hint for the updates feed', () => {
+      const value = 'https://itch.io/updates.rss'
+      const expected: DiscoverUriHint = { key: 'itchio:updates', label: 'Updates' }
+
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the digest hint for the digest feed', () => {
+      const value = 'https://itch.io/digest.rss'
+      const expected: DiscoverUriHint = { key: 'itchio:digest', label: 'Digest' }
+
+      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for the sitemap', () => {
       const value = 'https://itch.io/sitemap.xml'
 
@@ -873,6 +1246,8 @@ describe('itchioHandler', () => {
       ['https://itch.io/feed/featured.xml', { key: 'itchio:featured', label: 'Featured' }],
       ['https://itch.io/feed/new.xml', { key: 'itchio:new', label: 'New' }],
       ['https://itch.io/feed/sales.xml', { key: 'itchio:sales', label: 'Sales' }],
+      ['https://itch.io/updates.rss', { key: 'itchio:updates', label: 'Updates' }],
+      ['http://www.itch.io/digest.rss', { key: 'itchio:digest', label: 'Digest' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

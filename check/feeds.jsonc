@@ -789,6 +789,7 @@
     "itchio:creator": "https://itch.io/games/by-leafo.xml",
     "itchio:devlog": "https://qeresi.itch.io/a-tale-of-crowns/devlog.rss",
     "itchio:devlogs": "https://itch.io/devlogs.xml",
+    "itchio:digest": "https://itch.io/digest.rss",
     "itchio:featured": "https://itch.io/feed/featured.xml",
     "itchio:games": [
       "https://itch.io/games/newest.xml",
@@ -811,7 +812,8 @@
       "https://itch.io/comics.xml",
       "https://itch.io/misc.xml"
     ],
-    "itchio:tag": "https://itch.io/games/tag-horror.xml"
+    "itchio:tag": "https://itch.io/games/tag-horror.xml",
+    "itchio:updates": "https://itch.io/updates.rss"
   },
   "ivoox": {
     "ivoox:podcast": "https://feeds.ivoox.com/feed_fg_f1106_filtro_1.xml"
