@@ -29,13 +29,15 @@ const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/([^/].*?)\/*$/i
 const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png)$/i
 
 // The private feed of a signed-in user answers only with its `token`, so it is claimed and never
-// built.
+// built. Its tokenless spelling goes before the activity row, which would read it as the owner
+// `{owner}.private`.
 const feeds = definePlatformFeeds([
-  { key: 'github:activity', template: 'https://github.com/{owner}.atom' },
   {
     key: 'github:private-activity',
     template: 'https://github.com/{owner}.private.atom?token={token}',
   },
+  { key: 'github:private-activity', template: 'https://github.com/{owner}.private.atom' },
+  { key: 'github:activity', template: 'https://github.com/{owner}.atom' },
   { key: 'github:releases', template: 'https://github.com/{owner}/{repo}/releases.atom' },
   { key: 'github:commits', template: 'https://github.com/{owner}/{repo}/commits.atom' },
   { key: 'github:tags', template: 'https://github.com/{owner}/{repo}/tags.atom' },
