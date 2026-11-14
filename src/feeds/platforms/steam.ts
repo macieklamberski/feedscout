@@ -49,10 +49,12 @@ const feeds = definePlatformFeeds([
   {
     key: 'steam:group-news',
     template: 'https://store.steampowered.com/feeds/news/group/{clanId}/{name}',
+    isAlias: true,
   },
   {
     key: 'steam:group-news',
     template: 'https://store.steampowered.com/feeds/newshub/group/{clanId}',
+    isAlias: true,
   },
   {
     key: 'steam:news-collection',
@@ -61,10 +63,12 @@ const feeds = definePlatformFeeds([
   {
     key: 'steam:news-collection',
     template: 'https://store.steampowered.com/feeds/news/collection/{collection}/{name}',
+    isAlias: true,
   },
   {
     key: 'steam:news-collection',
     template: 'https://store.steampowered.com/feeds/newshub/collection/{collection}',
+    isAlias: true,
   },
   { key: 'steam:news-global', template: 'https://store.steampowered.com/feeds/news.xml' },
   { key: 'steam:daily-deals', template: 'https://store.steampowered.com/feeds/daily_deals.xml' },
