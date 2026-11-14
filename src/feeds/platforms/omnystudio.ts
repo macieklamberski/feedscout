@@ -15,6 +15,7 @@ const feeds = definePlatformFeeds([
   {
     key: 'omnystudio:show',
     template: 'https://www.omnycontent.com/d/playlist/{orgId}/{programId}/{playlistId}/podcast.rss',
+    isAlias: true,
   },
 ])
 
