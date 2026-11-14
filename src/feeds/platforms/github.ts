@@ -28,8 +28,14 @@ const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/([^/].*?)\/*$/i
 // suffixes: GitHub's own user routes, a name with .atom, .gpg, .keys or .png
 const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png)$/i
 
+// The private feed of a signed-in user answers only with its `token`, so it is claimed and never
+// built.
 const feeds = definePlatformFeeds([
   { key: 'github:activity', template: 'https://github.com/{owner}.atom' },
+  {
+    key: 'github:private-activity',
+    template: 'https://github.com/{owner}.private.atom?token={token}',
+  },
   { key: 'github:releases', template: 'https://github.com/{owner}/{repo}/releases.atom' },
   { key: 'github:commits', template: 'https://github.com/{owner}/{repo}/commits.atom' },
   { key: 'github:tags', template: 'https://github.com/{owner}/{repo}/tags.atom' },

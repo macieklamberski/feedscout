@@ -686,6 +686,16 @@ describe('githubHandler', () => {
       expect(githubHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the private activity hint for a private feed with a token', () => {
+      const value = 'https://github.com/alice.private.atom?token=ABC12345'
+      const expected: DiscoverUriHint = {
+        key: 'github:private-activity',
+        label: 'Private activity',
+      }
+
+      expect(githubHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the releases hint for a releases feed', () => {
       const value = 'https://github.com/AliceCorp/alicetool/releases.atom'
       const expected: DiscoverUriHint = { key: 'github:releases', label: 'Releases' }
@@ -846,6 +856,10 @@ describe('githubHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://github.com/a99f.atom', { key: 'github:activity', label: 'Activity' }],
+      [
+        'https://github.com/alice.private.atom?token=ABC12345',
+        { key: 'github:private-activity', label: 'Private activity' },
+      ],
       [
         'https://github.com/AliceCorp/alicetool/releases.atom',
         { key: 'github:releases', label: 'Releases' },
