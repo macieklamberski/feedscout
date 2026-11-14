@@ -147,9 +147,9 @@ describe('parseHatenaBookmarkUrl', () => {
   })
 
   it('should return a user ID with hyphens and underscores', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'web-dev_jp' }
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'bob-dev_jp' }
 
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/web-dev_jp/')).toEqual(expected)
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/bob-dev_jp/')).toEqual(expected)
   })
 
   it('should keep the user ID case', () => {

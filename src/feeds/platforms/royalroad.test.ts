@@ -11,7 +11,7 @@ describe('parseRoyalroadUrl', () => {
   })
 
   it('should return undefined for a profile page', () => {
-    expect(parseRoyalroadUrl('https://www.royalroad.com/profile/100374')).toBeUndefined()
+    expect(parseRoyalroadUrl('https://www.royalroad.com/profile/123456')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -47,7 +47,7 @@ describe('royalroadHandler', () => {
     })
 
     it('should not match a profile page', () => {
-      expect(royalroadHandler.match('https://www.royalroad.com/profile/100374')).toBe(false)
+      expect(royalroadHandler.match('https://www.royalroad.com/profile/123456')).toBe(false)
     })
 
     it('should not match a fiction list', () => {
@@ -76,7 +76,7 @@ describe('royalroadHandler', () => {
     })
 
     it('should return an empty array without a fiction id', () => {
-      expect(royalroadHandler.resolve('https://www.royalroad.com/profile/100374')).toEqual([])
+      expect(royalroadHandler.resolve('https://www.royalroad.com/profile/123456')).toEqual([])
     })
   })
 })

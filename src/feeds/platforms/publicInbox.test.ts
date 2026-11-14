@@ -157,10 +157,10 @@ describe('getPublicInboxPage', () => {
 
   it('should keep a percent-encoded message id as it is', () => {
     const value =
-      'https://inbox.example.com/snakemake-mode/alice%2Fsnakemake-mode%2Fissues%2F11%2F211507107@github.com/'
+      'https://inbox.example.com/example-mode/alice%2Fsnakemake-mode%2Fissues%2F11%2F211507107@github.com/'
     const expected: PublicInboxPage = {
       kind: 'message',
-      inboxUrl: 'https://inbox.example.com/snakemake-mode/',
+      inboxUrl: 'https://inbox.example.com/example-mode/',
       messageId: 'alice%2Fsnakemake-mode%2Fissues%2F11%2F211507107@github.com',
     }
 
