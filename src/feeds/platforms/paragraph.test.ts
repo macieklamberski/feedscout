@@ -96,6 +96,20 @@ describe('paragraphHandler', () => {
       expect(paragraphHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the blog hint for the feed spelling that redirects to the linked feed', () => {
+      const value = 'https://paragraph.com/@alice/feed'
+      const expected: DiscoverUriHint = { key: 'paragraph:blog', label: 'Blog' }
+
+      expect(paragraphHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the blog hint for the rss spelling that redirects to the linked feed', () => {
+      const value = 'https://paragraph.com/@alice/rss'
+      const expected: DiscoverUriHint = { key: 'paragraph:blog', label: 'Blog' }
+
+      expect(paragraphHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the blog hint for a blog feed', () => {
       const value = 'https://api.paragraph.com/blogs/rss/@alice'
       const expected: DiscoverUriHint = { key: 'paragraph:blog', label: 'Blog' }
@@ -146,6 +160,8 @@ describe('paragraphHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://paragraph.com/@alice/rss.xml', { key: 'paragraph:blog', label: 'Blog' }],
+      ['https://paragraph.com/@alice/feed', { key: 'paragraph:blog', label: 'Blog' }],
+      ['https://paragraph.com/@alice/rss', { key: 'paragraph:blog', label: 'Blog' }],
       ['https://api.paragraph.com/blogs/rss/@alice', { key: 'paragraph:blog', label: 'Blog' }],
       ['http://api.paragraph.com/blogs/rss/@alice', { key: 'paragraph:blog', label: 'Blog' }],
       ['https://paragraph.com/api/blogs/rss/%40alice', { key: 'paragraph:blog', label: 'Blog' }],
