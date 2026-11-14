@@ -68,13 +68,13 @@ const feeds = definePlatformFeeds(
     { key: 'flickr:faves', template: '{scheme}://{host}/services/feeds/photos_faves.gne?id={id}' },
     {
       key: 'flickr:faves',
-      template: '{scheme}://{host}/services/feeds/photos_faves.gne?id={id}&format=rss_200',
-      format: 'rss',
+      template: '{scheme}://{host}/services/feeds/photos_faves.gne?nsid={id}',
+      isAlias: true,
     },
     {
       key: 'flickr:faves',
-      template: '{scheme}://{host}/services/feeds/photos_faves.gne?nsid={id}',
-      isAlias: true,
+      template: '{scheme}://{host}/services/feeds/photos_faves.gne?id={id}&format=rss_200',
+      format: 'rss',
     },
     {
       key: 'flickr:faves',

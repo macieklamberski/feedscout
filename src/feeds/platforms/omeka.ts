@@ -50,23 +50,11 @@ const feeds = definePlatformFeeds(
     },
     {
       key: 'omeka:items',
-      template: '{root}/items/browse?output=atom',
-      format: 'atom',
-    },
-    {
-      key: 'omeka:items',
       template: '{root}/items?output=rss2',
       format: 'rss',
       isAlias: true,
     },
-    {
-      key: 'omeka:items',
-      template: '{root}/items?output=atom',
-      format: 'atom',
-      isAlias: true,
-    },
-    // A site whose homepage is the items browse serves the items feed at its root too, and the
-    // browse serves it page by page.
+    // A site whose homepage is the items browse serves the items feed at its root too.
     {
       key: 'omeka:items',
       template: '{root}/?output=rss2',
@@ -75,10 +63,22 @@ const feeds = definePlatformFeeds(
     },
     {
       key: 'omeka:items',
+      template: '{root}/items/browse?output=atom',
+      format: 'atom',
+    },
+    {
+      key: 'omeka:items',
+      template: '{root}/items?output=atom',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'omeka:items',
       template: '{root}/?output=atom',
       format: 'atom',
       isAlias: true,
     },
+    // The browse serves the items feed page by page.
     {
       key: 'omeka:items',
       template: '{root}/items/browse/{page}?output=rss2',

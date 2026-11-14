@@ -33,7 +33,6 @@ const feeds = definePlatformFeeds(
     { key: 'microblog:archive', template: '{scheme}://{host}/archive/index.json' },
     { key: 'microblog:photos', template: '{scheme}://{host}/photos/index.json' },
     { key: 'microblog:posts', template: '{scheme}://{host}/feed.xml', format: 'rss' },
-    { key: 'microblog:posts', template: '{scheme}://{host}/feed.json', format: 'json' },
     // replies.xml redirects to feed.xml, so a stored one is the posts feed.
     {
       key: 'microblog:posts',
@@ -41,6 +40,7 @@ const feeds = definePlatformFeeds(
       format: 'rss',
       isAlias: true,
     },
+    { key: 'microblog:posts', template: '{scheme}://{host}/feed.json', format: 'json' },
     {
       key: 'microblog:podcast',
       template: '{scheme}://{host}/podcast.xml',
