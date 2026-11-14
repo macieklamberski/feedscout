@@ -1,6 +1,7 @@
 import { getPathSegments, isHostOf, isHostOrSubdomainOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -14,6 +15,16 @@ const domains = ['laget.se']
 const lagetAssetRegex = /^(?:https?:)?\/\/[a-z]-content\.laget\.se\//i
 
 const assetTags = ['link', 'script']
+
+const teamFeeds = definePlatformFeeds([
+  { key: 'laget:news', template: 'https://www.laget.se/{team}/Home/NewsRss' },
+])
+
+// A club on its own domain is known only by its markers, so its feed is built but not claimed.
+const clubFeeds = definePlatformFeeds(
+  [{ key: 'laget:news', template: '{scheme}://{host}/Home/NewsRss' }],
+  { hosts },
+)
 
 // Both club templates load their stylesheets and scripts from the asset host, on an own domain too.
 export const isLagetHtml = (content: string): boolean => {
@@ -54,21 +65,17 @@ export const lagetHandler: PlatformHandler = {
 
     if (parsed) {
       // The team page links its feed with the team spelled as the request spelled it.
-      return [
-        {
-          uri: `https://www.laget.se/${parsed.team}/Home/NewsRss`,
-          hint: composeHint('laget:news'),
-        },
-      ]
+      return [teamFeeds.getFeedEntry('laget:news', { team: parsed.team })]
     }
 
-    if (isHostOrSubdomainOf(url, domains)) {
+    const page = clubFeeds.forUrl(url)
+
+    if (isHostOrSubdomainOf(url, domains) || !page) {
       return []
     }
 
-    // A club on its own domain serves its news feed at the domain root.
-    const { origin } = new URL(url)
-
-    return [{ uri: `${origin}/Home/NewsRss`, hint: composeHint('laget:news') }]
+    return [page.getFeedEntry('laget:news')]
   },
+
+  getFeedHint: teamFeeds.getFeedHint,
 }
