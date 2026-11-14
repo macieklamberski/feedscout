@@ -640,6 +640,12 @@
     ],
     "gitlab:branch-commits": "https://gitlab.com/gitlab-org/gitlab/-/commits/master?format=atom",
     "gitlab:dashboard": { "skip": "a private feed, 401 without the signed-in user's feed token" },
+    "gitlab:dashboard-issues": {
+      "skip": "a private feed, 401 without the signed-in user's feed token"
+    },
+    "gitlab:dashboard-merge-requests": {
+      "skip": "a private feed, 401 without the signed-in user's feed token"
+    },
     "gitlab:issues": "https://gitlab.com/gitlab-org/gitlab/-/issues.atom",
     "gitlab:merge-requests": "https://gitlab.com/gitlab-org/gitlab/-/merge_requests.atom",
     "gitlab:releases": "https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/releases.atom",

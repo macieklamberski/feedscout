@@ -434,6 +434,32 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the dashboard issues hint for a dashboard issues feed', () => {
+      const value = 'https://gitlab.com/dashboard/issues.atom?feed_token=glft-12345'
+      const expected: DiscoverUriHint = {
+        key: 'gitlab:dashboard-issues',
+        label: 'Dashboard issues',
+      }
+
+      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the dashboard merge requests hint for a dashboard merge requests feed', () => {
+      const value = 'https://gitlab.com/dashboard/merge_requests.atom?feed_token=glft-12345'
+      const expected: DiscoverUriHint = {
+        key: 'gitlab:dashboard-merge-requests',
+        label: 'Dashboard merge requests',
+      }
+
+      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for another file under the dashboard', () => {
+      const value = 'https://gitlab.com/dashboard/todos.atom'
+
+      expect(gitlabHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return the releases hint for a releases feed', () => {
       const value = 'https://gitlab.com/erinapp/erinapp/-/releases.atom'
       const expected: DiscoverUriHint = { key: 'gitlab:releases', label: 'Releases' }
@@ -632,6 +658,14 @@ describe('gitlabHandler', () => {
       [
         'https://gitlab.com/dashboard/projects.atom?feed_token=glft-12345',
         { key: 'gitlab:dashboard', label: 'Dashboard' },
+      ],
+      [
+        'https://gitlab.com/dashboard/issues.atom?feed_token=glft-12345',
+        { key: 'gitlab:dashboard-issues', label: 'Dashboard issues' },
+      ],
+      [
+        'https://gitlab.com/dashboard/merge_requests.atom?feed_token=glft-12345',
+        { key: 'gitlab:dashboard-merge-requests', label: 'Dashboard merge requests' },
       ],
       [
         'https://gitlab.com/erinapp/erinapp/-/releases.atom/',

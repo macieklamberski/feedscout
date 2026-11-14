@@ -96,6 +96,13 @@ const projectFeeds = [
   { file: 'merge_requests.atom', key: 'gitlab:merge-requests' },
 ]
 
+// The signed-in user's feeds under /dashboard/.
+const dashboardFeeds = [
+  { file: 'projects.atom', key: 'gitlab:dashboard' },
+  { file: 'issues.atom', key: 'gitlab:dashboard-issues' },
+  { file: 'merge_requests.atom', key: 'gitlab:dashboard-merge-requests' },
+]
+
 export const gitlabHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (!parseGitlabUrl(url)) {
@@ -178,14 +185,16 @@ export const gitlabHandler: PlatformHandler = {
       return
     }
 
-    // The signed-in user's dashboard feed answers only with their `feed_token`, so it is claimed
-    // under its own key and never built.
-    if (
-      segments.length === 2 &&
-      isAnyOf(prefixOrNamespace, 'dashboard') &&
-      isAnyOf(dashboardFile, 'projects.atom')
-    ) {
-      return composeHint('gitlab:dashboard')
+    // The signed-in user's dashboard feeds answer only with their `feed_token`, so they are claimed
+    // under their own keys and never built. The dashboard is a route, never a namespace.
+    if (isAnyOf(prefixOrNamespace, 'dashboard')) {
+      const dashboardFeed = dashboardFeeds.find(({ file }) => isAnyOf(dashboardFile, file))
+
+      if (segments.length !== 2 || !dashboardFeed) {
+        return
+      }
+
+      return composeHint(dashboardFeed.key)
     }
 
     const dashIndex = segments.indexOf('-')
