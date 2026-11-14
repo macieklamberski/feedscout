@@ -146,11 +146,11 @@ describe('dreamwidthHandler', () => {
       const value = 'https://bob.dreamwidth.org/tag/caf%C3%A9'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://bob.dreamwidth.org/data/rss?tag=café',
+          uri: 'https://bob.dreamwidth.org/data/rss?tag=caf%C3%A9',
           hint: { key: 'dreamwidth:posts-tag', label: 'Tag', format: 'rss' },
         },
         {
-          uri: 'https://bob.dreamwidth.org/data/atom?tag=café',
+          uri: 'https://bob.dreamwidth.org/data/atom?tag=caf%C3%A9',
           hint: { key: 'dreamwidth:posts-tag', label: 'Tag', format: 'atom' },
         },
         {
