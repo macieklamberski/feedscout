@@ -20,16 +20,6 @@ const contentTypePathRegex = /^\/browse\/([^/]+)\/?$/i
 
 const contentTypes = ['news', 'pr', 'social', 'image', 'video', 'audio', 'event'] as const
 
-const contentTypeKeys: Record<NewswireContentType, string> = {
-  news: 'newswire:news',
-  pr: 'newswire:press-releases',
-  social: 'newswire:social',
-  image: 'newswire:images',
-  video: 'newswire:videos',
-  audio: 'newswire:audio',
-  event: 'newswire:events',
-}
-
 const feeds = definePlatformFeeds(
   [
     { key: 'newswire:beat', template: '{scheme}://{host}/browse/rss/beat/{beat}' },
@@ -91,11 +81,32 @@ export const newswireHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed.kind === 'contentType') {
-      return [
-        page.getFeedEntry(contentTypeKeys[parsed.contentType]),
-        page.getFeedEntry('newswire:newsroom'),
-      ]
+    if (parsed.kind === 'contentType' && parsed.contentType === 'news') {
+      return [page.getFeedEntry('newswire:news'), page.getFeedEntry('newswire:newsroom')]
+    }
+
+    if (parsed.kind === 'contentType' && parsed.contentType === 'pr') {
+      return [page.getFeedEntry('newswire:press-releases'), page.getFeedEntry('newswire:newsroom')]
+    }
+
+    if (parsed.kind === 'contentType' && parsed.contentType === 'social') {
+      return [page.getFeedEntry('newswire:social'), page.getFeedEntry('newswire:newsroom')]
+    }
+
+    if (parsed.kind === 'contentType' && parsed.contentType === 'image') {
+      return [page.getFeedEntry('newswire:images'), page.getFeedEntry('newswire:newsroom')]
+    }
+
+    if (parsed.kind === 'contentType' && parsed.contentType === 'video') {
+      return [page.getFeedEntry('newswire:videos'), page.getFeedEntry('newswire:newsroom')]
+    }
+
+    if (parsed.kind === 'contentType' && parsed.contentType === 'audio') {
+      return [page.getFeedEntry('newswire:audio'), page.getFeedEntry('newswire:newsroom')]
+    }
+
+    if (parsed.kind === 'contentType' && parsed.contentType === 'event') {
+      return [page.getFeedEntry('newswire:events'), page.getFeedEntry('newswire:newsroom')]
     }
 
     return [page.getFeedEntry('newswire:newsroom')]
