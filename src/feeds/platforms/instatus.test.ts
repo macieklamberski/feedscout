@@ -122,15 +122,15 @@ describe('instatusHandler', () => {
       expect(instatusHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the translated incident history feeds', () => {
+    it('should return the incident history feeds on a translated page', () => {
       const value = 'https://status.example.com/zh-tw/history/1'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://status.example.com/zh-tw/history.rss',
+          uri: 'https://status.example.com/history.rss',
           hint: { key: 'instatus:history', label: 'Incident history', format: 'rss' },
         },
         {
-          uri: 'https://status.example.com/zh-tw/history.atom',
+          uri: 'https://status.example.com/history.atom',
           hint: { key: 'instatus:history', label: 'Incident history', format: 'atom' },
         },
       ]

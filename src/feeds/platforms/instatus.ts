@@ -11,28 +11,20 @@ const pageMarkers = ['custom-html-above-header', 'custom-html-below-footer']
 const domains = ['instatus.com']
 
 // A status page on its own domain is known only by its markers, so its feeds are built here but
-// not claimed. A translation's row comes first, so a page in one builds it.
+// not claimed. A translation's feeds serve the same items as the bare ones.
 const feeds = definePlatformFeeds(
   [
+    { key: 'instatus:history', template: '{scheme}://{host}/history.rss', format: 'rss' },
     {
       key: 'instatus:history',
       template: '{scheme}://{host}/{language}/history.rss',
       format: 'rss',
-    },
-    {
-      key: 'instatus:history',
-      template: '{scheme}://{host}/history.rss',
-      format: 'rss',
       isAlias: true,
     },
+    { key: 'instatus:history', template: '{scheme}://{host}/history.atom', format: 'atom' },
     {
       key: 'instatus:history',
       template: '{scheme}://{host}/{language}/history.atom',
-      format: 'atom',
-    },
-    {
-      key: 'instatus:history',
-      template: '{scheme}://{host}/history.atom',
       format: 'atom',
       isAlias: true,
     },
