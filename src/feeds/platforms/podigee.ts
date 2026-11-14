@@ -8,19 +8,20 @@ export type PodigeeUrl = { kind: 'podcast' }
 
 const domains = ['podigee.io']
 
-// The mp3 feed comes first, so resolve builds it. The aac, opus and vorbis feeds list the same
-// episodes in another encoding. A show's further feeds live under /feeds/{feed} and can list
-// fewer episodes than the main one. No page links them, so they are claimed and never built.
+// The aac, opus and vorbis feeds list the mp3 feed's episodes with other enclosures, so each
+// encoding is a feed of its own. A show's further feeds live under /feeds/{feed} and can list
+// fewer episodes than the main one. No page links either, and a show without an encoding
+// answers 302 to /feed/mp3, so they are claimed and never built.
 const feeds = definePlatformFeeds(
   [
     { key: 'podigee:podcast', template: '{scheme}://{host}/feed/mp3' },
-    { key: 'podigee:podcast', template: '{scheme}://{host}/feed/aac' },
-    { key: 'podigee:podcast', template: '{scheme}://{host}/feed/opus' },
-    { key: 'podigee:podcast', template: '{scheme}://{host}/feed/vorbis' },
+    { key: 'podigee:podcast-encoding', template: '{scheme}://{host}/feed/aac' },
+    { key: 'podigee:podcast-encoding', template: '{scheme}://{host}/feed/opus' },
+    { key: 'podigee:podcast-encoding', template: '{scheme}://{host}/feed/vorbis' },
     { key: 'podigee:feed', template: '{scheme}://{host}/feeds/{feed}/mp3' },
-    { key: 'podigee:feed', template: '{scheme}://{host}/feeds/{feed}/aac' },
-    { key: 'podigee:feed', template: '{scheme}://{host}/feeds/{feed}/opus' },
-    { key: 'podigee:feed', template: '{scheme}://{host}/feeds/{feed}/vorbis' },
+    { key: 'podigee:feed-encoding', template: '{scheme}://{host}/feeds/{feed}/aac' },
+    { key: 'podigee:feed-encoding', template: '{scheme}://{host}/feeds/{feed}/opus' },
+    { key: 'podigee:feed-encoding', template: '{scheme}://{host}/feeds/{feed}/vorbis' },
   ],
   { domains },
 )

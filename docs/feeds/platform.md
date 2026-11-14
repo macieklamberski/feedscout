@@ -1283,6 +1283,8 @@ Discovers RSS feeds for Podigee-hosted podcasts.
 |-------------|-----------------|
 | `{podcast}.podigee.io` | Podcast (RSS) |
 
+The aac, opus and vorbis feeds, `/feed/{encoding}` and `/feeds/{feed}/{encoding}`, are claimed under keys of their own and never built: no page links them, and a show without an encoding answers 302 to `/feed/mp3`.
+
 ### Postach.io
 
 Discovers Atom feeds for Postach.io sites.
@@ -2049,6 +2051,7 @@ Discovers the RSS feed of an Omny Studio show.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `omny.fm/shows/{slug}` | Show (RSS) |
+| `omny.fm/shows/{slug}/playlists/{playlist}` | Playlist (RSS) · show (RSS) |
 
 > [!NOTE]
 > A show whose page answers 404 can still resolve through this shortcut, which redirects to an identifier path on the content host.

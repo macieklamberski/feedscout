@@ -90,23 +90,32 @@ describe('podigeeHandler', () => {
       expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast hint for the aac feed', () => {
+    it('should return the podcast encoding hint for the aac feed', () => {
       const value = 'https://alice.podigee.io/feed/aac'
-      const expected: DiscoverUriHint = { key: 'podigee:podcast', label: 'Podcast' }
+      const expected: DiscoverUriHint = {
+        key: 'podigee:podcast-encoding',
+        label: 'Podcast in another encoding',
+      }
 
       expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast hint for the opus feed', () => {
+    it('should return the podcast encoding hint for the opus feed', () => {
       const value = 'https://alice.podigee.io/feed/opus'
-      const expected: DiscoverUriHint = { key: 'podigee:podcast', label: 'Podcast' }
+      const expected: DiscoverUriHint = {
+        key: 'podigee:podcast-encoding',
+        label: 'Podcast in another encoding',
+      }
 
       expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast hint for the vorbis feed', () => {
+    it('should return the podcast encoding hint for the vorbis feed', () => {
       const value = 'https://alice.podigee.io/feed/vorbis'
-      const expected: DiscoverUriHint = { key: 'podigee:podcast', label: 'Podcast' }
+      const expected: DiscoverUriHint = {
+        key: 'podigee:podcast-encoding',
+        label: 'Podcast in another encoding',
+      }
 
       expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -139,9 +148,12 @@ describe('podigeeHandler', () => {
       expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the feed hint for a further aac feed of a show', () => {
+    it('should return the feed encoding hint for a further aac feed of a show', () => {
       const value = 'https://alice.podigee.io/feeds/new_feed_12345/aac'
-      const expected: DiscoverUriHint = { key: 'podigee:feed', label: 'Feed' }
+      const expected: DiscoverUriHint = {
+        key: 'podigee:feed-encoding',
+        label: 'Feed in another encoding',
+      }
 
       expect(podigeeHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -162,15 +174,23 @@ describe('podigeeHandler', () => {
   describe('own feeds through the Platform method', () => {
     const podcastHint: DiscoverUriHint = { key: 'podigee:podcast', label: 'Podcast' }
     const feedHint: DiscoverUriHint = { key: 'podigee:feed', label: 'Feed' }
+    const podcastEncodingHint: DiscoverUriHint = {
+      key: 'podigee:podcast-encoding',
+      label: 'Podcast in another encoding',
+    }
+    const feedEncodingHint: DiscoverUriHint = {
+      key: 'podigee:feed-encoding',
+      label: 'Feed in another encoding',
+    }
     const values: Array<[string, DiscoverUriHint]> = [
-      ['https://alice.podigee.io/feed/aac', podcastHint],
-      ['https://alice.podigee.io/feed/opus', podcastHint],
-      ['https://alice.podigee.io/feed/vorbis', podcastHint],
+      ['https://alice.podigee.io/feed/aac', podcastEncodingHint],
+      ['https://alice.podigee.io/feed/opus', podcastEncodingHint],
+      ['https://alice.podigee.io/feed/vorbis', podcastEncodingHint],
       ['https://alice.podigee.io/feed/mp3/', podcastHint],
       ['https://alice.podigee.io/feed/mp3?source=itunes', podcastHint],
       ['https://alice.podigee.io/feeds/new_feed_12345/mp3', feedHint],
-      ['https://alice.podigee.io/feeds/new_feed_12345/opus', feedHint],
-      ['https://alice.podigee.io/feeds/new_feed_12345/vorbis', feedHint],
+      ['https://alice.podigee.io/feeds/new_feed_12345/opus', feedEncodingHint],
+      ['https://alice.podigee.io/feeds/new_feed_12345/vorbis', feedEncodingHint],
     ]
 
     it.each(values)('should return %s as itself', async (value, hint) => {
