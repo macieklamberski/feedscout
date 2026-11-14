@@ -2507,7 +2507,9 @@ Discovers the feeds of blog.hu blogs, and the activity feed of a blog.hu user.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.blog.hu` | Posts (RSS + Atom) · comments (RSS + Atom) |
+| `{blog}.blog.hu` | Posts (RSS + Atom) · comments (RSS + Atom) |
+| `{blog}.blog.hu/{year}/{month}/{day}/{slug}` | Post comments (RSS + Atom) · posts (RSS + Atom) · comments (RSS + Atom) |
+| `{blog}.blog.hu/tags/{tag}` | Tag<sup>†</sup> (RSS + Atom) · posts (RSS + Atom) · comments (RSS + Atom) |
 | `blog.hu/user/{id}` | User activity<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*

@@ -543,6 +543,8 @@
     "cocolog:posts": "Posts",
     "blog-hu:posts": "Posts",
     "blog-hu:comments": "Comments",
+    "blog-hu:post-comments": "Post comments",
+    "blog-hu:tag": "Tag",
     "blog-hu:user": "User activity",
     "chambermaster:upcoming-events": "Upcoming events",
     "chambermaster:new-events": "New events",
