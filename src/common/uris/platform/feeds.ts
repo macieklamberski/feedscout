@@ -72,6 +72,7 @@ const templateRegex = /^(https?|\{scheme\}):\/\/([^/?#]+)(\/[^?#]*)?(?:\?([^#]*)
 const placeholderRegex = /\{(\w+\*?)\}/g
 const trailingSlashRegex = /\/$/
 const nonAsciiRegex = /\P{ASCII}+/gu
+const leadingSlashesRegex = /^\/{2,}/
 const anchorsRegex = /^\^|\$$/g
 
 const rootPlaceholder = '{root}'
@@ -212,7 +213,9 @@ const compileTemplate = (
       return false
     }
 
-    const pathname = decodePath(url.pathname).replace(trailingSlashRegex, '')
+    // A doubled slash after the host names the same feed: pages link `host//feed` for `host/feed`.
+    const path = url.pathname.replace(leadingSlashesRegex, '/')
+    const pathname = decodePath(path).replace(trailingSlashRegex, '')
 
     if (!hostPathRegex.test(hostname + pathname)) {
       return false
