@@ -27,14 +27,6 @@ const feeds = definePlatformFeeds([
   { key: 'vimeo:videos', template: 'https://vimeo.com/{username}/videos/all/rss', isAlias: true },
 ])
 
-const feedKeys: Record<VimeoUrl['kind'], string> = {
-  channel: 'vimeo:channel',
-  group: 'vimeo:group',
-  album: 'vimeo:album',
-  likes: 'vimeo:likes',
-  user: 'vimeo:videos',
-}
-
 export const parseVimeoUrl = (url: string): VimeoUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -109,16 +101,5 @@ export const vimeoHandler: PlatformHandler = {
     return [feeds.getFeedEntry('vimeo:videos', { username: parsed.username })]
   },
 
-  getFeedHint: (url) => {
-    const hint = feeds.getFeedHint(url)
-    const page = parseVimeoUrl(url)
-
-    // The feed must read as the page kind that emits its key: `/123/videos/rss` is a video's and
-    // `/channels/likes/rss` a channel's, neither a user's feed.
-    if (!hint || !page || feedKeys[page.kind] !== hint.key) {
-      return
-    }
-
-    return hint
-  },
+  getFeedHint: feeds.getFeedHint,
 }

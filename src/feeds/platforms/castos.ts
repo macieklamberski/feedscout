@@ -1,7 +1,6 @@
-import { getPathSegments, isHostOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain, wordRegex } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,8 +8,6 @@ export type CastosUrl = { kind: 'show'; slug: string }
 export type CastosPage = { kind: 'show'; slug: string; feedId?: string }
 
 const domains = ['castos.com']
-// The feed host serves every show by path, so it names no show.
-const feedHosts = ['feeds.castos.com']
 
 // The feed id is opaque, so it is read from the feed link every show page carries.
 const feedIdRegex = /https:\/\/feeds\.castos\.com\/([a-z0-9]+)/i
@@ -27,7 +24,7 @@ const feeds = definePlatformFeeds(
 export const parseCastosUrl = (url: string): CastosUrl | undefined => {
   const slug = getTenantSubdomain(url, domains)
 
-  if (!slug || isHostOf(url, feedHosts)) {
+  if (!slug) {
     return
   }
 
@@ -60,15 +57,5 @@ export const castosHandler: PlatformHandler = {
     return [pageFeeds.getFeedEntry('castos:podcast', { feedId: page.feedId })]
   },
 
-  getFeedHint: (url) => {
-    const [segment] = getPathSegments(url)
-
-    // A feed id is word characters only, so a file on the feed host, such as `robots.txt`, is no
-    // feed.
-    if (!segment || !wordRegex.test(segment)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
