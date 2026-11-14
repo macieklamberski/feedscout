@@ -16,11 +16,21 @@ const feeds = definePlatformFeeds(
   [
     { key: 'pika:posts', template: '{scheme}://{host}/posts_feed', format: 'atom' },
     { key: 'pika:posts', template: '{scheme}://{host}/posts_feed.rss', format: 'rss' },
-    { key: 'pika:posts', template: '{scheme}://{host}/posts_feed.atom', format: 'atom' },
-    { key: 'pika:posts', template: '{scheme}://{host}/feed', format: 'atom' },
+    {
+      key: 'pika:posts',
+      template: '{scheme}://{host}/posts_feed.atom',
+      format: 'atom',
+      isAlias: true,
+    },
+    { key: 'pika:posts', template: '{scheme}://{host}/feed', format: 'atom', isAlias: true },
     { key: 'pika:tag', template: '{scheme}://{host}/tag/{tag}/feed', format: 'atom' },
     { key: 'pika:tag', template: '{scheme}://{host}/tag/{tag}/feed.rss', format: 'rss' },
-    { key: 'pika:tag', template: '{scheme}://{host}/tag/{tag}/feed.atom', format: 'atom' },
+    {
+      key: 'pika:tag',
+      template: '{scheme}://{host}/tag/{tag}/feed.atom',
+      format: 'atom',
+      isAlias: true,
+    },
   ],
   { domains },
 )
