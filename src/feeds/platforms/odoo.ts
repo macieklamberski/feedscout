@@ -16,8 +16,8 @@ const domains = ['odoo.com']
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'odoo:blog', template: '{scheme}://{host}/{language}/blog/{blog}/feed', format: 'atom' },
     { key: 'odoo:blog', template: '{scheme}://{host}/blog/{blog}/feed', format: 'atom' },
+    { key: 'odoo:blog', template: '{scheme}://{host}/{language}/blog/{blog}/feed', format: 'atom' },
   ],
   { domains },
 )

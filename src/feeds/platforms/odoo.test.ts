@@ -123,11 +123,11 @@ describe('odooHandler', () => {
       expect(odooHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the blog feed under the language prefix', () => {
+    it('should return the bare blog feed for a page under a language prefix', () => {
       const value = 'https://example.com/fr_FR/blog/actualites-5'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/fr_FR/blog/actualites-5/feed',
+          uri: 'https://example.com/blog/actualites-5/feed',
           hint: { key: 'odoo:blog', label: 'Blog', format: 'atom' },
         },
       ]
