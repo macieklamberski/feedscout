@@ -24,6 +24,9 @@ export type PlatformFeedTemplate = {
   // `{name*}` path placeholder takes one or more segments, filled from `name` as `docs/api`.
   template: string
   format?: DiscoverUriHint['format']
+  // Another spelling of one feed, such as a legacy host. Its canonical row is the first row above it
+  // with the same key and format and no `alias`, and the table throws when there is none.
+  alias?: boolean
 }
 
 // A value left undefined is no value, so the row it would fill is skipped.
@@ -295,6 +298,20 @@ export const definePlatformFeeds = (
   templates: Array<PlatformFeedTemplate>,
   options: PlatformFeedTableOptions = {},
 ): PlatformFeedTable => {
+  for (const [index, { key, format, alias }] of templates.entries()) {
+    if (!alias) {
+      continue
+    }
+
+    const hasCanonical = templates.slice(0, index).some((row) => {
+      return !row.alias && row.key === key && row.format === format
+    })
+
+    if (!hasCanonical) {
+      throw new Error(t(locales.errors.missingCanonicalFeedTemplate, { key }))
+    }
+  }
+
   const compiled = templates.map((template) => compileTemplate(template, options))
   // A template with more query parameters is the more specific one, so it is read first. At the
   // same count the earlier row wins, so a `{name*}` row goes after the rows its paths overlap.
