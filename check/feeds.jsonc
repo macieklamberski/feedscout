@@ -1649,7 +1649,10 @@
     "spreaker:podcast": "https://www.spreaker.com/show/1433865/episodes/feed"
   },
   "squarespace": {
-    "squarespace:collection": "https://www.squarespace.com/blog?format=rss"
+    "squarespace:category": "https://tierra-youngbloodfield-3ytp.squarespace.com/blog?category=Talks+With+T&format=rss",
+    "squarespace:collection": "https://www.squarespace.com/blog?format=rss",
+    "squarespace:comments": "http://steveboese.squarespace.com/journal/rss-comments.xml",
+    "squarespace:tag": "https://pittsfordpres.squarespace.com/blog?format=rss&tag=podcast"
   },
   "stackExchange": {
     "stackexchange:collective": "https://stackoverflow.com/feeds/collectives/aws",
