@@ -4,7 +4,7 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type CanalblogUrl = { kind: 'blog'; blog: string }
+export type CanalblogUrl = { kind: 'blog' }
 
 const domains = ['canalblog.com']
 
@@ -14,13 +14,11 @@ const feeds = definePlatformFeeds([{ key: 'canalblog:posts', template: '{scheme}
 
 export const parseCanalblogUrl = (url: string): CanalblogUrl | undefined => {
   // A nested subdomain like a.b.canalblog.com fails TLS, since the certificate covers one label.
-  const blog = getTenantSubdomain(url, domains)
-
-  if (!blog) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 
-  return { kind: 'blog', blog }
+  return { kind: 'blog' }
 }
 
 export const canalblogHandler: PlatformHandler = {

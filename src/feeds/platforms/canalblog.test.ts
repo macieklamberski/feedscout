@@ -6,21 +6,14 @@ import { type CanalblogUrl, canalblogHandler, parseCanalblogUrl } from './canalb
 
 describe('parseCanalblogUrl', () => {
   it('should return the blog for a blog home page', () => {
-    const value = 'https://alice.canalblog.com/'
-    const expected: CanalblogUrl = {
-      kind: 'blog',
-      blog: 'alice',
-    }
+    const expected: CanalblogUrl = { kind: 'blog' }
 
-    expect(parseCanalblogUrl(value)).toEqual(expected)
+    expect(parseCanalblogUrl('https://alice.canalblog.com/')).toEqual(expected)
   })
 
   it('should return the blog for a post page', () => {
     const value = 'https://alice.canalblog.com/archives/2024/05/19/12345678.html'
-    const expected: CanalblogUrl = {
-      kind: 'blog',
-      blog: 'alice',
-    }
+    const expected: CanalblogUrl = { kind: 'blog' }
 
     expect(parseCanalblogUrl(value)).toEqual(expected)
   })
