@@ -25,8 +25,8 @@ const publicationRegex =
 const feeds = definePlatformFeeds(
   [
     { key: 'substack:newsletter', template: '{scheme}://{host}/feed' },
-    { key: 'substack:newsletter', template: '{scheme}://{host}/feed.xml' },
-    { key: 'substack:newsletter', template: '{scheme}://{host}/feed.rss' },
+    { key: 'substack:newsletter', template: '{scheme}://{host}/feed.xml', isAlias: true },
+    { key: 'substack:newsletter', template: '{scheme}://{host}/feed.rss', isAlias: true },
     // One section of the newsletter, which holds only that section's posts.
     { key: 'substack:newsletter-section', template: '{scheme}://{host}/feed?sectionId={section}' },
     // A publication's podcast, mostly linked on api.substack.com, and one section of it, under ids
