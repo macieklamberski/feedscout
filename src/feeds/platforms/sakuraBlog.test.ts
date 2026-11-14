@@ -145,6 +145,14 @@ describe('sakuraBlogHandler', () => {
         'http://alice.sblo.jp/index.rdf',
         { key: 'sakura-blog:posts', label: 'Posts', format: 'rdf' },
       ],
+      [
+        'http://www.alice.sblo.jp/index20.rdf',
+        { key: 'sakura-blog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'http://www.alice.sblo.jp/index.rdf',
+        { key: 'sakura-blog:posts', label: 'Posts', format: 'rdf' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
