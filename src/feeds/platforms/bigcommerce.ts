@@ -1,5 +1,4 @@
 import { getQueryParam } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
@@ -167,41 +166,56 @@ export const bigcommerceHandler: PlatformHandler = {
   resolve: (url, content) => {
     const page = getBigcommercePage(url, content)
     const pageFeeds = feeds.forUrl(url)
-    const uris: Array<DiscoverUriEntry> = []
 
     if (!pageFeeds) {
-      return uris
+      return []
     }
-
-    const feedEntries = (key: string, params?: Record<string, string>) => [
-      pageFeeds.getFeedEntry(key, params, 'rss'),
-      pageFeeds.getFeedEntry(key, params, 'atom'),
-    ]
 
     if (page.kind === 'category') {
       const params = { categoryId: page.categoryId }
 
-      uris.push(
-        ...feedEntries('bigcommerce:category-new-products', params),
-        ...feedEntries('bigcommerce:category-popular-products', params),
-      )
+      return [
+        pageFeeds.getFeedEntry('bigcommerce:category-new-products', params, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:category-new-products', params, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:category-popular-products', params, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:category-popular-products', params, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:new-products', undefined, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:new-products', undefined, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:popular-products', undefined, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:popular-products', undefined, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:featured-products', undefined, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:featured-products', undefined, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:blog', undefined, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:blog', undefined, 'atom'),
+      ]
     }
 
     if (page.kind === 'search') {
-      uris.push(...feedEntries('bigcommerce:search', { query: page.query }))
+      return [
+        pageFeeds.getFeedEntry('bigcommerce:search', { query: page.query }, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:search', { query: page.query }, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:new-products', undefined, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:new-products', undefined, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:popular-products', undefined, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:popular-products', undefined, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:featured-products', undefined, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:featured-products', undefined, 'atom'),
+        pageFeeds.getFeedEntry('bigcommerce:blog', undefined, 'rss'),
+        pageFeeds.getFeedEntry('bigcommerce:blog', undefined, 'atom'),
+      ]
     }
 
-    uris.push(
-      ...feedEntries('bigcommerce:new-products'),
-      ...feedEntries('bigcommerce:popular-products'),
-      ...feedEntries('bigcommerce:featured-products'),
-      ...feedEntries('bigcommerce:blog'),
-    )
-
-    return uris
+    return [
+      pageFeeds.getFeedEntry('bigcommerce:new-products', undefined, 'rss'),
+      pageFeeds.getFeedEntry('bigcommerce:new-products', undefined, 'atom'),
+      pageFeeds.getFeedEntry('bigcommerce:popular-products', undefined, 'rss'),
+      pageFeeds.getFeedEntry('bigcommerce:popular-products', undefined, 'atom'),
+      pageFeeds.getFeedEntry('bigcommerce:featured-products', undefined, 'rss'),
+      pageFeeds.getFeedEntry('bigcommerce:featured-products', undefined, 'atom'),
+      pageFeeds.getFeedEntry('bigcommerce:blog', undefined, 'rss'),
+      pageFeeds.getFeedEntry('bigcommerce:blog', undefined, 'atom'),
+    ]
   },
 
-  // The table reads any host under the domain, so the apex and the www host, which do not resolve,
-  // are refused first.
   getFeedHint: feeds.getFeedHint,
 }
