@@ -17,7 +17,7 @@ const userRegex = /^\/([^/]+)/
 const feeds = definePlatformFeeds(
   [
     { key: 'csdn:blog', template: '{scheme}://{host}/{username}/rss/map' },
-    { key: 'csdn:blog', template: 'https://blog.csdn.net/{username}/rss/list' },
+    { key: 'csdn:blog', template: 'https://blog.csdn.net/{username}/rss/list', isAlias: true },
   ],
   { hosts: feedHosts },
 )
