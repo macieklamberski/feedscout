@@ -1,13 +1,13 @@
 import { getPathSegments, isHostOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { getBrandDomainRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type DasaugeUrl = { kind: 'profile'; username: string }
 
-// dasauge's country domains.
-const hosts = [/^dasauge\.(?:at|ch|co\.uk|com|de|es)$/]
+const hosts = [getBrandDomainRegex('dasauge')]
 
 const profileRegex = /^-(.+)$/
 
