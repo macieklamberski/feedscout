@@ -441,6 +441,7 @@ Discovers RSS feeds for SourceForge project activity, file releases, news, and d
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `sourceforge.net/projects/{project}` or `sourceforge.net/p/{project}` | Activity · project · files · news<sup>†</sup> (RSS + Atom) · discussion<sup>†</sup> (RSS + Atom) · bugs |
+| `sourceforge.net/p/{project}/discussion/{forum}/thread/{thread}` | The project's feeds · thread (RSS + Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
