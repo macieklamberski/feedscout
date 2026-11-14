@@ -63,25 +63,25 @@ type CompiledTemplate = {
   queryCount: number
   // The placeholder names the template fills.
   names: Array<string>
-  // The host and path a URL the template claims matches, as given and without `www`.
+  // The host and path a URL the template claims matches, as given and with an optional `www`.
   asGivenRegex: RegExp
-  withoutWwwRegex: RegExp
+  optionalWwwRegex: RegExp
   isFeedUrl: (feedUrl: FeedUrl) => boolean
-  isFeedUrlWithoutWww: (feedUrl: FeedUrl) => boolean
+  isFeedUrlWithOptionalWww: (feedUrl: FeedUrl) => boolean
   getUrl: (params?: PlatformFeedParams) => string
 }
 
-// A URL as the templates read it: the host joined to the decoded path without its trailing slash,
-// with and without `www`.
+// A URL as the templates read it: the host joined to the decoded path without its trailing slash.
 type FeedUrl = {
   url: URL
   hostPath: string
-  hostPathWithoutWww: string
 }
 
 const templateRegex = /^(https?|\{scheme\}):\/\/([^/?#]+)(\/[^?#]*)?(?:\?([^#]*))?$/i
 const placeholderRegex = /\{(\w+\*?)\}/g
 const trailingSlashRegex = /\/$/
+const nonAsciiRegex = /\P{ASCII}+/gu
+const leadingSlashesRegex = /^\/{2,}/
 const anchorsRegex = /^\^|\$$/g
 
 const rootPlaceholder = '{root}'
@@ -143,12 +143,13 @@ const readFeedUrl = (url: string): FeedUrl | undefined => {
   let feedUrl: FeedUrl | undefined
 
   if (parsedUrl && isHttpUrl(parsedUrl)) {
-    const pathname = decodePath(parsedUrl.pathname).replace(trailingSlashRegex, '')
+    // A doubled slash after the host names the same feed: pages link `host//feed` for `host/feed`.
+    const path = parsedUrl.pathname.replace(leadingSlashesRegex, '/')
+    const pathname = decodePath(path).replace(trailingSlashRegex, '')
 
     feedUrl = {
       url: parsedUrl,
       hostPath: parsedUrl.hostname + pathname,
-      hostPathWithoutWww: stripWww(parsedUrl.hostname) + pathname,
     }
   }
 
@@ -209,6 +210,8 @@ const compileTemplate = (
   const hosts = options.hosts ?? []
   const domains = (options.domains ?? []).map((domain) => toEntrySource(domain))
   const domainSource = `(?:${domains.join('|')})`
+  // One host label other than `www` unless `www` is a tenant.
+  const tenantSource = options.isWwwTenant ? '[^./]+' : '(?!www\\.)[^./]+'
 
   const hasHosts = hosts.length > 0 || domains.length > 0
 
@@ -231,20 +234,27 @@ const compileTemplate = (
     multiSegmentCaptures,
     true,
   )
-  const toHostPathRegex = (normalize: (value: string) => string): RegExp => {
+  // A fixed host matches with or without `www` in front, a tenant label never does, so
+  // `www.alice.example.com` is no tenant's host.
+  const toHostPathRegex = (isWwwOptional: boolean): RegExp => {
+    const wwwSource = isWwwOptional ? '(?:www\\.)?' : ''
+    const normalize = (value: string): string => (isWwwOptional ? stripWww(value) : value)
     const hostSources = [
-      ...hosts.map((value) => toEntrySource(isString(value) ? normalize(value) : value)),
-      ...(domains.length > 0 ? [`[^./]+\\.${domainSource}`] : []),
+      ...hosts.map((value) => {
+        return `${wwwSource}${toEntrySource(isString(value) ? normalize(value) : value)}`
+      }),
+      ...(domains.length > 0 ? [`${tenantSource}\\.${domainSource}`] : []),
     ]
-    const hostSource = toRegexSource(normalize(host), '[^.]+', {
+    const isFixedHost = !host.startsWith('{') || host.startsWith('{domain}')
+    const hostSource = toRegexSource(normalize(host), tenantSource, {
       host: `(?:${hostSources.join('|')})`,
       domain: domainSource,
     })
 
-    return new RegExp(`^${hostSource}${pathSource}$`, 'i')
+    return new RegExp(`^${isFixedHost ? wwwSource : ''}${hostSource}${pathSource}$`, 'i')
   }
-  const asGivenRegex = toHostPathRegex((value) => value)
-  const withoutWwwRegex = toHostPathRegex(stripWww)
+  const asGivenRegex = toHostPathRegex(false)
+  const optionalWwwRegex = toHostPathRegex(true)
   const queryRegexes = query.map(([name, value]): [string, RegExp] => {
     return [name, new RegExp(`^${toRegexSource(value, '.+')}$`, 'i')]
   })
@@ -268,8 +278,8 @@ const compileTemplate = (
     return matchesUrl(url, asGivenRegex, hostPath)
   }
 
-  const isFeedUrlWithoutWww = ({ url, hostPathWithoutWww }: FeedUrl): boolean => {
-    return matchesUrl(url, withoutWwwRegex, hostPathWithoutWww)
+  const isFeedUrlWithOptionalWww = ({ url, hostPath }: FeedUrl): boolean => {
+    return matchesUrl(url, optionalWwwRegex, hostPath)
   }
 
   // A placeholder with no value stays in the URL, as in trousse's `t`.
@@ -284,9 +294,11 @@ const compileTemplate = (
         return value === undefined ? placeholder : encode(value, name)
       })
     }
-    const builtQuery = composeQuery(
-      Object.fromEntries(query.map(([name, value]) => [name, fillPlaceholders(value)])),
+    const queryParams = Object.fromEntries(
+      query.map(([name, value]) => [name, fillPlaceholders(value)]),
     )
+    // Pages link a query value percent-encoded, as `?tag=%E6%8A%80%E8%A1%93` for `技術`.
+    const builtQuery = composeQuery(queryParams).replace(nonAsciiRegex, encodeURIComponent)
 
     // A root is written as given, without the trailing slash the path brings.
     const origin = isRootTemplate
@@ -302,9 +314,9 @@ const compileTemplate = (
     queryCount: query.length,
     names,
     asGivenRegex,
-    withoutWwwRegex,
+    optionalWwwRegex,
     isFeedUrl,
-    isFeedUrlWithoutWww,
+    isFeedUrlWithOptionalWww,
     getUrl,
   }
 }
@@ -321,7 +333,7 @@ export const definePlatformFeeds = (
   const bySpecificity = [...compiled].sort((a, b) => b.queryCount - a.queryCount)
   // A URL whose host and path no template takes is none of the feeds, whatever its query.
   const asGivenRegex = joinRegexes(compiled.map((candidate) => candidate.asGivenRegex))
-  const withoutWwwRegex = joinRegexes(compiled.map((candidate) => candidate.withoutWwwRegex))
+  const optionalWwwRegex = joinRegexes(compiled.map((candidate) => candidate.optionalWwwRegex))
 
   const getFeedUrl: PlatformFeedTable['getFeedUrl'] = (key, params, format) => {
     const candidates = compiled.filter((candidate) => {
@@ -351,8 +363,7 @@ export const definePlatformFeeds = (
       return
     }
 
-    // With `www` a tenant, a host as given wins, so `www.example.com` is the tenant `www` and
-    // `www.alice.example.com` falls back to the host without `www`.
+    // With `www` a tenant, a host as given wins, so `www.example.com` is the tenant `www`.
     if (options.isWwwTenant && asGivenRegex.test(feedUrl.hostPath)) {
       const template = bySpecificity.find((candidate) => candidate.isFeedUrl(feedUrl))
 
@@ -361,11 +372,13 @@ export const definePlatformFeeds = (
       }
     }
 
-    if (!withoutWwwRegex.test(feedUrl.hostPathWithoutWww)) {
+    if (!optionalWwwRegex.test(feedUrl.hostPath)) {
       return
     }
 
-    const template = bySpecificity.find((candidate) => candidate.isFeedUrlWithoutWww(feedUrl))
+    const template = bySpecificity.find((candidate) => {
+      return candidate.isFeedUrlWithOptionalWww(feedUrl)
+    })
 
     if (!template) {
       return
