@@ -3047,7 +3047,7 @@ Discovers Atom feeds for Travellerspoint travel blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.travellerspoint.com` | Posts |
+| `{blog}.travellerspoint.com` | Posts |
 
 ### Blogger.de
 
