@@ -31,6 +31,7 @@ const feeds = definePlatformFeeds(
     {
       key: 'ning:topic',
       template: '{scheme}://{host}/group/{group}/forum/topic/show?feed=yes&id={topic}&xn_auth=no',
+      isAlias: true,
     },
     { key: 'ning:activity', template: '{scheme}://{host}/activity/log/list?fmt=rss' },
     {
