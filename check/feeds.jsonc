@@ -1652,8 +1652,10 @@
     "squarespace:collection": "https://www.squarespace.com/blog?format=rss"
   },
   "stackExchange": {
+    "stackexchange:chat-starred": "https://chat.stackexchange.com/feeds/rooms/starred/23970",
     "stackexchange:collective": "https://stackoverflow.com/feeds/collectives/aws",
     "stackexchange:newest": "https://stackoverflow.com/feeds",
+    "stackexchange:proposal": "https://area51.stackexchange.com/feeds/proposal/67858",
     "stackexchange:question": "https://stackoverflow.com/feeds/question/927358",
     "stackexchange:tag": [
       "https://stackoverflow.com/feeds/tag/javascript",
@@ -1666,6 +1668,7 @@
       "https://meta.stackexchange.com/feeds/tag/discussion",
       "https://gaming.stackexchange.com/feeds/tag/steam"
     ],
+    "stackexchange:tagset": "https://stackexchange.com/feeds/tagsets/399798/community?sort=newest",
     "stackexchange:user": "https://stackoverflow.com/feeds/user/22656"
   },
   "statuspage": {
