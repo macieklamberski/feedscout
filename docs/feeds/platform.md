@@ -2810,7 +2810,7 @@ Discovers the posts feed of an Overblog blog.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{blog}.over-blog.{tld}`, `{blog}.over.blog`, `{blog}.overblog.com`, `{blog}.overblog.fr` | Posts |
+| `{blog}.over-blog.{tld}`, `{blog}.over.blog`, `{blog}.overblog.{tld}` | Posts |
 
 ### ExportersIndia
 
