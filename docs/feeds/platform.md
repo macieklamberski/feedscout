@@ -3784,7 +3784,7 @@ type PlatformHandler = {
     content?: string,
     headers?: Headers,
     fetchFn?: FetchFn,
-  ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef>>
+  ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef | undefined>>
   getFeedHint?: (url: string) => DiscoverUriHint | undefined
 }
 ```
@@ -3805,7 +3805,7 @@ An entry of `domains` can be a pattern standing for a family of domains, anchore
 
 A template can open with `{root}`, which stands for the scheme, the host with its port and an optional base path, as `https://example.com/forum`, written as given. `getFeedHint` reads a `{root}` row as a `{host}` row, on the origin of a host in `hosts` or a tenant under `domains`, never under a base path, since a tenant serves from its origin. A table with neither builds the row without claiming it.
 
-A path placeholder written `{name*}` stands for one or more segments, filled from the `name` value, so `https://{host}/{owner}/{repo}/commits/{branch}/{path*}.atom` with `{ path: 'src/lib/index.ts' }` builds the history of that file. Each segment is encoded on its own and the slashes are kept. A value that is empty or holds an empty segment, such as `docs//api`, counts as no value. `getFeedHint` claims any path with one or more non-empty segments there.
+A path placeholder written `{name*}` stands for one or more segments, filled from the `name` value, so `https://{host}/{owner}/{repo}/commits/{branch}/{path*}.atom` with `{ path: 'src/lib/index.ts' }` builds the history of that file. Each segment is encoded on its own and the slashes are kept. An empty segment is dropped, so `docs//api` builds `docs/api`, and a value with no segment left, such as `''` or `/`, counts as no value. `getFeedHint` claims any path with one or more non-empty segments there.
 
 `getFeedHint` tries the rows with more query parameters first and, at the same count, in table order. A `{name*}` row overlaps every row with fewer segments in its place, so it goes after them: with `/t/{tag}/feed` listed before `/{path*}/feed`, `/t/news/feed` reads as the tag feed.
 
@@ -3820,7 +3820,7 @@ const feeds = definePlatformFeeds([
 
 `getFeedHint` ignores a leading `www` on a fixed host, so `www.example.com/rss` reads as an `example.com/rss` row. A tenant host with `www` in front matches no row, and neither does `www` as a tenant. On a platform where `www` can be a tenant, set `isWwwTenant: true`: a row is then tried on the host as given first, so `www.example.com/rss` reads as the tenant `www` on a `{username}.example.com/rss` row, and the host without `www` only when no row matches. On a platform where `www.alice.example.com` serves the same feeds as `alice.example.com`, set `isWwwTenantPrefix: true`: the `www` in front of a tenant label is then dropped, so `www.alice.example.com/rss` reads as the tenant `alice`. `www.example.com/rss` still reads as no tenant unless `isWwwTenant` is set too.
 
-`forUrl(url)` returns the same `getFeedUrl` and `getFeedEntry` with `{scheme}`, `{host}` and `{root}` filled from the page URL, `{root}` with its origin, and `{domain}` with the entry of `domains` its host is under, so a handler passes only the values the URL cannot give. A value the handler passes wins, so a handler that reads a base path from the page passes `root` with it. A value left `undefined` counts as no value: it never replaces a value from the page, and a key with several rows builds the first one whose placeholders all have a value, so `{ slug, id }` with no `id` builds the row without `{id}`. It returns `undefined` for a URL that is not an http URL.
+`forUrl(url)` returns the same `getFeedUrl` and `getFeedEntry` with `{scheme}`, `{host}` and `{root}` filled from the page URL, `{root}` with its origin, and `{domain}` with the entry of `domains` its host is under, so a handler passes only the values the URL cannot give. A value the handler passes wins, so a handler that reads a base path from the page passes `root` with it. A value left `undefined` counts as no value: it never replaces a value from the page, and a key with several rows builds the first one whose placeholders all have a value, so `{ slug, id }` with no `id` builds the row without `{id}`. When no row of the key has a value for every placeholder, `getFeedUrl` and `getFeedEntry` return `undefined`, and the Platform method skips an `undefined` item `resolve` returns. It returns `undefined` for a URL that is not an http URL.
 
 ```typescript
 import { definePlatformFeeds, type PlatformHandler } from 'feedscout/platform'

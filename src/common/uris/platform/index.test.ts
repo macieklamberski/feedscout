@@ -495,6 +495,38 @@ describe('discoverUrisFromPlatform', () => {
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 
+  it('should continue to next handler if a matching handler builds no feed', async () => {
+    const unbuiltHandler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [undefined],
+    }
+    const workingHandler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/feed.xml' }],
+    }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [unbuiltHandler, workingHandler],
+    }
+    const expected = [{ uri: 'https://example.com/feed.xml' }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it('should drop a feed the handler built no URL for', async () => {
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [undefined, { uri: 'https://example.com/feed.xml' }],
+    }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+    }
+    const expected = [{ uri: 'https://example.com/feed.xml' }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
   it('should continue to next handler if async resolve rejects', async () => {
     const throwingHandler: PlatformHandler = {
       match: () => true,

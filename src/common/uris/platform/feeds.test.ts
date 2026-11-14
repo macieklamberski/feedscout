@@ -107,6 +107,11 @@ const pathFeeds = definePlatformFeeds(
   { hosts: ['example.com', 'www.example.com'] },
 )
 
+const directoryFeeds = definePlatformFeeds([
+  { key: 'typecho:page', template: 'https://www.example.com/feed/{directory*}/' },
+  { key: 'typecho:page', template: 'https://www.example.com/feed/{path*}' },
+])
+
 describe('definePlatformFeeds', () => {
   it('should throw for a template without an http scheme', () => {
     const throwing = () =>
@@ -262,11 +267,10 @@ describe('definePlatformFeeds', () => {
       expect(value).toBe(expected)
     })
 
-    it('should build the first template of a key when the values fill none', () => {
+    it('should return undefined when the values fill no template of a key', () => {
       const value = feeds.getFeedUrl('example:channel', {})
-      const expected = 'https://www.example.com/feed/{channel}'
 
-      expect(value).toBe(expected)
+      expect(value).toBeUndefined()
     })
 
     it('should pick the template of the format', () => {
@@ -289,11 +293,10 @@ describe('definePlatformFeeds', () => {
       expect(value).toBe(expected)
     })
 
-    it('should keep a placeholder with no value', () => {
+    it('should return undefined for a placeholder with no value', () => {
       const value = feeds.getFeedUrl('example:posts')
-      const expected = 'https://www.example.com/{username}/feed.rss'
 
-      expect(value).toBe(expected)
+      expect(value).toBeUndefined()
     })
 
     it('should write a root as given', () => {
@@ -317,11 +320,10 @@ describe('definePlatformFeeds', () => {
       expect(rootFeeds.getFeedUrl('example:latest', value)).toBe(expected)
     })
 
-    it('should keep a root placeholder with no value', () => {
+    it('should return undefined for a root placeholder with no value', () => {
       const value = {}
-      const expected = '{root}/latest.rss'
 
-      expect(rootFeeds.getFeedUrl('example:latest', value)).toBe(expected)
+      expect(rootFeeds.getFeedUrl('example:latest', value)).toBeUndefined()
     })
 
     it('should build the row without the placeholder whose value is undefined', () => {
@@ -334,11 +336,10 @@ describe('definePlatformFeeds', () => {
       expect(categoryFeeds.getFeedUrl('example:category', value)).toBe(expected)
     })
 
-    it('should keep a placeholder whose value is undefined', () => {
+    it('should return undefined for a placeholder whose value is undefined', () => {
       const value = { username: undefined }
-      const expected = 'https://www.example.com/{username}/feed.rss'
 
-      expect(feeds.getFeedUrl('example:posts', value)).toBe(expected)
+      expect(feeds.getFeedUrl('example:posts', value)).toBeUndefined()
     })
   })
 
@@ -356,6 +357,12 @@ describe('definePlatformFeeds', () => {
       }
 
       expect(value).toEqual(expected)
+    })
+
+    it('should return undefined for a placeholder with no value', () => {
+      const value = labelled.getFeedEntry('plurk:plurks', {})
+
+      expect(value).toBeUndefined()
     })
 
     it('should return the feed of the format with the format in its hint', () => {
@@ -773,7 +780,7 @@ describe('definePlatformFeeds', () => {
     })
 
     it('should return the key of a feed built from an encoded value', () => {
-      const value = feeds.getFeedUrl('example:posts', { username: 'c#' })
+      const value = feeds.getFeedUrl('example:posts', { username: 'c#' }) as string
       const expected = 'example:posts'
       const hint = feeds.getFeedHint(value)
 
@@ -1125,21 +1132,20 @@ describe('definePlatformFeeds', () => {
       expect(pageFeeds?.getFeedUrl('example:blog', params)).toBe(expected)
     })
 
-    it('should keep the domain placeholder for the apex of a pattern', () => {
+    it('should return undefined for the domain placeholder on the apex of a pattern', () => {
       const value = 'https://example.de/'
       const params = { username: 'alice' }
-      const expected = 'https://alice.{domain}/feed'
       const pageFeeds = domainPatternFeeds.forUrl(value)
 
-      expect(pageFeeds?.getFeedUrl('example:blog', params)).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:blog', params)).toBeUndefined()
     })
 
-    it('should keep the domain placeholder for a host under no domain', () => {
+    it('should return undefined for the domain placeholder on a host under no domain', () => {
       const value = 'https://alice.example.com/'
-      const expected = 'https://alice.{domain}/feed'
+      const params = { blog: 'alice' }
       const pageFeeds = siteFeeds.forUrl(value)
 
-      expect(pageFeeds?.getFeedUrl('example:posts', { blog: 'alice' })).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:posts', params)).toBeUndefined()
     })
 
     it('should write a value the handler passes over the one of the page', () => {
@@ -1260,18 +1266,47 @@ describe('definePlatformFeeds', () => {
         expect(pathFeeds.getFeedUrl('example:folder', value)).toBe(expected)
       })
 
-      it('should keep the placeholder for an empty value', () => {
+      it('should return undefined for an empty value', () => {
         const value = { path: '' }
-        const expected = 'https://www.example.com/{path*}/feed'
+
+        expect(pathFeeds.getFeedUrl('example:folder', value)).toBeUndefined()
+      })
+
+      it('should return undefined for a value of slashes only', () => {
+        const value = { path: '//' }
+
+        expect(pathFeeds.getFeedUrl('example:folder', value)).toBeUndefined()
+      })
+
+      it('should write a value with an empty segment without it', () => {
+        const value = { path: 'archives//13' }
+        const expected = 'https://www.example.com/archives/13/feed'
 
         expect(pathFeeds.getFeedUrl('example:folder', value)).toBe(expected)
       })
 
-      it('should keep the placeholder for a value with an empty segment', () => {
-        const value = { path: 'docs//api' }
-        const expected = 'https://www.example.com/{path*}/feed'
+      it('should write a value with a leading and a trailing slash without them', () => {
+        const value = { path: '/archives/13/' }
+        const expected = 'https://www.example.com/archives/13/feed'
 
         expect(pathFeeds.getFeedUrl('example:folder', value)).toBe(expected)
+      })
+
+      it('should build the first row of a key for a value with an empty segment', () => {
+        const value = { directory: 'archives//13' }
+        const expected = 'https://www.example.com/feed/archives/13/'
+
+        expect(directoryFeeds.getFeedUrl('typecho:page', value)).toBe(expected)
+      })
+
+      it('should build the row after it for an empty value', () => {
+        const value = {
+          directory: '',
+          path: 'archives/13.html',
+        }
+        const expected = 'https://www.example.com/feed/archives/13.html'
+
+        expect(directoryFeeds.getFeedUrl('typecho:page', value)).toBe(expected)
       })
 
       it('should write the query of a query row', () => {

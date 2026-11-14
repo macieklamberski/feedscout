@@ -54,12 +54,12 @@ export type PlatformFeedTable = {
     key: string,
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
-  ) => string
+  ) => string | undefined
   getFeedEntry: (
     key: string,
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
-  ) => DiscoverUriEntry
+  ) => DiscoverUriEntry | undefined
   getFeedHint: (url: string) => DiscoverUriHint | undefined
   forUrl: (url: string) => Pick<PlatformFeedTable, 'getFeedUrl' | 'getFeedEntry'> | undefined
 }
@@ -68,14 +68,12 @@ type CompiledTemplate = {
   key: string
   format?: DiscoverUriHint['format']
   queryCount: number
-  // The placeholder names the template fills.
-  names: Array<string>
   // The host and path a URL the template claims matches, as given and with an optional `www`.
   asGivenRegex: RegExp
   optionalWwwRegex: RegExp
   isFeedUrl: (feedUrl: FeedUrl) => boolean
   isFeedUrlWithOptionalWww: (feedUrl: FeedUrl) => boolean
-  getUrl: (params?: PlatformFeedParams) => string
+  getUrl: (params?: PlatformFeedParams) => string | undefined
 }
 
 // A URL as the templates read it: the host joined to the decoded path without its trailing slash.
@@ -98,8 +96,8 @@ const isMultiSegment = (placeholder: string): boolean => {
   return placeholder.endsWith('*')
 }
 
-// A `{name*}` value is one or more segments joined by `/`, and one with an empty segment is no
-// value, as no feed URL claimed by the row carries one.
+// A `{name*}` value is one or more segments joined by `/`. An empty segment is dropped, as a
+// doubled slash names the same page, and a value with no segment left is no value.
 const getPlaceholderValue = (
   params: PlatformFeedParams,
   placeholder: string,
@@ -108,13 +106,13 @@ const getPlaceholderValue = (
     return params[placeholder]
   }
 
-  const value = params[placeholder.slice(0, -1)]
+  const segments = params[placeholder.slice(0, -1)]?.split('/').filter((segment) => segment)
 
-  if (value === undefined || value.split('/').some((segment) => !segment)) {
+  if (!segments?.length) {
     return
   }
 
-  return value
+  return segments.join('/')
 }
 
 const encodePath = (value: string, placeholder: string): string => {
@@ -295,16 +293,26 @@ const compileTemplate = (
     return matchesUrl(url, optionalWwwRegex, hostPath)
   }
 
-  // A placeholder with no value stays in the URL, as in trousse's `t`.
-  const getUrl = (params: PlatformFeedParams = {}): string => {
+  // A template whose placeholders the values do not all fill builds no URL.
+  const getUrl = (params: PlatformFeedParams = {}): string | undefined => {
+    const values: Record<string, string> = {}
+
+    for (const name of names) {
+      const value = getPlaceholderValue(params, name)
+
+      if (value === undefined) {
+        return
+      }
+
+      values[name] = value
+    }
+
     const fillPlaceholders = (
       text: string,
       encode = (value: string, _name: string) => value,
     ): string => {
-      return text.replace(placeholderRegex, (placeholder, name: string) => {
-        const value = getPlaceholderValue(params, name)
-
-        return value === undefined ? placeholder : encode(value, name)
+      return text.replace(placeholderRegex, (_placeholder, name: string) => {
+        return encode(values[name], name)
       })
     }
     const queryParams = Object.fromEntries(
@@ -327,7 +335,6 @@ const compileTemplate = (
     key,
     format,
     queryCount: query.length,
-    names,
     asGivenRegex,
     optionalWwwRegex,
     isFeedUrl,
@@ -368,21 +375,29 @@ export const definePlatformFeeds = (
     const candidates = compiled.filter((candidate) => {
       return candidate.key === key && (format === undefined || candidate.format === format)
     })
-    // A key with several shapes builds the first one whose placeholders the values fill.
-    const template =
-      candidates.find((candidate) =>
-        candidate.names.every((name) => getPlaceholderValue(params ?? {}, name) !== undefined),
-      ) ?? candidates[0]
 
-    if (!template) {
+    if (candidates.length === 0) {
       throw new Error(t(locales.errors.missingFeedTemplate, { key }))
     }
 
-    return template.getUrl(params)
+    // A key with several shapes builds the first one whose placeholders the values fill.
+    for (const candidate of candidates) {
+      const feedUrl = candidate.getUrl(params)
+
+      if (feedUrl) {
+        return feedUrl
+      }
+    }
   }
 
   const getFeedEntry: PlatformFeedTable['getFeedEntry'] = (key, params, format) => {
-    return { uri: getFeedUrl(key, params, format), hint: composeHint(key, format) }
+    const uri = getFeedUrl(key, params, format)
+
+    if (!uri) {
+      return
+    }
+
+    return { uri, hint: composeHint(key, format) }
   }
 
   const getFeedHint: PlatformFeedTable['getFeedHint'] = (url) => {
