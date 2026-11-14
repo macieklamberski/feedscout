@@ -45,6 +45,10 @@ describe('parseShopifyUrl', () => {
     expect(parseShopifyUrl('https://shop.example/zh-hant-hk/blogs/videos')).toEqual(expected)
   })
 
+  it('should return undefined for a well-formed code that names no language', () => {
+    expect(parseShopifyUrl('https://shop.example/xx/blogs/news')).toBeUndefined()
+  })
+
   it('should return undefined for a page outside a blog', () => {
     expect(parseShopifyUrl('https://shop.example/products/shirt')).toBeUndefined()
   })

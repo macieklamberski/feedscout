@@ -29,8 +29,8 @@ describe('parseInstatusUrl', () => {
     expect(parseInstatusUrl('https://status.example.com/zh-tw')).toEqual(expected)
   })
 
-  it('should return the status page without a language for a script code', () => {
-    const expected: InstatusUrl = { kind: 'status' }
+  it('should return the status page with a language and script', () => {
+    const expected: InstatusUrl = { kind: 'status', language: 'zh-hant' }
 
     expect(parseInstatusUrl('https://status.example.com/zh-hant')).toEqual(expected)
   })

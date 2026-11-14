@@ -1,6 +1,6 @@
-import { getPathSegments, isAnyOf } from 'trousse'
+import { getPathSegments, isAnyOf, isLocaleSegment } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker, letterGroupsRegex } from '../../common/utils.js'
+import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -16,7 +16,7 @@ export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {
   const segments = getPathSegments(url)
   // A market's locale folder, as in `/en-us/blogs/news` or `/zh-hant-hk/blogs/news`.
   const [localeOrRoute] = segments
-  const locale = letterGroupsRegex.test(localeOrRoute ?? '') ? localeOrRoute : undefined
+  const locale = localeOrRoute && isLocaleSegment(localeOrRoute) ? localeOrRoute : undefined
   const [route, handle] = locale ? segments.slice(1) : segments
 
   if (!isAnyOf(route, 'blogs') || !handle) {
