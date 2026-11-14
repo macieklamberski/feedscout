@@ -163,10 +163,10 @@ Discovers RSS and Atom feeds for Blogspot blogs, including label, comments, summ
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.blogspot.com` | Posts (Atom + RSS) · summary (Atom + RSS) · comments (Atom + RSS<sup>†</sup>) |
-| `*.blogspot.com/search/label/{label}` | Label<sup>†</sup> (Atom + RSS), plus the feeds above |
-| `*.blogspot.com/{year}/{month}/{slug}.html` | Post comments (Atom + RSS<sup>†</sup>)*, plus the feeds above |
-| Custom domain, any of the paths above | Same as on `*.blogspot.com` |
+| `{blog}.blogspot.com` | Posts (Atom + RSS) · summary (Atom + RSS) · comments (Atom + RSS<sup>†</sup>) · comments summary (Atom + RSS) |
+| `{blog}.blogspot.com/search/label/{label}` | Label<sup>†</sup> (Atom + RSS) · label summary (Atom + RSS), plus the feeds above |
+| `{blog}.blogspot.com/{year}/{month}/{slug}.html` | Post comments (Atom + RSS<sup>†</sup>)*, plus the feeds above |
+| `{host}`, `{host}/search/label/{label}`, `{host}/{year}/{month}/{slug}.html` | Same as on `{blog}.blogspot.com` |
 
 \* *Requires HTML content to extract the post ID.*
 
