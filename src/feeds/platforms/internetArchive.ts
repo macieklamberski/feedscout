@@ -27,8 +27,18 @@ const feeds = definePlatformFeeds([
     key: 'internet-archive:search',
     template: 'https://cors.archive.org/services/collection-rss.php?query={query}',
   },
+  // A collection's forum is named by the collection identifier, so `resolve` builds it on the
+  // collection page.
+  {
+    key: 'internet-archive:forum',
+    template: 'https://archive.org/iathreads/posts-display-new.php?forum={forum}&mode=rss',
+  },
+  {
+    key: 'internet-archive:forum',
+    template: 'https://cors.archive.org/iathreads/posts-display-new.php?forum={forum}&mode=rss',
+  },
   // Claimed only: the advanced search serves the same items as the search feed, and the media
-  // type, forum and bookmarks feeds name values no page here gives.
+  // type and bookmarks feeds name values no page here gives.
   {
     key: 'internet-archive:search',
     template: 'https://archive.org/advancedsearch.php?output=rss&q={query}',
@@ -40,14 +50,6 @@ const feeds = definePlatformFeeds([
   {
     key: 'internet-archive:mediatype',
     template: 'https://cors.archive.org/services/collection-rss.php?mediatype={mediatype}',
-  },
-  {
-    key: 'internet-archive:forum',
-    template: 'https://archive.org/iathreads/posts-display-new.php?forum={forum}&mode=rss',
-  },
-  {
-    key: 'internet-archive:forum',
-    template: 'https://cors.archive.org/iathreads/posts-display-new.php?forum={forum}&mode=rss',
   },
   {
     key: 'internet-archive:bookmarks',
@@ -102,7 +104,10 @@ export const internetArchiveHandler: PlatformHandler = {
     }
 
     if (page.kind === 'collection') {
-      return [feeds.getFeedEntry('internet-archive:collection', { collection: page.collection })]
+      return [
+        feeds.getFeedEntry('internet-archive:collection', { collection: page.collection }),
+        feeds.getFeedEntry('internet-archive:forum', { forum: page.collection }),
+      ]
     }
 
     return [feeds.getFeedEntry('internet-archive:search', { query: page.query })]

@@ -62,6 +62,10 @@ describe('internetArchiveHandler', () => {
           uri: 'https://archive.org/services/collection-rss.php?collection=oldtimeradio',
           hint: { key: 'internet-archive:collection', label: 'Collection' },
         },
+        {
+          uri: 'https://archive.org/iathreads/posts-display-new.php?forum=oldtimeradio&mode=rss',
+          hint: { key: 'internet-archive:forum', label: 'Forum' },
+        },
       ]
 
       expect(internetArchiveHandler.resolve(value, shellHtml)).toEqual(expected)
@@ -73,6 +77,10 @@ describe('internetArchiveHandler', () => {
         {
           uri: 'https://archive.org/services/collection-rss.php?collection=GratefulDead',
           hint: { key: 'internet-archive:collection', label: 'Collection' },
+        },
+        {
+          uri: 'https://archive.org/iathreads/posts-display-new.php?forum=GratefulDead&mode=rss',
+          hint: { key: 'internet-archive:forum', label: 'Forum' },
         },
       ]
 
