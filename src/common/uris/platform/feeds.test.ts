@@ -130,7 +130,7 @@ describe('definePlatformFeeds', () => {
     const defining = () => {
       return definePlatformFeeds([
         { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
-        { key: 'example:posts', template: 'https://example.com/{username}/rss', alias: true },
+        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
       ])
     }
 
@@ -140,7 +140,7 @@ describe('definePlatformFeeds', () => {
   it('should throw for an alias row above the canonical row of its key', () => {
     const throwing = () => {
       return definePlatformFeeds([
-        { key: 'example:posts', template: 'https://example.com/{username}/rss', alias: true },
+        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
         { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
       ])
     }
@@ -156,7 +156,7 @@ describe('definePlatformFeeds', () => {
           key: 'example:posts',
           template: 'https://example.com/{username}/atom',
           format: 'atom',
-          alias: true,
+          isAlias: true,
         },
       ])
     }
@@ -168,8 +168,8 @@ describe('definePlatformFeeds', () => {
     const throwing = () => {
       return definePlatformFeeds([
         { key: 'example:other', template: 'https://feeds.example.com/{username}.rss' },
-        { key: 'example:posts', template: 'https://example.com/{username}/rss', alias: true },
-        { key: 'example:posts', template: 'https://example.com/{username}.rss', alias: true },
+        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
+        { key: 'example:posts', template: 'https://example.com/{username}.rss', isAlias: true },
       ])
     }
 
@@ -351,7 +351,7 @@ describe('definePlatformFeeds', () => {
     it('should return the hint of the key for a feed on an alias row', () => {
       const aliasFeeds = definePlatformFeeds([
         { key: 'youtube:videos', template: 'https://feeds.example.com/{username}.xml' },
-        { key: 'youtube:videos', template: 'https://example.com/{username}/rss', alias: true },
+        { key: 'youtube:videos', template: 'https://example.com/{username}/rss', isAlias: true },
       ])
       const value = 'https://example.com/alice/rss'
       const expected: DiscoverUriHint = { key: 'youtube:videos', label: 'Videos' }

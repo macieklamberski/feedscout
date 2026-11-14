@@ -3759,12 +3759,12 @@ A path placeholder written `{name*}` stands for one or more segments, filled fro
 
 `getFeedHint` tries the rows with more query parameters first and, at the same count, in table order. A `{name*}` row overlaps every row with fewer segments in its place, so it goes after them: with `/t/{tag}/feed` listed before `/{path*}/feed`, `/t/news/feed` reads as the tag feed.
 
-A feed the platform serves under several spellings, such as a legacy host, has one row per spelling under its key. The first row of the key and format without `alias` is the canonical one, which `getFeedEntry` builds, and each other spelling goes below it marked `alias: true`. `getFeedHint` reads an alias row back to the same hint. `definePlatformFeeds` throws for an alias row with no canonical row above it, so a reorder that would build the alias fails at once. Keep `alias` off a row that is a different feed under the same key, as a key can hold several feeds told apart by their values.
+A feed the platform serves under several spellings, such as a legacy host, has one row per spelling under its key. The first row of the key and format without `isAlias` is the canonical one, which `getFeedEntry` builds, and each other spelling goes below it marked `isAlias: true`. `getFeedHint` reads an alias row back to the same hint. `definePlatformFeeds` throws for an alias row with no canonical row above it, so a reorder that would build the alias fails at once. Keep `isAlias` off a row that is a different feed under the same key, as a key can hold several feeds told apart by their values.
 
 ```typescript
 const feeds = definePlatformFeeds([
   { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
-  { key: 'example:posts', template: 'https://example.com/{username}/rss', alias: true },
+  { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
 ])
 ```
 

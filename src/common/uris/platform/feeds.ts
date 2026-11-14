@@ -25,8 +25,8 @@ export type PlatformFeedTemplate = {
   template: string
   format?: DiscoverUriHint['format']
   // Another spelling of one feed, such as a legacy host. Its canonical row is the first row above it
-  // with the same key and format and no `alias`, and the table throws when there is none.
-  alias?: boolean
+  // with the same key and format and no `isAlias`, and the table throws when there is none.
+  isAlias?: boolean
 }
 
 // A value left undefined is no value, so the row it would fill is skipped.
@@ -298,13 +298,13 @@ export const definePlatformFeeds = (
   templates: Array<PlatformFeedTemplate>,
   options: PlatformFeedTableOptions = {},
 ): PlatformFeedTable => {
-  for (const [index, { key, format, alias }] of templates.entries()) {
-    if (!alias) {
+  for (const [index, { key, format, isAlias }] of templates.entries()) {
+    if (!isAlias) {
       continue
     }
 
     const hasCanonical = templates.slice(0, index).some((row) => {
-      return !row.alias && row.key === key && row.format === format
+      return !row.isAlias && row.key === key && row.format === format
     })
 
     if (!hasCanonical) {
