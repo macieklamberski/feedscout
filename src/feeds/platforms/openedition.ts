@@ -9,7 +9,10 @@ export type OpeneditionUrl = { kind: 'journal'; journal: string }
 
 const hosts = ['journals.openedition.org']
 
-// Each feed also answers at `backend.html` and at the journal home with `page=backend`.
+// Each feed also answers at `backend.html` and at the journal home with `page=backend`. The
+// documents feed narrows to one entity, such as an issue, by `identity`, and to one index entry
+// by `idcontainer`. The page URL does not say which kind of entity it shows, and an article id
+// gives an empty feed, so those two are claimed and never built.
 const feeds = definePlatformFeeds([
   {
     key: 'openedition:documents',
@@ -22,6 +25,16 @@ const feeds = definePlatformFeeds([
   {
     key: 'openedition:documents',
     template: 'https://journals.openedition.org/{journal}/?page=backend&format=rssdocuments',
+  },
+  {
+    key: 'openedition:entity',
+    template:
+      'https://journals.openedition.org/{journal}/backend?format=rssdocuments&identity={entity}',
+  },
+  {
+    key: 'openedition:index-entry',
+    template:
+      'https://journals.openedition.org/{journal}/backend?format=rssdocuments&idcontainer={entry}',
   },
   {
     key: 'openedition:issues',

@@ -681,6 +681,8 @@
     "laget:news": "News",
     "geoblog:trip": "Trip",
     "openedition:documents": "Documents",
+    "openedition:entity": "Entity",
+    "openedition:index-entry": "Index entry",
     "openedition:issues": "Issues",
     "openedition:reviews": "Reviews",
     "jinbo:posts": "Posts",

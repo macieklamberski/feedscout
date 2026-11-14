@@ -151,10 +151,18 @@ describe('openeditionHandler', () => {
       expect(openeditionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the documents hint for the documents feed of one author', () => {
+    it('should return the entity hint for the documents feed of one entity', () => {
       const value =
         'https://journals.openedition.org/example/backend?format=rssdocuments&identity=12345'
-      const expected: DiscoverUriHint = { key: 'openedition:documents', label: 'Documents' }
+      const expected: DiscoverUriHint = { key: 'openedition:entity', label: 'Entity' }
+
+      expect(openeditionHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the index entry hint for the documents feed of one index entry', () => {
+      const value =
+        'https://journals.openedition.org/example/backend?descriptionlength=800&format=rssdocuments&getreviews=1&idcontainer=12345'
+      const expected: DiscoverUriHint = { key: 'openedition:index-entry', label: 'Index entry' }
 
       expect(openeditionHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -233,6 +241,8 @@ describe('openeditionHandler', () => {
     const documentsHint: DiscoverUriHint = { key: 'openedition:documents', label: 'Documents' }
     const issuesHint: DiscoverUriHint = { key: 'openedition:issues', label: 'Issues' }
     const reviewsHint: DiscoverUriHint = { key: 'openedition:reviews', label: 'Reviews' }
+    const entityHint: DiscoverUriHint = { key: 'openedition:entity', label: 'Entity' }
+    const indexEntryHint: DiscoverUriHint = { key: 'openedition:index-entry', label: 'Index entry' }
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://journals.openedition.org/example/backend?format=rssdocuments', documentsHint],
       ['http://journals.openedition.org/example/backend.html?format=rssdocuments', documentsHint],
@@ -246,6 +256,14 @@ describe('openeditionHandler', () => {
       [
         'http://journals.openedition.org/example/backend?type=review&format=rssdocuments',
         reviewsHint,
+      ],
+      [
+        'https://journals.openedition.org/example/backend?format=rssdocuments&identity=12345',
+        entityHint,
+      ],
+      [
+        'https://journals.openedition.org/example/backend?class=noticesbiblios&descriptionlength=800&format=rssdocuments&idcontainer=12345',
+        indexEntryHint,
       ],
     ]
 
