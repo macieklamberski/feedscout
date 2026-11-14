@@ -1209,8 +1209,8 @@ Discovers Atom and RSS feeds for Pika blogs, including tag feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.pika.page` | Posts (Atom + RSS<sup>†</sup>) |
-| `*.pika.page/tag/{tag}` | Tag (Atom + RSS<sup>†</sup>) · posts (Atom + RSS<sup>†</sup>) |
+| `{blog}.pika.page` | Posts (Atom + RSS<sup>†</sup>) |
+| `{blog}.pika.page/tag/{tag}` | Tag (Atom + RSS<sup>†</sup>) · posts (Atom + RSS<sup>†</sup>) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
