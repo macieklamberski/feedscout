@@ -1,6 +1,7 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex } from '../../common/utils.js'
+import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers channel, group, likes, user, userVideos (guess, html).
@@ -16,6 +17,23 @@ export type VimeoUrl =
 const hosts = ['vimeo.com', 'www.vimeo.com']
 
 const albumSegments = ['album', 'showcase']
+
+const feeds = definePlatformFeeds([
+  { key: 'vimeo:channel', template: 'https://vimeo.com/channels/{channel}/videos/rss' },
+  { key: 'vimeo:group', template: 'https://vimeo.com/groups/{group}/videos/rss' },
+  { key: 'vimeo:album', template: 'https://vimeo.com/album/{albumId}/rss' },
+  { key: 'vimeo:likes', template: 'https://vimeo.com/{username}/likes/rss' },
+  { key: 'vimeo:videos', template: 'https://vimeo.com/{username}/videos/rss' },
+  { key: 'vimeo:videos', template: 'https://vimeo.com/{username}/videos/all/rss', isAlias: true },
+])
+
+const feedKeys: Record<VimeoUrl['kind'], string> = {
+  channel: 'vimeo:channel',
+  group: 'vimeo:group',
+  album: 'vimeo:album',
+  likes: 'vimeo:likes',
+  user: 'vimeo:videos',
+}
 
 export const parseVimeoUrl = (url: string): VimeoUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -69,47 +87,38 @@ export const vimeoHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-
     if (parsed.kind === 'channel') {
-      return [
-        {
-          uri: `${origin}/channels/${parsed.channel}/videos/rss`,
-          hint: composeHint('vimeo:channel'),
-        },
-      ]
+      return [feeds.getFeedEntry('vimeo:channel', { channel: parsed.channel })]
     }
 
     if (parsed.kind === 'group') {
-      return [
-        {
-          uri: `${origin}/groups/${parsed.group}/videos/rss`,
-          hint: composeHint('vimeo:group'),
-        },
-      ]
+      return [feeds.getFeedEntry('vimeo:group', { group: parsed.group })]
     }
 
     if (parsed.kind === 'album') {
-      return [
-        {
-          uri: `${origin}/album/${parsed.albumId}/rss`,
-          hint: composeHint('vimeo:album'),
-        },
-      ]
-    }
-
-    const videos = {
-      uri: `${origin}/${parsed.username}/videos/rss`,
-      hint: composeHint('vimeo:videos'),
+      return [feeds.getFeedEntry('vimeo:album', { albumId: parsed.albumId })]
     }
 
     if (parsed.kind === 'likes') {
       return [
-        { uri: `${origin}/${parsed.username}/likes/rss`, hint: composeHint('vimeo:likes') },
-        videos,
+        feeds.getFeedEntry('vimeo:likes', { username: parsed.username }),
+        feeds.getFeedEntry('vimeo:videos', { username: parsed.username }),
       ]
     }
 
-    return [videos]
+    return [feeds.getFeedEntry('vimeo:videos', { username: parsed.username })]
+  },
+
+  getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
+    const page = parseVimeoUrl(url)
+
+    // The feed must read as the page kind that emits its key: `/123/videos/rss` is a video's and
+    // `/channels/likes/rss` a channel's, neither a user's feed.
+    if (!hint || !page || feedKeys[page.kind] !== hint.key) {
+      return
+    }
+
+    return hint
   },
 }
