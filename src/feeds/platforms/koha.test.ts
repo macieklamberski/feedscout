@@ -196,6 +196,31 @@ describe('kohaHandler', () => {
       expect(kohaHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep the doubled slash of a list page under an install printed with one', () => {
+      const value =
+        'https://library.example.edu//cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber=309'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://library.example.edu//cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber=309',
+          hint: { key: 'koha:list', label: 'List' },
+        },
+      ]
+
+      expect(kohaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the comments feed under the base path of an install', () => {
+      const value = 'http://library.example.edu/opac/cgi-bin/koha/opac-showreviews.pl'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://library.example.edu/opac/cgi-bin/koha/opac-showreviews.pl?format=rss',
+          hint: { key: 'koha:comments', label: 'Recent comments' },
+        },
+      ]
+
+      expect(kohaHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the comments feed for the comments page', () => {
       const value = 'https://opac.northsouth.edu/cgi-bin/koha/opac-showreviews.pl'
       const expected = [

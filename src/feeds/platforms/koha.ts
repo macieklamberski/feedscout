@@ -1,4 +1,4 @@
-import { composeQuery, getQueryParam, getQueryParamValues, isAnyOf, parseUrl } from 'trousse'
+import { getQueryParam, getQueryParamValues, isAnyOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex, hasMarker } from '../../common/utils.js'
@@ -15,8 +15,10 @@ const scriptRegex =
 // The feed link Koha prints drops the page's paging and sort for the newest acquisitions.
 const searchPageParams = ['count', 'format', 'offset', 'sort_by']
 
-// A feed takes the install root and a search its query from the page, which no template holds, so
-// resolve builds them and the table only claims a feed of a catalog on kohacatalog.com.
+// A search feed takes its query from the page, which no template holds, so resolve builds it by
+// hand. The list and comments feeds build through `{root}`, the install root with its base path.
+// The table claims a feed only on kohacatalog.com, since an install elsewhere is known by its
+// page markup, which a feed URL does not carry.
 const ownFeeds = definePlatformFeeds(
   [
     {
@@ -29,12 +31,11 @@ const ownFeeds = definePlatformFeeds(
     },
     {
       key: 'koha:list',
-      template:
-        '{scheme}://{host}/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber={shelfNumber}',
+      template: '{root}/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber={shelfNumber}',
     },
     {
       key: 'koha:comments',
-      template: '{scheme}://{host}/cgi-bin/koha/opac-showreviews.pl?format=rss',
+      template: '{root}/cgi-bin/koha/opac-showreviews.pl?format=rss',
     },
   ],
   { domains },
@@ -103,17 +104,17 @@ export const kohaHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseKohaUrl(url)
+    const page = ownFeeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
     const { origin } = new URL(url)
-    const scriptsUrl = `${origin}${parsed.root}/cgi-bin/koha`
 
     if (parsed.kind === 'search') {
       // 50 is the default of numSearchRSSResults, the preference Koha prints as the feed's count.
-      const searchUrl = `${scriptsUrl}/opac-search.pl?${parsed.params}&count=50&sort_by=acqdate_dsc`
+      const searchUrl = `${origin}${parsed.root}/cgi-bin/koha/opac-search.pl?${parsed.params}&count=50&sort_by=acqdate_dsc`
 
       return [
         {
@@ -124,18 +125,15 @@ export const kohaHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed.kind === 'list') {
-      const params = composeQuery({ rss: '1', op: 'view', shelfnumber: parsed.shelfNumber })
+    // The table drops one trailing slash from a root, so a root printed with a doubled slash, as
+    // `https://example.edu//cgi-bin/koha/`, keeps it.
+    const root = `${origin}${parsed.root}/`
 
-      return [{ uri: `${scriptsUrl}/opac-shelves.pl${params}`, hint: composeHint('koha:list') }]
+    if (parsed.kind === 'list') {
+      return [page.getFeedEntry('koha:list', { root, shelfNumber: parsed.shelfNumber })]
     }
 
-    return [
-      {
-        uri: `${scriptsUrl}/opac-showreviews.pl?format=rss`,
-        hint: composeHint('koha:comments'),
-      },
-    ]
+    return [page.getFeedEntry('koha:comments', { root })]
   },
 
   getFeedHint: ownFeeds.getFeedHint,
