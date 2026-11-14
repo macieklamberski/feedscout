@@ -7,20 +7,14 @@ import { type PodcloudUrl, parsePodcloudUrl, podcloudHandler } from './podcloud.
 describe('parsePodcloudUrl', () => {
   it('should return the show for a show subdomain', () => {
     const value = 'https://alice-podcast.lepodcast.fr/'
-    const expected: PodcloudUrl = {
-      kind: 'show',
-      show: 'alice-podcast',
-    }
+    const expected: PodcloudUrl = { kind: 'show' }
 
     expect(parsePodcloudUrl(value)).toEqual(expected)
   })
 
   it('should return the show for an episode page', () => {
     const value = 'https://alice-podcast.lepodcast.fr/first-episode'
-    const expected: PodcloudUrl = {
-      kind: 'show',
-      show: 'alice-podcast',
-    }
+    const expected: PodcloudUrl = { kind: 'show' }
 
     expect(parsePodcloudUrl(value)).toEqual(expected)
   })

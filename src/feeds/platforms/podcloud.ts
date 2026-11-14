@@ -4,7 +4,7 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type PodcloudUrl = { kind: 'show'; show: string }
+export type PodcloudUrl = { kind: 'show' }
 
 const domains = ['lepodcast.fr']
 
@@ -17,13 +17,11 @@ const feeds = definePlatformFeeds(
 )
 
 export const parsePodcloudUrl = (url: string): PodcloudUrl | undefined => {
-  const show = getTenantSubdomain(url, domains)
-
-  if (!show) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 
-  return { kind: 'show', show }
+  return { kind: 'show' }
 }
 
 export const podcloudHandler: PlatformHandler = {
