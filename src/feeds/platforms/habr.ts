@@ -40,17 +40,27 @@ const feeds = definePlatformFeeds([
   { key: 'habr:comments', template: 'https://habr.com/{language}/rss/publications/{post}/' },
   { key: 'habr:subscriptions', template: 'https://habr.com/{language}/rss/feed/{token}/' },
   { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hubs/{hub}/articles/' },
-  { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hubs/{hub}/articles/all/' },
-  { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hub/{hub}/' },
+  {
+    key: 'habr:hub',
+    template: 'https://habr.com/{language}/rss/hubs/{hub}/articles/all/',
+    isAlias: true,
+  },
+  { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hub/{hub}/', isAlias: true },
   { key: 'habr:user', template: 'https://habr.com/{language}/rss/users/{username}/articles/' },
-  { key: 'habr:user', template: 'https://habr.com/{language}/rss/users/{username}/posts/' },
+  {
+    key: 'habr:user',
+    template: 'https://habr.com/{language}/rss/users/{username}/posts/',
+    isAlias: true,
+  },
   {
     key: 'habr:user',
     template: 'https://habr.com/{language}/rss/users/{username}/publications/articles/',
+    isAlias: true,
   },
   {
     key: 'habr:user',
     template: 'https://habr.com/{language}/rss/users/{username}/publications/posts/',
+    isAlias: true,
   },
   {
     key: 'habr:company',
@@ -59,8 +69,13 @@ const feeds = definePlatformFeeds([
   {
     key: 'habr:company',
     template: 'https://habr.com/{language}/rss/companies/{company}/articles/all/',
+    isAlias: true,
   },
-  { key: 'habr:company', template: 'https://habr.com/{language}/rss/company/{company}/blog/' },
+  {
+    key: 'habr:company',
+    template: 'https://habr.com/{language}/rss/company/{company}/blog/',
+    isAlias: true,
+  },
 ])
 
 export const parseHabrUrl = (url: string): HabrUrl | undefined => {
