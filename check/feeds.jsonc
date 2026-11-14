@@ -1102,7 +1102,7 @@
     "ning:forum": "https://korsika.ning.com/forum/topic/list?feed=yes&xn_auth=no",
     "ning:forum-category": "https://6364cadillac.ning.com/forum/categories/general-discussion-1/listForCategory?feed=yes&xn_auth=no",
     "ning:forum-featured": "http://opencoffee.ning.com/forum/topic/list?featured=1&feed=yes&xn_auth=no",
-    "ning:forum-group": "http://iuoma-network.ning.com/forum/topic/list?feed=yes&groupUrl=hand-carved-rubber-stamps&xn_auth=no",
+    "ning:forum-group": "http://iuoma-network.ning.com/groups/group/forum?feed=yes&groupUrl=hand-carved-rubber-stamps&xn_auth=no",
     "ning:forum-group-featured": "https://aquaponicgardening.ning.com/group/ibc-aquaponics/forum/topic/list?featured=1&feed=yes&xn_auth=no",
     "ning:forum-group-member": "https://jazzburgher.ning.com/group/musicwoman/forum/topic/listForContributor?feed=yes&user=5zsu1od4o6pr&xn_auth=no",
     "ning:forum-group-tag": "https://jazzburgher.ning.com/group/newgranadatheater/forum/topic/listForTag?feed=yes&tag=savoy&xn_auth=no",
