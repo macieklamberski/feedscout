@@ -3,8 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getBrandDomainRegex } from '../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic partly covers portfolio, profile.
+// Discoverability: Not discoverable without handler.
+// Handler needed for: jobs, workspaces.
 
 export type DasaugeUrl = { kind: 'home' }
 
@@ -14,7 +14,6 @@ const hosts = [getBrandDomainRegex('dasauge')]
 // Its row stays so a stored profile feed is still claimed.
 const feeds = definePlatformFeeds(
   [
-    { key: 'dasauge:news', template: '{scheme}://{host}/news/feed', format: 'atom' },
     { key: 'dasauge:jobs', template: '{scheme}://{host}/jobs/feed', format: 'atom' },
     { key: 'dasauge:workspaces', template: '{scheme}://{host}/workspaces/feed', format: 'atom' },
     { key: 'dasauge:profile', template: '{scheme}://{host}/-{username}/?rss' },
@@ -43,7 +42,6 @@ export const dasaugeHandler: PlatformHandler = {
     }
 
     return [
-      page.getFeedEntry('dasauge:news', {}, 'atom'),
       page.getFeedEntry('dasauge:jobs', {}, 'atom'),
       page.getFeedEntry('dasauge:workspaces', {}, 'atom'),
     ]

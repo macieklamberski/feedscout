@@ -17,10 +17,6 @@ const topSellersHint: DiscoverUriHint = {
 }
 const globalEntries: Array<DiscoverUriEntry> = [
   {
-    uri: 'https://store.steampowered.com/feeds/news.xml',
-    hint: { key: 'steam:news-global', label: 'News (global)' },
-  },
-  {
     uri: 'https://store.steampowered.com/feeds/daily_deals.xml',
     hint: { key: 'steam:daily-deals', label: 'Daily deals' },
   },
@@ -52,10 +48,6 @@ const feedCases: Array<[string, DiscoverUriHint]> = [
   ['https://steamcommunity.com/groups/alice/rss', groupHint],
   ['https://steamcommunity.com/groups/alice/rss/', groupHint],
   ['http://steamcommunity.com/groups/alice/rss', groupHint],
-  [
-    'https://store.steampowered.com/feeds/news.xml',
-    { key: 'steam:news-global', label: 'News (global)' },
-  ],
   [
     'https://store.steampowered.com/feeds/daily_deals.xml',
     { key: 'steam:daily-deals', label: 'Daily deals' },
@@ -333,11 +325,10 @@ describe('steamHandler', () => {
       expect(steamHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the global news hint for the global news feed', () => {
+    it('should return undefined for the global news feed', () => {
       const value = 'https://store.steampowered.com/feeds/news.xml'
-      const expected: DiscoverUriHint = { key: 'steam:news-global', label: 'News (global)' }
 
-      expect(steamHandler.getFeedHint?.(value)).toEqual(expected)
+      expect(steamHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return the daily deals hint for the daily deals feed', () => {

@@ -369,14 +369,6 @@
       "https://dasauge.de/jobs/feed",
       "https://dasauge.es/jobs/feed"
     ],
-    "dasauge:news": [
-      "https://dasauge.at/news/feed",
-      "https://dasauge.ch/news/feed",
-      "https://dasauge.co.uk/news/feed",
-      "https://dasauge.com/news/feed",
-      "https://dasauge.de/news/feed",
-      "https://dasauge.es/news/feed"
-    ],
     "dasauge:profile": {
       "skip": "claim-only since the 2026-10-26 relaunch, every profile's ?rss serves the profile page"
     },
@@ -1952,7 +1944,6 @@
       "https://store.steampowered.com/feeds/news/app/570/"
     ],
     "steam:news-collection": "https://store.steampowered.com/feeds/news/collection/steam",
-    "steam:news-global": "https://store.steampowered.com/feeds/news.xml",
     "steam:weekly-top-sellers": "https://store.steampowered.com/feeds/weeklytopsellers.xml"
   },
   "substack": {
