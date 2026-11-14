@@ -1,11 +1,7 @@
 import { isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  getHostOrigin,
-  getTenantSubdomain,
-  wordOrHyphenRegex,
-} from '../../common/utils.js'
+import { getHostOrigin, getTenantSubdomain, wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (guess, html).
@@ -23,6 +19,34 @@ const profileRegex = /^\/@(?<username>[^/]+)/
 // subdomain is not always the handle, and a custom domain replaces it.
 const publicationRegex =
   /primaryPublication\\?":\{[^{}]*?\\?"subdomain\\?":\\?"(?<subdomain>[\w-]+)\\?",\\?"custom_domain\\?":(?:\\?"(?<customDomain>[^"\\]+)\\?"|null)/
+
+// A custom domain is read only from a profile page, so its feed is built here but not claimed.
+// The same feed answers at feed.xml and feed.rss.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'substack:newsletter', template: '{scheme}://{host}/feed' },
+    { key: 'substack:newsletter', template: '{scheme}://{host}/feed.xml', isAlias: true },
+    { key: 'substack:newsletter', template: '{scheme}://{host}/feed.rss', isAlias: true },
+    // One section of the newsletter, which holds only that section's posts.
+    { key: 'substack:newsletter-section', template: '{scheme}://{host}/feed?sectionId={section}' },
+    // A publication's podcast, mostly linked on api.substack.com, and one section of it, under ids
+    // no page URL gives. A private or Spotify feed adds a listener token.
+    { key: 'substack:podcast', template: '{scheme}://{host}/feed/podcast/{publication}.rss' },
+    {
+      key: 'substack:podcast-section',
+      template: '{scheme}://{host}/feed/podcast/{publication}/s/{section}.rss',
+    },
+    {
+      key: 'substack:podcast',
+      template: '{scheme}://{host}/feed/podcast/{publication}/private/{token}.rss',
+    },
+    {
+      key: 'substack:podcast',
+      template: '{scheme}://{host}/feed/podcast/spotify/{token}/{publication}.rss',
+    },
+  ],
+  { domains },
+)
 
 const getPublicationOrigin = (content: string | undefined): string | undefined => {
   const { subdomain, customDomain } = content?.match(publicationRegex)?.groups ?? {}
@@ -91,6 +115,22 @@ export const substackHandler: PlatformHandler = {
       return []
     }
 
-    return [{ uri: `${page.origin}/feed`, hint: composeHint('substack:newsletter') }]
+    const pageFeeds = feeds.forUrl(page.origin)
+
+    if (!pageFeeds) {
+      return []
+    }
+
+    return [pageFeeds.getFeedEntry('substack:newsletter')]
+  },
+
+  // The table reads any single-label host under substack.com, so the page parser refuses the app
+  // host first, whose /feed answers 404.
+  getFeedHint: (url) => {
+    if (!parseSubstackUrl(url)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }
