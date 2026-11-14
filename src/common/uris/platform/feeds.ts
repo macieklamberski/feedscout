@@ -238,6 +238,11 @@ const compileTemplate = (
   }
 
   const names = [...template.matchAll(placeholderRegex)].map(([, name]) => name)
+  // A host label or path segment left empty builds a broken URL, as `/t//feed`, so an empty value
+  // there is no value. An empty query value writes no parameter.
+  const urlNames = new Set(
+    [...template.split('?')[0].matchAll(placeholderRegex)].map(([, name]) => name),
+  )
   const multiSegmentCaptures = Object.fromEntries(
     names.filter(isMultiSegment).map((name) => [name, multiSegmentCapture]),
   )
@@ -308,7 +313,7 @@ const compileTemplate = (
     for (const name of names) {
       const value = getPlaceholderValue(params, name)
 
-      if (value === undefined) {
+      if (value === undefined || (!value && urlNames.has(name))) {
         return
       }
 
