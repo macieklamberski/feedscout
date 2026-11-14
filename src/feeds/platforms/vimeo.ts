@@ -24,7 +24,7 @@ const feeds = definePlatformFeeds([
   { key: 'vimeo:album', template: 'https://vimeo.com/album/{albumId}/rss' },
   { key: 'vimeo:likes', template: 'https://vimeo.com/{username}/likes/rss' },
   { key: 'vimeo:videos', template: 'https://vimeo.com/{username}/videos/rss' },
-  { key: 'vimeo:videos', template: 'https://vimeo.com/{username}/videos/all/rss' },
+  { key: 'vimeo:videos', template: 'https://vimeo.com/{username}/videos/all/rss', isAlias: true },
 ])
 
 const feedKeys: Record<VimeoUrl['kind'], string> = {
