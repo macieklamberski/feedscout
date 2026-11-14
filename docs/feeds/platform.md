@@ -707,8 +707,8 @@ Discovers Atom and RSS feeds for Bear Blog, including tag-filtered feeds.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `bearblog.dev` | Trending<sup>†</sup> (Atom + RSS) |
-| `*.bearblog.dev` | Posts (Atom + RSS) |
-| `*.bearblog.dev/blog/?q={tag}` | Tag (Atom + RSS) · posts |
+| `{blog}.bearblog.dev` | Posts (Atom + RSS) |
+| `{blog}.bearblog.dev/blog/?q={tag}` | Tag (Atom + RSS) · posts |
 
 <sup>†</sup> *Found only by the Platform method.*
 

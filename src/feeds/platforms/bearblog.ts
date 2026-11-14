@@ -1,16 +1,58 @@
-import { composeQuery, getQueryParam, isHostOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getQueryParam, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (guess, html).
 // Handler needed for: home.
 
-export type BearblogUrl = { kind: 'discover' } | { kind: 'blog'; tag?: string }
+export type BearblogUrl = { kind: 'discover' } | { kind: 'blog'; blog: string; tag?: string }
 
 const domains = ['bearblog.dev']
 const apexHosts = ['bearblog.dev', 'www.bearblog.dev']
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'bearblog:discover', template: 'https://bearblog.dev/discover/feed/', format: 'atom' },
+    {
+      key: 'bearblog:discover',
+      template: 'https://bearblog.dev/discover/feed/?type=rss',
+      format: 'rss',
+    },
+    { key: 'bearblog:tag', template: '{scheme}://{host}/feed/?q={tag}', format: 'atom' },
+    {
+      key: 'bearblog:tag',
+      template: '{scheme}://{host}/feed/?type=rss&q={tag}',
+      format: 'rss',
+    },
+    { key: 'bearblog:posts', template: '{scheme}://{host}/feed/', format: 'atom' },
+    { key: 'bearblog:posts', template: '{scheme}://{host}/feed/?type=rss', format: 'rss' },
+    // Every blog serves the same two feeds under these paths too, which the page does not link.
+    { key: 'bearblog:posts', template: '{scheme}://{host}/atom/', format: 'atom', isAlias: true },
+    {
+      key: 'bearblog:posts',
+      template: '{scheme}://{host}/atom.xml',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'bearblog:posts',
+      template: '{scheme}://{host}/feed.xml',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'bearblog:posts',
+      template: '{scheme}://{host}/index.xml',
+      format: 'atom',
+      isAlias: true,
+    },
+    { key: 'bearblog:posts', template: '{scheme}://{host}/rss/', format: 'rss', isAlias: true },
+    { key: 'bearblog:posts', template: '{scheme}://{host}/rss.xml', format: 'rss', isAlias: true },
+  ],
+  { domains },
+)
 
 export const parseBearblogUrl = (url: string): BearblogUrl | undefined => {
   // Apex bearblog.dev exposes the platform-wide trending discovery feed.
@@ -18,14 +60,16 @@ export const parseBearblogUrl = (url: string): BearblogUrl | undefined => {
     return { kind: 'discover' }
   }
 
-  if (!getTenantSubdomain(url, domains)) {
+  const blog = getTenantSubdomain(url, domains)
+
+  if (!blog) {
     return
   }
 
   // Tag filter via ?q= query param.
   const tag = getQueryParam(new URL(url).searchParams, 'q')
 
-  return { kind: 'blog', tag }
+  return { kind: 'blog', blog, tag }
 }
 
 export const bearblogHandler: PlatformHandler = {
@@ -35,41 +79,35 @@ export const bearblogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseBearblogUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
     if (parsed.kind === 'discover') {
       return [
-        {
-          uri: 'https://bearblog.dev/discover/feed/',
-          hint: composeHint('bearblog:discover', 'atom'),
-        },
-        {
-          uri: 'https://bearblog.dev/discover/feed/?type=rss',
-          hint: composeHint('bearblog:discover', 'rss'),
-        },
+        page.getFeedEntry('bearblog:discover', {}, 'atom'),
+        page.getFeedEntry('bearblog:discover', {}, 'rss'),
       ]
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.tag) {
-      uris.push({
-        uri: `${origin}/feed/${composeQuery({ q: parsed.tag })}`,
-        hint: composeHint('bearblog:tag', 'atom'),
-      })
-      uris.push({
-        uri: `${origin}/feed/${composeQuery({ type: 'rss', q: parsed.tag })}`,
-        hint: composeHint('bearblog:tag', 'rss'),
-      })
+      const params = { tag: parsed.tag }
+
+      return [
+        page.getFeedEntry('bearblog:tag', params, 'atom'),
+        page.getFeedEntry('bearblog:tag', params, 'rss'),
+        page.getFeedEntry('bearblog:posts', {}, 'atom'),
+        page.getFeedEntry('bearblog:posts', {}, 'rss'),
+      ]
     }
 
-    uris.push({ uri: `${origin}/feed/`, hint: composeHint('bearblog:posts', 'atom') })
-    uris.push({ uri: `${origin}/feed/?type=rss`, hint: composeHint('bearblog:posts', 'rss') })
-
-    return uris
+    return [
+      page.getFeedEntry('bearblog:posts', {}, 'atom'),
+      page.getFeedEntry('bearblog:posts', {}, 'rss'),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type BearblogUrl, bearblogHandler, parseBearblogUrl } from './bearblog.js'
 
 describe('parseBearblogUrl', () => {
@@ -10,13 +12,21 @@ describe('parseBearblogUrl', () => {
   })
 
   it('should return the blog for a subdomain', () => {
-    const expected: BearblogUrl = { kind: 'blog', tag: undefined }
+    const expected: BearblogUrl = {
+      kind: 'blog',
+      blog: 'herman',
+      tag: undefined,
+    }
 
     expect(parseBearblogUrl('https://herman.bearblog.dev/')).toEqual(expected)
   })
 
   it('should return the blog with its tag for a tag filter', () => {
-    const expected: BearblogUrl = { kind: 'blog', tag: 'python' }
+    const expected: BearblogUrl = {
+      kind: 'blog',
+      blog: 'herman',
+      tag: 'python',
+    }
 
     expect(parseBearblogUrl('https://herman.bearblog.dev/blog/?q=python')).toEqual(expected)
   })
@@ -60,6 +70,22 @@ describe('bearblogHandler', () => {
         },
         {
           uri: 'https://alice.bearblog.dev/feed/?type=rss',
+          hint: { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
+        },
+      ]
+
+      expect(bearblogHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the scheme of an http blog page', () => {
+      const value = 'http://alice.bearblog.dev/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://alice.bearblog.dev/feed/',
+          hint: { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'http://alice.bearblog.dev/feed/?type=rss',
           hint: { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
         },
       ]
@@ -121,6 +147,152 @@ describe('bearblogHandler', () => {
       ]
 
       expect(bearblogHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    const feedHints: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://bearblog.dev/discover/feed/',
+        { key: 'bearblog:discover', label: 'Trending', format: 'atom' },
+      ],
+      [
+        'https://bearblog.dev/discover/feed/?type=rss',
+        { key: 'bearblog:discover', label: 'Trending', format: 'rss' },
+      ],
+      [
+        'https://bearblog.dev/discover/feed/?newest=True',
+        { key: 'bearblog:discover', label: 'Trending', format: 'atom' },
+      ],
+      [
+        'https://alice.bearblog.dev/feed/?q=psychology',
+        { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
+      ],
+      [
+        'https://alice.bearblog.dev/feed/?type=rss&q=psychology',
+        { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
+      ],
+      [
+        'https://alice.bearblog.dev/feed/?q=bearblog&type=rss',
+        { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
+      ],
+      [
+        'https://alice.bearblog.dev/feed/',
+        { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://alice.bearblog.dev/feed/?type=rss',
+        { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'http://herman.bearblog.dev/feed/',
+        { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://alice.bearblog.dev/atom/',
+        { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://alice.bearblog.dev/atom.xml',
+        { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://alice.bearblog.dev/feed.xml',
+        { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://alice.bearblog.dev/index.xml',
+        { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      ['https://alice.bearblog.dev/rss/', { key: 'bearblog:posts', label: 'Posts', format: 'rss' }],
+      [
+        'https://alice.bearblog.dev/rss.xml',
+        { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
+      ],
+    ]
+
+    it.each(feedHints)('should return the key of %s', (value, expected) => {
+      expect(bearblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://herman.bearblog.dev/blog/'
+
+      expect(bearblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a tag page', () => {
+      const value = 'https://herman.bearblog.dev/blog/?q=python'
+
+      expect(bearblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the discover page', () => {
+      const value = 'https://bearblog.dev/discover/'
+
+      expect(bearblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on the apex', () => {
+      const value = 'https://bearblog.dev/feed/'
+
+      expect(bearblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.example.bearblog.dev/feed/'
+
+      expect(bearblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/feed/'
+
+      expect(bearblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://bearblog.dev/discover/feed/',
+        { key: 'bearblog:discover', label: 'Trending', format: 'atom' },
+      ],
+      [
+        'https://bearblog.dev/discover/feed/?type=rss',
+        { key: 'bearblog:discover', label: 'Trending', format: 'rss' },
+      ],
+      [
+        'https://alice.bearblog.dev/feed/?q=psychology',
+        { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
+      ],
+      [
+        'https://alice.bearblog.dev/feed/?type=rss&q=psychology',
+        { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
+      ],
+      [
+        'https://alice.bearblog.dev/feed/',
+        { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://alice.bearblog.dev/feed/?type=rss',
+        { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://alice.bearblog.dev/atom.xml',
+        { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [bearblogHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
