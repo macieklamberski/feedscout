@@ -2633,12 +2633,12 @@ Discovers the blog feed of an OpenCart store running the Journal theme. Detected
 
 ### Eklablog
 
-Discovers the posts and comments feeds of an Eklablog blog. A blog on a custom domain is detected by the script it loads from `connect.eklablog.com`. This also covers blogs on `*.fatalblog.com`, `*.shonenblog.com`, `*.kilariblog.com`, `*.blogy.fr` and `*.shojoblog.com`.
+Discovers the posts and comments feeds of an Eklablog blog. A blog on any other domain is detected by the script it loads from `connect.eklablog.com`.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.blogg.org`, `*.blogueuse.fr`, `*.cd.st`, `*.doremiblog.com`, `*.ek.la`, `*.eklablog.com`, `*.eklablog.fr`, `*.eklablog.net`, `*.id.st`, `*.jeblog.fr`, `*.kazeo.com`, `*.kif.fr`, `*.lo.gs`, `*.revolublog.com`, `*.zic.fr` | Posts · comments<sup>†</sup> |
-| Any page on a custom domain | Posts · comments<sup>†</sup> |
+| `{blog}.eklablog.com` | Posts · comments<sup>†</sup> |
+| `{host}` | Posts · comments<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 

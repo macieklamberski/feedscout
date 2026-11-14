@@ -1,31 +1,26 @@
 import { isHostOf, isHostOrSubdomainOf, resolveUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, customDomain.
 
 export type EklablogUrl = { kind: 'blog' } | { kind: 'customDomain' }
 
-const domains = [
-  'blogg.org',
-  'blogueuse.fr',
-  'cd.st',
-  'doremiblog.com',
-  'ek.la',
-  'eklablog.com',
-  'eklablog.fr',
-  'eklablog.net',
-  'id.st',
-  'jeblog.fr',
-  'kazeo.com',
-  'kif.fr',
-  'lo.gs',
-  'revolublog.com',
-  'zic.fr',
-]
+// Eklablog serves blogs on 20 domains. Only its branded one is listed, and a blog on another one or
+// on a custom domain is known by its marker.
+const domains = ['eklablog.com']
 const connectHosts = ['connect.eklablog.com']
+
+// A blog off the domains is known only by its marker, so its feeds are built here but not claimed.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'eklablog:posts', template: '{scheme}://{host}/rss' },
+    { key: 'eklablog:comments', template: '{scheme}://{host}/rss/comments' },
+  ],
+  { domains },
+)
 
 const isConnectScript = (src: string | undefined): boolean => {
   return isHostOf(resolveUrl(src ?? '') ?? '', connectHosts)
@@ -67,17 +62,14 @@ export const eklablogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseEklablogUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
-
-    uris.push({ uri: `${origin}/rss`, hint: composeHint('eklablog:posts') })
-    uris.push({ uri: `${origin}/rss/comments`, hint: composeHint('eklablog:comments') })
-
-    return uris
+    return [pageFeeds.getFeedEntry('eklablog:posts'), pageFeeds.getFeedEntry('eklablog:comments')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

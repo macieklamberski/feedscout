@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type EklablogUrl, eklablogHandler, isEklablogHtml, parseEklablogUrl } from './eklablog.js'
 
 const pingHtml = '<script src="//connect.eklablog.com/ping/123456/isConnected" async></script>'
@@ -38,20 +40,6 @@ describe('parseEklablogUrl', () => {
   const blogUrls: Array<string> = [
     'https://enaelyork.eklablog.com/',
     'https://enaelyork.eklablog.com/critique-en-serie-a129920826',
-    'https://obraska.eklablog.fr/',
-    'https://randoacgv.eklablog.net/',
-    'https://huilerie-beaucaire.blogg.org/',
-    'https://singbell.blogueuse.fr/',
-    'https://harbelita.cd.st/',
-    'https://abysskan.doremiblog.com/',
-    'https://forrawamu.ek.la/',
-    'https://frasa.id.st/',
-    'https://animal-crossing59.jeblog.fr/',
-    'https://igre.kazeo.com/',
-    'https://nintendooceanv3.kif.fr/',
-    'https://hungmcleon.lo.gs/',
-    'https://dudu-village.revolublog.com/',
-    'https://half-dead-pigs.zic.fr/',
   ]
 
   it.each(blogUrls)('should return the blog for %s', (url) => {
@@ -70,6 +58,13 @@ describe('parseEklablogUrl', () => {
     expect(parseEklablogUrl(url)).toBeUndefined()
   })
 
+  it('should return a custom domain for an Eklablog domain off the list', () => {
+    const value = 'https://alice.kazeo.com/'
+    const expected: EklablogUrl = { kind: 'customDomain' }
+
+    expect(parseEklablogUrl(value)).toEqual(expected)
+  })
+
   it('should return a custom domain for another host', () => {
     const expected: EklablogUrl = { kind: 'customDomain' }
 
@@ -85,6 +80,18 @@ describe('eklablogHandler', () => {
 
     it('should return false for another host', () => {
       expect(eklablogHandler.match('https://example.com/')).toBe(false)
+    })
+
+    it('should return true for a blog on an Eklablog domain off the list carrying the marker', () => {
+      const value = 'https://alice.kazeo.com/'
+
+      expect(eklablogHandler.match(value, pingHtml)).toBe(true)
+    })
+
+    it('should return false for a blog on an Eklablog domain off the list without the marker', () => {
+      const value = 'https://alice.kazeo.com/'
+
+      expect(eklablogHandler.match(value, '<html></html>')).toBe(false)
     })
 
     it('should return true for a custom domain carrying the marker', () => {
@@ -131,6 +138,161 @@ describe('eklablogHandler', () => {
       ]
 
       expect(eklablogHandler.resolve(value, pingHtml)).toEqual(expected)
+    })
+
+    it('should return posts and comments feeds for a blog on an Eklablog domain off the list', () => {
+      const value = 'https://alice.kazeo.com/critique-en-serie-a129920826'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.kazeo.com/rss',
+          hint: { key: 'eklablog:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://alice.kazeo.com/rss/comments',
+          hint: { key: 'eklablog:comments', label: 'Comments' },
+        },
+      ]
+
+      expect(eklablogHandler.resolve(value, pingHtml)).toEqual(expected)
+    })
+
+    it('should keep the http scheme of the blog', () => {
+      const value = 'http://alice.eklablog.com/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://alice.eklablog.com/rss',
+          hint: { key: 'eklablog:posts', label: 'Posts' },
+        },
+        {
+          uri: 'http://alice.eklablog.com/rss/comments',
+          hint: { key: 'eklablog:comments', label: 'Comments' },
+        },
+      ]
+
+      expect(eklablogHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a posts feed', () => {
+      const value = 'https://alice.eklablog.com/rss'
+      const expected: DiscoverUriHint = { key: 'eklablog:posts', label: 'Posts' }
+
+      expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the comments hint for a comments feed', () => {
+      const value = 'https://alice.eklablog.com/rss/comments'
+      const expected: DiscoverUriHint = { key: 'eklablog:comments', label: 'Comments' }
+
+      expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for an http posts feed', () => {
+      const value = 'http://alice.eklablog.com/rss'
+      const expected: DiscoverUriHint = { key: 'eklablog:posts', label: 'Posts' }
+
+      expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the comments hint for an http comments feed', () => {
+      const value = 'http://alice.eklablog.com/rss/comments'
+      const expected: DiscoverUriHint = { key: 'eklablog:comments', label: 'Comments' }
+
+      expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a feed on an Eklablog domain off the list', () => {
+      const value = 'https://alice.kazeo.com/rss'
+
+      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return the posts hint for a feed with a trailing slash', () => {
+      const value = 'https://alice.eklablog.com/rss/'
+      const expected: DiscoverUriHint = { key: 'eklablog:posts', label: 'Posts' }
+
+      expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://alice.eklablog.com/critique-en-serie-a129920826'
+
+      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://eklablog.com/rss'
+
+      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www host', () => {
+      const value = 'https://www.eklablog.com/rss'
+
+      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www subdomain of a blog', () => {
+      const value = 'https://www.alice.eklablog.com/rss'
+
+      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.alice.eklablog.com/rss'
+
+      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://www.example.com/rss'
+
+      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('pages through the Platform method', () => {
+    it('should return the feeds of a blog on an Eklablog domain off the list', async () => {
+      const value = 'https://alice.kazeo.com/critique-en-serie-a129920826'
+      const result = await discoverUrisFromPlatform(pingHtml, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [eklablogHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.kazeo.com/rss',
+          hint: { key: 'eklablog:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://alice.kazeo.com/rss/comments',
+          hint: { key: 'eklablog:comments', label: 'Comments' },
+        },
+      ]
+
+      expect(result).toEqual(expected)
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://alice.eklablog.com/rss', { key: 'eklablog:posts', label: 'Posts' }],
+      ['https://alice.eklablog.com/rss/comments', { key: 'eklablog:comments', label: 'Comments' }],
+      ['http://alice.eklablog.com/rss', { key: 'eklablog:posts', label: 'Posts' }],
+      ['http://alice.eklablog.com/rss/comments', { key: 'eklablog:comments', label: 'Comments' }],
+      ['https://alice.eklablog.com/rss/', { key: 'eklablog:posts', label: 'Posts' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [eklablogHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
