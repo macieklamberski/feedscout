@@ -73,7 +73,7 @@ const uploadsPlaylistKeys: Record<string, string> = {
 // legacy one.
 const feeds = definePlatformFeeds([
   { key: 'youtube:all', template: `${feedUrl}?channel_id={channelId}` },
-  { key: 'youtube:all', template: `${feedUrl}?user={user}` },
+  { key: 'youtube:all', template: `${feedUrl}?user={user}`, isAlias: true },
   { key: 'youtube:playlist', template: `${feedUrl}?playlist_id={playlistId}` },
   ...Object.values(uploadsPlaylistKeys).map((key) => {
     return { key, template: `${feedUrl}?playlist_id={playlistId}` }
