@@ -1405,8 +1405,8 @@ Discovers RSS and Atom feeds for Tildes homepage and groups, filtered by tag whe
 |-------------|-----------------|
 | `tildes.net` | Topics (RSS + Atom) |
 | `tildes.net/~{group}` | Group (RSS + Atom) |
-| `tildes.net/?tag={tag}` | Tagged topics (RSS + Atom) |
-| `tildes.net/~{group}?tag={tag}` | Tagged group topics (RSS + Atom) |
+| `tildes.net/?tag={tag}` | Tag (RSS + Atom) |
+| `tildes.net/~{group}?tag={tag}` | Group tag (RSS + Atom) |
 | Any other page | Topics (RSS + Atom) |
 
 ### Viabloga
