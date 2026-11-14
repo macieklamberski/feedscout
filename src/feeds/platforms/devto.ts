@@ -20,8 +20,10 @@ const tagRegex = /^\/t\/([^/]+)/i
 const latestRegex = /^\/latest\/?$/i
 
 // `/feed/latest` reads before `/feed/{owner}`, so a user named latest reads as the latest feed.
+// `/rss` serves the same channel as `/feed`, which the page links, so its row only claims.
 const feeds = definePlatformFeeds([
   { key: 'devto:community', template: 'https://dev.to/feed' },
+  { key: 'devto:community', template: 'https://dev.to/rss' },
   { key: 'devto:latest', template: 'https://dev.to/feed/latest' },
   { key: 'devto:tag', template: 'https://dev.to/feed/tag/{tag}' },
   { key: 'devto:posts', template: 'https://dev.to/feed/{owner}' },

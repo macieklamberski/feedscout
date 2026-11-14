@@ -214,6 +214,13 @@ describe('devtoHandler', () => {
       expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the community hint for the community feed at rss', () => {
+      const value = 'https://dev.to/rss'
+      const expected: DiscoverUriHint = { key: 'devto:community', label: 'Community' }
+
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for a profile page', () => {
       const value = 'https://dev.to/antonfrattaroli'
 
@@ -245,6 +252,7 @@ describe('devtoHandler', () => {
       ['https://dev.to/feed/tag/log4j2', { key: 'devto:tag', label: 'Tag' }],
       ['https://dev.to/feed/latest', { key: 'devto:latest', label: 'Latest' }],
       ['https://dev.to/feed', { key: 'devto:community', label: 'Community' }],
+      ['https://dev.to/rss', { key: 'devto:community', label: 'Community' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
