@@ -1,11 +1,17 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type HashnodeUrl = { kind: 'blog' }
 
 const domains = ['hashnode.dev', 'hashnode.com']
+
+const feeds = definePlatformFeeds(
+  [{ key: 'hashnode:blog', template: '{scheme}://{host}/rss.xml' }],
+  { domains },
+)
 
 export const parseHashnodeUrl = (url: string): HashnodeUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -21,14 +27,14 @@ export const hashnodeHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsed = parseHashnodeUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parseHashnodeUrl(url) || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
-
-    return [{ uri: `${origin}/rss.xml`, hint: composeHint('hashnode:blog') }]
+    return [page.getFeedEntry('hashnode:blog')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   getRedminePage,
   isRedmineHeaders,
@@ -494,15 +496,15 @@ describe('redmineHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/projects/acme-tools/activity.atom',
-          hint: { key: 'redmine:activity', label: 'Activity' },
+          hint: { key: 'redmine:project-activity', label: 'Project activity' },
         },
         {
           uri: 'https://example.com/projects/acme-tools/issues.atom',
-          hint: { key: 'redmine:issues', label: 'Issues' },
+          hint: { key: 'redmine:project-issues', label: 'Project issues' },
         },
         {
           uri: 'https://example.com/projects/acme-tools/news.atom',
-          hint: { key: 'redmine:news', label: 'News' },
+          hint: { key: 'redmine:project-news', label: 'Project news' },
         },
       ]
 
@@ -514,11 +516,11 @@ describe('redmineHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/projects/acme-tools/activity.atom',
-          hint: { key: 'redmine:activity', label: 'Activity' },
+          hint: { key: 'redmine:project-activity', label: 'Project activity' },
         },
         {
           uri: 'https://example.com/projects/acme-tools/issues.atom',
-          hint: { key: 'redmine:issues', label: 'Issues' },
+          hint: { key: 'redmine:project-issues', label: 'Project issues' },
         },
       ]
 
@@ -530,11 +532,11 @@ describe('redmineHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/projects/acme-tools/activity.atom',
-          hint: { key: 'redmine:activity', label: 'Activity' },
+          hint: { key: 'redmine:project-activity', label: 'Project activity' },
         },
         {
           uri: 'https://example.com/projects/acme-tools/news.atom',
-          hint: { key: 'redmine:news', label: 'News' },
+          hint: { key: 'redmine:project-news', label: 'Project news' },
         },
       ]
 
@@ -546,7 +548,7 @@ describe('redmineHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/projects/acme-tools/issues.atom',
-          hint: { key: 'redmine:issues', label: 'Issues' },
+          hint: { key: 'redmine:project-issues', label: 'Project issues' },
         },
       ]
 
@@ -558,7 +560,7 @@ describe('redmineHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/projects/acme-tools/news.atom',
-          hint: { key: 'redmine:news', label: 'News' },
+          hint: { key: 'redmine:project-news', label: 'Project news' },
         },
       ]
 
@@ -570,7 +572,7 @@ describe('redmineHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/projects/acme-tools/activity.atom',
-          hint: { key: 'redmine:activity', label: 'Activity' },
+          hint: { key: 'redmine:project-activity', label: 'Project activity' },
         },
       ]
 
@@ -705,11 +707,191 @@ describe('redmineHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/projects/acme%3Ftools/issues.atom',
-          hint: { key: 'redmine:issues', label: 'Issues' },
+          hint: { key: 'redmine:project-issues', label: 'Project issues' },
         },
       ]
 
       expect(redmineHandler.resolve(value, content)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    const feedUrls: Array<[string, DiscoverUriHint]> = [
+      ['https://example.plan.io/news.atom', { key: 'redmine:news', label: 'News' }],
+      [
+        'https://example.plan.io/projects/acme/news.atom',
+        { key: 'redmine:project-news', label: 'Project news' },
+      ],
+      ['https://example.plan.io/activity.atom', { key: 'redmine:activity', label: 'Activity' }],
+      [
+        'https://example.plan.io/projects/acme/activity.atom',
+        { key: 'redmine:project-activity', label: 'Project activity' },
+      ],
+      ['https://example.plan.io/projects.atom', { key: 'redmine:projects', label: 'Projects' }],
+      ['https://example.plan.io/issues.atom', { key: 'redmine:issues', label: 'Issues' }],
+      [
+        'https://example.plan.io/projects/acme/issues.atom?set_filter=1&tracker_id=1',
+        { key: 'redmine:project-filtered-issues', label: 'Filtered project issues' },
+      ],
+      [
+        'https://example.plan.io/issues.atom?query_id=17&sort=updated_on%3Adesc',
+        { key: 'redmine:filtered-issues', label: 'Filtered issues' },
+      ],
+      [
+        'https://example.plan.io/issues.atom?set_filter=1&f%5B%5D=status_id&op%5Bstatus_id%5D=c',
+        { key: 'redmine:filtered-issues', label: 'Filtered issues' },
+      ],
+      [
+        'https://example.plan.io/issues.atom?per_page=50&sort=id%3Adesc',
+        { key: 'redmine:issues', label: 'Issues' },
+      ],
+      [
+        'https://example.plan.io/issues/12345.atom',
+        { key: 'redmine:issue', label: 'Issue updates' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/boards/2.atom',
+        { key: 'redmine:board', label: 'Forum' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/repository/main/revisions.atom',
+        { key: 'redmine:revisions', label: 'Revisions' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/repository/main/changes.atom',
+        { key: 'redmine:changes', label: 'Repository changes' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/repository/main/changes.atom?rev=a1b2c3d4',
+        { key: 'redmine:changes', label: 'Repository changes' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/boards.atom',
+        { key: 'redmine:boards', label: 'Forums' },
+      ],
+      [
+        'https://example.planio.com/issues/12345.atom',
+        { key: 'redmine:issue', label: 'Issue updates' },
+      ],
+    ]
+
+    it.each(feedUrls)('should return the hint for %s', (value, expected) => {
+      expect(redmineHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a page on a site subdomain', () => {
+      const value = 'https://example.plan.io/projects/acme/news'
+
+      expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://example.com/news.atom'
+
+      expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a forums feed on a custom domain', () => {
+      const value = 'https://example.com/projects/acme/boards.atom'
+
+      expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the planio.com apex', () => {
+      const value = 'https://planio.com/issues/12345.atom'
+
+      expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://plan.io/news.atom'
+
+      expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www', () => {
+      const value = 'https://www.plan.io/news.atom'
+
+      expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www host of a tenant', () => {
+      const value = 'https://www.example.plan.io/news.atom'
+
+      expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://a.example.plan.io/news.atom'
+
+      expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriEntry['hint']]> = [
+      ['https://example.plan.io/news.atom', { key: 'redmine:news', label: 'News' }],
+      [
+        'https://example.plan.io/projects/acme/news.atom',
+        { key: 'redmine:project-news', label: 'Project news' },
+      ],
+      ['https://example.plan.io/activity.atom', { key: 'redmine:activity', label: 'Activity' }],
+      [
+        'https://example.plan.io/projects/acme/issues.atom',
+        { key: 'redmine:project-issues', label: 'Project issues' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/activity.atom',
+        { key: 'redmine:project-activity', label: 'Project activity' },
+      ],
+      ['https://example.plan.io/projects.atom', { key: 'redmine:projects', label: 'Projects' }],
+      [
+        'https://example.plan.io/issues.atom?query_id=17&sort=updated_on%3Adesc',
+        { key: 'redmine:filtered-issues', label: 'Filtered issues' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/issues.atom?set_filter=1&status_id=c',
+        { key: 'redmine:project-filtered-issues', label: 'Filtered project issues' },
+      ],
+      [
+        'https://example.plan.io/issues/12345.atom',
+        { key: 'redmine:issue', label: 'Issue updates' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/boards/2.atom',
+        { key: 'redmine:board', label: 'Forum' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/repository/main/revisions.atom',
+        { key: 'redmine:revisions', label: 'Revisions' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/repository/main/changes.atom',
+        { key: 'redmine:changes', label: 'Repository changes' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/repository/main/changes.atom?rev=a1b2c3d4',
+        { key: 'redmine:changes', label: 'Repository changes' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/boards.atom',
+        { key: 'redmine:boards', label: 'Forums' },
+      ],
+      [
+        'https://example.planio.com/issues.atom?set_filter=1',
+        { key: 'redmine:issues', label: 'Issues' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [redmineHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

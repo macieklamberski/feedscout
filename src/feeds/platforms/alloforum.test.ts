@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type AlloforumUrl, alloforumHandler, parseAlloforumUrl } from './alloforum.js'
 
 describe('parseAlloforumUrl', () => {
@@ -103,6 +105,18 @@ describe('alloforumHandler', () => {
       expect(alloforumHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep the scheme of an http forum', () => {
+      const value = 'http://1234.alloforum.com/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://1234.alloforum.com/derniers-sujets.xml',
+          hint: { key: 'alloforum:latest-topics', label: 'Latest topics' },
+        },
+      ]
+
+      expect(alloforumHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the category and latest topics feeds for a category', () => {
       const value = 'https://example.alloforum.com/sample-category-c12-2.html'
       const expected: Array<DiscoverUriEntry> = [
@@ -149,6 +163,105 @@ describe('alloforumHandler', () => {
       ]
 
       expect(alloforumHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the latest topics hint for a latest topics feed', () => {
+      const value = 'https://alicebeads.alloforum.com/derniers-sujets.xml'
+      const expected: DiscoverUriHint = { key: 'alloforum:latest-topics', label: 'Latest topics' }
+
+      expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the category hint for a category feed', () => {
+      const value = 'https://10253.alloforum.com/derniers-sujets-materiel-volieres-c285.xml'
+      const expected: DiscoverUriHint = { key: 'alloforum:category', label: 'Category' }
+
+      expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the subcategory hint for a subcategory feed', () => {
+      const value =
+        'https://alicebeads.alloforum.com/derniers-sujets-materiel-techniques-c44498-divers-s17544.xml'
+      const expected: DiscoverUriHint = { key: 'alloforum:subcategory', label: 'Subcategory' }
+
+      expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the subcategory hint for a subcategory feed with a hyphenated slug', () => {
+      const value =
+        'https://alicebeads.alloforum.com/derniers-sujets-materiel-techniques-c44498-nuanciers-perles-s17542.xml'
+      const expected: DiscoverUriHint = { key: 'alloforum:subcategory', label: 'Subcategory' }
+
+      expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the category hint for an http category feed', () => {
+      const value = 'http://10253.alloforum.com/derniers-sujets-discussions-generales-c275.xml'
+      const expected: DiscoverUriHint = { key: 'alloforum:category', label: 'Category' }
+
+      expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a category page', () => {
+      const value = 'https://10253.alloforum.com/materiel-volieres-c285-1.html'
+
+      expect(alloforumHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.example.alloforum.com/derniers-sujets.xml'
+
+      expect(alloforumHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://alloforum.com/derniers-sujets.xml'
+
+      expect(alloforumHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/derniers-sujets.xml'
+
+      expect(alloforumHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://alicebeads.alloforum.com/derniers-sujets.xml',
+        { key: 'alloforum:latest-topics', label: 'Latest topics' },
+      ],
+      [
+        'https://10253.alloforum.com/derniers-sujets-materiel-volieres-c285.xml',
+        { key: 'alloforum:category', label: 'Category' },
+      ],
+      [
+        'https://10253.alloforum.com/derniers-sujets-discussions-generales-c275.xml',
+        { key: 'alloforum:category', label: 'Category' },
+      ],
+      [
+        'https://alicebeads.alloforum.com/derniers-sujets-materiel-techniques-c44498-divers-s17544.xml',
+        { key: 'alloforum:subcategory', label: 'Subcategory' },
+      ],
+      [
+        'https://alicebeads.alloforum.com/derniers-sujets-materiel-techniques-c44498-nuanciers-perles-s17542.xml',
+        { key: 'alloforum:subcategory', label: 'Subcategory' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [alloforumHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

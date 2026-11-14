@@ -1,7 +1,6 @@
-import { composeQuery, getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers userShow (html).
@@ -12,6 +11,29 @@ export type GoodreadsUrl =
   | { kind: 'reviews'; userId: string; shelf?: string }
 
 const hosts = ['goodreads.com', 'www.goodreads.com']
+
+const feeds = definePlatformFeeds([
+  {
+    key: 'goodreads:shelf',
+    template: 'https://www.goodreads.com/review/list_rss/{userId}?shelf={shelf}',
+  },
+  { key: 'goodreads:reviews', template: 'https://www.goodreads.com/review/list_rss/{userId}' },
+  { key: 'goodreads:updates', template: 'https://www.goodreads.com/user/updates_rss/{userId}' },
+  // A `key` parameter carries the account owner's private token, which no page gives, so these
+  // rows only claim the feed.
+  {
+    key: 'goodreads:shelf',
+    template: 'https://www.goodreads.com/review/list_rss/{userId}?key={key}&shelf={shelf}',
+  },
+  {
+    key: 'goodreads:reviews',
+    template: 'https://www.goodreads.com/review/list_rss/{userId}?key={key}',
+  },
+  {
+    key: 'goodreads:updates',
+    template: 'https://www.goodreads.com/user/updates_rss/{userId}?key={key}',
+  },
+])
 
 // A user page is /user/show/{id}-{slug} and their review list /review/list/{id}-{slug}.
 export const parseGoodreadsUrl = (url: string): GoodreadsUrl | undefined => {
@@ -45,44 +67,34 @@ export const goodreadsHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
     const parsed = parseGoodreadsUrl(url)
 
     if (!parsed) {
       return []
     }
 
+    const { userId } = parsed
+
     if (parsed.kind === 'user') {
       return [
-        {
-          uri: `${origin}/user/updates_rss/${parsed.userId}`,
-          hint: composeHint('goodreads:updates'),
-        },
-        {
-          uri: `${origin}/review/list_rss/${parsed.userId}`,
-          hint: composeHint('goodreads:reviews'),
-        },
+        feeds.getFeedEntry('goodreads:updates', { userId }),
+        feeds.getFeedEntry('goodreads:reviews', { userId }),
       ]
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.shelf) {
-      uris.push({
-        uri: `${origin}/review/list_rss/${parsed.userId}${composeQuery({ shelf: parsed.shelf })}`,
-        hint: composeHint('goodreads:shelf'),
-      })
+      return [
+        feeds.getFeedEntry('goodreads:shelf', { userId, shelf: parsed.shelf }),
+        feeds.getFeedEntry('goodreads:reviews', { userId }),
+        feeds.getFeedEntry('goodreads:updates', { userId }),
+      ]
     }
 
-    uris.push({
-      uri: `${origin}/review/list_rss/${parsed.userId}`,
-      hint: composeHint('goodreads:reviews'),
-    })
-    uris.push({
-      uri: `${origin}/user/updates_rss/${parsed.userId}`,
-      hint: composeHint('goodreads:updates'),
-    })
-
-    return uris
+    return [
+      feeds.getFeedEntry('goodreads:reviews', { userId }),
+      feeds.getFeedEntry('goodreads:updates', { userId }),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

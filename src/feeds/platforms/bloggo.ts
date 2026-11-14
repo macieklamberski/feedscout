@@ -1,7 +1,7 @@
 import { getPathSegments, isAnyOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -12,8 +12,16 @@ const domains = ['bloggo.nu']
 
 const postBodyRegex = /<body[^>]*\bpost-id-\d+/
 
-// The about page and the feed belong to the blog, not to a post.
-const blogPaths = ['about', 'feed']
+const feeds = definePlatformFeeds(
+  [
+    { key: 'bloggo:posts', template: '{scheme}://{host}/feed/' },
+    { key: 'bloggo:post-comments', template: '{scheme}://{host}/{slug}/feed/' },
+  ],
+  { domains },
+)
+
+// The about page belongs to the blog, not to a post.
+const blogPaths = ['about']
 
 export const parseBloggoUrl = (url: string): BloggoUrl | undefined => {
   const subdomain = getTenantSubdomain(url, domains)
@@ -55,24 +63,21 @@ export const bloggoHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getBloggoPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    // Every page redirects to https and its feed links spell https.
-    const origin = `https://${new URL(url).hostname}`
-    const uris: Array<DiscoverUriEntry> = []
-
     if (page.kind === 'post') {
-      uris.push({
-        uri: `${origin}/${page.slug}/feed/`,
-        hint: composeHint('bloggo:post-comments'),
-      })
+      return [
+        pageFeeds.getFeedEntry('bloggo:post-comments', { slug: page.slug }),
+        pageFeeds.getFeedEntry('bloggo:posts'),
+      ]
     }
 
-    uris.push({ uri: `${origin}/feed/`, hint: composeHint('bloggo:posts') })
-
-    return uris
+    return [pageFeeds.getFeedEntry('bloggo:posts')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

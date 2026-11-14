@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type EstrankyUrl, estrankyHandler, isEstrankyHtml, parseEstrankyUrl } from './estranky.js'
 
 const customDomainPage = `
@@ -151,6 +153,34 @@ describe('estrankyHandler', () => {
         },
         {
           uri: 'https://example.estranky.sk/rss/slices/l/photos/data.xml',
+          hint: { key: 'estranky:photos-slice', label: 'Photo album (Web Slice)' },
+        },
+      ]
+
+      expect(estrankyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the scheme and host of an http www site page', () => {
+      const value = 'http://www.example.estranky.cz/clanky/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://www.example.estranky.cz/rss/articles/data.xml',
+          hint: { key: 'estranky:posts', label: 'Posts' },
+        },
+        {
+          uri: 'http://www.example.estranky.cz/rss/photos/data.xml',
+          hint: { key: 'estranky:photos', label: 'Photos' },
+        },
+        {
+          uri: 'http://www.example.estranky.cz/rss/comments/data.xml',
+          hint: { key: 'estranky:comments', label: 'Comments' },
+        },
+        {
+          uri: 'http://www.example.estranky.cz/rss/slices/l/homepage/data.xml',
+          hint: { key: 'estranky:homepage-slice', label: 'Home page (Web Slice)' },
+        },
+        {
+          uri: 'http://www.example.estranky.cz/rss/slices/l/photos/data.xml',
           hint: { key: 'estranky:photos-slice', label: 'Photo album (Web Slice)' },
         },
       ]
@@ -321,6 +351,267 @@ describe('estrankyHandler', () => {
       ]
 
       expect(estrankyHandler.resolve(value, content)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a posts feed', () => {
+      const value = 'https://example.estranky.cz/rss/articles/data.xml'
+      const expected: DiscoverUriHint = { key: 'estranky:posts', label: 'Posts' }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a posts feed in another language', () => {
+      const value = 'https://example.estranky.sk/rss/en/articles/data.xml'
+      const expected: DiscoverUriHint = { key: 'estranky:posts', label: 'Posts' }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the photos hint for a photos feed', () => {
+      const value = 'https://example.estranky.cz/rss/photos/data.xml'
+      const expected: DiscoverUriHint = { key: 'estranky:photos', label: 'Photos' }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the photos hint for a photos feed in another language', () => {
+      const value = 'https://example.estranky.cz/rss/en/photos/data.xml'
+      const expected: DiscoverUriHint = { key: 'estranky:photos', label: 'Photos' }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the comments hint for a comments feed', () => {
+      const value = 'https://example.estranky.sk/rss/comments/data.xml'
+      const expected: DiscoverUriHint = { key: 'estranky:comments', label: 'Comments' }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the comments hint for a comments feed in another language', () => {
+      const value = 'https://example.estranky.sk/rss/en/comments/data.xml'
+      const expected: DiscoverUriHint = { key: 'estranky:comments', label: 'Comments' }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the home page slice hint for a home page slice feed', () => {
+      const value = 'http://example.estranky.cz/rss/slices/l/homepage/data.xml'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:homepage-slice',
+        label: 'Home page (Web Slice)',
+      }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the home page slice hint for a home page slice feed in another language', () => {
+      const value = 'https://example.estranky.cz/rss/en/slices/l/homepage/data.xml'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:homepage-slice',
+        label: 'Home page (Web Slice)',
+      }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the photo album slice hint for a photo album slice feed', () => {
+      const value = 'https://example.estranky.cz/rss/slices/l/photos/data.xml'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:photos-slice',
+        label: 'Photo album (Web Slice)',
+      }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the photo album slice hint for a photo album slice feed in another language', () => {
+      const value = 'https://example.estranky.cz/rss/en/slices/l/photos/data.xml'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:photos-slice',
+        label: 'Photo album (Web Slice)',
+      }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a page', () => {
+      const value = 'https://example.estranky.cz/fotoalbum/'
+
+      expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return the section hint for a section feed', () => {
+      const value = 'https://example.estranky.cz/rss/section/12/data.xml'
+      const expected: DiscoverUriHint = { key: 'estranky:section', label: 'Section' }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the section hint for a section feed in another language', () => {
+      const value = 'http://example.estranky.cz/rss/en/section/13/data.xml'
+      const expected: DiscoverUriHint = { key: 'estranky:section', label: 'Section' }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the article slice hint for an article slice feed', () => {
+      const value = 'https://example.estranky.cz/rss/slices/a/604/data.xml'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:article-slice',
+        label: 'Article (Web Slice)',
+      }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the article slice hint for an article slice feed in another language', () => {
+      const value = 'https://example.estranky.sk/rss/en/slices/a/604/data.xml'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:article-slice',
+        label: 'Article (Web Slice)',
+      }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the section slice hint for a section slice feed', () => {
+      const value = 'https://example.estranky.sk/rss/slices/s/118/data.xml'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:section-slice',
+        label: 'Section (Web Slice)',
+      }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the section slice hint for a section slice feed in another language', () => {
+      const value = 'https://example.estranky.cz/rss/en/slices/s/14/data.xml'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:section-slice',
+        label: 'Section (Web Slice)',
+      }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the photo folder slice hint for a photo folder slice feed', () => {
+      const value = 'http://example.estranky.sk/rss/slices/d/9/data.xml'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:photo-folder-slice',
+        label: 'Photo folder (Web Slice)',
+      }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the photo folder slice hint for a photo folder slice feed in another language', () => {
+      const value = 'https://example.estranky.cz/rss/de/slices/d/14/data.xml'
+      const expected: DiscoverUriHint = {
+        key: 'estranky:photo-folder-slice',
+        label: 'Photo folder (Web Slice)',
+      }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a feed on the www host', () => {
+      const value = 'https://www.estranky.cz/rss/articles/data.xml'
+
+      expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return the posts hint for a feed on www in front of a site', () => {
+      const value = 'http://www.example.estranky.cz/rss/articles/data.xml'
+      const expected: DiscoverUriHint = { key: 'estranky:posts', label: 'Posts' }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://estranky.sk/rss/slices/l/homepage/data.xml'
+
+      expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://www.example.com/rss/articles/data.xml'
+
+      expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.estranky.cz/rss/articles/data.xml',
+        { key: 'estranky:posts', label: 'Posts' },
+      ],
+      [
+        'https://example.estranky.sk/rss/en/articles/data.xml',
+        { key: 'estranky:posts', label: 'Posts' },
+      ],
+      [
+        'https://example.estranky.cz/rss/photos/data.xml',
+        { key: 'estranky:photos', label: 'Photos' },
+      ],
+      [
+        'https://example.estranky.cz/rss/en/photos/data.xml',
+        { key: 'estranky:photos', label: 'Photos' },
+      ],
+      [
+        'https://example.estranky.sk/rss/comments/data.xml',
+        { key: 'estranky:comments', label: 'Comments' },
+      ],
+      [
+        'https://example.estranky.sk/rss/en/comments/data.xml',
+        { key: 'estranky:comments', label: 'Comments' },
+      ],
+      [
+        'http://example.estranky.cz/rss/slices/l/homepage/data.xml',
+        { key: 'estranky:homepage-slice', label: 'Home page (Web Slice)' },
+      ],
+      [
+        'https://example.estranky.cz/rss/en/slices/l/homepage/data.xml',
+        { key: 'estranky:homepage-slice', label: 'Home page (Web Slice)' },
+      ],
+      [
+        'https://example.estranky.cz/rss/slices/l/photos/data.xml',
+        { key: 'estranky:photos-slice', label: 'Photo album (Web Slice)' },
+      ],
+      [
+        'https://example.estranky.cz/rss/en/slices/l/photos/data.xml',
+        { key: 'estranky:photos-slice', label: 'Photo album (Web Slice)' },
+      ],
+      [
+        'https://example.estranky.cz/rss/section/12/data.xml',
+        { key: 'estranky:section', label: 'Section' },
+      ],
+      [
+        'https://example.estranky.cz/rss/slices/a/604/data.xml',
+        { key: 'estranky:article-slice', label: 'Article (Web Slice)' },
+      ],
+      [
+        'https://example.estranky.sk/rss/slices/s/118/data.xml',
+        { key: 'estranky:section-slice', label: 'Section (Web Slice)' },
+      ],
+      [
+        'http://example.estranky.sk/rss/slices/d/9/data.xml',
+        { key: 'estranky:photo-folder-slice', label: 'Photo folder (Web Slice)' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [estrankyHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

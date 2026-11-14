@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { GiteaPage, GiteaUrl } from './gitea.js'
 import { getGiteaPage, giteaHandler, parseGiteaUrl } from './gitea.js'
 
@@ -437,6 +440,239 @@ describe('giteaHandler', () => {
       ]
 
       expect(giteaHandler.resolve(value, giteaSubPathHtml)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the activity hint for a user Atom feed', () => {
+      const value = 'https://codeberg.org/forgejo.atom'
+      const expected: DiscoverUriHint = { key: 'gitea:activity', label: 'Activity' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the activity hint for a user RSS feed', () => {
+      const value = 'https://codeberg.org/forgejo.rss'
+      const expected: DiscoverUriHint = { key: 'gitea:activity', label: 'Activity' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the activity hint for a repo Atom feed', () => {
+      const value = 'https://gitea.com/gitea/blog.atom'
+      const expected: DiscoverUriHint = { key: 'gitea:activity', label: 'Activity' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the activity hint for a repo RSS feed', () => {
+      const value = 'https://gitea.com/gitea/go-sdk.rss'
+      const expected: DiscoverUriHint = { key: 'gitea:activity', label: 'Activity' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the releases hint for a releases Atom feed', () => {
+      const value = 'https://gitea.com/gitea/blog/releases.atom'
+      const expected: DiscoverUriHint = { key: 'gitea:releases', label: 'Releases' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the releases hint for a releases RSS feed', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/releases.rss'
+      const expected: DiscoverUriHint = { key: 'gitea:releases', label: 'Releases' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tags hint for a tags Atom feed', () => {
+      const value = 'https://gitea.com/gitea/blog/tags.atom'
+      const expected: DiscoverUriHint = { key: 'gitea:tags', label: 'Tags' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tags hint for a tags RSS feed', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/tags.rss'
+      const expected: DiscoverUriHint = { key: 'gitea:tags', label: 'Tags' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the branch commits hint for a branch Atom feed', () => {
+      const value = 'https://gitea.com/carol/tea/atom/branch/print-issue-label'
+      const expected: DiscoverUriHint = { key: 'gitea:branch-commits', label: 'Branch commits' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the branch commits hint for a branch RSS feed', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/rss/branch/forgejo'
+      const expected: DiscoverUriHint = { key: 'gitea:branch-commits', label: 'Branch commits' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the file history hint for a file history feed', () => {
+      const value = 'https://gitea.com/carol/unidiff-comments/atom/branch/master/types/hunk.go'
+      const expected: DiscoverUriHint = { key: 'gitea:file-history', label: 'File history' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the file history hint for a folder history feed', () => {
+      const value = 'https://gitea.com/bob/theme/atom/branch/master/i18n'
+      const expected: DiscoverUriHint = { key: 'gitea:file-history', label: 'File history' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the file history hint for a percent-encoded file path', () => {
+      const value =
+        'https://gitea.com/AliceShell/Health-Docs/atom/branch/master/Vaccine-Binder-Research.zip%20%28Unzipped%20Files%29/Vaccine-Binder-Research'
+      const expected: DiscoverUriHint = { key: 'gitea:file-history', label: 'File history' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the file history hint for a branch named with a slash', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/atom/branch/v11.0/forgejo'
+      const expected: DiscoverUriHint = { key: 'gitea:file-history', label: 'File history' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the releases hint for a feed on www', () => {
+      const value = 'https://www.codeberg.org/forgejo/forgejo/releases.atom'
+      const expected: DiscoverUriHint = { key: 'gitea:releases', label: 'Releases' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the branch commits hint for feed routes in another case', () => {
+      const value = 'https://gitea.com/carol/tea/Atom/Branch/print-issue-label'
+      const expected: DiscoverUriHint = { key: 'gitea:branch-commits', label: 'Branch commits' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the activity hint for a user feed with a trailing slash', () => {
+      const value = 'https://codeberg.org/forgejo.atom/'
+      const expected: DiscoverUriHint = { key: 'gitea:activity', label: 'Activity' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the activity hint for a repo feed with a trailing slash', () => {
+      const value = 'https://gitea.com/gitea/go-sdk.rss/'
+      const expected: DiscoverUriHint = { key: 'gitea:activity', label: 'Activity' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the releases hint for a releases feed with a trailing slash', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/releases.rss/'
+      const expected: DiscoverUriHint = { key: 'gitea:releases', label: 'Releases' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tags hint for a tags feed with a trailing slash', () => {
+      const value = 'https://gitea.com/gitea/blog/tags.atom/'
+      const expected: DiscoverUriHint = { key: 'gitea:tags', label: 'Tags' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the branch commits hint for a branch feed with a trailing slash', () => {
+      const value = 'https://gitea.com/carol/tea/atom/branch/print-issue-label/'
+      const expected: DiscoverUriHint = { key: 'gitea:branch-commits', label: 'Branch commits' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the file history hint for a file history feed with a trailing slash', () => {
+      const value = 'https://gitea.com/carol/unidiff-comments/atom/branch/master/types/hunk.go/'
+      const expected: DiscoverUriHint = { key: 'gitea:file-history', label: 'File history' }
+
+      expect(giteaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a user page', () => {
+      const value = 'https://codeberg.org/forgejo'
+
+      expect(giteaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a repo page', () => {
+      const value = 'https://gitea.com/gitea/blog'
+
+      expect(giteaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a releases page', () => {
+      const value = 'https://gitea.com/gitea/blog/releases'
+
+      expect(giteaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a branch page', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/src/branch/forgejo'
+
+      expect(giteaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a branch feed route without a branch', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/atom/branch'
+
+      expect(giteaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a file named like a feed under a branch', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/src/branch/forgejo/releases.atom'
+
+      expect(giteaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a self-hosted feed', () => {
+      const value = 'https://git.example.org/owner/project/releases.atom'
+
+      expect(giteaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://codeberg.org/forgejo.atom', { key: 'gitea:activity', label: 'Activity' }],
+      ['https://gitea.com/gitea/blog.atom', { key: 'gitea:activity', label: 'Activity' }],
+      ['https://gitea.com/gitea/blog/releases.atom', { key: 'gitea:releases', label: 'Releases' }],
+      ['https://gitea.com/gitea/blog/tags.atom', { key: 'gitea:tags', label: 'Tags' }],
+      [
+        'https://gitea.com/carol/tea/atom/branch/print-issue-label',
+        { key: 'gitea:branch-commits', label: 'Branch commits' },
+      ],
+      [
+        'https://gitea.com/carol/unidiff-comments/atom/branch/master/types/hunk.go',
+        { key: 'gitea:file-history', label: 'File history' },
+      ],
+      ['https://codeberg.org/forgejo.atom/', { key: 'gitea:activity', label: 'Activity' }],
+      ['https://gitea.com/gitea/blog/releases.atom/', { key: 'gitea:releases', label: 'Releases' }],
+      [
+        'https://gitea.com/carol/tea/atom/branch/print-issue-label/',
+        { key: 'gitea:branch-commits', label: 'Branch commits' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [giteaHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

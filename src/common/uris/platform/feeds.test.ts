@@ -22,6 +22,9 @@ const feeds = definePlatformFeeds(
     { key: 'example:site-feed', template: '{scheme}://{host}/feed' },
     { key: 'example:channel', template: 'https://www.example.com/feed/{channel}' },
     { key: 'example:channel', template: 'https://{subdomain}.example.org/feed' },
+    { key: 'example:profile', template: 'https://www.example.com/-{username}/?rss' },
+    { key: 'example:member', template: 'https://www.example.com/members/{username}?rss=' },
+    { key: 'example:page', template: 'https://www.example.com/pages/{username}?rss&page={page}' },
     { key: 'example:handle', template: 'https://www.example.com/rss/@{username}' },
     { key: 'example:topic', template: 'https://www.example.com/topics/tag:{tag}/feed' },
   ],
@@ -126,6 +129,68 @@ describe('definePlatformFeeds', () => {
     expect(throwing).toThrow('No hosts for the example:blog feed')
   })
 
+  it('should accept an alias row below the canonical row of its key and format', () => {
+    const defining = () => {
+      return definePlatformFeeds([
+        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
+        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
+      ])
+    }
+
+    expect(defining).not.toThrow()
+  })
+
+  it('should throw for an alias row above the canonical row of its key', () => {
+    const throwing = () => {
+      return definePlatformFeeds([
+        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
+        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
+      ])
+    }
+
+    expect(throwing).toThrow('No canonical template above the example:posts alias')
+  })
+
+  it('should throw for an alias row whose key has a canonical row of another format only', () => {
+    const throwing = () => {
+      return definePlatformFeeds([
+        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
+        {
+          key: 'example:posts',
+          template: 'https://example.com/{username}/atom',
+          format: 'atom',
+          isAlias: true,
+        },
+      ])
+    }
+
+    expect(throwing).toThrow('No canonical template above the example:posts alias')
+  })
+
+  it('should accept an alias row below a canonical row of its key other than the first', () => {
+    const defining = () => {
+      return definePlatformFeeds([
+        { key: 'example:posts', template: 'https://feeds.example.com/{username}/{sort}.rss' },
+        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
+        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
+      ])
+    }
+
+    expect(defining).not.toThrow()
+  })
+
+  it('should throw for an alias row below another alias row only', () => {
+    const throwing = () => {
+      return definePlatformFeeds([
+        { key: 'example:other', template: 'https://feeds.example.com/{username}.rss' },
+        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
+        { key: 'example:posts', template: 'https://example.com/{username}.rss', isAlias: true },
+      ])
+    }
+
+    expect(throwing).toThrow('No canonical template above the example:posts alias')
+  })
+
   describe('getFeedUrl', () => {
     it('should write a path value into the template', () => {
       const value = feeds.getFeedUrl('example:posts', { username: 'alice' })
@@ -144,6 +209,27 @@ describe('definePlatformFeeds', () => {
     it('should write a query value through composeQuery', () => {
       const value = feeds.getFeedUrl('example:search', { username: 'alice' })
       const expected = 'https://feeds.example.com/rss.xml?type=item&q=by:alice%20sort:time'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should write a query flag with no value', () => {
+      const value = feeds.getFeedUrl('example:profile', { username: 'alice' })
+      const expected = 'https://www.example.com/-alice/?rss'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should write a query flag written with an empty value as a flag', () => {
+      const value = feeds.getFeedUrl('example:member', { username: 'alice' })
+      const expected = 'https://www.example.com/members/alice?rss'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should write a query flag beside a query value', () => {
+      const value = feeds.getFeedUrl('example:page', { username: 'alice', page: '2' })
+      const expected = 'https://www.example.com/pages/alice?rss&page=2'
 
       expect(value).toBe(expected)
     })
@@ -298,12 +384,61 @@ describe('definePlatformFeeds', () => {
       expect(hintFeeds.getFeedHint(value)).toEqual(expected)
     })
 
+    it('should return the hint of the key for a feed on an alias row', () => {
+      const aliasFeeds = definePlatformFeeds([
+        { key: 'youtube:videos', template: 'https://feeds.example.com/{username}.xml' },
+        { key: 'youtube:videos', template: 'https://example.com/{username}/rss', isAlias: true },
+      ])
+      const value = 'https://example.com/alice/rss'
+      const expected: DiscoverUriHint = { key: 'youtube:videos', label: 'Videos' }
+
+      expect(aliasFeeds.getFeedHint(value)).toEqual(expected)
+    })
+
     it('should return the key of a feed URL', () => {
       const value = 'https://www.example.com/alice/feed.rss'
       const expected = 'example:posts'
       const hint = feeds.getFeedHint(value)
 
       expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed named by a query flag', () => {
+      const value = 'https://www.example.com/-alice/?rss'
+      const expected = 'example:profile'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed named by a query flag with an empty value', () => {
+      const value = 'https://www.example.com/-alice/?rss='
+      const expected = 'example:profile'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed whose template writes the flag with an empty value', () => {
+      const value = 'https://www.example.com/members/alice?rss'
+      const expected = 'example:member'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed named by a query flag beside a query value', () => {
+      const value = 'https://www.example.com/pages/alice?page=2&rss='
+      const expected = 'example:page'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return undefined for a query flag with a value', () => {
+      const value = 'https://www.example.com/-alice/?rss=1'
+
+      expect(feeds.getFeedHint(value)).toBeUndefined()
     })
 
     it('should return the key of a feed with two values', () => {

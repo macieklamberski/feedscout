@@ -1,6 +1,6 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers officialColumns, organization, profile, tag (guess, html).
@@ -19,6 +19,23 @@ const tagRegex = /^\/tags\/([^/]+)/i
 const organizationRegex = /^\/organizations\/([^/]+)/i
 const popularItemsRegex = /^\/popular-items(\/|$)/i
 const officialColumnsRegex = /^\/official-columns(\/|$)/i
+
+// Qiita serves the user, tag and popular feeds at `/feed.atom` too. The literal rows read before
+// `/{username}/feed`, so a user named popular-items or official-columns reads as the site feed.
+const feeds = definePlatformFeeds([
+  { key: 'qiita:zine', template: 'https://qiita.com/official-columns/feed/', format: 'rss' },
+  { key: 'qiita:zine', template: 'https://qiita.com/official-columns/feed/atom/', format: 'atom' },
+  { key: 'qiita:popular', template: 'https://qiita.com/popular-items/feed' },
+  { key: 'qiita:popular', template: 'https://qiita.com/popular-items/feed.atom', isAlias: true },
+  {
+    key: 'qiita:organization',
+    template: 'https://qiita.com/organizations/{organization}/activities.atom',
+  },
+  { key: 'qiita:tag', template: 'https://qiita.com/tags/{tag}/feed' },
+  { key: 'qiita:tag', template: 'https://qiita.com/tags/{tag}/feed.atom', isAlias: true },
+  { key: 'qiita:posts', template: 'https://qiita.com/{username}/feed' },
+  { key: 'qiita:posts', template: 'https://qiita.com/{username}/feed.atom', isAlias: true },
+])
 
 export const parseQiitaUrl = (url: string): QiitaUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -71,46 +88,33 @@ export const qiitaHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'tag') {
-      return [
-        {
-          uri: `https://qiita.com/tags/${parsed.tag}/feed.atom`,
-          hint: composeHint('qiita:tag'),
-        },
-      ]
+      return [feeds.getFeedEntry('qiita:tag', { tag: parsed.tag })]
     }
 
     if (parsed.kind === 'organization') {
-      return [
-        {
-          uri: `https://qiita.com/organizations/${parsed.organization}/activities.atom`,
-          hint: composeHint('qiita:organization'),
-        },
-      ]
+      return [feeds.getFeedEntry('qiita:organization', { organization: parsed.organization })]
     }
 
     if (parsed.kind === 'popularItems') {
-      return [
-        {
-          uri: 'https://qiita.com/popular-items/feed.atom',
-          hint: composeHint('qiita:popular'),
-        },
-      ]
+      return [feeds.getFeedEntry('qiita:popular')]
     }
 
     if (parsed.kind === 'officialColumns') {
-      return [
-        {
-          uri: 'https://qiita.com/official-columns/feed/',
-          hint: composeHint('qiita:zine'),
-        },
-      ]
+      return [feeds.getFeedEntry('qiita:zine')]
     }
 
-    return [
-      {
-        uri: `https://qiita.com/${parsed.username}/feed.atom`,
-        hint: composeHint('qiita:posts'),
-      },
-    ]
+    return [feeds.getFeedEntry('qiita:posts', { username: parsed.username })]
+  },
+
+  // The table reads any first segment as a username, and a route word is none:
+  // qiita.com/tags/feed is the page of the tag feed.
+  getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
+
+    if (hint?.key === 'qiita:posts' && parseQiitaUrl(url)?.kind !== 'user') {
+      return
+    }
+
+    return hint
   },
 }

@@ -1,5 +1,6 @@
 import { encodePathSegment, isAnyOf, isPresent, parseUrl, resolveUrl } from 'trousse'
-import type { DiscoverUriHint } from '../../common/types.js'
+import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -26,13 +27,62 @@ export type RedminePage = (
   | { kind: 'project'; root: string; project: string; hasIssues: boolean; hasNews: boolean }
   | { kind: 'board'; root: string; project: string; boardId: string }
   | { kind: 'repository'; root: string; project: string; repository: string }
-) & { alternateHrefs: Array<string> }
+) & { alternateHrefs: Array<string>; project?: string }
 
 const poweredByRegex = /Powered by <a\s[^<>]*href="https?:\/\/www\.redmine\.org\/"/
 const projectClassRegex = /(?:^|\s)project-(\S+)/
 const repositoryRevisionsRegex = /\/repository\/([^/"?#]+)\/revisions\b/i
 const schemeRegex = /^https?:/
 const trailingSlashRegex = /\/$/
+// The issue list parameters that lay the list out or turn its filters on, so an issues feed
+// with only these holds the same issues. Any other one, such as query_id, filters it.
+const issueListParams = [
+  'sort',
+  'per_page',
+  'page',
+  'c',
+  'group_by',
+  't',
+  'utf8',
+  'set_filter',
+  'key',
+]
+
+// Planio hosts an install on a site subdomain of either domain. An install on its own domain is
+// known only by its marker, so its feeds are built here but not claimed.
+const domains = ['plan.io', 'planio.com']
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'redmine:project-news', template: '{root}/projects/{project}/news.atom' },
+    { key: 'redmine:news', template: '{root}/news.atom' },
+    {
+      key: 'redmine:project-activity',
+      template: '{root}/projects/{project}/activity.atom',
+    },
+    { key: 'redmine:activity', template: '{root}/activity.atom' },
+    { key: 'redmine:projects', template: '{root}/projects.atom' },
+    { key: 'redmine:project-issues', template: '{root}/projects/{project}/issues.atom' },
+    { key: 'redmine:issues', template: '{root}/issues.atom' },
+    { key: 'redmine:issue', template: '{root}/issues/{issueId}.atom' },
+    {
+      key: 'redmine:board',
+      template: '{root}/projects/{project}/boards/{boardId}.atom',
+    },
+    {
+      key: 'redmine:revisions',
+      template: '{root}/projects/{project}/repository/{repository}/revisions.atom',
+    },
+    // A repository's changes, also as of a revision with `?rev=`, and a project's forums are linked
+    // from pages the handler does not read, so these rows only claim.
+    {
+      key: 'redmine:changes',
+      template: '{root}/projects/{project}/repository/{repository}/changes.atom',
+    },
+    { key: 'redmine:boards', template: '{root}/projects/{project}/boards.atom' },
+  ],
+  { domains },
+)
 
 // The core layout prints the footer link, and Bitnami stacks swap it for their own, which
 // still keep the description meta.
@@ -205,67 +255,77 @@ export const redmineHandler: PlatformHandler = {
       return []
     }
 
-    const { root } = page
-    const scope = 'project' in page && page.project ? `${root}/projects/${page.project}` : root
-    const uris: Array<{ uri: string; hint: DiscoverUriHint }> = []
+    // An install under a sub-path such as /redmine keeps it in the root of every feed.
+    const params: PlatformFeedParams = { root: page.root, project: page.project }
+
+    const getFeedEntry = (key: string, values?: PlatformFeedParams): DiscoverUriEntry => {
+      const uri = feeds.getFeedUrl(key, { ...params, ...values })
+
+      return { uri: getAlternateSpelling(uri, page.alternateHrefs), hint: composeHint(key) }
+    }
+    // A page in a project gets the project's feed, and a page outside one the site's.
+    const getScopedFeedEntry = (key: string, projectKey: string): DiscoverUriEntry => {
+      return getFeedEntry(page.project ? projectKey : key)
+    }
 
     if (page.kind === 'home') {
-      uris.push(
-        { uri: `${root}/news.atom`, hint: composeHint('redmine:news') },
-        { uri: `${root}/activity.atom`, hint: composeHint('redmine:activity') },
-      )
+      return [getFeedEntry('redmine:news'), getFeedEntry('redmine:activity')]
     }
 
     if (page.kind === 'projects') {
-      uris.push({ uri: `${root}/projects.atom`, hint: composeHint('redmine:projects') })
+      return [getFeedEntry('redmine:projects')]
     }
 
     if (page.kind === 'issues') {
-      uris.push({ uri: `${scope}/issues.atom`, hint: composeHint('redmine:issues') })
+      return [getScopedFeedEntry('redmine:issues', 'redmine:project-issues')]
     }
 
     if (page.kind === 'issue') {
-      uris.push({ uri: `${root}/issues/${page.issueId}.atom`, hint: composeHint('redmine:issue') })
+      return [getFeedEntry('redmine:issue', { issueId: page.issueId })]
     }
 
     if (page.kind === 'news') {
-      uris.push({ uri: `${scope}/news.atom`, hint: composeHint('redmine:news') })
+      return [getScopedFeedEntry('redmine:news', 'redmine:project-news')]
     }
 
     if (page.kind === 'activity') {
-      uris.push({ uri: `${scope}/activity.atom`, hint: composeHint('redmine:activity') })
+      return [getScopedFeedEntry('redmine:activity', 'redmine:project-activity')]
     }
 
     if (page.kind === 'project') {
-      uris.push({ uri: `${scope}/activity.atom`, hint: composeHint('redmine:activity') })
-
-      if (page.hasIssues) {
-        uris.push({ uri: `${scope}/issues.atom`, hint: composeHint('redmine:issues') })
-      }
-
-      if (page.hasNews) {
-        uris.push({ uri: `${scope}/news.atom`, hint: composeHint('redmine:news') })
-      }
+      return [
+        getFeedEntry('redmine:project-activity'),
+        ...(page.hasIssues ? [getFeedEntry('redmine:project-issues')] : []),
+        ...(page.hasNews ? [getFeedEntry('redmine:project-news')] : []),
+      ]
     }
 
     if (page.kind === 'board') {
-      uris.push({
-        uri: `${scope}/boards/${page.boardId}.atom`,
-        hint: composeHint('redmine:board'),
-      })
+      return [getFeedEntry('redmine:board', { boardId: page.boardId })]
     }
 
-    if (page.kind === 'repository') {
-      uris.push({
-        uri: `${scope}/repository/${page.repository}/revisions.atom`,
-        hint: composeHint('redmine:revisions'),
-      })
+    return [getFeedEntry('redmine:revisions', { repository: page.repository })]
+  },
+
+  getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
+    const parsedUrl = parseUrl(url)
+
+    if (!hint || !parsedUrl || !isAnyOf(hint.key, ['redmine:issues', 'redmine:project-issues'])) {
+      return hint
     }
 
-    for (const entry of uris) {
-      entry.uri = getAlternateSpelling(entry.uri, page.alternateHrefs)
+    // A parameter name such as `f[]` or `op[status_id]` is read without its brackets.
+    const names = [...parsedUrl.searchParams.keys()].map((name) => name.split('[')[0])
+
+    if (names.every((name) => isAnyOf(name, issueListParams))) {
+      return hint
     }
 
-    return uris
+    if (hint.key === 'redmine:project-issues') {
+      return composeHint('redmine:project-filtered-issues')
+    }
+
+    return composeHint('redmine:filtered-issues')
   },
 }

@@ -1,12 +1,17 @@
 import { getPathSegments, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Unmeasured, bot wall.
 
 export type SmeBlogUrl = { kind: 'blog'; username: string } | { kind: 'home' }
 
 const hosts = ['blog.sme.sk']
+
+const feeds = definePlatformFeeds([
+  { key: 'sme-blog:site', template: 'https://blog.sme.sk/rss' },
+  { key: 'sme-blog:posts', template: 'https://blog.sme.sk/{username}/rss' },
+])
 
 export const parseSmeBlogUrl = (url: string): SmeBlogUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -34,12 +39,12 @@ export const smeBlogHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-
     if (parsed.kind === 'blog') {
-      return [{ uri: `${origin}/${parsed.username}/rss`, hint: composeHint('sme-blog:posts') }]
+      return [feeds.getFeedEntry('sme-blog:posts', { username: parsed.username })]
     }
 
-    return [{ uri: `${origin}/rss`, hint: composeHint('sme-blog:site') }]
+    return [feeds.getFeedEntry('sme-blog:site')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

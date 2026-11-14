@@ -1,11 +1,29 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type PodigeeUrl = { kind: 'podcast' }
 
 const domains = ['podigee.io']
+
+// The mp3 feed comes first, so resolve builds it. The aac, opus and vorbis feeds list the same
+// episodes in another encoding. A show's further feeds live under /feeds/{feed} and can list
+// fewer episodes than the main one. No page links them, so they are claimed and never built.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'podigee:podcast', template: '{scheme}://{host}/feed/mp3' },
+    { key: 'podigee:podcast', template: '{scheme}://{host}/feed/aac' },
+    { key: 'podigee:podcast', template: '{scheme}://{host}/feed/opus' },
+    { key: 'podigee:podcast', template: '{scheme}://{host}/feed/vorbis' },
+    { key: 'podigee:feed', template: '{scheme}://{host}/feeds/{feed}/mp3' },
+    { key: 'podigee:feed', template: '{scheme}://{host}/feeds/{feed}/aac' },
+    { key: 'podigee:feed', template: '{scheme}://{host}/feeds/{feed}/opus' },
+    { key: 'podigee:feed', template: '{scheme}://{host}/feeds/{feed}/vorbis' },
+  ],
+  { domains },
+)
 
 export const parsePodigeeUrl = (url: string): PodigeeUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -22,13 +40,14 @@ export const podigeeHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePodigeeUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
-
-    return [{ uri: `${origin}/feed/mp3`, hint: composeHint('podigee:podcast') }]
+    return [page.getFeedEntry('podigee:podcast')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

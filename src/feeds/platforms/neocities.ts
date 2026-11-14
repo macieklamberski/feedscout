@@ -1,6 +1,7 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, formatSuffixRegex, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -10,6 +11,10 @@ export type NeocitiesUrl = { kind: 'site'; username: string }
 const domains = ['neocities.org']
 const hosts = ['neocities.org', 'www.neocities.org']
 
+const feeds = definePlatformFeeds([
+  { key: 'neocities:updates', template: 'https://neocities.org/site/{username}.rss' },
+])
+
 export const parseNeocitiesUrl = (url: string): NeocitiesUrl | undefined => {
   const subdomain = getTenantSubdomain(url, domains)
 
@@ -17,8 +22,7 @@ export const parseNeocitiesUrl = (url: string): NeocitiesUrl | undefined => {
     return { kind: 'site', username: subdomain }
   }
 
-  const [route, segment] = getPathSegments(url)
-  const username = segment?.replace(formatSuffixRegex, '')
+  const [route, username] = getPathSegments(url)
 
   if (!isHostOf(url, hosts) || !isAnyOf(route, 'site') || !username) {
     return
@@ -39,11 +43,8 @@ export const neocitiesHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://neocities.org/site/${parsed.username}.rss`,
-        hint: composeHint('neocities:updates'),
-      },
-    ]
+    return [feeds.getFeedEntry('neocities:updates', { username: parsed.username })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

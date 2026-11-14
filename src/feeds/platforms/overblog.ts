@@ -1,23 +1,16 @@
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getBrandDomainRegex, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type OverblogUrl = { kind: 'blog' }
 
-const domains = [
-  'over-blog.com',
-  'over-blog.de',
-  'over-blog.es',
-  'over-blog.fr',
-  'over-blog.it',
-  'over-blog.net',
-  'over-blog.org',
-  'over.blog',
-  'overblog.com',
-  'overblog.fr',
-]
+const domains = [getBrandDomainRegex('over-blog'), getBrandDomainRegex('overblog'), 'over.blog']
+
+const feeds = definePlatformFeeds([{ key: 'overblog:posts', template: '{scheme}://{host}/rss' }], {
+  domains,
+})
 
 export const parseOverblogUrl = (url: string): OverblogUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -34,16 +27,14 @@ export const overblogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseOverblogUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
-
-    uris.push({ uri: `${origin}/rss`, hint: composeHint('overblog:posts') })
-
-    return uris
+    return [page.getFeedEntry('overblog:posts')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

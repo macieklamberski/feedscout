@@ -1,6 +1,7 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -12,6 +13,15 @@ export type PostypeUrl =
 
 const domains = ['postype.com']
 export const hosts = ['postype.com', 'www.postype.com']
+
+// A subdomain feed redirects to the channel feed on www.postype.com, and http to https.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'postype:posts', template: 'https://www.postype.com/@{channel}/rss' },
+    { key: 'postype:posts', template: '{scheme}://{host}/rss', isAlias: true },
+  ],
+  { domains },
+)
 
 export const parsePostypeUrl = (url: string): PostypeUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -56,15 +66,18 @@ export const postypeHandler: PlatformHandler = {
       return []
     }
 
-    if (parsed.kind === 'channel' || parsed.kind === 'post') {
-      return [
-        {
-          uri: `https://www.postype.com/@${parsed.channel}/rss`,
-          hint: composeHint('postype:posts'),
-        },
-      ]
+    if (parsed.kind === 'subdomain') {
+      const page = feeds.forUrl(url)
+
+      if (!page) {
+        return []
+      }
+
+      return [page.getFeedEntry('postype:posts')]
     }
 
-    return [{ uri: `${new URL(url).origin}/rss`, hint: composeHint('postype:posts') }]
+    return [feeds.getFeedEntry('postype:posts', { channel: parsed.channel })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   getMailchimpPage,
   type MailchimpPage,
@@ -190,6 +193,77 @@ describe('mailchimpHandler', () => {
 
     it('should return an empty array without both ids', () => {
       expect(mailchimpHandler.resolve('https://us17.campaign-archive.com/?u=abc123')).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the archive key for an archive feed', () => {
+      const value =
+        'https://us17.campaign-archive.com/feed?u=0123456789abcdef012345678&id=0123456789'
+      const expected: DiscoverUriHint = { key: 'mailchimp:archive', label: 'Archive' }
+
+      expect(mailchimpHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the archive key for an archive feed with the list id first', () => {
+      const value =
+        'https://us4.campaign-archive.com/feed?id=fedcba9876&u=fedcba9876543210fedcba987'
+      const expected: DiscoverUriHint = { key: 'mailchimp:archive', label: 'Archive' }
+
+      expect(mailchimpHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the archive key for an archive feed over http', () => {
+      const value =
+        'http://us17.campaign-archive.com/feed?u=abcdef0123456789abcdef012&id=abcdef0123'
+      const expected: DiscoverUriHint = { key: 'mailchimp:archive', label: 'Archive' }
+
+      expect(mailchimpHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for an archive page', () => {
+      const value =
+        'https://us17.campaign-archive.com/home/?u=0123456789abcdef012345678&id=0123456789'
+
+      expect(mailchimpHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a campaign page', () => {
+      const value = 'https://us17.campaign-archive.com/?u=0123456789abcdef012345678&id=0123456789'
+
+      expect(mailchimpHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed without the list id', () => {
+      const value = 'https://us17.campaign-archive.com/feed?u=0123456789abcdef012345678'
+
+      expect(mailchimpHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/feed?u=0123456789abcdef012345678&id=0123456789'
+
+      expect(mailchimpHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const hint: DiscoverUriHint = { key: 'mailchimp:archive', label: 'Archive' }
+    const ownFeeds: Array<string> = [
+      'https://us17.campaign-archive.com/feed?u=0123456789abcdef012345678&id=0123456789',
+      'https://us17.campaign-archive.com/feed?u=abcdef0123456789abcdef012&id=abcdef0123',
+      'https://us4.campaign-archive.com/feed?id=fedcba9876&u=fedcba9876543210fedcba987',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [mailchimpHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

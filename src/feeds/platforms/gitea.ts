@@ -15,15 +15,21 @@ export type GiteaPage = GiteaUrl & { root: string }
 const hosts = ['codeberg.org', 'www.codeberg.org', 'gitea.com', 'www.gitea.com']
 
 const giteaCookieRegex = /(?:^|[;,\s])[\w-]*gitea=/
-// Gitea reserves these suffixes for routes of a user, such as /{user}.rss, so no username ends
-// with one.
+// suffixes: Gitea's own user routes, such as /{user}.rss, so no username ends with one
 const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png|rss)$/i
+// suffixes: Gitea's own user and repo feeds, which Gitea also reserves on repo names
+const activityFeedRegex = /.\.(?:atom|rss)$/i
 // Gitea prints the window config as JSON, `"appSubUrl":"/gitea"`, and Forgejo as a script
 // object with escaped slashes, `appSubUrl: '\/gitea'`.
 const subUrlRegex = /appSubUrl["']?\s*:\s*["']([^"']*)["']/
 const escapedSlashRegex = /\\\//g
 
 const branchViews = ['src', 'commits']
+const branchFeedRoutes = ['atom', 'rss']
+const repoFeeds = [
+  { files: ['releases.atom', 'releases.rss'], key: 'gitea:releases' },
+  { files: ['tags.atom', 'tags.rss'], key: 'gitea:tags' },
+]
 
 export const isGiteaHeaders = (headers: Headers): boolean => {
   return giteaCookieRegex.test(headers.get('set-cookie') ?? '')
@@ -143,5 +149,39 @@ export const giteaHandler: PlatformHandler = {
     }
 
     return feeds
+  },
+
+  // Only Codeberg and gitea.com are claimed: a self-hosted instance is known by its session cookie,
+  // which a feed URL does not carry.
+  getFeedHint: (url) => {
+    if (!isHostOf(url, hosts)) {
+      return
+    }
+
+    const [ownerOrFeed, repoOrFeed, section, refType, ...refPath] = getPathSegments(url)
+
+    // A user feed, /{owner}.atom, or a repo feed, /{owner}/{repo}.atom.
+    if (!section) {
+      if (activityFeedRegex.test(repoOrFeed ?? ownerOrFeed ?? '')) {
+        return composeHint('gitea:activity')
+      }
+
+      return
+    }
+
+    if (!refType) {
+      const repoFeed = repoFeeds.find(({ files }) => isAnyOf(section, files))
+
+      if (!repoFeed) {
+        return
+      }
+
+      return composeHint(repoFeed.key)
+    }
+
+    // A slashed branch, such as v11.0/forgejo, gets the file history label, as in resolve.
+    if (isAnyOf(section, branchFeedRoutes) && isAnyOf(refType, 'branch') && refPath.length > 0) {
+      return composeHint(refPath.length > 1 ? 'gitea:file-history' : 'gitea:branch-commits')
+    }
   },
 }

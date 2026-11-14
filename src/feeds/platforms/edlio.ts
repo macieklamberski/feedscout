@@ -1,20 +1,36 @@
-import { composeQuery } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers news (guess, html).
 // Handler needed for: class, home.
 
+const domains = ['edlio.com']
 const listPackPath = '/apps/js/common/list-pack.js'
 
 const newsFeedHrefRegex = /^\/apps\/news\/rss\?categoryid=(\d+)$/i
 const classPathRegex = /^\/apps\/classes\/(\d+)(?:\/|$)/i
 const classFeedHrefRegex = /^\/apps\/classes\/assignment_rss\.jsp\?classREC_ID=(\d+)$/i
 
-export type EdlioPage =
-  | { kind: 'site'; origin: string; categoryId?: string }
-  | { kind: 'class'; origin: string; classId: string }
+// A school on its own domain is known only by its marker, so its feeds are built here but claimed
+// only on an edlio.com school.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'edlio:news', template: '{scheme}://{host}/apps/news/rss' },
+    {
+      key: 'edlio:news-category',
+      template: '{scheme}://{host}/apps/news/rss?categoryid={categoryId}',
+    },
+    {
+      key: 'edlio:assignments',
+      template: '{scheme}://{host}/apps/classes/assignment_rss.jsp?classREC_ID={classId}',
+    },
+  ],
+  { domains },
+)
+
+export type EdlioPage = { kind: 'site'; categoryId?: string } | { kind: 'class'; classId: string }
 
 export const isEdlioHtml = (content: string): boolean => {
   const script = findElement(content, (element) => {
@@ -24,19 +40,19 @@ export const isEdlioHtml = (content: string): boolean => {
   return script !== undefined
 }
 
-// The news page links its category's feed, which serves what the feed without a category serves,
-// so the category id is read from that link. A made-up `categoryid` answers 200 with an HTML page.
+// The news page links its category's feed, which serves only that category's news, so the
+// category id is read from that link. A made-up `categoryid` answers 200 with an HTML page.
 // A class page links its assignment feed by an anchor only, and the id is taken from the page url
 // only when the page links that class's feed.
 const getEdlioPage = (url: string, content: string | undefined): EdlioPage => {
-  const { origin, pathname } = new URL(url)
+  const { pathname } = new URL(url)
   const classLink = findElement(content, (element) => {
     return element.name === 'a' && classFeedHrefRegex.test(element.attribs.href ?? '')
   })
   const classId = classLink?.attribs.href?.match(classFeedHrefRegex)?.[1]
 
   if (classId && pathname.match(classPathRegex)?.[1] === classId) {
-    return { kind: 'class', origin, classId }
+    return { kind: 'class', classId }
   }
 
   const newsLink = findElement(content, (element) => {
@@ -44,7 +60,7 @@ const getEdlioPage = (url: string, content: string | undefined): EdlioPage => {
   })
   const categoryId = newsLink?.attribs.href?.match(newsFeedHrefRegex)?.[1]
 
-  return { kind: 'site', origin, categoryId }
+  return { kind: 'site', categoryId }
 }
 
 export const edlioHandler: PlatformHandler = {
@@ -54,22 +70,22 @@ export const edlioHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getEdlioPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
+
+    if (!pageFeeds) {
+      return []
+    }
 
     if (page.kind === 'class') {
-      const query = composeQuery({ classREC_ID: page.classId })
-      const feedUrl = `${page.origin}/apps/classes/assignment_rss.jsp${query}`
-
-      return [{ uri: feedUrl, hint: composeHint('edlio:assignments') }]
+      return [pageFeeds.getFeedEntry('edlio:assignments', { classId: page.classId })]
     }
-
-    const feedUrl = `${page.origin}/apps/news/rss`
 
     if (!page.categoryId) {
-      return [{ uri: feedUrl, hint: composeHint('edlio:news') }]
+      return [pageFeeds.getFeedEntry('edlio:news')]
     }
 
-    const query = composeQuery({ categoryid: page.categoryId })
-
-    return [{ uri: `${feedUrl}${query}`, hint: composeHint('edlio:news') }]
+    return [pageFeeds.getFeedEntry('edlio:news-category', { categoryId: page.categoryId })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

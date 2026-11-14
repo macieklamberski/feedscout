@@ -6,6 +6,12 @@ describe('githubGistHandler', () => {
     it('should match a user page', () => {
       expect(githubGistHandler.match('https://gist.github.com/octocat')).toBe(true)
     })
+
+    it('should not match the discover feed URL', () => {
+      const value = 'https://gist.github.com/discover.atom'
+
+      expect(githubGistHandler.match(value)).toBe(false)
+    })
   })
 
   describe('resolve', () => {
@@ -19,6 +25,13 @@ describe('githubGistHandler', () => {
       const expected = [{ uri: 'https://github.com/octocat.png' }]
 
       expect(githubGistHandler.resolve('https://gist.github.com/octocat/starred')).toEqual(expected)
+    })
+
+    it('should resolve user avatar from a user feed URL', () => {
+      const value = 'https://gist.github.com/alice.atom'
+      const expected = [{ uri: 'https://github.com/alice.png' }]
+
+      expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
   })
 })
