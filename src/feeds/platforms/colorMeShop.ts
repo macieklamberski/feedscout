@@ -59,8 +59,7 @@ export const colorMeShopHandler: PlatformHandler = {
     ]
   },
 
-  // The table reads a numbered host such as img15, and `www.{shop}`, as a shop, so the page parser
-  // refuses them first.
+  // The table reads a numbered host such as img15 as a shop, so the page parser refuses it first.
   getFeedHint: (url) => {
     if (!parseColorMeShopUrl(url)) {
       return
