@@ -1698,7 +1698,7 @@ Discovers the Atom feed of a Svbtle blog. Detected by the `Svbtle.com` generator
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{host}/…` | Posts (Atom) |
+| `{host}` | Posts (Atom) |
 
 > [!NOTE]
 > `svbtle.com` itself is excluded: its `/feed` answers 200 with an HTML discovery page, and the `svbtle.com/{user}/feed` form does not exist.
