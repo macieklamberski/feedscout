@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -23,6 +23,13 @@ const profilePaths = [
   'index',
   'table',
 ]
+
+// `/editorial/feed/rss` reads before `/{username}/feed/rss`, so it reads as the editorial feed.
+const feeds = definePlatformFeeds([
+  { key: 'arena:editorial', template: 'https://www.are.na/editorial/feed/rss' },
+  { key: 'arena:profile', template: 'https://www.are.na/{username}/feed/rss' },
+  { key: 'arena:channel', template: 'https://www.are.na/{username}/{channel}/feed/rss' },
+])
 
 export const parseArenaUrl = (url: string): ArenaUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -60,28 +67,17 @@ export const arenaHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'editorial') {
-      return [
-        {
-          uri: 'https://www.are.na/editorial/feed/rss',
-          hint: composeHint('arena:editorial'),
-        },
-      ]
+      return [feeds.getFeedEntry('arena:editorial')]
     }
 
     if (parsed.kind === 'channel') {
-      return [
-        {
-          uri: `https://www.are.na/${parsed.username}/${parsed.channel}/feed/rss`,
-          hint: composeHint('arena:channel'),
-        },
-      ]
+      const params = { username: parsed.username, channel: parsed.channel }
+
+      return [feeds.getFeedEntry('arena:channel', params)]
     }
 
-    return [
-      {
-        uri: `https://www.are.na/${parsed.username}/feed/rss`,
-        hint: composeHint('arena:profile'),
-      },
-    ]
+    return [feeds.getFeedEntry('arena:profile', { username: parsed.username })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
