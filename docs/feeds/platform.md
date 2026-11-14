@@ -3300,7 +3300,7 @@ Discovers the feeds of a company newsroom on `{newsroom}.newswire.com`. The news
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{newsroom}.newswire.com/browse/beat/{beat}` | Beat<sup>†</sup> at `/browse/rss/beat/{beat}` · newsroom at `/browse/rss` (RSS) |
-| `{newsroom}.newswire.com/browse/pr`, `/browse/news`, `/browse/social` | Press releases, news<sup>†</sup> or social<sup>†</sup> wire at `/browse/rss/{type}` · newsroom at `/browse/rss` (RSS) |
+| `{newsroom}.newswire.com/browse/pr`, `/browse/news`, `/browse/social`, `/browse/image`, `/browse/video`, `/browse/audio`, `/browse/event` | Press releases, news<sup>†</sup>, social<sup>†</sup> wire, images, videos, audio or events at `/browse/rss/{type}` · newsroom at `/browse/rss` (RSS) |
 | `{newsroom}.newswire.com`, any other page | Newsroom at `/browse/rss` (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*

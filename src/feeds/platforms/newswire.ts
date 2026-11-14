@@ -1,7 +1,7 @@
 import { getAnyOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers newsroom (guess, html), partly covers beat, contentType.
@@ -18,7 +18,24 @@ const domains = ['newswire.com']
 const beatPathRegex = /^\/browse\/beat\/([a-z0-9-]+)\/?$/i
 const contentTypePathRegex = /^\/browse\/([^/]+)\/?$/i
 
-const contentTypes = ['news', 'pr', 'social'] as const
+const contentTypes = ['news', 'pr', 'social', 'image', 'video', 'audio', 'event'] as const
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'newswire:beat', template: '{scheme}://{host}/browse/rss/beat/{beat}' },
+    { key: 'newswire:news', template: '{scheme}://{host}/browse/rss/news' },
+    { key: 'newswire:press-releases', template: '{scheme}://{host}/browse/rss/pr' },
+    { key: 'newswire:social', template: '{scheme}://{host}/browse/rss/social' },
+    { key: 'newswire:images', template: '{scheme}://{host}/browse/rss/image' },
+    { key: 'newswire:videos', template: '{scheme}://{host}/browse/rss/video' },
+    { key: 'newswire:audio', template: '{scheme}://{host}/browse/rss/audio' },
+    { key: 'newswire:events', template: '{scheme}://{host}/browse/rss/event' },
+    // The social posts from one network, which no newsroom page names.
+    { key: 'newswire:social-network', template: '{scheme}://{host}/browse/rss/social/{network}' },
+    { key: 'newswire:newsroom', template: '{scheme}://{host}/browse/rss' },
+  ],
+  { domains },
+)
 
 export const parseNewswireUrl = (url: string): NewswireUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
@@ -50,36 +67,50 @@ export const newswireHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseNewswireUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
-
     // A made-up beat redirects to the newsroom's /browse page, which validation drops.
     if (parsed.kind === 'beat') {
-      uris.push({
-        uri: `${origin}/browse/rss/beat/${parsed.beat}`,
-        hint: composeHint('newswire:beat'),
-      })
+      return [
+        page.getFeedEntry('newswire:beat', { beat: parsed.beat }),
+        page.getFeedEntry('newswire:newsroom'),
+      ]
     }
 
     if (parsed.kind === 'contentType' && parsed.contentType === 'news') {
-      uris.push({ uri: `${origin}/browse/rss/news`, hint: composeHint('newswire:news') })
+      return [page.getFeedEntry('newswire:news'), page.getFeedEntry('newswire:newsroom')]
     }
 
     if (parsed.kind === 'contentType' && parsed.contentType === 'pr') {
-      uris.push({ uri: `${origin}/browse/rss/pr`, hint: composeHint('newswire:press-releases') })
+      return [page.getFeedEntry('newswire:press-releases'), page.getFeedEntry('newswire:newsroom')]
     }
 
     if (parsed.kind === 'contentType' && parsed.contentType === 'social') {
-      uris.push({ uri: `${origin}/browse/rss/social`, hint: composeHint('newswire:social') })
+      return [page.getFeedEntry('newswire:social'), page.getFeedEntry('newswire:newsroom')]
     }
 
-    uris.push({ uri: `${origin}/browse/rss`, hint: composeHint('newswire:newsroom') })
+    if (parsed.kind === 'contentType' && parsed.contentType === 'image') {
+      return [page.getFeedEntry('newswire:images'), page.getFeedEntry('newswire:newsroom')]
+    }
 
-    return uris
+    if (parsed.kind === 'contentType' && parsed.contentType === 'video') {
+      return [page.getFeedEntry('newswire:videos'), page.getFeedEntry('newswire:newsroom')]
+    }
+
+    if (parsed.kind === 'contentType' && parsed.contentType === 'audio') {
+      return [page.getFeedEntry('newswire:audio'), page.getFeedEntry('newswire:newsroom')]
+    }
+
+    if (parsed.kind === 'contentType' && parsed.contentType === 'event') {
+      return [page.getFeedEntry('newswire:events'), page.getFeedEntry('newswire:newsroom')]
+    }
+
+    return [page.getFeedEntry('newswire:newsroom')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
