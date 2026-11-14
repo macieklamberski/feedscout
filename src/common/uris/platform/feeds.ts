@@ -60,13 +60,21 @@ export type PlatformFeedTable = {
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
   ) => DiscoverUriEntry | undefined
+  getFeedSpellings: (
+    key: string,
+    params?: PlatformFeedParams,
+    format?: DiscoverUriHint['format'],
+  ) => DiscoverUriEntry | undefined
   getFeedHint: (url: string) => DiscoverUriHint | undefined
-  forUrl: (url: string) => Pick<PlatformFeedTable, 'getFeedUrl' | 'getFeedEntry'> | undefined
+  forUrl: (
+    url: string,
+  ) => Pick<PlatformFeedTable, 'getFeedUrl' | 'getFeedEntry' | 'getFeedSpellings'> | undefined
 }
 
 type CompiledTemplate = {
   key: string
   format?: DiscoverUriHint['format']
+  isAlias?: boolean
   queryCount: number
   // The host and path a URL the template claims matches, as given and with an optional `www`.
   asGivenRegex: RegExp
@@ -197,7 +205,7 @@ const toRegexSource = (
 
 // A template as two functions: whether a URL is this feed, and the feed URL for a page's values.
 const compileTemplate = (
-  { key, format, template }: PlatformFeedTemplate,
+  { key, format, template, isAlias }: PlatformFeedTemplate,
   options: PlatformFeedTableOptions,
 ): CompiledTemplate => {
   const isRootTemplate = template.startsWith(rootPlaceholder)
@@ -334,6 +342,7 @@ const compileTemplate = (
   return {
     key,
     format,
+    isAlias,
     queryCount: query.length,
     asGivenRegex,
     optionalWwwRegex,
@@ -344,7 +353,8 @@ const compileTemplate = (
 }
 
 // One table of a handler's feed URLs, keyed by hint key. `getFeedUrl` writes a feed from the values
-// a page gave, `getFeedEntry` adds its hint, and `getFeedHint` reads a URL back to the feed's hint.
+// a page gave, `getFeedEntry` adds its hint, `getFeedSpellings` lists every spelling of the feed
+// under one hint, and `getFeedHint` reads a URL back to the feed's hint.
 export const definePlatformFeeds = (
   templates: Array<PlatformFeedTemplate>,
   options: PlatformFeedTableOptions = {},
@@ -371,7 +381,10 @@ export const definePlatformFeeds = (
   const asGivenRegex = joinRegexes(compiled.map((candidate) => candidate.asGivenRegex))
   const optionalWwwRegex = joinRegexes(compiled.map((candidate) => candidate.optionalWwwRegex))
 
-  const getFeedUrl: PlatformFeedTable['getFeedUrl'] = (key, params, format) => {
+  const getCandidates = (
+    key: string,
+    format: DiscoverUriHint['format'] | undefined,
+  ): Array<CompiledTemplate> => {
     const candidates = compiled.filter((candidate) => {
       return candidate.key === key && (format === undefined || candidate.format === format)
     })
@@ -380,8 +393,12 @@ export const definePlatformFeeds = (
       throw new Error(t(locales.errors.missingFeedTemplate, { key }))
     }
 
+    return candidates
+  }
+
+  const getFeedUrl: PlatformFeedTable['getFeedUrl'] = (key, params, format) => {
     // A key with several shapes builds the first one whose placeholders the values fill.
-    for (const candidate of candidates) {
+    for (const candidate of getCandidates(key, format)) {
       const feedUrl = candidate.getUrl(params)
 
       if (feedUrl) {
@@ -398,6 +415,44 @@ export const definePlatformFeeds = (
     }
 
     return { uri, hint: composeHint(key, format) }
+  }
+
+  // The row `getFeedUrl` builds, then every alias row of its feed below it that the values fill.
+  const getFeedSpellings: PlatformFeedTable['getFeedSpellings'] = (key, params, format) => {
+    const uris: Array<string> = []
+    let first: CompiledTemplate | undefined
+
+    for (const candidate of getCandidates(key, format)) {
+      if (first && candidate.format !== first.format) {
+        continue
+      }
+
+      // The next canonical row of the same format is another feed.
+      if (first && !candidate.isAlias) {
+        break
+      }
+
+      const uri = candidate.getUrl(params)
+
+      if (!uri) {
+        continue
+      }
+
+      if (!first) {
+        first = candidate
+      }
+
+      uris.push(uri)
+    }
+
+    if (uris.length === 0) {
+      return
+    }
+
+    return {
+      uri: uris.length === 1 ? uris[0] : uris,
+      hint: composeHint(key, format),
+    }
   }
 
   const getFeedHint: PlatformFeedTable['getFeedHint'] = (url) => {
@@ -456,8 +511,11 @@ export const definePlatformFeeds = (
     return {
       getFeedUrl: (key, params, format) => getFeedUrl(key, withUrlParams(params), format),
       getFeedEntry: (key, params, format) => getFeedEntry(key, withUrlParams(params), format),
+      getFeedSpellings: (key, params, format) => {
+        return getFeedSpellings(key, withUrlParams(params), format)
+      },
     }
   }
 
-  return { getFeedUrl, getFeedEntry, getFeedHint, forUrl }
+  return { getFeedUrl, getFeedEntry, getFeedSpellings, getFeedHint, forUrl }
 }

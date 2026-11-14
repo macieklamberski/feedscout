@@ -3818,9 +3818,21 @@ const feeds = definePlatformFeeds([
 ])
 ```
 
+A platform whose sites answer under different spellings of one feed, as one site serves `/feed/` and another only `?feed=rss`, needs every spelling tried in turn. `getFeedSpellings` takes the same arguments as `getFeedEntry` and returns one entry whose `uri` lists the row `getFeedEntry` builds, then every alias row of that feed the values fill, in table order. Discovery tries them in order until one is a feed. The list stops at the next canonical row of the key and format, so it never mixes two feeds. With one spelling filled, `uri` is a string, as from `getFeedEntry`.
+
+```typescript
+const feeds = definePlatformFeeds([
+  { key: 'example:posts', template: '{root}/feed/' },
+  { key: 'example:posts', template: '{root}/?feed=rss', isAlias: true },
+])
+
+// { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'], hint }
+feeds.getFeedSpellings('example:posts', { root: 'https://example.com' })
+```
+
 `getFeedHint` ignores a leading `www` on a fixed host, so `www.example.com/rss` reads as an `example.com/rss` row. A tenant host with `www` in front matches no row, and neither does `www` as a tenant. On a platform where `www` can be a tenant, set `isWwwTenant: true`: a row is then tried on the host as given first, so `www.example.com/rss` reads as the tenant `www` on a `{username}.example.com/rss` row, and the host without `www` only when no row matches. On a platform where `www.alice.example.com` serves the same feeds as `alice.example.com`, set `isWwwTenantPrefix: true`: the `www` in front of a tenant label is then dropped, so `www.alice.example.com/rss` reads as the tenant `alice`. `www.example.com/rss` still reads as no tenant unless `isWwwTenant` is set too.
 
-`forUrl(url)` returns the same `getFeedUrl` and `getFeedEntry` with `{scheme}`, `{host}` and `{root}` filled from the page URL, `{root}` with its origin, and `{domain}` with the entry of `domains` its host is under, so a handler passes only the values the URL cannot give. A value the handler passes wins, so a handler that reads a base path from the page passes `root` with it. A value left `undefined` counts as no value: it never replaces a value from the page, and a key with several rows builds the first one whose placeholders all have a value, so `{ slug, id }` with no `id` builds the row without `{id}`. When no row of the key has a value for every placeholder, `getFeedUrl` and `getFeedEntry` return `undefined`, and the Platform method skips an `undefined` item `resolve` returns. It returns `undefined` for a URL that is not an http URL.
+`forUrl(url)` returns the same `getFeedUrl`, `getFeedEntry` and `getFeedSpellings` with `{scheme}`, `{host}` and `{root}` filled from the page URL, `{root}` with its origin, and `{domain}` with the entry of `domains` its host is under, so a handler passes only the values the URL cannot give. A value the handler passes wins, so a handler that reads a base path from the page passes `root` with it. A value left `undefined` counts as no value: it never replaces a value from the page, and a key with several rows builds the first one whose placeholders all have a value, so `{ slug, id }` with no `id` builds the row without `{id}`. When no row of the key has a value for every placeholder, `getFeedUrl` and `getFeedEntry` return `undefined`, and the Platform method skips an `undefined` item `resolve` returns. It returns `undefined` for a URL that is not an http URL.
 
 ```typescript
 import { definePlatformFeeds, type PlatformHandler } from 'feedscout/platform'

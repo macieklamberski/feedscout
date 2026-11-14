@@ -376,6 +376,143 @@ describe('definePlatformFeeds', () => {
     })
   })
 
+  describe('getFeedSpellings', () => {
+    const spellingFeeds = definePlatformFeeds([
+      { key: 'wordpress:posts', template: '{root}/feed/' },
+      { key: 'wordpress:posts', template: '{root}/?feed=rss', isAlias: true },
+      { key: 'wordpress:posts', template: '{root}/feed/rss2/', isAlias: true },
+      { key: 'wordpress:posts', template: '{root}/?feed=rss2', isAlias: true },
+      { key: 'wordpress:posts', template: '{root}/feed/atom/', format: 'atom' },
+      { key: 'wordpress:posts', template: '{root}/?feed=atom', format: 'atom', isAlias: true },
+      { key: 'xenforo:forum', template: '{root}/forums/{forum}/index.rss' },
+      { key: 'xenforo:forum', template: '{root}/f/{forum}/index.rss', isAlias: true },
+      { key: 'xenforo:forum', template: '{root}/forums/index.rss' },
+      { key: 'xenforo:forum', template: '{root}/f/index.rss', isAlias: true },
+      { key: 'typecho:posts', template: '{root}/feed/{id}/' },
+      { key: 'typecho:posts', template: '{root}/index.php/feed/', isAlias: true },
+      { key: 'typecho:posts', template: '{root}/index.php/feed/{id}/', isAlias: true },
+      { key: 'typecho:page', template: '{root}/feed/{path*}/' },
+    ])
+
+    it('should return the canonical row and its alias rows in table order', () => {
+      const value = { root: 'https://example.com' }
+      const expected: DiscoverUriEntry = {
+        uri: [
+          'https://example.com/feed/',
+          'https://example.com/?feed=rss',
+          'https://example.com/feed/rss2/',
+          'https://example.com/?feed=rss2',
+        ],
+        hint: { key: 'wordpress:posts', label: 'Posts' },
+      }
+
+      expect(spellingFeeds.getFeedSpellings('wordpress:posts', value)).toEqual(expected)
+    })
+
+    it('should return the rows of the format with the format in its hint', () => {
+      const value = { root: 'https://example.com' }
+      const expected: DiscoverUriEntry = {
+        uri: ['https://example.com/feed/atom/', 'https://example.com/?feed=atom'],
+        hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
+      }
+
+      expect(spellingFeeds.getFeedSpellings('wordpress:posts', value, 'atom')).toEqual(expected)
+    })
+
+    it('should keep an alias row below a canonical row of another format', () => {
+      const formatFeeds = definePlatformFeeds([
+        { key: 'wordpress:posts', template: '{root}/feed/' },
+        { key: 'wordpress:posts', template: '{root}/feed/atom/', format: 'atom' },
+        { key: 'wordpress:posts', template: '{root}/?feed=rss2', isAlias: true },
+      ])
+      const value = { root: 'https://example.com' }
+      const expected: DiscoverUriEntry = {
+        uri: ['https://example.com/feed/', 'https://example.com/?feed=rss2'],
+        hint: { key: 'wordpress:posts', label: 'Posts' },
+      }
+
+      expect(formatFeeds.getFeedSpellings('wordpress:posts', value)).toEqual(expected)
+    })
+
+    it('should stop at the next canonical row of the key', () => {
+      const value = {
+        root: 'https://example.com',
+        forum: 'news.2',
+      }
+      const expected: DiscoverUriEntry = {
+        uri: [
+          'https://example.com/forums/news.2/index.rss',
+          'https://example.com/f/news.2/index.rss',
+        ],
+        hint: { key: 'xenforo:forum', label: 'Forum' },
+      }
+
+      expect(spellingFeeds.getFeedSpellings('xenforo:forum', value)).toEqual(expected)
+    })
+
+    it('should return the next feed when the values fill no row of the first', () => {
+      const value = { root: 'https://example.com' }
+      const expected: DiscoverUriEntry = {
+        uri: ['https://example.com/forums/index.rss', 'https://example.com/f/index.rss'],
+        hint: { key: 'xenforo:forum', label: 'Forum' },
+      }
+
+      expect(spellingFeeds.getFeedSpellings('xenforo:forum', value)).toEqual(expected)
+    })
+
+    it('should start at an alias row when the values fill no canonical row', () => {
+      const value = { root: 'https://example.com' }
+      const expected: DiscoverUriEntry = {
+        uri: 'https://example.com/index.php/feed/',
+        hint: { key: 'typecho:posts', label: 'Posts' },
+      }
+
+      expect(spellingFeeds.getFeedSpellings('typecho:posts', value)).toEqual(expected)
+    })
+
+    it('should list every alias row the values fill', () => {
+      const value = {
+        root: 'https://example.com',
+        id: '13',
+      }
+      const expected: DiscoverUriEntry = {
+        uri: [
+          'https://example.com/feed/13/',
+          'https://example.com/index.php/feed/',
+          'https://example.com/index.php/feed/13/',
+        ],
+        hint: { key: 'typecho:posts', label: 'Posts' },
+      }
+
+      expect(spellingFeeds.getFeedSpellings('typecho:posts', value)).toEqual(expected)
+    })
+
+    it('should return one spelling as a string', () => {
+      const value = {
+        root: 'https://example.com',
+        path: 'archives/13',
+      }
+      const expected: DiscoverUriEntry = {
+        uri: 'https://example.com/feed/archives/13/',
+        hint: { key: 'typecho:page', label: 'Page' },
+      }
+
+      expect(spellingFeeds.getFeedSpellings('typecho:page', value)).toEqual(expected)
+    })
+
+    it('should return undefined when the values fill no row of the key', () => {
+      const value = { root: 'https://example.com' }
+
+      expect(spellingFeeds.getFeedSpellings('typecho:page', value)).toBeUndefined()
+    })
+
+    it('should throw for an unknown key', () => {
+      const throwing = () => spellingFeeds.getFeedSpellings('example:unknown')
+
+      expect(throwing).toThrow('No feed template for example:unknown')
+    })
+  })
+
   describe('getFeedHint', () => {
     it('should return the hint of a feed whose row names a format', () => {
       const value = 'https://example.com/alice/products.rdf'
@@ -1181,6 +1318,21 @@ describe('definePlatformFeeds', () => {
       const pageFeeds = siteFeeds.forUrl(value)
 
       expect(pageFeeds?.getFeedEntry('ocnk:products')).toEqual(expected)
+    })
+
+    it('should return every spelling of the feed with its hint', () => {
+      const spellingFeeds = definePlatformFeeds([
+        { key: 'typecho:posts', template: '{root}/feed/' },
+        { key: 'typecho:posts', template: '{root}/index.php/feed/', isAlias: true },
+      ])
+      const value = 'https://example.com/archives/13/'
+      const expected: DiscoverUriEntry = {
+        uri: ['https://example.com/feed/', 'https://example.com/index.php/feed/'],
+        hint: { key: 'typecho:posts', label: 'Posts' },
+      }
+      const pageFeeds = spellingFeeds.forUrl(value)
+
+      expect(pageFeeds?.getFeedSpellings('typecho:posts')).toEqual(expected)
     })
 
     it('should fill the root with the origin of the page', () => {
