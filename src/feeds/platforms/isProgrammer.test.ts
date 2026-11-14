@@ -100,7 +100,7 @@ describe('isProgrammerHandler', () => {
       const value = 'http://alice.is-programmer.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://alice.is-programmer.com/posts.rss',
+          uri: 'http://alice.is-programmer.com/feed',
           hint: { key: 'is-programmer:posts', label: 'Posts' },
         },
         {
@@ -124,7 +124,7 @@ describe('isProgrammerHandler', () => {
       const value = 'https://alice.is-programmer.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://alice.is-programmer.com/posts.rss',
+          uri: 'http://alice.is-programmer.com/feed',
           hint: { key: 'is-programmer:posts', label: 'Posts' },
         },
         {
@@ -152,7 +152,7 @@ describe('isProgrammerHandler', () => {
           hint: { key: 'is-programmer:post-comments', label: 'Post comments' },
         },
         {
-          uri: 'http://alice.is-programmer.com/posts.rss',
+          uri: 'http://alice.is-programmer.com/feed',
           hint: { key: 'is-programmer:posts', label: 'Posts' },
         },
         {
