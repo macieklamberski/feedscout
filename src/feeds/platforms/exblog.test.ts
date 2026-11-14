@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { ExblogUrl } from './exblog.js'
 import { exblogHandler, parseExblogUrl } from './exblog.js'
 
@@ -113,8 +115,141 @@ describe('exblogHandler', () => {
       expect(exblogHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep the scheme of an HTTP blog page', () => {
+      const value = 'http://example.exblog.jp/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.exblog.jp/index.xml',
+          hint: { key: 'exblog:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'http://example.exblog.jp/atom.xml',
+          hint: { key: 'exblog:posts', label: 'Posts', format: 'atom' },
+        },
+      ]
+
+      expect(exblogHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for the portal', () => {
       expect(exblogHandler.resolve('https://www.exblog.jp/')).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the posts hint for an RSS feed', () => {
+      const value = 'https://example.exblog.jp/index.xml'
+      const expected: DiscoverUriHint = { key: 'exblog:posts', label: 'Posts', format: 'rss' }
+
+      expect(exblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for an Atom feed', () => {
+      const value = 'https://example.exblog.jp/atom.xml'
+      const expected: DiscoverUriHint = { key: 'exblog:posts', label: 'Posts', format: 'atom' }
+
+      expect(exblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for an RSS feed over HTTP', () => {
+      const value = 'http://example.exblog.jp/index.xml'
+      const expected: DiscoverUriHint = { key: 'exblog:posts', label: 'Posts', format: 'rss' }
+
+      expect(exblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the category hint for an RSS category feed', () => {
+      const value = 'https://example.exblog.jp/i12/index.xml'
+      const expected: DiscoverUriHint = { key: 'exblog:category', label: 'Category', format: 'rss' }
+
+      expect(exblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the category hint for an Atom category feed', () => {
+      const value = 'https://example.exblog.jp/i12/atom.xml'
+      const expected: DiscoverUriHint = {
+        key: 'exblog:category',
+        label: 'Category',
+        format: 'atom',
+      }
+
+      expect(exblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a category feed whose id runs into letters', () => {
+      const value = 'https://example.exblog.jp/i12x/index.xml'
+
+      expect(exblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a category page', () => {
+      const value = 'https://example.exblog.jp/i12/'
+
+      expect(exblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a post page', () => {
+      const value = 'https://example.exblog.jp/30123456/'
+
+      expect(exblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the portal', () => {
+      const value = 'https://www.exblog.jp/index.xml'
+
+      expect(exblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.example.exblog.jp/index.xml'
+
+      expect(exblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/index.xml'
+
+      expect(exblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.exblog.jp/index.xml',
+        { key: 'exblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://example.exblog.jp/atom.xml',
+        { key: 'exblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'http://example.exblog.jp/index.xml',
+        { key: 'exblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://example.exblog.jp/i12/index.xml',
+        { key: 'exblog:category', label: 'Category', format: 'rss' },
+      ],
+      [
+        'https://example.exblog.jp/i12/atom.xml',
+        { key: 'exblog:category', label: 'Category', format: 'atom' },
+      ],
+      [
+        'http://example.exblog.jp/i12/atom.xml',
+        { key: 'exblog:category', label: 'Category', format: 'atom' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [exblogHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

@@ -1,7 +1,7 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -12,6 +12,24 @@ export type ExblogUrl =
 const domains = ['exblog.jp']
 
 const categoryRegex = /^\/i(\d+)(?:\/|$)/i
+
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'exblog:category',
+      template: '{scheme}://{host}/i{category}/index.xml',
+      format: 'rss',
+    },
+    {
+      key: 'exblog:category',
+      template: '{scheme}://{host}/i{category}/atom.xml',
+      format: 'atom',
+    },
+    { key: 'exblog:posts', template: '{scheme}://{host}/index.xml', format: 'rss' },
+    { key: 'exblog:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
+  ],
+  { domains },
+)
 
 export const parseExblogUrl = (url: string): ExblogUrl | undefined => {
   const blog = getTenantSubdomain(url, domains)
@@ -35,30 +53,39 @@ export const exblogHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
     const parsed = parseExblogUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     // Category page: /i{N}.
     if (parsed.kind === 'category') {
-      uris.push({
-        uri: `${origin}/i${parsed.category}/index.xml`,
-        hint: composeHint('exblog:category', 'rss'),
-      })
-      uris.push({
-        uri: `${origin}/i${parsed.category}/atom.xml`,
-        hint: composeHint('exblog:category', 'atom'),
-      })
+      const params = { category: parsed.category }
+
+      return [
+        page.getFeedEntry('exblog:category', params, 'rss'),
+        page.getFeedEntry('exblog:category', params, 'atom'),
+        page.getFeedEntry('exblog:posts', {}, 'rss'),
+        page.getFeedEntry('exblog:posts', {}, 'atom'),
+      ]
     }
 
-    uris.push({ uri: `${origin}/index.xml`, hint: composeHint('exblog:posts', 'rss') })
-    uris.push({ uri: `${origin}/atom.xml`, hint: composeHint('exblog:posts', 'atom') })
+    return [
+      page.getFeedEntry('exblog:posts', {}, 'rss'),
+      page.getFeedEntry('exblog:posts', {}, 'atom'),
+    ]
+  },
 
-    return uris
+  getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
+
+    // The table reads any segment after `i`, while a category id is digits only.
+    if (hint?.key === 'exblog:category' && parseExblogUrl(url)?.kind !== 'category') {
+      return
+    }
+
+    return hint
   },
 }
