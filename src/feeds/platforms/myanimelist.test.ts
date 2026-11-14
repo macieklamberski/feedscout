@@ -4,55 +4,55 @@ import { myanimelistHandler, parseMyanimelistUrl } from './myanimelist.js'
 
 describe('parseMyanimelistUrl', () => {
   it('should return the profile for a profile page', () => {
-    const expected: MyanimelistUrl = { kind: 'profile', username: 'Xinil' }
+    const expected: MyanimelistUrl = { kind: 'profile', username: 'Bob' }
 
-    expect(parseMyanimelistUrl('https://myanimelist.net/profile/Xinil')).toEqual(expected)
+    expect(parseMyanimelistUrl('https://myanimelist.net/profile/Bob')).toEqual(expected)
   })
 
   it('should return the profile for a profile page with a trailing slash', () => {
-    const expected: MyanimelistUrl = { kind: 'profile', username: 'Xinil' }
+    const expected: MyanimelistUrl = { kind: 'profile', username: 'Bob' }
 
-    expect(parseMyanimelistUrl('https://myanimelist.net/profile/Xinil/')).toEqual(expected)
+    expect(parseMyanimelistUrl('https://myanimelist.net/profile/Bob/')).toEqual(expected)
   })
 
   it('should return the user for an anime list page', () => {
-    const value = 'https://myanimelist.net/animelist/Xinil'
-    const expected: MyanimelistUrl = { kind: 'user', username: 'Xinil' }
+    const value = 'https://myanimelist.net/animelist/Bob'
+    const expected: MyanimelistUrl = { kind: 'user', username: 'Bob' }
 
     expect(parseMyanimelistUrl(value)).toEqual(expected)
   })
 
   it('should return the user for a manga list page', () => {
-    const value = 'https://myanimelist.net/mangalist/Xinil'
-    const expected: MyanimelistUrl = { kind: 'user', username: 'Xinil' }
+    const value = 'https://myanimelist.net/mangalist/Bob'
+    const expected: MyanimelistUrl = { kind: 'user', username: 'Bob' }
 
     expect(parseMyanimelistUrl(value)).toEqual(expected)
   })
 
   it('should return the user for a history page', () => {
-    const expected: MyanimelistUrl = { kind: 'user', username: 'Xinil' }
+    const expected: MyanimelistUrl = { kind: 'user', username: 'Bob' }
 
-    expect(parseMyanimelistUrl('https://myanimelist.net/history/Xinil')).toEqual(expected)
+    expect(parseMyanimelistUrl('https://myanimelist.net/history/Bob')).toEqual(expected)
   })
 
   it('should return the user for a page below the profile', () => {
-    const value = 'https://myanimelist.net/profile/Xinil/reviews'
-    const expected: MyanimelistUrl = { kind: 'user', username: 'Xinil' }
+    const value = 'https://myanimelist.net/profile/Bob/reviews'
+    const expected: MyanimelistUrl = { kind: 'user', username: 'Bob' }
 
     expect(parseMyanimelistUrl(value)).toEqual(expected)
   })
 
   it('should return the user for the www host', () => {
-    const value = 'https://www.myanimelist.net/animelist/Xinil'
-    const expected: MyanimelistUrl = { kind: 'user', username: 'Xinil' }
+    const value = 'https://www.myanimelist.net/animelist/Bob'
+    const expected: MyanimelistUrl = { kind: 'user', username: 'Bob' }
 
     expect(parseMyanimelistUrl(value)).toEqual(expected)
   })
 
   it('should return the profile for a capitalized section', () => {
-    const expected: MyanimelistUrl = { kind: 'profile', username: 'Xinil' }
+    const expected: MyanimelistUrl = { kind: 'profile', username: 'Bob' }
 
-    expect(parseMyanimelistUrl('https://myanimelist.net/Profile/Xinil')).toEqual(expected)
+    expect(parseMyanimelistUrl('https://myanimelist.net/Profile/Bob')).toEqual(expected)
   })
 
   it('should return the news page', () => {
@@ -81,7 +81,7 @@ describe('parseMyanimelistUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseMyanimelistUrl('https://example.com/profile/Xinil')).toBeUndefined()
+    expect(parseMyanimelistUrl('https://example.com/profile/Bob')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -92,7 +92,7 @@ describe('parseMyanimelistUrl', () => {
 describe('myanimelistHandler', () => {
   describe('match', () => {
     it('should match a myanimelist.net URL', () => {
-      expect(myanimelistHandler.match('https://myanimelist.net/profile/Xinil')).toBe(true)
+      expect(myanimelistHandler.match('https://myanimelist.net/profile/Bob')).toBe(true)
     })
 
     it('should not match another host', () => {
@@ -158,26 +158,26 @@ describe('myanimelistHandler', () => {
     })
 
     it('should return all five feeds for /profile/{user}', () => {
-      const value = 'https://myanimelist.net/profile/Xinil'
+      const value = 'https://myanimelist.net/profile/Bob'
       const expected = [
         {
-          uri: 'https://myanimelist.net/rss.php?type=rw&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rw&u=Bob',
           hint: { key: 'myanimelist:anime', label: 'Anime list' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=rm&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rm&u=Bob',
           hint: { key: 'myanimelist:manga', label: 'Manga list' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=rwe&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rwe&u=Bob',
           hint: { key: 'myanimelist:recently-watched', label: 'Recently watched' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=rrm&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rrm&u=Bob',
           hint: { key: 'myanimelist:recently-read', label: 'Recently read' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=blog&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=blog&u=Bob',
           hint: { key: 'myanimelist:blog', label: 'Blog' },
         },
       ]
@@ -186,26 +186,26 @@ describe('myanimelistHandler', () => {
     })
 
     it('should return feeds for /animelist/{user}', () => {
-      const value = 'https://myanimelist.net/animelist/Xinil'
+      const value = 'https://myanimelist.net/animelist/Bob'
       const expected = [
         {
-          uri: 'https://myanimelist.net/rss.php?type=rw&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rw&u=Bob',
           hint: { key: 'myanimelist:anime', label: 'Anime list' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=rm&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rm&u=Bob',
           hint: { key: 'myanimelist:manga', label: 'Manga list' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=rwe&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rwe&u=Bob',
           hint: { key: 'myanimelist:recently-watched', label: 'Recently watched' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=rrm&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rrm&u=Bob',
           hint: { key: 'myanimelist:recently-read', label: 'Recently read' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=blog&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=blog&u=Bob',
           hint: { key: 'myanimelist:blog', label: 'Blog' },
         },
       ]
@@ -214,26 +214,26 @@ describe('myanimelistHandler', () => {
     })
 
     it('should return feeds for /mangalist/{user}', () => {
-      const value = 'https://myanimelist.net/mangalist/Xinil'
+      const value = 'https://myanimelist.net/mangalist/Bob'
       const expected = [
         {
-          uri: 'https://myanimelist.net/rss.php?type=rw&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rw&u=Bob',
           hint: { key: 'myanimelist:anime', label: 'Anime list' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=rm&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rm&u=Bob',
           hint: { key: 'myanimelist:manga', label: 'Manga list' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=rwe&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rwe&u=Bob',
           hint: { key: 'myanimelist:recently-watched', label: 'Recently watched' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=rrm&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rrm&u=Bob',
           hint: { key: 'myanimelist:recently-read', label: 'Recently read' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=blog&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=blog&u=Bob',
           hint: { key: 'myanimelist:blog', label: 'Blog' },
         },
       ]
@@ -242,26 +242,26 @@ describe('myanimelistHandler', () => {
     })
 
     it('should return feeds for /history/{user}', () => {
-      const value = 'https://myanimelist.net/history/Xinil'
+      const value = 'https://myanimelist.net/history/Bob'
       const expected = [
         {
-          uri: 'https://myanimelist.net/rss.php?type=rw&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rw&u=Bob',
           hint: { key: 'myanimelist:anime', label: 'Anime list' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=rm&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rm&u=Bob',
           hint: { key: 'myanimelist:manga', label: 'Manga list' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=rwe&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rwe&u=Bob',
           hint: { key: 'myanimelist:recently-watched', label: 'Recently watched' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=rrm&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rrm&u=Bob',
           hint: { key: 'myanimelist:recently-read', label: 'Recently read' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=blog&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=blog&u=Bob',
           hint: { key: 'myanimelist:blog', label: 'Blog' },
         },
       ]

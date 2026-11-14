@@ -32,7 +32,7 @@ describe('parseProducthuntUrl', () => {
     'https://www.producthunt.com/topics', // the topics index
     'https://www.producthunt.com/topics/productivity/launches', // a topic subpage
     'https://www.producthunt.com/categories/tech', // a category page
-    'https://www.producthunt.com/@rrhoover', // a user page
+    'https://www.producthunt.com/@alice', // a user page
   ]
 
   it.each(homePages)('should return the home page for %s', (value) => {

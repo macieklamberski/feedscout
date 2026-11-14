@@ -9,15 +9,15 @@ describe('redcircleHandler', () => {
     const values: Array<[boolean, string, string | undefined]> = [
       [true, `https://redcircle.com/shows/${showUuid}`, undefined],
       [true, `https://www.redcircle.com/shows/${showUuid}/ep/0af0d3c2`, undefined],
-      [true, 'https://redcircle.com/shows/japanese-with-shun', content],
-      [false, 'https://redcircle.com/shows/japanese-with-shun', undefined],
-      [false, 'https://redcircle.com/shows/japanese-with-shun', '<html></html>'],
+      [true, 'https://redcircle.com/shows/japanese-with-alice', content],
+      [false, 'https://redcircle.com/shows/japanese-with-alice', undefined],
+      [false, 'https://redcircle.com/shows/japanese-with-alice', '<html></html>'],
       [
         false,
-        'https://redcircle.com/shows/japanese-with-shun',
+        'https://redcircle.com/shows/japanese-with-alice',
         '<meta property="og:url" content="/">',
       ],
-      [false, 'https://redcircle.com/showsx/japanese-with-shun', content],
+      [false, 'https://redcircle.com/showsx/japanese-with-alice', content],
       [false, 'https://redcircle.com/', content],
       [false, `https://example.com/shows/${showUuid}`, undefined],
       [false, 'not-a-url', undefined],
@@ -43,14 +43,14 @@ describe('redcircleHandler', () => {
     })
 
     it('should return show feed from og:url on slug episode page', () => {
-      const value = 'https://redcircle.com/shows/japanese-with-shun/ep/0af0d3c2'
+      const value = 'https://redcircle.com/shows/japanese-with-alice/ep/0af0d3c2'
       const episodeContent = `<meta property="og:url" content="https://www.redcircle.com/shows/${showUuid}/ep/0af0d3c2"/>`
 
       expect(redcircleHandler.resolve(value, episodeContent)).toEqual(expected)
     })
 
     it('should return empty array for slug page without content', () => {
-      const value = 'https://redcircle.com/shows/japanese-with-shun'
+      const value = 'https://redcircle.com/shows/japanese-with-alice'
 
       expect(redcircleHandler.resolve(value)).toEqual([])
     })

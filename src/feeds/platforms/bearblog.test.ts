@@ -12,13 +12,13 @@ describe('parseBearblogUrl', () => {
   it('should return the blog for a subdomain', () => {
     const expected: BearblogUrl = { kind: 'blog', tag: undefined }
 
-    expect(parseBearblogUrl('https://herman.bearblog.dev/')).toEqual(expected)
+    expect(parseBearblogUrl('https://bob.bearblog.dev/')).toEqual(expected)
   })
 
   it('should return the blog with its tag for a tag filter', () => {
     const expected: BearblogUrl = { kind: 'blog', tag: 'python' }
 
-    expect(parseBearblogUrl('https://herman.bearblog.dev/blog/?q=python')).toEqual(expected)
+    expect(parseBearblogUrl('https://bob.bearblog.dev/blog/?q=python')).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {

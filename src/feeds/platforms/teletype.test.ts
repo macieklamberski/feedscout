@@ -5,21 +5,21 @@ import { parseTeletypeUrl, teletypeHandler } from './teletype.js'
 
 describe('parseTeletypeUrl', () => {
   it('should return the username for a blog page', () => {
-    const expected: TeletypeUrl = { kind: 'blog', username: 'durov' }
+    const expected: TeletypeUrl = { kind: 'blog', username: 'alice' }
 
-    expect(parseTeletypeUrl('https://teletype.in/@durov')).toEqual(expected)
+    expect(parseTeletypeUrl('https://teletype.in/@alice')).toEqual(expected)
   })
 
   it('should return the username for a post page', () => {
-    const expected: TeletypeUrl = { kind: 'blog', username: 'durov' }
+    const expected: TeletypeUrl = { kind: 'blog', username: 'alice' }
 
-    expect(parseTeletypeUrl('https://teletype.in/@durov/BJiAh0PhG')).toEqual(expected)
+    expect(parseTeletypeUrl('https://teletype.in/@alice/BJiAh0PhG')).toEqual(expected)
   })
 
   it('should decode an encoded username', () => {
-    const expected: TeletypeUrl = { kind: 'blog', username: 'дуров' }
+    const expected: TeletypeUrl = { kind: 'blog', username: 'алиса' }
 
-    expect(parseTeletypeUrl('https://teletype.in/@%D0%B4%D1%83%D1%80%D0%BE%D0%B2')).toEqual(
+    expect(parseTeletypeUrl('https://teletype.in/@%D0%B0%D0%BB%D0%B8%D1%81%D0%B0')).toEqual(
       expected,
     )
   })
@@ -31,7 +31,7 @@ describe('parseTeletypeUrl', () => {
   it('should return undefined for paths without @ prefix', () => {
     expect(parseTeletypeUrl('https://teletype.in/')).toBeUndefined()
     expect(parseTeletypeUrl('https://teletype.in/about')).toBeUndefined()
-    expect(parseTeletypeUrl('https://teletype.in/rss/durov')).toBeUndefined()
+    expect(parseTeletypeUrl('https://teletype.in/rss/alice')).toBeUndefined()
   })
 
   it('should return undefined for an empty username', () => {
@@ -43,7 +43,7 @@ describe('parseTeletypeUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseTeletypeUrl('https://example.com/@durov')).toBeUndefined()
+    expect(parseTeletypeUrl('https://example.com/@alice')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -54,7 +54,7 @@ describe('parseTeletypeUrl', () => {
 describe('teletypeHandler', () => {
   describe('match', () => {
     it('should match a blog page', () => {
-      expect(teletypeHandler.match('https://teletype.in/@durov')).toBe(true)
+      expect(teletypeHandler.match('https://teletype.in/@alice')).toBe(true)
     })
 
     it('should not match the home page', () => {
@@ -64,14 +64,14 @@ describe('teletypeHandler', () => {
 
   describe('resolve', () => {
     it('should return the RSS and Atom feeds for a blog', () => {
-      const value = 'https://teletype.in/@durov'
+      const value = 'https://teletype.in/@alice'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://teletype.in/rss/durov',
+          uri: 'https://teletype.in/rss/alice',
           hint: { key: 'teletype:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://teletype.in/atom/durov',
+          uri: 'https://teletype.in/atom/alice',
           hint: { key: 'teletype:posts', label: 'Posts', format: 'atom' },
         },
       ]
@@ -80,14 +80,14 @@ describe('teletypeHandler', () => {
     })
 
     it('should write a non-ASCII username as is', () => {
-      const value = 'https://teletype.in/@%D0%B4%D1%83%D1%80%D0%BE%D0%B2'
+      const value = 'https://teletype.in/@%D0%B0%D0%BB%D0%B8%D1%81%D0%B0'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://teletype.in/rss/дуров',
+          uri: 'https://teletype.in/rss/алиса',
           hint: { key: 'teletype:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://teletype.in/atom/дуров',
+          uri: 'https://teletype.in/atom/алиса',
           hint: { key: 'teletype:posts', label: 'Posts', format: 'atom' },
         },
       ]

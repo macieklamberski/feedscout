@@ -46,10 +46,10 @@ describe('kickstarterHandler', () => {
     })
 
     it('should return atom feed for project page', () => {
-      const value = 'https://www.kickstarter.com/projects/reinnesplace/reinnes-place'
+      const value = 'https://www.kickstarter.com/projects/alicesplace/alices-place'
       const expected = [
         {
-          uri: 'https://www.kickstarter.com/projects/reinnesplace/reinnes-place/posts.atom',
+          uri: 'https://www.kickstarter.com/projects/alicesplace/alices-place/posts.atom',
           hint: { key: 'kickstarter:updates', label: 'Updates' },
         },
       ]
@@ -58,10 +58,10 @@ describe('kickstarterHandler', () => {
     })
 
     it('should return atom feed for project page with a capitalized projects segment', () => {
-      const value = 'https://www.kickstarter.com/Projects/reinnesplace/reinnes-place'
+      const value = 'https://www.kickstarter.com/Projects/alicesplace/alices-place'
       const expected = [
         {
-          uri: 'https://www.kickstarter.com/projects/reinnesplace/reinnes-place/posts.atom',
+          uri: 'https://www.kickstarter.com/projects/alicesplace/alices-place/posts.atom',
           hint: { key: 'kickstarter:updates', label: 'Updates' },
         },
       ]
@@ -70,10 +70,10 @@ describe('kickstarterHandler', () => {
     })
 
     it('should return atom feed for project subpage', () => {
-      const value = 'https://www.kickstarter.com/projects/reinnesplace/reinnes-place/description'
+      const value = 'https://www.kickstarter.com/projects/alicesplace/alices-place/description'
       const expected = [
         {
-          uri: 'https://www.kickstarter.com/projects/reinnesplace/reinnes-place/posts.atom',
+          uri: 'https://www.kickstarter.com/projects/alicesplace/alices-place/posts.atom',
           hint: { key: 'kickstarter:updates', label: 'Updates' },
         },
       ]

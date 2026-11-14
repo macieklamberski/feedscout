@@ -42,20 +42,20 @@ describe('parseWebnodeUrl', () => {
   it('should return the section for a top-level page', () => {
     const expected: WebnodeUrl = { kind: 'section', section: 'quienes-somos-' }
 
-    expect(parseWebnodeUrl('https://crcesteslu.webnode.es/quienes-somos-/')).toEqual(expected)
+    expect(parseWebnodeUrl('https://dave.webnode.es/quienes-somos-/')).toEqual(expected)
   })
 
   it('should return the last segment for a nested page', () => {
     const expected: WebnodeUrl = { kind: 'section', section: 'associate' }
 
-    expect(parseWebnodeUrl('https://vietnam-concierge.webnode.vn/our-team/associate/')).toEqual(
+    expect(parseWebnodeUrl('https://grace-concierge.webnode.vn/our-team/associate/')).toEqual(
       expected,
     )
   })
 
   it('should return the site for a percent-encoded slug', () => {
     const value =
-      'https://paravakkottai.webnode.page/%e0%ae%95%e0%ae%9f%e0%af%8d%e0%ae%9f%e0%af%81%e0%ae%b0%e0%af%88/'
+      'https://bob.webnode.page/%e0%ae%95%e0%ae%9f%e0%af%8d%e0%ae%9f%e0%af%81%e0%ae%b0%e0%af%88/'
     const expected: WebnodeUrl = { kind: 'site' }
 
     expect(parseWebnodeUrl(value)).toEqual(expected)
@@ -64,13 +64,13 @@ describe('parseWebnodeUrl', () => {
   it('should return the site for the built-in sitemap page', () => {
     const expected: WebnodeUrl = { kind: 'site' }
 
-    expect(parseWebnodeUrl('https://diacom.webnode.cz/sitemap/')).toEqual(expected)
+    expect(parseWebnodeUrl('https://erin.webnode.cz/sitemap/')).toEqual(expected)
   })
 
   it('should return the section for a nested page named sitemap', () => {
     const expected: WebnodeUrl = { kind: 'section', section: 'sitemap' }
 
-    expect(parseWebnodeUrl('https://diacom.webnode.cz/about/sitemap/')).toEqual(expected)
+    expect(parseWebnodeUrl('https://erin.webnode.cz/about/sitemap/')).toEqual(expected)
   })
 
   it('should return the site for the home page', () => {
@@ -82,7 +82,7 @@ describe('parseWebnodeUrl', () => {
   it('should return the site for an article', () => {
     const expected: WebnodeUrl = { kind: 'site' }
 
-    expect(parseWebnodeUrl('https://hurbanovohasici.webnode.sk/news/hasic/')).toEqual(expected)
+    expect(parseWebnodeUrl('https://frank.webnode.sk/news/hasic/')).toEqual(expected)
   })
 
   it('should return the site for a product', () => {
@@ -94,7 +94,7 @@ describe('parseWebnodeUrl', () => {
   it('should return the site for an article archive', () => {
     const expected: WebnodeUrl = { kind: 'site' }
 
-    expect(parseWebnodeUrl('https://kurt-knispel.webnode.cz/archive/news/')).toEqual(expected)
+    expect(parseWebnodeUrl('https://alice-smith.webnode.cz/archive/news/')).toEqual(expected)
   })
 })
 
@@ -105,7 +105,7 @@ describe('webnodeHandler', () => {
     })
 
     it('should not match a Webnode 2 page', () => {
-      const value = 'https://davaronline.webnode.page/'
+      const value = 'https://carol.webnode.page/'
       const headers = new Headers({ server: 'webnode' })
 
       expect(webnodeHandler.match(value, webnode2Html, headers)).toBe(false)
@@ -114,14 +114,14 @@ describe('webnodeHandler', () => {
 
   describe('resolve', () => {
     it('should return the section feed and the site feed on a section page', () => {
-      const value = 'https://paravakkottai.webnode.page/blog/'
+      const value = 'https://bob.webnode.page/blog/'
       const expected = [
         {
-          uri: 'https://paravakkottai.webnode.page/rss/blog.xml',
+          uri: 'https://bob.webnode.page/rss/blog.xml',
           hint: { key: 'webnode:section', label: 'Section articles' },
         },
         {
-          uri: 'https://paravakkottai.webnode.page/rss/all.xml',
+          uri: 'https://bob.webnode.page/rss/all.xml',
           hint: { key: 'webnode:articles', label: 'All articles' },
         },
       ]

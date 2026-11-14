@@ -27,7 +27,7 @@ describe('parseSubstackUrl', () => {
   })
 
   it('should return undefined for a username with a dot', () => {
-    expect(parseSubstackUrl('https://substack.com/@platformer.old')).toBeUndefined()
+    expect(parseSubstackUrl('https://substack.com/@carol.old')).toBeUndefined()
   })
 
   it('should return undefined for an apex page without a profile path', () => {

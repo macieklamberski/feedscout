@@ -70,13 +70,13 @@ describe('parseZenfolioUrl', () => {
   it('should return the site for a zenfolio.com subdomain', () => {
     const expected: ZenfolioUrl = { kind: 'site' }
 
-    expect(parseZenfolioUrl('https://ctcphotography.zenfolio.com/')).toEqual(expected)
+    expect(parseZenfolioUrl('https://bobphotography.zenfolio.com/')).toEqual(expected)
   })
 
   it('should return the site for a custom domain page', () => {
     const expected: ZenfolioUrl = { kind: 'site' }
 
-    expect(parseZenfolioUrl('https://www.jennypodesta.com/p411800779')).toEqual(expected)
+    expect(parseZenfolioUrl('https://www.alicephoto.example/p411800779')).toEqual(expected)
   })
 
   it('should return undefined for the zenfolio.com apex', () => {
@@ -99,50 +99,50 @@ describe('parseZenfolioUrl', () => {
 describe('zenfolioHandler', () => {
   describe('match', () => {
     it('should match a zenfolio.com subdomain without content', () => {
-      expect(zenfolioHandler.match('https://ctcphotography.zenfolio.com/')).toBe(true)
+      expect(zenfolioHandler.match('https://bobphotography.zenfolio.com/')).toBe(true)
     })
 
     it('should match a custom domain by its stylesheet', () => {
-      expect(zenfolioHandler.match('https://www.jennypodesta.com/', zenfolioHtml)).toBe(true)
+      expect(zenfolioHandler.match('https://www.alicephoto.example/', zenfolioHtml)).toBe(true)
     })
 
     it('should match a custom domain by its visitor cookie', () => {
-      const value = 'https://www.jennypodesta.com/'
+      const value = 'https://www.alicephoto.example/'
 
       expect(zenfolioHandler.match(value, '<html></html>', zenfolioHeaders)).toBe(true)
     })
 
     it('should not match a custom domain without a marker', () => {
-      expect(zenfolioHandler.match('https://www.jennypodesta.com/', '<html></html>')).toBe(false)
+      expect(zenfolioHandler.match('https://www.alicephoto.example/', '<html></html>')).toBe(false)
     })
   })
 
   describe('resolve', () => {
     it('should return the site feeds from the origin', () => {
-      const value = 'https://www.jennypodesta.com/p411800779'
+      const value = 'https://www.alicephoto.example/p411800779'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://www.jennypodesta.com/recent.rss',
+          uri: 'https://www.alicephoto.example/recent.rss',
           hint: { key: 'zenfolio:recent', label: 'Recent galleries', format: 'rss' },
         },
         {
-          uri: 'https://www.jennypodesta.com/recent.atom',
+          uri: 'https://www.alicephoto.example/recent.atom',
           hint: { key: 'zenfolio:recent', label: 'Recent galleries', format: 'atom' },
         },
         {
-          uri: 'https://www.jennypodesta.com/featured.rss',
+          uri: 'https://www.alicephoto.example/featured.rss',
           hint: { key: 'zenfolio:featured', label: 'Featured galleries', format: 'rss' },
         },
         {
-          uri: 'https://www.jennypodesta.com/featured.atom',
+          uri: 'https://www.alicephoto.example/featured.atom',
           hint: { key: 'zenfolio:featured', label: 'Featured galleries', format: 'atom' },
         },
         {
-          uri: 'https://www.jennypodesta.com/blog.rss',
+          uri: 'https://www.alicephoto.example/blog.rss',
           hint: { key: 'zenfolio:blog', label: 'Blog', format: 'rss' },
         },
         {
-          uri: 'https://www.jennypodesta.com/blog.atom',
+          uri: 'https://www.alicephoto.example/blog.atom',
           hint: { key: 'zenfolio:blog', label: 'Blog', format: 'atom' },
         },
       ]

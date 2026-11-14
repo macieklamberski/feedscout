@@ -4,33 +4,33 @@ import { type AcomicsUrl, acomicsHandler, parseAcomicsUrl } from './acomics.js'
 
 describe('parseAcomicsUrl', () => {
   it('should return the comic for a comic page', () => {
-    const expected: AcomicsUrl = { kind: 'comic', comic: 'Oglaf' }
+    const expected: AcomicsUrl = { kind: 'comic', comic: 'Bobcomic' }
 
-    expect(parseAcomicsUrl('https://acomics.ru/~Oglaf')).toEqual(expected)
+    expect(parseAcomicsUrl('https://acomics.ru/~Bobcomic')).toEqual(expected)
   })
 
   it('should return the comic for an issue page', () => {
-    const expected: AcomicsUrl = { kind: 'comic', comic: 'erma' }
+    const expected: AcomicsUrl = { kind: 'comic', comic: 'carolcomic' }
 
-    expect(parseAcomicsUrl('https://acomics.ru/~erma/819')).toEqual(expected)
+    expect(parseAcomicsUrl('https://acomics.ru/~carolcomic/819')).toEqual(expected)
   })
 
   it('should return the user for a profile page', () => {
-    const expected: AcomicsUrl = { kind: 'user', username: 'Lilim' }
+    const expected: AcomicsUrl = { kind: 'user', username: 'Alicecomic' }
 
-    expect(parseAcomicsUrl('https://acomics.ru/-Lilim')).toEqual(expected)
+    expect(parseAcomicsUrl('https://acomics.ru/-Alicecomic')).toEqual(expected)
   })
 
   it('should return the user for a subscriptions page', () => {
-    const expected: AcomicsUrl = { kind: 'user', username: 'Lilim' }
+    const expected: AcomicsUrl = { kind: 'user', username: 'Alicecomic' }
 
-    expect(parseAcomicsUrl('https://acomics.ru/-Lilim/list2')).toEqual(expected)
+    expect(parseAcomicsUrl('https://acomics.ru/-Alicecomic/list2')).toEqual(expected)
   })
 
   it('should return the comic on the www host', () => {
-    const expected: AcomicsUrl = { kind: 'comic', comic: 'Oglaf' }
+    const expected: AcomicsUrl = { kind: 'comic', comic: 'Bobcomic' }
 
-    expect(parseAcomicsUrl('https://www.acomics.ru/~Oglaf')).toEqual(expected)
+    expect(parseAcomicsUrl('https://www.acomics.ru/~Bobcomic')).toEqual(expected)
   })
 
   it('should return undefined for a bare prefix', () => {
@@ -46,14 +46,14 @@ describe('parseAcomicsUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseAcomicsUrl('https://example.com/~Oglaf')).toBeUndefined()
+    expect(parseAcomicsUrl('https://example.com/~Bobcomic')).toBeUndefined()
   })
 })
 
 describe('acomicsHandler', () => {
   describe('match', () => {
     it('should return true for a comic page', () => {
-      expect(acomicsHandler.match('https://acomics.ru/~Oglaf')).toBe(true)
+      expect(acomicsHandler.match('https://acomics.ru/~Bobcomic')).toBe(true)
     })
 
     it('should return false for the home page', () => {
@@ -69,23 +69,23 @@ describe('acomicsHandler', () => {
     it('should return the issues feed for a comic', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://acomics.ru/~Oglaf/rss',
+          uri: 'https://acomics.ru/~Bobcomic/rss',
           hint: { key: 'acomics:issues', label: 'Issues' },
         },
       ]
 
-      expect(acomicsHandler.resolve('https://www.acomics.ru/~Oglaf/902')).toEqual(expected)
+      expect(acomicsHandler.resolve('https://www.acomics.ru/~Bobcomic/902')).toEqual(expected)
     })
 
     it('should return the subscriptions feed for a user', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://acomics.ru/-Lilim/rss',
+          uri: 'https://acomics.ru/-Alicecomic/rss',
           hint: { key: 'acomics:subscriptions', label: 'Subscriptions' },
         },
       ]
 
-      expect(acomicsHandler.resolve('https://acomics.ru/-Lilim')).toEqual(expected)
+      expect(acomicsHandler.resolve('https://acomics.ru/-Alicecomic')).toEqual(expected)
     })
   })
 })

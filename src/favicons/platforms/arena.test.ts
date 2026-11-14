@@ -45,8 +45,8 @@ const placeholderProfileHtml = `
 
 const channelRef: DiscoverRef = {
   platform: 'arena',
-  id: 'meg-miller/good-sign-offs',
-  url: 'https://www.are.na/meg-miller/good-sign-offs',
+  id: 'bob-jones/good-sign-offs',
+  url: 'https://www.are.na/bob-jones/good-sign-offs',
 }
 
 const channelApiUrl = 'https://api.are.na/v2/channels/good-sign-offs?per=1'
@@ -55,7 +55,7 @@ const channelJson = JSON.stringify({
   id: 207511,
   slug: 'good-sign-offs',
   user: {
-    slug: 'meg-miller',
+    slug: 'bob-jones',
     avatar_image: {
       thumb:
         'https://static.avatars.are.na/4094/small_f3db7f44de1bb70e00b733c71b6ac80e.jpg?1496713662',
@@ -68,7 +68,7 @@ const channelJson = JSON.stringify({
 describe('arenaHandler', () => {
   describe('match', () => {
     it('should match profile URLs', () => {
-      expect(arenaHandler.match('https://www.are.na/charles-broskoski')).toBe(true)
+      expect(arenaHandler.match('https://www.are.na/alice-smith')).toBe(true)
     })
 
     it('should not match editorial pages', () => {
@@ -79,10 +79,7 @@ describe('arenaHandler', () => {
   describe('resolve', () => {
     describe('profile pages', () => {
       it('should return the og:image avatar', async () => {
-        const result = await arenaHandler.resolve(
-          'https://www.are.na/charles-broskoski',
-          profileHtml,
-        )
+        const result = await arenaHandler.resolve('https://www.are.na/alice-smith', profileHtml)
         const expected = [
           {
             uri: 'https://static.avatars.are.na/15/large_f91bdac52d14ef988c9818884d6865db.jpg?1616377630',
@@ -94,7 +91,7 @@ describe('arenaHandler', () => {
 
       it('should return empty array for the placeholder og:image', async () => {
         const result = await arenaHandler.resolve(
-          'https://www.are.na/charles-broskoski',
+          'https://www.are.na/alice-smith',
           placeholderProfileHtml,
         )
 
@@ -103,7 +100,7 @@ describe('arenaHandler', () => {
 
       it('should return empty array when og:image is missing', async () => {
         const result = await arenaHandler.resolve(
-          'https://www.are.na/charles-broskoski',
+          'https://www.are.na/alice-smith',
           '<html><head></head></html>',
         )
 
@@ -111,7 +108,7 @@ describe('arenaHandler', () => {
       })
 
       it('should return empty array without content', async () => {
-        const result = await arenaHandler.resolve('https://www.are.na/charles-broskoski')
+        const result = await arenaHandler.resolve('https://www.are.na/alice-smith')
 
         expect(result).toEqual([])
       })
@@ -119,7 +116,7 @@ describe('arenaHandler', () => {
 
     it('should return a ref for channel pages', async () => {
       const result = await arenaHandler.resolve(
-        'https://www.are.na/meg-miller/good-sign-offs',
+        'https://www.are.na/bob-jones/good-sign-offs',
         profileHtml,
       )
       const expected = [channelRef]
@@ -128,8 +125,8 @@ describe('arenaHandler', () => {
     })
 
     it('should return a ref for channel subpages', async () => {
-      const value = 'https://www.are.na/meg-miller/good-sign-offs/table'
-      const expected = [{ platform: 'arena', id: 'meg-miller/good-sign-offs', url: value }]
+      const value = 'https://www.are.na/bob-jones/good-sign-offs/table'
+      const expected = [{ platform: 'arena', id: 'bob-jones/good-sign-offs', url: value }]
 
       expect(await arenaHandler.resolve(value, profileHtml)).toEqual(expected)
     })
@@ -165,8 +162,8 @@ describe('arenaEnricher', () => {
   it('should return empty array for a ref without a channel', async () => {
     const ref: DiscoverRef = {
       platform: 'arena',
-      id: 'meg-miller',
-      url: 'https://www.are.na/meg-miller',
+      id: 'bob-jones',
+      url: 'https://www.are.na/bob-jones',
     }
 
     expect(await arenaEnricher(ref, createContext({}))).toEqual([])
@@ -176,8 +173,8 @@ describe('arenaEnricher', () => {
     const context = createContext({ [channelApiUrl]: channelJson })
     const ref: DiscoverRef = {
       platform: 'arena',
-      id: 'charles-broskoski/good-sign-offs',
-      url: 'https://www.are.na/charles-broskoski/good-sign-offs',
+      id: 'alice-smith/good-sign-offs',
+      url: 'https://www.are.na/alice-smith/good-sign-offs',
     }
 
     expect(await arenaEnricher(ref, context)).toEqual([])
@@ -186,7 +183,7 @@ describe('arenaEnricher', () => {
   it('should return empty array when the owner has no avatar', async () => {
     const json = JSON.stringify({
       user: {
-        slug: 'meg-miller',
+        slug: 'bob-jones',
         avatar_image: {
           thumb: '',
           display: '',
@@ -201,7 +198,7 @@ describe('arenaEnricher', () => {
   it('should return empty array when the avatar is not on the avatars host', async () => {
     const json = JSON.stringify({
       user: {
-        slug: 'meg-miller',
+        slug: 'bob-jones',
         avatar_image: {
           display: 'https://example.com/medium_avatar.jpg',
         },
@@ -213,7 +210,7 @@ describe('arenaEnricher', () => {
   })
 
   it('should return empty array when avatar_image is missing', async () => {
-    const json = JSON.stringify({ user: { slug: 'meg-miller' } })
+    const json = JSON.stringify({ user: { slug: 'bob-jones' } })
     const context = createContext({ [channelApiUrl]: json })
 
     expect(await arenaEnricher(channelRef, context)).toEqual([])

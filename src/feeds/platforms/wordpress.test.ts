@@ -94,7 +94,7 @@ describe('parseWordpressUrl', () => {
   it('should return the post for a hypotheses.org post id that looks like a year', () => {
     const expected: WordpressUrl = { kind: 'post', path: '/1009' }
 
-    expect(parseWordpressUrl('https://raffl.hypotheses.org/1009')).toEqual(expected)
+    expect(parseWordpressUrl('https://dave.hypotheses.org/1009')).toEqual(expected)
   })
 
   it('should return the home page for the root', () => {
@@ -104,7 +104,7 @@ describe('parseWordpressUrl', () => {
   })
 
   it('should return the archive for an Unblog tag page', () => {
-    const value = 'http://blogerslorrainsengages.unblog.fr/tag/pays-des-trois-frontieres/'
+    const value = 'http://carol.unblog.fr/tag/pays-des-trois-frontieres/'
     const expected: WordpressUrl = {
       kind: 'archive',
       path: '/tag/pays-des-trois-frontieres',
@@ -190,8 +190,8 @@ describe('wordpressHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://example.wordpress.com'],
-      [true, 'http://gbessay.unblog.fr'],
-      [true, 'https://eurel.hypotheses.org'],
+      [true, 'http://bob.unblog.fr'],
+      [true, 'https://erin.hypotheses.org'],
       [false, 'https://wordpress.com'],
       [false, 'https://edublogs.org'],
       [false, 'http://unblog.fr'],
@@ -387,53 +387,53 @@ describe('wordpressHandler', () => {
     })
 
     it('should keep the http scheme of an Unblog post page in its feed URLs', () => {
-      const value = 'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/'
+      const value = 'http://aliceblog.unblog.fr/2010/11/14/divorce-ecologiste/'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: [
-            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/feed/',
-            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/?feed=rss',
-            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/feed/rss2/',
-            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/?feed=rss2',
+            'http://aliceblog.unblog.fr/2010/11/14/divorce-ecologiste/feed/',
+            'http://aliceblog.unblog.fr/2010/11/14/divorce-ecologiste/?feed=rss',
+            'http://aliceblog.unblog.fr/2010/11/14/divorce-ecologiste/feed/rss2/',
+            'http://aliceblog.unblog.fr/2010/11/14/divorce-ecologiste/?feed=rss2',
           ],
           hint: { key: 'wordpress:post-comments', label: 'Post comments', format: 'rss' },
         },
         {
           uri: [
-            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/feed/atom/',
-            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/?feed=atom',
+            'http://aliceblog.unblog.fr/2010/11/14/divorce-ecologiste/feed/atom/',
+            'http://aliceblog.unblog.fr/2010/11/14/divorce-ecologiste/?feed=atom',
           ],
           hint: { key: 'wordpress:post-comments', label: 'Post comments', format: 'atom' },
         },
         {
           uri: [
-            'http://dodiblog.unblog.fr/feed/',
-            'http://dodiblog.unblog.fr/?feed=rss',
-            'http://dodiblog.unblog.fr/feed/rss2/',
-            'http://dodiblog.unblog.fr/?feed=rss2',
+            'http://aliceblog.unblog.fr/feed/',
+            'http://aliceblog.unblog.fr/?feed=rss',
+            'http://aliceblog.unblog.fr/feed/rss2/',
+            'http://aliceblog.unblog.fr/?feed=rss2',
           ],
           hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: ['http://dodiblog.unblog.fr/feed/atom/', 'http://dodiblog.unblog.fr/?feed=atom'],
+          uri: ['http://aliceblog.unblog.fr/feed/atom/', 'http://aliceblog.unblog.fr/?feed=atom'],
           hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: ['http://dodiblog.unblog.fr/feed/rdf/', 'http://dodiblog.unblog.fr/?feed=rdf'],
+          uri: ['http://aliceblog.unblog.fr/feed/rdf/', 'http://aliceblog.unblog.fr/?feed=rdf'],
           hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
         },
         {
           uri: [
-            'http://dodiblog.unblog.fr/comments/feed/',
-            'http://dodiblog.unblog.fr/comments/feed/rss2/',
-            'http://dodiblog.unblog.fr/?feed=comments-rss2',
+            'http://aliceblog.unblog.fr/comments/feed/',
+            'http://aliceblog.unblog.fr/comments/feed/rss2/',
+            'http://aliceblog.unblog.fr/?feed=comments-rss2',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
         },
         {
           uri: [
-            'http://dodiblog.unblog.fr/comments/feed/atom/',
-            'http://dodiblog.unblog.fr/?feed=comments-atom',
+            'http://aliceblog.unblog.fr/comments/feed/atom/',
+            'http://aliceblog.unblog.fr/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
         },

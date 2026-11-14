@@ -3,9 +3,9 @@ import { type ButtondownUrl, buttondownHandler, parseButtondownUrl } from './but
 
 describe('parseButtondownUrl', () => {
   it('should return the newsletter for a newsletter page', () => {
-    const expected: ButtondownUrl = { kind: 'newsletter', username: 'cassidoo' }
+    const expected: ButtondownUrl = { kind: 'newsletter', username: 'alice' }
 
-    expect(parseButtondownUrl('https://buttondown.com/cassidoo')).toEqual(expected)
+    expect(parseButtondownUrl('https://buttondown.com/alice')).toEqual(expected)
   })
 
   it('should return undefined for the root', () => {
@@ -13,18 +13,18 @@ describe('parseButtondownUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseButtondownUrl('https://example.com/cassidoo')).toBeUndefined()
+    expect(parseButtondownUrl('https://example.com/alice')).toBeUndefined()
   })
 })
 
 describe('buttondownHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://buttondown.com/cassidoo'],
+      [true, 'https://buttondown.com/alice'],
       [true, 'https://www.buttondown.com/user'],
       [false, 'https://buttondown.com'],
-      [true, 'https://buttondown.email/cassidoo'],
-      [true, 'https://www.buttondown.email/cassidoo'],
+      [true, 'https://buttondown.email/alice'],
+      [true, 'https://www.buttondown.email/alice'],
       [false, 'https://example.com'],
     ]
 
@@ -43,10 +43,10 @@ describe('buttondownHandler', () => {
     })
 
     it('should return feed URL for newsletter', () => {
-      const value = 'https://buttondown.com/cassidoo'
+      const value = 'https://buttondown.com/alice'
       const expected = [
         {
-          uri: 'https://buttondown.com/cassidoo/rss',
+          uri: 'https://buttondown.com/alice/rss',
           hint: { key: 'buttondown:newsletter', label: 'Newsletter' },
         },
       ]
@@ -55,10 +55,10 @@ describe('buttondownHandler', () => {
     })
 
     it('should return feed URL regardless of subpath', () => {
-      const value = 'https://buttondown.com/cassidoo/archive'
+      const value = 'https://buttondown.com/alice/archive'
       const expected = [
         {
-          uri: 'https://buttondown.com/cassidoo/rss',
+          uri: 'https://buttondown.com/alice/rss',
           hint: { key: 'buttondown:newsletter', label: 'Newsletter' },
         },
       ]
@@ -73,10 +73,10 @@ describe('buttondownHandler', () => {
     })
 
     it('should canonicalise legacy buttondown.email host to buttondown.com feed', () => {
-      const value = 'https://buttondown.email/cassidoo'
+      const value = 'https://buttondown.email/alice'
       const expected = [
         {
-          uri: 'https://buttondown.com/cassidoo/rss',
+          uri: 'https://buttondown.com/alice/rss',
           hint: { key: 'buttondown:newsletter', label: 'Newsletter' },
         },
       ]

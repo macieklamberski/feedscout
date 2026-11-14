@@ -3,9 +3,9 @@ import { type HeyWorldUrl, heyWorldHandler, parseHeyWorldUrl } from './heyWorld.
 
 describe('parseHeyWorldUrl', () => {
   it('should return the blog for a user page', () => {
-    const expected: HeyWorldUrl = { kind: 'blog', username: 'jason' }
+    const expected: HeyWorldUrl = { kind: 'blog', username: 'bob' }
 
-    expect(parseHeyWorldUrl('https://world.hey.com/jason')).toEqual(expected)
+    expect(parseHeyWorldUrl('https://world.hey.com/bob')).toEqual(expected)
   })
 
   it('should return undefined for the root', () => {
@@ -20,7 +20,7 @@ describe('parseHeyWorldUrl', () => {
 describe('heyWorldHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://world.hey.com/dhh'],
+      [true, 'https://world.hey.com/alice'],
       [false, 'https://world.hey.com'],
       [false, 'https://hey.com'],
       [false, 'https://example.com'],
@@ -41,10 +41,10 @@ describe('heyWorldHandler', () => {
     })
 
     it('should return feed URL for blog', () => {
-      const value = 'https://world.hey.com/dhh'
+      const value = 'https://world.hey.com/alice'
       const expected = [
         {
-          uri: 'https://world.hey.com/dhh/feed.atom',
+          uri: 'https://world.hey.com/alice/feed.atom',
           hint: { key: 'hey-world:blog', label: 'Blog' },
         },
       ]
@@ -53,10 +53,10 @@ describe('heyWorldHandler', () => {
     })
 
     it('should return feed URL regardless of subpath', () => {
-      const value = 'https://world.hey.com/dhh/some-post-title'
+      const value = 'https://world.hey.com/alice/some-post-title'
       const expected = [
         {
-          uri: 'https://world.hey.com/dhh/feed.atom',
+          uri: 'https://world.hey.com/alice/feed.atom',
           hint: { key: 'hey-world:blog', label: 'Blog' },
         },
       ]

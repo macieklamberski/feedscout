@@ -14,12 +14,12 @@ const createContext = (responses: Record<string, string>): FaviconEnricherContex
   return { fetchFn }
 }
 
-const apiUrl = 'https://content.api.nebula.app/content/realengineering/'
+const apiUrl = 'https://content.api.nebula.app/content/alicescience/'
 
 const ref: DiscoverRef = {
   platform: 'nebula',
-  id: 'realengineering',
-  url: 'https://nebula.tv/realengineering',
+  id: 'alicescience',
+  url: 'https://nebula.tv/alicescience',
 }
 
 const createPage = (queryData: string): string => {
@@ -27,7 +27,7 @@ const createPage = (queryData: string): string => {
 }
 
 const channel = {
-  app_path: 'realengineering',
+  app_path: 'alicescience',
   assets: {
     avatar: {
       '256': {
@@ -50,7 +50,7 @@ const channelQueryData = JSON.stringify({
       state: { data: [{ app_path: 'featured', slug: 'featured', title: 'Featured' }] },
     },
     {
-      queryKey: ['content', { slugOrId: 'realengineering' }],
+      queryKey: ['content', { slugOrId: 'alicescience' }],
       state: { data: channel },
     },
   ],
@@ -59,7 +59,7 @@ const channelQueryData = JSON.stringify({
 describe('nebulaHandler', () => {
   describe('match', () => {
     it('should match channel URLs', () => {
-      expect(nebulaHandler.match('https://nebula.tv/realengineering')).toBe(true)
+      expect(nebulaHandler.match('https://nebula.tv/alicescience')).toBe(true)
     })
 
     it('should not match the home page', () => {
@@ -73,20 +73,20 @@ describe('nebulaHandler', () => {
         const value = createPage(channelQueryData)
         const expected = [{ uri: 'https://images.nebula.tv/e816edc6.jpeg?width=512' }]
 
-        expect(nebulaHandler.resolve('https://nebula.tv/realengineering', value)).toEqual(expected)
+        expect(nebulaHandler.resolve('https://nebula.tv/alicescience', value)).toEqual(expected)
       })
 
       it('should return a ref with the channel slug without page content', () => {
-        const url = 'https://nebula.tv/realengineering'
-        const expected = [{ platform: 'nebula', id: 'realengineering', url }]
+        const url = 'https://nebula.tv/alicescience'
+        const expected = [{ platform: 'nebula', id: 'alicescience', url }]
 
         expect(nebulaHandler.resolve(url)).toEqual(expected)
       })
 
       it('should return a ref with the channel slug when the page has no query data', () => {
-        const url = 'https://nebula.tv/realengineering'
+        const url = 'https://nebula.tv/alicescience'
         const value = '<html><head><title>Nebula</title></head></html>'
-        const expected = [{ platform: 'nebula', id: 'realengineering', url }]
+        const expected = [{ platform: 'nebula', id: 'alicescience', url }]
 
         expect(nebulaHandler.resolve(url, value)).toEqual(expected)
       })
@@ -96,13 +96,13 @@ describe('nebulaHandler', () => {
       it('should return a ref when the page query data is not valid JSON', () => {
         const value = createPage('{"queries":[}')
 
-        expect(nebulaHandler.resolve('https://nebula.tv/realengineering', value)).toEqual([ref])
+        expect(nebulaHandler.resolve('https://nebula.tv/alicescience', value)).toEqual([ref])
       })
 
       it('should stay linear on a page that repeats the query data assignment', () => {
         const value = 'window.__QUERY_DATA__={'.repeat(18_000)
         const start = performance.now()
-        const result = nebulaHandler.resolve('https://nebula.tv/realengineering', value)
+        const result = nebulaHandler.resolve('https://nebula.tv/alicescience', value)
 
         expect(performance.now() - start).toBeLessThan(500)
         expect(result).toEqual([ref])
@@ -114,14 +114,14 @@ describe('nebulaHandler', () => {
         })
         const value = createPage(queryData)
 
-        expect(nebulaHandler.resolve('https://nebula.tv/realengineering', value)).toEqual([ref])
+        expect(nebulaHandler.resolve('https://nebula.tv/alicescience', value)).toEqual([ref])
       })
 
       it('should return a ref when the 512 avatar is missing', () => {
         const queryData = JSON.stringify({
           queries: [
             {
-              queryKey: ['content', { slugOrId: 'realengineering' }],
+              queryKey: ['content', { slugOrId: 'alicescience' }],
               state: {
                 data: {
                   assets: {
@@ -136,7 +136,7 @@ describe('nebulaHandler', () => {
         })
         const value = createPage(queryData)
 
-        expect(nebulaHandler.resolve('https://nebula.tv/realengineering', value)).toEqual([ref])
+        expect(nebulaHandler.resolve('https://nebula.tv/alicescience', value)).toEqual([ref])
       })
 
       it('should return empty array for the home page', () => {
@@ -167,7 +167,7 @@ describe('nebulaEnricher', () => {
   })
 
   it('should return empty array when the content API has no avatar', async () => {
-    const context = createContext({ [apiUrl]: JSON.stringify({ app_path: 'realengineering' }) })
+    const context = createContext({ [apiUrl]: JSON.stringify({ app_path: 'alicescience' }) })
 
     expect(await nebulaEnricher(ref, context)).toEqual([])
   })
@@ -211,7 +211,7 @@ describe('nebulaEnricher', () => {
   it('should reject when the response is not 2xx', () => {
     const throwing = () => nebulaEnricher(ref, createContext({}))
     const expected =
-      'Unexpected status 404 from https://content.api.nebula.app/content/realengineering/'
+      'Unexpected status 404 from https://content.api.nebula.app/content/alicescience/'
 
     expect(throwing()).rejects.toThrow(expected)
   })

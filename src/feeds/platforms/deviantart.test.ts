@@ -4,21 +4,21 @@ import { deviantartHandler, parseDeviantartUrl } from './deviantart.js'
 
 describe('parseDeviantartUrl', () => {
   it('should return the profile for a profile page', () => {
-    const expected: DeviantartUrl = { kind: 'profile', username: 'yuumei' }
+    const expected: DeviantartUrl = { kind: 'profile', username: 'alice' }
 
-    expect(parseDeviantartUrl('https://deviantart.com/yuumei')).toEqual(expected)
+    expect(parseDeviantartUrl('https://deviantart.com/alice')).toEqual(expected)
   })
 
   it('should return the profile for the www host', () => {
-    const expected: DeviantartUrl = { kind: 'profile', username: 'yuumei' }
+    const expected: DeviantartUrl = { kind: 'profile', username: 'alice' }
 
-    expect(parseDeviantartUrl('https://www.deviantart.com/yuumei')).toEqual(expected)
+    expect(parseDeviantartUrl('https://www.deviantart.com/alice')).toEqual(expected)
   })
 
   it('should return the profile for a profile page with a trailing slash', () => {
-    const expected: DeviantartUrl = { kind: 'profile', username: 'yuumei' }
+    const expected: DeviantartUrl = { kind: 'profile', username: 'alice' }
 
-    expect(parseDeviantartUrl('https://www.deviantart.com/yuumei/')).toEqual(expected)
+    expect(parseDeviantartUrl('https://www.deviantart.com/alice/')).toEqual(expected)
   })
 
   it('should keep the username case', () => {
@@ -40,60 +40,60 @@ describe('parseDeviantartUrl', () => {
   })
 
   it('should return the profile for a gallery page', () => {
-    const expected: DeviantartUrl = { kind: 'profile', username: 'yuumei' }
+    const expected: DeviantartUrl = { kind: 'profile', username: 'alice' }
 
-    expect(parseDeviantartUrl('https://www.deviantart.com/yuumei/gallery')).toEqual(expected)
-    expect(parseDeviantartUrl('https://deviantart.com/yuumei/gallery/all')).toEqual(expected)
+    expect(parseDeviantartUrl('https://www.deviantart.com/alice/gallery')).toEqual(expected)
+    expect(parseDeviantartUrl('https://deviantart.com/alice/gallery/all')).toEqual(expected)
   })
 
   it('should return the author profile for a deviation page', () => {
-    const value = 'https://www.deviantart.com/yuumei/art/some-art-123'
-    const expected: DeviantartUrl = { kind: 'profile', username: 'yuumei' }
+    const value = 'https://www.deviantart.com/alice/art/some-art-123'
+    const expected: DeviantartUrl = { kind: 'profile', username: 'alice' }
 
     expect(parseDeviantartUrl(value)).toEqual(expected)
   })
 
   it('should return the folder for a gallery folder page', () => {
-    const value = 'https://deviantart.com/yuumei/gallery/123456/folder-name'
-    const expected: DeviantartUrl = { kind: 'folder', username: 'yuumei', folderId: '123456' }
+    const value = 'https://deviantart.com/alice/gallery/123456/folder-name'
+    const expected: DeviantartUrl = { kind: 'folder', username: 'alice', folderId: '123456' }
 
     expect(parseDeviantartUrl(value)).toEqual(expected)
   })
 
   it('should return the folder for a gallery folder page with a capitalized gallery segment', () => {
-    const value = 'https://deviantart.com/yuumei/Gallery/123456/folder-name'
-    const expected: DeviantartUrl = { kind: 'folder', username: 'yuumei', folderId: '123456' }
+    const value = 'https://deviantart.com/alice/Gallery/123456/folder-name'
+    const expected: DeviantartUrl = { kind: 'folder', username: 'alice', folderId: '123456' }
 
     expect(parseDeviantartUrl(value)).toEqual(expected)
   })
 
   it('should return the favourites for a favourites page', () => {
-    const expected: DeviantartUrl = { kind: 'favourites', username: 'yuumei' }
+    const expected: DeviantartUrl = { kind: 'favourites', username: 'alice' }
 
-    expect(parseDeviantartUrl('https://deviantart.com/yuumei/favourites')).toEqual(expected)
+    expect(parseDeviantartUrl('https://deviantart.com/alice/favourites')).toEqual(expected)
   })
 
   it('should return the favourites for a favourites page with a capitalized favourites segment', () => {
-    const expected: DeviantartUrl = { kind: 'favourites', username: 'yuumei' }
+    const expected: DeviantartUrl = { kind: 'favourites', username: 'alice' }
 
-    expect(parseDeviantartUrl('https://deviantart.com/yuumei/Favourites')).toEqual(expected)
+    expect(parseDeviantartUrl('https://deviantart.com/alice/Favourites')).toEqual(expected)
   })
 
   it('should return the journal for a journal page', () => {
-    const expected: DeviantartUrl = { kind: 'journal', username: 'yuumei' }
+    const expected: DeviantartUrl = { kind: 'journal', username: 'alice' }
 
-    expect(parseDeviantartUrl('https://deviantart.com/yuumei/journal')).toEqual(expected)
+    expect(parseDeviantartUrl('https://deviantart.com/alice/journal')).toEqual(expected)
   })
 
   it('should return the journal for a journal page with a capitalized journal segment', () => {
-    const expected: DeviantartUrl = { kind: 'journal', username: 'yuumei' }
+    const expected: DeviantartUrl = { kind: 'journal', username: 'alice' }
 
-    expect(parseDeviantartUrl('https://deviantart.com/yuumei/Journal')).toEqual(expected)
+    expect(parseDeviantartUrl('https://deviantart.com/alice/Journal')).toEqual(expected)
   })
 
   it('should return the journal for a journal post', () => {
-    const value = 'https://deviantart.com/yuumei/journal/some-post-slug'
-    const expected: DeviantartUrl = { kind: 'journal', username: 'yuumei' }
+    const value = 'https://deviantart.com/alice/journal/some-post-slug'
+    const expected: DeviantartUrl = { kind: 'journal', username: 'alice' }
 
     expect(parseDeviantartUrl(value)).toEqual(expected)
   })
@@ -132,7 +132,7 @@ describe('parseDeviantartUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseDeviantartUrl('https://example.com/yuumei')).toBeUndefined()
+    expect(parseDeviantartUrl('https://example.com/alice')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -143,20 +143,20 @@ describe('parseDeviantartUrl', () => {
 describe('deviantartHandler', () => {
   describe('match', () => {
     it('should match DeviantArt URLs', () => {
-      expect(deviantartHandler.match('https://www.deviantart.com/yuumei')).toBe(true)
+      expect(deviantartHandler.match('https://www.deviantart.com/alice')).toBe(true)
     })
 
     it('should not match other hosts', () => {
-      expect(deviantartHandler.match('https://example.com/yuumei')).toBe(false)
+      expect(deviantartHandler.match('https://example.com/alice')).toBe(false)
     })
   })
 
   describe('resolve', () => {
     it('should return RSS feed URL for user profile', () => {
-      const value = 'https://deviantart.com/yuumei'
+      const value = 'https://deviantart.com/alice'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=by:yuumei%20sort:time%20meta:all',
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=by:alice%20sort:time%20meta:all',
           hint: { key: 'deviantart:deviations', label: 'Deviations' },
         },
       ]
@@ -165,10 +165,10 @@ describe('deviantartHandler', () => {
     })
 
     it('should return RSS feed URL for specific gallery folder', () => {
-      const value = 'https://deviantart.com/yuumei/gallery/123456/folder-name'
+      const value = 'https://deviantart.com/alice/gallery/123456/folder-name'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=gallery:yuumei/123456',
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=gallery:alice/123456',
           hint: { key: 'deviantart:gallery', label: 'Gallery' },
         },
       ]
@@ -177,10 +177,10 @@ describe('deviantartHandler', () => {
     })
 
     it('should return RSS feed URL for favourites', () => {
-      const value = 'https://deviantart.com/yuumei/favourites'
+      const value = 'https://deviantart.com/alice/favourites'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=favby:yuumei',
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=favby:alice',
           hint: { key: 'deviantart:favorites', label: 'Favorites' },
         },
       ]
@@ -213,10 +213,10 @@ describe('deviantartHandler', () => {
     })
 
     it('should return RSS feed URL for journal page', () => {
-      const value = 'https://deviantart.com/yuumei/journal'
+      const value = 'https://deviantart.com/alice/journal'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?q=journal:yuumei',
+          uri: 'https://backend.deviantart.com/rss.xml?q=journal:alice',
           hint: { key: 'deviantart:journal', label: 'Journal' },
         },
       ]

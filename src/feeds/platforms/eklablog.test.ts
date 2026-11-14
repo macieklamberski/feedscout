@@ -36,22 +36,22 @@ describe('isEklablogHtml', () => {
 
 describe('parseEklablogUrl', () => {
   const blogUrls: Array<string> = [
-    'https://enaelyork.eklablog.com/',
-    'https://enaelyork.eklablog.com/critique-en-serie-a129920826',
-    'https://obraska.eklablog.fr/',
-    'https://randoacgv.eklablog.net/',
-    'https://huilerie-beaucaire.blogg.org/',
-    'https://singbell.blogueuse.fr/',
-    'https://harbelita.cd.st/',
-    'https://abysskan.doremiblog.com/',
-    'https://forrawamu.ek.la/',
-    'https://frasa.id.st/',
-    'https://animal-crossing59.jeblog.fr/',
-    'https://igre.kazeo.com/',
-    'https://nintendooceanv3.kif.fr/',
-    'https://hungmcleon.lo.gs/',
-    'https://dudu-village.revolublog.com/',
-    'https://half-dead-pigs.zic.fr/',
+    'https://alice.eklablog.com/',
+    'https://alice.eklablog.com/critique-en-serie-a129920826',
+    'https://olivia.eklablog.fr/',
+    'https://peggy.eklablog.net/',
+    'https://ivan-smith.blogg.org/',
+    'https://rupert.blogueuse.fr/',
+    'https://heidi.cd.st/',
+    'https://bob.doremiblog.com/',
+    'https://erin.ek.la/',
+    'https://frank.id.st/',
+    'https://carol59.jeblog.fr/',
+    'https://mallory.kazeo.com/',
+    'https://niaj3.kif.fr/',
+    'https://judy.lo.gs/',
+    'https://dave-village.revolublog.com/',
+    'https://grace-jones.zic.fr/',
   ]
 
   it.each(blogUrls)('should return the blog for %s', (url) => {
@@ -63,7 +63,7 @@ describe('parseEklablogUrl', () => {
   const otherUrls: Array<string> = [
     'https://eklablog.com/',
     'https://www.eklablog.com/',
-    'https://www.enaelyork.eklablog.com/',
+    'https://www.alice.eklablog.com/',
   ]
 
   it.each(otherUrls)('should return undefined for %s', (url) => {
@@ -80,7 +80,7 @@ describe('parseEklablogUrl', () => {
 describe('eklablogHandler', () => {
   describe('match', () => {
     it('should return true for a blog', () => {
-      expect(eklablogHandler.match('https://enaelyork.eklablog.com/')).toBe(true)
+      expect(eklablogHandler.match('https://alice.eklablog.com/')).toBe(true)
     })
 
     it('should return false for another host', () => {
@@ -102,14 +102,14 @@ describe('eklablogHandler', () => {
     })
 
     it('should return posts and comments feeds for blog', () => {
-      const value = 'https://enaelyork.eklablog.com/critique-en-serie-a129920826'
+      const value = 'https://alice.eklablog.com/critique-en-serie-a129920826'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://enaelyork.eklablog.com/rss',
+          uri: 'https://alice.eklablog.com/rss',
           hint: { key: 'eklablog:posts', label: 'Posts' },
         },
         {
-          uri: 'https://enaelyork.eklablog.com/rss/comments',
+          uri: 'https://alice.eklablog.com/rss/comments',
           hint: { key: 'eklablog:comments', label: 'Comments' },
         },
       ]

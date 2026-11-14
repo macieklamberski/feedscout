@@ -129,14 +129,14 @@ describe('blogspotHandler', () => {
     })
 
     it('should return the label feed for a label page on a custom domain', () => {
-      const value = 'https://example.com/search/label/Chris%20Rossini'
+      const value = 'https://example.com/search/label/Alice%20Smith'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/feeds/posts/default/-/Chris%20Rossini',
+          uri: 'https://example.com/feeds/posts/default/-/Alice%20Smith',
           hint: { key: 'blogspot:label', label: 'Label', format: 'atom' },
         },
         {
-          uri: 'https://example.com/feeds/posts/default/-/Chris%20Rossini?alt=rss',
+          uri: 'https://example.com/feeds/posts/default/-/Alice%20Smith?alt=rss',
           hint: { key: 'blogspot:label', label: 'Label', format: 'rss' },
         },
         {

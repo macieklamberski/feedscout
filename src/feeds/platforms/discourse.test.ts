@@ -165,7 +165,7 @@ describe('discourseHandler', () => {
 
   describe('match', () => {
     it('should return true for any URL with Discourse content', () => {
-      const value = 'https://forum.example.com/u/steveklabnik'
+      const value = 'https://forum.example.com/u/bob'
 
       expect(discourseHandler.match('https://forum.example.com/', discourseHtml)).toBe(true)
       expect(discourseHandler.match(value, discourseHtml)).toBe(true)
@@ -203,10 +203,10 @@ describe('discourseHandler', () => {
     })
 
     it('should return the activity feed for a capitalized u segment', () => {
-      const value = 'https://forum.example.com/U/steveklabnik'
+      const value = 'https://forum.example.com/U/bob'
       const expected = [
         {
-          uri: 'https://forum.example.com/u/steveklabnik/activity.rss',
+          uri: 'https://forum.example.com/u/bob/activity.rss',
           hint: { key: 'discourse:activity', label: 'Activity' },
         },
       ]
@@ -215,10 +215,10 @@ describe('discourseHandler', () => {
     })
 
     it('should return user activity feed for /u/{user} path', () => {
-      const value = 'https://forum.example.com/u/steveklabnik'
+      const value = 'https://forum.example.com/u/bob'
       const expected = [
         {
-          uri: 'https://forum.example.com/u/steveklabnik/activity.rss',
+          uri: 'https://forum.example.com/u/bob/activity.rss',
           hint: { key: 'discourse:activity', label: 'Activity' },
         },
       ]

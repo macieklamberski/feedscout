@@ -48,10 +48,10 @@ describe('jimdoHandler', () => {
     })
 
     it('should return the blog feed on a Jimdo subdomain', () => {
-      const value = 'https://neubritz.jimdofree.com/'
+      const value = 'https://alice.jimdofree.com/'
       const expected = [
         {
-          uri: 'https://neubritz.jimdofree.com/rss/blog',
+          uri: 'https://alice.jimdofree.com/rss/blog',
           hint: { key: 'jimdo:blog', label: 'Blog' },
         },
       ]

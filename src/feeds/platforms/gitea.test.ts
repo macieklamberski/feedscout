@@ -140,15 +140,15 @@ describe('parseGiteaUrl', () => {
   })
 
   it('should keep dots in a username', () => {
-    const expected: GiteaUrl = { kind: 'user', owner: 'a.bianco' }
+    const expected: GiteaUrl = { kind: 'user', owner: 'a.smith' }
 
-    expect(parseGiteaUrl('https://codeberg.org/a.bianco')).toEqual(expected)
+    expect(parseGiteaUrl('https://codeberg.org/a.smith')).toEqual(expected)
   })
 
   it('should keep dots in the username of a repo page', () => {
-    const expected: GiteaUrl = { kind: 'repo', owner: 'a.bianco', repo: 'notes' }
+    const expected: GiteaUrl = { kind: 'repo', owner: 'a.smith', repo: 'notes' }
 
-    expect(parseGiteaUrl('https://codeberg.org/a.bianco/notes')).toEqual(expected)
+    expect(parseGiteaUrl('https://codeberg.org/a.smith/notes')).toEqual(expected)
   })
 
   it('should return undefined for a route suffix without a user', () => {

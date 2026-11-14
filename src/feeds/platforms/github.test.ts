@@ -523,14 +523,14 @@ describe('githubHandler', () => {
     })
 
     const routeSuffixValues: Array<string> = [
-      'https://github.com/torvalds.atom',
-      'https://github.com/torvalds.png',
+      'https://github.com/alice.atom',
+      'https://github.com/alice.png',
     ]
 
     it.each(routeSuffixValues)('should return the user activity feed for %s', (value) => {
       const expected = [
         {
-          uri: 'https://github.com/torvalds.atom',
+          uri: 'https://github.com/alice.atom',
           hint: { key: 'github:activity', label: 'Activity' },
         },
       ]

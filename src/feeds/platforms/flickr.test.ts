@@ -18,9 +18,9 @@ describe('parseFlickrUrl', () => {
   })
 
   it('should return the photostream for an NSID photostream page', () => {
-    const expected: FlickrUrl = { kind: 'photostream', userId: '24662369@N07' }
+    const expected: FlickrUrl = { kind: 'photostream', userId: '87654321@N07' }
 
-    expect(parseFlickrUrl('https://www.flickr.com/photos/24662369@N07')).toEqual(expected)
+    expect(parseFlickrUrl('https://www.flickr.com/photos/87654321@N07')).toEqual(expected)
   })
 
   it('should return the photostream for a path alias', () => {
@@ -42,22 +42,22 @@ describe('parseFlickrUrl', () => {
   })
 
   it('should return the favorites for a favorites page', () => {
-    const value = 'https://www.flickr.com/photos/24662369@N07/favorites'
-    const expected: FlickrUrl = { kind: 'favorites', userId: '24662369@N07' }
+    const value = 'https://www.flickr.com/photos/87654321@N07/favorites'
+    const expected: FlickrUrl = { kind: 'favorites', userId: '87654321@N07' }
 
     expect(parseFlickrUrl(value)).toEqual(expected)
   })
 
   it('should return the favorites for a favorites page with a capitalized favorites segment', () => {
-    const value = 'https://www.flickr.com/photos/24662369@N07/Favorites'
-    const expected: FlickrUrl = { kind: 'favorites', userId: '24662369@N07' }
+    const value = 'https://www.flickr.com/photos/87654321@N07/Favorites'
+    const expected: FlickrUrl = { kind: 'favorites', userId: '87654321@N07' }
 
     expect(parseFlickrUrl(value)).toEqual(expected)
   })
 
   it('should return the favorites for a later favorites page', () => {
-    const value = 'https://www.flickr.com/photos/24662369@N07/favorites/page2'
-    const expected: FlickrUrl = { kind: 'favorites', userId: '24662369@N07' }
+    const value = 'https://www.flickr.com/photos/87654321@N07/favorites/page2'
+    const expected: FlickrUrl = { kind: 'favorites', userId: '87654321@N07' }
 
     expect(parseFlickrUrl(value)).toEqual(expected)
   })
@@ -239,10 +239,10 @@ describe('flickrHandler', () => {
     })
 
     it('should return photostream feed for an NSID photostream page', () => {
-      const value = 'https://www.flickr.com/photos/24662369@N07/'
+      const value = 'https://www.flickr.com/photos/87654321@N07/'
       const expected = [
         {
-          uri: `${feedsBase}/photos_public.gne?id=24662369@N07`,
+          uri: `${feedsBase}/photos_public.gne?id=87654321@N07`,
           hint: { key: 'flickr:photos', label: 'Photostream' },
         },
       ]
@@ -251,10 +251,10 @@ describe('flickrHandler', () => {
     })
 
     it('should return favorites feed for an NSID favorites page', () => {
-      const value = 'https://www.flickr.com/photos/24662369@N07/favorites'
+      const value = 'https://www.flickr.com/photos/87654321@N07/favorites'
       const expected = [
         {
-          uri: `${feedsBase}/photos_faves.gne?id=24662369@N07`,
+          uri: `${feedsBase}/photos_faves.gne?id=87654321@N07`,
           hint: { key: 'flickr:faves', label: 'Favorites' },
         },
       ]

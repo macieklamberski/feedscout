@@ -3,9 +3,9 @@ import { type LichessUrl, lichessHandler, parseLichessUrl } from './lichess.js'
 
 describe('parseLichessUrl', () => {
   it('should return the blog for a user blog page', () => {
-    const expected: LichessUrl = { kind: 'blog', username: 'thibault' }
+    const expected: LichessUrl = { kind: 'blog', username: 'alice' }
 
-    expect(parseLichessUrl('https://lichess.org/@/thibault/blog')).toEqual(expected)
+    expect(parseLichessUrl('https://lichess.org/@/alice/blog')).toEqual(expected)
   })
 
   it('should return the language for a community blog page', () => {
@@ -35,7 +35,7 @@ describe('parseLichessUrl', () => {
   it('should return the home page for any other page', () => {
     const expected: LichessUrl = { kind: 'home' }
 
-    expect(parseLichessUrl('https://lichess.org/@/thibault')).toEqual(expected)
+    expect(parseLichessUrl('https://lichess.org/@/alice')).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {
@@ -46,11 +46,11 @@ describe('parseLichessUrl', () => {
 describe('lichessHandler', () => {
   describe('match', () => {
     it('should match a lichess.org URL', () => {
-      expect(lichessHandler.match('https://lichess.org/@/thibault/blog')).toBe(true)
+      expect(lichessHandler.match('https://lichess.org/@/alice/blog')).toBe(true)
     })
 
     it('should not match another host', () => {
-      expect(lichessHandler.match('https://example.com/@/thibault/blog')).toBe(false)
+      expect(lichessHandler.match('https://example.com/@/alice/blog')).toBe(false)
     })
   })
 
@@ -60,10 +60,10 @@ describe('lichessHandler', () => {
     })
 
     it('should return the blog feed for a user blog', () => {
-      const value = 'https://lichess.org/@/thibault/blog'
+      const value = 'https://lichess.org/@/alice/blog'
       const expected = [
         {
-          uri: 'https://lichess.org/@/thibault/blog.atom',
+          uri: 'https://lichess.org/@/alice/blog.atom',
           hint: { key: 'lichess:blog', label: 'Blog' },
         },
       ]
@@ -72,10 +72,10 @@ describe('lichessHandler', () => {
     })
 
     it('should return the blog feed for a user blog post', () => {
-      const value = 'https://lichess.org/@/thibault/blog/how-to-report-a-bug/otcAwtvA'
+      const value = 'https://lichess.org/@/alice/blog/how-to-report-a-bug/otcAwtvA'
       const expected = [
         {
-          uri: 'https://lichess.org/@/thibault/blog.atom',
+          uri: 'https://lichess.org/@/alice/blog.atom',
           hint: { key: 'lichess:blog', label: 'Blog' },
         },
       ]
@@ -84,10 +84,10 @@ describe('lichessHandler', () => {
     })
 
     it('should keep the username case', () => {
-      const value = 'https://lichess.org/@/Thibault/blog'
+      const value = 'https://lichess.org/@/Alice/blog'
       const expected = [
         {
-          uri: 'https://lichess.org/@/Thibault/blog.atom',
+          uri: 'https://lichess.org/@/Alice/blog.atom',
           hint: { key: 'lichess:blog', label: 'Blog' },
         },
       ]
@@ -198,7 +198,7 @@ describe('lichessHandler', () => {
         },
       ]
 
-      expect(lichessHandler.resolve('https://lichess.org/@/thibault')).toEqual(expected)
+      expect(lichessHandler.resolve('https://lichess.org/@/alice')).toEqual(expected)
     })
 
     it('should return the updates feed for the home page', () => {
