@@ -1231,7 +1231,8 @@
     ]
   },
   "pagecord": {
-    "pagecord:blog": "https://blog.pagecord.com/feed.xml"
+    "pagecord:blog": "https://blog.pagecord.com/feed.xml",
+    "pagecord:tag": "https://blog.pagecord.com/feed.xml?tag=maintenance"
   },
   "paragraph": {
     "paragraph:blog": [
