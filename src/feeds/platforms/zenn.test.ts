@@ -172,7 +172,7 @@ describe('zennHandler', () => {
     })
 
     it('should return the posts hint for a user feed with all posts', () => {
-      const value = 'https://zenn.dev/manase/feed?all=1'
+      const value = 'https://zenn.dev/alice/feed?all=1'
       const expected: DiscoverUriHint = { key: 'zenn:posts', label: 'Posts' }
 
       expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
