@@ -1369,12 +1369,12 @@ Discovers the audio podcast feed of every channel a church page lists, or of the
 
 ### Shinobi Blog
 
-Discovers RSS and Atom feeds for Shinobi Blog, on `blog.shinobi.jp` and on 100 other Ninja Blog domains such as `ni-3.net`.
+Discovers RSS and Atom feeds for Shinobi Blog. A blog on any other domain is detected by the Ninja Blog banner its pages print.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{blog}.blog.shinobi.jp` | Posts (RSS + Atom) |
-| `{blog}.{domain}` | Posts (RSS + Atom) |
+| `{host}` | Posts (RSS + Atom) |
 
 ### Spotify for Creators
 

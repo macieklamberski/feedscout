@@ -80,6 +80,7 @@ import { pukiwikiHandler } from './pukiwiki.js'
 import { realEstateIndiaHandler } from './realEstateIndia.js'
 import { redmineHandler } from './redmine.js'
 import { shaarliHandler } from './shaarli.js'
+import { shinobiHandler } from './shinobi.js'
 import { shopifyHandler } from './shopify.js'
 import { shopserveHandler } from './shopserve.js'
 import { skycmsHandler } from './skycms.js'
@@ -391,6 +392,7 @@ const cases: Array<Case> = [
   ],
   ['redmine', redmineHandler, 'Powered by <a href="https://www.redmine.org/">Redmine</a>'],
   ['shaarli', shaarliHandler, '<div id="shaarli-menu"></div>'],
+  ['shinobi', shinobiHandler, '<img src="/admin/img/blogheader_logo.png">'],
   ['shopify', shopifyHandler, '', new Headers({ 'powered-by': 'Shopify' })],
   ['shopserve', shopserveHandler, '<a href="/hpgen/HPB/rss.xml">'],
   [
