@@ -1,7 +1,7 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -20,6 +20,15 @@ const domains = [
 
 const categoryRegex = /^\/([^/.]+)\/?$/
 const archivesCategoryRegex = /^\/archives\/category\/([^/]+)(?:\/|$)/i
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'hautetfort:category', template: '{scheme}://{host}/{category}/index.rss' },
+    { key: 'hautetfort:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
+    { key: 'hautetfort:posts', template: '{scheme}://{host}/index.rss', format: 'rss' },
+  ],
+  { domains },
+)
 
 export const parseHautetfortUrl = (url: string): HautetfortUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
@@ -56,25 +65,28 @@ export const hautetfortHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseHautetfortUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
     // Blog subdomains serve no certificate for their own name, so the feeds stay on http.
-    const origin = `http://${new URL(url).hostname}`
-    const uris: Array<DiscoverUriEntry> = []
+    const params = { scheme: 'http' }
 
     if (parsed.kind === 'category') {
-      uris.push({
-        uri: `${origin}/${parsed.category}/index.rss`,
-        hint: composeHint('hautetfort:category'),
-      })
+      return [
+        page.getFeedEntry('hautetfort:category', { ...params, category: parsed.category }),
+        page.getFeedEntry('hautetfort:posts', params, 'atom'),
+        page.getFeedEntry('hautetfort:posts', params, 'rss'),
+      ]
     }
 
-    uris.push({ uri: `${origin}/atom.xml`, hint: composeHint('hautetfort:posts', 'atom') })
-    uris.push({ uri: `${origin}/index.rss`, hint: composeHint('hautetfort:posts', 'rss') })
-
-    return uris
+    return [
+      page.getFeedEntry('hautetfort:posts', params, 'atom'),
+      page.getFeedEntry('hautetfort:posts', params, 'rss'),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
