@@ -22,14 +22,14 @@ describe('parseHatenablogUrl', () => {
   })
 
   it('should return the blog for an entry whose slug starts with category', () => {
-    const value = 'https://mmll.hatenablog.com/entry/category/css/collapse-list'
+    const value = 'https://grace.hatenablog.com/entry/category/css/collapse-list'
     const expected: HatenablogUrl = { kind: 'blog' }
 
     expect(parseHatenablogUrl(value)).toEqual(expected)
   })
 
   it('should return the blog for an entry whose slug starts with archive', () => {
-    const value = 'https://taxtax.hatenablog.jp/entry/archive/category/list'
+    const value = 'https://heidi.hatenablog.jp/entry/archive/category/list'
     const expected: HatenablogUrl = { kind: 'blog' }
 
     expect(parseHatenablogUrl(value)).toEqual(expected)
@@ -241,21 +241,21 @@ describe('hatenablogHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the posts hint for an RSS feed', () => {
-      const value = 'https://staff.hatenablog.com/rss'
+      const value = 'https://alice.hatenablog.com/rss'
       const expected: DiscoverUriHint = { key: 'hatenablog:posts', label: 'Posts', format: 'rss' }
 
       expect(hatenablogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for an Atom feed', () => {
-      const value = 'https://staff.hatenablog.com/feed'
+      const value = 'https://alice.hatenablog.com/feed'
       const expected: DiscoverUriHint = { key: 'hatenablog:posts', label: 'Posts', format: 'atom' }
 
       expect(hatenablogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the category hint for a percent-encoded RSS category feed', () => {
-      const value = 'https://staff.hatenablog.com/rss/category/%E3%81%8A%E7%9F%A5%E3%82%89%E3%81%9B'
+      const value = 'https://alice.hatenablog.com/rss/category/%E3%81%8A%E7%9F%A5%E3%82%89%E3%81%9B'
       const expected: DiscoverUriHint = {
         key: 'hatenablog:category',
         label: 'Category',
@@ -266,7 +266,7 @@ describe('hatenablogHandler', () => {
     })
 
     it('should return the category hint for a percent-encoded Atom category feed', () => {
-      const value = 'https://246west.hatenablog.com/feed/category/%E3%81%8A%E7%B1%B3'
+      const value = 'https://bob.hatenablog.com/feed/category/%E3%81%8A%E7%B1%B3'
       const expected: DiscoverUriHint = {
         key: 'hatenablog:category',
         label: 'Category',
@@ -277,7 +277,7 @@ describe('hatenablogHandler', () => {
     })
 
     it('should return the category hint for a category with a dot in its name', () => {
-      const value = 'https://usagi.hatenablog.jp/rss/category/Newtonsoft.Json'
+      const value = 'https://carol.hatenablog.jp/rss/category/Newtonsoft.Json'
       const expected: DiscoverUriHint = {
         key: 'hatenablog:category',
         label: 'Category',
@@ -288,14 +288,14 @@ describe('hatenablogHandler', () => {
     })
 
     it('should return the author hint for an RSS author feed', () => {
-      const value = 'https://forestwisteria.hatenablog.com/rss/author/forestwisteria'
+      const value = 'https://dave.hatenablog.com/rss/author/dave'
       const expected: DiscoverUriHint = { key: 'hatenablog:author', label: 'Author', format: 'rss' }
 
       expect(hatenablogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the author hint for an Atom author feed', () => {
-      const value = 'https://blog.hatenablog.com/feed/author/hatenablog-editors'
+      const value = 'https://erin.hatenablog.com/feed/author/erin-editors'
       const expected: DiscoverUriHint = {
         key: 'hatenablog:author',
         label: 'Author',
@@ -306,7 +306,7 @@ describe('hatenablogHandler', () => {
     })
 
     it('should return the author hint for a feed on hatenadiary.jp', () => {
-      const value = 'https://konifar-zatsu.hatenadiary.jp/rss/author/konifar'
+      const value = 'https://frank-notes.hatenadiary.jp/rss/author/frank'
       const expected: DiscoverUriHint = { key: 'hatenablog:author', label: 'Author', format: 'rss' }
 
       expect(hatenablogHandler.getFeedHint?.(value)).toEqual(expected)
@@ -314,13 +314,13 @@ describe('hatenablogHandler', () => {
 
     it('should return undefined for a category page', () => {
       const value =
-        'https://staff.hatenablog.com/archive/category/%E3%81%8A%E7%9F%A5%E3%82%89%E3%81%9B'
+        'https://alice.hatenablog.com/archive/category/%E3%81%8A%E7%9F%A5%E3%82%89%E3%81%9B'
 
       expect(hatenablogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an entry whose slug starts with category', () => {
-      const value = 'https://mmll.hatenablog.com/entry/category/css/collapse-list'
+      const value = 'https://grace.hatenablog.com/entry/category/css/collapse-list'
 
       expect(hatenablogHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -347,27 +347,27 @@ describe('hatenablogHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://staff.hatenablog.com/rss',
+        'https://alice.hatenablog.com/rss',
         { key: 'hatenablog:posts', label: 'Posts', format: 'rss' },
       ],
       [
-        'https://staff.hatenablog.com/feed',
+        'https://alice.hatenablog.com/feed',
         { key: 'hatenablog:posts', label: 'Posts', format: 'atom' },
       ],
       [
-        'https://staff.hatenablog.com/rss/category/%E3%81%8A%E7%9F%A5%E3%82%89%E3%81%9B',
+        'https://alice.hatenablog.com/rss/category/%E3%81%8A%E7%9F%A5%E3%82%89%E3%81%9B',
         { key: 'hatenablog:category', label: 'Category', format: 'rss' },
       ],
       [
-        'https://246west.hatenablog.com/feed/category/%E3%81%8A%E7%B1%B3',
+        'https://bob.hatenablog.com/feed/category/%E3%81%8A%E7%B1%B3',
         { key: 'hatenablog:category', label: 'Category', format: 'atom' },
       ],
       [
-        'https://forestwisteria.hatenablog.com/rss/author/forestwisteria',
+        'https://dave.hatenablog.com/rss/author/dave',
         { key: 'hatenablog:author', label: 'Author', format: 'rss' },
       ],
       [
-        'https://blog.hatenablog.com/feed/author/hatenablog-editors',
+        'https://erin.hatenablog.com/feed/author/erin-editors',
         { key: 'hatenablog:author', label: 'Author', format: 'atom' },
       ],
     ]
