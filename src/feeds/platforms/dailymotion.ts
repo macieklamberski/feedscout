@@ -30,7 +30,11 @@ const feeds = definePlatformFeeds([
   { key: 'dailymotion:search', template: 'https://www.dailymotion.com/rss/search/{query}' },
   { key: 'dailymotion:channel', template: 'https://www.dailymotion.com/rss/channel/{channel}' },
   { key: 'dailymotion:videos', template: 'https://www.dailymotion.com/rss/{username}' },
-  { key: 'dailymotion:videos', template: 'https://www.dailymotion.com/rss/user/{username}' },
+  {
+    key: 'dailymotion:videos',
+    template: 'https://www.dailymotion.com/rss/user/{username}',
+    isAlias: true,
+  },
   // The legacy routes take a page number, and the first page serves the same videos as the feed
   // without one. A search there also names its sort and language.
   {
