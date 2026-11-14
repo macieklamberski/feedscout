@@ -168,7 +168,7 @@ describe('alloforumHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the latest topics hint for a latest topics feed', () => {
-      const value = 'https://123perlamis.alloforum.com/derniers-sujets.xml'
+      const value = 'https://alicebeads.alloforum.com/derniers-sujets.xml'
       const expected: DiscoverUriHint = { key: 'alloforum:latest-topics', label: 'Latest topics' }
 
       expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
@@ -183,7 +183,7 @@ describe('alloforumHandler', () => {
 
     it('should return the subcategory hint for a subcategory feed', () => {
       const value =
-        'https://123perlamis.alloforum.com/derniers-sujets-materiel-techniques-c44498-divers-s17544.xml'
+        'https://alicebeads.alloforum.com/derniers-sujets-materiel-techniques-c44498-divers-s17544.xml'
       const expected: DiscoverUriHint = { key: 'alloforum:subcategory', label: 'Subcategory' }
 
       expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
@@ -191,7 +191,7 @@ describe('alloforumHandler', () => {
 
     it('should return the subcategory hint for a subcategory feed with a hyphenated slug', () => {
       const value =
-        'https://123perlamis.alloforum.com/derniers-sujets-materiel-techniques-c44498-nuanciers-perles-s17542.xml'
+        'https://alicebeads.alloforum.com/derniers-sujets-materiel-techniques-c44498-nuanciers-perles-s17542.xml'
       const expected: DiscoverUriHint = { key: 'alloforum:subcategory', label: 'Subcategory' }
 
       expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
@@ -232,7 +232,7 @@ describe('alloforumHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://123perlamis.alloforum.com/derniers-sujets.xml',
+        'https://alicebeads.alloforum.com/derniers-sujets.xml',
         { key: 'alloforum:latest-topics', label: 'Latest topics' },
       ],
       [
@@ -244,11 +244,11 @@ describe('alloforumHandler', () => {
         { key: 'alloforum:category', label: 'Category' },
       ],
       [
-        'https://123perlamis.alloforum.com/derniers-sujets-materiel-techniques-c44498-divers-s17544.xml',
+        'https://alicebeads.alloforum.com/derniers-sujets-materiel-techniques-c44498-divers-s17544.xml',
         { key: 'alloforum:subcategory', label: 'Subcategory' },
       ],
       [
-        'https://123perlamis.alloforum.com/derniers-sujets-materiel-techniques-c44498-nuanciers-perles-s17542.xml',
+        'https://alicebeads.alloforum.com/derniers-sujets-materiel-techniques-c44498-nuanciers-perles-s17542.xml',
         { key: 'alloforum:subcategory', label: 'Subcategory' },
       ],
     ]
