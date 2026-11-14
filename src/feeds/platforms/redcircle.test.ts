@@ -87,6 +87,18 @@ describe('redcircleHandler', () => {
       expect(redcircleHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
+    it('should return undefined for a file on the feed host', () => {
+      const value = 'https://feeds.redcircle.com/robots.txt'
+
+      expect(redcircleHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a show slug on the feed host', () => {
+      const value = 'https://feeds.redcircle.com/example-show'
+
+      expect(redcircleHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a show page', () => {
       const value = `https://redcircle.com/shows/${showUuid}`
 
