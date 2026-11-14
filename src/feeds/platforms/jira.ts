@@ -25,9 +25,9 @@ const confluencePathRegex = /^\/wiki(?:\/|$)/i
 const feeds = definePlatformFeeds(
   [
     { key: 'jira:project', template: '{root}/plugins/servlet/streams?key={key}' },
-    { key: 'jira:project', template: '{root}/activity?key={key}' },
+    { key: 'jira:project', template: '{root}/activity?key={key}', isAlias: true },
     { key: 'jira:site', template: '{root}/plugins/servlet/streams' },
-    { key: 'jira:site', template: '{root}/activity' },
+    { key: 'jira:site', template: '{root}/activity', isAlias: true },
     // An issue's XML view is an RSS document of that one issue.
     {
       key: 'jira:issue',
