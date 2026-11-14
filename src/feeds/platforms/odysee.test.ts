@@ -149,28 +149,28 @@ describe('odyseeHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the videos hint for a feed with a full claim ID', () => {
-      const value = 'https://odysee.com/$/rss/@CryptoRain:2feae5c0e5c62d5533e0dd78e58a7684ca94f215'
+      const value = 'https://odysee.com/$/rss/@BobRain:2feae5c0e5c62d5533e0dd78e58a7684ca94f215'
       const expected: DiscoverUriHint = { key: 'odysee:videos', label: 'Videos' }
 
       expect(odyseeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the videos hint for a feed with a short claim ID', () => {
-      const value = 'https://odysee.com/$/rss/@eduard.messmer:5'
+      const value = 'https://odysee.com/$/rss/@alice.example:5'
       const expected: DiscoverUriHint = { key: 'odysee:videos', label: 'Videos' }
 
       expect(odyseeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the videos hint for a feed with an encoded channel name', () => {
-      const value = 'https://odysee.com/$/rss/@LiberumAsociaci%C3%B3n:6'
+      const value = 'https://odysee.com/$/rss/@CarolAsociaci%C3%B3n:6'
       const expected: DiscoverUriHint = { key: 'odysee:videos', label: 'Videos' }
 
       expect(odyseeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the videos hint for a feed on the www host', () => {
-      const value = 'https://www.odysee.com/$/rss/@eduard.messmer:5'
+      const value = 'https://www.odysee.com/$/rss/@alice.example:5'
       const expected: DiscoverUriHint = { key: 'odysee:videos', label: 'Videos' }
 
       expect(odyseeHandler.getFeedHint?.(value)).toEqual(expected)
@@ -184,19 +184,19 @@ describe('odyseeHandler', () => {
     })
 
     it('should return undefined for a channel page', () => {
-      const value = 'https://odysee.com/@eduard.messmer:5'
+      const value = 'https://odysee.com/@alice.example:5'
 
       expect(odyseeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path without a claim ID', () => {
-      const value = 'https://odysee.com/$/rss/@eduard.messmer'
+      const value = 'https://odysee.com/$/rss/@alice.example'
 
       expect(odyseeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/$/rss/@eduard.messmer:5'
+      const value = 'https://example.com/$/rss/@alice.example:5'
 
       expect(odyseeHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -205,9 +205,9 @@ describe('odyseeHandler', () => {
   describe('own feeds through the Platform method', () => {
     const hint: DiscoverUriHint = { key: 'odysee:videos', label: 'Videos' }
     const ownFeeds = [
-      'https://odysee.com/$/rss/@CryptoRain:2feae5c0e5c62d5533e0dd78e58a7684ca94f215',
-      'https://odysee.com/$/rss/@eduard.messmer:5',
-      'https://odysee.com/$/rss/@LiberumAsociaci%C3%B3n:6',
+      'https://odysee.com/$/rss/@BobRain:2feae5c0e5c62d5533e0dd78e58a7684ca94f215',
+      'https://odysee.com/$/rss/@alice.example:5',
+      'https://odysee.com/$/rss/@CarolAsociaci%C3%B3n:6',
       'https://odysee.com/$/rss/@lbry/3fda836a92faaceedfe398225fb9b2ee2ed1f01a',
     ]
 
