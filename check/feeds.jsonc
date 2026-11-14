@@ -906,7 +906,8 @@
     "letterboxd:journal": "https://letterboxd.com/journal/rss/"
   },
   "librivox": {
-    "librivox:audiobook": "https://librivox.org/rss/253"
+    "librivox:audiobook": "https://librivox.org/rss/253",
+    "librivox:latest": "https://librivox.org/rss/latest_releases"
   },
   "libsyn": {
     "libsyn:podcast": "https://thefeed.libsyn.com/rss"

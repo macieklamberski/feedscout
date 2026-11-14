@@ -1,6 +1,7 @@
-import { isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,6 +10,13 @@ const hosts = ['librivox.org']
 const audiobookRegex = /^\/[^/]+\/?$/
 // An audiobook page links its feed by numeric id, which the slug does not carry.
 const feedIdRegex = /href="(?:https?|itpc):\/\/librivox\.org\/rss\/(\d+)"/i
+
+const feeds = definePlatformFeeds([
+  // The site's new releases. It needs no value from the page, so `resolve` builds it on every
+  // page it matches. It goes before the audiobook row, whose placeholder its path also fills.
+  { key: 'librivox:latest', template: 'https://librivox.org/rss/latest_releases' },
+  { key: 'librivox:audiobook', template: 'https://librivox.org/rss/{audiobookId}' },
+])
 
 export type LibrivoxPage = { audiobookId: string }
 
@@ -43,10 +51,20 @@ export const librivoxHandler: PlatformHandler = {
     }
 
     return [
-      {
-        uri: `https://librivox.org/rss/${page.audiobookId}`,
-        hint: composeHint('librivox:audiobook'),
-      },
+      feeds.getFeedEntry('librivox:audiobook', { audiobookId: page.audiobookId }),
+      feeds.getFeedEntry('librivox:latest'),
     ]
+  },
+
+  getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
+    const [, audiobookId] = getPathSegments(url)
+
+    // An audiobook id is digits, so a file such as rss/robots.txt is not one.
+    if (!hint || (hint.key === 'librivox:audiobook' && !digitsRegex.test(audiobookId))) {
+      return
+    }
+
+    return hint
   },
 }
