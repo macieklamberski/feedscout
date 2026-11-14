@@ -1,6 +1,7 @@
 import { getPathSegments, isAnyOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
+import { digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers trip (html).
@@ -13,6 +14,11 @@ export type GeoblogPage = GeoblogUrl & { tripId: string }
 const domains = ['geoblog.pl']
 
 const tripPathRegex = /^\/podroz\/(\d+)(?:\/|$)/i
+
+const feeds = definePlatformFeeds(
+  [{ key: 'geoblog:trip', template: '{scheme}://{host}/podroz/rss/{tripId}.xml' }],
+  { domains },
+)
 
 export const parseGeoblogUrl = (url: string): GeoblogUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -34,9 +40,9 @@ export const parseGeoblogUrl = (url: string): GeoblogUrl | undefined => {
   }
 }
 
-// A trip feed answers 200 with an empty channel for any id on any user's host, so the trip comes
-// from the page. Trip and entry pages link their own trip by a relative path, in the breadcrumb,
-// and the user's other trips by absolute urls.
+// A trip feed answers on any user's host, under that user's name, so the trip comes from the page.
+// Trip and entry pages link their own trip by a relative path, in the breadcrumb, and the user's
+// other trips by absolute urls.
 const getGeoblogPage = (url: string, content: string | undefined): GeoblogPage | undefined => {
   const parsed = parseGeoblogUrl(url)
 
@@ -63,13 +69,14 @@ export const geoblogHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getGeoblogPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
-
-    return [{ uri: `${origin}/podroz/rss/${page.tripId}.xml`, hint: composeHint('geoblog:trip') }]
+    return [pageFeeds.getFeedEntry('geoblog:trip', { tripId: page.tripId })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
