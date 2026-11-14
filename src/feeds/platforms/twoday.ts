@@ -1,7 +1,7 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -12,6 +12,26 @@ export type TwodayUrl =
 const domains = ['twoday.net']
 
 const topicRegex = /^\/topics\/([^/]+)(?:\/|$)/i
+
+// A blog's skin links its posts feed as `/index.rdf` or `/rss`, the same stories.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'twoday:posts', template: '{scheme}://{host}/rss' },
+    { key: 'twoday:posts', template: '{scheme}://{host}/index.rdf', isAlias: true },
+    { key: 'twoday:posts', template: '{scheme}://{host}/rss.xml', isAlias: true },
+    // The same stories with shorter text, which some skins serve.
+    { key: 'twoday:summary', template: '{scheme}://{host}/summary.rdf' },
+    { key: 'twoday:topic', template: '{scheme}://{host}/topics/{topic}/index.rdf' },
+    { key: 'twoday:topic', template: '{scheme}://{host}/topics/{topic}/rss', isAlias: true },
+    // Every blog serves its newest comments, and its stories by their newest comment.
+    { key: 'twoday:comments', template: '{scheme}://{host}/latestcomments.rdf' },
+    { key: 'twoday:commented', template: '{scheme}://{host}/comments.rdf' },
+    // The platform's own news. It needs no value from the page, so `resolve` builds it on every
+    // page.
+    { key: 'twoday:platform', template: 'https://www.twoday.net/rss' },
+  ],
+  { domains },
+)
 
 export const parseTwodayUrl = (url: string): TwodayUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
@@ -42,24 +62,31 @@ export const twodayHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseTwodayUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.kind === 'topic') {
-      uris.push({
-        uri: `${origin}/topics/${parsed.topic}/index.rdf`,
-        hint: composeHint('twoday:topic'),
-      })
+      return [
+        page.getFeedEntry('twoday:topic', { topic: parsed.topic }),
+        page.getFeedEntry('twoday:posts'),
+        page.getFeedEntry('twoday:summary'),
+        page.getFeedEntry('twoday:comments'),
+        page.getFeedEntry('twoday:commented'),
+        feeds.getFeedEntry('twoday:platform'),
+      ]
     }
 
-    // A blog's skin links either spelling, and both serve the same feed.
-    uris.push({ uri: [`${origin}/index.rdf`, `${origin}/rss`], hint: composeHint('twoday:posts') })
-
-    return uris
+    return [
+      page.getFeedEntry('twoday:posts'),
+      page.getFeedEntry('twoday:summary'),
+      page.getFeedEntry('twoday:comments'),
+      page.getFeedEntry('twoday:commented'),
+      feeds.getFeedEntry('twoday:platform'),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
