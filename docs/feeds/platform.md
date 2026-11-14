@@ -893,11 +893,12 @@ Discovers RSS feeds for Are.na user profiles and channels.
 
 ### Audioboom
 
-Discovers RSS feeds for Audioboom channels.
+Discovers RSS feeds for Audioboom channels and playlists.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `audioboom.com/channels/{id}` | Podcast (RSS) |
+| `audioboom.com/playlists/{id}` | Playlist (RSS) |
 
 ### Ausha
 
