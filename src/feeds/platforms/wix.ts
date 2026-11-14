@@ -7,7 +7,8 @@ import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 export type WixUrl = { kind: 'freeSite'; site: string } | { kind: 'site' }
 
-const domains = ['wixsite.com']
+// Wix Studio serves its free sites the same way, under a path on `{account}.wixstudio.com`.
+const domains = ['wixsite.com', 'wixstudio.com']
 const assetHosts = ['static.parastorage.com']
 
 // Wix answers a free site's feed under any one segment after the site path, such as a language.
@@ -41,7 +42,8 @@ export const isWixHeaders = (headers: Headers): boolean => {
   return headers.has('x-wix-request-id')
 }
 
-// A free site lives under a path on `{account}.wixsite.com`, whose root answers 404.
+// A free site lives under a path on `{account}.wixsite.com` or `{account}.wixstudio.com`, whose
+// root answers 404.
 export const parseWixUrl = (url: string): WixUrl | undefined => {
   const parsedUrl = parseUrl(url)
 

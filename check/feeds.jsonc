@@ -1906,7 +1906,8 @@
   "wix": {
     "wix:blog": [
       "https://www.allthefood.ie/blog-feed.xml",
-      "https://k4lxycw.wixsite.com/blog/blog-feed.xml"
+      "https://k4lxycw.wixsite.com/blog/blog-feed.xml",
+      "https://alexisveille.wixstudio.com/ltdt/blog-feed.xml"
     ]
   },
   "wordpress": {

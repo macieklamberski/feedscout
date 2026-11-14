@@ -41,6 +41,13 @@ describe('parseWixUrl', () => {
     expect(parseWixUrl(value)).toEqual(expected)
   })
 
+  it('should return the free site for a wixstudio.com path', () => {
+    const value = 'https://alice.wixstudio.com/mysite/blog'
+    const expected: WixUrl = { kind: 'freeSite', site: 'mysite' }
+
+    expect(parseWixUrl(value)).toEqual(expected)
+  })
+
   it('should return the site for a custom domain', () => {
     const expected: WixUrl = { kind: 'site' }
 
@@ -106,6 +113,18 @@ describe('wixHandler', () => {
       expect(wixHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the blog feed under the site path of a Wix Studio free site', () => {
+      const value = 'https://account.wixstudio.com/mysite/post/hello'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://account.wixstudio.com/mysite/blog-feed.xml',
+          hint: { key: 'wix:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(wixHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should keep the http scheme of a free site opened over http', () => {
       const value = 'http://account.wixsite.com/mysite/post/hello'
       const expected: Array<DiscoverUriEntry> = [
@@ -131,6 +150,13 @@ describe('wixHandler', () => {
   describe('getFeedHint', () => {
     it('should return the blog hint for the blog feed of a free site', () => {
       const value = 'https://alice.wixsite.com/mysite/blog-feed.xml'
+      const expected: DiscoverUriHint = { key: 'wix:blog', label: 'Blog' }
+
+      expect(wixHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the blog hint for the blog feed of a Wix Studio free site', () => {
+      const value = 'https://alice.wixstudio.com/mysite/blog-feed.xml'
       const expected: DiscoverUriHint = { key: 'wix:blog', label: 'Blog' }
 
       expect(wixHandler.getFeedHint?.(value)).toEqual(expected)
@@ -198,6 +224,8 @@ describe('wixHandler', () => {
       ['https://alice.wixsite.com/mysite/blog-feed.xml?lang=en', blogHint],
       ['https://alice.wixsite.com/mysite/de/blog-feed.xml', blogHint],
       ['https://alice.wixsite.com/mysite/blog/blog-feed.xml', blogHint],
+      ['https://alice.wixstudio.com/mysite/blog-feed.xml', blogHint],
+      ['http://alice.wixstudio.com/mysite/blog-feed.xml', blogHint],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
