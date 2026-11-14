@@ -55,6 +55,10 @@ describe('podbeanHandler', () => {
           uri: 'https://feed.podbean.com/alice/feed.xml',
           hint: { key: 'podbean:podcast', label: 'Podcast' },
         },
+        {
+          uri: 'https://feed.podbean.com/alice/last1/feed.xml',
+          hint: { key: 'podbean:latest', label: 'Latest episode' },
+        },
       ]
 
       expect(podbeanHandler.resolve(value)).toEqual(expected)
@@ -66,6 +70,10 @@ describe('podbeanHandler', () => {
         {
           uri: 'https://feed.podbean.com/alice/feed.xml',
           hint: { key: 'podbean:podcast', label: 'Podcast' },
+        },
+        {
+          uri: 'https://feed.podbean.com/alice/last1/feed.xml',
+          hint: { key: 'podbean:latest', label: 'Latest episode' },
         },
       ]
 
@@ -106,9 +114,9 @@ describe('podbeanHandler', () => {
       expect(podbeanHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast hint for a podcast feed cut to its latest episode', () => {
+    it('should return the latest hint for a podcast feed cut to its latest episode', () => {
       const value = 'https://feed.podbean.com/alice/last1/feed.xml'
-      const expected: DiscoverUriHint = { key: 'podbean:podcast', label: 'Podcast' }
+      const expected: DiscoverUriHint = { key: 'podbean:latest', label: 'Latest episode' }
 
       expect(podbeanHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -149,7 +157,7 @@ describe('podbeanHandler', () => {
       ['https://dave1show.podbean.com/feed.xml', { key: 'podbean:podcast', label: 'Podcast' }],
       [
         'http://feed.podbean.com/alice/last1/feed.xml',
-        { key: 'podbean:podcast', label: 'Podcast' },
+        { key: 'podbean:latest', label: 'Latest episode' },
       ],
     ]
 

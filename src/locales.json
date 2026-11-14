@@ -326,6 +326,7 @@
     "pixelfed:posts": "Posts",
     "pleroma:posts": "Posts",
     "podbean:podcast": "Podcast",
+    "podbean:latest": "Latest episode",
     "podcloud:podcast": "Podcast",
     "podhome:podcast": "Podcast",
     "podigee:podcast": "Podcast",
