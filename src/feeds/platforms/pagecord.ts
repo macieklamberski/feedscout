@@ -12,11 +12,11 @@ const domains = ['pagecord.com']
 const feeds = definePlatformFeeds(
   [
     { key: 'pagecord:blog', template: '{scheme}://{host}/feed.xml' },
-    { key: 'pagecord:blog', template: '{scheme}://{host}/feed' },
-    { key: 'pagecord:blog', template: '{scheme}://{host}/feed.rss' },
+    { key: 'pagecord:blog', template: '{scheme}://{host}/feed', isAlias: true },
+    { key: 'pagecord:blog', template: '{scheme}://{host}/feed.rss', isAlias: true },
     { key: 'pagecord:tag', template: '{scheme}://{host}/feed.xml?tag={tag}' },
-    { key: 'pagecord:tag', template: '{scheme}://{host}/feed?tag={tag}' },
-    { key: 'pagecord:tag', template: '{scheme}://{host}/feed.rss?tag={tag}' },
+    { key: 'pagecord:tag', template: '{scheme}://{host}/feed?tag={tag}', isAlias: true },
+    { key: 'pagecord:tag', template: '{scheme}://{host}/feed.rss?tag={tag}', isAlias: true },
   ],
   { domains },
 )
