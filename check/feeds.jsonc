@@ -1467,25 +1467,27 @@
     }
   },
   "redmine": {
-    "redmine:activity": [
-      "https://www.redmine.org/activity.atom",
-      "https://www.redmine.org/projects/redmine/activity.atom",
-      "https://redmine.lighttpd.net/projects/lighttpd/activity.atom"
-    ],
+    "redmine:activity": "https://www.redmine.org/activity.atom",
     "redmine:board": "https://www.redmine.org/projects/redmine/boards/1.atom",
+    "redmine:boards": "https://kinggemeenten.plan.io/projects/vragen-discussieforum/boards.atom",
+    "redmine:changes": "https://saxonica.plan.io/projects/saxon/repository/he/changes.atom",
+    "redmine:filtered-issues": "https://hostedredmine.plan.io/issues.atom?set_filter=1&tracker_id=1",
     "redmine:issue": [
       "https://www.redmine.org/issues/1.atom",
       "https://bugs.ruby-lang.org/issues/20000.atom"
     ],
-    "redmine:issues": [
-      "https://www.redmine.org/issues.atom",
+    "redmine:issues": "https://www.redmine.org/issues.atom",
+    "redmine:news": "https://www.redmine.org/news.atom",
+    "redmine:project-activity": [
+      "https://www.redmine.org/projects/redmine/activity.atom",
+      "https://redmine.lighttpd.net/projects/lighttpd/activity.atom"
+    ],
+    "redmine:project-filtered-issues": "https://pulp.plan.io/projects/ansible_plugin/issues.atom?set_filter=1&status_id=c",
+    "redmine:project-issues": [
       "https://bugs.ruby-lang.org/projects/ruby-master/issues.atom",
       "https://pulp.plan.io/projects/pulp/issues.atom"
     ],
-    "redmine:news": [
-      "https://www.redmine.org/news.atom",
-      "https://www.redmine.org/projects/redmine/news.atom"
-    ],
+    "redmine:project-news": "https://www.redmine.org/projects/redmine/news.atom",
     "redmine:projects": "https://www.redmine.org/projects.atom",
     "redmine:revisions": "https://www.redmine.org/projects/redmine/repository/svn/revisions.atom"
   },

@@ -3140,22 +3140,22 @@ Discovers the site updates feed of a Japanese prefecture, city or town website b
 
 ### Redmine
 
-Discovers the Atom feeds of a Redmine install, Planio's hosted ones on `plan.io` included. Detected by the "Powered by Redmine" footer link, the `Redmine` description meta or the `_redmine_session` cookie, so any domain is covered. An install under a sub-path gets its feeds there. A private project redirects to the sign-in page, and an error page prints Redmine's error block, so neither gets a feed.
+Discovers the Atom feeds of a Redmine install, Planio's hosted ones on `plan.io` and `planio.com` included. Detected by the "Powered by Redmine" footer link, the `Redmine` description meta or the `_redmine_session` cookie, so any domain is covered. An install under a sub-path gets its feeds there. A private project redirects to the sign-in page, and an error page prints Redmine's error block, so neither gets a feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/projects/{project}`, any other project page | Project activity, plus issues<sup>†</sup> and news<sup>†</sup> when the project menu lists them |
-| `{site}/projects/{project}/issues` | Project issues |
-| `{site}/projects/{project}/news` | Project news |
-| `{site}/projects/{project}/activity` | Project activity |
-| `{site}/projects/{project}/boards/{id}` | Forum messages |
-| `{site}/projects/{project}/repository/…` | Repository revisions |
-| `{site}/issues/{id}` | Issue updates |
-| `{site}/issues` | Issues |
-| `{site}/news` | News |
-| `{site}/activity` | Activity |
-| `{site}/projects` | Projects |
-| `{site}/`, any other page | News · activity |
+| `{root}/projects/{project}`, any other project page | Project activity, plus issues<sup>†</sup> and news<sup>†</sup> when the project menu lists them |
+| `{root}/projects/{project}/issues` | Project issues |
+| `{root}/projects/{project}/news` | Project news |
+| `{root}/projects/{project}/activity` | Project activity |
+| `{root}/projects/{project}/boards/{id}` | Forum messages |
+| `{root}/projects/{project}/repository/…` | Repository revisions |
+| `{root}/issues/{id}` | Issue updates |
+| `{root}/issues` | Issues |
+| `{root}/news` | News |
+| `{root}/activity` | Activity |
+| `{root}/projects` | Projects |
+| `{root}/`, any other page | News · activity |
 
 <sup>†</sup> *Found only by the Platform method.*
 
