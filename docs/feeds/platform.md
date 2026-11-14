@@ -2230,11 +2230,12 @@ Discovers the video, live and blog feeds of a Niconico channel on `ch.nicovideo.
 
 ### LibriVox
 
-Discovers the RSS feed of a LibriVox audiobook, read from the feed link on the audiobook page.
+Discovers the RSS feed of a LibriVox audiobook, read from the feed link on the audiobook page, and the site's new releases.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `librivox.org/{slug}` | Audiobook (RSS)* |
+| `librivox.org/{slug}` | Audiobook (RSS)* · new releases (RSS) |
+| `librivox.org/…` | New releases (RSS) |
 
 \* *Requires HTML content to read the audiobook ID.*
 
