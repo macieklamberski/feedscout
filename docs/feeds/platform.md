@@ -291,8 +291,9 @@ Discovers the Atom feed for Product Hunt.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `producthunt.com` | Products (Atom) |
+| `producthunt.com/topics/{topic}` | Category · products (Atom) |
 
-> There is one feed. Topic and category pages have no feed of their own, and the `?topic=` and `?category=` parameters are ignored.
+> A topic page links only the products feed. The feed narrows to that topic under `?category={topic}`, while a `/categories/` slug and the `?topic=` parameter are ignored.
 
 ### Pinboard
 

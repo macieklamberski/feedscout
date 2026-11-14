@@ -1373,6 +1373,7 @@
     ]
   },
   "producthunt": {
+    "producthunt:category": "https://www.producthunt.com/feed?category=developer-tools",
     "producthunt:products": "https://www.producthunt.com/feed"
   },
   "promodj": {
