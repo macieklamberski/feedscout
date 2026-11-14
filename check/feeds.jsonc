@@ -1171,6 +1171,8 @@
       "https://journals.openedition.org/suds/backend?format=rssdocuments",
       "https://journals.openedition.org/palimpsestes/backend?format=rssdocuments"
     ],
+    "openedition:entity": "https://journals.openedition.org/cal/backend?format=rssdocuments&identity=2632",
+    "openedition:index-entry": "https://journals.openedition.org/lectures/backend?descriptionlength=800&format=rssdocuments&getreviews=1&idcontainer=1515",
     "openedition:issues": [
       "https://journals.openedition.org/suds/backend?format=rssnumeros",
       "https://journals.openedition.org/palimpsestes/backend?format=rssnumeros"

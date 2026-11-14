@@ -1,6 +1,6 @@
 import { getPathSegments, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers journal.
@@ -8,6 +8,67 @@ import { composeHint } from '../../common/utils.js'
 export type OpeneditionUrl = { kind: 'journal'; journal: string }
 
 const hosts = ['journals.openedition.org']
+
+// Each feed also answers at `backend.html` and at the journal home with `page=backend`. The
+// documents feed narrows to one entity, such as an issue, by `identity`, and to one index entry
+// by `idcontainer`. The page URL does not say which kind of entity it shows, and an article id
+// gives an empty feed, so those two are claimed and never built.
+const feeds = definePlatformFeeds([
+  {
+    key: 'openedition:documents',
+    template: 'https://journals.openedition.org/{journal}/backend?format=rssdocuments',
+  },
+  {
+    key: 'openedition:documents',
+    template: 'https://journals.openedition.org/{journal}/backend.html?format=rssdocuments',
+    isAlias: true,
+  },
+  {
+    key: 'openedition:documents',
+    template: 'https://journals.openedition.org/{journal}/?page=backend&format=rssdocuments',
+    isAlias: true,
+  },
+  {
+    key: 'openedition:entity',
+    template:
+      'https://journals.openedition.org/{journal}/backend?format=rssdocuments&identity={entity}',
+  },
+  {
+    key: 'openedition:index-entry',
+    template:
+      'https://journals.openedition.org/{journal}/backend?format=rssdocuments&idcontainer={entry}',
+  },
+  {
+    key: 'openedition:issues',
+    template: 'https://journals.openedition.org/{journal}/backend?format=rssnumeros',
+  },
+  {
+    key: 'openedition:issues',
+    template: 'https://journals.openedition.org/{journal}/backend.html?format=rssnumeros',
+    isAlias: true,
+  },
+  {
+    key: 'openedition:issues',
+    template: 'https://journals.openedition.org/{journal}/?page=backend&format=rssnumeros',
+    isAlias: true,
+  },
+  {
+    key: 'openedition:reviews',
+    template: 'https://journals.openedition.org/{journal}/backend?format=rssdocuments&type=review',
+  },
+  {
+    key: 'openedition:reviews',
+    template:
+      'https://journals.openedition.org/{journal}/backend.html?format=rssdocuments&type=review',
+    isAlias: true,
+  },
+  {
+    key: 'openedition:reviews',
+    template:
+      'https://journals.openedition.org/{journal}/?page=backend&format=rssdocuments&type=review',
+    isAlias: true,
+  },
+])
 
 export const parseOpeneditionUrl = (url: string): OpeneditionUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -36,21 +97,14 @@ export const openeditionHandler: PlatformHandler = {
       return []
     }
 
-    const backendUrl = `https://journals.openedition.org/${parsed.journal}/backend`
+    const params = { journal: parsed.journal }
 
     return [
-      {
-        uri: `${backendUrl}?format=rssdocuments`,
-        hint: composeHint('openedition:documents'),
-      },
-      {
-        uri: `${backendUrl}?format=rssnumeros`,
-        hint: composeHint('openedition:issues'),
-      },
-      {
-        uri: `${backendUrl}?format=rssdocuments&type=review`,
-        hint: composeHint('openedition:reviews'),
-      },
+      feeds.getFeedEntry('openedition:documents', params),
+      feeds.getFeedEntry('openedition:issues', params),
+      feeds.getFeedEntry('openedition:reviews', params),
     ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
