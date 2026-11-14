@@ -1,7 +1,7 @@
 import { isPlainObject, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getJsonLd, hasMarker } from '../../common/utils.js'
+import { getBrandDomainRegex, getJsonLd, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home (guess, html), partly covers forum, topic.
@@ -14,19 +14,63 @@ export type ForumotionPage =
 const forumPathRegex = /^\/f(\d+)(?:p\d+)?-/i
 const topicPathRegex = /^\/t\d+(?:p\d+)?-/i
 
-// One pattern per brand, each over its generic and country domains. Generic free domains, such as
-// 1fr1.net or forumgratuit.org, are left to the marker.
-const domains = [
-  '7olm.org',
-  'actieforum.com',
-  /^ahlamontada\.(?:com|net)$/,
-  /^foroactivo\.(?:com|com\.[a-z]{2}|[a-z]{2})$/,
-  /^forumactif\.(?:biz|com|info|org|[a-z]{2})$/,
-  /^forumattivo\.(?:com|[a-z]{2})$/,
-  /^forumeiros\.(?:com|net)$/,
-  /^forumotion\.(?:asia|com|net|org|co\.[a-z]{2}|[a-z]{2})$/,
-  'yoo7.com',
+// The brands Forumotion lists on forumotion.com/languages, each under any of its domains. Other
+// domains Forumotion serves forums on, such as 1fr1.net or forumpro.fr, are left to the marker.
+const brands = [
+  '666forum',
+  'actieforum',
+  'ahlamontada',
+  'albanianforum',
+  'azerbaijaniforum',
+  'bosnianforum',
+  'bulgarianforum',
+  'danskforum',
+  'editboard',
+  'foroactivo',
+  'forocatalan',
+  'forum2x2',
+  'forumactif',
+  'forumattivo',
+  'forumcroatian',
+  'forumczech',
+  'forumeiros',
+  'forumfa',
+  'forumgratuit',
+  'forumgreek',
+  'forumhebrew',
+  'forumieren',
+  'forumjap',
+  'forumkorean',
+  'forumlt',
+  'forummo',
+  'forumms',
+  'forumotion',
+  'forumpolish',
+  'forumsc',
+  'forumta',
+  'forumtl',
+  'forumur',
+  'forumvi',
+  'georgianforum',
+  'hungarianforum',
+  'icelandforum',
+  'indonesianforum',
+  'latvianforum',
+  'longluntan',
+  'macedonianforum',
+  'norwegianforum',
+  'palstani',
+  'serbianforum',
+  'slovakforum',
+  'slovenianforum',
+  'swedishforum',
+  'thai-forum',
+  'ukraine7',
+  'yetkinforum',
 ]
+
+// The `forum` brand is too generic to match under any domain, so it keeps its one domain.
+const domains = ['forum.co.ee', ...brands.map(getBrandDomainRegex)]
 
 // A forum on its own domain is known only by its marker, so its feeds are built here but not
 // claimed.

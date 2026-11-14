@@ -234,11 +234,15 @@ describe('forumotionHandler', () => {
         { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'atom' },
       ],
       [
-        'https://example.yoo7.com/feed/?f=12',
+        'https://example.forumgratuit.org/feed/?f=12',
         { key: 'forumotion:forum', label: 'Forum', format: 'rss' },
       ],
       [
-        'https://example.7olm.org/feed/',
+        'https://example.forum2x2.ru/feed/',
+        { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
+      ],
+      [
+        'https://example.forum.co.ee/feed/',
         { key: 'forumotion:latest-topics', label: 'Latest topics', format: 'rss' },
       ],
       [
@@ -301,24 +305,13 @@ describe('forumotionHandler', () => {
       expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return the hint for a feed on www in front of a forum', () => {
-      const value = 'https://www.example.forumotion.com/feed/'
-      const expected: DiscoverUriHint = {
-        key: 'forumotion:latest-topics',
-        label: 'Latest topics',
-        format: 'rss',
-      }
-
-      expect(forumotionHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://cms.example.forumotion.com/feed/'
 
       expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return the hint for a feed on a country domain outside the old list', () => {
+    it('should return the hint for a feed on a co. country domain', () => {
       const value = 'https://example.forumotion.co.uk/feed/'
       const expected: DiscoverUriHint = {
         key: 'forumotion:latest-topics',
@@ -329,14 +322,14 @@ describe('forumotionHandler', () => {
       expect(forumotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a feed on a generic free domain', () => {
+    it('should return undefined for a feed on a domain outside the brands', () => {
       const value = 'https://example.1fr1.net/feed/'
 
       expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a suffix outside the domain patterns', () => {
-      const value = 'https://example.forumeiros.org/feed/'
+    it('should return undefined for the forum brand under another domain', () => {
+      const value = 'https://example.forum.com/feed/'
 
       expect(forumotionHandler.getFeedHint?.(value)).toBeUndefined()
     })
