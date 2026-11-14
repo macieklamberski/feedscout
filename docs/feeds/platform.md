@@ -384,8 +384,8 @@ Discovers RSS feeds for Tumblr blogs and tagged posts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.tumblr.com` | Blog posts |
-| `*.tumblr.com/tagged/{tag}` | Tagged posts<sup>†</sup> |
+| `{blog}.tumblr.com` | Blog posts |
+| `{blog}.tumblr.com/tagged/{tag}` | Tagged posts<sup>†</sup> |
 | `www.tumblr.com/{blog}` | Blog posts |
 | `www.tumblr.com/blog/view/{blog}` | Blog posts |
 | `www.tumblr.com/{blog}/tagged/{tag}` | Tagged posts |
