@@ -12,7 +12,7 @@ const hosts = ['theduckwebcomics.com', 'www.theduckwebcomics.com']
 const feedPathRegex = /^\/(\w+)\/rss\/$/i
 
 const feeds = definePlatformFeeds(
-  [{ key: 'duck-webcomics:comic', template: 'https://{host}/{comic}/rss/' }],
+  [{ key: 'duck-webcomics:comic', template: '{scheme}://{host}/{comic}/rss/' }],
   { hosts },
 )
 
