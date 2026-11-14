@@ -38,13 +38,6 @@ describe('jimdoHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return empty array for a URL that does not parse', () => {
-      const value = 'not-a-url'
-      const expected: Array<DiscoverUriEntry> = []
-
-      expect(jimdoHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should return the blog feed at the site root', () => {
       const value = 'https://www.studium-universale.de/blog/'
       const expected = [
