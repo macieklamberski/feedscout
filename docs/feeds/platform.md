@@ -3724,7 +3724,7 @@ You can create handlers for platforms not included by default.
 
 ### Handler Interface
 
-A `PlatformHandler` has two methods and an optional regex:
+A `PlatformHandler` has two methods and an optional third:
 
 ```typescript
 type PlatformHandler = {
@@ -3735,7 +3735,7 @@ type PlatformHandler = {
     headers?: Headers,
     fetchFn?: FetchFn,
   ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef>>
-  guessExclusionRegex?: RegExp
+  getFeedHint?: (url: string) => DiscoverUriHint | undefined
 }
 ```
 
@@ -3743,7 +3743,63 @@ type PlatformHandler = {
 |--------|-------------|
 | `match(url, content?, headers?)` | Returns `true` if this handler should process the URL |
 | `resolve(url, content?, headers?, fetchFn?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL. A favicon handler can also return a [`DiscoverRef`](/reference/types#discoverref) for an icon that takes an extra request. See [Enriching Platform Icons](/other/favicons#enriching-platform-icons) |
-| `guessExclusionRegex` | Matches the full URL of any user's feed on the platform's host. When the handler matches the page or the requested URL, the [Guess method](/feeds/guess) drops URLs matching it, unless the handler generated them. Set it on a platform where a path like `/feed.xml` can be the feed of a user named `feed` |
+| `getFeedHint(url)` | Returns the [hint](/reference/types#discoverurihint) of the feed the URL is, when it is one of the feeds the handler builds. The Platform method returns such a URL as given with that hint, and the [Guess method](/feeds/guess) drops a guessed one |
+
+### Declaring Feeds
+
+`definePlatformFeeds` holds a handler's feed URLs as templates keyed by hint key: `getFeedEntry` builds a feed with its hint, `getFeedHint` reads a URL back to its hint, with the row's `format`, `{host}` stands for any host in `hosts` or under `domains`, `{domain}` for one of `domains`, and `{scheme}` for the page's scheme on a platform that runs on the site's own host.
+
+`getFeedHint` reads a `{host}` row under `domains` only on a tenant, one label in front of the domain, so `alice.example.com/feed` is claimed and `example.com/feed`, `www.example.com/feed` and `blog.alice.example.com/feed` are not. A platform's own host goes in `hosts`. `resolve` still builds a `{host}` row on any host.
+
+An entry of `domains` can be a pattern standing for a family of domains, anchored at both ends, such as `/^blogspot\.(?:com|com\.[a-z]{2}|[a-z]{2})$/` for `blogspot.com`, `blogspot.de` and `blogspot.com.br`. `{host}` and `{domain}` then stand for any domain the pattern matches, and `forUrl` fills `{domain}` with the one the page's host is under.
+
+A template can open with `{root}`, which stands for the scheme, the host with its port and an optional base path, as `https://example.com/forum`, written as given. `getFeedHint` reads a `{root}` row as a `{host}` row, on the origin of a host in `hosts` or a tenant under `domains`, never under a base path, since a tenant serves from its origin. A table with neither builds the row without claiming it.
+
+A path placeholder written `{name*}` stands for one or more segments, filled from the `name` value, so `https://{host}/{owner}/{repo}/commits/{branch}/{path*}.atom` with `{ path: 'src/lib/index.ts' }` builds the history of that file. Each segment is encoded on its own and the slashes are kept. A value that is empty or holds an empty segment, such as `docs//api`, counts as no value. `getFeedHint` claims any path with one or more non-empty segments there.
+
+`getFeedHint` tries the rows with more query parameters first and, at the same count, in table order. A `{name*}` row overlaps every row with fewer segments in its place, so it goes after them: with `/t/{tag}/feed` listed before `/{path*}/feed`, `/t/news/feed` reads as the tag feed.
+
+A feed the platform serves under several spellings, such as a legacy host, has one row per spelling under its key. The spelling `getFeedEntry` builds is the canonical row, and each other spelling sits directly under it marked `isAlias: true`. An alias row belongs to the nearest row above it with the same key and format and no `isAlias`, so a key holding several feeds keeps each feed's spellings under its own canonical row. `getFeedHint` reads an alias row back to the same hint. `definePlatformFeeds` throws for an alias row with no canonical row above it, so a reorder that would build the alias fails at once. The table cannot tell whether two rows are one feed: that rests on a probe or a comment beside the row, and the placement on review. Keep `isAlias` off a row that is a different feed under the same key.
+
+```typescript
+const feeds = definePlatformFeeds([
+  { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
+  { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
+])
+```
+
+`getFeedHint` ignores a leading `www` on a fixed host, so `www.example.com/rss` reads as an `example.com/rss` row. A tenant host with `www` in front matches no row, and neither does `www` as a tenant. On a platform where `www` can be a tenant, set `isWwwTenant: true`: a row is then tried on the host as given first, so `www.example.com/rss` reads as the tenant `www` on a `{username}.example.com/rss` row, and the host without `www` only when no row matches. On a platform where `www.alice.example.com` serves the same feeds as `alice.example.com`, set `isWwwTenantPrefix: true`: the `www` in front of a tenant label is then dropped, so `www.alice.example.com/rss` reads as the tenant `alice`. `www.example.com/rss` still reads as no tenant unless `isWwwTenant` is set too.
+
+`forUrl(url)` returns the same `getFeedUrl` and `getFeedEntry` with `{scheme}`, `{host}` and `{root}` filled from the page URL, `{root}` with its origin, and `{domain}` with the entry of `domains` its host is under, so a handler passes only the values the URL cannot give. A value the handler passes wins, so a handler that reads a base path from the page passes `root` with it. A value left `undefined` counts as no value: it never replaces a value from the page, and a key with several rows builds the first one whose placeholders all have a value, so `{ slug, id }` with no `id` builds the row without `{id}`. It returns `undefined` for a URL that is not an http URL.
+
+```typescript
+import { definePlatformFeeds, type PlatformHandler } from 'feedscout/platform'
+
+const hosts = ['example.com', 'www.example.com']
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'example:posts', template: 'https://{host}/{username}/feed.rss' },
+    { key: 'example:search', template: 'https://feeds.example.com/rss.xml?q={query}' },
+  ],
+  { hosts },
+)
+
+const exampleHandler: PlatformHandler = {
+  match: (url) => new URL(url).hostname === 'example.com',
+  resolve: (url) => {
+    const [username] = new URL(url).pathname.split('/').filter(Boolean)
+    const pageFeeds = feeds.forUrl(url)
+
+    if (!pageFeeds) {
+      return []
+    }
+
+    return [pageFeeds.getFeedEntry('example:posts', { username })]
+  },
+  getFeedHint: feeds.getFeedHint,
+}
+```
 
 ### Basic Example
 

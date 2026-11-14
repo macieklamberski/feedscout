@@ -1,5 +1,11 @@
 import type { MaybePromise } from 'trousse'
-import type { DiscoverEnrichFn, DiscoverRef, DiscoverUriEntry, FetchFn } from '../../types.js'
+import type {
+  DiscoverEnrichFn,
+  DiscoverRef,
+  DiscoverUriEntry,
+  DiscoverUriHint,
+  FetchFn,
+} from '../../types.js'
 
 export type PlatformHandler = {
   match: (url: string, content?: string, headers?: Headers) => boolean
@@ -12,9 +18,8 @@ export type PlatformHandler = {
     headers?: Headers,
     fetchFn?: FetchFn,
   ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef>>
-  // Full URL of any tenant's feed on the handler's host. Guessed URLs matching it are dropped
-  // when the handler matches, as `/feed.xml` there can be the feed of a user named "feed".
-  guessExclusionRegex?: RegExp
+  // The hint of the feed the URL is, when it is one of the feeds the handler builds.
+  getFeedHint?: (url: string) => DiscoverUriHint | undefined
 }
 
 export type PlatformMethodOptions = {
