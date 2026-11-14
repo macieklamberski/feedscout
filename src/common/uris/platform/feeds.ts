@@ -24,8 +24,9 @@ export type PlatformFeedTemplate = {
   // `{name*}` path placeholder takes one or more segments, filled from `name` as `docs/api`.
   template: string
   format?: DiscoverUriHint['format']
-  // Another spelling of one feed, such as a legacy host. Its canonical row is the first row above it
-  // with the same key and format and no `isAlias`, and the table throws when there is none.
+  // Another spelling of one feed, such as a legacy host, directly under the row it spells. Its
+  // canonical row is the nearest row above it with the same key and format and no `isAlias`, and
+  // the table throws when there is none.
   isAlias?: boolean
 }
 
