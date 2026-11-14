@@ -14,9 +14,24 @@ const feeds = definePlatformFeeds(
   [
     { key: 'parsiblog:posts', template: '{scheme}://{host}/rss/', format: 'rss' },
     { key: 'parsiblog:posts', template: '{scheme}://{host}/atom/', format: 'atom' },
-    { key: 'parsiblog:posts', template: '{scheme}://{host}/RSS.aspx', format: 'rss' },
-    { key: 'parsiblog:posts', template: '{scheme}://{host}/ATOM.aspx', format: 'atom' },
-    { key: 'parsiblog:posts', template: '{scheme}://{host}/Mag/RSS.aspx', format: 'rss' },
+    {
+      key: 'parsiblog:posts',
+      template: '{scheme}://{host}/RSS.aspx',
+      format: 'rss',
+      isAlias: true,
+    },
+    {
+      key: 'parsiblog:posts',
+      template: '{scheme}://{host}/ATOM.aspx',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'parsiblog:posts',
+      template: '{scheme}://{host}/Mag/RSS.aspx',
+      format: 'rss',
+      isAlias: true,
+    },
   ],
   { domains, isWwwTenantPrefix: true },
 )
