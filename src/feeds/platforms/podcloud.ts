@@ -1,11 +1,20 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type PodcloudUrl = { kind: 'show' }
 
 const domains = ['lepodcast.fr']
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'podcloud:podcast', template: '{scheme}://{host}/rss' },
+    { key: 'podcloud:podcast', template: '{scheme}://{host}/feed', isAlias: true },
+  ],
+  { domains },
+)
 
 export const parsePodcloudUrl = (url: string): PodcloudUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -22,13 +31,14 @@ export const podcloudHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePodcloudUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { hostname } = new URL(url)
-
-    return [{ uri: `https://${hostname}/rss`, hint: composeHint('podcloud:podcast') }]
+    return [page.getFeedEntry('podcloud:podcast')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
