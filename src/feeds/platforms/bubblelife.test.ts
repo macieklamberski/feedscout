@@ -107,7 +107,7 @@ describe('getBubblelifePage', () => {
   })
 
   it('should return the news alert feed an rssinfo page links', () => {
-    const value = 'https://plano.bubblelife.com/community/plano_news/type/rssinfo'
+    const value = 'https://maplegrove.bubblelife.com/community/maplegrove_news/type/rssinfo'
     const content = `
       <a href="/rss?c=35671970">All Posts</a>
       <a href="/rss?c=35600714,nofriends">Flash News Alerts</a>
@@ -292,18 +292,18 @@ describe('bubblelifeHandler', () => {
 
     it('should return the library and news alert feeds from the library rssinfo page', () => {
       const value =
-        'https://plano.bubblelife.com/community/plano_news/library/35660940/type/rssinfo'
+        'https://maplegrove.bubblelife.com/community/maplegrove_news/library/35660940/type/rssinfo'
       const content = `
         <a href="/rss?c=35660940">All Posts</a>
         <a href="/rss?c=35600714,nofriends">Flash News Alerts</a>
       `
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://plano.bubblelife.com/rss?c=35660940',
+          uri: 'https://maplegrove.bubblelife.com/rss?c=35660940',
           hint: { key: 'bubblelife:library', label: 'Library' },
         },
         {
-          uri: 'https://plano.bubblelife.com/rss?c=35600714,nofriends',
+          uri: 'https://maplegrove.bubblelife.com/rss?c=35600714,nofriends',
           hint: { key: 'bubblelife:news-alerts', label: 'News alerts' },
         },
       ]
@@ -371,7 +371,7 @@ describe('bubblelifeHandler', () => {
     })
 
     it('should return the library hint for an uppercase feed path', () => {
-      const value = 'https://plano.bubblelife.com/RSS?C=35660940'
+      const value = 'https://maplegrove.bubblelife.com/RSS?C=35660940'
       const expected: DiscoverUriHint = { key: 'bubblelife:library', label: 'Library' }
 
       expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
@@ -412,7 +412,7 @@ describe('bubblelifeHandler', () => {
     })
 
     it('should return undefined for a feed path without an id', () => {
-      const value = 'https://plano.bubblelife.com/rss'
+      const value = 'https://maplegrove.bubblelife.com/rss'
 
       expect(bubblelifeHandler.getFeedHint?.(value)).toBeUndefined()
     })
