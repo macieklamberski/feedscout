@@ -1,7 +1,7 @@
-import { composeQuery, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
+import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers root (html), partly covers namespace.
@@ -10,6 +10,15 @@ export type DokuwikiPage = { installPath: string; namespace?: string }
 
 const namespaceRegex = /var NS='([^']+)'/
 const sessionCookiePathRegex = /(?:^|,)\s*DokuWiki=[^,]*?;\s*path=([^;,\s]+)/i
+
+// A wiki runs on its own domain, under its install path, and is known only by its marker, so its
+// feeds are built here but not claimed. The template links the namespace's pages feed, not its
+// changes.
+const feeds = definePlatformFeeds([
+  { key: 'dokuwiki:namespace', template: '{root}/feed.php?ns={namespace}' },
+  { key: 'dokuwiki:namespace-pages', template: '{root}/feed.php?mode=list&ns={namespace}' },
+  { key: 'dokuwiki:recent-changes', template: '{root}/feed.php' },
+])
 
 export const isDokuwikiHeaders = (headers: Headers): boolean => {
   return getCookieNames(headers).includes('DokuWiki')
@@ -47,23 +56,16 @@ export const dokuwikiHandler: PlatformHandler = {
   resolve: (url, content, headers) => {
     const { origin } = new URL(url)
     const { installPath, namespace } = getDokuwikiPage(url, content, headers)
-    const feedUrl = `${origin}${installPath}feed.php`
-    const uris: Array<DiscoverUriEntry> = []
+    const root = `${origin}${installPath}`
 
     if (namespace) {
-      uris.push({
-        uri: `${feedUrl}${composeQuery({ ns: namespace })}`,
-        hint: composeHint('dokuwiki:namespace'),
-      })
-      // The template advertises this one: the namespace's pages, not its changes.
-      uris.push({
-        uri: `${feedUrl}${composeQuery({ mode: 'list', ns: namespace })}`,
-        hint: composeHint('dokuwiki:namespace-pages'),
-      })
+      return [
+        feeds.getFeedEntry('dokuwiki:namespace', { root, namespace }),
+        feeds.getFeedEntry('dokuwiki:namespace-pages', { root, namespace }),
+        feeds.getFeedEntry('dokuwiki:recent-changes', { root }),
+      ]
     }
 
-    uris.push({ uri: feedUrl, hint: composeHint('dokuwiki:recent-changes') })
-
-    return uris
+    return [feeds.getFeedEntry('dokuwiki:recent-changes', { root })]
   },
 }
