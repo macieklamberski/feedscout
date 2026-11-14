@@ -523,10 +523,11 @@ describe('estrankyHandler', () => {
       expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a feed on www in front of a site', () => {
+    it('should return the posts hint for a feed on www in front of a site', () => {
       const value = 'http://www.example.estranky.cz/rss/articles/data.xml'
+      const expected: DiscoverUriHint = { key: 'estranky:posts', label: 'Posts' }
 
-      expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a feed on the apex', () => {
