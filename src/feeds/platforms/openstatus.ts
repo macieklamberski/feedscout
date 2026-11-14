@@ -6,16 +6,21 @@ import { findElement, hasMetaContent, isRootOfPage } from '../../common/utils.js
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
+const domains = ['openstatus.dev']
+
 const previewImageUrl = 'https://www.openstatus.dev/api/og/page'
 
 const summaryHrefRegex = /^(?:https?:\/\/[^/]+)?\/api\/status\/summary\.json$/i
 
-// A status page is known only by its markup, so its feeds are built on the page's origin and
-// claimed on no host.
-const feeds = definePlatformFeeds([
-  { key: 'openstatus:updates', template: '{root}/feed/rss', format: 'rss' },
-  { key: 'openstatus:updates', template: '{root}/feed/atom', format: 'atom' },
-])
+// A status page is known by its markup, so its feeds are built on any origin, and claimed only on
+// a tenant of OpenStatus's own domain, since a custom domain does not name the platform.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'openstatus:updates', template: '{root}/feed/rss', format: 'rss' },
+    { key: 'openstatus:updates', template: '{root}/feed/atom', format: 'atom' },
+  ],
+  { domains },
+)
 
 // A status page links its summary endpoint and takes its preview image from the hosted service.
 export const isOpenstatusPage = (url: string, content: string | undefined): boolean => {
@@ -56,4 +61,6 @@ export const openstatusHandler: PlatformHandler = {
       pageFeeds.getFeedEntry('openstatus:updates', {}, 'atom'),
     ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
