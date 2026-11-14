@@ -279,28 +279,28 @@ describe('vimeoHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the videos hint for a user videos feed', () => {
-      const value = 'https://vimeo.com/filmsupply/videos/rss'
+      const value = 'https://vimeo.com/alice/videos/rss'
       const expected: DiscoverUriHint = { key: 'vimeo:videos', label: 'Videos' }
 
       expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the videos hint for a user videos feed on the www host over http', () => {
-      const value = 'http://www.vimeo.com/filmsupply/videos/rss'
+      const value = 'http://www.vimeo.com/alice/videos/rss'
       const expected: DiscoverUriHint = { key: 'vimeo:videos', label: 'Videos' }
 
       expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the videos hint for a user all videos feed', () => {
-      const value = 'https://vimeo.com/user5139139/videos/all/rss'
+      const value = 'https://vimeo.com/user12345/videos/all/rss'
       const expected: DiscoverUriHint = { key: 'vimeo:videos', label: 'Videos' }
 
       expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the likes hint for a user likes feed', () => {
-      const value = 'https://vimeo.com/jaredlyon/likes/rss'
+      const value = 'https://vimeo.com/alice/likes/rss'
       const expected: DiscoverUriHint = { key: 'vimeo:likes', label: 'Likes' }
 
       expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
@@ -314,21 +314,21 @@ describe('vimeoHandler', () => {
     })
 
     it('should return the channel hint for a channel feed with a numeric channel', () => {
-      const value = 'https://vimeo.com/channels/40086/videos/rss'
+      const value = 'https://vimeo.com/channels/12345/videos/rss'
       const expected: DiscoverUriHint = { key: 'vimeo:channel', label: 'Channel' }
 
       expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the group hint for a group feed', () => {
-      const value = 'https://vimeo.com/groups/sweetandsoundsubmissions/videos/rss'
+      const value = 'https://vimeo.com/groups/example/videos/rss'
       const expected: DiscoverUriHint = { key: 'vimeo:group', label: 'Group' }
 
       expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the album hint for an album feed', () => {
-      const value = 'https://vimeo.com/album/2043624/rss'
+      const value = 'https://vimeo.com/album/12345/rss'
       const expected: DiscoverUriHint = { key: 'vimeo:album', label: 'Album' }
 
       expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
@@ -353,7 +353,7 @@ describe('vimeoHandler', () => {
     })
 
     it('should return undefined for a showcase feed', () => {
-      const value = 'https://vimeo.com/showcase/2043624/rss'
+      const value = 'https://vimeo.com/showcase/12345/rss'
 
       expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -365,13 +365,13 @@ describe('vimeoHandler', () => {
     })
 
     it('should return undefined for a user page', () => {
-      const value = 'https://vimeo.com/filmsupply'
+      const value = 'https://vimeo.com/alice'
 
       expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/filmsupply/videos/rss'
+      const value = 'https://example.com/alice/videos/rss'
 
       expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -379,19 +379,16 @@ describe('vimeoHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const values: Array<[string, DiscoverUriEntry['hint']]> = [
-      ['https://vimeo.com/filmsupply/videos/rss', { key: 'vimeo:videos', label: 'Videos' }],
-      ['https://vimeo.com/user5139139/videos/all/rss', { key: 'vimeo:videos', label: 'Videos' }],
-      ['https://vimeo.com/jaredlyon/likes/rss', { key: 'vimeo:likes', label: 'Likes' }],
+      ['https://vimeo.com/alice/videos/rss', { key: 'vimeo:videos', label: 'Videos' }],
+      ['https://vimeo.com/user12345/videos/all/rss', { key: 'vimeo:videos', label: 'Videos' }],
+      ['https://vimeo.com/alice/likes/rss', { key: 'vimeo:likes', label: 'Likes' }],
       [
         'https://vimeo.com/channels/staffpicks/videos/rss',
         { key: 'vimeo:channel', label: 'Channel' },
       ],
-      ['https://vimeo.com/channels/40086/videos/rss', { key: 'vimeo:channel', label: 'Channel' }],
-      [
-        'https://vimeo.com/groups/sweetandsoundsubmissions/videos/rss',
-        { key: 'vimeo:group', label: 'Group' },
-      ],
-      ['https://vimeo.com/album/2043624/rss', { key: 'vimeo:album', label: 'Album' }],
+      ['https://vimeo.com/channels/12345/videos/rss', { key: 'vimeo:channel', label: 'Channel' }],
+      ['https://vimeo.com/groups/example/videos/rss', { key: 'vimeo:group', label: 'Group' }],
+      ['https://vimeo.com/album/12345/rss', { key: 'vimeo:album', label: 'Album' }],
     ]
 
     it.each(values)('should return %s as itself', async (value, hint) => {
