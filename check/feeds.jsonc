@@ -1640,6 +1640,7 @@
   },
   "sportsregions": {
     "sportsregions:events": "https://echiquierpontivy.sportsregions.fr/rss/evenement",
+    "sportsregions:filtered-events": "https://archers-de-carrieres78.sportsregions.fr/rss/evenement?type_id=1",
     "sportsregions:news": "https://rugby-club-bournazel.sportsregions.fr/rss/news"
   },
   "spotifyForCreators": {
