@@ -748,6 +748,7 @@
     }
   },
   "goope": {
+    "goope:association-news": "https://r.goope.jp/srp-45/shokokai/feed.rss",
     "goope:member-news": [
       "https://r.goope.jp/maibarasci/shokokai/member/feed.rss",
       "https://yazu.tori-skr.jp/shokokai/member/feed.rss"
