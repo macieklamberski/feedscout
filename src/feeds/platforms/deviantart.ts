@@ -1,6 +1,6 @@
-import { composeQuery, decodeSegment, isHostOf, parseUrl } from 'trousse'
+import { decodeSegment, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -14,7 +14,6 @@ export type DeviantartUrl =
   | { kind: 'dailyDeviations' }
 
 const hosts = ['deviantart.com', 'www.deviantart.com']
-const feedBaseUrl = 'https://backend.deviantart.com/rss.xml'
 
 const tagRegex = /^\/tag\/([^/]+)/i
 const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/|$)/i
@@ -22,6 +21,60 @@ const favouritesRegex = /^\/[^/]+\/favourites\/?$/i
 const folderRegex = /^\/[^/]+\/gallery\/(\d+)(?:\/|$)/i
 const journalRegex = /^\/[^/]+\/journal(?:\/|$)/i
 const dailyDeviationsRegex = /^\/daily-deviations\/?$/i
+
+// A user's deviations serve the same items with or without the sort and meta terms, under
+// `type=gallery`, without a type and as `gallery:{username}`. The journals are `type=journal` over
+// the same `by:` query, as `q=journal:{username}` serves the site-wide Popular feed. The tag and
+// daily deviations feeds serve the same popular pool whatever the query, so they are claimed and
+// never built.
+const feeds = definePlatformFeeds([
+  {
+    key: 'deviantart:deviations',
+    template:
+      'https://backend.deviantart.com/rss.xml?type=deviation&q=by:{username} sort:time meta:all',
+  },
+  {
+    key: 'deviantart:deviations',
+    template: 'https://backend.deviantart.com/rss.xml?type=deviation&q=by:{username}',
+    isAlias: true,
+  },
+  {
+    key: 'deviantart:deviations',
+    template: 'https://backend.deviantart.com/rss.xml?type=gallery&q=by:{username}',
+    isAlias: true,
+  },
+  {
+    key: 'deviantart:deviations',
+    template: 'https://backend.deviantart.com/rss.xml?q=by:{username}',
+    isAlias: true,
+  },
+  {
+    key: 'deviantart:deviations',
+    template: 'https://backend.deviantart.com/rss.xml?q=gallery:{username}',
+    isAlias: true,
+  },
+  {
+    key: 'deviantart:gallery',
+    template:
+      'https://backend.deviantart.com/rss.xml?type=deviation&q=gallery:{username}/{folderId}',
+  },
+  {
+    key: 'deviantart:favorites',
+    template: 'https://backend.deviantart.com/rss.xml?type=deviation&q=favby:{username}',
+  },
+  {
+    key: 'deviantart:tag',
+    template: 'https://backend.deviantart.com/rss.xml?type=deviation&q=tag:{tag}',
+  },
+  {
+    key: 'deviantart:journal',
+    template: 'https://backend.deviantart.com/rss.xml?type=journal&q=by:{username}',
+  },
+  {
+    key: 'deviantart:daily-deviations',
+    template: 'https://backend.deviantart.com/rss.xml?q=special:dd',
+  },
+])
 
 export const parseDeviantartUrl = (url: string): DeviantartUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -77,61 +130,26 @@ export const deviantartHandler: PlatformHandler = {
       return []
     }
 
-    // Site-wide curated feeds.
-    if (parsed.kind === 'dailyDeviations') {
-      return [
-        {
-          uri: `${feedBaseUrl}${composeQuery({ q: 'special:dd' })}`,
-          hint: composeHint('deviantart:daily-deviations'),
-        },
-      ]
-    }
-
-    if (parsed.kind === 'tag') {
-      return [
-        {
-          uri: `${feedBaseUrl}${composeQuery({ type: 'deviation', q: `tag:${parsed.tag}` })}`,
-          hint: composeHint('deviantart:tag'),
-        },
-      ]
+    if (parsed.kind === 'dailyDeviations' || parsed.kind === 'tag') {
+      return []
     }
 
     if (parsed.kind === 'favourites') {
-      return [
-        {
-          uri: `${feedBaseUrl}${composeQuery({ type: 'deviation', q: `favby:${parsed.username}` })}`,
-          hint: composeHint('deviantart:favorites'),
-        },
-      ]
+      return [feeds.getFeedEntry('deviantart:favorites', { username: parsed.username })]
     }
 
     if (parsed.kind === 'folder') {
-      const query = `gallery:${parsed.username}/${parsed.folderId}`
+      const params = { username: parsed.username, folderId: parsed.folderId }
 
-      return [
-        {
-          uri: `${feedBaseUrl}${composeQuery({ type: 'deviation', q: query })}`,
-          hint: composeHint('deviantart:gallery'),
-        },
-      ]
+      return [feeds.getFeedEntry('deviantart:gallery', params)]
     }
 
     if (parsed.kind === 'journal') {
-      return [
-        {
-          uri: `${feedBaseUrl}${composeQuery({ q: `journal:${parsed.username}` })}`,
-          hint: composeHint('deviantart:journal'),
-        },
-      ]
+      return [feeds.getFeedEntry('deviantart:journal', { username: parsed.username })]
     }
 
-    const query = composeQuery({ type: 'deviation', q: `by:${parsed.username} sort:time meta:all` })
-
-    return [
-      {
-        uri: `${feedBaseUrl}${query}`,
-        hint: composeHint('deviantart:deviations'),
-      },
-    ]
+    return [feeds.getFeedEntry('deviantart:deviations', { username: parsed.username })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
