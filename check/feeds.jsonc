@@ -1235,7 +1235,7 @@
   },
   "paragraph": {
     "paragraph:blog": [
-      "https://api.paragraph.com/blogs/rss/@blog",
+      "https://paragraph.com/@blog/rss.xml",
       "https://paragraph.com/@blog/feed",
       "https://paragraph.com/@optimism/rss"
     ]
