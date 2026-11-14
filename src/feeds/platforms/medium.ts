@@ -28,7 +28,7 @@ const subdomainTagRegex = /^\/tagged\/([^/]+)/i
 const feeds = definePlatformFeeds(
   [
     { key: 'medium:posts', template: 'https://medium.com/feed/@{username}' },
-    { key: 'medium:posts', template: 'https://medium.com/@{username}/feed' },
+    { key: 'medium:posts', template: 'https://medium.com/@{username}/feed', isAlias: true },
     { key: 'medium:tag', template: 'https://medium.com/feed/tag/{tag}' },
     { key: 'medium:tagged', template: 'https://medium.com/feed/{publication}/tagged/{tag}' },
     { key: 'medium:tagged', template: '{scheme}://{host}/feed/tagged/{tag}' },
