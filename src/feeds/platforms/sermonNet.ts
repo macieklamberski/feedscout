@@ -1,6 +1,7 @@
-import { encodePathSegment, getPathSegments } from 'trousse'
+import { getPathSegments } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers church.
@@ -16,6 +17,14 @@ const domains = ['sermon.net']
 // The page links no feed. It embeds the channels and series of its media centre as JSON, and each
 // one the church owns serves a feed.
 const channelRegex = /"is_series":(?:false|true),"url":"([^"]+)"/g
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'sermon-net:channel', template: '{scheme}://{host}/rss/{channel}/audio' },
+    { key: 'sermon-net:church', template: '{scheme}://{host}/rss' },
+  ],
+  { domains },
+)
 
 export const parseSermonNetUrl = (url: string): SermonNetUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -65,37 +74,26 @@ export const sermonNetHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getSermonNetPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
-
     if (page.kind === 'channel') {
-      return [
-        {
-          uri: `${origin}/rss/${page.channel}/audio`,
-          hint: composeHint('sermon-net:channel'),
-        },
-      ]
+      return [pageFeeds.getFeedEntry('sermon-net:channel', { channel: page.channel })]
     }
 
     if (page.channels.length > 0) {
+      // The channel is page text, which can hold a `/`, and the table escapes it.
       return page.channels.map((channel) => {
-        // The channel is page text, which can hold a `/`.
-        const uri = `${origin}/rss/${encodePathSegment(channel)}/audio`
-
-        return { uri, hint: composeHint('sermon-net:channel') }
+        return pageFeeds.getFeedEntry('sermon-net:channel', { channel })
       })
     }
 
     // A church whose media was removed lists no channel and still serves an empty feed here.
-    return [
-      {
-        uri: `${origin}/rss`,
-        hint: composeHint('sermon-net:church'),
-      },
-    ]
+    return [pageFeeds.getFeedEntry('sermon-net:church')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

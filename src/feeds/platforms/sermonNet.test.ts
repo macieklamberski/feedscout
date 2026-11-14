@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   getSermonNetPage,
   parseSermonNetUrl,
@@ -61,21 +63,30 @@ describe('parseSermonNetUrl', () => {
 describe('getSermonNetPage', () => {
   it('should return every channel and series the church page lists once', () => {
     const value = 'https://faithchapelchurch.sermon.net/'
-    const expected: SermonNetPage = { kind: 'church', channels: ['faithchapel', 'main'] }
+    const expected: SermonNetPage = {
+      kind: 'church',
+      channels: ['faithchapel', 'main'],
+    }
 
     expect(getSermonNetPage(value, faithChapelHtml)).toEqual(expected)
   })
 
   it('should return the channel a channel page names', () => {
     const value = 'https://faithchapelchurch.sermon.net/main/faithchapel'
-    const expected: SermonNetPage = { kind: 'channel', channel: 'faithchapel' }
+    const expected: SermonNetPage = {
+      kind: 'channel',
+      channel: 'faithchapel',
+    }
 
     expect(getSermonNetPage(value, faithChapelHtml)).toEqual(expected)
   })
 
   it('should fall back to the church for a channel the page does not list', () => {
     const value = 'https://faithchapelchurch.sermon.net/main/shared'
-    const expected: SermonNetPage = { kind: 'church', channels: ['faithchapel', 'main'] }
+    const expected: SermonNetPage = {
+      kind: 'church',
+      channels: ['faithchapel', 'main'],
+    }
 
     expect(getSermonNetPage(value, faithChapelHtml)).toEqual(expected)
   })
@@ -166,6 +177,106 @@ describe('sermonNetHandler', () => {
       ]
 
       expect(sermonNetHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should keep the http scheme of a channel page opened over http', () => {
+      const value = 'http://example.sermon.net/main/sermons'
+      const content = 'var StudioAppData = {"allPlaylists":[{"is_series":true,"url":"sermons"}]};'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.sermon.net/rss/sermons/audio',
+          hint: { key: 'sermon-net:channel', label: 'Channel podcast' },
+        },
+      ]
+
+      expect(sermonNetHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should keep the http scheme of a church page opened over http', () => {
+      const value = 'http://example.sermon.net/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.sermon.net/rss',
+          hint: { key: 'sermon-net:church', label: 'Church' },
+        },
+      ]
+
+      expect(sermonNetHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the channel hint for the audio feed of a channel', () => {
+      const value = 'https://example.sermon.net/rss/sermons/audio'
+      const expected: DiscoverUriHint = { key: 'sermon-net:channel', label: 'Channel podcast' }
+
+      expect(sermonNetHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the channel hint for a channel with an escaped slash', () => {
+      const value = 'https://example.sermon.net/rss/main%2Fextra/audio'
+      const expected: DiscoverUriHint = { key: 'sermon-net:channel', label: 'Channel podcast' }
+
+      expect(sermonNetHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the church hint for the church feed', () => {
+      const value = 'https://example.sermon.net/rss'
+      const expected: DiscoverUriHint = { key: 'sermon-net:church', label: 'Church' }
+
+      expect(sermonNetHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the church hint for the church feed over http', () => {
+      const value = 'http://example.sermon.net/rss'
+      const expected: DiscoverUriHint = { key: 'sermon-net:church', label: 'Church' }
+
+      expect(sermonNetHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a channel page', () => {
+      const value = 'https://example.sermon.net/main/sermons'
+
+      expect(sermonNetHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the video feed of a channel', () => {
+      const value = 'https://example.sermon.net/rss/sermons/video'
+
+      expect(sermonNetHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the audio and PDF feed of a channel', () => {
+      const value = 'https://example.sermon.net/rss/sermons/audio_pdf'
+
+      expect(sermonNetHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the church feed path on the www host', () => {
+      const value = 'https://www.sermon.net/rss'
+
+      expect(sermonNetHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const channelHint: DiscoverUriHint = { key: 'sermon-net:channel', label: 'Channel podcast' }
+    const churchHint: DiscoverUriHint = { key: 'sermon-net:church', label: 'Church' }
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://example.sermon.net/rss/sermons/audio', channelHint],
+      ['http://example.sermon.net/rss/sermons/audio', channelHint],
+      ['https://example.sermon.net/rss/', churchHint],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [sermonNetHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
