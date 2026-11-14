@@ -271,42 +271,42 @@ describe('dreamwidthHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the posts key for an RSS feed', () => {
-      const value = 'https://zvi.dreamwidth.org/data/rss'
+      const value = 'https://alice.dreamwidth.org/data/rss'
       const expected: DiscoverUriHint = { key: 'dreamwidth:posts', label: 'Posts', format: 'rss' }
 
       expect(dreamwidthHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts key for an Atom feed', () => {
-      const value = 'https://kake.dreamwidth.org/data/atom'
+      const value = 'https://alice.dreamwidth.org/data/atom'
       const expected: DiscoverUriHint = { key: 'dreamwidth:posts', label: 'Posts', format: 'atom' }
 
       expect(dreamwidthHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts key for a feed with a trailing slash', () => {
-      const value = 'https://elfs.dreamwidth.org/data/rss/'
+      const value = 'https://alice.dreamwidth.org/data/rss/'
       const expected: DiscoverUriHint = { key: 'dreamwidth:posts', label: 'Posts', format: 'rss' }
 
       expect(dreamwidthHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts key for an http feed', () => {
-      const value = 'http://zvi.dreamwidth.org/data/rss'
+      const value = 'http://alice.dreamwidth.org/data/rss'
       const expected: DiscoverUriHint = { key: 'dreamwidth:posts', label: 'Posts', format: 'rss' }
 
       expect(dreamwidthHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the tag key for an RSS tag feed', () => {
-      const value = 'https://zvi.dreamwidth.org/data/rss?tag=feedback'
+      const value = 'https://alice.dreamwidth.org/data/rss?tag=feedback'
       const expected: DiscoverUriHint = { key: 'dreamwidth:posts-tag', label: 'Tag', format: 'rss' }
 
       expect(dreamwidthHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the tag key for an Atom tag feed with an encoded tag', () => {
-      const value = 'https://zulu.dreamwidth.org/data/atom?tag=fandom%3A+greys+anatomy'
+      const value = 'https://alice.dreamwidth.org/data/atom?tag=fandom%3A+example'
       const expected: DiscoverUriHint = {
         key: 'dreamwidth:posts-tag',
         label: 'Tag',
@@ -317,7 +317,7 @@ describe('dreamwidthHandler', () => {
     })
 
     it('should return the tag key for a tag feed with a trailing slash', () => {
-      const value = 'https://elfs.dreamwidth.org/data/atom/?tag=news'
+      const value = 'https://alice.dreamwidth.org/data/atom/?tag=news'
       const expected: DiscoverUriHint = {
         key: 'dreamwidth:posts-tag',
         label: 'Tag',
@@ -328,7 +328,7 @@ describe('dreamwidthHandler', () => {
     })
 
     it('should return the userpics key for a userpics feed', () => {
-      const value = 'https://zvi.dreamwidth.org/data/userpics'
+      const value = 'https://alice.dreamwidth.org/data/userpics'
       const expected: DiscoverUriHint = {
         key: 'dreamwidth:userpics',
         label: 'Userpics',
@@ -339,7 +339,7 @@ describe('dreamwidthHandler', () => {
     })
 
     it('should return undefined for a journal page', () => {
-      const value = 'https://zvi.dreamwidth.org/tag/feedback'
+      const value = 'https://alice.dreamwidth.org/tag/feedback'
 
       expect(dreamwidthHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -372,31 +372,31 @@ describe('dreamwidthHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://zvi.dreamwidth.org/data/rss',
+        'https://alice.dreamwidth.org/data/rss',
         { key: 'dreamwidth:posts', label: 'Posts', format: 'rss' },
       ],
       [
-        'https://kake.dreamwidth.org/data/atom',
+        'https://alice.dreamwidth.org/data/atom',
         { key: 'dreamwidth:posts', label: 'Posts', format: 'atom' },
       ],
       [
-        'https://elfs.dreamwidth.org/data/rss/',
+        'https://alice.dreamwidth.org/data/rss/',
         { key: 'dreamwidth:posts', label: 'Posts', format: 'rss' },
       ],
       [
-        'https://zvi.dreamwidth.org/data/rss?tag=feedback',
+        'https://alice.dreamwidth.org/data/rss?tag=feedback',
         { key: 'dreamwidth:posts-tag', label: 'Tag', format: 'rss' },
       ],
       [
-        'https://zulu.dreamwidth.org/data/atom?tag=fandom%3A+greys+anatomy',
+        'https://alice.dreamwidth.org/data/atom?tag=fandom%3A+example',
         { key: 'dreamwidth:posts-tag', label: 'Tag', format: 'atom' },
       ],
       [
-        'https://elfs.dreamwidth.org/data/atom/?tag=news',
+        'https://alice.dreamwidth.org/data/atom/?tag=news',
         { key: 'dreamwidth:posts-tag', label: 'Tag', format: 'atom' },
       ],
       [
-        'https://zvi.dreamwidth.org/data/userpics',
+        'https://alice.dreamwidth.org/data/userpics',
         { key: 'dreamwidth:userpics', label: 'Userpics', format: 'atom' },
       ],
     ]
