@@ -890,7 +890,7 @@ describe('redditHandler', () => {
     })
 
     it('should return the posts hint for a user feed', () => {
-      const value = 'https://www.reddit.com/user/feathj/.rss'
+      const value = 'https://www.reddit.com/user/carolj/.rss'
       const expected: DiscoverUriHint = { key: 'reddit:posts', label: 'Posts' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
@@ -911,7 +911,7 @@ describe('redditHandler', () => {
     })
 
     it('should return the user comments hint for a user comments feed', () => {
-      const value = 'https://www.reddit.com/user/gamavalkharid/comments/.rss'
+      const value = 'https://www.reddit.com/user/alicepost/comments/.rss'
       const expected: DiscoverUriHint = { key: 'reddit:user-comments', label: 'Comments' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
@@ -932,7 +932,7 @@ describe('redditHandler', () => {
     })
 
     it('should return the search hint for a site search feed', () => {
-      const value = 'https://www.reddit.com/search.rss?q=%22Sue%20Scheff%22'
+      const value = 'https://www.reddit.com/search.rss?q=%22Alice%20Example%22'
       const expected: DiscoverUriHint = { key: 'reddit:search', label: 'Search' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
@@ -967,7 +967,7 @@ describe('redditHandler', () => {
     })
 
     it('should return the user submitted hint for a submitted feed', () => {
-      const value = 'https://www.reddit.com/user/Darkskynet/submitted/.rss'
+      const value = 'https://www.reddit.com/user/BobSky/submitted/.rss'
       const expected: DiscoverUriHint = { key: 'reddit:user-submitted', label: 'Submitted' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
@@ -988,7 +988,7 @@ describe('redditHandler', () => {
     })
 
     it('should return the user comments hint for a user comments feed on the new host', () => {
-      const value = 'https://new.reddit.com/user/gamavalkharid/comments/.rss'
+      const value = 'https://new.reddit.com/user/alicepost/comments/.rss'
       const expected: DiscoverUriHint = { key: 'reddit:user-comments', label: 'Comments' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
@@ -1007,7 +1007,7 @@ describe('redditHandler', () => {
     })
 
     it('should return undefined for a user page', () => {
-      const value = 'https://www.reddit.com/user/feathj/'
+      const value = 'https://www.reddit.com/user/carolj/'
 
       expect(redditHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -1045,14 +1045,14 @@ describe('redditHandler', () => {
         'https://www.reddit.com/r/devops/top/.rss?_=1782881925',
         { key: 'reddit:subreddit', label: 'Subreddit' },
       ],
-      ['https://www.reddit.com/user/feathj/.rss', { key: 'reddit:posts', label: 'Posts' }],
+      ['https://www.reddit.com/user/carolj/.rss', { key: 'reddit:posts', label: 'Posts' }],
       ['https://www.reddit.com/domain/github.com/.rss', { key: 'reddit:posts', label: 'Posts' }],
       [
         'https://www.reddit.com/r/longevity/comments/.rss',
         { key: 'reddit:comments', label: 'Comments' },
       ],
       [
-        'https://www.reddit.com/user/gamavalkharid/comments/.rss',
+        'https://www.reddit.com/user/alicepost/comments/.rss',
         { key: 'reddit:user-comments', label: 'Comments' },
       ],
       [
@@ -1064,7 +1064,7 @@ describe('redditHandler', () => {
         { key: 'reddit:post-comments', label: 'Post comments' },
       ],
       [
-        'https://www.reddit.com/search.rss?q=%22Sue%20Scheff%22',
+        'https://www.reddit.com/search.rss?q=%22Alice%20Example%22',
         { key: 'reddit:search', label: 'Search' },
       ],
       [
@@ -1081,7 +1081,7 @@ describe('redditHandler', () => {
         { key: 'reddit:subreddits', label: 'Subreddits' },
       ],
       [
-        'https://www.reddit.com/user/Darkskynet/submitted/.rss',
+        'https://www.reddit.com/user/BobSky/submitted/.rss',
         { key: 'reddit:user-submitted', label: 'Submitted' },
       ],
       [
@@ -1093,7 +1093,7 @@ describe('redditHandler', () => {
         { key: 'reddit:comments', label: 'Comments' },
       ],
       [
-        'https://new.reddit.com/user/gamavalkharid/comments/.rss',
+        'https://new.reddit.com/user/alicepost/comments/.rss',
         { key: 'reddit:user-comments', label: 'Comments' },
       ],
       ['https://old.reddit.com/r/dns/.rss', { key: 'reddit:subreddit', label: 'Subreddit' }],
@@ -1103,7 +1103,7 @@ describe('redditHandler', () => {
         { key: 'reddit:subreddit', label: 'Subreddit' },
       ],
       ['https://old.reddit.com/r/devops/top/.rss', { key: 'reddit:subreddit', label: 'Subreddit' }],
-      ['https://old.reddit.com/user/feathj/.rss', { key: 'reddit:posts', label: 'Posts' }],
+      ['https://old.reddit.com/user/carolj/.rss', { key: 'reddit:posts', label: 'Posts' }],
       ['https://old.reddit.com/domain/github.com/.rss', { key: 'reddit:posts', label: 'Posts' }],
       [
         'https://old.reddit.com/r/ansible/comments/y7v2ed/.rss',
@@ -1127,7 +1127,7 @@ describe('redditHandler', () => {
         { key: 'reddit:subreddits', label: 'Subreddits' },
       ],
       [
-        'https://old.reddit.com/user/Darkskynet/submitted/.rss',
+        'https://old.reddit.com/user/BobSky/submitted/.rss',
         { key: 'reddit:user-submitted', label: 'Submitted' },
       ],
       [
