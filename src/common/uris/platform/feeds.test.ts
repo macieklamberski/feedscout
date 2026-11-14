@@ -50,6 +50,16 @@ const wwwTenantFeeds = definePlatformFeeds(wwwTenantTemplates, { isWwwTenant: tr
 
 const wwwStrippedFeeds = definePlatformFeeds(wwwTenantTemplates)
 
+const wwwPrefixFeeds = definePlatformFeeds(wwwTenantTemplates, { isWwwTenantPrefix: true })
+
+const wwwPrefixDomainFeeds = definePlatformFeeds(
+  [
+    { key: 'example:blog', template: '{scheme}://{username}.{domain}/feed' },
+    { key: 'example:site', template: 'https://{host}/feeds/site' },
+  ],
+  { domains: ['example.net'], isWwwTenantPrefix: true },
+)
+
 const domainPatternTemplates = [
   { key: 'example:blog', template: '{scheme}://{username}.{domain}/feed' },
   { key: 'example:site', template: 'https://{host}/feeds/site' },
@@ -114,6 +124,56 @@ describe('definePlatformFeeds', () => {
       definePlatformFeeds([{ key: 'example:blog', template: 'https://{username}.{domain}/feed' }])
 
     expect(throwing).toThrow('No hosts for the example:blog feed')
+  })
+
+  it('should accept an alias row below the canonical row of its key and format', () => {
+    const defining = () => {
+      return definePlatformFeeds([
+        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
+        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
+      ])
+    }
+
+    expect(defining).not.toThrow()
+  })
+
+  it('should throw for an alias row above the canonical row of its key', () => {
+    const throwing = () => {
+      return definePlatformFeeds([
+        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
+        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
+      ])
+    }
+
+    expect(throwing).toThrow('No canonical template above the example:posts alias')
+  })
+
+  it('should throw for an alias row whose key has a canonical row of another format only', () => {
+    const throwing = () => {
+      return definePlatformFeeds([
+        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
+        {
+          key: 'example:posts',
+          template: 'https://example.com/{username}/atom',
+          format: 'atom',
+          isAlias: true,
+        },
+      ])
+    }
+
+    expect(throwing).toThrow('No canonical template above the example:posts alias')
+  })
+
+  it('should throw for an alias row below another alias row only', () => {
+    const throwing = () => {
+      return definePlatformFeeds([
+        { key: 'example:other', template: 'https://feeds.example.com/{username}.rss' },
+        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
+        { key: 'example:posts', template: 'https://example.com/{username}.rss', isAlias: true },
+      ])
+    }
+
+    expect(throwing).toThrow('No canonical template above the example:posts alias')
   })
 
   describe('getFeedUrl', () => {
@@ -286,6 +346,17 @@ describe('definePlatformFeeds', () => {
       const expected: DiscoverUriHint = { key: 'youtube:videos', label: 'Videos' }
 
       expect(hintFeeds.getFeedHint(value)).toEqual(expected)
+    })
+
+    it('should return the hint of the key for a feed on an alias row', () => {
+      const aliasFeeds = definePlatformFeeds([
+        { key: 'youtube:videos', template: 'https://feeds.example.com/{username}.xml' },
+        { key: 'youtube:videos', template: 'https://example.com/{username}/rss', isAlias: true },
+      ])
+      const value = 'https://example.com/alice/rss'
+      const expected: DiscoverUriHint = { key: 'youtube:videos', label: 'Videos' }
+
+      expect(aliasFeeds.getFeedHint(value)).toEqual(expected)
     })
 
     it('should return the key of a feed URL', () => {
@@ -494,6 +565,56 @@ describe('definePlatformFeeds', () => {
       const value = 'https://www.alice.example.org/feed'
 
       expect(wwwStrippedFeeds.getFeedHint(value)).toBeUndefined()
+    })
+
+    it('should return the key of a feed on a tenant host with www with isWwwTenantPrefix', () => {
+      const value = 'https://www.alice.example.org/feed'
+      const expected = 'example:journal'
+      const hint = wwwPrefixFeeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return undefined for a tenant named www with isWwwTenantPrefix', () => {
+      const value = 'https://www.example.org/feed'
+
+      expect(wwwPrefixFeeds.getFeedHint(value)).toBeUndefined()
+    })
+
+    it('should return the key of an apex row for a www host with isWwwTenantPrefix', () => {
+      const value = 'https://www.example.org/rss'
+      const expected = 'example:site'
+      const hint = wwwPrefixFeeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return undefined for a feed on a tenant host with two www with isWwwTenantPrefix', () => {
+      const value = 'https://www.www.alice.example.org/feed'
+
+      expect(wwwPrefixFeeds.getFeedHint(value)).toBeUndefined()
+    })
+
+    it('should return the key of a feed on a tenant with www of a domain with isWwwTenantPrefix', () => {
+      const value = 'https://www.alice.example.net/feed'
+      const expected = 'example:blog'
+      const hint = wwwPrefixDomainFeeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed on a host with www of a domain with isWwwTenantPrefix', () => {
+      const value = 'https://www.meta.example.net/feeds/site'
+      const expected = 'example:site'
+      const hint = wwwPrefixDomainFeeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return undefined for a feed on www of a domain with isWwwTenantPrefix', () => {
+      const value = 'https://www.example.net/feeds/site'
+
+      expect(wwwPrefixDomainFeeds.getFeedHint(value)).toBeUndefined()
     })
 
     it('should return the key of a feed with a doubled slash after the host', () => {
