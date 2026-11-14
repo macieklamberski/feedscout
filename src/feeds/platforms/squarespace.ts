@@ -87,6 +87,7 @@ const feeds = definePlatformFeeds(
       key: 'squarespace:category',
       template:
         '{scheme}://{host}/{collection}/rss.xml;jsessionid={session}?categoryId={categoryId}',
+      isAlias: true,
     },
     {
       key: 'squarespace:category',
