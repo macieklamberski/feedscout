@@ -50,6 +50,16 @@ const wwwTenantFeeds = definePlatformFeeds(wwwTenantTemplates, { isWwwTenant: tr
 
 const wwwStrippedFeeds = definePlatformFeeds(wwwTenantTemplates)
 
+const wwwPrefixFeeds = definePlatformFeeds(wwwTenantTemplates, { isWwwTenantPrefix: true })
+
+const wwwPrefixDomainFeeds = definePlatformFeeds(
+  [
+    { key: 'example:blog', template: '{scheme}://{username}.{domain}/feed' },
+    { key: 'example:site', template: 'https://{host}/feeds/site' },
+  ],
+  { domains: ['example.net'], isWwwTenantPrefix: true },
+)
+
 const domainPatternTemplates = [
   { key: 'example:blog', template: '{scheme}://{username}.{domain}/feed' },
   { key: 'example:site', template: 'https://{host}/feeds/site' },
@@ -60,6 +70,11 @@ const domainPatternOptions = {
 }
 
 const domainPatternFeeds = definePlatformFeeds(domainPatternTemplates, domainPatternOptions)
+
+const hostPatternFeeds = definePlatformFeeds(
+  [{ key: 'example:profile', template: 'https://{host}/-{username}/feed' }],
+  { hosts: ['example.org', /^example\.(?:com|co\.[a-z]{2}|[a-z]{2})$/] },
+)
 
 const rootTemplates = [
   { key: 'example:latest', template: '{root}/latest.rss' },
@@ -111,6 +126,56 @@ describe('definePlatformFeeds', () => {
     expect(throwing).toThrow('No hosts for the example:blog feed')
   })
 
+  it('should accept an alias row below the canonical row of its key and format', () => {
+    const defining = () => {
+      return definePlatformFeeds([
+        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
+        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
+      ])
+    }
+
+    expect(defining).not.toThrow()
+  })
+
+  it('should throw for an alias row above the canonical row of its key', () => {
+    const throwing = () => {
+      return definePlatformFeeds([
+        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
+        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
+      ])
+    }
+
+    expect(throwing).toThrow('No canonical template above the example:posts alias')
+  })
+
+  it('should throw for an alias row whose key has a canonical row of another format only', () => {
+    const throwing = () => {
+      return definePlatformFeeds([
+        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
+        {
+          key: 'example:posts',
+          template: 'https://example.com/{username}/atom',
+          format: 'atom',
+          isAlias: true,
+        },
+      ])
+    }
+
+    expect(throwing).toThrow('No canonical template above the example:posts alias')
+  })
+
+  it('should throw for an alias row below another alias row only', () => {
+    const throwing = () => {
+      return definePlatformFeeds([
+        { key: 'example:other', template: 'https://feeds.example.com/{username}.rss' },
+        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
+        { key: 'example:posts', template: 'https://example.com/{username}.rss', isAlias: true },
+      ])
+    }
+
+    expect(throwing).toThrow('No canonical template above the example:posts alias')
+  })
+
   describe('getFeedUrl', () => {
     it('should write a path value into the template', () => {
       const value = feeds.getFeedUrl('example:posts', { username: 'alice' })
@@ -129,6 +194,13 @@ describe('definePlatformFeeds', () => {
     it('should write a query value through composeQuery', () => {
       const value = feeds.getFeedUrl('example:search', { username: 'alice' })
       const expected = 'https://feeds.example.com/rss.xml?type=item&q=by:alice%20sort:time'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should percent-encode a non-ASCII query value', () => {
+      const value = feeds.getFeedUrl('example:tag', { tag: '技術' })
+      const expected = 'https://feeds.example.com/rss.xml?q=tag:%E6%8A%80%E8%A1%93'
 
       expect(value).toBe(expected)
     })
@@ -276,66 +348,101 @@ describe('definePlatformFeeds', () => {
       expect(hintFeeds.getFeedHint(value)).toEqual(expected)
     })
 
+    it('should return the hint of the key for a feed on an alias row', () => {
+      const aliasFeeds = definePlatformFeeds([
+        { key: 'youtube:videos', template: 'https://feeds.example.com/{username}.xml' },
+        { key: 'youtube:videos', template: 'https://example.com/{username}/rss', isAlias: true },
+      ])
+      const value = 'https://example.com/alice/rss'
+      const expected: DiscoverUriHint = { key: 'youtube:videos', label: 'Videos' }
+
+      expect(aliasFeeds.getFeedHint(value)).toEqual(expected)
+    })
+
     it('should return the key of a feed URL', () => {
       const value = 'https://www.example.com/alice/feed.rss'
       const expected = 'example:posts'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return the key of a feed with two values', () => {
       const value = 'https://www.example.com/alice/recipes.rss'
       const expected = 'example:board'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return the key of a feed named by its query', () => {
       const value = 'https://feeds.example.com/rss.xml?q=tag%3Acats'
       const expected = 'example:tag'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed with a percent-encoded non-ASCII query value', () => {
+      const value = 'https://feeds.example.com/rss.xml?q=tag:%E6%8A%80%E8%A1%93'
+      const expected = 'example:tag'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed with a raw non-ASCII query value', () => {
+      const value = 'https://feeds.example.com/rss.xml?q=tag:技術'
+      const expected = 'example:tag'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return the key of the template with more query parameters first', () => {
       const value = 'https://feeds.example.com/rss.xml?type=item&q=by%3Aalice%20sort%3Atime'
+      const expected = 'example:search'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe('example:search')
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return the key of a feed on a tenant host', () => {
       const value = 'https://alice.example.org/feed'
       const expected = 'example:blog'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return the key of a feed on any listed host', () => {
       const value = 'https://example.com/feeds/site'
       const expected = 'example:site'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return the key of a feed under either scheme for a scheme placeholder', () => {
       const value = 'http://example.com/feed'
       const expected = 'example:site-feed'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return the key of a feed on a tenant of a listed domain', () => {
       const value = 'https://meta.example.net/feeds/site'
       const expected = 'example:site'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
-    it('should return the key of a feed on a tenant with www of a listed domain', () => {
+    it('should return undefined for a feed on a tenant with www of a listed domain', () => {
       const value = 'https://www.meta.example.net/feeds/site'
-      const expected = 'example:site'
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(feeds.getFeedHint(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex of a listed domain', () => {
@@ -357,8 +464,9 @@ describe('definePlatformFeeds', () => {
       )
       const value = 'https://www.example.net/feeds/site'
       const expected = 'example:site'
+      const hint = wwwTenantHostFeeds.getFeedHint(value)
 
-      expect(wwwTenantHostFeeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return undefined for a feed on a nested host of a listed domain', () => {
@@ -374,15 +482,17 @@ describe('definePlatformFeeds', () => {
       )
       const value = 'https://example.net/feeds/site'
       const expected = 'example:site'
+      const hint = hostFeeds.getFeedHint(value)
 
-      expect(hostFeeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return the key of a feed on a tenant host of a listed domain', () => {
       const value = 'https://alice.example.edu/journal/feed'
       const expected = 'example:journal'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return undefined for a tenant host of another domain', () => {
@@ -394,43 +504,47 @@ describe('definePlatformFeeds', () => {
     it('should ignore the scheme, www, a trailing slash and the case of a route word', () => {
       const value = 'http://example.com/alice/Feed.rss/'
       const expected = 'example:posts'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return the key of a tenant named www as given with isWwwTenant', () => {
       const value = 'https://www.example.org/feed'
       const expected = 'example:journal'
+      const hint = wwwTenantFeeds.getFeedHint(value)
 
-      expect(wwwTenantFeeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
-    it('should return the key of a feed on a tenant host with www with isWwwTenant', () => {
+    it('should return undefined for a feed on a tenant host with www with isWwwTenant', () => {
       const value = 'https://www.alice.example.org/feed'
-      const expected = 'example:journal'
 
-      expect(wwwTenantFeeds.getFeedHint(value)?.key).toBe(expected)
+      expect(wwwTenantFeeds.getFeedHint(value)).toBeUndefined()
     })
 
     it('should return the key of a feed on a fixed host with www with isWwwTenant', () => {
       const value = 'https://www.example.com/alice/videos.xml'
       const expected = 'example:videos'
+      const hint = wwwTenantFeeds.getFeedHint(value)
 
-      expect(wwwTenantFeeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return the key of a tenant row as given over an apex row with isWwwTenant', () => {
       const value = 'https://www.example.org/rss'
       const expected = 'example:blog'
+      const hint = wwwTenantFeeds.getFeedHint(value)
 
-      expect(wwwTenantFeeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return the key of an apex row for the apex host with isWwwTenant', () => {
       const value = 'https://example.org/rss'
       const expected = 'example:site'
+      const hint = wwwTenantFeeds.getFeedHint(value)
 
-      expect(wwwTenantFeeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return undefined for a tenant named www without isWwwTenant', () => {
@@ -442,85 +556,170 @@ describe('definePlatformFeeds', () => {
     it('should return the key of an apex row for a www host without isWwwTenant', () => {
       const value = 'https://www.example.org/rss'
       const expected = 'example:site'
+      const hint = wwwStrippedFeeds.getFeedHint(value)
 
-      expect(wwwStrippedFeeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
-    it('should return the key of a feed on a tenant host with www without isWwwTenant', () => {
+    it('should return undefined for a feed on a tenant host with www without isWwwTenant', () => {
+      const value = 'https://www.alice.example.org/feed'
+
+      expect(wwwStrippedFeeds.getFeedHint(value)).toBeUndefined()
+    })
+
+    it('should return the key of a feed on a tenant host with www with isWwwTenantPrefix', () => {
       const value = 'https://www.alice.example.org/feed'
       const expected = 'example:journal'
+      const hint = wwwPrefixFeeds.getFeedHint(value)
 
-      expect(wwwStrippedFeeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return undefined for a tenant named www with isWwwTenantPrefix', () => {
+      const value = 'https://www.example.org/feed'
+
+      expect(wwwPrefixFeeds.getFeedHint(value)).toBeUndefined()
+    })
+
+    it('should return the key of an apex row for a www host with isWwwTenantPrefix', () => {
+      const value = 'https://www.example.org/rss'
+      const expected = 'example:site'
+      const hint = wwwPrefixFeeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return undefined for a feed on a tenant host with two www with isWwwTenantPrefix', () => {
+      const value = 'https://www.www.alice.example.org/feed'
+
+      expect(wwwPrefixFeeds.getFeedHint(value)).toBeUndefined()
+    })
+
+    it('should return the key of a feed on a tenant with www of a domain with isWwwTenantPrefix', () => {
+      const value = 'https://www.alice.example.net/feed'
+      const expected = 'example:blog'
+      const hint = wwwPrefixDomainFeeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed on a host with www of a domain with isWwwTenantPrefix', () => {
+      const value = 'https://www.meta.example.net/feeds/site'
+      const expected = 'example:site'
+      const hint = wwwPrefixDomainFeeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return undefined for a feed on www of a domain with isWwwTenantPrefix', () => {
+      const value = 'https://www.example.net/feeds/site'
+
+      expect(wwwPrefixDomainFeeds.getFeedHint(value)).toBeUndefined()
+    })
+
+    it('should return the key of a feed with a doubled slash after the host', () => {
+      const value = 'https://www.example.com//alice/feed.rss'
+      const expected = 'example:posts'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed on a tenant with a doubled slash after the host', () => {
+      const value = 'https://meta.example.net//feeds/site'
+      const expected = 'example:site'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a root feed with a doubled slash after the host', () => {
+      const value = 'https://example.com//latest.rss'
+      const expected = 'example:latest'
+      const hint = rootFeeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
     })
 
     it('should ignore the query order and extra parameters', () => {
       const value =
         'https://feeds.example.com/rss.xml?utm_source=x&q=by%3Aalice%20sort%3Atime&type=item'
+      const expected = 'example:search'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe('example:search')
+      expect(hint?.key).toBe(expected)
     })
 
     it('should match an at sign of the template against its percent-encoded form', () => {
       const value = 'https://www.example.com/rss/%40alice'
       const expected = 'example:handle'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should match an at sign of the template as written', () => {
       const value = 'https://www.example.com/rss/@alice'
       const expected = 'example:handle'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should match a percent-encoded character of the template in lower case', () => {
       const value = 'https://www.example.com/topics/tag%3acats/feed'
       const expected = 'example:topic'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should match a percent-encoded character of the template in upper case', () => {
       const value = 'https://www.example.com/topics/tag%3Acats/feed'
       const expected = 'example:topic'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should match a template written with a percent-encoded character as written', () => {
       const value = 'https://www.example.com/rss/@alice'
       const expected = 'example:handle'
+      const hint = encodedFeeds.getFeedHint(value)
 
-      expect(encodedFeeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should match a template written with a percent-encoded character percent-encoded', () => {
       const value = 'https://www.example.com/rss/%40alice'
       const expected = 'example:handle'
+      const hint = encodedFeeds.getFeedHint(value)
 
-      expect(encodedFeeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return the key of a feed built from an encoded value', () => {
       const value = feeds.getFeedUrl('example:posts', { username: 'c#' })
       const expected = 'example:posts'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should keep an encoded slash inside one segment', () => {
       const value = 'https://www.example.com/alice%2Fbob/feed.rss'
       const expected = 'example:posts'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return the key of a feed with a malformed percent sequence', () => {
       const value = 'https://www.example.com/%E0%A4/feed.rss'
       const expected = 'example:posts'
+      const hint = feeds.getFeedHint(value)
 
-      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return undefined when an encoded slash would split a segment', () => {
@@ -538,8 +737,9 @@ describe('definePlatformFeeds', () => {
     it('should match an encoded slash of the template', () => {
       const value = 'https://www.example.com/a%2fb/alice'
       const expected = 'example:slash'
+      const hint = encodedFeeds.getFeedHint(value)
 
-      expect(encodedFeeds.getFeedHint(value)?.key).toBe(expected)
+      expect(hint?.key).toBe(expected)
     })
 
     it('should return undefined for a double-encoded slash against an encoded slash', () => {
@@ -588,36 +788,39 @@ describe('definePlatformFeeds', () => {
       it('should return the key of a feed on a domain the pattern matches', () => {
         const value = 'https://alice.example.co.uk/feed'
         const expected = 'example:blog'
+        const hint = domainPatternFeeds.getFeedHint(value)
 
-        expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(hint?.key).toBe(expected)
       })
 
       it('should return the key of a feed on a plain domain beside the pattern', () => {
         const value = 'https://alice.example.net/feed'
         const expected = 'example:blog'
+        const hint = domainPatternFeeds.getFeedHint(value)
 
-        expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(hint?.key).toBe(expected)
       })
 
-      it('should return the key of a feed with www before the tenant', () => {
+      it('should return undefined for a feed with www before the tenant', () => {
         const value = 'https://www.alice.example.de/feed'
-        const expected = 'example:blog'
 
-        expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(domainPatternFeeds.getFeedHint(value)).toBeUndefined()
       })
 
       it('should return the key of a feed on a port', () => {
         const value = 'https://alice.example.de:8080/feed'
         const expected = 'example:blog'
+        const hint = domainPatternFeeds.getFeedHint(value)
 
-        expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(hint?.key).toBe(expected)
       })
 
       it('should return the key of a host feed on a tenant', () => {
         const value = 'https://alice.example.co.uk/feeds/site'
         const expected = 'example:site'
+        const hint = domainPatternFeeds.getFeedHint(value)
 
-        expect(domainPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(hint?.key).toBe(expected)
       })
 
       it('should return undefined for a host feed on the apex', () => {
@@ -639,8 +842,9 @@ describe('definePlatformFeeds', () => {
         })
         const value = 'https://www.example.de/feed'
         const expected = 'example:blog'
+        const hint = wwwTenantPatternFeeds.getFeedHint(value)
 
-        expect(wwwTenantPatternFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(hint?.key).toBe(expected)
       })
 
       it('should return undefined for www as a tenant without isWwwTenant', () => {
@@ -662,12 +866,57 @@ describe('definePlatformFeeds', () => {
       })
     })
 
+    describe('with a host pattern', () => {
+      it('should return the key of a feed on a host the pattern matches', () => {
+        const value = 'https://example.co.uk/-alice/feed'
+        const expected = 'example:profile'
+        const hint = hostPatternFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return the key of a feed on a plain host beside the pattern', () => {
+        const value = 'https://example.org/-alice/feed'
+        const expected = 'example:profile'
+        const hint = hostPatternFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return the key of a feed on www before a host the pattern matches', () => {
+        const value = 'https://www.example.de/-alice/feed'
+        const expected = 'example:profile'
+        const hint = hostPatternFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return undefined for a suffix outside the pattern', () => {
+        const value = 'https://example.info/-alice/feed'
+
+        expect(hostPatternFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return undefined for a subdomain of a host the pattern matches', () => {
+        const value = 'https://alice.example.de/-alice/feed'
+
+        expect(hostPatternFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return undefined for a matching host inside another host', () => {
+        const value = 'https://example.de.example.net/-alice/feed'
+
+        expect(hostPatternFeeds.getFeedHint(value)).toBeUndefined()
+      })
+    })
+
     describe('with a root', () => {
       it('should return the key of a feed on a listed host', () => {
         const value = 'https://example.com/latest.rss'
         const expected = 'example:latest'
+        const hint = rootFeeds.getFeedHint(value)
 
-        expect(rootFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(hint?.key).toBe(expected)
       })
 
       it('should return undefined for a feed under a base path', () => {
@@ -685,22 +934,25 @@ describe('definePlatformFeeds', () => {
       it('should return the key of a feed on a tenant with a port', () => {
         const value = 'https://alice.example.net:8080/latest.rss'
         const expected = 'example:latest'
+        const hint = rootFeeds.getFeedHint(value)
 
-        expect(rootFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(hint?.key).toBe(expected)
       })
 
       it('should return the key of a feed on a tenant of a listed domain', () => {
         const value = 'https://alice.example.net/latest.rss'
         const expected = 'example:latest'
+        const hint = rootFeeds.getFeedHint(value)
 
-        expect(rootFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(hint?.key).toBe(expected)
       })
 
       it('should return the key of a feed named by its query', () => {
         const value = 'https://alice.example.net/search.rss?q=rss'
         const expected = 'example:search'
+        const hint = rootFeeds.getFeedHint(value)
 
-        expect(rootFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(hint?.key).toBe(expected)
       })
 
       it('should return undefined for another host', () => {
@@ -735,75 +987,85 @@ describe('definePlatformFeeds', () => {
     it('should fill the scheme of an http page', () => {
       const value = 'http://alice.example.net/about'
       const expected = 'http://alice.example.net/feed'
+      const pageFeeds = siteFeeds.forUrl(value)
 
-      expect(siteFeeds.forUrl(value)?.getFeedUrl('example:posts', { blog: 'alice' })).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:posts', { blog: 'alice' })).toBe(expected)
     })
 
     it('should fill the scheme of an https page', () => {
       const value = 'https://alice.example.net/about'
       const expected = 'https://alice.example.net/feed'
+      const pageFeeds = siteFeeds.forUrl(value)
 
-      expect(siteFeeds.forUrl(value)?.getFeedUrl('example:posts', { blog: 'alice' })).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:posts', { blog: 'alice' })).toBe(expected)
     })
 
     it('should fill the host of the page', () => {
       const value = 'https://www.example.com/about'
       const expected = 'https://www.example.com/feed'
+      const pageFeeds = siteFeeds.forUrl(value)
 
-      expect(siteFeeds.forUrl(value)?.getFeedUrl('ocnk:products')).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('ocnk:products')).toBe(expected)
     })
 
     it('should keep the port in the host of the page', () => {
       const value = 'http://example.com:8080/about'
       const expected = 'http://example.com:8080/feed'
+      const pageFeeds = siteFeeds.forUrl(value)
 
-      expect(siteFeeds.forUrl(value)?.getFeedUrl('ocnk:products')).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('ocnk:products')).toBe(expected)
     })
 
     it('should fill the domain the host of the page is under', () => {
       const value = 'https://alice.example.org/about'
       const expected = 'https://alice.example.org/feed'
+      const pageFeeds = siteFeeds.forUrl(value)
 
-      expect(siteFeeds.forUrl(value)?.getFeedUrl('example:posts', { blog: 'alice' })).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:posts', { blog: 'alice' })).toBe(expected)
     })
 
     it('should fill the domain under a tenant with a dot', () => {
       const value = 'https://my.blog.example.org/'
       const params = { blog: 'my.blog' }
       const expected = 'https://my.blog.example.org/feed'
+      const pageFeeds = siteFeeds.forUrl(value)
 
-      expect(siteFeeds.forUrl(value)?.getFeedUrl('example:posts', params)).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:posts', params)).toBe(expected)
     })
 
     it('should fill the domain a pattern matches', () => {
       const value = 'https://alice.example.co.uk/about'
       const params = { username: 'alice' }
       const expected = 'https://alice.example.co.uk/feed'
+      const pageFeeds = domainPatternFeeds.forUrl(value)
 
-      expect(domainPatternFeeds.forUrl(value)?.getFeedUrl('example:blog', params)).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:blog', params)).toBe(expected)
     })
 
     it('should fill the domain a pattern matches under a nested host', () => {
       const value = 'https://my.blog.example.de/'
       const params = { username: 'my.blog' }
       const expected = 'https://my.blog.example.de/feed'
+      const pageFeeds = domainPatternFeeds.forUrl(value)
 
-      expect(domainPatternFeeds.forUrl(value)?.getFeedUrl('example:blog', params)).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:blog', params)).toBe(expected)
     })
 
     it('should keep the domain placeholder for the apex of a pattern', () => {
       const value = 'https://example.de/'
       const params = { username: 'alice' }
       const expected = 'https://alice.{domain}/feed'
+      const pageFeeds = domainPatternFeeds.forUrl(value)
 
-      expect(domainPatternFeeds.forUrl(value)?.getFeedUrl('example:blog', params)).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:blog', params)).toBe(expected)
     })
 
     it('should keep the domain placeholder for a host under no domain', () => {
       const value = 'https://alice.example.com/'
       const expected = 'https://alice.{domain}/feed'
+      const pageFeeds = siteFeeds.forUrl(value)
 
-      expect(siteFeeds.forUrl(value)?.getFeedUrl('example:posts', { blog: 'alice' })).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:posts', { blog: 'alice' })).toBe(expected)
     })
 
     it('should write a value the handler passes over the one of the page', () => {
@@ -813,8 +1075,9 @@ describe('definePlatformFeeds', () => {
         blog: 'alice',
       }
       const expected = 'http://alice.example.net/feed'
+      const pageFeeds = siteFeeds.forUrl(value)
 
-      expect(siteFeeds.forUrl(value)?.getFeedUrl('example:posts', params)).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:posts', params)).toBe(expected)
     })
 
     it('should keep the value of the page over an undefined value the handler passes', () => {
@@ -824,8 +1087,9 @@ describe('definePlatformFeeds', () => {
         blog: 'alice',
       }
       const expected = 'http://alice.example.net/feed'
+      const pageFeeds = siteFeeds.forUrl(value)
 
-      expect(siteFeeds.forUrl(value)?.getFeedUrl('example:posts', params)).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:posts', params)).toBe(expected)
     })
 
     it('should return the feed with its hint', () => {
@@ -834,37 +1098,42 @@ describe('definePlatformFeeds', () => {
         uri: 'https://www.example.com/feed',
         hint: { key: 'ocnk:products', label: 'Products' },
       }
+      const pageFeeds = siteFeeds.forUrl(value)
 
-      expect(siteFeeds.forUrl(value)?.getFeedEntry('ocnk:products')).toEqual(expected)
+      expect(pageFeeds?.getFeedEntry('ocnk:products')).toEqual(expected)
     })
 
     it('should fill the root with the origin of the page', () => {
       const value = 'https://example.com/forum/t/1'
       const expected = 'https://example.com/latest.rss'
+      const pageFeeds = rootFeeds.forUrl(value)
 
-      expect(rootFeeds.forUrl(value)?.getFeedUrl('example:latest')).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:latest')).toBe(expected)
     })
 
     it('should keep the port in the root of the page', () => {
       const value = 'http://example.com:8080/about'
       const expected = 'http://example.com:8080/latest.rss'
+      const pageFeeds = rootFeeds.forUrl(value)
 
-      expect(rootFeeds.forUrl(value)?.getFeedUrl('example:latest')).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:latest')).toBe(expected)
     })
 
     it('should write a root with a base path the handler passes', () => {
       const value = 'https://example.com/forum/t/1'
       const params = { root: 'https://example.com/forum' }
       const expected = 'https://example.com/forum/latest.rss'
+      const pageFeeds = rootFeeds.forUrl(value)
 
-      expect(rootFeeds.forUrl(value)?.getFeedUrl('example:latest', params)).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:latest', params)).toBe(expected)
     })
 
     it('should fill the root on a table without hosts', () => {
       const value = 'https://example.org/forum/t/1'
       const expected = 'https://example.org/latest.rss'
+      const pageFeeds = selfHostedRootFeeds.forUrl(value)
 
-      expect(selfHostedRootFeeds.forUrl(value)?.getFeedUrl('example:latest')).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:latest')).toBe(expected)
     })
 
     it('should return undefined for an unparsable URL', () => {
@@ -956,29 +1225,33 @@ describe('definePlatformFeeds', () => {
       it('should return the key of a feed with one segment', () => {
         const value = 'https://www.example.com/docs/feed'
         const expected = 'example:folder'
+        const hint = pathFeeds.getFeedHint(value)
 
-        expect(pathFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(hint?.key).toBe(expected)
       })
 
       it('should return the key of a feed with two segments', () => {
         const value = 'https://www.example.com/docs/api/feed'
         const expected = 'example:folder'
+        const hint = pathFeeds.getFeedHint(value)
 
-        expect(pathFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(hint?.key).toBe(expected)
       })
 
       it('should return the key of a feed with four segments', () => {
         const value = 'https://www.example.com/docs/api/v2/guides/feed'
         const expected = 'example:folder'
+        const hint = pathFeeds.getFeedHint(value)
 
-        expect(pathFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(hint?.key).toBe(expected)
       })
 
       it('should return the key of a feed with an encoded character in a segment', () => {
         const value = 'https://www.example.com/docs/c%23%20notes/feed'
         const expected = 'example:folder'
+        const hint = pathFeeds.getFeedHint(value)
 
-        expect(pathFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(hint?.key).toBe(expected)
       })
 
       it('should return undefined for a feed with no segment', () => {
@@ -996,29 +1269,33 @@ describe('definePlatformFeeds', () => {
       it('should return the key of a row before it', () => {
         const value = 'https://www.example.com/t/news/feed'
         const expected = 'example:tag'
+        const hint = pathFeeds.getFeedHint(value)
 
-        expect(pathFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(hint?.key).toBe(expected)
       })
 
       it('should return the key of a row after it with more query parameters', () => {
         const value = 'https://www.example.com/c/news/local.rss?q=jobs'
         const expected = 'example:search'
+        const hint = pathFeeds.getFeedHint(value)
 
-        expect(pathFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(hint?.key).toBe(expected)
       })
 
       it('should return the key of a row without the query', () => {
         const value = 'https://www.example.com/c/news/local.rss'
         const expected = 'discourse:category'
+        const hint = pathFeeds.getFeedHint(value)
 
-        expect(pathFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(hint?.key).toBe(expected)
       })
 
       it('should return the key of a root row on a port', () => {
         const value = 'http://example.com:8080/site/docs/api.rss'
         const expected = 'example:site'
+        const hint = pathFeeds.getFeedHint(value)
 
-        expect(pathFeeds.getFeedHint(value)?.key).toBe(expected)
+        expect(hint?.key).toBe(expected)
       })
     })
 
@@ -1027,16 +1304,18 @@ describe('definePlatformFeeds', () => {
         const value = 'https://example.com/site/docs/api'
         const params = { path: 'docs/api' }
         const expected = 'https://example.com/site/docs/api.rss'
+        const pageFeeds = pathFeeds.forUrl(value)
 
-        expect(pathFeeds.forUrl(value)?.getFeedUrl('example:site', params)).toBe(expected)
+        expect(pageFeeds?.getFeedUrl('example:site', params)).toBe(expected)
       })
 
       it('should keep the port of the page', () => {
         const value = 'http://example.com:8080/site/docs/api'
         const params = { path: 'docs/api' }
         const expected = 'http://example.com:8080/site/docs/api.rss'
+        const pageFeeds = pathFeeds.forUrl(value)
 
-        expect(pathFeeds.forUrl(value)?.getFeedUrl('example:site', params)).toBe(expected)
+        expect(pageFeeds?.getFeedUrl('example:site', params)).toBe(expected)
       })
     })
   })
