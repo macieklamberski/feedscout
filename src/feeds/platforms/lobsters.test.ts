@@ -247,7 +247,7 @@ describe('lobstersHandler', () => {
       const value = 'https://lobste.rs/top/1d'
       const expected = [
         {
-          uri: 'https://lobste.rs/top/1d/rss',
+          uri: 'https://lobste.rs/top/1d.rss',
           hint: { key: 'lobsters:top', label: 'Top stories' },
         },
       ]
@@ -256,10 +256,10 @@ describe('lobstersHandler', () => {
     })
 
     const topPeriodValues: Array<[string, string]> = [
-      ['https://lobste.rs/top/3d', 'https://lobste.rs/top/3d/rss'],
-      ['https://lobste.rs/top/1w', 'https://lobste.rs/top/1w/rss'],
-      ['https://lobste.rs/top/1m', 'https://lobste.rs/top/1m/rss'],
-      ['https://lobste.rs/top/1y', 'https://lobste.rs/top/1y/rss'],
+      ['https://lobste.rs/top/3d', 'https://lobste.rs/top/3d.rss'],
+      ['https://lobste.rs/top/1w', 'https://lobste.rs/top/1w.rss'],
+      ['https://lobste.rs/top/1m', 'https://lobste.rs/top/1m.rss'],
+      ['https://lobste.rs/top/1y', 'https://lobste.rs/top/1y.rss'],
     ]
 
     it.each(topPeriodValues)('should return top stories feed for %s', (value, uri) => {
@@ -342,7 +342,7 @@ describe('lobstersHandler', () => {
     })
 
     it('should return the stories hint for a user stories feed', () => {
-      const value = 'https://lobste.rs/~steveklabnik/stories.rss'
+      const value = 'https://lobste.rs/~alice/stories.rss'
       const expected: DiscoverUriHint = { key: 'lobsters:stories', label: 'Stories' }
 
       expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
@@ -404,7 +404,7 @@ describe('lobstersHandler', () => {
     })
 
     it('should return undefined for a user page', () => {
-      const value = 'https://lobste.rs/~steveklabnik'
+      const value = 'https://lobste.rs/~alice'
 
       expect(lobstersHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -446,10 +446,7 @@ describe('lobstersHandler', () => {
       ['http://www.lobste.rs/rss?token=abc123', { key: 'lobsters:private', label: 'Private feed' }],
       ['https://lobste.rs/t/kotlin.rss', { key: 'lobsters:tag', label: 'Tag' }],
       ['https://lobste.rs/domains/github.com.rss', { key: 'lobsters:domain', label: 'Domain' }],
-      [
-        'https://lobste.rs/~steveklabnik/stories.rss',
-        { key: 'lobsters:stories', label: 'Stories' },
-      ],
+      ['https://lobste.rs/~alice/stories.rss', { key: 'lobsters:stories', label: 'Stories' }],
       ['https://lobste.rs/rss', { key: 'lobsters:stories', label: 'Stories' }],
       ['https://lobste.rs/top/1w/rss', { key: 'lobsters:top', label: 'Top stories' }],
       ['https://lobste.rs/top/1w.rss', { key: 'lobsters:top', label: 'Top stories' }],

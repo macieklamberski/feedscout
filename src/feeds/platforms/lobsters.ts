@@ -34,8 +34,8 @@ const feeds = definePlatformFeeds([
   { key: 'lobsters:stories', template: 'https://lobste.rs/rss' },
   // A reader's private feed, filtered by their settings, is claimed and never built.
   { key: 'lobsters:private', template: 'https://lobste.rs/rss?token={token}' },
-  { key: 'lobsters:top', template: 'https://lobste.rs/top/{period}/rss' },
   { key: 'lobsters:top', template: 'https://lobste.rs/top/{period}.rss' },
+  { key: 'lobsters:top', template: 'https://lobste.rs/top/{period}/rss' },
   { key: 'lobsters:top', template: 'https://lobste.rs/top/rss' },
   { key: 'lobsters:top', template: 'https://lobste.rs/top.rss' },
   { key: 'lobsters:newest', template: 'https://lobste.rs/newest.rss' },
