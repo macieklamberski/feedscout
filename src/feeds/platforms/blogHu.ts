@@ -26,20 +26,27 @@ const postFeedSegmentRegex = /\/(?:rss2|atom)\/?$/i
 const feeds = definePlatformFeeds(
   [
     { key: 'blog-hu:posts', template: '{scheme}://{host}/rss2', format: 'rss' },
-    { key: 'blog-hu:posts', template: '{scheme}://{host}/rss', format: 'rss' },
-    { key: 'blog-hu:posts', template: '{scheme}://{host}/xml/rss2', format: 'rss' },
+    { key: 'blog-hu:posts', template: '{scheme}://{host}/rss', format: 'rss', isAlias: true },
+    { key: 'blog-hu:posts', template: '{scheme}://{host}/xml/rss2', format: 'rss', isAlias: true },
     { key: 'blog-hu:posts', template: '{scheme}://{host}/atom', format: 'atom' },
     { key: 'blog-hu:comments', template: '{scheme}://{host}/comments/rss2', format: 'rss' },
-    { key: 'blog-hu:comments', template: '{scheme}://{host}/comments/rss', format: 'rss' },
+    {
+      key: 'blog-hu:comments',
+      template: '{scheme}://{host}/comments/rss',
+      format: 'rss',
+      isAlias: true,
+    },
     {
       key: 'blog-hu:comments',
       template: '{scheme}://{host}/comments/comments/rss',
       format: 'rss',
+      isAlias: true,
     },
     {
       key: 'blog-hu:comments',
       template: '{scheme}://{host}/comments/comments/rss2',
       format: 'rss',
+      isAlias: true,
     },
     { key: 'blog-hu:comments', template: '{scheme}://{host}/comments/atom', format: 'atom' },
     {
