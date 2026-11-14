@@ -1,6 +1,7 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, wordOrHyphenRegex } from '../../common/utils.js'
+import { wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -11,6 +12,20 @@ export type SoundcloudPage = { kind: 'user'; userId: string }
 export const hosts = ['soundcloud.com', 'www.soundcloud.com', 'm.soundcloud.com']
 
 const userIdRegex = /soundcloud:\/\/users:(\d+)/
+const userSegmentRegex = /^soundcloud:users:\d+$/i
+
+const feeds = definePlatformFeeds([
+  {
+    key: 'soundcloud:tracks',
+    template: 'https://feeds.soundcloud.com/users/soundcloud:users:{userId}/sounds.rss',
+  },
+  // The user path without sounds.rss serves the same feed.
+  {
+    key: 'soundcloud:tracks',
+    template: 'https://feeds.soundcloud.com/users/soundcloud:users:{userId}',
+    isAlias: true,
+  },
+])
 
 export const parseSoundcloudUrl = (url: string): SoundcloudUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -59,11 +74,17 @@ export const soundcloudHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://feeds.soundcloud.com/users/soundcloud:users:${page.userId}/sounds.rss`,
-        hint: composeHint('soundcloud:tracks'),
-      },
-    ]
+    return [feeds.getFeedEntry('soundcloud:tracks', { userId: page.userId })]
+  },
+
+  // A user id is digits, and a word in its place answers 400.
+  getFeedHint: (url) => {
+    const [, userSegment] = getPathSegments(url)
+
+    if (!userSegment || !userSegmentRegex.test(userSegment)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }

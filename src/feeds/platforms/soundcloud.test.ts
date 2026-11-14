@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { SoundcloudPage, SoundcloudUrl } from './soundcloud.js'
 import { getSoundcloudPage, parseSoundcloudUrl, soundcloudHandler } from './soundcloud.js'
 
@@ -104,6 +107,94 @@ describe('soundcloudHandler', () => {
       ]
 
       expect(soundcloudHandler.resolve(value, userIdHtml)).toEqual(expected)
+    })
+
+    it('should return nothing when the page carries no user id', () => {
+      const value = 'https://soundcloud.com/alice'
+      const expected: Array<DiscoverUriEntry> = []
+
+      expect(soundcloudHandler.resolve(value, undefined)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the tracks hint for a user feed', () => {
+      const value = 'https://feeds.soundcloud.com/users/soundcloud:users:12345/sounds.rss'
+      const expected: DiscoverUriHint = { key: 'soundcloud:tracks', label: 'Tracks' }
+
+      expect(soundcloudHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tracks hint for a user feed without sounds.rss', () => {
+      const value = 'https://feeds.soundcloud.com/users/soundcloud:users:12345'
+      const expected: DiscoverUriHint = { key: 'soundcloud:tracks', label: 'Tracks' }
+
+      expect(soundcloudHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tracks hint for an http user feed', () => {
+      const value = 'http://feeds.soundcloud.com/users/soundcloud:users:12345/sounds.rss'
+      const expected: DiscoverUriHint = { key: 'soundcloud:tracks', label: 'Tracks' }
+
+      expect(soundcloudHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tracks hint for a paged user feed', () => {
+      const value =
+        'https://feeds.soundcloud.com/users/soundcloud:users:12345/sounds.rss?before=67890'
+      const expected: DiscoverUriHint = { key: 'soundcloud:tracks', label: 'Tracks' }
+
+      expect(soundcloudHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a user feed with a word in place of the id', () => {
+      const value = 'https://feeds.soundcloud.com/users/soundcloud:users:alice/sounds.rss'
+
+      expect(soundcloudHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a user feed with a word before the id', () => {
+      const value = 'https://feeds.soundcloud.com/users/soundcloud:users:alice:12345/sounds.rss'
+
+      expect(soundcloudHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a playlist feed', () => {
+      const value = 'https://feeds.soundcloud.com/playlists/soundcloud:sets:12345/sounds.rss'
+
+      expect(soundcloudHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a profile page', () => {
+      const value = 'https://soundcloud.com/alice'
+
+      expect(soundcloudHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/users/soundcloud:users:12345/sounds.rss'
+
+      expect(soundcloudHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const hint: DiscoverUriHint = { key: 'soundcloud:tracks', label: 'Tracks' }
+    const ownFeeds = [
+      'https://feeds.soundcloud.com/users/soundcloud:users:12345/sounds.rss',
+      'http://feeds.soundcloud.com/users/soundcloud:users:12345/sounds.rss',
+      'https://feeds.soundcloud.com/users/soundcloud:users:12345',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [soundcloudHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
