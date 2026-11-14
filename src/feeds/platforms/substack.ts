@@ -174,8 +174,9 @@ export const substackHandler: PlatformHandler = {
     ]
   },
 
-  // The table reads any host under substack.com, so the page parser refuses a newsletter feed on
-  // the app hosts, whose /feed answers 404. Podcast feeds are served from the API host.
+  // The table reads any single-label host under substack.com, so the page parser refuses a
+  // newsletter feed on the app hosts, whose /feed answers 404. Podcast feeds are served from the
+  // API host.
   getFeedHint: (url) => {
     const hint = feeds.getFeedHint(url)
 
