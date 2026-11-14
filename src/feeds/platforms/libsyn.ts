@@ -25,8 +25,9 @@ const feeds = definePlatformFeeds(
       key: 'libsyn:podcast',
       template: 'https://rss.libsyn.com/shows/{showId}/destinations/{destinationId}.xml',
     },
-    // The same show feed on the sites host, and the feed cut to its last episodes, as `last100`.
-    { key: 'libsyn:podcast', template: 'https://sites.libsyn.com/{showId}/rss', isAlias: true },
+    // The sites host's feed, which on show 45546 redirects to an empty category feed, and the feed
+    // cut to its last episodes, as `last100`.
+    { key: 'libsyn:podcast', template: 'https://sites.libsyn.com/{showId}/rss' },
     { key: 'libsyn:podcast', template: 'https://feeds.libsyn.com/{showId}/last{count}' },
     { key: 'libsyn:podcast', template: '{scheme}://{host}/rss/last{count}' },
     { key: 'libsyn:category', template: '{scheme}://{host}/rss/category/{category}' },
