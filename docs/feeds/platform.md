@@ -3014,11 +3014,12 @@ Discovers Atom feeds for Travellerspoint travel blogs.
 
 ### Blogger.de
 
-Discovers RSS 1.0 feeds for blogs on `*.blogger.de`. Every blog serves its posts at `/rss`.
+Discovers RSS 1.0 feeds for blogs on `*.blogger.de`. Every blog serves its posts at `/rss`, and its posts with comments at `/rss?show=all`.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{blog}.blogger.de` | Posts |
+| `{blog}.blogger.de` | Posts · posts and comments |
+| `{blog}.blogger.de/topics/{topic}` | Topic · posts · posts and comments |
 
 ### Big Cartel
 
