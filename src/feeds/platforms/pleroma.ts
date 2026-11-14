@@ -1,6 +1,7 @@
 import { parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getScriptText, hasMarker } from '../../common/utils.js'
+import { findElement, getScriptText, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers profile.
@@ -12,6 +13,13 @@ const apiPath = '/api/pleroma/'
 const profileRegex = /^\/users\/([^/]+)/i
 // The frontend serves the same profile at /{name} and /@{name}.
 const profileAliasRegex = /^\/@?([^/]+)\/?$/
+
+// An instance is known only by its markup, so its feeds are built on the page's origin and claimed
+// on no host.
+const feeds = definePlatformFeeds([
+  { key: 'pleroma:posts', template: '{root}/users/{username}/feed.atom', format: 'atom' },
+  { key: 'pleroma:posts', template: '{root}/users/{username}/feed.rss', format: 'rss' },
+])
 
 // The frontend preloads its config from the API, and older releases inline that response in the
 // `initial-results` script, keyed by its path.
@@ -49,22 +57,17 @@ export const pleromaHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePleromaUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
+    const params = { username: parsed.username }
 
     return [
-      {
-        uri: `${origin}/users/${parsed.username}/feed.atom`,
-        hint: composeHint('pleroma:posts', 'atom'),
-      },
-      {
-        uri: `${origin}/users/${parsed.username}/feed.rss`,
-        hint: composeHint('pleroma:posts', 'rss'),
-      },
+      pageFeeds.getFeedEntry('pleroma:posts', params, 'atom'),
+      pageFeeds.getFeedEntry('pleroma:posts', params, 'rss'),
     ]
   },
 }
