@@ -1,6 +1,7 @@
 import { getAnyOf, getPathSegments, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,6 +9,8 @@ export type HabrUrl =
   | { kind: 'hub'; language: string; hub: string }
   | { kind: 'user'; language: string; username: string }
   | { kind: 'company'; language: string; company: string }
+  | { kind: 'article'; language: string; post: string; company?: string }
+  | { kind: 'flow'; language: string; flow: string }
   | { kind: 'home'; language: string }
 
 const hosts = ['habr.com', 'www.habr.com']
@@ -18,6 +21,11 @@ const languagePrefix = `(?:/(?:${languages.join('|')}))?`
 const hubRegex = new RegExp(`^${languagePrefix}/hubs?/([^/]+)`, 'i')
 const userRegex = new RegExp(`^${languagePrefix}/users/([^/]+)`, 'i')
 const companyRegex = new RegExp(`^${languagePrefix}/compan(?:y|ies)/([^/]+)`, 'i')
+const articleRegex = new RegExp(
+  `^${languagePrefix}(?:/compan(?:y|ies)/(?<company>[^/]+))?/(?:articles|blog|news|posts?)/(?<post>[^/]+)`,
+  'i',
+)
+const flowRegex = new RegExp(`^${languagePrefix}/flows/([^/]+)`, 'i')
 
 // The first row of a key is the feed `resolve` emits, the one Habr's pages link or, for a user, the
 // one that link redirects to. Habr serves the same items under the hub and user spellings below
@@ -39,6 +47,12 @@ const feeds = definePlatformFeeds([
     template: 'https://habr.com/{language}/rss/search/?q={query}&target_type=posts',
   },
   { key: 'habr:comments', template: 'https://habr.com/{language}/rss/publications/{post}/' },
+  // An article page links this spelling, which redirects to the publications one with a 301.
+  {
+    key: 'habr:comments',
+    template: 'https://habr.com/{language}/rss/post/{post}/',
+    isAlias: true,
+  },
   { key: 'habr:subscriptions', template: 'https://habr.com/{language}/rss/feed/{token}/' },
   { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hubs/{hub}/articles/' },
   {
@@ -104,10 +118,23 @@ export const parseHabrUrl = (url: string): HabrUrl | undefined => {
     return { kind: 'user', language, username }
   }
 
+  // A company article sits under the company, so it is read before the company page.
+  const article = pathname.match(articleRegex)?.groups
+
+  if (article?.post && digitsRegex.test(article.post)) {
+    return { kind: 'article', language, post: article.post, company: article.company }
+  }
+
   const company = pathname.match(companyRegex)?.[1]
 
   if (company) {
     return { kind: 'company', language, company }
+  }
+
+  const flow = pathname.match(flowRegex)?.[1]
+
+  if (flow) {
+    return { kind: 'flow', language, flow }
   }
 
   return { kind: 'home', language }
@@ -151,6 +178,38 @@ export const habrHandler: PlatformHandler = {
 
       return [
         feeds.getFeedEntry('habr:company', params),
+        feeds.getFeedEntry('habr:articles', { language: parsed.language }),
+        feeds.getFeedEntry('habr:news', { language: parsed.language }),
+      ]
+    }
+
+    if (parsed.kind === 'article') {
+      const params = { language: parsed.language, post: parsed.post }
+
+      if (parsed.company) {
+        return [
+          feeds.getFeedEntry('habr:comments', params),
+          feeds.getFeedEntry('habr:company', {
+            language: parsed.language,
+            company: parsed.company,
+          }),
+          feeds.getFeedEntry('habr:articles', { language: parsed.language }),
+          feeds.getFeedEntry('habr:news', { language: parsed.language }),
+        ]
+      }
+
+      return [
+        feeds.getFeedEntry('habr:comments', params),
+        feeds.getFeedEntry('habr:articles', { language: parsed.language }),
+        feeds.getFeedEntry('habr:news', { language: parsed.language }),
+      ]
+    }
+
+    if (parsed.kind === 'flow') {
+      const params = { language: parsed.language, flow: parsed.flow }
+
+      return [
+        feeds.getFeedEntry('habr:flow', params),
         feeds.getFeedEntry('habr:articles', { language: parsed.language }),
         feeds.getFeedEntry('habr:news', { language: parsed.language }),
       ]
