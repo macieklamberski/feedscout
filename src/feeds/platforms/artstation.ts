@@ -74,7 +74,7 @@ export const artstationHandler: PlatformHandler = {
       return []
     }
 
-    // The artwork feeds need no value from the page, so every page builds them after its own feeds.
+    // The artwork feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'artwork') {
       return [
         feeds.getFeedEntry('artstation:artwork'),
@@ -85,7 +85,6 @@ export const artstationHandler: PlatformHandler = {
     return [
       feeds.getFeedEntry('artstation:portfolio', { username: parsed.username }),
       feeds.getFeedEntry('artstation:artwork'),
-      feeds.getFeedEntry('artstation:artwork-latest'),
     ]
   },
 

@@ -15,17 +15,20 @@ const topSellersHint: DiscoverUriHint = {
   key: 'steam:weekly-top-sellers',
   label: 'Weekly top sellers',
 }
-const globalEntries: Array<DiscoverUriEntry> = [
-  {
-    uri: 'https://store.steampowered.com/feeds/news.xml',
-    hint: { key: 'steam:news-global', label: 'News (global)' },
-  },
+const storeEntries: Array<DiscoverUriEntry> = [
   {
     uri: 'https://store.steampowered.com/feeds/daily_deals.xml',
     hint: { key: 'steam:daily-deals', label: 'Daily deals' },
   },
   { uri: 'https://store.steampowered.com/feeds/newreleases.xml', hint: newReleasesHint },
   { uri: 'https://store.steampowered.com/feeds/weeklytopsellers.xml', hint: topSellersHint },
+]
+const globalEntries: Array<DiscoverUriEntry> = [
+  {
+    uri: 'https://store.steampowered.com/feeds/news.xml',
+    hint: { key: 'steam:news-global', label: 'News (global)' },
+  },
+  ...storeEntries,
 ]
 const feedCases: Array<[string, DiscoverUriHint]> = [
   ['https://store.steampowered.com/feeds/news/app/12345/', newsHint],
@@ -218,7 +221,7 @@ describe('steamHandler', () => {
           uri: 'https://steamcommunity.com/games/730/rss',
           hint: { key: 'steam:community-news', label: 'Community news' },
         },
-        ...globalEntries,
+        ...storeEntries,
       ]
 
       expect(steamHandler.resolve(value)).toEqual(expected)
@@ -284,7 +287,7 @@ describe('steamHandler', () => {
       const value = 'https://store.steampowered.com/news/group/12345/'
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://store.steampowered.com/feeds/news/group/12345', hint: groupNewsHint },
-        ...globalEntries,
+        ...storeEntries,
       ]
 
       expect(steamHandler.resolve(value)).toEqual(expected)
@@ -294,7 +297,7 @@ describe('steamHandler', () => {
       const value = 'https://store.steampowered.com/news/collection/steam'
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://store.steampowered.com/feeds/news/collection/steam', hint: collectionHint },
-        ...globalEntries,
+        ...storeEntries,
       ]
 
       expect(steamHandler.resolve(value)).toEqual(expected)

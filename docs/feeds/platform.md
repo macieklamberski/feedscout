@@ -469,8 +469,8 @@ Discovers Atom feeds for Kickstarter projects, curated pages, global new project
 |-------------|-----------------|
 | `kickstarter.com` | Global new projects<sup>†</sup> · blog |
 | `kickstarter.com/discover` | Global new projects · blog |
-| `kickstarter.com/pages/{name}` | Curated projects · blog |
-| `kickstarter.com/projects/{creator}/{project}` | Project updates · blog |
+| `kickstarter.com/pages/{name}` | Curated projects · global new projects · blog |
+| `kickstarter.com/projects/{creator}/{project}` | Project updates · global new projects · blog |
 
 > Every page above also gets the global new projects and the blog after its own feeds.
 
@@ -525,7 +525,7 @@ Discovers RSS feeds for Steam game news and community groups.
 | `steamcommunity.com/app/{id}` | Game news<sup>†</sup> · community news<sup>?</sup> |
 | `steamcommunity.com/groups/{name}` | Group<sup>†</sup> (RSS) |
 
-> Every store page above also gets the global news, daily deals, new releases and weekly top sellers after its own feeds.
+> Every store page above also gets the daily deals, new releases and weekly top sellers after its own feeds.
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -734,8 +734,8 @@ Discovers RSS feeds for ArtStation portfolios and the global artwork feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `artstation.com/{user}` | Portfolio<sup>†</sup> |
-| `{user}.artstation.com` | Portfolio |
+| `artstation.com/{user}` | Portfolio<sup>†</sup> · artwork |
+| `{user}.artstation.com` | Portfolio · artwork |
 | `artstation.com/artwork` | Artwork<sup>†</sup> · Artwork (Latest)<sup>†</sup> |
 
 > Every page above also gets the artwork feeds after its own.
@@ -1882,7 +1882,7 @@ Discovers the feeds of a Togetter curator or the site-wide news and popular feed
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `togetter.com/id/{user}` | Curator<sup>†</sup> · news · popular<sup>†</sup> (RSS) |
+| `togetter.com/id/{user}` | Curator<sup>†</sup> · popular<sup>†</sup> (RSS) |
 | Any other page | News · popular (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -2378,9 +2378,9 @@ Discovers Atom feeds for Lichess user blogs, the official blog and the community
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `lichess.org/@/{user}/blog` or `lichess.org/@/{user}/blog/{slug}/{id}` | User blog · site-wide updates |
-| `lichess.org/blog` or `lichess.org/blog/{id}/{slug}` | Official Lichess blog · site-wide updates |
-| `lichess.org/blog/community` or `lichess.org/{lang}/blog/community` | Community blogs, in that language when the URL names one · site-wide updates |
+| `lichess.org/@/{user}/blog` or `lichess.org/@/{user}/blog/{slug}/{id}` | User blog |
+| `lichess.org/blog` or `lichess.org/blog/{id}/{slug}` | Official Lichess blog |
+| `lichess.org/blog/community` or `lichess.org/{lang}/blog/community` | Community blogs, in that language when the URL names one |
 | Any other page | Site-wide updates |
 
 ### @wiki

@@ -69,27 +69,16 @@ export const lichessHandler: PlatformHandler = {
       return []
     }
 
-    // The site-wide updates feed needs no value from the page, so every page builds it after its
-    // own feeds.
     if (parsed.kind === 'blog') {
-      return [
-        feeds.getFeedEntry('lichess:blog', { username: parsed.username }),
-        feeds.getFeedEntry('lichess:updates'),
-      ]
+      return [feeds.getFeedEntry('lichess:blog', { username: parsed.username })]
     }
 
     if (parsed.kind === 'community') {
-      return [
-        feeds.getFeedEntry('lichess:community', { language: parsed.language }),
-        feeds.getFeedEntry('lichess:updates'),
-      ]
+      return [feeds.getFeedEntry('lichess:community', { language: parsed.language })]
     }
 
     if (parsed.kind === 'officialBlog') {
-      return [
-        feeds.getFeedEntry('lichess:blog', { username: 'Lichess' }),
-        feeds.getFeedEntry('lichess:updates'),
-      ]
+      return [feeds.getFeedEntry('lichess:blog', { username: 'Lichess' })]
     }
 
     return [feeds.getFeedEntry('lichess:updates')]

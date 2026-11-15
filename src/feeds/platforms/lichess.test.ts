@@ -64,14 +64,10 @@ describe('lichessHandler', () => {
 
     it('should return the blog feed for a user blog', () => {
       const value = 'https://lichess.org/@/thibault/blog'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://lichess.org/@/thibault/blog.atom',
           hint: { key: 'lichess:blog', label: 'Blog' },
-        },
-        {
-          uri: 'https://lichess.org/feed.atom',
-          hint: { key: 'lichess:updates', label: 'Updates' },
         },
       ]
 
@@ -80,14 +76,10 @@ describe('lichessHandler', () => {
 
     it('should return the blog feed for a user blog post', () => {
       const value = 'https://lichess.org/@/thibault/blog/how-to-report-a-bug/otcAwtvA'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://lichess.org/@/thibault/blog.atom',
           hint: { key: 'lichess:blog', label: 'Blog' },
-        },
-        {
-          uri: 'https://lichess.org/feed.atom',
-          hint: { key: 'lichess:updates', label: 'Updates' },
         },
       ]
 
@@ -96,14 +88,10 @@ describe('lichessHandler', () => {
 
     it('should keep the username case', () => {
       const value = 'https://lichess.org/@/Thibault/blog'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://lichess.org/@/Thibault/blog.atom',
           hint: { key: 'lichess:blog', label: 'Blog' },
-        },
-        {
-          uri: 'https://lichess.org/feed.atom',
-          hint: { key: 'lichess:updates', label: 'Updates' },
         },
       ]
 
@@ -112,14 +100,10 @@ describe('lichessHandler', () => {
 
     it('should return the Lichess blog feed for the official blog', () => {
       const value = 'https://lichess.org/blog'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://lichess.org/@/Lichess/blog.atom',
           hint: { key: 'lichess:blog', label: 'Blog' },
-        },
-        {
-          uri: 'https://lichess.org/feed.atom',
-          hint: { key: 'lichess:updates', label: 'Updates' },
         },
       ]
 
@@ -128,14 +112,10 @@ describe('lichessHandler', () => {
 
     it('should return the Lichess blog feed for an old official blog post', () => {
       const value = 'https://lichess.org/blog/W3WeMyQAACQAdfAL/7-piece-syzygy-tablebases'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://lichess.org/@/Lichess/blog.atom',
           hint: { key: 'lichess:blog', label: 'Blog' },
-        },
-        {
-          uri: 'https://lichess.org/feed.atom',
-          hint: { key: 'lichess:updates', label: 'Updates' },
         },
       ]
 
@@ -144,14 +124,10 @@ describe('lichessHandler', () => {
 
     it('should return the community blogs feed for the community page', () => {
       const value = 'https://lichess.org/blog/community?filter=best'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://lichess.org/blog/community.atom',
           hint: { key: 'lichess:community', label: 'Community blogs' },
-        },
-        {
-          uri: 'https://lichess.org/feed.atom',
-          hint: { key: 'lichess:updates', label: 'Updates' },
         },
       ]
 
@@ -160,14 +136,10 @@ describe('lichessHandler', () => {
 
     it('should return the language community blogs feed for a language community page', () => {
       const value = 'https://lichess.org/fr/blog/community'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://lichess.org/blog/community.atom?lang=fr',
           hint: { key: 'lichess:community', label: 'Community blogs' },
-        },
-        {
-          uri: 'https://lichess.org/feed.atom',
-          hint: { key: 'lichess:updates', label: 'Updates' },
         },
       ]
 
@@ -176,14 +148,10 @@ describe('lichessHandler', () => {
 
     it('should keep the case of an uppercase language code', () => {
       const value = 'https://lichess.org/FR/blog/community'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://lichess.org/blog/community.atom?lang=FR',
           hint: { key: 'lichess:community', label: 'Community blogs' },
-        },
-        {
-          uri: 'https://lichess.org/feed.atom',
-          hint: { key: 'lichess:updates', label: 'Updates' },
         },
       ]
 

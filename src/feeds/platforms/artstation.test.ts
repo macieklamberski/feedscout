@@ -78,10 +78,6 @@ describe('artstationHandler', () => {
           uri: 'https://www.artstation.com/artwork.rss',
           hint: { key: 'artstation:artwork', label: 'Artwork' },
         },
-        {
-          uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
-          hint: { key: 'artstation:artwork-latest', label: 'Artwork (Latest)' },
-        },
       ]
 
       expect(artstationHandler.resolve(value)).toEqual(expected)
@@ -97,10 +93,6 @@ describe('artstationHandler', () => {
         {
           uri: 'https://www.artstation.com/artwork.rss',
           hint: { key: 'artstation:artwork', label: 'Artwork' },
-        },
-        {
-          uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
-          hint: { key: 'artstation:artwork-latest', label: 'Artwork (Latest)' },
         },
       ]
 
@@ -118,10 +110,6 @@ describe('artstationHandler', () => {
           uri: 'https://www.artstation.com/artwork.rss',
           hint: { key: 'artstation:artwork', label: 'Artwork' },
         },
-        {
-          uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
-          hint: { key: 'artstation:artwork-latest', label: 'Artwork (Latest)' },
-        },
       ]
 
       expect(artstationHandler.resolve(value)).toEqual(expected)
@@ -137,10 +125,6 @@ describe('artstationHandler', () => {
         {
           uri: 'https://www.artstation.com/artwork.rss',
           hint: { key: 'artstation:artwork', label: 'Artwork' },
-        },
-        {
-          uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
-          hint: { key: 'artstation:artwork-latest', label: 'Artwork (Latest)' },
         },
       ]
 
