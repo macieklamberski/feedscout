@@ -58,16 +58,12 @@ describe('sakuraBlogHandler', () => {
       const value = 'https://alice.sblo.jp/article/123456.html'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://alice.sblo.jp/index20.rdf',
+          uri: ['http://alice.sblo.jp/index20.rdf', 'https://alice.sblo.jp/rss.xml'],
           hint: { key: 'sakura-blog:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'http://alice.sblo.jp/index.rdf',
           hint: { key: 'sakura-blog:posts', label: 'Posts', format: 'rdf' },
-        },
-        {
-          uri: 'https://alice.sblo.jp/rss.xml',
-          hint: { key: 'sakura-blog:redesign-posts', label: 'Posts', format: 'rss' },
         },
       ]
 
@@ -76,13 +72,9 @@ describe('sakuraBlogHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the redesign posts hint for the rss.xml feed of a newer blog', () => {
+    it('should return the posts hint for the rss.xml feed of a newer blog', () => {
       const value = 'https://alice.sblo.jp/rss.xml'
-      const expected: DiscoverUriHint = {
-        key: 'sakura-blog:redesign-posts',
-        label: 'Posts',
-        format: 'rss',
-      }
+      const expected: DiscoverUriHint = { key: 'sakura-blog:posts', label: 'Posts', format: 'rss' }
 
       expect(sakuraBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -143,7 +135,7 @@ describe('sakuraBlogHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
         'https://alice.sblo.jp/rss.xml',
-        { key: 'sakura-blog:redesign-posts', label: 'Posts', format: 'rss' },
+        { key: 'sakura-blog:posts', label: 'Posts', format: 'rss' },
       ],
       [
         'http://alice.sblo.jp/index20.rdf',
