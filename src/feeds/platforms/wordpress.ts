@@ -1,5 +1,6 @@
 import { getQueryParam, isAnyOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { definePlatformFeeds, type PlatformFeedTemplate } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
 
@@ -68,30 +69,67 @@ const archives: Array<{ regex: RegExp; hintKey: string; route?: string }> = [
   { regex: yearRegex, hintKey: 'wordpress:date-archive' },
 ]
 
-// WordPress serves every feed of a page both under its /feed/ path and as a ?feed= query.
-const getFeedEntries = (base: string, key: string): Array<DiscoverUriEntry> => {
-  return [
-    {
-      uri: [`${base}/feed/`, `${base}/?feed=rss`, `${base}/feed/rss2/`, `${base}/?feed=rss2`],
-      hint: composeHint(key, 'rss'),
-    },
-    {
-      uri: [`${base}/feed/atom/`, `${base}/?feed=atom`],
-      hint: composeHint(key, 'atom'),
-    },
-  ]
+// WordPress serves every feed of a page both under its /feed/ path and as a ?feed= query, so each
+// spelling after the first is an alias of it.
+const feedSpellings: Array<[DiscoverUriHint['format'], Array<string>]> = [
+  ['rss', ['/feed/', '/?feed=rss', '/feed/rss2/', '/?feed=rss2']],
+  ['atom', ['/feed/atom/', '/?feed=atom']],
+  ['rdf', ['/feed/rdf/', '/?feed=rdf']],
+]
+
+const postsFormats: Array<DiscoverUriHint['format']> = ['rss', 'atom', 'rdf']
+// WordPress has no RDF comment template, so the RDF form of a comment feed lists posts.
+const commentsFormats: Array<DiscoverUriHint['format']> = ['rss', 'atom']
+const archiveKeys = [
+  'wordpress:category',
+  'wordpress:tag',
+  'wordpress:author',
+  'wordpress:date-archive',
+]
+
+const getFeedRows = (
+  key: string,
+  page: string,
+  formats: Array<DiscoverUriHint['format']>,
+): Array<PlatformFeedTemplate> => {
+  return feedSpellings
+    .filter(([format]) => formats.includes(format))
+    .flatMap(([format, spellings]) => {
+      return spellings.map((spelling, index) => {
+        return { key, template: `{root}${page}${spelling}`, format, isAlias: index > 0 }
+      })
+    })
 }
 
-// WordPress has no RDF comment template, so the RDF form of a comment feed lists posts.
-const getPostsFeedEntries = (base: string, key: string): Array<DiscoverUriEntry> => {
-  return [
-    ...getFeedEntries(base, key),
-    {
-      uri: [`${base}/feed/rdf/`, `${base}/?feed=rdf`],
-      hint: composeHint(key, 'rdf'),
-    },
-  ]
-}
+// A site on any host is a WordPress site, so the feeds are built under the page's origin, and the
+// claim reads a feed URL back to its page in `getWordpressFeedHint`, which no row can express.
+// The site-wide comments feed takes its query form from the site root, not /comments. Without
+// pretty permalinks, ?feed=comments-rss serves the RSS 0.92 posts template.
+const feeds = definePlatformFeeds([
+  ...archiveKeys.flatMap((key) => getFeedRows(key, '/{path*}', postsFormats)),
+  ...getFeedRows('wordpress:post-comments', '/{path*}', commentsFormats),
+  ...getFeedRows('wordpress:posts', '', postsFormats),
+  { key: 'wordpress:comments', template: '{root}/comments/feed/', format: 'rss' },
+  {
+    key: 'wordpress:comments',
+    template: '{root}/comments/feed/rss2/',
+    format: 'rss',
+    isAlias: true,
+  },
+  {
+    key: 'wordpress:comments',
+    template: '{root}/?feed=comments-rss2',
+    format: 'rss',
+    isAlias: true,
+  },
+  { key: 'wordpress:comments', template: '{root}/comments/feed/atom/', format: 'atom' },
+  {
+    key: 'wordpress:comments',
+    template: '{root}/?feed=comments-atom',
+    format: 'atom',
+    isAlias: true,
+  },
+])
 
 // The page a WordPress URL shows, read from the path, so a WP Engine site reads the same. Only
 // hypotheses.org's post-id paths need the host.
@@ -189,38 +227,43 @@ export const getWordpressFeedHint = (url: string): DiscoverUriHint | undefined =
   return composeHint('wordpress:posts', format)
 }
 
+// The site-wide feeds, which every page gets after its own.
+const getSiteFeeds = (root: string): Array<DiscoverUriEntry | undefined> => {
+  return [
+    feeds.getFeedSpellings('wordpress:posts', { root }, 'rss'),
+    feeds.getFeedSpellings('wordpress:posts', { root }, 'atom'),
+    feeds.getFeedSpellings('wordpress:posts', { root }, 'rdf'),
+    feeds.getFeedSpellings('wordpress:comments', { root }, 'rss'),
+    feeds.getFeedSpellings('wordpress:comments', { root }, 'atom'),
+  ]
+}
+
 export const composeWordpressFeeds = (
   origin: string,
   parsed: WordpressUrl,
-): Array<DiscoverUriEntry> => {
-  const uris: Array<DiscoverUriEntry> = []
-
+): Array<DiscoverUriEntry | undefined> => {
   if (parsed.kind === 'archive') {
-    uris.push(...getPostsFeedEntries(`${origin}${parsed.path}`, parsed.hintKey))
+    const params = { root: origin, path: parsed.path }
+
+    return [
+      feeds.getFeedSpellings(parsed.hintKey, params, 'rss'),
+      feeds.getFeedSpellings(parsed.hintKey, params, 'atom'),
+      feeds.getFeedSpellings(parsed.hintKey, params, 'rdf'),
+      ...getSiteFeeds(origin),
+    ]
   }
 
   if (parsed.kind === 'post') {
-    uris.push(...getFeedEntries(`${origin}${parsed.path}`, 'wordpress:post-comments'))
+    const params = { root: origin, path: parsed.path }
+
+    return [
+      feeds.getFeedSpellings('wordpress:post-comments', params, 'rss'),
+      feeds.getFeedSpellings('wordpress:post-comments', params, 'atom'),
+      ...getSiteFeeds(origin),
+    ]
   }
 
-  uris.push(...getPostsFeedEntries(origin, 'wordpress:posts'))
-
-  // The site-wide comments feed takes its query form from the site root, not /comments.
-  // Without pretty permalinks, ?feed=comments-rss serves the RSS 0.92 posts template.
-  uris.push({
-    uri: [
-      `${origin}/comments/feed/`,
-      `${origin}/comments/feed/rss2/`,
-      `${origin}/?feed=comments-rss2`,
-    ],
-    hint: composeHint('wordpress:comments', 'rss'),
-  })
-  uris.push({
-    uri: [`${origin}/comments/feed/atom/`, `${origin}/?feed=comments-atom`],
-    hint: composeHint('wordpress:comments', 'atom'),
-  })
-
-  return uris
+  return getSiteFeeds(origin)
 }
 
 export const wordpressHandler: PlatformHandler = {

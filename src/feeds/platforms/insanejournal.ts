@@ -1,10 +1,6 @@
 import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import {
-  definePlatformFeeds,
-  type PlatformFeedParams,
-  type PlatformFeedTable,
-} from '../../common/uris/platform/feeds.js'
+import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 import { getJournalName, getJournalTag } from './livejournal.js'
@@ -139,10 +135,10 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
 
 // The InsaneJournal engine serves every journal the same feeds, plus a tag's feeds on a tag page.
 const getFeeds = (
-  table: Pick<PlatformFeedTable, 'getFeedEntry'>,
+  table: Pick<typeof journalFeeds, 'getFeedEntry'>,
   params: PlatformFeedParams,
   tag: string | undefined,
-): Array<DiscoverUriEntry> => {
+): Array<DiscoverUriEntry | undefined> => {
   if (!tag) {
     return [
       table.getFeedEntry('insanejournal:posts', params, 'rss'),

@@ -108,7 +108,7 @@ export const chambermasterHandler: PlatformHandler = {
       return []
     }
 
-    const feedEntry = (key: string) => pageFeeds.getFeedEntry(key)
+    const feedEntry = (key: Parameters<typeof feeds.getFeedEntry>[0]) => pageFeeds.getFeedEntry(key)
 
     // The chamber's lists need no value from the page, so every page builds them after its own
     // feeds.

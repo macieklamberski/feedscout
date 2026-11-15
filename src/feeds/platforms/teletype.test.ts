@@ -81,15 +81,15 @@ describe('teletypeHandler', () => {
       expect(teletypeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should write a non-ASCII username as is', () => {
+    it('should percent-encode a non-ASCII username', () => {
       const value = 'https://teletype.in/@%D0%B4%D1%83%D1%80%D0%BE%D0%B2'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://teletype.in/rss/дуров',
+          uri: 'https://teletype.in/rss/%D0%B4%D1%83%D1%80%D0%BE%D0%B2',
           hint: { key: 'teletype:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://teletype.in/atom/дуров',
+          uri: 'https://teletype.in/atom/%D0%B4%D1%83%D1%80%D0%BE%D0%B2',
           hint: { key: 'teletype:posts', label: 'Posts', format: 'atom' },
         },
       ]

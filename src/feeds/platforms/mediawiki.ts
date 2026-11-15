@@ -1,15 +1,33 @@
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getScriptDirectory, hasMarker } from '../../common/utils.js'
+import { findElement, getScriptDirectory, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers special (html), partly covers page.
 
-export type MediawikiPage = { scriptUrl: string; pageName?: string }
+export type MediawikiPage = { scriptRoot: string; pageName?: string }
 
 const rsdHrefRegex = /\/api\.php\?action=rsd$/i
 const pageNameRegex = /"wgPageName":("(?:[^"\\]|\\.)*")/
 const namespaceNumberRegex = /"wgNamespaceNumber":(-?\d+)/
+
+// A wiki runs on its own domain, under its script path, and is known only by its marker, so its
+// feeds are built here but not claimed. Its pages link a title encoded as a form, as
+// `title=Talk%3AMain+Page`.
+const feeds = definePlatformFeeds([
+  {
+    key: 'mediawiki:history',
+    template: '{root}/index.php?title={title}&action=history&feed=atom',
+    format: 'atom',
+    queryEncoding: 'form',
+  },
+  {
+    key: 'mediawiki:recent-changes',
+    template: '{root}/index.php?title=Special:RecentChanges&feed=atom',
+    format: 'atom',
+    queryEncoding: 'form',
+  },
+])
 
 // Core prints the RSD link to `api.php` in every page head, whatever the skin.
 const getRsdHref = (content: string | undefined): string | undefined => {
@@ -57,7 +75,7 @@ const getMediawikiPage = (url: string, content: string | undefined): MediawikiPa
   const { origin } = new URL(url)
   const scriptPath = getScriptDirectory(new URL(rsdHref, url).pathname)
 
-  return { scriptUrl: `${origin}${scriptPath}/index.php`, pageName: getPageName(content) }
+  return { scriptRoot: `${origin}${scriptPath}`, pageName: getPageName(content) }
 }
 
 export const mediawikiHandler: PlatformHandler = {
@@ -67,30 +85,21 @@ export const mediawikiHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getMediawikiPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { scriptUrl, pageName } = page
-    const uris: Array<DiscoverUriEntry> = []
+    const params = { root: page.scriptRoot, title: page.pageName }
 
-    if (pageName) {
-      const historyQuery = new URLSearchParams({ title: pageName, action: 'history', feed: 'atom' })
-
-      uris.push({
-        uri: `${scriptUrl}?${historyQuery}`,
-        hint: composeHint('mediawiki:history', 'atom'),
-      })
+    if (!page.pageName) {
+      return [pageFeeds.getFeedEntry('mediawiki:recent-changes', params, 'atom')]
     }
 
-    const recentChangesQuery = new URLSearchParams({ title: 'Special:RecentChanges', feed: 'atom' })
-
-    uris.push({
-      uri: `${scriptUrl}?${recentChangesQuery}`,
-      hint: composeHint('mediawiki:recent-changes', 'atom'),
-    })
-
-    return uris
+    return [
+      pageFeeds.getFeedEntry('mediawiki:history', params, 'atom'),
+      pageFeeds.getFeedEntry('mediawiki:recent-changes', params, 'atom'),
+    ]
   },
 }

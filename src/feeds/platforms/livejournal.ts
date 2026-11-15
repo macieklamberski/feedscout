@@ -13,6 +13,8 @@ import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 
 export type LivejournalUrl = { kind: 'journal'; username?: string; tag?: string }
 
+type JournalFeedKey<Platform extends string> = `${Platform}:${'posts' | 'posts-tag' | 'userpics'}`
+
 const domains = ['livejournal.com']
 const wwwHosts = ['www.livejournal.com']
 const legacyUserHosts = ['users.livejournal.com', 'community.livejournal.com']
@@ -28,7 +30,9 @@ const journalTagRegex = /^\/tag\/([^/]+)/i
 // `https://alice.livejournal.com`, or the path the users host serves it under, as
 // `https://users.livejournal.com/-alice-`. A tag's feeds keep their own rows, so the posts row,
 // which ignores extra query parameters, does not read one as posts.
-const getJournalTemplates = (platform: string): Array<PlatformFeedTemplate> => {
+const getJournalTemplates = <Platform extends string>(
+  platform: Platform,
+): Array<PlatformFeedTemplate<JournalFeedKey<Platform>>> => {
   return [
     { key: `${platform}:posts-tag`, template: '{root}/data/rss?tag={tag}', format: 'rss' },
     { key: `${platform}:posts-tag`, template: '{root}/data/atom?tag={tag}', format: 'atom' },
@@ -70,12 +74,12 @@ const pathFeeds = definePlatformFeeds(
 )
 
 // The feeds of a journal from its root, plus a tag's feeds on a tag page.
-const getJournalEntries = (
-  table: Pick<PlatformFeedTable, 'getFeedEntry'>,
+const getJournalEntries = <Platform extends string>(
+  table: Pick<PlatformFeedTable<JournalFeedKey<Platform>>, 'getFeedEntry'>,
   root: string,
   tag: string | undefined,
-  platform: string,
-): Array<DiscoverUriEntry> => {
+  platform: Platform,
+): Array<DiscoverUriEntry | undefined> => {
   if (tag) {
     const params = { root, tag: decodeSegment(tag) ?? tag }
 
@@ -101,7 +105,7 @@ export const getJournalFeeds = (
   base: string,
   tag: string | undefined,
   platform: string,
-): Array<DiscoverUriEntry> => {
+): Array<DiscoverUriEntry | undefined> => {
   return getJournalEntries(definePlatformFeeds(getJournalTemplates(platform)), base, tag, platform)
 }
 

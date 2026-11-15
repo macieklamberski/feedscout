@@ -30,6 +30,8 @@ export type RedminePage = (
   | { kind: 'repository'; root: string; project: string; repository: string }
 ) & { alternateHrefs: Array<string>; project?: string }
 
+type RedmineFeedKey = Parameters<typeof feeds.getFeedUrl>[0]
+
 const poweredByRegex = /Powered by <a\s[^<>]*href="https?:\/\/www\.redmine\.org\/"/
 const projectClassRegex = /(?:^|\s)project-(\S+)/
 const repositoryRevisionsRegex = /\/repository\/([^/"?#]+)\/revisions\b/i
@@ -268,8 +270,15 @@ export const redmineHandler: PlatformHandler = {
     // An install under a sub-path such as /redmine keeps it in the root of every feed.
     const params: PlatformFeedParams = { root: page.root, project: page.project }
 
-    const getFeedEntry = (key: string, values?: PlatformFeedParams): DiscoverUriEntry => {
+    const getFeedEntry = (
+      key: RedmineFeedKey,
+      values?: PlatformFeedParams,
+    ): DiscoverUriEntry | undefined => {
       const uri = feeds.getFeedUrl(key, { ...params, ...values })
+
+      if (!uri) {
+        return
+      }
 
       return { uri: getAlternateSpelling(uri, page.alternateHrefs), hint: composeHint(key) }
     }
