@@ -1882,7 +1882,7 @@ Discovers the feeds of a Homeland forum. Detected by the `Homeland` generator me
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/topics/node{id}` | Node<sup>†</sup> · topics (RSS) |
+| `{root}/topics/node{id}` | Node<sup>†</sup> · topics (RSS) |
 | Any other page | Topics (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
