@@ -2,7 +2,6 @@ import { parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
-  composeHint,
   findElement,
   getCookieNames,
   getScriptDirectory,
@@ -66,11 +65,7 @@ export const shaarliHandler: PlatformHandler = {
     const { baseUrl } = page
 
     return [
-      // The table builds a key's canonical row only, so the legacy spelling is written here.
-      {
-        uri: [feeds.getFeedUrl('shaarli:posts', { root: baseUrl }, 'rss'), `${baseUrl}/?do=rss`],
-        hint: composeHint('shaarli:posts', 'rss'),
-      },
+      feeds.getFeedSpellings('shaarli:posts', { root: baseUrl }, 'rss'),
       feeds.getFeedEntry('shaarli:posts', { root: baseUrl }, 'atom'),
     ]
   },
