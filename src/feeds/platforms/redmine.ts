@@ -295,7 +295,11 @@ export const redmineHandler: PlatformHandler = {
     }
 
     if (page.kind === 'user') {
-      return [getFeedEntry('redmine:user-activity', { userId: page.userId })]
+      return [
+        getFeedEntry('redmine:user-activity', { userId: page.userId }),
+        getFeedEntry('redmine:news'),
+        getFeedEntry('redmine:activity'),
+      ]
     }
 
     if (page.kind === 'news') {

@@ -3198,7 +3198,7 @@ Discovers the Atom feeds of a Redmine install, Planio's hosted ones on `plan.io`
 | `{root}/projects/{project}/boards/{id}` | Forum messages |
 | `{root}/projects/{project}/repository/…` | Repository revisions |
 | `{root}/issues/{id}` | Issue updates |
-| `{root}/users/{id}` | User activity |
+| `{root}/users/{id}` | User activity · news · activity |
 | `{root}/issues` | Issues |
 | `{root}/news` | News |
 | `{root}/activity` | Activity |

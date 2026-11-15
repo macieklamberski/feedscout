@@ -656,12 +656,20 @@ describe('redmineHandler', () => {
       )
     })
 
-    it('should return the user activity feed for a user page', () => {
+    it('should return the user activity, news and activity feeds for a user page', () => {
       const value = 'https://example.com/users/42'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/activity.atom?user_id=42',
           hint: { key: 'redmine:user-activity', label: 'User activity' },
+        },
+        {
+          uri: 'https://example.com/news.atom',
+          hint: { key: 'redmine:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/activity.atom',
+          hint: { key: 'redmine:activity', label: 'Activity' },
         },
       ]
 
