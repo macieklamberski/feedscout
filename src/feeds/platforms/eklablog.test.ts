@@ -38,8 +38,8 @@ describe('isEklablogHtml', () => {
 
 describe('parseEklablogUrl', () => {
   const blogUrls: Array<string> = [
-    'https://enaelyork.eklablog.com/',
-    'https://enaelyork.eklablog.com/critique-en-serie-a129920826',
+    'https://alice.eklablog.com/',
+    'https://alice.eklablog.com/critique-en-serie-a129920826',
   ]
 
   it.each(blogUrls)('should return the blog for %s', (url) => {
@@ -51,7 +51,7 @@ describe('parseEklablogUrl', () => {
   const otherUrls: Array<string> = [
     'https://eklablog.com/',
     'https://www.eklablog.com/',
-    'https://www.enaelyork.eklablog.com/',
+    'https://www.alice.eklablog.com/',
   ]
 
   it.each(otherUrls)('should return undefined for %s', (url) => {
@@ -75,7 +75,7 @@ describe('parseEklablogUrl', () => {
 describe('eklablogHandler', () => {
   describe('match', () => {
     it('should return true for a blog', () => {
-      expect(eklablogHandler.match('https://enaelyork.eklablog.com/')).toBe(true)
+      expect(eklablogHandler.match('https://alice.eklablog.com/')).toBe(true)
     })
 
     it('should return false for another host', () => {
@@ -109,14 +109,14 @@ describe('eklablogHandler', () => {
     })
 
     it('should return posts and comments feeds for blog', () => {
-      const value = 'https://enaelyork.eklablog.com/critique-en-serie-a129920826'
+      const value = 'https://alice.eklablog.com/critique-en-serie-a129920826'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://enaelyork.eklablog.com/rss',
+          uri: 'https://alice.eklablog.com/rss',
           hint: { key: 'eklablog:posts', label: 'Posts' },
         },
         {
-          uri: 'https://enaelyork.eklablog.com/rss/comments',
+          uri: 'https://alice.eklablog.com/rss/comments',
           hint: { key: 'eklablog:comments', label: 'Comments' },
         },
       ]

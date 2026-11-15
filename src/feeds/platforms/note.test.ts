@@ -7,15 +7,15 @@ import { noteHandler, parseNoteUrl } from './note.js'
 
 describe('parseNoteUrl', () => {
   it('should return the user for a profile page', () => {
-    const expected: NoteUrl = { kind: 'user', username: 'tsukasa_yamato' }
+    const expected: NoteUrl = { kind: 'user', username: 'bob_smith' }
 
-    expect(parseNoteUrl('https://note.com/tsukasa_yamato')).toEqual(expected)
+    expect(parseNoteUrl('https://note.com/bob_smith')).toEqual(expected)
   })
 
   it('should return the note for an article page', () => {
-    const expected: NoteUrl = { kind: 'note', username: 'tsukasa_yamato' }
+    const expected: NoteUrl = { kind: 'note', username: 'bob_smith' }
 
-    expect(parseNoteUrl('https://note.com/tsukasa_yamato/n/some-note')).toEqual(expected)
+    expect(parseNoteUrl('https://note.com/bob_smith/n/some-note')).toEqual(expected)
   })
 
   it('should return the user for the note.mu host', () => {
@@ -87,10 +87,10 @@ describe('noteHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for blog', () => {
-      const value = 'https://note.com/tsukasa_yamato'
+      const value = 'https://note.com/bob_smith'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://note.com/tsukasa_yamato/rss',
+          uri: 'https://note.com/bob_smith/rss',
           hint: { key: 'note:blog', label: 'Blog' },
         },
         {
@@ -103,10 +103,10 @@ describe('noteHandler', () => {
     })
 
     it('should return the author blog feed for a note', () => {
-      const value = 'https://note.com/tsukasa_yamato/n/n1234567890ab'
+      const value = 'https://note.com/bob_smith/n/n1234567890ab'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://note.com/tsukasa_yamato/rss',
+          uri: 'https://note.com/bob_smith/rss',
           hint: { key: 'note:blog', label: 'Blog' },
         },
         {
@@ -165,7 +165,7 @@ describe('noteHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the blog hint for a blog feed', () => {
-      const value = 'https://note.com/tsukasa_yamato/rss'
+      const value = 'https://note.com/bob_smith/rss'
       const expected: DiscoverUriHint = { key: 'note:blog', label: 'Blog' }
 
       expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
@@ -200,7 +200,7 @@ describe('noteHandler', () => {
     })
 
     it('should return undefined for a profile page', () => {
-      const value = 'https://note.com/tsukasa_yamato'
+      const value = 'https://note.com/bob_smith'
 
       expect(noteHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -218,7 +218,7 @@ describe('noteHandler', () => {
     })
 
     it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/tsukasa_yamato/rss'
+      const value = 'https://example.com/bob_smith/rss'
 
       expect(noteHandler.getFeedHint?.(value)).toBeUndefined()
     })

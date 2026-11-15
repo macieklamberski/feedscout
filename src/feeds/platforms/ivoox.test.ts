@@ -197,7 +197,7 @@ describe('ivooxHandler', () => {
     })
 
     it('should return undefined for a podcast page', () => {
-      const value = 'https://www.ivoox.com/podcast-cine-en-serie_sq_f1317588_1.html'
+      const value = 'https://www.ivoox.com/podcast-alice_sq_f1317588_1.html'
 
       expect(ivooxHandler.getFeedHint?.(value)).toBeUndefined()
     })

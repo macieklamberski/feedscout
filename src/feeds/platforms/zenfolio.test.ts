@@ -72,13 +72,13 @@ describe('parseZenfolioUrl', () => {
   it('should return the site for a zenfolio.com subdomain', () => {
     const expected: ZenfolioUrl = { kind: 'site' }
 
-    expect(parseZenfolioUrl('https://ctcphotography.zenfolio.com/')).toEqual(expected)
+    expect(parseZenfolioUrl('https://bobphotography.zenfolio.com/')).toEqual(expected)
   })
 
   it('should return the site for a custom domain page', () => {
     const expected: ZenfolioUrl = { kind: 'site' }
 
-    expect(parseZenfolioUrl('https://www.jennypodesta.com/p411800779')).toEqual(expected)
+    expect(parseZenfolioUrl('https://www.alicephoto.example/p411800779')).toEqual(expected)
   })
 
   it('should return undefined for the zenfolio.com apex', () => {
@@ -101,50 +101,50 @@ describe('parseZenfolioUrl', () => {
 describe('zenfolioHandler', () => {
   describe('match', () => {
     it('should match a zenfolio.com subdomain without content', () => {
-      expect(zenfolioHandler.match('https://ctcphotography.zenfolio.com/')).toBe(true)
+      expect(zenfolioHandler.match('https://bobphotography.zenfolio.com/')).toBe(true)
     })
 
     it('should match a custom domain by its stylesheet', () => {
-      expect(zenfolioHandler.match('https://www.jennypodesta.com/', zenfolioHtml)).toBe(true)
+      expect(zenfolioHandler.match('https://www.alicephoto.example/', zenfolioHtml)).toBe(true)
     })
 
     it('should match a custom domain by its visitor cookie', () => {
-      const value = 'https://www.jennypodesta.com/'
+      const value = 'https://www.alicephoto.example/'
 
       expect(zenfolioHandler.match(value, '<html></html>', zenfolioHeaders)).toBe(true)
     })
 
     it('should not match a custom domain without a marker', () => {
-      expect(zenfolioHandler.match('https://www.jennypodesta.com/', '<html></html>')).toBe(false)
+      expect(zenfolioHandler.match('https://www.alicephoto.example/', '<html></html>')).toBe(false)
     })
   })
 
   describe('resolve', () => {
     it('should return the site feeds from the origin', () => {
-      const value = 'https://www.jennypodesta.com/p411800779'
+      const value = 'https://www.alicephoto.example/p411800779'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://www.jennypodesta.com/recent.rss',
+          uri: 'https://www.alicephoto.example/recent.rss',
           hint: { key: 'zenfolio:recent', label: 'Recent galleries', format: 'rss' },
         },
         {
-          uri: 'https://www.jennypodesta.com/recent.atom',
+          uri: 'https://www.alicephoto.example/recent.atom',
           hint: { key: 'zenfolio:recent', label: 'Recent galleries', format: 'atom' },
         },
         {
-          uri: 'https://www.jennypodesta.com/featured.rss',
+          uri: 'https://www.alicephoto.example/featured.rss',
           hint: { key: 'zenfolio:featured', label: 'Featured galleries', format: 'rss' },
         },
         {
-          uri: 'https://www.jennypodesta.com/featured.atom',
+          uri: 'https://www.alicephoto.example/featured.atom',
           hint: { key: 'zenfolio:featured', label: 'Featured galleries', format: 'atom' },
         },
         {
-          uri: 'https://www.jennypodesta.com/blog.rss',
+          uri: 'https://www.alicephoto.example/blog.rss',
           hint: { key: 'zenfolio:blog', label: 'Blog', format: 'rss' },
         },
         {
-          uri: 'https://www.jennypodesta.com/blog.atom',
+          uri: 'https://www.alicephoto.example/blog.atom',
           hint: { key: 'zenfolio:blog', label: 'Blog', format: 'atom' },
         },
       ]
@@ -153,30 +153,30 @@ describe('zenfolioHandler', () => {
     })
 
     it('should keep the scheme of an http page', () => {
-      const value = 'http://ctcphotography.zenfolio.com/'
+      const value = 'http://bobphotography.zenfolio.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://ctcphotography.zenfolio.com/recent.rss',
+          uri: 'http://bobphotography.zenfolio.com/recent.rss',
           hint: { key: 'zenfolio:recent', label: 'Recent galleries', format: 'rss' },
         },
         {
-          uri: 'http://ctcphotography.zenfolio.com/recent.atom',
+          uri: 'http://bobphotography.zenfolio.com/recent.atom',
           hint: { key: 'zenfolio:recent', label: 'Recent galleries', format: 'atom' },
         },
         {
-          uri: 'http://ctcphotography.zenfolio.com/featured.rss',
+          uri: 'http://bobphotography.zenfolio.com/featured.rss',
           hint: { key: 'zenfolio:featured', label: 'Featured galleries', format: 'rss' },
         },
         {
-          uri: 'http://ctcphotography.zenfolio.com/featured.atom',
+          uri: 'http://bobphotography.zenfolio.com/featured.atom',
           hint: { key: 'zenfolio:featured', label: 'Featured galleries', format: 'atom' },
         },
         {
-          uri: 'http://ctcphotography.zenfolio.com/blog.rss',
+          uri: 'http://bobphotography.zenfolio.com/blog.rss',
           hint: { key: 'zenfolio:blog', label: 'Blog', format: 'rss' },
         },
         {
-          uri: 'http://ctcphotography.zenfolio.com/blog.atom',
+          uri: 'http://bobphotography.zenfolio.com/blog.atom',
           hint: { key: 'zenfolio:blog', label: 'Blog', format: 'atom' },
         },
       ]
@@ -192,31 +192,31 @@ describe('zenfolioHandler', () => {
   describe('getFeedHint', () => {
     const feedKeys: Array<[string, DiscoverUriHint]> = [
       [
-        'https://ctcphotography.zenfolio.com/recent.rss',
+        'https://bobphotography.zenfolio.com/recent.rss',
         { key: 'zenfolio:recent', label: 'Recent galleries', format: 'rss' },
       ],
       [
-        'https://ctcphotography.zenfolio.com/recent.atom',
+        'https://bobphotography.zenfolio.com/recent.atom',
         { key: 'zenfolio:recent', label: 'Recent galleries', format: 'atom' },
       ],
       [
-        'https://ctcphotography.zenfolio.com/featured.rss',
+        'https://bobphotography.zenfolio.com/featured.rss',
         { key: 'zenfolio:featured', label: 'Featured galleries', format: 'rss' },
       ],
       [
-        'https://ctcphotography.zenfolio.com/featured.atom',
+        'https://bobphotography.zenfolio.com/featured.atom',
         { key: 'zenfolio:featured', label: 'Featured galleries', format: 'atom' },
       ],
       [
-        'https://ctcphotography.zenfolio.com/blog.rss',
+        'https://bobphotography.zenfolio.com/blog.rss',
         { key: 'zenfolio:blog', label: 'Blog', format: 'rss' },
       ],
       [
-        'https://ctcphotography.zenfolio.com/blog.atom',
+        'https://bobphotography.zenfolio.com/blog.atom',
         { key: 'zenfolio:blog', label: 'Blog', format: 'atom' },
       ],
       [
-        'http://ctcphotography.zenfolio.com/recent.rss',
+        'http://bobphotography.zenfolio.com/recent.rss',
         { key: 'zenfolio:recent', label: 'Recent galleries', format: 'rss' },
       ],
     ]
@@ -226,7 +226,7 @@ describe('zenfolioHandler', () => {
     })
 
     it('should return undefined for a site page', () => {
-      const value = 'https://ctcphotography.zenfolio.com/p411800779'
+      const value = 'https://bobphotography.zenfolio.com/p411800779'
 
       expect(zenfolioHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -250,7 +250,7 @@ describe('zenfolioHandler', () => {
     })
 
     it('should return undefined for a feed on a custom domain', () => {
-      const value = 'https://www.jennypodesta.com/recent.rss'
+      const value = 'https://www.alicephoto.example/recent.rss'
 
       expect(zenfolioHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -259,27 +259,27 @@ describe('zenfolioHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriEntry['hint']]> = [
       [
-        'https://ctcphotography.zenfolio.com/recent.rss',
+        'https://bobphotography.zenfolio.com/recent.rss',
         { key: 'zenfolio:recent', label: 'Recent galleries', format: 'rss' },
       ],
       [
-        'https://ctcphotography.zenfolio.com/recent.atom',
+        'https://bobphotography.zenfolio.com/recent.atom',
         { key: 'zenfolio:recent', label: 'Recent galleries', format: 'atom' },
       ],
       [
-        'https://ctcphotography.zenfolio.com/featured.rss',
+        'https://bobphotography.zenfolio.com/featured.rss',
         { key: 'zenfolio:featured', label: 'Featured galleries', format: 'rss' },
       ],
       [
-        'https://ctcphotography.zenfolio.com/featured.atom',
+        'https://bobphotography.zenfolio.com/featured.atom',
         { key: 'zenfolio:featured', label: 'Featured galleries', format: 'atom' },
       ],
       [
-        'https://ctcphotography.zenfolio.com/blog.rss',
+        'https://bobphotography.zenfolio.com/blog.rss',
         { key: 'zenfolio:blog', label: 'Blog', format: 'rss' },
       ],
       [
-        'https://ctcphotography.zenfolio.com/blog.atom',
+        'https://bobphotography.zenfolio.com/blog.atom',
         { key: 'zenfolio:blog', label: 'Blog', format: 'atom' },
       ],
     ]

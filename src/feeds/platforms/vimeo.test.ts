@@ -47,7 +47,7 @@ describe('parseVimeoUrl', () => {
 describe('vimeoHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://vimeo.com/casey'],
+      [true, 'https://vimeo.com/alice'],
       [true, 'https://vimeo.com/channels/staffpicks'],
       [true, 'https://www.vimeo.com/user'],
       [false, 'https://example.org/user'],
@@ -69,10 +69,10 @@ describe('vimeoHandler', () => {
     })
 
     it('should return videos feed for user page', () => {
-      const value = 'https://vimeo.com/casey'
+      const value = 'https://vimeo.com/alice'
       const expected = [
         {
-          uri: 'https://vimeo.com/casey/videos/rss',
+          uri: 'https://vimeo.com/alice/videos/rss',
           hint: { key: 'vimeo:videos', label: 'Videos' },
         },
       ]
@@ -81,10 +81,10 @@ describe('vimeoHandler', () => {
     })
 
     it('should return the videos feed on the apex host over https for a www page over http', () => {
-      const value = 'http://www.vimeo.com/casey'
+      const value = 'http://www.vimeo.com/alice'
       const expected = [
         {
-          uri: 'https://vimeo.com/casey/videos/rss',
+          uri: 'https://vimeo.com/alice/videos/rss',
           hint: { key: 'vimeo:videos', label: 'Videos' },
         },
       ]
@@ -93,14 +93,14 @@ describe('vimeoHandler', () => {
     })
 
     it('should return likes and videos feeds for likes page', () => {
-      const value = 'https://vimeo.com/casey/likes'
+      const value = 'https://vimeo.com/alice/likes'
       const expected = [
         {
-          uri: 'https://vimeo.com/casey/likes/rss',
+          uri: 'https://vimeo.com/alice/likes/rss',
           hint: { key: 'vimeo:likes', label: 'Likes' },
         },
         {
-          uri: 'https://vimeo.com/casey/videos/rss',
+          uri: 'https://vimeo.com/alice/videos/rss',
           hint: { key: 'vimeo:videos', label: 'Videos' },
         },
       ]
@@ -109,14 +109,14 @@ describe('vimeoHandler', () => {
     })
 
     it('should return likes and videos feeds for likes page with a capitalized likes segment', () => {
-      const value = 'https://vimeo.com/casey/Likes'
+      const value = 'https://vimeo.com/alice/Likes'
       const expected = [
         {
-          uri: 'https://vimeo.com/casey/likes/rss',
+          uri: 'https://vimeo.com/alice/likes/rss',
           hint: { key: 'vimeo:likes', label: 'Likes' },
         },
         {
-          uri: 'https://vimeo.com/casey/videos/rss',
+          uri: 'https://vimeo.com/alice/videos/rss',
           hint: { key: 'vimeo:videos', label: 'Videos' },
         },
       ]
@@ -125,10 +125,10 @@ describe('vimeoHandler', () => {
     })
 
     it('should return videos feed for user subpage', () => {
-      const value = 'https://vimeo.com/casey/videos'
+      const value = 'https://vimeo.com/alice/videos'
       const expected = [
         {
-          uri: 'https://vimeo.com/casey/videos/rss',
+          uri: 'https://vimeo.com/alice/videos/rss',
           hint: { key: 'vimeo:videos', label: 'Videos' },
         },
       ]

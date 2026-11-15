@@ -12,27 +12,27 @@ const socialLinkHtml = `
 
 describe('parseMastodonUrl', () => {
   it('should return the profile for /@user', () => {
-    const expected: MastodonUrl = { kind: 'profile', username: 'Gargron' }
+    const expected: MastodonUrl = { kind: 'profile', username: 'Bob' }
 
-    expect(parseMastodonUrl('https://example.com/@Gargron')).toEqual(expected)
+    expect(parseMastodonUrl('https://example.com/@Bob')).toEqual(expected)
   })
 
   it('should return the profile for /users/{user}', () => {
-    const expected: MastodonUrl = { kind: 'profile', username: 'Gargron' }
+    const expected: MastodonUrl = { kind: 'profile', username: 'Bob' }
 
-    expect(parseMastodonUrl('https://example.com/users/Gargron')).toEqual(expected)
+    expect(parseMastodonUrl('https://example.com/users/Bob')).toEqual(expected)
   })
 
   it('should return the profile for /users/{user} with a capitalized users segment', () => {
-    const expected: MastodonUrl = { kind: 'profile', username: 'Gargron' }
+    const expected: MastodonUrl = { kind: 'profile', username: 'Bob' }
 
-    expect(parseMastodonUrl('https://example.com/Users/Gargron')).toEqual(expected)
+    expect(parseMastodonUrl('https://example.com/Users/Bob')).toEqual(expected)
   })
 
   it('should return the profile for a /users/{user} status page', () => {
-    const expected: MastodonUrl = { kind: 'profile', username: 'Gargron' }
+    const expected: MastodonUrl = { kind: 'profile', username: 'Bob' }
 
-    expect(parseMastodonUrl('https://example.com/users/Gargron/statuses/1')).toEqual(expected)
+    expect(parseMastodonUrl('https://example.com/users/Bob/statuses/1')).toEqual(expected)
   })
 
   it('should return undefined for /users without a user', () => {
@@ -263,7 +263,7 @@ describe('isMastodonHeaders', () => {
 describe('mastodonHandler', () => {
   describe('match', () => {
     it('should match profile path with Mastodon HTML', () => {
-      expect(mastodonHandler.match('https://example.com/@Gargron', mastodonHtml)).toBe(true)
+      expect(mastodonHandler.match('https://example.com/@Bob', mastodonHtml)).toBe(true)
     })
 
     it('should match profile path with Mastodon server header', () => {
@@ -296,10 +296,10 @@ describe('mastodonHandler', () => {
 
   describe('resolve', () => {
     it('should return RSS feed URL for user profile', () => {
-      const value = 'https://example.com/@Gargron'
+      const value = 'https://example.com/@Bob'
       const expected = [
         {
-          uri: 'https://example.com/@Gargron.rss',
+          uri: 'https://example.com/@Bob.rss',
           hint: { key: 'mastodon:posts', label: 'Posts' },
         },
       ]
@@ -320,14 +320,14 @@ describe('mastodonHandler', () => {
     })
 
     it('should return tagged and profile feeds for /@user/tagged/{tag}', () => {
-      const value = 'https://example.com/@Gargron/tagged/mastodev'
+      const value = 'https://example.com/@Bob/tagged/mastodev'
       const expected = [
         {
-          uri: 'https://example.com/@Gargron/tagged/mastodev.rss',
+          uri: 'https://example.com/@Bob/tagged/mastodev.rss',
           hint: { key: 'mastodon:tagged', label: 'Tagged' },
         },
         {
-          uri: 'https://example.com/@Gargron.rss',
+          uri: 'https://example.com/@Bob.rss',
           hint: { key: 'mastodon:posts', label: 'Posts' },
         },
       ]
@@ -340,14 +340,14 @@ describe('mastodonHandler', () => {
     })
 
     it('should return replies and profile feeds for /@user/with_replies', () => {
-      const value = 'https://example.com/@Gargron/with_replies'
+      const value = 'https://example.com/@Bob/with_replies'
       const expected = [
         {
-          uri: 'https://example.com/@Gargron/with_replies.rss',
+          uri: 'https://example.com/@Bob/with_replies.rss',
           hint: { key: 'mastodon:replies', label: 'Posts with replies' },
         },
         {
-          uri: 'https://example.com/@Gargron.rss',
+          uri: 'https://example.com/@Bob.rss',
           hint: { key: 'mastodon:posts', label: 'Posts' },
         },
       ]
@@ -356,14 +356,14 @@ describe('mastodonHandler', () => {
     })
 
     it('should return media and profile feeds for /@user/media', () => {
-      const value = 'https://example.com/@Gargron/media'
+      const value = 'https://example.com/@Bob/media'
       const expected = [
         {
-          uri: 'https://example.com/@Gargron/media.rss',
+          uri: 'https://example.com/@Bob/media.rss',
           hint: { key: 'mastodon:media', label: 'Media' },
         },
         {
-          uri: 'https://example.com/@Gargron.rss',
+          uri: 'https://example.com/@Bob.rss',
           hint: { key: 'mastodon:posts', label: 'Posts' },
         },
       ]

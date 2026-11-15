@@ -167,7 +167,7 @@ describe('webtoonsHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the series hint for a Canvas series feed', () => {
-      const value = 'https://www.webtoons.com/en/challenge/chibird/rss?title_no=97265'
+      const value = 'https://www.webtoons.com/en/challenge/alice/rss?title_no=97265'
       const expected: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
 
       expect(webtoonsHandler.getFeedHint?.(value)).toEqual(expected)
@@ -210,19 +210,19 @@ describe('webtoonsHandler', () => {
     })
 
     it('should return undefined for a series page', () => {
-      const value = 'https://www.webtoons.com/en/challenge/chibird/list?title_no=97265'
+      const value = 'https://www.webtoons.com/en/challenge/alice/list?title_no=97265'
 
       expect(webtoonsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path without a title number', () => {
-      const value = 'https://www.webtoons.com/en/challenge/chibird/rss'
+      const value = 'https://www.webtoons.com/en/challenge/alice/rss'
 
       expect(webtoonsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/en/challenge/chibird/rss?title_no=97265'
+      const value = 'https://example.com/en/challenge/alice/rss?title_no=97265'
 
       expect(webtoonsHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -231,7 +231,7 @@ describe('webtoonsHandler', () => {
   describe('own feeds through the Platform method', () => {
     const hint: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
     const ownFeeds = [
-      'https://www.webtoons.com/en/challenge/chibird/rss?title_no=97265',
+      'https://www.webtoons.com/en/challenge/alice/rss?title_no=97265',
       'https://www.webtoons.com/en/challenge/everyday-magic/rss?title_no=741756',
       'https://www.webtoons.com/en/drama/lookism/rss?title_no=1049',
       'https://www.webtoons.com/id/fantasy/deadly-7-inside-me/rss?title_no=722',

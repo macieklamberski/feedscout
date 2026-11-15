@@ -7,21 +7,21 @@ import { parseZennUrl, zennHandler } from './zenn.js'
 
 describe('parseZennUrl', () => {
   it('should return the user for a profile page', () => {
-    const expected: ZennUrl = { kind: 'user', username: 'catnose99' }
+    const expected: ZennUrl = { kind: 'user', username: 'alice99' }
 
-    expect(parseZennUrl('https://zenn.dev/catnose99')).toEqual(expected)
+    expect(parseZennUrl('https://zenn.dev/alice99')).toEqual(expected)
   })
 
   it('should return the post for an article page', () => {
-    const expected: ZennUrl = { kind: 'post', username: 'catnose99' }
+    const expected: ZennUrl = { kind: 'post', username: 'alice99' }
 
-    expect(parseZennUrl('https://zenn.dev/catnose99/articles/some-article')).toEqual(expected)
+    expect(parseZennUrl('https://zenn.dev/alice99/articles/some-article')).toEqual(expected)
   })
 
   it('should return the user for the www host', () => {
-    const expected: ZennUrl = { kind: 'user', username: 'catnose99' }
+    const expected: ZennUrl = { kind: 'user', username: 'alice99' }
 
-    expect(parseZennUrl('https://www.zenn.dev/catnose99')).toEqual(expected)
+    expect(parseZennUrl('https://www.zenn.dev/alice99')).toEqual(expected)
   })
 
   it('should return the topic for a topic page', () => {
@@ -61,7 +61,7 @@ describe('parseZennUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseZennUrl('https://example.com/catnose99')).toBeUndefined()
+    expect(parseZennUrl('https://example.com/alice99')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -87,14 +87,14 @@ describe('zennHandler', () => {
     }
 
     it('should return feed URL for user', () => {
-      const value = 'https://zenn.dev/catnose99'
+      const value = 'https://zenn.dev/alice99'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://zenn.dev/catnose99/feed',
+          uri: 'https://zenn.dev/alice99/feed',
           hint: { key: 'zenn:posts', label: 'Posts' },
         },
         {
-          uri: 'https://zenn.dev/catnose99/feed?all=1',
+          uri: 'https://zenn.dev/alice99/feed?all=1',
           hint: { key: 'zenn:all-posts', label: 'All posts' },
         },
         trendingFeed,
@@ -104,14 +104,14 @@ describe('zennHandler', () => {
     })
 
     it('should return the user feed URL for an article page', () => {
-      const value = 'https://zenn.dev/catnose99/articles/some-article'
+      const value = 'https://zenn.dev/alice99/articles/some-article'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://zenn.dev/catnose99/feed',
+          uri: 'https://zenn.dev/alice99/feed',
           hint: { key: 'zenn:posts', label: 'Posts' },
         },
         {
-          uri: 'https://zenn.dev/catnose99/feed?all=1',
+          uri: 'https://zenn.dev/alice99/feed?all=1',
           hint: { key: 'zenn:all-posts', label: 'All posts' },
         },
         trendingFeed,
@@ -182,7 +182,7 @@ describe('zennHandler', () => {
     })
 
     it('should return the posts hint for a user feed', () => {
-      const value = 'https://zenn.dev/catnose99/feed'
+      const value = 'https://zenn.dev/alice99/feed'
       const expected: DiscoverUriHint = { key: 'zenn:posts', label: 'Posts' }
 
       expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
@@ -228,7 +228,7 @@ describe('zennHandler', () => {
     })
 
     it('should return undefined for a user page', () => {
-      const value = 'https://zenn.dev/catnose99'
+      const value = 'https://zenn.dev/alice99'
 
       expect(zennHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -240,7 +240,7 @@ describe('zennHandler', () => {
     })
 
     it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/catnose99/feed'
+      const value = 'https://example.com/alice99/feed'
 
       expect(zennHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -249,7 +249,7 @@ describe('zennHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://zenn.dev/feed', { key: 'zenn:trending', label: 'Trending' }],
-      ['https://zenn.dev/catnose99/feed', { key: 'zenn:posts', label: 'Posts' }],
+      ['https://zenn.dev/alice99/feed', { key: 'zenn:posts', label: 'Posts' }],
       ['http://zenn.dev/alice/feed?all=1', { key: 'zenn:all-posts', label: 'All posts' }],
       ['https://zenn.dev/topics/react/feed', { key: 'zenn:topic', label: 'Topic' }],
       ['https://zenn.dev/p/team_zenn/feed', { key: 'zenn:publication', label: 'Publication' }],

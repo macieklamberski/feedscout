@@ -7,21 +7,21 @@ import { mediumHandler, parseMediumUrl } from './medium.js'
 
 describe('parseMediumUrl', () => {
   it('should return the user for a profile', () => {
-    const expected: MediumUrl = { kind: 'user', username: 'ev' }
+    const expected: MediumUrl = { kind: 'user', username: 'bob' }
 
-    expect(parseMediumUrl('https://medium.com/@ev')).toEqual(expected)
+    expect(parseMediumUrl('https://medium.com/@bob')).toEqual(expected)
   })
 
   it('should return the user for a profile article', () => {
-    const expected: MediumUrl = { kind: 'user', username: 'ev' }
+    const expected: MediumUrl = { kind: 'user', username: 'bob' }
 
-    expect(parseMediumUrl('https://medium.com/@ev/some-article')).toEqual(expected)
+    expect(parseMediumUrl('https://medium.com/@bob/some-article')).toEqual(expected)
   })
 
   it('should return the user for the www host', () => {
-    const expected: MediumUrl = { kind: 'user', username: 'ev' }
+    const expected: MediumUrl = { kind: 'user', username: 'bob' }
 
-    expect(parseMediumUrl('https://www.medium.com/@ev')).toEqual(expected)
+    expect(parseMediumUrl('https://www.medium.com/@bob')).toEqual(expected)
   })
 
   it('should return the tag for a tag page', () => {
@@ -122,7 +122,7 @@ describe('parseMediumUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseMediumUrl('https://example.com/@ev')).toBeUndefined()
+    expect(parseMediumUrl('https://example.com/@bob')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -133,19 +133,19 @@ describe('parseMediumUrl', () => {
 describe('mediumHandler', () => {
   describe('match', () => {
     it('should match a medium.com URL', () => {
-      expect(mediumHandler.match('https://medium.com/@ev')).toBe(true)
+      expect(mediumHandler.match('https://medium.com/@bob')).toBe(true)
     })
 
     it('should not match another host', () => {
-      expect(mediumHandler.match('https://example.com/@ev')).toBe(false)
+      expect(mediumHandler.match('https://example.com/@bob')).toBe(false)
     })
   })
 
   describe('resolve', () => {
     it('should return RSS feed URL for user profile', () => {
-      const value = 'https://medium.com/@ev'
+      const value = 'https://medium.com/@bob'
       const expected = [
-        { uri: 'https://medium.com/feed/@ev', hint: { key: 'medium:posts', label: 'Posts' } },
+        { uri: 'https://medium.com/feed/@bob', hint: { key: 'medium:posts', label: 'Posts' } },
       ]
 
       expect(mediumHandler.resolve(value)).toEqual(expected)
@@ -232,14 +232,14 @@ describe('mediumHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the posts hint for a user feed', () => {
-      const value = 'https://medium.com/feed/@anngivens'
+      const value = 'https://medium.com/feed/@carol'
       const expected: DiscoverUriHint = { key: 'medium:posts', label: 'Posts' }
 
       expect(mediumHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a user feed on the www host', () => {
-      const value = 'https://www.medium.com/feed/@mariandrew'
+      const value = 'https://www.medium.com/feed/@dave'
       const expected: DiscoverUriHint = { key: 'medium:posts', label: 'Posts' }
 
       expect(mediumHandler.getFeedHint?.(value)).toEqual(expected)
@@ -295,7 +295,7 @@ describe('mediumHandler', () => {
     })
 
     it('should return undefined for a profile page', () => {
-      const value = 'https://medium.com/@anngivens'
+      const value = 'https://medium.com/@carol'
 
       expect(mediumHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -333,7 +333,7 @@ describe('mediumHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://medium.com/feed/@anngivens', { key: 'medium:posts', label: 'Posts' }],
+      ['https://medium.com/feed/@carol', { key: 'medium:posts', label: 'Posts' }],
       ['https://medium.com/@alice.example/feed', { key: 'medium:posts', label: 'Posts' }],
       ['http://www.medium.com/@alice/feed/', { key: 'medium:posts', label: 'Posts' }],
       ['https://medium.com/feed/tag/fake-news', { key: 'medium:tag', label: 'Tag' }],

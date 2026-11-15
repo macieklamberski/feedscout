@@ -326,21 +326,21 @@ describe('sapoBlogsHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the posts hint for an RSS feed', () => {
-      const value = 'https://cantinhodacasa.blogs.sapo.pt/data/rss'
+      const value = 'https://bob.blogs.sapo.pt/data/rss'
       const expected: DiscoverUriHint = { key: 'sapo-blogs:posts', label: 'Posts', format: 'rss' }
 
       expect(sapoBlogsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for an Atom feed', () => {
-      const value = 'https://cantinhodacasa.blogs.sapo.pt/data/atom'
+      const value = 'https://bob.blogs.sapo.pt/data/atom'
       const expected: DiscoverUriHint = { key: 'sapo-blogs:posts', label: 'Posts', format: 'atom' }
 
       expect(sapoBlogsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the tag hint for a tag feed', () => {
-      const value = 'https://cantinhodacasa.blogs.sapo.pt/data/rss?tag=compal'
+      const value = 'https://bob.blogs.sapo.pt/data/rss?tag=compal'
       const expected: DiscoverUriHint = { key: 'sapo-blogs:tag', label: 'Tag' }
 
       expect(sapoBlogsHandler.getFeedHint?.(value)).toEqual(expected)
@@ -361,14 +361,14 @@ describe('sapoBlogsHandler', () => {
     })
 
     it('should return the comments hint for a comments feed', () => {
-      const value = 'https://blogs.sapo.pt/commentsrss.bml?blog=canetadapoesia'
+      const value = 'https://blogs.sapo.pt/commentsrss.bml?blog=carol'
       const expected: DiscoverUriHint = { key: 'sapo-blogs:comments', label: 'Comments' }
 
       expect(sapoBlogsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the comments hint for a comments feed naming a blog with an underscore', () => {
-      const value = 'https://blogs.sapo.pt/commentsrss.bml?blog=the_other_side'
+      const value = 'https://blogs.sapo.pt/commentsrss.bml?blog=dave_blog'
       const expected: DiscoverUriHint = { key: 'sapo-blogs:comments', label: 'Comments' }
 
       expect(sapoBlogsHandler.getFeedHint?.(value)).toEqual(expected)
@@ -421,27 +421,24 @@ describe('sapoBlogsHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://cantinhodacasa.blogs.sapo.pt/data/rss',
+        'https://bob.blogs.sapo.pt/data/rss',
         { key: 'sapo-blogs:posts', label: 'Posts', format: 'rss' },
       ],
       [
-        'https://cantinhodacasa.blogs.sapo.pt/data/atom',
+        'https://bob.blogs.sapo.pt/data/atom',
         { key: 'sapo-blogs:posts', label: 'Posts', format: 'atom' },
       ],
-      [
-        'https://cantinhodacasa.blogs.sapo.pt/data/rss?tag=compal',
-        { key: 'sapo-blogs:tag', label: 'Tag' },
-      ],
+      ['https://bob.blogs.sapo.pt/data/rss?tag=compal', { key: 'sapo-blogs:tag', label: 'Tag' }],
       [
         'https://alice.blogs.sapo.pt/data/rss?tag=ant%C3%B3nio+costa',
         { key: 'sapo-blogs:tag', label: 'Tag' },
       ],
       [
-        'https://blogs.sapo.pt/commentsrss.bml?blog=canetadapoesia',
+        'https://blogs.sapo.pt/commentsrss.bml?blog=carol',
         { key: 'sapo-blogs:comments', label: 'Comments' },
       ],
       [
-        'https://blogs.sapo.pt/commentsrss.bml?blog=the_other_side',
+        'https://blogs.sapo.pt/commentsrss.bml?blog=dave_blog',
         { key: 'sapo-blogs:comments', label: 'Comments' },
       ],
       [

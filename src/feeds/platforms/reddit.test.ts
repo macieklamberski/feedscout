@@ -89,60 +89,60 @@ describe('parseRedditUrl', () => {
   })
 
   it('should return the user for a /user/ page', () => {
-    const expected: RedditUrl = { kind: 'user', username: 'spez' }
+    const expected: RedditUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseRedditUrl('https://reddit.com/user/spez')).toEqual(expected)
+    expect(parseRedditUrl('https://reddit.com/user/alice')).toEqual(expected)
   })
 
   it('should return the user for a /u/ page', () => {
-    const expected: RedditUrl = { kind: 'user', username: 'spez' }
+    const expected: RedditUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseRedditUrl('https://reddit.com/u/spez')).toEqual(expected)
+    expect(parseRedditUrl('https://reddit.com/u/alice')).toEqual(expected)
   })
 
   it('should return the user without a feed extension', () => {
-    const expected: RedditUrl = { kind: 'user', username: 'spez' }
+    const expected: RedditUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseRedditUrl('https://www.reddit.com/u/spez.rss')).toEqual(expected)
-    expect(parseRedditUrl('https://www.reddit.com/user/spez.atom')).toEqual(expected)
+    expect(parseRedditUrl('https://www.reddit.com/u/alice.rss')).toEqual(expected)
+    expect(parseRedditUrl('https://www.reddit.com/user/alice.atom')).toEqual(expected)
   })
 
   it('should return the submitted page of a user', () => {
-    const expected: RedditUrl = { kind: 'submitted', username: 'spez' }
+    const expected: RedditUrl = { kind: 'submitted', username: 'alice' }
 
-    expect(parseRedditUrl('https://reddit.com/user/spez/submitted')).toEqual(expected)
+    expect(parseRedditUrl('https://reddit.com/user/alice/submitted')).toEqual(expected)
   })
 
   it('should return the submitted page without a feed extension', () => {
-    const expected: RedditUrl = { kind: 'submitted', username: 'spez' }
+    const expected: RedditUrl = { kind: 'submitted', username: 'alice' }
 
-    expect(parseRedditUrl('https://www.reddit.com/user/spez/submitted.rss')).toEqual(expected)
+    expect(parseRedditUrl('https://www.reddit.com/user/alice/submitted.rss')).toEqual(expected)
   })
 
   it('should return the comments page of a user', () => {
-    const expected: RedditUrl = { kind: 'comments', username: 'spez' }
+    const expected: RedditUrl = { kind: 'comments', username: 'alice' }
 
-    expect(parseRedditUrl('https://reddit.com/user/spez/comments')).toEqual(expected)
+    expect(parseRedditUrl('https://reddit.com/user/alice/comments')).toEqual(expected)
   })
 
   it('should return the post of a user for a profile post page', () => {
-    const value = 'https://reddit.com/user/spez/comments/abc123/whats_your_favorite'
-    const expected: RedditUrl = { kind: 'userPost', username: 'spez', postId: 'abc123' }
+    const value = 'https://reddit.com/user/alice/comments/abc123/whats_your_favorite'
+    const expected: RedditUrl = { kind: 'userPost', username: 'alice', postId: 'abc123' }
 
     expect(parseRedditUrl(value)).toEqual(expected)
   })
 
   it('should return the user for an unknown user section', () => {
-    const expected: RedditUrl = { kind: 'user', username: 'spez' }
+    const expected: RedditUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseRedditUrl('https://reddit.com/user/spez/upvoted')).toEqual(expected)
+    expect(parseRedditUrl('https://reddit.com/user/alice/upvoted')).toEqual(expected)
   })
 
   it('should return the multireddit for a /user/ multireddit page', () => {
-    const value = 'https://reddit.com/user/kjoneslol/m/sfwpornnetwork'
+    const value = 'https://reddit.com/user/bob/m/sfwpornnetwork'
     const expected: RedditUrl = {
       kind: 'multireddit',
-      username: 'kjoneslol',
+      username: 'bob',
       multireddit: 'sfwpornnetwork',
     }
 
@@ -152,18 +152,18 @@ describe('parseRedditUrl', () => {
   it('should return the multireddit for a /u/ multireddit page', () => {
     const expected: RedditUrl = {
       kind: 'multireddit',
-      username: 'kjoneslol',
+      username: 'bob',
       multireddit: 'sfwpornnetwork',
     }
 
-    expect(parseRedditUrl('https://reddit.com/u/kjoneslol/m/sfwpornnetwork')).toEqual(expected)
+    expect(parseRedditUrl('https://reddit.com/u/bob/m/sfwpornnetwork')).toEqual(expected)
   })
 
   it('should return the multireddit without a feed extension', () => {
-    const value = 'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork.rss'
+    const value = 'https://www.reddit.com/user/bob/m/sfwpornnetwork.rss'
     const expected: RedditUrl = {
       kind: 'multireddit',
-      username: 'kjoneslol',
+      username: 'bob',
       multireddit: 'sfwpornnetwork',
     }
 
@@ -187,10 +187,10 @@ describe('parseRedditUrl', () => {
   })
 
   it('should return the multireddit for a capitalized multireddit path', () => {
-    const value = 'https://reddit.com/User/kjoneslol/M/sfwpornnetwork'
+    const value = 'https://reddit.com/User/bob/M/sfwpornnetwork'
     const expected: RedditUrl = {
       kind: 'multireddit',
-      username: 'kjoneslol',
+      username: 'bob',
       multireddit: 'sfwpornnetwork',
     }
 
@@ -198,9 +198,9 @@ describe('parseRedditUrl', () => {
   })
 
   it('should return the submitted posts for a capitalized submitted path', () => {
-    const expected: RedditUrl = { kind: 'submitted', username: 'spez' }
+    const expected: RedditUrl = { kind: 'submitted', username: 'alice' }
 
-    expect(parseRedditUrl('https://reddit.com/U/spez/Submitted')).toEqual(expected)
+    expect(parseRedditUrl('https://reddit.com/U/alice/Submitted')).toEqual(expected)
   })
 
   it('should return the domain for a capitalized domain prefix', () => {
@@ -229,9 +229,9 @@ describe('parseRedditUrl', () => {
   })
 
   it('should return the comments page of a user for a capitalized comments path', () => {
-    const expected: RedditUrl = { kind: 'comments', username: 'spez' }
+    const expected: RedditUrl = { kind: 'comments', username: 'alice' }
 
-    expect(parseRedditUrl('https://reddit.com/user/spez/Comments')).toEqual(expected)
+    expect(parseRedditUrl('https://reddit.com/user/alice/Comments')).toEqual(expected)
   })
 
   it('should return undefined for a prefix without a name', () => {
@@ -743,10 +743,10 @@ describe('redditHandler', () => {
     })
 
     it('should return RSS feed URL for user profile', () => {
-      const value = 'https://reddit.com/user/spez'
+      const value = 'https://reddit.com/user/alice'
       const expected = [
         {
-          uri: 'https://www.reddit.com/user/spez/.rss',
+          uri: 'https://www.reddit.com/user/alice/.rss',
           hint: { key: 'reddit:user', label: 'User' },
         },
       ]
@@ -755,14 +755,14 @@ describe('redditHandler', () => {
     })
 
     it('should return submitted and profile feeds for /user/{user}/submitted', () => {
-      const value = 'https://reddit.com/user/spez/submitted'
+      const value = 'https://reddit.com/user/alice/submitted'
       const expected = [
         {
-          uri: 'https://www.reddit.com/user/spez/submitted/.rss',
+          uri: 'https://www.reddit.com/user/alice/submitted/.rss',
           hint: { key: 'reddit:user-submitted', label: 'Submitted' },
         },
         {
-          uri: 'https://www.reddit.com/user/spez/.rss',
+          uri: 'https://www.reddit.com/user/alice/.rss',
           hint: { key: 'reddit:user', label: 'User' },
         },
       ]
@@ -771,14 +771,14 @@ describe('redditHandler', () => {
     })
 
     it('should return user-comments and profile feeds for /user/{user}/comments', () => {
-      const value = 'https://reddit.com/user/spez/comments'
+      const value = 'https://reddit.com/user/alice/comments'
       const expected = [
         {
-          uri: 'https://www.reddit.com/user/spez/comments/.rss',
+          uri: 'https://www.reddit.com/user/alice/comments/.rss',
           hint: { key: 'reddit:user-comments', label: 'Comments' },
         },
         {
-          uri: 'https://www.reddit.com/user/spez/.rss',
+          uri: 'https://www.reddit.com/user/alice/.rss',
           hint: { key: 'reddit:user', label: 'User' },
         },
       ]
@@ -787,10 +787,10 @@ describe('redditHandler', () => {
     })
 
     it('should return the post comments feed for a profile post', () => {
-      const value = 'https://reddit.com/user/spez/comments/abc123/whats_your_favorite'
+      const value = 'https://reddit.com/user/alice/comments/abc123/whats_your_favorite'
       const expected = [
         {
-          uri: 'https://www.reddit.com/user/spez/comments/abc123/.rss',
+          uri: 'https://www.reddit.com/user/alice/comments/abc123/.rss',
           hint: { key: 'reddit:post-comments', label: 'Post comments' },
         },
       ]
@@ -799,10 +799,10 @@ describe('redditHandler', () => {
     })
 
     it('should return RSS feed URL for multireddit', () => {
-      const value = 'https://reddit.com/user/kjoneslol/m/sfwpornnetwork'
+      const value = 'https://reddit.com/user/bob/m/sfwpornnetwork'
       const expected = [
         {
-          uri: 'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss',
+          uri: 'https://www.reddit.com/user/bob/m/sfwpornnetwork/.rss',
           hint: { key: 'reddit:multireddit', label: 'Multireddit' },
         },
       ]
@@ -925,7 +925,7 @@ describe('redditHandler', () => {
     })
 
     it('should return the post comments hint for a user post feed', () => {
-      const value = 'https://www.reddit.com/user/spez/comments/abc123/.rss'
+      const value = 'https://www.reddit.com/user/alice/comments/abc123/.rss'
       const expected: DiscoverUriHint = { key: 'reddit:post-comments', label: 'Post comments' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
@@ -977,7 +977,7 @@ describe('redditHandler', () => {
     })
 
     it('should return the multireddit hint for a multireddit feed', () => {
-      const value = 'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss'
+      const value = 'https://www.reddit.com/user/bob/m/sfwpornnetwork/.rss'
       const expected: DiscoverUriHint = { key: 'reddit:multireddit', label: 'Multireddit' }
 
       expect(redditHandler.getFeedHint?.(value)).toEqual(expected)
@@ -1063,7 +1063,7 @@ describe('redditHandler', () => {
         { key: 'reddit:post-comments', label: 'Post comments' },
       ],
       [
-        'https://www.reddit.com/user/spez/comments/abc123/.rss',
+        'https://www.reddit.com/user/alice/comments/abc123/.rss',
         { key: 'reddit:post-comments', label: 'Post comments' },
       ],
       [
@@ -1088,7 +1088,7 @@ describe('redditHandler', () => {
         { key: 'reddit:user-submitted', label: 'Submitted' },
       ],
       [
-        'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss',
+        'https://www.reddit.com/user/bob/m/sfwpornnetwork/.rss',
         { key: 'reddit:multireddit', label: 'Multireddit' },
       ],
       [
@@ -1113,7 +1113,7 @@ describe('redditHandler', () => {
         { key: 'reddit:post-comments', label: 'Post comments' },
       ],
       [
-        'https://old.reddit.com/user/spez/comments/abc123/.rss',
+        'https://old.reddit.com/user/alice/comments/abc123/.rss',
         { key: 'reddit:post-comments', label: 'Post comments' },
       ],
       [
@@ -1134,7 +1134,7 @@ describe('redditHandler', () => {
         { key: 'reddit:user-submitted', label: 'Submitted' },
       ],
       [
-        'https://old.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss',
+        'https://old.reddit.com/user/bob/m/sfwpornnetwork/.rss',
         { key: 'reddit:multireddit', label: 'Multireddit' },
       ],
     ]

@@ -21,9 +21,9 @@ describe('parseFlickrUrl', () => {
   })
 
   it('should return the photostream for an NSID photostream page', () => {
-    const expected: FlickrUrl = { kind: 'photostream', userId: '24662369@N07' }
+    const expected: FlickrUrl = { kind: 'photostream', userId: '87654321@N07' }
 
-    expect(parseFlickrUrl('https://www.flickr.com/photos/24662369@N07')).toEqual(expected)
+    expect(parseFlickrUrl('https://www.flickr.com/photos/87654321@N07')).toEqual(expected)
   })
 
   it('should return the photostream for a path alias', () => {
@@ -45,22 +45,22 @@ describe('parseFlickrUrl', () => {
   })
 
   it('should return the favorites for a favorites page', () => {
-    const value = 'https://www.flickr.com/photos/24662369@N07/favorites'
-    const expected: FlickrUrl = { kind: 'favorites', userId: '24662369@N07' }
+    const value = 'https://www.flickr.com/photos/87654321@N07/favorites'
+    const expected: FlickrUrl = { kind: 'favorites', userId: '87654321@N07' }
 
     expect(parseFlickrUrl(value)).toEqual(expected)
   })
 
   it('should return the favorites for a favorites page with a capitalized favorites segment', () => {
-    const value = 'https://www.flickr.com/photos/24662369@N07/Favorites'
-    const expected: FlickrUrl = { kind: 'favorites', userId: '24662369@N07' }
+    const value = 'https://www.flickr.com/photos/87654321@N07/Favorites'
+    const expected: FlickrUrl = { kind: 'favorites', userId: '87654321@N07' }
 
     expect(parseFlickrUrl(value)).toEqual(expected)
   })
 
   it('should return the favorites for a later favorites page', () => {
-    const value = 'https://www.flickr.com/photos/24662369@N07/favorites/page2'
-    const expected: FlickrUrl = { kind: 'favorites', userId: '24662369@N07' }
+    const value = 'https://www.flickr.com/photos/87654321@N07/favorites/page2'
+    const expected: FlickrUrl = { kind: 'favorites', userId: '87654321@N07' }
 
     expect(parseFlickrUrl(value)).toEqual(expected)
   })
@@ -396,14 +396,14 @@ describe('flickrHandler', () => {
     })
 
     it('should return photostream feed for an NSID photostream page', () => {
-      const value = 'https://www.flickr.com/photos/24662369@N07/'
+      const value = 'https://www.flickr.com/photos/87654321@N07/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: `${feedsBase}/photos_public.gne?id=24662369@N07`,
+          uri: `${feedsBase}/photos_public.gne?id=87654321@N07`,
           hint: { key: 'flickr:photos', label: 'Photostream' },
         },
         {
-          uri: `${feedsBase}/photos_public.gne?id=24662369@N07&format=rss_200`,
+          uri: `${feedsBase}/photos_public.gne?id=87654321@N07&format=rss_200`,
           hint: { key: 'flickr:photos', label: 'Photostream', format: 'rss' },
         },
         {
@@ -440,14 +440,14 @@ describe('flickrHandler', () => {
     })
 
     it('should return favorites feed for an NSID favorites page', () => {
-      const value = 'https://www.flickr.com/photos/24662369@N07/favorites'
+      const value = 'https://www.flickr.com/photos/87654321@N07/favorites'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: `${feedsBase}/photos_faves.gne?id=24662369@N07`,
+          uri: `${feedsBase}/photos_faves.gne?id=87654321@N07`,
           hint: { key: 'flickr:faves', label: 'Favorites' },
         },
         {
-          uri: `${feedsBase}/photos_faves.gne?id=24662369@N07&format=rss_200`,
+          uri: `${feedsBase}/photos_faves.gne?id=87654321@N07&format=rss_200`,
           hint: { key: 'flickr:faves', label: 'Favorites', format: 'rss' },
         },
         {
@@ -484,22 +484,22 @@ describe('flickrHandler', () => {
     })
 
     it('should return the album feeds for an NSID album page', () => {
-      const value = 'https://www.flickr.com/photos/24662369@N07/albums/72177720336891667'
+      const value = 'https://www.flickr.com/photos/87654321@N07/albums/72177720336891667'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: `${feedsBase}/photoset.gne?nsid=24662369@N07&set=72177720336891667`,
+          uri: `${feedsBase}/photoset.gne?nsid=87654321@N07&set=72177720336891667`,
           hint: { key: 'flickr:photoset', label: 'Album' },
         },
         {
-          uri: `${feedsBase}/photoset.gne?nsid=24662369@N07&set=72177720336891667&format=rss_200`,
+          uri: `${feedsBase}/photoset.gne?nsid=87654321@N07&set=72177720336891667&format=rss_200`,
           hint: { key: 'flickr:photoset', label: 'Album', format: 'rss' },
         },
         {
-          uri: `${feedsBase}/photos_public.gne?id=24662369@N07`,
+          uri: `${feedsBase}/photos_public.gne?id=87654321@N07`,
           hint: { key: 'flickr:photos', label: 'Photostream' },
         },
         {
-          uri: `${feedsBase}/photos_public.gne?id=24662369@N07&format=rss_200`,
+          uri: `${feedsBase}/photos_public.gne?id=87654321@N07&format=rss_200`,
           hint: { key: 'flickr:photos', label: 'Photostream', format: 'rss' },
         },
         {
@@ -536,22 +536,22 @@ describe('flickrHandler', () => {
     })
 
     it('should return the tag feeds for an NSID photostream tag page', () => {
-      const value = 'https://www.flickr.com/photos/24662369@N07/tags/c%2B%2B/'
+      const value = 'https://www.flickr.com/photos/87654321@N07/tags/c%2B%2B/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: `${feedsBase}/photos_public.gne?id=24662369@N07&tags=c%2B%2B`,
+          uri: `${feedsBase}/photos_public.gne?id=87654321@N07&tags=c%2B%2B`,
           hint: { key: 'flickr:photos-tag', label: 'Tagged photostream' },
         },
         {
-          uri: `${feedsBase}/photos_public.gne?id=24662369@N07&tags=c%2B%2B&format=rss_200`,
+          uri: `${feedsBase}/photos_public.gne?id=87654321@N07&tags=c%2B%2B&format=rss_200`,
           hint: { key: 'flickr:photos-tag', label: 'Tagged photostream', format: 'rss' },
         },
         {
-          uri: `${feedsBase}/photos_public.gne?id=24662369@N07`,
+          uri: `${feedsBase}/photos_public.gne?id=87654321@N07`,
           hint: { key: 'flickr:photos', label: 'Photostream' },
         },
         {
-          uri: `${feedsBase}/photos_public.gne?id=24662369@N07&format=rss_200`,
+          uri: `${feedsBase}/photos_public.gne?id=87654321@N07&format=rss_200`,
           hint: { key: 'flickr:photos', label: 'Photostream', format: 'rss' },
         },
         {
@@ -806,7 +806,7 @@ describe('flickrHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the photostream hint for a photostream feed', () => {
-      const value = 'https://www.flickr.com/services/feeds/photos_public.gne?id=24662369@N07'
+      const value = 'https://www.flickr.com/services/feeds/photos_public.gne?id=87654321@N07'
       const expected: DiscoverUriHint = { key: 'flickr:photos', label: 'Photostream' }
 
       expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
@@ -822,7 +822,7 @@ describe('flickrHandler', () => {
 
     it('should return the photostream hint for a photostream feed on the bare host', () => {
       const value =
-        'https://flickr.com/services/feeds/photos_public.gne?id=24662369@N07&format=rss_200'
+        'https://flickr.com/services/feeds/photos_public.gne?id=87654321@N07&format=rss_200'
       const expected: DiscoverUriHint = {
         key: 'flickr:photos',
         label: 'Photostream',
@@ -833,7 +833,7 @@ describe('flickrHandler', () => {
     })
 
     it('should return the photostream hint for a photostream feed over http', () => {
-      const value = 'http://api.flickr.com/services/feeds/photos_public.gne?id=24662369@N07'
+      const value = 'http://api.flickr.com/services/feeds/photos_public.gne?id=87654321@N07'
       const expected: DiscoverUriHint = { key: 'flickr:photos', label: 'Photostream' }
 
       expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
@@ -855,7 +855,7 @@ describe('flickrHandler', () => {
     })
 
     it('should return the favorites hint for a favorites feed', () => {
-      const value = 'https://www.flickr.com/services/feeds/photos_faves.gne?id=24662369@N07'
+      const value = 'https://www.flickr.com/services/feeds/photos_faves.gne?id=87654321@N07'
       const expected: DiscoverUriHint = { key: 'flickr:faves', label: 'Favorites' }
 
       expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
@@ -907,7 +907,7 @@ describe('flickrHandler', () => {
     })
 
     it('should read the feed route words in any case', () => {
-      const value = 'https://www.flickr.com/Services/Feeds/Photos_Public.gne?id=24662369@N07'
+      const value = 'https://www.flickr.com/Services/Feeds/Photos_Public.gne?id=87654321@N07'
       const expected: DiscoverUriHint = { key: 'flickr:photos', label: 'Photostream' }
 
       expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
@@ -923,7 +923,7 @@ describe('flickrHandler', () => {
 
     it('should return the favorites hint for a favorites feed with a tag it ignores', () => {
       const value =
-        'https://www.flickr.com/services/feeds/photos_faves.gne?id=24662369@N07&tags=cats'
+        'https://www.flickr.com/services/feeds/photos_faves.gne?id=87654321@N07&tags=cats'
       const expected: DiscoverUriHint = { key: 'flickr:faves', label: 'Favorites' }
 
       expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
@@ -938,7 +938,7 @@ describe('flickrHandler', () => {
 
     it('should return the tagged photostream hint for a photostream feed narrowed to a tag', () => {
       const value =
-        'https://api.flickr.com/services/feeds/photos_public.gne?id=24662369@N07&tags=cats&format=atom'
+        'https://api.flickr.com/services/feeds/photos_public.gne?id=87654321@N07&tags=cats&format=atom'
       const expected: DiscoverUriHint = { key: 'flickr:photos-tag', label: 'Tagged photostream' }
 
       expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
@@ -955,7 +955,7 @@ describe('flickrHandler', () => {
     })
 
     it('should return the tagged photostream location hint for a user location feed narrowed to a tag', () => {
-      const value = 'https://www.flickr.com/services/feeds/geo?id=24662369@N07&tags=cats'
+      const value = 'https://www.flickr.com/services/feeds/geo?id=87654321@N07&tags=cats'
       const expected: DiscoverUriHint = {
         key: 'flickr:photos-tag-geo',
         label: 'Tagged photostream with location',
@@ -1069,7 +1069,7 @@ describe('flickrHandler', () => {
 
     it('should return the album hint for an album feed', () => {
       const value =
-        'https://api.flickr.com/services/feeds/photoset.gne?set=72157600000000000&nsid=24662369@N07&lang=en-us'
+        'https://api.flickr.com/services/feeds/photoset.gne?set=72157600000000000&nsid=87654321@N07&lang=en-us'
       const expected: DiscoverUriHint = { key: 'flickr:photoset', label: 'Album' }
 
       expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
@@ -1077,20 +1077,20 @@ describe('flickrHandler', () => {
 
     it('should return the contacts hint for a friends feed', () => {
       const value =
-        'https://api.flickr.com/services/feeds/photos_friends.gne?user_id=24662369@N07&friends=0&display_all=1&format=rss_200'
+        'https://api.flickr.com/services/feeds/photos_friends.gne?user_id=87654321@N07&friends=0&display_all=1&format=rss_200'
       const expected: DiscoverUriHint = { key: 'flickr:contacts', label: 'Contacts', format: 'rss' }
 
       expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a photostream page', () => {
-      const value = 'https://www.flickr.com/photos/24662369@N07/'
+      const value = 'https://www.flickr.com/photos/87654321@N07/'
 
       expect(flickrHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a photostream feed path on another host', () => {
-      const value = 'https://example.com/services/feeds/photos_public.gne?id=24662369@N07'
+      const value = 'https://example.com/services/feeds/photos_public.gne?id=87654321@N07'
 
       expect(flickrHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -1150,7 +1150,7 @@ describe('flickrHandler', () => {
         { key: 'flickr:group-pool', label: 'Group pool' },
       ],
       [
-        'https://www.flickr.com/services/feeds/photos_faves.gne?id=24662369@N07&tags=cats',
+        'https://www.flickr.com/services/feeds/photos_faves.gne?id=87654321@N07&tags=cats',
         { key: 'flickr:faves', label: 'Favorites' },
       ],
       [

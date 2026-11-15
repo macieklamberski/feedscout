@@ -129,33 +129,33 @@ describe('parseHatenaBookmarkUrl', () => {
   })
 
   it('should return the user for a user page', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'jkondo' }
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/jkondo/')).toEqual(expected)
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/alice/')).toEqual(expected)
   })
 
   it('should return the user for a user page without a trailing slash', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'jkondo' }
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/jkondo')).toEqual(expected)
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/alice')).toEqual(expected)
   })
 
   it('should return the user for a user subpage', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'jkondo' }
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/jkondo/bookmark')).toEqual(expected)
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/alice/bookmark')).toEqual(expected)
   })
 
   it('should return a user ID with hyphens and underscores', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'web-dev_jp' }
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'bob-dev_jp' }
 
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/web-dev_jp/')).toEqual(expected)
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/bob-dev_jp/')).toEqual(expected)
   })
 
   it('should keep the user ID case', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'JKondo' }
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'ALice' }
 
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/JKondo')).toEqual(expected)
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/ALice')).toEqual(expected)
   })
 
   it('should return the user and tag for a user page filtered by tag', () => {
@@ -166,15 +166,15 @@ describe('parseHatenaBookmarkUrl', () => {
   })
 
   it('should return the user for a user feed URL', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'jkondo' }
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/jkondo.rss')).toEqual(expected)
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/alice.rss')).toEqual(expected)
   })
 
   it('should return the user for a user feed URL with a capitalized rss extension', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'jkondo' }
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/jkondo.RSS')).toEqual(expected)
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/alice.RSS')).toEqual(expected)
   })
 
   it('should return the hot entries of a category', () => {
@@ -238,9 +238,9 @@ describe('parseHatenaBookmarkUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseHatenaBookmarkUrl('https://hatena.ne.jp/jkondo')).toBeUndefined()
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp.example.com/jkondo')).toBeUndefined()
-    expect(parseHatenaBookmarkUrl('https://example.com/jkondo')).toBeUndefined()
+    expect(parseHatenaBookmarkUrl('https://hatena.ne.jp/alice')).toBeUndefined()
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp.example.com/alice')).toBeUndefined()
+    expect(parseHatenaBookmarkUrl('https://example.com/alice')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -550,7 +550,7 @@ describe('hatenaBookmarkHandler', () => {
         { key: 'hatena-bookmark:site', label: 'Site' },
       ],
       [
-        'https://b.hatena.ne.jp/site/blog.livedoor.jp/itsoku?mode=rss',
+        'https://b.hatena.ne.jp/site/blog.livedoor.jp/erin?mode=rss',
         { key: 'hatena-bookmark:site', label: 'Site' },
       ],
       [
@@ -558,7 +558,7 @@ describe('hatenaBookmarkHandler', () => {
         { key: 'hatena-bookmark:site', label: 'Site' },
       ],
       [
-        'https://b.hatena.ne.jp/t-wada/bookmark.rss',
+        'https://b.hatena.ne.jp/carol/bookmark.rss',
         { key: 'hatena-bookmark:bookmarks', label: 'Bookmarks' },
       ],
       [
@@ -582,13 +582,13 @@ describe('hatenaBookmarkHandler', () => {
     })
 
     it('should return undefined for a site page', () => {
-      const value = 'https://b.hatena.ne.jp/site/blog.livedoor.jp/itsoku?sort=eid'
+      const value = 'https://b.hatena.ne.jp/site/blog.livedoor.jp/erin?sort=eid'
 
       expect(hatenaBookmarkHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a user page', () => {
-      const value = 'https://b.hatena.ne.jp/jkondo/bookmark'
+      const value = 'https://b.hatena.ne.jp/alice/bookmark'
 
       expect(hatenaBookmarkHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -629,7 +629,7 @@ describe('hatenaBookmarkHandler', () => {
         'https://b.hatena.ne.jp/q/game?date_range=5y&mode=rss&safe=on&sort=popular&target=tag&users=5',
         search,
       ],
-      ['https://b.hatena.ne.jp/site/blog.livedoor.jp/nwknews?mode=rss', site],
+      ['https://b.hatena.ne.jp/site/blog.livedoor.jp/dave?mode=rss', site],
       ['https://b.hatena.ne.jp/site/bookmark.rss', bookmarks],
       [
         'https://b.hatena.ne.jp/alice/bookmark.rss?tag=%E4%BD%90%E8%97%A4%E4%BA%9C%E7%B4%80',

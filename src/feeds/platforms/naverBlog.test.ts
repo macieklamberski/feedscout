@@ -117,14 +117,14 @@ describe('naverBlogHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the blog hint for a blog feed', () => {
-      const value = 'https://rss.blog.naver.com/ansrnsdhqk74.xml'
+      const value = 'https://rss.blog.naver.com/bob74.xml'
       const expected: DiscoverUriHint = { key: 'naver-blog:blog', label: 'Blog', format: 'rss' }
 
       expect(naverBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the blog hint for a blog feed with a hyphen in the id', () => {
-      const value = 'https://rss.blog.naver.com/chart-worm.xml'
+      const value = 'https://rss.blog.naver.com/carol-notes.xml'
       const expected: DiscoverUriHint = { key: 'naver-blog:blog', label: 'Blog', format: 'rss' }
 
       expect(naverBlogHandler.getFeedHint?.(value)).toEqual(expected)
@@ -214,11 +214,11 @@ describe('naverBlogHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://rss.blog.naver.com/ansrnsdhqk74.xml',
+        'https://rss.blog.naver.com/bob74.xml',
         { key: 'naver-blog:blog', label: 'Blog', format: 'rss' },
       ],
       [
-        'https://rss.blog.naver.com/chart-worm.xml',
+        'https://rss.blog.naver.com/carol-notes.xml',
         { key: 'naver-blog:blog', label: 'Blog', format: 'rss' },
       ],
       ['http://rss.blog.naver.com/alice', { key: 'naver-blog:blog', label: 'Blog', format: 'rss' }],

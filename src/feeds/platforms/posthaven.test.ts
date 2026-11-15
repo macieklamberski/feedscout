@@ -118,42 +118,43 @@ describe('posthavenHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the posts hint for a posts feed', () => {
-      const value = 'https://10thdot.posthaven.com/posts.atom'
+      const value = 'https://erin.posthaven.com/posts.atom'
       const expected: DiscoverUriHint = { key: 'posthaven:posts', label: 'Posts' }
 
       expect(posthavenHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the tag hint for a tag feed', () => {
-      const value = 'https://kathykavan.posthaven.com/tag/webapp.atom'
+      const value = 'https://bob.posthaven.com/tag/webapp.atom'
       const expected: DiscoverUriHint = { key: 'posthaven:tag', label: 'Tag' }
 
       expect(posthavenHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the tag hint for a tag feed with a capitalized tag', () => {
-      const value = 'https://paulbrooker.posthaven.com/tag/Kurd.atom'
+      const value = 'https://carol.posthaven.com/tag/Kurd.atom'
       const expected: DiscoverUriHint = { key: 'posthaven:tag', label: 'Tag' }
 
       expect(posthavenHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the tag hint for a percent-encoded tag feed', () => {
-      const value = "https://4cp.posthaven.com/tag/Cosmic%20Debris:%20Kirby%20in%20the%20'70s.atom"
+      const value =
+        "https://frank.posthaven.com/tag/Cosmic%20Debris:%20Kirby%20in%20the%20'70s.atom"
       const expected: DiscoverUriHint = { key: 'posthaven:tag', label: 'Tag' }
 
       expect(posthavenHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the tag hint for a tag feed with a dot in the tag', () => {
-      const value = 'https://aliabunimah.posthaven.com/tag/NEST%20U.S.A.atom'
+      const value = 'https://dave.posthaven.com/tag/NEST%20U.S.A.atom'
       const expected: DiscoverUriHint = { key: 'posthaven:tag', label: 'Tag' }
 
       expect(posthavenHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a tag page', () => {
-      const value = 'https://kathykavan.posthaven.com/tag/webapp'
+      const value = 'https://bob.posthaven.com/tag/webapp'
 
       expect(posthavenHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -185,10 +186,13 @@ describe('posthavenHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://10thdot.posthaven.com/posts.atom', { key: 'posthaven:posts', label: 'Posts' }],
-      ['https://kathykavan.posthaven.com/tag/webapp.atom', { key: 'posthaven:tag', label: 'Tag' }],
-      ['https://paulbrooker.posthaven.com/tag/Kurd.atom', { key: 'posthaven:tag', label: 'Tag' }],
-      ['https://4cp.posthaven.com/tag/Bill%20Everett.atom', { key: 'posthaven:tag', label: 'Tag' }],
+      ['https://erin.posthaven.com/posts.atom', { key: 'posthaven:posts', label: 'Posts' }],
+      ['https://bob.posthaven.com/tag/webapp.atom', { key: 'posthaven:tag', label: 'Tag' }],
+      ['https://carol.posthaven.com/tag/Kurd.atom', { key: 'posthaven:tag', label: 'Tag' }],
+      [
+        'https://frank.posthaven.com/tag/Bill%20Everett.atom',
+        { key: 'posthaven:tag', label: 'Tag' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

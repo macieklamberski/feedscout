@@ -7,16 +7,16 @@ import { odyseeHandler, parseOdyseeUrl } from './odysee.js'
 
 describe('parseOdyseeUrl', () => {
   it('should return the name and claim ID for a channel page', () => {
-    const value = 'https://odysee.com/@veritasium:f'
-    const expected: OdyseeUrl = { kind: 'channel', name: 'veritasium', claimId: 'f' }
+    const value = 'https://odysee.com/@alice:f'
+    const expected: OdyseeUrl = { kind: 'channel', name: 'alice', claimId: 'f' }
 
     expect(parseOdyseeUrl(value)).toEqual(expected)
   })
 
   it('should return the name for a channel without claim ID', () => {
-    const expected: OdyseeUrl = { kind: 'channel', name: 'veritasium' }
+    const expected: OdyseeUrl = { kind: 'channel', name: 'alice' }
 
-    expect(parseOdyseeUrl('https://odysee.com/@veritasium')).toEqual(expected)
+    expect(parseOdyseeUrl('https://odysee.com/@alice')).toEqual(expected)
   })
 
   it('should return the channel for a page under a channel', () => {
@@ -33,8 +33,8 @@ describe('parseOdyseeUrl', () => {
   })
 
   it('should preserve uppercase characters in channel and claim ID', () => {
-    const value = 'https://odysee.com/@Veritasium:F'
-    const expected: OdyseeUrl = { kind: 'channel', name: 'Veritasium', claimId: 'F' }
+    const value = 'https://odysee.com/@Alice:F'
+    const expected: OdyseeUrl = { kind: 'channel', name: 'Alice', claimId: 'F' }
 
     expect(parseOdyseeUrl(value)).toEqual(expected)
   })
@@ -46,9 +46,9 @@ describe('parseOdyseeUrl', () => {
   })
 
   it('should return the channel for a percent-encoded path', () => {
-    const expected: OdyseeUrl = { kind: 'channel', name: 'corbettreport', claimId: '0' }
+    const expected: OdyseeUrl = { kind: 'channel', name: 'bob', claimId: '0' }
 
-    expect(parseOdyseeUrl('https://odysee.com/%40corbettreport%3A0')).toEqual(expected)
+    expect(parseOdyseeUrl('https://odysee.com/%40bob%3A0')).toEqual(expected)
   })
 
   it('should return undefined for a malformed encoded name', () => {
@@ -80,7 +80,7 @@ describe('parseOdyseeUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseOdyseeUrl('https://example.com/@veritasium:f')).toBeUndefined()
+    expect(parseOdyseeUrl('https://example.com/@alice:f')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -91,11 +91,11 @@ describe('parseOdyseeUrl', () => {
 describe('odyseeHandler', () => {
   describe('match', () => {
     it('should match a channel with its claim ID', () => {
-      expect(odyseeHandler.match('https://odysee.com/@veritasium:f')).toBe(true)
+      expect(odyseeHandler.match('https://odysee.com/@alice:f')).toBe(true)
     })
 
     it('should not match a channel without its claim ID', () => {
-      expect(odyseeHandler.match('https://odysee.com/@veritasium')).toBe(false)
+      expect(odyseeHandler.match('https://odysee.com/@alice')).toBe(false)
     })
 
     it('should not match another host', () => {
@@ -105,10 +105,10 @@ describe('odyseeHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for channel', () => {
-      const value = 'https://odysee.com/@veritasium:f'
+      const value = 'https://odysee.com/@alice:f'
       const expected = [
         {
-          uri: 'https://odysee.com/$/rss/@veritasium:f',
+          uri: 'https://odysee.com/$/rss/@alice:f',
           hint: { key: 'odysee:videos', label: 'Videos' },
         },
       ]
@@ -141,7 +141,7 @@ describe('odyseeHandler', () => {
     })
 
     it('should return empty array for channel without claim ID', () => {
-      const value = 'https://odysee.com/@veritasium'
+      const value = 'https://odysee.com/@alice'
 
       expect(odyseeHandler.resolve(value)).toEqual([])
     })

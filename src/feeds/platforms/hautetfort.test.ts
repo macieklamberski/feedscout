@@ -6,28 +6,25 @@ import { type HautetfortUrl, hautetfortHandler, parseHautetfortUrl } from './hau
 
 describe('parseHautetfortUrl', () => {
   const values: Array<[string, HautetfortUrl]> = [
-    ['http://litteraturedepartout.hautetfort.com/', { kind: 'blog', blog: 'litteraturedepartout' }],
-    ['http://cfabtpduloiret.blogspirit.com/', { kind: 'blog', blog: 'cfabtpduloiret' }],
+    ['http://bob.hautetfort.com/', { kind: 'blog', blog: 'bob' }],
+    ['http://carol.blogspirit.com/', { kind: 'blog', blog: 'carol' }],
+    ['http://dave.blog.blogspirit-business.com/', { kind: 'blog', blog: 'dave' }],
     [
-      'http://institutmauricegarcon.blog.blogspirit-business.com/',
-      { kind: 'blog', blog: 'institutmauricegarcon' },
+      'http://alice.hautetfort.com/archive/2016/06/15/erin-smith-5815631.html',
+      { kind: 'blog', blog: 'alice' },
+    ],
+    ['http://alice.hautetfort.com/about.html', { kind: 'blog', blog: 'alice' }],
+    [
+      'http://alice.hautetfort.com/histoire/',
+      { kind: 'category', blog: 'alice', category: 'histoire' },
     ],
     [
-      'http://vouloir.hautetfort.com/archive/2016/06/15/roger-viroux-5815631.html',
-      { kind: 'blog', blog: 'vouloir' },
-    ],
-    ['http://vouloir.hautetfort.com/about.html', { kind: 'blog', blog: 'vouloir' }],
-    [
-      'http://vouloir.hautetfort.com/histoire/',
-      { kind: 'category', blog: 'vouloir', category: 'histoire' },
+      'http://alice.hautetfort.com/a_contre-temps',
+      { kind: 'category', blog: 'alice', category: 'a_contre-temps' },
     ],
     [
-      'http://vouloir.hautetfort.com/a_contre-temps',
-      { kind: 'category', blog: 'vouloir', category: 'a_contre-temps' },
-    ],
-    [
-      'http://vouloir.hautetfort.com/archives/category/histoire/index-2.html',
-      { kind: 'category', blog: 'vouloir', category: 'histoire' },
+      'http://alice.hautetfort.com/archives/category/histoire/index-2.html',
+      { kind: 'category', blog: 'alice', category: 'histoire' },
     ],
   ]
 
@@ -40,8 +37,8 @@ describe('parseHautetfortUrl', () => {
     'https://www.hautetfort.com/explore/posts/tag/graveyard',
     'https://www.blogspirit.com/en/index.php',
     'https://hautetfort.com/',
-    'https://www.vouloir.hautetfort.com/',
-    'https://www.vouloir.blogspirit.com/',
+    'https://www.alice.hautetfort.com/',
+    'https://www.alice.blogspirit.com/',
     'https://example.com/histoire/',
     'not-a-url',
   ]
@@ -54,7 +51,7 @@ describe('parseHautetfortUrl', () => {
 describe('hautetfortHandler', () => {
   describe('match', () => {
     it('should return true for a blog', () => {
-      expect(hautetfortHandler.match('http://litteraturedepartout.hautetfort.com/')).toBe(true)
+      expect(hautetfortHandler.match('http://bob.hautetfort.com/')).toBe(true)
     })
 
     it('should return false for another host', () => {
@@ -68,14 +65,14 @@ describe('hautetfortHandler', () => {
     })
 
     it('should return the blog feeds on http for a blog page', () => {
-      const value = 'https://cfabtpduloiret.blogspirit.com/'
+      const value = 'https://carol.blogspirit.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://cfabtpduloiret.blogspirit.com/atom.xml',
+          uri: 'http://carol.blogspirit.com/atom.xml',
           hint: { key: 'hautetfort:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'http://cfabtpduloiret.blogspirit.com/index.rss',
+          uri: 'http://carol.blogspirit.com/index.rss',
           hint: { key: 'hautetfort:posts', label: 'Posts', format: 'rss' },
         },
       ]
@@ -84,18 +81,18 @@ describe('hautetfortHandler', () => {
     })
 
     it('should return the category feed and the blog feeds for a category page', () => {
-      const value = 'http://vouloir.hautetfort.com/histoire/'
+      const value = 'http://alice.hautetfort.com/histoire/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://vouloir.hautetfort.com/histoire/index.rss',
+          uri: 'http://alice.hautetfort.com/histoire/index.rss',
           hint: { key: 'hautetfort:category', label: 'Category' },
         },
         {
-          uri: 'http://vouloir.hautetfort.com/atom.xml',
+          uri: 'http://alice.hautetfort.com/atom.xml',
           hint: { key: 'hautetfort:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'http://vouloir.hautetfort.com/index.rss',
+          uri: 'http://alice.hautetfort.com/index.rss',
           hint: { key: 'hautetfort:posts', label: 'Posts', format: 'rss' },
         },
       ]
@@ -106,48 +103,48 @@ describe('hautetfortHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the category hint for a category feed', () => {
-      const value = 'http://pourunefranceforteetcatholique.hautetfort.com/web/index.rss'
+      const value = 'http://frank.hautetfort.com/web/index.rss'
       const expected: DiscoverUriHint = { key: 'hautetfort:category', label: 'Category' }
 
       expect(hautetfortHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the category hint for a category feed on blogspirit.com', () => {
-      const value = 'http://actionbarbes.blogspirit.com/dans-le-18eme/index.rss'
+      const value = 'http://grace.blogspirit.com/dans-le-18eme/index.rss'
       const expected: DiscoverUriHint = { key: 'hautetfort:category', label: 'Category' }
 
       expect(hautetfortHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for an RSS feed', () => {
-      const value = 'http://vouloir.hautetfort.com/index.rss'
+      const value = 'http://alice.hautetfort.com/index.rss'
       const expected: DiscoverUriHint = { key: 'hautetfort:posts', label: 'Posts', format: 'rss' }
 
       expect(hautetfortHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for an Atom feed', () => {
-      const value = 'http://cfabtpduloiret.blogspirit.com/atom.xml'
+      const value = 'http://carol.blogspirit.com/atom.xml'
       const expected: DiscoverUriHint = { key: 'hautetfort:posts', label: 'Posts', format: 'atom' }
 
       expect(hautetfortHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a feed on blog.blogspirit-business.com', () => {
-      const value = 'http://institutmauricegarcon.blog.blogspirit-business.com/index.rss'
+      const value = 'http://dave.blog.blogspirit-business.com/index.rss'
       const expected: DiscoverUriHint = { key: 'hautetfort:posts', label: 'Posts', format: 'rss' }
 
       expect(hautetfortHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a category page', () => {
-      const value = 'http://vouloir.hautetfort.com/histoire/'
+      const value = 'http://alice.hautetfort.com/histoire/'
 
       expect(hautetfortHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'http://blog.vouloir.hautetfort.com/index.rss'
+      const value = 'http://blog.alice.hautetfort.com/index.rss'
 
       expect(hautetfortHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -168,19 +165,19 @@ describe('hautetfortHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'http://pourunefranceforteetcatholique.hautetfort.com/web/index.rss',
+        'http://frank.hautetfort.com/web/index.rss',
         { key: 'hautetfort:category', label: 'Category' },
       ],
       [
-        'http://actionbarbes.blogspirit.com/dans-le-18eme/index.rss',
+        'http://grace.blogspirit.com/dans-le-18eme/index.rss',
         { key: 'hautetfort:category', label: 'Category' },
       ],
       [
-        'http://vouloir.hautetfort.com/index.rss',
+        'http://alice.hautetfort.com/index.rss',
         { key: 'hautetfort:posts', label: 'Posts', format: 'rss' },
       ],
       [
-        'http://cfabtpduloiret.blogspirit.com/atom.xml',
+        'http://carol.blogspirit.com/atom.xml',
         { key: 'hautetfort:posts', label: 'Posts', format: 'atom' },
       ],
     ]

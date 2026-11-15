@@ -14,21 +14,21 @@ describe('parseBearblogUrl', () => {
   it('should return the blog for a subdomain', () => {
     const expected: BearblogUrl = {
       kind: 'blog',
-      blog: 'herman',
+      blog: 'bob',
       tag: undefined,
     }
 
-    expect(parseBearblogUrl('https://herman.bearblog.dev/')).toEqual(expected)
+    expect(parseBearblogUrl('https://bob.bearblog.dev/')).toEqual(expected)
   })
 
   it('should return the blog with its tag for a tag filter', () => {
     const expected: BearblogUrl = {
       kind: 'blog',
-      blog: 'herman',
+      blog: 'bob',
       tag: 'python',
     }
 
-    expect(parseBearblogUrl('https://herman.bearblog.dev/blog/?q=python')).toEqual(expected)
+    expect(parseBearblogUrl('https://bob.bearblog.dev/blog/?q=python')).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {
@@ -208,10 +208,7 @@ describe('bearblogHandler', () => {
         'https://alice.bearblog.dev/feed/?type=rss',
         { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
       ],
-      [
-        'http://herman.bearblog.dev/feed/',
-        { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
-      ],
+      ['http://bob.bearblog.dev/feed/', { key: 'bearblog:posts', label: 'Posts', format: 'atom' }],
       [
         'https://alice.bearblog.dev/atom/',
         { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
@@ -240,13 +237,13 @@ describe('bearblogHandler', () => {
     })
 
     it('should return undefined for a blog page', () => {
-      const value = 'https://herman.bearblog.dev/blog/'
+      const value = 'https://bob.bearblog.dev/blog/'
 
       expect(bearblogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a tag page', () => {
-      const value = 'https://herman.bearblog.dev/blog/?q=python'
+      const value = 'https://bob.bearblog.dev/blog/?q=python'
 
       expect(bearblogHandler.getFeedHint?.(value)).toBeUndefined()
     })

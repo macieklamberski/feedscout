@@ -7,30 +7,30 @@ import { parseVelogUrl, velogHandler } from './velog.js'
 
 describe('parseVelogUrl', () => {
   it('should return the username for a profile page', () => {
-    const expected: VelogUrl = { kind: 'user', username: 'velopert' }
+    const expected: VelogUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseVelogUrl('https://velog.io/@velopert')).toEqual(expected)
+    expect(parseVelogUrl('https://velog.io/@alice')).toEqual(expected)
   })
 
   it('should return the username for profile subpages', () => {
-    const expected: VelogUrl = { kind: 'user', username: 'velopert' }
+    const expected: VelogUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseVelogUrl('https://velog.io/@velopert/posts')).toEqual(expected)
-    expect(parseVelogUrl('https://velog.io/@velopert/series')).toEqual(expected)
-    expect(parseVelogUrl('https://velog.io/@velopert/about')).toEqual(expected)
+    expect(parseVelogUrl('https://velog.io/@alice/posts')).toEqual(expected)
+    expect(parseVelogUrl('https://velog.io/@alice/series')).toEqual(expected)
+    expect(parseVelogUrl('https://velog.io/@alice/about')).toEqual(expected)
   })
 
   it('should return the username for a post page', () => {
-    const value = 'https://velog.io/@velopert/some-post-slug'
-    const expected: VelogUrl = { kind: 'user', username: 'velopert' }
+    const value = 'https://velog.io/@alice/some-post-slug'
+    const expected: VelogUrl = { kind: 'user', username: 'alice' }
 
     expect(parseVelogUrl(value)).toEqual(expected)
   })
 
   it('should return the username for the www host', () => {
-    const expected: VelogUrl = { kind: 'user', username: 'velopert' }
+    const expected: VelogUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseVelogUrl('https://www.velog.io/@velopert')).toEqual(expected)
+    expect(parseVelogUrl('https://www.velog.io/@alice')).toEqual(expected)
   })
 
   it('should decode an encoded username', () => {
@@ -62,7 +62,7 @@ describe('parseVelogUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseVelogUrl('https://example.com/@velopert')).toBeUndefined()
+    expect(parseVelogUrl('https://example.com/@alice')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -88,10 +88,10 @@ describe('velogHandler', () => {
     }
 
     it('should return feed URL for user', () => {
-      const value = 'https://velog.io/@velopert'
+      const value = 'https://velog.io/@alice'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://v2.velog.io/rss/velopert',
+          uri: 'https://v2.velog.io/rss/alice',
           hint: { key: 'velog:posts', label: 'Posts' },
         },
         trendingFeed,
@@ -128,14 +128,14 @@ describe('velogHandler', () => {
 
   describe('getFeedHint', () => {
     it('should return the posts hint for a user feed', () => {
-      const value = 'https://v2.velog.io/rss/jay_be'
+      const value = 'https://v2.velog.io/rss/bob_dev'
       const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
 
       expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a user feed with an at sign', () => {
-      const value = 'https://v2.velog.io/rss/@minzami1215'
+      const value = 'https://v2.velog.io/rss/@carol1215'
       const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
 
       expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
@@ -149,21 +149,21 @@ describe('velogHandler', () => {
     })
 
     it('should return the posts hint for a feed with a trailing slash', () => {
-      const value = 'https://v2.velog.io/rss/kkh3/'
+      const value = 'https://v2.velog.io/rss/dave3/'
       const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
 
       expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a feed over http', () => {
-      const value = 'http://v2.velog.io/rss/kkh3'
+      const value = 'http://v2.velog.io/rss/dave3'
       const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
 
       expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the posts hint for a capitalized route', () => {
-      const value = 'https://v2.velog.io/RSS/kkh3'
+      const value = 'https://v2.velog.io/RSS/dave3'
       const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
 
       expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
@@ -198,25 +198,25 @@ describe('velogHandler', () => {
     })
 
     it('should return undefined for a profile page', () => {
-      const value = 'https://velog.io/@jay_be'
+      const value = 'https://velog.io/@bob_dev'
 
       expect(velogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the feed path on the page host', () => {
-      const value = 'https://velog.io/rss/jay_be'
+      const value = 'https://velog.io/rss/bob_dev'
 
       expect(velogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a path below a user feed', () => {
-      const value = 'https://v2.velog.io/rss/jay_be/posts'
+      const value = 'https://v2.velog.io/rss/bob_dev/posts'
 
       expect(velogHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
-      const value = 'https://example.com/rss/jay_be'
+      const value = 'https://example.com/rss/bob_dev'
 
       expect(velogHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -224,8 +224,8 @@ describe('velogHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://v2.velog.io/rss/jay_be', { key: 'velog:posts', label: 'Posts' }],
-      ['https://v2.velog.io/rss/@minzami1215', { key: 'velog:posts', label: 'Posts' }],
+      ['https://v2.velog.io/rss/bob_dev', { key: 'velog:posts', label: 'Posts' }],
+      ['https://v2.velog.io/rss/@carol1215', { key: 'velog:posts', label: 'Posts' }],
       ['https://v2.velog.io/rss', { key: 'velog:trending', label: 'Trending' }],
       ['https://api.velog.io/rss/alice', { key: 'velog:posts', label: 'Posts' }],
       ['https://api.velog.io/rss', { key: 'velog:trending', label: 'Trending' }],

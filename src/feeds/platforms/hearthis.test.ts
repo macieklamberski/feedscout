@@ -23,7 +23,7 @@ describe('parseHearthisUrl', () => {
 describe('hearthisHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://hearthis.at/james-monty-montgomery'],
+      [true, 'https://hearthis.at/alice-smith'],
       [true, 'https://www.hearthis.at/user'],
       [false, 'https://hearthis.at'],
       [false, 'https://example.com'],
@@ -44,14 +44,14 @@ describe('hearthisHandler', () => {
     })
 
     it('should return feed URL for user', () => {
-      const value = 'https://hearthis.at/james-monty-montgomery'
+      const value = 'https://hearthis.at/alice-smith'
       const expected = [
         {
-          uri: 'https://hearthis.at/james-monty-montgomery/podcast/',
+          uri: 'https://hearthis.at/alice-smith/podcast/',
           hint: { key: 'hearthis:tracks', label: 'Tracks' },
         },
         {
-          uri: 'https://hearthis.at/james-monty-montgomery/rss/',
+          uri: 'https://hearthis.at/alice-smith/rss/',
           hint: { key: 'hearthis:track-list', label: 'Track list' },
         },
         {
@@ -64,14 +64,14 @@ describe('hearthisHandler', () => {
     })
 
     it('should return feed URL regardless of subpath', () => {
-      const value = 'https://hearthis.at/james-monty-montgomery/some-track'
+      const value = 'https://hearthis.at/alice-smith/some-track'
       const expected = [
         {
-          uri: 'https://hearthis.at/james-monty-montgomery/podcast/',
+          uri: 'https://hearthis.at/alice-smith/podcast/',
           hint: { key: 'hearthis:tracks', label: 'Tracks' },
         },
         {
-          uri: 'https://hearthis.at/james-monty-montgomery/rss/',
+          uri: 'https://hearthis.at/alice-smith/rss/',
           hint: { key: 'hearthis:track-list', label: 'Track list' },
         },
         {

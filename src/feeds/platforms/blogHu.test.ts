@@ -6,16 +6,16 @@ import { type BlogHuUrl, blogHuHandler, parseBlogHuUrl } from './blogHu.js'
 
 describe('parseBlogHuUrl', () => {
   it('should return the blog for a blog subdomain', () => {
-    const expected: BlogHuUrl = { kind: 'blog', blog: 'kertbuvolo' }
+    const expected: BlogHuUrl = { kind: 'blog', blog: 'bob' }
 
-    expect(parseBlogHuUrl('https://kertbuvolo.blog.hu/')).toEqual(expected)
+    expect(parseBlogHuUrl('https://bob.blog.hu/')).toEqual(expected)
   })
 
   it('should return the blog for a post on a blog subdomain', () => {
-    const value = 'https://egyatucatbol.blog.hu/2026/09/30/blog_vs_imdb'
+    const value = 'https://carol.blog.hu/2026/09/30/blog_vs_imdb'
     const expected: BlogHuUrl = {
       kind: 'blog',
-      blog: 'egyatucatbol',
+      blog: 'carol',
       post: { year: '2026', month: '09', day: '30', slug: 'blog_vs_imdb' },
     }
 
@@ -30,15 +30,15 @@ describe('parseBlogHuUrl', () => {
   })
 
   it('should return the user for a user profile', () => {
-    const expected: BlogHuUrl = { kind: 'user', userId: '821883' }
+    const expected: BlogHuUrl = { kind: 'user', userId: '654321' }
 
-    expect(parseBlogHuUrl('https://blog.hu/user/821883')).toEqual(expected)
+    expect(parseBlogHuUrl('https://blog.hu/user/654321')).toEqual(expected)
   })
 
   it('should return the user for a user profile on www', () => {
-    const expected: BlogHuUrl = { kind: 'user', userId: '821883' }
+    const expected: BlogHuUrl = { kind: 'user', userId: '654321' }
 
-    expect(parseBlogHuUrl('https://www.blog.hu/User/821883/')).toEqual(expected)
+    expect(parseBlogHuUrl('https://www.blog.hu/User/654321/')).toEqual(expected)
   })
 
   it('should return undefined for a non-numeric user path', () => {
@@ -54,11 +54,11 @@ describe('parseBlogHuUrl', () => {
   })
 
   it('should return undefined for a nested subdomain', () => {
-    expect(parseBlogHuUrl('https://a.kertbuvolo.blog.hu/')).toBeUndefined()
+    expect(parseBlogHuUrl('https://a.bob.blog.hu/')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
-    expect(parseBlogHuUrl('https://example.com/user/821883')).toBeUndefined()
+    expect(parseBlogHuUrl('https://example.com/user/654321')).toBeUndefined()
   })
 
   it('should return undefined for invalid URL', () => {
@@ -69,7 +69,7 @@ describe('parseBlogHuUrl', () => {
 describe('blogHuHandler', () => {
   describe('match', () => {
     it('should return true for a blog', () => {
-      expect(blogHuHandler.match('https://kertbuvolo.blog.hu/')).toBe(true)
+      expect(blogHuHandler.match('https://bob.blog.hu/')).toBe(true)
     })
 
     it('should return false for the apex home page', () => {
@@ -83,22 +83,22 @@ describe('blogHuHandler', () => {
     })
 
     it('should return posts and comments feeds for a blog', () => {
-      const value = 'https://kertbuvolo.blog.hu/'
+      const value = 'https://bob.blog.hu/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://kertbuvolo.blog.hu/rss2',
+          uri: 'https://bob.blog.hu/rss2',
           hint: { key: 'blog-hu:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://kertbuvolo.blog.hu/atom',
+          uri: 'https://bob.blog.hu/atom',
           hint: { key: 'blog-hu:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://kertbuvolo.blog.hu/comments/rss2',
+          uri: 'https://bob.blog.hu/comments/rss2',
           hint: { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
         },
         {
-          uri: 'https://kertbuvolo.blog.hu/comments/atom',
+          uri: 'https://bob.blog.hu/comments/atom',
           hint: { key: 'blog-hu:comments', label: 'Comments', format: 'atom' },
         },
       ]
@@ -171,10 +171,10 @@ describe('blogHuHandler', () => {
     })
 
     it('should return the user feed for a user profile', () => {
-      const value = 'https://blog.hu/user/821883'
+      const value = 'https://blog.hu/user/654321'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://blog.hu/user/821883/rss',
+          uri: 'https://blog.hu/user/654321/rss',
           hint: { key: 'blog-hu:user', label: 'User activity' },
         },
       ]
@@ -183,22 +183,22 @@ describe('blogHuHandler', () => {
     })
 
     it('should keep the scheme of an http blog page', () => {
-      const value = 'http://kertbuvolo.blog.hu/'
+      const value = 'http://bob.blog.hu/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://kertbuvolo.blog.hu/rss2',
+          uri: 'http://bob.blog.hu/rss2',
           hint: { key: 'blog-hu:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'http://kertbuvolo.blog.hu/atom',
+          uri: 'http://bob.blog.hu/atom',
           hint: { key: 'blog-hu:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'http://kertbuvolo.blog.hu/comments/rss2',
+          uri: 'http://bob.blog.hu/comments/rss2',
           hint: { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
         },
         {
-          uri: 'http://kertbuvolo.blog.hu/comments/atom',
+          uri: 'http://bob.blog.hu/comments/atom',
           hint: { key: 'blog-hu:comments', label: 'Comments', format: 'atom' },
         },
       ]
@@ -207,10 +207,10 @@ describe('blogHuHandler', () => {
     })
 
     it('should return the apex user feed for a user profile on www over http', () => {
-      const value = 'http://www.blog.hu/user/821883'
+      const value = 'http://www.blog.hu/user/654321'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://blog.hu/user/821883/rss',
+          uri: 'https://blog.hu/user/654321/rss',
           hint: { key: 'blog-hu:user', label: 'User activity' },
         },
       ]
@@ -248,7 +248,7 @@ describe('blogHuHandler', () => {
         'https://example.blog.hu/comments/atom',
         { key: 'blog-hu:comments', label: 'Comments', format: 'atom' },
       ],
-      ['http://kertbuvolo.blog.hu/rss2', { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }],
+      ['http://bob.blog.hu/rss2', { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }],
       ['https://blog.hu/user/12345/rss', { key: 'blog-hu:user', label: 'User activity' }],
       ['https://www.blog.hu/user/12345/rss', { key: 'blog-hu:user', label: 'User activity' }],
       [
@@ -295,13 +295,13 @@ describe('blogHuHandler', () => {
     })
 
     it('should return undefined for a blog page', () => {
-      const value = 'https://egyatucatbol.blog.hu/2026/09/30/blog_vs_imdb'
+      const value = 'https://carol.blog.hu/2026/09/30/blog_vs_imdb'
 
       expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a user profile', () => {
-      const value = 'https://blog.hu/user/821883'
+      const value = 'https://blog.hu/user/654321'
 
       expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -313,7 +313,7 @@ describe('blogHuHandler', () => {
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://a.kertbuvolo.blog.hu/rss2'
+      const value = 'https://a.bob.blog.hu/rss2'
 
       expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
     })

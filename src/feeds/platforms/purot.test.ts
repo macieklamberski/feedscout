@@ -17,19 +17,19 @@ const pageHtml = `
     />
     <link
       rel="alternate"
-      href="/changes/kevatjuhla?mode=rss&messages=0"
+      href="/changes/examplewiki?mode=rss&messages=0"
       title="Page changes RSS"
       type="application/rss+xml"
     />
     <link
       rel="alternate"
-      href="/changes/kevatjuhla?mode=rss&pages=0"
+      href="/changes/examplewiki?mode=rss&pages=0"
       title="Page discussions RSS"
       type="application/rss+xml"
     />
     <link
       rel="alternate"
-      href="/changes/kevatjuhla?mode=rss"
+      href="/changes/examplewiki?mode=rss"
       title="Changes, discussions and likes RSS"
       type="application/rss+xml"
     />
@@ -71,7 +71,7 @@ const missingProfileHtml = `
 `
 const anchorOnlyHtml = `
   <body>
-    <a href="/changes/kevatjuhla?mode=rss&messages=0">Page changes RSS</a>
+    <a href="/changes/examplewiki?mode=rss&messages=0">Page changes RSS</a>
   </body>
 `
 
@@ -79,7 +79,7 @@ describe('parsePurotUrl', () => {
   it('should return the wiki for a wiki subdomain', () => {
     const expected: PurotUrl = { kind: 'wiki', wiki: 'example' }
 
-    expect(parsePurotUrl('https://example.purot.net/kevatjuhla')).toEqual(expected)
+    expect(parsePurotUrl('https://example.purot.net/examplewiki')).toEqual(expected)
   })
 
   it('should return undefined for the apex domain', () => {
@@ -101,16 +101,16 @@ describe('parsePurotUrl', () => {
 
 describe('getPurotPage', () => {
   it('should return the page its feed link names', () => {
-    const expected: PurotPage = { kind: 'page', wiki: 'example', page: 'kevatjuhla' }
+    const expected: PurotPage = { kind: 'page', wiki: 'example', page: 'examplewiki' }
 
-    expect(getPurotPage('https://example.purot.net/kevatjuhla', pageHtml)).toEqual(expected)
+    expect(getPurotPage('https://example.purot.net/examplewiki', pageHtml)).toEqual(expected)
   })
 
   it('should return the page a feed link in uppercase names', () => {
-    const content = '<link rel="alternate" href="/changes/kevatjuhla?MODE=RSS&MESSAGES=0" />'
-    const expected: PurotPage = { kind: 'page', wiki: 'example', page: 'kevatjuhla' }
+    const content = '<link rel="alternate" href="/changes/examplewiki?MODE=RSS&MESSAGES=0" />'
+    const expected: PurotPage = { kind: 'page', wiki: 'example', page: 'examplewiki' }
 
-    expect(getPurotPage('https://example.purot.net/kevatjuhla', content)).toEqual(expected)
+    expect(getPurotPage('https://example.purot.net/examplewiki', content)).toEqual(expected)
   })
 
   it('should return the front page for the home page', () => {
@@ -120,9 +120,9 @@ describe('getPurotPage', () => {
   })
 
   it('should spell the page as its feed link does for a url in another case', () => {
-    const expected: PurotPage = { kind: 'page', wiki: 'example', page: 'kevatjuhla' }
+    const expected: PurotPage = { kind: 'page', wiki: 'example', page: 'examplewiki' }
 
-    expect(getPurotPage('https://example.purot.net/Kevatjuhla', pageHtml)).toEqual(expected)
+    expect(getPurotPage('https://example.purot.net/Examplewiki', pageHtml)).toEqual(expected)
   })
 
   it('should return the wiki for a profile page', () => {
@@ -133,14 +133,14 @@ describe('getPurotPage', () => {
   })
 
   it('should return the wiki for a page linking its feed only from an anchor', () => {
-    const value = 'https://example.purot.net/kevatjuhla'
+    const value = 'https://example.purot.net/examplewiki'
     const expected: PurotPage = { kind: 'wiki', wiki: 'example' }
 
     expect(getPurotPage(value, anchorOnlyHtml)).toEqual(expected)
   })
 
   it('should escape a space in the page its feed link names', () => {
-    const value = 'https://example.purot.net/kevatjuhla'
+    const value = 'https://example.purot.net/examplewiki'
     const content = '<link rel="alternate" href="/changes/kevat juhla?mode=rss&messages=0" />'
     const expected: PurotPage = { kind: 'page', wiki: 'example', page: 'kevat%20juhla' }
 
@@ -148,8 +148,8 @@ describe('getPurotPage', () => {
   })
 
   const foreignLinks = [
-    '<link rel="alternate" href="https://other.purot.net/changes/kevatjuhla?mode=rss&messages=0" />',
-    '<link rel="alternate" href="/changes/kevatjuhla?mode=rss&messages=0&pages=0" />',
+    '<link rel="alternate" href="https://other.purot.net/changes/examplewiki?mode=rss&messages=0" />',
+    '<link rel="alternate" href="/changes/examplewiki?mode=rss&messages=0&pages=0" />',
   ]
 
   it.each(foreignLinks)(
@@ -157,18 +157,18 @@ describe('getPurotPage', () => {
     (value) => {
       const expected: PurotPage = { kind: 'wiki', wiki: 'example' }
 
-      expect(getPurotPage('https://example.purot.net/kevatjuhla', value)).toEqual(expected)
+      expect(getPurotPage('https://example.purot.net/examplewiki', value)).toEqual(expected)
     },
   )
 
   it('should return the wiki without content', () => {
     const expected: PurotPage = { kind: 'wiki', wiki: 'example' }
 
-    expect(getPurotPage('https://example.purot.net/kevatjuhla', undefined)).toEqual(expected)
+    expect(getPurotPage('https://example.purot.net/examplewiki', undefined)).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {
-    expect(getPurotPage('https://example.com/kevatjuhla', pageHtml)).toBeUndefined()
+    expect(getPurotPage('https://example.com/examplewiki', pageHtml)).toBeUndefined()
   })
 })
 
@@ -185,18 +185,18 @@ describe('purotHandler', () => {
 
   describe('resolve', () => {
     it('should return the page and wiki feeds for a page', () => {
-      const value = 'https://example.purot.net/kevatjuhla'
+      const value = 'https://example.purot.net/examplewiki'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.purot.net/changes/kevatjuhla?mode=rss&messages=0',
+          uri: 'https://example.purot.net/changes/examplewiki?mode=rss&messages=0',
           hint: { key: 'purot:page-changes', label: 'Page changes' },
         },
         {
-          uri: 'https://example.purot.net/changes/kevatjuhla?mode=rss&pages=0',
+          uri: 'https://example.purot.net/changes/examplewiki?mode=rss&pages=0',
           hint: { key: 'purot:page-discussions', label: 'Page discussions' },
         },
         {
-          uri: 'https://example.purot.net/changes/kevatjuhla?mode=rss',
+          uri: 'https://example.purot.net/changes/examplewiki?mode=rss',
           hint: { key: 'purot:page-activity', label: 'Page changes, discussions and likes' },
         },
         {
@@ -270,21 +270,21 @@ describe('purotHandler', () => {
     })
 
     it('should return the page changes hint for a page changes feed', () => {
-      const value = 'https://example.purot.net/changes/kevatjuhla?messages=0&mode=rss'
+      const value = 'https://example.purot.net/changes/examplewiki?messages=0&mode=rss'
       const expected: DiscoverUriHint = { key: 'purot:page-changes', label: 'Page changes' }
 
       expect(purotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the page discussions hint for a page discussions feed', () => {
-      const value = 'https://example.purot.net/changes/kevatjuhla?mode=rss&pages=0'
+      const value = 'https://example.purot.net/changes/examplewiki?mode=rss&pages=0'
       const expected: DiscoverUriHint = { key: 'purot:page-discussions', label: 'Page discussions' }
 
       expect(purotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the page activity hint for a page activity feed', () => {
-      const value = 'https://example.purot.net/changes/kevatjuhla?mode=rss'
+      const value = 'https://example.purot.net/changes/examplewiki?mode=rss'
       const expected: DiscoverUriHint = {
         key: 'purot:page-activity',
         label: 'Page changes, discussions and likes',
@@ -338,7 +338,7 @@ describe('purotHandler', () => {
     })
 
     it('should return undefined for a changes page', () => {
-      const value = 'https://example.purot.net/changes/kevatjuhla'
+      const value = 'https://example.purot.net/changes/examplewiki'
 
       expect(purotHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -396,10 +396,10 @@ describe('purotHandler', () => {
     const values: Array<[string, DiscoverUriEntry['hint']]> = [
       ['https://example.purot.net/changes/all?mode=rss', recentChanges],
       ['http://example.purot.net/changes/all?mode=rss', recentChanges],
-      ['https://example.purot.net/changes/kevatjuhla?mode=rss&messages=0', pageChanges],
-      ['https://example.purot.net/changes/kevatjuhla?messages=0&mode=rss', pageChanges],
-      ['https://example.purot.net/changes/kevatjuhla?mode=rss&pages=0', pageDiscussions],
-      ['https://example.purot.net/changes/kevatjuhla?mode=rss', pageActivity],
+      ['https://example.purot.net/changes/examplewiki?mode=rss&messages=0', pageChanges],
+      ['https://example.purot.net/changes/examplewiki?messages=0&mode=rss', pageChanges],
+      ['https://example.purot.net/changes/examplewiki?mode=rss&pages=0', pageDiscussions],
+      ['https://example.purot.net/changes/examplewiki?mode=rss', pageActivity],
       ['https://example.purot.net/changes/all?messages=0&mode=rss', recentPageChanges],
       ['https://example.purot.net/changes/all?mode=rss&pages=0', recentDiscussions],
       ['https://example.purot.net/changes/profile/alice?messages=0&mode=rss', userChanges],

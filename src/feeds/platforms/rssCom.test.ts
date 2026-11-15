@@ -154,7 +154,7 @@ describe('rssComHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://media.rss.com/charismanews/feed.xml', { key: 'rss-com:podcast', label: 'Podcast' }],
-      ['https://media.rss.com/kuuske/feed.xml', { key: 'rss-com:podcast', label: 'Podcast' }],
+      ['https://media.rss.com/alice/feed.xml', { key: 'rss-com:podcast', label: 'Podcast' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
