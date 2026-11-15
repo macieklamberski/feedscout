@@ -15,8 +15,8 @@ export type MastodonUrl =
   | { kind: 'tag'; tag: string }
 
 const mastodonRegex = /mastodon/i
-// A profile URL can end in .rss, a legacy .atom or the ActivityPub .json. A remote handle,
-// @user@host.tld, holds dots, so only these suffixes are stripped.
+// suffixes: Mastodon's own profile formats, .rss, a legacy .atom and the ActivityPub .json. A
+// remote handle, @user@host.tld, holds dots, so only these suffixes are stripped.
 const feedExtensionRegex = /\.(rss|atom|json)$/i
 
 // Mastodon is self-hosted and known only by its page marker, so nothing in a feed URL names it and

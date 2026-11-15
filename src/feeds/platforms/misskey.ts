@@ -9,6 +9,8 @@ import { hasAnyMeta, hasElementWithId, hasMarker } from '../../common/utils.js'
 export type MisskeyUrl = { kind: 'profile'; username: string }
 
 const profileRegex = /^\/@(?<segment>[^/]+)/
+// suffixes: Misskey's own profile feed formats. A remote handle, @user@host.tld, holds dots, so
+// only these suffixes are stripped.
 const feedSuffixRegex = /\.(?:atom|rss|json)$/i
 
 // Misskey is self-hosted and known only by its page marker, so nothing in a feed URL names it and
