@@ -137,10 +137,10 @@ describe('pmwikiHandler', () => {
       expect(pmwikiHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should write a non-ASCII group as is', () => {
+    it('should percent-encode a non-ASCII group', () => {
       const value = 'https://example.com/pmwiki.php?n=%C3%84rzte.Liste'
       const expected: DiscoverUriEntry = {
-        uri: 'https://example.com/pmwiki.php?n=Ärzte.RecentChanges&action=rss',
+        uri: 'https://example.com/pmwiki.php?n=%C3%84rzte.RecentChanges&action=rss',
         hint: { key: 'pmwiki:group-changes', label: 'Group changes', format: 'rss' },
       }
 
