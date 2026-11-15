@@ -11,6 +11,20 @@ describe('parseLivejournalUrl', () => {
     expect(parseLivejournalUrl('https://example.livejournal.com/')).toEqual(expected)
   })
 
+  it('should return the user and tag for a tag page on the www host', () => {
+    const expected: LivejournalUrl = { kind: 'journal', username: 'alice', tag: 'books' }
+
+    expect(parseLivejournalUrl('https://www.livejournal.com/users/alice/tag/books')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return the user and tag for a tag page on the users host', () => {
+    const expected: LivejournalUrl = { kind: 'journal', username: 'alice', tag: 'books' }
+
+    expect(parseLivejournalUrl('https://users.livejournal.com/alice/tag/books')).toEqual(expected)
+  })
+
   it('should return the tag for a tag page', () => {
     const expected: LivejournalUrl = { kind: 'journal', tag: 'books' }
 
@@ -190,6 +204,34 @@ describe('livejournalHandler', () => {
 
     it('should add tag-filtered feeds for /tag/ paths', () => {
       const value = 'https://alice.livejournal.com/tag/television'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.livejournal.com/data/rss?tag=television',
+          hint: { key: 'livejournal:posts-tag', label: 'Tag', format: 'rss' },
+        },
+        {
+          uri: 'https://alice.livejournal.com/data/atom?tag=television',
+          hint: { key: 'livejournal:posts-tag', label: 'Tag', format: 'atom' },
+        },
+        {
+          uri: 'https://alice.livejournal.com/data/rss',
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://alice.livejournal.com/data/atom',
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://alice.livejournal.com/data/userpics',
+          hint: { key: 'livejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(livejournalHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should add tag-filtered feeds for a tag page on the users host', () => {
+      const value = 'https://users.livejournal.com/alice/tag/television'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://alice.livejournal.com/data/rss?tag=television',

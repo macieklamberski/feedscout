@@ -43,6 +43,20 @@ describe('parseNingUrl', () => {
     expect(parseNingUrl('https://example.ning.com/forum/topics/tour-and-travel')).toEqual(expected)
   })
 
+  it('should return the topic and group of a group topic page', () => {
+    const value = 'https://example.ning.com/group/hikers/forum/topics/a-trail'
+    const expected: NingUrl = { kind: 'topic', topic: 'a-trail', group: 'hikers' }
+
+    expect(parseNingUrl(value)).toEqual(expected)
+  })
+
+  it('should return the group of a group page', () => {
+    const value = 'https://example.ning.com/group/hikers/forum'
+    const expected: NingUrl = { kind: 'group', group: 'hikers' }
+
+    expect(parseNingUrl(value)).toEqual(expected)
+  })
+
   it('should return the home page for the root', () => {
     const expected: NingUrl = { kind: 'home' }
 
@@ -82,6 +96,65 @@ describe('ningHandler', () => {
   })
 
   describe('resolve', () => {
+    const siteFeeds: Array<DiscoverUriEntry> = [
+      {
+        uri: 'https://example.ning.com/activity/log/list?fmt=rss',
+        hint: { key: 'ning:activity', label: 'Latest activity' },
+      },
+      {
+        uri: 'https://example.ning.com/profiles/blog/feed?xn_auth=no',
+        hint: { key: 'ning:blog', label: 'Blog posts' },
+      },
+      {
+        uri: 'https://example.ning.com/forum/topic/list?feed=yes&xn_auth=no',
+        hint: { key: 'ning:forum', label: 'Forum' },
+      },
+      {
+        uri: 'https://example.ning.com/profiles/friend/feed?xn_auth=no',
+        hint: { key: 'ning:members', label: 'Members' },
+      },
+      {
+        uri: 'https://example.ning.com/profiles/friend/feed?featured=1&xn_auth=no',
+        hint: { key: 'ning:members-featured', label: 'Featured members' },
+      },
+      {
+        uri: 'https://example.ning.com/photo/photo/rss?xn_auth=no',
+        hint: { key: 'ning:photos', label: 'Photos' },
+      },
+      {
+        uri: 'https://example.ning.com/photo/photo/listFeatured?rss=yes&xn_auth=no',
+        hint: { key: 'ning:photos-featured', label: 'Featured photos' },
+      },
+      {
+        uri: 'https://example.ning.com/video/video/rss?xn_auth=no',
+        hint: { key: 'ning:videos', label: 'Videos' },
+      },
+      {
+        uri: 'https://example.ning.com/video/video/rss?featured=1&xn_auth=no',
+        hint: { key: 'ning:videos-featured', label: 'Featured videos' },
+      },
+      {
+        uri: 'https://example.ning.com/events/event/feed?xn_auth=no',
+        hint: { key: 'ning:events', label: 'Events' },
+      },
+      {
+        uri: 'https://example.ning.com/groups/group/feed?xn_auth=no',
+        hint: { key: 'ning:groups', label: 'Groups' },
+      },
+      {
+        uri: 'https://example.ning.com/groups/group/feed?featured=1&xn_auth=no',
+        hint: { key: 'ning:groups-featured', label: 'Featured groups' },
+      },
+      {
+        uri: 'https://example.ning.com/page/page/list?feed=yes&xn_auth=no',
+        hint: { key: 'ning:pages', label: 'Pages' },
+      },
+      {
+        uri: 'https://example.ning.com/notes/index/feed?xn_auth=no',
+        hint: { key: 'ning:notes', label: 'Notes' },
+      },
+    ]
+
     it('should return empty array for a URL that does not parse', () => {
       expect(ningHandler.resolve('not-a-url')).toEqual([])
     })
@@ -217,6 +290,36 @@ describe('ningHandler', () => {
 
       expect(ningHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return the topic and group forum feeds for a group topic page', () => {
+      const value = 'https://example.ning.com/group/hikers/forum/topics/a-trail'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.ning.com/forum/topics/a-trail?groupUrl=hikers&feed=yes&xn_auth=no',
+          hint: { key: 'ning:topic', label: 'Topic' },
+        },
+        {
+          uri: 'https://example.ning.com/groups/group/forum?feed=yes&groupUrl=hikers&xn_auth=no',
+          hint: { key: 'ning:forum-group', label: 'Group forum' },
+        },
+        ...siteFeeds,
+      ]
+
+      expect(ningHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the group forum feed for a group page', () => {
+      const value = 'https://example.ning.com/group/hikers'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.ning.com/groups/group/forum?feed=yes&groupUrl=hikers&xn_auth=no',
+          hint: { key: 'ning:forum-group', label: 'Group forum' },
+        },
+        ...siteFeeds,
+      ]
+
+      expect(ningHandler.resolve(value)).toEqual(expected)
+    })
   })
 
   describe('getFeedHint', () => {
@@ -267,6 +370,10 @@ describe('ningHandler', () => {
       ],
       [
         'https://example.ning.com/group/hikers/forum/topics/a-trail?feed=yes&xn_auth=no',
+        { key: 'ning:topic', label: 'Topic' },
+      ],
+      [
+        'https://example.ning.com/forum/topics/a-trail?groupUrl=hikers&feed=yes&xn_auth=no',
         { key: 'ning:topic', label: 'Topic' },
       ],
       [
@@ -576,6 +683,10 @@ describe('ningHandler', () => {
       ],
       [
         'https://example.ning.com/group/hikers/forum/topics/a-trail?feed=yes&xn_auth=no',
+        { key: 'ning:topic', label: 'Topic' },
+      ],
+      [
+        'https://example.ning.com/forum/topics/a-trail?groupUrl=hikers&feed=yes&xn_auth=no',
         { key: 'ning:topic', label: 'Topic' },
       ],
       [
