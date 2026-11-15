@@ -37,10 +37,6 @@ export const wordRegex = /^\w+$/
 export const wordOrHyphenRegex = /^[\w-]+$/
 export const letterThenWordOrHyphenRegex = /^[a-zA-Z][\w-]*$/
 export const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-// length: keeps path words such as `history` out
-export const letterPairsRegex = /^[a-z]{2}(?:-[a-z]{2})?$/i
-// length: keeps path words such as `blogs` out
-export const letterGroupsRegex = /^[a-z]{2,3}(?:-[a-z]{4})?(?:-[a-z]{2})?$/i
 // A format extension after a value that cannot hold a dot, as `.rss` or `.html`.
 export const formatSuffixRegex = /\.[a-z]+$/i
 
