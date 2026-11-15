@@ -1,3 +1,4 @@
+import { getQueryParam } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
@@ -7,8 +8,7 @@ import { hasMarker } from '../../common/utils.js'
 const domains = ['jimdofree.com']
 
 // A site on its own domain is known only by its header, so its feeds are built here but not
-// claimed. A blog narrowed to one tag is linked from a post's tag list, which `resolve` does not
-// read, so the table only claims it.
+// claimed. A post's tag links the blog narrowed to that tag, `/?tag={tag}`.
 const feeds = definePlatformFeeds(
   [
     { key: 'jimdo:blog', template: '{scheme}://{host}/rss/blog' },
@@ -33,6 +33,12 @@ export const jimdoHandler: PlatformHandler = {
 
     if (!page) {
       return []
+    }
+
+    const tag = getQueryParam(new URL(url), 'tag')
+
+    if (tag) {
+      return [page.getFeedEntry('jimdo:blog'), page.getFeedEntry('jimdo:blog-tag', { tag })]
     }
 
     return [page.getFeedEntry('jimdo:blog')]

@@ -11,6 +11,12 @@ describe('parseDreamwidthUrl', () => {
     expect(parseDreamwidthUrl('https://example.dreamwidth.org/')).toEqual(expected)
   })
 
+  it('should return the user and tag for a tag page on the www host', () => {
+    const expected: DreamwidthUrl = { kind: 'journal', username: 'alice', tag: 'books' }
+
+    expect(parseDreamwidthUrl('https://www.dreamwidth.org/users/alice/tag/books')).toEqual(expected)
+  })
+
   it('should return the tag for a tag page', () => {
     const expected: DreamwidthUrl = { kind: 'journal', tag: 'books' }
 

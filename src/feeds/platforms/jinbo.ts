@@ -19,6 +19,11 @@ const feedLinkRegex = /^https:\/\/blog\.jinbo\.net\/([^/]+)\/rss$/i
 const feeds = definePlatformFeeds([
   {
     key: 'jinbo:category',
+    template: 'https://blog.jinbo.net/{username}/rss/category/{categoryId}',
+    format: 'rss',
+  },
+  {
+    key: 'jinbo:category',
     template: 'https://blog.jinbo.net/{username}/atom/category/{categoryId}',
     format: 'atom',
   },
@@ -144,11 +149,18 @@ export const jinboHandler: PlatformHandler = {
 
     if (page.kind === 'category') {
       return [
+        feeds.getFeedEntry('jinbo:category', { username, categoryId: page.categoryId }, 'rss'),
         feeds.getFeedEntry('jinbo:category', { username, categoryId: page.categoryId }, 'atom'),
         feeds.getFeedEntry('jinbo:posts', { username }, 'rss'),
         feeds.getFeedEntry('jinbo:posts', { username }, 'atom'),
         feeds.getFeedEntry('jinbo:responses', { username }, 'rss'),
         feeds.getFeedEntry('jinbo:responses', { username }, 'atom'),
+        feeds.getFeedEntry('jinbo:comments', { username }, 'rss'),
+        feeds.getFeedEntry('jinbo:comments', { username }, 'atom'),
+        feeds.getFeedEntry('jinbo:trackbacks', { username }, 'rss'),
+        feeds.getFeedEntry('jinbo:trackbacks', { username }, 'atom'),
+        feeds.getFeedEntry('jinbo:lines', { username }, 'rss'),
+        feeds.getFeedEntry('jinbo:lines', { username }, 'atom'),
       ]
     }
 
@@ -159,6 +171,12 @@ export const jinboHandler: PlatformHandler = {
         feeds.getFeedEntry('jinbo:posts', { username }, 'atom'),
         feeds.getFeedEntry('jinbo:responses', { username }, 'rss'),
         feeds.getFeedEntry('jinbo:responses', { username }, 'atom'),
+        feeds.getFeedEntry('jinbo:comments', { username }, 'rss'),
+        feeds.getFeedEntry('jinbo:comments', { username }, 'atom'),
+        feeds.getFeedEntry('jinbo:trackbacks', { username }, 'rss'),
+        feeds.getFeedEntry('jinbo:trackbacks', { username }, 'atom'),
+        feeds.getFeedEntry('jinbo:lines', { username }, 'rss'),
+        feeds.getFeedEntry('jinbo:lines', { username }, 'atom'),
       ]
     }
 
@@ -170,6 +188,12 @@ export const jinboHandler: PlatformHandler = {
         feeds.getFeedEntry('jinbo:posts', { username }, 'atom'),
         feeds.getFeedEntry('jinbo:responses', { username }, 'rss'),
         feeds.getFeedEntry('jinbo:responses', { username }, 'atom'),
+        feeds.getFeedEntry('jinbo:comments', { username }, 'rss'),
+        feeds.getFeedEntry('jinbo:comments', { username }, 'atom'),
+        feeds.getFeedEntry('jinbo:trackbacks', { username }, 'rss'),
+        feeds.getFeedEntry('jinbo:trackbacks', { username }, 'atom'),
+        feeds.getFeedEntry('jinbo:lines', { username }, 'rss'),
+        feeds.getFeedEntry('jinbo:lines', { username }, 'atom'),
       ]
     }
 
@@ -178,6 +202,12 @@ export const jinboHandler: PlatformHandler = {
       feeds.getFeedEntry('jinbo:posts', { username }, 'atom'),
       feeds.getFeedEntry('jinbo:responses', { username }, 'rss'),
       feeds.getFeedEntry('jinbo:responses', { username }, 'atom'),
+      feeds.getFeedEntry('jinbo:comments', { username }, 'rss'),
+      feeds.getFeedEntry('jinbo:comments', { username }, 'atom'),
+      feeds.getFeedEntry('jinbo:trackbacks', { username }, 'rss'),
+      feeds.getFeedEntry('jinbo:trackbacks', { username }, 'atom'),
+      feeds.getFeedEntry('jinbo:lines', { username }, 'rss'),
+      feeds.getFeedEntry('jinbo:lines', { username }, 'atom'),
     ]
   },
 

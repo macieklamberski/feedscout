@@ -2,7 +2,7 @@ import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
-import { getJournalName, journalTagRegex } from './livejournal.js'
+import { getJournalName, getJournalTag } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, tag, tildePath, userPath.
@@ -48,8 +48,6 @@ export const parseDreamwidthUrl = (url: string): DreamwidthUrl | undefined => {
     return
   }
 
-  const tag = pathname.match(journalTagRegex)?.[1]
-
   // Bare www.dreamwidth.org has no per-user context, so it names a journal only through a
   // /users/ or /~ selector in the path.
   if (isHostOf(url, wwwHosts)) {
@@ -59,14 +57,14 @@ export const parseDreamwidthUrl = (url: string): DreamwidthUrl | undefined => {
       return
     }
 
-    return { kind: 'journal', username, tag }
+    return { kind: 'journal', username, tag: getJournalTag(pathname, usersPathRegex) }
   }
 
   if (!getTenantSubdomain(url, domains)) {
     return
   }
 
-  return { kind: 'journal', tag }
+  return { kind: 'journal', tag: getJournalTag(pathname) }
 }
 
 export const dreamwidthHandler: PlatformHandler = {
