@@ -535,8 +535,8 @@ Discovers RSS feeds for Steam game news and community groups.
 |-------------|-----------------|
 | `store.steampowered.com` | Daily deals<sup>†</sup> · new releases<sup>†</sup> · weekly top sellers<sup>†</sup> |
 | `store.steampowered.com/news` | Daily deals<sup>†</sup> · new releases<sup>†</sup> · weekly top sellers<sup>†</sup> |
-| `store.steampowered.com/news/group/{id}` | Group news |
-| `store.steampowered.com/news/collection/{name}` | News collection |
+| `store.steampowered.com/news/group/{id}` | Group news<sup>†</sup> |
+| `store.steampowered.com/news/collection/{name}` | News collection<sup>†</sup> |
 | `store.steampowered.com/app/{id}` | Game news<sup>†</sup> · community news<sup>?</sup> |
 | `store.steampowered.com/news/app/{id}` | Game news<sup>†</sup> · community news<sup>?</sup> |
 | `store.steampowered.com/newshub/app/{id}` | Game news · community news |
