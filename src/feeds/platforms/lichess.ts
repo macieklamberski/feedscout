@@ -1,11 +1,4 @@
-import {
-  getPathSegments,
-  getQueryParam,
-  isAnyOf,
-  isHostOf,
-  isLocaleSegment,
-  parseUrl,
-} from 'trousse'
+import { getPathSegments, getQueryParam, isAnyOf, isHostOf, isLocale, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -46,7 +39,7 @@ export const parseLichessUrl = (url: string): LichessUrl | undefined => {
   const communityMatch = pathname.match(communityRegex)
   const language = communityMatch?.[1]
 
-  if (communityMatch && (!language || isLocaleSegment(language))) {
+  if (communityMatch && (!language || isLocale(language))) {
     return { kind: 'community', language }
   }
 
@@ -89,7 +82,7 @@ export const lichessHandler: PlatformHandler = {
   getFeedHint: (url) => {
     const language = getQueryParam(parseUrl(url), 'lang')
 
-    if (language && !isLocaleSegment(language)) {
+    if (language && !isLocale(language)) {
       return
     }
 

@@ -3,7 +3,7 @@ import {
   getSubdomain,
   isAnyOf,
   isHostOf,
-  isLocaleSegment,
+  isLocale,
   isSubdomainOf,
   parseUrl,
 } from 'trousse'
@@ -171,7 +171,7 @@ export const estrankyHandler: PlatformHandler = {
   getFeedHint: (url) => {
     const [, languageOrRoute] = getPathSegments(url)
 
-    if (!isAnyOf(languageOrRoute, routes) && !isLocaleSegment(languageOrRoute)) {
+    if (!isAnyOf(languageOrRoute, routes) && !isLocale(languageOrRoute)) {
       return
     }
 

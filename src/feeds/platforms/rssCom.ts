@@ -1,4 +1,4 @@
-import { isHostOf, isLocaleSegment, parseUrl } from 'trousse'
+import { isHostOf, isLocale, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -24,7 +24,7 @@ export const parseRssComUrl = (url: string): RssComUrl | undefined => {
 
   const [, locale, show] = parsedUrl.pathname.match(podcastRegex) ?? []
 
-  if (!show || (locale && !isLocaleSegment(locale))) {
+  if (!show || (locale && !isLocale(locale))) {
     return
   }
 

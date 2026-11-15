@@ -1,4 +1,4 @@
-import { isHostOf, isLocaleSegment, parseUrl } from 'trousse'
+import { isHostOf, isLocale, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
@@ -141,7 +141,7 @@ export const dailymotionHandler: PlatformHandler = {
   getFeedHint: (url) => {
     const language = parseUrl(url)?.pathname.match(searchLanguageRegex)?.[1]
 
-    if (language && !isLocaleSegment(language)) {
+    if (language && !isLocale(language)) {
       return
     }
 

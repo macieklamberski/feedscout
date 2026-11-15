@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf, isLocaleSegment } from 'trousse'
+import { getPathSegments, isHostOf, isLocale } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -97,7 +97,7 @@ export const ivooxHandler: PlatformHandler = {
   getFeedHint: (url) => {
     const [locale, feed] = getPathSegments(url)
 
-    if (feed && !isLocaleSegment(locale)) {
+    if (feed && !isLocale(locale)) {
       return
     }
 
