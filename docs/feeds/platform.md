@@ -3784,7 +3784,7 @@ type PlatformHandler = {
     content?: string,
     headers?: Headers,
     fetchFn?: FetchFn,
-  ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef>>
+  ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef | undefined>>
   getFeedHint?: (url: string) => DiscoverUriHint | undefined
 }
 ```
@@ -3805,9 +3805,15 @@ An entry of `domains` can be a pattern standing for a family of domains, anchore
 
 A template can open with `{root}`, which stands for the scheme, the host with its port and an optional base path, as `https://example.com/forum`, written as given. `getFeedHint` reads a `{root}` row as a `{host}` row, on the origin of a host in `hosts` or a tenant under `domains`, never under a base path, since a tenant serves from its origin. A table with neither builds the row without claiming it.
 
-A path placeholder written `{name*}` stands for one or more segments, filled from the `name` value, so `https://{host}/{owner}/{repo}/commits/{branch}/{path*}.atom` with `{ path: 'src/lib/index.ts' }` builds the history of that file. Each segment is encoded on its own and the slashes are kept. A value that is empty or holds an empty segment, such as `docs//api`, counts as no value. `getFeedHint` claims any path with one or more non-empty segments there.
+A path placeholder written `{name*}` stands for one or more segments, filled from the `name` value, so `https://{host}/{owner}/{repo}/commits/{branch}/{path*}.atom` with `{ path: 'src/lib/index.ts' }` builds the history of that file. Each segment is encoded on its own and the slashes are kept. An empty segment is dropped, so `docs//api` builds `docs/api`, and a value with no segment left, such as `''` or `/`, counts as no value. `getFeedHint` claims any path with one or more non-empty segments there.
 
 `getFeedHint` tries the rows with more query parameters first and, at the same count, in table order. A `{name*}` row overlaps every row with fewer segments in its place, so it goes after them: with `/t/{tag}/feed` listed before `/{path*}/feed`, `/t/news/feed` reads as the tag feed.
+
+A placeholder standing as a whole query parameter, as `{query}` in `{root}/index.php?{query}&format=feed&type=rss`, takes a query the page passes, for a platform whose feed keeps the page's own routing parameters. The query is written as given in the place of the placeholder, without its leading `?`, its empty parameters and any parameter the row sets itself, matched in any case. So `{ query: '?option=com_content&view=category&id=12&format=html' }` builds `index.php?option=com_content&view=category&id=12&format=feed&type=rss`. A non-ASCII character is percent-encoded, as in any query value. An empty string writes the row's own parameters alone, and `undefined` skips the row, as for any placeholder. `getFeedHint` matches the row on its own parameters only, and a passed query does not count toward the rows tried first.
+
+A row can list one parameter several times, as `?types=page&types=blogpost&types=comment`. It is built with every value in table order, and `getFeedHint` claims a URL that holds each of the values, in any order. A parameter the row lists once is read from its first value in the URL, as before.
+
+A query value is written with only the characters that would change the URL's structure escaped, so `?q=by:alice sort:time` builds `?q=by:alice%20sort:time`. On a platform whose pages link their feeds encoded as a form, set `queryEncoding: 'form'`: every query value of the table, the template's own text included, is then encoded as `URLSearchParams` does, so `?title={title}` with `Talk:Main Page` builds `?title=Talk%3AMain+Page`. A flag and a passed query are written as before. `getFeedHint` reads a value decoded, so it claims either spelling.
 
 A feed the platform serves under several spellings, such as a legacy host, has one row per spelling under its key. The spelling `getFeedEntry` builds is the canonical row, and each other spelling sits directly under it marked `isAlias: true`. An alias row belongs to the nearest row above it with the same key and format and no `isAlias`, so a key holding several feeds keeps each feed's spellings under its own canonical row. `getFeedHint` reads an alias row back to the same hint. `definePlatformFeeds` throws for an alias row with no canonical row above it, so a reorder that would build the alias fails at once. The table cannot tell whether two rows are one feed: that rests on a probe or a comment beside the row, and the placement on review. Keep `isAlias` off a row that is a different feed under the same key.
 
@@ -3818,9 +3824,21 @@ const feeds = definePlatformFeeds([
 ])
 ```
 
+A platform whose sites answer under different spellings of one feed, as one site serves `/feed/` and another only `?feed=rss`, needs every spelling tried in turn. `getFeedSpellings` takes the same arguments as `getFeedEntry` and returns one entry whose `uri` lists the row `getFeedEntry` builds, then every alias row of that feed the values fill, in table order. Discovery tries them in order until one is a feed. The list stops at the next canonical row of the key and format, so it never mixes two feeds. With one spelling filled, `uri` is a string, as from `getFeedEntry`.
+
+```typescript
+const feeds = definePlatformFeeds([
+  { key: 'example:posts', template: '{root}/feed/' },
+  { key: 'example:posts', template: '{root}/?feed=rss', isAlias: true },
+])
+
+// { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'], hint }
+feeds.getFeedSpellings('example:posts', { root: 'https://example.com' })
+```
+
 `getFeedHint` ignores a leading `www` on a fixed host, so `www.example.com/rss` reads as an `example.com/rss` row. A tenant host with `www` in front matches no row, and neither does `www` as a tenant. On a platform where `www` can be a tenant, set `isWwwTenant: true`: a row is then tried on the host as given first, so `www.example.com/rss` reads as the tenant `www` on a `{username}.example.com/rss` row, and the host without `www` only when no row matches. On a platform where `www.alice.example.com` serves the same feeds as `alice.example.com`, set `isWwwTenantPrefix: true`: the `www` in front of a tenant label is then dropped, so `www.alice.example.com/rss` reads as the tenant `alice`. `www.example.com/rss` still reads as no tenant unless `isWwwTenant` is set too.
 
-`forUrl(url)` returns the same `getFeedUrl` and `getFeedEntry` with `{scheme}`, `{host}` and `{root}` filled from the page URL, `{root}` with its origin, and `{domain}` with the entry of `domains` its host is under, so a handler passes only the values the URL cannot give. A value the handler passes wins, so a handler that reads a base path from the page passes `root` with it. A value left `undefined` counts as no value: it never replaces a value from the page, and a key with several rows builds the first one whose placeholders all have a value, so `{ slug, id }` with no `id` builds the row without `{id}`. It returns `undefined` for a URL that is not an http URL.
+`forUrl(url)` returns the same `getFeedUrl`, `getFeedEntry` and `getFeedSpellings` with `{scheme}`, `{host}` and `{root}` filled from the page URL, `{root}` with its origin, and `{domain}` with the entry of `domains` its host is under, so a handler passes only the values the URL cannot give. A value the handler passes wins, so a handler that reads a base path from the page passes `root` with it. A value left `undefined` counts as no value: it never replaces a value from the page, and a key with several rows builds the first one whose placeholders all have a value, so `{ slug, id }` with no `id` builds the row without `{id}`. An empty value in a host label or a path segment counts as no value too, so no row builds `/t//feed`, while an empty query value writes no parameter. When no row of the key has a value for every placeholder, `getFeedUrl` and `getFeedEntry` return `undefined`, and the Platform method skips an `undefined` item `resolve` returns. It returns `undefined` for a URL that is not an http URL.
 
 ```typescript
 import { definePlatformFeeds, type PlatformHandler } from 'feedscout/platform'
