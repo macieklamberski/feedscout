@@ -1,7 +1,7 @@
 import { getAnyOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -25,10 +25,13 @@ const basePathRegex = /\bbasePath:\s*'(?<basePath>(?:\/[^'/]+)*)\/?'/
 const appRootIds = ['XF', 'XenForo']
 
 // A board on any host is known only by its markup, which a feed URL does not carry, so the feeds
-// are built under the board root and never claimed.
+// are built under the board root and never claimed. A forum page names the route of the board
+// feed, and a board page does not, so it gets both routes in turn.
 const feeds = definePlatformFeeds([
   { key: 'xenforo:forum', template: '{root}/{route}/{forumPath}/index.rss' },
   { key: 'xenforo:site', template: '{root}/{route}/-/index.rss' },
+  { key: 'xenforo:site', template: '{root}/forums/-/index.rss' },
+  { key: 'xenforo:site', template: '{root}/f/-/index.rss', isAlias: true },
 ])
 
 export const isXenforoHtml = (content: string): boolean => {
@@ -113,11 +116,6 @@ export const xenforoHandler: PlatformHandler = {
       ]
     }
 
-    return [
-      {
-        uri: routePrefixes.map((route) => feeds.getFeedUrl('xenforo:site', { root, route })),
-        hint: composeHint('xenforo:site'),
-      },
-    ]
+    return [feeds.getFeedSpellings('xenforo:site', { root })]
   },
 }
