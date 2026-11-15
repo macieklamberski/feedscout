@@ -99,6 +99,8 @@ const feeds = definePlatformFeeds([
   },
 ])
 
+type TypechoFeedKey = Parameters<typeof feeds.getFeedSpellings>[0]
+
 const getAssetUrl = (element: Element): string => {
   return element.attribs.href ?? element.attribs.src ?? ''
 }
@@ -157,7 +159,7 @@ const getPathParams = (path: string): PlatformFeedParams => {
 
 const getFeedEntries = (
   siteUrl: string,
-  key: string,
+  key: TypechoFeedKey,
   params?: PlatformFeedParams,
 ): Array<DiscoverUriEntry | undefined> => {
   return formats.map((format) => {
