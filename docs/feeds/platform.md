@@ -935,8 +935,8 @@ Discovers RSS feeds for BookWyrm user activity, reviews, quotes, comments, and p
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/user/{user}` | Activity · reviews<sup>†</sup> · quotes<sup>†</sup> · comments<sup>†</sup> (RSS) |
-| `{instance}/user/{user}/(shelf\|books)/{shelf-id}` | Shelf (RSS) · activity/reviews<sup>†</sup>/quotes<sup>†</sup>/comments<sup>†</sup> |
+| `{root}/user/{user}` | Activity · reviews<sup>†</sup> · quotes<sup>†</sup> · comments<sup>†</sup> (RSS) |
+| `{root}/user/{user}/(shelf\|books)/{shelf-id}` | Shelf (RSS) · activity/reviews<sup>†</sup>/quotes<sup>†</sup>/comments<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
