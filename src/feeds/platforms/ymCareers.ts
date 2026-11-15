@@ -1,6 +1,7 @@
 import { isAnyOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Unmeasured, rate limit: the board refuses an IP after about 15 requests, and one measurement sends about 200.
 
@@ -13,6 +14,13 @@ const searchPathRegex = /^\/jobs\/?$/i
 const browsePathRegex = /^\/jobs((?:\/[a-z_]+\/[^/]+)+?)(?:\/page\d+)?\/?$/i
 
 const excludedParams = ['display', 'page']
+
+// A board runs on its own domain and is known only by its headers, so its feeds are built here but
+// not claimed. The feed is the list's own path with `display=rss` in front of the page's query.
+const feeds = definePlatformFeeds([
+  { key: 'ym-careers:search', template: '{root}?display=rss&{query}' },
+  { key: 'ym-careers:browse', template: '{root}?display=rss&{query}' },
+])
 
 // Every board answers with the header, its bot check page included.
 export const isYmCareersHeaders = (headers: Headers): boolean => {
@@ -61,22 +69,17 @@ export const ymCareersHandler: PlatformHandler = {
   resolve: (url) => {
     const { origin } = new URL(url)
     const parsed = parseYmCareersUrl(url)
-    const query = parsed?.query ? `&${parsed.query}` : ''
+    const query = parsed?.query ?? ''
 
     if (parsed?.kind === 'browse') {
       return [
-        {
-          uri: `${origin}/jobs${parsed.facets}?display=rss${query}`,
-          hint: composeHint('ym-careers:browse'),
-        },
+        feeds.getFeedEntry('ym-careers:browse', { root: `${origin}/jobs${parsed.facets}`, query }),
       ]
     }
 
-    return [
-      {
-        uri: `${origin}${parsed?.path ?? '/jobs'}?display=rss${query}`,
-        hint: composeHint('ym-careers:search'),
-      },
-    ]
+    // The table drops one trailing slash from a root, so a search path ending in one keeps it.
+    const root = `${origin}${parsed?.path ?? '/jobs'}/`
+
+    return [feeds.getFeedEntry('ym-careers:search', { root, query })]
   },
 }
