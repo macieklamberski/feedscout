@@ -7,7 +7,7 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 export type SquarespaceUrl = { kind: 'collection'; collection: string }
 
 export const isSquarespaceHeaders = (headers: Headers): boolean => {
-  return includesAnyOf(headers.get('server') ?? undefined, 'squarespace')
+  return includesAnyOf(headers.get('server'), 'squarespace')
 }
 
 export const parseSquarespaceUrl = (url: string): SquarespaceUrl | undefined => {

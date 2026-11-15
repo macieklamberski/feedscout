@@ -13,7 +13,7 @@ export const isDrupalHtml = (content: string): boolean => {
 }
 
 export const isDrupalHeaders = (headers: Headers): boolean => {
-  return includesAnyOf(headers.get('x-generator') ?? undefined, 'drupal')
+  return includesAnyOf(headers.get('x-generator'), 'drupal')
 }
 
 export type DrupalPage = { kind: 'site'; baseUrl: string }

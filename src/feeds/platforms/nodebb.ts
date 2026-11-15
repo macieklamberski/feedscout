@@ -19,7 +19,7 @@ const topicRegex = /\/topic\/(?<id>[^/]+)/i
 const relativePathRegex = /"relative_path":"(?<relativePath>\/[^"]*)"/
 
 export const isNodebbHeaders = (headers: Headers): boolean => {
-  return includesAnyOf(headers.get('x-powered-by') ?? undefined, 'nodebb')
+  return includesAnyOf(headers.get('x-powered-by'), 'nodebb')
 }
 
 export const parseNodebbUrl = (url: string): NodebbUrl | undefined => {

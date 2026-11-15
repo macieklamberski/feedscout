@@ -7,7 +7,7 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 export type ShopifyUrl = { kind: 'blog'; handle: string; locale?: string }
 
 export const isShopifyHeaders = (headers: Headers): boolean => {
-  return includesAnyOf(headers.get('powered-by') ?? undefined, 'shopify')
+  return includesAnyOf(headers.get('powered-by'), 'shopify')
 }
 
 export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {

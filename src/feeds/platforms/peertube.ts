@@ -14,7 +14,7 @@ const accountPathRegex = /^\/(?:a|accounts)\/([^/]+)/i
 const podcastFeedPath = '/feeds/podcast/videos.xml'
 
 export const isPeertubeHeaders = (headers: Headers): boolean => {
-  return includesAnyOf(headers.get('x-powered-by') ?? undefined, 'peertube')
+  return includesAnyOf(headers.get('x-powered-by'), 'peertube')
 }
 
 // The podcast feed takes only the numeric channel id, which the channel page carries in its link

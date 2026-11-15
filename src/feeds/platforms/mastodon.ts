@@ -38,7 +38,7 @@ export const isMastodonHtml = (content: string): boolean => {
 }
 
 export const isMastodonHeaders = (headers: Headers): boolean => {
-  return includesAnyOf(headers.get('server') ?? undefined, 'mastodon')
+  return includesAnyOf(headers.get('server'), 'mastodon')
 }
 
 export const parseMastodonUrl = (url: string): MastodonUrl | undefined => {
