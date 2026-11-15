@@ -12,7 +12,7 @@ const hosts = ['mail-archive.com', 'www.mail-archive.com']
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'mail-archive:list', template: '{scheme}://{host}/{list}/maillist.xml' },
+    { key: 'mail-archive:list', template: '{scheme}://{host}/{list}/maillist.xml', format: 'rss' },
     { key: 'mail-archive:list', template: '{scheme}://{host}/{list}/maillist.rdf', format: 'rdf' },
   ],
   { hosts },
@@ -47,7 +47,10 @@ export const mailArchiveHandler: PlatformHandler = {
       return []
     }
 
-    return [pageFeeds.getFeedEntry('mail-archive:list', { list: parsed.list })]
+    return [
+      pageFeeds.getFeedEntry('mail-archive:list', { list: parsed.list }, 'rss'),
+      pageFeeds.getFeedEntry('mail-archive:list', { list: parsed.list }, 'rdf'),
+    ]
   },
 
   // The table reads any first segment as a list, so a segment without `@`, a page of the site, is

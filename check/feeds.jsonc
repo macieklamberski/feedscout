@@ -955,7 +955,10 @@
     "jimdo:blog-tag": "https://cedra52.jimdofree.com/rss/blog/com"
   },
   "jinbo": {
-    "jinbo:category": "https://blog.jinbo.net/homocultura/atom/category/9",
+    "jinbo:category": [
+      "https://blog.jinbo.net/homocultura/rss/category/9",
+      "https://blog.jinbo.net/homocultura/atom/category/9"
+    ],
     "jinbo:comments": [
       "https://blog.jinbo.net/manic/rss/comment",
       "https://blog.jinbo.net/manic/atom/comment"
@@ -1122,7 +1125,8 @@
   "mailArchive": {
     "mail-archive:list": [
       "https://www.mail-archive.com/gnupg-users@gnupg.org/maillist.xml",
-      "https://mail-archive.com/dnsop@ietf.org/maillist.xml"
+      "https://mail-archive.com/dnsop@ietf.org/maillist.xml",
+      "https://www.mail-archive.com/gnupg-users@gnupg.org/maillist.rdf"
     ]
   },
   "mailchimp": {
@@ -1674,7 +1678,10 @@
     "qiita:popular": "https://qiita.com/popular-items/feed",
     "qiita:posts": "https://qiita.com/Qiita/feed",
     "qiita:tag": "https://qiita.com/tags/javascript/feed",
-    "qiita:zine": "https://qiita.com/official-columns/feed/"
+    "qiita:zine": [
+      "https://qiita.com/official-columns/feed/",
+      "https://qiita.com/official-columns/feed/atom/"
+    ]
   },
   "rakutenBlog": {
     "rakuten-blog:posts": "https://api.plaza.rakuten.ne.jp/buntankingdam/rss/"
@@ -1808,7 +1815,11 @@
     "shaarli:posts": ["https://demo.shaarli.org/feed/rss", "https://demo.shaarli.org/feed/atom"]
   },
   "shinobi": {
-    "shinobi:posts": ["https://chabun.blog.shinobi.jp/RSS/", "https://chabun.blog.shinobi.jp/ATOM/"]
+    "shinobi:posts": [
+      "https://chabun.blog.shinobi.jp/RSS/",
+      "https://chabun.blog.shinobi.jp/ATOM/",
+      "https://chabun.blog.shinobi.jp/RSS/100/"
+    ]
   },
   "shopify": {
     "shopify:blog": "https://www.allbirds.com/blogs/news.atom",
@@ -1868,6 +1879,7 @@
       "https://sourceforge.net/projects/filezilla/rss",
       "https://sourceforge.net/projects/nmap/rss"
     ],
+    "sourceforge:files-folder": "https://sourceforge.net/projects/mingw-w64/rss?path=/Toolchains%20targetting%20Win64",
     "sourceforge:news": [
       "https://sourceforge.net/p/sevenzip/news/feed.rss",
       "https://sourceforge.net/p/sevenzip/news/feed.atom"
