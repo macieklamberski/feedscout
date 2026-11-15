@@ -1,11 +1,18 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement } from '../../common/utils.js'
+import { findElement } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers board, search (html).
 // Handler needed for: job.
 
 const boardRoutePrefix = '/index.smpl?arg=jb_'
+
+// A board runs on the employer's own domain, so the table only builds its feed. `ff=1` serves the
+// full job descriptions, which the bare feed cuts short.
+const feeds = definePlatformFeeds([
+  { key: 'haley-jobs:jobs', template: '{root}/rss/rss.smpl?ff=1' },
+])
 
 // Haley's resource centers and admin pages come from the same servers, so the job board is told
 // apart by its own `jb_` routes.
@@ -31,10 +38,13 @@ export const haleyJobsHandler: PlatformHandler = {
   },
 
   // A search filter the board does not know falls back to every job, so no filter is carried.
-  // `ff=1` serves the full job descriptions, which the bare feed cuts short.
   resolve: (url) => {
-    const { origin } = new URL(url)
+    const page = feeds.forUrl(url)
 
-    return [{ uri: `${origin}/rss/rss.smpl?ff=1`, hint: composeHint('haley-jobs:jobs') }]
+    if (!page) {
+      return []
+    }
+
+    return [page.getFeedEntry('haley-jobs:jobs')]
   },
 }
