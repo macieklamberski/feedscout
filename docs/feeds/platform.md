@@ -2047,8 +2047,8 @@ Discovers the RSS feed of a Funkwhale channel. Detected by the `Funkwhale` gener
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/channels/{handle}` | Channel (RSS) |
-| `{instance}/channels/{handle}@{domain}` | Channel (RSS) on the channel's own instance |
+| `{root}/channels/{handle}` | Channel (RSS) |
+| `{root}/channels/{handle}@{domain}` | Channel (RSS) on the channel's own instance |
 
 > [!NOTE]
 > The v1 API path is emitted rather than v2, which one instance advertises in its own link tag while another answers 404 for it. An unknown channel answers 404 carrying an RSS content type and an `<rss>` root.
