@@ -17,7 +17,8 @@ const feedSuffixRegex = /\.atom$/i
 
 // The feeds of every GitLab install. The table claims a feed only on gitlab.com: a self-hosted
 // instance is known by its page markup, which a feed URL does not carry. A project path has any
-// depth and ends at the `/-/` separator.
+// depth and ends at a `/-/` separator, not always the first: in
+// `/{ns}/{project}/-/{x}/-/releases.atom` the project is `{ns}/{project}/-/{x}`.
 const feeds = definePlatformFeeds(
   [
     {
