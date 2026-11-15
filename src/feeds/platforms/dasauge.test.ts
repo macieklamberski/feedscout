@@ -4,7 +4,6 @@ import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { type DasaugeUrl, dasaugeHandler, parseDasaugeUrl } from './dasauge.js'
 
-const newsHint: DiscoverUriHint = { key: 'dasauge:news', label: 'News', format: 'atom' }
 const jobsHint: DiscoverUriHint = { key: 'dasauge:jobs', label: 'Jobs', format: 'atom' }
 const workspacesHint: DiscoverUriHint = {
   key: 'dasauge:workspaces',
@@ -68,7 +67,6 @@ describe('dasaugeHandler', () => {
     it('should return the site-wide feeds on the page host', () => {
       const value = 'https://dasauge.at/-carol-jones'
       const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://dasauge.at/news/feed', hint: newsHint },
         { uri: 'https://dasauge.at/jobs/feed', hint: jobsHint },
         { uri: 'https://dasauge.at/workspaces/feed', hint: workspacesHint },
       ]
@@ -79,7 +77,6 @@ describe('dasaugeHandler', () => {
     it('should keep the scheme of an http page', () => {
       const value = 'http://dasauge.de/'
       const expected: Array<DiscoverUriEntry> = [
-        { uri: 'http://dasauge.de/news/feed', hint: newsHint },
         { uri: 'http://dasauge.de/jobs/feed', hint: jobsHint },
         { uri: 'http://dasauge.de/workspaces/feed', hint: workspacesHint },
       ]
@@ -89,10 +86,10 @@ describe('dasaugeHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the news hint for the news feed', () => {
+    it('should return undefined for the news feed', () => {
       const value = 'https://dasauge.de/news/feed'
 
-      expect(dasaugeHandler.getFeedHint?.(value)).toEqual(newsHint)
+      expect(dasaugeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return the jobs hint for the jobs feed', () => {
@@ -162,7 +159,6 @@ describe('dasaugeHandler', () => {
 
   describe('discoverUrisFromPlatform', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://dasauge.de/news/feed/', newsHint],
       ['http://dasauge.ch/jobs/feed', jobsHint],
       ['https://dasauge.es/workspaces/feed/', workspacesHint],
       ['https://dasauge.de/-alice/?rss', { key: 'dasauge:profile', label: 'Profile' }],

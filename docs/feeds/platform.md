@@ -495,8 +495,8 @@ Discovers RSS feeds for Steam game news and community groups.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `store.steampowered.com` | Global news<sup>†</sup> · daily deals<sup>†</sup> · new releases<sup>†</sup> · weekly top sellers<sup>†</sup> |
-| `store.steampowered.com/news` | Global news<sup>†</sup> · daily deals<sup>†</sup> · new releases<sup>†</sup> · weekly top sellers<sup>†</sup> |
+| `store.steampowered.com` | Daily deals<sup>†</sup> · new releases<sup>†</sup> · weekly top sellers<sup>†</sup> |
+| `store.steampowered.com/news` | Daily deals<sup>†</sup> · new releases<sup>†</sup> · weekly top sellers<sup>†</sup> |
 | `store.steampowered.com/news/group/{id}` | Group news |
 | `store.steampowered.com/news/collection/{name}` | News collection |
 | `store.steampowered.com/app/{id}` | Game news<sup>†</sup> · community news<sup>?</sup> |
@@ -2801,8 +2801,8 @@ Discovers the site-wide Atom feeds of dasauge on any of its country domains.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `dasauge.de` | News · jobs<sup>†</sup> · workspaces<sup>†</sup> |
-| `dasauge.de/{page}` | News · jobs<sup>†</sup> · workspaces<sup>†</sup> |
+| `dasauge.de` | Jobs<sup>†</sup> · workspaces<sup>†</sup> |
+| `dasauge.de/{page}` | Jobs<sup>†</sup> · workspaces<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 

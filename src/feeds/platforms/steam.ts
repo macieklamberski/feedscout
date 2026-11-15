@@ -70,7 +70,6 @@ const feeds = definePlatformFeeds([
     template: 'https://store.steampowered.com/feeds/newshub/collection/{collection}',
     isAlias: true,
   },
-  { key: 'steam:news-global', template: 'https://store.steampowered.com/feeds/news.xml' },
   { key: 'steam:daily-deals', template: 'https://store.steampowered.com/feeds/daily_deals.xml' },
   { key: 'steam:new-releases', template: 'https://store.steampowered.com/feeds/newreleases.xml' },
   {
@@ -114,7 +113,7 @@ export const parseSteamUrl = (url: string): SteamUrl | undefined => {
     }
   }
 
-  // The store front and its news hub link the global news feed.
+  // The store front and its news hub get the store-wide listings.
   if (isHostOf(parsedUrl, storeHosts) && (pathname === '/' || newsRegex.test(pathname))) {
     return { kind: 'news' }
   }
@@ -152,7 +151,6 @@ export const steamHandler: PlatformHandler = {
     }
 
     return [
-      feeds.getFeedEntry('steam:news-global'),
       feeds.getFeedEntry('steam:daily-deals'),
       feeds.getFeedEntry('steam:new-releases'),
       feeds.getFeedEntry('steam:weekly-top-sellers'),
