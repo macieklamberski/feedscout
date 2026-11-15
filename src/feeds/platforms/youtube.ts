@@ -1,4 +1,4 @@
-import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getQueryParam, isAnyOf, isHostOf, isPresent, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
@@ -115,13 +115,13 @@ const getPlaylistKey = (playlistId: string | undefined): string => {
   return 'youtube:playlist'
 }
 
-const getChannelUris = (channelId: string): Array<DiscoverUriEntry> => {
+const getChannelUris = (channelId: string): Array<DiscoverUriEntry | undefined> => {
   return [
     {
       uri: [
         feeds.getFeedUrl('youtube:all', { channelId }),
         feeds.getFeedUrl('youtube:playlist', { playlistId: toUploadsPlaylistId('UU', channelId) }),
-      ],
+      ].filter(isPresent),
       hint: composeHint('youtube:all'),
     },
     ...Object.entries(uploadsPlaylistKeys).map(([prefix, key]) => {
@@ -236,17 +236,13 @@ export const youtubeHandler: PlatformHandler = {
 
     const channelId = page.kind === 'playlist' ? undefined : page.channelId
     const username = page.kind === 'playlist' ? undefined : page.username
+    const playlistUri = feeds.getFeedUrl('youtube:playlist', { playlistId: page.playlistId })
 
     return [
       ...(channelId ? getChannelUris(channelId) : []),
       ...(username ? [feeds.getFeedEntry('youtube:all', { user: username })] : []),
-      ...(page.playlistId
-        ? [
-            {
-              uri: feeds.getFeedUrl('youtube:playlist', { playlistId: page.playlistId }),
-              hint: composeHint(getPlaylistKey(page.playlistId)),
-            },
-          ]
+      ...(playlistUri
+        ? [{ uri: playlistUri, hint: composeHint(getPlaylistKey(page.playlistId)) }]
         : []),
     ]
   },

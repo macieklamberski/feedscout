@@ -75,7 +75,7 @@ const getJournalEntries = (
   root: string,
   tag: string | undefined,
   platform: string,
-): Array<DiscoverUriEntry> => {
+): Array<DiscoverUriEntry | undefined> => {
   if (tag) {
     const params = { root, tag: decodeSegment(tag) ?? tag }
 
@@ -101,7 +101,7 @@ export const getJournalFeeds = (
   base: string,
   tag: string | undefined,
   platform: string,
-): Array<DiscoverUriEntry> => {
+): Array<DiscoverUriEntry | undefined> => {
   return getJournalEntries(definePlatformFeeds(getJournalTemplates(platform)), base, tag, platform)
 }
 
