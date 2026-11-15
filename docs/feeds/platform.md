@@ -1046,7 +1046,7 @@ Discovers Atom feeds for Friendica user profiles. Detected by the `Friendica` ge
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/profile/{user}`, `{instance}/u/{user}` or `{instance}/~{user}` | Posts · comments · replies · activity (Atom) |
+| `{root}/profile/{user}`, `{root}/u/{user}` or `{root}/~{user}` | Posts · comments · replies · activity (Atom) |
 
 ### Ghost
 
