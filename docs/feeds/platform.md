@@ -1723,14 +1723,14 @@ Discovers the feeds of a WriteFreely blog. Detected by the `WriteFreely` or `Wri
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/{blog}` | Blog · instance reader<sup>†</sup> (RSS) |
-| `{instance}/{blog}/tag:{tag}` | Tag · blog · instance reader<sup>†</sup> (RSS) |
-| `{instance}` on a single-user instance | Blog (RSS) |
-| `{instance}/{post}` on a single-user instance | Blog (RSS) |
-| `{instance}/page/{n}` on a single-user instance | Blog (RSS) |
-| `{instance}/lang:{code}` on a single-user instance | Blog (RSS) |
-| `{instance}/archive` on a single-user instance | Blog (RSS) |
-| `{instance}/tag:{tag}` on a single-user instance | Tag · blog (RSS) |
+| `{root}/{blog}` | Blog · instance reader<sup>†</sup> (RSS) |
+| `{root}/{blog}/tag:{tag}` | Tag · blog · instance reader<sup>†</sup> (RSS) |
+| `{root}` on a single-user instance | Blog (RSS) |
+| `{root}/{post}` on a single-user instance | Blog (RSS) |
+| `{root}/page/{n}` on a single-user instance | Blog (RSS) |
+| `{root}/lang:{code}` on a single-user instance | Blog (RSS) |
+| `{root}/archive` on a single-user instance | Blog (RSS) |
+| `{root}/tag:{tag}` on a single-user instance | Tag · blog (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
