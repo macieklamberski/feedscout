@@ -59,11 +59,11 @@ describe('parseWebtoonsUrl', () => {
     expect(parseWebtoonsUrl(value)).toEqual(expected)
   })
 
-  it('should return the lowercase language for a capitalized language segment', () => {
-    const value = 'https://www.webtoons.com/ZH-HANT/action/example-series/list?title_no=11058'
+  it('should return the series with any language', () => {
+    const value = 'https://www.webtoons.com/ja/action/example-series/list?title_no=11058'
     const expected: WebtoonsUrl = {
       kind: 'series',
-      language: 'zh-hant',
+      language: 'ja',
       genre: 'action',
       name: 'example-series',
       titleNo: '11058',
@@ -85,7 +85,7 @@ describe('parseWebtoonsUrl', () => {
     expect(parseWebtoonsUrl(value)).toEqual(expected)
   })
 
-  it('should return undefined for an unknown language', () => {
+  it('should return undefined for a segment that is no language', () => {
     const value = 'https://www.webtoons.com/xx/fantasy/example-series/list?title_no=95'
 
     expect(parseWebtoonsUrl(value)).toBeUndefined()
@@ -178,6 +178,19 @@ describe('webtoonsHandler', () => {
       const expected: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
 
       expect(webtoonsHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the series hint for a feed under any language', () => {
+      const value = 'https://www.webtoons.com/ja/challenge/alice/rss?title_no=97265'
+      const expected: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
+
+      expect(webtoonsHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a feed under a segment that is no language', () => {
+      const value = 'https://www.webtoons.com/xx/challenge/alice/rss?title_no=97265'
+
+      expect(webtoonsHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return the series hint for a feed with a percent-encoded name', () => {

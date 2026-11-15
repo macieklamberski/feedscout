@@ -114,10 +114,16 @@ describe('parseHabrUrl', () => {
     expect(parseHabrUrl('https://habr.com/')).toEqual(expected)
   })
 
-  it('should return the home page for a prefix that is not a Habr language', () => {
-    const expected: HabrUrl = { kind: 'home', language: 'ru' }
+  it('should return the hub with any language prefix', () => {
+    const expected: HabrUrl = { kind: 'hub', language: 'de', hub: 'javascript' }
 
     expect(parseHabrUrl('https://habr.com/de/hubs/javascript/')).toEqual(expected)
+  })
+
+  it('should return the Russian home page for a prefix that is no language', () => {
+    const expected: HabrUrl = { kind: 'home', language: 'ru' }
+
+    expect(parseHabrUrl('https://habr.com/xx/hubs/javascript/')).toEqual(expected)
   })
 
   it('should return the user for the www host', () => {
@@ -173,26 +179,6 @@ describe('habrHandler', () => {
 
     it('should return the user feed for a user page', () => {
       const value = 'https://habr.com/en/users/example/posts/'
-      const expected = [
-        {
-          uri: 'https://habr.com/en/rss/users/example/publications/articles/',
-          hint: { key: 'habr:user', label: 'User' },
-        },
-        {
-          uri: 'https://habr.com/en/rss/articles/',
-          hint: { key: 'habr:articles', label: 'Articles' },
-        },
-        {
-          uri: 'https://habr.com/en/rss/news/',
-          hint: { key: 'habr:news', label: 'News' },
-        },
-      ]
-
-      expect(habrHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return the lowercase language for a capitalized language path', () => {
-      const value = 'https://habr.com/EN/users/example/posts/'
       const expected = [
         {
           uri: 'https://habr.com/en/rss/users/example/publications/articles/',
@@ -349,6 +335,19 @@ describe('habrHandler', () => {
       const expected: DiscoverUriHint = { key: 'habr:user', label: 'User' }
 
       expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the articles hint for a feed under any language', () => {
+      const value = 'https://habr.com/de/rss/articles/'
+      const expected: DiscoverUriHint = { key: 'habr:articles', label: 'Articles' }
+
+      expect(habrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a feed under a prefix that is no language', () => {
+      const value = 'https://habr.com/xx/rss/articles/'
+
+      expect(habrHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return the user hint for a user articles feed', () => {

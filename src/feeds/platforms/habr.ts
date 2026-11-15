@@ -1,4 +1,4 @@
-import { getAnyOf, getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, isLocale, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
@@ -15,17 +15,13 @@ export type HabrUrl =
 
 const hosts = ['habr.com', 'www.habr.com']
 
-const languages = ['ru', 'en']
-const languagePrefix = `(?:/(?:${languages.join('|')}))?`
-
-const hubRegex = new RegExp(`^${languagePrefix}/hubs?/([^/]+)`, 'i')
-const userRegex = new RegExp(`^${languagePrefix}/users/([^/]+)`, 'i')
-const companyRegex = new RegExp(`^${languagePrefix}/compan(?:y|ies)/([^/]+)`, 'i')
-const articleRegex = new RegExp(
-  `^${languagePrefix}(?:/compan(?:y|ies)/(?<company>[^/]+))?/(?:articles|blog|news|posts?)/(?<post>[^/]+)`,
-  'i',
-)
-const flowRegex = new RegExp(`^${languagePrefix}/flows/([^/]+)`, 'i')
+const languagePrefixRegex = /^\/([^/]+)(.*)$/
+const hubRegex = /^\/hubs?\/([^/]+)/i
+const userRegex = /^\/users\/([^/]+)/i
+const companyRegex = /^\/compan(?:y|ies)\/([^/]+)/i
+const articleRegex =
+  /^(?:\/compan(?:y|ies)\/(?<company>[^/]+))?\/(?:articles|blog|news|posts?)\/(?<post>[^/]+)/i
+const flowRegex = /^\/flows\/([^/]+)/i
 
 // The first row of a key is the feed `resolve` emits, the one Habr's pages link or, for a user, the
 // one that link redirects to. Habr serves the same items under the hub and user spellings below
@@ -103,9 +99,11 @@ export const parseHabrUrl = (url: string): HabrUrl | undefined => {
     return
   }
 
-  const { pathname } = parsedUrl
-  const [languageOrRoute] = getPathSegments(parsedUrl)
-  const language = getAnyOf(languageOrRoute, languages) ?? 'ru'
+  // A page without a language prefix is the Russian site.
+  const [, prefix = '', rest = ''] = parsedUrl.pathname.match(languagePrefixRegex) ?? []
+  const hasLanguage = isLocale(prefix)
+  const language = hasLanguage ? prefix : 'ru'
+  const pathname = hasLanguage ? rest : parsedUrl.pathname
   const hub = pathname.match(hubRegex)?.[1]
 
   if (hub) {
@@ -221,5 +219,14 @@ export const habrHandler: PlatformHandler = {
     ]
   },
 
-  getFeedHint: feeds.getFeedHint,
+  // A segment before `rss` is a language only in its own form.
+  getFeedHint: (url) => {
+    const [languageOrRss] = getPathSegments(url)
+
+    if (!isAnyOf(languageOrRss, 'rss') && !isLocale(languageOrRss)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
+  },
 }
