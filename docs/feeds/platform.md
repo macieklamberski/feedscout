@@ -2621,9 +2621,9 @@ Discovers the RSS feed of a Gnuboard 4 or 5 board. Detected by the visit cookie 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/bbs/board.php?bo_table={board}` | Board<sup>†</sup> |
-| `{site}/bbs/board.php?bo_table={board}&wr_id={post}` | Board<sup>†</sup> |
-| `{site}/{board}` or `{site}/{board}/{post}` on Gnuboard 5 | Board, read from the page's `g5_bo_table` variable |
+| `{root}/bbs/board.php?bo_table={board}` | Board<sup>†</sup> |
+| `{root}/bbs/board.php?bo_table={board}&wr_id={post}` | Board<sup>†</sup> |
+| `{root}/{board}` or `{root}/{board}/{post}` on Gnuboard 5 | Board, read from the page's `g5_bo_table` variable |
 
 <sup>†</sup> *Found only by the Platform method.*
 
