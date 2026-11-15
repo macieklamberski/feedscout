@@ -358,6 +358,7 @@ describe('definePlatformFeeds', () => {
     })
 
     it('should throw for an unknown key', () => {
+      // @ts-expect-error: A key the table does not hold fails the typecheck too.
       const throwing = () => feeds.getFeedUrl('example:unknown')
 
       expect(throwing).toThrow('No feed template for example:unknown')
@@ -441,14 +442,13 @@ describe('definePlatformFeeds', () => {
       expect(categoryFeeds.getFeedUrl('example:category', value)).toBe(expected)
     })
 
-    it('should write no parameter for an empty query value', () => {
+    it('should return undefined for an empty query value', () => {
       const value = {
         username: 'alice',
         page: '',
       }
-      const expected = 'https://www.example.com/pages/alice?rss'
 
-      expect(feeds.getFeedUrl('example:page', value)).toBe(expected)
+      expect(feeds.getFeedUrl('example:page', value)).toBeUndefined()
     })
   })
 
@@ -616,6 +616,7 @@ describe('definePlatformFeeds', () => {
     })
 
     it('should throw for an unknown key', () => {
+      // @ts-expect-error: A key the table does not hold fails the typecheck too.
       const throwing = () => spellingFeeds.getFeedSpellings('example:unknown')
 
       expect(throwing).toThrow('No feed template for example:unknown')
@@ -1749,14 +1750,13 @@ describe('definePlatformFeeds', () => {
         expect(formQueryFeeds.getFeedUrl('mediawiki:history', value)).toBe(expected)
       })
 
-      it('should write no parameter for an empty value', () => {
+      it('should return undefined for an empty value', () => {
         const value = {
           root: 'https://example.com',
           title: '',
         }
-        const expected = 'https://example.com/index.php?action=history&feed=atom'
 
-        expect(formQueryFeeds.getFeedUrl('mediawiki:history', value)).toBe(expected)
+        expect(formQueryFeeds.getFeedUrl('mediawiki:history', value)).toBeUndefined()
       })
 
       it('should write a query flag with no value', () => {

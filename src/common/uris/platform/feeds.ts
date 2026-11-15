@@ -17,8 +17,8 @@ import locales from '../../../locales.json' with { type: 'json' }
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../types.js'
 import { composeHint } from '../../utils.js'
 
-export type PlatformFeedTemplate = {
-  key: string
+export type PlatformFeedTemplate<Key extends string = string> = {
+  key: Key
   // A feed URL with `{name}` placeholders, each one host label, path segment or query value, and
   // `{scheme}` for a feed served under the page's own scheme. A template opening with `{root}`
   // takes the scheme, the host and an optional base path, as `https://example.com/forum`. A
@@ -56,26 +56,28 @@ export type PlatformFeedTableOptions = {
   isWwwTenantPrefix?: boolean
 }
 
-export type PlatformFeedTable = {
+// A table's methods take only the keys of its rows, so a key the table does not hold fails the
+// typecheck.
+export type PlatformFeedTable<Key extends string = string> = {
   getFeedUrl: (
-    key: string,
+    key: Key,
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
   ) => string | undefined
   getFeedEntry: (
-    key: string,
+    key: Key,
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
   ) => DiscoverUriEntry | undefined
   getFeedSpellings: (
-    key: string,
+    key: Key,
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
   ) => DiscoverUriEntry | undefined
   getFeedHint: (url: string) => DiscoverUriHint | undefined
   forUrl: (
     url: string,
-  ) => Pick<PlatformFeedTable, 'getFeedUrl' | 'getFeedEntry' | 'getFeedSpellings'> | undefined
+  ) => Pick<PlatformFeedTable<Key>, 'getFeedUrl' | 'getFeedEntry' | 'getFeedSpellings'> | undefined
 }
 
 type CompiledTemplate = {
@@ -254,11 +256,6 @@ const compileTemplate = (
       return composeQuery({ [name]: value }).slice(1)
     }
 
-    // An empty value writes no parameter, as `composeQuery` does.
-    if (!value) {
-      return ''
-    }
-
     // biome-ignore lint/plugin/useComposeQuery: The form option asks for what URLSearchParams writes.
     return new URLSearchParams([[name, value]]).toString()
   }
@@ -296,11 +293,10 @@ const compileTemplate = (
   }
 
   const names = [...template.matchAll(placeholderRegex)].map(([, name]) => name)
-  // A host label or path segment left empty builds a broken URL, as `/t//feed`, so an empty value
-  // there is no value. An empty query value writes no parameter.
-  const urlNames = new Set(
-    [...template.split('?')[0].matchAll(placeholderRegex)].map(([, name]) => name),
-  )
+  // An empty value is no value: a host label or path segment left empty builds a broken URL, as
+  // `/t//feed`, and a query value left empty a feed the page does not name, as `?videoChannelId=`.
+  // An empty passed query passes nothing, so the row writes its own parameters alone.
+  const passedQueryNames = new Set(queryEntries.map(getPassedQueryName))
   const multiSegmentCaptures = Object.fromEntries(
     names.filter(isMultiSegment).map((name) => [name, multiSegmentCapture]),
   )
@@ -374,7 +370,7 @@ const compileTemplate = (
     for (const name of names) {
       const value = getPlaceholderValue(params, name)
 
-      if (value === undefined || (!value && urlNames.has(name))) {
+      if (value === undefined || (!value && !passedQueryNames.has(name))) {
         return
       }
 
@@ -430,10 +426,10 @@ const compileTemplate = (
 // One table of a handler's feed URLs, keyed by hint key. `getFeedUrl` writes a feed from the values
 // a page gave, `getFeedEntry` adds its hint, `getFeedSpellings` lists every spelling of the feed
 // under one hint, and `getFeedHint` reads a URL back to the feed's hint.
-export const definePlatformFeeds = (
-  templates: Array<PlatformFeedTemplate>,
+export const definePlatformFeeds = <const Key extends string>(
+  templates: Array<PlatformFeedTemplate<Key>>,
   options: PlatformFeedTableOptions = {},
-): PlatformFeedTable => {
+): PlatformFeedTable<Key> => {
   for (const [index, { key, format, isAlias }] of templates.entries()) {
     if (!isAlias) {
       continue
@@ -471,7 +467,7 @@ export const definePlatformFeeds = (
     return candidates
   }
 
-  const getFeedUrl: PlatformFeedTable['getFeedUrl'] = (key, params, format) => {
+  const getFeedUrl: PlatformFeedTable<Key>['getFeedUrl'] = (key, params, format) => {
     // A key with several shapes builds the first one whose placeholders the values fill.
     for (const candidate of getCandidates(key, format)) {
       const feedUrl = candidate.getUrl(params)
@@ -482,7 +478,7 @@ export const definePlatformFeeds = (
     }
   }
 
-  const getFeedEntry: PlatformFeedTable['getFeedEntry'] = (key, params, format) => {
+  const getFeedEntry: PlatformFeedTable<Key>['getFeedEntry'] = (key, params, format) => {
     const uri = getFeedUrl(key, params, format)
 
     if (!uri) {
@@ -493,7 +489,7 @@ export const definePlatformFeeds = (
   }
 
   // The row `getFeedUrl` builds, then every alias row of its feed below it that the values fill.
-  const getFeedSpellings: PlatformFeedTable['getFeedSpellings'] = (key, params, format) => {
+  const getFeedSpellings: PlatformFeedTable<Key>['getFeedSpellings'] = (key, params, format) => {
     const uris: Array<string> = []
     let first: CompiledTemplate | undefined
 
@@ -530,7 +526,7 @@ export const definePlatformFeeds = (
     }
   }
 
-  const getFeedHint: PlatformFeedTable['getFeedHint'] = (url) => {
+  const getFeedHint: PlatformFeedTable<Key>['getFeedHint'] = (url) => {
     const feedUrl = readFeedUrl(url)
 
     if (!feedUrl) {
@@ -564,7 +560,7 @@ export const definePlatformFeeds = (
   // The table for one page: `{scheme}`, `{host}` and `{root}` come from the page URL, and `{domain}`
   // is its host without the subdomain under `domains`, `example.co.uk` for `alice.example.co.uk`. A
   // value the handler passes wins, so a handler passes a root with the base path the page names.
-  const forUrl: PlatformFeedTable['forUrl'] = (url) => {
+  const forUrl: PlatformFeedTable<Key>['forUrl'] = (url) => {
     const parsedUrl = parseUrl(url)
 
     if (!parsedUrl || !isHttpUrl(parsedUrl)) {
