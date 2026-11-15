@@ -97,9 +97,9 @@ describe('parseHabrUrl', () => {
   })
 
   it('should return the flow for a flow page', () => {
-    const expected: HabrUrl = { kind: 'flow', language: 'ru', flow: 'develop' }
+    const expected: HabrUrl = { kind: 'flow', language: 'ru', flow: 'example' }
 
-    expect(parseHabrUrl('https://habr.com/ru/flows/develop/articles/')).toEqual(expected)
+    expect(parseHabrUrl('https://habr.com/ru/flows/example/articles/')).toEqual(expected)
   })
 
   it('should return the home page with its language for site-wide pages', () => {
@@ -296,10 +296,10 @@ describe('habrHandler', () => {
     })
 
     it('should return the flow feed for a flow page', () => {
-      const value = 'https://habr.com/ru/flows/develop/'
+      const value = 'https://habr.com/ru/flows/example/'
       const expected = [
         {
-          uri: 'https://habr.com/ru/rss/flows/develop/articles/',
+          uri: 'https://habr.com/ru/rss/flows/example/articles/',
           hint: { key: 'habr:flow', label: 'Flow' },
         },
         {
@@ -483,7 +483,7 @@ describe('habrHandler', () => {
         'https://habr.com/en/rss/hubs/javascript/posts',
         { key: 'habr:hub-posts', label: 'Hub posts' },
       ],
-      ['https://habr.com/ru/rss/flows/develop/articles', { key: 'habr:flow', label: 'Flow' }],
+      ['https://habr.com/ru/rss/flows/example/articles', { key: 'habr:flow', label: 'Flow' }],
       ['https://habr.com/ru/rss/tag/haskell/', { key: 'habr:tag', label: 'Tag' }],
       ['https://habr.com/rss/tag/emacs/', { key: 'habr:tag', label: 'Tag' }],
       [
@@ -541,7 +541,7 @@ describe('habrHandler', () => {
         'https://habr.com/en/rss/hubs/javascript/posts/',
         { key: 'habr:hub-posts', label: 'Hub posts' },
       ],
-      ['http://habr.com/ru/rss/flows/develop/articles', { key: 'habr:flow', label: 'Flow' }],
+      ['http://habr.com/ru/rss/flows/example/articles', { key: 'habr:flow', label: 'Flow' }],
       ['https://habr.com/ru/rss/post/123456/?fl=ru', { key: 'habr:comments', label: 'Comments' }],
       ['https://habr.com/ru/rss/tag/haskell/', { key: 'habr:tag', label: 'Tag' }],
       ['http://habr.com/rss/tag/emacs/', { key: 'habr:tag', label: 'Tag' }],
