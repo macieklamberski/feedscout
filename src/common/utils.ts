@@ -4,6 +4,7 @@ import {
   escapeRegex,
   getSubdomain,
   isAnyOf,
+  isHostname,
   isInteger,
   isSameText,
   isString,
@@ -287,7 +288,9 @@ export const isRootOfPage = (rootUrl: string, url: string): boolean => {
 }
 
 // A value written into a host passes only when the parsed URL keeps it as the whole host, so
-// `a@b.example` or `open/x` cuts no other host out of it, and an empty label as in `..` is refused.
+// `a@b.example` or `open/x` cuts no other host out of it. The URL parser also keeps `a,b.example`
+// and `a~b.example`, and a final dot spells the host a second way. A label may start or end with
+// `-`, as live tenants on LiveJournal and Tumblr do.
 export const getHostOrigin = (host: string): string | undefined => {
   const parsedUrl = parseUrl(`https://${host}`)
 
@@ -295,7 +298,7 @@ export const getHostOrigin = (host: string): string | undefined => {
     return
   }
 
-  if (parsedUrl.hostname.split('.').includes('')) {
+  if (!isHostname(parsedUrl.hostname) || parsedUrl.hostname.endsWith('.')) {
     return
   }
 
