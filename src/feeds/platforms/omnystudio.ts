@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -11,8 +11,6 @@ export type OmnystudioUrl =
 const hosts = ['omny.fm', 'www.omny.fm']
 
 const showPathRegex = /^\/shows\/([^/]+)(?:\/playlists\/([^/]+))?/i
-// The show's own playlist, whose feed is the show feed.
-const showPlaylistRegex = /^podcast$/i
 
 const feeds = definePlatformFeeds([
   { key: 'omnystudio:show', template: 'https://omny.fm/shows/{show}/playlists/podcast.rss' },
@@ -39,7 +37,8 @@ export const parseOmnystudioUrl = (url: string): OmnystudioUrl | undefined => {
     return
   }
 
-  if (playlist && !showPlaylistRegex.test(playlist)) {
+  // The show's own playlist, whose feed is the show feed.
+  if (playlist && !isAnyOf(playlist, 'podcast')) {
     return { kind: 'playlist', show, playlist }
   }
 
