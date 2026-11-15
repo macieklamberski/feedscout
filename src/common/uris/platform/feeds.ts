@@ -256,11 +256,6 @@ const compileTemplate = (
       return composeQuery({ [name]: value }).slice(1)
     }
 
-    // An empty value writes no parameter, as `composeQuery` does.
-    if (!value) {
-      return ''
-    }
-
     // biome-ignore lint/plugin/useComposeQuery: The form option asks for what URLSearchParams writes.
     return new URLSearchParams([[name, value]]).toString()
   }
@@ -298,11 +293,10 @@ const compileTemplate = (
   }
 
   const names = [...template.matchAll(placeholderRegex)].map(([, name]) => name)
-  // A host label or path segment left empty builds a broken URL, as `/t//feed`, so an empty value
-  // there is no value. An empty query value writes no parameter.
-  const urlNames = new Set(
-    [...template.split('?')[0].matchAll(placeholderRegex)].map(([, name]) => name),
-  )
+  // An empty value is no value: a host label or path segment left empty builds a broken URL, as
+  // `/t//feed`, and a query value left empty a feed the page does not name, as `?videoChannelId=`.
+  // An empty passed query passes nothing, so the row writes its own parameters alone.
+  const passedQueryNames = new Set(queryEntries.map(getPassedQueryName))
   const multiSegmentCaptures = Object.fromEntries(
     names.filter(isMultiSegment).map((name) => [name, multiSegmentCapture]),
   )
@@ -376,7 +370,7 @@ const compileTemplate = (
     for (const name of names) {
       const value = getPlaceholderValue(params, name)
 
-      if (value === undefined || (!value && urlNames.has(name))) {
+      if (value === undefined || (!value && !passedQueryNames.has(name))) {
         return
       }
 
