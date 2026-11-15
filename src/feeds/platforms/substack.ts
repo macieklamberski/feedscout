@@ -49,10 +49,23 @@ const feeds = definePlatformFeeds(
     { key: 'substack:newsletter-section', template: '{scheme}://{host}/feed?sectionId={section}' },
     // A publication's podcast, mostly linked on api.substack.com, and one section of it, under ids
     // no page URL gives. A private or Spotify feed adds a listener token.
-    { key: 'substack:podcast', template: '{scheme}://{host}/feed/podcast/{publication}.rss' },
+    {
+      key: 'substack:podcast',
+      template: 'https://api.substack.com/feed/podcast/{publication}.rss',
+    },
+    {
+      key: 'substack:podcast',
+      template: '{scheme}://{host}/feed/podcast/{publication}.rss',
+      isAlias: true,
+    },
+    {
+      key: 'substack:podcast-section',
+      template: 'https://api.substack.com/feed/podcast/{publication}/s/{section}.rss',
+    },
     {
       key: 'substack:podcast-section',
       template: '{scheme}://{host}/feed/podcast/{publication}/s/{section}.rss',
+      isAlias: true,
     },
     {
       key: 'substack:private-podcast',
@@ -197,7 +210,7 @@ export const substackHandler: PlatformHandler = {
 
     const hasPodcast = podcastEnabledRegex.test(record) && !podcastFeedUrlRegex.test(record)
     // A podcast feed answers on the publication host too, but names the API host as its self link.
-    const params = { host: 'api.substack.com', publication }
+    const params = { publication }
 
     return [
       pageFeeds.getFeedEntry('substack:newsletter'),

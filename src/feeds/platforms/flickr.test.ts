@@ -219,39 +219,39 @@ describe('flickrHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should keep the scheme of an http page', () => {
+    it('should return https feeds for an http page', () => {
       const value = 'http://flickr.com/photos/tags/rock'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://www.flickr.com/services/feeds/photos_public.gne?tags=rock',
+          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?tags=rock',
           hint: { key: 'flickr:tag', label: 'Tag' },
         },
         {
-          uri: 'http://www.flickr.com/services/feeds/photos_public.gne?tags=rock&format=rss_200',
+          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?tags=rock&format=rss_200',
           hint: { key: 'flickr:tag', label: 'Tag', format: 'rss' },
         },
         {
-          uri: 'http://www.flickr.com/services/feeds/forums.gne',
+          uri: 'https://www.flickr.com/services/feeds/forums.gne',
           hint: { key: 'flickr:forum', label: 'Forum' },
         },
         {
-          uri: 'http://www.flickr.com/services/feeds/forums.gne?format=rss_200',
+          uri: 'https://www.flickr.com/services/feeds/forums.gne?format=rss_200',
           hint: { key: 'flickr:forum', label: 'Forum', format: 'rss' },
         },
         {
-          uri: 'http://www.flickr.com/services/feeds/photos_public.gne',
+          uri: 'https://www.flickr.com/services/feeds/photos_public.gne',
           hint: { key: 'flickr:recent', label: 'Uploads from everyone' },
         },
         {
-          uri: 'http://www.flickr.com/services/feeds/photos_public.gne?format=rss_200',
+          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?format=rss_200',
           hint: { key: 'flickr:recent', label: 'Uploads from everyone', format: 'rss' },
         },
         {
-          uri: 'http://www.flickr.com/services/feeds/geo',
+          uri: 'https://www.flickr.com/services/feeds/geo',
           hint: { key: 'flickr:recent-geo', label: 'Uploads from everyone with location' },
         },
         {
-          uri: 'http://www.flickr.com/services/feeds/geo?format=rss_200',
+          uri: 'https://www.flickr.com/services/feeds/geo?format=rss_200',
           hint: {
             key: 'flickr:recent-geo',
             label: 'Uploads from everyone with location',
