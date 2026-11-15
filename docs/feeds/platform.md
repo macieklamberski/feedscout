@@ -1947,8 +1947,8 @@ Discovers the feeds of a FluxBB board. Detected by the `brdheader` and `brdmain`
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{board}/viewforum.php?id={id}` | Forum (Atom) · posts<sup>†</sup> (RSS + Atom) |
-| `{board}/viewtopic.php?id={id}` | Topic (Atom) · posts<sup>†</sup> (RSS + Atom) |
+| `{root}/viewforum.php?id={id}` | Forum (Atom) · posts<sup>†</sup> (RSS + Atom) |
+| `{root}/viewtopic.php?id={id}` | Topic (Atom) · posts<sup>†</sup> (RSS + Atom) |
 | Any other page | Posts (RSS<sup>†</sup> + Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
