@@ -116,7 +116,7 @@ export const isLemmyHtml = (content: string): boolean => {
 }
 
 export const isLemmyHeaders = (headers: Headers): boolean => {
-  return includesAnyOf(headers.get('x-powered-by') ?? undefined, 'lemmy')
+  return includesAnyOf(headers.get('x-powered-by'), 'lemmy')
 }
 
 export const lemmyHandler: PlatformHandler = {
