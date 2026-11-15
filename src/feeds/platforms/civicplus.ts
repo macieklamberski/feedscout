@@ -74,7 +74,12 @@ export const civicplusHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getCivicplusPage(content)
+    const pageFeeds = feeds.forUrl(url)
 
-    return [feeds.getFeedEntry(page.key, { root: new URL(url).origin })]
+    if (!pageFeeds) {
+      return []
+    }
+
+    return [pageFeeds.getFeedEntry(page.key)]
   },
 }
