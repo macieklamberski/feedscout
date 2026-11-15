@@ -271,6 +271,10 @@ export const parseSourceforgeUrl = (url: string): SourceforgeUrl | undefined => 
 const isGenericTool = (project: string, tool: string): boolean => {
   const toolFeedUrl = feeds.getFeedUrl('sourceforge:tool', { project, tool }, 'rss')
 
+  if (!toolFeedUrl) {
+    return false
+  }
+
   return feeds.getFeedHint(toolFeedUrl)?.key === 'sourceforge:tool'
 }
 
