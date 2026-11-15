@@ -85,6 +85,18 @@ describe('getBloggoPage', () => {
 
     expect(getBloggoPage(value, undefined)).toEqual(expected)
   })
+
+  it('should stay linear on a page that repeats the body tag opening', () => {
+    const content = '<body'.repeat(40_000)
+    const expected: BloggoPage = { kind: 'blog' }
+
+    const start = performance.now()
+    const page = getBloggoPage(value, content)
+    const elapsed = performance.now() - start
+
+    expect(elapsed).toBeLessThan(1000)
+    expect(page).toEqual(expected)
+  })
 })
 
 describe('bloggoHandler', () => {
