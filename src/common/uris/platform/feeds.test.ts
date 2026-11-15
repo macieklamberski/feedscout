@@ -132,6 +132,30 @@ const repeatedQueryFeeds = definePlatformFeeds(
   { hosts: ['example.com'] },
 )
 
+const formQueryFeeds = definePlatformFeeds(
+  [
+    {
+      key: 'mediawiki:history',
+      template: '{root}/index.php?title={title}&action=history&feed=atom',
+      format: 'atom',
+      queryEncoding: 'form',
+    },
+    {
+      key: 'mediawiki:recent-changes',
+      template: '{root}/index.php?title=Special:RecentChanges&feed=atom&{query}',
+      format: 'atom',
+      queryEncoding: 'form',
+    },
+    {
+      key: 'example:profile',
+      template: '{root}/index.php?title={title}&rss',
+      queryEncoding: 'form',
+    },
+    { key: 'example:search', template: '{root}/search?q={terms}&feed=atom' },
+  ],
+  { hosts: ['example.com'] },
+)
+
 const directoryFeeds = definePlatformFeeds([
   { key: 'typecho:page', template: 'https://www.example.com/feed/{directory*}/' },
   { key: 'typecho:page', template: 'https://www.example.com/feed/{path*}' },
@@ -236,6 +260,34 @@ describe('definePlatformFeeds', () => {
       expect(value).toBe(expected)
     })
 
+    it('should percent-encode a non-ASCII path value', () => {
+      const value = feeds.getFeedUrl('example:posts', { username: '技術' })
+      const expected = 'https://www.example.com/%E6%8A%80%E8%A1%93/feed.rss'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should write a percent sign that starts no escape as %25', () => {
+      const value = feeds.getFeedUrl('example:posts', { username: '100%off' })
+      const expected = 'https://www.example.com/100%25off/feed.rss'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should write a percent-encoded path value as given', () => {
+      const value = feeds.getFeedUrl('example:posts', { username: '%e6%8a%80%e8%a1%93' })
+      const expected = 'https://www.example.com/%e6%8a%80%e8%a1%93/feed.rss'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should write a lone surrogate of a path value as given', () => {
+      const value = feeds.getFeedUrl('example:posts', { username: 'alice\ud800' })
+      const expected = 'https://www.example.com/alice\ud800/feed.rss'
+
+      expect(value).toBe(expected)
+    })
+
     it('should write a query value through composeQuery', () => {
       const value = feeds.getFeedUrl('example:search', { username: 'alice' })
       const expected = 'https://feeds.example.com/rss.xml?type=item&q=by:alice%20sort:time'
@@ -306,6 +358,7 @@ describe('definePlatformFeeds', () => {
     })
 
     it('should throw for an unknown key', () => {
+      // @ts-expect-error: A key the table does not hold fails the typecheck too.
       const throwing = () => feeds.getFeedUrl('example:unknown')
 
       expect(throwing).toThrow('No feed template for example:unknown')
@@ -389,14 +442,13 @@ describe('definePlatformFeeds', () => {
       expect(categoryFeeds.getFeedUrl('example:category', value)).toBe(expected)
     })
 
-    it('should write no parameter for an empty query value', () => {
+    it('should return undefined for an empty query value', () => {
       const value = {
         username: 'alice',
         page: '',
       }
-      const expected = 'https://www.example.com/pages/alice?rss'
 
-      expect(feeds.getFeedUrl('example:page', value)).toBe(expected)
+      expect(feeds.getFeedUrl('example:page', value)).toBeUndefined()
     })
   })
 
@@ -564,6 +616,7 @@ describe('definePlatformFeeds', () => {
     })
 
     it('should throw for an unknown key', () => {
+      // @ts-expect-error: A key the table does not hold fails the typecheck too.
       const throwing = () => spellingFeeds.getFeedSpellings('example:unknown')
 
       expect(throwing).toThrow('No feed template for example:unknown')
@@ -969,6 +1022,38 @@ describe('definePlatformFeeds', () => {
       const value = 'https://www.example.com/rss/%40alice'
       const expected = 'example:handle'
       const hint = encodedFeeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed with a raw non-ASCII path value', () => {
+      const value = 'https://www.example.com/技術/feed.rss'
+      const expected = 'example:posts'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed with a percent-encoded non-ASCII path value', () => {
+      const value = 'https://www.example.com/%E6%8A%80%E8%A1%93/feed.rss'
+      const expected = 'example:posts'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed with a raw percent sign in a path value', () => {
+      const value = 'https://www.example.com/100%off/feed.rss'
+      const expected = 'example:posts'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed with a percent-encoded percent sign in a path value', () => {
+      const value = 'https://www.example.com/100%25off/feed.rss'
+      const expected = 'example:posts'
+      const hint = feeds.getFeedHint(value)
 
       expect(hint?.key).toBe(expected)
     })
@@ -1627,6 +1712,100 @@ describe('definePlatformFeeds', () => {
           'https://example.com/createrssfeed.action?types=blogpost&types=page&spaces=conf_all'
 
         expect(repeatedQueryFeeds.getFeedHint(value)).toBeUndefined()
+      })
+    })
+  })
+
+  describe('with form query encoding', () => {
+    describe('getFeedUrl', () => {
+      it('should encode a query value as URLSearchParams does', () => {
+        const value = {
+          root: 'https://example.com',
+          title: 'Talk:Main Page',
+        }
+        const expected =
+          'https://example.com/index.php?title=Talk%3AMain+Page&action=history&feed=atom'
+
+        expect(formQueryFeeds.getFeedUrl('mediawiki:history', value)).toBe(expected)
+      })
+
+      it('should encode the text of the template in a query value', () => {
+        const value = {
+          root: 'https://example.com',
+          query: '',
+        }
+        const expected = 'https://example.com/index.php?title=Special%3ARecentChanges&feed=atom'
+
+        expect(formQueryFeeds.getFeedUrl('mediawiki:recent-changes', value)).toBe(expected)
+      })
+
+      it('should percent-encode a non-ASCII query value', () => {
+        const value = {
+          root: 'https://example.com',
+          title: '技術',
+        }
+        const expected =
+          'https://example.com/index.php?title=%E6%8A%80%E8%A1%93&action=history&feed=atom'
+
+        expect(formQueryFeeds.getFeedUrl('mediawiki:history', value)).toBe(expected)
+      })
+
+      it('should return undefined for an empty value', () => {
+        const value = {
+          root: 'https://example.com',
+          title: '',
+        }
+
+        expect(formQueryFeeds.getFeedUrl('mediawiki:history', value)).toBeUndefined()
+      })
+
+      it('should write a query flag with no value', () => {
+        const value = {
+          root: 'https://example.com',
+          title: 'User:Alice',
+        }
+        const expected = 'https://example.com/index.php?title=User%3AAlice&rss'
+
+        expect(formQueryFeeds.getFeedUrl('example:profile', value)).toBe(expected)
+      })
+
+      it('should write a passed query as given', () => {
+        const value = {
+          root: 'https://example.com',
+          query: 'days=7&namespace=0:1',
+        }
+        const expected =
+          'https://example.com/index.php?title=Special%3ARecentChanges&feed=atom&days=7&namespace=0:1'
+
+        expect(formQueryFeeds.getFeedUrl('mediawiki:recent-changes', value)).toBe(expected)
+      })
+
+      it('should escape only the structure in a row without the form option', () => {
+        const value = {
+          root: 'https://example.com',
+          terms: 'by:alice sort:time',
+        }
+        const expected = 'https://example.com/search?q=by:alice%20sort:time&feed=atom'
+
+        expect(formQueryFeeds.getFeedUrl('example:search', value)).toBe(expected)
+      })
+    })
+
+    describe('getFeedHint', () => {
+      it('should return the key of a feed with a form-encoded value', () => {
+        const value = 'https://example.com/index.php?title=Special%3ARecentChanges&feed=atom'
+        const expected = 'mediawiki:recent-changes'
+        const hint = formQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return the key of a feed with the value as written', () => {
+        const value = 'https://example.com/index.php?title=Special:RecentChanges&feed=atom'
+        const expected = 'mediawiki:recent-changes'
+        const hint = formQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
       })
     })
   })

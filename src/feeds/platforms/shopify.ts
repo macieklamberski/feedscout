@@ -5,15 +5,15 @@ import { formatSuffixRegex, hasMarker, letterGroupsRegex } from '../../common/ut
 
 // Discoverability: Discoverable without handler.
 
-export type ShopifyUrl = { kind: 'blog'; handle: string }
+export type ShopifyUrl = { kind: 'blog'; handle: string; tag?: string }
 
 const shopifyRegex = /shopify/i
 
 const domains = ['myshopify.com']
 
 // A store on its own domain is known only by its header, so its feeds are built here but not
-// claimed. A blog tag, a collection and a collection narrowed to product tags are linked from pages
-// `resolve` does not read, so the table only claims them.
+// claimed. A collection and a collection narrowed to product tags are linked from pages `resolve`
+// does not read, so the table only claims them.
 const feeds = definePlatformFeeds(
   [
     { key: 'shopify:blog', template: '{scheme}://{host}/blogs/{handle}.atom' },
@@ -46,12 +46,16 @@ export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {
   // A market's locale folder, as in `/en-us/blogs/news` or `/zh-hant-hk/blogs/news`.
   const [localeOrRoute] = segments
   const locale = letterGroupsRegex.test(localeOrRoute ?? '') ? localeOrRoute : undefined
-  const [route, handleSegment] = locale ? segments.slice(1) : segments
-  // A handle holds no dot, so a feed URL's `.atom` is a format, not part of the handle.
+  const [route, handleSegment, taggedWord, tag] = locale ? segments.slice(1) : segments
+  // A handle or a tag holds no dot, so a feed URL's `.atom` is a format, not part of either.
   const handle = handleSegment?.replace(formatSuffixRegex, '')
 
   if (!isAnyOf(route, 'blogs') || !handle) {
     return
+  }
+
+  if (isAnyOf(taggedWord, 'tagged') && tag) {
+    return { kind: 'blog', handle, tag: tag.replace(formatSuffixRegex, '') }
   }
 
   return { kind: 'blog', handle }
@@ -72,6 +76,13 @@ export const shopifyHandler: PlatformHandler = {
 
     if (!parsed || !page) {
       return []
+    }
+
+    if (parsed.tag) {
+      return [
+        page.getFeedEntry('shopify:blog', { handle: parsed.handle }),
+        page.getFeedEntry('shopify:blog-tag', { handle: parsed.handle, tag: parsed.tag }),
+      ]
     }
 
     return [page.getFeedEntry('shopify:blog', { handle: parsed.handle })]

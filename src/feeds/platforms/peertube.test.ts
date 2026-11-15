@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PeertubeUrl } from './peertube.js'
 import { isPeertubeHeaders, parsePeertubeUrl, peertubeHandler } from './peertube.js'
 
@@ -120,6 +121,22 @@ describe('peertubeHandler', () => {
       const expected = [
         {
           uri: 'https://example.com/feeds/videos.xml?videoChannelName=a%2Bb',
+          hint: { key: 'peertube:channel', label: 'Channel' },
+        },
+        {
+          uri: 'https://example.com/feeds/videos.xml',
+          hint: { key: 'peertube:instance', label: 'Instance' },
+        },
+      ]
+
+      expect(peertubeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should percent-encode a non-ASCII channel name in the query value', () => {
+      const value = 'https://example.com/c/caf%C3%A9'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/feeds/videos.xml?videoChannelName=caf%C3%A9',
           hint: { key: 'peertube:channel', label: 'Channel' },
         },
         {

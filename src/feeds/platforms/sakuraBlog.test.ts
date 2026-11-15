@@ -54,11 +54,11 @@ describe('sakuraBlogHandler', () => {
       expect(sakuraBlogHandler.resolve('https://example.com/')).toEqual([])
     })
 
-    it('should return RSS 2.0 and RDF feeds over http for an https blog URL', () => {
+    it('should return the classic feeds over http and rss.xml on the page scheme', () => {
       const value = 'https://alice.sblo.jp/article/123456.html'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://alice.sblo.jp/index20.rdf',
+          uri: ['http://alice.sblo.jp/index20.rdf', 'https://alice.sblo.jp/rss.xml'],
           hint: { key: 'sakura-blog:posts', label: 'Posts', format: 'rss' },
         },
         {

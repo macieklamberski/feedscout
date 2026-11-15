@@ -11,10 +11,11 @@ const domains = ['sblo.jp']
 const feeds = definePlatformFeeds(
   [
     { key: 'sakura-blog:posts', template: '{scheme}://{host}/index20.rdf', format: 'rss' },
-    { key: 'sakura-blog:posts', template: '{scheme}://{host}/index.rdf', format: 'rdf' },
     // A blog made since the platform's redesign serves its posts at `/rss.xml` alone, and an older
-    // blog answers 404 there, so `resolve` keeps building the older files.
-    { key: 'sakura-blog:posts', template: '{scheme}://{host}/rss.xml', format: 'rss' },
+    // blog answers 404 there. It is built under the page's own origin, since a newer blog serves
+    // https and redirects http there.
+    { key: 'sakura-blog:posts', template: '{root}/rss.xml', format: 'rss', isAlias: true },
+    { key: 'sakura-blog:posts', template: '{scheme}://{host}/index.rdf', format: 'rdf' },
   ],
   { domains, isWwwTenantPrefix: true },
 )
@@ -40,10 +41,9 @@ export const sakuraBlogHandler: PlatformHandler = {
     }
 
     // Blogs on the classic engine answer over http only, as their alternate links spell it: https
-    // fails the TLS handshake with a certificate that names blog.sakura.ne.jp. Newer blogs serve
-    // https and /rss.xml instead, which generic discovery finds through the page's anchor.
+    // fails the TLS handshake with a certificate that names blog.sakura.ne.jp.
     return [
-      page.getFeedEntry('sakura-blog:posts', { scheme: 'http' }, 'rss'),
+      page.getFeedSpellings('sakura-blog:posts', { scheme: 'http' }, 'rss'),
       page.getFeedEntry('sakura-blog:posts', { scheme: 'http' }, 'rdf'),
     ]
   },

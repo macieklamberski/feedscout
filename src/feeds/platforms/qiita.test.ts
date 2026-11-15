@@ -177,36 +177,48 @@ describe('qiitaHandler', () => {
       expect(qiitaHandler.resolve(value)).toEqual([])
     })
 
-    it('should return Qiita Zine feed for /official-columns', () => {
+    it('should return Qiita Zine feeds for /official-columns', () => {
       const value = 'https://qiita.com/official-columns'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://qiita.com/official-columns/feed/',
-          hint: { key: 'qiita:zine', label: 'Qiita Zine' },
+          hint: { key: 'qiita:zine', label: 'Qiita Zine', format: 'rss' },
+        },
+        {
+          uri: 'https://qiita.com/official-columns/feed/atom/',
+          hint: { key: 'qiita:zine', label: 'Qiita Zine', format: 'atom' },
         },
       ]
 
       expect(qiitaHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return Qiita Zine feed for /official-columns with a capitalized official-columns segment', () => {
+    it('should return Qiita Zine feeds for /official-columns with a capitalized official-columns segment', () => {
       const value = 'https://qiita.com/Official-Columns'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://qiita.com/official-columns/feed/',
-          hint: { key: 'qiita:zine', label: 'Qiita Zine' },
+          hint: { key: 'qiita:zine', label: 'Qiita Zine', format: 'rss' },
+        },
+        {
+          uri: 'https://qiita.com/official-columns/feed/atom/',
+          hint: { key: 'qiita:zine', label: 'Qiita Zine', format: 'atom' },
         },
       ]
 
       expect(qiitaHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return Qiita Zine feed for /official-columns/{slug}', () => {
+    it('should return Qiita Zine feeds for /official-columns/{slug}', () => {
       const value = 'https://qiita.com/official-columns/some-article'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://qiita.com/official-columns/feed/',
-          hint: { key: 'qiita:zine', label: 'Qiita Zine' },
+          hint: { key: 'qiita:zine', label: 'Qiita Zine', format: 'rss' },
+        },
+        {
+          uri: 'https://qiita.com/official-columns/feed/atom/',
+          hint: { key: 'qiita:zine', label: 'Qiita Zine', format: 'atom' },
         },
       ]
 
