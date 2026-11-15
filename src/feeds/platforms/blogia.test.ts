@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type BlogiaUrl, blogiaHandler, parseBlogiaUrl } from './blogia.js'
 
 describe('parseBlogiaUrl', () => {
@@ -44,12 +47,16 @@ describe('blogiaHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return the https posts feed for an http page', () => {
+    it('should keep the scheme of an http page', () => {
       const value = 'http://alice.blogia.com/temas/reflexiones/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.blogia.com/feed.xml',
+          uri: 'http://alice.blogia.com/feed.xml',
           hint: { key: 'blogia:posts', label: 'Posts' },
+        },
+        {
+          uri: 'http://alice.blogia.com/comentarios.xml',
+          hint: { key: 'blogia:comments', label: 'Comments' },
         },
       ]
 
@@ -58,6 +65,86 @@ describe('blogiaHandler', () => {
 
     it('should return empty array for the www host', () => {
       expect(blogiaHandler.resolve('https://www.blogia.com/')).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the posts key for a posts feed', () => {
+      const value = 'https://alice.blogia.com/feed.xml'
+      const expected: DiscoverUriHint = { key: 'blogia:posts', label: 'Posts' }
+
+      expect(blogiaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts key for an http posts feed', () => {
+      const value = 'http://alice.blogia.com/feed.xml'
+      const expected: DiscoverUriHint = { key: 'blogia:posts', label: 'Posts' }
+
+      expect(blogiaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://alice.blogia.com/temas/reflexiones/'
+
+      expect(blogiaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.alice.blogia.com/feed.xml'
+
+      expect(blogiaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://blogia.com/feed.xml'
+
+      expect(blogiaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return the comments hint for a comments feed', () => {
+      const value = 'https://alice.blogia.com/comentarios.xml'
+      const expected: DiscoverUriHint = { key: 'blogia:comments', label: 'Comments' }
+
+      expect(blogiaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/feed.xml'
+
+      expect(blogiaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const hint: DiscoverUriHint = { key: 'blogia:posts', label: 'Posts' }
+    const ownFeeds: Array<string> = [
+      'https://alice.blogia.com/feed.xml',
+      'http://alice.blogia.com/feed.xml',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [blogiaHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should return a comments feed as itself', async () => {
+      const value = 'http://alice.blogia.com/comentarios.xml'
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [blogiaHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'blogia:comments', label: 'Comments' } },
+      ]
+
+      expect(result).toEqual(expected)
     })
   })
 })

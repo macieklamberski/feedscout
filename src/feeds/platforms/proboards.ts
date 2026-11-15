@@ -1,12 +1,19 @@
 import { isHostOrSubdomainOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type ProboardsUrl = { kind: 'forum' } | { kind: 'customDomain' }
 
 const domains = ['proboards.com', 'freeforums.net', 'boards.net']
+
+// A forum on its own domain is known only by its markers, so its feed is built but not claimed.
+const feeds = definePlatformFeeds(
+  [{ key: 'proboards:posts', template: '{scheme}://{host}/rss/public' }],
+  { domains },
+)
 
 // Every forum page loads the core script from storage.proboards.com or storage.forums.net, on a
 // custom domain too.
@@ -39,13 +46,14 @@ export const proboardsHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseProboardsUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
-
-    return [{ uri: `${origin}/rss/public`, hint: composeHint('proboards:posts') }]
+    return [page.getFeedEntry('proboards:posts')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

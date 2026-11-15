@@ -27,7 +27,7 @@ Use this checklist to ensure a complete migration:
 - Handle `undefined` from `omitEmpty` if you use it
 - Update custom `extractUrls` callbacks to Feedsmith 3 feed shapes
 - Replace `codebergHandler` with `giteaHandler` if you import it from `feedscout/platform`
-- Update code that matches on hint keys: `codeberg:*` is now `gitea:*`, `artstation:artwork-trending` is now `artstation:artwork-latest`, and `producthunt:topic` and `producthunt:category` are gone
+- Update code that matches on hint keys: `codeberg:*` is now `gitea:*`, `artstation:artwork-trending` and `artstation:artwork-latest` are now `artstation:artwork`, `launchpad:branches` and `launchpad:revisions` are split into project and person keys, a Lobsters user's stories feed is now `lobsters:user-stories`, `microblog:replies` and `shaarli:posts-legacy` are now `microblog:posts` and `shaarli:posts`, and `producthunt:topic`, `producthunt:category`, `itchio:blog`, `lichess:updates` and `steam:news-global` are gone
 - Set `maxAncestorDepth: 0` and `sectionNames: []` on the Guess method if you need the 1.x set of guessed URLs
 - Add the new `phase` values to any exhaustive `switch` in your `onError` callback, if you come from 1.10 or earlier
 - Expect a failed input fetch to return results or an empty array, not to reject, if you come from 1.10 or earlier
@@ -170,11 +170,20 @@ Some platform handlers changed the hint keys they attach to discovered URLs. Thi
 | `codeberg:tags` | `gitea:tags` |
 | `codeberg:branch-commits` | `gitea:branch-commits` |
 | `codeberg:file-history` | `gitea:file-history` |
-| `artstation:artwork-trending` | `artstation:artwork-latest` |
+| `artstation:artwork-trending` | `artstation:artwork` |
+| `artstation:artwork-latest` | `artstation:artwork` |
+| `launchpad:branches` | `launchpad:project-branches` or `launchpad:person-branches` |
+| `launchpad:revisions` | `launchpad:project-revisions` or `launchpad:person-revisions` |
+| `lobsters:stories` on `https://lobste.rs/~{user}/stories.rss` | `lobsters:user-stories` |
+| `microblog:replies` | `microblog:posts` |
+| `shaarli:posts-legacy` | `shaarli:posts` |
 | `producthunt:topic` | Removed |
 | `producthunt:category` | Removed |
+| `itchio:blog` | Removed |
+| `lichess:updates` | Removed |
+| `steam:news-global` | Removed |
 
-The Codeberg handler is now `giteaHandler`, and `codebergHandler` is no longer exported from `feedscout/platform`. It still covers codeberg.org and gitea.com, and also matches self-hosted Gitea instances. The ArtStation trending feed was a duplicate, so the handler now returns the latest artwork feed. Product Hunt topic and category pages now return only the main `https://www.producthunt.com/feed`, because the feed ignores the topic and category parameters.
+The Codeberg handler is now `giteaHandler`, and `codebergHandler` is no longer exported from `feedscout/platform`. It still covers codeberg.org and gitea.com, and also matches self-hosted Gitea instances. The ArtStation trending feed was a duplicate, so the handler now returns the latest artwork feed. Versions 2.0 to 2.2 gave that feed the key `artstation:artwork-latest`. It is now `artstation:artwork`, the key of the default artwork feed, since a sort order stays under its feed's key. The URL still carries `?sorting=latest`. Version 2.2 gave a Launchpad project's and a person's branches feed the one key `launchpad:branches`, and their revisions feed `launchpad:revisions`. A project's feeds are now `launchpad:project-branches` and `launchpad:project-revisions`, and a person's are `launchpad:person-branches` and `launchpad:person-revisions`. The URLs are unchanged. A Lobsters user's stories feed, `https://lobste.rs/~{user}/stories.rss`, shared the key `lobsters:stories` with the site-wide `https://lobste.rs/rss`. It is now `lobsters:user-stories`, and `lobsters:stories` names only the site-wide feed. A Micro.blog replies page returned `https://{user}.micro.blog/replies.xml` under `microblog:replies`. That URL redirects to the blog's `feed.xml`, so a replies page now returns the blog's feeds, and the handler's `getFeedHint` gives a `replies.xml` URL the key `microblog:posts`. The legacy Shaarli feed, `/?do=rss`, was a separate entry under `shaarli:posts-legacy`. Shaarli 0.12 and later redirect it to `/feed/rss`, so it is now the second URL tried for the `shaarli:posts` RSS feed, after `/feed/rss`. Product Hunt topic and category pages now return only the main `https://www.producthunt.com/feed`, because the feed ignores the topic and category parameters. The itch.io blog, the Lichess updates feed and the Steam store news feed are news about the platform itself, not about the page, so the itch.io, Lichess and Steam handlers no longer return `https://itch.io/blog.rss`, `https://lichess.org/feed.atom` or `https://store.steampowered.com/feeds/news.xml`. Nothing replaces them.
 
 #### Before (1.x)
 ```typescript
@@ -195,8 +204,11 @@ const releases = feeds.find((feed) => feed.hint?.key === 'gitea:releases')
 #### Migration Steps
 1. Replace `codebergHandler` imports with `giteaHandler`
 2. Replace `codeberg:` hint key prefixes with `gitea:`
-3. Replace `artstation:artwork-trending` with `artstation:artwork-latest`
-4. Remove handling for `producthunt:topic` and `producthunt:category`
+3. Replace `artstation:artwork-trending` and `artstation:artwork-latest` with `artstation:artwork`
+4. Replace `launchpad:branches` and `launchpad:revisions` with their `launchpad:project-*` and `launchpad:person-*` keys
+5. Match a Lobsters user's stories feed on `lobsters:user-stories`, not `lobsters:stories`
+6. Replace `microblog:replies` with `microblog:posts` and `shaarli:posts-legacy` with `shaarli:posts`
+7. Remove handling for `producthunt:topic`, `producthunt:category`, `itchio:blog`, `lichess:updates` and `steam:news-global`
 
 ### Guess Method Tests More URLs by Default
 

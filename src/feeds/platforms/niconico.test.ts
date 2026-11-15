@@ -1,5 +1,21 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type NiconicoUrl, niconicoHandler, parseNiconicoUrl } from './niconico.js'
+
+const videosHint: DiscoverUriHint = { key: 'niconico:videos', label: 'Videos' }
+const liveHint: DiscoverUriHint = { key: 'niconico:live', label: 'Live' }
+const blogHint: DiscoverUriHint = { key: 'niconico:blog', label: 'Blog' }
+
+const feedCases: Array<[string, DiscoverUriHint]> = [
+  ['https://ch.nicovideo.jp/examplechannel/video?rss=2.0', videosHint],
+  ['https://ch.nicovideo.jp/examplechannel/live?rss=2.0', liveHint],
+  ['https://ch.nicovideo.jp/examplechannel/blomaga/nico/feed', blogHint],
+  ['http://ch.nicovideo.jp/examplechannel/video?rss=2.0', videosHint], // http
+  ['https://ch.nicovideo.jp/examplechannel/live/?rss=2.0', liveHint], // Trailing slash
+  ['https://ch.nicovideo.jp/examplechannel/blomaga/nico/feed/', blogHint], // Trailing slash
+]
 
 describe('parseNiconicoUrl', () => {
   it('should return the channel for a channel page', () => {
@@ -135,6 +151,73 @@ describe('niconicoHandler', () => {
       ]
 
       expect(niconicoHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the videos hint for a video feed', () => {
+      const value = 'https://ch.nicovideo.jp/examplechannel/video?rss=2.0'
+      const expected: DiscoverUriHint = { key: 'niconico:videos', label: 'Videos' }
+
+      expect(niconicoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the live hint for a live feed', () => {
+      const value = 'https://ch.nicovideo.jp/examplechannel/live?rss=2.0'
+      const expected: DiscoverUriHint = { key: 'niconico:live', label: 'Live' }
+
+      expect(niconicoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the blog hint for a blog feed', () => {
+      const value = 'https://ch.nicovideo.jp/examplechannel/blomaga/nico/feed'
+      const expected: DiscoverUriHint = { key: 'niconico:blog', label: 'Blog' }
+
+      expect(niconicoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the videos hint for a video feed over http', () => {
+      const value = 'http://ch.nicovideo.jp/examplechannel/video?rss=2.0'
+      const expected: DiscoverUriHint = { key: 'niconico:videos', label: 'Videos' }
+
+      expect(niconicoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a video page', () => {
+      const value = 'https://ch.nicovideo.jp/examplechannel/video'
+
+      expect(niconicoHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a video page with another rss value', () => {
+      const value = 'https://ch.nicovideo.jp/examplechannel/video?rss=atom'
+
+      expect(niconicoHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a channel page', () => {
+      const value = 'https://ch.nicovideo.jp/examplechannel'
+
+      expect(niconicoHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/examplechannel/video?rss=2.0'
+
+      expect(niconicoHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('as a feed URL input', () => {
+    it.each(feedCases)('should return %s as given', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [niconicoHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

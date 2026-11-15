@@ -1,44 +1,46 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type BloggangUrl, bloggangHandler, parseBloggangUrl } from './bloggang.js'
 
 describe('parseBloggangUrl', () => {
   it('should return the blog for a blog subdomain', () => {
-    const expected: BloggangUrl = { kind: 'blog', username: 'gonga' }
+    const expected: BloggangUrl = { kind: 'blog', username: 'alice' }
 
-    expect(parseBloggangUrl('https://gonga.bloggang.com/')).toEqual(expected)
+    expect(parseBloggangUrl('https://alice.bloggang.com/')).toEqual(expected)
   })
 
   it('should return the blog for a subdomain with an underscore', () => {
-    const expected: BloggangUrl = { kind: 'blog', username: 'granmy_home' }
+    const expected: BloggangUrl = { kind: 'blog', username: 'carol_home' }
 
-    expect(parseBloggangUrl('https://granmy_home.bloggang.com/')).toEqual(expected)
+    expect(parseBloggangUrl('https://carol_home.bloggang.com/')).toEqual(expected)
   })
 
   it('should return the blog for the blog page on www', () => {
-    const value = 'https://www.bloggang.com/mainblog.php?id=gonga'
-    const expected: BloggangUrl = { kind: 'blog', username: 'gonga' }
+    const value = 'https://www.bloggang.com/mainblog.php?id=alice'
+    const expected: BloggangUrl = { kind: 'blog', username: 'alice' }
 
     expect(parseBloggangUrl(value)).toEqual(expected)
   })
 
   it('should return the blog for the blog page on the bare domain', () => {
-    const value = 'https://bloggang.com/mainblog.php?id=gonga'
-    const expected: BloggangUrl = { kind: 'blog', username: 'gonga' }
+    const value = 'https://bloggang.com/mainblog.php?id=alice'
+    const expected: BloggangUrl = { kind: 'blog', username: 'alice' }
 
     expect(parseBloggangUrl(value)).toEqual(expected)
   })
 
   it('should return the post for a post page', () => {
-    const value = 'https://www.bloggang.com/viewblog.php?id=gonga&date=25-11-2007&group=1&gblog=3'
-    const expected: BloggangUrl = { kind: 'post', username: 'gonga' }
+    const value = 'https://www.bloggang.com/viewblog.php?id=alice&date=25-11-2007&group=1&gblog=3'
+    const expected: BloggangUrl = { kind: 'post', username: 'alice' }
 
     expect(parseBloggangUrl(value)).toEqual(expected)
   })
 
   it('should return the diary for a diary page', () => {
-    const value = 'https://www.bloggang.com/viewdiary.php?id=gonga&group=1'
-    const expected: BloggangUrl = { kind: 'diary', username: 'gonga' }
+    const value = 'https://www.bloggang.com/viewdiary.php?id=alice&group=1'
+    const expected: BloggangUrl = { kind: 'diary', username: 'alice' }
 
     expect(parseBloggangUrl(value)).toEqual(expected)
   })
@@ -48,7 +50,7 @@ describe('parseBloggangUrl', () => {
   })
 
   it('should return undefined for a nested subdomain', () => {
-    expect(parseBloggangUrl('https://a.gonga.bloggang.com/')).toBeUndefined()
+    expect(parseBloggangUrl('https://a.alice.bloggang.com/')).toBeUndefined()
   })
 
   it('should return undefined for the mobile host', () => {
@@ -56,11 +58,11 @@ describe('parseBloggangUrl', () => {
   })
 
   it('should return undefined for another script with an id', () => {
-    expect(parseBloggangUrl('https://www.bloggang.com/follow.php?id=gonga')).toBeUndefined()
+    expect(parseBloggangUrl('https://www.bloggang.com/follow.php?id=alice')).toBeUndefined()
   })
 
   it('should return undefined for a blog script under another path', () => {
-    const value = 'https://www.bloggang.com/admin/mainblog.php?id=gonga'
+    const value = 'https://www.bloggang.com/admin/mainblog.php?id=alice'
 
     expect(parseBloggangUrl(value)).toBeUndefined()
   })
@@ -70,21 +72,21 @@ describe('parseBloggangUrl', () => {
   })
 
   it('should return undefined for an id that is not a hostname label', () => {
-    const value = 'https://www.bloggang.com/mainblog.php?id=gonga.example.com/x'
+    const value = 'https://www.bloggang.com/mainblog.php?id=alice.example.com/x'
 
     expect(parseBloggangUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
-    expect(parseBloggangUrl('https://example.com/mainblog.php?id=gonga')).toBeUndefined()
+    expect(parseBloggangUrl('https://example.com/mainblog.php?id=alice')).toBeUndefined()
   })
 })
 
 describe('bloggangHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://akarapat.bloggang.com/'],
-      [true, 'https://www.bloggang.com/mainblog.php?id=akarapat'],
+      [true, 'https://bob.bloggang.com/'],
+      [true, 'https://www.bloggang.com/mainblog.php?id=bob'],
       [false, 'https://www.bloggang.com/'],
       [false, 'https://example.com/'],
     ]
@@ -99,11 +101,23 @@ describe('bloggangHandler', () => {
       expect(bloggangHandler.resolve('https://example.com/')).toEqual([])
     })
 
-    it('should return the posts feed for a blog subdomain', () => {
-      const value = 'https://gonga.bloggang.com/'
+    it('should keep the scheme of an http blog page', () => {
+      const value = 'http://www.bloggang.com/mainblog.php?id=alice'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://gonga.bloggang.com/rss',
+          uri: 'http://alice.bloggang.com/rss',
+          hint: { key: 'bloggang:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(bloggangHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the posts feed for a blog subdomain', () => {
+      const value = 'https://alice.bloggang.com/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.bloggang.com/rss',
           hint: { key: 'bloggang:posts', label: 'Posts' },
         },
       ]
@@ -112,15 +126,80 @@ describe('bloggangHandler', () => {
     })
 
     it('should return the posts feed for a post page on www', () => {
-      const value = 'https://www.bloggang.com/viewblog.php?id=gonga&date=25-11-2007&group=1&gblog=3'
+      const value = 'https://www.bloggang.com/viewblog.php?id=alice&date=25-11-2007&group=1&gblog=3'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://gonga.bloggang.com/rss',
+          uri: 'https://alice.bloggang.com/rss',
           hint: { key: 'bloggang:posts', label: 'Posts' },
         },
       ]
 
       expect(bloggangHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a posts feed', () => {
+      const value = 'https://alice.bloggang.com/rss'
+      const expected: DiscoverUriHint = { key: 'bloggang:posts', label: 'Posts' }
+
+      expect(bloggangHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a posts feed of a username with an underscore', () => {
+      const value = 'https://alice_example.bloggang.com/rss'
+      const expected: DiscoverUriHint = { key: 'bloggang:posts', label: 'Posts' }
+
+      expect(bloggangHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for the rss path on the mobile host', () => {
+      const value = 'https://m.bloggang.com/rss'
+
+      expect(bloggangHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the rss path on www', () => {
+      const value = 'https://www.bloggang.com/rss'
+
+      expect(bloggangHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://alice.bloggang.com/'
+
+      expect(bloggangHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://a.alice.bloggang.com/rss'
+
+      expect(bloggangHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/rss'
+
+      expect(bloggangHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const values: Array<[string, DiscoverUriHint]> = [
+      ['https://alice.bloggang.com/rss', { key: 'bloggang:posts', label: 'Posts' }],
+      ['https://alice_example.bloggang.com/rss', { key: 'bloggang:posts', label: 'Posts' }],
+      ['http://alice.bloggang.com/rss', { key: 'bloggang:posts', label: 'Posts' }],
+    ]
+
+    it.each(values)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [bloggangHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

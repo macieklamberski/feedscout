@@ -1,7 +1,7 @@
-import { composeQuery, getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex, wordRegex } from '../../common/utils.js'
+import { digitsRegex, wordRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers paper (html), partly covers category.
@@ -11,7 +11,14 @@ export type PchomeUrl =
   | { kind: 'category'; username: string; category: string }
 
 const hosts = ['mypaper.pchome.com.tw', 'mypaper.m.pchome.com.tw']
-const baseUrl = 'https://mypaper.pchome.com.tw'
+
+const feeds = definePlatformFeeds([
+  {
+    key: 'pchome:category',
+    template: 'https://mypaper.pchome.com.tw/{username}/rss?cid={category}',
+  },
+  { key: 'pchome:posts', template: 'https://mypaper.pchome.com.tw/{username}/rss' },
+])
 
 export const parsePchomeUrl = (url: string): PchomeUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -44,17 +51,18 @@ export const pchomeHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.kind === 'category') {
-      uris.push({
-        uri: `${baseUrl}/${parsed.username}/rss${composeQuery({ cid: parsed.category })}`,
-        hint: composeHint('pchome:category'),
-      })
+      return [
+        feeds.getFeedEntry('pchome:category', {
+          username: parsed.username,
+          category: parsed.category,
+        }),
+        feeds.getFeedEntry('pchome:posts', { username: parsed.username }),
+      ]
     }
 
-    uris.push({ uri: `${baseUrl}/${parsed.username}/rss`, hint: composeHint('pchome:posts') })
-
-    return uris
+    return [feeds.getFeedEntry('pchome:posts', { username: parsed.username })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

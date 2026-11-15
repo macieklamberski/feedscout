@@ -1,8 +1,8 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
-  composeHint,
   type Element,
   findElement,
   hasMarker,
@@ -25,6 +25,81 @@ const indexScriptRegex = /^\/index\.php(?=\/|$)/i
 const homePathRegex = /^(?:\/|\/page\/\d+\/?)?$/i
 
 const assetTags = ['link', 'script']
+const formats: Array<DiscoverUriHint['format']> = ['rss', 'rdf', 'atom']
+
+// A blog on any host is known only by its theme or plugin assets, which a feed URL does not carry,
+// so the feeds are built under the site root and never claimed. A page path keeps its trailing
+// slash, as `/archives/13/`, or its lack of one, as `/archives/13.html`, so each has its own row.
+// The `/index.php` spelling answers whether or not the site rewrites URLs, the short one only when
+// it does, so a site without rewriting gets its feeds through the script.
+const feeds = definePlatformFeeds([
+  { key: 'typecho:posts', template: '{root}/feed/', format: 'rss' },
+  { key: 'typecho:posts', template: '{root}/index.php/feed/', format: 'rss', isAlias: true },
+  { key: 'typecho:posts', template: '{root}/feed/rss/', format: 'rdf' },
+  { key: 'typecho:posts', template: '{root}/index.php/feed/rss/', format: 'rdf', isAlias: true },
+  { key: 'typecho:posts', template: '{root}/feed/atom/', format: 'atom' },
+  { key: 'typecho:posts', template: '{root}/index.php/feed/atom/', format: 'atom', isAlias: true },
+  { key: 'typecho:comments', template: '{root}/feed/comments/', format: 'rss' },
+  {
+    key: 'typecho:comments',
+    template: '{root}/index.php/feed/comments/',
+    format: 'rss',
+    isAlias: true,
+  },
+  { key: 'typecho:comments', template: '{root}/feed/rss/comments/', format: 'rdf' },
+  {
+    key: 'typecho:comments',
+    template: '{root}/index.php/feed/rss/comments/',
+    format: 'rdf',
+    isAlias: true,
+  },
+  { key: 'typecho:comments', template: '{root}/feed/atom/comments/', format: 'atom' },
+  {
+    key: 'typecho:comments',
+    template: '{root}/index.php/feed/atom/comments/',
+    format: 'atom',
+    isAlias: true,
+  },
+  { key: 'typecho:page', template: '{root}/feed/{directory*}/', format: 'rss' },
+  {
+    key: 'typecho:page',
+    template: '{root}/index.php/feed/{directory*}/',
+    format: 'rss',
+    isAlias: true,
+  },
+  { key: 'typecho:page', template: '{root}/feed/{path*}', format: 'rss' },
+  { key: 'typecho:page', template: '{root}/index.php/feed/{path*}', format: 'rss', isAlias: true },
+  { key: 'typecho:page', template: '{root}/feed/rss/{directory*}/', format: 'rdf' },
+  {
+    key: 'typecho:page',
+    template: '{root}/index.php/feed/rss/{directory*}/',
+    format: 'rdf',
+    isAlias: true,
+  },
+  { key: 'typecho:page', template: '{root}/feed/rss/{path*}', format: 'rdf' },
+  {
+    key: 'typecho:page',
+    template: '{root}/index.php/feed/rss/{path*}',
+    format: 'rdf',
+    isAlias: true,
+  },
+  { key: 'typecho:page', template: '{root}/feed/atom/{directory*}/', format: 'atom' },
+  {
+    key: 'typecho:page',
+    template: '{root}/index.php/feed/atom/{directory*}/',
+    format: 'atom',
+    isAlias: true,
+  },
+  { key: 'typecho:page', template: '{root}/feed/atom/{path*}', format: 'atom' },
+  {
+    key: 'typecho:page',
+    template: '{root}/index.php/feed/atom/{path*}',
+    format: 'atom',
+    isAlias: true,
+  },
+])
+
+type TypechoFeedKey = Parameters<typeof feeds.getFeedSpellings>[0]
 
 const getAssetUrl = (element: Element): string => {
   return element.attribs.href ?? element.attribs.src ?? ''
@@ -72,23 +147,24 @@ export const getTypechoPage = (
   return { kind: 'page', siteUrl, path }
 }
 
-// The `/index.php` spelling answers whether or not the site rewrites URLs, the short one only
-// when it does.
-const getFeedEntries = (siteUrl: string, path: string, key: string): Array<DiscoverUriEntry> => {
-  return [
-    {
-      uri: [`${siteUrl}/feed${path}`, `${siteUrl}/index.php/feed${path}`],
-      hint: composeHint(key, 'rss'),
-    },
-    {
-      uri: [`${siteUrl}/feed/rss${path}`, `${siteUrl}/index.php/feed/rss${path}`],
-      hint: composeHint(key, 'rdf'),
-    },
-    {
-      uri: [`${siteUrl}/feed/atom${path}`, `${siteUrl}/index.php/feed/atom${path}`],
-      hint: composeHint(key, 'atom'),
-    },
-  ]
+const getPathParams = (path: string): PlatformFeedParams => {
+  const segments = path.slice(1)
+
+  if (segments.endsWith('/')) {
+    return { directory: segments.slice(0, -1) }
+  }
+
+  return { path: segments }
+}
+
+const getFeedEntries = (
+  siteUrl: string,
+  key: TypechoFeedKey,
+  params?: PlatformFeedParams,
+): Array<DiscoverUriEntry | undefined> => {
+  return formats.map((format) => {
+    return feeds.getFeedSpellings(key, { ...params, root: siteUrl }, format)
+  })
 }
 
 export const typechoHandler: PlatformHandler = {
@@ -107,15 +183,17 @@ export const typechoHandler: PlatformHandler = {
       return []
     }
 
-    const postsEntries = [
-      ...getFeedEntries(page.siteUrl, '/', 'typecho:posts'),
-      ...getFeedEntries(page.siteUrl, '/comments/', 'typecho:comments'),
-    ]
-
     if (page.kind === 'home') {
-      return postsEntries
+      return [
+        ...getFeedEntries(page.siteUrl, 'typecho:posts'),
+        ...getFeedEntries(page.siteUrl, 'typecho:comments'),
+      ]
     }
 
-    return [...getFeedEntries(page.siteUrl, page.path, 'typecho:page'), ...postsEntries]
+    return [
+      ...getFeedEntries(page.siteUrl, 'typecho:page', getPathParams(page.path)),
+      ...getFeedEntries(page.siteUrl, 'typecho:posts'),
+      ...getFeedEntries(page.siteUrl, 'typecho:comments'),
+    ]
   },
 }

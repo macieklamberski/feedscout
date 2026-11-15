@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { TumblrUrl } from './tumblr.js'
 import { parseTumblrUrl, tumblrHandler } from './tumblr.js'
 
@@ -114,20 +117,40 @@ describe('tumblrHandler', () => {
 
     it('should return the tag feed for a capitalized tagged segment', () => {
       const value = 'https://example.tumblr.com/Tagged/updates'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.tumblr.com/tagged/updates/rss',
           hint: { key: 'tumblr:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://example.tumblr.com/rss',
+          hint: { key: 'tumblr:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://example.tumblr.com/?format=rss',
+          hint: { key: 'tumblr:theme-posts', label: 'Theme posts' },
+        },
+        {
+          uri: 'https://example.tumblr.com/podcast',
+          hint: { key: 'tumblr:podcast', label: 'Podcast' },
         },
       ]
 
       expect(tumblrHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return feed URL for blog', () => {
+    it('should return the posts, theme posts and podcast feeds for blog', () => {
       const value = 'https://example.tumblr.com'
       const expected = [
         { uri: 'https://example.tumblr.com/rss', hint: { key: 'tumblr:posts', label: 'Posts' } },
+        {
+          uri: 'https://example.tumblr.com/?format=rss',
+          hint: { key: 'tumblr:theme-posts', label: 'Theme posts' },
+        },
+        {
+          uri: 'https://example.tumblr.com/podcast',
+          hint: { key: 'tumblr:podcast', label: 'Podcast' },
+        },
       ]
 
       expect(tumblrHandler.resolve(value)).toEqual(expected)
@@ -135,23 +158,216 @@ describe('tumblrHandler', () => {
 
     it('should return tagged feed URL for tag page', () => {
       const value = 'https://example.tumblr.com/tagged/photography'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.tumblr.com/tagged/photography/rss',
           hint: { key: 'tumblr:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://example.tumblr.com/rss',
+          hint: { key: 'tumblr:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://example.tumblr.com/?format=rss',
+          hint: { key: 'tumblr:theme-posts', label: 'Theme posts' },
+        },
+        {
+          uri: 'https://example.tumblr.com/podcast',
+          hint: { key: 'tumblr:podcast', label: 'Podcast' },
         },
       ]
 
       expect(tumblrHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return blog subdomain feed URL for www.tumblr.com blog path', () => {
+    it('should return the blog subdomain feeds for www.tumblr.com blog path', () => {
       const value = 'https://www.tumblr.com/example/123/example-post'
       const expected = [
         { uri: 'https://example.tumblr.com/rss', hint: { key: 'tumblr:posts', label: 'Posts' } },
+        {
+          uri: 'https://example.tumblr.com/?format=rss',
+          hint: { key: 'tumblr:theme-posts', label: 'Theme posts' },
+        },
+        {
+          uri: 'https://example.tumblr.com/podcast',
+          hint: { key: 'tumblr:podcast', label: 'Podcast' },
+        },
       ]
 
       expect(tumblrHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the http scheme of an http blog page', () => {
+      const value = 'http://example.tumblr.com/post/123'
+      const expected = [
+        { uri: 'http://example.tumblr.com/rss', hint: { key: 'tumblr:posts', label: 'Posts' } },
+        {
+          uri: 'http://example.tumblr.com/?format=rss',
+          hint: { key: 'tumblr:theme-posts', label: 'Theme posts' },
+        },
+        {
+          uri: 'http://example.tumblr.com/podcast',
+          hint: { key: 'tumblr:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(tumblrHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the http scheme of an http tag page', () => {
+      const value = 'http://example.tumblr.com/tagged/updates'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.tumblr.com/tagged/updates/rss',
+          hint: { key: 'tumblr:tag', label: 'Tag' },
+        },
+        {
+          uri: 'http://example.tumblr.com/rss',
+          hint: { key: 'tumblr:posts', label: 'Posts' },
+        },
+        {
+          uri: 'http://example.tumblr.com/?format=rss',
+          hint: { key: 'tumblr:theme-posts', label: 'Theme posts' },
+        },
+        {
+          uri: 'http://example.tumblr.com/podcast',
+          hint: { key: 'tumblr:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(tumblrHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a blog feed', () => {
+      const value = 'https://example.tumblr.com/rss'
+      const expected: DiscoverUriHint = { key: 'tumblr:posts', label: 'Posts' }
+
+      expect(tumblrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a blog feed with a trailing slash', () => {
+      const value = 'https://example.tumblr.com/rss/'
+      const expected: DiscoverUriHint = { key: 'tumblr:posts', label: 'Posts' }
+
+      expect(tumblrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a blog feed on a www subdomain', () => {
+      const value = 'https://www.example.tumblr.com/rss'
+
+      expect(tumblrHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return the posts hint for an http blog feed', () => {
+      const value = 'http://example.tumblr.com/rss'
+      const expected: DiscoverUriHint = { key: 'tumblr:posts', label: 'Posts' }
+
+      expect(tumblrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a tag feed', () => {
+      const value = 'https://example.tumblr.com/tagged/updates/rss'
+      const expected: DiscoverUriHint = { key: 'tumblr:tag', label: 'Tag' }
+
+      expect(tumblrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a percent-encoded tag feed', () => {
+      const value = 'https://example.tumblr.com/tagged/caf%C3%A9/rss'
+      const expected: DiscoverUriHint = { key: 'tumblr:tag', label: 'Tag' }
+
+      expect(tumblrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the theme posts hint for the format query on the blog root', () => {
+      const value = 'https://example.tumblr.com/?format=rss'
+      const expected: DiscoverUriHint = { key: 'tumblr:theme-posts', label: 'Theme posts' }
+
+      expect(tumblrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for a podcast feed', () => {
+      const value = 'https://example.tumblr.com/podcast'
+      const expected: DiscoverUriHint = { key: 'tumblr:podcast', label: 'Podcast' }
+
+      expect(tumblrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for a podcast feed under rss', () => {
+      const value = 'https://example.tumblr.com/podcast/rss'
+      const expected: DiscoverUriHint = { key: 'tumblr:podcast', label: 'Podcast' }
+
+      expect(tumblrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for the format query on a post page', () => {
+      const value = 'https://example.tumblr.com/post/123?format=rss'
+
+      expect(tumblrHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://example.tumblr.com/post/123'
+
+      expect(tumblrHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a tag page', () => {
+      const value = 'https://example.tumblr.com/tagged/updates'
+
+      expect(tumblrHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on www.tumblr.com', () => {
+      const value = 'https://www.tumblr.com/example/rss'
+
+      expect(tumblrHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.example.tumblr.com/rss'
+
+      expect(tumblrHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://tumblr.com/rss'
+
+      expect(tumblrHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/rss'
+
+      expect(tumblrHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://example.tumblr.com/rss', { key: 'tumblr:posts', label: 'Posts' }],
+      ['https://example.tumblr.com/rss/', { key: 'tumblr:posts', label: 'Posts' }],
+      ['https://example.tumblr.com/tagged/updates/rss', { key: 'tumblr:tag', label: 'Tag' }],
+      ['https://example.tumblr.com/tagged/updates/rss/', { key: 'tumblr:tag', label: 'Tag' }],
+      [
+        'https://example.tumblr.com/?format=rss',
+        { key: 'tumblr:theme-posts', label: 'Theme posts' },
+      ],
+      ['https://example.tumblr.com/podcast', { key: 'tumblr:podcast', label: 'Podcast' }],
+      ['https://example.tumblr.com/podcast/rss', { key: 'tumblr:podcast', label: 'Podcast' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [tumblrHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

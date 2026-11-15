@@ -1,18 +1,31 @@
 import { getPathSegments, isAnyOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { findElement, getBrandDomainRegex, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers article, site (html), partly covers section.
 
 export type WebnodeUrl = { kind: 'section'; section: string } | { kind: 'site' }
 
+// Webnode's country domains, with `webnode.page` and `webnode.cat`.
+const domains = [getBrandDomainRegex('webnode')]
+
 const clientScriptPrefix = 'https://d11bh4d8fhuq47.cloudfront.net/_system/client/'
 
 // Articles, e-shop products and article archives belong to the site, and their slugs can repeat a
 // section's slug.
 const itemPaths = ['archive', 'news', 'products']
+
+// A site on its own domain is known only by its marker, so its feeds are built here but not
+// claimed. The site-wide row comes first, as it also fits the section row.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'webnode:articles', template: '{scheme}://{host}/rss/all.xml' },
+    { key: 'webnode:section', template: '{scheme}://{host}/rss/{section}.xml' },
+  ],
+  { domains },
+)
 
 // The classic editor loads its client script from this host on every page. Webnode 2 pages load
 // none of it and serve no feeds.
@@ -50,18 +63,21 @@ export const webnodeHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseWebnodeUrl(url)
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
+    const page = feeds.forUrl(url)
 
-    if (parsed.kind === 'section') {
-      uris.push({
-        uri: `${origin}/rss/${parsed.section}.xml`,
-        hint: composeHint('webnode:section'),
-      })
+    if (!page) {
+      return []
     }
 
-    uris.push({ uri: `${origin}/rss/all.xml`, hint: composeHint('webnode:articles') })
+    if (parsed.kind === 'section') {
+      return [
+        page.getFeedEntry('webnode:section', { section: parsed.section }),
+        page.getFeedEntry('webnode:articles'),
+      ]
+    }
 
-    return uris
+    return [page.getFeedEntry('webnode:articles')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

@@ -6,17 +6,18 @@ import { parseHabrUrl } from '../../feeds/platforms/habr.js'
 const placeholderRegex = /^https:\/\/assets\.habr\.com\/.+\/img\/avatars\/\d+\.png$/i
 
 const getCardClass = (url: string): string | undefined => {
-  const kind = parseHabrUrl(url)?.kind
+  const parsed = parseHabrUrl(url)
 
-  if (kind === 'hub') {
+  if (parsed?.kind === 'hub') {
     return 'tm-hub-card__avatar'
   }
 
-  if (kind === 'user') {
+  if (parsed?.kind === 'user') {
     return 'user-card'
   }
 
-  if (kind === 'company') {
+  // A company article page carries the company card beside the article.
+  if (parsed?.kind === 'company' || (parsed?.kind === 'article' && parsed.company)) {
     return 'company-card'
   }
 }

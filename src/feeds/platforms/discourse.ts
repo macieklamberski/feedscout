@@ -1,8 +1,7 @@
-import { composeQuery, getAnyOf, getQueryParam, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getAnyOf, getQueryParam, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
-  composeHint,
   digitsRegex,
   findElement,
   formatSuffixRegex,
@@ -19,18 +18,40 @@ export type DiscourseUrl =
   | { kind: 'topic'; slug: string; topicId: string }
   | { kind: 'user'; username: string }
   | { kind: 'category'; category: string }
+  | { kind: 'tag'; tag: string }
   | { kind: 'top'; period?: string }
   | { kind: 'latest' }
 export type DiscoursePage = DiscourseUrl & { siteUrl: string }
 
 const userRegex = /^\/u\/([^/]+)/i
-// A category page takes a `/none` or `/all` subcategory tail and an `/l/{filter}` list tail, and the
-// category feed answers only without them.
+// A category page takes a `/none` or `/all` subcategory tail and an `/l/{filter}` list tail, and
+// the category feed answers only without them.
 const categoryRegex = /^\/c\/(.+?)(?:\/(?:none|all))?(?:\/l\/.+)?\/?$/i
+// A tag page is `/tag/{slug}` or `/tag/{slug}/{id}`, with an optional `/l/{filter}` list tail.
+const tagRegex = /^\/tag\/([^/]+(?:\/[^/]+)?)(?:\/l\/.+)?\/?$/i
 const topicRegex = /^\/t\/(?<slug>[^/]+)\/(?<topicId>[^/]+)/i
 const topRegex = /^\/top(?:\/([^/]+))?\/?$/i
 
 const validTopPeriods = ['daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'all']
+
+const domains = ['discourse.group', 'trydiscourse.com']
+
+// The feeds of a forum from its root, which a platform subdomain serves from and an install on its
+// own domain can put under a sub-path its markup names.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'discourse:topic', template: '{root}/t/{slug}/{topicId}.rss' },
+    { key: 'discourse:activity', template: '{root}/u/{username}/activity.rss' },
+    { key: 'discourse:category', template: '{root}/c/{category*}.rss' },
+    { key: 'discourse:tag', template: '{root}/tag/{slug}/{id}.rss' },
+    { key: 'discourse:tag', template: '{root}/tag/{slug}.rss', isAlias: true },
+    { key: 'discourse:top', template: '{root}/top.rss?period={period}' },
+    { key: 'discourse:top', template: '{root}/top.rss' },
+    { key: 'discourse:latest', template: '{root}/latest.rss' },
+    { key: 'discourse:posts', template: '{root}/posts.rss' },
+  ],
+  { domains },
+)
 
 const getTopPeriod = (
   pathPeriod: string | undefined,
@@ -68,6 +89,13 @@ export const parseDiscourseUrl = (url: string): DiscourseUrl | undefined => {
 
   if (category) {
     return { kind: 'category', category }
+  }
+
+  // A tag also answers with a format extension, as `.rss`.
+  const tag = pathname.match(tagRegex)?.[1]?.replace(formatSuffixRegex, '')
+
+  if (tag) {
+    return { kind: 'tag', tag }
   }
 
   // Top topics: /top or /top/{period}
@@ -134,60 +162,67 @@ export const discourseHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getDiscoursePage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
+    const root = page.siteUrl
+
+    // The latest topics and posts need no value from the page, so every page builds them after its
+    // own feeds.
     if (page.kind === 'topic') {
       return [
-        {
-          uri: `${page.siteUrl}/t/${page.slug}/${page.topicId}.rss`,
-          hint: composeHint('discourse:topic'),
-        },
+        pageFeeds.getFeedEntry('discourse:topic', {
+          root,
+          slug: page.slug,
+          topicId: page.topicId,
+        }),
+        pageFeeds.getFeedEntry('discourse:latest', { root }),
+        pageFeeds.getFeedEntry('discourse:posts', { root }),
       ]
     }
 
     if (page.kind === 'user') {
       return [
-        {
-          uri: `${page.siteUrl}/u/${page.username}/activity.rss`,
-          hint: composeHint('discourse:activity'),
-        },
+        pageFeeds.getFeedEntry('discourse:activity', { root, username: page.username }),
+        pageFeeds.getFeedEntry('discourse:latest', { root }),
+        pageFeeds.getFeedEntry('discourse:posts', { root }),
       ]
     }
 
     if (page.kind === 'category') {
       return [
-        {
-          uri: `${page.siteUrl}/c/${page.category}.rss`,
-          hint: composeHint('discourse:category'),
-        },
+        pageFeeds.getFeedEntry('discourse:category', { root, category: page.category }),
+        pageFeeds.getFeedEntry('discourse:latest', { root }),
+        pageFeeds.getFeedEntry('discourse:posts', { root }),
+      ]
+    }
+
+    if (page.kind === 'tag') {
+      const [slug, id] = page.tag.split('/')
+
+      return [
+        pageFeeds.getFeedEntry('discourse:tag', { root, slug, id }),
+        pageFeeds.getFeedEntry('discourse:latest', { root }),
+        pageFeeds.getFeedEntry('discourse:posts', { root }),
       ]
     }
 
     if (page.kind === 'top') {
-      const periodQuery = page.period ? composeQuery({ period: page.period }) : ''
-
       return [
-        {
-          uri: `${page.siteUrl}/top.rss${periodQuery}`,
-          hint: composeHint('discourse:top'),
-        },
+        pageFeeds.getFeedEntry('discourse:top', { root, period: page.period }),
+        pageFeeds.getFeedEntry('discourse:latest', { root }),
+        pageFeeds.getFeedEntry('discourse:posts', { root }),
       ]
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
-    uris.push({
-      uri: `${page.siteUrl}/latest.rss`,
-      hint: composeHint('discourse:latest'),
-    })
-    uris.push({
-      uri: `${page.siteUrl}/posts.rss`,
-      hint: composeHint('discourse:posts'),
-    })
-
-    return uris
+    return [
+      pageFeeds.getFeedEntry('discourse:latest', { root }),
+      pageFeeds.getFeedEntry('discourse:posts', { root }),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

@@ -136,6 +136,15 @@ describe('habrHandler', () => {
 
         expect(result).toEqual(expected)
       })
+
+      it('should return the company logo from the company card on a company article', async () => {
+        const value = 'https://habr.com/ru/companies/example/articles/123456/'
+        const content = createCompanyPage(companyLogo)
+        const result = await habrHandler.resolve(value, content)
+        const expected = [{ uri: companyLogo }]
+
+        expect(result).toEqual(expected)
+      })
     })
 
     describe('sad paths', () => {

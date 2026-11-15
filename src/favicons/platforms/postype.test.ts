@@ -65,6 +65,20 @@ describe('postypeHandler', () => {
 
         expect(postypeHandler.resolve(value, channelPage)).toEqual(expected)
       })
+
+      it('should return a ref to the channel for its feed', () => {
+        const value = 'https://www.postype.com/@example/rss'
+        const expected = [createRef(value)]
+
+        expect(postypeHandler.resolve(value)).toEqual(expected)
+      })
+
+      it('should return a ref to the channel for a subdomain feed', () => {
+        const value = 'https://example.postype.com/rss'
+        const expected = [createRef(value)]
+
+        expect(postypeHandler.resolve(value)).toEqual(expected)
+      })
     })
 
     describe('sad paths', () => {

@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type PlurkUrl, parsePlurkUrl, plurkHandler } from './plurk.js'
 
 describe('parsePlurkUrl', () => {
@@ -26,22 +29,20 @@ describe('parsePlurkUrl', () => {
     expect(parsePlurkUrl('https://www.plurk.com/u/alice')).toEqual(expected)
   })
 
-  it('should return a page for the root', () => {
-    const expected: PlurkUrl = { kind: 'page' }
-
-    expect(parsePlurkUrl('https://www.plurk.com/')).toEqual(expected)
+  it('should return undefined for the root', () => {
+    expect(parsePlurkUrl('https://www.plurk.com/')).toBeUndefined()
   })
 
-  it('should return a page for a dotted first segment', () => {
-    const expected: PlurkUrl = { kind: 'page' }
-
-    expect(parsePlurkUrl('https://www.plurk.com/robots.txt')).toEqual(expected)
+  it('should return undefined for a dotted first segment', () => {
+    expect(parsePlurkUrl('https://www.plurk.com/robots.txt')).toBeUndefined()
   })
 
-  it('should return a page for a user feed path', () => {
-    const expected: PlurkUrl = { kind: 'page' }
+  it('should return undefined for a post path without an id', () => {
+    expect(parsePlurkUrl('https://www.plurk.com/p')).toBeUndefined()
+  })
 
-    expect(parsePlurkUrl('https://www.plurk.com/alice.xml')).toEqual(expected)
+  it('should return undefined for the mobile root', () => {
+    expect(parsePlurkUrl('https://www.plurk.com/m/')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -57,6 +58,10 @@ describe('plurkHandler', () => {
 
     it('should not match another host', () => {
       expect(plurkHandler.match('https://example.com/alice')).toBe(false)
+    })
+
+    it('should not match a file of the site', () => {
+      expect(plurkHandler.match('https://www.plurk.com/robots.txt')).toBe(false)
     })
   })
 
@@ -136,23 +141,54 @@ describe('plurkHandler', () => {
 
       expect(plurkHandler.resolve(value)).toEqual(expected)
     })
+  })
 
-    it('should return nothing for a post path without an id', () => {
-      expect(plurkHandler.resolve('https://www.plurk.com/p')).toEqual([])
+  describe('getFeedHint', () => {
+    it('should return the plurks hint for a user feed', () => {
+      const value = 'https://www.plurk.com/alice.xml'
+      const expected: DiscoverUriHint = { key: 'plurk:plurks', label: 'Plurks' }
+
+      expect(plurkHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return nothing for the home page', () => {
-      expect(plurkHandler.resolve('https://www.plurk.com/')).toEqual([])
+    it('should return the plurks hint for a user feed under /user/', () => {
+      const value = 'https://www.plurk.com/user/alice.xml'
+      const expected: DiscoverUriHint = { key: 'plurk:plurks', label: 'Plurks' }
+
+      expect(plurkHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the responses hint for a post feed', () => {
+      const value = 'https://www.plurk.com/p/abc123.xml'
+      const expected: DiscoverUriHint = { key: 'plurk:responses', label: 'Responses' }
+
+      expect(plurkHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a user page', () => {
+      const value = 'https://www.plurk.com/alice'
+
+      expect(plurkHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
-  describe('guessExclusionRegex', () => {
-    it('should match a guessed root feed, which is a user feed on Plurk', () => {
-      expect(plurkHandler.guessExclusionRegex?.test('https://www.plurk.com/feed.xml')).toBe(true)
-    })
+  describe('discoverUrisFromPlatform', () => {
+    const ownFeeds: Array<string> = [
+      'https://www.plurk.com/user/alice.xml',
+      'https://www.plurk.com/alice.xml',
+    ]
 
-    it('should not match a post feed', () => {
-      expect(plurkHandler.guessExclusionRegex?.test('https://www.plurk.com/p/abc.xml')).toBe(false)
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [plurkHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'plurk:plurks', label: 'Plurks' } },
+      ]
+
+      expect(result).toEqual(expected)
     })
   })
 })

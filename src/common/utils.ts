@@ -1,8 +1,10 @@
 import { DomUtils, parseDocument } from 'htmlparser2'
 import {
   anyWordMatchesAnyOf,
+  escapeRegex,
   getSubdomain,
   isAnyOf,
+  isHostname,
   isInteger,
   isSameText,
   isString,
@@ -40,6 +42,12 @@ export const letterThenWordOrHyphenRegex = /^[a-zA-Z][\w-]*$/
 export const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 // A format extension after a value that cannot hold a dot, as `.rss` or `.html`.
 export const formatSuffixRegex = /\.[a-z]+$/i
+
+// A brand's domain under any top-level domain of two or more letters, or under a `co.` or `com.`
+// country second level, as `blogspot.de`, `blogspot.cat`, `blogspot.co.uk` and `blogspot.com.br`.
+export const getBrandDomainRegex = (brand: string): RegExp => {
+  return new RegExp(`^${escapeRegex(brand)}\\.(?:[a-z]{2,}|(?:co|com)\\.[a-z]{2})$`)
+}
 
 // The `id` group the regex reads from the value, when it is all digits.
 export const getNumericId = (value: string | undefined, regex: RegExp): string | undefined => {
@@ -237,7 +245,7 @@ const trailingSlashRegex = /\/$/
 // platform's own site everywhere.
 export const getTenantSubdomain = (
   url: string | URL,
-  domains: Array<string>,
+  domains: Array<string | RegExp>,
 ): string | undefined => {
   const subdomain = getSubdomain(url, domains)
 
@@ -272,7 +280,9 @@ export const isRootOfPage = (rootUrl: string, url: string): boolean => {
 }
 
 // A value written into a host passes only when the parsed URL keeps it as the whole host, so
-// `a@b.example` or `open/x` cuts no other host out of it, and an empty label as in `..` is refused.
+// `a@b.example` or `open/x` cuts no other host out of it. The URL parser also keeps `a,b.example`
+// and `a~b.example`, and a final dot spells the host a second way. A label may start or end with
+// `-`, as live tenants on LiveJournal and Tumblr do.
 export const getHostOrigin = (host: string): string | undefined => {
   const parsedUrl = parseUrl(`https://${host}`)
 
@@ -280,7 +290,7 @@ export const getHostOrigin = (host: string): string | undefined => {
     return
   }
 
-  if (parsedUrl.hostname.split('.').includes('')) {
+  if (!isHostname(parsedUrl.hostname) || parsedUrl.hostname.endsWith('.')) {
     return
   }
 

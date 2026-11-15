@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { isKohaHtml, type KohaUrl, kohaHandler, parseKohaUrl } from './koha.js'
 
 const kohaHtml = `
@@ -94,33 +97,50 @@ describe('parseKohaUrl', () => {
     expect(parseKohaUrl(value)).toEqual(expected)
   })
 
-  it('should return undefined for a search page without a query', () => {
+  it('should return an OPAC page for a search page without a query', () => {
     const value = 'https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-search.pl?q=&idx=kw'
+    const expected: KohaUrl = { kind: 'opac', root: '' }
 
-    expect(parseKohaUrl(value)).toBeUndefined()
+    expect(parseKohaUrl(value)).toEqual(expected)
   })
 
-  it('should return undefined for the list of public lists', () => {
+  it('should return an OPAC page for the list of public lists', () => {
     const value = 'https://library-search.nics.gov.uk/cgi-bin/koha/opac-shelves.pl?op=list&public=1'
+    const expected: KohaUrl = { kind: 'opac', root: '' }
 
-    expect(parseKohaUrl(value)).toBeUndefined()
+    expect(parseKohaUrl(value)).toEqual(expected)
   })
 
-  it('should return undefined for a list page with a non-numeric shelf number', () => {
+  it('should return an OPAC page for a list page with a non-numeric shelf number', () => {
     const value =
       'https://library-search.nics.gov.uk/cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber=abc'
+    const expected: KohaUrl = { kind: 'opac', root: '' }
 
-    expect(parseKohaUrl(value)).toBeUndefined()
+    expect(parseKohaUrl(value)).toEqual(expected)
   })
 
-  it('should return undefined for the OPAC home page', () => {
+  it('should return an OPAC page for the OPAC home page', () => {
     const value = 'https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-main.pl'
+    const expected: KohaUrl = { kind: 'opac', root: '' }
+
+    expect(parseKohaUrl(value)).toEqual(expected)
+  })
+
+  it('should return an OPAC page for a record page under a base path', () => {
+    const value = 'https://example.edu/library/cgi-bin/koha/opac-detail.pl?biblionumber=1'
+    const expected: KohaUrl = { kind: 'opac', root: '/library' }
+
+    expect(parseKohaUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for a staff interface page', () => {
+    const value = 'https://biblioteca.unach.edu.ec/cgi-bin/koha/mainpage.pl'
 
     expect(parseKohaUrl(value)).toBeUndefined()
   })
 
-  it('should return undefined for the news feed', () => {
-    const value = 'https://library.imar.ro/cgi-bin/koha/opac-news-rss.pl'
+  it('should return undefined for a page outside the scripts', () => {
+    const value = 'https://biblioteca.unach.edu.ec/'
 
     expect(parseKohaUrl(value)).toBeUndefined()
   })
@@ -150,16 +170,46 @@ describe('kohaHandler', () => {
       expect(kohaHandler.match(value, otherHtml)).toBe(false)
     })
 
-    it('should not match a Koha page that names no feed', () => {
+    it('should match the OPAC home page', () => {
       const value = 'https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-main.pl'
+
+      expect(kohaHandler.match(value, kohaHtml)).toBe(true)
+    })
+
+    it('should not match a staff interface page', () => {
+      const value = 'https://biblioteca.unach.edu.ec/cgi-bin/koha/mainpage.pl'
 
       expect(kohaHandler.match(value, kohaHtml)).toBe(false)
     })
   })
 
   describe('resolve', () => {
-    it('should return empty array for a Koha page that names no feed', () => {
+    it('should return the news feed for the OPAC home page', () => {
       const value = 'https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-main.pl'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-news-rss.pl',
+          hint: { key: 'koha:news', label: 'News' },
+        },
+      ]
+
+      expect(kohaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the news feed for a search page without a query', () => {
+      const value = 'https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-search.pl?q=&idx=kw'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-news-rss.pl',
+          hint: { key: 'koha:news', label: 'News' },
+        },
+      ]
+
+      expect(kohaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return an empty array for a staff interface page', () => {
+      const value = 'https://biblioteca.unach.edu.ec/cgi-bin/koha/mainpage.pl'
 
       expect(kohaHandler.resolve(value)).toEqual([])
     })
@@ -167,13 +217,17 @@ describe('kohaHandler', () => {
     it('should return the search feed for a search page', () => {
       const value =
         'https://opac.iub.edu.bd/cgi-bin/koha/opac-search.pl?idx=kw&q=water&sort_by=title_az'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: [
             'https://opac.iub.edu.bd/cgi-bin/koha/opac-search.pl?idx=kw&q=water&count=50&sort_by=acqdate_dsc&format=rss',
             'https://opac.iub.edu.bd/cgi-bin/koha/opac-search.pl?idx=kw&q=water&count=50&sort_by=acqdate_dsc&format=rss2',
           ],
           hint: { key: 'koha:search', label: 'Search' },
+        },
+        {
+          uri: 'https://opac.iub.edu.bd/cgi-bin/koha/opac-news-rss.pl',
+          hint: { key: 'koha:news', label: 'News' },
         },
       ]
 
@@ -183,10 +237,47 @@ describe('kohaHandler', () => {
     it('should return the list feed for a list page', () => {
       const value =
         'https://library-search.nics.gov.uk/cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber=309'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://library-search.nics.gov.uk/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber=309',
           hint: { key: 'koha:list', label: 'List' },
+        },
+        {
+          uri: 'https://library-search.nics.gov.uk/cgi-bin/koha/opac-news-rss.pl',
+          hint: { key: 'koha:news', label: 'News' },
+        },
+      ]
+
+      expect(kohaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the doubled slash of a list page under an install printed with one', () => {
+      const value =
+        'https://library.example.edu//cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber=309'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://library.example.edu//cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber=309',
+          hint: { key: 'koha:list', label: 'List' },
+        },
+        {
+          uri: 'https://library.example.edu//cgi-bin/koha/opac-news-rss.pl',
+          hint: { key: 'koha:news', label: 'News' },
+        },
+      ]
+
+      expect(kohaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the comments feed under the base path of an install', () => {
+      const value = 'http://library.example.edu/opac/cgi-bin/koha/opac-showreviews.pl'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://library.example.edu/opac/cgi-bin/koha/opac-showreviews.pl?format=rss',
+          hint: { key: 'koha:comments', label: 'Recent comments' },
+        },
+        {
+          uri: 'http://library.example.edu/opac/cgi-bin/koha/opac-news-rss.pl',
+          hint: { key: 'koha:news', label: 'News' },
         },
       ]
 
@@ -195,14 +286,134 @@ describe('kohaHandler', () => {
 
     it('should return the comments feed for the comments page', () => {
       const value = 'https://opac.northsouth.edu/cgi-bin/koha/opac-showreviews.pl'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://opac.northsouth.edu/cgi-bin/koha/opac-showreviews.pl?format=rss',
           hint: { key: 'koha:comments', label: 'Recent comments' },
         },
+        {
+          uri: 'https://opac.northsouth.edu/cgi-bin/koha/opac-news-rss.pl',
+          hint: { key: 'koha:news', label: 'News' },
+        },
       ]
 
       expect(kohaHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the search hint for a search feed on kohacatalog.com', () => {
+      const value =
+        'https://example.kohacatalog.com/cgi-bin/koha/opac-search.pl?format=rss&idx=ti&q=water&sort_by=relevance'
+      const expected: DiscoverUriHint = { key: 'koha:search', label: 'Search' }
+
+      expect(kohaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the search hint for an rss2 search feed', () => {
+      const value =
+        'https://example.kohacatalog.com/cgi-bin/koha/opac-search.pl?q=water&count=50&sort_by=acqdate_dsc&format=rss2'
+      const expected: DiscoverUriHint = { key: 'koha:search', label: 'Search' }
+
+      expect(kohaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the list hint for a list feed', () => {
+      const value =
+        'https://example.kohacatalog.com/cgi-bin/koha/opac-shelves.pl?op=view&rss=1&shelfnumber=12'
+      const expected: DiscoverUriHint = { key: 'koha:list', label: 'List' }
+
+      expect(kohaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the comments hint for a comments feed', () => {
+      const value = 'https://example.kohacatalog.com/cgi-bin/koha/opac-showreviews.pl?format=rss'
+      const expected: DiscoverUriHint = { key: 'koha:comments', label: 'Recent comments' }
+
+      expect(kohaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the news hint for a news feed', () => {
+      const value = 'https://example.kohacatalog.com/cgi-bin/koha/opac-news-rss.pl'
+      const expected: DiscoverUriHint = { key: 'koha:news', label: 'News' }
+
+      expect(kohaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the list hint for an http list feed', () => {
+      const value =
+        'http://example.kohacatalog.com/cgi-bin/koha/opac-shelves.pl?op=view&rss=1&shelfnumber=12'
+      const expected: DiscoverUriHint = { key: 'koha:list', label: 'List' }
+
+      expect(kohaHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a search page', () => {
+      const value = 'https://example.kohacatalog.com/cgi-bin/koha/opac-search.pl?q=water'
+
+      expect(kohaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a list page', () => {
+      const value =
+        'https://example.kohacatalog.com/cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber=12'
+
+      expect(kohaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www host', () => {
+      const value = 'https://www.kohacatalog.com/cgi-bin/koha/opac-showreviews.pl?format=rss'
+
+      expect(kohaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value =
+        'https://opac.example.kohacatalog.com/cgi-bin/koha/opac-showreviews.pl?format=rss'
+
+      expect(kohaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://example.com/cgi-bin/koha/opac-showreviews.pl?format=rss'
+
+      expect(kohaHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.kohacatalog.com/cgi-bin/koha/opac-search.pl?format=rss&idx=ti&q=water&sort_by=relevance',
+        { key: 'koha:search', label: 'Search' },
+      ],
+      [
+        'https://example.kohacatalog.com/cgi-bin/koha/opac-search.pl?q=water&count=50&sort_by=acqdate_dsc&format=rss2',
+        { key: 'koha:search', label: 'Search' },
+      ],
+      [
+        'https://example.kohacatalog.com/cgi-bin/koha/opac-shelves.pl?op=view&rss=1&shelfnumber=12',
+        { key: 'koha:list', label: 'List' },
+      ],
+      [
+        'https://example.kohacatalog.com/cgi-bin/koha/opac-showreviews.pl?format=rss',
+        { key: 'koha:comments', label: 'Recent comments' },
+      ],
+      [
+        'http://example.kohacatalog.com/cgi-bin/koha/opac-news-rss.pl',
+        { key: 'koha:news', label: 'News' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [kohaHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type IsProgrammerUrl, isProgrammerHandler, parseIsProgrammerUrl } from './isProgrammer.js'
 
 describe('parseIsProgrammerUrl', () => {
@@ -98,7 +100,7 @@ describe('isProgrammerHandler', () => {
       const value = 'http://alice.is-programmer.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://alice.is-programmer.com/posts.rss',
+          uri: 'http://alice.is-programmer.com/feed',
           hint: { key: 'is-programmer:posts', label: 'Posts' },
         },
         {
@@ -122,7 +124,7 @@ describe('isProgrammerHandler', () => {
       const value = 'https://alice.is-programmer.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://alice.is-programmer.com/posts.rss',
+          uri: 'http://alice.is-programmer.com/feed',
           hint: { key: 'is-programmer:posts', label: 'Posts' },
         },
         {
@@ -150,7 +152,7 @@ describe('isProgrammerHandler', () => {
           hint: { key: 'is-programmer:post-comments', label: 'Post comments' },
         },
         {
-          uri: 'http://alice.is-programmer.com/posts.rss',
+          uri: 'http://alice.is-programmer.com/feed',
           hint: { key: 'is-programmer:posts', label: 'Posts' },
         },
         {
@@ -168,6 +170,152 @@ describe('isProgrammerHandler', () => {
       ]
 
       expect(isProgrammerHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the post comments hint for a post comments feed', () => {
+      const value = 'http://joe.is-programmer.com/posts/17753.rss'
+      const expected: DiscoverUriHint = {
+        key: 'is-programmer:post-comments',
+        label: 'Post comments',
+      }
+
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a posts feed', () => {
+      const value = 'http://carol.is-programmer.com/posts.rss'
+      const expected: DiscoverUriHint = { key: 'is-programmer:posts', label: 'Posts' }
+
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a posts feed at /feed', () => {
+      const value = 'http://erin.is-programmer.com/feed'
+      const expected: DiscoverUriHint = { key: 'is-programmer:posts', label: 'Posts' }
+
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a posts feed at /feed.rss', () => {
+      const value = 'http://grace.is-programmer.com/feed.rss'
+      const expected: DiscoverUriHint = { key: 'is-programmer:posts', label: 'Posts' }
+
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a posts feed at /rss', () => {
+      const value = 'http://frank.is-programmer.com/rss'
+      const expected: DiscoverUriHint = { key: 'is-programmer:posts', label: 'Posts' }
+
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a posts feed at /?format=rss', () => {
+      const value = 'http://dave.is-programmer.com/?format=rss'
+      const expected: DiscoverUriHint = { key: 'is-programmer:posts', label: 'Posts' }
+
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the comments hint for a comments feed', () => {
+      const value = 'http://carol.is-programmer.com/comments.rss'
+      const expected: DiscoverUriHint = { key: 'is-programmer:comments', label: 'Comments' }
+
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the messages hint for a messages feed', () => {
+      const value = 'http://carol.is-programmer.com/messages.rss'
+      const expected: DiscoverUriHint = { key: 'is-programmer:messages', label: 'Messages' }
+
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the site hint for a site feed', () => {
+      const value = 'http://carol.is-programmer.com/site.rss'
+      const expected: DiscoverUriHint = { key: 'is-programmer:site', label: 'Site' }
+
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the post comments hint for a feed from a mixed-case host', () => {
+      const value = 'http://Joe.is-programmer.com/posts/17753.rss'
+      const expected: DiscoverUriHint = {
+        key: 'is-programmer:post-comments',
+        label: 'Post comments',
+      }
+
+      expect(isProgrammerHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a post page', () => {
+      const value = 'http://joe.is-programmer.com/posts/17753.html'
+
+      expect(isProgrammerHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a blog home page', () => {
+      const value = 'http://joe.is-programmer.com/'
+
+      expect(isProgrammerHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex domain', () => {
+      const value = 'http://is-programmer.com/posts.rss'
+
+      expect(isProgrammerHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a host below a blog subdomain', () => {
+      const value = 'http://blog.joe.is-programmer.com/posts.rss'
+
+      expect(isProgrammerHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'http://joe.example.com/posts.rss'
+
+      expect(isProgrammerHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'http://joe.is-programmer.com/posts/17753.rss',
+        { key: 'is-programmer:post-comments', label: 'Post comments' },
+      ],
+      [
+        'http://heidi.is-programmer.com/posts/409.rss',
+        { key: 'is-programmer:post-comments', label: 'Post comments' },
+      ],
+      ['http://carol.is-programmer.com/posts.rss', { key: 'is-programmer:posts', label: 'Posts' }],
+      ['http://erin.is-programmer.com/feed', { key: 'is-programmer:posts', label: 'Posts' }],
+      ['http://grace.is-programmer.com/feed.rss', { key: 'is-programmer:posts', label: 'Posts' }],
+      ['http://frank.is-programmer.com/rss', { key: 'is-programmer:posts', label: 'Posts' }],
+      ['http://dave.is-programmer.com/?format=rss', { key: 'is-programmer:posts', label: 'Posts' }],
+      [
+        'http://carol.is-programmer.com/comments.rss',
+        { key: 'is-programmer:comments', label: 'Comments' },
+      ],
+      [
+        'http://carol.is-programmer.com/messages.rss',
+        { key: 'is-programmer:messages', label: 'Messages' },
+      ],
+      ['http://carol.is-programmer.com/site.rss', { key: 'is-programmer:site', label: 'Site' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [isProgrammerHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

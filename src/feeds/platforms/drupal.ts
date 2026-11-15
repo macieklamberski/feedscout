@@ -1,12 +1,17 @@
 import { DomUtils } from 'htmlparser2'
 import { includesAnyOf, isString } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
+import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 import { isGcsWebPage } from './gcsWeb.js'
 
 // Discoverability: Discoverable without handler.
 
 type DrupalSettings = { path?: { baseUrl?: unknown } }
+
+// A site runs on its own domain, under its base path, and is known only by its marker, so its
+// feed is built here but not claimed.
+const feeds = definePlatformFeeds([{ key: 'drupal:site', template: '{root}/rss.xml' }])
 
 export const isDrupalHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Drupal')
@@ -55,6 +60,6 @@ export const drupalHandler: PlatformHandler = {
   resolve: (url, content) => {
     const page = getDrupalPage(url, content)
 
-    return [{ uri: `${page.baseUrl}rss.xml`, hint: composeHint('drupal:site') }]
+    return [feeds.getFeedEntry('drupal:site', { root: page.baseUrl })]
   },
 }

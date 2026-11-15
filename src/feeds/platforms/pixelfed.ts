@@ -1,6 +1,7 @@
 import { parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasAnyMeta, hasMarker } from '../../common/utils.js'
+import { hasAnyMeta, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -12,6 +13,12 @@ const metaMarkers: Array<[string, string]> = [
   ['generator', 'pixelfed'],
   ['application-name', 'Pixelfed'],
 ]
+
+// An instance is known only by its markup, so its feeds are built on the page's origin and claimed
+// on no host.
+const feeds = definePlatformFeeds([
+  { key: 'pixelfed:posts', template: '{root}/users/{username}.atom' },
+])
 
 export const isPixelfedHtml = (content: string): boolean => {
   return hasAnyMeta(content, metaMarkers)
@@ -44,18 +51,12 @@ export const pixelfedHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePixelfedUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
-
-    return [
-      {
-        uri: `${origin}/users/${parsed.username}.atom`,
-        hint: composeHint('pixelfed:posts'),
-      },
-    ]
+    return [pageFeeds.getFeedEntry('pixelfed:posts', { username: parsed.username })]
   },
 }

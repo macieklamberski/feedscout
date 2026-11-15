@@ -34,14 +34,22 @@ describe('getTextpatternPage', () => {
         href="https://example.com/blog/rss/"
       >
     `
-    const expected: TextpatternPage = { kind: 'site', siteUrl: 'https://example.com/blog' }
+    const expected: TextpatternPage = {
+      kind: 'section',
+      siteUrl: 'https://example.com/blog',
+      section: 'articles',
+    }
 
     expect(getTextpatternPage(value, content)).toEqual(expected)
   })
 
   it('should return the origin without content', () => {
     const value = 'https://example.com/blog/articles/1/hello'
-    const expected: TextpatternPage = { kind: 'site', siteUrl: 'https://example.com' }
+    const expected: TextpatternPage = {
+      kind: 'section',
+      siteUrl: 'https://example.com',
+      section: 'blog',
+    }
 
     expect(getTextpatternPage(value, undefined)).toEqual(expected)
   })
@@ -56,7 +64,11 @@ describe('getTextpatternPage', () => {
         href="https://example.com/blog/rss"
       >
     `
-    const expected: TextpatternPage = { kind: 'site', siteUrl: 'https://example.com' }
+    const expected: TextpatternPage = {
+      kind: 'section',
+      siteUrl: 'https://example.com',
+      section: 'articles',
+    }
 
     expect(getTextpatternPage(value, content)).toEqual(expected)
   })
@@ -70,9 +82,58 @@ describe('getTextpatternPage', () => {
         href="https://example.org/blog/rss"
       >
     `
-    const expected: TextpatternPage = { kind: 'site', siteUrl: 'https://example.com' }
+    const expected: TextpatternPage = {
+      kind: 'section',
+      siteUrl: 'https://example.com',
+      section: 'articles',
+    }
 
     expect(getTextpatternPage(value, content)).toEqual(expected)
+  })
+
+  it('should return the site for the home page', () => {
+    const expected: TextpatternPage = { kind: 'site', siteUrl: 'https://example.com' }
+
+    expect(getTextpatternPage('https://example.com/', undefined)).toEqual(expected)
+  })
+
+  it('should return the category for a category page', () => {
+    const value = 'https://example.com/category/News%20Items/'
+    const expected: TextpatternPage = {
+      kind: 'category',
+      siteUrl: 'https://example.com',
+      category: 'News Items',
+    }
+
+    expect(getTextpatternPage(value, undefined)).toEqual(expected)
+  })
+
+  it('should return the category a messy URL names', () => {
+    const value = 'https://example.com/index.php?c=news'
+    const expected: TextpatternPage = {
+      kind: 'category',
+      siteUrl: 'https://example.com',
+      category: 'news',
+    }
+
+    expect(getTextpatternPage(value, undefined)).toEqual(expected)
+  })
+
+  it('should return the section a messy URL names', () => {
+    const value = 'https://example.com/index.php?s=articles'
+    const expected: TextpatternPage = {
+      kind: 'section',
+      siteUrl: 'https://example.com',
+      section: 'articles',
+    }
+
+    expect(getTextpatternPage(value, undefined)).toEqual(expected)
+  })
+
+  it('should return the site for an author page', () => {
+    const expected: TextpatternPage = { kind: 'site', siteUrl: 'https://example.com' }
+
+    expect(getTextpatternPage('https://example.com/author/alice/', undefined)).toEqual(expected)
   })
 })
 
@@ -92,8 +153,8 @@ describe('textpatternHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return the RSS and Atom feeds', () => {
-      const value = 'https://example.com/article/1'
+    it('should return the RSS and Atom feeds for the home page', () => {
+      const value = 'https://example.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/rss',
@@ -108,8 +169,56 @@ describe('textpatternHandler', () => {
       expect(textpatternHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the section feeds before the site feeds for a page in a section', () => {
+      const value = 'https://example.com/articles/1/hello'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/rss?section=articles',
+          hint: { key: 'textpattern:section', label: 'Section', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/atom?section=articles',
+          hint: { key: 'textpattern:section', label: 'Section', format: 'atom' },
+        },
+        {
+          uri: 'https://example.com/rss',
+          hint: { key: 'textpattern:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/atom',
+          hint: { key: 'textpattern:posts', label: 'Posts', format: 'atom' },
+        },
+      ]
+
+      expect(textpatternHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the category feeds before the site feeds for a category page', () => {
+      const value = 'https://example.com/category/news/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/rss?category=news',
+          hint: { key: 'textpattern:category', label: 'Category', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/atom?category=news',
+          hint: { key: 'textpattern:category', label: 'Category', format: 'atom' },
+        },
+        {
+          uri: 'https://example.com/rss',
+          hint: { key: 'textpattern:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/atom',
+          hint: { key: 'textpattern:posts', label: 'Posts', format: 'atom' },
+        },
+      ]
+
+      expect(textpatternHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the feeds of a site under a sub-path', () => {
-      const value = 'https://example.com/blog/articles/1/hello'
+      const value = 'https://example.com/blog/'
       const content = `
         <link
           rel="alternate"

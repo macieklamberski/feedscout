@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   getTransistorPage,
   parseTransistorUrl,
@@ -16,10 +19,6 @@ describe('parseTransistorUrl', () => {
 
   it('should return undefined for the www host', () => {
     expect(parseTransistorUrl('https://www.transistor.fm/')).toBeUndefined()
-  })
-
-  it('should return undefined for the feed host', () => {
-    expect(parseTransistorUrl('https://feeds.transistor.fm/myshow')).toBeUndefined()
   })
 
   it('should return undefined for a nested subdomain', () => {
@@ -44,10 +43,6 @@ describe('getTransistorPage', () => {
     const expected: TransistorPage = { kind: 'show', slug: 'my-show' }
 
     expect(getTransistorPage('https://my-show.transistor.fm/', undefined)).toEqual(expected)
-  })
-
-  it('should return undefined for the feed host', () => {
-    expect(getTransistorPage('https://feeds.transistor.fm/my-show', undefined)).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -143,6 +138,67 @@ describe('transistorHandler', () => {
 
     it('should return empty array for the bare host', () => {
       expect(transistorHandler.resolve('https://transistor.fm/')).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for a podcast feed', () => {
+      const value = 'https://feeds.transistor.fm/bob-podcast'
+      const expected: DiscoverUriHint = { key: 'transistor:podcast', label: 'Podcast' }
+
+      expect(transistorHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for a podcast feed with a dot in its slug', () => {
+      const value = 'https://feeds.transistor.fm/alice.show'
+      const expected: DiscoverUriHint = { key: 'transistor:podcast', label: 'Podcast' }
+
+      expect(transistorHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a show page', () => {
+      const value = 'https://bob-podcast.transistor.fm/'
+
+      expect(transistorHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the feed host root', () => {
+      const value = 'https://feeds.transistor.fm/'
+
+      expect(transistorHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a nested path on the feed host', () => {
+      const value = 'https://feeds.transistor.fm/bob-podcast/episodes'
+
+      expect(transistorHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/bob-podcast'
+
+      expect(transistorHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://feeds.transistor.fm/bob-podcast', { key: 'transistor:podcast', label: 'Podcast' }],
+      [
+        'https://feeds.transistor.fm/carol-podcast',
+        { key: 'transistor:podcast', label: 'Podcast' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [transistorHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

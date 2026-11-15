@@ -1,5 +1,5 @@
-import { composeQuery, endsWithAnyOf, isAnyOf, isHttpUrl, isString, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { endsWithAnyOf, isAnyOf, isHttpUrl, isString, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -70,14 +70,39 @@ const legacyScopes: Array<{ kind: LegacyKind; title: string; viewerId: string }>
   },
 ]
 
-const hintKeys: Record<DspacePage['kind'], string> = {
-  collection: 'dspace:collection',
-  community: 'dspace:community',
-  home: 'dspace:site',
+const legacyKeys: Record<LegacyKind, string> = {
   legacyCollection: 'dspace:collection',
   legacyCommunity: 'dspace:community',
   legacyHome: 'dspace:site',
 }
+
+// A repository runs on its own domain and is known only by its marker, so its search feeds are
+// built here, under the REST API root, but not claimed. DSpace 6 and older feeds are the links the
+// page prints.
+const feeds = definePlatformFeeds([
+  {
+    key: 'dspace:collection',
+    template: '{root}/opensearch/search?format=atom&scope={uuid}&query=*',
+    format: 'atom',
+  },
+  {
+    key: 'dspace:collection',
+    template: '{root}/opensearch/search?format=rss&scope={uuid}&query=*',
+    format: 'rss',
+  },
+  {
+    key: 'dspace:community',
+    template: '{root}/opensearch/search?format=atom&scope={uuid}&query=*',
+    format: 'atom',
+  },
+  {
+    key: 'dspace:community',
+    template: '{root}/opensearch/search?format=rss&scope={uuid}&query=*',
+    format: 'rss',
+  },
+  { key: 'dspace:site', template: '{root}/opensearch/search?format=atom&query=*', format: 'atom' },
+  { key: 'dspace:site', template: '{root}/opensearch/search?format=rss&query=*', format: 'rss' },
+])
 
 // The Angular UI of DSpace 7 and later renders every page inside this root element.
 export const isDspaceHtml = (content: string): boolean => {
@@ -212,18 +237,6 @@ export const getDspacePage = (url: string, content: string | undefined): DspaceP
   return { kind: 'community', restUrl, uuid }
 }
 
-const getSearchUrl = (restUrl: string, format: 'atom' | 'rss', scope?: string): string => {
-  const params: Record<string, string> = { format }
-
-  if (scope) {
-    params.scope = scope
-  }
-
-  params.query = '*'
-
-  return `${restUrl}/opensearch/search${composeQuery(params)}`
-}
-
 export const dspaceHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (hasMarker(content, headers, { html: isDspaceHtml })) {
@@ -248,28 +261,35 @@ export const dspaceHandler: PlatformHandler = {
       return []
     }
 
-    const hintKey = hintKeys[page.kind]
-
     if ('feeds' in page) {
-      return page.feeds.map(({ uri, format }) => {
-        return { uri, hint: composeHint(hintKey, format) }
+      return page.feeds.map((feed) => {
+        return { uri: feed.uri, hint: composeHint(legacyKeys[page.kind], feed.format) }
       })
     }
 
-    const uris: Array<DiscoverUriEntry> = []
+    const root = page.restUrl
 
-    if ('uuid' in page) {
-      uris.push(
-        { uri: getSearchUrl(page.restUrl, 'atom', page.uuid), hint: composeHint(hintKey, 'atom') },
-        { uri: getSearchUrl(page.restUrl, 'rss', page.uuid), hint: composeHint(hintKey, 'rss') },
-      )
+    if (page.kind === 'collection') {
+      return [
+        feeds.getFeedEntry('dspace:collection', { root, uuid: page.uuid }, 'atom'),
+        feeds.getFeedEntry('dspace:collection', { root, uuid: page.uuid }, 'rss'),
+        feeds.getFeedEntry('dspace:site', { root }, 'atom'),
+        feeds.getFeedEntry('dspace:site', { root }, 'rss'),
+      ]
     }
 
-    uris.push(
-      { uri: getSearchUrl(page.restUrl, 'atom'), hint: composeHint('dspace:site', 'atom') },
-      { uri: getSearchUrl(page.restUrl, 'rss'), hint: composeHint('dspace:site', 'rss') },
-    )
+    if (page.kind === 'community') {
+      return [
+        feeds.getFeedEntry('dspace:community', { root, uuid: page.uuid }, 'atom'),
+        feeds.getFeedEntry('dspace:community', { root, uuid: page.uuid }, 'rss'),
+        feeds.getFeedEntry('dspace:site', { root }, 'atom'),
+        feeds.getFeedEntry('dspace:site', { root }, 'rss'),
+      ]
+    }
 
-    return uris
+    return [
+      feeds.getFeedEntry('dspace:site', { root }, 'atom'),
+      feeds.getFeedEntry('dspace:site', { root }, 'rss'),
+    ]
   },
 }
