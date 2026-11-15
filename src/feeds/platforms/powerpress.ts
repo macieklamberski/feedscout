@@ -49,7 +49,12 @@ export const powerpressHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getPowerpressPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    return [feeds.getFeedEntry('powerpress:podcast', { root: page.homeUrl })]
+    if (!pageFeeds) {
+      return []
+    }
+
+    return [pageFeeds.getFeedEntry('powerpress:podcast', { root: page.homeUrl })]
   },
 }
