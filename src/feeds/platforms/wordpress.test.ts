@@ -60,6 +60,17 @@ describe('parseWordpressUrl', () => {
     expect(parseWordpressUrl('https://example.wordpress.com/2024/05/')).toEqual(expected)
   })
 
+  it('should return the archive for a date page under the date prefix', () => {
+    const value = 'https://example.hypotheses.org/date/2024/05/'
+    const expected: WordpressUrl = {
+      kind: 'archive',
+      path: '/date/2024/05',
+      hintKey: 'wordpress:date-archive',
+    }
+
+    expect(parseWordpressUrl(value)).toEqual(expected)
+  })
+
   it('should return the post for a post page', () => {
     const expected: WordpressUrl = { kind: 'post', path: '/2024/05/01/hello' }
 
@@ -1021,6 +1032,75 @@ describe('wordpressHandler', () => {
       expect(wordpressHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should include year archive feed when on year page under the date prefix', () => {
+      const value = 'https://example.hypotheses.org/date/2024/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: [
+            'https://example.hypotheses.org/date/2024/feed/',
+            'https://example.hypotheses.org/date/2024/?feed=rss',
+            'https://example.hypotheses.org/date/2024/feed/rss2/',
+            'https://example.hypotheses.org/date/2024/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:date-archive', label: 'Date archive', format: 'rss' },
+        },
+        {
+          uri: [
+            'https://example.hypotheses.org/date/2024/feed/atom/',
+            'https://example.hypotheses.org/date/2024/?feed=atom',
+          ],
+          hint: { key: 'wordpress:date-archive', label: 'Date archive', format: 'atom' },
+        },
+        {
+          uri: [
+            'https://example.hypotheses.org/date/2024/feed/rdf/',
+            'https://example.hypotheses.org/date/2024/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:date-archive', label: 'Date archive', format: 'rdf' },
+        },
+        {
+          uri: [
+            'https://example.hypotheses.org/feed/',
+            'https://example.hypotheses.org/?feed=rss',
+            'https://example.hypotheses.org/feed/rss2/',
+            'https://example.hypotheses.org/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: [
+            'https://example.hypotheses.org/feed/atom/',
+            'https://example.hypotheses.org/?feed=atom',
+          ],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: [
+            'https://example.hypotheses.org/feed/rdf/',
+            'https://example.hypotheses.org/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
+        },
+        {
+          uri: [
+            'https://example.hypotheses.org/comments/feed/',
+            'https://example.hypotheses.org/comments/feed/rss2/',
+            'https://example.hypotheses.org/?feed=comments-rss2',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: [
+            'https://example.hypotheses.org/comments/feed/atom/',
+            'https://example.hypotheses.org/?feed=comments-atom',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
+        },
+      ]
+
+      expect(wordpressHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should include month archive feed when on year/month page', () => {
       const value = 'https://example.wordpress.com/2024/06/'
       const expected: Array<DiscoverUriEntry> = [
@@ -1358,6 +1438,17 @@ describe('wordpressHandler', () => {
         expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
       },
     )
+
+    it('should return the date archive hint for a feed under the date prefix', () => {
+      const value = 'https://example.hypotheses.org/date/2024/feed/'
+      const expected: DiscoverUriHint = {
+        key: 'wordpress:date-archive',
+        label: 'Date archive',
+        format: 'rss',
+      }
+
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+    })
 
     const postsFeedPaths: Array<[string, DiscoverUriHint['format']]> = [
       ['/feed/', 'rss'],
