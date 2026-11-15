@@ -134,7 +134,7 @@ const getFeeds = (
   table: Pick<PlatformFeedTable, 'getFeedEntry'>,
   params: PlatformFeedParams,
   tag: string | undefined,
-): Array<DiscoverUriEntry> => {
+): Array<DiscoverUriEntry | undefined> => {
   if (!tag) {
     return [
       table.getFeedEntry('insanejournal:posts', params, 'rss'),

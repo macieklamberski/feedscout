@@ -17,7 +17,7 @@ export type PlatformHandler = {
     content?: string,
     headers?: Headers,
     fetchFn?: FetchFn,
-  ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef>>
+  ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef | undefined>>
   // The hint of the feed the URL is, when it is one of the feeds the handler builds.
   getFeedHint?: (url: string) => DiscoverUriHint | undefined
 }
