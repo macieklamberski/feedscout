@@ -511,6 +511,8 @@
     "publii:posts": "Posts",
     "svbtle:posts": "Posts",
     "textpattern:posts": "Posts",
+    "textpattern:section": "Section",
+    "textpattern:category": "Category",
     "wild-apricot:blog": "Blog",
     "wild-apricot:events": "Events",
     "wild-apricot:page": "Page feed",

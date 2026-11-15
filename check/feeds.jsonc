@@ -2033,7 +2033,15 @@
     ]
   },
   "textpattern": {
-    "textpattern:posts": ["https://textpattern.com/rss", "https://textpattern.com/atom"]
+    "textpattern:category": [
+      "https://textpattern.com/rss?category=advisories",
+      "https://textpattern.com/atom?category=advisories"
+    ],
+    "textpattern:posts": ["https://textpattern.com/rss", "https://textpattern.com/atom"],
+    "textpattern:section": [
+      "https://textpattern.com/rss?section=weblog",
+      "https://textpattern.com/atom?section=weblog"
+    ]
   },
   "tildes": {
     "tildes:group": [
