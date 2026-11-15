@@ -68,10 +68,24 @@ describe('parseOdooUrl', () => {
     expect(parseOdooUrl('https://example.com/fr_FR/blog/actualites-5')).toEqual(expected)
   })
 
-  it('should return the blog under a language prefix longer than three letters', () => {
-    const expected: OdooUrl = { kind: 'blog', blog: 'news-1' }
+  it('should return the blog under a bare language prefix', () => {
+    const value = 'https://example.com/fr/blog/actualites-5'
+    const expected: OdooUrl = { kind: 'blog', blog: 'actualites-5' }
 
-    expect(parseOdooUrl('https://example.com/abcd/blog/news-1')).toEqual(expected)
+    expect(parseOdooUrl(value)).toEqual(expected)
+  })
+
+  it('should return the blog under a language and numeric region prefix', () => {
+    const value = 'https://example.com/es_419/blog/noticias-5'
+    const expected: OdooUrl = { kind: 'blog', blog: 'noticias-5' }
+
+    expect(parseOdooUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined under a prefix that names no language', () => {
+    const value = 'https://example.com/abcd/blog/news-1'
+
+    expect(parseOdooUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for the list of all blogs', () => {

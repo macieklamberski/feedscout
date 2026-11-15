@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, isLocaleSegment } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -14,7 +14,7 @@ export type LichessUrl =
 const hosts = ['lichess.org']
 
 const userBlogRegex = /^\/@\/([\w-]+)\/blog(?:\/|$)/i
-const communityRegex = /^(?:\/(\w+))?\/blog\/community\/?$/i
+const communityRegex = /^(?:\/([^/]+))?\/blog\/community\/?$/i
 
 const feeds = definePlatformFeeds([
   { key: 'lichess:blog', template: 'https://lichess.org/@/{username}/blog.atom' },
@@ -37,9 +37,10 @@ export const parseLichessUrl = (url: string): LichessUrl | undefined => {
   }
 
   const communityMatch = pathname.match(communityRegex)
+  const language = communityMatch?.[1]
 
-  if (communityMatch) {
-    return { kind: 'community', language: communityMatch[1] }
+  if (communityMatch && (!language || isLocaleSegment(language))) {
+    return { kind: 'community', language }
   }
 
   const [section, id, slug, rest] = getPathSegments(url)
