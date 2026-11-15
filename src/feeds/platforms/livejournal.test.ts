@@ -116,6 +116,18 @@ describe('livejournalHandler', () => {
       })
     })
 
+    it('should keep a www path username ending with an underscore on the users host', async () => {
+      const value = 'https://www.livejournal.com/users/alice_/'
+      const expected: DiscoverUriEntry = {
+        uri: 'https://users.livejournal.com/alice-/data/rss',
+        hint: { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
+      }
+
+      const [first] = await livejournalHandler.resolve(value)
+
+      expect(first).toEqual(expected)
+    })
+
     it('should return empty array for a URL outside LiveJournal', () => {
       expect(livejournalHandler.resolve('https://example.com/')).toEqual([])
     })

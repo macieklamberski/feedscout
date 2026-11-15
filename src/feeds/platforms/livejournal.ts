@@ -156,8 +156,8 @@ export const parseLivejournalUrl = (url: string): LivejournalUrl | undefined => 
 }
 
 // A journal on its own subdomain, which the parser checked, keeps the page's origin. A user named
-// in the path is canonicalised to its subdomain, with `_` written as `-`. A name that starts or
-// ends with `_` makes no valid host label, so it stays on users.livejournal.com.
+// in the path is canonicalised to its subdomain, with `_` written as `-`. LiveJournal redirects a
+// name starting or ending with `_` to its path on users.livejournal.com, so its feeds stay there.
 const getJournalRoot = (url: string, username: string | undefined): string | undefined => {
   if (!username) {
     return new URL(url).origin
