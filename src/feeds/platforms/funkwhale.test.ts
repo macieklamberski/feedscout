@@ -111,11 +111,11 @@ describe('funkwhaleHandler', () => {
       expect(funkwhaleHandler.resolve(value)).toEqual([])
     })
 
-    it('should keep a channel name with a malformed escape as written', () => {
+    it('should encode a stray percent sign in a channel name', () => {
       const value = 'https://example.org/channels/100%'
       const expected = [
         {
-          uri: 'https://example.org/api/v1/channels/100%/rss',
+          uri: 'https://example.org/api/v1/channels/100%25/rss',
           hint: { key: 'funkwhale:channel', label: 'Channel' },
         },
       ]
