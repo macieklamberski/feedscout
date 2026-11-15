@@ -1824,9 +1824,11 @@ Discovers the feeds of a Togetter curator or the site-wide news, recent and popu
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `togetter.com/id/{user}` | Curator<sup>†</sup> · popular<sup>†</sup> (RSS) |
-| `togetter.com/recent` | Recent · popular<sup>†</sup> (RSS) |
-| Any other page | News · popular (RSS) |
+| `togetter.com/id/{user}` | Curator<sup>†</sup> · news · recent · popular<sup>†</sup> (RSS) |
+| `togetter.com/recent` | Recent · news · popular<sup>†</sup> (RSS) |
+| Any other page | News · recent · popular (RSS) |
+
+> Every page above also gets the news, recent and popular feeds after its own.
 
 <sup>†</sup> *Found only by the Platform method.*
 

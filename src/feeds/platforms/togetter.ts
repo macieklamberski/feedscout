@@ -55,18 +55,30 @@ export const togetterHandler: PlatformHandler = {
       return []
     }
 
+    // The news, recent and popular feeds need no value from the page, so every page builds them
+    // after its own feeds.
     if (parsed.kind === 'user') {
       return [
         feeds.getFeedEntry('togetter:curator', { username: parsed.username }),
+        feeds.getFeedEntry('togetter:news'),
+        feeds.getFeedEntry('togetter:recent'),
         feeds.getFeedEntry('togetter:hot'),
       ]
     }
 
     if (parsed.kind === 'recent') {
-      return [feeds.getFeedEntry('togetter:recent'), feeds.getFeedEntry('togetter:hot')]
+      return [
+        feeds.getFeedEntry('togetter:recent'),
+        feeds.getFeedEntry('togetter:news'),
+        feeds.getFeedEntry('togetter:hot'),
+      ]
     }
 
-    return [feeds.getFeedEntry('togetter:news'), feeds.getFeedEntry('togetter:hot')]
+    return [
+      feeds.getFeedEntry('togetter:news'),
+      feeds.getFeedEntry('togetter:recent'),
+      feeds.getFeedEntry('togetter:hot'),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
