@@ -259,7 +259,7 @@ Discovers Atom feeds for GitHub Gist users, starred gists, forked gists, and the
 
 ### Gitea
 
-Discovers Atom feeds for Gitea users, repositories, releases, tags, branch commits and file history, with RSS as the fallback. Codeberg and `gitea.com` are matched by host; any other instance is matched by the session cookie Gitea sets on a repository page. An install under a sub-path gets its feeds there, read from `appSubUrl` in the page config.
+Discovers Atom and RSS feeds for Gitea users, repositories, releases, tags, branch commits and file history, one entry per format. Codeberg and `gitea.com` are matched by host; any other instance is matched by the session cookie Gitea sets on a repository page. An install under a sub-path gets its feeds there, read from `appSubUrl` in the page config.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
