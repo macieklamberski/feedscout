@@ -3,8 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getBrandDomainRegex } from '../../common/utils.js'
 
-// Discoverability: Not discoverable without handler.
-// Handler needed for: jobs, workspaces.
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers portfolio, profile.
 
 export type DasaugeUrl = { kind: 'home' }
 
