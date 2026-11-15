@@ -129,10 +129,18 @@ export const getLegistarPage = (
   if (parsed.kind === 'legislation') {
     const feedUrl = pageFeeds.getFeedUrl('legistar:legislation', { id, guid })
 
+    if (!feedUrl) {
+      return
+    }
+
     return { kind: 'legislation', feedUrl: getFeedUrl(url, content, feedUrl) }
   }
 
   const feedUrl = pageFeeds.getFeedUrl('legistar:meeting', { id, guid })
+
+  if (!feedUrl) {
+    return
+  }
 
   return { kind: 'meeting', feedUrl: getFeedUrl(url, content, feedUrl) }
 }

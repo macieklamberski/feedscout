@@ -9,7 +9,7 @@ const layoutAssetRegex = /^\/Areas\/Layout\/Assets\//i
 
 // The module ids that serve an all-categories feed. A module id with no feed answers 200 with an
 // empty body.
-const moduleKeys = new Map([
+const moduleKeys = new Map<string, CivicplusFeedKey>([
   ['1', 'civicplus:news-flash'],
   ['51', 'civicplus:blog'],
   ['53', 'civicplus:photo-gallery'],
@@ -43,7 +43,9 @@ const feeds = definePlatformFeeds([
   { key: 'civicplus:pages', template: '{root}/RSSFeed.aspx?ModID=76&CID=All-0' },
 ])
 
-export type CivicplusPage = { kind: 'module'; key: string }
+type CivicplusFeedKey = Parameters<typeof feeds.getFeedEntry>[0]
+
+export type CivicplusPage = { kind: 'module'; key: CivicplusFeedKey }
 
 export const isCivicplusHtml = (content: string): boolean => {
   const script = findElement(content, (element) => {
