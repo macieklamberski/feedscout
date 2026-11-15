@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { isHostOf, isLocale, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -9,7 +9,7 @@ export type RssComUrl = { kind: 'podcast'; show: string }
 const hosts = ['rss.com', 'www.rss.com']
 
 // An optional locale prefix, e.g. /es/podcasts/, /it/podcasts/.
-const podcastRegex = /^\/(?:[a-z]+\/)?podcasts\/([^/]+)/i
+const podcastRegex = /^\/(?:([^/]+)\/)?podcasts\/([^/]+)/i
 
 const feeds = definePlatformFeeds([
   { key: 'rss-com:podcast', template: 'https://media.rss.com/{show}/feed.xml' },
@@ -22,9 +22,9 @@ export const parseRssComUrl = (url: string): RssComUrl | undefined => {
     return
   }
 
-  const show = parsedUrl.pathname.match(podcastRegex)?.[1]
+  const [, locale, show] = parsedUrl.pathname.match(podcastRegex) ?? []
 
-  if (!show) {
+  if (!show || (locale && !isLocale(locale))) {
     return
   }
 

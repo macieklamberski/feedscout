@@ -205,6 +205,12 @@ describe('lichessHandler', () => {
       expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return undefined for a community feed under a code that names no language', () => {
+      const value = 'https://lichess.org/blog/community.atom?lang=xx'
+
+      expect(lichessHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for the site updates feed', () => {
       const value = 'https://lichess.org/feed.atom'
 

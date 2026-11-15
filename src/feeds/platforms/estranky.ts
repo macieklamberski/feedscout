@@ -1,4 +1,12 @@
-import { getSubdomain, isAnyOf, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
+import {
+  getPathSegments,
+  getSubdomain,
+  isAnyOf,
+  isHostOf,
+  isLocale,
+  isSubdomainOf,
+  parseUrl,
+} from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -15,6 +23,7 @@ const domains = ['estranky.cz', 'estranky.sk']
 const estrankyAssetRegex = /^(?:https?:)?\/\/s3[a-z]\.(?:estranky\.(?:cz|sk)|eoldal\.hu)\//i
 
 const assetTags = ['link', 'script']
+const routes = ['articles', 'photos', 'comments', 'slices', 'section']
 
 // A site keeps the scheme it picked. A site in another language serves its feeds under the language
 // segment too, as `/rss/en/slices/l/homepage/data.xml`. A section feed and the Web Slices of one
@@ -157,6 +166,15 @@ export const estrankyHandler: PlatformHandler = {
     ]
   },
 
-  // A custom domain is known only by its markers, so its feeds are built but not claimed.
-  getFeedHint: feeds.getFeedHint,
+  // A custom domain is known only by its markers, so its feeds are built but not claimed. A segment
+  // after `/rss/` is a language only in its own form.
+  getFeedHint: (url) => {
+    const [, languageOrRoute] = getPathSegments(url)
+
+    if (!isAnyOf(languageOrRoute, routes) && !isLocale(languageOrRoute)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
+  },
 }

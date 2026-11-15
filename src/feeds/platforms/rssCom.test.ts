@@ -23,6 +23,12 @@ describe('parseRssComUrl', () => {
     expect(parseRssComUrl('https://rss.com/fil/podcasts/podcasting101')).toEqual(expected)
   })
 
+  it('should return undefined under a prefix that names no language', () => {
+    const value = 'https://rss.com/xx/podcasts/podcasting101'
+
+    expect(parseRssComUrl(value)).toBeUndefined()
+  })
+
   it('should return undefined for the root', () => {
     expect(parseRssComUrl('https://rss.com/')).toBeUndefined()
   })

@@ -1,4 +1,4 @@
-import { getAnyOf, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, getQueryParam, isAnyOf, isHostOf, isLocale, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
@@ -19,7 +19,6 @@ const hosts = ['webtoons.com', 'www.webtoons.com', 'm.webtoons.com']
 
 const seriesRegex = /^\/([^/]+)\/([^/]+)\/([^/]+)\/(?:list|[^/]+\/viewer)\/?$/i
 
-const languages = ['de', 'en', 'es', 'fr', 'id', 'th', 'zh-hant']
 const canvasGenres = ['canvas', 'challenge']
 
 const feeds = definePlatformFeeds([
@@ -46,11 +45,17 @@ export const parseWebtoonsUrl = (url: string): WebtoonsUrl | undefined => {
     return
   }
 
-  const [, languageSegment, genre, name] = parsedUrl.pathname.match(seriesRegex) ?? []
-  const language = getAnyOf(languageSegment, languages)
+  const [, language, genre, name] = parsedUrl.pathname.match(seriesRegex) ?? []
   const titleNo = getQueryParam(parsedUrl.searchParams, 'title_no')
 
-  if (!language || !genre || !name || !titleNo || !digitsRegex.test(titleNo)) {
+  if (
+    !language ||
+    !isLocale(language) ||
+    !genre ||
+    !name ||
+    !titleNo ||
+    !digitsRegex.test(titleNo)
+  ) {
     return
   }
 
@@ -76,5 +81,13 @@ export const webtoonsHandler: PlatformHandler = {
     return [feeds.getFeedEntry('webtoons:series', { ...parsed, genre })]
   },
 
-  getFeedHint: feeds.getFeedHint,
+  getFeedHint: (url) => {
+    const [language] = getPathSegments(url)
+
+    if (!isLocale(language)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
+  },
 }

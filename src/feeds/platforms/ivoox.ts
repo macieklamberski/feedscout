@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { getPathSegments, isHostOf, isLocale } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -93,5 +93,14 @@ export const ivooxHandler: PlatformHandler = {
     return [feeds.getFeedEntry('ivoox:podcast', { podcastId: page.podcastId })]
   },
 
-  getFeedHint: feeds.getFeedHint,
+  // A segment before the feed is a locale only in its own form.
+  getFeedHint: (url) => {
+    const [locale, feed] = getPathSegments(url)
+
+    if (feed && !isLocale(locale)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
+  },
 }

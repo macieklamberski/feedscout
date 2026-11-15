@@ -382,6 +382,12 @@ describe('dailymotionHandler', () => {
       expect(dailymotionHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return undefined for a search feed under a code that names no language', () => {
+      const value = 'https://www.dailymotion.com/rss/relevance/lang/xx/search/cats/0'
+
+      expect(dailymotionHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return the group hint for a group feed', () => {
       const value = 'https://www.dailymotion.com/rss/group/12345/1?withEnclosure=1'
       const expected: DiscoverUriHint = { key: 'dailymotion:group', label: 'Group' }
