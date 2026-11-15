@@ -24,10 +24,10 @@ const escapedSlashRegex = /\\\//g
 const branchViews = ['src', 'commits']
 
 // Every feed comes as Atom and RSS, emitted as two entries, so validation keeps the one a host
-// serves. The table claims a feed only on Codeberg and gitea.com: a
-// self-hosted instance is known by its session cookie, which a feed URL does not carry. A slashed
-// branch, such as v11.0/forgejo, reads as the file history, so the one-segment rows come first,
-// and a repo's activity comes before its owner's, so a page with a repo builds the repo's.
+// serves. The table claims a feed only on Codeberg and gitea.com: a self-hosted instance is known
+// by its session cookie, which a feed URL does not carry. A slashed branch, such as v11.0/forgejo,
+// reads as the file history, so the one-segment rows come first, and a repo's activity comes
+// before its owner's, so a page with a repo builds the repo's.
 const feeds = definePlatformFeeds(
   [
     { key: 'gitea:activity', template: '{root}/{owner}/{repo}.atom', format: 'atom' },
