@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, isRegion, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
@@ -15,8 +15,6 @@ const domains = ['pinterest.com']
 
 // A country site such as pinterest.co.uk redirects to its label on pinterest.com, uk.pinterest.com,
 // which serves the same profiles and boards.
-// length: keeps service hosts such as help out
-const countryLabelRegex = /^[a-z]{2}$/
 
 // Profile tabs of a user, which name the user, not a board.
 const userSubpaths = ['pins', 'boards', '_saved', '_created', 'followers', 'following']
@@ -26,7 +24,7 @@ const isPinterestHost = (parsedUrl: URL): boolean => {
     return true
   }
 
-  return countryLabelRegex.test(getTenantSubdomain(parsedUrl, domains) ?? '')
+  return isRegion(getTenantSubdomain(parsedUrl, domains) ?? '')
 }
 
 export const parsePinterestUrl = (url: string): PinterestUrl | undefined => {
