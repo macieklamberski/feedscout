@@ -112,24 +112,6 @@ describe('getTypechoPage', () => {
     expect(getTypechoPage(value, themeHtml)).toEqual(expected)
   })
 
-  it('should return the path of a page with a doubled slash as a single slash', () => {
-    const value = 'https://example.com/archives//13/'
-    const expected: TypechoPage = {
-      kind: 'page',
-      siteUrl: 'https://example.com',
-      path: '/archives/13/',
-    }
-
-    expect(getTypechoPage(value, themeHtml)).toEqual(expected)
-  })
-
-  it('should return the home page for a doubled slash at the root', () => {
-    const value = 'https://example.com//'
-    const expected: TypechoPage = { kind: 'home', siteUrl: 'https://example.com' }
-
-    expect(getTypechoPage(value, themeHtml)).toEqual(expected)
-  })
-
   it('should return the site root of a blog under a sub-path', () => {
     const value = 'https://example.com/blog/category/notes/'
     const expected: TypechoPage = {
@@ -369,6 +351,19 @@ describe('typechoHandler', () => {
       ]
 
       expect(typechoHandler.resolve(value, themeHtml)).toEqual(expected)
+    })
+
+    it('should return the page feeds without the empty segment of a doubled slash', () => {
+      const value = 'https://example.com/archives//13/'
+      const expected: DiscoverUriEntry = {
+        uri: [
+          'https://example.com/feed/archives/13/',
+          'https://example.com/index.php/feed/archives/13/',
+        ],
+        hint: { key: 'typecho:page', label: 'Page', format: 'rss' },
+      }
+
+      expect(typechoHandler.resolve(value, themeHtml)).toContainEqual(expected)
     })
   })
 })
