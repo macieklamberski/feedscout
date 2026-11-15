@@ -1,12 +1,7 @@
-import {
-  composeQuery,
-  decodeSegment,
-  isHostOrSubdomainOf,
-  parseUrl,
-  startsWithAnyOf,
-} from 'trousse'
+import { decodeSegment, isHostOrSubdomainOf, parseUrl, startsWithAnyOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -21,13 +16,36 @@ const settingsRootRegex = /"root":"(?<root>\/[^"]*)"/
 const sessionCookieRegex = /^_tender\d*_session$/
 const helpRootRegex = /^\/help(?:\/|$)/i
 const discussionPathRegex = /^\/discussions\/(?<category>[^/]+)\/(?<discussion>\d+[^/]*)\/?$/i
-const discussionsFeedPathRegex = /^\/discussions\.atom\/?$/i
-const commentsFeedPathRegex = /^\/comments\/recent\.atom\/?$/i
-const discussionFeedPathRegex = /^\/discussions\/[^/]+\/\d+[^/]*\.atom\/?$/i
+const discussionFeedPathRegex = /\/\d+[^/]*\.atom\/?$/i
 const trailingSlashRegex = /\/$/
 // A missing page answers 404 with the stock Rails error page inside the site layout, and a
 // made-up category would otherwise get the site's feed.
 const errorPageRegex = /<!-- This file lives in public\/404\.html -->/
+
+// A site's root comes from its settings script, which a feed URL does not carry, so the table
+// claims a feed on a Tender host under its origin or `/help` only. A custom domain carries no
+// marker in the URL alone, so its feeds are built here but not claimed.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'tender:discussions', template: '{root}/discussions.atom' },
+    { key: 'tender:discussions', template: '{root}/help/discussions.atom' },
+    { key: 'tender:comments', template: '{root}/comments/recent.atom' },
+    { key: 'tender:comments', template: '{root}/help/comments/recent.atom' },
+    // The page links its comments feed with the discussion repeated as `discussion_id`, and the
+    // feed answers without it too.
+    {
+      key: 'tender:discussion',
+      template: '{root}/discussions/{category}/{discussion}.atom?discussion_id={discussionId}',
+    },
+    {
+      key: 'tender:discussion',
+      template: '{root}/discussions/{category}/{discussion}.atom',
+      isAlias: true,
+    },
+    { key: 'tender:discussion', template: '{root}/help/discussions/{category}/{discussion}.atom' },
+  ],
+  { domains },
+)
 
 const getSettingsRoot = (content: string | undefined): string | undefined => {
   const settingsLine = content?.match(settingsLineRegex)?.[0]
@@ -113,46 +131,33 @@ export const tenderHandler: PlatformHandler = {
 
     if (page.kind === 'discussion') {
       const { siteUrl, category, discussion } = page
-
-      // The page links its comments feed with the discussion repeated as `discussion_id`.
-      const query = composeQuery({ discussion_id: decodeSegment(discussion) ?? discussion })
+      const discussionId = decodeSegment(discussion) ?? discussion
 
       return [
-        {
-          uri: `${siteUrl}/discussions/${category}/${discussion}.atom${query}`,
-          hint: composeHint('tender:discussion'),
-        },
+        feeds.getFeedEntry('tender:discussion', {
+          root: siteUrl,
+          category,
+          discussion,
+          discussionId,
+        }),
       ]
     }
 
     return [
-      { uri: `${page.siteUrl}/discussions.atom`, hint: composeHint('tender:discussions') },
-      { uri: `${page.siteUrl}/comments/recent.atom`, hint: composeHint('tender:comments') },
+      feeds.getFeedEntry('tender:discussions', { root: page.siteUrl }),
+      feeds.getFeedEntry('tender:comments', { root: page.siteUrl }),
     ]
   },
 
-  // A site's root comes from its settings script and a custom domain carries no marker in the URL
-  // alone, so only a feed on a Tender host is read, under its origin or `/help`.
+  // A discussion's id leads its path segment, and `new.atom` under a category is the form for a
+  // new discussion.
   getFeedHint: (url) => {
-    const parsedUrl = parseUrl(url)
+    const hint = feeds.getFeedHint(url)
 
-    if (!parsedUrl || !getTenantSubdomain(url, domains)) {
+    if (hint?.key === 'tender:discussion' && !discussionFeedPathRegex.test(new URL(url).pathname)) {
       return
     }
 
-    const sitePath = getSitePath(parsedUrl.pathname, getRoot(parsedUrl.pathname, undefined))
-
-    if (discussionsFeedPathRegex.test(sitePath)) {
-      return composeHint('tender:discussions')
-    }
-
-    if (commentsFeedPathRegex.test(sitePath)) {
-      return composeHint('tender:comments')
-    }
-
-    // A discussion answers its feed with or without the `discussion_id` the page links.
-    if (discussionFeedPathRegex.test(sitePath)) {
-      return composeHint('tender:discussion')
-    }
+    return hint
   },
 }
