@@ -93,6 +93,26 @@ describe('atyponHandler', () => {
       expect(atyponHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return https journal feeds for an http Wiley journal page', () => {
+      const value = 'http://onlinelibrary.wiley.com/journal/15406261'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://onlinelibrary.wiley.com/action/showFeed?type=etoc&feed=rss&jc=15406261',
+          hint: { key: 'atypon:journal', label: 'Journal', format: 'rss' },
+        },
+        {
+          uri: 'http://onlinelibrary.wiley.com/action/showFeed?type=axatoc&feed=rss&jc=15406261',
+          hint: { key: 'atypon:ahead-of-print', label: 'Ahead of print', format: 'rdf' },
+        },
+        {
+          uri: 'https://onlinelibrary.wiley.com/feed/15406261/most-cited',
+          hint: { key: 'atypon:most-cited', label: 'Most cited', format: 'rss' },
+        },
+      ]
+
+      expect(atyponHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should keep the scheme of an http journal page', () => {
       const value = 'http://www.tandfonline.com/toc/tprs20/current'
       const expected: Array<DiscoverUriEntry> = [
