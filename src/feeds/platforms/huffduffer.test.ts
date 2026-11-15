@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
@@ -198,10 +199,11 @@ describe('huffdufferHandler', () => {
       expect(huffdufferHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the site-wide feeds for a search page without a query', () => {
+    it('should return the site-wide feeds for a search page without a query', async () => {
       const expected: Array<DiscoverUriEntry> = [...newFeeds, ...popularFeeds]
+      const entries = await huffdufferHandler.resolve('https://huffduffer.com/search')
 
-      expect(huffdufferHandler.resolve('https://huffduffer.com/search')).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return the collective feeds for a collective page', () => {

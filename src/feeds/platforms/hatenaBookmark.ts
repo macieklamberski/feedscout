@@ -180,13 +180,6 @@ export const hatenaBookmarkHandler: PlatformHandler = {
     if (parsed.kind === 'hotentry') {
       const { category } = parsed
 
-      if (!category) {
-        return [
-          feeds.getFeedEntry('hatena-bookmark:hot'),
-          feeds.getFeedEntry('hatena-bookmark:new'),
-        ]
-      }
-
       return [
         feeds.getFeedEntry('hatena-bookmark:hot-category', { category }),
         feeds.getFeedEntry('hatena-bookmark:hot'),

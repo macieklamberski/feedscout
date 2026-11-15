@@ -98,19 +98,11 @@ export const dreamwidthHandler: PlatformHandler = {
     // A journal named in the path lives on its own host, a journal page serves from its own.
     const host = parsed.username ? `${journal}.dreamwidth.org` : undefined
 
-    if (parsed.tag) {
-      const tag = decodeSegment(parsed.tag) ?? parsed.tag
-
-      return [
-        page.getFeedEntry('dreamwidth:posts-tag', { host, tag }, 'rss'),
-        page.getFeedEntry('dreamwidth:posts-tag', { host, tag }, 'atom'),
-        page.getFeedEntry('dreamwidth:posts', { host }, 'rss'),
-        page.getFeedEntry('dreamwidth:posts', { host }, 'atom'),
-        page.getFeedEntry('dreamwidth:userpics', { host }, 'atom'),
-      ]
-    }
+    const tag = decodeSegment(parsed.tag) ?? parsed.tag
 
     return [
+      page.getFeedEntry('dreamwidth:posts-tag', { host, tag }, 'rss'),
+      page.getFeedEntry('dreamwidth:posts-tag', { host, tag }, 'atom'),
       page.getFeedEntry('dreamwidth:posts', { host }, 'rss'),
       page.getFeedEntry('dreamwidth:posts', { host }, 'atom'),
       page.getFeedEntry('dreamwidth:userpics', { host }, 'atom'),

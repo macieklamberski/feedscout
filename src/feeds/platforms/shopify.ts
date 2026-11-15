@@ -78,14 +78,10 @@ export const shopifyHandler: PlatformHandler = {
       return []
     }
 
-    if (parsed.tag) {
-      return [
-        page.getFeedEntry('shopify:blog', { handle: parsed.handle }),
-        page.getFeedEntry('shopify:blog-tag', { handle: parsed.handle, tag: parsed.tag }),
-      ]
-    }
-
-    return [page.getFeedEntry('shopify:blog', { handle: parsed.handle })]
+    return [
+      page.getFeedEntry('shopify:blog', { handle: parsed.handle }),
+      page.getFeedEntry('shopify:blog-tag', { handle: parsed.handle, tag: parsed.tag }),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,

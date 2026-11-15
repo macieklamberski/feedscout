@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
@@ -175,7 +176,7 @@ describe('insanejournalHandler', () => {
       expect(insanejournalHandler.resolve('https://example.com/')).toEqual([])
     })
 
-    it('should return RSS, Atom, and userpics feeds for journal subdomain', () => {
+    it('should return RSS, Atom, and userpics feeds for journal subdomain', async () => {
       const value = 'https://alice.insanejournal.com'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -191,11 +192,12 @@ describe('insanejournalHandler', () => {
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await insanejournalHandler.resolve(value)
 
-      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should return feeds regardless of path', () => {
+    it('should return feeds regardless of path', async () => {
       const value = 'https://alice.insanejournal.com/123456.html'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -211,8 +213,9 @@ describe('insanejournalHandler', () => {
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await insanejournalHandler.resolve(value)
 
-      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should add tag-filtered feeds for /tag/ paths on journal', () => {
@@ -299,7 +302,7 @@ describe('insanejournalHandler', () => {
       expect(insanejournalHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should canonicalise www.insanejournal.com/users/{user} to subdomain', () => {
+    it('should canonicalise www.insanejournal.com/users/{user} to subdomain', async () => {
       const value = 'https://www.insanejournal.com/users/bob'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -315,11 +318,12 @@ describe('insanejournalHandler', () => {
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await insanejournalHandler.resolve(value)
 
-      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should canonicalise www.insanejournal.com/users/{user} to subdomain with a capitalized users segment', () => {
+    it('should canonicalise www.insanejournal.com/users/{user} to subdomain with a capitalized users segment', async () => {
       const value = 'https://www.insanejournal.com/Users/bob'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -335,11 +339,12 @@ describe('insanejournalHandler', () => {
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await insanejournalHandler.resolve(value)
 
-      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should route www.insanejournal.com/asylum/{name} to asylums subdomain', () => {
+    it('should route www.insanejournal.com/asylum/{name} to asylums subdomain', async () => {
       const value = 'https://www.insanejournal.com/asylum/carol'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -355,11 +360,12 @@ describe('insanejournalHandler', () => {
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await insanejournalHandler.resolve(value)
 
-      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should route www.insanejournal.com/asylum/{name} to asylums subdomain with a capitalized asylum segment', () => {
+    it('should route www.insanejournal.com/asylum/{name} to asylums subdomain with a capitalized asylum segment', async () => {
       const value = 'https://www.insanejournal.com/Asylum/carol'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -375,11 +381,12 @@ describe('insanejournalHandler', () => {
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await insanejournalHandler.resolve(value)
 
-      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should keep asylums.insanejournal.com path-scoped feeds', () => {
+    it('should keep asylums.insanejournal.com path-scoped feeds', async () => {
       const value = 'https://asylums.insanejournal.com/carol'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -395,11 +402,12 @@ describe('insanejournalHandler', () => {
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await insanejournalHandler.resolve(value)
 
-      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should build asylum feeds over https for an http page', () => {
+    it('should build asylum feeds over https for an http page', async () => {
       const value = 'http://asylums.insanejournal.com/carol'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -415,11 +423,12 @@ describe('insanejournalHandler', () => {
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await insanejournalHandler.resolve(value)
 
-      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should keep the feeds of a journal the users host serves by path', () => {
+    it('should keep the feeds of a journal the users host serves by path', async () => {
       const value = 'https://users.insanejournal.com/_alice_/'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -435,8 +444,9 @@ describe('insanejournalHandler', () => {
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await insanejournalHandler.resolve(value)
 
-      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should add tag-filtered feeds for a tag page on the users host', () => {
@@ -479,7 +489,7 @@ describe('insanejournalHandler', () => {
       expect(insanejournalHandler.resolve('https://feeds.insanejournal.com/')).toEqual([])
     })
 
-    it('should keep feeds.insanejournal.com path-scoped feeds', () => {
+    it('should keep feeds.insanejournal.com path-scoped feeds', async () => {
       const value = 'https://feeds.insanejournal.com/example_feed'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -495,11 +505,12 @@ describe('insanejournalHandler', () => {
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await insanejournalHandler.resolve(value)
 
-      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should keep the http scheme of a feeds.insanejournal.com page', () => {
+    it('should keep the http scheme of a feeds.insanejournal.com page', async () => {
       const value = 'http://feeds.insanejournal.com/example_feed'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -515,11 +526,12 @@ describe('insanejournalHandler', () => {
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await insanejournalHandler.resolve(value)
 
-      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should keep the http scheme of a journal subdomain page', () => {
+    it('should keep the http scheme of a journal subdomain page', async () => {
       const value = 'http://alice.insanejournal.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -535,8 +547,9 @@ describe('insanejournalHandler', () => {
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await insanejournalHandler.resolve(value)
 
-      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
   })
 

@@ -122,28 +122,17 @@ export const writefreelyHandler: PlatformHandler = {
     }
 
     // The instance reader holds every blog of a multi-user instance.
-    if (params.blog && params.tag) {
-      return [
-        pageFeeds.getFeedEntry('writefreely:tag', params),
-        pageFeeds.getFeedEntry('writefreely:blog', params),
-        pageFeeds.getFeedEntry('writefreely:reader'),
-      ]
-    }
-
     if (params.blog) {
       return [
+        pageFeeds.getFeedEntry('writefreely:tag', params),
         pageFeeds.getFeedEntry('writefreely:blog', params),
         pageFeeds.getFeedEntry('writefreely:reader'),
       ]
     }
 
-    if (params.tag) {
-      return [
-        pageFeeds.getFeedEntry('writefreely:tag', params),
-        pageFeeds.getFeedEntry('writefreely:blog', params),
-      ]
-    }
-
-    return [pageFeeds.getFeedEntry('writefreely:blog', params)]
+    return [
+      pageFeeds.getFeedEntry('writefreely:tag', params),
+      pageFeeds.getFeedEntry('writefreely:blog', params),
+    ]
   },
 }

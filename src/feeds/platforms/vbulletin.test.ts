@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import { isVbulletinHeaders, isVbulletinHtml, vbulletinHandler } from './vbulletin.js'
 
 const juliForumHtml = `
@@ -142,10 +143,11 @@ describe('vbulletinHandler', () => {
       expect(vbulletinHandler.resolve('not-a-url')).toEqual([])
     })
 
-    it('should return the site feed from the root of the core script', () => {
+    it('should return the site feed from the root of the core script', async () => {
       const value = 'https://www.aquaticquotient.com/forum/forum.php'
+      const entries = await vbulletinHandler.resolve(value, aquaticQuotientHtml)
 
-      expect(vbulletinHandler.resolve(value, aquaticQuotientHtml)).toEqual([
+      expect(entries.filter(isPresent)).toEqual([
         {
           uri: 'https://www.aquaticquotient.com/forum/external.php?type=RSS2',
           hint: { key: 'vbulletin:site', label: 'Site' },
@@ -153,7 +155,7 @@ describe('vbulletinHandler', () => {
       ])
     })
 
-    it('should return the site feed from the script directory for a core script with no host', () => {
+    it('should return the site feed from the script directory for a core script with no host', async () => {
       const value = 'https://example.org/forum/forum.php'
       const content = `
         <script
@@ -161,8 +163,9 @@ describe('vbulletinHandler', () => {
           src="cdn://example.org/forum/clientscript/vbulletin-core.js?v=425"
         ></script>
       `
+      const entries = await vbulletinHandler.resolve(value, content)
 
-      expect(vbulletinHandler.resolve(value, content)).toEqual([
+      expect(entries.filter(isPresent)).toEqual([
         {
           uri: 'https://example.org/forum/external.php?type=RSS2',
           hint: { key: 'vbulletin:site', label: 'Site' },
@@ -170,10 +173,11 @@ describe('vbulletinHandler', () => {
       ])
     })
 
-    it('should return the site feed for a rewritten page URL', () => {
+    it('should return the site feed for a rewritten page URL', async () => {
       const value = 'https://www.gpspower.net/other-gps-systems.html'
+      const entries = await vbulletinHandler.resolve(value, gpspowerHtml)
 
-      expect(vbulletinHandler.resolve(value, gpspowerHtml)).toEqual([
+      expect(entries.filter(isPresent)).toEqual([
         {
           uri: 'https://www.gpspower.net/external.php?type=RSS2',
           hint: { key: 'vbulletin:site', label: 'Site' },
@@ -181,10 +185,11 @@ describe('vbulletinHandler', () => {
       ])
     })
 
-    it('should return the site feed from the script directory without the core script', () => {
+    it('should return the site feed from the script directory without the core script', async () => {
       const value = 'https://www.al-shaaba.net/vb/showthread.php?t=1'
+      const entries = await vbulletinHandler.resolve(value, '<html></html>')
 
-      expect(vbulletinHandler.resolve(value, '<html></html>')).toEqual([
+      expect(entries.filter(isPresent)).toEqual([
         {
           uri: 'https://www.al-shaaba.net/vb/external.php?type=RSS2',
           hint: { key: 'vbulletin:site', label: 'Site' },
@@ -222,10 +227,11 @@ describe('vbulletinHandler', () => {
       ])
     })
 
-    it('should return only the site feed for a forum id with a letter', () => {
+    it('should return only the site feed for a forum id with a letter', async () => {
       const value = 'https://rangeroverclub.com/forumdisplay.php?f=28abc'
+      const entries = await vbulletinHandler.resolve(value, '<html></html>')
 
-      expect(vbulletinHandler.resolve(value, '<html></html>')).toEqual([
+      expect(entries.filter(isPresent)).toEqual([
         {
           uri: 'https://rangeroverclub.com/external.php?type=RSS2',
           hint: { key: 'vbulletin:site', label: 'Site' },
@@ -248,10 +254,11 @@ describe('vbulletinHandler', () => {
       ])
     })
 
-    it('should return the vBulletin 5 site feed from the base URL', () => {
+    it('should return the vBulletin 5 site feed from the base URL', async () => {
       const value = 'https://www.loganclub.ro/forum/'
+      const entries = await vbulletinHandler.resolve(value, loganClubHtml)
 
-      expect(vbulletinHandler.resolve(value, loganClubHtml)).toEqual([
+      expect(entries.filter(isPresent)).toEqual([
         {
           uri: 'https://www.loganclub.ro/forum/external?type=rss2',
           hint: { key: 'vbulletin:site', label: 'Site' },
@@ -259,7 +266,7 @@ describe('vbulletinHandler', () => {
       ])
     })
 
-    it('should skip a vBulletin 5 header rollup script with no host', () => {
+    it('should skip a vBulletin 5 header rollup script with no host', async () => {
       const value = 'https://example.org/forum/'
       const content = `
         <base href="https://example.org/forum/" />
@@ -268,8 +275,9 @@ describe('vbulletinHandler', () => {
           src="cdn://example.org/js/header-rollup-575.js"
         ></script>
       `
+      const entries = await vbulletinHandler.resolve(value, content)
 
-      expect(vbulletinHandler.resolve(value, content)).toEqual([
+      expect(entries.filter(isPresent)).toEqual([
         {
           uri: 'https://example.org/forum/external.php?type=RSS2',
           hint: { key: 'vbulletin:site', label: 'Site' },
@@ -277,10 +285,11 @@ describe('vbulletinHandler', () => {
       ])
     })
 
-    it('should return the vBulletin 5 site feed on a channel page', () => {
+    it('should return the vBulletin 5 site feed on a channel page', async () => {
       const value = 'https://apolyton.net/forum/civilization-7'
+      const entries = await vbulletinHandler.resolve(value, apolytonHtml)
 
-      expect(vbulletinHandler.resolve(value, apolytonHtml)).toEqual([
+      expect(entries.filter(isPresent)).toEqual([
         {
           uri: 'https://apolyton.net/external?type=rss2',
           hint: { key: 'vbulletin:site', label: 'Site' },
@@ -335,11 +344,12 @@ describe('vbulletinHandler', () => {
       ])
     })
 
-    it('should skip the root channel on a vBulletin 5 home page', () => {
+    it('should skip the root channel on a vBulletin 5 home page', async () => {
       const value = 'https://apolyton.net/'
       const content = `${apolytonHtml}<script>var pageData = { "channelid": "1" };</script>`
+      const entries = await vbulletinHandler.resolve(value, content)
 
-      expect(vbulletinHandler.resolve(value, content)).toEqual([
+      expect(entries.filter(isPresent)).toEqual([
         {
           uri: 'https://apolyton.net/external?type=rss2',
           hint: { key: 'vbulletin:site', label: 'Site' },
@@ -347,10 +357,11 @@ describe('vbulletinHandler', () => {
       ])
     })
 
-    it('should not return external.php on a vBulletin 5 page with a forum URL', () => {
+    it('should not return external.php on a vBulletin 5 page with a forum URL', async () => {
       const value = 'https://apolyton.net/forumdisplay.php?f=28'
+      const entries = await vbulletinHandler.resolve(value, apolytonHtml)
 
-      expect(vbulletinHandler.resolve(value, apolytonHtml)).toEqual([
+      expect(entries.filter(isPresent)).toEqual([
         {
           uri: 'https://apolyton.net/external?type=rss2',
           hint: { key: 'vbulletin:site', label: 'Site' },

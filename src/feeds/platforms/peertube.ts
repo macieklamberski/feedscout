@@ -101,13 +101,6 @@ export const peertubeHandler: PlatformHandler = {
         channelId: getPodcastChannelId(url, content),
       }
 
-      if (!params.channelId) {
-        return [
-          pageFeeds.getFeedEntry('peertube:channel', params),
-          pageFeeds.getFeedEntry('peertube:instance'),
-        ]
-      }
-
       return [
         pageFeeds.getFeedEntry('peertube:channel', params),
         pageFeeds.getFeedEntry('peertube:channel-podcast', params),

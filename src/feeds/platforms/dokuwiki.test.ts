@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import { dokuwikiHandler, isDokuwikiHeaders } from './dokuwiki.js'
 
 const dokuwikiHeaders = new Headers({
@@ -59,7 +60,7 @@ describe('dokuwikiHandler', () => {
       expect(dokuwikiHandler.resolve(value, content, dokuwikiHeaders)).toEqual(expected)
     })
 
-    it('should return the site feed for a page in the root namespace', () => {
+    it('should return the site feed for a page in the root namespace', async () => {
       const value = 'https://example.org/start'
       const content = `
         <link rel="start" href="/"/>
@@ -71,8 +72,9 @@ describe('dokuwikiHandler', () => {
           hint: { key: 'dokuwiki:recent-changes', label: 'Recent changes' },
         },
       ]
+      const entries = await dokuwikiHandler.resolve(value, content, dokuwikiHeaders)
 
-      expect(dokuwikiHandler.resolve(value, content, dokuwikiHeaders)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should write the colon of a nested namespace as is', () => {
@@ -110,7 +112,7 @@ describe('dokuwikiHandler', () => {
       expect(dokuwikiHandler.resolve(value, content, dokuwikiHeaders)).toEqual(expected)
     })
 
-    it('should keep the page origin when the start link is absolute', () => {
+    it('should keep the page origin when the start link is absolute', async () => {
       const value = 'https://example.org/wiki/start'
       const content = '<link rel="start" href="http://wiki.example.com/wiki/"/>'
       const expected = [
@@ -119,11 +121,12 @@ describe('dokuwikiHandler', () => {
           hint: { key: 'dokuwiki:recent-changes', label: 'Recent changes' },
         },
       ]
+      const entries = await dokuwikiHandler.resolve(value, content, dokuwikiHeaders)
 
-      expect(dokuwikiHandler.resolve(value, content, dokuwikiHeaders)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should build the feeds from the session cookie path without a start link', () => {
+    it('should build the feeds from the session cookie path without a start link', async () => {
       const value = 'https://example.org/wiki/doku.php?id=start'
       const headers = new Headers()
 
@@ -136,11 +139,12 @@ describe('dokuwikiHandler', () => {
           hint: { key: 'dokuwiki:recent-changes', label: 'Recent changes' },
         },
       ]
+      const entries = await dokuwikiHandler.resolve(value, '', headers)
 
-      expect(dokuwikiHandler.resolve(value, '', headers)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should fall back to the origin root without a start link or a cookie path', () => {
+    it('should fall back to the origin root without a start link or a cookie path', async () => {
       const value = 'https://example.org/start'
       const expected = [
         {
@@ -148,11 +152,12 @@ describe('dokuwikiHandler', () => {
           hint: { key: 'dokuwiki:recent-changes', label: 'Recent changes' },
         },
       ]
+      const entries = await dokuwikiHandler.resolve(value)
 
-      expect(dokuwikiHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should fall back to the origin root for a malformed start link', () => {
+    it('should fall back to the origin root for a malformed start link', async () => {
       const value = 'https://example.org/start'
       const content = '<link rel="start" href="http://[wiki/">'
       const expected = [
@@ -161,8 +166,9 @@ describe('dokuwikiHandler', () => {
           hint: { key: 'dokuwiki:recent-changes', label: 'Recent changes' },
         },
       ]
+      const entries = await dokuwikiHandler.resolve(value, content)
 
-      expect(dokuwikiHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
   })
 })

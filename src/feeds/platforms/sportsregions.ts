@@ -95,15 +95,11 @@ export const sportsregionsHandler: PlatformHandler = {
 
     const filters = getEventFilters(url)
 
-    if (filters) {
-      return [
-        page.getFeedEntry('sportsregions:filtered-events', filters),
-        page.getFeedEntry('sportsregions:news'),
-        page.getFeedEntry('sportsregions:events'),
-      ]
-    }
-
-    return [page.getFeedEntry('sportsregions:news'), page.getFeedEntry('sportsregions:events')]
+    return [
+      page.getFeedEntry('sportsregions:filtered-events', filters),
+      page.getFeedEntry('sportsregions:news'),
+      page.getFeedEntry('sportsregions:events'),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,

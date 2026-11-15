@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
@@ -51,7 +52,7 @@ describe('firesideHandler', () => {
       expect(firesideHandler.resolve('https://example.com/')).toEqual([])
     })
 
-    it('should keep the scheme of an http podcast page on its own host', () => {
+    it('should keep the scheme of an http podcast page on its own host', async () => {
       const value = 'http://alice.fireside.fm'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -67,11 +68,12 @@ describe('firesideHandler', () => {
           hint: { key: 'fireside:blog', label: 'Blog' },
         },
       ]
+      const entries = await firesideHandler.resolve(value)
 
-      expect(firesideHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should return RSS and JSON feeds for podcast', () => {
+    it('should return RSS and JSON feeds for podcast', async () => {
       const value = 'https://alice.fireside.fm'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -87,11 +89,12 @@ describe('firesideHandler', () => {
           hint: { key: 'fireside:blog', label: 'Blog' },
         },
       ]
+      const entries = await firesideHandler.resolve(value)
 
-      expect(firesideHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should return feed URLs regardless of path', () => {
+    it('should return feed URLs regardless of path', async () => {
       const value = 'https://alice.fireside.fm/episodes/some-episode'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -107,8 +110,9 @@ describe('firesideHandler', () => {
           hint: { key: 'fireside:blog', label: 'Blog' },
         },
       ]
+      const entries = await firesideHandler.resolve(value)
 
-      expect(firesideHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return the tag feed first for a tag page', () => {

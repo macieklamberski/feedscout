@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
@@ -134,7 +135,7 @@ describe('goodreadsHandler', () => {
       expect(goodreadsHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return reviews and updates feeds for review list page', () => {
+    it('should return reviews and updates feeds for review list page', async () => {
       const value = 'https://www.goodreads.com/review/list/1-alice-smith'
       const expected = [
         {
@@ -146,8 +147,9 @@ describe('goodreadsHandler', () => {
           hint: { key: 'goodreads:updates', label: 'Updates' },
         },
       ]
+      const entries = await goodreadsHandler.resolve(value)
 
-      expect(goodreadsHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should include shelf feed when shelf query param is set', () => {

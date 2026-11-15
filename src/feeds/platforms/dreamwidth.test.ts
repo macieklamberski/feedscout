@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
@@ -94,7 +95,7 @@ describe('dreamwidthHandler', () => {
       expect(dreamwidthHandler.resolve('https://example.com/')).toEqual([])
     })
 
-    it('should return RSS, Atom, and userpics feeds for blog', () => {
+    it('should return RSS, Atom, and userpics feeds for blog', async () => {
       const value = 'https://alice.dreamwidth.org'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -110,11 +111,12 @@ describe('dreamwidthHandler', () => {
           hint: { key: 'dreamwidth:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await dreamwidthHandler.resolve(value)
 
-      expect(dreamwidthHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should keep the scheme of an http journal page', () => {
+    it('should keep the scheme of an http journal page', async () => {
       const value = 'http://alice.dreamwidth.org'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -130,11 +132,12 @@ describe('dreamwidthHandler', () => {
           hint: { key: 'dreamwidth:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await dreamwidthHandler.resolve(value)
 
-      expect(dreamwidthHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should return feed URLs regardless of path', () => {
+    it('should return feed URLs regardless of path', async () => {
       const value = 'https://alice.dreamwidth.org/123456.html'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -150,8 +153,9 @@ describe('dreamwidthHandler', () => {
           hint: { key: 'dreamwidth:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await dreamwidthHandler.resolve(value)
 
-      expect(dreamwidthHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should add tag-filtered feeds for /tag/ paths', () => {
@@ -214,7 +218,7 @@ describe('dreamwidthHandler', () => {
       expect(dreamwidthHandler.resolve('https://www.dreamwidth.org/random')).toEqual([])
     })
 
-    it('should canonicalise www.dreamwidth.org/users/{user} to subdomain with a hyphen', () => {
+    it('should canonicalise www.dreamwidth.org/users/{user} to subdomain with a hyphen', async () => {
       const value = 'https://www.dreamwidth.org/users/carol_jones'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -230,11 +234,12 @@ describe('dreamwidthHandler', () => {
           hint: { key: 'dreamwidth:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await dreamwidthHandler.resolve(value)
 
-      expect(dreamwidthHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should canonicalise www.dreamwidth.org/users/{user} to subdomain with a hyphen with a capitalized users segment', () => {
+    it('should canonicalise www.dreamwidth.org/users/{user} to subdomain with a hyphen with a capitalized users segment', async () => {
       const value = 'https://www.dreamwidth.org/Users/carol_jones'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -250,11 +255,12 @@ describe('dreamwidthHandler', () => {
           hint: { key: 'dreamwidth:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await dreamwidthHandler.resolve(value)
 
-      expect(dreamwidthHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should canonicalise www.dreamwidth.org/~{user} to subdomain', () => {
+    it('should canonicalise www.dreamwidth.org/~{user} to subdomain', async () => {
       const value = 'https://www.dreamwidth.org/~carol-jones'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -270,8 +276,9 @@ describe('dreamwidthHandler', () => {
           hint: { key: 'dreamwidth:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
+      const entries = await dreamwidthHandler.resolve(value)
 
-      expect(dreamwidthHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
   })
 

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
@@ -251,7 +252,7 @@ describe('habrHandler', () => {
       expect(habrHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the comments feed for an article page', () => {
+    it('should return the comments feed for an article page', async () => {
       const value = 'https://habr.com/ru/articles/123456/'
       const expected = [
         {
@@ -267,8 +268,9 @@ describe('habrHandler', () => {
           hint: { key: 'habr:news', label: 'News' },
         },
       ]
+      const entries = await habrHandler.resolve(value)
 
-      expect(habrHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return the comments and company feeds for a company article page', () => {

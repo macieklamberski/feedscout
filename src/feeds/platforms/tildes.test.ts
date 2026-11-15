@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
@@ -102,7 +103,7 @@ describe('tildesHandler', () => {
       expect(tildesHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return global topics feeds for root path', () => {
+    it('should return global topics feeds for root path', async () => {
       const value = 'https://tildes.net/'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -114,8 +115,9 @@ describe('tildesHandler', () => {
           hint: { key: 'tildes:topics', label: 'Topics', format: 'atom' },
         },
       ]
+      const entries = await tildesHandler.resolve(value)
 
-      expect(tildesHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return group tag feeds for a group page with a tag', () => {

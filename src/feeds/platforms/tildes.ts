@@ -86,16 +86,9 @@ export const tildesHandler: PlatformHandler = {
       ]
     }
 
-    if (tag) {
-      return [
-        feeds.getFeedEntry('tildes:tag', { tag }, 'rss'),
-        feeds.getFeedEntry('tildes:tag', { tag }, 'atom'),
-        feeds.getFeedEntry('tildes:topics', {}, 'rss'),
-        feeds.getFeedEntry('tildes:topics', {}, 'atom'),
-      ]
-    }
-
     return [
+      feeds.getFeedEntry('tildes:tag', { tag }, 'rss'),
+      feeds.getFeedEntry('tildes:tag', { tag }, 'atom'),
       feeds.getFeedEntry('tildes:topics', {}, 'rss'),
       feeds.getFeedEntry('tildes:topics', {}, 'atom'),
     ]

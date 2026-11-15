@@ -120,25 +120,17 @@ export const bubblelifeHandler: PlatformHandler = {
     const params = { id: page.feedId }
     const alertParams = { id: page.alertId }
 
-    if (page.kind === 'library' && page.alertId) {
+    if (page.kind === 'library') {
       return [
         pageFeeds.getFeedEntry('bubblelife:library', params),
         pageFeeds.getFeedEntry('bubblelife:news-alerts', alertParams),
       ]
     }
 
-    if (page.kind === 'library') {
-      return [pageFeeds.getFeedEntry('bubblelife:library', params)]
-    }
-
-    if (page.alertId) {
-      return [
-        pageFeeds.getFeedEntry('bubblelife:posts', params),
-        pageFeeds.getFeedEntry('bubblelife:news-alerts', alertParams),
-      ]
-    }
-
-    return [pageFeeds.getFeedEntry('bubblelife:posts', params)]
+    return [
+      pageFeeds.getFeedEntry('bubblelife:posts', params),
+      pageFeeds.getFeedEntry('bubblelife:news-alerts', alertParams),
+    ]
   },
 
   getFeedHint: (url) => {

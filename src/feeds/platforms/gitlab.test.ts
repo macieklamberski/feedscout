@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
@@ -318,7 +319,7 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return releases, tags, issues, merge requests, and activity feeds for repo page', () => {
+    it('should return releases, tags, issues, merge requests, and activity feeds for repo page', async () => {
       const value = 'https://gitlab.com/gitlab-org/gitlab'
       const expected = [
         {
@@ -342,8 +343,9 @@ describe('gitlabHandler', () => {
           hint: { key: 'gitlab:activity', label: 'Activity' },
         },
       ]
+      const entries = await gitlabHandler.resolve(value)
 
-      expect(gitlabHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return branch commits feed for /-/commits/{branch}', () => {

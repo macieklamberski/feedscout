@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
@@ -278,8 +279,10 @@ describe('hatenaBookmarkHandler', () => {
       expect(hatenaBookmarkHandler.resolve(base)).toEqual(hotEntries)
     })
 
-    it('should return hot entries for the hotentry page', () => {
-      expect(hatenaBookmarkHandler.resolve(`${base}/hotentry`)).toEqual(hotEntries)
+    it('should return hot entries for the hotentry page', async () => {
+      const entries = await hatenaBookmarkHandler.resolve(`${base}/hotentry`)
+
+      expect(entries.filter(isPresent)).toEqual(hotEntries)
     })
 
     it('should return hot entries in category for a category page', () => {
@@ -310,13 +313,17 @@ describe('hatenaBookmarkHandler', () => {
       expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return hot entries for the all category page', () => {
+    it('should return hot entries for the all category page', async () => {
       const value = `${base}/hotentry/all`
-      expect(hatenaBookmarkHandler.resolve(value)).toEqual(hotEntries)
+      const entries = await hatenaBookmarkHandler.resolve(value)
+
+      expect(entries.filter(isPresent)).toEqual(hotEntries)
     })
 
-    it('should return hot entries for an unknown category page', () => {
-      expect(hatenaBookmarkHandler.resolve(`${base}/hotentry/Foo`)).toEqual(hotEntries)
+    it('should return hot entries for an unknown category page', async () => {
+      const entries = await hatenaBookmarkHandler.resolve(`${base}/hotentry/Foo`)
+
+      expect(entries.filter(isPresent)).toEqual(hotEntries)
     })
 
     it('should return new entries for the entrylist page', () => {

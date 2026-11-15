@@ -109,22 +109,12 @@ export const jiraHandler: PlatformHandler = {
     const { baseUrl, tenant, projectKey, issueKey } = jiraPage
     // A cloud site serves from its origin.
     const root = tenant ? undefined : baseUrl
-    if (issueKey) {
-      return [
-        page.getFeedEntry('jira:issue', { root, issue: issueKey }, 'rss'),
-        page.getFeedEntry('jira:project', { root, key: projectKey }),
-        page.getFeedEntry('jira:site', { root }),
-      ]
-    }
 
-    if (projectKey) {
-      return [
-        page.getFeedEntry('jira:project', { root, key: projectKey }),
-        page.getFeedEntry('jira:site', { root }),
-      ]
-    }
-
-    return [page.getFeedEntry('jira:site', { root })]
+    return [
+      page.getFeedEntry('jira:issue', { root, issue: issueKey }, 'rss'),
+      page.getFeedEntry('jira:project', { root, key: projectKey }),
+      page.getFeedEntry('jira:site', { root }),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,

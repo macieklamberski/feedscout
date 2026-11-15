@@ -98,8 +98,8 @@ export const phpbbHandler: PlatformHandler = {
     const { boardUrl: root, forumId, topicId } = page
 
     return [
-      ...(topicId ? [pageFeeds.getFeedEntry('phpbb:topic', { root, topicId })] : []),
-      ...(forumId ? [pageFeeds.getFeedEntry('phpbb:forum', { root, forumId })] : []),
+      pageFeeds.getFeedEntry('phpbb:topic', { root, topicId }),
+      pageFeeds.getFeedEntry('phpbb:forum', { root, forumId }),
       pageFeeds.getFeedEntry('phpbb:site', { root }),
       pageFeeds.getFeedEntry('phpbb:news', { root }),
       pageFeeds.getFeedEntry('phpbb:new-topics', { root }),

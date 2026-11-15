@@ -93,10 +93,6 @@ export const mediawikiHandler: PlatformHandler = {
 
     const params = { root: page.scriptRoot, title: page.pageName }
 
-    if (!page.pageName) {
-      return [pageFeeds.getFeedEntry('mediawiki:recent-changes', params, 'atom')]
-    }
-
     return [
       pageFeeds.getFeedEntry('mediawiki:history', params, 'atom'),
       pageFeeds.getFeedEntry('mediawiki:recent-changes', params, 'atom'),

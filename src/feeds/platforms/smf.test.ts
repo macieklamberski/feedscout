@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { isSmfHtml, smfHandler } from './smf.js'
 
@@ -53,22 +54,25 @@ describe('smfHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should build the site feeds from the script URL', () => {
-      expect(smfHandler.resolve('https://example.com/forum/', smfHtml)).toEqual(siteFeeds)
+    it('should build the site feeds from the script URL', async () => {
+      const entries = await smfHandler.resolve('https://example.com/forum/', smfHtml)
+
+      expect(entries.filter(isPresent)).toEqual(siteFeeds)
     })
 
-    it('should drop the session id from the script URL', () => {
+    it('should drop the session id from the script URL', async () => {
       const content = `
         <script>
           var smf_theme_url = "https://example.com/forum/Themes/default";
           var smf_scripturl = "https://example.com/forum/index.php?PHPSESSID=abc123&amp;";
         </script>
       `
+      const entries = await smfHandler.resolve('https://example.com/forum/', content)
 
-      expect(smfHandler.resolve('https://example.com/forum/', content)).toEqual(siteFeeds)
+      expect(entries.filter(isPresent)).toEqual(siteFeeds)
     })
 
-    it('should drop the trailing slash of a script URL', () => {
+    it('should drop the trailing slash of a script URL', async () => {
       const content = `
         <script>
           var smf_theme_url = "https://example.com/forum/Themes/default";
@@ -85,8 +89,9 @@ describe('smfHandler', () => {
           hint: { key: 'smf:posts', label: 'Posts', format: 'atom' },
         },
       ]
+      const entries = await smfHandler.resolve('https://example.com/forum/', content)
 
-      expect(smfHandler.resolve('https://example.com/forum/', content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should add the board feeds on a board page', () => {
@@ -108,10 +113,11 @@ describe('smfHandler', () => {
       expect(smfHandler.resolve(value, content)).toEqual([...boardFeeds, ...siteFeeds])
     })
 
-    it('should give the site feeds on a topic page without an index link', () => {
+    it('should give the site feeds on a topic page without an index link', async () => {
       const value = 'https://example.com/forum/index.php?topic=345.0'
+      const entries = await smfHandler.resolve(value, smfHtml)
 
-      expect(smfHandler.resolve(value, smfHtml)).toEqual(siteFeeds)
+      expect(entries.filter(isPresent)).toEqual(siteFeeds)
     })
 
     it('should return nothing without the script URL', () => {

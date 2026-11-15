@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
@@ -246,7 +247,7 @@ describe('sourceforgeHandler', () => {
       expect(sourceforgeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the thread feeds for a discussion thread page', () => {
+    it('should return the thread feeds for a discussion thread page', async () => {
       const value = 'https://sourceforge.net/p/example/discussion/12345/thread/abc123/'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -302,8 +303,9 @@ describe('sourceforgeHandler', () => {
           hint: { key: 'sourceforge:discussion-thread', label: 'Thread', format: 'atom' },
         },
       ]
+      const entries = await sourceforgeHandler.resolve(value)
 
-      expect(sourceforgeHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return the folder feed for a files subfolder page', () => {
@@ -319,7 +321,7 @@ describe('sourceforgeHandler', () => {
       expect(sourceforgeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the forum feeds for a discussion forum page', () => {
+    it('should return the forum feeds for a discussion forum page', async () => {
       const value = 'https://sourceforge.net/p/example/discussion/12345/'
       const expected: Array<DiscoverUriEntry> = [
         ...exampleFeeds,
@@ -332,11 +334,12 @@ describe('sourceforgeHandler', () => {
           hint: { key: 'sourceforge:discussion-forum', label: 'Forum', format: 'atom' },
         },
       ]
+      const entries = await sourceforgeHandler.resolve(value)
 
-      expect(sourceforgeHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should return the tool and page feeds for a wiki page', () => {
+    it('should return the tool and page feeds for a wiki page', async () => {
       const value = 'https://sourceforge.net/p/example/wiki/Home/'
       const expected: Array<DiscoverUriEntry> = [
         ...exampleFeeds,
@@ -357,11 +360,12 @@ describe('sourceforgeHandler', () => {
           hint: { key: 'sourceforge:tool-page', label: 'Page changes', format: 'atom' },
         },
       ]
+      const entries = await sourceforgeHandler.resolve(value)
 
-      expect(sourceforgeHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should return the tool feeds for a code tree page', () => {
+    it('should return the tool feeds for a code tree page', async () => {
       const value = 'https://sourceforge.net/p/example/code/HEAD/tree/'
       const expected: Array<DiscoverUriEntry> = [
         ...exampleFeeds,
@@ -374,11 +378,12 @@ describe('sourceforgeHandler', () => {
           hint: { key: 'sourceforge:tool', label: 'Tool changes', format: 'atom' },
         },
       ]
+      const entries = await sourceforgeHandler.resolve(value)
 
-      expect(sourceforgeHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should return the page feeds without a tool feed for a ticket page', () => {
+    it('should return the page feeds without a tool feed for a ticket page', async () => {
       const value = 'https://sourceforge.net/p/example/bugs/2500/'
       const expected: Array<DiscoverUriEntry> = [
         ...exampleFeeds,
@@ -391,8 +396,9 @@ describe('sourceforgeHandler', () => {
           hint: { key: 'sourceforge:tool-page', label: 'Page changes', format: 'atom' },
         },
       ]
+      const entries = await sourceforgeHandler.resolve(value)
 
-      expect(sourceforgeHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return the project feeds alone for a tool with rows of its own', () => {

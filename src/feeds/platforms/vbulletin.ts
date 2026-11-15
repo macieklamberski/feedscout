@@ -159,13 +159,9 @@ export const vbulletinHandler: PlatformHandler = {
 
     const feeds = page.version === 5 ? vbulletin5Feeds : vbulletin4Feeds
 
-    if (page.forumId) {
-      return [
-        feeds.getFeedEntry('vbulletin:forum', { root: page.root, forumId: page.forumId }),
-        feeds.getFeedEntry('vbulletin:site', { root: page.root }),
-      ]
-    }
-
-    return [feeds.getFeedEntry('vbulletin:site', { root: page.root })]
+    return [
+      feeds.getFeedEntry('vbulletin:forum', { root: page.root, forumId: page.forumId }),
+      feeds.getFeedEntry('vbulletin:site', { root: page.root }),
+    ]
   },
 }

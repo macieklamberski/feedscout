@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import { isWritefreelyHtml, writefreelyHandler } from './writefreely.js'
 
 const writefreelyHtml = '<meta name="generator" content="WriteFreely">'
@@ -59,7 +60,7 @@ describe('writefreelyHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return the blog and reader feeds', () => {
+    it('should return the blog and reader feeds', async () => {
       const value = 'https://example.org/alice'
       const expected = [
         {
@@ -71,11 +72,12 @@ describe('writefreelyHandler', () => {
           hint: { key: 'writefreely:reader', label: 'Reader' },
         },
       ]
+      const entries = await writefreelyHandler.resolve(value)
 
-      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should use the blog name from a post page', () => {
+    it('should use the blog name from a post page', async () => {
       const value = 'https://example.org/alice/a-post'
       const expected = [
         {
@@ -87,11 +89,12 @@ describe('writefreelyHandler', () => {
           hint: { key: 'writefreely:reader', label: 'Reader' },
         },
       ]
+      const entries = await writefreelyHandler.resolve(value)
 
-      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should use the blog name from a later page of a blog', () => {
+    it('should use the blog name from a later page of a blog', async () => {
       const value = 'https://example.org/alice/page/2'
       const expected = [
         {
@@ -103,11 +106,12 @@ describe('writefreelyHandler', () => {
           hint: { key: 'writefreely:reader', label: 'Reader' },
         },
       ]
+      const entries = await writefreelyHandler.resolve(value)
 
-      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should use the blog name of a blog named page', () => {
+    it('should use the blog name of a blog named page', async () => {
       const value = 'https://example.org/page/'
       const expected = [
         {
@@ -119,8 +123,9 @@ describe('writefreelyHandler', () => {
           hint: { key: 'writefreely:reader', label: 'Reader' },
         },
       ]
+      const entries = await writefreelyHandler.resolve(value)
 
-      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should add the tag feed for a tag page', () => {
@@ -143,7 +148,7 @@ describe('writefreelyHandler', () => {
       expect(writefreelyHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should build the feeds of a single-user instance from the blog title link', () => {
+    it('should build the feeds of a single-user instance from the blog title link', async () => {
       const value = 'https://example.org/a-post'
       const content = '<h1 id="blog-title"><a href="/" class="h-card p-author">Blog</a></h1>'
       const expected = [
@@ -152,11 +157,12 @@ describe('writefreelyHandler', () => {
           hint: { key: 'writefreely:blog', label: 'Blog' },
         },
       ]
+      const entries = await writefreelyHandler.resolve(value, content)
 
-      expect(writefreelyHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should build the feeds of a single-user instance from a single-quoted blog title', () => {
+    it('should build the feeds of a single-user instance from a single-quoted blog title', async () => {
       const value = 'https://example.org/a-post'
       const content = "<h1 id='blog-title'><a href='/'>Blog</a></h1>"
       const expected = [
@@ -165,8 +171,9 @@ describe('writefreelyHandler', () => {
           hint: { key: 'writefreely:blog', label: 'Blog' },
         },
       ]
+      const entries = await writefreelyHandler.resolve(value, content)
 
-      expect(writefreelyHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should build the tag feed of a single-user instance', () => {
@@ -235,7 +242,7 @@ describe('writefreelyHandler', () => {
       expect(writefreelyHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should build the blog feed of a single-user instance from a later page without a blog title link', () => {
+    it('should build the blog feed of a single-user instance from a later page without a blog title link', async () => {
       const value = 'https://example.org/page/2'
       const expected = [
         {
@@ -243,11 +250,12 @@ describe('writefreelyHandler', () => {
           hint: { key: 'writefreely:blog', label: 'Blog' },
         },
       ]
+      const entries = await writefreelyHandler.resolve(value)
 
-      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should build the blog feed of a single-user instance from a capitalized page segment without a blog title link', () => {
+    it('should build the blog feed of a single-user instance from a capitalized page segment without a blog title link', async () => {
       const value = 'https://example.org/Page/2'
       const expected = [
         {
@@ -255,11 +263,12 @@ describe('writefreelyHandler', () => {
           hint: { key: 'writefreely:blog', label: 'Blog' },
         },
       ]
+      const entries = await writefreelyHandler.resolve(value)
 
-      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should build the blog feed of a single-user instance from a language page without a blog title link', () => {
+    it('should build the blog feed of a single-user instance from a language page without a blog title link', async () => {
       const value = 'https://example.org/lang:en'
       const expected = [
         {
@@ -267,11 +276,12 @@ describe('writefreelyHandler', () => {
           hint: { key: 'writefreely:blog', label: 'Blog' },
         },
       ]
+      const entries = await writefreelyHandler.resolve(value)
 
-      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should build the blog feed of a single-user instance from an uppercase language segment without a blog title link', () => {
+    it('should build the blog feed of a single-user instance from an uppercase language segment without a blog title link', async () => {
       const value = 'https://example.org/LANG:en'
       const expected = [
         {
@@ -279,11 +289,12 @@ describe('writefreelyHandler', () => {
           hint: { key: 'writefreely:blog', label: 'Blog' },
         },
       ]
+      const entries = await writefreelyHandler.resolve(value)
 
-      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should build the blog feed of a single-user instance from the archive page without a blog title link', () => {
+    it('should build the blog feed of a single-user instance from the archive page without a blog title link', async () => {
       const value = 'https://example.org/archive/'
       const expected = [
         {
@@ -291,11 +302,12 @@ describe('writefreelyHandler', () => {
           hint: { key: 'writefreely:blog', label: 'Blog' },
         },
       ]
+      const entries = await writefreelyHandler.resolve(value)
 
-      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should build the blog feed of a single-user instance from a capitalized archive segment without a blog title link', () => {
+    it('should build the blog feed of a single-user instance from a capitalized archive segment without a blog title link', async () => {
       const value = 'https://example.org/Archive'
       const expected = [
         {
@@ -303,11 +315,12 @@ describe('writefreelyHandler', () => {
           hint: { key: 'writefreely:blog', label: 'Blog' },
         },
       ]
+      const entries = await writefreelyHandler.resolve(value)
 
-      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should fall back to the blog name when the blog title links elsewhere', () => {
+    it('should fall back to the blog name when the blog title links elsewhere', async () => {
       const value = 'https://example.org/alice/a-post'
       const content = '<h1 id="blog-title"><a href="https://alice.example.com/">Blog</a></h1>'
       const expected = [
@@ -320,11 +333,12 @@ describe('writefreelyHandler', () => {
           hint: { key: 'writefreely:reader', label: 'Reader' },
         },
       ]
+      const entries = await writefreelyHandler.resolve(value, content)
 
-      expect(writefreelyHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should build the blog feed of a single-user instance from its root', () => {
+    it('should build the blog feed of a single-user instance from its root', async () => {
       const value = 'https://example.org/'
       const content = '<h1 id="blog-title"><a href="/">Blog</a></h1>'
       const expected = [
@@ -333,8 +347,9 @@ describe('writefreelyHandler', () => {
           hint: { key: 'writefreely:blog', label: 'Blog' },
         },
       ]
+      const entries = await writefreelyHandler.resolve(value, content)
 
-      expect(writefreelyHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return an empty array for the root when the blog title links a blog path', () => {

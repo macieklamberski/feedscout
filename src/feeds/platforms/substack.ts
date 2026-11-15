@@ -191,7 +191,7 @@ export const substackHandler: PlatformHandler = {
     if (!record || !publication) {
       return [
         pageFeeds.getFeedEntry('substack:newsletter'),
-        ...(section ? [pageFeeds.getFeedEntry('substack:newsletter-section', { section })] : []),
+        pageFeeds.getFeedEntry('substack:newsletter-section', { section }),
       ]
     }
 
@@ -201,7 +201,7 @@ export const substackHandler: PlatformHandler = {
 
     return [
       pageFeeds.getFeedEntry('substack:newsletter'),
-      ...(section ? [pageFeeds.getFeedEntry('substack:newsletter-section', { section })] : []),
+      pageFeeds.getFeedEntry('substack:newsletter-section', { section }),
       ...(hasPodcast ? [pageFeeds.getFeedEntry('substack:podcast', params)] : []),
       ...getPodcastSections(content, publication).map((section) => {
         return pageFeeds.getFeedEntry('substack:podcast-section', { ...params, section })

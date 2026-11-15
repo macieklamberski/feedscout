@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { isMybbHeaders, isMybbHtml, mybbHandler } from './mybb.js'
 
@@ -83,23 +84,26 @@ describe('mybbHandler', () => {
       expect(mybbHandler.resolve('not-a-url')).toEqual([])
     })
 
-    it('should build the board feeds from the root path', () => {
+    it('should build the board feeds from the root path', async () => {
       const value = 'https://example.com/community/index.php'
+      const entries = await mybbHandler.resolve(value, mybbHtml)
 
-      expect(mybbHandler.resolve(value, mybbHtml)).toEqual(boardFeeds)
+      expect(entries.filter(isPresent)).toEqual(boardFeeds)
     })
 
-    it('should build the board feeds from a root path with a trailing slash', () => {
+    it('should build the board feeds from a root path with a trailing slash', async () => {
       const value = 'https://example.com/community/index.php'
       const content = '<script>var rootpath = "https://example.com/community/";</script>'
+      const entries = await mybbHandler.resolve(value, content)
 
-      expect(mybbHandler.resolve(value, content)).toEqual(boardFeeds)
+      expect(entries.filter(isPresent)).toEqual(boardFeeds)
     })
 
-    it('should build the board feeds from the page directory without a root path', () => {
+    it('should build the board feeds from the page directory without a root path', async () => {
       const value = 'https://example.com/community/index.php'
+      const entries = await mybbHandler.resolve(value)
 
-      expect(mybbHandler.resolve(value)).toEqual(boardFeeds)
+      expect(entries.filter(isPresent)).toEqual(boardFeeds)
     })
 
     it('should add the forum feeds on a forum page', () => {
@@ -114,10 +118,11 @@ describe('mybbHandler', () => {
       expect(mybbHandler.resolve(value, mybbHtml)).toEqual([...forumFeeds, ...boardFeeds])
     })
 
-    it('should ignore a forum page without a numeric forum id', () => {
+    it('should ignore a forum page without a numeric forum id', async () => {
       const value = 'https://example.com/community/forumdisplay.php?fid=news'
+      const entries = await mybbHandler.resolve(value, mybbHtml)
 
-      expect(mybbHandler.resolve(value, mybbHtml)).toEqual(boardFeeds)
+      expect(entries.filter(isPresent)).toEqual(boardFeeds)
     })
 
     it('should read the forum from the last breadcrumb forum on a thread page', () => {
@@ -162,10 +167,11 @@ describe('mybbHandler', () => {
       expect(mybbHandler.resolve(value, content)).toEqual([...forumFeeds, ...boardFeeds])
     })
 
-    it('should give the board feeds on a thread page without a breadcrumb', () => {
+    it('should give the board feeds on a thread page without a breadcrumb', async () => {
       const value = 'https://example.com/community/thread-345.html'
+      const entries = await mybbHandler.resolve(value, mybbHtml)
 
-      expect(mybbHandler.resolve(value, mybbHtml)).toEqual(boardFeeds)
+      expect(entries.filter(isPresent)).toEqual(boardFeeds)
     })
   })
 })

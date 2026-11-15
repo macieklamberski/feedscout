@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
@@ -120,7 +121,7 @@ describe('jiraHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should keep a project key with & inside the key query value', () => {
+    it('should keep a project key with & inside the key query value', async () => {
       const value = 'https://jira.example.org/secure/Dashboard.jspa'
       const content = '<meta name="ajs-project-key" content="A&amp;B">'
       const expected = [
@@ -133,8 +134,9 @@ describe('jiraHandler', () => {
           hint: { key: 'jira:site', label: 'Site activity' },
         },
       ]
+      const entries = await jiraHandler.resolve(value, content)
 
-      expect(jiraHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return the project and site feeds for a capitalized browse segment', () => {
@@ -177,7 +179,7 @@ describe('jiraHandler', () => {
       expect(jiraHandler.resolve(value, jiraHtml)).toEqual(expected)
     })
 
-    it('should read the project key from a project path', () => {
+    it('should read the project key from a project path', async () => {
       const value = 'https://example.atlassian.net/jira/software/projects/ABC/boards/1'
       const expected = [
         {
@@ -189,8 +191,9 @@ describe('jiraHandler', () => {
           hint: { key: 'jira:site', label: 'Site activity' },
         },
       ]
+      const entries = await jiraHandler.resolve(value)
 
-      expect(jiraHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should prefix the context path', () => {
@@ -213,7 +216,7 @@ describe('jiraHandler', () => {
       expect(jiraHandler.resolve(value, contextPathHtml)).toEqual(expected)
     })
 
-    it('should return only the site stream without a project key', () => {
+    it('should return only the site stream without a project key', async () => {
       const value = 'https://example.atlassian.net/'
       const expected = [
         {
@@ -221,8 +224,9 @@ describe('jiraHandler', () => {
           hint: { key: 'jira:site', label: 'Site activity' },
         },
       ]
+      const entries = await jiraHandler.resolve(value)
 
-      expect(jiraHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return the feeds under the page scheme for an http Cloud page', () => {

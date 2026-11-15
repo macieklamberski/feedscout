@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import {
   getNodebbPage,
   isNodebbHeaders,
@@ -130,7 +131,7 @@ describe('nodebbHandler', () => {
       expect(nodebbHandler.resolve('not-a-url')).toEqual([])
     })
 
-    it('should return the feeds under the sub-path the page config names', () => {
+    it('should return the feeds under the sub-path the page config names', async () => {
       const value = 'https://example.org/forum/topic/12/hello'
       const content =
         '<script>var config = {"relative_path":"/forum","upload_url":"/assets"}</script>'
@@ -148,8 +149,9 @@ describe('nodebbHandler', () => {
           hint: { key: 'nodebb:popular', label: 'Popular' },
         },
       ]
+      const entries = await nodebbHandler.resolve(value, content)
 
-      expect(nodebbHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return the category feed for a capitalized category segment', () => {
@@ -202,7 +204,7 @@ describe('nodebbHandler', () => {
       expect(nodebbHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should add the topic feed on a topic page', () => {
+    it('should add the topic feed on a topic page', async () => {
       const value = 'https://example.org/topic/345/a-topic'
       const expected = [
         { uri: 'https://example.org/topic/345.rss', hint: { key: 'nodebb:topic', label: 'Topic' } },
@@ -212,11 +214,12 @@ describe('nodebbHandler', () => {
           hint: { key: 'nodebb:popular', label: 'Popular' },
         },
       ]
+      const entries = await nodebbHandler.resolve(value)
 
-      expect(nodebbHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should add the topic feed on a topic page with a capitalized topic segment', () => {
+    it('should add the topic feed on a topic page with a capitalized topic segment', async () => {
       const value = 'https://example.org/Topic/345/a-topic'
       const expected = [
         { uri: 'https://example.org/topic/345.rss', hint: { key: 'nodebb:topic', label: 'Topic' } },
@@ -226,8 +229,9 @@ describe('nodebbHandler', () => {
           hint: { key: 'nodebb:popular', label: 'Popular' },
         },
       ]
+      const entries = await nodebbHandler.resolve(value)
 
-      expect(nodebbHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
   })
 })

@@ -58,14 +58,10 @@ export const dokuwikiHandler: PlatformHandler = {
     const { installPath, namespace } = getDokuwikiPage(url, content, headers)
     const root = `${origin}${installPath}`
 
-    if (namespace) {
-      return [
-        feeds.getFeedEntry('dokuwiki:namespace', { root, namespace }),
-        feeds.getFeedEntry('dokuwiki:namespace-pages', { root, namespace }),
-        feeds.getFeedEntry('dokuwiki:recent-changes', { root }),
-      ]
-    }
-
-    return [feeds.getFeedEntry('dokuwiki:recent-changes', { root })]
+    return [
+      feeds.getFeedEntry('dokuwiki:namespace', { root, namespace }),
+      feeds.getFeedEntry('dokuwiki:namespace-pages', { root, namespace }),
+      feeds.getFeedEntry('dokuwiki:recent-changes', { root }),
+    ]
   },
 }

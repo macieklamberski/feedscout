@@ -132,29 +132,11 @@ export const blogHuHandler: PlatformHandler = {
       return []
     }
 
-    if (parsed.post) {
-      return [
-        page.getFeedEntry('blog-hu:post-comments', parsed.post, 'rss'),
-        page.getFeedEntry('blog-hu:post-comments', parsed.post, 'atom'),
-        page.getFeedEntry('blog-hu:posts', {}, 'rss'),
-        page.getFeedEntry('blog-hu:posts', {}, 'atom'),
-        page.getFeedEntry('blog-hu:comments', {}, 'rss'),
-        page.getFeedEntry('blog-hu:comments', {}, 'atom'),
-      ]
-    }
-
-    if (parsed.tag) {
-      return [
-        page.getFeedEntry('blog-hu:tag', { tag: parsed.tag }, 'rss'),
-        page.getFeedEntry('blog-hu:tag', { tag: parsed.tag }, 'atom'),
-        page.getFeedEntry('blog-hu:posts', {}, 'rss'),
-        page.getFeedEntry('blog-hu:posts', {}, 'atom'),
-        page.getFeedEntry('blog-hu:comments', {}, 'rss'),
-        page.getFeedEntry('blog-hu:comments', {}, 'atom'),
-      ]
-    }
-
     return [
+      page.getFeedEntry('blog-hu:post-comments', parsed.post, 'rss'),
+      page.getFeedEntry('blog-hu:post-comments', parsed.post, 'atom'),
+      page.getFeedEntry('blog-hu:tag', { tag: parsed.tag }, 'rss'),
+      page.getFeedEntry('blog-hu:tag', { tag: parsed.tag }, 'atom'),
       page.getFeedEntry('blog-hu:posts', {}, 'rss'),
       page.getFeedEntry('blog-hu:posts', {}, 'atom'),
       page.getFeedEntry('blog-hu:comments', {}, 'rss'),

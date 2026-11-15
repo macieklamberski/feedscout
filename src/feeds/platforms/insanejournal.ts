@@ -139,14 +139,6 @@ const getFeeds = (
   params: PlatformFeedParams,
   tag: string | undefined,
 ): Array<DiscoverUriEntry | undefined> => {
-  if (!tag) {
-    return [
-      table.getFeedEntry('insanejournal:posts', params, 'rss'),
-      table.getFeedEntry('insanejournal:posts', params, 'atom'),
-      table.getFeedEntry('insanejournal:userpics', params, 'atom'),
-    ]
-  }
-
   const tagParams = { ...params, tag: decodeSegment(tag) ?? tag }
 
   return [

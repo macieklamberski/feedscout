@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
@@ -99,7 +100,7 @@ describe('sportsregionsHandler', () => {
       expect(sportsregionsHandler.resolve(value, clubHtml)).toEqual(expected)
     })
 
-    it('should return news and events feeds for a club subdomain', () => {
+    it('should return news and events feeds for a club subdomain', async () => {
       const value = 'https://example-club.sportsregions.fr/saison-2026-2027/actualites-du-club'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -111,11 +112,12 @@ describe('sportsregionsHandler', () => {
           hint: { key: 'sportsregions:events', label: 'Events' },
         },
       ]
+      const entries = await sportsregionsHandler.resolve(value)
 
-      expect(sportsregionsHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should return news and events feeds for a custom domain', () => {
+    it('should return news and events feeds for a custom domain', async () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.example.com/rss/news',
@@ -126,11 +128,12 @@ describe('sportsregionsHandler', () => {
           hint: { key: 'sportsregions:events', label: 'Events' },
         },
       ]
+      const entries = await sportsregionsHandler.resolve('https://www.example.com/', clubHtml)
 
-      expect(sportsregionsHandler.resolve('https://www.example.com/', clubHtml)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should keep the http scheme of a club subdomain opened over http', () => {
+    it('should keep the http scheme of a club subdomain opened over http', async () => {
       const value = 'http://example-club.sportsregions.fr/'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -142,11 +145,12 @@ describe('sportsregionsHandler', () => {
           hint: { key: 'sportsregions:events', label: 'Events' },
         },
       ]
+      const entries = await sportsregionsHandler.resolve(value)
 
-      expect(sportsregionsHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should keep the http scheme of a custom domain', () => {
+    it('should keep the http scheme of a custom domain', async () => {
       const value = 'http://example.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -158,8 +162,9 @@ describe('sportsregionsHandler', () => {
           hint: { key: 'sportsregions:events', label: 'Events' },
         },
       ]
+      const entries = await sportsregionsHandler.resolve(value, clubHtml)
 
-      expect(sportsregionsHandler.resolve(value, clubHtml)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return the filtered events feed first for a filtered events page of a club', () => {
@@ -222,7 +227,7 @@ describe('sportsregionsHandler', () => {
       expect(sportsregionsHandler.resolve(value, clubHtml)).toEqual(expected)
     })
 
-    it('should return news and events feeds for an events page filtered by an event type the feed ignores', () => {
+    it('should return news and events feeds for an events page filtered by an event type the feed ignores', async () => {
       const value = 'https://example-club.sportsregions.fr/evenements?type_evenement_id=1'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -234,8 +239,9 @@ describe('sportsregionsHandler', () => {
           hint: { key: 'sportsregions:events', label: 'Events' },
         },
       ]
+      const entries = await sportsregionsHandler.resolve(value)
 
-      expect(sportsregionsHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
   })
 

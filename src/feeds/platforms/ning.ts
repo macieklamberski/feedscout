@@ -321,7 +321,7 @@ export const ningHandler: PlatformHandler = {
     if (parsed.kind === 'topic') {
       return [
         page.getFeedEntry('ning:topic', { topic: parsed.topic, group: parsed.group }),
-        ...(parsed.group ? [page.getFeedEntry('ning:forum-group', { group: parsed.group })] : []),
+        page.getFeedEntry('ning:forum-group', { group: parsed.group }),
         page.getFeedEntry('ning:activity'),
         page.getFeedEntry('ning:blog'),
         page.getFeedEntry('ning:blog-featured'),

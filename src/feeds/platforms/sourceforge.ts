@@ -305,31 +305,23 @@ export const sourceforgeHandler: PlatformHandler = {
       feeds.getFeedEntry('sourceforge:discussion', { project }, 'atom'),
       feeds.getFeedEntry('sourceforge:bugs', { project }, 'rss'),
       feeds.getFeedEntry('sourceforge:bugs', { project }, 'atom'),
-      ...(path ? [feeds.getFeedEntry('sourceforge:files-folder', { project, path })] : []),
+      feeds.getFeedEntry('sourceforge:files-folder', { project, path }),
       ...(forum && !thread
         ? [
             feeds.getFeedEntry('sourceforge:discussion-forum', { project, forum }, 'rss'),
             feeds.getFeedEntry('sourceforge:discussion-forum', { project, forum }, 'atom'),
           ]
         : []),
-      ...(thread
-        ? [
-            feeds.getFeedEntry('sourceforge:discussion-thread', { project, forum, thread }, 'rss'),
-            feeds.getFeedEntry('sourceforge:discussion-thread', { project, forum, thread }, 'atom'),
-          ]
-        : []),
+      feeds.getFeedEntry('sourceforge:discussion-thread', { project, forum, thread }, 'rss'),
+      feeds.getFeedEntry('sourceforge:discussion-thread', { project, forum, thread }, 'atom'),
       ...(hasToolFeed
         ? [
             feeds.getFeedEntry('sourceforge:tool', { project, tool }, 'rss'),
             feeds.getFeedEntry('sourceforge:tool', { project, tool }, 'atom'),
           ]
         : []),
-      ...(page
-        ? [
-            feeds.getFeedEntry('sourceforge:tool-page', { project, tool, page }, 'rss'),
-            feeds.getFeedEntry('sourceforge:tool-page', { project, tool, page }, 'atom'),
-          ]
-        : []),
+      feeds.getFeedEntry('sourceforge:tool-page', { project, tool, page }, 'rss'),
+      feeds.getFeedEntry('sourceforge:tool-page', { project, tool, page }, 'atom'),
     ]
   },
 

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
@@ -82,7 +83,7 @@ describe('blogHuHandler', () => {
       expect(blogHuHandler.resolve('https://example.com/')).toEqual([])
     })
 
-    it('should return posts and comments feeds for a blog', () => {
+    it('should return posts and comments feeds for a blog', async () => {
       const value = 'https://bob.blog.hu/'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -102,11 +103,12 @@ describe('blogHuHandler', () => {
           hint: { key: 'blog-hu:comments', label: 'Comments', format: 'atom' },
         },
       ]
+      const entries = await blogHuHandler.resolve(value)
 
-      expect(blogHuHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should return the post comments feeds first for a post page', () => {
+    it('should return the post comments feeds first for a post page', async () => {
       const value = 'https://example.blog.hu/2013/06/30/example_post'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -134,11 +136,12 @@ describe('blogHuHandler', () => {
           hint: { key: 'blog-hu:comments', label: 'Comments', format: 'atom' },
         },
       ]
+      const entries = await blogHuHandler.resolve(value)
 
-      expect(blogHuHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should return the tag feeds first for a tag page', () => {
+    it('should return the tag feeds first for a tag page', async () => {
       const value = 'http://example.blog.hu/tags/example%20tag'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -166,8 +169,9 @@ describe('blogHuHandler', () => {
           hint: { key: 'blog-hu:comments', label: 'Comments', format: 'atom' },
         },
       ]
+      const entries = await blogHuHandler.resolve(value)
 
-      expect(blogHuHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return the user feed for a user profile', () => {
@@ -182,7 +186,7 @@ describe('blogHuHandler', () => {
       expect(blogHuHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should keep the scheme of an http blog page', () => {
+    it('should keep the scheme of an http blog page', async () => {
       const value = 'http://bob.blog.hu/'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -202,8 +206,9 @@ describe('blogHuHandler', () => {
           hint: { key: 'blog-hu:comments', label: 'Comments', format: 'atom' },
         },
       ]
+      const entries = await blogHuHandler.resolve(value)
 
-      expect(blogHuHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return the apex user feed for a user profile on www over http', () => {

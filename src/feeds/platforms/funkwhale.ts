@@ -56,10 +56,6 @@ export const funkwhaleHandler: PlatformHandler = {
       .split('@')
     const channelOrigin = domain ? getHostOrigin(domain) : origin
 
-    if (!channelOrigin) {
-      return []
-    }
-
     // The name comes out of the path decoded, and the table encodes it back into one.
     return [
       feeds.getFeedEntry('funkwhale:channel', {

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
@@ -301,7 +302,7 @@ describe('youtubeHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should encode the playlist id in the feed URL', () => {
+    it('should encode the playlist id in the feed URL', async () => {
       const value = 'https://www.youtube.com/playlist?list=PL1%26x%3D2'
       const expected = [
         {
@@ -309,8 +310,9 @@ describe('youtubeHandler', () => {
           hint: { key: 'youtube:playlist', label: 'Playlist' },
         },
       ]
+      const entries = await youtubeHandler.resolve(value)
 
-      expect(youtubeHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return empty array for a URL outside YouTube', () => {
@@ -387,7 +389,7 @@ describe('youtubeHandler', () => {
       expect(youtubeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return feed URL for playlist', () => {
+    it('should return feed URL for playlist', async () => {
       const value = 'https://youtube.com/playlist?list=PL1234567890'
       const expected = [
         {
@@ -395,8 +397,9 @@ describe('youtubeHandler', () => {
           hint: { key: 'youtube:playlist', label: 'Playlist' },
         },
       ]
+      const entries = await youtubeHandler.resolve(value)
 
-      expect(youtubeHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     const uploadsPlaylistPages: Array<[string, DiscoverUriEntry]> = [
@@ -474,14 +477,15 @@ describe('youtubeHandler', () => {
 
     it.each(uploadsPlaylistPages)(
       'should return the uploads feed under its channel key for %s',
-      (value, entry) => {
+      async (value, entry) => {
         const expected = [entry]
+        const entries = await youtubeHandler.resolve(value)
 
-        expect(youtubeHandler.resolve(value)).toEqual(expected)
+        expect(entries.filter(isPresent)).toEqual(expected)
       },
     )
 
-    it('should return the playlist key for an uploads list with a malformed channel ID', () => {
+    it('should return the playlist key for an uploads list with a malformed channel ID', async () => {
       const value = 'https://www.youtube.com/playlist?list=UUaBcDeFgHiJkLmNoPqRsTuVw'
       const expected = [
         {
@@ -489,11 +493,12 @@ describe('youtubeHandler', () => {
           hint: { key: 'youtube:playlist', label: 'Playlist' },
         },
       ]
+      const entries = await youtubeHandler.resolve(value)
 
-      expect(youtubeHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should return only playlist feed for watch page with list param', () => {
+    it('should return only playlist feed for watch page with list param', async () => {
       const value = 'https://youtube.com/watch?v=abc123&list=PL1234567890'
       const expected = [
         {
@@ -501,8 +506,9 @@ describe('youtubeHandler', () => {
           hint: { key: 'youtube:playlist', label: 'Playlist' },
         },
       ]
+      const entries = await youtubeHandler.resolve(value, '{"channelId":"UC1234567890"}')
 
-      expect(youtubeHandler.resolve(value, '{"channelId":"UC1234567890"}')).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should extract channel ID from @handle page content', () => {

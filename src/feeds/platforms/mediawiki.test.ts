@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { isMediawikiHtml, mediawikiHandler } from './mediawiki.js'
 
@@ -96,7 +97,7 @@ describe('mediawikiHandler', () => {
       expect(mediawikiHandler.resolve(value, content)).toContainEqual(expected)
     })
 
-    it('should return only the recent changes feed for a special page', () => {
+    it('should return only the recent changes feed for a special page', async () => {
       const value = 'https://example.org/wiki/Special:RecentChanges'
       const content = `
         ${rsdLink}
@@ -108,11 +109,12 @@ describe('mediawikiHandler', () => {
           hint: { key: 'mediawiki:recent-changes', label: 'Recent changes', format: 'atom' },
         },
       ]
+      const entries = await mediawikiHandler.resolve(value, content)
 
-      expect(mediawikiHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should return only the recent changes feed without a page name', () => {
+    it('should return only the recent changes feed without a page name', async () => {
       const value = 'https://example.org/wiki/Main_Page'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -120,11 +122,12 @@ describe('mediawikiHandler', () => {
           hint: { key: 'mediawiki:recent-changes', label: 'Recent changes', format: 'atom' },
         },
       ]
+      const entries = await mediawikiHandler.resolve(value, rsdLink)
 
-      expect(mediawikiHandler.resolve(value, rsdLink)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should keep the page origin when the RSD link names another server', () => {
+    it('should keep the page origin when the RSD link names another server', async () => {
       const value = 'https://example.org/wiki/Main_Page'
       const content = `
         <link
@@ -139,8 +142,9 @@ describe('mediawikiHandler', () => {
           hint: { key: 'mediawiki:recent-changes', label: 'Recent changes', format: 'atom' },
         },
       ]
+      const entries = await mediawikiHandler.resolve(value, content)
 
-      expect(mediawikiHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return no feeds without the RSD link', () => {

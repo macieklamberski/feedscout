@@ -175,17 +175,6 @@ export const huffdufferHandler: PlatformHandler = {
     }
 
     if (page.kind === 'search') {
-      if (!page.query) {
-        return [
-          feeds.getFeedEntry('huffduffer:new', undefined, 'rss'),
-          feeds.getFeedEntry('huffduffer:new', undefined, 'atom'),
-          feeds.getFeedEntry('huffduffer:new', undefined, 'json'),
-          feeds.getFeedEntry('huffduffer:popular', undefined, 'rss'),
-          feeds.getFeedEntry('huffduffer:popular', undefined, 'atom'),
-          feeds.getFeedEntry('huffduffer:popular', undefined, 'json'),
-        ]
-      }
-
       return [
         feeds.getFeedEntry('huffduffer:search', { query: page.query }, 'rss'),
         feeds.getFeedEntry('huffduffer:search', { query: page.query }, 'atom'),

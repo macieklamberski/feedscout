@@ -186,20 +186,9 @@ export const habrHandler: PlatformHandler = {
     if (parsed.kind === 'article') {
       const params = { language: parsed.language, post: parsed.post }
 
-      if (parsed.company) {
-        return [
-          feeds.getFeedEntry('habr:comments', params),
-          feeds.getFeedEntry('habr:company', {
-            language: parsed.language,
-            company: parsed.company,
-          }),
-          feeds.getFeedEntry('habr:articles', { language: parsed.language }),
-          feeds.getFeedEntry('habr:news', { language: parsed.language }),
-        ]
-      }
-
       return [
         feeds.getFeedEntry('habr:comments', params),
+        feeds.getFeedEntry('habr:company', { language: parsed.language, company: parsed.company }),
         feeds.getFeedEntry('habr:articles', { language: parsed.language }),
         feeds.getFeedEntry('habr:news', { language: parsed.language }),
       ]

@@ -84,18 +84,10 @@ export const nodebbHandler: PlatformHandler = {
 
     const root = page.siteUrl
 
-    if (page.kind === 'topic' && page.categoryId) {
-      return [
-        feeds.getFeedEntry('nodebb:topic', { root, topicId: page.topicId }),
-        feeds.getFeedEntry('nodebb:category', { root, categoryId: page.categoryId }),
-        feeds.getFeedEntry('nodebb:recent', { root }),
-        feeds.getFeedEntry('nodebb:popular', { root }),
-      ]
-    }
-
     if (page.kind === 'topic') {
       return [
         feeds.getFeedEntry('nodebb:topic', { root, topicId: page.topicId }),
+        feeds.getFeedEntry('nodebb:category', { root, categoryId: page.categoryId }),
         feeds.getFeedEntry('nodebb:recent', { root }),
         feeds.getFeedEntry('nodebb:popular', { root }),
       ]

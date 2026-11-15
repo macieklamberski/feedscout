@@ -135,14 +135,10 @@ export const githubHandler: PlatformHandler = {
     if (parsed.kind === 'discussions') {
       const { org, discussionCategory } = parsed
 
-      if (discussionCategory) {
-        return [
-          feeds.getFeedEntry('github:discussions', { org }),
-          feeds.getFeedEntry('github:discussion-category', { org, category: discussionCategory }),
-        ]
-      }
-
-      return [feeds.getFeedEntry('github:discussions', { org })]
+      return [
+        feeds.getFeedEntry('github:discussions', { org }),
+        feeds.getFeedEntry('github:discussion-category', { org, category: discussionCategory }),
+      ]
     }
 
     const { owner, repo, section, discussionCategory, branch, file } = parsed
@@ -157,7 +153,7 @@ export const githubHandler: PlatformHandler = {
       ]
     }
 
-    if (section === 'discussions' && discussionCategory) {
+    if (section === 'discussions') {
       return [
         feeds.getFeedEntry('github:releases', params),
         feeds.getFeedEntry('github:commits', params),
@@ -167,15 +163,6 @@ export const githubHandler: PlatformHandler = {
           ...params,
           category: discussionCategory,
         }),
-      ]
-    }
-
-    if (section === 'discussions') {
-      return [
-        feeds.getFeedEntry('github:releases', params),
-        feeds.getFeedEntry('github:commits', params),
-        feeds.getFeedEntry('github:tags', params),
-        feeds.getFeedEntry('github:discussions', params),
       ]
     }
 

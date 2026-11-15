@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
@@ -239,7 +240,7 @@ describe('ningHandler', () => {
       expect(ningHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the topic feed before the site feeds and lists for a topic page', () => {
+    it('should return the topic feed before the site feeds and lists for a topic page', async () => {
       const value = 'https://example.ning.com/forum/topics/tour-and-travel'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -311,8 +312,9 @@ describe('ningHandler', () => {
           hint: { key: 'ning:notes', label: 'Notes' },
         },
       ]
+      const entries = await ningHandler.resolve(value)
 
-      expect(ningHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return the topic and group forum feeds for a group topic page', () => {

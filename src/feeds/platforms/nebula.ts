@@ -63,18 +63,9 @@ export const nebulaHandler: PlatformHandler = {
     if (parsed.kind === 'explore') {
       const { category } = parsed
 
-      if (category) {
-        return [
-          feeds.getFeedEntry('nebula:category', { category }),
-          feeds.getFeedEntry('nebula:category-plus', { category }),
-          feeds.getFeedEntry('nebula:videos-all'),
-          feeds.getFeedEntry('nebula:videos-all-plus'),
-          feeds.getFeedEntry('nebula:originals'),
-          feeds.getFeedEntry('nebula:channels'),
-        ]
-      }
-
       return [
+        feeds.getFeedEntry('nebula:category', { category }),
+        feeds.getFeedEntry('nebula:category-plus', { category }),
         feeds.getFeedEntry('nebula:videos-all'),
         feeds.getFeedEntry('nebula:videos-all-plus'),
         feeds.getFeedEntry('nebula:originals'),

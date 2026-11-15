@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { isPhpbbHtml, phpbbHandler } from './phpbb.js'
 
@@ -78,13 +79,13 @@ describe('phpbbHandler', () => {
       ]
     }
 
-    it('should build the board feeds from a board mounted under a sub-path', () => {
-      expect(phpbbHandler.resolve('https://example.com/community/')).toEqual(
-        getBoardFeeds('https://example.com/community'),
-      )
+    it('should build the board feeds from a board mounted under a sub-path', async () => {
+      const entries = await phpbbHandler.resolve('https://example.com/community/')
+
+      expect(entries.filter(isPresent)).toEqual(getBoardFeeds('https://example.com/community'))
     })
 
-    it('should drop the script segment and add the forum feed', () => {
+    it('should drop the script segment and add the forum feed', async () => {
       const value = 'https://example.com/community/viewforum.php?f=12'
       const expected = [
         {
@@ -93,8 +94,9 @@ describe('phpbbHandler', () => {
         },
         ...getBoardFeeds('https://example.com/community'),
       ]
+      const entries = await phpbbHandler.resolve(value)
 
-      expect(phpbbHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should add the topic feed before the forum feed', () => {
@@ -114,7 +116,7 @@ describe('phpbbHandler', () => {
       expect(phpbbHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should drop the script segment and add the forum feed with a capitalized viewforum segment', () => {
+    it('should drop the script segment and add the forum feed with a capitalized viewforum segment', async () => {
       const value = 'https://example.com/community/VIEWFORUM.PHP?f=12'
       const expected = [
         {
@@ -123,11 +125,12 @@ describe('phpbbHandler', () => {
         },
         ...getBoardFeeds('https://example.com/community'),
       ]
+      const entries = await phpbbHandler.resolve(value)
 
-      expect(phpbbHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should read the forum id name in uppercase', () => {
+    it('should read the forum id name in uppercase', async () => {
       const value = 'https://example.com/community/viewforum.php?F=12'
       const expected = [
         {
@@ -136,11 +139,12 @@ describe('phpbbHandler', () => {
         },
         ...getBoardFeeds('https://example.com/community'),
       ]
+      const entries = await phpbbHandler.resolve(value)
 
-      expect(phpbbHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should read the topic id name in uppercase', () => {
+    it('should read the topic id name in uppercase', async () => {
       const value = 'https://example.com/community/viewtopic.php?T=345'
       const expected = [
         {
@@ -149,11 +153,12 @@ describe('phpbbHandler', () => {
         },
         ...getBoardFeeds('https://example.com/community'),
       ]
+      const entries = await phpbbHandler.resolve(value)
 
-      expect(phpbbHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should read the topic from the canonical link of a post link', () => {
+    it('should read the topic from the canonical link of a post link', async () => {
       const value = 'https://example.com/community/viewtopic.php?p=678'
       const content = `
         <link
@@ -168,11 +173,12 @@ describe('phpbbHandler', () => {
         },
         ...getBoardFeeds('https://example.com/community'),
       ]
+      const entries = await phpbbHandler.resolve(value, content)
 
-      expect(phpbbHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should read the topic from a relative canonical link', () => {
+    it('should read the topic from a relative canonical link', async () => {
       const value = 'https://example.com/community/viewtopic.php?p=678'
       const content = `
         <link
@@ -187,11 +193,12 @@ describe('phpbbHandler', () => {
         },
         ...getBoardFeeds('https://example.com/community'),
       ]
+      const entries = await phpbbHandler.resolve(value, content)
 
-      expect(phpbbHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should prefer the topic in the url over the canonical link', () => {
+    it('should prefer the topic in the url over the canonical link', async () => {
       const value = 'https://example.com/community/viewtopic.php?t=345'
       const content = `
         <link
@@ -206,17 +213,19 @@ describe('phpbbHandler', () => {
         },
         ...getBoardFeeds('https://example.com/community'),
       ]
+      const entries = await phpbbHandler.resolve(value, content)
 
-      expect(phpbbHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should give the board feeds for a forum id with a letter', () => {
+    it('should give the board feeds for a forum id with a letter', async () => {
       const value = 'https://example.com/community/viewforum.php?f=12abc'
+      const entries = await phpbbHandler.resolve(value)
 
-      expect(phpbbHandler.resolve(value)).toEqual(getBoardFeeds('https://example.com/community'))
+      expect(entries.filter(isPresent)).toEqual(getBoardFeeds('https://example.com/community'))
     })
 
-    it('should read the canonical link when the topic id in the url has a letter', () => {
+    it('should read the canonical link when the topic id in the url has a letter', async () => {
       const value = 'https://example.com/community/viewtopic.php?t=345abc'
       const content = `
         <link
@@ -231,19 +240,19 @@ describe('phpbbHandler', () => {
         },
         ...getBoardFeeds('https://example.com/community'),
       ]
+      const entries = await phpbbHandler.resolve(value, content)
 
-      expect(phpbbHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should give the board feeds for a post link without a canonical link', () => {
+    it('should give the board feeds for a post link without a canonical link', async () => {
       const value = 'https://example.com/community/viewtopic.php?p=678'
+      const entries = await phpbbHandler.resolve(value, '<html></html>')
 
-      expect(phpbbHandler.resolve(value, '<html></html>')).toEqual(
-        getBoardFeeds('https://example.com/community'),
-      )
+      expect(entries.filter(isPresent)).toEqual(getBoardFeeds('https://example.com/community'))
     })
 
-    it('should handle a board at the origin root', () => {
+    it('should handle a board at the origin root', async () => {
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://example.com/feed.php', hint: { key: 'phpbb:site', label: 'Site' } },
         {
@@ -263,8 +272,9 @@ describe('phpbbHandler', () => {
           hint: { key: 'phpbb:forums', label: 'Forums' },
         },
       ]
+      const entries = await phpbbHandler.resolve('https://example.com/')
 
-      expect(phpbbHandler.resolve('https://example.com/')).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
   })
 })

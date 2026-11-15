@@ -160,18 +160,8 @@ export const gitlabHandler: PlatformHandler = {
     // Project page: gitlab.com/{group}/{subgroup...}/{project}.
     const { projectPath: project, branch } = parsed
 
-    if (branch) {
-      return [
-        page.getFeedEntry('gitlab:branch-commits', { project, branch }),
-        page.getFeedEntry('gitlab:releases', { project }),
-        page.getFeedEntry('gitlab:tags', { project }),
-        page.getFeedEntry('gitlab:issues', { project }),
-        page.getFeedEntry('gitlab:merge-requests', { project }),
-        page.getFeedEntry('gitlab:activity', { path: project }),
-      ]
-    }
-
     return [
+      page.getFeedEntry('gitlab:branch-commits', { project, branch }),
       page.getFeedEntry('gitlab:releases', { project }),
       page.getFeedEntry('gitlab:tags', { project }),
       page.getFeedEntry('gitlab:issues', { project }),

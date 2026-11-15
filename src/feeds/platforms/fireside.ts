@@ -53,16 +53,8 @@ export const firesideHandler: PlatformHandler = {
       return []
     }
 
-    if (parsed.tag) {
-      return [
-        page.getFeedEntry('fireside:tag', { tag: parsed.tag }),
-        page.getFeedEntry('fireside:podcast', { slug: parsed.slug }, 'rss'),
-        page.getFeedEntry('fireside:podcast', { slug: parsed.slug }, 'json'),
-        page.getFeedEntry('fireside:blog'),
-      ]
-    }
-
     return [
+      page.getFeedEntry('fireside:tag', { tag: parsed.tag }),
       page.getFeedEntry('fireside:podcast', { slug: parsed.slug }, 'rss'),
       page.getFeedEntry('fireside:podcast', { slug: parsed.slug }, 'json'),
       page.getFeedEntry('fireside:blog'),

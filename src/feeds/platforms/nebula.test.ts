@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
@@ -90,7 +91,7 @@ describe('nebulaHandler', () => {
       expect(nebulaHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return global feeds for root path', () => {
+    it('should return global feeds for root path', async () => {
       const value = 'https://nebula.tv/'
       const expected = [
         {
@@ -110,11 +111,12 @@ describe('nebulaHandler', () => {
           hint: { key: 'nebula:channels', label: 'Recently Added Channels' },
         },
       ]
+      const entries = await nebulaHandler.resolve(value)
 
-      expect(nebulaHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should return global feeds for /videos', () => {
+    it('should return global feeds for /videos', async () => {
       const value = 'https://nebula.tv/videos'
       const expected = [
         {
@@ -134,11 +136,12 @@ describe('nebulaHandler', () => {
           hint: { key: 'nebula:channels', label: 'Recently Added Channels' },
         },
       ]
+      const entries = await nebulaHandler.resolve(value)
 
-      expect(nebulaHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should return global feeds for /videos in any case', () => {
+    it('should return global feeds for /videos in any case', async () => {
       const value = 'https://nebula.tv/Videos'
       const expected = [
         {
@@ -158,11 +161,12 @@ describe('nebulaHandler', () => {
           hint: { key: 'nebula:channels', label: 'Recently Added Channels' },
         },
       ]
+      const entries = await nebulaHandler.resolve(value)
 
-      expect(nebulaHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should return global feeds for /explore', () => {
+    it('should return global feeds for /explore', async () => {
       const value = 'https://nebula.tv/explore'
       const expected = [
         {
@@ -182,11 +186,12 @@ describe('nebulaHandler', () => {
           hint: { key: 'nebula:channels', label: 'Recently Added Channels' },
         },
       ]
+      const entries = await nebulaHandler.resolve(value)
 
-      expect(nebulaHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should return global feeds for /explore/{tab}', () => {
+    it('should return global feeds for /explore/{tab}', async () => {
       const value = 'https://nebula.tv/explore/podcasts'
       const expected = [
         {
@@ -206,8 +211,9 @@ describe('nebulaHandler', () => {
           hint: { key: 'nebula:channels', label: 'Recently Added Channels' },
         },
       ]
+      const entries = await nebulaHandler.resolve(value)
 
-      expect(nebulaHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return category feeds when category query is set', () => {

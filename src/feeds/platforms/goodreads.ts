@@ -82,15 +82,8 @@ export const goodreadsHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed.shelf) {
-      return [
-        feeds.getFeedEntry('goodreads:shelf', { userId, shelf: parsed.shelf }),
-        feeds.getFeedEntry('goodreads:reviews', { userId }),
-        feeds.getFeedEntry('goodreads:updates', { userId }),
-      ]
-    }
-
     return [
+      feeds.getFeedEntry('goodreads:shelf', { userId, shelf: parsed.shelf }),
       feeds.getFeedEntry('goodreads:reviews', { userId }),
       feeds.getFeedEntry('goodreads:updates', { userId }),
     ]

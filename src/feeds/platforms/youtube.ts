@@ -240,7 +240,7 @@ export const youtubeHandler: PlatformHandler = {
 
     return [
       ...(channelId ? getChannelUris(channelId) : []),
-      ...(username ? [feeds.getFeedEntry('youtube:all', { user: username })] : []),
+      feeds.getFeedEntry('youtube:all', { user: username }),
       ...(playlistUri
         ? [{ uri: playlistUri, hint: composeHint(getPlaylistKey(page.playlistId)) }]
         : []),

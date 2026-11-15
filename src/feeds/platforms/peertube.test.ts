@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PeertubeUrl } from './peertube.js'
 import { isPeertubeHeaders, parsePeertubeUrl, peertubeHandler } from './peertube.js'
@@ -100,7 +101,7 @@ describe('peertubeHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should keep a channel name with & inside the query value', () => {
+    it('should keep a channel name with & inside the query value', async () => {
       const value = 'https://example.com/c/news&accountName=alice'
       const expected = [
         {
@@ -112,11 +113,12 @@ describe('peertubeHandler', () => {
           hint: { key: 'peertube:instance', label: 'Instance' },
         },
       ]
+      const entries = await peertubeHandler.resolve(value)
 
-      expect(peertubeHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should keep an escaped channel name escaped once in the query value', () => {
+    it('should keep an escaped channel name escaped once in the query value', async () => {
       const value = 'https://example.com/c/a%2Bb'
       const expected = [
         {
@@ -128,11 +130,12 @@ describe('peertubeHandler', () => {
           hint: { key: 'peertube:instance', label: 'Instance' },
         },
       ]
+      const entries = await peertubeHandler.resolve(value)
 
-      expect(peertubeHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should percent-encode a non-ASCII channel name in the query value', () => {
+    it('should percent-encode a non-ASCII channel name in the query value', async () => {
       const value = 'https://example.com/c/caf%C3%A9'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -144,8 +147,9 @@ describe('peertubeHandler', () => {
           hint: { key: 'peertube:instance', label: 'Instance' },
         },
       ]
+      const entries = await peertubeHandler.resolve(value)
 
-      expect(peertubeHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should keep an account name with & inside the query value', () => {
@@ -168,7 +172,7 @@ describe('peertubeHandler', () => {
       expect(peertubeHandler.resolve('not-a-url')).toEqual([])
     })
 
-    it('should return the channel and instance feeds', () => {
+    it('should return the channel and instance feeds', async () => {
       const value = 'https://example.org/c/channel/videos'
       const expected = [
         {
@@ -180,8 +184,9 @@ describe('peertubeHandler', () => {
           hint: { key: 'peertube:instance', label: 'Instance' },
         },
       ]
+      const entries = await peertubeHandler.resolve(value)
 
-      expect(peertubeHandler.resolve(value)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return the podcast feed the channel page links', () => {
@@ -211,7 +216,7 @@ describe('peertubeHandler', () => {
       expect(peertubeHandler.resolve(value, content)).toEqual(expected)
     })
 
-    it('should skip a podcast feed linked on another host', () => {
+    it('should skip a podcast feed linked on another host', async () => {
       const value = 'https://example.org/c/channel'
       const content = `
         <link
@@ -230,11 +235,12 @@ describe('peertubeHandler', () => {
           hint: { key: 'peertube:instance', label: 'Instance' },
         },
       ]
+      const entries = await peertubeHandler.resolve(value, content)
 
-      expect(peertubeHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should skip a podcast feed the channel page names only in an anchor', () => {
+    it('should skip a podcast feed the channel page names only in an anchor', async () => {
       const value = 'https://example.org/c/channel'
       const content = '<a href="/feeds/podcast/videos.xml?videoChannelId=1">Podcast</a>'
       const expected = [
@@ -247,8 +253,9 @@ describe('peertubeHandler', () => {
           hint: { key: 'peertube:instance', label: 'Instance' },
         },
       ]
+      const entries = await peertubeHandler.resolve(value, content)
 
-      expect(peertubeHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return the account feed on an account page', () => {

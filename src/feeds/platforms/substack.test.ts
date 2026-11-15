@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isPresent } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
@@ -285,7 +286,7 @@ describe('substackHandler', () => {
       expect(substackHandler.resolve('https://api.substack.com/p/post')).toEqual([])
     })
 
-    it('should return the podcast feed of a publication with a podcast', () => {
+    it('should return the podcast feed of a publication with a podcast', async () => {
       const value = 'https://example.substack.com/podcast'
       const content =
         '{"pub":{"author_id":678,"id":12345,"podcast_enabled":true,"podcast_feed_url":null}}'
@@ -296,11 +297,12 @@ describe('substackHandler', () => {
         },
         { uri: 'https://api.substack.com/feed/podcast/12345.rss', hint: podcastHint },
       ]
+      const entries = await substackHandler.resolve(value, content)
 
-      expect(substackHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should return the podcast section feed of each podcast section once', () => {
+    it('should return the podcast section feed of each podcast section once', async () => {
       const value = 'https://example.substack.com/s/episodes'
       const content =
         '{"pub":{"author_id":678,"id":12345,"podcast_enabled":false},"sections":[{"id":111,"publication_id":12345,"podcastSettings":{"section_id":111}},{"id":222,"publication_id":12345,"podcastSettings":null},{"id":333,"publication_id":12345,"podcastSettings":{"section_id":333}}],"section":{"id":111,"publication_id":12345,"podcastSettings":{"section_id":111}}}'
@@ -318,8 +320,9 @@ describe('substackHandler', () => {
           hint: { key: 'substack:podcast-section', label: 'Podcast section' },
         },
       ]
+      const entries = await substackHandler.resolve(value, content)
 
-      expect(substackHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should leave out the podcast section feed of another publication', () => {
@@ -336,7 +339,7 @@ describe('substackHandler', () => {
       expect(substackHandler.resolve(value, content)).toEqual(expected)
     })
 
-    it('should leave out the podcast feed of a publication that names its own', () => {
+    it('should leave out the podcast feed of a publication that names its own', async () => {
       const value = 'https://example.substack.com/podcast'
       const content =
         '{"pub":{"id":12345,"podcast_enabled":true,"podcast_feed_url":"https://api.substack.com/feed/podcast/12345/s/111.rss","sections":[{"id":111,"publication_id":12345,"podcastSettings":{"section_id":111}}]}}'
@@ -350,11 +353,12 @@ describe('substackHandler', () => {
           hint: { key: 'substack:podcast-section', label: 'Podcast section' },
         },
       ]
+      const entries = await substackHandler.resolve(value, content)
 
-      expect(substackHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
-    it('should read the podcast from the publication record, not from a quoted string', () => {
+    it('should read the podcast from the publication record, not from a quoted string', async () => {
       const value = 'https://example.substack.com/p/post'
       const content =
         '{"headline":"\\"pub\\":{\\"id\\":999,\\"podcast_enabled\\":true}"}' +
@@ -366,8 +370,9 @@ describe('substackHandler', () => {
         },
         { uri: 'https://api.substack.com/feed/podcast/12345.rss', hint: podcastHint },
       ]
+      const entries = await substackHandler.resolve(value, content)
 
-      expect(substackHandler.resolve(value, content)).toEqual(expected)
+      expect(entries.filter(isPresent)).toEqual(expected)
     })
 
     it('should return the newsletter feed alone for a publication without a podcast', () => {
