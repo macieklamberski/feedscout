@@ -1,8 +1,7 @@
-import { composeQuery, getQueryParam, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getQueryParam, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
-  composeHint,
   digitsRegex,
   findElement,
   getCookieNames,
@@ -16,6 +15,19 @@ import { isForumotionHtml } from './forumotion.js'
 // Generic partly covers board, forum, post, topic.
 
 export type PhpbbPage = { boardUrl: string; forumId?: string; topicId?: string }
+
+// A board is known only by its markup and cookies, so its feeds are built under the board root and
+// claimed on no host. Each board-wide feed is an administrator toggle, so a board serves any subset
+// of them.
+const feeds = definePlatformFeeds([
+  { key: 'phpbb:topic', template: '{root}/feed.php?t={topicId}' },
+  { key: 'phpbb:forum', template: '{root}/feed.php?f={forumId}' },
+  { key: 'phpbb:site', template: '{root}/feed.php' },
+  { key: 'phpbb:news', template: '{root}/feed.php?mode=news' },
+  { key: 'phpbb:new-topics', template: '{root}/feed.php?mode=topics' },
+  { key: 'phpbb:active-topics', template: '{root}/feed.php?mode=topics_active' },
+  { key: 'phpbb:forums', template: '{root}/feed.php?mode=forums' },
+])
 
 // Forumotion's phpBB3 template prints the same body id and serves none of phpBB's feeds.
 export const isPhpbbHtml = (content: string): boolean => {
@@ -77,37 +89,22 @@ export const phpbbHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getPhpbbPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { boardUrl, forumId, topicId } = page
-    const uris: Array<DiscoverUriEntry> = []
+    const { boardUrl: root, forumId, topicId } = page
 
-    if (topicId) {
-      uris.push({
-        uri: `${boardUrl}/feed.php${composeQuery({ t: topicId })}`,
-        hint: composeHint('phpbb:topic'),
-      })
-    }
-
-    if (forumId) {
-      uris.push({
-        uri: `${boardUrl}/feed.php${composeQuery({ f: forumId })}`,
-        hint: composeHint('phpbb:forum'),
-      })
-    }
-
-    // Each board-wide feed is an administrator toggle, so a board serves any subset of them.
-    uris.push(
-      { uri: `${boardUrl}/feed.php`, hint: composeHint('phpbb:site') },
-      { uri: `${boardUrl}/feed.php?mode=news`, hint: composeHint('phpbb:news') },
-      { uri: `${boardUrl}/feed.php?mode=topics`, hint: composeHint('phpbb:new-topics') },
-      { uri: `${boardUrl}/feed.php?mode=topics_active`, hint: composeHint('phpbb:active-topics') },
-      { uri: `${boardUrl}/feed.php?mode=forums`, hint: composeHint('phpbb:forums') },
-    )
-
-    return uris
+    return [
+      ...(topicId ? [pageFeeds.getFeedEntry('phpbb:topic', { root, topicId })] : []),
+      ...(forumId ? [pageFeeds.getFeedEntry('phpbb:forum', { root, forumId })] : []),
+      pageFeeds.getFeedEntry('phpbb:site', { root }),
+      pageFeeds.getFeedEntry('phpbb:news', { root }),
+      pageFeeds.getFeedEntry('phpbb:new-topics', { root }),
+      pageFeeds.getFeedEntry('phpbb:active-topics', { root }),
+      pageFeeds.getFeedEntry('phpbb:forums', { root }),
+    ]
   },
 }
