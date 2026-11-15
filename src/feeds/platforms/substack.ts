@@ -17,6 +17,10 @@ const appHosts = ['open.substack.com', 'api.substack.com']
 
 const profileRegex = /^\/@(?<username>[^/]+)/
 const sectionPathRegex = /^\/s\/(?<slug>[^/]+)/i
+// A section page embeds the record of every section of the publication, each naming its id before
+// its slug with no brace between them.
+const braceRegex = /[{}]/
+const sectionIdRegex = /"id":(?<section>\d+),/
 // A profile page embeds its primary publication as escaped JSON. The publication
 // subdomain is not always the handle, and a custom domain replaces it.
 const publicationRegex =
@@ -82,8 +86,6 @@ const getPodcastSections = (content: string, publication: string): Array<string>
   return sections
 }
 
-// A section page embeds the record of every section of the publication, each naming its id before
-// its slug.
 const getSectionId = (content: string | undefined, url: string): string | undefined => {
   const slug = parseUrl(url)?.pathname.match(sectionPathRegex)?.groups?.slug
 
@@ -91,9 +93,22 @@ const getSectionId = (content: string | undefined, url: string): string | undefi
     return
   }
 
-  const sectionRegex = new RegExp(`"id":(?<section>\\d+),[^{}]*?"slug":"${escapeRegex(slug)}"`, 'i')
+  const slugRegex = new RegExp(`"slug":"${escapeRegex(slug)}"`, 'i')
 
-  return content.match(sectionRegex)?.groups?.section
+  // Each run between two braces is read once, so a page of ids with no slug stays linear.
+  for (const run of content.split(braceRegex)) {
+    const slugIndex = run.search(slugRegex)
+
+    if (slugIndex === -1) {
+      continue
+    }
+
+    const section = run.slice(0, slugIndex).match(sectionIdRegex)?.groups?.section
+
+    if (section) {
+      return section
+    }
+  }
 }
 
 const getPublicationOrigin = (content: string | undefined): string | undefined => {

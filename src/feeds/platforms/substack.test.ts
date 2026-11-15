@@ -162,6 +162,24 @@ describe('substackHandler', () => {
       expect(substackHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should read a section page with a long run of section ids in linear time', () => {
+      const value = 'https://example.substack.com/s/mutual-aid'
+      const content = '"id":1,'.repeat(30_000)
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+      ]
+
+      const start = performance.now()
+      const result = substackHandler.resolve(value, content)
+      const elapsed = performance.now() - start
+
+      expect(elapsed).toBeLessThan(1000)
+      expect(result).toEqual(expected)
+    })
+
     it('should return the newsletter feed alone for a section page whose section the page omits', () => {
       const value = 'https://example.substack.com/s/mutual-aid'
       const content = '{"sections":[{"id":161100,"name":"Updates","slug":"updates"}]}'

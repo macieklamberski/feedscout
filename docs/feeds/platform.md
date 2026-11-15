@@ -1402,12 +1402,12 @@ Discovers the audio, all-media, video, and audio with PDF feeds of every channel
 
 ### Shinobi Blog
 
-Discovers RSS and Atom feeds for Shinobi Blog. A blog on any other domain is detected by the Ninja Blog banner its pages print.
+Discovers RSS, Atom and RDF feeds for Shinobi Blog. A blog on any other domain is detected by the Ninja Blog banner its pages print.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{blog}.blog.shinobi.jp` | Posts (RSS + Atom + RDF) |
-| `{host}` | Posts (RSS + Atom) |
+| `{host}` | Posts (RSS + Atom + RDF) |
 
 ### Spotify for Creators
 
