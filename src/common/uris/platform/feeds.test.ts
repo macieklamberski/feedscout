@@ -107,6 +107,53 @@ const pathFeeds = definePlatformFeeds(
   { hosts: ['example.com', 'www.example.com'] },
 )
 
+const passedQueryFeeds = definePlatformFeeds(
+  [
+    { key: 'joomla:view', template: '{root}/index.php?{query}&format=feed&type=rss' },
+    { key: 'b2evolution:posts', template: '{root}/index.php?{query}&tempskin=_rss2' },
+    { key: 'example:search', template: '{root}/jobs/feed?sort=date&{query}' },
+    { key: 'example:site', template: '{root}/index.php?format=feed&type=atom' },
+  ],
+  { hosts: ['example.com'] },
+)
+
+const repeatedQueryFeeds = definePlatformFeeds(
+  [
+    {
+      key: 'confluence:space',
+      template:
+        'https://{host}/createrssfeed.action?types=page&types=blogpost&types=comment&spaces={space}',
+    },
+    {
+      key: 'confluence:site',
+      template: 'https://{host}/createrssfeed.action?types=page&spaces=conf_all',
+    },
+  ],
+  { hosts: ['example.com'] },
+)
+
+const formQueryFeeds = definePlatformFeeds(
+  [
+    {
+      key: 'mediawiki:history',
+      template: '{root}/index.php?title={title}&action=history&feed=atom',
+      format: 'atom',
+    },
+    {
+      key: 'mediawiki:recent-changes',
+      template: '{root}/index.php?title=Special:RecentChanges&feed=atom&{query}',
+      format: 'atom',
+    },
+    { key: 'example:profile', template: '{root}/index.php?title={title}&rss' },
+  ],
+  { hosts: ['example.com'], queryEncoding: 'form' },
+)
+
+const directoryFeeds = definePlatformFeeds([
+  { key: 'typecho:page', template: 'https://www.example.com/feed/{directory*}/' },
+  { key: 'typecho:page', template: 'https://www.example.com/feed/{path*}' },
+])
+
 describe('definePlatformFeeds', () => {
   it('should throw for a template without an http scheme', () => {
     const throwing = () =>
@@ -262,11 +309,10 @@ describe('definePlatformFeeds', () => {
       expect(value).toBe(expected)
     })
 
-    it('should build the first template of a key when the values fill none', () => {
+    it('should return undefined when the values fill no template of a key', () => {
       const value = feeds.getFeedUrl('example:channel', {})
-      const expected = 'https://www.example.com/feed/{channel}'
 
-      expect(value).toBe(expected)
+      expect(value).toBeUndefined()
     })
 
     it('should pick the template of the format', () => {
@@ -289,11 +335,10 @@ describe('definePlatformFeeds', () => {
       expect(value).toBe(expected)
     })
 
-    it('should keep a placeholder with no value', () => {
+    it('should return undefined for a placeholder with no value', () => {
       const value = feeds.getFeedUrl('example:posts')
-      const expected = 'https://www.example.com/{username}/feed.rss'
 
-      expect(value).toBe(expected)
+      expect(value).toBeUndefined()
     })
 
     it('should write a root as given', () => {
@@ -317,11 +362,10 @@ describe('definePlatformFeeds', () => {
       expect(rootFeeds.getFeedUrl('example:latest', value)).toBe(expected)
     })
 
-    it('should keep a root placeholder with no value', () => {
+    it('should return undefined for a root placeholder with no value', () => {
       const value = {}
-      const expected = '{root}/latest.rss'
 
-      expect(rootFeeds.getFeedUrl('example:latest', value)).toBe(expected)
+      expect(rootFeeds.getFeedUrl('example:latest', value)).toBeUndefined()
     })
 
     it('should build the row without the placeholder whose value is undefined', () => {
@@ -334,11 +378,42 @@ describe('definePlatformFeeds', () => {
       expect(categoryFeeds.getFeedUrl('example:category', value)).toBe(expected)
     })
 
-    it('should keep a placeholder whose value is undefined', () => {
+    it('should return undefined for a placeholder whose value is undefined', () => {
       const value = { username: undefined }
-      const expected = 'https://www.example.com/{username}/feed.rss'
 
-      expect(feeds.getFeedUrl('example:posts', value)).toBe(expected)
+      expect(feeds.getFeedUrl('example:posts', value)).toBeUndefined()
+    })
+
+    it('should return undefined for an empty path segment', () => {
+      const value = { username: '' }
+
+      expect(feeds.getFeedUrl('example:posts', value)).toBeUndefined()
+    })
+
+    it('should return undefined for an empty host label', () => {
+      const value = { username: '' }
+
+      expect(feeds.getFeedUrl('example:blog', value)).toBeUndefined()
+    })
+
+    it('should build the row without the placeholder whose value is empty', () => {
+      const value = {
+        slug: 'news',
+        id: '',
+      }
+      const expected = 'https://www.example.com/c/news.rss'
+
+      expect(categoryFeeds.getFeedUrl('example:category', value)).toBe(expected)
+    })
+
+    it('should write no parameter for an empty query value', () => {
+      const value = {
+        username: 'alice',
+        page: '',
+      }
+      const expected = 'https://www.example.com/pages/alice?rss'
+
+      expect(feeds.getFeedUrl('example:page', value)).toBe(expected)
     })
   })
 
@@ -358,6 +433,12 @@ describe('definePlatformFeeds', () => {
       expect(value).toEqual(expected)
     })
 
+    it('should return undefined for a placeholder with no value', () => {
+      const value = labelled.getFeedEntry('plurk:plurks', {})
+
+      expect(value).toBeUndefined()
+    })
+
     it('should return the feed of the format with the format in its hint', () => {
       const value = labelled.getFeedEntry('plurk:plurks', { username: 'alice' }, 'atom')
       const expected: DiscoverUriEntry = {
@@ -366,6 +447,143 @@ describe('definePlatformFeeds', () => {
       }
 
       expect(value).toEqual(expected)
+    })
+  })
+
+  describe('getFeedSpellings', () => {
+    const spellingFeeds = definePlatformFeeds([
+      { key: 'wordpress:posts', template: '{root}/feed/' },
+      { key: 'wordpress:posts', template: '{root}/?feed=rss', isAlias: true },
+      { key: 'wordpress:posts', template: '{root}/feed/rss2/', isAlias: true },
+      { key: 'wordpress:posts', template: '{root}/?feed=rss2', isAlias: true },
+      { key: 'wordpress:posts', template: '{root}/feed/atom/', format: 'atom' },
+      { key: 'wordpress:posts', template: '{root}/?feed=atom', format: 'atom', isAlias: true },
+      { key: 'xenforo:forum', template: '{root}/forums/{forum}/index.rss' },
+      { key: 'xenforo:forum', template: '{root}/f/{forum}/index.rss', isAlias: true },
+      { key: 'xenforo:forum', template: '{root}/forums/index.rss' },
+      { key: 'xenforo:forum', template: '{root}/f/index.rss', isAlias: true },
+      { key: 'typecho:posts', template: '{root}/feed/{id}/' },
+      { key: 'typecho:posts', template: '{root}/index.php/feed/', isAlias: true },
+      { key: 'typecho:posts', template: '{root}/index.php/feed/{id}/', isAlias: true },
+      { key: 'typecho:page', template: '{root}/feed/{path*}/' },
+    ])
+
+    it('should return the canonical row and its alias rows in table order', () => {
+      const value = { root: 'https://example.com' }
+      const expected: DiscoverUriEntry = {
+        uri: [
+          'https://example.com/feed/',
+          'https://example.com/?feed=rss',
+          'https://example.com/feed/rss2/',
+          'https://example.com/?feed=rss2',
+        ],
+        hint: { key: 'wordpress:posts', label: 'Posts' },
+      }
+
+      expect(spellingFeeds.getFeedSpellings('wordpress:posts', value)).toEqual(expected)
+    })
+
+    it('should return the rows of the format with the format in its hint', () => {
+      const value = { root: 'https://example.com' }
+      const expected: DiscoverUriEntry = {
+        uri: ['https://example.com/feed/atom/', 'https://example.com/?feed=atom'],
+        hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
+      }
+
+      expect(spellingFeeds.getFeedSpellings('wordpress:posts', value, 'atom')).toEqual(expected)
+    })
+
+    it('should keep an alias row below a canonical row of another format', () => {
+      const formatFeeds = definePlatformFeeds([
+        { key: 'wordpress:posts', template: '{root}/feed/' },
+        { key: 'wordpress:posts', template: '{root}/feed/atom/', format: 'atom' },
+        { key: 'wordpress:posts', template: '{root}/?feed=rss2', isAlias: true },
+      ])
+      const value = { root: 'https://example.com' }
+      const expected: DiscoverUriEntry = {
+        uri: ['https://example.com/feed/', 'https://example.com/?feed=rss2'],
+        hint: { key: 'wordpress:posts', label: 'Posts' },
+      }
+
+      expect(formatFeeds.getFeedSpellings('wordpress:posts', value)).toEqual(expected)
+    })
+
+    it('should stop at the next canonical row of the key', () => {
+      const value = {
+        root: 'https://example.com',
+        forum: 'news.2',
+      }
+      const expected: DiscoverUriEntry = {
+        uri: [
+          'https://example.com/forums/news.2/index.rss',
+          'https://example.com/f/news.2/index.rss',
+        ],
+        hint: { key: 'xenforo:forum', label: 'Forum' },
+      }
+
+      expect(spellingFeeds.getFeedSpellings('xenforo:forum', value)).toEqual(expected)
+    })
+
+    it('should return the next feed when the values fill no row of the first', () => {
+      const value = { root: 'https://example.com' }
+      const expected: DiscoverUriEntry = {
+        uri: ['https://example.com/forums/index.rss', 'https://example.com/f/index.rss'],
+        hint: { key: 'xenforo:forum', label: 'Forum' },
+      }
+
+      expect(spellingFeeds.getFeedSpellings('xenforo:forum', value)).toEqual(expected)
+    })
+
+    it('should start at an alias row when the values fill no canonical row', () => {
+      const value = { root: 'https://example.com' }
+      const expected: DiscoverUriEntry = {
+        uri: 'https://example.com/index.php/feed/',
+        hint: { key: 'typecho:posts', label: 'Posts' },
+      }
+
+      expect(spellingFeeds.getFeedSpellings('typecho:posts', value)).toEqual(expected)
+    })
+
+    it('should list every alias row the values fill', () => {
+      const value = {
+        root: 'https://example.com',
+        id: '13',
+      }
+      const expected: DiscoverUriEntry = {
+        uri: [
+          'https://example.com/feed/13/',
+          'https://example.com/index.php/feed/',
+          'https://example.com/index.php/feed/13/',
+        ],
+        hint: { key: 'typecho:posts', label: 'Posts' },
+      }
+
+      expect(spellingFeeds.getFeedSpellings('typecho:posts', value)).toEqual(expected)
+    })
+
+    it('should return one spelling as a string', () => {
+      const value = {
+        root: 'https://example.com',
+        path: 'archives/13',
+      }
+      const expected: DiscoverUriEntry = {
+        uri: 'https://example.com/feed/archives/13/',
+        hint: { key: 'typecho:page', label: 'Page' },
+      }
+
+      expect(spellingFeeds.getFeedSpellings('typecho:page', value)).toEqual(expected)
+    })
+
+    it('should return undefined when the values fill no row of the key', () => {
+      const value = { root: 'https://example.com' }
+
+      expect(spellingFeeds.getFeedSpellings('typecho:page', value)).toBeUndefined()
+    })
+
+    it('should throw for an unknown key', () => {
+      const throwing = () => spellingFeeds.getFeedSpellings('example:unknown')
+
+      expect(throwing).toThrow('No feed template for example:unknown')
     })
   })
 
@@ -773,7 +991,7 @@ describe('definePlatformFeeds', () => {
     })
 
     it('should return the key of a feed built from an encoded value', () => {
-      const value = feeds.getFeedUrl('example:posts', { username: 'c#' })
+      const value = feeds.getFeedUrl('example:posts', { username: 'c#' }) as string
       const expected = 'example:posts'
       const hint = feeds.getFeedHint(value)
 
@@ -1125,21 +1343,20 @@ describe('definePlatformFeeds', () => {
       expect(pageFeeds?.getFeedUrl('example:blog', params)).toBe(expected)
     })
 
-    it('should keep the domain placeholder for the apex of a pattern', () => {
+    it('should return undefined for the domain placeholder on the apex of a pattern', () => {
       const value = 'https://example.de/'
       const params = { username: 'alice' }
-      const expected = 'https://alice.{domain}/feed'
       const pageFeeds = domainPatternFeeds.forUrl(value)
 
-      expect(pageFeeds?.getFeedUrl('example:blog', params)).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:blog', params)).toBeUndefined()
     })
 
-    it('should keep the domain placeholder for a host under no domain', () => {
+    it('should return undefined for the domain placeholder on a host under no domain', () => {
       const value = 'https://alice.example.com/'
-      const expected = 'https://alice.{domain}/feed'
+      const params = { blog: 'alice' }
       const pageFeeds = siteFeeds.forUrl(value)
 
-      expect(pageFeeds?.getFeedUrl('example:posts', { blog: 'alice' })).toBe(expected)
+      expect(pageFeeds?.getFeedUrl('example:posts', params)).toBeUndefined()
     })
 
     it('should write a value the handler passes over the one of the page', () => {
@@ -1175,6 +1392,21 @@ describe('definePlatformFeeds', () => {
       const pageFeeds = siteFeeds.forUrl(value)
 
       expect(pageFeeds?.getFeedEntry('ocnk:products')).toEqual(expected)
+    })
+
+    it('should return every spelling of the feed with its hint', () => {
+      const spellingFeeds = definePlatformFeeds([
+        { key: 'typecho:posts', template: '{root}/feed/' },
+        { key: 'typecho:posts', template: '{root}/index.php/feed/', isAlias: true },
+      ])
+      const value = 'https://example.com/archives/13/'
+      const expected: DiscoverUriEntry = {
+        uri: ['https://example.com/feed/', 'https://example.com/index.php/feed/'],
+        hint: { key: 'typecho:posts', label: 'Posts' },
+      }
+      const pageFeeds = spellingFeeds.forUrl(value)
+
+      expect(pageFeeds?.getFeedSpellings('typecho:posts')).toEqual(expected)
     })
 
     it('should fill the root with the origin of the page', () => {
@@ -1223,6 +1455,284 @@ describe('definePlatformFeeds', () => {
     })
   })
 
+  describe('with a passed query', () => {
+    describe('getFeedUrl', () => {
+      it('should write the passed query in place of the placeholder', () => {
+        const value = {
+          root: 'https://example.com',
+          query: 'option=com_content&view=category&id=12',
+        }
+        const expected =
+          'https://example.com/index.php?option=com_content&view=category&id=12&format=feed&type=rss'
+
+        expect(passedQueryFeeds.getFeedUrl('joomla:view', value)).toBe(expected)
+      })
+
+      it('should write the passed query after the parameters before it', () => {
+        const value = {
+          root: 'https://example.com',
+          query: 'keywords=nurse',
+        }
+        const expected = 'https://example.com/jobs/feed?sort=date&keywords=nurse'
+
+        expect(passedQueryFeeds.getFeedUrl('example:search', value)).toBe(expected)
+      })
+
+      it('should drop the question mark in front of the passed query', () => {
+        const value = {
+          root: 'https://example.com',
+          query: '?blog=2',
+        }
+        const expected = 'https://example.com/index.php?blog=2&tempskin=_rss2'
+
+        expect(passedQueryFeeds.getFeedUrl('b2evolution:posts', value)).toBe(expected)
+      })
+
+      it('should drop a parameter of the passed query the row sets itself', () => {
+        const value = {
+          root: 'https://example.com',
+          query: 'option=com_content&format=html',
+        }
+        const expected = 'https://example.com/index.php?option=com_content&format=feed&type=rss'
+
+        expect(passedQueryFeeds.getFeedUrl('joomla:view', value)).toBe(expected)
+      })
+
+      it('should drop a parameter the row sets itself in another case', () => {
+        const value = {
+          root: 'https://example.com',
+          query: 'option=com_content&Format=html',
+        }
+        const expected = 'https://example.com/index.php?option=com_content&format=feed&type=rss'
+
+        expect(passedQueryFeeds.getFeedUrl('joomla:view', value)).toBe(expected)
+      })
+
+      it('should drop an empty parameter of the passed query', () => {
+        const value = {
+          root: 'https://example.com',
+          query: 'blog=2&&page=3&',
+        }
+        const expected = 'https://example.com/index.php?blog=2&page=3&tempskin=_rss2'
+
+        expect(passedQueryFeeds.getFeedUrl('b2evolution:posts', value)).toBe(expected)
+      })
+
+      it('should write the passed query as given', () => {
+        const value = {
+          root: 'https://example.com',
+          query: 'keywords=caf%C3%A9+nurse&where=a:b',
+        }
+        const expected =
+          'https://example.com/jobs/feed?sort=date&keywords=caf%C3%A9+nurse&where=a:b'
+
+        expect(passedQueryFeeds.getFeedUrl('example:search', value)).toBe(expected)
+      })
+
+      it('should percent-encode a non-ASCII character of the passed query', () => {
+        const value = {
+          root: 'https://example.com',
+          query: 'keywords=技術',
+        }
+        const expected = 'https://example.com/jobs/feed?sort=date&keywords=%E6%8A%80%E8%A1%93'
+
+        expect(passedQueryFeeds.getFeedUrl('example:search', value)).toBe(expected)
+      })
+
+      it('should write the parameters of the row alone for an empty passed query', () => {
+        const value = {
+          root: 'https://example.com',
+          query: '',
+        }
+        const expected = 'https://example.com/index.php?format=feed&type=rss'
+
+        expect(passedQueryFeeds.getFeedUrl('joomla:view', value)).toBe(expected)
+      })
+
+      it('should return undefined for a passed query with no value', () => {
+        const value = { root: 'https://example.com' }
+
+        expect(passedQueryFeeds.getFeedUrl('joomla:view', value)).toBeUndefined()
+      })
+    })
+
+    describe('getFeedHint', () => {
+      it('should return the key of a feed with a passed query', () => {
+        const value =
+          'https://example.com/index.php?option=com_content&view=category&id=12&format=feed&type=rss'
+        const expected = 'joomla:view'
+        const hint = passedQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return the key of a feed without the parameters of a passed query', () => {
+        const value = 'https://example.com/index.php?format=feed&type=rss'
+        const expected = 'joomla:view'
+        const hint = passedQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should not count a passed query as a parameter of the row', () => {
+        const value = 'https://example.com/index.php?format=feed&type=atom'
+        const expected = 'example:site'
+        const hint = passedQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return undefined for a feed missing a parameter of the row', () => {
+        const value = 'https://example.com/index.php?option=com_content&format=feed'
+
+        expect(passedQueryFeeds.getFeedHint(value)).toBeUndefined()
+      })
+    })
+  })
+
+  describe('with a repeated query parameter', () => {
+    describe('getFeedUrl', () => {
+      it('should write every value of the parameter in table order', () => {
+        const value = {
+          host: 'example.com',
+          space: 'DOC',
+        }
+        const expected =
+          'https://example.com/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=DOC'
+
+        expect(repeatedQueryFeeds.getFeedUrl('confluence:space', value)).toBe(expected)
+      })
+    })
+
+    describe('getFeedHint', () => {
+      it('should return the key of a feed with every value of the parameter', () => {
+        const value =
+          'https://example.com/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=DOC'
+        const expected = 'confluence:space'
+        const hint = repeatedQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return the key of a feed with the values in another order', () => {
+        const value =
+          'https://example.com/createrssfeed.action?spaces=DOC&types=comment&types=page&types=blogpost'
+        const expected = 'confluence:space'
+        const hint = repeatedQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return the key of a feed with a value the row does not list', () => {
+        const value =
+          'https://example.com/createrssfeed.action?types=page&types=blogpost&types=comment&types=attachment&spaces=DOC'
+        const expected = 'confluence:space'
+        const hint = repeatedQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return undefined for a feed missing a value of the parameter', () => {
+        const value =
+          'https://example.com/createrssfeed.action?types=page&types=blogpost&spaces=DOC'
+
+        expect(repeatedQueryFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should read the first value of a parameter the row lists once', () => {
+        const value =
+          'https://example.com/createrssfeed.action?types=blogpost&types=page&spaces=conf_all'
+
+        expect(repeatedQueryFeeds.getFeedHint(value)).toBeUndefined()
+      })
+    })
+  })
+
+  describe('with form query encoding', () => {
+    describe('getFeedUrl', () => {
+      it('should encode a query value as URLSearchParams does', () => {
+        const value = {
+          root: 'https://example.com',
+          title: 'Talk:Main Page',
+        }
+        const expected =
+          'https://example.com/index.php?title=Talk%3AMain+Page&action=history&feed=atom'
+
+        expect(formQueryFeeds.getFeedUrl('mediawiki:history', value)).toBe(expected)
+      })
+
+      it('should encode the text of the template in a query value', () => {
+        const value = {
+          root: 'https://example.com',
+          query: '',
+        }
+        const expected = 'https://example.com/index.php?title=Special%3ARecentChanges&feed=atom'
+
+        expect(formQueryFeeds.getFeedUrl('mediawiki:recent-changes', value)).toBe(expected)
+      })
+
+      it('should percent-encode a non-ASCII query value', () => {
+        const value = {
+          root: 'https://example.com',
+          title: '技術',
+        }
+        const expected =
+          'https://example.com/index.php?title=%E6%8A%80%E8%A1%93&action=history&feed=atom'
+
+        expect(formQueryFeeds.getFeedUrl('mediawiki:history', value)).toBe(expected)
+      })
+
+      it('should write no parameter for an empty value', () => {
+        const value = {
+          root: 'https://example.com',
+          title: '',
+        }
+        const expected = 'https://example.com/index.php?action=history&feed=atom'
+
+        expect(formQueryFeeds.getFeedUrl('mediawiki:history', value)).toBe(expected)
+      })
+
+      it('should write a query flag with no value', () => {
+        const value = {
+          root: 'https://example.com',
+          title: 'User:Alice',
+        }
+        const expected = 'https://example.com/index.php?title=User%3AAlice&rss'
+
+        expect(formQueryFeeds.getFeedUrl('example:profile', value)).toBe(expected)
+      })
+
+      it('should write a passed query as given', () => {
+        const value = {
+          root: 'https://example.com',
+          query: 'days=7&namespace=0:1',
+        }
+        const expected =
+          'https://example.com/index.php?title=Special%3ARecentChanges&feed=atom&days=7&namespace=0:1'
+
+        expect(formQueryFeeds.getFeedUrl('mediawiki:recent-changes', value)).toBe(expected)
+      })
+    })
+
+    describe('getFeedHint', () => {
+      it('should return the key of a feed with a form-encoded value', () => {
+        const value = 'https://example.com/index.php?title=Special%3ARecentChanges&feed=atom'
+        const expected = 'mediawiki:recent-changes'
+        const hint = formQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return the key of a feed with the value as written', () => {
+        const value = 'https://example.com/index.php?title=Special:RecentChanges&feed=atom'
+        const expected = 'mediawiki:recent-changes'
+        const hint = formQueryFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+    })
+  })
+
   describe('with a multi-segment placeholder', () => {
     describe('getFeedUrl', () => {
       it('should write one segment', () => {
@@ -1260,18 +1770,47 @@ describe('definePlatformFeeds', () => {
         expect(pathFeeds.getFeedUrl('example:folder', value)).toBe(expected)
       })
 
-      it('should keep the placeholder for an empty value', () => {
+      it('should return undefined for an empty value', () => {
         const value = { path: '' }
-        const expected = 'https://www.example.com/{path*}/feed'
+
+        expect(pathFeeds.getFeedUrl('example:folder', value)).toBeUndefined()
+      })
+
+      it('should return undefined for a value of slashes only', () => {
+        const value = { path: '//' }
+
+        expect(pathFeeds.getFeedUrl('example:folder', value)).toBeUndefined()
+      })
+
+      it('should write a value with an empty segment without it', () => {
+        const value = { path: 'archives//13' }
+        const expected = 'https://www.example.com/archives/13/feed'
 
         expect(pathFeeds.getFeedUrl('example:folder', value)).toBe(expected)
       })
 
-      it('should keep the placeholder for a value with an empty segment', () => {
-        const value = { path: 'docs//api' }
-        const expected = 'https://www.example.com/{path*}/feed'
+      it('should write a value with a leading and a trailing slash without them', () => {
+        const value = { path: '/archives/13/' }
+        const expected = 'https://www.example.com/archives/13/feed'
 
         expect(pathFeeds.getFeedUrl('example:folder', value)).toBe(expected)
+      })
+
+      it('should build the first row of a key for a value with an empty segment', () => {
+        const value = { directory: 'archives//13' }
+        const expected = 'https://www.example.com/feed/archives/13/'
+
+        expect(directoryFeeds.getFeedUrl('typecho:page', value)).toBe(expected)
+      })
+
+      it('should build the row after it for an empty value', () => {
+        const value = {
+          directory: '',
+          path: 'archives/13.html',
+        }
+        const expected = 'https://www.example.com/feed/archives/13.html'
+
+        expect(directoryFeeds.getFeedUrl('typecho:page', value)).toBe(expected)
       })
 
       it('should write the query of a query row', () => {

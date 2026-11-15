@@ -258,13 +258,20 @@ export const redmineHandler: PlatformHandler = {
     // An install under a sub-path such as /redmine keeps it in the root of every feed.
     const params: PlatformFeedParams = { root: page.root, project: page.project }
 
-    const getFeedEntry = (key: string, values?: PlatformFeedParams): DiscoverUriEntry => {
+    const getFeedEntry = (
+      key: string,
+      values?: PlatformFeedParams,
+    ): DiscoverUriEntry | undefined => {
       const uri = feeds.getFeedUrl(key, { ...params, ...values })
+
+      if (!uri) {
+        return
+      }
 
       return { uri: getAlternateSpelling(uri, page.alternateHrefs), hint: composeHint(key) }
     }
     // A page in a project gets the project's feed, and a page outside one the site's.
-    const getScopedFeedEntry = (key: string, projectKey: string): DiscoverUriEntry => {
+    const getScopedFeedEntry = (key: string, projectKey: string): DiscoverUriEntry | undefined => {
       return getFeedEntry(page.project ? projectKey : key)
     }
 
