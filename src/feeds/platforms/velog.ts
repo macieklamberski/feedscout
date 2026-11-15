@@ -15,8 +15,8 @@ const userRegex = /^\/@([^/]+)/
 // api.velog.io serves the same bytes as v2.velog.io, so its rows only claim.
 const feeds = definePlatformFeeds([
   { key: 'velog:trending', template: 'https://v2.velog.io/rss' },
-  { key: 'velog:posts', template: 'https://v2.velog.io/rss/{username}' },
   { key: 'velog:trending', template: 'https://api.velog.io/rss', isAlias: true },
+  { key: 'velog:posts', template: 'https://v2.velog.io/rss/{username}' },
   { key: 'velog:posts', template: 'https://api.velog.io/rss/{username}', isAlias: true },
 ])
 

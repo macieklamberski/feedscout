@@ -45,13 +45,24 @@ const feeds = definePlatformFeeds(
       key: 'reddit:subreddit-search',
       template: 'https://www.reddit.com/r/{subreddit}/search.rss?q={query}&restrict_sr=on',
     },
+    // Each `{host}` row is the feed above it on old. and new., which the page parser reads as
+    // pages. `resolve` passes no `host`, so it builds on www.
+    {
+      key: 'reddit:subreddit-search',
+      template: '{scheme}://{host}/r/{subreddit}/search.rss?q={query}&restrict_sr=on',
+      isAlias: true,
+    },
     { key: 'reddit:search', template: 'https://www.reddit.com/search.rss?q={query}' },
     { key: 'reddit:wiki', template: 'https://www.reddit.com/r/{subreddit}/wiki/index.rss' },
+    {
+      key: 'reddit:wiki',
+      template: '{scheme}://{host}/r/{subreddit}/wiki/index.rss',
+      isAlias: true,
+    },
     {
       key: 'reddit:post-comments',
       template: 'https://www.reddit.com/r/{subreddit}/comments/{postId}/.rss',
     },
-    // The same feed on old. and new.
     {
       key: 'reddit:post-comments',
       template: '{scheme}://{host}/r/{subreddit}/comments/{postId}/.rss',
@@ -61,8 +72,12 @@ const feeds = definePlatformFeeds(
       key: 'reddit:post-comments',
       template: 'https://www.reddit.com/user/{username}/comments/{postId}/.rss',
     },
+    {
+      key: 'reddit:post-comments',
+      template: '{scheme}://{host}/user/{username}/comments/{postId}/.rss',
+      isAlias: true,
+    },
     { key: 'reddit:comments', template: 'https://www.reddit.com/r/{subreddit}/comments/.rss' },
-    // The same feed on old. and new.
     {
       key: 'reddit:comments',
       template: '{scheme}://{host}/r/{subreddit}/comments/.rss',
@@ -73,27 +88,41 @@ const feeds = definePlatformFeeds(
       template: 'https://www.reddit.com/user/{username}/m/{multireddit}/.rss',
     },
     {
+      key: 'reddit:multireddit',
+      template: '{scheme}://{host}/user/{username}/m/{multireddit}/.rss',
+      isAlias: true,
+    },
+    {
       key: 'reddit:user-submitted',
       template: 'https://www.reddit.com/user/{username}/submitted/.rss',
+    },
+    {
+      key: 'reddit:user-submitted',
+      template: '{scheme}://{host}/user/{username}/submitted/.rss',
+      isAlias: true,
     },
     {
       key: 'reddit:user-comments',
       template: 'https://www.reddit.com/user/{username}/comments/.rss',
     },
+    {
+      key: 'reddit:user-comments',
+      template: '{scheme}://{host}/user/{username}/comments/.rss',
+      isAlias: true,
+    },
     { key: 'reddit:subreddits', template: 'https://www.reddit.com/subreddits/{sort}/.rss' },
-    // The same feed on old. and new.
     {
       key: 'reddit:subreddits',
       template: '{scheme}://{host}/subreddits/{sort}/.rss',
       isAlias: true,
     },
     { key: 'reddit:subreddits', template: 'https://www.reddit.com/subreddits/.rss' },
+    { key: 'reddit:subreddits', template: '{scheme}://{host}/subreddits/.rss', isAlias: true },
     {
       key: 'reddit:subreddit',
       template: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss?t={timeframe}',
     },
     { key: 'reddit:subreddit', template: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss' },
-    // The same feed on old. and new.
     {
       key: 'reddit:subreddit',
       template: '{scheme}://{host}/r/{subreddit}/{sort}/.rss',
@@ -105,48 +134,15 @@ const feeds = definePlatformFeeds(
       template: 'https://www.reddit.com/r/{subreddit}.rss',
       isAlias: true,
     },
+    { key: 'reddit:subreddit', template: '{scheme}://{host}/r/{subreddit}/.rss', isAlias: true },
+    { key: 'reddit:subreddit', template: '{scheme}://{host}/r/{subreddit}.rss', isAlias: true },
     { key: 'reddit:user', template: 'https://www.reddit.com/user/{username}/.rss' },
+    { key: 'reddit:user', template: '{scheme}://{host}/user/{username}/.rss', isAlias: true },
     { key: 'reddit:domain', template: 'https://www.reddit.com/domain/{domain}/.rss' },
+    { key: 'reddit:domain', template: '{scheme}://{host}/domain/{domain}/.rss', isAlias: true },
     { key: 'reddit:posts', template: 'https://www.reddit.com/{sort}/.rss?t={timeframe}' },
     { key: 'reddit:posts', template: 'https://www.reddit.com/{sort}/.rss' },
     { key: 'reddit:posts', template: 'https://www.reddit.com/.rss' },
-    // The same feeds on old. and new., which the page parser reads as pages. `resolve` passes no
-    // `host`, so it builds on www.
-    {
-      key: 'reddit:subreddit-search',
-      template: '{scheme}://{host}/r/{subreddit}/search.rss?q={query}&restrict_sr=on',
-      isAlias: true,
-    },
-    {
-      key: 'reddit:wiki',
-      template: '{scheme}://{host}/r/{subreddit}/wiki/index.rss',
-      isAlias: true,
-    },
-    {
-      key: 'reddit:post-comments',
-      template: '{scheme}://{host}/user/{username}/comments/{postId}/.rss',
-      isAlias: true,
-    },
-    {
-      key: 'reddit:multireddit',
-      template: '{scheme}://{host}/user/{username}/m/{multireddit}/.rss',
-      isAlias: true,
-    },
-    {
-      key: 'reddit:user-submitted',
-      template: '{scheme}://{host}/user/{username}/submitted/.rss',
-      isAlias: true,
-    },
-    {
-      key: 'reddit:user-comments',
-      template: '{scheme}://{host}/user/{username}/comments/.rss',
-      isAlias: true,
-    },
-    { key: 'reddit:subreddits', template: '{scheme}://{host}/subreddits/.rss', isAlias: true },
-    { key: 'reddit:subreddit', template: '{scheme}://{host}/r/{subreddit}/.rss', isAlias: true },
-    { key: 'reddit:subreddit', template: '{scheme}://{host}/r/{subreddit}.rss', isAlias: true },
-    { key: 'reddit:user', template: '{scheme}://{host}/user/{username}/.rss', isAlias: true },
-    { key: 'reddit:domain', template: '{scheme}://{host}/domain/{domain}/.rss', isAlias: true },
   ],
   { hosts: mirrorHosts },
 )
