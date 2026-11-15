@@ -67,19 +67,25 @@ export const ymCareersHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
+    const pageFeeds = feeds.forUrl(url)
+
+    if (!pageFeeds) {
+      return []
+    }
+
     const { origin } = new URL(url)
     const parsed = parseYmCareersUrl(url)
     const query = parsed?.query ?? ''
 
     if (parsed?.kind === 'browse') {
-      return [
-        feeds.getFeedEntry('ym-careers:browse', { root: `${origin}/jobs${parsed.facets}`, query }),
-      ]
+      const root = `${origin}/jobs${parsed.facets}`
+
+      return [pageFeeds.getFeedEntry('ym-careers:browse', { root, query })]
     }
 
     // The table drops one trailing slash from a root, so a search path ending in one keeps it.
     const root = `${origin}${parsed?.path ?? '/jobs'}/`
 
-    return [feeds.getFeedEntry('ym-careers:search', { root, query })]
+    return [pageFeeds.getFeedEntry('ym-careers:search', { root, query })]
   },
 }
