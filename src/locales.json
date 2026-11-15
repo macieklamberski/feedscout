@@ -170,6 +170,7 @@
     "goodreads:private-updates": "Private updates",
     "sourceforge:activity": "Recent activity",
     "sourceforge:files": "File releases",
+    "sourceforge:files-folder": "Folder file releases",
     "sourceforge:news": "News",
     "sourceforge:discussion": "Discussion",
     "sourceforge:project-feed": "Project feed",

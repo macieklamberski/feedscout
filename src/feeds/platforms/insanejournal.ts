@@ -7,7 +7,7 @@ import {
 } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
-import { getJournalName, journalTagRegex } from './livejournal.js'
+import { getJournalName, getJournalTag } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers asylum, blog, tildePath, userPath.
@@ -31,8 +31,6 @@ const pathHosts = [...asylumHosts, ...feedHosts, ...userHosts]
 const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/i
 const firstSegmentRegex = /^\/([^/]+)/
-const pathTagRegex = /^\/[^/]+\/tag\/([^/]+)/i
-const wwwPathTagRegex = /^\/(?:users\/|~|asylum\/|community\/)[^/]+\/tag\/([^/]+)/i
 
 const journalFeeds = definePlatformFeeds(
   [
@@ -86,23 +84,17 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
     return
   }
 
-  const tag = pathname.match(journalTagRegex)?.[1]
-  // A path host names the journal first, so a tag page sits under its name.
-  const pathTag = pathname.match(pathTagRegex)?.[1]
-
   if (isHostOf(url, wwwHosts)) {
-    // The www host names the journal in its path too, so a tag page sits under its name.
-    const wwwTag = pathname.match(wwwPathTagRegex)?.[1]
     const username = getJournalName(pathname, wwwUsersPathRegex)
 
     if (username) {
-      return { kind: 'journal', username, tag: wwwTag }
+      return { kind: 'journal', username, tag: getJournalTag(pathname, wwwUsersPathRegex) }
     }
 
     const asylum = getJournalName(pathname, wwwAsylumPathRegex)
 
     if (asylum) {
-      return { kind: 'asylum', asylum, tag: wwwTag }
+      return { kind: 'asylum', asylum, tag: getJournalTag(pathname, wwwAsylumPathRegex) }
     }
 
     return
@@ -115,7 +107,7 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
       return
     }
 
-    return { kind: 'asylum', asylum, tag: pathTag }
+    return { kind: 'asylum', asylum, tag: getJournalTag(pathname, firstSegmentRegex) }
   }
 
   if (isHostOf(url, feedHosts)) {
@@ -125,7 +117,7 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
       return
     }
 
-    return { kind: 'syndicated', feed, tag: pathTag }
+    return { kind: 'syndicated', feed, tag: getJournalTag(pathname, firstSegmentRegex) }
   }
 
   if (isHostOf(url, userHosts)) {
@@ -135,14 +127,14 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
       return
     }
 
-    return { kind: 'journal', username, tag: pathTag }
+    return { kind: 'journal', username, tag: getJournalTag(pathname, firstSegmentRegex) }
   }
 
   if (!getTenantSubdomain(url, domains)) {
     return
   }
 
-  return { kind: 'journal', tag }
+  return { kind: 'journal', tag: getJournalTag(pathname) }
 }
 
 // The InsaneJournal engine serves every journal the same feeds, plus a tag's feeds on a tag page.

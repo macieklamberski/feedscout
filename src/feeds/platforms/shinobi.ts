@@ -85,6 +85,7 @@ export const shinobiHandler: PlatformHandler = {
     return [
       page.getFeedEntry('shinobi:posts', {}, 'rss'),
       page.getFeedEntry('shinobi:posts', {}, 'atom'),
+      page.getFeedEntry('shinobi:posts', {}, 'rdf'),
     ]
   },
 

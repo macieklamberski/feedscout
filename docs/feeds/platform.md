@@ -122,6 +122,7 @@ Discovers RSS feeds for Substack newsletters and podcasts.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{publication}.substack.com` | Newsletter · podcast<sup>†</sup>* · podcast section<sup>†</sup>* |
+| `{publication}.substack.com/s/{section}` | The publication's feeds · newsletter section* |
 | `substack.com/@{user}` | Newsletter<sup>†</sup>* |
 
 \* *Read from the page content. On a profile, the publication can differ from the handle and can sit on a custom domain, with the handle as the fallback. On a publication page, one podcast feed for a publication with a podcast, and one podcast section feed for each section that is a podcast.*
@@ -447,8 +448,12 @@ Discovers RSS feeds for SourceForge project activity, file releases, news, and d
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `sourceforge.net/projects/{project}` or `sourceforge.net/p/{project}` | Activity · project · files · news<sup>†</sup> (RSS + Atom) · discussion<sup>†</sup> (RSS + Atom) · bugs |
+| `sourceforge.net/projects/{project}` or `sourceforge.net/p/{project}` | Activity (RSS + Atom) · project (RSS + Atom) · files · news<sup>†</sup> (RSS + Atom) · discussion<sup>†</sup> (RSS + Atom) · bugs (RSS + Atom) |
+| `sourceforge.net/projects/{project}/files/{folder}` | The project's feeds · folder files |
+| `sourceforge.net/p/{project}/discussion/{forum}` | The project's feeds · forum (RSS + Atom) |
 | `sourceforge.net/p/{project}/discussion/{forum}/thread/{thread}` | The project's feeds · thread (RSS + Atom) |
+| `sourceforge.net/p/{project}/{tool}` | The project's feeds · tool (RSS + Atom) |
+| `sourceforge.net/p/{project}/{tool}/{page}` | The project's feeds · tool (RSS + Atom) · page (RSS + Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -752,7 +757,7 @@ Discovers RSS and Atom feeds for Dreamwidth blogs.
 |-------------|-----------------|
 | `{journal}.dreamwidth.org` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 | `www.dreamwidth.org/users/{journal}` or `www.dreamwidth.org/~{journal}` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
-| `{journal}.dreamwidth.org/tag/{tag}` | Tag (RSS + Atom) · posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
+| `{journal}.dreamwidth.org/tag/{tag}` or `www.dreamwidth.org/users/{journal}/tag/{tag}` | Tag (RSS + Atom) · posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1033,6 +1038,8 @@ Discovers Atom and RSS feeds for Flickr photostreams, favorites, tags, groups an
 | `flickr.com/photos/tags/{tag}` | Tag<sup>†</sup> |
 | `flickr.com/photos/{nsid}` | Photostream |
 | `flickr.com/photos/{nsid}/favorites` | Favorites |
+| `flickr.com/photos/{nsid}/albums/{set}` | Album · photostream |
+| `flickr.com/photos/{nsid}/tags/{tag}` | Tagged photostream<sup>†</sup> · photostream |
 | `flickr.com/groups/{nsid}` | Group pool<sup>†</sup> · group photos<sup>†</sup> · discussions · pool with location |
 | `flickr.com/groups/{nsid}/pool` | Group pool<sup>†</sup> · group photos<sup>†</sup> · pool with location |
 | `flickr.com/groups/{nsid}/discuss` | Group discussions |
@@ -1170,6 +1177,7 @@ Discovers RSS and Atom feeds for LiveJournal blogs.
 | `{user}.livejournal.com` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 | `www.livejournal.com/users/{user}`, `www.livejournal.com/~{user}`, `users.livejournal.com/{user}` or `community.livejournal.com/{user}` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 | `{user}.livejournal.com/tag/{tag}` | Tag (RSS + Atom<sup>†</sup>) · posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
+| `www.livejournal.com/users/{user}/tag/{tag}`, `users.livejournal.com/{user}/tag/{tag}` or `community.livejournal.com/{user}/tag/{tag}` | Tag (RSS + Atom) · posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1330,7 +1338,7 @@ Discovers Atom feeds for Qiita users, tags, organizations, and popular items.
 | `qiita.com/tags/{tag}` | Tag |
 | `qiita.com/organizations/{org}` | Organization |
 | `qiita.com/popular-items` | Popular items<sup>†</sup> |
-| `qiita.com/official-columns` | Qiita Zine |
+| `qiita.com/official-columns` | Qiita Zine (RSS + Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1410,12 +1418,12 @@ Discovers the audio, all-media, video, and audio with PDF feeds of every channel
 
 ### Shinobi Blog
 
-Discovers RSS and Atom feeds for Shinobi Blog. A blog on any other domain is detected by the Ninja Blog banner its pages print.
+Discovers RSS, Atom and RDF feeds for Shinobi Blog. A blog on any other domain is detected by the Ninja Blog banner its pages print.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{blog}.blog.shinobi.jp` | Posts (RSS + Atom) |
-| `{host}` | Posts (RSS + Atom) |
+| `{blog}.blog.shinobi.jp` | Posts (RSS + Atom + RDF) |
+| `{host}` | Posts (RSS + Atom + RDF) |
 
 ### Spotify for Creators
 
@@ -1651,6 +1659,7 @@ Discovers the Atom feed of a Shopify store's blog. Detected by the `Powered-By` 
 |-------------|-----------------|
 | `{host}/blogs/{handle}` | Blog (Atom) |
 | `{host}/{locale}/blogs/{handle}` | Blog (Atom) |
+| `{host}/blogs/{handle}/tagged/{tag}` | Blog (Atom) · tag (Atom) |
 
 > [!NOTE]
 > There is no store-wide feed, so the blog handle is required. A missing blog answers 404 with an Atom content type and an empty body.
@@ -2192,11 +2201,12 @@ Discovers Atom feeds for Plurk users and single plurks.
 
 ### Internet Archive
 
-Discovers the RSS feeds of Internet Archive collections, their forums and searches. A collection page is told from an item page by its markup: collections serve the app shell that loads `/offshoot_assets/`, and items serve full HTML. Item pages resolve nothing.
+Discovers the RSS feeds of Internet Archive collections, their forums, searches and account bookmarks. A collection page is told from an item page by its markup: collections serve the app shell that loads `/offshoot_assets/`, and items serve full HTML. Item pages resolve nothing.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `archive.org/details/{collection}` | Collection<sup>†</sup> (RSS)* · forum<sup>†</sup> (RSS)* |
+| `archive.org/details/@{user}` | Bookmarks<sup>†</sup> (RSS)* |
 | `archive.org/search?query={query}` | Search<sup>†</sup> (RSS) |
 
 \* *Requires HTML content to tell a collection from an item.*
@@ -2390,6 +2400,8 @@ Discovers the site feeds of a Ning network and the feed of a forum topic. Detect
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{host}/forum/topics/{topic}` | Topic · latest activity<sup>†</sup> · blog posts<sup>†</sup> · forum · members<sup>†</sup> · featured members<sup>†</sup> · photos<sup>†</sup> · featured photos<sup>†</sup> · videos<sup>†</sup> · featured videos<sup>†</sup> · events<sup>†</sup> · groups<sup>†</sup> · featured groups<sup>†</sup> · pages<sup>†</sup> · notes<sup>†</sup> |
+| `{host}/group/{group}/forum/topics/{topic}` | Topic · group forum · the site feeds and lists above |
+| `{host}/group/{group}` | Group forum · the site feeds and lists above |
 | `{host}/`, any other page | Latest activity<sup>†</sup> · blog posts<sup>†</sup> · forum<sup>†</sup> · members<sup>†</sup> · featured members<sup>†</sup> · photos<sup>†</sup> · featured photos<sup>†</sup> · videos<sup>†</sup> · featured videos<sup>†</sup> · events<sup>†</sup> · groups<sup>†</sup> · featured groups<sup>†</sup> · pages<sup>†</sup> · notes<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -2646,12 +2658,12 @@ Discovers the posts feed of a ProBoards forum. A forum on a custom domain is det
 
 ### The Mail Archive
 
-Discovers the RSS feed of a mailing list archived on The Mail Archive (mail-archive.com). The list is named by its posting address in the first path segment.
+Discovers the RSS and RDF feeds of a mailing list archived on The Mail Archive (mail-archive.com). The list is named by its posting address in the first path segment.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `mail-archive.com/{list}/` | Mailing list |
-| `mail-archive.com/{list}/msg{n}.html` | Mailing list<sup>†</sup> |
+| `mail-archive.com/{list}/` | Mailing list (RSS + RDF<sup>†</sup>) |
+| `mail-archive.com/{list}/msg{n}.html` | Mailing list<sup>†</sup> (RSS + RDF) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2735,6 +2747,7 @@ Discovers the blog feed of a Jimdo site. Detected by the `x-jimdo-wid` response 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{site}.jimdofree.com`, `{host}` | Blog (RSS) |
+| `{site}.jimdofree.com/?tag={tag}`, `{host}/?tag={tag}` | Blog (RSS) · tag (RSS) |
 
 > [!NOTE]
 > Only sites with a blog have the feed.
@@ -3351,10 +3364,12 @@ Discovers the feeds of a blog on Jinbonet's blog host, `blog.jinbo.net/{user}`. 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `blog.jinbo.net/{user}` | Posts · comments and trackbacks (RSS and Atom) |
-| `blog.jinbo.net/{user}/category/{id}` | Category (Atom), plus the blog feeds |
+| `blog.jinbo.net/{user}` | Posts · comments and trackbacks · comments<sup>†</sup> · trackbacks<sup>†</sup> · lines<sup>†</sup> (RSS and Atom) |
+| `blog.jinbo.net/{user}/category/{id}` | Category (RSS and Atom), plus the blog feeds |
 | `blog.jinbo.net/{user}/tag/{tag}` | Tag (Atom), plus the blog feeds |
 | `blog.jinbo.net/{user}/{postId}` | Post comments and trackbacks (RSS and Atom), plus the blog feeds |
+
+<sup>†</sup> *Found only by the Platform method.*
 
 ### TischtennisLive
 

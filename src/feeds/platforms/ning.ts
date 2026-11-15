@@ -7,30 +7,41 @@ import { hasMarker } from '../../common/utils.js'
 // Generic partly covers topic.
 // Handler needed for: home.
 
-export type NingUrl = { kind: 'topic'; topic: string } | { kind: 'home' }
+export type NingUrl =
+  | { kind: 'topic'; topic: string; group?: string }
+  | { kind: 'group'; group: string }
+  | { kind: 'home' }
 
 const topicRegex = /^\/forum\/topics\/([^/]+)\/?$/i
+const groupTopicRegex = /^\/group\/(?<group>[^/]+)\/forum\/topics\/(?<topic>[^/]+)\/?$/i
+const groupRegex = /^\/group\/([^/]+)/i
 
 const domains = ['ning.com']
 
 // A network on its own domain is known only by its marker, so its feeds are built here but not
 // claimed. Past the feeds `resolve` builds, the table only claims. A topic in a group, or one
-// named by its id, is still that one topic.
+// named by its id, is still that one topic. A group topic page links its feed with `groupUrl`, so
+// that row goes first and builds when the page names a group.
 const feeds = definePlatformFeeds(
   [
-    { key: 'ning:topic', template: '{scheme}://{host}/forum/topics/{topic}?feed=yes&xn_auth=no' },
     {
       key: 'ning:topic',
-      template: '{scheme}://{host}/forum/topic/show?feed=yes&id={topic}&xn_auth=no',
-      isAlias: true,
+      template: '{scheme}://{host}/forum/topics/{topic}?groupUrl={group}&feed=yes&xn_auth=no',
     },
     {
       key: 'ning:topic',
       template: '{scheme}://{host}/group/{group}/forum/topics/{topic}?feed=yes&xn_auth=no',
+      isAlias: true,
     },
     {
       key: 'ning:topic',
       template: '{scheme}://{host}/group/{group}/forum/topic/show?feed=yes&id={topic}&xn_auth=no',
+      isAlias: true,
+    },
+    { key: 'ning:topic', template: '{scheme}://{host}/forum/topics/{topic}?feed=yes&xn_auth=no' },
+    {
+      key: 'ning:topic',
+      template: '{scheme}://{host}/forum/topic/show?feed=yes&id={topic}&xn_auth=no',
       isAlias: true,
     },
     { key: 'ning:activity', template: '{scheme}://{host}/activity/log/list?fmt=rss' },
@@ -266,10 +277,23 @@ export const parseNingUrl = (url: string): NingUrl | undefined => {
     return
   }
 
-  const topic = parsedUrl.pathname.match(topicRegex)?.[1]
+  const { pathname } = parsedUrl
+  const topic = pathname.match(topicRegex)?.[1]
 
   if (topic) {
     return { kind: 'topic', topic }
+  }
+
+  const groupTopic = pathname.match(groupTopicRegex)?.groups
+
+  if (groupTopic?.group && groupTopic.topic) {
+    return { kind: 'topic', topic: groupTopic.topic, group: groupTopic.group }
+  }
+
+  const group = pathname.match(groupRegex)?.[1]
+
+  if (group) {
+    return { kind: 'group', group }
   }
 
   return { kind: 'home' }
@@ -296,7 +320,28 @@ export const ningHandler: PlatformHandler = {
     // every page builds them after its own feeds.
     if (parsed.kind === 'topic') {
       return [
-        page.getFeedEntry('ning:topic', { topic: parsed.topic }),
+        page.getFeedEntry('ning:topic', { topic: parsed.topic, group: parsed.group }),
+        ...(parsed.group ? [page.getFeedEntry('ning:forum-group', { group: parsed.group })] : []),
+        page.getFeedEntry('ning:activity'),
+        page.getFeedEntry('ning:blog'),
+        page.getFeedEntry('ning:forum'),
+        page.getFeedEntry('ning:members'),
+        page.getFeedEntry('ning:members-featured'),
+        page.getFeedEntry('ning:photos'),
+        page.getFeedEntry('ning:photos-featured'),
+        page.getFeedEntry('ning:videos'),
+        page.getFeedEntry('ning:videos-featured'),
+        page.getFeedEntry('ning:events'),
+        page.getFeedEntry('ning:groups'),
+        page.getFeedEntry('ning:groups-featured'),
+        page.getFeedEntry('ning:pages'),
+        page.getFeedEntry('ning:notes'),
+      ]
+    }
+
+    if (parsed.kind === 'group') {
+      return [
+        page.getFeedEntry('ning:forum-group', { group: parsed.group }),
         page.getFeedEntry('ning:activity'),
         page.getFeedEntry('ning:blog'),
         page.getFeedEntry('ning:forum'),
