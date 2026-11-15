@@ -80,18 +80,16 @@ export const parseHatenaFotolifeUrl = (url: string): HatenaFotolifeUrl | undefin
     return { kind: 'userlist' }
   }
 
-  const listingValue = decodeSegment(section)
-
-  if (isAnyOf(username, 'model') && listingValue) {
-    return { kind: 'siteModel', model: listingValue }
+  if (isAnyOf(username, 'model') && section) {
+    return { kind: 'siteModel', model: section }
   }
 
-  if (isAnyOf(username, 'focallength') && listingValue) {
-    return { kind: 'focalLength', focalLength: listingValue }
+  if (isAnyOf(username, 'focallength') && section) {
+    return { kind: 'focalLength', focalLength: section }
   }
 
-  if (isAnyOf(username, 'fotocolor') && listingValue) {
-    return { kind: 'color', color: listingValue }
+  if (isAnyOf(username, 'fotocolor') && section) {
+    return { kind: 'color', color: section }
   }
 
   // A Hatena ID starts with a letter. Old IDs such as `kumapu-` end in a hyphen.

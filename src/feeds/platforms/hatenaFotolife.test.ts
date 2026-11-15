@@ -107,9 +107,9 @@ describe('parseHatenaFotolifeUrl', () => {
     expect(parseHatenaFotolifeUrl('https://f.hatena.ne.jp/userlist')).toEqual(expected)
   })
 
-  it('should return the decoded camera model for a site-wide camera model page', () => {
+  it('should return the camera model as the URL spells it for a site-wide camera model page', () => {
     const value = 'https://f.hatena.ne.jp/model/Example%20Camera'
-    const expected: HatenaFotolifeUrl = { kind: 'siteModel', model: 'Example Camera' }
+    const expected: HatenaFotolifeUrl = { kind: 'siteModel', model: 'Example%20Camera' }
 
     expect(parseHatenaFotolifeUrl(value)).toEqual(expected)
   })
@@ -190,6 +190,22 @@ describe('hatenaFotolifeHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://f.hatena.ne.jp/model/Example%20Camera?mode=rss',
+          hint: { key: 'hatena-fotolife:site-model', label: 'Photos by camera model' },
+        },
+        {
+          uri: 'https://f.hatena.ne.jp/userlist?mode=rss',
+          hint: { key: 'hatena-fotolife:recent', label: 'Recent photos' },
+        },
+      ]
+
+      expect(hatenaFotolifeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep an escaped percent sign and non-ASCII escapes in a camera model', () => {
+      const value = 'https://f.hatena.ne.jp/model/100%25%20%E6%A9%9F'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://f.hatena.ne.jp/model/100%25%20%E6%A9%9F?mode=rss',
           hint: { key: 'hatena-fotolife:site-model', label: 'Photos by camera model' },
         },
         {
