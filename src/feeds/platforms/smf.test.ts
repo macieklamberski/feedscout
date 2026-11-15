@@ -68,6 +68,27 @@ describe('smfHandler', () => {
       expect(smfHandler.resolve('https://example.com/forum/', content)).toEqual(siteFeeds)
     })
 
+    it('should drop the trailing slash of a script URL', () => {
+      const content = `
+        <script>
+          var smf_theme_url = "https://example.com/forum/Themes/default";
+          var smf_scripturl = "https://example.com/forum/";
+        </script>
+      `
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/forum?action=.xml;type=rss2',
+          hint: { key: 'smf:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/forum?action=.xml;type=atom',
+          hint: { key: 'smf:posts', label: 'Posts', format: 'atom' },
+        },
+      ]
+
+      expect(smfHandler.resolve('https://example.com/forum/', content)).toEqual(expected)
+    })
+
     it('should add the board feeds on a board page', () => {
       const value = 'https://example.com/forum/index.php?board=11.0'
 
