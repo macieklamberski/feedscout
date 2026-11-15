@@ -290,5 +290,80 @@ describe('typechoHandler', () => {
 
       expect(typechoHandler.resolve(value, subPathThemeHtml)).toEqual(expected)
     })
+
+    it('should return the page feeds without a trailing slash for a page without one', () => {
+      const value = 'https://example.com/archives/hello.html'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: [
+            'https://example.com/feed/archives/hello.html',
+            'https://example.com/index.php/feed/archives/hello.html',
+          ],
+          hint: { key: 'typecho:page', label: 'Page', format: 'rss' },
+        },
+        {
+          uri: [
+            'https://example.com/feed/rss/archives/hello.html',
+            'https://example.com/index.php/feed/rss/archives/hello.html',
+          ],
+          hint: { key: 'typecho:page', label: 'Page', format: 'rdf' },
+        },
+        {
+          uri: [
+            'https://example.com/feed/atom/archives/hello.html',
+            'https://example.com/index.php/feed/atom/archives/hello.html',
+          ],
+          hint: { key: 'typecho:page', label: 'Page', format: 'atom' },
+        },
+        {
+          uri: ['https://example.com/feed/', 'https://example.com/index.php/feed/'],
+          hint: { key: 'typecho:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: ['https://example.com/feed/rss/', 'https://example.com/index.php/feed/rss/'],
+          hint: { key: 'typecho:posts', label: 'Posts', format: 'rdf' },
+        },
+        {
+          uri: ['https://example.com/feed/atom/', 'https://example.com/index.php/feed/atom/'],
+          hint: { key: 'typecho:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: [
+            'https://example.com/feed/comments/',
+            'https://example.com/index.php/feed/comments/',
+          ],
+          hint: { key: 'typecho:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: [
+            'https://example.com/feed/rss/comments/',
+            'https://example.com/index.php/feed/rss/comments/',
+          ],
+          hint: { key: 'typecho:comments', label: 'Comments', format: 'rdf' },
+        },
+        {
+          uri: [
+            'https://example.com/feed/atom/comments/',
+            'https://example.com/index.php/feed/atom/comments/',
+          ],
+          hint: { key: 'typecho:comments', label: 'Comments', format: 'atom' },
+        },
+      ]
+
+      expect(typechoHandler.resolve(value, themeHtml)).toEqual(expected)
+    })
+
+    it('should return the page feeds without the empty segment of a doubled slash', () => {
+      const value = 'https://example.com/archives//13/'
+      const expected: DiscoverUriEntry = {
+        uri: [
+          'https://example.com/feed/archives/13/',
+          'https://example.com/index.php/feed/archives/13/',
+        ],
+        hint: { key: 'typecho:page', label: 'Page', format: 'rss' },
+      }
+
+      expect(typechoHandler.resolve(value, themeHtml)).toContainEqual(expected)
+    })
   })
 })

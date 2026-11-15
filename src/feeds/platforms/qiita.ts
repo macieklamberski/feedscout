@@ -100,7 +100,10 @@ export const qiitaHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'officialColumns') {
-      return [feeds.getFeedEntry('qiita:zine')]
+      return [
+        feeds.getFeedEntry('qiita:zine', {}, 'rss'),
+        feeds.getFeedEntry('qiita:zine', {}, 'atom'),
+      ]
     }
 
     return [feeds.getFeedEntry('qiita:posts', { username: parsed.username })]

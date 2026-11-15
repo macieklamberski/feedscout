@@ -76,7 +76,11 @@ describe('mailArchiveHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.mail-archive.com/a%20b@example.org/maillist.xml',
-          hint: { key: 'mail-archive:list', label: 'Mailing list' },
+          hint: { key: 'mail-archive:list', label: 'Mailing list', format: 'rss' },
+        },
+        {
+          uri: 'https://www.mail-archive.com/a%20b@example.org/maillist.rdf',
+          hint: { key: 'mail-archive:list', label: 'Mailing list', format: 'rdf' },
         },
       ]
 
@@ -88,7 +92,11 @@ describe('mailArchiveHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.mail-archive.com/gnupg-users@gnupg.org/maillist.xml',
-          hint: { key: 'mail-archive:list', label: 'Mailing list' },
+          hint: { key: 'mail-archive:list', label: 'Mailing list', format: 'rss' },
+        },
+        {
+          uri: 'https://www.mail-archive.com/gnupg-users@gnupg.org/maillist.rdf',
+          hint: { key: 'mail-archive:list', label: 'Mailing list', format: 'rdf' },
         },
       ]
 
@@ -100,7 +108,11 @@ describe('mailArchiveHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://mail-archive.com/dnsop@ietf.org/maillist.xml',
-          hint: { key: 'mail-archive:list', label: 'Mailing list' },
+          hint: { key: 'mail-archive:list', label: 'Mailing list', format: 'rss' },
+        },
+        {
+          uri: 'https://mail-archive.com/dnsop@ietf.org/maillist.rdf',
+          hint: { key: 'mail-archive:list', label: 'Mailing list', format: 'rdf' },
         },
       ]
 
@@ -109,10 +121,14 @@ describe('mailArchiveHandler', () => {
 
     it('should keep a percent-encoded at sign in the list address', () => {
       const value = 'https://www.mail-archive.com/dev%40example.org/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.mail-archive.com/dev%40example.org/maillist.xml',
-          hint: { key: 'mail-archive:list', label: 'Mailing list' },
+          hint: { key: 'mail-archive:list', label: 'Mailing list', format: 'rss' },
+        },
+        {
+          uri: 'https://www.mail-archive.com/dev%40example.org/maillist.rdf',
+          hint: { key: 'mail-archive:list', label: 'Mailing list', format: 'rdf' },
         },
       ]
 
@@ -121,10 +137,14 @@ describe('mailArchiveHandler', () => {
 
     it('should keep a percent-encoded slash in the list address as written', () => {
       const value = 'https://www.mail-archive.com/dev%2Fnull@example.org/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.mail-archive.com/dev%2Fnull@example.org/maillist.xml',
-          hint: { key: 'mail-archive:list', label: 'Mailing list' },
+          hint: { key: 'mail-archive:list', label: 'Mailing list', format: 'rss' },
+        },
+        {
+          uri: 'https://www.mail-archive.com/dev%2Fnull@example.org/maillist.rdf',
+          hint: { key: 'mail-archive:list', label: 'Mailing list', format: 'rdf' },
         },
       ]
 
@@ -136,7 +156,11 @@ describe('mailArchiveHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'http://www.mail-archive.com/alice@example.org/maillist.xml',
-          hint: { key: 'mail-archive:list', label: 'Mailing list' },
+          hint: { key: 'mail-archive:list', label: 'Mailing list', format: 'rss' },
+        },
+        {
+          uri: 'http://www.mail-archive.com/alice@example.org/maillist.rdf',
+          hint: { key: 'mail-archive:list', label: 'Mailing list', format: 'rdf' },
         },
       ]
 
@@ -147,28 +171,44 @@ describe('mailArchiveHandler', () => {
   describe('getFeedHint', () => {
     it('should return the list hint for a list feed', () => {
       const value = 'https://www.mail-archive.com/alice@example.org/maillist.xml'
-      const expected: DiscoverUriHint = { key: 'mail-archive:list', label: 'Mailing list' }
+      const expected: DiscoverUriHint = {
+        key: 'mail-archive:list',
+        label: 'Mailing list',
+        format: 'rss',
+      }
 
       expect(mailArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the list hint for a list feed on the apex host', () => {
       const value = 'https://mail-archive.com/alice@lists.example.org/maillist.xml'
-      const expected: DiscoverUriHint = { key: 'mail-archive:list', label: 'Mailing list' }
+      const expected: DiscoverUriHint = {
+        key: 'mail-archive:list',
+        label: 'Mailing list',
+        format: 'rss',
+      }
 
       expect(mailArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the list hint for a list feed over http', () => {
       const value = 'http://www.mail-archive.com/alice@example.org/maillist.xml'
-      const expected: DiscoverUriHint = { key: 'mail-archive:list', label: 'Mailing list' }
+      const expected: DiscoverUriHint = {
+        key: 'mail-archive:list',
+        label: 'Mailing list',
+        format: 'rss',
+      }
 
       expect(mailArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the list hint for a list feed with a percent-encoded at sign', () => {
       const value = 'https://www.mail-archive.com/alice%40example.org/maillist.xml'
-      const expected: DiscoverUriHint = { key: 'mail-archive:list', label: 'Mailing list' }
+      const expected: DiscoverUriHint = {
+        key: 'mail-archive:list',
+        label: 'Mailing list',
+        format: 'rss',
+      }
 
       expect(mailArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -207,11 +247,11 @@ describe('mailArchiveHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
         'https://www.mail-archive.com/alice@example.org/maillist.xml',
-        { key: 'mail-archive:list', label: 'Mailing list' },
+        { key: 'mail-archive:list', label: 'Mailing list', format: 'rss' },
       ],
       [
         'https://mail-archive.com/alice@example.org/maillist.xml/',
-        { key: 'mail-archive:list', label: 'Mailing list' },
+        { key: 'mail-archive:list', label: 'Mailing list', format: 'rss' },
       ],
       [
         'https://mail-archive.com/alice@example.org/maillist.rdf',

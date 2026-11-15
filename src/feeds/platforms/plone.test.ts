@@ -332,6 +332,18 @@ describe('ploneHandler', () => {
       expect(await ploneHandler.resolve(value, searchHtml)).toEqual(expected)
     })
 
+    it('should return the search feed without a query for a search page without one', async () => {
+      const value = 'https://example.org/agency/@@search'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.org/agency/search_rss',
+          hint: { key: 'plone:search', label: 'Search' },
+        },
+      ]
+
+      expect(await ploneHandler.resolve(value, searchHtml)).toEqual(expected)
+    })
+
     it('should return the site feeds', async () => {
       const value = 'https://example.org/'
       const expected: Array<DiscoverUriEntry> = [
