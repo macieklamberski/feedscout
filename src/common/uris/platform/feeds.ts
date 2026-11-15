@@ -31,6 +31,10 @@ export type PlatformFeedTemplate = {
   // canonical row is the nearest row above it with the same key and format and no `isAlias`, and
   // the table throws when there is none.
   isAlias?: boolean
+  // How the row's query values are written: `minimal`, the default, escapes only what would change
+  // the URL's structure, and `form` encodes as `URLSearchParams` does, `:` as `%3A` and a space as
+  // `+`.
+  queryEncoding?: 'minimal' | 'form'
 }
 
 // A value left undefined is no value, so the row it would fill is skipped.
@@ -50,9 +54,6 @@ export type PlatformFeedTableOptions = {
   // Whether `www` in front of a tenant label is dropped, so `www.alice.example.com` matches as
   // `alice.example.com`.
   isWwwTenantPrefix?: boolean
-  // How a query value is written: `minimal`, the default, escapes only what would change the URL's
-  // structure, and `form` encodes as `URLSearchParams` does, `:` as `%3A` and a space as `+`.
-  queryEncoding?: 'minimal' | 'form'
 }
 
 export type PlatformFeedTable = {
@@ -213,7 +214,7 @@ const toRegexSource = (
 
 // A template as two functions: whether a URL is this feed, and the feed URL for a page's values.
 const compileTemplate = (
-  { key, format, template, isAlias }: PlatformFeedTemplate,
+  { key, format, template, isAlias, queryEncoding }: PlatformFeedTemplate,
   options: PlatformFeedTableOptions,
 ): CompiledTemplate => {
   const isRootTemplate = template.startsWith(rootPlaceholder)
@@ -239,7 +240,7 @@ const compileTemplate = (
   const query = queryEntries.filter((entry) => getPassedQueryName(entry) === undefined)
   const ownNames = query.map(([name]) => name)
   const encodeQueryParameter = (name: string, value: string | true): string => {
-    if (value === true || options.queryEncoding !== 'form') {
+    if (value === true || queryEncoding !== 'form') {
       return composeQuery({ [name]: value }).slice(1)
     }
 
@@ -285,6 +286,11 @@ const compileTemplate = (
   }
 
   const names = [...template.matchAll(placeholderRegex)].map(([, name]) => name)
+  // A host label or path segment left empty builds a broken URL, as `/t//feed`, so an empty value
+  // there is no value. An empty query value writes no parameter.
+  const urlNames = new Set(
+    [...template.split('?')[0].matchAll(placeholderRegex)].map(([, name]) => name),
+  )
   const multiSegmentCaptures = Object.fromEntries(
     names.filter(isMultiSegment).map((name) => [name, multiSegmentCapture]),
   )
@@ -358,7 +364,7 @@ const compileTemplate = (
     for (const name of names) {
       const value = getPlaceholderValue(params, name)
 
-      if (value === undefined) {
+      if (value === undefined || (!value && urlNames.has(name))) {
         return
       }
 
