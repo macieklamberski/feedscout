@@ -805,6 +805,44 @@ describe('getHostOrigin', () => {
   it('should return undefined for a value the URL parser refuses', () => {
     expect(getHostOrigin('a b.example.com')).toBeUndefined()
   })
+
+  it('should return the origin of a tenant label ending with a hyphen', () => {
+    const value = 'alice-.livejournal.com'
+    const expected = 'https://alice-.livejournal.com'
+
+    expect(getHostOrigin(value)).toBe(expected)
+  })
+
+  it('should return the origin of a tenant label starting with a hyphen', () => {
+    const value = '-alice.tumblr.com'
+    const expected = 'https://-alice.tumblr.com'
+
+    expect(getHostOrigin(value)).toBe(expected)
+  })
+
+  it('should return undefined for a label longer than 63 characters', () => {
+    const value = `${'a'.repeat(64)}.example.com`
+
+    expect(getHostOrigin(value)).toBeUndefined()
+  })
+
+  it('should return undefined for a comma in a label', () => {
+    const value = 'alice,bob.example.com'
+
+    expect(getHostOrigin(value)).toBeUndefined()
+  })
+
+  it('should return undefined for a tilde in a label', () => {
+    const value = 'alice~bob.example.com'
+
+    expect(getHostOrigin(value)).toBeUndefined()
+  })
+
+  it('should return undefined for a domain with a final dot', () => {
+    const value = 'social.example.com.'
+
+    expect(getHostOrigin(value)).toBeUndefined()
+  })
 })
 
 describe('getScriptDirectory', () => {
