@@ -60,9 +60,15 @@ export const pukiwikiHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getPukiwikiPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
+
+    if (!pageFeeds) {
+      return []
+    }
+
     const directoryUrl = new URL('./', page.scriptUrl).href
     const script = page.scriptUrl.slice(directoryUrl.length) || undefined
 
-    return [feeds.getFeedEntry('pukiwiki:recent-changes', { root: directoryUrl, script })]
+    return [pageFeeds.getFeedEntry('pukiwiki:recent-changes', { root: directoryUrl, script })]
   },
 }
