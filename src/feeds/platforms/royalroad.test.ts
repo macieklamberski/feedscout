@@ -120,12 +120,6 @@ describe('royalroadHandler', () => {
       expect(royalroadHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a word in place of the fiction id', () => {
-      const value = 'https://www.royalroad.com/syndication/latest'
-
-      expect(royalroadHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
     it('should return undefined for a fiction page', () => {
       const value = 'https://www.royalroad.com/fiction/12345'
 

@@ -1,7 +1,6 @@
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -58,14 +57,5 @@ export const royalroadHandler: PlatformHandler = {
     return [feeds.getFeedEntry('royalroad:fiction', { fictionId: parsed.fictionId })]
   },
 
-  // A fiction id is digits, and /syndication/latest answers 404.
-  getFeedHint: (url) => {
-    const fictionId = getPathSegments(url).at(-1)
-
-    if (!fictionId || !digitsRegex.test(fictionId)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

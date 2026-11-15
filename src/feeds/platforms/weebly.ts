@@ -90,15 +90,5 @@ export const weeblyHandler: PlatformHandler = {
     return slugs.map((slug) => pageFeeds.getFeedEntry('weebly:blog', { page: slug }))
   },
 
-  // The table reads any first segment as a page, so a dotted one, a file of the site, is refused:
-  // /robots.txt/feed and /sitemap.xml/feed answer with a 404 or an empty body, never a feed.
-  getFeedHint: (url) => {
-    const [pageSegment] = getPathSegments(url)
-
-    if (!pageSegment || formatSuffixRegex.test(pageSegment)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

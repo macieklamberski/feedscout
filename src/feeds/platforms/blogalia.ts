@@ -9,9 +9,7 @@ export type BlogaliaUrl = { kind: 'blog' }
 
 const domains = ['blogalia.com']
 
-// `{host}` also takes the apex and nested subdomains, which `parseBlogaliaUrl` refuses, so
-// `getFeedHint` reads a URL only once the parser accepts its host. `www` is a tenant, as
-// `www.blogalia.com` is Blogalia's own news blog.
+// `www` is a tenant, as `www.blogalia.com` is Blogalia's own news blog.
 const feeds = definePlatformFeeds(
   [
     { key: 'blogalia:posts', template: '{scheme}://{host}/rdf.xml', format: 'rdf' },
@@ -51,11 +49,5 @@ export const blogaliaHandler: PlatformHandler = {
     ]
   },
 
-  getFeedHint: (url) => {
-    if (!parseBlogaliaUrl(url)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
