@@ -138,15 +138,22 @@ const formQueryFeeds = definePlatformFeeds(
       key: 'mediawiki:history',
       template: '{root}/index.php?title={title}&action=history&feed=atom',
       format: 'atom',
+      queryEncoding: 'form',
     },
     {
       key: 'mediawiki:recent-changes',
       template: '{root}/index.php?title=Special:RecentChanges&feed=atom&{query}',
       format: 'atom',
+      queryEncoding: 'form',
     },
-    { key: 'example:profile', template: '{root}/index.php?title={title}&rss' },
+    {
+      key: 'example:profile',
+      template: '{root}/index.php?title={title}&rss',
+      queryEncoding: 'form',
+    },
+    { key: 'example:search', template: '{root}/search?q={terms}&feed=atom' },
   ],
-  { hosts: ['example.com'], queryEncoding: 'form' },
+  { hosts: ['example.com'] },
 )
 
 const directoryFeeds = definePlatformFeeds([
@@ -1711,6 +1718,16 @@ describe('definePlatformFeeds', () => {
           'https://example.com/index.php?title=Special%3ARecentChanges&feed=atom&days=7&namespace=0:1'
 
         expect(formQueryFeeds.getFeedUrl('mediawiki:recent-changes', value)).toBe(expected)
+      })
+
+      it('should escape only the structure in a row without the form option', () => {
+        const value = {
+          root: 'https://example.com',
+          terms: 'by:alice sort:time',
+        }
+        const expected = 'https://example.com/search?q=by:alice%20sort:time&feed=atom'
+
+        expect(formQueryFeeds.getFeedUrl('example:search', value)).toBe(expected)
       })
     })
 
