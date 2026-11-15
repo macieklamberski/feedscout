@@ -160,6 +160,10 @@ Discovers feeds for WP Engine-hosted WordPress sites. Uses the same feed structu
 |-------------|-----------------|
 | `{site}.wpenginepowered.com` | Posts (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>) · comments (RSS + Atom<sup>†</sup>) |
 | `{site}.wpengine.com` | Posts (RSS + Atom + RDF<sup>†</sup>) · comments (RSS<sup>†</sup> + Atom<sup>†</sup>) |
+| `{site}.wpengine.com/category/{category}` or `{site}.wpenginepowered.com/category/{category}` | Category (RSS + Atom + RDF), plus the feeds above |
+| `{site}.wpengine.com/category/{parent}/{category}` or `{site}.wpenginepowered.com/category/{parent}/{category}` | Nested category (RSS + Atom + RDF), plus the feeds above |
+| `{site}.wpengine.com/tag/{tag}` or `{site}.wpenginepowered.com/tag/{tag}` | Tag (RSS + Atom + RDF), plus the feeds above |
+| `{site}.wpengine.com/author/{author}` or `{site}.wpenginepowered.com/author/{author}` | Author (RSS + Atom + RDF), plus the feeds above |
 | `{site}.wpengine.com/{yyyy}`, `/{yyyy}/{mm}` or `/{yyyy}/{mm}/{dd}`, and the same on `{site}.wpenginepowered.com` | Date archive (RSS<sup>†</sup> + Atom<sup>†</sup> + RDF<sup>†</sup>), plus the feeds above |
 | `{site}.wpengine.com/{post}` or `{site}.wpenginepowered.com/{post}` | Post comments (RSS + Atom<sup>†</sup>), plus the feeds above |
 
