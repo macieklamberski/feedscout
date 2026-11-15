@@ -451,6 +451,12 @@ describe('estrankyHandler', () => {
       expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return undefined for a feed under a code that names no language', () => {
+      const value = 'https://example.estranky.cz/rss/xx/articles/data.xml'
+
+      expect(estrankyHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a page', () => {
       const value = 'https://example.estranky.cz/fotoalbum/'
 

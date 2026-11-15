@@ -1,4 +1,11 @@
-import { getPathSegments, isAnyOf, isHostOf, isLocaleSegment } from 'trousse'
+import {
+  getPathSegments,
+  getQueryParam,
+  isAnyOf,
+  isHostOf,
+  isLocaleSegment,
+  parseUrl,
+} from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -79,5 +86,13 @@ export const lichessHandler: PlatformHandler = {
     return [feeds.getFeedEntry('lichess:blog', { username: 'Lichess' })]
   },
 
-  getFeedHint: feeds.getFeedHint,
+  getFeedHint: (url) => {
+    const language = getQueryParam(parseUrl(url), 'lang')
+
+    if (language && !isLocaleSegment(language)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
+  },
 }

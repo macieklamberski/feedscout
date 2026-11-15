@@ -1,4 +1,4 @@
-import { isLocaleSegment, parseUrl } from 'trousse'
+import { getPathSegments, isLocaleSegment, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getCookieNames, hasMarker } from '../../common/utils.js'
@@ -65,5 +65,14 @@ export const odooHandler: PlatformHandler = {
     return [page.getFeedEntry('odoo:blog', { blog: odooUrl.blog }, 'atom')]
   },
 
-  getFeedHint: feeds.getFeedHint,
+  // A segment before the blog is a language only in its own form.
+  getFeedHint: (url) => {
+    const [language, , , feed] = getPathSegments(url)
+
+    if (feed && !isLocaleSegment(language, { underscore: true })) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
+  },
 }

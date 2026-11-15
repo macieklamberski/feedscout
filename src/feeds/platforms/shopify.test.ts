@@ -282,6 +282,12 @@ describe('shopifyHandler', () => {
       expect(shopifyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return undefined for a feed under a well-formed code that names no language', () => {
+      const value = 'https://example.myshopify.com/xx/blogs/news.atom'
+
+      expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a blog page on a store subdomain', () => {
       const value = 'https://example.myshopify.com/blogs/news'
 

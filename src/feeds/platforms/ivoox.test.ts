@@ -196,6 +196,12 @@ describe('ivooxHandler', () => {
       expect(ivooxHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return undefined for a feed under a code that names no locale', () => {
+      const value = 'https://www.ivoox.com/xx/feed_fl_12345_1.xml'
+
+      expect(ivooxHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a podcast page', () => {
       const value = 'https://www.ivoox.com/podcast-alice_sq_f1317588_1.html'
 

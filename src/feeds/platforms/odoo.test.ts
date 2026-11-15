@@ -167,6 +167,12 @@ describe('odooHandler', () => {
       expect(odooHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return undefined for a feed under a prefix that names no language', () => {
+      const value = 'https://example.odoo.com/xx/blog/news-1/feed'
+
+      expect(odooHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a blog page on a database subdomain', () => {
       const value = 'https://example.odoo.com/blog/news-1'
 

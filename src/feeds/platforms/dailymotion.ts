@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { isHostOf, isLocaleSegment, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
@@ -22,6 +22,7 @@ const playlistRegex = /^\/playlist\/(?<playlistId>[^/]+)/i
 const channelRegex = /^\/channel\/(?<channel>[^/]+)/i
 const searchRegex = /^\/search\/([^/]+)/i
 const trendingRegex = /^\/(?:trending\/?)?$/i
+const searchLanguageRegex = /^\/rss\/[^/]+\/lang\/([^/]+)\/search\//i
 
 // `/rss/trending` reads before `/rss/{username}`, so a user named trending gets that feed.
 const feeds = definePlatformFeeds([
@@ -137,5 +138,13 @@ export const dailymotionHandler: PlatformHandler = {
     ]
   },
 
-  getFeedHint: feeds.getFeedHint,
+  getFeedHint: (url) => {
+    const language = parseUrl(url)?.pathname.match(searchLanguageRegex)?.[1]
+
+    if (language && !isLocaleSegment(language)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
+  },
 }
