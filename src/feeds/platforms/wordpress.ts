@@ -26,9 +26,11 @@ const postIdDomains = ['hypotheses.org']
 const categoryRegex = /^\/category\/(.+?)(?:\/(?:feed|rdf|rss|rss2|atom|embed|page)(?:\/|$)|\/?$)/i
 const tagRegex = /^\/tag\/([^/]+)/i
 const authorRegex = /^\/author\/([^/]+)/i
-const yearRegex = /^\/(\d{4})\/?$/
-const yearMonthRegex = /^\/(\d{4})\/(\d{2})\/?$/
-const dayRegex = /^\/(\d{4})\/(\d{2})\/(\d{2})\/?$/
+// WordPress moves the date archives under /date/ when the post id is among the first three tags
+// of the permalink, as in hypotheses.org's /{id} posts.
+const yearRegex = /^(?:\/date)?\/(\d{4})\/?$/i
+const yearMonthRegex = /^(?:\/date)?\/(\d{4})\/(\d{2})\/?$/i
+const dayRegex = /^(?:\/date)?\/(\d{4})\/(\d{2})\/(\d{2})\/?$/i
 const postIdRegex = /^\/\d+\/?$/
 const trailingSlashRegex = /\/$/
 const feedSegmentRegex = /\/feed(?:\/|$)/i

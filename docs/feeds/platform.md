@@ -145,6 +145,7 @@ Discovers RSS and Atom feeds for WordPress.com and Unblog blogs, with category, 
 | `{blog}.unblog.fr` | Same as `{blog}.wordpress.com` (Unblog) |
 | `{blog}.hypotheses.org` | Same as `{blog}.wordpress.com` |
 | `{blog}.hypotheses.org/{post_id}` | Post comments (RSS + Atom<sup>†</sup>), plus the feeds above |
+| `{blog}.hypotheses.org/date/{yyyy}`, `/date/{yyyy}/{mm}` or `/date/{yyyy}/{mm}/{dd}` | Date archive (RSS<sup>†</sup> + Atom<sup>†</sup> + RDF<sup>†</sup>), plus the feeds above |
 | `{blog}.home.blog` | Same as `{blog}.wordpress.com` |
 | `{blog}.wpcomstaging.com` | Same as `{blog}.wordpress.com` |
 | `{blog}.edublogs.org` | Same as `{blog}.wordpress.com` |
