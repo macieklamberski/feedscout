@@ -276,6 +276,10 @@ describe('shopifyHandler', () => {
         'https://example.myshopify.com/en-us/collections/all/blue.atom',
         { key: 'shopify:collection-tag', label: 'Tagged products' },
       ],
+      [
+        'https://example.myshopify.com/collections/collections/blue.atom',
+        { key: 'shopify:collection-tag', label: 'Tagged products' },
+      ],
     ]
 
     it.each(feedUrls)('should return the hint for %s', (value, expected) => {
