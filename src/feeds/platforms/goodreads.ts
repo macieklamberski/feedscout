@@ -22,15 +22,15 @@ const feeds = definePlatformFeeds([
   // A `key` parameter carries the account owner's private token, which no page gives, so these
   // rows only claim the feed.
   {
-    key: 'goodreads:shelf',
+    key: 'goodreads:private-shelf',
     template: 'https://www.goodreads.com/review/list_rss/{userId}?key={key}&shelf={shelf}',
   },
   {
-    key: 'goodreads:reviews',
+    key: 'goodreads:private-reviews',
     template: 'https://www.goodreads.com/review/list_rss/{userId}?key={key}',
   },
   {
-    key: 'goodreads:updates',
+    key: 'goodreads:private-updates',
     template: 'https://www.goodreads.com/user/updates_rss/{userId}?key={key}',
   },
 ])

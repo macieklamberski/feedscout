@@ -31,6 +31,8 @@
     "arena:profile": "https://www.are.na/charles-broskoski/feed/rss"
   },
   "art19": {
+    // An invented token: the feed is private to its listener, so this sample answers 404.
+    "art19:private": "https://rss.art19.com/alternate_feeds/user/american-scandal/0123456789abcdef",
     "art19:show": "https://rss.art19.com/american-scandal"
   },
   "artstation": {
@@ -249,7 +251,9 @@
     "captivate:collection": "https://feeds.captivate.fm/theknurdproject/jcast/",
     "captivate:latest": "https://feeds.captivate.fm/theknurdproject/latest/",
     "captivate:network": "https://feeds.captivate.fm/n/iacast-network/",
-    "captivate:podcast": "https://feeds.captivate.fm/school-of-podcasting/"
+    "captivate:podcast": "https://feeds.captivate.fm/school-of-podcasting/",
+    // An invented token: the feed is private to its listener, so this sample answers 401.
+    "captivate:private": "https://private.captivate.fm/school-of-podcasting/0123456789abcdef"
   },
   "castopod": {
     "castopod:podcast": "https://castopod.it/@PlinPlon/feed.xml"
@@ -742,6 +746,11 @@
     ]
   },
   "goodreads": {
+    // Invented keys: the feeds are private to their owner, and Goodreads removed RSS in October
+    // 2026, so these samples answer 404.
+    "goodreads:private-reviews": "https://www.goodreads.com/review/list_rss/1?key=0123456789abcdef",
+    "goodreads:private-shelf": "https://www.goodreads.com/review/list_rss/1?key=0123456789abcdef&shelf=read",
+    "goodreads:private-updates": "https://www.goodreads.com/user/updates_rss/1?key=0123456789abcdef",
     "goodreads:reviews": {
       "skip": "Goodreads removed RSS in October 2026, so every feed answers 404"
     },
@@ -1974,7 +1983,11 @@
     ],
     "substack:newsletter-section": "https://biggersisterchannel.substack.com/feed?sectionId=194387",
     "substack:podcast": "https://api.substack.com/feed/podcast/1055993.rss",
-    "substack:podcast-section": "https://api.substack.com/feed/podcast/1047751/s/25347.rss"
+    "substack:podcast-section": "https://api.substack.com/feed/podcast/1047751/s/25347.rss",
+    // Invented tokens: the feeds are private to their listener or to Spotify, so these samples
+    // answer 400.
+    "substack:private-podcast": "https://api.substack.com/feed/podcast/1055993/private/0123456789abcdef.rss",
+    "substack:spotify-podcast": "https://api.substack.com/feed/podcast/spotify/0123456789abcdef/1055993.rss"
   },
   "svbtle": {
     "svbtle:posts": "https://dcurt.is/feed"
