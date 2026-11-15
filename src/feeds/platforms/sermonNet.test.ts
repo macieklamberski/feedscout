@@ -91,6 +91,13 @@ describe('getSermonNetPage', () => {
     expect(getSermonNetPage(value, faithChapelHtml)).toEqual(expected)
   })
 
+  it('should return the channel the URL names without content', () => {
+    const value = 'https://faithchapelchurch.sermon.net/main/faithchapel'
+    const expected: SermonNetPage = { kind: 'channel', channel: 'faithchapel' }
+
+    expect(getSermonNetPage(value, undefined)).toEqual(expected)
+  })
+
   it('should return the church with no channel without content', () => {
     const value = 'https://faithchapelchurch.sermon.net/'
     const expected: SermonNetPage = { kind: 'church', channels: [] }
@@ -250,6 +257,30 @@ describe('sermonNetHandler', () => {
       ]
 
       expect(sermonNetHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should return the feeds of the channel the URL names without content', () => {
+      const value = 'https://example.sermon.net/main/joshua'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.sermon.net/rss/joshua/audio',
+          hint: { key: 'sermon-net:channel', label: 'Channel podcast' },
+        },
+        {
+          uri: 'https://example.sermon.net/rss/joshua',
+          hint: { key: 'sermon-net:channel-media', label: 'Channel media' },
+        },
+        {
+          uri: 'https://example.sermon.net/rss/joshua/video',
+          hint: { key: 'sermon-net:channel-video', label: 'Channel video podcast' },
+        },
+        {
+          uri: 'https://example.sermon.net/rss/joshua/audio_pdf',
+          hint: { key: 'sermon-net:channel-audio-pdf', label: 'Channel podcast with PDFs' },
+        },
+      ]
+
+      expect(sermonNetHandler.resolve(value)).toEqual(expected)
     })
 
     it('should keep the http scheme of a church page opened over http', () => {

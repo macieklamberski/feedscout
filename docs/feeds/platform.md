@@ -1402,7 +1402,7 @@ Discovers the audio, all-media, video, and audio with PDF feeds of every channel
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{church}.sermon.net` | Channel podcasts, media, video podcasts, and podcasts with PDFs (RSS)*, or the church feed when no channel is listed |
-| `{church}.sermon.net/{mediaCentre}/{channel}` | That channel's podcast<sup>†</sup>, media<sup>†</sup>, video podcast<sup>†</sup>, and podcast with PDFs<sup>†</sup> (RSS)* |
+| `{church}.sermon.net/{mediaCentre}/{channel}` | That channel's podcast<sup>†</sup>, media<sup>†</sup>, video podcast<sup>†</sup>, and podcast with PDFs<sup>†</sup> (RSS) |
 
 \* *Requires HTML content to read the channels the page lists.*
 
