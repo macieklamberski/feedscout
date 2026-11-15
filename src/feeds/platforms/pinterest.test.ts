@@ -224,6 +224,12 @@ describe('pinterestHandler', () => {
       expect(pinterestHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return undefined for a feed on a subdomain that is no country label', () => {
+      const value = 'https://help.pinterest.com/alice/feed.rss'
+
+      expect(pinterestHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a feed on a country domain', () => {
       const value = 'https://www.pinterest.co.uk/pinterest/feed.rss'
 

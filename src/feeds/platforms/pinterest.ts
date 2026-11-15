@@ -81,5 +81,13 @@ export const pinterestHandler: PlatformHandler = {
     return [page.getFeedEntry('pinterest:pins', { host, username: parsed.username })]
   },
 
-  getFeedHint: feeds.getFeedHint,
+  getFeedHint: (url) => {
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl || !isPinterestHost(parsedUrl)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
+  },
 }
