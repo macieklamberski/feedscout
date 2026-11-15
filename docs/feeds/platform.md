@@ -1885,7 +1885,7 @@ Discovers the feeds of a Habr hub, user, company, flow or article, plus the site
 | `habr.com/{lang}/users/{user}` | User · articles · news<sup>†</sup> (RSS) |
 | `habr.com/{lang}/companies/{company}` | Company · articles · news<sup>†</sup> (RSS) |
 | `habr.com/{lang}/articles/{id}` | Comments · articles · news<sup>†</sup> (RSS) |
-| `habr.com/{lang}/companies/{company}/articles/{id}` | Comments · company · articles · news<sup>†</sup> (RSS) |
+| `habr.com/{lang}/companies/{company}/articles/{id}` | Comments · company<sup>†</sup> · articles · news<sup>†</sup> (RSS) |
 | `habr.com/{lang}/flows/{flow}` | Flow · articles · news<sup>†</sup> (RSS) |
 | Any other page | Articles · news<sup>†</sup> (RSS) |
 
