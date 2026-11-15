@@ -1,7 +1,7 @@
 import { parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (html).
@@ -16,7 +16,7 @@ export type OpencartJournalPage = {
 // A store is known only by its markup, so its feeds are built under the store root and claimed on
 // no host. The blog route is named for the Journal version. OpenCart 4 separates a route's method
 // with a dot and answers the slash form with a 404, and only Journal 3 runs on it, so its dot form
-// takes no version and is built when no version is passed.
+// is a second spelling of the Journal 3 feed.
 const feeds = definePlatformFeeds([
   {
     key: 'opencart-journal:blog',
@@ -94,13 +94,7 @@ export const opencartJournalHandler: PlatformHandler = {
     }
 
     return [
-      {
-        uri: [
-          pageFeeds.getFeedUrl('opencart-journal:blog', { root, version: page.version }, 'rss'),
-          pageFeeds.getFeedUrl('opencart-journal:blog', { root }, 'rss'),
-        ],
-        hint: composeHint('opencart-journal:blog', 'rss'),
-      },
+      pageFeeds.getFeedSpellings('opencart-journal:blog', { root, version: page.version }, 'rss'),
     ]
   },
 }
