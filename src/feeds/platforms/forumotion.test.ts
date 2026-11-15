@@ -129,7 +129,19 @@ describe('forumotionHandler', () => {
     })
 
     it('should return false for a page without it', () => {
-      expect(forumotionHandler.match('https://shingamix.forumotion.com/', otherHtml)).toBe(false)
+      expect(forumotionHandler.match('https://www.example.com/', otherHtml)).toBe(false)
+    })
+
+    it('should return true for a forum on a Forumotion domain without content', () => {
+      const value = 'https://alice.forumotion.com/'
+
+      expect(forumotionHandler.match(value)).toBe(true)
+    })
+
+    it('should return false for the Forumotion site', () => {
+      const value = 'https://www.forumotion.com/'
+
+      expect(forumotionHandler.match(value, userdataScript)).toBe(false)
     })
   })
 

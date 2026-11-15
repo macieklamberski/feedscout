@@ -18,10 +18,11 @@ describe('parseNoteUrl', () => {
     expect(parseNoteUrl('https://note.com/tsukasa_yamato/n/some-note')).toEqual(expected)
   })
 
-  it('should return the user for the www host', () => {
+  it('should return the user for the note.mu host', () => {
+    const value = 'https://note.mu/alice'
     const expected: NoteUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseNoteUrl('https://www.note.com/alice')).toEqual(expected)
+    expect(parseNoteUrl(value)).toEqual(expected)
   })
 
   it('should return the magazine for a magazine page', () => {
@@ -213,6 +214,10 @@ describe('noteHandler', () => {
       ['https://note.com/hashtag/AI/rss', { key: 'note:hashtag', label: 'Hashtag' }],
       ['https://note.com/notemag/m/m7244518f06ae/rss', { key: 'note:magazine', label: 'Magazine' }],
       ['https://note.com/rss', { key: 'note:featured', label: 'Featured' }],
+      ['https://note.mu/alice/rss', { key: 'note:blog', label: 'Blog' }],
+      ['https://note.mu/hashtag/AI/rss', { key: 'note:hashtag', label: 'Hashtag' }],
+      ['https://note.mu/notemag/m/m7244518f06ae/rss', { key: 'note:magazine', label: 'Magazine' }],
+      ['https://note.mu/rss', { key: 'note:featured', label: 'Featured' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

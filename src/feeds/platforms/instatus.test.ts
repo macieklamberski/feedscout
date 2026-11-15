@@ -93,6 +93,18 @@ describe('instatusHandler', () => {
 
       expect(value).toBe(false)
     })
+
+    it('should match a status page on an Instatus host without content', () => {
+      const value = 'https://alice.instatus.com/'
+
+      expect(instatusHandler.match(value)).toBe(true)
+    })
+
+    it('should not match the Instatus site', () => {
+      const value = 'https://instatus.com/'
+
+      expect(instatusHandler.match(value, instatusHtml)).toBe(false)
+    })
   })
 
   describe('resolve', () => {

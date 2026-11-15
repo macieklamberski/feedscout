@@ -13,18 +13,27 @@ export type NoteUrl =
   | { kind: 'user'; username: string }
   | { kind: 'home' }
 
-export const hosts = ['note.com', 'www.note.com']
+export const hosts = ['note.com', 'note.mu']
 
 // A hashtag page redirects to `/tag/{tag}`, and the feed stays under `/hashtag`.
 const hashtagRegex = /^\/(?:hashtag|tag)\/([^/]+)/i
 const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/i
 const noteRegex = /^\/([^/]+)\/n\/[^/]+/i
 
+// note.mu, the old domain, redirects every feed to the same path on note.com.
 const feeds = definePlatformFeeds([
   { key: 'note:featured', template: 'https://note.com/rss' },
+  { key: 'note:featured', template: 'https://note.mu/rss', isAlias: true },
   { key: 'note:hashtag', template: 'https://note.com/hashtag/{tag}/rss' },
+  { key: 'note:hashtag', template: 'https://note.mu/hashtag/{tag}/rss', isAlias: true },
   { key: 'note:magazine', template: 'https://note.com/{username}/m/{magazine}/rss' },
+  {
+    key: 'note:magazine',
+    template: 'https://note.mu/{username}/m/{magazine}/rss',
+    isAlias: true,
+  },
   { key: 'note:blog', template: 'https://note.com/{username}/rss' },
+  { key: 'note:blog', template: 'https://note.mu/{username}/rss', isAlias: true },
 ])
 
 export const parseNoteUrl = (url: string): NoteUrl | undefined => {
