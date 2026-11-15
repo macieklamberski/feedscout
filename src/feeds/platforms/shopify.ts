@@ -11,8 +11,6 @@ const shopifyRegex = /shopify/i
 
 const domains = ['myshopify.com']
 
-const routes = ['blogs', 'collections']
-
 // A store on its own domain is known only by its header, so its feeds are built here but not
 // claimed. A collection and a collection narrowed to product tags are linked from pages `resolve`
 // does not read, so the table only claims them.
@@ -36,7 +34,7 @@ const feeds = definePlatformFeeds(
       template: '{scheme}://{host}/{locale}/collections/{handle}/{tags}.atom',
     },
   ],
-  { domains },
+  { domains, checks: { locale: isLocale } },
 )
 
 export const isShopifyHeaders = (headers: Headers): boolean => {
@@ -90,14 +88,5 @@ export const shopifyHandler: PlatformHandler = {
     return [page.getFeedEntry('shopify:blog', { handle: parsed.handle })]
   },
 
-  // A segment before the route is a market's locale only in its own form.
-  getFeedHint: (url) => {
-    const [localeOrRoute] = getPathSegments(url)
-
-    if (!isAnyOf(localeOrRoute, routes) && !isLocale(localeOrRoute)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

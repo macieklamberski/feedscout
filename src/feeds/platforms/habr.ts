@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, isLocale, parseUrl } from 'trousse'
+import { isHostOf, isLocale, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
@@ -28,69 +28,72 @@ const flowRegex = /^\/flows\/([^/]+)/i
 // it, which readers store. A top listing is the same feed sorted, and a tag without its language
 // prefix is the same tag. A subscription feed carries the reader's private token, so the table
 // only claims it.
-const feeds = definePlatformFeeds([
-  { key: 'habr:articles', template: 'https://habr.com/{language}/rss/articles/' },
-  { key: 'habr:articles', template: 'https://habr.com/{language}/rss/articles/top/' },
-  { key: 'habr:articles', template: 'https://habr.com/{language}/rss/articles/top/{period}/' },
-  { key: 'habr:news', template: 'https://habr.com/{language}/rss/news/' },
-  { key: 'habr:news', template: 'https://habr.com/{language}/rss/news/top/{period}/' },
-  { key: 'habr:hub-posts', template: 'https://habr.com/{language}/rss/hubs/{hub}/posts/' },
-  { key: 'habr:flow', template: 'https://habr.com/{language}/rss/flows/{flow}/articles/' },
-  { key: 'habr:tag', template: 'https://habr.com/{language}/rss/tag/{tag}/' },
-  { key: 'habr:tag', template: 'https://habr.com/rss/tag/{tag}/' },
-  {
-    key: 'habr:search',
-    template: 'https://habr.com/{language}/rss/search/?q={query}&target_type=posts',
-  },
-  { key: 'habr:comments', template: 'https://habr.com/{language}/rss/publications/{post}/' },
-  // An article page links this spelling, which redirects to the publications one with a 301.
-  {
-    key: 'habr:comments',
-    template: 'https://habr.com/{language}/rss/post/{post}/',
-    isAlias: true,
-  },
-  { key: 'habr:subscriptions', template: 'https://habr.com/{language}/rss/feed/{token}/' },
-  { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hubs/{hub}/articles/' },
-  {
-    key: 'habr:hub',
-    template: 'https://habr.com/{language}/rss/hubs/{hub}/articles/all/',
-    isAlias: true,
-  },
-  { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hub/{hub}/', isAlias: true },
-  {
-    key: 'habr:user',
-    template: 'https://habr.com/{language}/rss/users/{username}/publications/articles/',
-  },
-  {
-    key: 'habr:user',
-    template: 'https://habr.com/{language}/rss/users/{username}/articles/',
-    isAlias: true,
-  },
-  {
-    key: 'habr:user',
-    template: 'https://habr.com/{language}/rss/users/{username}/posts/',
-    isAlias: true,
-  },
-  {
-    key: 'habr:user',
-    template: 'https://habr.com/{language}/rss/users/{username}/publications/posts/',
-    isAlias: true,
-  },
-  {
-    key: 'habr:company',
-    template: 'https://habr.com/{language}/rss/companies/{company}/articles/',
-  },
-  {
-    key: 'habr:company',
-    template: 'https://habr.com/{language}/rss/companies/{company}/articles/all/',
-    isAlias: true,
-  },
-  {
-    key: 'habr:company',
-    template: 'https://habr.com/{language}/rss/company/{company}/blog/',
-    isAlias: true,
-  },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'habr:articles', template: 'https://habr.com/{language}/rss/articles/' },
+    { key: 'habr:articles', template: 'https://habr.com/{language}/rss/articles/top/' },
+    { key: 'habr:articles', template: 'https://habr.com/{language}/rss/articles/top/{period}/' },
+    { key: 'habr:news', template: 'https://habr.com/{language}/rss/news/' },
+    { key: 'habr:news', template: 'https://habr.com/{language}/rss/news/top/{period}/' },
+    { key: 'habr:hub-posts', template: 'https://habr.com/{language}/rss/hubs/{hub}/posts/' },
+    { key: 'habr:flow', template: 'https://habr.com/{language}/rss/flows/{flow}/articles/' },
+    { key: 'habr:tag', template: 'https://habr.com/{language}/rss/tag/{tag}/' },
+    { key: 'habr:tag', template: 'https://habr.com/rss/tag/{tag}/' },
+    {
+      key: 'habr:search',
+      template: 'https://habr.com/{language}/rss/search/?q={query}&target_type=posts',
+    },
+    { key: 'habr:comments', template: 'https://habr.com/{language}/rss/publications/{post}/' },
+    // An article page links this spelling, which redirects to the publications one with a 301.
+    {
+      key: 'habr:comments',
+      template: 'https://habr.com/{language}/rss/post/{post}/',
+      isAlias: true,
+    },
+    { key: 'habr:subscriptions', template: 'https://habr.com/{language}/rss/feed/{token}/' },
+    { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hubs/{hub}/articles/' },
+    {
+      key: 'habr:hub',
+      template: 'https://habr.com/{language}/rss/hubs/{hub}/articles/all/',
+      isAlias: true,
+    },
+    { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hub/{hub}/', isAlias: true },
+    {
+      key: 'habr:user',
+      template: 'https://habr.com/{language}/rss/users/{username}/publications/articles/',
+    },
+    {
+      key: 'habr:user',
+      template: 'https://habr.com/{language}/rss/users/{username}/articles/',
+      isAlias: true,
+    },
+    {
+      key: 'habr:user',
+      template: 'https://habr.com/{language}/rss/users/{username}/posts/',
+      isAlias: true,
+    },
+    {
+      key: 'habr:user',
+      template: 'https://habr.com/{language}/rss/users/{username}/publications/posts/',
+      isAlias: true,
+    },
+    {
+      key: 'habr:company',
+      template: 'https://habr.com/{language}/rss/companies/{company}/articles/',
+    },
+    {
+      key: 'habr:company',
+      template: 'https://habr.com/{language}/rss/companies/{company}/articles/all/',
+      isAlias: true,
+    },
+    {
+      key: 'habr:company',
+      template: 'https://habr.com/{language}/rss/company/{company}/blog/',
+      isAlias: true,
+    },
+  ],
+  { checks: { language: isLocale } },
+)
 
 export const parseHabrUrl = (url: string): HabrUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -219,14 +222,5 @@ export const habrHandler: PlatformHandler = {
     ]
   },
 
-  // A segment before `rss` is a language only in its own form.
-  getFeedHint: (url) => {
-    const [languageOrRss] = getPathSegments(url)
-
-    if (!isAnyOf(languageOrRss, 'rss') && !isLocale(languageOrRss)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

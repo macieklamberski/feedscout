@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf, isLocale } from 'trousse'
+import { isHostOf, isLocale } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -15,31 +15,34 @@ const episodeRegex = /_rf_\d+_\d+\.html$/i
 // An episode page names its show in the JSON-LD `partOfSeries`, among links to other shows.
 const partOfSeriesRegex = /"partOfSeries":\{[^{}]*_sq_f(\d+)_/
 
-const feeds = definePlatformFeeds([
-  { key: 'ivoox:podcast', template: 'https://feeds.ivoox.com/feed_fg_f{podcastId}_filtro_1.xml' },
-  // Served spellings with the same items, under any slug. Claimed, never built.
-  {
-    key: 'ivoox:podcast',
-    template: 'https://feeds.ivoox.com/{slug}_fg_f{podcastId}_filtro_1.xml',
-    isAlias: true,
-  },
-  {
-    key: 'ivoox:podcast',
-    template: 'https://www.ivoox.com/{slug}_fg_f{podcastId}_filtro_1.xml',
-    isAlias: true,
-  },
-  {
-    key: 'ivoox:podcast',
-    template: 'https://www.ivoox.com/{locale}/{slug}_fg_f{podcastId}_filtro_1.xml',
-    isAlias: true,
-  },
-  // A group of shows, and a listener's playlist, under ids only their own pages give.
-  { key: 'ivoox:group', template: 'https://www.ivoox.com/{locale}/feed_fl_{groupId}_{page}.xml' },
-  {
-    key: 'ivoox:playlist',
-    template: 'https://www.ivoox.com/{locale}/itunes-feed_fp_{playlistId}-_{date}_{page}.xml',
-  },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'ivoox:podcast', template: 'https://feeds.ivoox.com/feed_fg_f{podcastId}_filtro_1.xml' },
+    // Served spellings with the same items, under any slug. Claimed, never built.
+    {
+      key: 'ivoox:podcast',
+      template: 'https://feeds.ivoox.com/{slug}_fg_f{podcastId}_filtro_1.xml',
+      isAlias: true,
+    },
+    {
+      key: 'ivoox:podcast',
+      template: 'https://www.ivoox.com/{slug}_fg_f{podcastId}_filtro_1.xml',
+      isAlias: true,
+    },
+    {
+      key: 'ivoox:podcast',
+      template: 'https://www.ivoox.com/{locale}/{slug}_fg_f{podcastId}_filtro_1.xml',
+      isAlias: true,
+    },
+    // A group of shows, and a listener's playlist, under ids only their own pages give.
+    { key: 'ivoox:group', template: 'https://www.ivoox.com/{locale}/feed_fl_{groupId}_{page}.xml' },
+    {
+      key: 'ivoox:playlist',
+      template: 'https://www.ivoox.com/{locale}/itunes-feed_fp_{playlistId}-_{date}_{page}.xml',
+    },
+  ],
+  { checks: { locale: isLocale } },
+)
 
 export const parseIvooxUrl = (url: string): IvooxUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -93,14 +96,5 @@ export const ivooxHandler: PlatformHandler = {
     return [feeds.getFeedEntry('ivoox:podcast', { podcastId: page.podcastId })]
   },
 
-  // A segment before the feed is a locale only in its own form.
-  getFeedHint: (url) => {
-    const [locale, feed] = getPathSegments(url)
-
-    if (feed && !isLocale(locale)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

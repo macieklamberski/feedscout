@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOrSubdomainOf, isLocale, parseUrl } from 'trousse'
+import { isHostOrSubdomainOf, isLocale, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
@@ -29,7 +29,7 @@ const feeds = definePlatformFeeds(
       isAlias: true,
     },
   ],
-  { domains },
+  { domains, checks: { language: isLocale } },
 )
 
 export const isInstatusHtml = (content: string): boolean => {
@@ -75,14 +75,5 @@ export const instatusHandler: PlatformHandler = {
     ]
   },
 
-  // A segment before the feed is a translation only in its own form.
-  getFeedHint: (url) => {
-    const [language, feed] = getPathSegments(url)
-
-    if (feed && !isLocale(language)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

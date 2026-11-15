@@ -40,6 +40,8 @@ export type PlatformFeedTemplate<Key extends string = string> = {
 // A value left undefined is no value, so the row it would fill is skipped.
 export type PlatformFeedParams = Record<string, string | undefined>
 
+export type PlatformFeedCheck = (value: string) => boolean
+
 export type PlatformFeedTableOptions = {
   // The hosts a `{host}` placeholder stands for, with every host under `domains`. `getFeedHint`
   // claims a host under `domains` only for a single tenant label.
@@ -54,6 +56,9 @@ export type PlatformFeedTableOptions = {
   // Whether `www` in front of a tenant label is dropped, so `www.alice.example.com` matches as
   // `alice.example.com`.
   isWwwTenantPrefix?: boolean
+  // A check per placeholder name, such as `{ locale: isLocale }`. A row whose value fails its check
+  // is not built, and `getFeedHint` claims no URL whose value fails it.
+  checks?: Record<string, PlatformFeedCheck>
 }
 
 // A table's methods take only the keys of its rows, so a key the table does not hold fails the
@@ -88,8 +93,9 @@ type CompiledTemplate = {
   // The host and path a URL the template claims matches, as given and with an optional `www`.
   asGivenRegex: RegExp
   optionalWwwRegex: RegExp
-  isFeedUrl: (feedUrl: FeedUrl) => boolean
-  isFeedUrlWithOptionalWww: (feedUrl: FeedUrl) => boolean
+  // With `isChecked`, the URL's values must also pass the table's checks.
+  isFeedUrl: (feedUrl: FeedUrl, isChecked?: boolean) => boolean
+  isFeedUrlWithOptionalWww: (feedUrl: FeedUrl, isChecked?: boolean) => boolean
   getUrl: (params?: PlatformFeedParams) => string | undefined
 }
 
@@ -109,12 +115,18 @@ const leadingSlashesRegex = /^\/{2,}/
 const anchorsRegex = /^\^|\$$/g
 const passedQueryRegex = /^\{(\w+)\}$/
 const leadingQuestionMarkRegex = /^\?/
+const checkCaptureRegex = /\(\?<check\d+>/g
 
 const rootPlaceholder = '{root}'
+const checkGroupPrefix = 'check'
 const multiSegmentCapture = '[^/]+(?:/[^/]+)*'
 
 const isMultiSegment = (placeholder: string): boolean => {
   return placeholder.endsWith('*')
+}
+
+const toBareName = (placeholder: string): string => {
+  return isMultiSegment(placeholder) ? placeholder.slice(0, -1) : placeholder
 }
 
 // A `{name*}` value is one or more segments joined by `/`. An empty segment is dropped, as a
@@ -194,7 +206,8 @@ const readFeedUrl = (url: string): FeedUrl | undefined => {
 
 // One pattern any of the patterns matches, so a table reads a URL on none of its feeds at once.
 const joinRegexes = (regexes: Array<RegExp>): RegExp => {
-  const sources = regexes.map((regex) => `(?:${regex.source})`)
+  // A checked capture is named, and a name may appear once in a pattern.
+  const sources = regexes.map((regex) => `(?:${regex.source.replace(checkCaptureRegex, '(?:')})`)
 
   return new RegExp(sources.join('|') || '(?!)', 'i')
 }
@@ -211,12 +224,13 @@ const toRegexSource = (
   capture: string,
   captures: Record<string, string> = {},
   isPath = false,
+  wrapCapture = (_name: string, source: string) => source,
 ): string => {
   return text
     .split(placeholderRegex)
     .map((piece, index) => {
       if (index % 2 === 1) {
-        return captures[piece] ?? capture
+        return wrapCapture(piece, captures[piece] ?? capture)
       }
 
       return escapeRegex(isPath ? decodePath(piece) : piece)
@@ -293,6 +307,39 @@ const compileTemplate = (
   }
 
   const names = [...template.matchAll(placeholderRegex)].map(([, name]) => name)
+  const checks = options.checks ?? {}
+  const checkedNames: Array<string> = []
+  // A checked placeholder is captured as `check{index}`, so a claim reads its value back.
+  const wrapCapture = (name: string, source: string): string => {
+    const bareName = toBareName(name)
+
+    if (!checks[bareName]) {
+      return source
+    }
+
+    checkedNames.push(bareName)
+
+    return `(?<${checkGroupPrefix}${checkedNames.length - 1}>${source})`
+  }
+  const passesChecks = (groups: Record<string, string> = {}): boolean => {
+    return Object.entries(groups).every(([group, value]) => {
+      return checks[checkedNames[Number(group.slice(checkGroupPrefix.length))]](value)
+    })
+  }
+  // A value matches its pattern, and with `isChecked` its checked placeholders pass their checks.
+  const isMatch = (regex: RegExp, value: string, isChecked: boolean): boolean => {
+    if (!isChecked) {
+      return regex.test(value)
+    }
+
+    const match = regex.exec(value)
+
+    if (!match) {
+      return false
+    }
+
+    return passesChecks(match.groups)
+  }
   // An empty value is no value: a host label or path segment left empty builds a broken URL, as
   // `/t//feed`, and a query value left empty a feed the page does not name, as `?videoChannelId=`.
   // An empty passed query passes nothing, so the row writes its own parameters alone.
@@ -307,6 +354,7 @@ const compileTemplate = (
     '[^/]+',
     multiSegmentCaptures,
     true,
+    wrapCapture,
   )
   // A fixed host matches with or without `www` in front, a tenant label only with
   // `isWwwTenantPrefix`, so `www.alice.example.com` is otherwise no tenant's host.
@@ -324,25 +372,37 @@ const compileTemplate = (
     const fixedPrefixSource = isFixedHost ? wwwSource : ''
     const isTenantHost = !isFixedHost && !host.startsWith('{host}')
     const tenantPrefixSource = isTenantHost ? tenantWwwSource : ''
-    const hostSource = toRegexSource(normalize(host), tenantSource, {
+    const hostCaptures = {
       host: `(?:${hostSources.join('|')})`,
       domain: domainSource,
-    })
+    }
+    const hostSource = toRegexSource(
+      normalize(host),
+      tenantSource,
+      hostCaptures,
+      false,
+      wrapCapture,
+    )
 
     return new RegExp(`^${fixedPrefixSource}${tenantPrefixSource}${hostSource}${pathSource}$`, 'i')
   }
   const asGivenRegex = toHostPathRegex(false)
   const optionalWwwRegex = toHostPathRegex(true)
   const queryRegexes = query.map(([name, value]): [string, RegExp] => {
-    return [name, new RegExp(`^${toRegexSource(value, '.+')}$`, 'i')]
+    return [name, new RegExp(`^${toRegexSource(value, '.+', {}, false, wrapCapture)}$`, 'i')]
   })
   const repeatedNames = ownNames.filter((name, index) => ownNames.indexOf(name) !== index)
 
   // A `{root}` table without hosts serves any site, so nothing in its URL names the platform.
   const claimsUrls = !isRootTemplate || hasHosts
 
-  const matchesUrl = (url: URL, hostPathRegex: RegExp, hostPath: string): boolean => {
-    if (!claimsUrls || !hostPathRegex.test(hostPath)) {
+  const matchesUrl = (
+    url: URL,
+    hostPathRegex: RegExp,
+    hostPath: string,
+    isChecked = false,
+  ): boolean => {
+    if (!claimsUrls || !isMatch(hostPathRegex, hostPath, isChecked)) {
       return false
     }
 
@@ -351,16 +411,16 @@ const compileTemplate = (
       // A name the row repeats, as `types=page&types=blogpost`, finds each value in any place.
       const candidates = repeatedNames.includes(name) ? values : values.slice(0, 1)
 
-      return candidates.some((value) => regex.test(value))
+      return candidates.some((value) => isMatch(regex, value, isChecked))
     })
   }
 
-  const isFeedUrl = ({ url, hostPath }: FeedUrl): boolean => {
-    return matchesUrl(url, asGivenRegex, hostPath)
+  const isFeedUrl = ({ url, hostPath }: FeedUrl, isChecked?: boolean): boolean => {
+    return matchesUrl(url, asGivenRegex, hostPath, isChecked)
   }
 
-  const isFeedUrlWithOptionalWww = ({ url, hostPath }: FeedUrl): boolean => {
-    return matchesUrl(url, optionalWwwRegex, hostPath)
+  const isFeedUrlWithOptionalWww = ({ url, hostPath }: FeedUrl, isChecked?: boolean): boolean => {
+    return matchesUrl(url, optionalWwwRegex, hostPath, isChecked)
   }
 
   // A template whose placeholders the values do not all fill builds no URL.
@@ -371,6 +431,12 @@ const compileTemplate = (
       const value = getPlaceholderValue(params, name)
 
       if (value === undefined || (!value && !passedQueryNames.has(name))) {
+        return
+      }
+
+      const check = checks[toBareName(name)]
+
+      if (check && !check(value)) {
         return
       }
 
@@ -538,6 +604,10 @@ export const definePlatformFeeds = <const Key extends string>(
       const template = bySpecificity.find((candidate) => candidate.isFeedUrl(feedUrl))
 
       if (template) {
+        if (!template.isFeedUrl(feedUrl, true)) {
+          return
+        }
+
         return composeHint(template.key, template.format)
       }
     }
@@ -550,7 +620,9 @@ export const definePlatformFeeds = <const Key extends string>(
       return candidate.isFeedUrlWithOptionalWww(feedUrl)
     })
 
-    if (!template) {
+    // A value its check refuses refuses the URL, so a looser row such as one without the query
+    // does not claim it in its place.
+    if (!template?.isFeedUrlWithOptionalWww(feedUrl, true)) {
       return
     }
 

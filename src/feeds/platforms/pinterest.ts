@@ -23,7 +23,7 @@ const feeds = definePlatformFeeds(
     { key: 'pinterest:pins', template: '{scheme}://{host}/{username}/feed.rss' },
     { key: 'pinterest:board', template: '{scheme}://{host}/{username}/{board}.rss' },
   ],
-  { hosts, domains },
+  { hosts, domains, checks: { host: (host) => isPinterestHost(new URL(`https://${host}`)) } },
 )
 
 // A country site such as pinterest.co.uk redirects to its label on pinterest.com, uk.pinterest.com,
@@ -81,13 +81,5 @@ export const pinterestHandler: PlatformHandler = {
     return [page.getFeedEntry('pinterest:pins', { host, username: parsed.username })]
   },
 
-  getFeedHint: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl || !isPinterestHost(parsedUrl)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
