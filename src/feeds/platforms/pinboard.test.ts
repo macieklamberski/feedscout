@@ -306,23 +306,26 @@ describe('pinboardHandler', () => {
       expect(pinboardHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return the bookmarks hint for a private user feed', () => {
+    it('should return the private bookmarks hint for a private user feed', () => {
       const value = 'https://feeds.pinboard.in/rss/secret:abc123/u:example'
-      const expected: DiscoverUriHint = { key: 'pinboard:bookmarks', label: 'Bookmarks' }
+      const expected: DiscoverUriHint = {
+        key: 'pinboard:private-bookmarks',
+        label: 'Private bookmarks',
+      }
 
       expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag hint for a private tag feed', () => {
+    it('should return the private tag hint for a private tag feed', () => {
       const value = 'https://feeds.pinboard.in/rss/secret:abc123/u:example/t:programming'
-      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
+      const expected: DiscoverUriHint = { key: 'pinboard:private-tag', label: 'Private tag' }
 
       expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag hint for a private feed with several tags', () => {
+    it('should return the private tag hint for a private feed with several tags', () => {
       const value = 'https://feeds.pinboard.in/rss/secret:abc123/u:example/t:programming/t:rust/'
-      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
+      const expected: DiscoverUriHint = { key: 'pinboard:private-tag', label: 'Private tag' }
 
       expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -387,11 +390,11 @@ describe('pinboardHandler', () => {
       ['https://feeds.pinboard.in/rss/t:programming/', { key: 'pinboard:tag', label: 'Tag' }],
       [
         'https://feeds.pinboard.in/rss/secret:abc123/u:example',
-        { key: 'pinboard:bookmarks', label: 'Bookmarks' },
+        { key: 'pinboard:private-bookmarks', label: 'Private bookmarks' },
       ],
       [
         'https://feeds.pinboard.in/rss/secret:abc123/u:example/t:programming',
-        { key: 'pinboard:tag', label: 'Tag' },
+        { key: 'pinboard:private-tag', label: 'Private tag' },
       ],
       ['https://feeds.pinboard.in/rss/recent/', { key: 'pinboard:recent', label: 'Recent' }],
       ['https://feeds.pinboard.in/rss/popular/', { key: 'pinboard:popular', label: 'Popular' }],

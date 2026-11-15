@@ -16,7 +16,7 @@ const feeds = definePlatformFeeds([
   { key: 'art19:show', template: 'https://rss.art19.com/{slug}' },
   // A listener's private feed, such as an ad-free one, under a token no page gives.
   {
-    key: 'art19:show',
+    key: 'art19:private',
     template: 'https://rss.art19.com/alternate_feeds/user/{slug}/{token}',
   },
 ])

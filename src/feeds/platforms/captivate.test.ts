@@ -140,9 +140,9 @@ describe('captivateHandler', () => {
       expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast hint for a private feed', () => {
+    it('should return the private hint for a private feed', () => {
       const value = 'https://private.captivate.fm/abc123/def456'
-      const expected: DiscoverUriHint = { key: 'captivate:podcast', label: 'Podcast' }
+      const expected: DiscoverUriHint = { key: 'captivate:private', label: 'Private feed' }
 
       expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -185,7 +185,7 @@ describe('captivateHandler', () => {
       ],
       [
         'https://private.captivate.fm/abc123/def456',
-        { key: 'captivate:podcast', label: 'Podcast' },
+        { key: 'captivate:private', label: 'Private feed' },
       ],
     ]
 

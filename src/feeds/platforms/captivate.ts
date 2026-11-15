@@ -17,7 +17,7 @@ const feeds = definePlatformFeeds([
   { key: 'captivate:network', template: 'https://feeds.captivate.fm/n/{network}/' },
   { key: 'captivate:collection', template: 'https://feeds.captivate.fm/{slug}/{collection}/' },
   // A private feed for one listener, under tokens no page gives, so it is claimed and never built.
-  { key: 'captivate:podcast', template: 'https://private.captivate.fm/{show}/{listener}' },
+  { key: 'captivate:private', template: 'https://private.captivate.fm/{show}/{listener}' },
 ])
 
 export const parseCaptivateUrl = (url: string): CaptivateUrl | undefined => {

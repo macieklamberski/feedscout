@@ -50,11 +50,11 @@ const feeds = definePlatformFeeds(
       template: '{scheme}://{host}/feed/podcast/{publication}/s/{section}.rss',
     },
     {
-      key: 'substack:podcast',
+      key: 'substack:private-podcast',
       template: '{scheme}://{host}/feed/podcast/{publication}/private/{token}.rss',
     },
     {
-      key: 'substack:podcast',
+      key: 'substack:spotify-podcast',
       template: '{scheme}://{host}/feed/podcast/spotify/{token}/{publication}.rss',
     },
   ],

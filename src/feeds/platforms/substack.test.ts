@@ -369,8 +369,14 @@ describe('substackHandler', () => {
     const podcastFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://api.substack.com/feed/podcast/12345.rss', podcastHint],
       ['https://alice.substack.com/feed/podcast/12345.rss', podcastHint],
-      ['https://api.substack.com/feed/podcast/12345/private/abc-123.rss', podcastHint],
-      ['https://api.substack.com/feed/podcast/spotify/abc-123/12345.rss', podcastHint],
+      [
+        'https://api.substack.com/feed/podcast/12345/private/abc-123.rss',
+        { key: 'substack:private-podcast', label: 'Private podcast' },
+      ],
+      [
+        'https://api.substack.com/feed/podcast/spotify/abc-123/12345.rss',
+        { key: 'substack:spotify-podcast', label: 'Spotify podcast' },
+      ],
       [
         'https://api.substack.com/feed/podcast/12345/s/678.rss',
         { key: 'substack:podcast-section', label: 'Podcast section' },
