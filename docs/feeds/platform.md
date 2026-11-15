@@ -1779,10 +1779,10 @@ Discovers the feeds of a Discuz! board. Detected by the `Discuz!` generator meta
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{board}/forum-{fid}-1.html` | Board · site<sup>†</sup> (RSS) |
-| `{board}/forum.php?mod=forumdisplay&fid={fid}` | Board · site (RSS) |
-| `{board}/forumdisplay.php?fid={fid}` on Discuz! 7 and older | Board · site<sup>†</sup> (RSS) from `rss.php` |
-| `{board}/archiver/?fid-{fid}.html` or `{board}/archiver/fid-{fid}.html` | Board<sup>†</sup> · site<sup>†</sup> (RSS), from `rss.php` on Discuz! 7 and older |
+| `{root}/forum-{fid}-1.html` | Board · site<sup>†</sup> (RSS) |
+| `{root}/forum.php?mod=forumdisplay&fid={fid}` | Board · site (RSS) |
+| `{root}/forumdisplay.php?fid={fid}` on Discuz! 7 and older | Board · site<sup>†</sup> (RSS) from `rss.php` |
+| `{root}/archiver/?fid-{fid}.html` or `{root}/archiver/fid-{fid}.html` | Board<sup>†</sup> · site<sup>†</sup> (RSS), from `rss.php` on Discuz! 7 and older |
 | Any other page | Site (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
