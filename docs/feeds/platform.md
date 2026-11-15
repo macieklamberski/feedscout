@@ -3805,6 +3805,8 @@ An entry of `domains` can be a pattern standing for a family of domains, anchore
 
 A template can open with `{root}`, which stands for the scheme, the host with its port and an optional base path, as `https://example.com/forum`, written as given. `getFeedHint` reads a `{root}` row as a `{host}` row, on the origin of a host in `hosts` or a tenant under `domains`, never under a base path, since a tenant serves from its origin. A table with neither builds the row without claiming it.
 
+A path value is written with `/`, `?`, `#`, `\` and whitespace escaped, a `%` that starts no escape as `%25`, and a non-ASCII character percent-encoded, so `{ username: '技術' }` builds `/%E6%8A%80%E8%A1%93/` and `100%off` builds `100%25off`. A valid escape is written as given, in its own case, so a value the page passed encoded is never encoded twice. `getFeedHint` reads a path decoded, so it claims either spelling.
+
 A path placeholder written `{name*}` stands for one or more segments, filled from the `name` value, so `https://{host}/{owner}/{repo}/commits/{branch}/{path*}.atom` with `{ path: 'src/lib/index.ts' }` builds the history of that file. Each segment is encoded on its own and the slashes are kept. An empty segment is dropped, so `docs//api` builds `docs/api`, and a value with no segment left, such as `''` or `/`, counts as no value. `getFeedHint` claims any path with one or more non-empty segments there.
 
 `getFeedHint` tries the rows with more query parameters first and, at the same count, in table order. A `{name*}` row overlaps every row with fewer segments in its place, so it goes after them: with `/t/{tag}/feed` listed before `/{path*}/feed`, `/t/news/feed` reads as the tag feed.

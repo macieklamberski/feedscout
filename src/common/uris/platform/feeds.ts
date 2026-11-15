@@ -100,7 +100,9 @@ type FeedUrl = {
 const templateRegex = /^(https?|\{scheme\}):\/\/([^/?#]+)(\/[^?#]*)?(?:\?([^#]*))?$/i
 const placeholderRegex = /\{(\w+\*?)\}/g
 const trailingSlashRegex = /\/$/
-const nonAsciiRegex = /\P{ASCII}+/gu
+// A lone surrogate has no UTF-8 form and stays as given.
+const nonAsciiRegex = /[^\p{ASCII}\p{Cs}]+/gu
+const strayPercentRegex = /%(?![0-9a-f]{2})/gi
 const leadingSlashesRegex = /^\/{2,}/
 const anchorsRegex = /^\^|\$$/g
 const passedQueryRegex = /^\{(\w+)\}$/
@@ -132,12 +134,20 @@ const getPlaceholderValue = (
   return segments.join('/')
 }
 
+// A path value as pages link it: a `%` that starts no escape becomes `%25` and non-ASCII is
+// percent-encoded, while a valid escape keeps its spelling, so no value is encoded twice.
+const encodePathValue = (value: string): string => {
+  return encodePathSegment(value)
+    .replace(strayPercentRegex, '%25')
+    .replace(nonAsciiRegex, encodeURIComponent)
+}
+
 const encodePath = (value: string, placeholder: string): string => {
   if (!isMultiSegment(placeholder)) {
-    return encodePathSegment(value)
+    return encodePathValue(value)
   }
 
-  return value.split('/').map(encodePathSegment).join('/')
+  return value.split('/').map(encodePathValue).join('/')
 }
 
 // A path decoded segment by segment, so `%40` and `@` compare equal. A decoded `%` and `/` are

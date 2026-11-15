@@ -260,6 +260,34 @@ describe('definePlatformFeeds', () => {
       expect(value).toBe(expected)
     })
 
+    it('should percent-encode a non-ASCII path value', () => {
+      const value = feeds.getFeedUrl('example:posts', { username: '技術' })
+      const expected = 'https://www.example.com/%E6%8A%80%E8%A1%93/feed.rss'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should write a percent sign that starts no escape as %25', () => {
+      const value = feeds.getFeedUrl('example:posts', { username: '100%off' })
+      const expected = 'https://www.example.com/100%25off/feed.rss'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should write a percent-encoded path value as given', () => {
+      const value = feeds.getFeedUrl('example:posts', { username: '%e6%8a%80%e8%a1%93' })
+      const expected = 'https://www.example.com/%e6%8a%80%e8%a1%93/feed.rss'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should write a lone surrogate of a path value as given', () => {
+      const value = feeds.getFeedUrl('example:posts', { username: 'alice\ud800' })
+      const expected = 'https://www.example.com/alice\ud800/feed.rss'
+
+      expect(value).toBe(expected)
+    })
+
     it('should write a query value through composeQuery', () => {
       const value = feeds.getFeedUrl('example:search', { username: 'alice' })
       const expected = 'https://feeds.example.com/rss.xml?type=item&q=by:alice%20sort:time'
@@ -993,6 +1021,38 @@ describe('definePlatformFeeds', () => {
       const value = 'https://www.example.com/rss/%40alice'
       const expected = 'example:handle'
       const hint = encodedFeeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed with a raw non-ASCII path value', () => {
+      const value = 'https://www.example.com/技術/feed.rss'
+      const expected = 'example:posts'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed with a percent-encoded non-ASCII path value', () => {
+      const value = 'https://www.example.com/%E6%8A%80%E8%A1%93/feed.rss'
+      const expected = 'example:posts'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed with a raw percent sign in a path value', () => {
+      const value = 'https://www.example.com/100%off/feed.rss'
+      const expected = 'example:posts'
+      const hint = feeds.getFeedHint(value)
+
+      expect(hint?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed with a percent-encoded percent sign in a path value', () => {
+      const value = 'https://www.example.com/100%25off/feed.rss'
+      const expected = 'example:posts'
+      const hint = feeds.getFeedHint(value)
 
       expect(hint?.key).toBe(expected)
     })
