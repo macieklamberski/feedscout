@@ -1,7 +1,7 @@
 import { anyWordMatchesAnyOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, type Element, findElement, hasMarker } from '../../common/utils.js'
+import { type Element, findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -27,9 +27,9 @@ const itemPortalTypes = [
 ]
 
 // A site is known only by its markup, so its feeds are built under the portal or folder URL the
-// page prints and claimed on no host. The search feed carries the search page's query as it is,
-// so resolve builds it by hand.
+// page prints and claimed on no host. The search feed carries the search page's query as it is.
 const feeds = definePlatformFeeds([
+  { key: 'plone:search', template: '{root}/search_rss?{query}' },
   { key: 'plone:site', template: '{root}/RSS', format: 'rdf' },
   { key: 'plone:site', template: '{root}/rss.xml', format: 'rss' },
   { key: 'plone:site', template: '{root}/atom.xml', format: 'atom' },
@@ -140,9 +140,7 @@ export const ploneHandler: PlatformHandler = {
     }
 
     if (page.kind === 'search') {
-      return [
-        { uri: `${page.portalUrl}/search_rss?${page.query}`, hint: composeHint('plone:search') },
-      ]
+      return [pageFeeds.getFeedEntry('plone:search', { root: page.portalUrl, query: page.query })]
     }
 
     if (page.kind === 'site') {
