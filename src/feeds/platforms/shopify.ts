@@ -1,12 +1,41 @@
 import { getPathSegments, isAnyOf, isLocaleSegment } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { formatSuffixRegex, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type ShopifyUrl = { kind: 'blog'; handle: string; locale?: string }
+export type ShopifyUrl = { kind: 'blog'; handle: string; tag?: string }
 
 const shopifyRegex = /shopify/i
+
+const domains = ['myshopify.com']
+
+// A store on its own domain is known only by its header, so its feeds are built here but not
+// claimed. A collection and a collection narrowed to product tags are linked from pages `resolve`
+// does not read, so the table only claims them.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'shopify:blog', template: '{scheme}://{host}/blogs/{handle}.atom' },
+    { key: 'shopify:blog', template: '{scheme}://{host}/{locale}/blogs/{handle}.atom' },
+    { key: 'shopify:blog-tag', template: '{scheme}://{host}/blogs/{handle}/tagged/{tag}.atom' },
+    {
+      key: 'shopify:blog-tag',
+      template: '{scheme}://{host}/{locale}/blogs/{handle}/tagged/{tag}.atom',
+    },
+    { key: 'shopify:collection', template: '{scheme}://{host}/collections/{handle}.atom' },
+    { key: 'shopify:collection', template: '{scheme}://{host}/{locale}/collections/{handle}.atom' },
+    {
+      key: 'shopify:collection-tag',
+      template: '{scheme}://{host}/collections/{handle}/{tags}.atom',
+    },
+    {
+      key: 'shopify:collection-tag',
+      template: '{scheme}://{host}/{locale}/collections/{handle}/{tags}.atom',
+    },
+  ],
+  { domains },
+)
 
 export const isShopifyHeaders = (headers: Headers): boolean => {
   return shopifyRegex.test(headers.get('powered-by') ?? '')
@@ -17,13 +46,19 @@ export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {
   // A market's locale folder, as in `/en-us/blogs/news` or `/zh-hant-hk/blogs/news`.
   const [localeOrRoute] = segments
   const locale = localeOrRoute && isLocaleSegment(localeOrRoute) ? localeOrRoute : undefined
-  const [route, handle] = locale ? segments.slice(1) : segments
+  const [route, handleSegment, taggedWord, tag] = locale ? segments.slice(1) : segments
+  // A handle or a tag holds no dot, so a feed URL's `.atom` is a format, not part of either.
+  const handle = handleSegment?.replace(formatSuffixRegex, '')
 
   if (!isAnyOf(route, 'blogs') || !handle) {
     return
   }
 
-  return { kind: 'blog', handle, locale }
+  if (isAnyOf(taggedWord, 'tagged') && tag) {
+    return { kind: 'blog', handle, tag: tag.replace(formatSuffixRegex, '') }
+  }
+
+  return { kind: 'blog', handle }
 }
 
 export const shopifyHandler: PlatformHandler = {
@@ -37,14 +72,21 @@ export const shopifyHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseShopifyUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const storeUrl = parsed.locale ? `${origin}/${parsed.locale}` : origin
+    if (parsed.tag) {
+      return [
+        page.getFeedEntry('shopify:blog', { handle: parsed.handle }),
+        page.getFeedEntry('shopify:blog-tag', { handle: parsed.handle, tag: parsed.tag }),
+      ]
+    }
 
-    return [{ uri: `${storeUrl}/blogs/${parsed.handle}.atom`, hint: composeHint('shopify:blog') }]
+    return [page.getFeedEntry('shopify:blog', { handle: parsed.handle })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

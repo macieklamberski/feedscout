@@ -1,6 +1,7 @@
 import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain, wordOrHyphenRegex } from '../../common/utils.js'
+import { getTenantSubdomain, wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -15,6 +16,10 @@ const hosts = ['bloggang.com', 'www.bloggang.com']
 const mobileHosts = ['m.bloggang.com']
 
 const scriptRegex = /^\/(\w+)\.php$/i
+
+const feeds = definePlatformFeeds([{ key: 'bloggang:posts', template: '{scheme}://{host}/rss' }], {
+  domains,
+})
 
 export const parseBloggangUrl = (url: string): BloggangUrl | undefined => {
   const subdomain = getTenantSubdomain(url, domains)
@@ -56,16 +61,22 @@ export const bloggangHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseBloggangUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    return [
-      {
-        uri: `https://${parsed.username}.bloggang.com/rss`,
-        hint: composeHint('bloggang:posts'),
-      },
-    ]
+    // A page on www names the blog in its query, so the feed host is built from the username.
+    return [page.getFeedEntry('bloggang:posts', { host: `${parsed.username}.bloggang.com` })]
+  },
+
+  // m.bloggang.com/rss redirects to www.bloggang.com/rss/, so only a blog host serves a feed.
+  getFeedHint: (url) => {
+    if (!parseBloggangUrl(url)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }

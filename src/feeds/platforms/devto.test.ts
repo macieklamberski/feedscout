@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { DevtoUrl } from './devto.js'
 import { devtoHandler, parseDevtoUrl } from './devto.js'
 
@@ -52,9 +55,9 @@ describe('parseDevtoUrl', () => {
   })
 
   it('should return a hyphenated name', () => {
-    const expected: DevtoUrl = { kind: 'profile', owner: 'maame-codes' }
+    const expected: DevtoUrl = { kind: 'profile', owner: 'bob-codes' }
 
-    expect(parseDevtoUrl('https://dev.to/maame-codes')).toEqual(expected)
+    expect(parseDevtoUrl('https://dev.to/bob-codes')).toEqual(expected)
   })
 
   it('should return the home page', () => {
@@ -92,10 +95,18 @@ describe('devtoHandler', () => {
   describe('resolve', () => {
     it('should return RSS feed URL for user profile', () => {
       const value = 'https://dev.to/thepracticaldev'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://dev.to/feed/thepracticaldev',
           hint: { key: 'devto:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://dev.to/feed',
+          hint: { key: 'devto:community', label: 'Community' },
+        },
+        {
+          uri: 'https://dev.to/feed/latest',
+          hint: { key: 'devto:latest', label: 'Latest' },
         },
       ]
 
@@ -104,10 +115,18 @@ describe('devtoHandler', () => {
 
     it('should return RSS feed URL for tag page', () => {
       const value = 'https://dev.to/t/javascript'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://dev.to/feed/tag/javascript',
           hint: { key: 'devto:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://dev.to/feed',
+          hint: { key: 'devto:community', label: 'Community' },
+        },
+        {
+          uri: 'https://dev.to/feed/latest',
+          hint: { key: 'devto:latest', label: 'Latest' },
         },
       ]
 
@@ -116,8 +135,12 @@ describe('devtoHandler', () => {
 
     it('should return community feed for homepage', () => {
       const value = 'https://dev.to/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://dev.to/feed', hint: { key: 'devto:community', label: 'Community' } },
+        {
+          uri: 'https://dev.to/feed/latest',
+          hint: { key: 'devto:latest', label: 'Latest' },
+        },
       ]
 
       expect(devtoHandler.resolve(value)).toEqual(expected)
@@ -151,6 +174,116 @@ describe('devtoHandler', () => {
       ]
 
       expect(devtoHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a user feed', () => {
+      const value = 'https://dev.to/feed/carol'
+      const expected: DiscoverUriHint = { key: 'devto:posts', label: 'Posts' }
+
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a feed with a trailing slash', () => {
+      const value = 'https://dev.to/feed/dave/'
+      const expected: DiscoverUriHint = { key: 'devto:posts', label: 'Posts' }
+
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a feed on the www host', () => {
+      const value = 'https://www.dev.to/feed/carol'
+      const expected: DiscoverUriHint = { key: 'devto:posts', label: 'Posts' }
+
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a feed over http', () => {
+      const value = 'http://dev.to/feed/carol'
+      const expected: DiscoverUriHint = { key: 'devto:posts', label: 'Posts' }
+
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a tag feed', () => {
+      const value = 'https://dev.to/feed/tag/log4j2'
+      const expected: DiscoverUriHint = { key: 'devto:tag', label: 'Tag' }
+
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a tag feed with a capitalized route', () => {
+      const value = 'https://dev.to/Feed/Tag/hash'
+      const expected: DiscoverUriHint = { key: 'devto:tag', label: 'Tag' }
+
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the latest hint for the latest feed', () => {
+      const value = 'https://dev.to/feed/latest'
+      const expected: DiscoverUriHint = { key: 'devto:latest', label: 'Latest' }
+
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the community hint for the community feed', () => {
+      const value = 'https://dev.to/feed'
+      const expected: DiscoverUriHint = { key: 'devto:community', label: 'Community' }
+
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the community hint for the community feed at rss', () => {
+      const value = 'https://dev.to/rss'
+      const expected: DiscoverUriHint = { key: 'devto:community', label: 'Community' }
+
+      expect(devtoHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a profile page', () => {
+      const value = 'https://dev.to/carol'
+
+      expect(devtoHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an article page', () => {
+      const value = 'https://dev.to/carol/some-article-1n45'
+
+      expect(devtoHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a tag page', () => {
+      const value = 'https://dev.to/t/log4j2'
+
+      expect(devtoHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/feed/carol'
+
+      expect(devtoHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://dev.to/feed/carol', { key: 'devto:posts', label: 'Posts' }],
+      ['https://dev.to/feed/tag/log4j2', { key: 'devto:tag', label: 'Tag' }],
+      ['https://dev.to/feed/latest', { key: 'devto:latest', label: 'Latest' }],
+      ['https://dev.to/feed', { key: 'devto:community', label: 'Community' }],
+      ['https://dev.to/rss', { key: 'devto:community', label: 'Community' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [devtoHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

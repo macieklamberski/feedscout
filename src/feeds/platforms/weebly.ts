@@ -1,11 +1,7 @@
-import { encodePathSegment, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  findElements,
-  formatSuffixRegex,
-  getTenantSubdomain,
-} from '../../common/utils.js'
+import { findElements, formatSuffixRegex, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -17,6 +13,11 @@ const domains = ['weebly.com']
 // A page link is one segment with an optional .html, as `/newsletter.html` or `/newsletter`. Any
 // other dot marks a file, such as `/favicon.ico`.
 const pageLinkRegex = /^\/([^/.]+)(?:\.html)?$/i
+
+const feeds = definePlatformFeeds(
+  [{ key: 'weebly:blog', template: '{scheme}://{host}/{page}/feed' }],
+  { domains },
+)
 
 export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -78,27 +79,16 @@ export const weeblyHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getWeeblyPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
+    const slugs = page.kind === 'home' ? page.pages : [page.page ?? 'blog']
 
-    if (page.kind === 'home') {
-      return page.pages.map((slug) => {
-        return {
-          uri: `${origin}/${encodePathSegment(slug)}/feed`,
-          hint: composeHint('weebly:blog'),
-        }
-      })
-    }
-
-    return [
-      {
-        uri: `${origin}/${encodePathSegment(page.page ?? 'blog')}/feed`,
-        hint: composeHint('weebly:blog'),
-      },
-    ]
+    return slugs.map((slug) => pageFeeds.getFeedEntry('weebly:blog', { page: slug }))
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

@@ -1,6 +1,7 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
+import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, wwwBlog (html).
@@ -12,6 +13,19 @@ const hosts = ['tumblr.com', 'www.tumblr.com']
 export const domains = ['tumblr.com']
 
 const tagRegex = /^\/tagged\/([^/]+)/i
+
+// `?format=rss` holds the posts as the theme renders them, `/podcast` the audio posts. Both
+// answer a plain request with a browser check. `/podcast/rss` is a spelling of the podcast.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'tumblr:tag', template: '{scheme}://{host}/tagged/{tag}/rss' },
+    { key: 'tumblr:posts', template: '{scheme}://{host}/rss' },
+    { key: 'tumblr:theme-posts', template: '{scheme}://{host}/?format=rss' },
+    { key: 'tumblr:podcast', template: '{scheme}://{host}/podcast' },
+    { key: 'tumblr:podcast', template: '{scheme}://{host}/podcast/rss', isAlias: true },
+  ],
+  { domains },
+)
 
 export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
   // www.tumblr.com/{blog} and the legacy www.tumblr.com/blog/view/{blog} show a blog, and
@@ -56,22 +70,36 @@ export const tumblrHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseTumblrUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const blogOrigin = isHostOf(url, hosts) ? getHostOrigin(`${parsed.blog}.tumblr.com`) : origin
+    const host = `${parsed.blog}.tumblr.com`
 
-    if (!blogOrigin) {
+    // A blog name read from a www.tumblr.com path has to be one host label.
+    if (!getHostOrigin(host)) {
       return []
     }
 
+    // The blog's posts and podcast need no value from the page but its blog, so every page builds
+    // them after its own feeds.
     if (parsed.kind === 'tag') {
-      return [{ uri: `${blogOrigin}/tagged/${parsed.tag}/rss`, hint: composeHint('tumblr:tag') }]
+      return [
+        page.getFeedEntry('tumblr:tag', { host, tag: parsed.tag }),
+        page.getFeedEntry('tumblr:posts', { host }),
+        page.getFeedEntry('tumblr:theme-posts', { host }),
+        page.getFeedEntry('tumblr:podcast', { host }),
+      ]
     }
 
-    return [{ uri: `${blogOrigin}/rss`, hint: composeHint('tumblr:posts') }]
+    return [
+      page.getFeedEntry('tumblr:posts', { host }),
+      page.getFeedEntry('tumblr:theme-posts', { host }),
+      page.getFeedEntry('tumblr:podcast', { host }),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

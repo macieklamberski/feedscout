@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type HubspotUrl, hubspotHandler, isHubspotHtml, parseHubspotUrl } from './hubspot.js'
 
 const hubspotHtml = '<meta name="generator" content="HubSpot">'
@@ -215,6 +218,120 @@ describe('hubspotHandler', () => {
       ]
 
       expect(hubspotHandler.resolve(value, content)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the blog hint for a blog feed', () => {
+      const value = 'https://12345.hs-sites.com/rss.xml'
+      const expected: DiscoverUriHint = { key: 'hubspot:blog', label: 'Blog' }
+
+      expect(hubspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the blog hint for a blog feed on the ap1 regional domain', () => {
+      const value = 'https://alice-12345.hs-sites-ap1.com/rss.xml'
+      const expected: DiscoverUriHint = { key: 'hubspot:blog', label: 'Blog' }
+
+      expect(hubspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a feed on a host that only looks regional', () => {
+      const value = 'https://alice-12345.hs-sites-eu.com/rss.xml'
+
+      expect(hubspotHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return the blog hint for a blog feed on a regional domain', () => {
+      const value = 'https://alice-12345.hs-sites-eu1.com/rss.xml'
+      const expected: DiscoverUriHint = { key: 'hubspot:blog', label: 'Blog' }
+
+      expect(hubspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the author hint for an author feed', () => {
+      const value = 'https://12345.hs-sites.com/author/alice/rss.xml'
+      const expected: DiscoverUriHint = { key: 'hubspot:author', label: 'Author' }
+
+      expect(hubspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a tag feed', () => {
+      const value = 'https://12345.hs-sites.com/tag/news/rss.xml'
+      const expected: DiscoverUriHint = { key: 'hubspot:tag', label: 'Tag' }
+
+      expect(hubspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a topic feed', () => {
+      const value = 'https://12345.hs-sites.com/topic/news/rss.xml'
+      const expected: DiscoverUriHint = { key: 'hubspot:tag', label: 'Tag' }
+
+      expect(hubspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a blog post', () => {
+      const value = 'https://12345.hs-sites.com/a-post'
+
+      expect(hubspotHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return the podcast hint for a podcast feed', () => {
+      const value = 'https://12345.hs-sites.com/podcasts/67890/rss.xml'
+      const expected: DiscoverUriHint = { key: 'hubspot:podcast', label: 'Podcast' }
+
+      expect(hubspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a podcast feed on a custom domain', () => {
+      const value = 'https://example.com/podcasts/67890/rss.xml'
+
+      expect(hubspotHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://hs-sites.com/rss.xml'
+
+      expect(hubspotHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www host', () => {
+      const value = 'https://www.hs-sites.com/rss.xml'
+
+      expect(hubspotHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://example.com/rss.xml'
+
+      expect(hubspotHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://12345.hs-sites.com/rss.xml', { key: 'hubspot:blog', label: 'Blog' }],
+      [
+        'https://12345.hs-sites.com/author/alice/rss.xml',
+        { key: 'hubspot:author', label: 'Author' },
+      ],
+      ['https://12345.hs-sites.com/tag/news/rss.xml', { key: 'hubspot:tag', label: 'Tag' }],
+      ['https://12345.hs-sitesqa.com/topic/news/rss.xml', { key: 'hubspot:tag', label: 'Tag' }],
+      [
+        'https://12345.hs-sites-na2.com/podcasts/67890/rss.xml',
+        { key: 'hubspot:podcast', label: 'Podcast' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [hubspotHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

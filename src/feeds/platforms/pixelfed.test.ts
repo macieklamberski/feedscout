@@ -7,44 +7,44 @@ const otherHtml = '<html><head><meta name="generator" content="WordPress"></head
 
 describe('parsePixelfedUrl', () => {
   it('should return the username for a profile page', () => {
-    const expected: PixelfedUrl = { kind: 'user', username: 'dansup' }
+    const expected: PixelfedUrl = { kind: 'user', username: 'alice' }
 
-    expect(parsePixelfedUrl('https://example.com/dansup')).toEqual(expected)
+    expect(parsePixelfedUrl('https://example.com/alice')).toEqual(expected)
   })
 
   it('should return the username for a trailing slash', () => {
-    const expected: PixelfedUrl = { kind: 'user', username: 'dansup' }
+    const expected: PixelfedUrl = { kind: 'user', username: 'alice' }
 
-    expect(parsePixelfedUrl('https://example.com/dansup/')).toEqual(expected)
+    expect(parsePixelfedUrl('https://example.com/alice/')).toEqual(expected)
   })
 
   it('should return the username for a /users/{user} URL', () => {
-    const expected: PixelfedUrl = { kind: 'user', username: 'dansup' }
+    const expected: PixelfedUrl = { kind: 'user', username: 'alice' }
 
-    expect(parsePixelfedUrl('https://example.com/users/dansup')).toEqual(expected)
+    expect(parsePixelfedUrl('https://example.com/users/alice')).toEqual(expected)
   })
 
   it('should return the username for a /users/{user} URL with a capitalized users segment', () => {
-    const expected: PixelfedUrl = { kind: 'user', username: 'dansup' }
+    const expected: PixelfedUrl = { kind: 'user', username: 'alice' }
 
-    expect(parsePixelfedUrl('https://example.com/Users/dansup')).toEqual(expected)
+    expect(parsePixelfedUrl('https://example.com/Users/alice')).toEqual(expected)
   })
 
   it('should return undefined for non-profile paths', () => {
     expect(parsePixelfedUrl('https://example.com/p/12345')).toBeUndefined()
-    expect(parsePixelfedUrl('https://example.com/p/dansup/123')).toBeUndefined()
+    expect(parsePixelfedUrl('https://example.com/p/alice/123')).toBeUndefined()
   })
 
   it('should return the username with a dash', () => {
-    const expected: PixelfedUrl = { kind: 'user', username: 'dan-sup' }
+    const expected: PixelfedUrl = { kind: 'user', username: 'alice-x' }
 
-    expect(parsePixelfedUrl('https://example.com/dan-sup')).toEqual(expected)
+    expect(parsePixelfedUrl('https://example.com/alice-x')).toEqual(expected)
   })
 
   it('should return the username with a dot', () => {
-    const expected: PixelfedUrl = { kind: 'user', username: 'maienne.photo' }
+    const expected: PixelfedUrl = { kind: 'user', username: 'bob.photo' }
 
-    expect(parsePixelfedUrl('https://example.com/maienne.photo')).toEqual(expected)
+    expect(parsePixelfedUrl('https://example.com/bob.photo')).toEqual(expected)
   })
 
   it('should return undefined for the root', () => {
@@ -82,15 +82,15 @@ describe('pixelfedHandler', () => {
 
   describe('match', () => {
     it('should return true for profile URL with Pixelfed content', () => {
-      expect(pixelfedHandler.match('https://example.com/dansup', pixelfedHtml)).toBe(true)
+      expect(pixelfedHandler.match('https://example.com/alice', pixelfedHtml)).toBe(true)
     })
 
     it('should return false without content', () => {
-      expect(pixelfedHandler.match('https://example.com/dansup')).toBe(false)
+      expect(pixelfedHandler.match('https://example.com/alice')).toBe(false)
     })
 
     it('should return false for non-Pixelfed content', () => {
-      expect(pixelfedHandler.match('https://example.com/dansup', otherHtml)).toBe(false)
+      expect(pixelfedHandler.match('https://example.com/alice', otherHtml)).toBe(false)
     })
 
     it('should return false for non-profile paths', () => {
@@ -100,10 +100,10 @@ describe('pixelfedHandler', () => {
 
   describe('resolve', () => {
     it('should return atom feed for profile', () => {
-      const value = 'https://example.com/dansup'
+      const value = 'https://example.com/alice'
       const expected = [
         {
-          uri: 'https://example.com/users/dansup.atom',
+          uri: 'https://example.com/users/alice.atom',
           hint: { key: 'pixelfed:posts', label: 'Posts' },
         },
       ]

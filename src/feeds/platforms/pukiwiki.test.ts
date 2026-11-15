@@ -19,7 +19,7 @@ const pukiwiki14Html = `
     <link
       rel="stylesheet"
       type="text/css"
-      href="/monst3ds/skin/pukiwiki.css.php?charset=Shift_JIS"
+      href="/examplewiki/skin/pukiwiki.css.php?charset=Shift_JIS"
     />
   </head>
 `
@@ -157,10 +157,10 @@ describe('pukiwikiHandler', () => {
 
   describe('resolve', () => {
     it('should return the recent changes feed on the script of a page', () => {
-      const value = 'http://example.com/monst3ds/index.php?FrontPage'
+      const value = 'http://example.com/examplewiki/index.php?FrontPage'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://example.com/monst3ds/index.php?cmd=rss',
+          uri: 'http://example.com/examplewiki/index.php?cmd=rss',
           hint: { key: 'pukiwiki:recent-changes', label: 'Recent changes' },
         },
       ]

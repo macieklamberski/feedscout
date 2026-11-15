@@ -1,12 +1,7 @@
 import { getPathSegments, isAnyOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  findElement,
-  getCookieNames,
-  hasMarker,
-  hasMetaContent,
-} from '../../common/utils.js'
+import { findElement, getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home, issue (html), partly covers article.
@@ -15,6 +10,41 @@ export type OjsPage = { kind: 'journal'; journalUrl: string }
 
 // OJS loads its theme stylesheets through the component router under the journal's root.
 const componentRouterRegex = /^(https?:\/\/.+?)\/\$\$\$call\$\$\$\//i
+
+// OJS is self-hosted and known only by its page marker, so nothing in a feed URL names it and the
+// table only builds, under the journal root the page names.
+const feeds = definePlatformFeeds([
+  {
+    key: 'ojs:articles',
+    template: '{root}/gateway/plugin/WebFeedGatewayPlugin/atom',
+    format: 'atom',
+  },
+  {
+    key: 'ojs:articles',
+    template: '{root}/gateway/plugin/WebFeedGatewayPlugin/rss',
+    format: 'rdf',
+  },
+  {
+    key: 'ojs:articles',
+    template: '{root}/gateway/plugin/WebFeedGatewayPlugin/rss2',
+    format: 'rss',
+  },
+  {
+    key: 'ojs:announcements',
+    template: '{root}/gateway/plugin/AnnouncementFeedGatewayPlugin/atom',
+    format: 'atom',
+  },
+  {
+    key: 'ojs:announcements',
+    template: '{root}/gateway/plugin/AnnouncementFeedGatewayPlugin/rss',
+    format: 'rdf',
+  },
+  {
+    key: 'ojs:announcements',
+    template: '{root}/gateway/plugin/AnnouncementFeedGatewayPlugin/rss2',
+    format: 'rss',
+  },
+])
 
 export const isOjsHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Open Journal Systems')
@@ -60,16 +90,15 @@ export const ojsHandler: PlatformHandler = {
       return []
     }
 
-    const articles = `${page.journalUrl}/gateway/plugin/WebFeedGatewayPlugin`
-    const announcements = `${page.journalUrl}/gateway/plugin/AnnouncementFeedGatewayPlugin`
+    const params = { root: page.journalUrl }
 
     return [
-      { uri: `${articles}/atom`, hint: composeHint('ojs:articles', 'atom') },
-      { uri: `${articles}/rss`, hint: composeHint('ojs:articles', 'rdf') },
-      { uri: `${articles}/rss2`, hint: composeHint('ojs:articles', 'rss') },
-      { uri: `${announcements}/atom`, hint: composeHint('ojs:announcements', 'atom') },
-      { uri: `${announcements}/rss`, hint: composeHint('ojs:announcements', 'rdf') },
-      { uri: `${announcements}/rss2`, hint: composeHint('ojs:announcements', 'rss') },
+      feeds.getFeedEntry('ojs:articles', params, 'atom'),
+      feeds.getFeedEntry('ojs:articles', params, 'rdf'),
+      feeds.getFeedEntry('ojs:articles', params, 'rss'),
+      feeds.getFeedEntry('ojs:announcements', params, 'atom'),
+      feeds.getFeedEntry('ojs:announcements', params, 'rdf'),
+      feeds.getFeedEntry('ojs:announcements', params, 'rss'),
     ]
   },
 }

@@ -1,20 +1,23 @@
-import { isHttpUrl, type NormalizeOptions, normalizeUrl, stripWww, trimUrlValues } from 'trousse'
+import {
+  isHttpUrl,
+  isPresent,
+  type NormalizeOptions,
+  normalizeUrl,
+  stripWww,
+  trimUrlValues,
+} from 'trousse'
 import { reportError } from '../../discover/utils.js'
 import type {
   DiscoverInputObject,
   DiscoverOnErrorFn,
   DiscoverRef,
   DiscoverUriEntry,
+  DiscoverUriHint,
   FetchFn,
 } from '../../types.js'
 import type { PlatformHandler, PlatformMethodOptions } from './types.js'
 
 type PlatformPage = Omit<DiscoverInputObject, 'status'>
-
-type PlatformResolution = {
-  entries: Array<DiscoverUriEntry>
-  guessExclusionRegexes: Array<RegExp>
-}
 
 // The same page answers under https, with www, with a trailing slash, without the fragment and
 // with the query reordered.
@@ -50,21 +53,43 @@ const orderHandlers = (handlers: Array<PlatformHandler>, url: string): Array<Pla
   return [...urlHandlers, ...markerHandlers]
 }
 
-export const resolveFromPlatform = async (
+// The hint of the handler feed the URL is, read as the URL arrived.
+export const getFeedHint = (
+  handlers: Array<PlatformHandler>,
+  url: string,
+): DiscoverUriHint | undefined => {
+  for (const handler of handlers) {
+    try {
+      const hint = handler.getFeedHint?.(url)
+
+      if (hint) {
+        return hint
+      }
+    } catch {}
+  }
+}
+
+export const discoverUrisFromPlatform = async (
   content: string | undefined,
   headers: Headers | undefined,
   options: PlatformMethodOptions,
   fetchFn?: FetchFn,
   onError?: DiscoverOnErrorFn,
-): Promise<PlatformResolution> => {
+): Promise<Array<DiscoverUriEntry>> => {
   const { baseUrl, requestedUrl, handlers, enrichFn } = options
   const entries: Array<DiscoverUriEntry> = []
   const refs: Array<DiscoverRef> = []
-  const guessExclusionRegexes: Array<RegExp> = []
 
   // Host checks pass a `foo://` URL on a platform host, whose empty pathname no handler expects.
   if (!isHttpUrl(baseUrl)) {
-    return { entries, guessExclusionRegexes }
+    return entries
+  }
+
+  // A URL that is one of a handler's feeds is that feed, and no page parser reads it.
+  const ownFeedHint = getFeedHint(handlers, baseUrl)
+
+  if (ownFeedHint) {
+    return [{ uri: baseUrl, hint: ownFeedHint }]
   }
 
   const fetchedPageUrl = readPageUrl(baseUrl)
@@ -109,12 +134,8 @@ export const resolveFromPlatform = async (
           }
         }
 
-        // A match puts the page on the handler's host even when resolve finds nothing there.
-        if (handler.guessExclusionRegex) {
-          guessExclusionRegexes.push(handler.guessExclusionRegex)
-        }
-
-        const resolved = await handler.resolve(page.url, page.content, page.headers, fetchFn)
+        const items = await handler.resolve(page.url, page.content, page.headers, fetchFn)
+        const resolved = items.filter(isPresent)
 
         // A handler that matched but found nothing leaves the page to the handlers after it.
         if (resolved.length === 0) {
@@ -143,7 +164,7 @@ export const resolveFromPlatform = async (
   }
 
   if (!enrichFn) {
-    return { entries, guessExclusionRegexes }
+    return entries
   }
 
   // Each ref is enriched on its own, so one that fails leaves the icons of the others.
@@ -158,18 +179,6 @@ export const resolveFromPlatform = async (
       reportError(onError, error, { phase: 'enrichFn', url: refsUrl })
     }
   }
-
-  return { entries, guessExclusionRegexes }
-}
-
-export const discoverUrisFromPlatform = async (
-  content: string | undefined,
-  headers: Headers | undefined,
-  options: PlatformMethodOptions,
-  fetchFn?: FetchFn,
-  onError?: DiscoverOnErrorFn,
-): Promise<Array<DiscoverUriEntry>> => {
-  const { entries } = await resolveFromPlatform(content, headers, options, fetchFn, onError)
 
   return entries
 }
