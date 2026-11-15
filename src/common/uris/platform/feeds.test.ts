@@ -358,6 +358,7 @@ describe('definePlatformFeeds', () => {
     })
 
     it('should throw for an unknown key', () => {
+      // @ts-expect-error: A key the table does not hold fails the typecheck too.
       const throwing = () => feeds.getFeedUrl('example:unknown')
 
       expect(throwing).toThrow('No feed template for example:unknown')
@@ -616,6 +617,7 @@ describe('definePlatformFeeds', () => {
     })
 
     it('should throw for an unknown key', () => {
+      // @ts-expect-error: A key the table does not hold fails the typecheck too.
       const throwing = () => spellingFeeds.getFeedSpellings('example:unknown')
 
       expect(throwing).toThrow('No feed template for example:unknown')
