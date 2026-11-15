@@ -217,6 +217,22 @@ describe('tischtennisliveHandler', () => {
           uri: 'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID=1234&Next=1',
           hint: { key: 'tischtennislive:group-fixtures', label: 'Group fixtures' },
         },
+        {
+          uri: 'https://musterkreis.tischtennislive.de/Export/RSS.aspx',
+          hint: { key: 'tischtennislive:news', label: 'News' },
+        },
+        {
+          uri: 'https://musterkreis.tischtennislive.de/Export/RSS_Termine.aspx',
+          hint: { key: 'tischtennislive:dates', label: 'Dates' },
+        },
+        {
+          uri: 'https://musterkreis.tischtennislive.de/Export/RSS_Dokumente.aspx',
+          hint: { key: 'tischtennislive:documents', label: 'Documents' },
+        },
+        {
+          uri: 'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS_Turniere.aspx',
+          hint: { key: 'tischtennislive:tournaments', label: 'Tournaments' },
+        },
       ]
 
       expect(tischtennisliveHandler.resolve(value, groupHtml)).toEqual(expected)
@@ -232,6 +248,22 @@ describe('tischtennisliveHandler', () => {
         {
           uri: 'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?Typ=Wett&ID=56789&Next=1',
           hint: { key: 'tischtennislive:league-fixtures', label: 'League fixtures' },
+        },
+        {
+          uri: 'https://musterkreis.tischtennislive.de/Export/RSS.aspx',
+          hint: { key: 'tischtennislive:news', label: 'News' },
+        },
+        {
+          uri: 'https://musterkreis.tischtennislive.de/Export/RSS_Termine.aspx',
+          hint: { key: 'tischtennislive:dates', label: 'Dates' },
+        },
+        {
+          uri: 'https://musterkreis.tischtennislive.de/Export/RSS_Dokumente.aspx',
+          hint: { key: 'tischtennislive:documents', label: 'Documents' },
+        },
+        {
+          uri: 'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS_Turniere.aspx',
+          hint: { key: 'tischtennislive:tournaments', label: 'Tournaments' },
         },
       ]
 
@@ -272,6 +304,22 @@ describe('tischtennisliveHandler', () => {
         {
           uri: 'http://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?Typ=Wett&ID=56789&Next=1',
           hint: { key: 'tischtennislive:league-fixtures', label: 'League fixtures' },
+        },
+        {
+          uri: 'http://musterkreis.tischtennislive.de/Export/RSS.aspx',
+          hint: { key: 'tischtennislive:news', label: 'News' },
+        },
+        {
+          uri: 'http://musterkreis.tischtennislive.de/Export/RSS_Termine.aspx',
+          hint: { key: 'tischtennislive:dates', label: 'Dates' },
+        },
+        {
+          uri: 'http://musterkreis.tischtennislive.de/Export/RSS_Dokumente.aspx',
+          hint: { key: 'tischtennislive:documents', label: 'Documents' },
+        },
+        {
+          uri: 'http://musterkreis.tischtennislive.de/Export/Tischtennis/RSS_Turniere.aspx',
+          hint: { key: 'tischtennislive:tournaments', label: 'Tournaments' },
         },
       ]
 

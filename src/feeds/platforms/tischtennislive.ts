@@ -114,10 +114,16 @@ export const tischtennisliveHandler: PlatformHandler = {
       return []
     }
 
+    // The association's news, dates, documents and tournaments need no value from the page, so
+    // every page builds them after its own feeds.
     if (page.kind === 'group') {
       return [
         pageFeeds.getFeedEntry('tischtennislive:group-results', { group: page.group }),
         pageFeeds.getFeedEntry('tischtennislive:group-fixtures', { group: page.group }),
+        pageFeeds.getFeedEntry('tischtennislive:news'),
+        pageFeeds.getFeedEntry('tischtennislive:dates'),
+        pageFeeds.getFeedEntry('tischtennislive:documents'),
+        pageFeeds.getFeedEntry('tischtennislive:tournaments'),
       ]
     }
 
@@ -125,6 +131,10 @@ export const tischtennisliveHandler: PlatformHandler = {
       return [
         pageFeeds.getFeedEntry('tischtennislive:league-results', { league: page.league }),
         pageFeeds.getFeedEntry('tischtennislive:league-fixtures', { league: page.league }),
+        pageFeeds.getFeedEntry('tischtennislive:news'),
+        pageFeeds.getFeedEntry('tischtennislive:dates'),
+        pageFeeds.getFeedEntry('tischtennislive:documents'),
+        pageFeeds.getFeedEntry('tischtennislive:tournaments'),
       ]
     }
 

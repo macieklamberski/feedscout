@@ -73,8 +73,10 @@ export const devtoHandler: PlatformHandler = {
       return []
     }
 
+    // The community and latest feeds need no value from the page, so every page builds them after
+    // its own feeds.
     if (parsed.kind === 'home') {
-      return [feeds.getFeedEntry('devto:community')]
+      return [feeds.getFeedEntry('devto:community'), feeds.getFeedEntry('devto:latest')]
     }
 
     if (parsed.kind === 'latest') {
@@ -82,10 +84,18 @@ export const devtoHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'tag') {
-      return [feeds.getFeedEntry('devto:tag', { tag: parsed.tag })]
+      return [
+        feeds.getFeedEntry('devto:tag', { tag: parsed.tag }),
+        feeds.getFeedEntry('devto:community'),
+        feeds.getFeedEntry('devto:latest'),
+      ]
     }
 
-    return [feeds.getFeedEntry('devto:posts', { owner: parsed.owner })]
+    return [
+      feeds.getFeedEntry('devto:posts', { owner: parsed.owner }),
+      feeds.getFeedEntry('devto:community'),
+      feeds.getFeedEntry('devto:latest'),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,

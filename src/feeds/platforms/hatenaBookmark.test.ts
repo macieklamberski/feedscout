@@ -264,9 +264,15 @@ describe('hatenaBookmarkHandler', () => {
       expect(hatenaBookmarkHandler.resolve('https://example.com/')).toEqual([])
     })
 
-    const hotEntries: Array<DiscoverUriEntry> = [
-      { uri: `${base}/hotentry.rss`, hint: { key: 'hatena-bookmark:hot', label: 'Hot entries' } },
-    ]
+    const hotEntry: DiscoverUriEntry = {
+      uri: `${base}/hotentry.rss`,
+      hint: { key: 'hatena-bookmark:hot', label: 'Hot entries' },
+    }
+    const newEntry: DiscoverUriEntry = {
+      uri: `${base}/entrylist.rss`,
+      hint: { key: 'hatena-bookmark:new', label: 'New entries' },
+    }
+    const hotEntries: Array<DiscoverUriEntry> = [hotEntry, newEntry]
 
     it('should return hot entries for the homepage', () => {
       expect(hatenaBookmarkHandler.resolve(base)).toEqual(hotEntries)
@@ -283,6 +289,8 @@ describe('hatenaBookmarkHandler', () => {
           uri: `${base}/hotentry/it.rss`,
           hint: { key: 'hatena-bookmark:hot-category', label: 'Hot entries in category' },
         },
+        hotEntry,
+        newEntry,
       ]
 
       expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
@@ -295,6 +303,8 @@ describe('hatenaBookmarkHandler', () => {
           uri: `${base}/hotentry/it.rss`,
           hint: { key: 'hatena-bookmark:hot-category', label: 'Hot entries in category' },
         },
+        hotEntry,
+        newEntry,
       ]
 
       expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
@@ -302,11 +312,7 @@ describe('hatenaBookmarkHandler', () => {
 
     it('should return hot entries for the all category page', () => {
       const value = `${base}/hotentry/all`
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: `${base}/hotentry.rss`, hint: { key: 'hatena-bookmark:hot', label: 'Hot entries' } },
-      ]
-
-      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(hotEntries)
     })
 
     it('should return hot entries for an unknown category page', () => {
@@ -314,12 +320,7 @@ describe('hatenaBookmarkHandler', () => {
     })
 
     it('should return new entries for the entrylist page', () => {
-      const expected = [
-        {
-          uri: `${base}/entrylist.rss`,
-          hint: { key: 'hatena-bookmark:new', label: 'New entries' },
-        },
-      ]
+      const expected: Array<DiscoverUriEntry> = [newEntry, hotEntry]
 
       expect(hatenaBookmarkHandler.resolve(`${base}/entrylist`)).toEqual(expected)
     })
@@ -331,6 +332,8 @@ describe('hatenaBookmarkHandler', () => {
           uri: `${base}/entrylist/game.rss`,
           hint: { key: 'hatena-bookmark:new-category', label: 'New entries in category' },
         },
+        hotEntry,
+        newEntry,
       ]
 
       expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
@@ -338,22 +341,19 @@ describe('hatenaBookmarkHandler', () => {
 
     it('should return new entries for the all category page', () => {
       const value = `${base}/entrylist/all`
-      const expected: Array<DiscoverUriEntry> = [
-        {
-          uri: `${base}/entrylist.rss`,
-          hint: { key: 'hatena-bookmark:new', label: 'New entries' },
-        },
-      ]
+      const expected: Array<DiscoverUriEntry> = [newEntry, hotEntry]
 
       expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return a search feed for a query page', () => {
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${base}/q/c++%20web?target=title&mode=rss`,
           hint: { key: 'hatena-bookmark:search', label: 'Search' },
         },
+        hotEntry,
+        newEntry,
       ]
 
       expect(hatenaBookmarkHandler.resolve(`${base}/q/c%2B%2B%20web?target=title`)).toEqual(
@@ -362,22 +362,26 @@ describe('hatenaBookmarkHandler', () => {
     })
 
     it('should write a colon in the query as is', () => {
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${base}/q/Re:Zero?mode=rss`,
           hint: { key: 'hatena-bookmark:search', label: 'Search' },
         },
+        hotEntry,
+        newEntry,
       ]
 
       expect(hatenaBookmarkHandler.resolve(`${base}/q/Re%3AZero`)).toEqual(expected)
     })
 
     it('should write an at sign in the query as is', () => {
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${base}/q/@nifty?mode=rss`,
           hint: { key: 'hatena-bookmark:search', label: 'Search' },
         },
+        hotEntry,
+        newEntry,
       ]
 
       expect(hatenaBookmarkHandler.resolve(`${base}/q/%40nifty`)).toEqual(expected)
@@ -385,22 +389,26 @@ describe('hatenaBookmarkHandler', () => {
 
     it('should write a non-ASCII query as is', () => {
       const value = `${base}/q/%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3`
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${base}/q/セキュリティ?mode=rss`,
           hint: { key: 'hatena-bookmark:search', label: 'Search' },
         },
+        hotEntry,
+        newEntry,
       ]
 
       expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return a site feed for a domain page', () => {
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${base}/site/example.com?mode=rss`,
           hint: { key: 'hatena-bookmark:site', label: 'Site' },
         },
+        hotEntry,
+        newEntry,
       ]
 
       expect(hatenaBookmarkHandler.resolve(`${base}/site/example.com`)).toEqual(expected)
@@ -408,11 +416,13 @@ describe('hatenaBookmarkHandler', () => {
 
     it('should return a site feed without the trailing slash of a site page', () => {
       const value = `${base}/site/example.com/news/`
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${base}/site/example.com/news?mode=rss`,
           hint: { key: 'hatena-bookmark:site', label: 'Site' },
         },
+        hotEntry,
+        newEntry,
       ]
 
       expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
@@ -420,11 +430,13 @@ describe('hatenaBookmarkHandler', () => {
 
     it('should return a site feed with the sort order of a site page', () => {
       const value = `${base}/site/example.com/?sort=eid&page=2`
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${base}/site/example.com?sort=eid&mode=rss`,
           hint: { key: 'hatena-bookmark:site', label: 'Site' },
         },
+        hotEntry,
+        newEntry,
       ]
 
       expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
@@ -435,6 +447,8 @@ describe('hatenaBookmarkHandler', () => {
         uri: `${base}/mizdra/bookmark.rss`,
         hint: { key: 'hatena-bookmark:bookmarks', label: 'Bookmarks' },
       },
+      hotEntry,
+      newEntry,
     ]
 
     it('should return bookmarks for a user page', () => {
@@ -448,6 +462,8 @@ describe('hatenaBookmarkHandler', () => {
           uri: `${base}/alice/bookmark.rss?tag=javascript`,
           hint: { key: 'hatena-bookmark:user-tag', label: 'User tag' },
         },
+        hotEntry,
+        newEntry,
       ]
 
       expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
@@ -455,11 +471,13 @@ describe('hatenaBookmarkHandler', () => {
 
     it('should return an https feed for an http page', () => {
       const value = 'http://b.hatena.ne.jp/hotentry/it'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${base}/hotentry/it.rss`,
           hint: { key: 'hatena-bookmark:hot-category', label: 'Hot entries in category' },
         },
+        hotEntry,
+        newEntry,
       ]
 
       expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
@@ -467,11 +485,13 @@ describe('hatenaBookmarkHandler', () => {
 
     it('should return an https site feed for an http site page', () => {
       const value = 'http://b.hatena.ne.jp/site/example.com'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: `${base}/site/example.com?mode=rss`,
           hint: { key: 'hatena-bookmark:site', label: 'Site' },
         },
+        hotEntry,
+        newEntry,
       ]
 
       expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)

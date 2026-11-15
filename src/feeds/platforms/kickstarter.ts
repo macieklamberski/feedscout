@@ -55,17 +55,23 @@ export const kickstarterHandler: PlatformHandler = {
       return []
     }
 
+    // The new projects feed needs no value from the page, so every page builds it after its own
+    // feeds.
     if (parsed.kind === 'project') {
       return [
         feeds.getFeedEntry('kickstarter:updates', {
           creator: parsed.creator,
           project: parsed.project,
         }),
+        feeds.getFeedEntry('kickstarter:projects'),
       ]
     }
 
     if (parsed.kind === 'page') {
-      return [feeds.getFeedEntry('kickstarter:page', { name: parsed.name })]
+      return [
+        feeds.getFeedEntry('kickstarter:page', { name: parsed.name }),
+        feeds.getFeedEntry('kickstarter:projects'),
+      ]
     }
 
     // Homepage or discover pages - return global new projects feed.

@@ -100,32 +100,66 @@ export const lobstersHandler: PlatformHandler = {
       return []
     }
 
+    // The site-wide stories, newest and comments feeds need no value from the page, so every page
+    // builds them after its own feeds.
     if (parsed.kind === 'tag') {
-      return [feeds.getFeedEntry('lobsters:tag', { tags: parsed.tags })]
+      return [
+        feeds.getFeedEntry('lobsters:tag', { tags: parsed.tags }),
+        feeds.getFeedEntry('lobsters:stories'),
+        feeds.getFeedEntry('lobsters:newest'),
+        feeds.getFeedEntry('lobsters:comments'),
+      ]
     }
 
     if (parsed.kind === 'domain') {
-      return [feeds.getFeedEntry('lobsters:domain', { domain: parsed.domain })]
+      return [
+        feeds.getFeedEntry('lobsters:domain', { domain: parsed.domain }),
+        feeds.getFeedEntry('lobsters:stories'),
+        feeds.getFeedEntry('lobsters:newest'),
+        feeds.getFeedEntry('lobsters:comments'),
+      ]
     }
 
     if (parsed.kind === 'user') {
-      return [feeds.getFeedEntry('lobsters:user-stories', { username: parsed.username })]
+      return [
+        feeds.getFeedEntry('lobsters:user-stories', { username: parsed.username }),
+        feeds.getFeedEntry('lobsters:stories'),
+        feeds.getFeedEntry('lobsters:newest'),
+        feeds.getFeedEntry('lobsters:comments'),
+      ]
     }
 
     // The top page without a period redirects to the one-week page.
     if (parsed.kind === 'top') {
-      return [feeds.getFeedEntry('lobsters:top', { period: parsed.period ?? '1w' })]
+      return [
+        feeds.getFeedEntry('lobsters:top', { period: parsed.period ?? '1w' }),
+        feeds.getFeedEntry('lobsters:stories'),
+        feeds.getFeedEntry('lobsters:newest'),
+        feeds.getFeedEntry('lobsters:comments'),
+      ]
     }
 
     if (parsed.kind === 'newest') {
-      return [feeds.getFeedEntry('lobsters:newest')]
+      return [
+        feeds.getFeedEntry('lobsters:newest'),
+        feeds.getFeedEntry('lobsters:stories'),
+        feeds.getFeedEntry('lobsters:comments'),
+      ]
     }
 
     if (parsed.kind === 'comments') {
-      return [feeds.getFeedEntry('lobsters:comments')]
+      return [
+        feeds.getFeedEntry('lobsters:comments'),
+        feeds.getFeedEntry('lobsters:stories'),
+        feeds.getFeedEntry('lobsters:newest'),
+      ]
     }
 
-    return [feeds.getFeedEntry('lobsters:stories'), feeds.getFeedEntry('lobsters:comments')]
+    return [
+      feeds.getFeedEntry('lobsters:stories'),
+      feeds.getFeedEntry('lobsters:newest'),
+      feeds.getFeedEntry('lobsters:comments'),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,

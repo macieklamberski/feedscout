@@ -131,10 +131,19 @@ export const steamHandler: PlatformHandler = {
       return []
     }
 
+    // The store's deals, releases and top sellers need no value from the page, so every store page
+    // builds them after its own feeds. A community page is another site.
     if (parsed.kind === 'app') {
       return [
         feeds.getFeedEntry('steam:news', { appId: parsed.appId }),
         feeds.getFeedEntry('steam:community-news', { appId: parsed.appId }),
+        ...(isHostOf(url, storeHosts)
+          ? [
+              feeds.getFeedEntry('steam:daily-deals'),
+              feeds.getFeedEntry('steam:new-releases'),
+              feeds.getFeedEntry('steam:weekly-top-sellers'),
+            ]
+          : []),
       ]
     }
 
@@ -143,11 +152,21 @@ export const steamHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'groupNews') {
-      return [feeds.getFeedEntry('steam:group-news', { clanId: parsed.clanId })]
+      return [
+        feeds.getFeedEntry('steam:group-news', { clanId: parsed.clanId }),
+        feeds.getFeedEntry('steam:daily-deals'),
+        feeds.getFeedEntry('steam:new-releases'),
+        feeds.getFeedEntry('steam:weekly-top-sellers'),
+      ]
     }
 
     if (parsed.kind === 'collection') {
-      return [feeds.getFeedEntry('steam:news-collection', { collection: parsed.collection })]
+      return [
+        feeds.getFeedEntry('steam:news-collection', { collection: parsed.collection }),
+        feeds.getFeedEntry('steam:daily-deals'),
+        feeds.getFeedEntry('steam:new-releases'),
+        feeds.getFeedEntry('steam:weekly-top-sellers'),
+      ]
     }
 
     return [

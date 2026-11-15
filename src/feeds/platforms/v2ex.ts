@@ -63,12 +63,19 @@ export const v2exHandler: PlatformHandler = {
       return []
     }
 
+    // The index feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'node') {
-      return [feeds.getFeedEntry('v2ex:node', { node: parsed.node })]
+      return [
+        feeds.getFeedEntry('v2ex:node', { node: parsed.node }),
+        feeds.getFeedEntry('v2ex:index'),
+      ]
     }
 
     if (parsed.kind === 'member') {
-      return [feeds.getFeedEntry('v2ex:member', { username: parsed.username })]
+      return [
+        feeds.getFeedEntry('v2ex:member', { username: parsed.username }),
+        feeds.getFeedEntry('v2ex:index'),
+      ]
     }
 
     if (parsed.kind === 'tab') {

@@ -185,11 +185,13 @@ Discovers RSS feeds for DEV.to user profiles, tags, the global community, and th
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `dev.to` | Community |
+| `dev.to` | Community · latest sort<sup>†</sup> |
 | `dev.to/latest` | Latest sort<sup>†</sup> · community |
 | `dev.to/{username}` | User or organization posts |
 | `dev.to/{username}/{article}` | Author's posts<sup>†</sup> |
 | `dev.to/t/{tag}` | Tag posts<sup>†</sup> |
+
+> Every page above also gets the community and latest sort feeds after its own.
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -199,7 +201,7 @@ Discovers RSS feeds for Lobsters homepage, users, tags, and domains.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `lobste.rs` | Homepage · site-wide comments |
+| `lobste.rs` | Homepage · newest posts · site-wide comments |
 | `lobste.rs/newest` | Newest posts |
 | `lobste.rs/top` | Top stories of the past week |
 | `lobste.rs/top/{period}` | Top stories by period, such as 1d, 2w or 1y |
@@ -208,6 +210,8 @@ Discovers RSS feeds for Lobsters homepage, users, tags, and domains.
 | `lobste.rs/t/{tag}` | Tag |
 | `lobste.rs/t/{tag1},{tag2}` | Multi-tag |
 | `lobste.rs/domains/{domain}` | Domain |
+
+> Every page above also gets the homepage, newest posts and site-wide comments feeds after its own.
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -255,6 +259,8 @@ Discovers Atom feeds for GitHub Gist users, starred gists, forked gists, and the
 | `gist.github.com/{username}/starred` | User starred gists |
 | `gist.github.com/{username}/forks` or `/forked` | User forked gists<sup>†</sup> |
 | `gist.github.com/discover` | Discover gists<sup>†</sup> |
+
+> Every page above also gets the discover gists feed after its own.
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -308,14 +314,16 @@ Discovers RSS feeds for Pinboard users, user tags, and the popular and recent li
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `pinboard.in` | Popular bookmarks<sup>†</sup> |
-| `pinboard.in/popular` | Popular bookmarks<sup>†</sup> |
-| `pinboard.in/recent` | Recent bookmarks<sup>†</sup> |
+| `pinboard.in` | Popular bookmarks<sup>†</sup> · recent bookmarks<sup>†</sup> |
+| `pinboard.in/popular` | Popular bookmarks<sup>†</sup> · recent bookmarks<sup>†</sup> |
+| `pinboard.in/recent` | Recent bookmarks<sup>†</sup> · popular bookmarks<sup>†</sup> |
 | `pinboard.in/u:{username}` | User bookmarks<sup>†</sup> |
 | `pinboard.in/u:{username}/t:{tag}` | User tag<sup>†</sup> |
 | `pinboard.in/u:{username}/t:{tag1}/t:{tag2}` | User multi-tag<sup>†</sup> |
 | `pinboard.in/u:{username}/from:{source}` or `pinboard.in/u:{username}/t:{tag}/from:{source}` | Source<sup>†</sup> |
 | `pinboard.in/t:{tag}` | Site-wide tag<sup>?</sup> |
+
+> Every page above also gets the recent and popular bookmarks after its own feeds.
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -343,6 +351,8 @@ Discovers RSS feeds for Dailymotion users, playlists, channels, searches, and th
 | `dailymotion.com/channel/{name}` | Channel<sup>†</sup> |
 | `dailymotion.com/search/{query}` | Search<sup>†</sup> |
 | `dailymotion.com` or `dailymotion.com/trending` | Trending<sup>†</sup> |
+
+> Every page above also gets the trending feed after its own.
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -397,6 +407,8 @@ Discovers RSS feeds for Tumblr blogs and tagged posts.
 | `www.tumblr.com/blog/view/{blog}` | Blog posts · theme posts · podcast |
 | `www.tumblr.com/{blog}/tagged/{tag}` | Tagged posts |
 
+> Every tag page above also gets the blog posts, theme posts and podcast after its own feeds.
+
 <sup>†</sup> *Found only by the Platform method.*
 
 ### Behance
@@ -410,6 +422,8 @@ Discovers RSS feeds for Behance user portfolios, plus the homepage Featured-proj
 | `behance.net/{username}/appreciated` | User portfolio* |
 | `behance.net/{username}/{tab}` | User portfolio |
 | Any other page | Featured projects |
+
+> Every page above also gets the featured projects after its own feeds.
 
 \* *Behance ignores `content=appreciated` and serves the user's own projects, so the appreciated page gets the portfolio feed.*
 
@@ -465,8 +479,10 @@ Discovers Atom feeds for Kickstarter projects, curated pages and global new proj
 |-------------|-----------------|
 | `kickstarter.com` | Global new projects<sup>†</sup> |
 | `kickstarter.com/discover` | Global new projects |
-| `kickstarter.com/pages/{name}` | Curated projects |
-| `kickstarter.com/projects/{creator}/{project}` | Project updates |
+| `kickstarter.com/pages/{name}` | Curated projects · global new projects |
+| `kickstarter.com/projects/{creator}/{project}` | Project updates · global new projects |
+
+> Every page above also gets the global new projects after its own feeds.
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -476,8 +492,8 @@ Discovers the Atom feeds Launchpad serves on `feeds.launchpad.net` for projects,
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `launchpad.net` | Announcements |
-| `bugs.launchpad.net` | Latest bugs<sup>†</sup> |
+| `launchpad.net` | Announcements · latest bugs<sup>†</sup> |
+| `bugs.launchpad.net` | Latest bugs<sup>†</sup> · announcements<sup>†</sup> |
 | `launchpad.net/{project}` | Announcements · latest bugs · branches · revisions |
 | `bugs.launchpad.net/{project}` | Latest bugs |
 | `code.launchpad.net/{project}` | Branches · revisions |
@@ -491,6 +507,8 @@ Discovers the Atom feeds Launchpad serves on `feeds.launchpad.net` for projects,
 | `code.launchpad.net/~{user}/{project}/{branch}` | Branch |
 | `code.launchpad.net/~{user}/{distro}/{series}/{package}/{branch}` | Branch |
 
+> Every page past the two home pages also gets the site-wide announcements and latest bugs after its own feeds.
+
 <sup>†</sup> *Found only by the Platform method.*
 
 ### Letterboxd
@@ -501,6 +519,8 @@ Discovers RSS feeds for Letterboxd user profiles.
 |-------------|-----------------|
 | `letterboxd.com/{username}` | User diary |
 | `letterboxd.com/journal` | Journal |
+
+> Every page above also gets the journal after its own feeds.
 
 ### Steam
 
@@ -518,6 +538,8 @@ Discovers RSS feeds for Steam game news and community groups.
 | `steamcommunity.com/app/{id}` | Game news<sup>†</sup> · community news<sup>?</sup> |
 | `steamcommunity.com/groups/{name}` | Group<sup>†</sup> (RSS) |
 
+> Every store page above also gets the daily deals, new releases and weekly top sellers after its own feeds.
+
 <sup>†</sup> *Found only by the Platform method.*
 
 <sup>?</sup> *Not measured, the feed failed to load during the run.*
@@ -533,6 +555,8 @@ Discovers Atom feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, M
 | `{host}/questions/{id}` | Question |
 | `{host}/users/{id}` | User<sup>†</sup> |
 | `{host}/collectives/{name}` | Collective<sup>†</sup> |
+
+> Every page above also gets the site-wide newest questions after its own feeds.
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -573,7 +597,7 @@ Discovers RSS feeds for Hatena Bookmark listings, searches, sites and user bookm
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `b.hatena.ne.jp` | Hot entries |
+| `b.hatena.ne.jp` | Hot entries · new entries |
 | `b.hatena.ne.jp/hotentry/{category}` | Hot entries by category |
 | `b.hatena.ne.jp/entrylist` | New entries |
 | `b.hatena.ne.jp/entrylist/{category}` | New entries by category |
@@ -582,6 +606,8 @@ Discovers RSS feeds for Hatena Bookmark listings, searches, sites and user bookm
 | `b.hatena.ne.jp/site/{site*}` | Site bookmarks<sup>†</sup> |
 | `b.hatena.ne.jp/{user}` | User bookmarks |
 | `b.hatena.ne.jp/{user}/bookmark?tag={tag}` | User tag |
+
+> Every page above also gets the hot and new entries after its own feeds.
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -663,6 +689,8 @@ Discovers RSS feeds for Douban user interests, reviews, notes, and subject revie
 | `{book,movie,music}.douban.com/subject/{id}` | Subject reviews |
 | `www.douban.com` | Book<sup>†</sup> · movie<sup>†</sup> · music<sup>†</sup> · drama<sup>†</sup> reviews · new movie reviews · popular reviews |
 
+> Every page above also gets the category review feeds after its own.
+
 <sup>†</sup> *Found only by the Platform method.*
 
 ### V2EX
@@ -676,6 +704,8 @@ Discovers Atom feeds for V2EX index, nodes, members, and tabs.
 | `v2ex.com/member/{username}` | Member |
 | `v2ex.com/?tab={tab}` | Tab · index |
 | Any other page | Index |
+
+> Every page above also gets the index feed after its own.
 
 ### Ximalaya
 
@@ -721,9 +751,11 @@ Discovers RSS feeds for ArtStation portfolios and the global artwork feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `artstation.com/{user}` | Portfolio<sup>†</sup> |
-| `{user}.artstation.com` | Portfolio |
+| `artstation.com/{user}` | Portfolio<sup>†</sup> · artwork |
+| `{user}.artstation.com` | Portfolio · artwork |
 | `artstation.com/artwork` | Artwork<sup>†</sup> · latest artwork<sup>†</sup> |
+
+> Every page above also gets the artwork feeds after its own.
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -798,8 +830,8 @@ Discovers RSS feeds for Hacker News.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `news.ycombinator.com` | Front page (RSS) · full front page (RSS) |
-| `news.ycombinator.com/show` | Show HN (RSS) · full front page (RSS) |
+| `news.ycombinator.com` | Front page (RSS) · Show HN (RSS) · full front page (RSS) |
+| `news.ycombinator.com/show` | Show HN (RSS) · front page (RSS) · full front page (RSS) |
 
 ### Listed
 
@@ -819,9 +851,11 @@ Discovers RSS feeds for MyAnimeList user lists and site-wide news.
 | `myanimelist.net/animelist/{user}` | Anime list<sup>†</sup> · Manga list<sup>†</sup> · Recently watched<sup>†</sup> · Recently read<sup>†</sup> · Blog<sup>†</sup> (RSS) |
 | `myanimelist.net/mangalist/{user}` | Anime list<sup>†</sup> · Manga list<sup>†</sup> · Recently watched<sup>†</sup> · Recently read<sup>†</sup> · Blog<sup>†</sup> (RSS) |
 | `myanimelist.net/history/{user}` | (same as above) |
-| `myanimelist.net/news` | Site-wide news |
-| `myanimelist.net/featured` | Featured articles |
-| Any other page | Site-wide news |
+| `myanimelist.net/news` | Site-wide news · featured articles |
+| `myanimelist.net/featured` | Featured articles · site-wide news |
+| Any other page | Site-wide news · featured articles |
+
+> Every page above also gets the site-wide news and featured articles after its own feeds.
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -847,6 +881,8 @@ Discovers RSS feeds for note.com, including hashtag and magazine feeds.
 | `note.com/{user}/n/{noteId}` | Blog |
 | `note.com/hashtag/{tag}` or `note.com/tag/{tag}` | Hashtag<sup>†</sup> |
 | `note.com/{user}/m/{magazineId}` | Magazine<sup>†</sup> |
+
+> Every page above also gets the featured feed after its own.
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -888,6 +924,8 @@ Discovers RSS feeds for Velog users and the platform-wide trending feed.
 | `velog.io` | Trending posts<sup>†</sup> |
 | Any other page | Trending posts |
 
+> Every page above also gets the trending posts after its own feeds.
+
 <sup>†</sup> *Found only by the Platform method.*
 
 ### Acast
@@ -924,6 +962,8 @@ Discovers RSS feeds for Are.na user profiles and channels.
 | `are.na/{user}` | User profile |
 | `are.na/{user}/{channel}` | Channel |
 | `are.na/editorial` | Editorial |
+
+> Every page above also gets the editorial feed after its own.
 
 ### Audioboom
 
@@ -1024,6 +1064,8 @@ Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator 
 | `{root}/top` or `/top/{period}` | Top topics (RSS) |
 | `{root}/` (or any other path) | Latest topics · latest posts (RSS) |
 
+> Every page above also gets the latest topics and latest posts after its own feeds.
+
 <sup>†</sup> *Found only by the Platform method.*
 
 > [!NOTE]
@@ -1091,13 +1133,15 @@ Discovers RSS, Atom and JSON feeds for Huffduffer users, their collectives and t
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `huffduffer.com` | New huffduffs (RSS · Atom · JSON) |
+| `huffduffer.com` | New huffduffs (RSS · Atom · JSON) · popular (RSS · Atom · JSON) |
 | `huffduffer.com/popular` | Popular (RSS · Atom · JSON) |
 | `huffduffer.com/search?q={query}` | Search (RSS · Atom · JSON) |
 | `huffduffer.com/{user}` | Huffduffs (RSS · Atom · JSON) |
 | `huffduffer.com/{user}/collective` | Collective (RSS · Atom · JSON) |
 | `huffduffer.com/{user}/{id}` | Possibly related<sup>†</sup> · huffduffs (RSS · Atom · JSON) |
 | `huffduffer.com/{user}/{id}/related` | Possibly related (RSS · Atom · JSON) |
+
+> Every page above also gets the new huffduffs and popular feeds after its own.
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1213,6 +1257,8 @@ Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including ca
 | `{blog}.micro.blog/archive` | Archive<sup>†</sup>, plus the feeds above |
 | `{blog}.micro.blog/photos` | Photos<sup>†</sup>, plus the feeds above |
 
+> Every page above also gets the archive and photos feeds after its own.
+
 <sup>†</sup> *Found only by the Platform method.*
 
 ### Misskey
@@ -1245,8 +1291,10 @@ Discovers RSS feeds for Observable user notebooks and collections.
 |-------------|-----------------|
 | `observablehq.com/@{user}` | Notebooks<sup>†</sup> |
 | `observablehq.com/@{user}/collection/{slug}` or `/@{user}/-/collection/{slug}` | Collection<sup>†</sup> |
-| `observablehq.com/recent` or `/public?sort=publish_time` | Recent<sup>†</sup> |
-| `observablehq.com/trending` or `/public` | Trending<sup>†</sup> |
+| `observablehq.com/recent` or `/public?sort=publish_time` | Recent<sup>†</sup> · trending<sup>†</sup> |
+| `observablehq.com/trending` or `/public` | Trending<sup>†</sup> · recent<sup>†</sup> |
+
+> Every page above also gets the recent and trending feeds after its own.
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1340,6 +1388,8 @@ Discovers Atom feeds for Qiita users, tags, organizations, and popular items.
 | `qiita.com/popular-items` | Popular items<sup>†</sup> |
 | `qiita.com/official-columns` | Qiita Zine (RSS + Atom) |
 
+> Every page above also gets the popular items and Qiita Zine feeds after its own.
+
 <sup>†</sup> *Found only by the Platform method.*
 
 ### RSS.com
@@ -1358,6 +1408,8 @@ Discovers Atom feeds for RubyGems.org gems and the site-wide latest gems.
 |-------------|-----------------|
 | `rubygems.org/gems/{name}` | Gem versions (Atom) |
 | `rubygems.org` | Latest gems<sup>†</sup> (Atom) |
+
+> Every page above also gets the latest gems after its own feeds.
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1409,8 +1461,10 @@ Discovers the audio, all-media, video, and audio with PDF feeds of every channel
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{church}.sermon.net` | Channel podcasts, media, video podcasts, and podcasts with PDFs (RSS)*, or the church feed when no channel is listed |
+| `{church}.sermon.net` | Channel podcasts, media, video podcasts, and podcasts with PDFs (RSS)* · church feed (RSS) |
 | `{church}.sermon.net/{mediaCentre}/{channel}` | That channel's podcast<sup>†</sup>, media<sup>†</sup>, video podcast<sup>†</sup>, and podcast with PDFs<sup>†</sup> (RSS) |
+
+> Every page above also gets the church feed after its own.
 
 \* *Requires HTML content to read the channels the page lists.*
 
@@ -1458,6 +1512,8 @@ Discovers RSS and Atom feeds for Tildes homepage and groups, filtered by tag whe
 | `tildes.net/~{group}?tag={tag}` | Group tag (RSS + Atom) |
 | Any other page | Topics (RSS + Atom) |
 
+> Every page above also gets the site-wide topics (RSS + Atom) after its own feeds.
+
 ### Viabloga
 
 Discovers RSS, Atom and RDF feeds for Viabloga.
@@ -1496,6 +1552,8 @@ Discovers RSS feeds for Zenn users, topics, publications, and the platform-wide 
 | `zenn.dev/topics/{topic}` | Topic |
 | `zenn.dev/p/{pub}` | Publication |
 | `zenn.dev` | Trending posts |
+
+> Every page above also gets the trending posts after its own feeds.
 
 ### BitChute
 
@@ -2167,6 +2225,8 @@ Discovers the RSS feeds of crates.io, built from the URL, since the page answers
 | `crates.io` | New crates<sup>†</sup> · recent updates<sup>†</sup> (RSS) |
 | `crates.io/crates/{name}` | Crate releases<sup>†</sup> (RSS) |
 
+> Every page above also gets the new crates and recent updates after its own feeds.
+
 <sup>†</sup> *Found only by the Platform method.*
 
 > [!NOTE]
@@ -2399,10 +2459,10 @@ Discovers the site feeds of a Ning network and the feed of a forum topic. Detect
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{host}/forum/topics/{topic}` | Topic · latest activity<sup>†</sup> · blog posts<sup>†</sup> · forum · members<sup>†</sup> · featured members<sup>†</sup> · photos<sup>†</sup> · featured photos<sup>†</sup> · videos<sup>†</sup> · featured videos<sup>†</sup> · events<sup>†</sup> · groups<sup>†</sup> · featured groups<sup>†</sup> · pages<sup>†</sup> · notes<sup>†</sup> |
+| `{host}/forum/topics/{topic}` | Topic · latest activity<sup>†</sup> · blog posts<sup>†</sup> · featured blog posts<sup>†</sup> · forum · featured topics<sup>†</sup> · members<sup>†</sup> · featured members<sup>†</sup> · photos<sup>†</sup> · featured photos<sup>†</sup> · videos<sup>†</sup> · featured videos<sup>†</sup> · events<sup>†</sup> · groups<sup>†</sup> · featured groups<sup>†</sup> · pages<sup>†</sup> · notes<sup>†</sup> |
 | `{host}/group/{group}/forum/topics/{topic}` | Topic · group forum · the site feeds and lists above |
 | `{host}/group/{group}` | Group forum · the site feeds and lists above |
-| `{host}/`, any other page | Latest activity<sup>†</sup> · blog posts<sup>†</sup> · forum<sup>†</sup> · members<sup>†</sup> · featured members<sup>†</sup> · photos<sup>†</sup> · featured photos<sup>†</sup> · videos<sup>†</sup> · featured videos<sup>†</sup> · events<sup>†</sup> · groups<sup>†</sup> · featured groups<sup>†</sup> · pages<sup>†</sup> · notes<sup>†</sup> |
+| `{host}/`, any other page | Latest activity<sup>†</sup> · blog posts<sup>†</sup> · featured blog posts<sup>†</sup> · forum<sup>†</sup> · featured topics<sup>†</sup> · members<sup>†</sup> · featured members<sup>†</sup> · photos<sup>†</sup> · featured photos<sup>†</sup> · videos<sup>†</sup> · featured videos<sup>†</sup> · events<sup>†</sup> · groups<sup>†</sup> · featured groups<sup>†</sup> · pages<sup>†</sup> · notes<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2438,9 +2498,10 @@ Discovers the feeds of a Koha library catalogue. Detected by the `/opac-tmpl/` a
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{root}/cgi-bin/koha/opac-search.pl?q={query}` | Search results, newest acquisitions first (RSS) |
-| `{root}/cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber={id}` | List<sup>†</sup> (RSS) |
-| `{root}/cgi-bin/koha/opac-showreviews.pl` | Recent comments (RSS) |
+| `{root}/cgi-bin/koha/opac-search.pl?q={query}` | Search results, newest acquisitions first (RSS) · news<sup>†</sup> (RSS) |
+| `{root}/cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber={id}` | List<sup>†</sup> (RSS) · news<sup>†</sup> (RSS) |
+| `{root}/cgi-bin/koha/opac-showreviews.pl` | Recent comments (RSS) · news<sup>†</sup> (RSS) |
+| Any other `{root}/cgi-bin/koha/opac-{page}.pl`, as `opac-main.pl` | News<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2604,6 +2665,8 @@ Discovers the RSS feeds of a ChamberMaster (GrowthZone) chamber of commerce dire
 | `{host}/news/…` | News releases<sup>†</sup> |
 | `{host}/MemberToMember/…` | New member to member deals<sup>†</sup> |
 
+> Every page above also gets the chamber's other lists after its own feeds.
+
 <sup>†</sup> *Found only by the Platform method.*
 
 ### PChome Online 個人新聞台
@@ -2688,6 +2751,8 @@ Discovers the RSS feeds of blogs on SME Blog, the blog platform of the Slovak da
 | `blog.sme.sk/{user}/{category}/{slug}` | Posts |
 | `blog.sme.sk` | Site |
 | `blog.sme.sk/t/{topic}` | Site |
+
+> Every page above also gets the site feed after its own.
 
 ### Acomics
 
@@ -2832,6 +2897,8 @@ Discovers the module and forum feeds of a uCoz site. Covers sites on uCoz's own 
 | `{host}/{module}/…` | Module (RSS) for `news`, `publ`, `load`, `photo`, `blog`, `dir`, `board`, `stuff` and `forum` |
 | `{host}/forum/{section}…` | Forum section · forum (RSS) |
 | `{host}/`, any other page | News (RSS) |
+
+> Every page above also gets the news feed after its own.
 
 > [!NOTE]
 > A module the site has not turned on answers 404.
@@ -3190,6 +3257,8 @@ Discovers the news and class assignment feeds of an Edlio school website. Detect
 | `{host}/apps/classes/{id}/assignments/` | Assignments of the class the page links (RSS) |
 | `{host}/`, any other page | News (RSS) |
 
+> Every page above also gets the news feed after its own.
+
 ### Talentsoft
 
 Discovers the job offer feeds of a Talentsoft career site, hosted on `talent-soft.com` or `profils.org` or on the employer's own domain. Detected by the `/client/dist/talentsoft-cookies.iife.js` script every page loads, so any domain is covered.
@@ -3242,7 +3311,9 @@ Discovers the Atom feeds of a Redmine install, Planio's hosted ones on `plan.io`
 | `{root}/news` | News |
 | `{root}/activity` | Activity |
 | `{root}/projects` | Projects |
-| `{root}/`, any other page | News · activity |
+| `{root}/`, any other page | News · activity · projects · issues |
+
+> Every page above also gets the site news, activity, projects and issues after its own feeds.
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -3381,6 +3452,8 @@ Discovers the feeds of a table tennis association on `{association}.tischtennisl
 | `{association}.tischtennislive.de/?L3=SpielUebersicht&Gruppe={group}`, a match overview linking its results feeds | Group results of the last 10 days · fixtures of the next 10 days at `/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next={0\|1}` (RSS)* |
 | `{association}.tischtennislive.de`, any other page | News · dates<sup>†</sup> · documents<sup>†</sup> · tournaments<sup>†</sup> (RSS) |
 
+> Every page above also gets the news, dates, documents and tournaments after its own feeds.
+
 \* *Requires HTML content to read the ID from the page's results feed link.*
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -3394,6 +3467,8 @@ Discovers the feeds of a company newsroom on `{newsroom}.newswire.com`. The news
 | `{newsroom}.newswire.com/browse/beat/{beat}` | Beat<sup>†</sup> at `/browse/rss/beat/{beat}` · newsroom at `/browse/rss` (RSS) |
 | `{newsroom}.newswire.com/browse/pr`, `/browse/news`, `/browse/social`, `/browse/image`, `/browse/video`, `/browse/audio`, `/browse/event` | Press releases, news<sup>†</sup>, social<sup>†</sup> wire, images, videos, audio or events at `/browse/rss/{type}` · newsroom at `/browse/rss` (RSS) |
 | `{newsroom}.newswire.com`, any other page | Newsroom at `/browse/rss` (RSS) |
+
+> Every page above also gets the newsroom and every content type feed after its own.
 
 <sup>†</sup> *Found only by the Platform method.*
 

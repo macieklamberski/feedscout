@@ -88,8 +88,13 @@ export const noteHandler: PlatformHandler = {
       return []
     }
 
+    // The featured notes feed needs no value from the page, so every page builds it after its own
+    // feeds.
     if (parsed.kind === 'hashtag') {
-      return [feeds.getFeedEntry('note:hashtag', { tag: parsed.tag })]
+      return [
+        feeds.getFeedEntry('note:hashtag', { tag: parsed.tag }),
+        feeds.getFeedEntry('note:featured'),
+      ]
     }
 
     if (parsed.kind === 'magazine') {
@@ -98,12 +103,16 @@ export const noteHandler: PlatformHandler = {
           username: parsed.username,
           magazine: parsed.magazine,
         }),
+        feeds.getFeedEntry('note:featured'),
       ]
     }
 
     // A note page leads to its author's blog feed.
     if (parsed.kind === 'note' || parsed.kind === 'user') {
-      return [feeds.getFeedEntry('note:blog', { username: parsed.username })]
+      return [
+        feeds.getFeedEntry('note:blog', { username: parsed.username }),
+        feeds.getFeedEntry('note:featured'),
+      ]
     }
 
     return [feeds.getFeedEntry('note:featured')]

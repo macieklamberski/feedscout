@@ -104,10 +104,14 @@ describe('arenaHandler', () => {
   describe('resolve', () => {
     it('should return feed URL for user profile', () => {
       const value = 'https://www.are.na/charles-broskoski'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.are.na/charles-broskoski/feed/rss',
           hint: { key: 'arena:profile', label: 'Profile' },
+        },
+        {
+          uri: 'https://www.are.na/editorial/feed/rss',
+          hint: { key: 'arena:editorial', label: 'Editorial' },
         },
       ]
 
@@ -116,10 +120,14 @@ describe('arenaHandler', () => {
 
     it('should return feed URL for channel', () => {
       const value = 'https://www.are.na/meg-miller/good-sign-offs'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.are.na/meg-miller/good-sign-offs/feed/rss',
           hint: { key: 'arena:channel', label: 'Channel' },
+        },
+        {
+          uri: 'https://www.are.na/editorial/feed/rss',
+          hint: { key: 'arena:editorial', label: 'Editorial' },
         },
       ]
 

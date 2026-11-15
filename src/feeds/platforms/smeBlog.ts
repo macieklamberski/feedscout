@@ -39,8 +39,12 @@ export const smeBlogHandler: PlatformHandler = {
       return []
     }
 
+    // The site feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'blog') {
-      return [feeds.getFeedEntry('sme-blog:posts', { username: parsed.username })]
+      return [
+        feeds.getFeedEntry('sme-blog:posts', { username: parsed.username }),
+        feeds.getFeedEntry('sme-blog:site'),
+      ]
     }
 
     return [feeds.getFeedEntry('sme-blog:site')]

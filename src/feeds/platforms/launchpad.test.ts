@@ -205,6 +205,10 @@ describe('launchpadHandler', () => {
           uri: 'http://feeds.launchpad.net/announcements.atom',
           hint: { key: 'launchpad:announcements', label: 'Announcements' },
         },
+        {
+          uri: 'http://feeds.launchpad.net/bugs/latest-bugs.atom',
+          hint: { key: 'launchpad:bugs', label: 'Latest bugs' },
+        },
       ]
 
       expect(launchpadHandler.resolve('https://launchpad.net/')).toEqual(expected)
@@ -215,6 +219,10 @@ describe('launchpadHandler', () => {
         {
           uri: 'http://feeds.launchpad.net/bugs/latest-bugs.atom',
           hint: { key: 'launchpad:bugs', label: 'Latest bugs' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/announcements.atom',
+          hint: { key: 'launchpad:announcements', label: 'Announcements' },
         },
       ]
 
@@ -240,6 +248,14 @@ describe('launchpadHandler', () => {
           uri: 'http://feeds.launchpad.net/example/revisions.atom',
           hint: { key: 'launchpad:project-revisions', label: 'Project revisions' },
         },
+        {
+          uri: 'http://feeds.launchpad.net/announcements.atom',
+          hint: { key: 'launchpad:announcements', label: 'Announcements' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/bugs/latest-bugs.atom',
+          hint: { key: 'launchpad:bugs', label: 'Latest bugs' },
+        },
       ]
 
       expect(launchpadHandler.resolve(value)).toEqual(expected)
@@ -251,6 +267,14 @@ describe('launchpadHandler', () => {
         {
           uri: 'http://feeds.launchpad.net/example/latest-bugs.atom',
           hint: { key: 'launchpad:project-bugs', label: 'Project latest bugs' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/announcements.atom',
+          hint: { key: 'launchpad:announcements', label: 'Announcements' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/bugs/latest-bugs.atom',
+          hint: { key: 'launchpad:bugs', label: 'Latest bugs' },
         },
       ]
 
@@ -267,6 +291,14 @@ describe('launchpadHandler', () => {
         {
           uri: 'http://feeds.launchpad.net/example/revisions.atom',
           hint: { key: 'launchpad:project-revisions', label: 'Project revisions' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/announcements.atom',
+          hint: { key: 'launchpad:announcements', label: 'Announcements' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/bugs/latest-bugs.atom',
+          hint: { key: 'launchpad:bugs', label: 'Latest bugs' },
         },
       ]
 
@@ -288,6 +320,58 @@ describe('launchpadHandler', () => {
           uri: 'http://feeds.launchpad.net/~example/revisions.atom',
           hint: { key: 'launchpad:person-revisions', label: 'Person revisions' },
         },
+        {
+          uri: 'http://feeds.launchpad.net/announcements.atom',
+          hint: { key: 'launchpad:announcements', label: 'Announcements' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/bugs/latest-bugs.atom',
+          hint: { key: 'launchpad:bugs', label: 'Latest bugs' },
+        },
+      ]
+
+      expect(launchpadHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the person bugs for a person on the bugs host', () => {
+      const value = 'https://bugs.launchpad.net/~example'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://feeds.launchpad.net/~example/latest-bugs.atom',
+          hint: { key: 'launchpad:person-bugs', label: 'Person latest bugs' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/announcements.atom',
+          hint: { key: 'launchpad:announcements', label: 'Announcements' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/bugs/latest-bugs.atom',
+          hint: { key: 'launchpad:bugs', label: 'Latest bugs' },
+        },
+      ]
+
+      expect(launchpadHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the person code feeds for a person on the code host', () => {
+      const value = 'https://code.launchpad.net/~example'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://feeds.launchpad.net/~example/branches.atom',
+          hint: { key: 'launchpad:person-branches', label: 'Person branches' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/~example/revisions.atom',
+          hint: { key: 'launchpad:person-revisions', label: 'Person revisions' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/announcements.atom',
+          hint: { key: 'launchpad:announcements', label: 'Announcements' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/bugs/latest-bugs.atom',
+          hint: { key: 'launchpad:bugs', label: 'Latest bugs' },
+        },
       ]
 
       expect(launchpadHandler.resolve(value)).toEqual(expected)
@@ -298,6 +382,14 @@ describe('launchpadHandler', () => {
         {
           uri: 'http://feeds.launchpad.net/bugs/123/bug.atom',
           hint: { key: 'launchpad:bug', label: 'Bug' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/announcements.atom',
+          hint: { key: 'launchpad:announcements', label: 'Announcements' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/bugs/latest-bugs.atom',
+          hint: { key: 'launchpad:bugs', label: 'Latest bugs' },
         },
       ]
 
@@ -313,6 +405,14 @@ describe('launchpadHandler', () => {
           uri: 'http://feeds.launchpad.net/example/+source/package/latest-bugs.atom',
           hint: { key: 'launchpad:package-bugs', label: 'Package latest bugs' },
         },
+        {
+          uri: 'http://feeds.launchpad.net/announcements.atom',
+          hint: { key: 'launchpad:announcements', label: 'Announcements' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/bugs/latest-bugs.atom',
+          hint: { key: 'launchpad:bugs', label: 'Latest bugs' },
+        },
       ]
 
       expect(launchpadHandler.resolve(value)).toEqual(expected)
@@ -323,6 +423,14 @@ describe('launchpadHandler', () => {
         {
           uri: 'http://feeds.launchpad.net/~example/project/trunk/branch.atom',
           hint: { key: 'launchpad:branch', label: 'Branch' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/announcements.atom',
+          hint: { key: 'launchpad:announcements', label: 'Announcements' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/bugs/latest-bugs.atom',
+          hint: { key: 'launchpad:bugs', label: 'Latest bugs' },
         },
       ]
 
@@ -337,6 +445,14 @@ describe('launchpadHandler', () => {
         {
           uri: 'http://feeds.launchpad.net/~example/distro/series/package/branch/branch.atom',
           hint: { key: 'launchpad:branch', label: 'Branch' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/announcements.atom',
+          hint: { key: 'launchpad:announcements', label: 'Announcements' },
+        },
+        {
+          uri: 'http://feeds.launchpad.net/bugs/latest-bugs.atom',
+          hint: { key: 'launchpad:bugs', label: 'Latest bugs' },
         },
       ]
 

@@ -116,6 +116,14 @@ describe('microblogHandler', () => {
           uri: 'https://example.micro.blog/podcast.json',
           hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
         },
+        {
+          uri: 'https://example.micro.blog/archive/index.json',
+          hint: { key: 'microblog:archive', label: 'Archive' },
+        },
+        {
+          uri: 'https://example.micro.blog/photos/index.json',
+          hint: { key: 'microblog:photos', label: 'Photos' },
+        },
       ]
 
       expect(microblogHandler.resolve(value)).toEqual(expected)
@@ -139,6 +147,14 @@ describe('microblogHandler', () => {
         {
           uri: 'https://example.micro.blog/podcast.json',
           hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
+        },
+        {
+          uri: 'https://example.micro.blog/archive/index.json',
+          hint: { key: 'microblog:archive', label: 'Archive' },
+        },
+        {
+          uri: 'https://example.micro.blog/photos/index.json',
+          hint: { key: 'microblog:photos', label: 'Photos' },
         },
       ]
 
@@ -172,6 +188,14 @@ describe('microblogHandler', () => {
           uri: 'https://example.micro.blog/podcast.json',
           hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
         },
+        {
+          uri: 'https://example.micro.blog/archive/index.json',
+          hint: { key: 'microblog:archive', label: 'Archive' },
+        },
+        {
+          uri: 'https://example.micro.blog/photos/index.json',
+          hint: { key: 'microblog:photos', label: 'Photos' },
+        },
       ]
 
       expect(microblogHandler.resolve(value)).toEqual(expected)
@@ -204,6 +228,14 @@ describe('microblogHandler', () => {
           uri: 'https://example.micro.blog/podcast.json',
           hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
         },
+        {
+          uri: 'https://example.micro.blog/archive/index.json',
+          hint: { key: 'microblog:archive', label: 'Archive' },
+        },
+        {
+          uri: 'https://example.micro.blog/photos/index.json',
+          hint: { key: 'microblog:photos', label: 'Photos' },
+        },
       ]
 
       expect(microblogHandler.resolve(value)).toEqual(expected)
@@ -232,12 +264,16 @@ describe('microblogHandler', () => {
           uri: 'https://example.micro.blog/podcast.json',
           hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
         },
+        {
+          uri: 'https://example.micro.blog/photos/index.json',
+          hint: { key: 'microblog:photos', label: 'Photos' },
+        },
       ]
 
       expect(microblogHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the site feeds without the archive feed for a sibling path of the archive page', () => {
+    it('should return the site feeds for a sibling path of the archive page', () => {
       const value = 'https://example.micro.blog/archive_months.css'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -255,6 +291,14 @@ describe('microblogHandler', () => {
         {
           uri: 'https://example.micro.blog/podcast.json',
           hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
+        },
+        {
+          uri: 'https://example.micro.blog/archive/index.json',
+          hint: { key: 'microblog:archive', label: 'Archive' },
+        },
+        {
+          uri: 'https://example.micro.blog/photos/index.json',
+          hint: { key: 'microblog:photos', label: 'Photos' },
         },
       ]
 
@@ -284,12 +328,16 @@ describe('microblogHandler', () => {
           uri: 'https://example.micro.blog/podcast.json',
           hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
         },
+        {
+          uri: 'https://example.micro.blog/archive/index.json',
+          hint: { key: 'microblog:archive', label: 'Archive' },
+        },
       ]
 
       expect(microblogHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return only the blog feeds for a replies page', () => {
+    it('should return the blog feeds for a replies page', () => {
       const value = 'https://example.micro.blog/replies'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -308,17 +356,29 @@ describe('microblogHandler', () => {
           uri: 'https://example.micro.blog/podcast.json',
           hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
         },
+        {
+          uri: 'https://example.micro.blog/archive/index.json',
+          hint: { key: 'microblog:archive', label: 'Archive' },
+        },
+        {
+          uri: 'https://example.micro.blog/photos/index.json',
+          hint: { key: 'microblog:photos', label: 'Photos' },
+        },
       ]
 
       expect(microblogHandler.resolve(value)).toEqual(expected)
     })
 
-    const capitalizedSectionValues: Array<[string, DiscoverUriEntry]> = [
+    const capitalizedSectionValues: Array<[string, DiscoverUriEntry, DiscoverUriEntry]> = [
       [
         'https://example.micro.blog/Archive',
         {
           uri: 'https://example.micro.blog/archive/index.json',
           hint: { key: 'microblog:archive', label: 'Archive' },
+        },
+        {
+          uri: 'https://example.micro.blog/photos/index.json',
+          hint: { key: 'microblog:photos', label: 'Photos' },
         },
       ],
       [
@@ -327,12 +387,16 @@ describe('microblogHandler', () => {
           uri: 'https://example.micro.blog/photos/index.json',
           hint: { key: 'microblog:photos', label: 'Photos' },
         },
+        {
+          uri: 'https://example.micro.blog/archive/index.json',
+          hint: { key: 'microblog:archive', label: 'Archive' },
+        },
       ],
     ]
 
     it.each(capitalizedSectionValues)(
       'should return the section feed for %s',
-      (value, sectionFeed) => {
+      (value, sectionFeed, otherSectionFeed) => {
         const expected: Array<DiscoverUriEntry> = [
           sectionFeed,
           {
@@ -351,6 +415,7 @@ describe('microblogHandler', () => {
             uri: 'https://example.micro.blog/podcast.json',
             hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
           },
+          otherSectionFeed,
         ]
 
         expect(microblogHandler.resolve(value)).toEqual(expected)
@@ -376,6 +441,14 @@ describe('microblogHandler', () => {
           uri: 'https://example.micro.blog/podcast.json',
           hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
         },
+        {
+          uri: 'https://example.micro.blog/archive/index.json',
+          hint: { key: 'microblog:archive', label: 'Archive' },
+        },
+        {
+          uri: 'https://example.micro.blog/photos/index.json',
+          hint: { key: 'microblog:photos', label: 'Photos' },
+        },
       ]
 
       expect(microblogHandler.resolve(value)).toEqual(expected)
@@ -399,6 +472,14 @@ describe('microblogHandler', () => {
         {
           uri: 'http://alice.micro.blog/podcast.json',
           hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
+        },
+        {
+          uri: 'http://alice.micro.blog/archive/index.json',
+          hint: { key: 'microblog:archive', label: 'Archive' },
+        },
+        {
+          uri: 'http://alice.micro.blog/photos/index.json',
+          hint: { key: 'microblog:photos', label: 'Photos' },
         },
       ]
 

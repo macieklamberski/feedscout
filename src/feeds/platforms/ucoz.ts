@@ -115,18 +115,23 @@ export const ucozHandler: PlatformHandler = {
       return []
     }
 
+    // Every site runs the news module, so every page builds its feed after its own feeds, and the
+    // home page lists its news.
     if (parsed.kind === 'forumSection') {
       return [
         pageFeeds.getFeedEntry('ucoz:forum-section', { sectionId: parsed.sectionId }),
         pageFeeds.getFeedEntry('ucoz:forum'),
+        pageFeeds.getFeedEntry('ucoz:news'),
       ]
     }
 
-    if (parsed.kind === 'module') {
-      return [pageFeeds.getFeedEntry(moduleHints[parsed.module])]
+    if (parsed.kind === 'module' && parsed.module !== 'news') {
+      return [
+        pageFeeds.getFeedEntry(moduleHints[parsed.module]),
+        pageFeeds.getFeedEntry('ucoz:news'),
+      ]
     }
 
-    // Every site runs the news module, and the home page lists its news.
     return [pageFeeds.getFeedEntry('ucoz:news')]
   },
 

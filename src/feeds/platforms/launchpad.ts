@@ -177,37 +177,57 @@ export const launchpadHandler: PlatformHandler = {
       return []
     }
 
+    // The site-wide announcements and bugs need no value from the page, so every page builds them
+    // after its own feeds.
     if (parsed.kind === 'home' && parsed.application === 'main') {
-      return [feeds.getFeedEntry('launchpad:announcements')]
+      return [feeds.getFeedEntry('launchpad:announcements'), feeds.getFeedEntry('launchpad:bugs')]
     }
 
     if (parsed.kind === 'home') {
-      return [feeds.getFeedEntry('launchpad:bugs')]
+      return [feeds.getFeedEntry('launchpad:bugs'), feeds.getFeedEntry('launchpad:announcements')]
     }
 
     if (parsed.kind === 'bug') {
-      return [feeds.getFeedEntry('launchpad:bug', parsed)]
+      return [
+        feeds.getFeedEntry('launchpad:bug', parsed),
+        feeds.getFeedEntry('launchpad:announcements'),
+        feeds.getFeedEntry('launchpad:bugs'),
+      ]
     }
 
     if (parsed.kind === 'branch') {
-      return [feeds.getFeedEntry('launchpad:branch', parsed)]
+      return [
+        feeds.getFeedEntry('launchpad:branch', parsed),
+        feeds.getFeedEntry('launchpad:announcements'),
+        feeds.getFeedEntry('launchpad:bugs'),
+      ]
     }
 
     if (parsed.kind === 'sourcePackage') {
-      return [feeds.getFeedEntry('launchpad:package-bugs', parsed)]
+      return [
+        feeds.getFeedEntry('launchpad:package-bugs', parsed),
+        feeds.getFeedEntry('launchpad:announcements'),
+        feeds.getFeedEntry('launchpad:bugs'),
+      ]
     }
 
     if (parsed.kind === 'project') {
       const { application, project } = parsed
 
       if (application === 'bugs') {
-        return [feeds.getFeedEntry('launchpad:project-bugs', { project })]
+        return [
+          feeds.getFeedEntry('launchpad:project-bugs', { project }),
+          feeds.getFeedEntry('launchpad:announcements'),
+          feeds.getFeedEntry('launchpad:bugs'),
+        ]
       }
 
       if (application === 'code') {
         return [
           feeds.getFeedEntry('launchpad:project-branches', { project }),
           feeds.getFeedEntry('launchpad:project-revisions', { project }),
+          feeds.getFeedEntry('launchpad:announcements'),
+          feeds.getFeedEntry('launchpad:bugs'),
         ]
       }
 
@@ -216,19 +236,27 @@ export const launchpadHandler: PlatformHandler = {
         feeds.getFeedEntry('launchpad:project-bugs', { project }),
         feeds.getFeedEntry('launchpad:project-branches', { project }),
         feeds.getFeedEntry('launchpad:project-revisions', { project }),
+        feeds.getFeedEntry('launchpad:announcements'),
+        feeds.getFeedEntry('launchpad:bugs'),
       ]
     }
 
     const { application, username } = parsed
 
     if (application === 'bugs') {
-      return [feeds.getFeedEntry('launchpad:person-bugs', { username })]
+      return [
+        feeds.getFeedEntry('launchpad:person-bugs', { username }),
+        feeds.getFeedEntry('launchpad:announcements'),
+        feeds.getFeedEntry('launchpad:bugs'),
+      ]
     }
 
     if (application === 'code') {
       return [
         feeds.getFeedEntry('launchpad:person-branches', { username }),
         feeds.getFeedEntry('launchpad:person-revisions', { username }),
+        feeds.getFeedEntry('launchpad:announcements'),
+        feeds.getFeedEntry('launchpad:bugs'),
       ]
     }
 
@@ -236,6 +264,8 @@ export const launchpadHandler: PlatformHandler = {
       feeds.getFeedEntry('launchpad:person-bugs', { username }),
       feeds.getFeedEntry('launchpad:person-branches', { username }),
       feeds.getFeedEntry('launchpad:person-revisions', { username }),
+      feeds.getFeedEntry('launchpad:announcements'),
+      feeds.getFeedEntry('launchpad:bugs'),
     ]
   },
 

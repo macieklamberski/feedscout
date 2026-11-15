@@ -129,46 +129,49 @@ describe('huffdufferHandler', () => {
   })
 
   describe('resolve', () => {
+    const newFeeds: Array<DiscoverUriEntry> = [
+      {
+        uri: 'https://huffduffer.com/new/rss',
+        hint: { key: 'huffduffer:new', label: 'New huffduffs', format: 'rss' },
+      },
+      {
+        uri: 'https://huffduffer.com/new/atom',
+        hint: { key: 'huffduffer:new', label: 'New huffduffs', format: 'atom' },
+      },
+      {
+        uri: 'https://huffduffer.com/new/json',
+        hint: { key: 'huffduffer:new', label: 'New huffduffs', format: 'json' },
+      },
+    ]
+    const popularFeeds: Array<DiscoverUriEntry> = [
+      {
+        uri: 'https://huffduffer.com/popular/rss',
+        hint: { key: 'huffduffer:popular', label: 'Popular', format: 'rss' },
+      },
+      {
+        uri: 'https://huffduffer.com/popular/atom',
+        hint: { key: 'huffduffer:popular', label: 'Popular', format: 'atom' },
+      },
+      {
+        uri: 'https://huffduffer.com/popular/json',
+        hint: { key: 'huffduffer:popular', label: 'Popular', format: 'json' },
+      },
+    ]
+
     it('should return empty array for a URL outside Huffduffer', () => {
       expect(huffdufferHandler.resolve('https://example.com/alice')).toEqual([])
     })
 
-    it('should return the site-wide new feeds for the home page', () => {
+    it('should return the site-wide new and popular feeds for the home page', () => {
       const value = 'https://huffduffer.com/'
-      const expected: Array<DiscoverUriEntry> = [
-        {
-          uri: 'https://huffduffer.com/new/rss',
-          hint: { key: 'huffduffer:new', label: 'New huffduffs', format: 'rss' },
-        },
-        {
-          uri: 'https://huffduffer.com/new/atom',
-          hint: { key: 'huffduffer:new', label: 'New huffduffs', format: 'atom' },
-        },
-        {
-          uri: 'https://huffduffer.com/new/json',
-          hint: { key: 'huffduffer:new', label: 'New huffduffs', format: 'json' },
-        },
-      ]
+      const expected: Array<DiscoverUriEntry> = [...newFeeds, ...popularFeeds]
 
       expect(huffdufferHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return the popular feeds for the popular page', () => {
       const value = 'https://huffduffer.com/popular'
-      const expected: Array<DiscoverUriEntry> = [
-        {
-          uri: 'https://huffduffer.com/popular/rss',
-          hint: { key: 'huffduffer:popular', label: 'Popular', format: 'rss' },
-        },
-        {
-          uri: 'https://huffduffer.com/popular/atom',
-          hint: { key: 'huffduffer:popular', label: 'Popular', format: 'atom' },
-        },
-        {
-          uri: 'https://huffduffer.com/popular/json',
-          hint: { key: 'huffduffer:popular', label: 'Popular', format: 'json' },
-        },
-      ]
+      const expected: Array<DiscoverUriEntry> = [...popularFeeds, ...newFeeds]
 
       expect(huffdufferHandler.resolve(value)).toEqual(expected)
     })
@@ -188,13 +191,17 @@ describe('huffdufferHandler', () => {
           uri: 'https://huffduffer.com/search/json?q=example%20query',
           hint: { key: 'huffduffer:search', label: 'Search', format: 'json' },
         },
+        ...newFeeds,
+        ...popularFeeds,
       ]
 
       expect(huffdufferHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for a search page without a query', () => {
-      expect(huffdufferHandler.resolve('https://huffduffer.com/search')).toEqual([])
+    it('should return the site-wide feeds for a search page without a query', () => {
+      const expected: Array<DiscoverUriEntry> = [...newFeeds, ...popularFeeds]
+
+      expect(huffdufferHandler.resolve('https://huffduffer.com/search')).toEqual(expected)
     })
 
     it('should return the collective feeds for a collective page', () => {
@@ -212,6 +219,8 @@ describe('huffdufferHandler', () => {
           uri: 'https://huffduffer.com/alice/collective/json',
           hint: { key: 'huffduffer:collective', label: 'Collective', format: 'json' },
         },
+        ...newFeeds,
+        ...popularFeeds,
       ]
 
       expect(huffdufferHandler.resolve(value)).toEqual(expected)
@@ -232,6 +241,8 @@ describe('huffdufferHandler', () => {
           uri: 'https://huffduffer.com/alice/json',
           hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'json' },
         },
+        ...newFeeds,
+        ...popularFeeds,
       ]
 
       expect(huffdufferHandler.resolve(value)).toEqual(expected)
@@ -264,6 +275,8 @@ describe('huffdufferHandler', () => {
           uri: 'https://huffduffer.com/alice/json',
           hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'json' },
         },
+        ...newFeeds,
+        ...popularFeeds,
       ]
 
       expect(huffdufferHandler.resolve(value)).toEqual(expected)
@@ -284,6 +297,8 @@ describe('huffdufferHandler', () => {
           uri: 'https://huffduffer.com/alice/12345/related/json',
           hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'json' },
         },
+        ...newFeeds,
+        ...popularFeeds,
       ]
 
       expect(huffdufferHandler.resolve(value)).toEqual(expected)
@@ -304,6 +319,8 @@ describe('huffdufferHandler', () => {
           uri: 'https://huffduffer.com/alice/json',
           hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'json' },
         },
+        ...newFeeds,
+        ...popularFeeds,
       ]
 
       expect(huffdufferHandler.resolve(value)).toEqual(expected)
@@ -332,6 +349,8 @@ describe('huffdufferHandler', () => {
           uri: 'https://huffduffer.com/AliceSmith/json',
           hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'json' },
         },
+        ...newFeeds,
+        ...popularFeeds,
       ]
 
       expect(huffdufferHandler.resolve(value, content)).toEqual(expected)
@@ -372,6 +391,8 @@ describe('huffdufferHandler', () => {
           uri: 'https://huffduffer.com/alicesmith/json',
           hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'json' },
         },
+        ...newFeeds,
+        ...popularFeeds,
       ]
 
       expect(huffdufferHandler.resolve(value, content)).toEqual(expected)

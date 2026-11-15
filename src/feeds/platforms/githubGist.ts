@@ -77,19 +77,29 @@ export const githubGistHandler: PlatformHandler = {
       return []
     }
 
+    // The discover feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'discover') {
       return [feeds.getFeedEntry('github-gist:discover')]
     }
 
     if (parsed.kind === 'starred') {
-      return [feeds.getFeedEntry('github-gist:starred', { username: parsed.username })]
+      return [
+        feeds.getFeedEntry('github-gist:starred', { username: parsed.username }),
+        feeds.getFeedEntry('github-gist:discover'),
+      ]
     }
 
     if (parsed.kind === 'forks') {
-      return [feeds.getFeedEntry('github-gist:forks', { username: parsed.username })]
+      return [
+        feeds.getFeedEntry('github-gist:forks', { username: parsed.username }),
+        feeds.getFeedEntry('github-gist:discover'),
+      ]
     }
 
-    return [feeds.getFeedEntry('github-gist:gists', { username: parsed.username })]
+    return [
+      feeds.getFeedEntry('github-gist:gists', { username: parsed.username }),
+      feeds.getFeedEntry('github-gist:discover'),
+    ]
   },
 
   getFeedHint: (url) => {

@@ -153,6 +153,34 @@ describe('chambermasterHandler', () => {
           uri: 'https://business.example.com/Feed/rss/FeaturedEvents.rss',
           hint: { key: 'chambermaster:featured-events', label: 'Featured events' },
         },
+        {
+          uri: 'https://business.example.com/Feed/rss/NewMembers.rss',
+          hint: { key: 'chambermaster:new-members', label: 'New members' },
+        },
+        {
+          uri: 'https://business.example.com/Feed/rss/FeaturedMembers.rss',
+          hint: { key: 'chambermaster:featured-members', label: 'Featured members' },
+        },
+        {
+          uri: 'https://business.example.com/Feed/rss/NewJobs.rss',
+          hint: { key: 'chambermaster:new-jobs', label: 'New jobs' },
+        },
+        {
+          uri: 'https://business.example.com/Feed/rss/NewCoupons.rss',
+          hint: { key: 'chambermaster:new-coupons', label: 'New coupons' },
+        },
+        {
+          uri: 'https://business.example.com/Feed/rss/NewMarketItems.rss',
+          hint: { key: 'chambermaster:new-market-items', label: 'New marketplace items' },
+        },
+        {
+          uri: 'https://business.example.com/Feed/rss/NewsReleases.rss',
+          hint: { key: 'chambermaster:news-releases', label: 'News releases' },
+        },
+        {
+          uri: 'https://business.example.com/Feed/rss/NewM2MDeals.rss',
+          hint: { key: 'chambermaster:new-m2m-deals', label: 'New member to member deals' },
+        },
       ]
 
       expect(chambermasterHandler.resolve(value)).toEqual(expected)
@@ -160,10 +188,46 @@ describe('chambermasterHandler', () => {
 
     it('should keep the page origin on a gochambermaster.com preview host', () => {
       const value = 'https://examplechamber.preview.gochambermaster.com/jobs'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://examplechamber.preview.gochambermaster.com/Feed/rss/NewJobs.rss',
           hint: { key: 'chambermaster:new-jobs', label: 'New jobs' },
+        },
+        {
+          uri: 'https://examplechamber.preview.gochambermaster.com/Feed/rss/UpcomingEvents.rss',
+          hint: { key: 'chambermaster:upcoming-events', label: 'Upcoming events' },
+        },
+        {
+          uri: 'https://examplechamber.preview.gochambermaster.com/Feed/rss/NewEvents.rss',
+          hint: { key: 'chambermaster:new-events', label: 'New events' },
+        },
+        {
+          uri: 'https://examplechamber.preview.gochambermaster.com/Feed/rss/FeaturedEvents.rss',
+          hint: { key: 'chambermaster:featured-events', label: 'Featured events' },
+        },
+        {
+          uri: 'https://examplechamber.preview.gochambermaster.com/Feed/rss/NewMembers.rss',
+          hint: { key: 'chambermaster:new-members', label: 'New members' },
+        },
+        {
+          uri: 'https://examplechamber.preview.gochambermaster.com/Feed/rss/FeaturedMembers.rss',
+          hint: { key: 'chambermaster:featured-members', label: 'Featured members' },
+        },
+        {
+          uri: 'https://examplechamber.preview.gochambermaster.com/Feed/rss/NewCoupons.rss',
+          hint: { key: 'chambermaster:new-coupons', label: 'New coupons' },
+        },
+        {
+          uri: 'https://examplechamber.preview.gochambermaster.com/Feed/rss/NewMarketItems.rss',
+          hint: { key: 'chambermaster:new-market-items', label: 'New marketplace items' },
+        },
+        {
+          uri: 'https://examplechamber.preview.gochambermaster.com/Feed/rss/NewsReleases.rss',
+          hint: { key: 'chambermaster:news-releases', label: 'News releases' },
+        },
+        {
+          uri: 'https://examplechamber.preview.gochambermaster.com/Feed/rss/NewM2MDeals.rss',
+          hint: { key: 'chambermaster:new-m2m-deals', label: 'New member to member deals' },
         },
       ]
 
@@ -181,6 +245,38 @@ describe('chambermasterHandler', () => {
           uri: 'https://business.example.com/Feed/rss/FeaturedMembers.rss',
           hint: { key: 'chambermaster:featured-members', label: 'Featured members' },
         },
+        {
+          uri: 'https://business.example.com/Feed/rss/UpcomingEvents.rss',
+          hint: { key: 'chambermaster:upcoming-events', label: 'Upcoming events' },
+        },
+        {
+          uri: 'https://business.example.com/Feed/rss/NewEvents.rss',
+          hint: { key: 'chambermaster:new-events', label: 'New events' },
+        },
+        {
+          uri: 'https://business.example.com/Feed/rss/FeaturedEvents.rss',
+          hint: { key: 'chambermaster:featured-events', label: 'Featured events' },
+        },
+        {
+          uri: 'https://business.example.com/Feed/rss/NewJobs.rss',
+          hint: { key: 'chambermaster:new-jobs', label: 'New jobs' },
+        },
+        {
+          uri: 'https://business.example.com/Feed/rss/NewCoupons.rss',
+          hint: { key: 'chambermaster:new-coupons', label: 'New coupons' },
+        },
+        {
+          uri: 'https://business.example.com/Feed/rss/NewMarketItems.rss',
+          hint: { key: 'chambermaster:new-market-items', label: 'New marketplace items' },
+        },
+        {
+          uri: 'https://business.example.com/Feed/rss/NewsReleases.rss',
+          hint: { key: 'chambermaster:news-releases', label: 'News releases' },
+        },
+        {
+          uri: 'https://business.example.com/Feed/rss/NewM2MDeals.rss',
+          hint: { key: 'chambermaster:new-m2m-deals', label: 'New member to member deals' },
+        },
       ]
 
       expect(chambermasterHandler.resolve(value)).toEqual(expected)
@@ -191,6 +287,42 @@ describe('chambermasterHandler', () => {
         {
           uri: 'https://members.example.com/Feed/rss/NewJobs.rss',
           hint: { key: 'chambermaster:new-jobs', label: 'New jobs' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/UpcomingEvents.rss',
+          hint: { key: 'chambermaster:upcoming-events', label: 'Upcoming events' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewEvents.rss',
+          hint: { key: 'chambermaster:new-events', label: 'New events' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/FeaturedEvents.rss',
+          hint: { key: 'chambermaster:featured-events', label: 'Featured events' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewMembers.rss',
+          hint: { key: 'chambermaster:new-members', label: 'New members' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/FeaturedMembers.rss',
+          hint: { key: 'chambermaster:featured-members', label: 'Featured members' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewCoupons.rss',
+          hint: { key: 'chambermaster:new-coupons', label: 'New coupons' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewMarketItems.rss',
+          hint: { key: 'chambermaster:new-market-items', label: 'New marketplace items' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewsReleases.rss',
+          hint: { key: 'chambermaster:news-releases', label: 'News releases' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewM2MDeals.rss',
+          hint: { key: 'chambermaster:new-m2m-deals', label: 'New member to member deals' },
         },
       ]
 
@@ -203,6 +335,42 @@ describe('chambermasterHandler', () => {
           uri: 'https://members.example.com/Feed/rss/NewCoupons.rss',
           hint: { key: 'chambermaster:new-coupons', label: 'New coupons' },
         },
+        {
+          uri: 'https://members.example.com/Feed/rss/UpcomingEvents.rss',
+          hint: { key: 'chambermaster:upcoming-events', label: 'Upcoming events' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewEvents.rss',
+          hint: { key: 'chambermaster:new-events', label: 'New events' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/FeaturedEvents.rss',
+          hint: { key: 'chambermaster:featured-events', label: 'Featured events' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewMembers.rss',
+          hint: { key: 'chambermaster:new-members', label: 'New members' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/FeaturedMembers.rss',
+          hint: { key: 'chambermaster:featured-members', label: 'Featured members' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewJobs.rss',
+          hint: { key: 'chambermaster:new-jobs', label: 'New jobs' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewMarketItems.rss',
+          hint: { key: 'chambermaster:new-market-items', label: 'New marketplace items' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewsReleases.rss',
+          hint: { key: 'chambermaster:news-releases', label: 'News releases' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewM2MDeals.rss',
+          hint: { key: 'chambermaster:new-m2m-deals', label: 'New member to member deals' },
+        },
       ]
 
       expect(chambermasterHandler.resolve('https://members.example.com/hotdeals')).toEqual(expected)
@@ -213,6 +381,42 @@ describe('chambermasterHandler', () => {
         {
           uri: 'https://members.example.com/Feed/rss/NewMarketItems.rss',
           hint: { key: 'chambermaster:new-market-items', label: 'New marketplace items' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/UpcomingEvents.rss',
+          hint: { key: 'chambermaster:upcoming-events', label: 'Upcoming events' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewEvents.rss',
+          hint: { key: 'chambermaster:new-events', label: 'New events' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/FeaturedEvents.rss',
+          hint: { key: 'chambermaster:featured-events', label: 'Featured events' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewMembers.rss',
+          hint: { key: 'chambermaster:new-members', label: 'New members' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/FeaturedMembers.rss',
+          hint: { key: 'chambermaster:featured-members', label: 'Featured members' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewJobs.rss',
+          hint: { key: 'chambermaster:new-jobs', label: 'New jobs' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewCoupons.rss',
+          hint: { key: 'chambermaster:new-coupons', label: 'New coupons' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewsReleases.rss',
+          hint: { key: 'chambermaster:news-releases', label: 'News releases' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewM2MDeals.rss',
+          hint: { key: 'chambermaster:new-m2m-deals', label: 'New member to member deals' },
         },
       ]
 
@@ -227,6 +431,42 @@ describe('chambermasterHandler', () => {
           uri: 'https://members.example.com/Feed/rss/NewsReleases.rss',
           hint: { key: 'chambermaster:news-releases', label: 'News releases' },
         },
+        {
+          uri: 'https://members.example.com/Feed/rss/UpcomingEvents.rss',
+          hint: { key: 'chambermaster:upcoming-events', label: 'Upcoming events' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewEvents.rss',
+          hint: { key: 'chambermaster:new-events', label: 'New events' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/FeaturedEvents.rss',
+          hint: { key: 'chambermaster:featured-events', label: 'Featured events' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewMembers.rss',
+          hint: { key: 'chambermaster:new-members', label: 'New members' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/FeaturedMembers.rss',
+          hint: { key: 'chambermaster:featured-members', label: 'Featured members' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewJobs.rss',
+          hint: { key: 'chambermaster:new-jobs', label: 'New jobs' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewCoupons.rss',
+          hint: { key: 'chambermaster:new-coupons', label: 'New coupons' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewMarketItems.rss',
+          hint: { key: 'chambermaster:new-market-items', label: 'New marketplace items' },
+        },
+        {
+          uri: 'https://members.example.com/Feed/rss/NewM2MDeals.rss',
+          hint: { key: 'chambermaster:new-m2m-deals', label: 'New member to member deals' },
+        },
       ]
 
       expect(chambermasterHandler.resolve('https://members.example.com/news')).toEqual(expected)
@@ -237,6 +477,42 @@ describe('chambermasterHandler', () => {
         {
           uri: 'https://www.example.com/Feed/rss/NewM2MDeals.rss',
           hint: { key: 'chambermaster:new-m2m-deals', label: 'New member to member deals' },
+        },
+        {
+          uri: 'https://www.example.com/Feed/rss/UpcomingEvents.rss',
+          hint: { key: 'chambermaster:upcoming-events', label: 'Upcoming events' },
+        },
+        {
+          uri: 'https://www.example.com/Feed/rss/NewEvents.rss',
+          hint: { key: 'chambermaster:new-events', label: 'New events' },
+        },
+        {
+          uri: 'https://www.example.com/Feed/rss/FeaturedEvents.rss',
+          hint: { key: 'chambermaster:featured-events', label: 'Featured events' },
+        },
+        {
+          uri: 'https://www.example.com/Feed/rss/NewMembers.rss',
+          hint: { key: 'chambermaster:new-members', label: 'New members' },
+        },
+        {
+          uri: 'https://www.example.com/Feed/rss/FeaturedMembers.rss',
+          hint: { key: 'chambermaster:featured-members', label: 'Featured members' },
+        },
+        {
+          uri: 'https://www.example.com/Feed/rss/NewJobs.rss',
+          hint: { key: 'chambermaster:new-jobs', label: 'New jobs' },
+        },
+        {
+          uri: 'https://www.example.com/Feed/rss/NewCoupons.rss',
+          hint: { key: 'chambermaster:new-coupons', label: 'New coupons' },
+        },
+        {
+          uri: 'https://www.example.com/Feed/rss/NewMarketItems.rss',
+          hint: { key: 'chambermaster:new-market-items', label: 'New marketplace items' },
+        },
+        {
+          uri: 'https://www.example.com/Feed/rss/NewsReleases.rss',
+          hint: { key: 'chambermaster:news-releases', label: 'News releases' },
         },
       ]
 

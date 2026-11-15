@@ -129,6 +129,34 @@ describe('newswireHandler', () => {
           uri: 'https://acme.newswire.com/browse/rss',
           hint: { key: 'newswire:newsroom', label: 'Newsroom' },
         },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/news',
+          hint: { key: 'newswire:news', label: 'News' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/pr',
+          hint: { key: 'newswire:press-releases', label: 'Press releases' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/social',
+          hint: { key: 'newswire:social', label: 'Social wire' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/image',
+          hint: { key: 'newswire:images', label: 'Images' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/video',
+          hint: { key: 'newswire:videos', label: 'Videos' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/audio',
+          hint: { key: 'newswire:audio', label: 'Audio' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/event',
+          hint: { key: 'newswire:events', label: 'Events' },
+        },
       ]
 
       expect(newswireHandler.resolve(value)).toEqual(expected)
@@ -144,6 +172,30 @@ describe('newswireHandler', () => {
         {
           uri: 'https://acme.newswire.com/browse/rss',
           hint: { key: 'newswire:newsroom', label: 'Newsroom' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/news',
+          hint: { key: 'newswire:news', label: 'News' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/pr',
+          hint: { key: 'newswire:press-releases', label: 'Press releases' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/social',
+          hint: { key: 'newswire:social', label: 'Social wire' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/video',
+          hint: { key: 'newswire:videos', label: 'Videos' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/audio',
+          hint: { key: 'newswire:audio', label: 'Audio' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/event',
+          hint: { key: 'newswire:events', label: 'Events' },
         },
       ]
 
@@ -161,6 +213,30 @@ describe('newswireHandler', () => {
           uri: 'https://acme.newswire.com/browse/rss',
           hint: { key: 'newswire:newsroom', label: 'Newsroom' },
         },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/news',
+          hint: { key: 'newswire:news', label: 'News' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/pr',
+          hint: { key: 'newswire:press-releases', label: 'Press releases' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/social',
+          hint: { key: 'newswire:social', label: 'Social wire' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/image',
+          hint: { key: 'newswire:images', label: 'Images' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/audio',
+          hint: { key: 'newswire:audio', label: 'Audio' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/event',
+          hint: { key: 'newswire:events', label: 'Events' },
+        },
       ]
 
       expect(newswireHandler.resolve(value)).toEqual(expected)
@@ -176,6 +252,30 @@ describe('newswireHandler', () => {
         {
           uri: 'https://acme.newswire.com/browse/rss',
           hint: { key: 'newswire:newsroom', label: 'Newsroom' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/news',
+          hint: { key: 'newswire:news', label: 'News' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/pr',
+          hint: { key: 'newswire:press-releases', label: 'Press releases' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/social',
+          hint: { key: 'newswire:social', label: 'Social wire' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/image',
+          hint: { key: 'newswire:images', label: 'Images' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/video',
+          hint: { key: 'newswire:videos', label: 'Videos' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/event',
+          hint: { key: 'newswire:events', label: 'Events' },
         },
       ]
 
@@ -193,6 +293,30 @@ describe('newswireHandler', () => {
           uri: 'https://acme.newswire.com/browse/rss',
           hint: { key: 'newswire:newsroom', label: 'Newsroom' },
         },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/news',
+          hint: { key: 'newswire:news', label: 'News' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/pr',
+          hint: { key: 'newswire:press-releases', label: 'Press releases' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/social',
+          hint: { key: 'newswire:social', label: 'Social wire' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/image',
+          hint: { key: 'newswire:images', label: 'Images' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/video',
+          hint: { key: 'newswire:videos', label: 'Videos' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/audio',
+          hint: { key: 'newswire:audio', label: 'Audio' },
+        },
       ]
 
       expect(newswireHandler.resolve(value)).toEqual(expected)
@@ -208,6 +332,34 @@ describe('newswireHandler', () => {
         {
           uri: 'https://acme.newswire.com/browse/rss',
           hint: { key: 'newswire:newsroom', label: 'Newsroom' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/news',
+          hint: { key: 'newswire:news', label: 'News' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/pr',
+          hint: { key: 'newswire:press-releases', label: 'Press releases' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/social',
+          hint: { key: 'newswire:social', label: 'Social wire' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/image',
+          hint: { key: 'newswire:images', label: 'Images' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/video',
+          hint: { key: 'newswire:videos', label: 'Videos' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/audio',
+          hint: { key: 'newswire:audio', label: 'Audio' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/event',
+          hint: { key: 'newswire:events', label: 'Events' },
         },
       ]
 
@@ -225,6 +377,30 @@ describe('newswireHandler', () => {
           uri: 'https://acme.newswire.com/browse/rss',
           hint: { key: 'newswire:newsroom', label: 'Newsroom' },
         },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/news',
+          hint: { key: 'newswire:news', label: 'News' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/social',
+          hint: { key: 'newswire:social', label: 'Social wire' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/image',
+          hint: { key: 'newswire:images', label: 'Images' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/video',
+          hint: { key: 'newswire:videos', label: 'Videos' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/audio',
+          hint: { key: 'newswire:audio', label: 'Audio' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/event',
+          hint: { key: 'newswire:events', label: 'Events' },
+        },
       ]
 
       expect(newswireHandler.resolve(value)).toEqual(expected)
@@ -240,6 +416,30 @@ describe('newswireHandler', () => {
         {
           uri: 'https://acme.newswire.com/browse/rss',
           hint: { key: 'newswire:newsroom', label: 'Newsroom' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/pr',
+          hint: { key: 'newswire:press-releases', label: 'Press releases' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/social',
+          hint: { key: 'newswire:social', label: 'Social wire' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/image',
+          hint: { key: 'newswire:images', label: 'Images' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/video',
+          hint: { key: 'newswire:videos', label: 'Videos' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/audio',
+          hint: { key: 'newswire:audio', label: 'Audio' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/event',
+          hint: { key: 'newswire:events', label: 'Events' },
         },
       ]
 
@@ -257,6 +457,30 @@ describe('newswireHandler', () => {
           uri: 'https://acme.newswire.com/browse/rss',
           hint: { key: 'newswire:newsroom', label: 'Newsroom' },
         },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/news',
+          hint: { key: 'newswire:news', label: 'News' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/pr',
+          hint: { key: 'newswire:press-releases', label: 'Press releases' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/image',
+          hint: { key: 'newswire:images', label: 'Images' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/video',
+          hint: { key: 'newswire:videos', label: 'Videos' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/audio',
+          hint: { key: 'newswire:audio', label: 'Audio' },
+        },
+        {
+          uri: 'https://acme.newswire.com/browse/rss/event',
+          hint: { key: 'newswire:events', label: 'Events' },
+        },
       ]
 
       expect(newswireHandler.resolve(value)).toEqual(expected)
@@ -272,6 +496,30 @@ describe('newswireHandler', () => {
         {
           uri: 'http://acme.newswire.com/browse/rss',
           hint: { key: 'newswire:newsroom', label: 'Newsroom' },
+        },
+        {
+          uri: 'http://acme.newswire.com/browse/rss/news',
+          hint: { key: 'newswire:news', label: 'News' },
+        },
+        {
+          uri: 'http://acme.newswire.com/browse/rss/social',
+          hint: { key: 'newswire:social', label: 'Social wire' },
+        },
+        {
+          uri: 'http://acme.newswire.com/browse/rss/image',
+          hint: { key: 'newswire:images', label: 'Images' },
+        },
+        {
+          uri: 'http://acme.newswire.com/browse/rss/video',
+          hint: { key: 'newswire:videos', label: 'Videos' },
+        },
+        {
+          uri: 'http://acme.newswire.com/browse/rss/audio',
+          hint: { key: 'newswire:audio', label: 'Audio' },
+        },
+        {
+          uri: 'http://acme.newswire.com/browse/rss/event',
+          hint: { key: 'newswire:events', label: 'Events' },
         },
       ]
 

@@ -64,6 +64,8 @@ export const tildesHandler: PlatformHandler = {
 
     const { tag } = parsed
 
+    // The site-wide topics feed needs no value from the page, so every page builds it after its own
+    // feeds.
     if (parsed.kind === 'group') {
       const { group } = parsed
 
@@ -71,12 +73,16 @@ export const tildesHandler: PlatformHandler = {
         return [
           feeds.getFeedEntry('tildes:group-tag', { group, tag }, 'rss'),
           feeds.getFeedEntry('tildes:group-tag', { group, tag }, 'atom'),
+          feeds.getFeedEntry('tildes:topics', {}, 'rss'),
+          feeds.getFeedEntry('tildes:topics', {}, 'atom'),
         ]
       }
 
       return [
         feeds.getFeedEntry('tildes:group', { group }, 'rss'),
         feeds.getFeedEntry('tildes:group', { group }, 'atom'),
+        feeds.getFeedEntry('tildes:topics', {}, 'rss'),
+        feeds.getFeedEntry('tildes:topics', {}, 'atom'),
       ]
     }
 
@@ -84,6 +90,8 @@ export const tildesHandler: PlatformHandler = {
       return [
         feeds.getFeedEntry('tildes:tag', { tag }, 'rss'),
         feeds.getFeedEntry('tildes:tag', { tag }, 'atom'),
+        feeds.getFeedEntry('tildes:topics', {}, 'rss'),
+        feeds.getFeedEntry('tildes:topics', {}, 'atom'),
       ]
     }
 

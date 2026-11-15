@@ -83,8 +83,15 @@ export const tumblrHandler: PlatformHandler = {
       return []
     }
 
+    // The blog's posts and podcast need no value from the page but its blog, so every page builds
+    // them after its own feeds.
     if (parsed.kind === 'tag') {
-      return [page.getFeedEntry('tumblr:tag', { host, tag: parsed.tag })]
+      return [
+        page.getFeedEntry('tumblr:tag', { host, tag: parsed.tag }),
+        page.getFeedEntry('tumblr:posts', { host }),
+        page.getFeedEntry('tumblr:theme-posts', { host }),
+        page.getFeedEntry('tumblr:podcast', { host }),
+      ]
     }
 
     return [

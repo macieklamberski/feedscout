@@ -1020,6 +1020,7 @@
   "koha": {
     "koha:comments": "https://library.hekima.ac.ke/cgi-bin/koha/opac-showreviews.pl?format=rss",
     "koha:list": "https://koha.ffzg.hr/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber=6649",
+    "koha:news": "https://library.imar.ro/cgi-bin/koha/opac-news-rss.pl",
     "koha:search": "https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-search.pl?q=agua&count=50&sort_by=acqdate_dsc&format=rss"
   },
   "laget": {

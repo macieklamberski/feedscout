@@ -117,10 +117,22 @@ describe('tumblrHandler', () => {
 
     it('should return the tag feed for a capitalized tagged segment', () => {
       const value = 'https://example.tumblr.com/Tagged/updates'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.tumblr.com/tagged/updates/rss',
           hint: { key: 'tumblr:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://example.tumblr.com/rss',
+          hint: { key: 'tumblr:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://example.tumblr.com/?format=rss',
+          hint: { key: 'tumblr:theme-posts', label: 'Theme posts' },
+        },
+        {
+          uri: 'https://example.tumblr.com/podcast',
+          hint: { key: 'tumblr:podcast', label: 'Podcast' },
         },
       ]
 
@@ -146,10 +158,22 @@ describe('tumblrHandler', () => {
 
     it('should return tagged feed URL for tag page', () => {
       const value = 'https://example.tumblr.com/tagged/photography'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.tumblr.com/tagged/photography/rss',
           hint: { key: 'tumblr:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://example.tumblr.com/rss',
+          hint: { key: 'tumblr:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://example.tumblr.com/?format=rss',
+          hint: { key: 'tumblr:theme-posts', label: 'Theme posts' },
+        },
+        {
+          uri: 'https://example.tumblr.com/podcast',
+          hint: { key: 'tumblr:podcast', label: 'Podcast' },
         },
       ]
 
@@ -192,10 +216,22 @@ describe('tumblrHandler', () => {
 
     it('should keep the http scheme of an http tag page', () => {
       const value = 'http://example.tumblr.com/tagged/updates'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'http://example.tumblr.com/tagged/updates/rss',
           hint: { key: 'tumblr:tag', label: 'Tag' },
+        },
+        {
+          uri: 'http://example.tumblr.com/rss',
+          hint: { key: 'tumblr:posts', label: 'Posts' },
+        },
+        {
+          uri: 'http://example.tumblr.com/?format=rss',
+          hint: { key: 'tumblr:theme-posts', label: 'Theme posts' },
+        },
+        {
+          uri: 'http://example.tumblr.com/podcast',
+          hint: { key: 'tumblr:podcast', label: 'Podcast' },
         },
       ]
 

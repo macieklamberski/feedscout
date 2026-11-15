@@ -87,26 +87,48 @@ export const qiitaHandler: PlatformHandler = {
       return []
     }
 
+    // The popular items and Qiita Zine feeds need no value from the page, so every page builds them
+    // after its own feeds.
     if (parsed.kind === 'tag') {
-      return [feeds.getFeedEntry('qiita:tag', { tag: parsed.tag })]
+      return [
+        feeds.getFeedEntry('qiita:tag', { tag: parsed.tag }),
+        feeds.getFeedEntry('qiita:popular'),
+        feeds.getFeedEntry('qiita:zine', {}, 'rss'),
+        feeds.getFeedEntry('qiita:zine', {}, 'atom'),
+      ]
     }
 
     if (parsed.kind === 'organization') {
-      return [feeds.getFeedEntry('qiita:organization', { organization: parsed.organization })]
+      return [
+        feeds.getFeedEntry('qiita:organization', { organization: parsed.organization }),
+        feeds.getFeedEntry('qiita:popular'),
+        feeds.getFeedEntry('qiita:zine', {}, 'rss'),
+        feeds.getFeedEntry('qiita:zine', {}, 'atom'),
+      ]
     }
 
     if (parsed.kind === 'popularItems') {
-      return [feeds.getFeedEntry('qiita:popular')]
+      return [
+        feeds.getFeedEntry('qiita:popular'),
+        feeds.getFeedEntry('qiita:zine', {}, 'rss'),
+        feeds.getFeedEntry('qiita:zine', {}, 'atom'),
+      ]
     }
 
     if (parsed.kind === 'officialColumns') {
       return [
         feeds.getFeedEntry('qiita:zine', {}, 'rss'),
         feeds.getFeedEntry('qiita:zine', {}, 'atom'),
+        feeds.getFeedEntry('qiita:popular'),
       ]
     }
 
-    return [feeds.getFeedEntry('qiita:posts', { username: parsed.username })]
+    return [
+      feeds.getFeedEntry('qiita:posts', { username: parsed.username }),
+      feeds.getFeedEntry('qiita:popular'),
+      feeds.getFeedEntry('qiita:zine', {}, 'rss'),
+      feeds.getFeedEntry('qiita:zine', {}, 'atom'),
+    ]
   },
 
   // The table reads any first segment as a username, and a route word is none:

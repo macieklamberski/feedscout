@@ -64,17 +64,28 @@ describe('pinboardHandler', () => {
   })
 
   describe('resolve', () => {
+    const recentFeed: DiscoverUriEntry = {
+      uri: 'https://feeds.pinboard.in/rss/recent/',
+      hint: { key: 'pinboard:recent', label: 'Recent' },
+    }
+    const popularFeed: DiscoverUriEntry = {
+      uri: 'https://feeds.pinboard.in/rss/popular/',
+      hint: { key: 'pinboard:popular', label: 'Popular' },
+    }
+
     it('should return empty array for a URL outside Pinboard', () => {
       expect(pinboardHandler.resolve('https://example.com/')).toEqual([])
     })
 
     it('should return the bookmarks feed for a user page', () => {
       const value = 'https://pinboard.in/u:example/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://feeds.pinboard.in/rss/u:example/',
           hint: { key: 'pinboard:bookmarks', label: 'Bookmarks' },
         },
+        recentFeed,
+        popularFeed,
       ]
 
       expect(pinboardHandler.resolve(value)).toEqual(expected)
@@ -87,6 +98,8 @@ describe('pinboardHandler', () => {
           uri: 'https://feeds.pinboard.in/rss/u:example/from:twitter/',
           hint: { key: 'pinboard:source', label: 'Source' },
         },
+        recentFeed,
+        popularFeed,
       ]
 
       expect(pinboardHandler.resolve(value)).toEqual(expected)
@@ -99,6 +112,8 @@ describe('pinboardHandler', () => {
           uri: 'https://feeds.pinboard.in/rss/u:example/t:rss/t:atom/from:twitter/',
           hint: { key: 'pinboard:source', label: 'Source' },
         },
+        recentFeed,
+        popularFeed,
       ]
 
       expect(pinboardHandler.resolve(value)).toEqual(expected)
@@ -106,11 +121,13 @@ describe('pinboardHandler', () => {
 
     it('should keep the username case', () => {
       const value = 'https://pinboard.in/U:Example/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://feeds.pinboard.in/rss/u:Example/',
           hint: { key: 'pinboard:bookmarks', label: 'Bookmarks' },
         },
+        recentFeed,
+        popularFeed,
       ]
 
       expect(pinboardHandler.resolve(value)).toEqual(expected)
@@ -118,11 +135,13 @@ describe('pinboardHandler', () => {
 
     it('should return the bookmarks feed for a user subpage', () => {
       const value = 'https://pinboard.in/u:example/before:12345'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://feeds.pinboard.in/rss/u:example/',
           hint: { key: 'pinboard:bookmarks', label: 'Bookmarks' },
         },
+        recentFeed,
+        popularFeed,
       ]
 
       expect(pinboardHandler.resolve(value)).toEqual(expected)
@@ -130,11 +149,13 @@ describe('pinboardHandler', () => {
 
     it('should return the user tag feed for a user tag page', () => {
       const value = 'https://pinboard.in/u:example/t:Programming/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://feeds.pinboard.in/rss/u:example/t:Programming/',
           hint: { key: 'pinboard:user-tag', label: 'User tag' },
         },
+        recentFeed,
+        popularFeed,
       ]
 
       expect(pinboardHandler.resolve(value)).toEqual(expected)
@@ -142,11 +163,13 @@ describe('pinboardHandler', () => {
 
     it('should return the user tag feed for a user page with several tags', () => {
       const value = 'https://pinboard.in/u:example/T:programming/t:rust'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://feeds.pinboard.in/rss/u:example/t:programming/t:rust/',
           hint: { key: 'pinboard:user-tag', label: 'User tag' },
         },
+        recentFeed,
+        popularFeed,
       ]
 
       expect(pinboardHandler.resolve(value)).toEqual(expected)
@@ -154,11 +177,12 @@ describe('pinboardHandler', () => {
 
     it('should return the recent feed for the recent page', () => {
       const value = 'https://pinboard.in/recent/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://feeds.pinboard.in/rss/recent/',
           hint: { key: 'pinboard:recent', label: 'Recent' },
         },
+        popularFeed,
       ]
 
       expect(pinboardHandler.resolve(value)).toEqual(expected)
@@ -166,11 +190,12 @@ describe('pinboardHandler', () => {
 
     it('should return the popular feed for the popular page', () => {
       const value = 'https://pinboard.in/popular/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://feeds.pinboard.in/rss/popular/',
           hint: { key: 'pinboard:popular', label: 'Popular' },
         },
+        recentFeed,
       ]
 
       expect(pinboardHandler.resolve(value)).toEqual(expected)
@@ -178,11 +203,13 @@ describe('pinboardHandler', () => {
 
     it('should return the tag feed for a site-wide tag page', () => {
       const value = 'https://pinboard.in/t:programming/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://feeds.pinboard.in/rss/t:programming/',
           hint: { key: 'pinboard:tag', label: 'Tag' },
         },
+        recentFeed,
+        popularFeed,
       ]
 
       expect(pinboardHandler.resolve(value)).toEqual(expected)
@@ -190,11 +217,12 @@ describe('pinboardHandler', () => {
 
     it('should return the popular feed for the homepage', () => {
       const value = 'https://pinboard.in/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://feeds.pinboard.in/rss/popular/',
           hint: { key: 'pinboard:popular', label: 'Popular' },
         },
+        recentFeed,
       ]
 
       expect(pinboardHandler.resolve(value)).toEqual(expected)

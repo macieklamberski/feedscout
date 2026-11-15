@@ -56,10 +56,14 @@ describe('kickstarterHandler', () => {
 
     it('should return atom feed for project page', () => {
       const value = 'https://www.kickstarter.com/projects/reinnesplace/reinnes-place'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.kickstarter.com/projects/reinnesplace/reinnes-place/posts.atom',
           hint: { key: 'kickstarter:updates', label: 'Updates' },
+        },
+        {
+          uri: 'https://www.kickstarter.com/projects/feed.atom',
+          hint: { key: 'kickstarter:projects', label: 'Projects' },
         },
       ]
 
@@ -68,10 +72,14 @@ describe('kickstarterHandler', () => {
 
     it('should return atom feed for project page with a capitalized projects segment', () => {
       const value = 'https://www.kickstarter.com/Projects/reinnesplace/reinnes-place'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.kickstarter.com/projects/reinnesplace/reinnes-place/posts.atom',
           hint: { key: 'kickstarter:updates', label: 'Updates' },
+        },
+        {
+          uri: 'https://www.kickstarter.com/projects/feed.atom',
+          hint: { key: 'kickstarter:projects', label: 'Projects' },
         },
       ]
 
@@ -80,10 +88,14 @@ describe('kickstarterHandler', () => {
 
     it('should return atom feed for project subpage', () => {
       const value = 'https://www.kickstarter.com/projects/reinnesplace/reinnes-place/description'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.kickstarter.com/projects/reinnesplace/reinnes-place/posts.atom',
           hint: { key: 'kickstarter:updates', label: 'Updates' },
+        },
+        {
+          uri: 'https://www.kickstarter.com/projects/feed.atom',
+          hint: { key: 'kickstarter:projects', label: 'Projects' },
         },
       ]
 
@@ -128,10 +140,14 @@ describe('kickstarterHandler', () => {
 
     it('should return curated page feed for a curated page', () => {
       const value = 'https://www.kickstarter.com/pages/example'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.kickstarter.com/pages/example.atom',
           hint: { key: 'kickstarter:page', label: 'Curated projects' },
+        },
+        {
+          uri: 'https://www.kickstarter.com/projects/feed.atom',
+          hint: { key: 'kickstarter:projects', label: 'Projects' },
         },
       ]
 
@@ -140,10 +156,14 @@ describe('kickstarterHandler', () => {
 
     it('should handle URLs with query params', () => {
       const value = 'https://www.kickstarter.com/projects/creator/project?ref=discovery'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.kickstarter.com/projects/creator/project/posts.atom',
           hint: { key: 'kickstarter:updates', label: 'Updates' },
+        },
+        {
+          uri: 'https://www.kickstarter.com/projects/feed.atom',
+          hint: { key: 'kickstarter:projects', label: 'Projects' },
         },
       ]
 
@@ -152,10 +172,14 @@ describe('kickstarterHandler', () => {
 
     it('should handle URLs with trailing slashes', () => {
       const value = 'https://www.kickstarter.com/projects/creator/project/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.kickstarter.com/projects/creator/project/posts.atom',
           hint: { key: 'kickstarter:updates', label: 'Updates' },
+        },
+        {
+          uri: 'https://www.kickstarter.com/projects/feed.atom',
+          hint: { key: 'kickstarter:projects', label: 'Projects' },
         },
       ]
 

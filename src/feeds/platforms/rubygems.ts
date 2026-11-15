@@ -55,9 +55,14 @@ export const rubygemsHandler: PlatformHandler = {
       return []
     }
 
-    // Gem names are case-sensitive: /gems/RedCloth/versions.atom answers and /gems/redcloth 404s.
+    // The latest gems feed needs no value from the page, so every page builds it after its own
+    // feeds. Gem names are case-sensitive: /gems/RedCloth/versions.atom answers and /gems/redcloth
+    // 404s.
     if (parsed.kind === 'gem') {
-      return [feeds.getFeedEntry('rubygems:versions', { gem: parsed.gem })]
+      return [
+        feeds.getFeedEntry('rubygems:versions', { gem: parsed.gem }),
+        feeds.getFeedEntry('rubygems:latest-gems'),
+      ]
     }
 
     // Every page links the FeedBurner mirror of this feed, which now serves the home page HTML.

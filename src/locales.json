@@ -715,6 +715,7 @@
     "koha:search": "Search",
     "koha:list": "List",
     "koha:comments": "Recent comments",
+    "koha:news": "News",
     "public-inbox:messages": "Messages",
     "public-inbox:thread": "Thread",
     "dspace:site": "Site",
