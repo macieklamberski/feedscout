@@ -57,21 +57,27 @@ export const confluenceHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getConfluencePage(url, content)
+    const pageFeeds = feeds.forUrl(url)
+
+    if (!pageFeeds) {
+      return []
+    }
+
     const params = { root: page.baseUrl }
 
     if (page.kind === 'space') {
       return [
-        feeds.getFeedEntry('confluence:space', { ...params, spaceKey: page.spaceKey }),
-        feeds.getFeedEntry('confluence:site', params),
-        feeds.getFeedEntry('confluence:dashboard', params, 'rss'),
-        feeds.getFeedEntry('confluence:dashboard', params, 'atom'),
+        pageFeeds.getFeedEntry('confluence:space', { ...params, spaceKey: page.spaceKey }),
+        pageFeeds.getFeedEntry('confluence:site', params),
+        pageFeeds.getFeedEntry('confluence:dashboard', params, 'rss'),
+        pageFeeds.getFeedEntry('confluence:dashboard', params, 'atom'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('confluence:site', params),
-      feeds.getFeedEntry('confluence:dashboard', params, 'rss'),
-      feeds.getFeedEntry('confluence:dashboard', params, 'atom'),
+      pageFeeds.getFeedEntry('confluence:site', params),
+      pageFeeds.getFeedEntry('confluence:dashboard', params, 'rss'),
+      pageFeeds.getFeedEntry('confluence:dashboard', params, 'atom'),
     ]
   },
 }
