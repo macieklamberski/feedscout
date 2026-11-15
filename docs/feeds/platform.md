@@ -309,6 +309,7 @@ Discovers RSS feeds for Pinboard users, user tags, and the popular and recent li
 | `pinboard.in/u:{username}` | User bookmarks<sup>†</sup> |
 | `pinboard.in/u:{username}/t:{tag}` | User tag<sup>†</sup> |
 | `pinboard.in/u:{username}/t:{tag1}/t:{tag2}` | User multi-tag<sup>†</sup> |
+| `pinboard.in/u:{username}/from:{source}`, `pinboard.in/u:{username}/t:{tag}/from:{source}` | User source |
 | `pinboard.in/t:{tag}` | Site-wide tag<sup>?</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -739,6 +740,7 @@ Discovers RSS and Atom feeds for Dreamwidth blogs.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{journal}.dreamwidth.org` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
+| `{journal}.dreamwidth.org/tag/{tag}` | Tag (RSS + Atom) · posts (RSS + Atom) · userpics (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
