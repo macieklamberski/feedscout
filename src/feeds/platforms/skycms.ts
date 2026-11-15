@@ -73,14 +73,14 @@ export const skycmsHandler: PlatformHandler = {
 
   resolve: (url) => {
     const skycmsUrl = parseSkycmsUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!skycmsUrl) {
+    if (!skycmsUrl || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
     const { pageId, slug } = skycmsUrl
 
-    return [feeds.getFeedEntry('skycms:page', { root: origin, pageId, slug }, 'rss')]
+    return [pageFeeds.getFeedEntry('skycms:page', { pageId, slug }, 'rss')]
   },
 }
