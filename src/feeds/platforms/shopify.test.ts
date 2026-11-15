@@ -48,6 +48,18 @@ describe('parseShopifyUrl', () => {
     expect(parseShopifyUrl('https://shop.example/zh-hant-hk/blogs/videos')).toEqual(expected)
   })
 
+  it('should return the blog and tag for a blog tag page', () => {
+    const expected: ShopifyUrl = { kind: 'blog', handle: 'news', tag: 'travel' }
+
+    expect(parseShopifyUrl('https://shop.example/blogs/news/tagged/travel')).toEqual(expected)
+  })
+
+  it('should drop the format from the tag of a blog tag feed', () => {
+    const expected: ShopifyUrl = { kind: 'blog', handle: 'news', tag: 'travel' }
+
+    expect(parseShopifyUrl('https://shop.example/blogs/news/tagged/travel.atom')).toEqual(expected)
+  })
+
   it('should drop the format from the handle of a blog feed', () => {
     const expected: ShopifyUrl = { kind: 'blog', handle: 'news' }
 
@@ -185,12 +197,32 @@ describe('shopifyHandler', () => {
       expect(shopifyHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the blog feed for a blog tag feed', () => {
-      const value = 'https://example.com/blogs/news/tagged/travel.atom'
-      const expected = [
+    it('should return the blog and tag feeds for a blog tag page', () => {
+      const value = 'https://example.com/blogs/news/tagged/travel'
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/blogs/news.atom',
           hint: { key: 'shopify:blog', label: 'Blog' },
+        },
+        {
+          uri: 'https://example.com/blogs/news/tagged/travel.atom',
+          hint: { key: 'shopify:blog-tag', label: 'Tag' },
+        },
+      ]
+
+      expect(shopifyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the blog and tag feeds for a blog tag feed', () => {
+      const value = 'https://example.com/blogs/news/tagged/travel.atom'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/blogs/news.atom',
+          hint: { key: 'shopify:blog', label: 'Blog' },
+        },
+        {
+          uri: 'https://example.com/blogs/news/tagged/travel.atom',
+          hint: { key: 'shopify:blog-tag', label: 'Tag' },
         },
       ]
 

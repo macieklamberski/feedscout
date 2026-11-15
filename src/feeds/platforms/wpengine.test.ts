@@ -616,21 +616,25 @@ describe('wpengineHandler', () => {
   describe('getFeedHint', () => {
     it('should return the posts hint for the site feed', () => {
       const value = 'https://example.wpenginepowered.com/feed/'
-      const expected: DiscoverUriHint = { key: 'wordpress:posts', label: 'Posts' }
+      const expected: DiscoverUriHint = { key: 'wordpress:posts', label: 'Posts', format: 'rss' }
 
       expect(wpengineHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the tag hint for a tag Atom feed on the legacy domain', () => {
       const value = 'https://example.wpengine.com/tag/news/feed/atom/'
-      const expected: DiscoverUriHint = { key: 'wordpress:tag', label: 'Tag' }
+      const expected: DiscoverUriHint = { key: 'wordpress:tag', label: 'Tag', format: 'atom' }
 
       expect(wpengineHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the post comments hint for a post feed query', () => {
       const value = 'https://example.wpenginepowered.com/2024/05/01/hello/?feed=rss'
-      const expected: DiscoverUriHint = { key: 'wordpress:post-comments', label: 'Post comments' }
+      const expected: DiscoverUriHint = {
+        key: 'wordpress:post-comments',
+        label: 'Post comments',
+        format: 'rss',
+      }
 
       expect(wpengineHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -656,11 +660,17 @@ describe('wpengineHandler', () => {
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://example.wpenginepowered.com/feed/', { key: 'wordpress:posts', label: 'Posts' }],
-      ['https://example.wpengine.com/tag/news/feed/atom/', { key: 'wordpress:tag', label: 'Tag' }],
+      [
+        'https://example.wpenginepowered.com/feed/',
+        { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://example.wpengine.com/tag/news/feed/atom/',
+        { key: 'wordpress:tag', label: 'Tag', format: 'atom' },
+      ],
       [
         'https://example.wpenginepowered.com/2024/05/01/hello/?feed=rss',
-        { key: 'wordpress:post-comments', label: 'Post comments' },
+        { key: 'wordpress:post-comments', label: 'Post comments', format: 'rss' },
       ],
     ]
 

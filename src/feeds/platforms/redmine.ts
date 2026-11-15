@@ -29,6 +29,8 @@ export type RedminePage = (
   | { kind: 'repository'; root: string; project: string; repository: string }
 ) & { alternateHrefs: Array<string>; project?: string }
 
+type RedmineFeedKey = Parameters<typeof feeds.getFeedUrl>[0]
+
 const poweredByRegex = /Powered by <a\s[^<>]*href="https?:\/\/www\.redmine\.org\/"/
 const projectClassRegex = /(?:^|\s)project-(\S+)/
 const repositoryRevisionsRegex = /\/repository\/([^/"?#]+)\/revisions\b/i
@@ -259,7 +261,7 @@ export const redmineHandler: PlatformHandler = {
     const params: PlatformFeedParams = { root: page.root, project: page.project }
 
     const getFeedEntry = (
-      key: string,
+      key: RedmineFeedKey,
       values?: PlatformFeedParams,
     ): DiscoverUriEntry | undefined => {
       const uri = feeds.getFeedUrl(key, { ...params, ...values })
@@ -271,7 +273,10 @@ export const redmineHandler: PlatformHandler = {
       return { uri: getAlternateSpelling(uri, page.alternateHrefs), hint: composeHint(key) }
     }
     // A page in a project gets the project's feed, and a page outside one the site's.
-    const getScopedFeedEntry = (key: string, projectKey: string): DiscoverUriEntry | undefined => {
+    const getScopedFeedEntry = (
+      key: RedmineFeedKey,
+      projectKey: RedmineFeedKey,
+    ): DiscoverUriEntry | undefined => {
       return getFeedEntry(page.project ? projectKey : key)
     }
 

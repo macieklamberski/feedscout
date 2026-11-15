@@ -108,7 +108,7 @@ export const chambermasterHandler: PlatformHandler = {
       return []
     }
 
-    const feedEntry = (key: string) => pageFeeds.getFeedEntry(key)
+    const feedEntry = (key: Parameters<typeof feeds.getFeedEntry>[0]) => pageFeeds.getFeedEntry(key)
 
     if (parsed.kind === 'events') {
       return [

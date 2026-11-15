@@ -15,7 +15,8 @@ describe('internetArchiveHandler', () => {
       [true, 'https://archive.org/details/oldtimeradio?tab=about'],
       [true, 'https://www.archive.org/details/oldtimeradio'],
       [true, 'https://archive.org/Details/oldtimeradio'],
-      [false, 'https://archive.org/details/@alice'],
+      [true, 'https://archive.org/details/@alice'],
+      [true, 'https://archive.org/details/@alice/uploads'],
       [false, 'https://archive.org/details/oldtimeradio/some-file'],
       [false, 'https://archive.org/details/'],
       [false, 'https://archive.org/'],
@@ -55,6 +56,18 @@ describe('internetArchiveHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return the bookmarks feed for an account page', () => {
+      const value = 'https://archive.org/details/@alice'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://archive.org/bookmarks/alice?output=rss',
+          hint: { key: 'internet-archive:bookmarks', label: 'Bookmarks' },
+        },
+      ]
+
+      expect(internetArchiveHandler.resolve(value, shellHtml)).toEqual(expected)
+    })
+
     it('should return the collection feed', () => {
       const value = 'https://archive.org/details/oldtimeradio'
       const expected = [

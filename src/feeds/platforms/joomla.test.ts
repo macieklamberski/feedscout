@@ -98,6 +98,23 @@ describe('joomlaHandler', () => {
       expect(joomlaHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should percent-encode a non-ASCII routing value as the page URL writes it', () => {
+      const value =
+        'https://example.com/index.php?option=com_content&view=category&id=5:%D0%BD%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D0%B8'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/index.php?option=com_content&view=category&id=5:%D0%BD%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D0%B8&format=feed&type=rss',
+          hint: { key: 'joomla:view', label: 'View', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/index.php?option=com_content&view=category&id=5:%D0%BD%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D0%B8&format=feed&type=atom',
+          hint: { key: 'joomla:view', label: 'View', format: 'atom' },
+        },
+      ]
+
+      expect(joomlaHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should keep a search-engine friendly html suffix', () => {
       const value = 'https://example.com/blogs.html'
       const expected: Array<DiscoverUriEntry> = [

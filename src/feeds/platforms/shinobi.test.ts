@@ -110,7 +110,7 @@ describe('shinobiHandler', () => {
       expect(shinobiHandler.resolve(value)).toEqual([])
     })
 
-    it('should return RSS and Atom feeds for blog', () => {
+    it('should return RSS, Atom and RSS 1.0 feeds for blog', () => {
       const value = 'https://example.blog.shinobi.jp/Entry/1/'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -121,12 +121,16 @@ describe('shinobiHandler', () => {
           uri: 'https://example.blog.shinobi.jp/ATOM/',
           hint: { key: 'shinobi:posts', label: 'Posts', format: 'atom' },
         },
+        {
+          uri: 'https://example.blog.shinobi.jp/RSS/100/',
+          hint: { key: 'shinobi:posts', label: 'Posts', format: 'rdf' },
+        },
       ]
 
       expect(shinobiHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return RSS and Atom feeds for a blog on a Ninja Blog domain off the list', () => {
+    it('should return RSS, Atom and RSS 1.0 feeds for a blog on a Ninja Blog domain off the list', () => {
       const value = 'https://example.3rin.net/Entry/1/'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -136,6 +140,10 @@ describe('shinobiHandler', () => {
         {
           uri: 'https://example.3rin.net/ATOM/',
           hint: { key: 'shinobi:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://example.3rin.net/RSS/100/',
+          hint: { key: 'shinobi:posts', label: 'Posts', format: 'rdf' },
         },
       ]
 
@@ -152,6 +160,10 @@ describe('shinobiHandler', () => {
         {
           uri: 'http://example.blog.shinobi.jp/ATOM/',
           hint: { key: 'shinobi:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'http://example.blog.shinobi.jp/RSS/100/',
+          hint: { key: 'shinobi:posts', label: 'Posts', format: 'rdf' },
         },
       ]
 
@@ -284,6 +296,10 @@ describe('shinobiHandler', () => {
         {
           uri: 'https://example.3rin.net/ATOM/',
           hint: { key: 'shinobi:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://example.3rin.net/RSS/100/',
+          hint: { key: 'shinobi:posts', label: 'Posts', format: 'rdf' },
         },
       ]
 
