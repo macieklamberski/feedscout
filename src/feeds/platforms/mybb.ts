@@ -1,4 +1,4 @@
-import { composeQuery, getQueryParam, parseUrl } from 'trousse'
+import { composeQuery, endsWithAnyOf, getQueryParam, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -15,7 +15,6 @@ import {
 
 export type MybbPage = { boardUrl: string; forumId?: string }
 
-const forumScriptRegex = /\/forumdisplay\.php$/i
 const forumPathRegex = /\/forum-(\d+)(?:-page-\d+)?\.html$/i
 const threadPathRegex = /\/(?:showthread\.php|thread-\d+(?:-[a-z]+-\d+)?\.html)$/i
 const forumLinkRegex = /(?:^|\/)(?:forumdisplay\.php\?fid=|forum-)(\d+)(?:\.html)?$/i
@@ -68,7 +67,7 @@ const getForumId = (url: string, content: string | undefined): string | undefine
   const { pathname, searchParams } = new URL(url)
   const queryId = getQueryParam(searchParams, 'fid')
 
-  if (forumScriptRegex.test(pathname) && queryId && digitsRegex.test(queryId)) {
+  if (endsWithAnyOf(pathname, '/forumdisplay.php') && queryId && digitsRegex.test(queryId)) {
     return queryId
   }
 

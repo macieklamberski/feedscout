@@ -5,6 +5,7 @@ import {
   isHostOrSubdomainOf,
   parseUrl,
   resolveUrl,
+  startsWithAnyOf,
 } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
@@ -19,7 +20,6 @@ const domains = ['goope.jp']
 const assetHosts = ['cdn.goope.jp']
 
 const templateRegex = /^t_(\d+)$/i
-const qrCodePathRegex = /^\/qr\//i
 
 const isQrCode = (src: string | undefined): boolean => {
   const qrCodeUrl = parseUrl(resolveUrl(src ?? ''))
@@ -28,7 +28,7 @@ const isQrCode = (src: string | undefined): boolean => {
     return false
   }
 
-  return isHostOf(qrCodeUrl, hosts) && qrCodePathRegex.test(qrCodeUrl.pathname)
+  return isHostOf(qrCodeUrl, hosts) && startsWithAnyOf(qrCodeUrl.pathname, '/qr/')
 }
 
 const isGoopeAsset = (href: string | undefined): boolean => {

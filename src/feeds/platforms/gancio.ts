@@ -1,4 +1,4 @@
-import { getAnyOf, getPathSegments, isAnyOf, parseUrl } from 'trousse'
+import { endsWithAnyOf, getAnyOf, getPathSegments, isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement } from '../../common/utils.js'
 
@@ -6,7 +6,6 @@ import { composeHint, findElement } from '../../common/utils.js'
 
 const customCssPathRegex = /\/custom_css$/i
 const trailingSlashesRegex = /(?<!\/)\/+$/
-const eventsScriptRegex = /\/gancio-events\.es\.js$/i
 
 export type GancioPage =
   | { kind: 'tag' | 'place' | 'collection'; rootUrl: string; value: string }
@@ -26,7 +25,7 @@ const getGancioPage = (url: string, content: string | undefined): GancioPage | u
 
   // The layout also loads the events web component, which a theme cannot drop.
   const script = findElement(content, (element) => {
-    return element.name === 'script' && eventsScriptRegex.test(element.attribs.src ?? '')
+    return element.name === 'script' && endsWithAnyOf(element.attribs.src, '/gancio-events.es.js')
   })
 
   if (!link?.attribs.href || !script) {

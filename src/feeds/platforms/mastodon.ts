@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, parseUrl } from 'trousse'
+import { getPathSegments, includesAnyOf, isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -19,7 +19,6 @@ export type MastodonUrl =
   | { kind: 'tagged'; username: string; tag: string }
   | { kind: 'tag'; tag: string }
 
-const mastodonRegex = /mastodon/i
 // A profile URL can end in .rss, a legacy .atom or the ActivityPub .json. A remote handle,
 // @user@host.tld, holds dots, so only these suffixes are stripped.
 const feedExtensionRegex = /\.(rss|atom|json)$/i
@@ -39,7 +38,7 @@ export const isMastodonHtml = (content: string): boolean => {
 }
 
 export const isMastodonHeaders = (headers: Headers): boolean => {
-  return mastodonRegex.test(headers.get('server') ?? '')
+  return includesAnyOf(headers.get('server') ?? undefined, 'mastodon')
 }
 
 export const parseMastodonUrl = (url: string): MastodonUrl | undefined => {

@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isLocale } from 'trousse'
+import { getPathSegments, includesAnyOf, isAnyOf, isLocale } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker } from '../../common/utils.js'
 
@@ -6,10 +6,8 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 
 export type ShopifyUrl = { kind: 'blog'; handle: string; locale?: string }
 
-const shopifyRegex = /shopify/i
-
 export const isShopifyHeaders = (headers: Headers): boolean => {
-  return shopifyRegex.test(headers.get('powered-by') ?? '')
+  return includesAnyOf(headers.get('powered-by') ?? undefined, 'shopify')
 }
 
 export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {

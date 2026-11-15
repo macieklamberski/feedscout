@@ -15,8 +15,6 @@ export type TischtennislivePage =
 
 const domains = ['tischtennislive.de']
 
-const resultsFeedPathRegex = /^\/Export\/Tischtennis\/RSS\.aspx$/i
-
 export const parseTischtennisliveUrl = (url: string): TischtennisliveUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
     return
@@ -49,7 +47,7 @@ export const getTischtennislivePage = (
       return false
     }
 
-    return isHostOf(linkUrl, hostname) && resultsFeedPathRegex.test(linkUrl.pathname)
+    return isHostOf(linkUrl, hostname) && isAnyOf(linkUrl.pathname, '/Export/Tischtennis/RSS.aspx')
   })
   const feedUrl = parseUrl(link?.attribs.href, url)
   const id = getQueryParam(feedUrl?.searchParams, 'id') ?? ''

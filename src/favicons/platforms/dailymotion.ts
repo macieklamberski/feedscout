@@ -1,12 +1,10 @@
-import { composeQuery, isNonEmptyString, parseUrl } from 'trousse'
+import { composeQuery, isNonEmptyString, parseUrl, startsWithAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { parseDailymotionUrl } from '../../feeds/platforms/dailymotion.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
 const platform = 'dailymotion'
-
-const placeholderPathRegex = /^\/d\//i
 
 // The id is the API path, `user/{name}` or `playlist/{id}`.
 const getApiPath = (url: string): string | undefined => {
@@ -50,7 +48,7 @@ export const dailymotionEnricher: FaviconEnricher = async (ref, context) => {
   const avatar = parseResponseJson(response)?.[field]
 
   // An account without an avatar gets the generic silhouette served under /d/.
-  if (isNonEmptyString(avatar) && !placeholderPathRegex.test(parseUrl(avatar)?.pathname ?? '')) {
+  if (isNonEmptyString(avatar) && !startsWithAnyOf(parseUrl(avatar)?.pathname, '/d/')) {
     return [avatar]
   }
 

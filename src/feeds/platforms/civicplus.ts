@@ -1,11 +1,9 @@
-import { composeQuery } from 'trousse'
+import { composeQuery, startsWithAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
-
-const layoutAssetRegex = /^\/Areas\/Layout\/Assets\//i
 
 type CivicplusModule = { query: Record<string, string>; hint: string }
 
@@ -33,7 +31,9 @@ export type CivicplusPage = { kind: 'module'; origin: string; module: CivicplusM
 
 export const isCivicplusHtml = (content: string): boolean => {
   const script = findElement(content, (element) => {
-    return element.name === 'script' && layoutAssetRegex.test(element.attribs.src ?? '')
+    return (
+      element.name === 'script' && startsWithAnyOf(element.attribs.src, '/Areas/Layout/Assets/')
+    )
   })
 
   return script !== undefined

@@ -1,4 +1,4 @@
-import { composeQuery, getQueryParam, isSubdomainOf, parseUrl, resolveUrl } from 'trousse'
+import { composeQuery, getQueryParam, isAnyOf, isSubdomainOf, parseUrl, resolveUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -17,9 +17,6 @@ export type LegistarUrl =
 export type LegistarPage = { kind: 'legislation' | 'meeting'; feedUrl: string }
 
 const domains = ['legistar.com']
-
-const legislationPathRegex = /^\/LegislationDetail\.aspx$/i
-const meetingPathRegex = /^\/MeetingDetail\.aspx$/i
 
 // Legistar's load balancer sets this cookie on every page, on a client's custom domain too.
 const cookieName = 'BIGipServerinsite.legistar.com_443'
@@ -48,11 +45,11 @@ export const parseLegistarUrl = (url: string): LegistarUrl | undefined => {
     return
   }
 
-  if (legislationPathRegex.test(parsedUrl.pathname)) {
+  if (isAnyOf(parsedUrl.pathname, '/LegislationDetail.aspx')) {
     return { kind: 'legislation', id, guid }
   }
 
-  if (!meetingPathRegex.test(parsedUrl.pathname)) {
+  if (!isAnyOf(parsedUrl.pathname, '/MeetingDetail.aspx')) {
     return
   }
 

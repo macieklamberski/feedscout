@@ -1,4 +1,4 @@
-import { getPathSegments } from 'trousse'
+import { getPathSegments, startsWithAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -18,7 +18,6 @@ export type WritefreelyPage = { blogPath: string; tag?: string }
 const tagPathRegex = /\/tag:([^/]+)/i
 const rootRouteRegex = /^\/(?:(?:tag|lang):|page\/\d+(?:\/|$)|archive\/?$)/i
 const blogPathRegex = /^\/(?:[^/]+\/)?$/
-const writeStylesheetRegex = /^\/css\/write\.css/i
 
 const getUrlBlogPath = (url: string): string | undefined => {
   const { pathname } = new URL(url)
@@ -54,7 +53,7 @@ const getBlogPath = (content: string | undefined): string | undefined => {
 }
 
 const isWriteStylesheet = (element: Element): boolean => {
-  return writeStylesheetRegex.test(element.attribs.href ?? '')
+  return startsWithAnyOf(element.attribs.href, '/css/write.css')
 }
 
 export const isWritefreelyHtml = (content: string): boolean => {

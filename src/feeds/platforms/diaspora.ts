@@ -1,13 +1,10 @@
-import { encodePathSegment, isAnyOf } from 'trousse'
+import { encodePathSegment, isAnyOf, startsWithAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, formatSuffixRegex, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 const profileRegex = /^\/(?<route>u|public|people)\/(?<segment>[^/]+)/i
-// A `/people/{guid}` page is keyed by guid, and the feed by username. The page
-// carries the username in its diaspora ID.
-const peoplePathRegex = /^\/people\//i
 const diasporaIdRegex = /"diaspora_id":"([^"@]+)@/
 
 export const isDiasporaHtml = (content: string): boolean => {
@@ -31,7 +28,9 @@ const getDiasporaPage = (url: string, content: string | undefined): DiasporaPage
     return
   }
 
-  if (!peoplePathRegex.test(pathname)) {
+  // A `/people/{guid}` page is keyed by guid, and the feed by username. The page carries the
+  // username in its diaspora ID.
+  if (!startsWithAnyOf(pathname, '/people/')) {
     return { username: pathUsername }
   }
 

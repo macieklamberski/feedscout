@@ -1,4 +1,4 @@
-import { getQueryParam, isHostOf, parseUrl } from 'trousse'
+import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { alphanumericOrHyphenRegex, composeHint, getTenantSubdomain } from '../../common/utils.js'
 
@@ -17,7 +17,6 @@ const domains = [
 ]
 const hosts = ['comicfury.com', 'www.comicfury.com']
 
-const profilePathRegex = /^\/comicprofile\.php$/i
 const readerPathRegex = /^\/read\/([^/]+)/i
 
 export const parseComicfuryUrl = (url: string): ComicfuryUrl | undefined => {
@@ -37,7 +36,7 @@ export const parseComicfuryUrl = (url: string): ComicfuryUrl | undefined => {
     return { kind: 'comic', comic }
   }
 
-  if (profilePathRegex.test(parsedUrl.pathname)) {
+  if (isAnyOf(parsedUrl.pathname, '/comicprofile.php')) {
     const comic = getQueryParam(parsedUrl.searchParams, 'url')
 
     if (!comic || !alphanumericOrHyphenRegex.test(comic)) {

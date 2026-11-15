@@ -1,12 +1,11 @@
+import { startsWithAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const generatedPathRegex = /^\/hpgen\/hpb\//i
-
 const isGeneratedPath = (value: string | undefined): boolean => {
-  return generatedPathRegex.test(value ?? '')
+  return startsWithAnyOf(value, '/hpgen/HPB/')
 }
 
 // Every desktop page Shopserve generates links its news entries, categories and theme images

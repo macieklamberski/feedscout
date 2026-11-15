@@ -1,4 +1,4 @@
-import { composeQuery, getQueryParam } from 'trousse'
+import { composeQuery, getQueryParam, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
@@ -6,7 +6,6 @@ import { composeHint, findElement, getCookieNames, hasMarker } from '../../commo
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers category, home, search.
 
-const searchPathRegex = /^\/search\.php$/i
 const categoryFeedRegex = /^[^?#]*\/rss\.php\?(?:[^#]*&)?categoryid=(?<categoryId>[1-9]\d*)/i
 
 export type BigcommercePage =
@@ -32,7 +31,7 @@ const getBigcommercePage = (url: string, content: string | undefined): Bigcommer
   const { pathname, searchParams } = new URL(url)
   const query = getQueryParam(searchParams, 'search_query')
 
-  if (searchPathRegex.test(pathname) && query) {
+  if (isAnyOf(pathname, '/search.php') && query) {
     return { kind: 'search', query }
   }
 
