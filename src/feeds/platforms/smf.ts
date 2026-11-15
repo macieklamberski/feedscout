@@ -59,8 +59,9 @@ export const smfHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getSmfPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
@@ -70,16 +71,16 @@ export const smfHandler: PlatformHandler = {
       const params = { root, board: page.boardId }
 
       return [
-        feeds.getFeedEntry('smf:board', params, 'rss'),
-        feeds.getFeedEntry('smf:board', params, 'atom'),
-        feeds.getFeedEntry('smf:posts', { root }, 'rss'),
-        feeds.getFeedEntry('smf:posts', { root }, 'atom'),
+        pageFeeds.getFeedEntry('smf:board', params, 'rss'),
+        pageFeeds.getFeedEntry('smf:board', params, 'atom'),
+        pageFeeds.getFeedEntry('smf:posts', { root }, 'rss'),
+        pageFeeds.getFeedEntry('smf:posts', { root }, 'atom'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('smf:posts', { root }, 'rss'),
-      feeds.getFeedEntry('smf:posts', { root }, 'atom'),
+      pageFeeds.getFeedEntry('smf:posts', { root }, 'rss'),
+      pageFeeds.getFeedEntry('smf:posts', { root }, 'atom'),
     ]
   },
 }
