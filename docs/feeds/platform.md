@@ -2245,9 +2245,9 @@ Discovers the RSS feeds of a Gancio event calendar. Detected by the `custom_css`
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/tag/{tag}` | Tag (RSS) |
-| `{instance}/place/{id}/{name}` | Place (RSS) |
-| `{instance}/collection/{name}` | Collection (RSS) |
+| `{root}/tag/{tag}` | Tag (RSS) |
+| `{root}/place/{id}/{name}` | Place (RSS) |
+| `{root}/collection/{name}` | Collection (RSS) |
 | Any other page | Site (RSS) |
 
 > [!NOTE]
