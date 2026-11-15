@@ -102,10 +102,11 @@ export const b2evolutionHandler: PlatformHandler = {
     return getB2evolutionPage(content) !== undefined
   },
 
-  resolve: (_url, content) => {
+  resolve: (url, content) => {
     const page = getB2evolutionPage(content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
@@ -115,18 +116,18 @@ export const b2evolutionHandler: PlatformHandler = {
     if (page.kind === 'post') {
       return [
         { uri: page.postCommentsUrl, hint: composeHint('b2evolution:post-comments') },
-        feeds.getFeedEntry('b2evolution:posts', params, 'rss'),
-        feeds.getFeedEntry('b2evolution:posts', params, 'atom'),
-        feeds.getFeedEntry('b2evolution:comments', params, 'rss'),
-        feeds.getFeedEntry('b2evolution:comments', params, 'atom'),
+        pageFeeds.getFeedEntry('b2evolution:posts', params, 'rss'),
+        pageFeeds.getFeedEntry('b2evolution:posts', params, 'atom'),
+        pageFeeds.getFeedEntry('b2evolution:comments', params, 'rss'),
+        pageFeeds.getFeedEntry('b2evolution:comments', params, 'atom'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('b2evolution:posts', params, 'rss'),
-      feeds.getFeedEntry('b2evolution:posts', params, 'atom'),
-      feeds.getFeedEntry('b2evolution:comments', params, 'rss'),
-      feeds.getFeedEntry('b2evolution:comments', params, 'atom'),
+      pageFeeds.getFeedEntry('b2evolution:posts', params, 'rss'),
+      pageFeeds.getFeedEntry('b2evolution:posts', params, 'atom'),
+      pageFeeds.getFeedEntry('b2evolution:comments', params, 'rss'),
+      pageFeeds.getFeedEntry('b2evolution:comments', params, 'atom'),
     ]
   },
 }
