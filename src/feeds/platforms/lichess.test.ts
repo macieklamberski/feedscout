@@ -17,10 +17,10 @@ describe('parseLichessUrl', () => {
     expect(parseLichessUrl('https://lichess.org/fr/blog/community')).toEqual(expected)
   })
 
-  it('should return a language longer than three letters', () => {
-    const expected: LichessUrl = { kind: 'community', language: 'abcd' }
+  it('should return undefined under a prefix that names no language', () => {
+    const value = 'https://lichess.org/abcd/blog/community'
 
-    expect(parseLichessUrl('https://lichess.org/abcd/blog/community')).toEqual(expected)
+    expect(parseLichessUrl(value)).toBeUndefined()
   })
 
   it('should return the community blog page without a language', () => {

@@ -1,7 +1,7 @@
-import { getPathSegments, isHostOrSubdomainOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOrSubdomainOf, isLocaleSegment, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain, hasMarker, letterPairsRegex } from '../../common/utils.js'
+import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -79,7 +79,7 @@ export const instatusHandler: PlatformHandler = {
   getFeedHint: (url) => {
     const [language, feed] = getPathSegments(url)
 
-    if (feed && !letterPairsRegex.test(language)) {
+    if (feed && !isLocaleSegment(language)) {
       return
     }
 

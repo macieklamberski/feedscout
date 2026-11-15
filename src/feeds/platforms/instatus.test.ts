@@ -163,6 +163,14 @@ describe('instatusHandler', () => {
         'https://example.instatus.com/de/history.atom',
         { key: 'instatus:history', label: 'Incident history', format: 'atom' },
       ],
+      [
+        'https://example.instatus.com/fil/history.rss',
+        { key: 'instatus:history', label: 'Incident history', format: 'rss' },
+      ],
+      [
+        'https://example.instatus.com/zh-hant/history.rss',
+        { key: 'instatus:history', label: 'Incident history', format: 'rss' },
+      ],
     ]
 
     it.each(feedUrls)('should return the hint for %s', (value, expected) => {
@@ -183,6 +191,12 @@ describe('instatusHandler', () => {
 
     it('should return undefined for a feed under a segment that is not a language', () => {
       const value = 'https://example.instatus.com/incidents/history.rss'
+
+      expect(instatusHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed under a well-formed code that names no language', () => {
+      const value = 'https://example.instatus.com/xx/history.rss'
 
       expect(instatusHandler.getFeedHint?.(value)).toBeUndefined()
     })

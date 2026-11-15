@@ -48,6 +48,12 @@ describe('parseShopifyUrl', () => {
     expect(parseShopifyUrl('https://shop.example/zh-hant-hk/blogs/videos')).toEqual(expected)
   })
 
+  it('should return undefined for a well-formed code that names no language', () => {
+    const value = 'https://shop.example/xx/blogs/news'
+
+    expect(parseShopifyUrl(value)).toBeUndefined()
+  })
+
   it('should return the blog and tag for a blog tag page', () => {
     const expected: ShopifyUrl = { kind: 'blog', handle: 'news', tag: 'travel' }
 

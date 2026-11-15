@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { isLocaleSegment, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getCookieNames, hasMarker } from '../../common/utils.js'
@@ -8,7 +8,7 @@ import { getCookieNames, hasMarker } from '../../common/utils.js'
 export type OdooUrl = { kind: 'blog'; blog: string }
 
 // The blog segment is `{slug}-{id}`, after an optional language prefix such as `/fr` or `/en_GB`.
-const blogRegex = /^(?:\/[a-z]+(?:_[a-z\d]+)?)?\/blog\/([^/]+-\d+)(?:\/|$)/i
+const blogRegex = /^(?:\/([^/]+))?\/blog\/([^/]+-\d+)(?:\/|$)/i
 
 // Odoo's own site runs on www.odoo.com, and a database on its own domain is known only by its
 // cookies, so feeds on either are built here but not claimed.
@@ -36,13 +36,13 @@ export const parseOdooUrl = (url: string): OdooUrl | undefined => {
     return
   }
 
-  const match = parsedUrl.pathname.match(blogRegex)
+  const [, language, blog] = parsedUrl.pathname.match(blogRegex) ?? []
 
-  if (!match?.[1]) {
+  if (!blog || (language && !isLocaleSegment(language, { underscore: true }))) {
     return
   }
 
-  return { kind: 'blog', blog: match[1] }
+  return { kind: 'blog', blog }
 }
 
 export const odooHandler: PlatformHandler = {
