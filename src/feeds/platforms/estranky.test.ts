@@ -369,6 +369,20 @@ describe('estrankyHandler', () => {
       expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the posts hint for a posts feed under photos.xml', () => {
+      const value = 'https://example.estranky.cz/rss/articles/photos.xml'
+      const expected: DiscoverUriHint = { key: 'estranky:posts', label: 'Posts' }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a posts feed under comments.xml', () => {
+      const value = 'https://example.estranky.sk/rss/articles/comments.xml'
+      const expected: DiscoverUriHint = { key: 'estranky:posts', label: 'Posts' }
+
+      expect(estrankyHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the photos hint for a photos feed', () => {
       const value = 'https://example.estranky.cz/rss/photos/data.xml'
       const expected: DiscoverUriHint = { key: 'estranky:photos', label: 'Photos' }
@@ -551,6 +565,14 @@ describe('estrankyHandler', () => {
       ],
       [
         'https://example.estranky.sk/rss/en/articles/data.xml',
+        { key: 'estranky:posts', label: 'Posts' },
+      ],
+      [
+        'https://example.estranky.cz/rss/articles/photos.xml',
+        { key: 'estranky:posts', label: 'Posts' },
+      ],
+      [
+        'https://example.estranky.sk/rss/articles/comments.xml',
         { key: 'estranky:posts', label: 'Posts' },
       ],
       [

@@ -264,6 +264,13 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the gallery hint for a gallery feed without the deviation type', () => {
+      const value = 'https://backend.deviantart.com/rss.xml?q=gallery%3Aalice%2F12345'
+      const expected: DiscoverUriHint = { key: 'deviantart:gallery', label: 'Gallery' }
+
+      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the favorites hint for an encoded favorites feed', () => {
       const value = 'https://backend.deviantart.com/rss.xml?type=deviation&q=favby%3Akristarella'
       const expected: DiscoverUriHint = { key: 'deviantart:favorites', label: 'Favorites' }
@@ -380,6 +387,11 @@ describe('discoverUrisFromPlatform', () => {
     ],
     [
       'https://backend.deviantart.com/rss.xml?type=deviation&q=gallery%3Ahanciong%2F30811007',
+      'deviantart:gallery',
+      'Gallery',
+    ],
+    [
+      'https://backend.deviantart.com/rss.xml?q=gallery:alice/12345',
       'deviantart:gallery',
       'Gallery',
     ],

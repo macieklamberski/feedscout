@@ -10,6 +10,8 @@ export type MailchimpUrl =
 export type MailchimpPage = { kind: 'archive' | 'campaign'; userId: string; listId: string }
 
 const domains = ['campaign-archive.com']
+// A feed on these answers 302 to the same feed on campaign-archive.com.
+const feedDomains = [...domains, 'campaign-archive1.com', 'campaign-archive2.com']
 
 const archivePathRegex = /^\/home\/?$/i
 // A campaign page links its archive and feed, whose id is the list the campaign went to.
@@ -17,7 +19,7 @@ const listLinkRegex = /campaign-archive\.com\/(?:home\/|feed)\?u=\w+&(?:amp;)?id
 
 const feeds = definePlatformFeeds(
   [{ key: 'mailchimp:archive', template: '{scheme}://{host}/feed?u={userId}&id={listId}' }],
-  { domains },
+  { domains: feedDomains },
 )
 
 export const parseMailchimpUrl = (url: string): MailchimpUrl | undefined => {

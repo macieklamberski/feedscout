@@ -37,6 +37,22 @@ const feeds = definePlatformFeeds([
     key: 'douban:subject-reviews',
     template: 'https://www.douban.com/feed/subject/{subjectId}/reviews',
   },
+  // A subject page links the feed on its section's host, which answers 301 to www.douban.com.
+  {
+    key: 'douban:subject-reviews',
+    template: 'https://book.douban.com/feed/subject/{subjectId}/reviews',
+    isAlias: true,
+  },
+  {
+    key: 'douban:subject-reviews',
+    template: 'https://movie.douban.com/feed/subject/{subjectId}/reviews',
+    isAlias: true,
+  },
+  {
+    key: 'douban:subject-reviews',
+    template: 'https://music.douban.com/feed/subject/{subjectId}/reviews',
+    isAlias: true,
+  },
   { key: 'douban:book-reviews', template: 'https://www.douban.com/feed/review/book' },
   { key: 'douban:movie-reviews', template: 'https://www.douban.com/feed/review/movie' },
   { key: 'douban:music-reviews', template: 'https://www.douban.com/feed/review/music' },

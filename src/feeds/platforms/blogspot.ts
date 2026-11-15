@@ -28,14 +28,16 @@ const widgetsScriptRegex = /^(?:https?:)?\/\/www\.blogger\.com\/static\/v1\/widg
 
 // A custom domain is known only by its markup, so its feeds are built here but not claimed.
 // Blogger serves the posts feed at /feeds/posts/full and /atom.xml too, and the comments feed at
-// /feeds/comments/full.
+// /feeds/comments/full. Every feed but the multi-label ones is served on www.blogger.com too,
+// under the blog's id.
 const feeds = definePlatformFeeds(
   [
     { key: 'blogspot:posts', template: '{scheme}://{host}/feeds/posts/default', format: 'atom' },
     {
       key: 'blogspot:posts',
-      template: '{scheme}://{host}/feeds/posts/default?alt=rss',
-      format: 'rss',
+      template: 'https://www.blogger.com/feeds/{blogId}/posts/default',
+      format: 'atom',
+      isAlias: true,
     },
     {
       key: 'blogspot:posts',
@@ -45,14 +47,25 @@ const feeds = definePlatformFeeds(
     },
     {
       key: 'blogspot:posts',
-      template: '{scheme}://{host}/feeds/posts/full?alt=rss',
+      template: '{scheme}://{host}/atom.xml',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'blogspot:posts',
+      template: '{scheme}://{host}/feeds/posts/default?alt=rss',
+      format: 'rss',
+    },
+    {
+      key: 'blogspot:posts',
+      template: 'https://www.blogger.com/feeds/{blogId}/posts/default?alt=rss',
       format: 'rss',
       isAlias: true,
     },
     {
       key: 'blogspot:posts',
-      template: '{scheme}://{host}/atom.xml',
-      format: 'atom',
+      template: '{scheme}://{host}/feeds/posts/full?alt=rss',
+      format: 'rss',
       isAlias: true,
     },
     {
@@ -62,8 +75,20 @@ const feeds = definePlatformFeeds(
     },
     {
       key: 'blogspot:posts-summary',
+      template: 'https://www.blogger.com/feeds/{blogId}/posts/summary',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'blogspot:posts-summary',
       template: '{scheme}://{host}/feeds/posts/summary?alt=rss',
       format: 'rss',
+    },
+    {
+      key: 'blogspot:posts-summary',
+      template: 'https://www.blogger.com/feeds/{blogId}/posts/summary?alt=rss',
+      format: 'rss',
+      isAlias: true,
     },
     {
       key: 'blogspot:comments',
@@ -72,13 +97,25 @@ const feeds = definePlatformFeeds(
     },
     {
       key: 'blogspot:comments',
-      template: '{scheme}://{host}/feeds/comments/default?alt=rss',
-      format: 'rss',
+      template: 'https://www.blogger.com/feeds/{blogId}/comments/default',
+      format: 'atom',
+      isAlias: true,
     },
     {
       key: 'blogspot:comments',
       template: '{scheme}://{host}/feeds/comments/full',
       format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'blogspot:comments',
+      template: '{scheme}://{host}/feeds/comments/default?alt=rss',
+      format: 'rss',
+    },
+    {
+      key: 'blogspot:comments',
+      template: 'https://www.blogger.com/feeds/{blogId}/comments/default?alt=rss',
+      format: 'rss',
       isAlias: true,
     },
     {
@@ -88,8 +125,20 @@ const feeds = definePlatformFeeds(
     },
     {
       key: 'blogspot:comments-summary',
+      template: 'https://www.blogger.com/feeds/{blogId}/comments/summary',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'blogspot:comments-summary',
       template: '{scheme}://{host}/feeds/comments/summary?alt=rss',
       format: 'rss',
+    },
+    {
+      key: 'blogspot:comments-summary',
+      template: 'https://www.blogger.com/feeds/{blogId}/comments/summary?alt=rss',
+      format: 'rss',
+      isAlias: true,
     },
     {
       key: 'blogspot:label',
@@ -98,8 +147,20 @@ const feeds = definePlatformFeeds(
     },
     {
       key: 'blogspot:label',
+      template: 'https://www.blogger.com/feeds/{blogId}/posts/default/-/{label}',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'blogspot:label',
       template: '{scheme}://{host}/feeds/posts/default/-/{label}?alt=rss',
       format: 'rss',
+    },
+    {
+      key: 'blogspot:label',
+      template: 'https://www.blogger.com/feeds/{blogId}/posts/default/-/{label}?alt=rss',
+      format: 'rss',
+      isAlias: true,
     },
     {
       key: 'blogspot:label-summary',
@@ -108,8 +169,20 @@ const feeds = definePlatformFeeds(
     },
     {
       key: 'blogspot:label-summary',
+      template: 'https://www.blogger.com/feeds/{blogId}/posts/summary/-/{label}',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'blogspot:label-summary',
       template: '{scheme}://{host}/feeds/posts/summary/-/{label}?alt=rss',
       format: 'rss',
+    },
+    {
+      key: 'blogspot:label-summary',
+      template: 'https://www.blogger.com/feeds/{blogId}/posts/summary/-/{label}?alt=rss',
+      format: 'rss',
+      isAlias: true,
     },
     // Several labels, as `/-/{a}/{b}`, give the posts carrying all of them. These rows go after the
     // single-label ones, which `resolve` builds, since a label can hold a slash.
@@ -140,8 +213,20 @@ const feeds = definePlatformFeeds(
     },
     {
       key: 'blogspot:post-comments',
+      template: 'https://www.blogger.com/feeds/{blogId}/{postId}/comments/default',
+      format: 'atom',
+      isAlias: true,
+    },
+    {
+      key: 'blogspot:post-comments',
       template: '{scheme}://{host}/feeds/{postId}/comments/default?alt=rss',
       format: 'rss',
+    },
+    {
+      key: 'blogspot:post-comments',
+      template: 'https://www.blogger.com/feeds/{blogId}/{postId}/comments/default?alt=rss',
+      format: 'rss',
+      isAlias: true,
     },
   ],
   { domains, isWwwTenantPrefix: true },
