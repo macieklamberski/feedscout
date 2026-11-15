@@ -110,8 +110,9 @@ export const mybbHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getMybbPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
@@ -119,16 +120,16 @@ export const mybbHandler: PlatformHandler = {
 
     if (page.forumId) {
       return [
-        feeds.getFeedEntry('mybb:forum', { root, forumId: page.forumId }, 'rss'),
-        feeds.getFeedEntry('mybb:forum', { root, forumId: page.forumId }, 'atom'),
-        feeds.getFeedEntry('mybb:threads', { root }, 'rss'),
-        feeds.getFeedEntry('mybb:threads', { root }, 'atom'),
+        pageFeeds.getFeedEntry('mybb:forum', { root, forumId: page.forumId }, 'rss'),
+        pageFeeds.getFeedEntry('mybb:forum', { root, forumId: page.forumId }, 'atom'),
+        pageFeeds.getFeedEntry('mybb:threads', { root }, 'rss'),
+        pageFeeds.getFeedEntry('mybb:threads', { root }, 'atom'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('mybb:threads', { root }, 'rss'),
-      feeds.getFeedEntry('mybb:threads', { root }, 'atom'),
+      pageFeeds.getFeedEntry('mybb:threads', { root }, 'rss'),
+      pageFeeds.getFeedEntry('mybb:threads', { root }, 'atom'),
     ]
   },
 }
