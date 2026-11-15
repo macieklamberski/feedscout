@@ -1,11 +1,10 @@
+import { startsWithAnyOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
-
-const layoutAssetRegex = /^\/Areas\/Layout\/Assets\//i
 
 // The module ids that serve an all-categories feed. A module id with no feed answers 200 with an
 // empty body.
@@ -49,7 +48,9 @@ export type CivicplusPage = { kind: 'module'; key: CivicplusFeedKey }
 
 export const isCivicplusHtml = (content: string): boolean => {
   const script = findElement(content, (element) => {
-    return element.name === 'script' && layoutAssetRegex.test(element.attribs.src ?? '')
+    return (
+      element.name === 'script' && startsWithAnyOf(element.attribs.src, '/Areas/Layout/Assets/')
+    )
   })
 
   return script !== undefined

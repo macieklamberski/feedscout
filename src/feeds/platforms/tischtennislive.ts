@@ -15,8 +15,6 @@ export type TischtennislivePage =
 
 const domains = ['tischtennislive.de']
 
-const resultsFeedPathRegex = /^\/Export\/Tischtennis\/RSS\.aspx$/i
-
 // Next=0 lists the matches of the last 10 days and Next=1 those of the next 10 days.
 const feeds = definePlatformFeeds(
   [
@@ -79,7 +77,7 @@ export const getTischtennislivePage = (
       return false
     }
 
-    return isHostOf(linkUrl, hostname) && resultsFeedPathRegex.test(linkUrl.pathname)
+    return isHostOf(linkUrl, hostname) && isAnyOf(linkUrl.pathname, '/Export/Tischtennis/RSS.aspx')
   })
   const feedUrl = parseUrl(link?.attribs.href, url)
   const id = getQueryParam(feedUrl?.searchParams, 'id') ?? ''

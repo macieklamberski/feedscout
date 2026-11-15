@@ -1,4 +1,11 @@
-import { decodeSegment, getPathSegments, getQueryParam, isAnyOf, parseUrl } from 'trousse'
+import {
+  decodeSegment,
+  getPathSegments,
+  getQueryParam,
+  includesAnyOf,
+  isAnyOf,
+  parseUrl,
+} from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
@@ -11,8 +18,6 @@ export type SquarespaceUrl =
   | { kind: 'tag'; collection: string; tag: string }
 
 const domains = ['squarespace.com']
-
-const squarespaceRegex = /squarespace/i
 
 // A site on its own domain is known only by its marker, so only a feed on a squarespace.com site
 // is claimed. A Squarespace 5 site serves the `.xml` feeds, redirects them from https to http with
@@ -131,7 +136,7 @@ const feeds = definePlatformFeeds(
 )
 
 export const isSquarespaceHeaders = (headers: Headers): boolean => {
-  return squarespaceRegex.test(headers.get('server') ?? '')
+  return includesAnyOf(headers.get('server'), 'squarespace')
 }
 
 // A category or tag page filters its collection, by path or by query.

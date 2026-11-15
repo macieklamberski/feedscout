@@ -1,4 +1,4 @@
-import { getAnyOf, getPathSegments, getQueryParam, isAnyOf, parseUrl } from 'trousse'
+import { getAnyOf, getPathSegments, getQueryParam, includesAnyOf, isAnyOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasClass, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -14,8 +14,6 @@ export type LemmyUrl =
   | ({ kind: 'home' } & LemmyQuery)
 
 export type LemmyPage = LemmyUrl
-
-const lemmyPoweredByRegex = /lemmy/i
 
 const validSorts = [
   'Active',
@@ -112,9 +110,7 @@ export const isLemmyHtml = (content: string): boolean => {
 }
 
 export const isLemmyHeaders = (headers: Headers): boolean => {
-  const poweredBy = headers.get('x-powered-by') ?? ''
-
-  return lemmyPoweredByRegex.test(poweredBy)
+  return includesAnyOf(headers.get('x-powered-by'), 'lemmy')
 }
 
 export const lemmyHandler: PlatformHandler = {

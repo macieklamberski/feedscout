@@ -1,4 +1,4 @@
-import { isAnyOf } from 'trousse'
+import { isAnyOf, startsWithAnyOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { formatSuffixRegex, hasMarker } from '../../common/utils.js'
@@ -6,9 +6,6 @@ import { formatSuffixRegex, hasMarker } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 const profileRegex = /^\/(?<route>u|public|people)\/(?<segment>[^/]+)/i
-// A `/people/{guid}` page is keyed by guid, and the feed by username. The page
-// carries the username in its diaspora ID.
-const peoplePathRegex = /^\/people\//i
 const diasporaIdRegex = /"diaspora_id":"([^"@]+)@/
 
 // A pod runs on its own domain and is known only by its marker, so its feed is built here but not
@@ -38,7 +35,9 @@ const getDiasporaPage = (url: string, content: string | undefined): DiasporaPage
     return
   }
 
-  if (!peoplePathRegex.test(pathname)) {
+  // A `/people/{guid}` page is keyed by guid, and the feed by username. The page carries the
+  // username in its diaspora ID.
+  if (!startsWithAnyOf(pathname, '/people/')) {
     return { username: pathUsername }
   }
 

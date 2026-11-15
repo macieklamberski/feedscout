@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isLocale } from 'trousse'
+import { getPathSegments, includesAnyOf, isAnyOf, isLocale } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { formatSuffixRegex, hasMarker } from '../../common/utils.js'
@@ -6,8 +6,6 @@ import { formatSuffixRegex, hasMarker } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 export type ShopifyUrl = { kind: 'blog'; handle: string; tag?: string }
-
-const shopifyRegex = /shopify/i
 
 const domains = ['myshopify.com']
 
@@ -40,7 +38,7 @@ const feeds = definePlatformFeeds(
 )
 
 export const isShopifyHeaders = (headers: Headers): boolean => {
-  return shopifyRegex.test(headers.get('powered-by') ?? '')
+  return includesAnyOf(headers.get('powered-by'), 'shopify')
 }
 
 export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {

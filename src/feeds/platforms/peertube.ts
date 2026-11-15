@@ -1,4 +1,4 @@
-import { decodeSegment, getQueryParam, parseUrl } from 'trousse'
+import { decodeSegment, getQueryParam, includesAnyOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -8,7 +8,6 @@ import { findElement, hasMarker } from '../../common/utils.js'
 
 export type PeertubeUrl = { kind: 'channel' | 'account'; name: string } | { kind: 'instance' }
 
-const peertubeRegex = /peertube/i
 const channelPathRegex = /^\/(?:c|video-channels)\/([^/]+)/i
 const accountPathRegex = /^\/(?:a|accounts)\/([^/]+)/i
 
@@ -27,7 +26,7 @@ const feeds = definePlatformFeeds([
 ])
 
 export const isPeertubeHeaders = (headers: Headers): boolean => {
-  return peertubeRegex.test(headers.get('x-powered-by') ?? '')
+  return includesAnyOf(headers.get('x-powered-by'), 'peertube')
 }
 
 // The podcast feed takes only the numeric channel id, which the channel page carries in its link

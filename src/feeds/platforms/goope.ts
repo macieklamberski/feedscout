@@ -5,6 +5,7 @@ import {
   isHostOrSubdomainOf,
   parseUrl,
   resolveUrl,
+  startsWithAnyOf,
 } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
@@ -24,7 +25,6 @@ const domains = ['goope.jp']
 const assetHosts = ['cdn.goope.jp']
 
 const templateRegex = /^t_\d+$/i
-const qrCodePathRegex = /^\/qr\//i
 
 // A page under a `t_{id}` template segment links the plain feeds, so the template rows only claim.
 const freeSiteFeeds = definePlatformFeeds([
@@ -104,7 +104,7 @@ const isQrCode = (src: string | undefined): boolean => {
     return false
   }
 
-  return isHostOf(qrCodeUrl, hosts) && qrCodePathRegex.test(qrCodeUrl.pathname)
+  return isHostOf(qrCodeUrl, hosts) && startsWithAnyOf(qrCodeUrl.pathname, '/qr/')
 }
 
 const isGoopeAsset = (href: string | undefined): boolean => {

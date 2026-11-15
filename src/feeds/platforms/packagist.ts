@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { endsWithAnyOf, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -16,9 +16,6 @@ const hosts = ['packagist.org']
 const packageRegex = /^\/packages\/([^/]+)\/([^/]+)(?:\/|$)/i
 const vendorRegex = /^\/packages\/([^/]+)\/?$/i
 const extensionsRegex = /^\/extensions(?:\/|$)/i
-
-// The JSON API sits under the same paths, such as /packages/list.json.
-const jsonSuffixRegex = /\.json$/i
 
 const feeds = definePlatformFeeds([
   {
@@ -92,7 +89,8 @@ export const parsePackagistUrl = (url: string): PackagistUrl | undefined => {
 
   const { pathname } = parsedUrl
 
-  if (jsonSuffixRegex.test(pathname)) {
+  // The JSON API sits under the same paths, such as /packages/list.json.
+  if (endsWithAnyOf(pathname, '.json')) {
     return
   }
 
