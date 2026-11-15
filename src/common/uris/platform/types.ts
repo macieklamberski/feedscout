@@ -20,6 +20,11 @@ export type PlatformHandler = {
   ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef | undefined>>
   // The hint of the feed the URL is, when it is one of the feeds the handler builds.
   getFeedHint?: (url: string) => DiscoverUriHint | undefined
+  /**
+   * @deprecated Ignored since 2.3.0, as a handler claims its own feeds through `getFeedHint`. See
+   * "Declaring Feeds" in docs/feeds/platform.md. Removed in the next major.
+   */
+  guessExclusionRegex?: RegExp
 }
 
 export type PlatformMethodOptions = {

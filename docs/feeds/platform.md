@@ -3912,6 +3912,8 @@ type PlatformHandler = {
 | `resolve(url, content?, headers?, fetchFn?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL. A favicon handler can also return a [`DiscoverRef`](/reference/types#discoverref) for an icon that takes an extra request. See [Enriching Platform Icons](/other/favicons#enriching-platform-icons) |
 | `getFeedHint(url)` | Returns the [hint](/reference/types#discoverurihint) of the feed the URL is, when it is one of the feeds the handler builds. The Platform method returns such a URL as given with that hint, and the [Guess method](/feeds/guess) drops a guessed one |
 
+`guessExclusionRegex` is a deprecated field, kept so a handler that sets it still type-checks. It is ignored: the Guess method drops a guessed URL through `getFeedHint`, so declare the handler's feeds as in [Declaring Feeds](#declaring-feeds).
+
 ### Declaring Feeds
 
 `definePlatformFeeds` holds a handler's feed URLs as templates keyed by hint key: `getFeedEntry` builds a feed with its hint, `getFeedHint` reads a URL back to its hint, with the row's `format`, `{host}` stands for any host in `hosts` or under `domains`, `{domain}` for one of `domains`, and `{scheme}` for the page's scheme on a platform that runs on the site's own host.

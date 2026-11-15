@@ -2,6 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { omitEmpty } from 'trousse'
 import type { DiscoverUriHint, FetchFn } from '../types.js'
 import { discoverUris } from './index.js'
+import type { PlatformHandler } from './platform/types.js'
 
 // A root `.xml` path is a user's feed, as on Plurk.
 const userFeedRegex = /^https:\/\/example\.com\/[^/]+\.xml$/
@@ -412,6 +413,31 @@ describe('discoverUris', () => {
         },
       })
       const expected = { guess: [{ uri: 'https://example.com/feed' }] }
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should keep a guess matching the deprecated guessExclusionRegex', async () => {
+      const handler: PlatformHandler = {
+        match: () => true,
+        resolve: () => [],
+        guessExclusionRegex: userFeedRegex,
+      }
+      const value = await discoverUris({
+        platform: {
+          options: {
+            baseUrl: 'https://example.com',
+            handlers: [handler],
+          },
+        },
+        guess: {
+          options: {
+            baseUrl: 'https://example.com',
+            uris: ['/feed.xml'],
+          },
+        },
+      })
+      const expected = { guess: [{ uri: 'https://example.com/feed.xml' }] }
 
       expect(value).toEqual(expected)
     })
