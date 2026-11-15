@@ -29,8 +29,12 @@ export const shopserveHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    return [feeds.getFeedEntry('shopserve:news', { root: origin })]
+    if (!pageFeeds) {
+      return []
+    }
+
+    return [pageFeeds.getFeedEntry('shopserve:news')]
   },
 }
