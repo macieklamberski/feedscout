@@ -2046,7 +2046,7 @@ Discovers the RSS feed of an Art19 show.
 
 ### Omny Studio
 
-Discovers the RSS feed of an Omny Studio show.
+Discovers the RSS feeds of an Omny Studio show and its playlists.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|

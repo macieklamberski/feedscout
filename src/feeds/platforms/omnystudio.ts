@@ -16,14 +16,14 @@ const showPlaylistRegex = /^podcast$/i
 
 const feeds = definePlatformFeeds([
   { key: 'omnystudio:show', template: 'https://omny.fm/shows/{show}/playlists/podcast.rss' },
-  { key: 'omnystudio:playlist', template: 'https://omny.fm/shows/{show}/playlists/{playlist}.rss' },
-  // Every playlist feed, the show's own included, answers 302 to its playlist here, and no URL
-  // tells the show's playlist apart.
+  // Every show feed answers 302 to its playlist here. A named playlist redirects here too, and no
+  // URL tells it apart from the show's own.
   {
-    key: 'omnystudio:playlist',
+    key: 'omnystudio:show',
     template: 'https://www.omnycontent.com/d/playlist/{orgId}/{programId}/{playlistId}/podcast.rss',
     isAlias: true,
   },
+  { key: 'omnystudio:playlist', template: 'https://omny.fm/shows/{show}/playlists/{playlist}.rss' },
 ])
 
 export const parseOmnystudioUrl = (url: string): OmnystudioUrl | undefined => {

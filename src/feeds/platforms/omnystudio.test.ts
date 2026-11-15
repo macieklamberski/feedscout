@@ -172,26 +172,26 @@ describe('omnystudioHandler', () => {
       expect(omnystudioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the playlist hint for a feed on the content host', () => {
+    it('should return the show hint for a feed on the content host', () => {
       const value =
         'https://www.omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss'
-      const expected: DiscoverUriHint = { key: 'omnystudio:playlist', label: 'Playlist' }
+      const expected: DiscoverUriHint = { key: 'omnystudio:show', label: 'Show' }
 
       expect(omnystudioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the playlist hint for a feed on the content host apex', () => {
+    it('should return the show hint for a feed on the content host apex', () => {
       const value =
         'https://omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss'
-      const expected: DiscoverUriHint = { key: 'omnystudio:playlist', label: 'Playlist' }
+      const expected: DiscoverUriHint = { key: 'omnystudio:show', label: 'Show' }
 
       expect(omnystudioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the playlist hint for a content host feed carrying an access token', () => {
+    it('should return the show hint for a content host feed carrying an access token', () => {
       const value =
         'https://omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss?accessToken=example'
-      const expected: DiscoverUriHint = { key: 'omnystudio:playlist', label: 'Playlist' }
+      const expected: DiscoverUriHint = { key: 'omnystudio:show', label: 'Show' }
 
       expect(omnystudioHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -228,15 +228,15 @@ describe('omnystudioHandler', () => {
       ['https://omny.fm/shows/example-show/playlists/example-playlist.rss', playlistHint],
       [
         'https://www.omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss',
-        playlistHint,
+        showHint,
       ],
       [
         'https://omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss',
-        playlistHint,
+        showHint,
       ],
       [
         'https://omnycontent.com/d/playlist/11111111-aaaa-4bbb-8ccc-111111111111/22222222-aaaa-4bbb-8ccc-222222222222/33333333-aaaa-4bbb-8ccc-333333333333/podcast.rss?accessToken=example',
-        playlistHint,
+        showHint,
       ],
     ]
 
