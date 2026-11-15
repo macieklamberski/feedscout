@@ -1736,11 +1736,13 @@ Discovers the Atom feed of a Svbtle blog. Detected by the `Svbtle.com` generator
 
 ### Textpattern
 
-Discovers the feeds of a Textpattern site. Detected by the `Textpattern` generator meta tag.
+Discovers the feeds of a Textpattern site, its sections and its categories. Detected by the `Textpattern` generator meta tag. A clean URL names the section in its first segment, so a site whose URLs start with the article title or date gets a section feed that answers 404.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page | Posts (RSS + Atom) |
+| `{root}/{section}/…` or `{root}/?s={section}` | Section (RSS + Atom) · posts (RSS + Atom) |
+| `{root}/category/{category}/` or `{root}/?c={category}` | Category (RSS + Atom) · posts (RSS + Atom) |
+| `{root}/`, any other page | Posts (RSS + Atom) |
 
 ### Grav
 
