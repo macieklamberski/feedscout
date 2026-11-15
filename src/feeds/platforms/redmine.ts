@@ -22,6 +22,7 @@ export type RedminePage = (
   | { kind: 'projects'; root: string }
   | { kind: 'issues'; root: string; project?: string }
   | { kind: 'issue'; root: string; issueId: string }
+  | { kind: 'user'; root: string; userId: string }
   | { kind: 'news'; root: string; project?: string }
   | { kind: 'activity'; root: string; project?: string }
   | { kind: 'project'; root: string; project: string; hasIssues: boolean; hasNews: boolean }
@@ -57,9 +58,14 @@ const feeds = definePlatformFeeds(
     { key: 'redmine:project-news', template: '{root}/projects/{project}/news.atom' },
     { key: 'redmine:news', template: '{root}/news.atom' },
     {
+      key: 'redmine:project-user-activity',
+      template: '{root}/projects/{project}/activity.atom?user_id={userId}',
+    },
+    {
       key: 'redmine:project-activity',
       template: '{root}/projects/{project}/activity.atom',
     },
+    { key: 'redmine:user-activity', template: '{root}/activity.atom?user_id={userId}' },
     { key: 'redmine:activity', template: '{root}/activity.atom' },
     { key: 'redmine:projects', template: '{root}/projects.atom' },
     { key: 'redmine:project-issues', template: '{root}/projects/{project}/issues.atom' },
@@ -209,6 +215,10 @@ export const getRedminePage = (
     return { kind: 'issue', root, alternateHrefs, issueId: second }
   }
 
+  if (isAnyOf(first, 'users') && second && digitsRegex.test(second) && !third) {
+    return { kind: 'user', root, alternateHrefs, userId: second }
+  }
+
   if (!second && isAnyOf(first, 'projects')) {
     return { kind: 'projects', root, alternateHrefs }
   }
@@ -282,6 +292,14 @@ export const redmineHandler: PlatformHandler = {
 
     if (page.kind === 'issue') {
       return [getFeedEntry('redmine:issue', { issueId: page.issueId })]
+    }
+
+    if (page.kind === 'user') {
+      return [
+        getFeedEntry('redmine:user-activity', { userId: page.userId }),
+        getFeedEntry('redmine:news'),
+        getFeedEntry('redmine:activity'),
+      ]
     }
 
     if (page.kind === 'news') {

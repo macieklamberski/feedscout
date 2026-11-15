@@ -128,24 +128,24 @@ describe('pinboardHandler', () => {
       expect(pinboardHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the tag feed for a user tag page', () => {
+    it('should return the user tag feed for a user tag page', () => {
       const value = 'https://pinboard.in/u:example/t:Programming/'
       const expected = [
         {
           uri: 'https://feeds.pinboard.in/rss/u:example/t:Programming/',
-          hint: { key: 'pinboard:tag', label: 'Tag' },
+          hint: { key: 'pinboard:user-tag', label: 'User tag' },
         },
       ]
 
       expect(pinboardHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the tag feed for a user page with several tags', () => {
+    it('should return the user tag feed for a user page with several tags', () => {
       const value = 'https://pinboard.in/u:example/T:programming/t:rust'
       const expected = [
         {
           uri: 'https://feeds.pinboard.in/rss/u:example/t:programming/t:rust/',
-          hint: { key: 'pinboard:tag', label: 'Tag' },
+          hint: { key: 'pinboard:user-tag', label: 'User tag' },
         },
       ]
 
@@ -237,44 +237,44 @@ describe('pinboardHandler', () => {
       expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag hint for a user tag feed', () => {
+    it('should return the user tag hint for a user tag feed', () => {
       const value = 'https://feeds.pinboard.in/rss/u:example/t:programming/'
-      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
+      const expected: DiscoverUriHint = { key: 'pinboard:user-tag', label: 'User tag' }
 
       expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag hint for a user tag feed without a trailing slash', () => {
+    it('should return the user tag hint for a user tag feed without a trailing slash', () => {
       const value = 'https://feeds.pinboard.in/rss/u:example/t:programming'
-      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
+      const expected: DiscoverUriHint = { key: 'pinboard:user-tag', label: 'User tag' }
 
       expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag hint for a user tag feed over http', () => {
+    it('should return the user tag hint for a user tag feed over http', () => {
       const value = 'http://feeds.pinboard.in/rss/u:example/t:programming/'
-      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
+      const expected: DiscoverUriHint = { key: 'pinboard:user-tag', label: 'User tag' }
 
       expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag hint for a user feed with several tags', () => {
+    it('should return the user tag hint for a user feed with several tags', () => {
       const value = 'https://feeds.pinboard.in/rss/u:example/t:programming/t:rust/t:async/'
-      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
+      const expected: DiscoverUriHint = { key: 'pinboard:user-tag', label: 'User tag' }
 
       expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag hint for a tag holding a colon', () => {
+    it('should return the user tag hint for a tag holding a colon', () => {
       const value = 'https://feeds.pinboard.in/rss/u:example/t:via:shortcuts/'
-      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
+      const expected: DiscoverUriHint = { key: 'pinboard:user-tag', label: 'User tag' }
 
       expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag hint for a tag holding an encoded slash', () => {
+    it('should return the user tag hint for a tag holding an encoded slash', () => {
       const value = 'https://feeds.pinboard.in/rss/u:example/t:rust%252fasync/'
-      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
+      const expected: DiscoverUriHint = { key: 'pinboard:user-tag', label: 'User tag' }
 
       expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -286,16 +286,16 @@ describe('pinboardHandler', () => {
       expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag hint for a tag feed with a count parameter', () => {
+    it('should return the user tag hint for a tag feed with a count parameter', () => {
       const value = 'https://feeds.pinboard.in/rss/u:example/t:programming?count=4'
-      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
+      const expected: DiscoverUriHint = { key: 'pinboard:user-tag', label: 'User tag' }
 
       expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should read the tag feed route words in any case', () => {
+    it('should read the user tag feed route words in any case', () => {
       const value = 'https://feeds.pinboard.in/RSS/U:example/T:programming/'
-      const expected: DiscoverUriHint = { key: 'pinboard:tag', label: 'Tag' }
+      const expected: DiscoverUriHint = { key: 'pinboard:user-tag', label: 'User tag' }
 
       expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -385,7 +385,7 @@ describe('pinboardHandler', () => {
       ],
       [
         'https://feeds.pinboard.in/rss/u:example/t:programming/t:rust/',
-        { key: 'pinboard:tag', label: 'Tag' },
+        { key: 'pinboard:user-tag', label: 'User tag' },
       ],
       ['https://feeds.pinboard.in/rss/t:programming/', { key: 'pinboard:tag', label: 'Tag' }],
       [

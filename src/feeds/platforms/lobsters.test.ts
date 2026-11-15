@@ -227,7 +227,7 @@ describe('lobstersHandler', () => {
       const expected = [
         {
           uri: 'https://lobste.rs/~pushcx/stories.rss',
-          hint: { key: 'lobsters:stories', label: 'Stories' },
+          hint: { key: 'lobsters:user-stories', label: 'User stories' },
         },
       ]
 
@@ -344,9 +344,9 @@ describe('lobstersHandler', () => {
       expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the stories hint for a user stories feed', () => {
+    it('should return the user stories hint for a user stories feed', () => {
       const value = 'https://lobste.rs/~alice/stories.rss'
-      const expected: DiscoverUriHint = { key: 'lobsters:stories', label: 'Stories' }
+      const expected: DiscoverUriHint = { key: 'lobsters:user-stories', label: 'User stories' }
 
       expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -449,7 +449,10 @@ describe('lobstersHandler', () => {
       ['http://www.lobste.rs/rss?token=abc123', { key: 'lobsters:private', label: 'Private feed' }],
       ['https://lobste.rs/t/kotlin.rss', { key: 'lobsters:tag', label: 'Tag' }],
       ['https://lobste.rs/domains/github.com.rss', { key: 'lobsters:domain', label: 'Domain' }],
-      ['https://lobste.rs/~alice/stories.rss', { key: 'lobsters:stories', label: 'Stories' }],
+      [
+        'https://lobste.rs/~alice/stories.rss',
+        { key: 'lobsters:user-stories', label: 'User stories' },
+      ],
       ['https://lobste.rs/rss', { key: 'lobsters:stories', label: 'Stories' }],
       ['https://lobste.rs/top/1w/rss', { key: 'lobsters:top', label: 'Top stories' }],
       ['https://lobste.rs/top/1w.rss', { key: 'lobsters:top', label: 'Top stories' }],

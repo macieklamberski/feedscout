@@ -705,7 +705,7 @@ Discovers RSS feeds for ArtStation portfolios and the global artwork feed.
 |-------------|-----------------|
 | `artstation.com/{user}` | Portfolio<sup>†</sup> |
 | `{user}.artstation.com` | Portfolio |
-| `artstation.com/artwork` | Artwork<sup>†</sup> · Artwork (Latest)<sup>†</sup> |
+| `artstation.com/artwork` | Artwork<sup>†</sup> · latest artwork<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -3196,6 +3196,7 @@ Discovers the Atom feeds of a Redmine install, Planio's hosted ones on `plan.io`
 | `{root}/projects/{project}/boards/{id}` | Forum messages |
 | `{root}/projects/{project}/repository/…` | Repository revisions |
 | `{root}/issues/{id}` | Issue updates |
+| `{root}/users/{id}` | User activity · news · activity |
 | `{root}/issues` | Issues |
 | `{root}/news` | News |
 | `{root}/activity` | Activity |

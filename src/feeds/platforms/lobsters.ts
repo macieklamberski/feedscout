@@ -31,7 +31,7 @@ const tagsValueRegex = /^[\w,-]+$/
 const feeds = definePlatformFeeds([
   { key: 'lobsters:tag', template: 'https://lobste.rs/t/{tags}.rss' },
   { key: 'lobsters:domain', template: 'https://lobste.rs/domains/{domain}.rss' },
-  { key: 'lobsters:stories', template: 'https://lobste.rs/~{username}/stories.rss' },
+  { key: 'lobsters:user-stories', template: 'https://lobste.rs/~{username}/stories.rss' },
   { key: 'lobsters:stories', template: 'https://lobste.rs/rss' },
   // A reader's private feed, filtered by their settings, is claimed and never built.
   { key: 'lobsters:private', template: 'https://lobste.rs/rss?token={token}' },
@@ -109,7 +109,7 @@ export const lobstersHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'user') {
-      return [feeds.getFeedEntry('lobsters:stories', { username: parsed.username })]
+      return [feeds.getFeedEntry('lobsters:user-stories', { username: parsed.username })]
     }
 
     // The top page without a period redirects to the one-week page.

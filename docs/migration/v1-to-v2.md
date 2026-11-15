@@ -27,7 +27,7 @@ Use this checklist to ensure a complete migration:
 - Handle `undefined` from `omitEmpty` if you use it
 - Update custom `extractUrls` callbacks to Feedsmith 3 feed shapes
 - Replace `codebergHandler` with `giteaHandler` if you import it from `feedscout/platform`
-- Update code that matches on hint keys: `codeberg:*` is now `gitea:*`, `artstation:artwork-trending` is now `artstation:artwork-latest`, and `producthunt:topic` and `producthunt:category` are gone
+- Update code that matches on hint keys: `codeberg:*` is now `gitea:*`, `artstation:artwork-trending` and `artstation:artwork-latest` are now `artstation:artwork`, and `producthunt:topic` and `producthunt:category` are gone
 - Set `maxAncestorDepth: 0` and `sectionNames: []` on the Guess method if you need the 1.x set of guessed URLs
 - Add the new `phase` values to any exhaustive `switch` in your `onError` callback, if you come from 1.10 or earlier
 - Expect a failed input fetch to return results or an empty array, not to reject, if you come from 1.10 or earlier
@@ -170,11 +170,12 @@ Some platform handlers changed the hint keys they attach to discovered URLs. Thi
 | `codeberg:tags` | `gitea:tags` |
 | `codeberg:branch-commits` | `gitea:branch-commits` |
 | `codeberg:file-history` | `gitea:file-history` |
-| `artstation:artwork-trending` | `artstation:artwork-latest` |
+| `artstation:artwork-trending` | `artstation:artwork` |
+| `artstation:artwork-latest` | `artstation:artwork` |
 | `producthunt:topic` | Removed |
 | `producthunt:category` | Removed |
 
-The Codeberg handler is now `giteaHandler`, and `codebergHandler` is no longer exported from `feedscout/platform`. It still covers codeberg.org and gitea.com, and also matches self-hosted Gitea instances. The ArtStation trending feed was a duplicate, so the handler now returns the latest artwork feed. Product Hunt topic and category pages now return only the main `https://www.producthunt.com/feed`, because the feed ignores the topic and category parameters.
+The Codeberg handler is now `giteaHandler`, and `codebergHandler` is no longer exported from `feedscout/platform`. It still covers codeberg.org and gitea.com, and also matches self-hosted Gitea instances. The ArtStation trending feed was a duplicate, so the handler now returns the latest artwork feed. Versions 2.0 to 2.2 gave that feed the key `artstation:artwork-latest`. It is now `artstation:artwork`, the key of the default artwork feed, since a sort order stays under its feed's key. The URL still carries `?sorting=latest`. Product Hunt topic and category pages now return only the main `https://www.producthunt.com/feed`, because the feed ignores the topic and category parameters.
 
 #### Before (1.x)
 ```typescript
@@ -195,7 +196,7 @@ const releases = feeds.find((feed) => feed.hint?.key === 'gitea:releases')
 #### Migration Steps
 1. Replace `codebergHandler` imports with `giteaHandler`
 2. Replace `codeberg:` hint key prefixes with `gitea:`
-3. Replace `artstation:artwork-trending` with `artstation:artwork-latest`
+3. Replace `artstation:artwork-trending` and `artstation:artwork-latest` with `artstation:artwork`
 4. Remove handling for `producthunt:topic` and `producthunt:category`
 
 ### Guess Method Tests More URLs by Default
