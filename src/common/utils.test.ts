@@ -805,6 +805,36 @@ describe('getHostOrigin', () => {
   it('should return undefined for a value the URL parser refuses', () => {
     expect(getHostOrigin('a b.example.com')).toBeUndefined()
   })
+
+  it('should return undefined for a label starting with a hyphen', () => {
+    const value = '-alice.example.com'
+
+    expect(getHostOrigin(value)).toBeUndefined()
+  })
+
+  it('should return undefined for a label ending with a hyphen', () => {
+    const value = 'alice-.example.com'
+
+    expect(getHostOrigin(value)).toBeUndefined()
+  })
+
+  it('should return undefined for a comma in a label', () => {
+    const value = 'alice,bob.example.com'
+
+    expect(getHostOrigin(value)).toBeUndefined()
+  })
+
+  it('should return undefined for a tilde in a label', () => {
+    const value = 'alice~bob.example.com'
+
+    expect(getHostOrigin(value)).toBeUndefined()
+  })
+
+  it('should return undefined for a domain with a final dot', () => {
+    const value = 'social.example.com.'
+
+    expect(getHostOrigin(value)).toBeUndefined()
+  })
 })
 
 describe('getScriptDirectory', () => {
