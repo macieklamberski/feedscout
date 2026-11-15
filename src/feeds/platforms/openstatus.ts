@@ -6,14 +6,15 @@ import { findElement, hasMetaContent, isRootOfPage } from '../../common/utils.js
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const domains = ['openstatus.dev']
+// stpg.dev is OpenStatus's short domain, and serves every status page under the same slug.
+const domains = ['openstatus.dev', 'stpg.dev']
 
 const previewImageUrl = 'https://www.openstatus.dev/api/og/page'
 
 const summaryHrefRegex = /^(?:https?:\/\/[^/]+)?\/api\/status\/summary\.json$/i
 
 // A status page is known by its markup, so its feeds are built on any origin, and claimed only on
-// a tenant of OpenStatus's own domain, since a custom domain does not name the platform.
+// a tenant of OpenStatus's own domains, since a custom domain does not name the platform.
 const feeds = definePlatformFeeds(
   [
     { key: 'openstatus:updates', template: '{root}/feed/rss', format: 'rss' },

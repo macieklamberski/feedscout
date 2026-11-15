@@ -129,6 +129,14 @@ describe('openstatusHandler', () => {
         'http://example.openstatus.dev/feed/rss/',
         { key: 'openstatus:updates', label: 'Updates', format: 'rss' },
       ],
+      [
+        'https://example.stpg.dev/feed/rss',
+        { key: 'openstatus:updates', label: 'Updates', format: 'rss' },
+      ],
+      [
+        'https://example.stpg.dev/feed/atom',
+        { key: 'openstatus:updates', label: 'Updates', format: 'atom' },
+      ],
     ]
 
     it.each(feedUrls)('should return the hint for %s', (value, expected) => {
@@ -153,6 +161,12 @@ describe('openstatusHandler', () => {
       expect(openstatusHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
+    it('should return undefined for a feed on the www host of the short domain', () => {
+      const value = 'https://www.stpg.dev/feed/rss'
+
+      expect(openstatusHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://status.example.openstatus.dev/feed/rss'
 
@@ -169,6 +183,10 @@ describe('openstatusHandler', () => {
       [
         'http://example.openstatus.dev/feed/atom',
         { key: 'openstatus:updates', label: 'Updates', format: 'atom' },
+      ],
+      [
+        'https://example.stpg.dev/feed/rss',
+        { key: 'openstatus:updates', label: 'Updates', format: 'rss' },
       ],
     ]
 
