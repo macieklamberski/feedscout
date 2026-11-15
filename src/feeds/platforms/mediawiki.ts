@@ -14,21 +14,20 @@ const namespaceNumberRegex = /"wgNamespaceNumber":(-?\d+)/
 // A wiki runs on its own domain, under its script path, and is known only by its marker, so its
 // feeds are built here but not claimed. Its pages link a title encoded as a form, as
 // `title=Talk%3AMain+Page`.
-const feeds = definePlatformFeeds(
-  [
-    {
-      key: 'mediawiki:history',
-      template: '{root}/index.php?title={title}&action=history&feed=atom',
-      format: 'atom',
-    },
-    {
-      key: 'mediawiki:recent-changes',
-      template: '{root}/index.php?title=Special:RecentChanges&feed=atom',
-      format: 'atom',
-    },
-  ],
-  { queryEncoding: 'form' },
-)
+const feeds = definePlatformFeeds([
+  {
+    key: 'mediawiki:history',
+    template: '{root}/index.php?title={title}&action=history&feed=atom',
+    format: 'atom',
+    queryEncoding: 'form',
+  },
+  {
+    key: 'mediawiki:recent-changes',
+    template: '{root}/index.php?title=Special:RecentChanges&feed=atom',
+    format: 'atom',
+    queryEncoding: 'form',
+  },
+])
 
 // Core prints the RSD link to `api.php` in every page head, whatever the skin.
 const getRsdHref = (content: string | undefined): string | undefined => {
