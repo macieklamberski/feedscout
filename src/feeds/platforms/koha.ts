@@ -63,9 +63,7 @@ export const parseKohaUrl = (url: string): KohaUrl | undefined => {
   }
 
   const params = parsedUrl.searchParams
-  const page = script.toLowerCase()
-
-  if (page === 'opac-search') {
+  if (isAnyOf(script, 'opac-search')) {
     const terms = [...getQueryParamValues(params, 'q'), ...getQueryParamValues(params, 'limit')]
 
     if (terms.length === 0) {
@@ -83,7 +81,7 @@ export const parseKohaUrl = (url: string): KohaUrl | undefined => {
     return { kind: 'search', root, params: searchParams.toString() }
   }
 
-  if (page === 'opac-shelves') {
+  if (isAnyOf(script, 'opac-shelves')) {
     const shelfNumber = getQueryParam(params, 'shelfnumber')
 
     if (!shelfNumber || !digitsRegex.test(shelfNumber)) {
@@ -93,7 +91,7 @@ export const parseKohaUrl = (url: string): KohaUrl | undefined => {
     return { kind: 'list', root, shelfNumber }
   }
 
-  if (page === 'opac-showreviews') {
+  if (isAnyOf(script, 'opac-showreviews')) {
     return { kind: 'comments', root }
   }
 

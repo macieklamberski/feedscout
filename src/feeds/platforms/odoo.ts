@@ -1,4 +1,4 @@
-import { isLocaleSegment, parseUrl } from 'trousse'
+import { isLocale, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getCookieNames, hasMarker } from '../../common/utils.js'
@@ -38,7 +38,7 @@ export const parseOdooUrl = (url: string): OdooUrl | undefined => {
 
   const [, language, blog] = parsedUrl.pathname.match(blogRegex) ?? []
 
-  if (!blog || (language && !isLocaleSegment(language, { underscore: true }))) {
+  if (!blog || (language && !isLocale(language, { underscore: true }))) {
     return
   }
 

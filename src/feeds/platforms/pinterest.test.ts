@@ -39,6 +39,10 @@ describe('parsePinterestUrl', () => {
     expect(parsePinterestUrl('https://pinterest.ai/nasa')).toBeUndefined()
   })
 
+  it('should return undefined for a subdomain that is no country label', () => {
+    expect(parsePinterestUrl('https://help.pinterest.com/nasa/')).toBeUndefined()
+  })
+
   it('should return the tab for user subpages', () => {
     const expected: PinterestUrl = { kind: 'tab', username: 'nasa' }
 

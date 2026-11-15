@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, isLocaleSegment } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, isLocale } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -39,7 +39,7 @@ export const parseLichessUrl = (url: string): LichessUrl | undefined => {
   const communityMatch = pathname.match(communityRegex)
   const language = communityMatch?.[1]
 
-  if (communityMatch && (!language || isLocaleSegment(language))) {
+  if (communityMatch && (!language || isLocale(language))) {
     return { kind: 'community', language }
   }
 
