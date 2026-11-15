@@ -81,9 +81,14 @@ describe('zennHandler', () => {
   })
 
   describe('resolve', () => {
+    const trendingFeed: DiscoverUriEntry = {
+      uri: 'https://zenn.dev/feed',
+      hint: { key: 'zenn:trending', label: 'Trending' },
+    }
+
     it('should return feed URL for user', () => {
       const value = 'https://zenn.dev/alice99'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://zenn.dev/alice99/feed',
           hint: { key: 'zenn:posts', label: 'Posts' },
@@ -92,6 +97,7 @@ describe('zennHandler', () => {
           uri: 'https://zenn.dev/alice99/feed?all=1',
           hint: { key: 'zenn:all-posts', label: 'All posts' },
         },
+        trendingFeed,
       ]
 
       expect(zennHandler.resolve(value)).toEqual(expected)
@@ -99,7 +105,7 @@ describe('zennHandler', () => {
 
     it('should return the user feed URL for an article page', () => {
       const value = 'https://zenn.dev/alice99/articles/some-article'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://zenn.dev/alice99/feed',
           hint: { key: 'zenn:posts', label: 'Posts' },
@@ -108,6 +114,7 @@ describe('zennHandler', () => {
           uri: 'https://zenn.dev/alice99/feed?all=1',
           hint: { key: 'zenn:all-posts', label: 'All posts' },
         },
+        trendingFeed,
       ]
 
       expect(zennHandler.resolve(value)).toEqual(expected)
@@ -115,11 +122,12 @@ describe('zennHandler', () => {
 
     it('should return feed URL for topic page', () => {
       const value = 'https://zenn.dev/topics/react'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://zenn.dev/topics/react/feed',
           hint: { key: 'zenn:topic', label: 'Topic' },
         },
+        trendingFeed,
       ]
 
       expect(zennHandler.resolve(value)).toEqual(expected)
@@ -127,11 +135,12 @@ describe('zennHandler', () => {
 
     it('should return feed URL for short publication page', () => {
       const value = 'https://zenn.dev/p/team_zenn'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://zenn.dev/p/team_zenn/feed',
           hint: { key: 'zenn:publication', label: 'Publication' },
         },
+        trendingFeed,
       ]
 
       expect(zennHandler.resolve(value)).toEqual(expected)

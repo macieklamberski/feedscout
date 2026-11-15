@@ -1,10 +1,25 @@
 import { composeQuery, getQueryParam, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
+import { hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type JoomlaUrl = { kind: 'view'; path: string }
+
+// A site without search-engine friendly URLs names the view in the query, as in
+// `index.php?option=com_content&view=category&id=8`.
+const routingParams = ['option', 'view', 'layout', 'id', 'catid', 'Itemid', 'lang']
+
+// A site runs on its own domain and is known only by its marker, so its feeds are built here but
+// not claimed. The feed is the view's own URL with the feed format in its query, and a view
+// without search-engine friendly URLs passes the routing parameters that name it.
+const feeds = definePlatformFeeds([
+  { key: 'joomla:view', template: '{root}?{query}&format=feed&type=rss', format: 'rss' },
+  { key: 'joomla:view', template: '{root}?format=feed&type=rss', format: 'rss' },
+  { key: 'joomla:view', template: '{root}?{query}&format=feed&type=atom', format: 'atom' },
+  { key: 'joomla:view', template: '{root}?format=feed&type=atom', format: 'atom' },
+])
 
 // Templates such as Helix Ultimate rewrite the generator to a string that only
 // contains `Joomla!`, while every Joomla 3, 4 and 5 page ships the script options.
@@ -14,23 +29,20 @@ export const isJoomlaHtml = (content: string): boolean => {
   )
 }
 
-// A site without search-engine friendly URLs names the view in the query, as in
-// `index.php?option=com_content&view=category&id=8`.
-const routingParams = ['option', 'view', 'layout', 'id', 'catid', 'Itemid', 'lang']
+const getRoutingQuery = (searchParams: URLSearchParams): string | undefined => {
+  if (getQueryParam(searchParams, 'option') === undefined) {
+    return
+  }
 
-const getFeedQuery = (searchParams: URLSearchParams, type: string): string => {
   const query: Record<string, string> = {}
 
   for (const name of routingParams) {
     const value = getQueryParam(searchParams, name)
 
-    if (getQueryParam(searchParams, 'option') !== undefined && value) {
+    if (value) {
       query[name] = value
     }
   }
-
-  query.format = 'feed'
-  query.type = type
 
   return composeQuery(query)
 }
@@ -56,23 +68,19 @@ export const joomlaHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseJoomlaUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
     const { origin, searchParams } = new URL(url)
-    const viewUrl = `${origin}${parsed.path}`
+    // The table drops one trailing slash from a root, so a view path ending in one keeps it.
+    const params = { root: `${origin}${parsed.path}/`, query: getRoutingQuery(searchParams) }
 
     return [
-      {
-        uri: `${viewUrl}${getFeedQuery(searchParams, 'rss')}`,
-        hint: composeHint('joomla:view', 'rss'),
-      },
-      {
-        uri: `${viewUrl}${getFeedQuery(searchParams, 'atom')}`,
-        hint: composeHint('joomla:view', 'atom'),
-      },
+      pageFeeds.getFeedEntry('joomla:view', params, 'rss'),
+      pageFeeds.getFeedEntry('joomla:view', params, 'atom'),
     ]
   },
 }

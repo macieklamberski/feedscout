@@ -125,6 +125,30 @@ describe('jinboHandler', () => {
           uri: 'https://blog.jinbo.net/alice/atom/response',
           hint: { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'atom' },
         },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/comment',
+          hint: { key: 'jinbo:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/comment',
+          hint: { key: 'jinbo:comments', label: 'Comments', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/trackback',
+          hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/trackback',
+          hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/line',
+          hint: { key: 'jinbo:lines', label: 'Lines', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/line',
+          hint: { key: 'jinbo:lines', label: 'Lines', format: 'atom' },
+        },
       ]
 
       expect(jinboHandler.resolve(value)).toEqual(expected)
@@ -165,6 +189,30 @@ describe('jinboHandler', () => {
           uri: 'https://blog.jinbo.net/alice/atom/response',
           hint: { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'atom' },
         },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/comment',
+          hint: { key: 'jinbo:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/comment',
+          hint: { key: 'jinbo:comments', label: 'Comments', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/trackback',
+          hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/trackback',
+          hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/line',
+          hint: { key: 'jinbo:lines', label: 'Lines', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/line',
+          hint: { key: 'jinbo:lines', label: 'Lines', format: 'atom' },
+        },
       ]
 
       expect(jinboHandler.resolve(value)).toEqual(expected)
@@ -193,6 +241,30 @@ describe('jinboHandler', () => {
           uri: 'https://blog.jinbo.net/AliceBlog/atom/response',
           hint: { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'atom' },
         },
+        {
+          uri: 'https://blog.jinbo.net/AliceBlog/rss/comment',
+          hint: { key: 'jinbo:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/AliceBlog/atom/comment',
+          hint: { key: 'jinbo:comments', label: 'Comments', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/AliceBlog/rss/trackback',
+          hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/AliceBlog/atom/trackback',
+          hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/AliceBlog/rss/line',
+          hint: { key: 'jinbo:lines', label: 'Lines', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/AliceBlog/atom/line',
+          hint: { key: 'jinbo:lines', label: 'Lines', format: 'atom' },
+        },
       ]
 
       expect(jinboHandler.resolve(value, content)).toEqual(expected)
@@ -202,6 +274,10 @@ describe('jinboHandler', () => {
       const value = 'https://blog.jinbo.net/alice/category/9'
       const content = '<p class="info"><span class="count">12</span>개의 게시물을 찾았습니다.</p>'
       const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/category/9',
+          hint: { key: 'jinbo:category', label: 'Category', format: 'rss' },
+        },
         {
           uri: 'https://blog.jinbo.net/alice/atom/category/9',
           hint: { key: 'jinbo:category', label: 'Category', format: 'atom' },
@@ -221,6 +297,30 @@ describe('jinboHandler', () => {
         {
           uri: 'https://blog.jinbo.net/alice/atom/response',
           hint: { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/comment',
+          hint: { key: 'jinbo:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/comment',
+          hint: { key: 'jinbo:comments', label: 'Comments', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/trackback',
+          hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/trackback',
+          hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/line',
+          hint: { key: 'jinbo:lines', label: 'Lines', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/line',
+          hint: { key: 'jinbo:lines', label: 'Lines', format: 'atom' },
         },
       ]
 
@@ -251,6 +351,30 @@ describe('jinboHandler', () => {
           uri: 'https://blog.jinbo.net/alice/atom/response',
           hint: { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'atom' },
         },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/comment',
+          hint: { key: 'jinbo:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/comment',
+          hint: { key: 'jinbo:comments', label: 'Comments', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/trackback',
+          hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/trackback',
+          hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/line',
+          hint: { key: 'jinbo:lines', label: 'Lines', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/line',
+          hint: { key: 'jinbo:lines', label: 'Lines', format: 'atom' },
+        },
       ]
 
       expect(jinboHandler.resolve(value, content)).toEqual(expected)
@@ -280,6 +404,30 @@ describe('jinboHandler', () => {
           uri: 'https://blog.jinbo.net/alice/atom/response',
           hint: { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'atom' },
         },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/comment',
+          hint: { key: 'jinbo:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/comment',
+          hint: { key: 'jinbo:comments', label: 'Comments', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/trackback',
+          hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/trackback',
+          hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/line',
+          hint: { key: 'jinbo:lines', label: 'Lines', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/line',
+          hint: { key: 'jinbo:lines', label: 'Lines', format: 'atom' },
+        },
       ]
 
       expect(jinboHandler.resolve(value, content)).toEqual(expected)
@@ -289,6 +437,10 @@ describe('jinboHandler', () => {
       const value = 'https://blog.jinbo.net/alice/category/999'
       const content = '<p class="info"><em>0</em>개의 게시물을 찾았습니다.</p>'
       const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/category/999',
+          hint: { key: 'jinbo:category', label: 'Category', format: 'rss' },
+        },
         {
           uri: 'https://blog.jinbo.net/alice/atom/category/999',
           hint: { key: 'jinbo:category', label: 'Category', format: 'atom' },
@@ -308,6 +460,30 @@ describe('jinboHandler', () => {
         {
           uri: 'https://blog.jinbo.net/alice/atom/response',
           hint: { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/comment',
+          hint: { key: 'jinbo:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/comment',
+          hint: { key: 'jinbo:comments', label: 'Comments', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/trackback',
+          hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/trackback',
+          hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/line',
+          hint: { key: 'jinbo:lines', label: 'Lines', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/line',
+          hint: { key: 'jinbo:lines', label: 'Lines', format: 'atom' },
         },
       ]
 
@@ -335,6 +511,30 @@ describe('jinboHandler', () => {
           uri: 'https://blog.jinbo.net/alice%23b/atom/response',
           hint: { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'atom' },
         },
+        {
+          uri: 'https://blog.jinbo.net/alice%23b/rss/comment',
+          hint: { key: 'jinbo:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice%23b/atom/comment',
+          hint: { key: 'jinbo:comments', label: 'Comments', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice%23b/rss/trackback',
+          hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice%23b/atom/trackback',
+          hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice%23b/rss/line',
+          hint: { key: 'jinbo:lines', label: 'Lines', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice%23b/atom/line',
+          hint: { key: 'jinbo:lines', label: 'Lines', format: 'atom' },
+        },
       ]
 
       expect(jinboHandler.resolve(value, content)).toEqual(expected)
@@ -345,6 +545,13 @@ describe('jinboHandler', () => {
     it('should return the category hint for a category feed', () => {
       const value = 'https://blog.jinbo.net/erindialogue/atom/category/5'
       const expected: DiscoverUriHint = { key: 'jinbo:category', label: 'Category', format: 'atom' }
+
+      expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the category hint for a category RSS feed', () => {
+      const value = 'https://blog.jinbo.net/erindialogue/rss/category/5'
+      const expected: DiscoverUriHint = { key: 'jinbo:category', label: 'Category', format: 'rss' }
 
       expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
     })

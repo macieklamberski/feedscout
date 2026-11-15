@@ -21,8 +21,6 @@ const feeds = definePlatformFeeds([
   { key: 'kickstarter:projects', template: 'https://www.kickstarter.com/projects/feed.atom' },
   // A curated page of projects, such as `/pages/tees`.
   { key: 'kickstarter:page', template: 'https://www.kickstarter.com/pages/{name}.atom' },
-  // The site's news blog. It needs no value from the page, so `resolve` builds it on every page.
-  { key: 'kickstarter:blog', template: 'https://www.kickstarter.com/blog.atom' },
 ])
 
 export const parseKickstarterUrl = (url: string): KickstarterUrl | undefined => {
@@ -57,25 +55,27 @@ export const kickstarterHandler: PlatformHandler = {
       return []
     }
 
+    // The new projects feed needs no value from the page, so every page builds it after its own
+    // feeds.
     if (parsed.kind === 'project') {
       return [
         feeds.getFeedEntry('kickstarter:updates', {
           creator: parsed.creator,
           project: parsed.project,
         }),
-        feeds.getFeedEntry('kickstarter:blog'),
+        feeds.getFeedEntry('kickstarter:projects'),
       ]
     }
 
     if (parsed.kind === 'page') {
       return [
         feeds.getFeedEntry('kickstarter:page', { name: parsed.name }),
-        feeds.getFeedEntry('kickstarter:blog'),
+        feeds.getFeedEntry('kickstarter:projects'),
       ]
     }
 
     // Homepage or discover pages - return global new projects feed.
-    return [feeds.getFeedEntry('kickstarter:projects'), feeds.getFeedEntry('kickstarter:blog')]
+    return [feeds.getFeedEntry('kickstarter:projects')]
   },
 
   getFeedHint: feeds.getFeedHint,

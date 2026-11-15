@@ -95,10 +95,18 @@ describe('devtoHandler', () => {
   describe('resolve', () => {
     it('should return RSS feed URL for user profile', () => {
       const value = 'https://dev.to/thepracticaldev'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://dev.to/feed/thepracticaldev',
           hint: { key: 'devto:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://dev.to/feed',
+          hint: { key: 'devto:community', label: 'Community' },
+        },
+        {
+          uri: 'https://dev.to/feed/latest',
+          hint: { key: 'devto:latest', label: 'Latest' },
         },
       ]
 
@@ -107,10 +115,18 @@ describe('devtoHandler', () => {
 
     it('should return RSS feed URL for tag page', () => {
       const value = 'https://dev.to/t/javascript'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://dev.to/feed/tag/javascript',
           hint: { key: 'devto:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://dev.to/feed',
+          hint: { key: 'devto:community', label: 'Community' },
+        },
+        {
+          uri: 'https://dev.to/feed/latest',
+          hint: { key: 'devto:latest', label: 'Latest' },
         },
       ]
 
@@ -119,8 +135,12 @@ describe('devtoHandler', () => {
 
     it('should return community feed for homepage', () => {
       const value = 'https://dev.to/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://dev.to/feed', hint: { key: 'devto:community', label: 'Community' } },
+        {
+          uri: 'https://dev.to/feed/latest',
+          hint: { key: 'devto:latest', label: 'Latest' },
+        },
       ]
 
       expect(devtoHandler.resolve(value)).toEqual(expected)

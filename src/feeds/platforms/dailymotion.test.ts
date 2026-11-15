@@ -55,15 +55,11 @@ describe('parseDailymotionUrl', () => {
     expect(parseDailymotionUrl('https://www.dailymotion.com/Playlist/x7vjjm')).toEqual(expected)
   })
 
-  it('should return the playlist id cut at its first underscore', () => {
+  it('should keep the title tail of a playlist id', () => {
     const value = 'https://www.dailymotion.com/playlist/X7VJJM_BFM-Story_bfm-story'
-    const expected: DailymotionUrl = { kind: 'playlist', playlistId: 'X7VJJM' }
+    const expected: DailymotionUrl = { kind: 'playlist', playlistId: 'X7VJJM_BFM-Story_bfm-story' }
 
     expect(parseDailymotionUrl(value)).toEqual(expected)
-  })
-
-  it('should return undefined for a playlist id that starts with an underscore', () => {
-    expect(parseDailymotionUrl('https://www.dailymotion.com/playlist/_bfm-story')).toBeUndefined()
   })
 
   it('should return a one-character playlist id whole', () => {
@@ -155,10 +151,14 @@ describe('dailymotionHandler', () => {
   describe('resolve', () => {
     it('should return RSS feed for user page', () => {
       const value = 'https://www.dailymotion.com/bfmtv'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.dailymotion.com/rss/bfmtv',
           hint: { key: 'dailymotion:videos', label: 'Videos' },
+        },
+        {
+          uri: 'https://www.dailymotion.com/rss/trending',
+          hint: { key: 'dailymotion:trending', label: 'Trending' },
         },
       ]
 
@@ -167,10 +167,14 @@ describe('dailymotionHandler', () => {
 
     it('should return RSS feed for playlist page', () => {
       const value = 'https://www.dailymotion.com/playlist/x7vjjm'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.dailymotion.com/rss/playlist/x7vjjm',
           hint: { key: 'dailymotion:playlist', label: 'Playlist' },
+        },
+        {
+          uri: 'https://www.dailymotion.com/rss/trending',
+          hint: { key: 'dailymotion:trending', label: 'Trending' },
         },
       ]
 
@@ -179,10 +183,14 @@ describe('dailymotionHandler', () => {
 
     it('should return RSS feed for channel page', () => {
       const value = 'https://www.dailymotion.com/channel/news'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.dailymotion.com/rss/channel/news',
           hint: { key: 'dailymotion:channel', label: 'Channel' },
+        },
+        {
+          uri: 'https://www.dailymotion.com/rss/trending',
+          hint: { key: 'dailymotion:trending', label: 'Trending' },
         },
       ]
 
@@ -239,10 +247,14 @@ describe('dailymotionHandler', () => {
 
     it('should return search feed for /search/{query}', () => {
       const value = 'https://www.dailymotion.com/search/cats'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.dailymotion.com/rss/search/cats',
           hint: { key: 'dailymotion:search', label: 'Search' },
+        },
+        {
+          uri: 'https://www.dailymotion.com/rss/trending',
+          hint: { key: 'dailymotion:trending', label: 'Trending' },
         },
       ]
 

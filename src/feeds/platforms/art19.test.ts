@@ -93,9 +93,9 @@ describe('art19Handler', () => {
       expect(art19Handler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the show hint for a private feed', () => {
+    it('should return the private hint for a private feed', () => {
       const value = 'https://rss.art19.com/alternate_feeds/user/example-show/abc123'
-      const expected: DiscoverUriHint = { key: 'art19:show', label: 'Show' }
+      const expected: DiscoverUriHint = { key: 'art19:private', label: 'Private feed' }
 
       expect(art19Handler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -143,7 +143,7 @@ describe('art19Handler', () => {
       ['https://rss.art19.com/Bob-Health-Show', { key: 'art19:show', label: 'Show' }],
       [
         'https://rss.art19.com/alternate_feeds/user/example-show/abc123',
-        { key: 'art19:show', label: 'Show' },
+        { key: 'art19:private', label: 'Private feed' },
       ],
     ]
 

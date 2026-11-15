@@ -55,6 +55,12 @@ export const getSermonNetPage = (
     return
   }
 
+  // Without the page only the URL names the channel, and the church feed is another channel on
+  // some sites.
+  if (parsed.kind === 'channel' && !content) {
+    return parsed
+  }
+
   const channels: Array<string> = []
 
   for (const [, channel] of content?.matchAll(channelRegex) ?? []) {
@@ -84,29 +90,29 @@ export const sermonNetHandler: PlatformHandler = {
       return []
     }
 
+    // The church's feed needs no value from the page, so every page builds it after its own feeds.
     if (page.kind === 'channel') {
       return [
         pageFeeds.getFeedEntry('sermon-net:channel', { channel: page.channel }),
         pageFeeds.getFeedEntry('sermon-net:channel-media', { channel: page.channel }),
         pageFeeds.getFeedEntry('sermon-net:channel-video', { channel: page.channel }),
         pageFeeds.getFeedEntry('sermon-net:channel-audio-pdf', { channel: page.channel }),
+        pageFeeds.getFeedEntry('sermon-net:church'),
       ]
     }
 
-    if (page.channels.length > 0) {
-      // The channel is page text, which can hold a `/`, and the table escapes it.
-      return page.channels.flatMap((channel) => {
+    // The channel is page text, which can hold a `/`, and the table escapes it.
+    return [
+      ...page.channels.flatMap((channel) => {
         return [
           pageFeeds.getFeedEntry('sermon-net:channel', { channel }),
           pageFeeds.getFeedEntry('sermon-net:channel-media', { channel }),
           pageFeeds.getFeedEntry('sermon-net:channel-video', { channel }),
           pageFeeds.getFeedEntry('sermon-net:channel-audio-pdf', { channel }),
         ]
-      })
-    }
-
-    // A church whose media was removed lists no channel and still serves an empty feed here.
-    return [pageFeeds.getFeedEntry('sermon-net:church')]
+      }),
+      pageFeeds.getFeedEntry('sermon-net:church'),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,

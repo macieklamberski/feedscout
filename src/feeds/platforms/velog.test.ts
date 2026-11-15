@@ -82,25 +82,32 @@ describe('velogHandler', () => {
   })
 
   describe('resolve', () => {
+    const trendingFeed: DiscoverUriEntry = {
+      uri: 'https://v2.velog.io/rss',
+      hint: { key: 'velog:trending', label: 'Trending' },
+    }
+
     it('should return feed URL for user', () => {
       const value = 'https://velog.io/@alice'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://v2.velog.io/rss/alice',
           hint: { key: 'velog:posts', label: 'Posts' },
         },
+        trendingFeed,
       ]
 
       expect(velogHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should write a non-ASCII username as is', () => {
+    it('should percent-encode a non-ASCII username', () => {
       const value = 'https://velog.io/@%EA%B9%80'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://v2.velog.io/rss/김',
+          uri: 'https://v2.velog.io/rss/%EA%B9%80',
           hint: { key: 'velog:posts', label: 'Posts' },
         },
+        trendingFeed,
       ]
 
       expect(velogHandler.resolve(value)).toEqual(expected)

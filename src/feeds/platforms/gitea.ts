@@ -1,7 +1,6 @@
 import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers user (guess, html), partly covers branch, commits, file, fileCommits, issues, repo.
@@ -17,19 +16,51 @@ const hosts = ['codeberg.org', 'www.codeberg.org', 'gitea.com', 'www.gitea.com']
 const giteaCookieRegex = /(?:^|[;,\s])[\w-]*gitea=/
 // suffixes: Gitea's own user routes, such as /{user}.rss, so no username ends with one
 const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png|rss)$/i
-// suffixes: Gitea's own user and repo feeds, which Gitea also reserves on repo names
-const activityFeedRegex = /.\.(?:atom|rss)$/i
 // Gitea prints the window config as JSON, `"appSubUrl":"/gitea"`, and Forgejo as a script
 // object with escaped slashes, `appSubUrl: '\/gitea'`.
 const subUrlRegex = /appSubUrl["']?\s*:\s*["']([^"']*)["']/
 const escapedSlashRegex = /\\\//g
 
 const branchViews = ['src', 'commits']
-const branchFeedRoutes = ['atom', 'rss']
-const repoFeeds = [
-  { files: ['releases.atom', 'releases.rss'], key: 'gitea:releases' },
-  { files: ['tags.atom', 'tags.rss'], key: 'gitea:tags' },
-]
+
+// Every feed comes as Atom and RSS, emitted as two entries, so validation keeps the one a host
+// serves. The table claims a feed only on Codeberg and gitea.com: a self-hosted instance is known
+// by its session cookie, which a feed URL does not carry. A slashed branch, such as v11.0/forgejo,
+// reads as the file history, so the one-segment rows come first, and a repo's activity comes
+// before its owner's, so a page with a repo builds the repo's.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'gitea:activity', template: '{root}/{owner}/{repo}.atom', format: 'atom' },
+    { key: 'gitea:activity', template: '{root}/{owner}/{repo}.rss', format: 'rss' },
+    { key: 'gitea:activity', template: '{root}/{owner}.atom', format: 'atom' },
+    { key: 'gitea:activity', template: '{root}/{owner}.rss', format: 'rss' },
+    { key: 'gitea:releases', template: '{root}/{owner}/{repo}/releases.atom', format: 'atom' },
+    { key: 'gitea:releases', template: '{root}/{owner}/{repo}/releases.rss', format: 'rss' },
+    { key: 'gitea:tags', template: '{root}/{owner}/{repo}/tags.atom', format: 'atom' },
+    { key: 'gitea:tags', template: '{root}/{owner}/{repo}/tags.rss', format: 'rss' },
+    {
+      key: 'gitea:branch-commits',
+      template: '{root}/{owner}/{repo}/atom/branch/{branch}',
+      format: 'atom',
+    },
+    {
+      key: 'gitea:branch-commits',
+      template: '{root}/{owner}/{repo}/rss/branch/{branch}',
+      format: 'rss',
+    },
+    {
+      key: 'gitea:file-history',
+      template: '{root}/{owner}/{repo}/atom/branch/{path*}',
+      format: 'atom',
+    },
+    {
+      key: 'gitea:file-history',
+      template: '{root}/{owner}/{repo}/rss/branch/{path*}',
+      format: 'rss',
+    },
+  ],
+  { hosts },
+)
 
 export const isGiteaHeaders = (headers: Headers): boolean => {
   return giteaCookieRegex.test(headers.get('set-cookie') ?? '')
@@ -103,85 +134,57 @@ export const giteaHandler: PlatformHandler = {
       return []
     }
 
-    const { root } = page
+    const { root, owner } = page
 
     // User or organization page: codeberg.org/{owner}.
     if (page.kind === 'user') {
-      const { owner } = page
-
       return [
-        {
-          uri: [`${root}/${owner}.atom`, `${root}/${owner}.rss`],
-          hint: composeHint('gitea:activity'),
-        },
+        feeds.getFeedEntry('gitea:activity', { root, owner }, 'atom'),
+        feeds.getFeedEntry('gitea:activity', { root, owner }, 'rss'),
       ]
     }
 
     // Repo page: codeberg.org/{owner}/{repo}.
-    const { owner, repo, branchPath } = page
-    const feeds: Array<DiscoverUriEntry> = [
-      {
-        uri: [`${root}/${owner}/${repo}/releases.atom`, `${root}/${owner}/${repo}/releases.rss`],
-        hint: composeHint('gitea:releases'),
-      },
-      {
-        uri: [`${root}/${owner}/${repo}/tags.atom`, `${root}/${owner}/${repo}/tags.rss`],
-        hint: composeHint('gitea:tags'),
-      },
-      {
-        uri: [`${root}/${owner}/${repo}.atom`, `${root}/${owner}/${repo}.rss`],
-        hint: composeHint('gitea:activity'),
-      },
-    ]
+    const { repo, branchPath } = page
+
+    if (!branchPath) {
+      return [
+        feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'rss'),
+        feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'rss'),
+        feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'rss'),
+      ]
+    }
 
     // Branch or file page and its history: {owner}/{repo}/{src|commits}/branch/{branch}/{path}.
-    if (branchPath) {
-      feeds.unshift({
-        // gitea.com sends an anonymous /rss/branch request to its sign-in page, and Codeberg
-        // answers /atom/branch with a cookie challenge.
-        uri: [
-          `${root}/${owner}/${repo}/atom/branch/${branchPath}`,
-          `${root}/${owner}/${repo}/rss/branch/${branchPath}`,
-        ],
-        // A slashed branch, such as v11.0/forgejo, gets the file history label.
-        hint: composeHint(branchPath.includes('/') ? 'gitea:file-history' : 'gitea:branch-commits'),
-      })
+    // gitea.com sends an anonymous /rss/branch request to its sign-in page, and Codeberg answers
+    // /atom/branch with a cookie challenge, so both are emitted.
+    if (branchPath.includes('/')) {
+      return [
+        feeds.getFeedEntry('gitea:file-history', { root, owner, repo, path: branchPath }, 'atom'),
+        feeds.getFeedEntry('gitea:file-history', { root, owner, repo, path: branchPath }, 'rss'),
+        feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'rss'),
+        feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'rss'),
+        feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'rss'),
+      ]
     }
 
-    return feeds
+    return [
+      feeds.getFeedEntry('gitea:branch-commits', { root, owner, repo, branch: branchPath }, 'atom'),
+      feeds.getFeedEntry('gitea:branch-commits', { root, owner, repo, branch: branchPath }, 'rss'),
+      feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'atom'),
+      feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'rss'),
+      feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'atom'),
+      feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'rss'),
+      feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'atom'),
+      feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'rss'),
+    ]
   },
 
-  // Only Codeberg and gitea.com are claimed: a self-hosted instance is known by its session cookie,
-  // which a feed URL does not carry.
-  getFeedHint: (url) => {
-    if (!isHostOf(url, hosts)) {
-      return
-    }
-
-    const [ownerOrFeed, repoOrFeed, section, refType, ...refPath] = getPathSegments(url)
-
-    // A user feed, /{owner}.atom, or a repo feed, /{owner}/{repo}.atom.
-    if (!section) {
-      if (activityFeedRegex.test(repoOrFeed ?? ownerOrFeed ?? '')) {
-        return composeHint('gitea:activity')
-      }
-
-      return
-    }
-
-    if (!refType) {
-      const repoFeed = repoFeeds.find(({ files }) => isAnyOf(section, files))
-
-      if (!repoFeed) {
-        return
-      }
-
-      return composeHint(repoFeed.key)
-    }
-
-    // A slashed branch, such as v11.0/forgejo, gets the file history label, as in resolve.
-    if (isAnyOf(section, branchFeedRoutes) && isAnyOf(refType, 'branch') && refPath.length > 0) {
-      return composeHint(refPath.length > 1 ? 'gitea:file-history' : 'gitea:branch-commits')
-    }
-  },
+  getFeedHint: feeds.getFeedHint,
 }

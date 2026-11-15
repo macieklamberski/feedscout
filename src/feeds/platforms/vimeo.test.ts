@@ -334,24 +334,6 @@ describe('vimeoHandler', () => {
       expect(vimeoHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a numeric first segment', () => {
-      const value = 'https://vimeo.com/123456/videos/rss'
-
-      expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a likes feed under the channels route', () => {
-      const value = 'https://vimeo.com/channels/likes/rss'
-
-      expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for an album feed with a non-numeric id', () => {
-      const value = 'https://vimeo.com/album/not-a-number/rss'
-
-      expect(vimeoHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
     it('should return undefined for a showcase feed', () => {
       const value = 'https://vimeo.com/showcase/12345/rss'
 

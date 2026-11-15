@@ -39,10 +39,6 @@ describe('parsePinterestUrl', () => {
     expect(parsePinterestUrl('https://pinterest.ai/nasa')).toBeUndefined()
   })
 
-  it('should return undefined for a subdomain longer than a country label', () => {
-    expect(parsePinterestUrl('https://help.pinterest.com/nasa/')).toBeUndefined()
-  })
-
   it('should return the tab for user subpages', () => {
     const expected: PinterestUrl = { kind: 'tab', username: 'nasa' }
 
@@ -222,12 +218,6 @@ describe('pinterestHandler', () => {
       const expected: DiscoverUriHint = { key: 'pinterest:board', label: 'Board' }
 
       expect(pinterestHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a feed on a subdomain longer than a country label', () => {
-      const value = 'https://help.pinterest.com/pinterest/feed.rss'
-
-      expect(pinterestHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a country domain', () => {

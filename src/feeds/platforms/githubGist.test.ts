@@ -123,10 +123,14 @@ describe('githubGistHandler', () => {
   describe('resolve', () => {
     it('should return Atom feed URL for user gists page', () => {
       const value = 'https://gist.github.com/alice'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://gist.github.com/alice.atom',
           hint: { key: 'github-gist:gists', label: 'Gists' },
+        },
+        {
+          uri: 'https://gist.github.com/discover.atom',
+          hint: { key: 'github-gist:discover', label: 'Discover' },
         },
       ]
 
@@ -139,10 +143,14 @@ describe('githubGistHandler', () => {
     ]
 
     it.each(gainedValues)('should return the user gists feed for %s', (value) => {
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://gist.github.com/alice.atom',
           hint: { key: 'github-gist:gists', label: 'Gists' },
+        },
+        {
+          uri: 'https://gist.github.com/discover.atom',
+          hint: { key: 'github-gist:discover', label: 'Discover' },
         },
       ]
 
@@ -151,10 +159,14 @@ describe('githubGistHandler', () => {
 
     it('should return starred gists feed for user starred page', () => {
       const value = 'https://gist.github.com/alice/starred'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://gist.github.com/alice/starred.atom',
           hint: { key: 'github-gist:starred', label: 'Starred' },
+        },
+        {
+          uri: 'https://gist.github.com/discover.atom',
+          hint: { key: 'github-gist:discover', label: 'Discover' },
         },
       ]
 
@@ -163,10 +175,14 @@ describe('githubGistHandler', () => {
 
     it('should return the forked gists feed for user forks page', () => {
       const value = 'https://gist.github.com/alice/forks'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://gist.github.com/alice/forked.atom',
           hint: { key: 'github-gist:forks', label: 'Forks' },
+        },
+        {
+          uri: 'https://gist.github.com/discover.atom',
+          hint: { key: 'github-gist:discover', label: 'Discover' },
         },
       ]
 

@@ -7,10 +7,11 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type BitchuteUrl = { kind: 'channel'; channel: string }
 
-const hosts = ['bitchute.com', 'www.bitchute.com']
+const hosts = ['bitchute.com', 'www.bitchute.com', 'old.bitchute.com']
 
 // A channel page links no feed. The www feed redirects to api.bitchute.com, the spelling feeds are
-// stored at, so the table reads both and builds the api one.
+// stored at, so the table reads both and builds the api one. old.bitchute.com serves the same
+// items, but links each one on old.bitchute.com.
 const feeds = definePlatformFeeds([
   { key: 'bitchute:channel', template: 'https://api.bitchute.com/feeds/rss/channel/{channel}/' },
   {
@@ -18,6 +19,7 @@ const feeds = definePlatformFeeds([
     template: 'https://www.bitchute.com/feeds/rss/channel/{channel}/',
     isAlias: true,
   },
+  { key: 'bitchute:channel', template: 'https://old.bitchute.com/feeds/rss/channel/{channel}/' },
 ])
 
 export const parseBitchuteUrl = (url: string): BitchuteUrl | undefined => {

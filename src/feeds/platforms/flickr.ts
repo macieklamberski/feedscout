@@ -12,6 +12,8 @@ export type FlickrUrl =
   | { kind: 'favorites'; userId: string }
   | { kind: 'albums'; userId: string }
   | { kind: 'galleries'; userId: string }
+  | { kind: 'album'; userId: string; set: string }
+  | { kind: 'userTag'; userId: string; tag: string }
   | { kind: 'subpage'; userId: string }
   | { kind: 'group'; group: string; section?: string }
   | { kind: 'forum' }
@@ -27,6 +29,8 @@ const forumRegex = /^\/help\/forum(?:\/|$)/i
 const nsidRegex = /^\d+@N\d+$/
 
 const groupSections = ['pool', 'discuss']
+const albumSections = ['albums', 'sets']
+
 const feeds = definePlatformFeeds(
   [
     { key: 'flickr:forum', template: '{scheme}://{host}/services/feeds/forums.gne' },
@@ -68,13 +72,13 @@ const feeds = definePlatformFeeds(
     { key: 'flickr:faves', template: '{scheme}://{host}/services/feeds/photos_faves.gne?id={id}' },
     {
       key: 'flickr:faves',
-      template: '{scheme}://{host}/services/feeds/photos_faves.gne?id={id}&format=rss_200',
-      format: 'rss',
+      template: '{scheme}://{host}/services/feeds/photos_faves.gne?nsid={id}',
+      isAlias: true,
     },
     {
       key: 'flickr:faves',
-      template: '{scheme}://{host}/services/feeds/photos_faves.gne?nsid={id}',
-      isAlias: true,
+      template: '{scheme}://{host}/services/feeds/photos_faves.gne?id={id}&format=rss_200',
+      format: 'rss',
     },
     {
       key: 'flickr:faves',
@@ -117,9 +121,9 @@ const feeds = definePlatformFeeds(
       template: '{scheme}://{host}/services/feeds/geo/?g={id}&format=rss_200',
       format: 'rss',
     },
-    // Past here the table only claims: a photostream or group pool narrowed to a tag, an album, the
-    // photos of a member's contacts, and the photos that carry a location by member, by tag, or by
-    // member or group pool narrowed to a tag.
+    // Past here the table only claims, but for an album and a photostream narrowed to a tag: the
+    // photos of a member's contacts, a group pool narrowed to a tag, and the photos that carry a
+    // location by member, by tag, or by member or group pool narrowed to a tag.
     {
       key: 'flickr:photos-tag',
       template: '{scheme}://{host}/services/feeds/photos_public.gne?id={id}&tags={tags}',
@@ -226,6 +230,15 @@ export const parseFlickrUrl = (url: string): FlickrUrl | undefined => {
 
     if (isAnyOf(section, 'albums') && rest.length === 0) {
       return { kind: 'albums', userId }
+    }
+
+    // An album, as /albums/{set} and its legacy /sets/{set}.
+    if (isAnyOf(section, albumSections) && rest[0]) {
+      return { kind: 'album', userId, set: rest[0] }
+    }
+
+    if (isAnyOf(section, 'tags') && rest[0]) {
+      return { kind: 'userTag', userId, tag: rest[0] }
     }
 
     if (isAnyOf(section, 'galleries') && rest.length === 0) {
@@ -353,6 +366,38 @@ export const flickrHandler: PlatformHandler = {
     }
 
     const params = { host, id: parsed.userId }
+
+    if (parsed.kind === 'album') {
+      return [
+        page.getFeedEntry('flickr:photoset', { ...params, set: parsed.set }),
+        page.getFeedEntry('flickr:photoset', { ...params, set: parsed.set }, 'rss'),
+        page.getFeedEntry('flickr:photos', params),
+        page.getFeedEntry('flickr:photos', params, 'rss'),
+        page.getFeedEntry('flickr:forum', { host }),
+        page.getFeedEntry('flickr:forum', { host }, 'rss'),
+        page.getFeedEntry('flickr:recent', { host }),
+        page.getFeedEntry('flickr:recent', { host }, 'rss'),
+        page.getFeedEntry('flickr:recent-geo', { host }),
+        page.getFeedEntry('flickr:recent-geo', { host }, 'rss'),
+      ]
+    }
+
+    if (parsed.kind === 'userTag') {
+      const tags = decodeSegment(parsed.tag) ?? parsed.tag
+
+      return [
+        page.getFeedEntry('flickr:photos-tag', { ...params, tags }),
+        page.getFeedEntry('flickr:photos-tag', { ...params, tags }, 'rss'),
+        page.getFeedEntry('flickr:photos', params),
+        page.getFeedEntry('flickr:photos', params, 'rss'),
+        page.getFeedEntry('flickr:forum', { host }),
+        page.getFeedEntry('flickr:forum', { host }, 'rss'),
+        page.getFeedEntry('flickr:recent', { host }),
+        page.getFeedEntry('flickr:recent', { host }, 'rss'),
+        page.getFeedEntry('flickr:recent-geo', { host }),
+        page.getFeedEntry('flickr:recent-geo', { host }, 'rss'),
+      ]
+    }
 
     if (parsed.kind === 'favorites') {
       return [

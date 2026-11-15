@@ -26,9 +26,6 @@ const feeds = definePlatformFeeds(
     // Every blog serves its newest comments, and its stories by their newest comment.
     { key: 'twoday:comments', template: '{scheme}://{host}/latestcomments.rdf' },
     { key: 'twoday:commented', template: '{scheme}://{host}/comments.rdf' },
-    // The platform's own news. It needs no value from the page, so `resolve` builds it on every
-    // page.
-    { key: 'twoday:platform', template: 'https://www.twoday.net/rss' },
   ],
   { domains },
 )
@@ -75,7 +72,6 @@ export const twodayHandler: PlatformHandler = {
         page.getFeedEntry('twoday:summary'),
         page.getFeedEntry('twoday:comments'),
         page.getFeedEntry('twoday:commented'),
-        feeds.getFeedEntry('twoday:platform'),
       ]
     }
 
@@ -84,7 +80,6 @@ export const twodayHandler: PlatformHandler = {
       page.getFeedEntry('twoday:summary'),
       page.getFeedEntry('twoday:comments'),
       page.getFeedEntry('twoday:commented'),
-      feeds.getFeedEntry('twoday:platform'),
     ]
   },
 

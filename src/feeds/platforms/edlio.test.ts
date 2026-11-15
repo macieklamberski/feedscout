@@ -97,10 +97,14 @@ describe('edlioHandler', () => {
 
     it('should return the linked category feed for the news page', () => {
       const value = 'https://example.com/apps/news/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/apps/news/rss?categoryid=12345',
           hint: { key: 'edlio:news-category', label: 'News category' },
+        },
+        {
+          uri: 'https://example.com/apps/news/rss',
+          hint: { key: 'edlio:news', label: 'News' },
         },
       ]
 
@@ -109,10 +113,14 @@ describe('edlioHandler', () => {
 
     it('should return the linked assignments feed for a class page', () => {
       const value = 'https://example.com/apps/classes/67890/assignments/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/apps/classes/assignment_rss.jsp?classREC_ID=67890',
           hint: { key: 'edlio:assignments', label: 'Assignments' },
+        },
+        {
+          uri: 'https://example.com/apps/news/rss',
+          hint: { key: 'edlio:news', label: 'News' },
         },
       ]
 
@@ -122,10 +130,14 @@ describe('edlioHandler', () => {
     it('should return the linked category feed spelled in another case', () => {
       const value = 'https://example.com/apps/news/'
       const content = '<link rel="alternate" href="/apps/news/rss?CategoryID=12345" />'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/apps/news/rss?categoryid=12345',
           hint: { key: 'edlio:news-category', label: 'News category' },
+        },
+        {
+          uri: 'https://example.com/apps/news/rss',
+          hint: { key: 'edlio:news', label: 'News' },
         },
       ]
 
@@ -135,10 +147,14 @@ describe('edlioHandler', () => {
     it('should return the linked assignments feed spelled in another case', () => {
       const value = 'https://example.com/apps/classes/67890/assignments/'
       const content = '<a href="/apps/classes/assignment_rss.jsp?classrec_id=67890">RSS</a>'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/apps/classes/assignment_rss.jsp?classREC_ID=67890',
           hint: { key: 'edlio:assignments', label: 'Assignments' },
+        },
+        {
+          uri: 'https://example.com/apps/news/rss',
+          hint: { key: 'edlio:news', label: 'News' },
         },
       ]
 
@@ -199,6 +215,10 @@ describe('edlioHandler', () => {
         {
           uri: 'http://example.edlio.com/apps/news/rss?categoryid=12345',
           hint: { key: 'edlio:news-category', label: 'News category' },
+        },
+        {
+          uri: 'http://example.edlio.com/apps/news/rss',
+          hint: { key: 'edlio:news', label: 'News' },
         },
       ]
 

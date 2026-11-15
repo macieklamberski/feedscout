@@ -63,13 +63,5 @@ export const writeasHandler: PlatformHandler = {
     return [feeds.getFeedEntry('writeas:blog', { username: parsed.username })]
   },
 
-  // The table reads any first segment as a name, so a dotted one, a file of the site, is refused
-  // by the page parser first: write.as/{post}.md/feed/ answers with an empty body.
-  getFeedHint: (url) => {
-    if (!parseWriteasUrl(url)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

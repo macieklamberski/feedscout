@@ -53,6 +53,15 @@ describe('tildesHandler', () => {
   })
 
   describe('resolve', () => {
+    const topicsRssFeed: DiscoverUriEntry = {
+      uri: 'https://tildes.net/topics.rss',
+      hint: { key: 'tildes:topics', label: 'Topics', format: 'rss' },
+    }
+    const topicsAtomFeed: DiscoverUriEntry = {
+      uri: 'https://tildes.net/topics.atom',
+      hint: { key: 'tildes:topics', label: 'Topics', format: 'atom' },
+    }
+
     it('should return empty array for a URL outside Tildes', () => {
       expect(tildesHandler.resolve('https://example.com/')).toEqual([])
     })
@@ -68,6 +77,8 @@ describe('tildesHandler', () => {
           uri: 'https://tildes.net/~tech/topics.atom',
           hint: { key: 'tildes:group', label: 'Group', format: 'atom' },
         },
+        topicsRssFeed,
+        topicsAtomFeed,
       ]
 
       expect(tildesHandler.resolve(value)).toEqual(expected)
@@ -84,6 +95,8 @@ describe('tildesHandler', () => {
           uri: 'https://tildes.net/~tech/topics.atom',
           hint: { key: 'tildes:group', label: 'Group', format: 'atom' },
         },
+        topicsRssFeed,
+        topicsAtomFeed,
       ]
 
       expect(tildesHandler.resolve(value)).toEqual(expected)
@@ -116,6 +129,8 @@ describe('tildesHandler', () => {
           uri: 'https://tildes.net/~tech/topics.atom?tag=programming',
           hint: { key: 'tildes:group-tag', label: 'Group tag', format: 'atom' },
         },
+        topicsRssFeed,
+        topicsAtomFeed,
       ]
 
       expect(tildesHandler.resolve(value)).toEqual(expected)
@@ -132,6 +147,8 @@ describe('tildesHandler', () => {
           uri: 'https://tildes.net/topics.atom?tag=programming',
           hint: { key: 'tildes:tag', label: 'Tag', format: 'atom' },
         },
+        topicsRssFeed,
+        topicsAtomFeed,
       ]
 
       expect(tildesHandler.resolve(value)).toEqual(expected)

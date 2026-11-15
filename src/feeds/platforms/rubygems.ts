@@ -21,6 +21,9 @@ const feeds = definePlatformFeeds([
   { key: 'rubygems:latest-gems', template: 'https://rubygems.org/gems.atom' },
   { key: 'rubygems:latest-gems', template: 'https://index.rubygems.org/gems.atom' },
   { key: 'rubygems:latest-gems', template: 'https://bundler.rubygems.org/gems.atom' },
+  // The dashboard feed of a signed-in user answers only with its `api_key`, so it is claimed and
+  // never built.
+  { key: 'rubygems:dashboard', template: 'https://rubygems.org/dashboard.atom?api_key={apiKey}' },
 ])
 
 export const parseRubygemsUrl = (url: string): RubygemsUrl | undefined => {
@@ -52,9 +55,14 @@ export const rubygemsHandler: PlatformHandler = {
       return []
     }
 
-    // Gem names are case-sensitive: /gems/RedCloth/versions.atom answers and /gems/redcloth 404s.
+    // The latest gems feed needs no value from the page, so every page builds it after its own
+    // feeds. Gem names are case-sensitive: /gems/RedCloth/versions.atom answers and /gems/redcloth
+    // 404s.
     if (parsed.kind === 'gem') {
-      return [feeds.getFeedEntry('rubygems:versions', { gem: parsed.gem })]
+      return [
+        feeds.getFeedEntry('rubygems:versions', { gem: parsed.gem }),
+        feeds.getFeedEntry('rubygems:latest-gems'),
+      ]
     }
 
     // Every page links the FeedBurner mirror of this feed, which now serves the home page HTML.

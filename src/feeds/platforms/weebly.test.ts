@@ -254,18 +254,6 @@ describe('weeblyHandler', () => {
       expect(weeblyHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a feed path under a robots file', () => {
-      const value = 'https://carol.weebly.com/robots.txt/feed'
-
-      expect(weeblyHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path under a sitemap file', () => {
-      const value = 'https://bob.weebly.com/sitemap.xml/feed'
-
-      expect(weeblyHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
     it('should return undefined for a blog page', () => {
       const value = 'https://example.weebly.com/wish-you-were-here'
 

@@ -28,14 +28,18 @@
   "arena": {
     "arena:channel": "https://www.are.na/meg-miller/good-sign-offs/feed/rss",
     "arena:editorial": "https://www.are.na/editorial/feed/rss",
-    "arena:profile": "https://www.are.na/charles-broskoski/feed/rss"
+    "arena:profile": "https://www.are.na/cab/feed/rss"
   },
   "art19": {
+    // An invented token: the feed is private to its listener, so this sample answers 404.
+    "art19:private": "https://rss.art19.com/alternate_feeds/user/american-scandal/0123456789abcdef",
     "art19:show": "https://rss.art19.com/american-scandal"
   },
   "artstation": {
-    "artstation:artwork": "https://www.artstation.com/artwork.rss",
-    "artstation:artwork-latest": "https://www.artstation.com/artwork.rss?sorting=latest",
+    "artstation:artwork": [
+      "https://www.artstation.com/artwork.rss",
+      "https://www.artstation.com/artwork.rss?sorting=latest"
+    ],
     "artstation:portfolio": "https://www.artstation.com/rossdraws.rss"
   },
   "atwiki": {
@@ -249,7 +253,9 @@
     "captivate:collection": "https://feeds.captivate.fm/theknurdproject/jcast/",
     "captivate:latest": "https://feeds.captivate.fm/theknurdproject/latest/",
     "captivate:network": "https://feeds.captivate.fm/n/iacast-network/",
-    "captivate:podcast": "https://feeds.captivate.fm/school-of-podcasting/"
+    "captivate:podcast": "https://feeds.captivate.fm/school-of-podcasting/",
+    // An invented token: the feed is private to its listener, so this sample answers 401.
+    "captivate:private": "https://private.captivate.fm/school-of-podcasting/0123456789abcdef"
   },
   "castopod": {
     "castopod:podcast": "https://castopod.it/@PlinPlon/feed.xml"
@@ -368,14 +374,6 @@
       "https://dasauge.com/jobs/feed",
       "https://dasauge.de/jobs/feed",
       "https://dasauge.es/jobs/feed"
-    ],
-    "dasauge:news": [
-      "https://dasauge.at/news/feed",
-      "https://dasauge.ch/news/feed",
-      "https://dasauge.co.uk/news/feed",
-      "https://dasauge.com/news/feed",
-      "https://dasauge.de/news/feed",
-      "https://dasauge.es/news/feed"
     ],
     "dasauge:profile": {
       "skip": "claim-only since the 2026-10-26 relaunch, every profile's ?rss serves the profile page"
@@ -666,6 +664,8 @@
     "ghost:author": "https://demo.ghost.io/author/ghost/rss/",
     "ghost:blog": "https://demo.ghost.io/rss/",
     "ghost:collection": "https://unprecedented.ghost.io/archive/rss/",
+    // An invented token: the site is private to its members, so this sample answers 404.
+    "ghost:private": "https://demo.ghost.io/0123456789abcdef0123456789abcd/rss/",
     "ghost:tag": "https://demo.ghost.io/tag/getting-started/rss/"
   },
   "gitea": {
@@ -740,6 +740,11 @@
     ]
   },
   "goodreads": {
+    // Invented keys: the feeds are private to their owner, and Goodreads removed RSS in October
+    // 2026, so these samples answer 404.
+    "goodreads:private-reviews": "https://www.goodreads.com/review/list_rss/1?key=0123456789abcdef",
+    "goodreads:private-shelf": "https://www.goodreads.com/review/list_rss/1?key=0123456789abcdef&shelf=read",
+    "goodreads:private-updates": "https://www.goodreads.com/user/updates_rss/1?key=0123456789abcdef",
     "goodreads:reviews": {
       "skip": "Goodreads removed RSS in October 2026, so every feed answers 404"
     },
@@ -862,7 +867,11 @@
       "https://huffduffer.com/iamdanw/collective/atom",
       "https://huffduffer.com/iamdanw/collective/json"
     ],
-    "huffduffer:huffduffs": "https://huffduffer.com/wjt/rss",
+    "huffduffer:huffduffs": [
+      "https://huffduffer.com/wjt/rss",
+      "https://huffduffer.com/wjt/atom",
+      "https://huffduffer.com/wjt/json"
+    ],
     "huffduffer:new": [
       "https://huffduffer.com/new/rss",
       "https://huffduffer.com/new/atom",
@@ -873,7 +882,11 @@
       "https://huffduffer.com/popular/atom",
       "https://huffduffer.com/popular/json"
     ],
-    "huffduffer:related": "https://huffduffer.com/robby/56876/related/rss",
+    "huffduffer:related": [
+      "https://huffduffer.com/robby/56876/related/rss",
+      "https://huffduffer.com/robby/56876/related/atom",
+      "https://huffduffer.com/robby/56876/related/json"
+    ],
     "huffduffer:search": [
       "https://huffduffer.com/search/rss?q=Edward+Dutton",
       "https://huffduffer.com/search/atom?q=Edward+Dutton",
@@ -912,11 +925,9 @@
     "is-programmer:site": "http://bachue.is-programmer.com/site.rss"
   },
   "itchio": {
-    "itchio:blog": "https://itch.io/blog.rss",
     "itchio:creator": "https://itch.io/games/by-leafo.xml",
     "itchio:devlog": "https://qeresi.itch.io/a-tale-of-crowns/devlog.rss",
     "itchio:devlogs": "https://itch.io/devlogs.xml",
-    "itchio:digest": "https://itch.io/digest.rss",
     "itchio:featured": "https://itch.io/feed/featured.xml",
     "itchio:games": [
       "https://itch.io/games/newest.xml",
@@ -939,8 +950,7 @@
       "https://itch.io/comics.xml",
       "https://itch.io/misc.xml"
     ],
-    "itchio:tag": "https://itch.io/games/tag-horror.xml",
-    "itchio:updates": "https://itch.io/updates.rss"
+    "itchio:tag": "https://itch.io/games/tag-horror.xml"
   },
   "ivoox": {
     "ivoox:group": "https://www.ivoox.com/en/feed_fl_281_1.xml",
@@ -955,7 +965,10 @@
     "jimdo:blog-tag": "https://cedra52.jimdofree.com/rss/blog/com"
   },
   "jinbo": {
-    "jinbo:category": "https://blog.jinbo.net/homocultura/atom/category/9",
+    "jinbo:category": [
+      "https://blog.jinbo.net/homocultura/rss/category/9",
+      "https://blog.jinbo.net/homocultura/atom/category/9"
+    ],
     "jinbo:comments": [
       "https://blog.jinbo.net/manic/rss/comment",
       "https://blog.jinbo.net/manic/atom/comment"
@@ -997,7 +1010,6 @@
     "jugem:theme": "http://jugem.jp/theme/c189/7233/rss"
   },
   "kickstarter": {
-    "kickstarter:blog": "https://www.kickstarter.com/blog.atom",
     "kickstarter:page": "https://www.kickstarter.com/pages/tees.atom",
     "kickstarter:projects": "https://www.kickstarter.com/projects/feed.atom",
     "kickstarter:updates": "https://www.kickstarter.com/projects/elanlee/exploding-kittens/posts.atom"
@@ -1008,6 +1020,7 @@
   "koha": {
     "koha:comments": "https://library.hekima.ac.ke/cgi-bin/koha/opac-showreviews.pl?format=rss",
     "koha:list": "https://koha.ffzg.hr/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber=6649",
+    "koha:news": "https://library.imar.ro/cgi-bin/koha/opac-news-rss.pl",
     "koha:search": "https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-search.pl?q=agua&count=50&sort_by=acqdate_dsc&format=rss"
   },
   "laget": {
@@ -1075,8 +1088,7 @@
     "lichess:community": [
       "https://lichess.org/blog/community.atom",
       "https://lichess.org/blog/community.atom?lang=fr"
-    ],
-    "lichess:updates": "https://lichess.org/feed.atom"
+    ]
   },
   "listed": {
     "listed:blog": "https://listed.to/@Listed/feed.rss"
@@ -1115,14 +1127,16 @@
     "lobsters:domain": "https://lobste.rs/domains/github.com.rss",
     "lobsters:newest": "https://lobste.rs/newest.rss",
     "lobsters:private": "https://lobste.rs/rss?token=0123456789abcdef",
-    "lobsters:stories": ["https://lobste.rs/~pushcx/stories.rss", "https://lobste.rs/rss"],
+    "lobsters:stories": "https://lobste.rs/rss",
     "lobsters:tag": "https://lobste.rs/t/programming.rss",
-    "lobsters:top": ["https://lobste.rs/top/rss", "https://lobste.rs/top/1w/rss"]
+    "lobsters:top": ["https://lobste.rs/top/rss", "https://lobste.rs/top/1w/rss"],
+    "lobsters:user-stories": "https://lobste.rs/~pushcx/stories.rss"
   },
   "mailArchive": {
     "mail-archive:list": [
       "https://www.mail-archive.com/gnupg-users@gnupg.org/maillist.xml",
-      "https://mail-archive.com/dnsop@ietf.org/maillist.xml"
+      "https://mail-archive.com/dnsop@ietf.org/maillist.xml",
+      "https://www.mail-archive.com/gnupg-users@gnupg.org/maillist.rdf"
     ]
   },
   "mailchimp": {
@@ -1368,6 +1382,7 @@
     ]
   },
   "omnystudio": {
+    "omnystudio:playlist": "https://omny.fm/shows/capetalk-breakfast/playlists/money-on-a-monday.rss",
     "omnystudio:show": "https://omny.fm/shows/stuff-you-should-know/playlists/podcast.rss"
   },
   "opencartJournal": {
@@ -1490,15 +1505,16 @@
     "pinboard:bookmarks": "https://feeds.pinboard.in/rss/u:pinboard/",
     "pinboard:network": "https://feeds.pinboard.in/rss/secret:0123456789abcdef/u:pinboard/network/",
     "pinboard:popular": "https://feeds.pinboard.in/rss/popular/",
+    // Invented tokens: the feeds are private to their owner, so these samples answer 401.
+    "pinboard:private-bookmarks": "https://feeds.pinboard.in/rss/secret:0123456789abcdef/u:pinboard/",
+    "pinboard:private-tag": "https://feeds.pinboard.in/rss/secret:0123456789abcdef/u:pinboard/t:llm/",
     "pinboard:recent": "https://feeds.pinboard.in/rss/recent/",
     "pinboard:source": "https://feeds.pinboard.in/rss/u:friedelitis/from:twitter",
     "pinboard:starred": "https://feeds.pinboard.in/rss/secret:0123456789abcdef/u:pinboard/starred/",
-    "pinboard:tag": [
-      "https://feeds.pinboard.in/rss/u:mshook/t:llm/"
-      // The site-wide tag feed answered 500 on 2026-09-26 while Pinboard's search backend was down.
-      // Uncomment once it answers 200 again.
-      // "https://feeds.pinboard.in/rss/t:llm/"
-    ]
+    "pinboard:tag": {
+      "skip": "Every site-wide tag feed, as https://feeds.pinboard.in/rss/t:llm/, answered 500 on 2026-09-26 and 2026-11-14 while Pinboard's search backend was down"
+    },
+    "pinboard:user-tag": "https://feeds.pinboard.in/rss/u:mshook/t:llm/"
   },
   "pinterest": {
     "pinterest:board": "https://www.pinterest.com/nasa/hubble-space-telescope.rss",
@@ -1531,7 +1547,7 @@
     ]
   },
   "plurk": {
-    "plurk:plurks": "https://www.plurk.com/user/plurkoffice.xml",
+    "plurk:plurks": "https://www.plurk.com/plurkoffice.xml",
     "plurk:responses": "https://www.plurk.com/p/3j6p8yayds.xml"
   },
   "pmwiki": {
@@ -1556,13 +1572,15 @@
   },
   "podigee": {
     "podigee:feed": "https://lorenz-lauscht.podigee.io/feeds/neuer_feed_1696850635/mp3",
-    "podigee:podcast": "https://cui-bono.podigee.io/feed/mp3"
+    "podigee:feed-encoding": "https://lorenz-lauscht.podigee.io/feeds/neuer_feed_1696850635/aac",
+    "podigee:podcast": "https://cui-bono.podigee.io/feed/mp3",
+    "podigee:podcast-encoding": "https://lorenz-lauscht.podigee.io/feed/aac"
   },
   "podlove": {
     "podlove:podcast": ["https://freakshow.fm/feed/mp3", "https://cre.fm/feed/opus"]
   },
   "podomatic": {
-    "podomatic:show": "https://asquaredpodcast10.podomatic.com/rss2.xml"
+    "podomatic:show": "https://0282.podomatic.com/rss2.xml"
   },
   "postachio": {
     "postachio:posts": "https://help.postach.io/feed.xml"
@@ -1674,7 +1692,10 @@
     "qiita:popular": "https://qiita.com/popular-items/feed",
     "qiita:posts": "https://qiita.com/Qiita/feed",
     "qiita:tag": "https://qiita.com/tags/javascript/feed",
-    "qiita:zine": "https://qiita.com/official-columns/feed/"
+    "qiita:zine": [
+      "https://qiita.com/official-columns/feed/",
+      "https://qiita.com/official-columns/feed/atom/"
+    ]
   },
   "rakutenBlog": {
     "rakuten-blog:posts": "https://api.plaza.rakuten.ne.jp/buntankingdam/rss/"
@@ -1729,8 +1750,10 @@
       "https://pulp.plan.io/projects/pulp/issues.atom"
     ],
     "redmine:project-news": "https://www.redmine.org/projects/redmine/news.atom",
+    "redmine:project-user-activity": "https://www.redmine.org/projects/redmine/activity.atom?user_id=1",
     "redmine:projects": "https://www.redmine.org/projects.atom",
-    "redmine:revisions": "https://www.redmine.org/projects/redmine/repository/svn/revisions.atom"
+    "redmine:revisions": "https://www.redmine.org/projects/redmine/repository/svn/revisions.atom",
+    "redmine:user-activity": "https://www.redmine.org/activity.atom?user_id=1"
   },
   "reformal": {
     "reformal:feedback": [
@@ -1745,11 +1768,17 @@
     "rss-com:podcast": "https://media.rss.com/podcasting101/feed.xml"
   },
   "rubygems": {
+    // An invented key: the feed is private to its owner, so this sample redirects to the sign-in page.
+    "rubygems:dashboard": "https://rubygems.org/dashboard.atom?api_key=0123456789abcdef0123456789abcdef",
     "rubygems:latest-gems": "https://rubygems.org/gems.atom",
     "rubygems:versions": "https://rubygems.org/gems/rails/versions.atom"
   },
   "sakuraBlog": {
-    "sakura-blog:posts": ["http://cwtokyo.sblo.jp/index20.rdf", "http://cwtokyo.sblo.jp/index.rdf"]
+    "sakura-blog:posts": [
+      "http://cwtokyo.sblo.jp/index20.rdf",
+      "http://cwtokyo.sblo.jp/index.rdf",
+      "https://irorimura2026.sblo.jp/rss.xml"
+    ]
   },
   "sapoBlogs": {
     "sapo-blogs:comments": [
@@ -1804,7 +1833,11 @@
     "shaarli:posts": ["https://demo.shaarli.org/feed/rss", "https://demo.shaarli.org/feed/atom"]
   },
   "shinobi": {
-    "shinobi:posts": ["https://chabun.blog.shinobi.jp/RSS/", "https://chabun.blog.shinobi.jp/ATOM/"]
+    "shinobi:posts": [
+      "https://chabun.blog.shinobi.jp/RSS/",
+      "https://chabun.blog.shinobi.jp/ATOM/",
+      "https://chabun.blog.shinobi.jp/RSS/100/"
+    ]
   },
   "shopify": {
     "shopify:blog": "https://www.allbirds.com/blogs/news.atom",
@@ -1864,6 +1897,7 @@
       "https://sourceforge.net/projects/filezilla/rss",
       "https://sourceforge.net/projects/nmap/rss"
     ],
+    "sourceforge:files-folder": "https://sourceforge.net/projects/mingw-w64/rss?path=/Toolchains%20targetting%20Win64",
     "sourceforge:news": [
       "https://sourceforge.net/p/sevenzip/news/feed.rss",
       "https://sourceforge.net/p/sevenzip/news/feed.atom"
@@ -1957,7 +1991,6 @@
       "https://store.steampowered.com/feeds/news/app/570/"
     ],
     "steam:news-collection": "https://store.steampowered.com/feeds/news/collection/steam",
-    "steam:news-global": "https://store.steampowered.com/feeds/news.xml",
     "steam:weekly-top-sellers": "https://store.steampowered.com/feeds/weeklytopsellers.xml"
   },
   "substack": {
@@ -1967,7 +2000,11 @@
     ],
     "substack:newsletter-section": "https://biggersisterchannel.substack.com/feed?sectionId=194387",
     "substack:podcast": "https://api.substack.com/feed/podcast/1055993.rss",
-    "substack:podcast-section": "https://api.substack.com/feed/podcast/1047751/s/25347.rss"
+    "substack:podcast-section": "https://api.substack.com/feed/podcast/1047751/s/25347.rss",
+    // Invented tokens: the feeds are private to their listener or to Spotify, so these samples
+    // answer 400.
+    "substack:private-podcast": "https://api.substack.com/feed/podcast/1055993/private/0123456789abcdef.rss",
+    "substack:spotify-podcast": "https://api.substack.com/feed/podcast/spotify/0123456789abcdef/1055993.rss"
   },
   "svbtle": {
     "svbtle:posts": "https://dcurt.is/feed"
@@ -2013,7 +2050,15 @@
     ]
   },
   "textpattern": {
-    "textpattern:posts": ["https://textpattern.com/rss", "https://textpattern.com/atom"]
+    "textpattern:category": [
+      "https://textpattern.com/rss?category=advisories",
+      "https://textpattern.com/atom?category=advisories"
+    ],
+    "textpattern:posts": ["https://textpattern.com/rss", "https://textpattern.com/atom"],
+    "textpattern:section": [
+      "https://textpattern.com/rss?section=weblog",
+      "https://textpattern.com/atom?section=weblog"
+    ]
   },
   "tildes": {
     "tildes:group": [
@@ -2054,9 +2099,10 @@
     "tistory:blog": "https://notice.tistory.com/rss"
   },
   "togetter": {
-    "togetter:curator": "https://togetter.com/rss/id/tarareba722",
+    "togetter:curator": "https://posfie.com/@tarareba722/rss",
     "togetter:hot": "https://togetter.com/rss/hot",
-    "togetter:news": "https://togetter.com/rss/news"
+    "togetter:news": "https://togetter.com/rss/news",
+    "togetter:recent": "https://togetter.com/rss/recent"
   },
   "tourTravelWorld": {
     "tour-travel-world:tour-packages": "https://www.kirtytours.com/tour-packages.rss"
@@ -2078,7 +2124,6 @@
   "twoday": {
     "twoday:commented": "https://safinabianca.twoday.net/comments.rdf",
     "twoday:comments": "https://safinabianca.twoday.net/latestcomments.rdf",
-    "twoday:platform": "https://www.twoday.net/rss",
     "twoday:posts": "https://changes.twoday.net/rss",
     "twoday:summary": "https://hotelmama.twoday.net/summary.rdf",
     "twoday:topic": "https://schmollfisch.twoday.net/topics/Wo+der+Hase+hinlief/index.rdf"

@@ -19,7 +19,6 @@ const bannerLogoRegex = /^\/admin\/img\/blogheader_logo\.png$/i
 const feeds = definePlatformFeeds(
   [
     { key: 'shinobi:posts', template: '{scheme}://{host}/RSS/', format: 'rss' },
-    { key: 'shinobi:posts', template: '{scheme}://{host}/ATOM/', format: 'atom' },
     { key: 'shinobi:posts', template: '{scheme}://{host}/RSS/200/', format: 'rss', isAlias: true },
     { key: 'shinobi:posts', template: '{scheme}://{host}/RSS/RSS/', format: 'rss', isAlias: true },
     {
@@ -36,6 +35,7 @@ const feeds = definePlatformFeeds(
       format: 'rss',
       isAlias: true,
     },
+    { key: 'shinobi:posts', template: '{scheme}://{host}/ATOM/', format: 'atom' },
     { key: 'shinobi:posts', template: '{scheme}://{host}/RSS/100/', format: 'rdf' },
     {
       key: 'shinobi:posts',
@@ -85,6 +85,7 @@ export const shinobiHandler: PlatformHandler = {
     return [
       page.getFeedEntry('shinobi:posts', {}, 'rss'),
       page.getFeedEntry('shinobi:posts', {}, 'atom'),
+      page.getFeedEntry('shinobi:posts', {}, 'rdf'),
     ]
   },
 

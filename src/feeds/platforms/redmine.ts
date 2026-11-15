@@ -22,12 +22,15 @@ export type RedminePage = (
   | { kind: 'projects'; root: string }
   | { kind: 'issues'; root: string; project?: string }
   | { kind: 'issue'; root: string; issueId: string }
+  | { kind: 'user'; root: string; userId: string }
   | { kind: 'news'; root: string; project?: string }
   | { kind: 'activity'; root: string; project?: string }
   | { kind: 'project'; root: string; project: string; hasIssues: boolean; hasNews: boolean }
   | { kind: 'board'; root: string; project: string; boardId: string }
   | { kind: 'repository'; root: string; project: string; repository: string }
 ) & { alternateHrefs: Array<string>; project?: string }
+
+type RedmineFeedKey = Parameters<typeof feeds.getFeedUrl>[0]
 
 const poweredByRegex = /Powered by <a\s[^<>]*href="https?:\/\/www\.redmine\.org\/"/
 const projectClassRegex = /(?:^|\s)project-(\S+)/
@@ -57,9 +60,14 @@ const feeds = definePlatformFeeds(
     { key: 'redmine:project-news', template: '{root}/projects/{project}/news.atom' },
     { key: 'redmine:news', template: '{root}/news.atom' },
     {
+      key: 'redmine:project-user-activity',
+      template: '{root}/projects/{project}/activity.atom?user_id={userId}',
+    },
+    {
       key: 'redmine:project-activity',
       template: '{root}/projects/{project}/activity.atom',
     },
+    { key: 'redmine:user-activity', template: '{root}/activity.atom?user_id={userId}' },
     { key: 'redmine:activity', template: '{root}/activity.atom' },
     { key: 'redmine:projects', template: '{root}/projects.atom' },
     { key: 'redmine:project-issues', template: '{root}/projects/{project}/issues.atom' },
@@ -209,6 +217,10 @@ export const getRedminePage = (
     return { kind: 'issue', root, alternateHrefs, issueId: second }
   }
 
+  if (isAnyOf(first, 'users') && second && digitsRegex.test(second) && !third) {
+    return { kind: 'user', root, alternateHrefs, userId: second }
+  }
+
   if (!second && isAnyOf(first, 'projects')) {
     return { kind: 'projects', root, alternateHrefs }
   }
@@ -258,38 +270,112 @@ export const redmineHandler: PlatformHandler = {
     // An install under a sub-path such as /redmine keeps it in the root of every feed.
     const params: PlatformFeedParams = { root: page.root, project: page.project }
 
-    const getFeedEntry = (key: string, values?: PlatformFeedParams): DiscoverUriEntry => {
+    const getFeedEntry = (
+      key: RedmineFeedKey,
+      values?: PlatformFeedParams,
+    ): DiscoverUriEntry | undefined => {
       const uri = feeds.getFeedUrl(key, { ...params, ...values })
+
+      if (!uri) {
+        return
+      }
 
       return { uri: getAlternateSpelling(uri, page.alternateHrefs), hint: composeHint(key) }
     }
-    // A page in a project gets the project's feed, and a page outside one the site's.
-    const getScopedFeedEntry = (key: string, projectKey: string): DiscoverUriEntry => {
-      return getFeedEntry(page.project ? projectKey : key)
-    }
 
+    // The site news, activity, projects and issues need no value from the page, so every page
+    // builds them after its own feeds.
     if (page.kind === 'home') {
-      return [getFeedEntry('redmine:news'), getFeedEntry('redmine:activity')]
+      return [
+        getFeedEntry('redmine:news'),
+        getFeedEntry('redmine:activity'),
+        getFeedEntry('redmine:projects'),
+        getFeedEntry('redmine:issues'),
+      ]
     }
 
     if (page.kind === 'projects') {
-      return [getFeedEntry('redmine:projects')]
+      return [
+        getFeedEntry('redmine:projects'),
+        getFeedEntry('redmine:news'),
+        getFeedEntry('redmine:activity'),
+        getFeedEntry('redmine:issues'),
+      ]
     }
 
     if (page.kind === 'issues') {
-      return [getScopedFeedEntry('redmine:issues', 'redmine:project-issues')]
+      if (page.project) {
+        return [
+          getFeedEntry('redmine:project-issues'),
+          getFeedEntry('redmine:news'),
+          getFeedEntry('redmine:activity'),
+          getFeedEntry('redmine:projects'),
+          getFeedEntry('redmine:issues'),
+        ]
+      }
+
+      return [
+        getFeedEntry('redmine:issues'),
+        getFeedEntry('redmine:news'),
+        getFeedEntry('redmine:activity'),
+        getFeedEntry('redmine:projects'),
+      ]
     }
 
     if (page.kind === 'issue') {
-      return [getFeedEntry('redmine:issue', { issueId: page.issueId })]
+      return [
+        getFeedEntry('redmine:issue', { issueId: page.issueId }),
+        getFeedEntry('redmine:news'),
+        getFeedEntry('redmine:activity'),
+        getFeedEntry('redmine:projects'),
+        getFeedEntry('redmine:issues'),
+      ]
+    }
+
+    if (page.kind === 'user') {
+      return [
+        getFeedEntry('redmine:user-activity', { userId: page.userId }),
+        getFeedEntry('redmine:news'),
+        getFeedEntry('redmine:activity'),
+      ]
     }
 
     if (page.kind === 'news') {
-      return [getScopedFeedEntry('redmine:news', 'redmine:project-news')]
+      if (page.project) {
+        return [
+          getFeedEntry('redmine:project-news'),
+          getFeedEntry('redmine:news'),
+          getFeedEntry('redmine:activity'),
+          getFeedEntry('redmine:projects'),
+          getFeedEntry('redmine:issues'),
+        ]
+      }
+
+      return [
+        getFeedEntry('redmine:news'),
+        getFeedEntry('redmine:activity'),
+        getFeedEntry('redmine:projects'),
+        getFeedEntry('redmine:issues'),
+      ]
     }
 
     if (page.kind === 'activity') {
-      return [getScopedFeedEntry('redmine:activity', 'redmine:project-activity')]
+      if (page.project) {
+        return [
+          getFeedEntry('redmine:project-activity'),
+          getFeedEntry('redmine:news'),
+          getFeedEntry('redmine:activity'),
+          getFeedEntry('redmine:projects'),
+          getFeedEntry('redmine:issues'),
+        ]
+      }
+
+      return [
+        getFeedEntry('redmine:activity'),
+        getFeedEntry('redmine:news'),
+        getFeedEntry('redmine:projects'),
+        getFeedEntry('redmine:issues'),
+      ]
     }
 
     if (page.kind === 'project') {
@@ -297,14 +383,30 @@ export const redmineHandler: PlatformHandler = {
         getFeedEntry('redmine:project-activity'),
         ...(page.hasIssues ? [getFeedEntry('redmine:project-issues')] : []),
         ...(page.hasNews ? [getFeedEntry('redmine:project-news')] : []),
+        getFeedEntry('redmine:news'),
+        getFeedEntry('redmine:activity'),
+        getFeedEntry('redmine:projects'),
+        getFeedEntry('redmine:issues'),
       ]
     }
 
     if (page.kind === 'board') {
-      return [getFeedEntry('redmine:board', { boardId: page.boardId })]
+      return [
+        getFeedEntry('redmine:board', { boardId: page.boardId }),
+        getFeedEntry('redmine:news'),
+        getFeedEntry('redmine:activity'),
+        getFeedEntry('redmine:projects'),
+        getFeedEntry('redmine:issues'),
+      ]
     }
 
-    return [getFeedEntry('redmine:revisions', { repository: page.repository })]
+    return [
+      getFeedEntry('redmine:revisions', { repository: page.repository }),
+      getFeedEntry('redmine:news'),
+      getFeedEntry('redmine:activity'),
+      getFeedEntry('redmine:projects'),
+      getFeedEntry('redmine:issues'),
+    ]
   },
 
   getFeedHint: (url) => {

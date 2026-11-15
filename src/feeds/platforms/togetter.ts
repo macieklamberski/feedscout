@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -6,7 +6,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 // Generic covers page (html).
 // Handler needed for: user.
 
-export type TogetterUrl = { kind: 'user'; username: string } | { kind: 'home' }
+export type TogetterUrl = { kind: 'user'; username: string } | { kind: 'recent' } | { kind: 'home' }
 
 export const hosts = ['togetter.com', 'www.togetter.com']
 
@@ -15,7 +15,10 @@ const userPathRegex = /^\/id\/([^/]+)/i
 const feeds = definePlatformFeeds([
   { key: 'togetter:news', template: 'https://togetter.com/rss/news' },
   { key: 'togetter:hot', template: 'https://togetter.com/rss/hot' },
-  { key: 'togetter:curator', template: 'https://togetter.com/rss/id/{username}' },
+  { key: 'togetter:recent', template: 'https://togetter.com/rss/recent' },
+  // A curator's feed moved to posfie.com, and the togetter.com one redirects there with a 301.
+  { key: 'togetter:curator', template: 'https://posfie.com/@{username}/rss' },
+  { key: 'togetter:curator', template: 'https://togetter.com/rss/id/{username}', isAlias: true },
 ])
 
 export const parseTogetterUrl = (url: string): TogetterUrl | undefined => {
@@ -27,11 +30,17 @@ export const parseTogetterUrl = (url: string): TogetterUrl | undefined => {
 
   const username = parsedUrl.pathname.match(userPathRegex)?.[1]
 
-  if (!username) {
-    return { kind: 'home' }
+  if (username) {
+    return { kind: 'user', username }
   }
 
-  return { kind: 'user', username }
+  const [route] = getPathSegments(parsedUrl)
+
+  if (isAnyOf(route, 'recent')) {
+    return { kind: 'recent' }
+  }
+
+  return { kind: 'home' }
 }
 
 export const togetterHandler: PlatformHandler = {
@@ -46,14 +55,30 @@ export const togetterHandler: PlatformHandler = {
       return []
     }
 
+    // The news, recent and popular feeds need no value from the page, so every page builds them
+    // after its own feeds.
     if (parsed.kind === 'user') {
       return [
         feeds.getFeedEntry('togetter:curator', { username: parsed.username }),
+        feeds.getFeedEntry('togetter:news'),
+        feeds.getFeedEntry('togetter:recent'),
         feeds.getFeedEntry('togetter:hot'),
       ]
     }
 
-    return [feeds.getFeedEntry('togetter:news'), feeds.getFeedEntry('togetter:hot')]
+    if (parsed.kind === 'recent') {
+      return [
+        feeds.getFeedEntry('togetter:recent'),
+        feeds.getFeedEntry('togetter:news'),
+        feeds.getFeedEntry('togetter:hot'),
+      ]
+    }
+
+    return [
+      feeds.getFeedEntry('togetter:news'),
+      feeds.getFeedEntry('togetter:recent'),
+      feeds.getFeedEntry('togetter:hot'),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,

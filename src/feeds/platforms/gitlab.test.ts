@@ -389,6 +389,25 @@ describe('gitlabHandler', () => {
 
       expect(gitlabHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return no feeds for the site root', () => {
+      const value = 'https://gitlab.com/'
+      const expected: Array<DiscoverUriEntry> = []
+
+      expect(gitlabHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the scheme of a self-hosted page served over http', () => {
+      const value = 'http://gitlab.example.com:8080/team'
+      const expected = [
+        {
+          uri: 'http://gitlab.example.com:8080/team.atom',
+          hint: { key: 'gitlab:activity', label: 'Activity' },
+        },
+      ]
+
+      expect(gitlabHandler.resolve(value)).toEqual(expected)
+    })
   })
 
   describe('getFeedHint', () => {
@@ -598,6 +617,19 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
+    it('should return the branch commits hint for a branch commits feed with an atom suffix', () => {
+      const value = 'https://gitlab.com/frank-jp/frankapp/-/commits/master.atom'
+      const expected: DiscoverUriHint = { key: 'gitlab:branch-commits', label: 'Branch commits' }
+
+      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for an atom suffix on a file under a branch', () => {
+      const value = 'https://gitlab.com/frank-jp/frankapp/-/commits/master/README.md.atom'
+
+      expect(gitlabHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a project feed path under a namespace alone', () => {
       const value = 'https://gitlab.com/erinapp/-/releases.atom'
 
@@ -652,6 +684,10 @@ describe('gitlabHandler', () => {
       ],
       [
         'https://gitlab.com/carol.io/install/-/commits/master/LICENSE?format=atom',
+        { key: 'gitlab:branch-commits', label: 'Branch commits' },
+      ],
+      [
+        'https://gitlab.com/frank-jp/frankapp/-/commits/master.atom',
         { key: 'gitlab:branch-commits', label: 'Branch commits' },
       ],
       ['https://gitlab.com/0xa.atom/', { key: 'gitlab:activity', label: 'Activity' }],

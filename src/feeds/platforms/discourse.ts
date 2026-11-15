@@ -170,6 +170,8 @@ export const discourseHandler: PlatformHandler = {
 
     const root = page.siteUrl
 
+    // The latest topics and posts need no value from the page, so every page builds them after its
+    // own feeds.
     if (page.kind === 'topic') {
       return [
         pageFeeds.getFeedEntry('discourse:topic', {
@@ -177,25 +179,43 @@ export const discourseHandler: PlatformHandler = {
           slug: page.slug,
           topicId: page.topicId,
         }),
+        pageFeeds.getFeedEntry('discourse:latest', { root }),
+        pageFeeds.getFeedEntry('discourse:posts', { root }),
       ]
     }
 
     if (page.kind === 'user') {
-      return [pageFeeds.getFeedEntry('discourse:activity', { root, username: page.username })]
+      return [
+        pageFeeds.getFeedEntry('discourse:activity', { root, username: page.username }),
+        pageFeeds.getFeedEntry('discourse:latest', { root }),
+        pageFeeds.getFeedEntry('discourse:posts', { root }),
+      ]
     }
 
     if (page.kind === 'category') {
-      return [pageFeeds.getFeedEntry('discourse:category', { root, category: page.category })]
+      return [
+        pageFeeds.getFeedEntry('discourse:category', { root, category: page.category }),
+        pageFeeds.getFeedEntry('discourse:latest', { root }),
+        pageFeeds.getFeedEntry('discourse:posts', { root }),
+      ]
     }
 
     if (page.kind === 'tag') {
       const [slug, id] = page.tag.split('/')
 
-      return [pageFeeds.getFeedEntry('discourse:tag', { root, slug, id })]
+      return [
+        pageFeeds.getFeedEntry('discourse:tag', { root, slug, id }),
+        pageFeeds.getFeedEntry('discourse:latest', { root }),
+        pageFeeds.getFeedEntry('discourse:posts', { root }),
+      ]
     }
 
     if (page.kind === 'top') {
-      return [pageFeeds.getFeedEntry('discourse:top', { root, period: page.period })]
+      return [
+        pageFeeds.getFeedEntry('discourse:top', { root, period: page.period }),
+        pageFeeds.getFeedEntry('discourse:latest', { root }),
+        pageFeeds.getFeedEntry('discourse:posts', { root }),
+      ]
     }
 
     return [

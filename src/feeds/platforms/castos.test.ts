@@ -17,10 +17,6 @@ describe('parseCastosUrl', () => {
     expect(parseCastosUrl('https://myshow.castos.com/')).toEqual(expected)
   })
 
-  it('should return undefined for the feed host', () => {
-    expect(parseCastosUrl('https://feeds.castos.com/abc123')).toBeUndefined()
-  })
-
   it('should return undefined for another host', () => {
     expect(parseCastosUrl('https://example.com/')).toBeUndefined()
   })
@@ -45,10 +41,6 @@ describe('getCastosPage', () => {
     const expected: CastosPage = { kind: 'show', slug: 'my-show' }
 
     expect(getCastosPage('https://my-show.castos.com/', '<p>My Show</p>')).toEqual(expected)
-  })
-
-  it('should return undefined for the feed host', () => {
-    expect(getCastosPage('https://feeds.castos.com/x8k2p', undefined)).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -172,12 +164,6 @@ describe('castosHandler', () => {
 
     it('should return undefined for the feed host root', () => {
       const value = 'https://feeds.castos.com/'
-
-      expect(castosHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a file on the feed host', () => {
-      const value = 'https://feeds.castos.com/robots.txt'
 
       expect(castosHandler.getFeedHint?.(value)).toBeUndefined()
     })

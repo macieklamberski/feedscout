@@ -18,6 +18,13 @@ describe('parseBitchuteUrl', () => {
     expect(parseBitchuteUrl('https://bitchute.com/channel/example')).toEqual(expected)
   })
 
+  it('should return the channel for a channel page on old.bitchute.com', () => {
+    const value = 'https://old.bitchute.com/channel/example/'
+    const expected: BitchuteUrl = { kind: 'channel', channel: 'example' }
+
+    expect(parseBitchuteUrl(value)).toEqual(expected)
+  })
+
   it('should return the channel for a channel subpage', () => {
     const expected: BitchuteUrl = { kind: 'channel', channel: 'example' }
 
@@ -102,6 +109,13 @@ describe('bitchuteHandler', () => {
       expect(bitchuteHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the channel hint for a channel feed on old.bitchute.com', () => {
+      const value = 'https://old.bitchute.com/feeds/rss/channel/alicechannel/'
+      const expected: DiscoverUriHint = { key: 'bitchute:channel', label: 'Channel' }
+
+      expect(bitchuteHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for a channel page', () => {
       const value = 'https://www.bitchute.com/channel/alicechannel/'
 
@@ -127,6 +141,10 @@ describe('bitchuteHandler', () => {
       ],
       [
         'https://api.bitchute.com/feeds/rss/channel/bob_channel/',
+        { key: 'bitchute:channel', label: 'Channel' },
+      ],
+      [
+        'https://old.bitchute.com/feeds/rss/channel/alicechannel/',
         { key: 'bitchute:channel', label: 'Channel' },
       ],
     ]

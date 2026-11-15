@@ -19,14 +19,10 @@ const feeds = definePlatformFeeds([
   { key: 'paragraph:blog', template: 'https://paragraph.com/@{username}/rss', isAlias: true },
   {
     key: 'paragraph:blog',
-    template: 'https://api.paragraph.com/blogs/rss/@{username}',
-    isAlias: true,
-  },
-  {
-    key: 'paragraph:blog',
     template: 'https://paragraph.com/api/blogs/rss/@{username}',
     isAlias: true,
   },
+  { key: 'paragraph:blog', template: 'https://api.paragraph.com/blogs/rss/@{username}' },
 ])
 
 export const parseParagraphUrl = (url: string): ParagraphUrl | undefined => {

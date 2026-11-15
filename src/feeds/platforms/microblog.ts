@@ -33,7 +33,6 @@ const feeds = definePlatformFeeds(
     { key: 'microblog:archive', template: '{scheme}://{host}/archive/index.json' },
     { key: 'microblog:photos', template: '{scheme}://{host}/photos/index.json' },
     { key: 'microblog:posts', template: '{scheme}://{host}/feed.xml', format: 'rss' },
-    { key: 'microblog:posts', template: '{scheme}://{host}/feed.json', format: 'json' },
     // replies.xml redirects to feed.xml, so a stored one is the posts feed.
     {
       key: 'microblog:posts',
@@ -41,6 +40,7 @@ const feeds = definePlatformFeeds(
       format: 'rss',
       isAlias: true,
     },
+    { key: 'microblog:posts', template: '{scheme}://{host}/feed.json', format: 'json' },
     {
       key: 'microblog:podcast',
       template: '{scheme}://{host}/podcast.xml',
@@ -94,6 +94,8 @@ export const microblogHandler: PlatformHandler = {
       return []
     }
 
+    // The posts, podcast, archive and photos feeds need no value from the page, so every page
+    // builds them after its own feeds.
     if (parsed.kind === 'category') {
       const params = { category: parsed.category }
 
@@ -104,6 +106,8 @@ export const microblogHandler: PlatformHandler = {
         page.getFeedEntry('microblog:posts', {}, 'json'),
         page.getFeedEntry('microblog:podcast', {}, 'rss'),
         page.getFeedEntry('microblog:podcast', {}, 'json'),
+        page.getFeedEntry('microblog:archive'),
+        page.getFeedEntry('microblog:photos'),
       ]
     }
 
@@ -114,6 +118,7 @@ export const microblogHandler: PlatformHandler = {
         page.getFeedEntry('microblog:posts', {}, 'json'),
         page.getFeedEntry('microblog:podcast', {}, 'rss'),
         page.getFeedEntry('microblog:podcast', {}, 'json'),
+        page.getFeedEntry('microblog:photos'),
       ]
     }
 
@@ -124,6 +129,7 @@ export const microblogHandler: PlatformHandler = {
         page.getFeedEntry('microblog:posts', {}, 'json'),
         page.getFeedEntry('microblog:podcast', {}, 'rss'),
         page.getFeedEntry('microblog:podcast', {}, 'json'),
+        page.getFeedEntry('microblog:archive'),
       ]
     }
 
@@ -132,6 +138,8 @@ export const microblogHandler: PlatformHandler = {
       page.getFeedEntry('microblog:posts', {}, 'json'),
       page.getFeedEntry('microblog:podcast', {}, 'rss'),
       page.getFeedEntry('microblog:podcast', {}, 'json'),
+      page.getFeedEntry('microblog:archive'),
+      page.getFeedEntry('microblog:photos'),
     ]
   },
 

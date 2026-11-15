@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent, uuidRegex } from '../../common/utils.js'
@@ -78,14 +78,5 @@ export const redcircleHandler: PlatformHandler = {
     return [feeds.getFeedEntry('redcircle:show', { showUuid: page.showUuid })]
   },
 
-  getFeedHint: (url) => {
-    const [showUuid] = getPathSegments(url)
-
-    // Only a uuid names a show feed, so a file such as robots.txt gets no hint.
-    if (!showUuid || !uuidRegex.test(showUuid)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

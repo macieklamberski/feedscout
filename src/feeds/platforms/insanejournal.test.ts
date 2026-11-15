@@ -21,10 +21,45 @@ describe('parseInsanejournalUrl', () => {
     expect(parseInsanejournalUrl('https://www.insanejournal.com/users/jane')).toEqual(expected)
   })
 
+  it('should return the user and tag for a tag page on a www users path', () => {
+    const value = 'https://www.insanejournal.com/users/jane/tag/books'
+    const expected: InsanejournalUrl = { kind: 'journal', username: 'jane', tag: 'books' }
+
+    expect(parseInsanejournalUrl(value)).toEqual(expected)
+  })
+
+  it('should return the asylum and tag for a tag page on the asylums host', () => {
+    const value = 'https://asylums.insanejournal.com/club/tag/books'
+    const expected: InsanejournalUrl = { kind: 'asylum', asylum: 'club', tag: 'books' }
+
+    expect(parseInsanejournalUrl(value)).toEqual(expected)
+  })
+
   it('should return the asylum for a www asylum path', () => {
     const expected: InsanejournalUrl = { kind: 'asylum', asylum: 'club' }
 
     expect(parseInsanejournalUrl('https://www.insanejournal.com/asylum/club')).toEqual(expected)
+  })
+
+  it('should return the user and tag for a www users tag page', () => {
+    const value = 'https://www.insanejournal.com/users/jane/tag/books'
+    const expected: InsanejournalUrl = { kind: 'journal', username: 'jane', tag: 'books' }
+
+    expect(parseInsanejournalUrl(value)).toEqual(expected)
+  })
+
+  it('should return the user and tag for a www tilde tag page', () => {
+    const value = 'https://www.insanejournal.com/~jane/tag/books'
+    const expected: InsanejournalUrl = { kind: 'journal', username: 'jane', tag: 'books' }
+
+    expect(parseInsanejournalUrl(value)).toEqual(expected)
+  })
+
+  it('should return the asylum and tag for a www asylum tag page', () => {
+    const value = 'https://www.insanejournal.com/asylum/club/tag/books'
+    const expected: InsanejournalUrl = { kind: 'asylum', asylum: 'club', tag: 'books' }
+
+    expect(parseInsanejournalUrl(value)).toEqual(expected)
   })
 
   it('should return the asylum for an asylums host page', () => {
@@ -37,6 +72,34 @@ describe('parseInsanejournalUrl', () => {
     const expected: InsanejournalUrl = { kind: 'syndicated', feed: 'news' }
 
     expect(parseInsanejournalUrl('https://feeds.insanejournal.com/news')).toEqual(expected)
+  })
+
+  it('should return the journal for a users host page', () => {
+    const expected: InsanejournalUrl = { kind: 'journal', username: '_alice_' }
+
+    expect(parseInsanejournalUrl('https://users.insanejournal.com/_alice_/')).toEqual(expected)
+  })
+
+  it('should return the journal and tag for a users host tag page', () => {
+    const value = 'https://users.insanejournal.com/_alice_/tag/books'
+    const expected: InsanejournalUrl = { kind: 'journal', username: '_alice_', tag: 'books' }
+
+    expect(parseInsanejournalUrl(value)).toEqual(expected)
+  })
+
+  it('should return the asylum and tag for an asylums host tag page', () => {
+    const value = 'https://asylums.insanejournal.com/club/tag/books'
+    const expected: InsanejournalUrl = { kind: 'asylum', asylum: 'club', tag: 'books' }
+
+    expect(parseInsanejournalUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for the bare users host', () => {
+    expect(parseInsanejournalUrl('https://users.insanejournal.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for a dotted users host path', () => {
+    expect(parseInsanejournalUrl('https://users.insanejournal.com/robots.txt')).toBeUndefined()
   })
 
   it('should return undefined for the bare www host', () => {
@@ -77,6 +140,8 @@ describe('insanejournalHandler', () => {
       [true, 'https://www.insanejournal.com/community/carol'],
       [true, 'https://asylums.insanejournal.com/carol'],
       [true, 'https://feeds.insanejournal.com/example_feed'],
+      [true, 'https://users.insanejournal.com/_bob_/'],
+      [false, 'https://users.insanejournal.com/'],
       [false, 'https://www.insanejournal.com'],
       [false, 'https://asylums.insanejournal.com'],
       [false, 'https://feeds.insanejournal.com'],
@@ -152,6 +217,34 @@ describe('insanejournalHandler', () => {
 
     it('should add tag-filtered feeds for /tag/ paths on journal', () => {
       const value = 'https://alice.insanejournal.com/tag/photography'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.insanejournal.com/data/rss?tag=photography',
+          hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'rss' },
+        },
+        {
+          uri: 'https://alice.insanejournal.com/data/atom?tag=photography',
+          hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'atom' },
+        },
+        {
+          uri: 'https://alice.insanejournal.com/data/rss',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://alice.insanejournal.com/data/atom',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://alice.insanejournal.com/data/userpics',
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should add tag-filtered feeds for a tag page on a www users path', () => {
+      const value = 'https://www.insanejournal.com/users/alice/tag/photography'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://alice.insanejournal.com/data/rss?tag=photography',
@@ -319,6 +412,54 @@ describe('insanejournalHandler', () => {
         },
         {
           uri: 'https://asylums.insanejournal.com/carol/data/userpics',
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the feeds of a journal the users host serves by path', () => {
+      const value = 'https://users.insanejournal.com/_alice_/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://users.insanejournal.com/_alice_/data/rss',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://users.insanejournal.com/_alice_/data/atom',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://users.insanejournal.com/_alice_/data/userpics',
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should add tag-filtered feeds for a tag page on the users host', () => {
+      const value = 'https://users.insanejournal.com/_alice_/tag/books'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://users.insanejournal.com/_alice_/data/rss?tag=books',
+          hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'rss' },
+        },
+        {
+          uri: 'https://users.insanejournal.com/_alice_/data/atom?tag=books',
+          hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'atom' },
+        },
+        {
+          uri: 'https://users.insanejournal.com/_alice_/data/rss',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://users.insanejournal.com/_alice_/data/atom',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://users.insanejournal.com/_alice_/data/userpics',
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]

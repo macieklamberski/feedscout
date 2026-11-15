@@ -84,6 +84,12 @@ const formErrorProjectHtml = projectHtml.replace(
   '<a class="home" href="/">Home</a>',
   '<a class="home" href="/">Home</a><div id="errorExplanation"><ul><li>Invalid</li></ul></div>',
 )
+const userHtml = `
+  <body class="controller-users action-show avatars-on">
+    <a class="home" href="/">Home</a>
+    ${footerHtml}
+  </body>
+`
 const notFoundHtml = `
   <body class="has-main-menu controller-users action-show avatars-on">
     <a class="home" href="/">Home</a>
@@ -288,6 +294,18 @@ describe('getRedminePage', () => {
     expect(getRedminePage('https://example.com/issues/4521', projectHtml)).toEqual(expected)
   })
 
+  it('should return the user of a user page', () => {
+    const value = 'https://example.com/users/42'
+    const expected: RedminePage = {
+      kind: 'user',
+      root: 'https://example.com',
+      alternateHrefs: [],
+      userId: '42',
+    }
+
+    expect(getRedminePage(value, userHtml)).toEqual(expected)
+  })
+
   it('should return the site issues', () => {
     const expected: RedminePage = {
       kind: 'issues',
@@ -346,7 +364,7 @@ describe('getRedminePage', () => {
   it('should return the home page for a page outside any project', () => {
     const expected: RedminePage = { kind: 'home', root: 'https://example.com', alternateHrefs: [] }
 
-    expect(getRedminePage('https://example.com/users/7', siteHtml)).toEqual(expected)
+    expect(getRedminePage('https://example.com/search', siteHtml)).toEqual(expected)
   })
 
   it('should return the root of an install under a sub-path', () => {
@@ -506,6 +524,22 @@ describe('redmineHandler', () => {
           uri: 'https://example.com/projects/acme-tools/news.atom',
           hint: { key: 'redmine:project-news', label: 'Project news' },
         },
+        {
+          uri: 'https://example.com/news.atom',
+          hint: { key: 'redmine:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/activity.atom',
+          hint: { key: 'redmine:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://example.com/projects.atom',
+          hint: { key: 'redmine:projects', label: 'Projects' },
+        },
+        {
+          uri: 'https://example.com/issues.atom',
+          hint: { key: 'redmine:issues', label: 'Issues' },
+        },
       ]
 
       expect(redmineHandler.resolve(value, projectHtml)).toEqual(expected)
@@ -521,6 +555,22 @@ describe('redmineHandler', () => {
         {
           uri: 'https://example.com/projects/acme-tools/issues.atom',
           hint: { key: 'redmine:project-issues', label: 'Project issues' },
+        },
+        {
+          uri: 'https://example.com/news.atom',
+          hint: { key: 'redmine:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/activity.atom',
+          hint: { key: 'redmine:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://example.com/projects.atom',
+          hint: { key: 'redmine:projects', label: 'Projects' },
+        },
+        {
+          uri: 'https://example.com/issues.atom',
+          hint: { key: 'redmine:issues', label: 'Issues' },
         },
       ]
 
@@ -538,6 +588,22 @@ describe('redmineHandler', () => {
           uri: 'https://example.com/projects/acme-tools/news.atom',
           hint: { key: 'redmine:project-news', label: 'Project news' },
         },
+        {
+          uri: 'https://example.com/news.atom',
+          hint: { key: 'redmine:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/activity.atom',
+          hint: { key: 'redmine:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://example.com/projects.atom',
+          hint: { key: 'redmine:projects', label: 'Projects' },
+        },
+        {
+          uri: 'https://example.com/issues.atom',
+          hint: { key: 'redmine:issues', label: 'Issues' },
+        },
       ]
 
       expect(redmineHandler.resolve(value, newsMenuProjectHtml)).toEqual(expected)
@@ -549,6 +615,22 @@ describe('redmineHandler', () => {
         {
           uri: 'https://example.com/projects/acme-tools/issues.atom',
           hint: { key: 'redmine:project-issues', label: 'Project issues' },
+        },
+        {
+          uri: 'https://example.com/news.atom',
+          hint: { key: 'redmine:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/activity.atom',
+          hint: { key: 'redmine:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://example.com/projects.atom',
+          hint: { key: 'redmine:projects', label: 'Projects' },
+        },
+        {
+          uri: 'https://example.com/issues.atom',
+          hint: { key: 'redmine:issues', label: 'Issues' },
         },
       ]
 
@@ -562,6 +644,22 @@ describe('redmineHandler', () => {
           uri: 'https://example.com/projects/acme-tools/news.atom',
           hint: { key: 'redmine:project-news', label: 'Project news' },
         },
+        {
+          uri: 'https://example.com/news.atom',
+          hint: { key: 'redmine:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/activity.atom',
+          hint: { key: 'redmine:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://example.com/projects.atom',
+          hint: { key: 'redmine:projects', label: 'Projects' },
+        },
+        {
+          uri: 'https://example.com/issues.atom',
+          hint: { key: 'redmine:issues', label: 'Issues' },
+        },
       ]
 
       expect(redmineHandler.resolve(value, projectHtml)).toEqual(expected)
@@ -574,6 +672,22 @@ describe('redmineHandler', () => {
           uri: 'https://example.com/projects/acme-tools/activity.atom',
           hint: { key: 'redmine:project-activity', label: 'Project activity' },
         },
+        {
+          uri: 'https://example.com/news.atom',
+          hint: { key: 'redmine:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/activity.atom',
+          hint: { key: 'redmine:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://example.com/projects.atom',
+          hint: { key: 'redmine:projects', label: 'Projects' },
+        },
+        {
+          uri: 'https://example.com/issues.atom',
+          hint: { key: 'redmine:issues', label: 'Issues' },
+        },
       ]
 
       expect(redmineHandler.resolve(value, projectHtml)).toEqual(expected)
@@ -585,6 +699,22 @@ describe('redmineHandler', () => {
         {
           uri: 'https://example.com/projects/acme-tools/boards/3.atom',
           hint: { key: 'redmine:board', label: 'Forum' },
+        },
+        {
+          uri: 'https://example.com/news.atom',
+          hint: { key: 'redmine:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/activity.atom',
+          hint: { key: 'redmine:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://example.com/projects.atom',
+          hint: { key: 'redmine:projects', label: 'Projects' },
+        },
+        {
+          uri: 'https://example.com/issues.atom',
+          hint: { key: 'redmine:issues', label: 'Issues' },
         },
       ]
 
@@ -608,6 +738,22 @@ describe('redmineHandler', () => {
           uri: 'http://example.com/projects/acme-tools/boards/3.atom',
           hint: { key: 'redmine:board', label: 'Forum' },
         },
+        {
+          uri: 'https://example.com/news.atom',
+          hint: { key: 'redmine:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/activity.atom',
+          hint: { key: 'redmine:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://example.com/projects.atom',
+          hint: { key: 'redmine:projects', label: 'Projects' },
+        },
+        {
+          uri: 'https://example.com/issues.atom',
+          hint: { key: 'redmine:issues', label: 'Issues' },
+        },
       ]
 
       expect(redmineHandler.resolve(value, content)).toEqual(expected)
@@ -620,6 +766,22 @@ describe('redmineHandler', () => {
           uri: 'https://example.com/projects/acme-tools/repository/core/revisions.atom',
           hint: { key: 'redmine:revisions', label: 'Revisions' },
         },
+        {
+          uri: 'https://example.com/news.atom',
+          hint: { key: 'redmine:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/activity.atom',
+          hint: { key: 'redmine:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://example.com/projects.atom',
+          hint: { key: 'redmine:projects', label: 'Projects' },
+        },
+        {
+          uri: 'https://example.com/issues.atom',
+          hint: { key: 'redmine:issues', label: 'Issues' },
+        },
       ]
 
       expect(redmineHandler.resolve(value, repositoryHtml)).toEqual(expected)
@@ -631,6 +793,22 @@ describe('redmineHandler', () => {
           uri: 'https://example.com/issues/4521.atom',
           hint: { key: 'redmine:issue', label: 'Issue updates' },
         },
+        {
+          uri: 'https://example.com/news.atom',
+          hint: { key: 'redmine:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/activity.atom',
+          hint: { key: 'redmine:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://example.com/projects.atom',
+          hint: { key: 'redmine:projects', label: 'Projects' },
+        },
+        {
+          uri: 'https://example.com/issues.atom',
+          hint: { key: 'redmine:issues', label: 'Issues' },
+        },
       ]
 
       expect(redmineHandler.resolve('https://example.com/issues/4521', projectHtml)).toEqual(
@@ -638,11 +816,43 @@ describe('redmineHandler', () => {
       )
     })
 
+    it('should return the user activity, news and activity feeds for a user page', () => {
+      const value = 'https://example.com/users/42'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/activity.atom?user_id=42',
+          hint: { key: 'redmine:user-activity', label: 'User activity' },
+        },
+        {
+          uri: 'https://example.com/news.atom',
+          hint: { key: 'redmine:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/activity.atom',
+          hint: { key: 'redmine:activity', label: 'Activity' },
+        },
+      ]
+
+      expect(redmineHandler.resolve(value, userHtml)).toEqual(expected)
+    })
+
     it('should return the site issues feed for the issues page', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/issues.atom',
           hint: { key: 'redmine:issues', label: 'Issues' },
+        },
+        {
+          uri: 'https://example.com/news.atom',
+          hint: { key: 'redmine:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/activity.atom',
+          hint: { key: 'redmine:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://example.com/projects.atom',
+          hint: { key: 'redmine:projects', label: 'Projects' },
         },
       ]
 
@@ -655,6 +865,18 @@ describe('redmineHandler', () => {
           uri: 'https://example.com/news.atom',
           hint: { key: 'redmine:news', label: 'News' },
         },
+        {
+          uri: 'https://example.com/activity.atom',
+          hint: { key: 'redmine:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://example.com/projects.atom',
+          hint: { key: 'redmine:projects', label: 'Projects' },
+        },
+        {
+          uri: 'https://example.com/issues.atom',
+          hint: { key: 'redmine:issues', label: 'Issues' },
+        },
       ]
 
       expect(redmineHandler.resolve('https://example.com/news', siteHtml)).toEqual(expected)
@@ -665,6 +887,18 @@ describe('redmineHandler', () => {
         {
           uri: 'https://example.com/activity.atom',
           hint: { key: 'redmine:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://example.com/news.atom',
+          hint: { key: 'redmine:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/projects.atom',
+          hint: { key: 'redmine:projects', label: 'Projects' },
+        },
+        {
+          uri: 'https://example.com/issues.atom',
+          hint: { key: 'redmine:issues', label: 'Issues' },
         },
       ]
 
@@ -677,12 +911,24 @@ describe('redmineHandler', () => {
           uri: 'https://example.com/projects.atom',
           hint: { key: 'redmine:projects', label: 'Projects' },
         },
+        {
+          uri: 'https://example.com/news.atom',
+          hint: { key: 'redmine:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/activity.atom',
+          hint: { key: 'redmine:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://example.com/issues.atom',
+          hint: { key: 'redmine:issues', label: 'Issues' },
+        },
       ]
 
       expect(redmineHandler.resolve('https://example.com/projects', siteHtml)).toEqual(expected)
     })
 
-    it('should return the site news and activity feeds for the home page', () => {
+    it('should return the site feeds for the home page', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/news.atom',
@@ -691,6 +937,14 @@ describe('redmineHandler', () => {
         {
           uri: 'https://example.com/activity.atom',
           hint: { key: 'redmine:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://example.com/projects.atom',
+          hint: { key: 'redmine:projects', label: 'Projects' },
+        },
+        {
+          uri: 'https://example.com/issues.atom',
+          hint: { key: 'redmine:issues', label: 'Issues' },
         },
       ]
 
@@ -709,6 +963,22 @@ describe('redmineHandler', () => {
           uri: 'https://example.com/projects/acme%3Ftools/issues.atom',
           hint: { key: 'redmine:project-issues', label: 'Project issues' },
         },
+        {
+          uri: 'https://example.com/news.atom',
+          hint: { key: 'redmine:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/activity.atom',
+          hint: { key: 'redmine:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://example.com/projects.atom',
+          hint: { key: 'redmine:projects', label: 'Projects' },
+        },
+        {
+          uri: 'https://example.com/issues.atom',
+          hint: { key: 'redmine:issues', label: 'Issues' },
+        },
       ]
 
       expect(redmineHandler.resolve(value, content)).toEqual(expected)
@@ -726,6 +996,14 @@ describe('redmineHandler', () => {
       [
         'https://example.plan.io/projects/acme/activity.atom',
         { key: 'redmine:project-activity', label: 'Project activity' },
+      ],
+      [
+        'https://example.plan.io/activity.atom?user_id=42',
+        { key: 'redmine:user-activity', label: 'User activity' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/activity.atom?user_id=42',
+        { key: 'redmine:project-user-activity', label: 'Project user activity' },
       ],
       ['https://example.plan.io/projects.atom', { key: 'redmine:projects', label: 'Projects' }],
       ['https://example.plan.io/issues.atom', { key: 'redmine:issues', label: 'Issues' }],
@@ -843,6 +1121,14 @@ describe('redmineHandler', () => {
       [
         'https://example.plan.io/projects/acme/activity.atom',
         { key: 'redmine:project-activity', label: 'Project activity' },
+      ],
+      [
+        'https://example.plan.io/activity.atom?user_id=42',
+        { key: 'redmine:user-activity', label: 'User activity' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/activity.atom?user_id=42',
+        { key: 'redmine:project-user-activity', label: 'Project user activity' },
       ],
       ['https://example.plan.io/projects.atom', { key: 'redmine:projects', label: 'Projects' }],
       [

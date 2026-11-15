@@ -34,17 +34,23 @@ describe('rubygemsHandler', () => {
   })
 
   describe('resolve', () => {
+    const latestGemsFeed: DiscoverUriEntry = {
+      uri: 'https://rubygems.org/gems.atom',
+      hint: { key: 'rubygems:latest-gems', label: 'Latest gems' },
+    }
+
     it('should return empty array for a URL outside RubyGems', () => {
       expect(rubygemsHandler.resolve('https://example.com/')).toEqual([])
     })
 
     it('should return the versions feed for a gem page', () => {
       const value = 'https://rubygems.org/gems/example-gem'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://rubygems.org/gems/example-gem/versions.atom',
           hint: { key: 'rubygems:versions', label: 'Versions' },
         },
+        latestGemsFeed,
       ]
 
       expect(rubygemsHandler.resolve(value)).toEqual(expected)
@@ -52,11 +58,12 @@ describe('rubygemsHandler', () => {
 
     it('should return the versions feed for a gem version page', () => {
       const value = 'https://rubygems.org/gems/example_gem/versions/1.0.0'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://rubygems.org/gems/example_gem/versions.atom',
           hint: { key: 'rubygems:versions', label: 'Versions' },
         },
+        latestGemsFeed,
       ]
 
       expect(rubygemsHandler.resolve(value)).toEqual(expected)
@@ -64,11 +71,12 @@ describe('rubygemsHandler', () => {
 
     it('should keep the case of the gem name', () => {
       const value = 'https://rubygems.org/Gems/ExampleGem'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://rubygems.org/gems/ExampleGem/versions.atom',
           hint: { key: 'rubygems:versions', label: 'Versions' },
         },
+        latestGemsFeed,
       ]
 
       expect(rubygemsHandler.resolve(value)).toEqual(expected)
@@ -115,6 +123,13 @@ describe('rubygemsHandler', () => {
 
     it.each(latestGemsFeeds)('should return the latest gems hint for %s', (value) => {
       const expected: DiscoverUriHint = { key: 'rubygems:latest-gems', label: 'Latest gems' }
+
+      expect(rubygemsHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the dashboard hint for a dashboard feed with an API key', () => {
+      const value = 'https://rubygems.org/dashboard.atom?api_key=0123456789abcdef'
+      const expected: DiscoverUriHint = { key: 'rubygems:dashboard', label: 'Dashboard' }
 
       expect(rubygemsHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -175,6 +190,20 @@ describe('rubygemsHandler', () => {
       })
       const expected: Array<DiscoverUriEntry> = [
         { uri: value, hint: { key: 'rubygems:latest-gems', label: 'Latest gems' } },
+      ]
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should return a dashboard feed as itself', async () => {
+      const value = 'https://rubygems.org/dashboard.atom?api_key=0123456789abcdef'
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [rubygemsHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'rubygems:dashboard', label: 'Dashboard' } },
       ]
 
       expect(result).toEqual(expected)

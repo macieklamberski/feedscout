@@ -61,6 +61,22 @@ describe('jimdoHandler', () => {
 
       expect(jimdoHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return the blog and tag feeds for a tag listing', () => {
+      const value = 'https://example.jimdofree.com/?tag=travel'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.jimdofree.com/rss/blog',
+          hint: { key: 'jimdo:blog', label: 'Blog' },
+        },
+        {
+          uri: 'https://example.jimdofree.com/rss/blog/travel',
+          hint: { key: 'jimdo:blog-tag', label: 'Tag' },
+        },
+      ]
+
+      expect(jimdoHandler.resolve(value)).toEqual(expected)
+    })
   })
 
   describe('getFeedHint', () => {

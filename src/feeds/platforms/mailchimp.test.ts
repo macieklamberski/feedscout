@@ -221,6 +221,22 @@ describe('mailchimpHandler', () => {
       expect(mailchimpHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the archive key for an archive feed on campaign-archive1.com', () => {
+      const value =
+        'https://us17.campaign-archive1.com/feed?u=0123456789abcdef012345678&id=0123456789'
+      const expected: DiscoverUriHint = { key: 'mailchimp:archive', label: 'Archive' }
+
+      expect(mailchimpHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the archive key for an archive feed on campaign-archive2.com', () => {
+      const value =
+        'https://us17.campaign-archive2.com/feed?u=0123456789abcdef012345678&id=0123456789'
+      const expected: DiscoverUriHint = { key: 'mailchimp:archive', label: 'Archive' }
+
+      expect(mailchimpHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for an archive page', () => {
       const value =
         'https://us17.campaign-archive.com/home/?u=0123456789abcdef012345678&id=0123456789'
@@ -253,6 +269,7 @@ describe('mailchimpHandler', () => {
       'https://us17.campaign-archive.com/feed?u=0123456789abcdef012345678&id=0123456789',
       'https://us17.campaign-archive.com/feed?u=abcdef0123456789abcdef012&id=abcdef0123',
       'https://us4.campaign-archive.com/feed?id=fedcba9876&u=fedcba9876543210fedcba987',
+      'https://us17.campaign-archive1.com/feed?u=0123456789abcdef012345678&id=0123456789',
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value) => {

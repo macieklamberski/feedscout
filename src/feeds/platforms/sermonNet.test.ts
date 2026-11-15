@@ -91,6 +91,13 @@ describe('getSermonNetPage', () => {
     expect(getSermonNetPage(value, graceHillHtml)).toEqual(expected)
   })
 
+  it('should return the channel the URL names without content', () => {
+    const value = 'https://gracehillchurch.sermon.net/main/gracehill'
+    const expected: SermonNetPage = { kind: 'channel', channel: 'gracehill' }
+
+    expect(getSermonNetPage(value, undefined)).toEqual(expected)
+  })
+
   it('should return the church with no channel without content', () => {
     const value = 'https://gracehillchurch.sermon.net/'
     const expected: SermonNetPage = { kind: 'church', channels: [] }
@@ -153,6 +160,10 @@ describe('sermonNetHandler', () => {
           uri: 'https://gracehillchurch.sermon.net/rss/main/audio_pdf',
           hint: { key: 'sermon-net:channel-audio-pdf', label: 'Channel podcast with PDFs' },
         },
+        {
+          uri: 'https://gracehillchurch.sermon.net/rss',
+          hint: { key: 'sermon-net:church', label: 'Church' },
+        },
       ]
 
       expect(sermonNetHandler.resolve(value, content)).toEqual(expected)
@@ -177,6 +188,10 @@ describe('sermonNetHandler', () => {
           uri: 'https://gracehillchurch.sermon.net/rss/gracehill/audio_pdf',
           hint: { key: 'sermon-net:channel-audio-pdf', label: 'Channel podcast with PDFs' },
         },
+        {
+          uri: 'https://gracehillchurch.sermon.net/rss',
+          hint: { key: 'sermon-net:church', label: 'Church' },
+        },
       ]
 
       expect(sermonNetHandler.resolve(value, graceHillHtml)).toEqual(expected)
@@ -185,7 +200,7 @@ describe('sermonNetHandler', () => {
     it('should return every listed channel when a channel page names an unlisted one', () => {
       const value = 'https://gracehillchurch.sermon.net/main/shared'
 
-      expect(sermonNetHandler.resolve(value, graceHillHtml)).toHaveLength(8)
+      expect(sermonNetHandler.resolve(value, graceHillHtml)).toHaveLength(9)
     })
 
     it('should return the church feed for a page that lists no channel', () => {
@@ -222,6 +237,10 @@ describe('sermonNetHandler', () => {
           uri: 'https://gracehillchurch.sermon.net/rss/main%2Fextra/audio_pdf',
           hint: { key: 'sermon-net:channel-audio-pdf', label: 'Channel podcast with PDFs' },
         },
+        {
+          uri: 'https://gracehillchurch.sermon.net/rss',
+          hint: { key: 'sermon-net:church', label: 'Church' },
+        },
       ]
 
       expect(sermonNetHandler.resolve(value, content)).toEqual(expected)
@@ -247,9 +266,41 @@ describe('sermonNetHandler', () => {
           uri: 'http://example.sermon.net/rss/sermons/audio_pdf',
           hint: { key: 'sermon-net:channel-audio-pdf', label: 'Channel podcast with PDFs' },
         },
+        {
+          uri: 'http://example.sermon.net/rss',
+          hint: { key: 'sermon-net:church', label: 'Church' },
+        },
       ]
 
       expect(sermonNetHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should return the feeds of the channel the URL names without content', () => {
+      const value = 'https://example.sermon.net/main/bob'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.sermon.net/rss/bob/audio',
+          hint: { key: 'sermon-net:channel', label: 'Channel podcast' },
+        },
+        {
+          uri: 'https://example.sermon.net/rss/bob',
+          hint: { key: 'sermon-net:channel-media', label: 'Channel media' },
+        },
+        {
+          uri: 'https://example.sermon.net/rss/bob/video',
+          hint: { key: 'sermon-net:channel-video', label: 'Channel video podcast' },
+        },
+        {
+          uri: 'https://example.sermon.net/rss/bob/audio_pdf',
+          hint: { key: 'sermon-net:channel-audio-pdf', label: 'Channel podcast with PDFs' },
+        },
+        {
+          uri: 'https://example.sermon.net/rss',
+          hint: { key: 'sermon-net:church', label: 'Church' },
+        },
+      ]
+
+      expect(sermonNetHandler.resolve(value)).toEqual(expected)
     })
 
     it('should keep the http scheme of a church page opened over http', () => {

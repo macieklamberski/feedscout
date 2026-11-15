@@ -29,22 +29,20 @@ describe('parsePlurkUrl', () => {
     expect(parsePlurkUrl('https://www.plurk.com/u/alice')).toEqual(expected)
   })
 
-  it('should return a page for the root', () => {
-    const expected: PlurkUrl = { kind: 'page' }
-
-    expect(parsePlurkUrl('https://www.plurk.com/')).toEqual(expected)
+  it('should return undefined for the root', () => {
+    expect(parsePlurkUrl('https://www.plurk.com/')).toBeUndefined()
   })
 
-  it('should return a page for a dotted first segment', () => {
-    const expected: PlurkUrl = { kind: 'page' }
-
-    expect(parsePlurkUrl('https://www.plurk.com/robots.txt')).toEqual(expected)
+  it('should return undefined for a dotted first segment', () => {
+    expect(parsePlurkUrl('https://www.plurk.com/robots.txt')).toBeUndefined()
   })
 
-  it('should return a page for a user feed path', () => {
-    const expected: PlurkUrl = { kind: 'page' }
+  it('should return undefined for a post path without an id', () => {
+    expect(parsePlurkUrl('https://www.plurk.com/p')).toBeUndefined()
+  })
 
-    expect(parsePlurkUrl('https://www.plurk.com/alice.xml')).toEqual(expected)
+  it('should return undefined for the mobile root', () => {
+    expect(parsePlurkUrl('https://www.plurk.com/m/')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -61,6 +59,10 @@ describe('plurkHandler', () => {
     it('should not match another host', () => {
       expect(plurkHandler.match('https://example.com/alice')).toBe(false)
     })
+
+    it('should not match a file of the site', () => {
+      expect(plurkHandler.match('https://www.plurk.com/robots.txt')).toBe(false)
+    })
   })
 
   describe('resolve', () => {
@@ -72,7 +74,7 @@ describe('plurkHandler', () => {
       const value = 'https://www.plurk.com/alice'
       const expected = [
         {
-          uri: 'https://www.plurk.com/user/alice.xml',
+          uri: 'https://www.plurk.com/alice.xml',
           hint: { key: 'plurk:plurks', label: 'Plurks' },
         },
       ]
@@ -84,7 +86,7 @@ describe('plurkHandler', () => {
       const value = 'https://plurk.com/alice/'
       const expected = [
         {
-          uri: 'https://www.plurk.com/user/alice.xml',
+          uri: 'https://www.plurk.com/alice.xml',
           hint: { key: 'plurk:plurks', label: 'Plurks' },
         },
       ]
@@ -96,7 +98,7 @@ describe('plurkHandler', () => {
       const value = 'https://www.plurk.com/u/alice'
       const expected = [
         {
-          uri: 'https://www.plurk.com/user/alice.xml',
+          uri: 'https://www.plurk.com/alice.xml',
           hint: { key: 'plurk:plurks', label: 'Plurks' },
         },
       ]
@@ -108,7 +110,7 @@ describe('plurkHandler', () => {
       const value = 'https://www.plurk.com/m/alice/friends'
       const expected = [
         {
-          uri: 'https://www.plurk.com/user/alice.xml',
+          uri: 'https://www.plurk.com/alice.xml',
           hint: { key: 'plurk:plurks', label: 'Plurks' },
         },
       ]
@@ -138,14 +140,6 @@ describe('plurkHandler', () => {
       ]
 
       expect(plurkHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return nothing for a post path without an id', () => {
-      expect(plurkHandler.resolve('https://www.plurk.com/p')).toEqual([])
-    })
-
-    it('should return nothing for the home page', () => {
-      expect(plurkHandler.resolve('https://www.plurk.com/')).toEqual([])
     })
   })
 

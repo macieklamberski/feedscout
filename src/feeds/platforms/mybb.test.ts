@@ -89,6 +89,13 @@ describe('mybbHandler', () => {
       expect(mybbHandler.resolve(value, mybbHtml)).toEqual(boardFeeds)
     })
 
+    it('should build the board feeds from a root path with a trailing slash', () => {
+      const value = 'https://example.com/community/index.php'
+      const content = '<script>var rootpath = "https://example.com/community/";</script>'
+
+      expect(mybbHandler.resolve(value, content)).toEqual(boardFeeds)
+    })
+
     it('should build the board feeds from the page directory without a root path', () => {
       const value = 'https://example.com/community/index.php'
 

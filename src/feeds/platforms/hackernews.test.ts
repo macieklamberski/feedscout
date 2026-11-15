@@ -54,6 +54,10 @@ describe('hackernewsHandler', () => {
           hint: { key: 'hackernews:front', label: 'Front page' },
         },
         {
+          uri: 'https://news.ycombinator.com/showrss',
+          hint: { key: 'hackernews:show', label: 'Show HN' },
+        },
+        {
           uri: 'https://news.ycombinator.com/bigrss',
           hint: { key: 'hackernews:front-full', label: 'Full front page' },
         },
@@ -68,6 +72,10 @@ describe('hackernewsHandler', () => {
         {
           uri: 'https://news.ycombinator.com/rss',
           hint: { key: 'hackernews:front', label: 'Front page' },
+        },
+        {
+          uri: 'https://news.ycombinator.com/showrss',
+          hint: { key: 'hackernews:show', label: 'Show HN' },
         },
         {
           uri: 'https://news.ycombinator.com/bigrss',
@@ -92,6 +100,10 @@ describe('hackernewsHandler', () => {
           hint: { key: 'hackernews:show', label: 'Show HN' },
         },
         {
+          uri: 'https://news.ycombinator.com/rss',
+          hint: { key: 'hackernews:front', label: 'Front page' },
+        },
+        {
           uri: 'https://news.ycombinator.com/bigrss',
           hint: { key: 'hackernews:front-full', label: 'Full front page' },
         },
@@ -106,6 +118,10 @@ describe('hackernewsHandler', () => {
         {
           uri: 'https://news.ycombinator.com/showrss',
           hint: { key: 'hackernews:show', label: 'Show HN' },
+        },
+        {
+          uri: 'https://news.ycombinator.com/rss',
+          hint: { key: 'hackernews:front', label: 'Front page' },
         },
         {
           uri: 'https://news.ycombinator.com/bigrss',

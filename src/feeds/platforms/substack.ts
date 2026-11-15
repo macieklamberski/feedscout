@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { escapeRegex, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain, wordOrHyphenRegex } from '../../common/utils.js'
@@ -16,6 +16,11 @@ const domains = ['substack.com']
 const appHosts = ['open.substack.com', 'api.substack.com']
 
 const profileRegex = /^\/@(?<username>[^/]+)/
+const sectionPathRegex = /^\/s\/(?<slug>[^/]+)/i
+// A section page embeds the record of every section of the publication, each naming its id before
+// its slug with no brace between them.
+const braceRegex = /[{}]/
+const sectionIdRegex = /"id":(?<section>\d+),/
 // A profile page embeds its primary publication as escaped JSON. The publication
 // subdomain is not always the handle, and a custom domain replaces it.
 const publicationRegex =
@@ -50,11 +55,11 @@ const feeds = definePlatformFeeds(
       template: '{scheme}://{host}/feed/podcast/{publication}/s/{section}.rss',
     },
     {
-      key: 'substack:podcast',
+      key: 'substack:private-podcast',
       template: '{scheme}://{host}/feed/podcast/{publication}/private/{token}.rss',
     },
     {
-      key: 'substack:podcast',
+      key: 'substack:spotify-podcast',
       template: '{scheme}://{host}/feed/podcast/spotify/{token}/{publication}.rss',
     },
   ],
@@ -79,6 +84,31 @@ const getPodcastSections = (content: string, publication: string): Array<string>
   }
 
   return sections
+}
+
+const getSectionId = (content: string | undefined, url: string): string | undefined => {
+  const slug = parseUrl(url)?.pathname.match(sectionPathRegex)?.groups?.slug
+
+  if (!content || !slug) {
+    return
+  }
+
+  const slugRegex = new RegExp(`"slug":"${escapeRegex(slug)}"`, 'i')
+
+  // Each run between two braces is read once, so a page of ids with no slug stays linear.
+  for (const run of content.split(braceRegex)) {
+    const slugIndex = run.search(slugRegex)
+
+    if (slugIndex === -1) {
+      continue
+    }
+
+    const section = run.slice(0, slugIndex).match(sectionIdRegex)?.groups?.section
+
+    if (section) {
+      return section
+    }
+  }
 }
 
 const getPublicationOrigin = (content: string | undefined): string | undefined => {
@@ -154,11 +184,15 @@ export const substackHandler: PlatformHandler = {
       return []
     }
 
+    const section = page.kind === 'newsletter' ? getSectionId(content, url) : undefined
     const record = content?.match(pubRecordRegex)?.groups?.record
     const publication = record?.match(pubIdRegex)?.groups?.publication
 
     if (!record || !publication) {
-      return [pageFeeds.getFeedEntry('substack:newsletter')]
+      return [
+        pageFeeds.getFeedEntry('substack:newsletter'),
+        ...(section ? [pageFeeds.getFeedEntry('substack:newsletter-section', { section })] : []),
+      ]
     }
 
     const hasPodcast = podcastEnabledRegex.test(record) && !podcastFeedUrlRegex.test(record)
@@ -167,6 +201,7 @@ export const substackHandler: PlatformHandler = {
 
     return [
       pageFeeds.getFeedEntry('substack:newsletter'),
+      ...(section ? [pageFeeds.getFeedEntry('substack:newsletter-section', { section })] : []),
       ...(hasPodcast ? [pageFeeds.getFeedEntry('substack:podcast', params)] : []),
       ...getPodcastSections(content, publication).map((section) => {
         return pageFeeds.getFeedEntry('substack:podcast-section', { ...params, section })

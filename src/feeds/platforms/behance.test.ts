@@ -116,10 +116,14 @@ describe('behanceHandler', () => {
   describe('resolve', () => {
     it('should return feed for user profile', () => {
       const value = 'https://www.behance.net/johndoe'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.behance.net/feeds/user?username=johndoe',
           hint: { key: 'behance:portfolio', label: 'Portfolio' },
+        },
+        {
+          uri: 'https://www.behance.net/feeds/projects',
+          hint: { key: 'behance:projects', label: 'Featured projects' },
         },
       ]
 
@@ -266,6 +270,10 @@ describe('discoverUrisFromPlatform', () => {
       {
         uri: 'https://www.behance.net/feeds/user?username=feeds',
         hint: { key: 'behance:portfolio', label: 'Portfolio' },
+      },
+      {
+        uri: 'https://www.behance.net/feeds/projects',
+        hint: { key: 'behance:projects', label: 'Featured projects' },
       },
     ]
 

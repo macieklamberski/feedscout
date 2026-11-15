@@ -155,6 +155,13 @@ describe('firesideHandler', () => {
       expect(firesideHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the podcast hint for an RSS feed on the show host', () => {
+      const value = 'https://alicecast.fireside.fm/rss'
+      const expected: DiscoverUriHint = { key: 'fireside:podcast', label: 'Podcast', format: 'rss' }
+
+      expect(firesideHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the podcast hint for a JSON feed', () => {
       const value = 'https://alicecast.fireside.fm/json'
       const expected: DiscoverUriHint = {
@@ -229,6 +236,10 @@ describe('firesideHandler', () => {
       ],
       [
         'https://feeds.fireside.fm/bobcast/rss/',
+        { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
+      ],
+      [
+        'http://alicecast.fireside.fm/rss',
         { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
       ],
       [

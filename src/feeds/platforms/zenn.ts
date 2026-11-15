@@ -71,18 +71,26 @@ export const zennHandler: PlatformHandler = {
       return []
     }
 
+    // The trending feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'topic') {
-      return [feeds.getFeedEntry('zenn:topic', { topic: parsed.topic })]
+      return [
+        feeds.getFeedEntry('zenn:topic', { topic: parsed.topic }),
+        feeds.getFeedEntry('zenn:trending'),
+      ]
     }
 
     if (parsed.kind === 'publication') {
-      return [feeds.getFeedEntry('zenn:publication', { publication: parsed.publication })]
+      return [
+        feeds.getFeedEntry('zenn:publication', { publication: parsed.publication }),
+        feeds.getFeedEntry('zenn:trending'),
+      ]
     }
 
     if (parsed.kind === 'user' || parsed.kind === 'post') {
       return [
         feeds.getFeedEntry('zenn:posts', { username: parsed.username }),
         feeds.getFeedEntry('zenn:all-posts', { username: parsed.username }),
+        feeds.getFeedEntry('zenn:trending'),
       ]
     }
 

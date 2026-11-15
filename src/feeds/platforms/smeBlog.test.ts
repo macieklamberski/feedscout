@@ -52,6 +52,11 @@ describe('smeBlogHandler', () => {
   })
 
   describe('resolve', () => {
+    const siteFeed: DiscoverUriEntry = {
+      uri: 'https://blog.sme.sk/rss',
+      hint: { key: 'sme-blog:site', label: 'Site' },
+    }
+
     it('should return empty array for a URL outside SME Blog', () => {
       expect(smeBlogHandler.resolve('https://example.com/')).toEqual([])
     })
@@ -62,6 +67,7 @@ describe('smeBlogHandler', () => {
           uri: 'https://blog.sme.sk/alice/rss',
           hint: { key: 'sme-blog:posts', label: 'Posts' },
         },
+        siteFeed,
       ]
 
       expect(smeBlogHandler.resolve('https://blog.sme.sk/alice')).toEqual(expected)
@@ -97,6 +103,7 @@ describe('smeBlogHandler', () => {
           uri: 'https://blog.sme.sk/alice/rss',
           hint: { key: 'sme-blog:posts', label: 'Posts' },
         },
+        siteFeed,
       ]
 
       expect(smeBlogHandler.resolve(value)).toEqual(expected)

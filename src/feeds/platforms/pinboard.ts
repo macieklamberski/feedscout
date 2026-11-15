@@ -24,7 +24,7 @@ const feeds = definePlatformFeeds([
   { key: 'pinboard:bookmarks', template: 'https://feeds.pinboard.in/rss/u:{username}/' },
   // A private feed, whose token only its owner knows, so it is claimed and never built.
   {
-    key: 'pinboard:bookmarks',
+    key: 'pinboard:private-bookmarks',
     template: 'https://feeds.pinboard.in/rss/secret:{token}/u:{username}/',
   },
   { key: 'pinboard:recent', template: 'https://feeds.pinboard.in/rss/recent/' },
@@ -38,9 +38,9 @@ const feeds = definePlatformFeeds([
   { key: 'pinboard:source', template: 'https://feeds.pinboard.in/rss/u:{username}/from:{source}/' },
   // A tag feed repeats `t:{tag}` once per tag, so `tags` holds them joined by `/t:`. These rows go
   // after the source rows their paths overlap.
-  { key: 'pinboard:tag', template: 'https://feeds.pinboard.in/rss/u:{username}/t:{tags*}/' },
+  { key: 'pinboard:user-tag', template: 'https://feeds.pinboard.in/rss/u:{username}/t:{tags*}/' },
   {
-    key: 'pinboard:tag',
+    key: 'pinboard:private-tag',
     template: 'https://feeds.pinboard.in/rss/secret:{token}/u:{username}/t:{tags*}/',
   },
   { key: 'pinboard:tag', template: 'https://feeds.pinboard.in/rss/t:{tags*}/' },
@@ -121,12 +121,16 @@ export const pinboardHandler: PlatformHandler = {
       return []
     }
 
+    // The recent and popular lists need no value from the page, so every page builds them after its
+    // own feeds.
     if (parsed.kind === 'userTag') {
       return [
-        feeds.getFeedEntry('pinboard:tag', {
+        feeds.getFeedEntry('pinboard:user-tag', {
           username: parsed.username,
           tags: joinTags(parsed.tags),
         }),
+        feeds.getFeedEntry('pinboard:recent'),
+        feeds.getFeedEntry('pinboard:popular'),
       ]
     }
 
@@ -137,24 +141,34 @@ export const pinboardHandler: PlatformHandler = {
           tags: joinTags(parsed.tags),
           source: parsed.source,
         }),
+        feeds.getFeedEntry('pinboard:recent'),
+        feeds.getFeedEntry('pinboard:popular'),
       ]
     }
 
     if (parsed.kind === 'user') {
-      return [feeds.getFeedEntry('pinboard:bookmarks', { username: parsed.username })]
+      return [
+        feeds.getFeedEntry('pinboard:bookmarks', { username: parsed.username }),
+        feeds.getFeedEntry('pinboard:recent'),
+        feeds.getFeedEntry('pinboard:popular'),
+      ]
     }
 
     // It answered 500 on 2026-09-26 while Pinboard's search backend was down, and validation
     // drops it until the backend is back.
     if (parsed.kind === 'tag') {
-      return [feeds.getFeedEntry('pinboard:tag', { tags: joinTags(parsed.tags) })]
+      return [
+        feeds.getFeedEntry('pinboard:tag', { tags: joinTags(parsed.tags) }),
+        feeds.getFeedEntry('pinboard:recent'),
+        feeds.getFeedEntry('pinboard:popular'),
+      ]
     }
 
     if (parsed.kind === 'recent') {
-      return [feeds.getFeedEntry('pinboard:recent')]
+      return [feeds.getFeedEntry('pinboard:recent'), feeds.getFeedEntry('pinboard:popular')]
     }
 
-    return [feeds.getFeedEntry('pinboard:popular')]
+    return [feeds.getFeedEntry('pinboard:popular'), feeds.getFeedEntry('pinboard:recent')]
   },
 
   getFeedHint: feeds.getFeedHint,

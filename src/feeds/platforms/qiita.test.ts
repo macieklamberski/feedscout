@@ -63,13 +63,30 @@ describe('qiitaHandler', () => {
   })
 
   describe('resolve', () => {
+    const popularFeed: DiscoverUriEntry = {
+      uri: 'https://qiita.com/popular-items/feed',
+      hint: { key: 'qiita:popular', label: 'Popular items' },
+    }
+    const zineFeeds: Array<DiscoverUriEntry> = [
+      {
+        uri: 'https://qiita.com/official-columns/feed/',
+        hint: { key: 'qiita:zine', label: 'Qiita Zine', format: 'rss' },
+      },
+      {
+        uri: 'https://qiita.com/official-columns/feed/atom/',
+        hint: { key: 'qiita:zine', label: 'Qiita Zine', format: 'atom' },
+      },
+    ]
+
     it('should return feed URL for user', () => {
       const value = 'https://qiita.com/Qiita'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://qiita.com/Qiita/feed',
           hint: { key: 'qiita:posts', label: 'Posts' },
         },
+        popularFeed,
+        ...zineFeeds,
       ]
 
       expect(qiitaHandler.resolve(value)).toEqual(expected)
@@ -77,11 +94,13 @@ describe('qiitaHandler', () => {
 
     it('should return feed URL regardless of subpath', () => {
       const value = 'https://qiita.com/Qiita/items/some-article'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://qiita.com/Qiita/feed',
           hint: { key: 'qiita:posts', label: 'Posts' },
         },
+        popularFeed,
+        ...zineFeeds,
       ]
 
       expect(qiitaHandler.resolve(value)).toEqual(expected)
@@ -89,11 +108,13 @@ describe('qiitaHandler', () => {
 
     it('should return feed URL for tag page', () => {
       const value = 'https://qiita.com/tags/javascript'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://qiita.com/tags/javascript/feed',
           hint: { key: 'qiita:tag', label: 'Tag' },
         },
+        popularFeed,
+        ...zineFeeds,
       ]
 
       expect(qiitaHandler.resolve(value)).toEqual(expected)
@@ -101,11 +122,13 @@ describe('qiitaHandler', () => {
 
     it('should return feed URL for the page of a tag named feed', () => {
       const value = 'https://qiita.com/tags/feed'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://qiita.com/tags/feed/feed',
           hint: { key: 'qiita:tag', label: 'Tag' },
         },
+        popularFeed,
+        ...zineFeeds,
       ]
 
       expect(qiitaHandler.resolve(value)).toEqual(expected)
@@ -113,11 +136,13 @@ describe('qiitaHandler', () => {
 
     it('should return feed URL for tag page with a capitalized tags segment', () => {
       const value = 'https://qiita.com/Tags/javascript'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://qiita.com/tags/javascript/feed',
           hint: { key: 'qiita:tag', label: 'Tag' },
         },
+        popularFeed,
+        ...zineFeeds,
       ]
 
       expect(qiitaHandler.resolve(value)).toEqual(expected)
@@ -125,11 +150,13 @@ describe('qiitaHandler', () => {
 
     it('should return feed URL for organization page', () => {
       const value = 'https://qiita.com/organizations/qiita-inc'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://qiita.com/organizations/qiita-inc/activities.atom',
           hint: { key: 'qiita:organization', label: 'Organization' },
         },
+        popularFeed,
+        ...zineFeeds,
       ]
 
       expect(qiitaHandler.resolve(value)).toEqual(expected)
@@ -137,11 +164,13 @@ describe('qiitaHandler', () => {
 
     it('should return feed URL for organization page with a capitalized organizations segment', () => {
       const value = 'https://qiita.com/Organizations/qiita-inc'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://qiita.com/organizations/qiita-inc/activities.atom',
           hint: { key: 'qiita:organization', label: 'Organization' },
         },
+        popularFeed,
+        ...zineFeeds,
       ]
 
       expect(qiitaHandler.resolve(value)).toEqual(expected)
@@ -149,11 +178,12 @@ describe('qiitaHandler', () => {
 
     it('should return feed URL for popular items page', () => {
       const value = 'https://qiita.com/popular-items'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://qiita.com/popular-items/feed',
           hint: { key: 'qiita:popular', label: 'Popular items' },
         },
+        ...zineFeeds,
       ]
 
       expect(qiitaHandler.resolve(value)).toEqual(expected)
@@ -161,11 +191,12 @@ describe('qiitaHandler', () => {
 
     it('should return feed URL for popular items page with a capitalized popular-items segment', () => {
       const value = 'https://qiita.com/Popular-Items'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://qiita.com/popular-items/feed',
           hint: { key: 'qiita:popular', label: 'Popular items' },
         },
+        ...zineFeeds,
       ]
 
       expect(qiitaHandler.resolve(value)).toEqual(expected)
@@ -177,37 +208,52 @@ describe('qiitaHandler', () => {
       expect(qiitaHandler.resolve(value)).toEqual([])
     })
 
-    it('should return Qiita Zine feed for /official-columns', () => {
+    it('should return Qiita Zine feeds for /official-columns', () => {
       const value = 'https://qiita.com/official-columns'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://qiita.com/official-columns/feed/',
-          hint: { key: 'qiita:zine', label: 'Qiita Zine' },
+          hint: { key: 'qiita:zine', label: 'Qiita Zine', format: 'rss' },
         },
+        {
+          uri: 'https://qiita.com/official-columns/feed/atom/',
+          hint: { key: 'qiita:zine', label: 'Qiita Zine', format: 'atom' },
+        },
+        popularFeed,
       ]
 
       expect(qiitaHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return Qiita Zine feed for /official-columns with a capitalized official-columns segment', () => {
+    it('should return Qiita Zine feeds for /official-columns with a capitalized official-columns segment', () => {
       const value = 'https://qiita.com/Official-Columns'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://qiita.com/official-columns/feed/',
-          hint: { key: 'qiita:zine', label: 'Qiita Zine' },
+          hint: { key: 'qiita:zine', label: 'Qiita Zine', format: 'rss' },
         },
+        {
+          uri: 'https://qiita.com/official-columns/feed/atom/',
+          hint: { key: 'qiita:zine', label: 'Qiita Zine', format: 'atom' },
+        },
+        popularFeed,
       ]
 
       expect(qiitaHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return Qiita Zine feed for /official-columns/{slug}', () => {
+    it('should return Qiita Zine feeds for /official-columns/{slug}', () => {
       const value = 'https://qiita.com/official-columns/some-article'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://qiita.com/official-columns/feed/',
-          hint: { key: 'qiita:zine', label: 'Qiita Zine' },
+          hint: { key: 'qiita:zine', label: 'Qiita Zine', format: 'rss' },
         },
+        {
+          uri: 'https://qiita.com/official-columns/feed/atom/',
+          hint: { key: 'qiita:zine', label: 'Qiita Zine', format: 'atom' },
+        },
+        popularFeed,
       ]
 
       expect(qiitaHandler.resolve(value)).toEqual(expected)
@@ -385,6 +431,18 @@ describe('qiitaHandler', () => {
       const value = 'https://qiita.com/tags/feed'
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://qiita.com/tags/feed/feed', hint: { key: 'qiita:tag', label: 'Tag' } },
+        {
+          uri: 'https://qiita.com/popular-items/feed',
+          hint: { key: 'qiita:popular', label: 'Popular items' },
+        },
+        {
+          uri: 'https://qiita.com/official-columns/feed/',
+          hint: { key: 'qiita:zine', label: 'Qiita Zine', format: 'rss' },
+        },
+        {
+          uri: 'https://qiita.com/official-columns/feed/atom/',
+          hint: { key: 'qiita:zine', label: 'Qiita Zine', format: 'atom' },
+        },
       ]
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,

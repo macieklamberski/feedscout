@@ -642,6 +642,42 @@ describe('blogspotHandler', () => {
       expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the posts hint for an Atom posts feed on www.blogger.com', () => {
+      const value = 'https://www.blogger.com/feeds/1234567890/posts/default'
+      const expected: DiscoverUriHint = { key: 'blogspot:posts', label: 'Posts', format: 'atom' }
+
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for an RSS posts feed on www.blogger.com', () => {
+      const value = 'https://www.blogger.com/feeds/1234567890/posts/default?alt=rss'
+      const expected: DiscoverUriHint = { key: 'blogspot:posts', label: 'Posts', format: 'rss' }
+
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the comments hint for an Atom comments feed on www.blogger.com', () => {
+      const value = 'https://www.blogger.com/feeds/1234567890/comments/default'
+      const expected: DiscoverUriHint = {
+        key: 'blogspot:comments',
+        label: 'Comments',
+        format: 'atom',
+      }
+
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the comments hint for an RSS comments feed on www.blogger.com', () => {
+      const value = 'https://www.blogger.com/feeds/1234567890/comments/default?alt=rss'
+      const expected: DiscoverUriHint = {
+        key: 'blogspot:comments',
+        label: 'Comments',
+        format: 'rss',
+      }
+
+      expect(blogspotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the posts hint for an Atom full posts feed', () => {
       const value = 'https://example.blogspot.com/feeds/posts/full'
       const expected: DiscoverUriHint = { key: 'blogspot:posts', label: 'Posts', format: 'atom' }
@@ -890,8 +926,56 @@ describe('blogspotHandler', () => {
         { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
       ],
       [
+        'https://www.blogger.com/feeds/1234567890/posts/default',
+        { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'https://www.blogger.com/feeds/1234567890/comments/default?alt=rss',
+        { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
+      ],
+      [
         'https://example.blogspot.com/feeds/posts/summary',
         { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'atom' },
+      ],
+      [
+        'https://www.blogger.com/feeds/1234567890/posts/summary',
+        { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'atom' },
+      ],
+      [
+        'https://www.blogger.com/feeds/1234567890/posts/summary?alt=rss',
+        { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'rss' },
+      ],
+      [
+        'https://www.blogger.com/feeds/1234567890/comments/summary',
+        { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'atom' },
+      ],
+      [
+        'https://www.blogger.com/feeds/1234567890/comments/summary?alt=rss',
+        { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'rss' },
+      ],
+      [
+        'https://www.blogger.com/feeds/1234567890/posts/default/-/Call%20of%20Cthulhu',
+        { key: 'blogspot:label', label: 'Label', format: 'atom' },
+      ],
+      [
+        'https://www.blogger.com/feeds/1234567890/posts/default/-/Books?alt=rss',
+        { key: 'blogspot:label', label: 'Label', format: 'rss' },
+      ],
+      [
+        'https://www.blogger.com/feeds/1234567890/posts/summary/-/Books',
+        { key: 'blogspot:label-summary', label: 'Label summary', format: 'atom' },
+      ],
+      [
+        'https://www.blogger.com/feeds/1234567890/posts/summary/-/Books?alt=rss',
+        { key: 'blogspot:label-summary', label: 'Label summary', format: 'rss' },
+      ],
+      [
+        'https://www.blogger.com/feeds/1234567890/12345/comments/default',
+        { key: 'blogspot:post-comments', label: 'Post comments', format: 'atom' },
+      ],
+      [
+        'https://www.blogger.com/feeds/1234567890/12345/comments/default?alt=rss',
+        { key: 'blogspot:post-comments', label: 'Post comments', format: 'rss' },
       ],
       [
         'https://example.blogspot.com/feeds/comments/default?alt=rss',

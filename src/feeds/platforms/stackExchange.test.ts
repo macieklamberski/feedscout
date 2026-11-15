@@ -125,10 +125,14 @@ describe('stackExchangeHandler', () => {
 
     it('should return tag feed for tag page on Stack Overflow', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://stackoverflow.com/feeds/tag/javascript',
           hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -137,10 +141,14 @@ describe('stackExchangeHandler', () => {
 
     it('should return tag feed for tag page on Stack Overflow with a capitalized questions segment', () => {
       const value = 'https://stackoverflow.com/Questions/tagged/javascript'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://stackoverflow.com/feeds/tag/javascript',
           hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -149,10 +157,14 @@ describe('stackExchangeHandler', () => {
 
     it('should return tag feed for combined tags on Stack Overflow', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript+typescript'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://stackoverflow.com/feeds/tag/javascript+typescript',
           hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -161,10 +173,14 @@ describe('stackExchangeHandler', () => {
 
     it('should return question feed for question page on Stack Overflow', () => {
       const value = 'https://stackoverflow.com/questions/12345/how-to-do-something'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://stackoverflow.com/feeds/question/12345',
           hint: { key: 'stackexchange:question', label: 'Question' },
+        },
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -173,10 +189,14 @@ describe('stackExchangeHandler', () => {
 
     it('should return question feed for question page on Stack Overflow with a capitalized questions segment', () => {
       const value = 'https://stackoverflow.com/Questions/12345/how-to-do-something'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://stackoverflow.com/feeds/question/12345',
           hint: { key: 'stackexchange:question', label: 'Question' },
+        },
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -185,10 +205,14 @@ describe('stackExchangeHandler', () => {
 
     it('should return user feed for user page on Stack Overflow', () => {
       const value = 'https://stackoverflow.com/users/123/username'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://stackoverflow.com/feeds/user/123',
           hint: { key: 'stackexchange:user', label: 'User' },
+        },
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -197,10 +221,14 @@ describe('stackExchangeHandler', () => {
 
     it('should return user feed for user page on Stack Overflow with a capitalized users segment', () => {
       const value = 'https://stackoverflow.com/Users/123/username'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://stackoverflow.com/feeds/user/123',
           hint: { key: 'stackexchange:user', label: 'User' },
+        },
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -209,10 +237,14 @@ describe('stackExchangeHandler', () => {
 
     it('should return tag feed with correct origin for Stack Exchange subdomain', () => {
       const value = 'https://math.stackexchange.com/questions/tagged/calculus'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://math.stackexchange.com/feeds/tag/calculus',
           hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://math.stackexchange.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -221,10 +253,14 @@ describe('stackExchangeHandler', () => {
 
     it('should return question feed for question page on Server Fault', () => {
       const value = 'https://serverfault.com/questions/98765/some-question'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://serverfault.com/feeds/question/98765',
           hint: { key: 'stackexchange:question', label: 'Question' },
+        },
+        {
+          uri: 'https://serverfault.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -233,10 +269,14 @@ describe('stackExchangeHandler', () => {
 
     it('should return user feed for user page on Ask Ubuntu', () => {
       const value = 'https://askubuntu.com/users/456/username'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://askubuntu.com/feeds/user/456',
           hint: { key: 'stackexchange:user', label: 'User' },
+        },
+        {
+          uri: 'https://askubuntu.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -245,10 +285,14 @@ describe('stackExchangeHandler', () => {
 
     it('should return question feed for question page on MathOverflow', () => {
       const value = 'https://mathoverflow.net/questions/54321/some-question'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://mathoverflow.net/feeds/question/54321',
           hint: { key: 'stackexchange:question', label: 'Question' },
+        },
+        {
+          uri: 'https://mathoverflow.net/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -281,10 +325,14 @@ describe('stackExchangeHandler', () => {
 
     it('should return collective feed for collectives page', () => {
       const value = 'https://stackoverflow.com/collectives/aws'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://stackoverflow.com/feeds/collectives/aws',
           hint: { key: 'stackexchange:collective', label: 'Collective' },
+        },
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -293,10 +341,14 @@ describe('stackExchangeHandler', () => {
 
     it('should return collective feed for collectives page with a capitalized collectives segment', () => {
       const value = 'https://stackoverflow.com/Collectives/aws'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://stackoverflow.com/feeds/collectives/aws',
           hint: { key: 'stackexchange:collective', label: 'Collective' },
+        },
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -311,6 +363,10 @@ describe('stackExchangeHandler', () => {
             uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=newest',
             hint: { key: 'stackexchange:tag', label: 'Tag' },
           },
+          {
+            uri: 'https://stackoverflow.com/feeds',
+            hint: { key: 'stackexchange:newest', label: 'Newest questions' },
+          },
         ],
       ],
       [
@@ -319,6 +375,10 @@ describe('stackExchangeHandler', () => {
           {
             uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=active',
             hint: { key: 'stackexchange:tag', label: 'Tag' },
+          },
+          {
+            uri: 'https://stackoverflow.com/feeds',
+            hint: { key: 'stackexchange:newest', label: 'Newest questions' },
           },
         ],
       ],
@@ -329,6 +389,10 @@ describe('stackExchangeHandler', () => {
             uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=votes',
             hint: { key: 'stackexchange:tag', label: 'Tag' },
           },
+          {
+            uri: 'https://stackoverflow.com/feeds',
+            hint: { key: 'stackexchange:newest', label: 'Newest questions' },
+          },
         ],
       ],
       [
@@ -338,6 +402,10 @@ describe('stackExchangeHandler', () => {
             uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=creation',
             hint: { key: 'stackexchange:tag', label: 'Tag' },
           },
+          {
+            uri: 'https://stackoverflow.com/feeds',
+            hint: { key: 'stackexchange:newest', label: 'Newest questions' },
+          },
         ],
       ],
       [
@@ -346,6 +414,10 @@ describe('stackExchangeHandler', () => {
           {
             uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=month',
             hint: { key: 'stackexchange:tag', label: 'Tag' },
+          },
+          {
+            uri: 'https://stackoverflow.com/feeds',
+            hint: { key: 'stackexchange:newest', label: 'Newest questions' },
           },
         ],
       ],
@@ -360,10 +432,14 @@ describe('stackExchangeHandler', () => {
 
     it('should pass through ?tab= on tag feed (lowercased) when value is allowed', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript?tab=Active'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=active',
           hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -372,10 +448,14 @@ describe('stackExchangeHandler', () => {
 
     it('should spell a ?sort= value in another case as Stack Exchange does', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript?sort=Newest'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=newest',
           hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -384,10 +464,14 @@ describe('stackExchangeHandler', () => {
 
     it('should pass through hot sort', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript?sort=hot'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=hot',
           hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -396,10 +480,14 @@ describe('stackExchangeHandler', () => {
 
     it('should pass through week sort', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript?sort=week'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=week',
           hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -408,10 +496,14 @@ describe('stackExchangeHandler', () => {
 
     it('should drop disallowed ?tab= values silently', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript?tab=Frequent'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://stackoverflow.com/feeds/tag/javascript',
           hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 
@@ -420,10 +512,14 @@ describe('stackExchangeHandler', () => {
 
     it('should drop unknown sort values silently', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript?sort=garbage'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://stackoverflow.com/feeds/tag/javascript',
           hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
         },
       ]
 

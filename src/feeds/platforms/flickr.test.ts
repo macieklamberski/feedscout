@@ -96,9 +96,23 @@ describe('parseFlickrUrl', () => {
     expect(parseFlickrUrl(value)).toEqual(expected)
   })
 
-  it('should return a subpage for an album page', () => {
+  it('should return the album for an album page', () => {
     const value = 'https://www.flickr.com/photos/alice/albums/72177720335744738'
-    const expected: FlickrUrl = { kind: 'subpage', userId: 'alice' }
+    const expected: FlickrUrl = { kind: 'album', userId: 'alice', set: '72177720335744738' }
+
+    expect(parseFlickrUrl(value)).toEqual(expected)
+  })
+
+  it('should return the album for a legacy set page', () => {
+    const value = 'https://www.flickr.com/photos/alice/sets/72177720335744738/'
+    const expected: FlickrUrl = { kind: 'album', userId: 'alice', set: '72177720335744738' }
+
+    expect(parseFlickrUrl(value)).toEqual(expected)
+  })
+
+  it('should return the user tag for a photostream tag page', () => {
+    const value = 'https://www.flickr.com/photos/alice/tags/florida/'
+    const expected: FlickrUrl = { kind: 'userTag', userId: 'alice', tag: 'florida' }
 
     expect(parseFlickrUrl(value)).toEqual(expected)
   })
@@ -435,6 +449,110 @@ describe('flickrHandler', () => {
         {
           uri: `${feedsBase}/photos_faves.gne?id=87654321@N07&format=rss_200`,
           hint: { key: 'flickr:faves', label: 'Favorites', format: 'rss' },
+        },
+        {
+          uri: `${feedsBase}/forums.gne`,
+          hint: { key: 'flickr:forum', label: 'Forum' },
+        },
+        {
+          uri: `${feedsBase}/forums.gne?format=rss_200`,
+          hint: { key: 'flickr:forum', label: 'Forum', format: 'rss' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne`,
+          hint: { key: 'flickr:recent', label: 'Uploads from everyone' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne?format=rss_200`,
+          hint: { key: 'flickr:recent', label: 'Uploads from everyone', format: 'rss' },
+        },
+        {
+          uri: `${feedsBase}/geo`,
+          hint: { key: 'flickr:recent-geo', label: 'Uploads from everyone with location' },
+        },
+        {
+          uri: `${feedsBase}/geo?format=rss_200`,
+          hint: {
+            key: 'flickr:recent-geo',
+            label: 'Uploads from everyone with location',
+            format: 'rss',
+          },
+        },
+      ]
+
+      expect(flickrHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the album feeds for an NSID album page', () => {
+      const value = 'https://www.flickr.com/photos/87654321@N07/albums/72177720336891667'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${feedsBase}/photoset.gne?nsid=87654321@N07&set=72177720336891667`,
+          hint: { key: 'flickr:photoset', label: 'Album' },
+        },
+        {
+          uri: `${feedsBase}/photoset.gne?nsid=87654321@N07&set=72177720336891667&format=rss_200`,
+          hint: { key: 'flickr:photoset', label: 'Album', format: 'rss' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne?id=87654321@N07`,
+          hint: { key: 'flickr:photos', label: 'Photostream' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne?id=87654321@N07&format=rss_200`,
+          hint: { key: 'flickr:photos', label: 'Photostream', format: 'rss' },
+        },
+        {
+          uri: `${feedsBase}/forums.gne`,
+          hint: { key: 'flickr:forum', label: 'Forum' },
+        },
+        {
+          uri: `${feedsBase}/forums.gne?format=rss_200`,
+          hint: { key: 'flickr:forum', label: 'Forum', format: 'rss' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne`,
+          hint: { key: 'flickr:recent', label: 'Uploads from everyone' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne?format=rss_200`,
+          hint: { key: 'flickr:recent', label: 'Uploads from everyone', format: 'rss' },
+        },
+        {
+          uri: `${feedsBase}/geo`,
+          hint: { key: 'flickr:recent-geo', label: 'Uploads from everyone with location' },
+        },
+        {
+          uri: `${feedsBase}/geo?format=rss_200`,
+          hint: {
+            key: 'flickr:recent-geo',
+            label: 'Uploads from everyone with location',
+            format: 'rss',
+          },
+        },
+      ]
+
+      expect(flickrHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the tag feeds for an NSID photostream tag page', () => {
+      const value = 'https://www.flickr.com/photos/87654321@N07/tags/c%2B%2B/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${feedsBase}/photos_public.gne?id=87654321@N07&tags=c%2B%2B`,
+          hint: { key: 'flickr:photos-tag', label: 'Tagged photostream' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne?id=87654321@N07&tags=c%2B%2B&format=rss_200`,
+          hint: { key: 'flickr:photos-tag', label: 'Tagged photostream', format: 'rss' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne?id=87654321@N07`,
+          hint: { key: 'flickr:photos', label: 'Photostream' },
+        },
+        {
+          uri: `${feedsBase}/photos_public.gne?id=87654321@N07&format=rss_200`,
+          hint: { key: 'flickr:photos', label: 'Photostream', format: 'rss' },
         },
         {
           uri: `${feedsBase}/forums.gne`,

@@ -81,10 +81,14 @@ describe('letterboxdHandler', () => {
   describe('resolve', () => {
     it('should return RSS feed for user profile', () => {
       const value = 'https://letterboxd.com/dave'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://letterboxd.com/dave/rss/',
           hint: { key: 'letterboxd:diary', label: 'Diary' },
+        },
+        {
+          uri: 'https://letterboxd.com/journal/rss/',
+          hint: { key: 'letterboxd:journal', label: 'Journal' },
         },
       ]
 

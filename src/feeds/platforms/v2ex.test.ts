@@ -58,6 +58,11 @@ describe('v2exHandler', () => {
   })
 
   describe('resolve', () => {
+    const indexFeed: DiscoverUriEntry = {
+      uri: 'https://www.v2ex.com/index.xml',
+      hint: { key: 'v2ex:index', label: 'Index' },
+    }
+
     it('should return empty array for a URL outside V2EX', () => {
       expect(v2exHandler.resolve('https://example.com/')).toEqual([])
     })
@@ -76,11 +81,12 @@ describe('v2exHandler', () => {
 
     it('should return node feed for node page', () => {
       const value = 'https://www.v2ex.com/go/programmer'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.v2ex.com/feed/programmer.xml',
           hint: { key: 'v2ex:node', label: 'Node' },
         },
+        indexFeed,
       ]
 
       expect(v2exHandler.resolve(value)).toEqual(expected)
@@ -88,11 +94,12 @@ describe('v2exHandler', () => {
 
     it('should keep the case of a capitalized node', () => {
       const value = 'https://www.v2ex.com/go/Python'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.v2ex.com/feed/Python.xml',
           hint: { key: 'v2ex:node', label: 'Node' },
         },
+        indexFeed,
       ]
 
       expect(v2exHandler.resolve(value)).toEqual(expected)
@@ -100,11 +107,12 @@ describe('v2exHandler', () => {
 
     it('should return node feed for node page with a capitalized go segment', () => {
       const value = 'https://www.v2ex.com/Go/programmer'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.v2ex.com/feed/programmer.xml',
           hint: { key: 'v2ex:node', label: 'Node' },
         },
+        indexFeed,
       ]
 
       expect(v2exHandler.resolve(value)).toEqual(expected)
@@ -112,11 +120,12 @@ describe('v2exHandler', () => {
 
     it('should return member feed for member page', () => {
       const value = 'https://www.v2ex.com/member/alice'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.v2ex.com/feed/member/alice.xml',
           hint: { key: 'v2ex:member', label: 'Member' },
         },
+        indexFeed,
       ]
 
       expect(v2exHandler.resolve(value)).toEqual(expected)
@@ -124,11 +133,12 @@ describe('v2exHandler', () => {
 
     it('should return member feed for member page with a capitalized member segment', () => {
       const value = 'https://www.v2ex.com/Member/alice'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.v2ex.com/feed/member/alice.xml',
           hint: { key: 'v2ex:member', label: 'Member' },
         },
+        indexFeed,
       ]
 
       expect(v2exHandler.resolve(value)).toEqual(expected)

@@ -1,4 +1,5 @@
-import { composeQuery, getQueryParam, isAnyOf, isSubdomainOf, parseUrl, resolveUrl } from 'trousse'
+import { getQueryParam, isSubdomainOf, parseUrl, resolveUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -21,10 +22,25 @@ const domains = ['legistar.com']
 
 const legislationPathRegex = /^\/LegislationDetail\.aspx$/i
 const meetingPathRegex = /^\/MeetingDetail\.aspx$/i
-const feedPathRegex = /^\/Feed\.ashx$/i
 
 // Legistar's load balancer sets this cookie on every page, on a client's custom domain too.
 const cookieName = 'BIGipServerinsite.legistar.com_443'
+
+// A feed on a client's custom domain carries nothing that names Legistar, so the table claims a
+// feed only on a Legistar host and builds it on any.
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'legistar:legislation',
+      template: '{scheme}://{host}/Feed.ashx?M=LD&ID={id}&GUID={guid}',
+    },
+    {
+      key: 'legistar:meeting',
+      template: '{scheme}://{host}/Feed.ashx?M=CalendarDetail&ID={id}&GUID={guid}',
+    },
+  ],
+  { domains },
+)
 
 // Every page loads the share widget under Legistar's own account, on a custom domain too.
 export const isLegistarHtml = (content: string): boolean => {
@@ -102,22 +118,31 @@ export const getLegistarPage = (
   content: string | undefined,
 ): LegistarPage | undefined => {
   const parsed = parseLegistarUrl(url)
+  const pageFeeds = feeds.forUrl(url)
 
-  if (!parsed) {
+  if (!parsed || !pageFeeds) {
     return
   }
 
-  const { origin } = new URL(url)
+  const { id, guid } = parsed
 
   if (parsed.kind === 'legislation') {
-    const query = composeQuery({ M: 'LD', ID: parsed.id, GUID: parsed.guid })
+    const feedUrl = pageFeeds.getFeedUrl('legistar:legislation', { id, guid })
 
-    return { kind: 'legislation', feedUrl: getFeedUrl(url, content, `${origin}/Feed.ashx${query}`) }
+    if (!feedUrl) {
+      return
+    }
+
+    return { kind: 'legislation', feedUrl: getFeedUrl(url, content, feedUrl) }
   }
 
-  const query = composeQuery({ M: 'CalendarDetail', ID: parsed.id, GUID: parsed.guid })
+  const feedUrl = pageFeeds.getFeedUrl('legistar:meeting', { id, guid })
 
-  return { kind: 'meeting', feedUrl: getFeedUrl(url, content, `${origin}/Feed.ashx${query}`) }
+  if (!feedUrl) {
+    return
+  }
+
+  return { kind: 'meeting', feedUrl: getFeedUrl(url, content, feedUrl) }
 }
 
 export const legistarHandler: PlatformHandler = {
@@ -146,26 +171,5 @@ export const legistarHandler: PlatformHandler = {
     return [{ uri: page.feedUrl, hint: composeHint('legistar:meeting') }]
   },
 
-  // A custom domain carries no marker in the URL alone, so only a feed on a Legistar host is read.
-  getFeedHint: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl || !isSubdomainOf(url, domains) || !feedPathRegex.test(parsedUrl.pathname)) {
-      return
-    }
-
-    if (!getRecord(parsedUrl.searchParams)) {
-      return
-    }
-
-    const mode = getQueryParam(parsedUrl.searchParams, 'm')
-
-    if (isAnyOf(mode, 'LD')) {
-      return composeHint('legistar:legislation')
-    }
-
-    if (isAnyOf(mode, 'CalendarDetail')) {
-      return composeHint('legistar:meeting')
-    }
-  },
+  getFeedHint: feeds.getFeedHint,
 }

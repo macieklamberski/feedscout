@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { isOpenstatusPage, openstatusHandler } from './openstatus.js'
 
 const openstatusHtml = `
@@ -110,6 +112,93 @@ describe('openstatusHandler', () => {
       ]
 
       expect(openstatusHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    const feedUrls: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.openstatus.dev/feed/rss',
+        { key: 'openstatus:updates', label: 'Updates', format: 'rss' },
+      ],
+      [
+        'https://example.openstatus.dev/feed/atom',
+        { key: 'openstatus:updates', label: 'Updates', format: 'atom' },
+      ],
+      [
+        'http://example.openstatus.dev/feed/rss/',
+        { key: 'openstatus:updates', label: 'Updates', format: 'rss' },
+      ],
+      [
+        'https://example.stpg.dev/feed/rss',
+        { key: 'openstatus:updates', label: 'Updates', format: 'rss' },
+      ],
+      [
+        'https://example.stpg.dev/feed/atom',
+        { key: 'openstatus:updates', label: 'Updates', format: 'atom' },
+      ],
+    ]
+
+    it.each(feedUrls)('should return the hint for %s', (value, expected) => {
+      expect(openstatusHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a page on a status page subdomain', () => {
+      const value = 'https://example.openstatus.dev/events'
+
+      expect(openstatusHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://status.example.com/feed/rss'
+
+      expect(openstatusHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www', () => {
+      const value = 'https://www.openstatus.dev/feed/rss'
+
+      expect(openstatusHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www host of the short domain', () => {
+      const value = 'https://www.stpg.dev/feed/rss'
+
+      expect(openstatusHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://status.example.openstatus.dev/feed/rss'
+
+      expect(openstatusHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.openstatus.dev/feed/rss',
+        { key: 'openstatus:updates', label: 'Updates', format: 'rss' },
+      ],
+      [
+        'http://example.openstatus.dev/feed/atom',
+        { key: 'openstatus:updates', label: 'Updates', format: 'atom' },
+      ],
+      [
+        'https://example.stpg.dev/feed/rss',
+        { key: 'openstatus:updates', label: 'Updates', format: 'rss' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [openstatusHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

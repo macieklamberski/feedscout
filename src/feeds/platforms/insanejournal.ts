@@ -1,13 +1,9 @@
 import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import {
-  definePlatformFeeds,
-  type PlatformFeedParams,
-  type PlatformFeedTable,
-} from '../../common/uris/platform/feeds.js'
+import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
-import { getJournalName, journalTagRegex } from './livejournal.js'
+import { getJournalName, getJournalTag } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers asylum, blog, tildePath, userPath.
@@ -84,19 +80,17 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
     return
   }
 
-  const tag = pathname.match(journalTagRegex)?.[1]
-
   if (isHostOf(url, wwwHosts)) {
     const username = getJournalName(pathname, wwwUsersPathRegex)
 
     if (username) {
-      return { kind: 'journal', username, tag }
+      return { kind: 'journal', username, tag: getJournalTag(pathname, wwwUsersPathRegex) }
     }
 
     const asylum = getJournalName(pathname, wwwAsylumPathRegex)
 
     if (asylum) {
-      return { kind: 'asylum', asylum, tag }
+      return { kind: 'asylum', asylum, tag: getJournalTag(pathname, wwwAsylumPathRegex) }
     }
 
     return
@@ -109,7 +103,7 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
       return
     }
 
-    return { kind: 'asylum', asylum, tag }
+    return { kind: 'asylum', asylum, tag: getJournalTag(pathname, firstSegmentRegex) }
   }
 
   if (isHostOf(url, feedHosts)) {
@@ -119,22 +113,32 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
       return
     }
 
-    return { kind: 'syndicated', feed, tag }
+    return { kind: 'syndicated', feed, tag: getJournalTag(pathname, firstSegmentRegex) }
+  }
+
+  if (isHostOf(url, userHosts)) {
+    const username = getJournalName(pathname, firstSegmentRegex)
+
+    if (!username) {
+      return
+    }
+
+    return { kind: 'journal', username, tag: getJournalTag(pathname, firstSegmentRegex) }
   }
 
   if (!getTenantSubdomain(url, domains)) {
     return
   }
 
-  return { kind: 'journal', tag }
+  return { kind: 'journal', tag: getJournalTag(pathname) }
 }
 
 // The InsaneJournal engine serves every journal the same feeds, plus a tag's feeds on a tag page.
 const getFeeds = (
-  table: Pick<PlatformFeedTable, 'getFeedEntry'>,
+  table: Pick<typeof journalFeeds, 'getFeedEntry'>,
   params: PlatformFeedParams,
   tag: string | undefined,
-): Array<DiscoverUriEntry> => {
+): Array<DiscoverUriEntry | undefined> => {
   if (!tag) {
     return [
       table.getFeedEntry('insanejournal:posts', params, 'rss'),
@@ -183,6 +187,17 @@ export const insanejournalHandler: PlatformHandler = {
       }
 
       return getFeeds(pageFeeds, { journal: parsed.feed }, parsed.tag)
+    }
+
+    // A journal the users host serves by path keeps its feeds there.
+    if (parsed.username && isHostOf(url, userHosts)) {
+      const pageFeeds = pathFeeds.forUrl(url)
+
+      if (!pageFeeds) {
+        return []
+      }
+
+      return getFeeds(pageFeeds, { journal: parsed.username }, parsed.tag)
     }
 
     const journalUrl = parsed.username ? getHostOrigin(`${parsed.username}.insanejournal.com`) : url

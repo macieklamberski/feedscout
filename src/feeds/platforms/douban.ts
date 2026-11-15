@@ -37,6 +37,22 @@ const feeds = definePlatformFeeds([
     key: 'douban:subject-reviews',
     template: 'https://www.douban.com/feed/subject/{subjectId}/reviews',
   },
+  // A subject page links the feed on its section's host, which answers 301 to www.douban.com.
+  {
+    key: 'douban:subject-reviews',
+    template: 'https://book.douban.com/feed/subject/{subjectId}/reviews',
+    isAlias: true,
+  },
+  {
+    key: 'douban:subject-reviews',
+    template: 'https://movie.douban.com/feed/subject/{subjectId}/reviews',
+    isAlias: true,
+  },
+  {
+    key: 'douban:subject-reviews',
+    template: 'https://music.douban.com/feed/subject/{subjectId}/reviews',
+    isAlias: true,
+  },
   { key: 'douban:book-reviews', template: 'https://www.douban.com/feed/review/book' },
   { key: 'douban:movie-reviews', template: 'https://www.douban.com/feed/review/movie' },
   { key: 'douban:music-reviews', template: 'https://www.douban.com/feed/review/music' },
@@ -82,6 +98,8 @@ export const doubanHandler: PlatformHandler = {
       return []
     }
 
+    // The category review feeds need no value from the page, so every page builds them after its
+    // own feeds.
     if (parsed.kind === 'user') {
       const params = { username: parsed.username }
 
@@ -89,14 +107,27 @@ export const doubanHandler: PlatformHandler = {
         feeds.getFeedEntry('douban:interests', params),
         feeds.getFeedEntry('douban:reviews', params),
         feeds.getFeedEntry('douban:notes', params),
+        feeds.getFeedEntry('douban:book-reviews'),
+        feeds.getFeedEntry('douban:movie-reviews'),
+        feeds.getFeedEntry('douban:music-reviews'),
+        feeds.getFeedEntry('douban:drama-reviews'),
+        feeds.getFeedEntry('douban:new-movie-reviews'),
+        feeds.getFeedEntry('douban:popular-reviews'),
       ]
     }
 
     if (parsed.kind === 'subject') {
-      return [feeds.getFeedEntry('douban:subject-reviews', { subjectId: parsed.subjectId })]
+      return [
+        feeds.getFeedEntry('douban:subject-reviews', { subjectId: parsed.subjectId }),
+        feeds.getFeedEntry('douban:book-reviews'),
+        feeds.getFeedEntry('douban:movie-reviews'),
+        feeds.getFeedEntry('douban:music-reviews'),
+        feeds.getFeedEntry('douban:drama-reviews'),
+        feeds.getFeedEntry('douban:new-movie-reviews'),
+        feeds.getFeedEntry('douban:popular-reviews'),
+      ]
     }
 
-    // Root page: category review feeds.
     return [
       feeds.getFeedEntry('douban:book-reviews'),
       feeds.getFeedEntry('douban:movie-reviews'),

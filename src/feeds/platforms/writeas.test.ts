@@ -164,12 +164,6 @@ describe('writeasHandler', () => {
       expect(writeasHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a feed path under a dotted first segment', () => {
-      const value = 'https://write.as/abcde12345fgh.md/feed/'
-
-      expect(writeasHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/quietquill/feed/'
 

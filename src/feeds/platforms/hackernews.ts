@@ -15,8 +15,7 @@ const showRegex = /^\/show(?:new)?\/?$/i
 const feeds = definePlatformFeeds([
   { key: 'hackernews:front', template: 'https://news.ycombinator.com/rss' },
   { key: 'hackernews:show', template: 'https://news.ycombinator.com/showrss' },
-  // The front page ranking at 300 stories, against 30 in `/rss`. It needs no value from the page,
-  // so `resolve` builds it on every page.
+  // The front page ranking at 300 stories, against 30 in `/rss`.
   { key: 'hackernews:front-full', template: 'https://news.ycombinator.com/bigrss' },
 ])
 
@@ -44,11 +43,20 @@ export const hackernewsHandler: PlatformHandler = {
       return []
     }
 
+    // Every feed needs no value from the page, so every page builds them, its own first.
     if (parsed.kind === 'show') {
-      return [feeds.getFeedEntry('hackernews:show'), feeds.getFeedEntry('hackernews:front-full')]
+      return [
+        feeds.getFeedEntry('hackernews:show'),
+        feeds.getFeedEntry('hackernews:front'),
+        feeds.getFeedEntry('hackernews:front-full'),
+      ]
     }
 
-    return [feeds.getFeedEntry('hackernews:front'), feeds.getFeedEntry('hackernews:front-full')]
+    return [
+      feeds.getFeedEntry('hackernews:front'),
+      feeds.getFeedEntry('hackernews:show'),
+      feeds.getFeedEntry('hackernews:front-full'),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,

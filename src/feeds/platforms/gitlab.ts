@@ -1,6 +1,7 @@
-import { getPathSegments, getQueryParam, isAnyOf, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers group (guess, html), partly covers commits, project, tree.
@@ -13,7 +14,43 @@ export const hosts = ['gitlab.com', 'www.gitlab.com']
 
 // GitLab names may contain dots, so only the feed suffix is cut off.
 const feedSuffixRegex = /\.atom$/i
-const activityFeedRegex = /.\.atom$/i
+
+// The feeds of every GitLab install. The table claims a feed only on gitlab.com: a self-hosted
+// instance is known by its page markup, which a feed URL does not carry. A project path has any
+// depth and ends at a `/-/` separator, not always the first: in
+// `/{ns}/{project}/-/{x}/-/releases.atom` the project is `{ns}/{project}/-/{x}`.
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'gitlab:branch-commits',
+      template: '{root}/{project*}/-/commits/{branch}?format=atom',
+    },
+    // `/-/commits/{branch}.atom` serves the bytes `?format=atom` does. Under a file path GitLab
+    // reads the suffix as part of the file and redirects to the tree.
+    {
+      key: 'gitlab:branch-commits',
+      template: '{root}/{project*}/-/commits/{branch}.atom',
+      isAlias: true,
+    },
+    // The commits of one file or folder under a branch, another feed under the same key.
+    {
+      key: 'gitlab:branch-commits',
+      template: '{root}/{project*}/-/commits/{branch}/{path*}?format=atom',
+    },
+    { key: 'gitlab:releases', template: '{root}/{project*}/-/releases.atom' },
+    { key: 'gitlab:tags', template: '{root}/{project*}/-/tags?format=atom' },
+    { key: 'gitlab:issues', template: '{root}/{project*}/-/issues.atom' },
+    { key: 'gitlab:merge-requests', template: '{root}/{project*}/-/merge_requests.atom' },
+    // The signed-in user's dashboard feeds answer only with their `feed_token`, so they are
+    // claimed and never built.
+    { key: 'gitlab:dashboard', template: '{root}/dashboard/projects.atom' },
+    { key: 'gitlab:dashboard-issues', template: '{root}/dashboard/issues.atom' },
+    { key: 'gitlab:dashboard-merge-requests', template: '{root}/dashboard/merge_requests.atom' },
+    // A namespace or a project of any depth, after the rows its paths overlap.
+    { key: 'gitlab:activity', template: '{root}/{path*}.atom' },
+  ],
+  { hosts },
+)
 
 // Every GitLab page prints its frontend config through the gon gem and loads its bundles from
 // /assets/webpack/. The og:site_name is operator-set text, which any page can carry.
@@ -89,20 +126,6 @@ export const parseGitlabUrl = (url: string): GitlabUrl | undefined => {
   return { kind: 'project', namespace, projectPath }
 }
 
-// The project feeds after the `/-/` separator that ends a project path of any depth.
-const projectFeeds = [
-  { file: 'releases.atom', key: 'gitlab:releases' },
-  { file: 'issues.atom', key: 'gitlab:issues' },
-  { file: 'merge_requests.atom', key: 'gitlab:merge-requests' },
-]
-
-// The signed-in user's feeds under /dashboard/.
-const dashboardFeeds = [
-  { file: 'projects.atom', key: 'gitlab:dashboard' },
-  { file: 'issues.atom', key: 'gitlab:dashboard-issues' },
-  { file: 'merge_requests.atom', key: 'gitlab:dashboard-merge-requests' },
-]
-
 export const gitlabHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (!parseGitlabUrl(url)) {
@@ -122,119 +145,67 @@ export const gitlabHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
     const parsed = parseGitlabUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
     // User or group page: gitlab.com/{namespace}.
     if (parsed.kind === 'namespace') {
-      return [{ uri: `${origin}/${parsed.namespace}.atom`, hint: composeHint('gitlab:activity') }]
+      return [page.getFeedEntry('gitlab:activity', { path: parsed.namespace })]
     }
 
     // Project page: gitlab.com/{group}/{subgroup...}/{project}.
-    const { projectPath, branch } = parsed
-    const repoFeeds = [
-      {
-        uri: `${origin}/${projectPath}/-/releases.atom`,
-        hint: composeHint('gitlab:releases'),
-      },
-      {
-        uri: `${origin}/${projectPath}/-/tags?format=atom`,
-        hint: composeHint('gitlab:tags'),
-      },
-      {
-        uri: `${origin}/${projectPath}/-/issues.atom`,
-        hint: composeHint('gitlab:issues'),
-      },
-      {
-        uri: `${origin}/${projectPath}/-/merge_requests.atom`,
-        hint: composeHint('gitlab:merge-requests'),
-      },
-      {
-        uri: `${origin}/${projectPath}.atom`,
-        hint: composeHint('gitlab:activity'),
-      },
-    ]
+    const { projectPath: project, branch } = parsed
 
     if (branch) {
-      repoFeeds.unshift({
-        uri: `${origin}/${projectPath}/-/commits/${branch}?format=atom`,
-        hint: composeHint('gitlab:branch-commits'),
-      })
+      return [
+        page.getFeedEntry('gitlab:branch-commits', { project, branch }),
+        page.getFeedEntry('gitlab:releases', { project }),
+        page.getFeedEntry('gitlab:tags', { project }),
+        page.getFeedEntry('gitlab:issues', { project }),
+        page.getFeedEntry('gitlab:merge-requests', { project }),
+        page.getFeedEntry('gitlab:activity', { path: project }),
+      ]
     }
 
-    return repoFeeds
+    return [
+      page.getFeedEntry('gitlab:releases', { project }),
+      page.getFeedEntry('gitlab:tags', { project }),
+      page.getFeedEntry('gitlab:issues', { project }),
+      page.getFeedEntry('gitlab:merge-requests', { project }),
+      page.getFeedEntry('gitlab:activity', { path: project }),
+    ]
   },
 
-  // Only gitlab.com is claimed: a self-hosted instance is known by its page markup, which a feed
-  // URL does not carry.
   getFeedHint: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
-      return
-    }
-
-    const segments = getPathSegments(parsedUrl)
-    const [prefixOrNamespace, dashboardFile] = segments
-
-    if (isAnyOf(prefixOrNamespace, accountPrefixes)) {
-      return
-    }
-
-    // The signed-in user's dashboard feeds answer only with their `feed_token`, so they are claimed
-    // under their own keys and never built. The dashboard is a route, never a namespace.
-    if (isAnyOf(prefixOrNamespace, 'dashboard')) {
-      const dashboardFeed = dashboardFeeds.find(({ file }) => isAnyOf(dashboardFile, file))
-
-      if (segments.length !== 2 || !dashboardFeed) {
-        return
-      }
-
-      return composeHint(dashboardFeed.key)
-    }
-
+    const segments = getPathSegments(url)
+    const [prefixOrNamespace] = segments
     const dashIndex = segments.indexOf('-')
+    // The dashboard is a route, never a namespace, and its feeds sit right under it.
+    const isDashboard = isAnyOf(prefixOrNamespace, 'dashboard')
 
-    if (dashIndex === -1) {
-      const [, featureSegments] = splitProjectPath(segments)
-
-      if (featureSegments.length === 0 && activityFeedRegex.test(segments.at(-1) ?? '')) {
-        return composeHint('gitlab:activity')
-      }
-
+    // A group or user page is no feed, and a project path is a namespace and a project at least.
+    if (
+      isAnyOf(prefixOrNamespace, accountPrefixes) ||
+      (isDashboard && segments.length !== 2) ||
+      dashIndex === 0 ||
+      dashIndex === 1
+    ) {
       return
     }
 
-    // A project path is a namespace and a project at least.
-    if (dashIndex < 2) {
+    const hint = feeds.getFeedHint(url)
+    // The activity row reads any path ending in `.atom`, but a route after `/-/`, the dashboard
+    // and a legacy feature path name no namespace or project.
+    const isRoutePath = dashIndex !== -1 || isDashboard || splitProjectPath(segments)[1].length > 0
+
+    if (hint?.key === 'gitlab:activity' && isRoutePath) {
       return
     }
 
-    const [feature, branch] = segments.slice(dashIndex + 1)
-    const isAtomFormat = isAnyOf(getQueryParam(parsedUrl, 'format'), 'atom')
-
-    if (isAnyOf(feature, 'commits') && branch && isAtomFormat) {
-      return composeHint('gitlab:branch-commits')
-    }
-
-    if (branch) {
-      return
-    }
-
-    if (isAnyOf(feature, 'tags') && isAtomFormat) {
-      return composeHint('gitlab:tags')
-    }
-
-    const projectFeed = projectFeeds.find(({ file }) => isAnyOf(feature, file))
-
-    if (!projectFeed) {
-      return
-    }
-
-    return composeHint(projectFeed.key)
+    return hint
   },
 }

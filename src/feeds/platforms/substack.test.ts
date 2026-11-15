@@ -144,6 +144,55 @@ describe('substackHandler', () => {
       expect(substackHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the section feed for a section page', () => {
+      const value = 'https://example.substack.com/s/mutual-aid'
+      const content =
+        '{"sections":[{"id":161100,"slug":"updates"},{"id":194387,"name":"Mutual Aid","slug":"mutual-aid"}]}'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+        {
+          uri: 'https://example.substack.com/feed?sectionId=194387',
+          hint: { key: 'substack:newsletter-section', label: 'Newsletter section' },
+        },
+      ]
+
+      expect(substackHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should read a section page with a long run of section ids in linear time', () => {
+      const value = 'https://example.substack.com/s/mutual-aid'
+      const content = '"id":1,'.repeat(30_000)
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+      ]
+
+      const start = performance.now()
+      const result = substackHandler.resolve(value, content)
+      const elapsed = performance.now() - start
+
+      expect(elapsed).toBeLessThan(1000)
+      expect(result).toEqual(expected)
+    })
+
+    it('should return the newsletter feed alone for a section page whose section the page omits', () => {
+      const value = 'https://example.substack.com/s/mutual-aid'
+      const content = '{"sections":[{"id":161100,"name":"Updates","slug":"updates"}]}'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+      ]
+
+      expect(substackHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return feed URL for profile page', () => {
       const value = 'https://substack.com/@alice'
       const expected = [
@@ -369,8 +418,14 @@ describe('substackHandler', () => {
     const podcastFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://api.substack.com/feed/podcast/12345.rss', podcastHint],
       ['https://alice.substack.com/feed/podcast/12345.rss', podcastHint],
-      ['https://api.substack.com/feed/podcast/12345/private/abc-123.rss', podcastHint],
-      ['https://api.substack.com/feed/podcast/spotify/abc-123/12345.rss', podcastHint],
+      [
+        'https://api.substack.com/feed/podcast/12345/private/abc-123.rss',
+        { key: 'substack:private-podcast', label: 'Private podcast' },
+      ],
+      [
+        'https://api.substack.com/feed/podcast/spotify/abc-123/12345.rss',
+        { key: 'substack:spotify-podcast', label: 'Spotify podcast' },
+      ],
       [
         'https://api.substack.com/feed/podcast/12345/s/678.rss',
         { key: 'substack:podcast-section', label: 'Podcast section' },
