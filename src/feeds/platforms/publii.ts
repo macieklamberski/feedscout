@@ -62,14 +62,15 @@ export const publiiHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getPubliiPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
     return [
-      feeds.getFeedEntry('publii:posts', { root: page.siteUrl }, 'atom'),
-      feeds.getFeedEntry('publii:posts', { root: page.siteUrl }, 'json'),
+      pageFeeds.getFeedEntry('publii:posts', { root: page.siteUrl }, 'atom'),
+      pageFeeds.getFeedEntry('publii:posts', { root: page.siteUrl }, 'json'),
     ]
   },
 }
