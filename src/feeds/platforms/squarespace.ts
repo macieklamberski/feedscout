@@ -1,4 +1,4 @@
-import { getPathSegments } from 'trousse'
+import { getPathSegments, includesAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker } from '../../common/utils.js'
 
@@ -6,10 +6,8 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 
 export type SquarespaceUrl = { kind: 'collection'; collection: string }
 
-const squarespaceRegex = /squarespace/i
-
 export const isSquarespaceHeaders = (headers: Headers): boolean => {
-  return squarespaceRegex.test(headers.get('server') ?? '')
+  return includesAnyOf(headers.get('server') ?? undefined, 'squarespace')
 }
 
 export const parseSquarespaceUrl = (url: string): SquarespaceUrl | undefined => {

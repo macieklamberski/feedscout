@@ -1,5 +1,5 @@
 import { DomUtils } from 'htmlparser2'
-import { isString } from 'trousse'
+import { includesAnyOf, isString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 import { isGcsWebPage } from './gcsWeb.js'
@@ -8,14 +8,12 @@ import { isGcsWebPage } from './gcsWeb.js'
 
 type DrupalSettings = { path?: { baseUrl?: unknown } }
 
-const drupalRegex = /drupal/i
-
 export const isDrupalHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Drupal')
 }
 
 export const isDrupalHeaders = (headers: Headers): boolean => {
-  return drupalRegex.test(headers.get('x-generator') ?? '')
+  return includesAnyOf(headers.get('x-generator') ?? undefined, 'drupal')
 }
 
 export type DrupalPage = { kind: 'site'; baseUrl: string }

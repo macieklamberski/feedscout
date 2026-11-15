@@ -1,4 +1,4 @@
-import { composeQuery, isAnyOf, isHttpUrl, isString, parseUrl } from 'trousse'
+import { composeQuery, endsWithAnyOf, isAnyOf, isHttpUrl, isString, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -38,7 +38,6 @@ const scopePathRegex = /\/(?<route>collections|communities)\/(?<uuid>[^/]+)(?:\/
 const transferStateEntityRegex = /&([aglqs]);/g
 const legacyFeedPathRegex =
   /\/feed\/(?<format>rss_1\.0|rss_2\.0|atom_1\.0)\/(?<scope>site|[^/]+\/[^/]+)$/i
-const legacyStylesheetRegex = /\/static\/css\/bootstrap\/dspace-theme\.css$/i
 const generatorRegex = /^DSpace\b/
 
 // Angular before 16 escapes the transfer state with these entities, and later versions print JSON.
@@ -90,7 +89,10 @@ export const isDspaceHtml = (content: string): boolean => {
 // carry are the second marker.
 export const isLegacyDspaceHtml = (content: string): boolean => {
   const stylesheet = findElement(content, (element) => {
-    return element.name === 'link' && legacyStylesheetRegex.test(element.attribs.href ?? '')
+    return (
+      element.name === 'link' &&
+      endsWithAnyOf(element.attribs.href, '/static/css/bootstrap/dspace-theme.css')
+    )
   })
 
   if (stylesheet) {

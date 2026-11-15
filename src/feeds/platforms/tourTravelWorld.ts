@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, findElements, hasMarker } from '../../common/utils.js'
 
@@ -7,7 +7,6 @@ import { composeHint, findElement, findElements, hasMarker } from '../../common/
 export type TourTravelWorldPage = { feedUrl: string }
 
 const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//i
-const packagesFeedPathRegex = /^\/tour-packages\.rss$/i
 
 // Every Weblink.In catalog site loads its template stylesheet from the shared asset host.
 export const isTourTravelWorldHtml = (content: string): boolean => {
@@ -38,7 +37,7 @@ const getTourTravelWorldPage = (
   for (const anchor of anchors) {
     const target = parseUrl(anchor.attribs.href, url)
 
-    if (target && isHostOf(target, hostname) && packagesFeedPathRegex.test(target.pathname)) {
+    if (target && isHostOf(target, hostname) && isAnyOf(target.pathname, '/tour-packages.rss')) {
       return { feedUrl: target.href }
     }
   }

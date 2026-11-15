@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { includesAnyOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getNumericId, hasMarker } from '../../common/utils.js'
@@ -13,14 +13,13 @@ export type NodebbUrl =
   | { kind: 'forum' }
 export type NodebbPage = NodebbUrl & { siteUrl: string }
 
-const nodebbRegex = /nodebb/i
 const categoryRegex = /\/category\/(?<id>[^/]+)/i
 const topicRegex = /\/topic\/(?<id>[^/]+)/i
 // The page config prints the install's sub-path, such as `/forum`, and an empty one at the root.
 const relativePathRegex = /"relative_path":"(?<relativePath>\/[^"]*)"/
 
 export const isNodebbHeaders = (headers: Headers): boolean => {
-  return nodebbRegex.test(headers.get('x-powered-by') ?? '')
+  return includesAnyOf(headers.get('x-powered-by') ?? undefined, 'nodebb')
 }
 
 export const parseNodebbUrl = (url: string): NodebbUrl | undefined => {

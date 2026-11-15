@@ -1,4 +1,4 @@
-import { composeQuery, getOrigin, getQueryParam, parseUrl } from 'trousse'
+import { composeQuery, endsWithAnyOf, getOrigin, getQueryParam, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -21,7 +21,6 @@ const rollupPathRegex = /\/js\/[^/]*$/i
 // vBulletin 5 and 6.0 print `"channelid": "{id}"` in `pageData`,
 // 6.1 and later `data-channelid='{id}'`.
 const channelIdRegex = /(?:"channelid":\s*"|data-channelid=['"])(\d+)/
-const forumDisplayRegex = /\/forumdisplay\.php$/i
 const friendlyForumIdRegex = /^\?(\d+)(?:-|&|$)/
 
 // vBulletin 4 prints `clientscript/vbulletin-core.js` as an absolute URL under the forum root.
@@ -59,7 +58,7 @@ export const isVbulletinHeaders = (headers: Headers): boolean => {
 
 // Friendly URLs name the forum as `?{id}-{title}` or `?{id}`, and plain ones as `?f={id}`.
 const getForumId = (parsedUrl: URL): string | undefined => {
-  if (!forumDisplayRegex.test(parsedUrl.pathname)) {
+  if (!endsWithAnyOf(parsedUrl.pathname, '/forumdisplay.php')) {
     return
   }
 

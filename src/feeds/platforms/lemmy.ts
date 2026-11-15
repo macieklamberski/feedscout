@@ -1,4 +1,12 @@
-import { composeQuery, getAnyOf, getPathSegments, getQueryParam, isAnyOf, parseUrl } from 'trousse'
+import {
+  composeQuery,
+  getAnyOf,
+  getPathSegments,
+  getQueryParam,
+  includesAnyOf,
+  isAnyOf,
+  parseUrl,
+} from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -19,8 +27,6 @@ export type LemmyUrl =
   | ({ kind: 'home' } & LemmyQuery)
 
 export type LemmyPage = LemmyUrl
-
-const lemmyPoweredByRegex = /lemmy/i
 
 const validSorts = [
   'Active',
@@ -110,9 +116,7 @@ export const isLemmyHtml = (content: string): boolean => {
 }
 
 export const isLemmyHeaders = (headers: Headers): boolean => {
-  const poweredBy = headers.get('x-powered-by') ?? ''
-
-  return lemmyPoweredByRegex.test(poweredBy)
+  return includesAnyOf(headers.get('x-powered-by') ?? undefined, 'lemmy')
 }
 
 export const lemmyHandler: PlatformHandler = {

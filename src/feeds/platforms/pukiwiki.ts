@@ -1,3 +1,4 @@
+import { endsWithAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
@@ -10,7 +11,6 @@ const stylesheetRegex = /(?:^|\/)pukiwiki\.css(?:\.php)?(?:[?#]|$)/i
 // Quick Homepage Maker, a PukiWiki fork, numbers its session cookie per install.
 const sessionCookieRegex = /^QHMSSID\d*$/
 const skinRootRegex = /^(.*?\/)skin\//i
-const scriptPathRegex = /\.php$/i
 
 export const isPukiwikiHtml = (content: string): boolean => {
   const stylesheet = findElement(content, (element) => {
@@ -38,7 +38,7 @@ export const getPukiwikiPage = (url: string, content: string | undefined): Pukiw
   const root =
     stylesheetUrl?.origin === origin ? stylesheetUrl.pathname.match(skinRootRegex)?.[1] : undefined
 
-  if (scriptPathRegex.test(pathname) || !root || !pathname.startsWith(root)) {
+  if (endsWithAnyOf(pathname, '.php') || !root || !pathname.startsWith(root)) {
     return { kind: 'wiki', scriptUrl: `${origin}${pathname}` }
   }
 

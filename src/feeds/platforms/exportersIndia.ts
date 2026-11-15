@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, findElements, hasMarker } from '../../common/utils.js'
@@ -6,8 +6,6 @@ import { composeHint, findElement, findElements, hasMarker } from '../../common/
 // Discoverability: Discoverable without handler.
 
 const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//i
-const productsFeedPathRegex = /^\/products\.rss$/i
-const servicesFeedPathRegex = /^\/services\.rss$/i
 
 export type ExportersIndiaPage = { productsFeedUrl?: string; servicesFeedUrl?: string }
 
@@ -47,11 +45,11 @@ const getExportersIndiaPage = (
       continue
     }
 
-    if (productsFeedPathRegex.test(target.pathname) && productsFeedUrl === undefined) {
+    if (isAnyOf(target.pathname, '/products.rss') && productsFeedUrl === undefined) {
       productsFeedUrl = target.href
     }
 
-    if (servicesFeedPathRegex.test(target.pathname) && servicesFeedUrl === undefined) {
+    if (isAnyOf(target.pathname, '/services.rss') && servicesFeedUrl === undefined) {
       servicesFeedUrl = target.href
     }
   }

@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, findElements, hasMarker } from '../../common/utils.js'
@@ -8,7 +8,6 @@ import { composeHint, findElement, findElements, hasMarker } from '../../common/
 export type PlacementIndiaPage = { feedUrl: string; jobOpeningFeedUrl?: string }
 
 const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//i
-const vacanciesFeedPathRegex = /^\/vacancy\.rss$/i
 const jobOpeningFeedPathRegex = /^\/vacancy_\d+\.rss$/i
 
 // Every Weblink.In catalog site loads its template stylesheet from the shared asset host.
@@ -46,7 +45,7 @@ const getPlacementIndiaPage = (
       continue
     }
 
-    if (vacanciesFeedPathRegex.test(target.pathname) && feedUrl === undefined) {
+    if (isAnyOf(target.pathname, '/vacancy.rss') && feedUrl === undefined) {
       feedUrl = target.href
     }
 

@@ -14,8 +14,6 @@ export type TalentsoftPage =
 const cookiesScriptPath = '/client/dist/talentsoft-cookies.iife.js'
 const offerFeedPath = '/handlers/offerRss.ashx'
 
-const offerFeedPathRegex = /^\/handlers\/offerRss\.ashx$/i
-
 // Every career site loads the cookie banner script from this path, on every page and theme.
 export const isTalentsoftHtml = (content: string): boolean => {
   const script = findElement(content, (element) => {
@@ -49,7 +47,7 @@ const getTalentsoftPage = (url: string, content: string | undefined): Talentsoft
 
       return (
         feedUrl?.origin === origin &&
-        offerFeedPathRegex.test(feedUrl.pathname) &&
+        isAnyOf(feedUrl.pathname, offerFeedPath) &&
         isAnyOf([...feedUrl.searchParams.keys()].join(), 'lcid')
       )
     })
@@ -64,7 +62,7 @@ const getTalentsoftPage = (url: string, content: string | undefined): Talentsoft
   })
   const searchFeedUrl = parseUrl(searchLink?.attribs.href, url)
 
-  if (searchFeedUrl?.origin === origin && offerFeedPathRegex.test(searchFeedUrl.pathname)) {
+  if (searchFeedUrl?.origin === origin && isAnyOf(searchFeedUrl.pathname, offerFeedPath)) {
     return { kind: 'search', origin, lcid, searchFeedUrl: searchFeedUrl.href }
   }
 

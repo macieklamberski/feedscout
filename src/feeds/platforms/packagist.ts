@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { endsWithAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -18,9 +18,6 @@ const packageRegex = /^\/packages\/([^/]+)\/([^/]+)(?:\/|$)/i
 const vendorRegex = /^\/packages\/([^/]+)\/?$/i
 const extensionsRegex = /^\/extensions(?:\/|$)/i
 
-// The JSON API sits under the same paths, such as /packages/list.json.
-const jsonSuffixRegex = /\.json$/i
-
 const createFeeds = (name: string, key: string): Array<DiscoverUriEntry> => {
   return [
     { uri: `https://packagist.org/feeds/${name}.rss`, hint: composeHint(key, 'rss') },
@@ -37,7 +34,8 @@ export const parsePackagistUrl = (url: string): PackagistUrl | undefined => {
 
   const { pathname } = parsedUrl
 
-  if (jsonSuffixRegex.test(pathname)) {
+  // The JSON API sits under the same paths, such as /packages/list.json.
+  if (endsWithAnyOf(pathname, '.json')) {
     return
   }
 
