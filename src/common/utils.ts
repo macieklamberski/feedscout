@@ -9,6 +9,7 @@ import {
   isSameText,
   isString,
   parseUrl,
+  startsWithAnyOf,
   stripWww,
 } from 'trousse'
 import locales from '../locales.json' with { type: 'json' }
@@ -216,19 +217,14 @@ const isMetaWithKey = (element: Element, key: string): boolean => {
     return false
   }
 
-  return name?.toLowerCase() === key || property?.toLowerCase() === key
+  return isAnyOf(name, key) || isAnyOf(property, key)
 }
 
 // Check if HTML contains a meta tag matching a name or property attribute with the given
 // content value (case-insensitive prefix match).
 export const hasMetaContent = (content: string, name: string, value: string): boolean => {
-  const key = name.toLowerCase()
-  const lowercasedValue = value.toLowerCase()
-
   return getParsedPage(content).metas.some((meta) => {
-    return (
-      isMetaWithKey(meta, key) && meta.attribs.content.toLowerCase().startsWith(lowercasedValue)
-    )
+    return isMetaWithKey(meta, name) && startsWithAnyOf(meta.attribs.content, value)
   })
 }
 
@@ -328,9 +324,7 @@ export const hasMarker = (
 
 // Read the content value of the first meta tag with the given name or property attribute.
 export const getMetaContent = (content: string, name: string): string | undefined => {
-  const key = name.toLowerCase()
-
-  return getParsedPage(content).metas.find((meta) => isMetaWithKey(meta, key))?.attribs.content
+  return getParsedPage(content).metas.find((meta) => isMetaWithKey(meta, name))?.attribs.content
 }
 
 export const matchesAnyOfLinkSelectors = (

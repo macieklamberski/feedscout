@@ -1,4 +1,4 @@
-import { decodeSegment, isAnyOf, parseUrl, resolveUrl } from 'trousse'
+import { decodeSegment, isAnyOf, parseUrl, resolveUrl, startsWithAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -54,7 +54,7 @@ const getLinkedFeedUrl = (
 
     const { host: feedHost, pathname: feedPathname } = new URL(feedUrl)
 
-    if (feedHost === host && feedPathname.toLowerCase().startsWith(feedPath.toLowerCase())) {
+    if (feedHost === host && startsWithAnyOf(feedPathname, feedPath)) {
       return feedUrl
     }
   }
