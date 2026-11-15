@@ -11,7 +11,7 @@ const hosts = ['bitchute.com', 'www.bitchute.com', 'old.bitchute.com']
 
 // A channel page links no feed. The www feed redirects to api.bitchute.com, the spelling feeds are
 // stored at, so the table reads both and builds the api one. old.bitchute.com serves the same
-// feed.
+// items, but links each one on old.bitchute.com.
 const feeds = definePlatformFeeds([
   { key: 'bitchute:channel', template: 'https://api.bitchute.com/feeds/rss/channel/{channel}/' },
   {
@@ -19,11 +19,7 @@ const feeds = definePlatformFeeds([
     template: 'https://www.bitchute.com/feeds/rss/channel/{channel}/',
     isAlias: true,
   },
-  {
-    key: 'bitchute:channel',
-    template: 'https://old.bitchute.com/feeds/rss/channel/{channel}/',
-    isAlias: true,
-  },
+  { key: 'bitchute:channel', template: 'https://old.bitchute.com/feeds/rss/channel/{channel}/' },
 ])
 
 export const parseBitchuteUrl = (url: string): BitchuteUrl | undefined => {

@@ -214,6 +214,10 @@ describe('noteHandler', () => {
       ['https://note.com/hashtag/AI/rss', { key: 'note:hashtag', label: 'Hashtag' }],
       ['https://note.com/notemag/m/m7244518f06ae/rss', { key: 'note:magazine', label: 'Magazine' }],
       ['https://note.com/rss', { key: 'note:featured', label: 'Featured' }],
+      ['https://note.mu/alice/rss', { key: 'note:blog', label: 'Blog' }],
+      ['https://note.mu/hashtag/AI/rss', { key: 'note:hashtag', label: 'Hashtag' }],
+      ['https://note.mu/notemag/m/m7244518f06ae/rss', { key: 'note:magazine', label: 'Magazine' }],
+      ['https://note.mu/rss', { key: 'note:featured', label: 'Featured' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
