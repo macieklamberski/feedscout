@@ -217,12 +217,20 @@ describe('huffdufferHandler', () => {
       expect(huffdufferHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the huffduffs feed for a profile', () => {
+    it('should return the huffduffs feeds for a profile', () => {
       const value = 'https://huffduffer.com/alice'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://huffduffer.com/alice/rss',
-          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs' },
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/atom',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/json',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'json' },
         },
       ]
 
@@ -234,35 +242,67 @@ describe('huffdufferHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://huffduffer.com/alice/12345/related/rss',
-          hint: { key: 'huffduffer:related', label: 'Possibly related' },
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/12345/related/atom',
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/12345/related/json',
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'json' },
         },
         {
           uri: 'https://huffduffer.com/alice/rss',
-          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs' },
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/atom',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/json',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'json' },
         },
       ]
 
       expect(huffdufferHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the related feed for a related page', () => {
+    it('should return the related feeds for a related page', () => {
       const value = 'https://huffduffer.com/alice/12345/related'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://huffduffer.com/alice/12345/related/rss',
-          hint: { key: 'huffduffer:related', label: 'Possibly related' },
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/12345/related/atom',
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/12345/related/json',
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'json' },
         },
       ]
 
       expect(huffdufferHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the huffduffs feed on the apex host over https for a www page over http', () => {
+    it('should return the huffduffs feeds on the apex host over https for a www page over http', () => {
       const value = 'http://www.huffduffer.com/alice'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://huffduffer.com/alice/rss',
-          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs' },
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/atom',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/json',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'json' },
         },
       ]
 
@@ -282,7 +322,15 @@ describe('huffdufferHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://huffduffer.com/AliceSmith/rss',
-          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs' },
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/AliceSmith/atom',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/AliceSmith/json',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'json' },
         },
       ]
 
@@ -302,11 +350,27 @@ describe('huffdufferHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://huffduffer.com/alicesmith/12345/related/rss',
-          hint: { key: 'huffduffer:related', label: 'Possibly related' },
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/alicesmith/12345/related/atom',
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/alicesmith/12345/related/json',
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'json' },
         },
         {
           uri: 'https://huffduffer.com/alicesmith/rss',
-          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs' },
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/alicesmith/atom',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/alicesmith/json',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'json' },
         },
       ]
 
@@ -372,7 +436,22 @@ describe('huffdufferHandler', () => {
 
     it('should return the related hint for a related feed', () => {
       const value = 'https://huffduffer.com/alice/12345/related/rss'
-      const expected: DiscoverUriHint = { key: 'huffduffer:related', label: 'Possibly related' }
+      const expected: DiscoverUriHint = {
+        key: 'huffduffer:related',
+        label: 'Possibly related',
+        format: 'rss',
+      }
+
+      expect(huffdufferHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the related hint for a related atom feed', () => {
+      const value = 'https://huffduffer.com/alice/12345/related/atom'
+      const expected: DiscoverUriHint = {
+        key: 'huffduffer:related',
+        label: 'Possibly related',
+        format: 'atom',
+      }
 
       expect(huffdufferHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -494,7 +573,15 @@ describe('huffdufferHandler', () => {
       ],
       [
         'https://huffduffer.com/alice/12345/related/rss',
-        { key: 'huffduffer:related', label: 'Possibly related' },
+        { key: 'huffduffer:related', label: 'Possibly related', format: 'rss' },
+      ],
+      [
+        'https://huffduffer.com/alice/12345/related/atom',
+        { key: 'huffduffer:related', label: 'Possibly related', format: 'atom' },
+      ],
+      [
+        'https://huffduffer.com/alice/12345/related/json',
+        { key: 'huffduffer:related', label: 'Possibly related', format: 'json' },
       ],
       [
         'https://huffduffer.com/new/rss',
