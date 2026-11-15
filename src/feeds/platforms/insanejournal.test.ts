@@ -27,6 +27,27 @@ describe('parseInsanejournalUrl', () => {
     expect(parseInsanejournalUrl('https://www.insanejournal.com/asylum/club')).toEqual(expected)
   })
 
+  it('should return the user and tag for a www users tag page', () => {
+    const value = 'https://www.insanejournal.com/users/jane/tag/books'
+    const expected: InsanejournalUrl = { kind: 'journal', username: 'jane', tag: 'books' }
+
+    expect(parseInsanejournalUrl(value)).toEqual(expected)
+  })
+
+  it('should return the user and tag for a www tilde tag page', () => {
+    const value = 'https://www.insanejournal.com/~jane/tag/books'
+    const expected: InsanejournalUrl = { kind: 'journal', username: 'jane', tag: 'books' }
+
+    expect(parseInsanejournalUrl(value)).toEqual(expected)
+  })
+
+  it('should return the asylum and tag for a www asylum tag page', () => {
+    const value = 'https://www.insanejournal.com/asylum/club/tag/books'
+    const expected: InsanejournalUrl = { kind: 'asylum', asylum: 'club', tag: 'books' }
+
+    expect(parseInsanejournalUrl(value)).toEqual(expected)
+  })
+
   it('should return the asylum for an asylums host page', () => {
     const expected: InsanejournalUrl = { kind: 'asylum', asylum: 'club' }
 
@@ -182,6 +203,34 @@ describe('insanejournalHandler', () => {
 
     it('should add tag-filtered feeds for /tag/ paths on journal', () => {
       const value = 'https://alice.insanejournal.com/tag/photography'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.insanejournal.com/data/rss?tag=photography',
+          hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'rss' },
+        },
+        {
+          uri: 'https://alice.insanejournal.com/data/atom?tag=photography',
+          hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'atom' },
+        },
+        {
+          uri: 'https://alice.insanejournal.com/data/rss',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://alice.insanejournal.com/data/atom',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://alice.insanejournal.com/data/userpics',
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should add tag-filtered feeds for a tag page on a www users path', () => {
+      const value = 'https://www.insanejournal.com/users/alice/tag/photography'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://alice.insanejournal.com/data/rss?tag=photography',

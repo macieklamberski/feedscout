@@ -32,6 +32,7 @@ const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/i
 const firstSegmentRegex = /^\/([^/]+)/
 const pathTagRegex = /^\/[^/]+\/tag\/([^/]+)/i
+const wwwPathTagRegex = /^\/(?:users\/|~|asylum\/|community\/)[^/]+\/tag\/([^/]+)/i
 
 const journalFeeds = definePlatformFeeds(
   [
@@ -90,16 +91,18 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
   const pathTag = pathname.match(pathTagRegex)?.[1]
 
   if (isHostOf(url, wwwHosts)) {
+    // The www host names the journal in its path too, so a tag page sits under its name.
+    const wwwTag = pathname.match(wwwPathTagRegex)?.[1]
     const username = getJournalName(pathname, wwwUsersPathRegex)
 
     if (username) {
-      return { kind: 'journal', username, tag }
+      return { kind: 'journal', username, tag: wwwTag }
     }
 
     const asylum = getJournalName(pathname, wwwAsylumPathRegex)
 
     if (asylum) {
-      return { kind: 'asylum', asylum, tag }
+      return { kind: 'asylum', asylum, tag: wwwTag }
     }
 
     return
