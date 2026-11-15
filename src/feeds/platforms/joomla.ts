@@ -68,8 +68,9 @@ export const joomlaHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseJoomlaUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
@@ -78,8 +79,8 @@ export const joomlaHandler: PlatformHandler = {
     const params = { root: `${origin}${parsed.path}/`, query: getRoutingQuery(searchParams) }
 
     return [
-      feeds.getFeedEntry('joomla:view', params, 'rss'),
-      feeds.getFeedEntry('joomla:view', params, 'atom'),
+      pageFeeds.getFeedEntry('joomla:view', params, 'rss'),
+      pageFeeds.getFeedEntry('joomla:view', params, 'atom'),
     ]
   },
 }
