@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, isRegion, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -29,7 +29,7 @@ const feeds = definePlatformFeeds(
 // A country site such as pinterest.co.uk redirects to its label on pinterest.com, uk.pinterest.com,
 // which serves the same profiles and boards.
 const isPinterestHost = (parsedUrl: URL): boolean => {
-  return isHostOf(parsedUrl, hosts) || getTenantSubdomain(parsedUrl, domains) !== undefined
+  return isHostOf(parsedUrl, hosts) || isRegion(getTenantSubdomain(parsedUrl, domains) ?? '')
 }
 
 export const parsePinterestUrl = (url: string): PinterestUrl | undefined => {
