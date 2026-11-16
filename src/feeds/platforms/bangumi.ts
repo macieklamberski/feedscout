@@ -1,6 +1,6 @@
-import { encodePathSegment, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home (html), partly covers user.
@@ -13,6 +13,15 @@ const challengedHosts = ['chii.in']
 const hosts = ['bgm.tv', 'bangumi.tv', ...challengedHosts]
 
 const userRegex = /^\/user\/([^/]+)/i
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'bangumi:collections', template: '{scheme}://{host}/feed/user/{username}/interests' },
+    { key: 'bangumi:timeline', template: '{scheme}://{host}/feed/user/{username}/timeline' },
+    { key: 'bangumi:blog', template: '{scheme}://{host}/feed/blog/all' },
+  ],
+  { hosts },
+)
 
 export const parseBangumiUrl = (url: string): BangumiUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -37,23 +46,21 @@ export const bangumiHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseBangumiUrl(url)
+    const pageFeeds = feeds.forUrl(isHostOf(url, challengedHosts) ? 'https://bgm.tv/' : url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
-    const parsedUrl = new URL(url)
-    const origin = isHostOf(parsedUrl, challengedHosts) ? 'https://bgm.tv' : parsedUrl.origin
-
     if (parsed.kind === 'user') {
-      const base = `${origin}/feed/user/${encodePathSegment(parsed.username)}`
-
       return [
-        { uri: `${base}/interests`, hint: composeHint('bangumi:collections') },
-        { uri: `${base}/timeline`, hint: composeHint('bangumi:timeline') },
+        pageFeeds.getFeedEntry('bangumi:collections', { username: parsed.username }),
+        pageFeeds.getFeedEntry('bangumi:timeline', { username: parsed.username }),
       ]
     }
 
-    return [{ uri: `${origin}/feed/blog/all`, hint: composeHint('bangumi:blog') }]
+    return [pageFeeds.getFeedEntry('bangumi:blog')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

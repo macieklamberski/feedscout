@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import type { BangumiUrl } from './bangumi.js'
 import { bangumiHandler, parseBangumiUrl } from './bangumi.js'
 
@@ -71,7 +72,7 @@ describe('bangumiHandler', () => {
     })
 
     it('should return the collections and timeline feeds for a user page', () => {
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://bgm.tv/feed/user/sai/interests',
           hint: { key: 'bangumi:collections', label: 'Collections' },
@@ -86,7 +87,7 @@ describe('bangumiHandler', () => {
     })
 
     it('should return the bgm.tv feeds for a chii.in user page', () => {
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://bgm.tv/feed/user/sai/interests',
           hint: { key: 'bangumi:collections', label: 'Collections' },
@@ -101,7 +102,7 @@ describe('bangumiHandler', () => {
     })
 
     it('should return the blog feed for any other page', () => {
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://bangumi.tv/feed/blog/all',
           hint: { key: 'bangumi:blog', label: 'Blog' },
@@ -109,6 +110,33 @@ describe('bangumiHandler', () => {
       ]
 
       expect(bangumiHandler.resolve('https://bangumi.tv/')).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the collections hint for a collections feed', () => {
+      const value = 'https://bgm.tv/feed/user/sai/interests'
+      const expected: DiscoverUriHint = { key: 'bangumi:collections', label: 'Collections' }
+
+      expect(bangumiHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the timeline hint for a timeline feed on bangumi.tv', () => {
+      const value = 'https://bangumi.tv/feed/user/sai/timeline'
+      const expected: DiscoverUriHint = { key: 'bangumi:timeline', label: 'Timeline' }
+
+      expect(bangumiHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the blog hint for the blog feed', () => {
+      const value = 'https://bgm.tv/feed/blog/all'
+      const expected: DiscoverUriHint = { key: 'bangumi:blog', label: 'Blog' }
+
+      expect(bangumiHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a user page', () => {
+      expect(bangumiHandler.getFeedHint?.('https://bgm.tv/user/sai')).toBeUndefined()
     })
   })
 })
