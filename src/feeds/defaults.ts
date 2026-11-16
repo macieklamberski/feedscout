@@ -23,6 +23,7 @@ import { bearblogHandler } from './platforms/bearblog.js'
 import { behanceHandler } from './platforms/behance.js'
 import { bigCartelHandler } from './platforms/bigCartel.js'
 import { bigcommerceHandler } from './platforms/bigcommerce.js'
+import { bingHandler } from './platforms/bing.js'
 import { bitchuteHandler } from './platforms/bitchute.js'
 import { blogaliaHandler } from './platforms/blogalia.js'
 import { bloggangHandler } from './platforms/bloggang.js'
@@ -411,6 +412,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     behanceHandler,
     bigCartelHandler,
     bigcommerceHandler,
+    bingHandler,
     bitchuteHandler,
     blogHuHandler,
     blogaliaHandler,

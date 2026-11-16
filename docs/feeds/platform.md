@@ -3510,6 +3510,17 @@ Discovers the collections and timeline feeds of a Bangumi user on `bgm.tv` or `b
 
 <sup>†</sup> *Found only by the Platform method.*
 
+### Bing
+
+Discovers the feed of a Bing web or news search. The news search page links no feed. `cn.bing.com` is matched too, unverified, since it redirects to `www.bing.com` outside China.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `bing.com/search?q={query}` | Search (RSS) |
+| `bing.com/news/search?q={query}` | News search<sup>†</sup> (RSS) |
+
+<sup>†</sup> *Found only by the Platform method.*
+
 ## Basic Usage
 
 ```typescript
@@ -3575,6 +3586,7 @@ import {
   behanceHandler,
   bigCartelHandler,
   bigcommerceHandler,
+  bingHandler,
   bitchuteHandler,
   blogHuHandler,
   blogaliaHandler,
