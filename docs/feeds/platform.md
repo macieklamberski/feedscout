@@ -1573,20 +1573,6 @@ Discovers RSS feeds for BitChute channels. Channel pages carry only an oEmbed li
 > [!NOTE]
 > The feed endpoint accepts only the vanity slug that appears in the channel URL. A channel's internal id returns 404.
 
-### Confluence
-
-Discovers the Atom activity streams and the dashboard feed of a Confluence Data Center site. Detected by the `confluence-base-url` meta tag, with the context path and space key read from the page.
-
-| URL Pattern | Feeds Generated |
-|-------------|-----------------|
-| Any page on a space | Space stream<sup>†</sup> · site stream<sup>†</sup> (Atom) · dashboard (RSS<sup>†</sup> + Atom<sup>†</sup>) |
-| Any other page | Site stream<sup>†</sup> (Atom) · dashboard (RSS<sup>†</sup> + Atom<sup>†</sup>) |
-
-<sup>†</sup> *Found only by the Platform method.*
-
-> [!NOTE]
-> Confluence Cloud is not supported. It renders client-side, serves no `confluence-*` meta tag, and its stream needs a session.
-
 ### diaspora*
 
 Discovers the Atom feed of a diaspora* profile. Detected by the `Diaspora.Page` global.
@@ -3587,7 +3573,6 @@ import {
   cocologHandler,
   colorMeShopHandler,
   comicfuryHandler,
-  confluenceHandler,
   cppblogHandler,
   cratesIoHandler,
   csdnHandler,
