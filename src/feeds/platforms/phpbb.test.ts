@@ -172,6 +172,25 @@ describe('phpbbHandler', () => {
       expect(phpbbHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should read the topic from a relative canonical link', () => {
+      const value = 'https://example.com/community/viewtopic.php?p=678'
+      const content = `
+        <link
+          rel="canonical"
+          href="./viewtopic.php?t=345"
+        >
+      `
+      const expected = [
+        {
+          uri: 'https://example.com/community/feed.php?t=345',
+          hint: { key: 'phpbb:topic', label: 'Topic' },
+        },
+        ...getBoardFeeds('https://example.com/community'),
+      ]
+
+      expect(phpbbHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should prefer the topic in the url over the canonical link', () => {
       const value = 'https://example.com/community/viewtopic.php?t=345'
       const content = `
@@ -225,7 +244,25 @@ describe('phpbbHandler', () => {
     })
 
     it('should handle a board at the origin root', () => {
-      const expected = getBoardFeeds('https://example.com')
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://example.com/feed.php', hint: { key: 'phpbb:site', label: 'Site' } },
+        {
+          uri: 'https://example.com/feed.php?mode=news',
+          hint: { key: 'phpbb:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/feed.php?mode=topics',
+          hint: { key: 'phpbb:new-topics', label: 'New topics' },
+        },
+        {
+          uri: 'https://example.com/feed.php?mode=topics_active',
+          hint: { key: 'phpbb:active-topics', label: 'Active topics' },
+        },
+        {
+          uri: 'https://example.com/feed.php?mode=forums',
+          hint: { key: 'phpbb:forums', label: 'Forums' },
+        },
+      ]
 
       expect(phpbbHandler.resolve('https://example.com/')).toEqual(expected)
     })

@@ -278,9 +278,13 @@ describe('discoverUrisFromHtml', () => {
       const expected: Array<string> = []
 
       // Uses string-only anchorUris and no path segments to test pure suffix matching behavior.
-      expect(
-        discoverUrisFromHtml(value, { ...defaultOptions, anchorUris, anchorPathSegments: [] }),
-      ).toEqual(expected)
+      const result = discoverUrisFromHtml(value, {
+        ...defaultOptions,
+        anchorUris,
+        anchorPathSegments: [],
+      })
+
+      expect(result).toEqual(expected)
     })
 
     it('should ignore wp-json/oembed/ URI', () => {
@@ -455,14 +459,17 @@ describe('discoverUrisFromHtml', () => {
         '<a href="https://provider.example/fd/abc123.xml"><div data-framer-name="RSS Icon"></div></a>'
       const expected: Array<string> = []
 
-      expect(
-        discoverUrisFromHtml(value, { ...defaultOptions, anchorAttributes: undefined }),
-      ).toEqual(expected)
+      const result = discoverUrisFromHtml(value, { ...defaultOptions, anchorAttributes: undefined })
+
+      expect(result).toEqual(expected)
     })
   })
 
   describe('<base href> resolution', () => {
-    const withBase = { ...defaultOptions, baseUrl: 'https://example.com/page' }
+    const withBase = {
+      ...defaultOptions,
+      baseUrl: 'https://example.com/page',
+    }
 
     it('should resolve relative anchor hrefs against an absolute <base href>', () => {
       const value = '<base href="https://example.com/sub/"><a href="feed.xml">RSS</a>'
@@ -515,9 +522,9 @@ describe('discoverUrisFromHtml', () => {
       const expected = ['feed.xml']
 
       // A relative base with an invalid page URL resolves to nothing usable.
-      expect(
-        discoverUrisFromHtml(value, { ...defaultOptions, baseUrl: 'not-a-valid-url' }),
-      ).toEqual(expected)
+      const result = discoverUrisFromHtml(value, { ...defaultOptions, baseUrl: 'not-a-valid-url' })
+
+      expect(result).toEqual(expected)
     })
   })
 
@@ -589,50 +596,46 @@ describe('discoverUrisFromHtml', () => {
     it('should use custom anchorUris', () => {
       const value = '<a href="/custom-feed">Feed</a>'
       const expected = ['/custom-feed']
+      const options = {
+        ...defaultOptions,
+        anchorUris: ['/custom-feed'],
+      }
 
-      expect(
-        discoverUrisFromHtml(value, {
-          ...defaultOptions,
-          anchorUris: ['/custom-feed'],
-        }),
-      ).toEqual(expected)
+      expect(discoverUrisFromHtml(value, options)).toEqual(expected)
     })
 
     it('should use custom RegExp anchorUris', () => {
       const value = '<a href="/podcast/episodes.xml">Link</a>'
       const expected = ['/podcast/episodes.xml']
+      const options = {
+        ...defaultOptions,
+        // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+        anchorUris: [/\/podcast\//],
+      }
 
-      expect(
-        discoverUrisFromHtml(value, {
-          ...defaultOptions,
-          // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
-          anchorUris: [/\/podcast\//],
-        }),
-      ).toEqual(expected)
+      expect(discoverUrisFromHtml(value, options)).toEqual(expected)
     })
 
     it('should use custom anchorLabels', () => {
       const value = '<a href="/news.xml">Get Updates</a>'
       const expected = ['/news.xml']
+      const options = {
+        ...defaultOptions,
+        anchorLabels: ['updates'],
+      }
 
-      expect(
-        discoverUrisFromHtml(value, {
-          ...defaultOptions,
-          anchorLabels: ['updates'],
-        }),
-      ).toEqual(expected)
+      expect(discoverUrisFromHtml(value, options)).toEqual(expected)
     })
 
     it('should use custom anchorIgnoredUris', () => {
       const value = '<a href="/custom-ignore/feed">Feed</a>'
       const expected: Array<string> = []
+      const options = {
+        ...defaultOptions,
+        anchorIgnoredUris: ['custom-ignore'],
+      }
 
-      expect(
-        discoverUrisFromHtml(value, {
-          ...defaultOptions,
-          anchorIgnoredUris: ['custom-ignore'],
-        }),
-      ).toEqual(expected)
+      expect(discoverUrisFromHtml(value, options)).toEqual(expected)
     })
   })
 

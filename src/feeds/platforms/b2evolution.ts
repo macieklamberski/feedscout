@@ -1,4 +1,4 @@
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -11,16 +11,35 @@ import {
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, post.
 
-const assetRegex = /\/rsc\/(?:build|css|js)\//
+const assetRegex = /\/rsc\/(?:build|css|js)\//i
 const sessionCookieRegex = /^session_b2evo(?:__.+)?$/
 const blogFeedHrefRegex = /^(.*[?&])tempskin=_(?:rss2|atom)$/i
 const blogCommentsHrefRegex = /^(.*[?&])tempskin=_(?:rss2|atom)&disp=comments$/i
 const postCommentsHrefRegex = /[?&]tempskin=_rss2&disp=comments&p=\d+$/i
 const notFoundClassRegex = /\b(?:disp_404|error_404)\b/
+// A feed link up to its skin, as `/index.php?blog=2&`, is the blog's root and the query naming it.
+const feedPrefixRegex = /^([^?]*)\?(.*)$/
+
+// An install runs on its own domain and is known only by its marker, so its feeds are built here
+// but not claimed. A feed is the blog's feed link with another skin.
+const feeds = definePlatformFeeds([
+  { key: 'b2evolution:posts', template: '{root}?{query}&tempskin=_rss2', format: 'rss' },
+  { key: 'b2evolution:posts', template: '{root}?{query}&tempskin=_atom', format: 'atom' },
+  {
+    key: 'b2evolution:comments',
+    template: '{root}?{query}&tempskin=_rss2&disp=comments',
+    format: 'rss',
+  },
+  {
+    key: 'b2evolution:comments',
+    template: '{root}?{query}&tempskin=_atom&disp=comments',
+    format: 'atom',
+  },
+])
 
 export type B2evolutionPage =
-  | { kind: 'blog'; feedPrefix: string }
-  | { kind: 'post'; feedPrefix: string; postCommentsUrl: string }
+  | { kind: 'blog'; feedRoot: string; feedQuery: string }
+  | { kind: 'post'; feedRoot: string; feedQuery: string; postCommentsUrl: string }
 
 // Core scripts and styles load from the install's `rsc` directory whatever the skin.
 // Some installs before 4.1 load none from there, and kowsarblog.ir renames the generator.
@@ -58,8 +77,9 @@ const getB2evolutionPage = (content: string | undefined): B2evolutionPage | unde
   const commentsHref = findHref(content, 'a', blogCommentsHrefRegex)
   const feedPrefix =
     alternateHref?.match(blogFeedHrefRegex)?.[1] ?? commentsHref?.match(blogCommentsHrefRegex)?.[1]
+  const [, feedRoot, feedQuery] = feedPrefix?.match(feedPrefixRegex) ?? []
 
-  if (!feedPrefix) {
+  if (feedRoot === undefined || feedQuery === undefined) {
     return
   }
 
@@ -67,10 +87,10 @@ const getB2evolutionPage = (content: string | undefined): B2evolutionPage | unde
   const postCommentsUrl = findHref(content, 'a', postCommentsHrefRegex)
 
   if (postCommentsUrl) {
-    return { kind: 'post', feedPrefix, postCommentsUrl }
+    return { kind: 'post', feedRoot, feedQuery, postCommentsUrl }
   }
 
-  return { kind: 'blog', feedPrefix }
+  return { kind: 'blog', feedRoot, feedQuery }
 }
 
 export const b2evolutionHandler: PlatformHandler = {
@@ -82,33 +102,32 @@ export const b2evolutionHandler: PlatformHandler = {
     return getB2evolutionPage(content) !== undefined
   },
 
-  resolve: (_url, content) => {
+  resolve: (url, content) => {
     const page = getB2evolutionPage(content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { feedPrefix } = page
-    const uris: Array<DiscoverUriEntry> = []
+    // The table drops one trailing slash from a root, so a root ending in one keeps it.
+    const params = { root: `${page.feedRoot}/`, query: page.feedQuery }
 
     if (page.kind === 'post') {
-      uris.push({ uri: page.postCommentsUrl, hint: composeHint('b2evolution:post-comments') })
+      return [
+        { uri: page.postCommentsUrl, hint: composeHint('b2evolution:post-comments') },
+        pageFeeds.getFeedEntry('b2evolution:posts', params, 'rss'),
+        pageFeeds.getFeedEntry('b2evolution:posts', params, 'atom'),
+        pageFeeds.getFeedEntry('b2evolution:comments', params, 'rss'),
+        pageFeeds.getFeedEntry('b2evolution:comments', params, 'atom'),
+      ]
     }
 
-    uris.push(
-      { uri: `${feedPrefix}tempskin=_rss2`, hint: composeHint('b2evolution:posts', 'rss') },
-      { uri: `${feedPrefix}tempskin=_atom`, hint: composeHint('b2evolution:posts', 'atom') },
-      {
-        uri: `${feedPrefix}tempskin=_rss2&disp=comments`,
-        hint: composeHint('b2evolution:comments', 'rss'),
-      },
-      {
-        uri: `${feedPrefix}tempskin=_atom&disp=comments`,
-        hint: composeHint('b2evolution:comments', 'atom'),
-      },
-    )
-
-    return uris
+    return [
+      pageFeeds.getFeedEntry('b2evolution:posts', params, 'rss'),
+      pageFeeds.getFeedEntry('b2evolution:posts', params, 'atom'),
+      pageFeeds.getFeedEntry('b2evolution:comments', params, 'rss'),
+      pageFeeds.getFeedEntry('b2evolution:comments', params, 'atom'),
+    ]
   },
 }

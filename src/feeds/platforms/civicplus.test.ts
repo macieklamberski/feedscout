@@ -95,9 +95,9 @@ describe('civicplusHandler', () => {
     })
 
     it('should match a module page by the cookie', () => {
-      expect(
-        civicplusHandler.match('https://example.com/CivicAlerts.aspx', otherHtml, civicplusHeaders),
-      ).toBe(true)
+      const value = 'https://example.com/CivicAlerts.aspx'
+
+      expect(civicplusHandler.match(value, otherHtml, civicplusHeaders)).toBe(true)
     })
 
     it('should match the home page', () => {
@@ -152,6 +152,7 @@ describe('civicplusHandler', () => {
     })
 
     it('should return the pages feed for a module without a feed', () => {
+      const value = 'https://example.com/QuickLinks.aspx'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/RSSFeed.aspx?ModID=76&CID=All-0',
@@ -159,9 +160,7 @@ describe('civicplusHandler', () => {
         },
       ]
 
-      expect(
-        civicplusHandler.resolve('https://example.com/QuickLinks.aspx', quickLinksHtml),
-      ).toEqual(expected)
+      expect(civicplusHandler.resolve(value, quickLinksHtml)).toEqual(expected)
     })
   })
 })

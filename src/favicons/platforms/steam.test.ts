@@ -129,9 +129,9 @@ describe('steamHandler', () => {
     })
 
     it('should return empty array for a community group page without a preview image', () => {
-      expect(
-        steamHandler.resolve('https://steamcommunity.com/groups/Valve', '<html></html>'),
-      ).toEqual([])
+      const value = 'https://steamcommunity.com/groups/Valve'
+
+      expect(steamHandler.resolve(value, '<html></html>')).toEqual([])
     })
 
     it('should return empty array for a URL the parser rejects', () => {
@@ -192,27 +192,27 @@ describe('steamEnricher', () => {
     expect(await steamEnricher(createRef('620'), context)).toEqual([])
   })
 
-  it('should reject when the API returns invalid JSON', async () => {
+  it('should reject when the API returns invalid JSON', () => {
     const context = createContext({ [apiUrl]: 'not json' })
     const throwing = () => steamEnricher(createRef('620'), context)
 
-    await expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
+    expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const throwing = () => steamEnricher(createRef('620'), { fetchFn })
 
-    await expect(throwing()).rejects.toThrow('Network error')
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
+  it('should reject when the response is not 2xx', () => {
     const throwing = () => steamEnricher(createRef('620'), createContext({}))
     const expected =
       'Unexpected status 404 from https://api.steampowered.com/ICommunityService/GetApps/v1/?appids[0]=620'
 
-    await expect(throwing()).rejects.toThrow(expected)
+    expect(throwing()).rejects.toThrow(expected)
   })
 })

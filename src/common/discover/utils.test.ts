@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, spyOn } from 'bun:test'
 import { parseFeed } from 'feedsmith'
-import locales from '../locales.json' with { type: 'json' }
+import type { MaybePromise } from 'trousse'
+import locales from '../../locales.json' with { type: 'json' }
 import type {
   DiscoverErrorContext,
   DiscoverMethodsConfig,
@@ -23,16 +24,15 @@ import {
 describe('defaultFetchFn', () => {
   type MockResponse = Pick<Response, 'headers' | 'text' | 'url' | 'status' | 'statusText'>
 
-  type MockFetchImplementation = (
-    url: string,
-    options?: RequestInit,
-  ) => MockResponse | Promise<MockResponse>
+  type MockFetchImplementation = (url: string, options?: RequestInit) => MaybePromise<MockResponse>
 
   const createFetchMock = (implementation: MockFetchImplementation): typeof fetch => {
     const fetchMock = async (input: URL | RequestInfo, init?: RequestInit) => {
+      // biome-ignore lint/plugin: A mock response stands in for the parts of Response the fetch reads.
       return (await implementation(input.toString(), init)) as Response
     }
 
+    // biome-ignore lint/plugin: Bun types fetch with a preconnect method a plain function lacks.
     return fetchMock as typeof fetch
   }
 
@@ -379,7 +379,6 @@ describe('normalizeInput', () => {
     }
     const expected = {
       url: 'https://example.com',
-      content: undefined,
       headers: expect.any(Headers),
       status: 200,
     }
@@ -1988,6 +1987,7 @@ describe('attempt', () => {
     const thenable: PromiseLike<string> = {
       // biome-ignore lint/suspicious/noThenProperty: A thenable is the input under test.
       then: (_onFulfilled, onRejected) => {
+        // biome-ignore lint/plugin/noThen: The thenable under test hands its rejection to onRejected.
         return Promise.reject(new Error('Thenable failed')).then(undefined, onRejected)
       },
     }
@@ -2067,7 +2067,10 @@ describe('normalizeUriEntry', () => {
   })
 
   it('should preserve hint on string entry', () => {
-    const value = { uri: '/feed.xml', hint: { key: 'test:feed', label: 'Feed' } }
+    const value = {
+      uri: '/feed.xml',
+      hint: { key: 'test:feed', label: 'Feed' },
+    }
     const expected = {
       uri: 'https://example.com/feed.xml',
       hint: { key: 'test:feed', label: 'Feed' },
@@ -2077,7 +2080,10 @@ describe('normalizeUriEntry', () => {
   })
 
   it('should preserve hint on array entry', () => {
-    const value = { uri: ['/feed/', '?feed=rss'], hint: { key: 'test:feed', label: 'Feed' } }
+    const value = {
+      uri: ['/feed/', '?feed=rss'],
+      hint: { key: 'test:feed', label: 'Feed' },
+    }
     const expected = {
       uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'],
       hint: { key: 'test:feed', label: 'Feed' },
@@ -2108,9 +2114,15 @@ describe('normalizeUriEntry', () => {
   it('should return undefined for a file with an ignored extension', () => {
     const value = { uri: 'https://example.com/rss/episode.mp3' }
 
-    expect(
-      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
-    ).toBeUndefined()
+    const result = normalizeUriEntry(
+      value,
+      defaultResolveUrlFn,
+      'https://example.com/',
+      undefined,
+      ['mp3'],
+    )
+
+    expect(result).toBeUndefined()
   })
 
   it('should return undefined for an episode behind a tracking prefix with a feed segment', () => {
@@ -2118,35 +2130,59 @@ describe('normalizeUriEntry', () => {
       uri: 'https://prefix.example.com/e/tracker.example.com/redirect.mp3/prefix.example.org/e/tracker.example.org/rss/p/media.example.net/show/episode.mp3',
     }
 
-    expect(
-      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
-    ).toBeUndefined()
+    const result = normalizeUriEntry(
+      value,
+      defaultResolveUrlFn,
+      'https://example.com/',
+      undefined,
+      ['mp3'],
+    )
+
+    expect(result).toBeUndefined()
   })
 
   it('should return undefined for an ignored file with a query string', () => {
     const value = { uri: 'https://example.com/episode.MP3?ref=feed' }
 
-    expect(
-      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
-    ).toBeUndefined()
+    const result = normalizeUriEntry(
+      value,
+      defaultResolveUrlFn,
+      'https://example.com/',
+      undefined,
+      ['mp3'],
+    )
+
+    expect(result).toBeUndefined()
   })
 
   it('should drop ignored alternatives', () => {
     const value = { uri: ['/episode.mp3', '/feed.xml'] }
     const expected = { uri: ['https://example.com/feed.xml'] }
 
-    expect(
-      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
-    ).toEqual(expected)
+    const result = normalizeUriEntry(
+      value,
+      defaultResolveUrlFn,
+      'https://example.com/',
+      undefined,
+      ['mp3'],
+    )
+
+    expect(result).toEqual(expected)
   })
 
   it('should keep a file whose extension is not ignored', () => {
     const value = { uri: 'https://example.com/favicon.png' }
     const expected = { uri: 'https://example.com/favicon.png' }
 
-    expect(
-      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
-    ).toEqual(expected)
+    const result = normalizeUriEntry(
+      value,
+      defaultResolveUrlFn,
+      'https://example.com/',
+      undefined,
+      ['mp3'],
+    )
+
+    expect(result).toEqual(expected)
   })
 
   it('should keep every file when no extensions are ignored', () => {
@@ -2160,26 +2196,38 @@ describe('normalizeUriEntry', () => {
     const value = { uri: 'https://example.com/feed/mp3/' }
     const expected = { uri: 'https://example.com/feed/mp3/' }
 
-    expect(
-      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
-    ).toEqual(expected)
+    const result = normalizeUriEntry(
+      value,
+      defaultResolveUrlFn,
+      'https://example.com/',
+      undefined,
+      ['mp3'],
+    )
+
+    expect(result).toEqual(expected)
   })
 
   it('should keep a uri whose query names an ignored file', () => {
     const value = { uri: 'https://example.com/feed.php?file=episode.mp3' }
     const expected = { uri: 'https://example.com/feed.php?file=episode.mp3' }
 
-    expect(
-      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
-    ).toEqual(expected)
+    const result = normalizeUriEntry(
+      value,
+      defaultResolveUrlFn,
+      'https://example.com/',
+      undefined,
+      ['mp3'],
+    )
+
+    expect(result).toEqual(expected)
   })
 
   it('should return undefined for a relative uri resolved against a file base', () => {
     const value = { uri: '/feed.xml' }
 
-    expect(
-      normalizeUriEntry(value, defaultResolveUrlFn, 'file:///Users/alice/saved.html'),
-    ).toBeUndefined()
+    const result = normalizeUriEntry(value, defaultResolveUrlFn, 'file:///Users/alice/saved.html')
+
+    expect(result).toBeUndefined()
   })
 
   it('should keep original string uri when resolveUrlFn returns undefined', () => {
@@ -2213,8 +2261,11 @@ describe('omitReadPages', () => {
   })
 
   it('should drop only the alternatives that point at a read page', () => {
-    const value = { uri: ['https://example.com/#', 'https://example.com/feed'], hint: undefined }
-    const expected = { uri: 'https://example.com/feed', hint: undefined }
+    const value = {
+      uri: ['https://example.com/#', 'https://example.com/feed'],
+      hint: undefined,
+    }
+    const expected = { uri: 'https://example.com/feed' }
 
     expect(omitReadPages(value, readPageUrls)).toEqual(expected)
   })

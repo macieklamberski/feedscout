@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   getLegistarPage,
   type LegistarPage,
@@ -46,23 +48,22 @@ describe('parseLegistarUrl', () => {
   })
 
   it('should return undefined for a detail page without a GUID', () => {
-    expect(
-      parseLegistarUrl('https://madison.legistar.com/LegislationDetail.aspx?ID=1065902'),
-    ).toBeUndefined()
+    const value = 'https://madison.legistar.com/LegislationDetail.aspx?ID=1065902'
+
+    expect(parseLegistarUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for a non-numeric ID', () => {
-    expect(
-      parseLegistarUrl(
-        'https://madison.legistar.com/LegislationDetail.aspx?ID=abc&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217',
-      ),
-    ).toBeUndefined()
+    const value =
+      'https://madison.legistar.com/LegislationDetail.aspx?ID=abc&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217'
+
+    expect(parseLegistarUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for a GUID with a non-hex character', () => {
-    expect(
-      parseLegistarUrl('https://madison.legistar.com/LegislationDetail.aspx?ID=1065902&GUID=xyz'),
-    ).toBeUndefined()
+    const value = 'https://madison.legistar.com/LegislationDetail.aspx?ID=1065902&GUID=xyz'
+
+    expect(parseLegistarUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -74,11 +75,10 @@ describe('parseLegistarUrl', () => {
   })
 
   it('should return undefined for another detail page', () => {
-    expect(
-      parseLegistarUrl(
-        'https://madison.legistar.com/DepartmentDetail.aspx?ID=17411&GUID=ED5B7181-AD76-4EF5-9730-729ACA9BFE9C',
-      ),
-    ).toBeUndefined()
+    const value =
+      'https://madison.legistar.com/DepartmentDetail.aspx?ID=17411&GUID=ED5B7181-AD76-4EF5-9730-729ACA9BFE9C'
+
+    expect(parseLegistarUrl(value)).toBeUndefined()
   })
 
   it('should return the legislation for a detail page on a custom domain', () => {
@@ -373,6 +373,120 @@ describe('legistarHandler', () => {
 
     it('should return empty array for another page', () => {
       expect(legistarHandler.resolve('https://example.com/')).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the legislation hint for a legislation feed', () => {
+      const value =
+        'https://alleghenycounty.legistar.com/Feed.ashx?M=LD&ID=6069821&GUID=4507F171-BA67-43E7-A535-95A46CA29A11'
+      const expected: DiscoverUriHint = { key: 'legistar:legislation', label: 'Legislation' }
+
+      expect(legistarHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the meeting hint for a meeting feed', () => {
+      const value =
+        'https://baltimore.legistar.com/Feed.ashx?M=CalendarDetail&ID=825328&GUID=3884B135-30AF-4C64-831C-956ED571117E'
+      const expected: DiscoverUriHint = { key: 'legistar:meeting', label: 'Meeting' }
+
+      expect(legistarHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the meeting hint for a meeting feed with the title the page link appends', () => {
+      const value =
+        'https://springfield.legistar.com/Feed.ashx?M=CalendarDetail&ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&Title=City+of+Springfield+-+Meeting+of+Park+Advisory+Commission+on+9%2f15%2f2026+at+4%3a00+PM'
+      const expected: DiscoverUriHint = { key: 'legistar:meeting', label: 'Meeting' }
+
+      expect(legistarHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the legislation hint for a legislation feed over http', () => {
+      const value =
+        'http://mckinney.legistar.com/Feed.ashx?M=LD&ID=4674357&GUID=7FEFBD10-89D4-4AE8-8490-E76C6DA74630'
+      const expected: DiscoverUriHint = { key: 'legistar:legislation', label: 'Legislation' }
+
+      expect(legistarHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should ignore the case of the feed path and query', () => {
+      const value =
+        'https://madison.legistar.com/feed.ashx?m=ld&id=1065902&guid=EFE087C2-C62A-40F9-B1F9-6E2975E86217'
+      const expected: DiscoverUriHint = { key: 'legistar:legislation', label: 'Legislation' }
+
+      expect(legistarHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a legislation page', () => {
+      const value =
+        'https://madison.legistar.com/LegislationDetail.aspx?ID=1065902&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217'
+
+      expect(legistarHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed without a GUID', () => {
+      const value = 'https://madison.legistar.com/Feed.ashx?M=LD&ID=1065902'
+
+      expect(legistarHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a calendar feed', () => {
+      const value =
+        'https://madison.legistar.com/Feed.ashx?M=Calendar&ID=1065902&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217&Mode=All'
+
+      expect(legistarHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value =
+        'https://legistar.council.nyc.gov/Feed.ashx?M=LD&ID=548175&GUID=91F5A388-3FA2-4881-92F8-3A8295CF56D9'
+
+      expect(legistarHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www host', () => {
+      const value =
+        'https://www.legistar.com/Feed.ashx?M=LD&ID=12345&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D'
+
+      expect(legistarHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an invalid URL', () => {
+      const value = 'not a url'
+
+      expect(legistarHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://alleghenycounty.legistar.com/Feed.ashx?M=LD&ID=6069821&GUID=4507F171-BA67-43E7-A535-95A46CA29A11',
+        { key: 'legistar:legislation', label: 'Legislation' },
+      ],
+      [
+        'https://baltimore.legistar.com/Feed.ashx?M=CalendarDetail&ID=825328&GUID=3884B135-30AF-4C64-831C-956ED571117E',
+        { key: 'legistar:meeting', label: 'Meeting' },
+      ],
+      [
+        'https://springfield.legistar.com/Feed.ashx?M=CalendarDetail&ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&Title=City+of+Springfield+-+Meeting+of+Park+Advisory+Commission+on+9%2f15%2f2026+at+4%3a00+PM',
+        { key: 'legistar:meeting', label: 'Meeting' },
+      ],
+      [
+        'http://seattle.legistar.com/Feed.ashx?M=CalendarDetail&ID=871703&GUID=ED61529C-EC73-4B36-91A8-8D86FE27B902',
+        { key: 'legistar:meeting', label: 'Meeting' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [legistarHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

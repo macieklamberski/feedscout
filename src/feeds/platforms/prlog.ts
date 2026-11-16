@@ -1,7 +1,7 @@
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getPathSegments, isHostOf, isSameText, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement } from '../../common/utils.js'
+import { findElement } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,6 +9,13 @@ export type PrlogUrl = { kind: 'pressroom'; pressroomId: string }
 export type PrlogPage = PrlogUrl
 
 const hosts = ['pressroom.prlog.org']
+
+const feeds = definePlatformFeeds([
+  {
+    key: 'prlog:press-releases',
+    template: 'https://pressroom.prlog.org/{pressroomId}/latest.xml',
+  },
+])
 
 export const parsePrlogUrl = (url: string): PrlogUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -44,7 +51,7 @@ export const getPrlogPage = (url: string, content: string | undefined): PrlogPag
   })
   const linked = parsePrlogUrl(link?.attribs.href ?? '')
 
-  if (linked && linked.pressroomId.toLowerCase() === parsed.pressroomId.toLowerCase()) {
+  if (linked && isSameText(linked.pressroomId, parsed.pressroomId)) {
     return linked
   }
 
@@ -63,14 +70,8 @@ export const prlogHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
-
-    uris.push({
-      uri: `${origin}/${page.pressroomId}/latest.xml`,
-      hint: composeHint('prlog:press-releases'),
-    })
-
-    return uris
+    return [feeds.getFeedEntry('prlog:press-releases', { pressroomId: page.pressroomId })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

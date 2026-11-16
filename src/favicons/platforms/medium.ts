@@ -8,7 +8,7 @@ import { getResponseText } from '../utils.js'
 const platform = 'medium'
 
 // Medium's CDN crops to a square only under `/fit/c/{size}/{size}/`.
-const squareImageRegex = /\/fit\/c\/(\d+)\/\1\//
+const squareImageRegex = /\/fit\/c\/(\d+)\/\1\//i
 
 // Publications without a logo carry Medium's 545x106 wordmark.
 const wordmarkImageId = '1*TGH72Nnw24QL3iV9IOm4VA'

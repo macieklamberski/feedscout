@@ -4,12 +4,13 @@ import type {
   DiscoverErrorContext,
   DiscoverOnErrorFn,
   DiscoverRef,
+  DiscoverUriEntry,
   FetchFn,
 } from '../../types.js'
-import { discoverUrisFromPlatform, resolveFromPlatform } from './index.js'
+import { definePlatformFeeds } from './feeds.js'
+import { discoverUrisFromPlatform } from './index.js'
 import type { PlatformHandler } from './types.js'
 
-const guessExclusionRegex = /^https:\/\/example\.com\/[^/]+\.xml$/
 const samePageUrls = [
   'https://example.com/page?a=1&b=2',
   'http://example.com/page?a=1&b=2',
@@ -23,13 +24,120 @@ const samePageUrls = [
   'https://example.com/p%61ge?a=1&b=2',
 ]
 
+const claimedFeeds = definePlatformFeeds([
+  { key: 'ocnk:products', template: 'https://example.com/{shop}/products.rdf', format: 'rdf' },
+  { key: 'youtube:videos', template: 'https://example.com/{username}/videos.xml' },
+])
+
+const claimedFeedCases: Array<[string, DiscoverUriEntry]> = [
+  [
+    'https://example.com/alice/products.rdf',
+    {
+      uri: 'https://example.com/alice/products.rdf',
+      hint: { key: 'ocnk:products', label: 'Products', format: 'rdf' },
+    },
+  ],
+  [
+    'https://example.com/alice/videos.xml',
+    {
+      uri: 'https://example.com/alice/videos.xml',
+      hint: { key: 'youtube:videos', label: 'Videos' },
+    },
+  ],
+]
+
 describe('discoverUrisFromPlatform', () => {
   it('should return URIs when handler matches', async () => {
     const handler: PlatformHandler = {
       match: () => true,
       resolve: () => [{ uri: 'https://example.com/feed.xml' }],
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+    }
+    const expected = [{ uri: 'https://example.com/feed.xml' }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it('should return the URL as given with its hint when a handler claims it as its feed', async () => {
+    const handler: PlatformHandler = {
+      match: () => false,
+      resolve: () => [],
+      getFeedHint: (url) => {
+        if (!url.endsWith('.xml')) {
+          return
+        }
+
+        return { key: 'youtube:videos', label: 'Videos' }
+      },
+    }
+    const options = {
+      baseUrl: 'http://Example.com/alice.xml',
+      handlers: [handler],
+    }
+    const expected = [
+      { uri: 'http://Example.com/alice.xml', hint: { key: 'youtube:videos', label: 'Videos' } },
+    ]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it.each(claimedFeedCases)(
+    'should return the hint of the feed table row that claims %s',
+    async (value, expected) => {
+      const handler: PlatformHandler = {
+        match: () => false,
+        resolve: () => [],
+        getFeedHint: claimedFeeds.getFeedHint,
+      }
+      const options = {
+        baseUrl: value,
+        handlers: [handler],
+      }
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual([expected])
+    },
+  )
+
+  it('should ask every handler for its feed before any match', async () => {
+    const pageHandler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/alice.xml/feed.xml' }],
+    }
+    const feedHandler: PlatformHandler = {
+      match: () => false,
+      resolve: () => [],
+      getFeedHint: () => ({ key: 'youtube:videos', label: 'Videos' }),
+    }
+    const options = {
+      baseUrl: 'https://example.com/alice.xml',
+      handlers: [pageHandler, feedHandler],
+    }
+    const expected = [
+      { uri: 'https://example.com/alice.xml', hint: { key: 'youtube:videos', label: 'Videos' } },
+    ]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it('should move on when a getFeedHint throws', async () => {
+    const throwingHandler: PlatformHandler = {
+      match: () => false,
+      resolve: () => [],
+      getFeedHint: () => {
+        throw new Error('Unexpected input')
+      },
+    }
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/feed.xml' }],
+    }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [throwingHandler, handler],
+    }
     const expected = [{ uri: 'https://example.com/feed.xml' }]
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
@@ -40,7 +148,10 @@ describe('discoverUrisFromPlatform', () => {
       match: () => false,
       resolve: () => [{ uri: 'https://example.com/feed.xml' }],
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+    }
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual([])
   })
@@ -50,13 +161,19 @@ describe('discoverUrisFromPlatform', () => {
       match: () => true,
       resolve: () => [{ uri: 'https://example.com/feed.xml' }],
     }
-    const options = { baseUrl: 'foo://example.com', handlers: [handler] }
+    const options = {
+      baseUrl: 'foo://example.com',
+      handlers: [handler],
+    }
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual([])
   })
 
   it('should return empty array when handlers array is empty', async () => {
-    const options = { baseUrl: 'https://example.com', handlers: [] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [],
+    }
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual([])
   })
@@ -112,7 +229,10 @@ describe('discoverUrisFromPlatform', () => {
       },
     }
     const html = '<html><body>Test</body></html>'
-    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(html, undefined, options)
 
@@ -133,7 +253,10 @@ describe('discoverUrisFromPlatform', () => {
         return []
       },
     }
-    const options = { baseUrl: 'https://example.com/page', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com/page',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(undefined, undefined, options)
     const expected = ['match:https://example.com/page', 'resolve:https://example.com/page']
@@ -155,7 +278,10 @@ describe('discoverUrisFromPlatform', () => {
         return []
       },
     }
-    const options = { baseUrl: 'https://example.com/r//programming///hot', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com/r//programming///hot',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(undefined, undefined, options)
     const expected = [
@@ -178,7 +304,10 @@ describe('discoverUrisFromPlatform', () => {
         return []
       },
     }
-    const options = { baseUrl: 'https://example.com//page?next=//example.org', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com//page?next=//example.org',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(undefined, undefined, options)
     const expected = ['https://example.com/page?next=//example.org']
@@ -196,7 +325,10 @@ describe('discoverUrisFromPlatform', () => {
       },
       resolve: () => [],
     }
-    const options = { baseUrl: 'https://example.com/photos/name%20/', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com/photos/name%20/',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(undefined, undefined, options)
     const expected = ['https://example.com/photos/name/']
@@ -214,7 +346,10 @@ describe('discoverUrisFromPlatform', () => {
       },
       resolve: () => [],
     }
-    const options = { baseUrl: 'https://example.com/playlist?list=PL123%20', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com/playlist?list=PL123%20',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(undefined, undefined, options)
     const expected = ['https://example.com/playlist?list=PL123']
@@ -234,7 +369,10 @@ describe('discoverUrisFromPlatform', () => {
         return []
       },
     }
-    const options = { baseUrl: 'https://EXAMPLE.com:443', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://EXAMPLE.com:443',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(undefined, undefined, options)
     const expected = ['https://example.com/']
@@ -257,7 +395,10 @@ describe('discoverUrisFromPlatform', () => {
       },
     }
     const headers = new Headers({ 'content-type': 'text/html' })
-    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(undefined, headers, options)
 
@@ -284,7 +425,10 @@ describe('discoverUrisFromPlatform', () => {
         statusText: 'OK',
       })
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(undefined, undefined, options, fetchFn)
 
@@ -351,6 +495,38 @@ describe('discoverUrisFromPlatform', () => {
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 
+  it('should continue to next handler if a matching handler builds no feed', async () => {
+    const unbuiltHandler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [undefined],
+    }
+    const workingHandler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/feed.xml' }],
+    }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [unbuiltHandler, workingHandler],
+    }
+    const expected = [{ uri: 'https://example.com/feed.xml' }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it('should drop a feed the handler built no URL for', async () => {
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [undefined, { uri: 'https://example.com/feed.xml' }],
+    }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+    }
+    const expected = [{ uri: 'https://example.com/feed.xml' }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
   it('should continue to next handler if async resolve rejects', async () => {
     const throwingHandler: PlatformHandler = {
       match: () => true,
@@ -378,7 +554,10 @@ describe('discoverUrisFromPlatform', () => {
       match: () => true,
       resolve: () => [{ uri: 'https://example.com/url.xml' }],
     }
-    const options = { baseUrl: 'https://example.com', handlers: [markerHandler, urlHandler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [markerHandler, urlHandler],
+    }
     const expected = [{ uri: 'https://example.com/url.xml' }]
 
     expect(await discoverUrisFromPlatform('<html></html>', undefined, options)).toEqual(expected)
@@ -395,7 +574,10 @@ describe('discoverUrisFromPlatform', () => {
       },
       resolve: () => [{ uri: 'https://example.com/feed.xml' }],
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+    }
     const expected = [{ uri: 'https://example.com/feed.xml' }]
 
     expect(await discoverUrisFromPlatform('<html></html>', undefined, options)).toEqual(expected)
@@ -410,7 +592,10 @@ describe('discoverUrisFromPlatform', () => {
       match: (_url, content) => content !== undefined,
       resolve: () => [{ uri: 'https://example.com/second.xml' }],
     }
-    const options = { baseUrl: 'https://example.com', handlers: [firstHandler, secondHandler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [firstHandler, secondHandler],
+    }
     const expected = [{ uri: 'https://example.com/first.xml' }]
 
     expect(await discoverUrisFromPlatform('<html></html>', undefined, options)).toEqual(expected)
@@ -453,7 +638,11 @@ describe('discoverUrisFromPlatform', () => {
       ],
     }
     const enrichFn: DiscoverEnrichFn = () => ['https://cdn.example.com/alice.png']
-    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+      enrichFn,
+    }
     const expected = [
       { uri: 'https://example.com/avatar.png' },
       { uri: 'https://cdn.example.com/alice.png' },
@@ -476,7 +665,11 @@ describe('discoverUrisFromPlatform', () => {
 
       return []
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+      enrichFn,
+    }
     const expected = [
       { platform: 'example', id: 'alice', url: 'https://example.com/@alice' },
       { platform: 'example', id: 'bob', url: 'https://example.com/@bob' },
@@ -495,7 +688,10 @@ describe('discoverUrisFromPlatform', () => {
         { platform: 'example', id: 'alice', url: 'https://example.com/@alice' },
       ],
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+    }
     const expected = [{ uri: 'https://example.com/avatar.png' }]
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
@@ -512,7 +708,11 @@ describe('discoverUrisFromPlatform', () => {
 
       return []
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+      enrichFn,
+    }
 
     await discoverUrisFromPlatform(undefined, undefined, options)
 
@@ -534,7 +734,11 @@ describe('discoverUrisFromPlatform', () => {
 
       return ['https://cdn.example.com/bob.png']
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+      enrichFn,
+    }
     const expected = [{ uri: 'https://cdn.example.com/bob.png' }]
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
@@ -551,7 +755,11 @@ describe('discoverUrisFromPlatform', () => {
     const enrichFn: DiscoverEnrichFn = () => {
       throw new Error('Enrich error')
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+      enrichFn,
+    }
     const expected = [{ uri: 'https://example.com/avatar.png' }]
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
@@ -572,7 +780,11 @@ describe('discoverUrisFromPlatform', () => {
 
       return ['https://cdn.example.com/bob.png']
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+      enrichFn,
+    }
     const expected = [{ uri: 'https://cdn.example.com/bob.png' }]
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
@@ -591,7 +803,11 @@ describe('discoverUrisFromPlatform', () => {
     const onError: DiscoverOnErrorFn = (error, context) => {
       reported.push([error, context])
     }
-    const options = { baseUrl: 'https://example.com/@alice', handlers: [handler], enrichFn }
+    const options = {
+      baseUrl: 'https://example.com/@alice',
+      handlers: [handler],
+      enrichFn,
+    }
     const expected: Array<[unknown, DiscoverErrorContext]> = [
       [error, { phase: 'enrichFn', url: 'https://example.com/@alice' }],
     ]
@@ -613,7 +829,10 @@ describe('discoverUrisFromPlatform', () => {
     const onError: DiscoverOnErrorFn = (error, context) => {
       reported.push([error, context])
     }
-    const options = { baseUrl: 'https://example.com/page', handlers: [throwingHandler] }
+    const options = {
+      baseUrl: 'https://example.com/page',
+      handlers: [throwingHandler],
+    }
     const expected: Array<[unknown, DiscoverErrorContext]> = [
       [error, { phase: 'platformHandler', url: 'https://example.com/page' }],
     ]
@@ -1042,26 +1261,5 @@ describe('discoverUrisFromPlatform', () => {
     await discoverUrisFromPlatform(undefined, undefined, options, undefined, onError)
 
     expect(reported).toEqual(expected)
-  })
-})
-
-describe('resolveFromPlatform', () => {
-  it('should collect the guessExclusionRegex of a handler that matched the requested URL', async () => {
-    const handler: PlatformHandler = {
-      match: (url) => url === 'https://example.com/popular',
-      resolve: () => [{ uri: 'https://example.com/popular/feed.xml' }],
-      guessExclusionRegex,
-    }
-    const options = {
-      baseUrl: 'https://example.com/login',
-      requestedUrl: 'https://example.com/popular',
-      handlers: [handler],
-    }
-    const expected = {
-      entries: [{ uri: 'https://example.com/popular/feed.xml' }],
-      guessExclusionRegexes: [guessExclusionRegex],
-    }
-
-    expect(await resolveFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 })

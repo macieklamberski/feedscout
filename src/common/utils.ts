@@ -1,6 +1,18 @@
 import { DomUtils, parseDocument } from 'htmlparser2'
-import { anyWordMatchesAnyOf, getSubdomain, isAnyOf, parseUrl, stripWww } from 'trousse'
-import locales from './locales.json' with { type: 'json' }
+import {
+  anyWordMatchesAnyOf,
+  escapeRegex,
+  getSubdomain,
+  isAnyOf,
+  isHostname,
+  isInteger,
+  isSameText,
+  isString,
+  parseUrl,
+  startsWithAnyOf,
+  stripWww,
+} from 'trousse'
+import locales from '../locales.json' with { type: 'json' }
 import type { DiscoverUriHint, FetchFn } from './types.js'
 
 export type Element = NonNullable<ReturnType<typeof DomUtils.findOne>>
@@ -15,6 +27,11 @@ export type PageMarkers = {
   headers?: (headers: Headers) => boolean
 }
 
+type ProcessConcurrentlyOptions = {
+  concurrency: number
+  shouldStop?: () => boolean
+}
+
 export const digitsRegex = /^\d+$/
 export const alphanumericOrHyphenRegex = /^[A-Za-z0-9-]+$/
 export const hexRegex = /^[0-9a-f]+$/i
@@ -23,12 +40,14 @@ export const wordRegex = /^\w+$/
 export const wordOrHyphenRegex = /^[\w-]+$/
 export const letterThenWordOrHyphenRegex = /^[a-zA-Z][\w-]*$/
 export const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-// length: keeps path words such as `history` out
-export const letterPairsRegex = /^[a-z]{2}(?:-[a-z]{2})?$/i
-// length: keeps path words such as `blogs` out
-export const letterGroupsRegex = /^[a-z]{2,3}(?:-[a-z]{4})?(?:-(?:[a-z]{2}|\d{3}))?$/i
 // A format extension after a value that cannot hold a dot, as `.rss` or `.html`.
 export const formatSuffixRegex = /\.[a-z]+$/i
+
+// A brand's domain under any top-level domain of two or more letters, or under a `co.` or `com.`
+// country second level, as `blogspot.de`, `blogspot.cat`, `blogspot.co.uk` and `blogspot.com.br`.
+export const getBrandDomainRegex = (brand: string): RegExp => {
+  return new RegExp(`^${escapeRegex(brand)}\\.(?:[a-z]{2,}|(?:co|com)\\.[a-z]{2})$`)
+}
 
 // The `id` group the regex reads from the value, when it is all digits.
 export const getNumericId = (value: string | undefined, regex: RegExp): string | undefined => {
@@ -61,7 +80,7 @@ export const withTextBody = (fetchFn: FetchFn): FetchFn => {
   return async (url, options) => {
     const response = await fetchFn(url, options)
 
-    if (typeof response.body === 'string') {
+    if (isString(response.body)) {
       return response
     }
 
@@ -74,7 +93,7 @@ export const withTextBody = (fetchFn: FetchFn): FetchFn => {
 
 // Coerce to a positive integer, falling back when missing or invalid (NaN, < 1, non-integer).
 export const toPositiveInteger = (value: number | undefined, fallback: number): number => {
-  return typeof value === 'number' && Number.isInteger(value) && value >= 1 ? value : fallback
+  return isInteger(value) && value >= 1 ? value : fallback
 }
 
 export const normalizeMimeType = (type: string): string => {
@@ -198,19 +217,14 @@ const isMetaWithKey = (element: Element, key: string): boolean => {
     return false
   }
 
-  return name?.toLowerCase() === key || property?.toLowerCase() === key
+  return isAnyOf(name, key) || isAnyOf(property, key)
 }
 
 // Check if HTML contains a meta tag matching a name or property attribute with the given
 // content value (case-insensitive prefix match).
 export const hasMetaContent = (content: string, name: string, value: string): boolean => {
-  const key = name.toLowerCase()
-  const lowercasedValue = value.toLowerCase()
-
   return getParsedPage(content).metas.some((meta) => {
-    return (
-      isMetaWithKey(meta, key) && meta.attribs.content.toLowerCase().startsWith(lowercasedValue)
-    )
+    return isMetaWithKey(meta, name) && startsWithAnyOf(meta.attribs.content, value)
   })
 }
 
@@ -231,7 +245,7 @@ const trailingSlashRegex = /\/$/
 // platform's own site everywhere.
 export const getTenantSubdomain = (
   url: string | URL,
-  domains: Array<string>,
+  domains: Array<string | RegExp>,
 ): string | undefined => {
   const subdomain = getSubdomain(url, domains)
 
@@ -266,15 +280,17 @@ export const isRootOfPage = (rootUrl: string, url: string): boolean => {
 }
 
 // A value written into a host passes only when the parsed URL keeps it as the whole host, so
-// `a@b.example` or `open/x` cuts no other host out of it, and an empty label as in `..` is refused.
+// `a@b.example` or `open/x` cuts no other host out of it. The URL parser also keeps `a,b.example`
+// and `a~b.example`, and a final dot spells the host a second way. A label may start or end with
+// `-`, as live tenants on LiveJournal and Tumblr do.
 export const getHostOrigin = (host: string): string | undefined => {
   const parsedUrl = parseUrl(`https://${host}`)
 
-  if (!parsedUrl || parsedUrl.hostname !== host.toLowerCase()) {
+  if (!parsedUrl || !isSameText(parsedUrl.hostname, host)) {
     return
   }
 
-  if (parsedUrl.hostname.split('.').includes('')) {
+  if (!isHostname(parsedUrl.hostname) || parsedUrl.hostname.endsWith('.')) {
     return
   }
 
@@ -308,9 +324,7 @@ export const hasMarker = (
 
 // Read the content value of the first meta tag with the given name or property attribute.
 export const getMetaContent = (content: string, name: string): string | undefined => {
-  const key = name.toLowerCase()
-
-  return getParsedPage(content).metas.find((meta) => isMetaWithKey(meta, key))?.attribs.content
+  return getParsedPage(content).metas.find((meta) => isMetaWithKey(meta, name))?.attribs.content
 }
 
 export const matchesAnyOfLinkSelectors = (
@@ -334,10 +348,7 @@ export const matchesAnyOfLinkSelectors = (
 export const processConcurrently = async <T>(
   items: Array<T>,
   processFn: (item: T, index: number) => Promise<void>,
-  options: {
-    concurrency: number
-    shouldStop?: () => boolean
-  },
+  options: ProcessConcurrentlyOptions,
 ): Promise<void> => {
   let index = 0
 

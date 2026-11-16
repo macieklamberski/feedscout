@@ -1,12 +1,7 @@
-import { composeQuery, getAnyOf, getPathSegments, getQueryParam, isAnyOf, parseUrl } from 'trousse'
+import { getAnyOf, getPathSegments, getQueryParam, includesAnyOf, isAnyOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  findElement,
-  hasClass,
-  hasMarker,
-  hasMetaContent,
-} from '../../common/utils.js'
+import { findElement, hasClass, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers community, user (html), partly covers home.
@@ -19,8 +14,6 @@ export type LemmyUrl =
   | ({ kind: 'home' } & LemmyQuery)
 
 export type LemmyPage = LemmyUrl
-
-const lemmyPoweredByRegex = /lemmy/i
 
 const validSorts = [
   'Active',
@@ -44,19 +37,26 @@ const validSorts = [
   'NewComments',
 ]
 
-const getQuerySuffix = (page: LemmyPage): string => {
-  const params: Record<string, string> = {}
-
-  if (page.sort) {
-    params.sort = page.sort
-  }
-
-  if (page.limit) {
-    params.limit = page.limit
-  }
-
-  return composeQuery(params)
-}
+// Lemmy is self-hosted, so nothing in a feed URL names it and the table only builds. A sort and a
+// limit from the page carry into the feed, and the row with the most of them filled is built.
+const feeds = definePlatformFeeds([
+  { key: 'lemmy:community', template: '{root}/feeds/c/{community}.xml?sort={sort}&limit={limit}' },
+  { key: 'lemmy:community', template: '{root}/feeds/c/{community}.xml?sort={sort}' },
+  { key: 'lemmy:community', template: '{root}/feeds/c/{community}.xml?limit={limit}' },
+  { key: 'lemmy:community', template: '{root}/feeds/c/{community}.xml' },
+  { key: 'lemmy:user', template: '{root}/feeds/u/{username}.xml?sort={sort}&limit={limit}' },
+  { key: 'lemmy:user', template: '{root}/feeds/u/{username}.xml?sort={sort}' },
+  { key: 'lemmy:user', template: '{root}/feeds/u/{username}.xml?limit={limit}' },
+  { key: 'lemmy:user', template: '{root}/feeds/u/{username}.xml' },
+  { key: 'lemmy:all', template: '{root}/feeds/all.xml?sort={sort}&limit={limit}' },
+  { key: 'lemmy:all', template: '{root}/feeds/all.xml?sort={sort}' },
+  { key: 'lemmy:all', template: '{root}/feeds/all.xml?limit={limit}' },
+  { key: 'lemmy:all', template: '{root}/feeds/all.xml' },
+  { key: 'lemmy:local', template: '{root}/feeds/local.xml?sort={sort}&limit={limit}' },
+  { key: 'lemmy:local', template: '{root}/feeds/local.xml?sort={sort}' },
+  { key: 'lemmy:local', template: '{root}/feeds/local.xml?limit={limit}' },
+  { key: 'lemmy:local', template: '{root}/feeds/local.xml' },
+])
 
 export const parseLemmyUrl = (url: string): LemmyUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -93,7 +93,7 @@ export const getLemmyPage = (url: string, content: string | undefined): LemmyPag
   const link = findElement(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'alternate'
   })
-  const feedUrl = parseUrl(link?.attribs.href ?? '', 'https://example.com')
+  const feedUrl = parseUrl(link?.attribs.href, 'https://example.com')
   const sort =
     getAnyOf(parsed.sort, validSorts) ??
     getAnyOf(getQueryParam(feedUrl?.searchParams, 'sort'), validSorts)
@@ -110,9 +110,7 @@ export const isLemmyHtml = (content: string): boolean => {
 }
 
 export const isLemmyHeaders = (headers: Headers): boolean => {
-  const poweredBy = headers.get('x-powered-by') ?? ''
-
-  return lemmyPoweredByRegex.test(poweredBy)
+  return includesAnyOf(headers.get('x-powered-by'), 'lemmy')
 }
 
 export const lemmyHandler: PlatformHandler = {
@@ -126,41 +124,25 @@ export const lemmyHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getLemmyPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const sortSuffix = getQuerySuffix(page)
+    const { sort, limit } = page
 
     if (page.kind === 'community') {
-      return [
-        {
-          uri: `${origin}/feeds/c/${page.community}.xml${sortSuffix}`,
-          hint: composeHint('lemmy:community'),
-        },
-      ]
+      return [pageFeeds.getFeedEntry('lemmy:community', { community: page.community, sort, limit })]
     }
 
     if (page.kind === 'user') {
-      return [
-        {
-          uri: `${origin}/feeds/u/${page.username}.xml${sortSuffix}`,
-          hint: composeHint('lemmy:user'),
-        },
-      ]
+      return [pageFeeds.getFeedEntry('lemmy:user', { username: page.username, sort, limit })]
     }
 
     return [
-      {
-        uri: `${origin}/feeds/all.xml${sortSuffix}`,
-        hint: composeHint('lemmy:all'),
-      },
-      {
-        uri: `${origin}/feeds/local.xml${sortSuffix}`,
-        hint: composeHint('lemmy:local'),
-      },
+      pageFeeds.getFeedEntry('lemmy:all', { sort, limit }),
+      pageFeeds.getFeedEntry('lemmy:local', { sort, limit }),
     ]
   },
 }

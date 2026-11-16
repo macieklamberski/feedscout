@@ -1,7 +1,12 @@
-import { composeQuery, isPlainObject, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { isHostOrSubdomainOf, isPlainObject, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getJsonLd, hasMarker } from '../../common/utils.js'
+import {
+  getBrandDomainRegex,
+  getJsonLd,
+  getTenantSubdomain,
+  hasMarker,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home (guess, html), partly covers forum, topic.
@@ -13,6 +18,109 @@ export type ForumotionPage =
 
 const forumPathRegex = /^\/f(\d+)(?:p\d+)?-/i
 const topicPathRegex = /^\/t\d+(?:p\d+)?-/i
+
+// The brands Forumotion lists on forumotion.com/languages, each under any of its domains. Other
+// domains Forumotion serves forums on, such as 1fr1.net or forumpro.fr, are left to the marker.
+const brands = [
+  '666forum',
+  'actieforum',
+  'ahlamontada',
+  'albanianforum',
+  'azerbaijaniforum',
+  'bosnianforum',
+  'bulgarianforum',
+  'danskforum',
+  'editboard',
+  'foroactivo',
+  'forocatalan',
+  'forum2x2',
+  'forumactif',
+  'forumattivo',
+  'forumcroatian',
+  'forumczech',
+  'forumeiros',
+  'forumfa',
+  'forumgratuit',
+  'forumgreek',
+  'forumhebrew',
+  'forumieren',
+  'forumjap',
+  'forumkorean',
+  'forumlt',
+  'forummo',
+  'forumms',
+  'forumotion',
+  'forumpolish',
+  'forumsc',
+  'forumta',
+  'forumtl',
+  'forumur',
+  'forumvi',
+  'georgianforum',
+  'hungarianforum',
+  'icelandforum',
+  'indonesianforum',
+  'latvianforum',
+  'longluntan',
+  'macedonianforum',
+  'norwegianforum',
+  'palstani',
+  'serbianforum',
+  'slovakforum',
+  'slovenianforum',
+  'swedishforum',
+  'thai-forum',
+  'ukraine7',
+  'yetkinforum',
+]
+
+// The `forum` brand is too generic to match under any domain, so it keeps its one domain.
+const domains = ['forum.co.ee', ...brands.map(getBrandDomainRegex)]
+
+// A forum on its own domain is known only by its marker, so its feeds are built here but not
+// claimed.
+const feeds = definePlatformFeeds(
+  [
+    // Forumotion serves each feed at `/rss` too, which only claims.
+    { key: 'forumotion:forum', template: '{scheme}://{host}/feed/?f={forumId}', format: 'rss' },
+    {
+      key: 'forumotion:forum',
+      template: '{scheme}://{host}/rss?f={forumId}',
+      format: 'rss',
+      isAlias: true,
+    },
+    {
+      key: 'forumotion:forum',
+      template: '{scheme}://{host}/feed/?f={forumId}&type=atom',
+      format: 'atom',
+    },
+    {
+      key: 'forumotion:forum',
+      template: '{scheme}://{host}/rss?f={forumId}&type=atom',
+      format: 'atom',
+      isAlias: true,
+    },
+    { key: 'forumotion:latest-topics', template: '{scheme}://{host}/feed/', format: 'rss' },
+    {
+      key: 'forumotion:latest-topics',
+      template: '{scheme}://{host}/rss',
+      format: 'rss',
+      isAlias: true,
+    },
+    {
+      key: 'forumotion:latest-topics',
+      template: '{scheme}://{host}/feed/?type=atom',
+      format: 'atom',
+    },
+    {
+      key: 'forumotion:latest-topics',
+      template: '{scheme}://{host}/rss?type=atom',
+      format: 'atom',
+      isAlias: true,
+    },
+  ],
+  { domains },
+)
 
 // Core prints the `_userdata` script in every page head, on every template and domain.
 export const isForumotionHtml = (content: string): boolean => {
@@ -32,7 +140,7 @@ const getBreadcrumbPaths = (url: string, content: string): Array<string> => {
     }
 
     for (const element of data.itemListElement) {
-      const pathname = parseUrl(element?.item?.['@id'] ?? '', url)?.pathname
+      const pathname = parseUrl(element?.item?.['@id'], url)?.pathname
 
       if (pathname) {
         paths.push(pathname)
@@ -68,34 +176,39 @@ export const getForumotionPage = (url: string, content: string | undefined): For
 }
 
 export const forumotionHandler: PlatformHandler = {
-  match: (_url, content, headers) => {
+  match: (url, content, headers) => {
+    if (isHostOrSubdomainOf(url, domains)) {
+      return getTenantSubdomain(url, domains) !== undefined
+    }
+
     return hasMarker(content, headers, { html: isForumotionHtml })
   },
 
   resolve: (url, content) => {
     const page = getForumotionPage(url, content)
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
+    const pageFeeds = feeds.forUrl(url)
+
+    if (!pageFeeds) {
+      return []
+    }
 
     // Forumotion serves no topic feed and ignores `?t=`, so a topic page gets its forum's feed.
     if (page.kind === 'forum' || page.kind === 'topic') {
-      uris.push(
-        {
-          uri: `${origin}/feed/${composeQuery({ f: page.forumId })}`,
-          hint: composeHint('forumotion:forum', 'rss'),
-        },
-        {
-          uri: `${origin}/feed/${composeQuery({ f: page.forumId, type: 'atom' })}`,
-          hint: composeHint('forumotion:forum', 'atom'),
-        },
-      )
+      const params = { forumId: page.forumId }
+
+      return [
+        pageFeeds.getFeedEntry('forumotion:forum', params, 'rss'),
+        pageFeeds.getFeedEntry('forumotion:forum', params, 'atom'),
+        pageFeeds.getFeedEntry('forumotion:latest-topics', {}, 'rss'),
+        pageFeeds.getFeedEntry('forumotion:latest-topics', {}, 'atom'),
+      ]
     }
 
-    uris.push(
-      { uri: `${origin}/feed/`, hint: composeHint('forumotion:latest-topics', 'rss') },
-      { uri: `${origin}/feed/?type=atom`, hint: composeHint('forumotion:latest-topics', 'atom') },
-    )
-
-    return uris
+    return [
+      pageFeeds.getFeedEntry('forumotion:latest-topics', {}, 'rss'),
+      pageFeeds.getFeedEntry('forumotion:latest-topics', {}, 'atom'),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

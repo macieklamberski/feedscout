@@ -1,4 +1,4 @@
-import { isNonEmptyString, parseUrl } from 'trousse'
+import { isNonEmptyString, parseUrl, startsWithAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent, hasMarker } from '../../common/utils.js'
 import { isPeertubeHeaders, parsePeertubeUrl } from '../../feeds/platforms/peertube.js'
@@ -11,8 +11,6 @@ type Avatar = {
 }
 
 const platform = 'peertube'
-
-const avatarPathPrefix = '/lazy-static/avatars/'
 
 const apiPaths: Record<string, string> = {
   c: 'video-channels',
@@ -47,7 +45,7 @@ export const peertubeHandler: PlatformHandler = {
 
     const ogImage = content ? getMetaContent(content, 'og:image') : undefined
 
-    if (ogImage && parseUrl(ogImage)?.pathname.startsWith(avatarPathPrefix)) {
+    if (ogImage && startsWithAnyOf(parseUrl(ogImage)?.pathname, '/lazy-static/avatars/')) {
       return [{ uri: ogImage }]
     }
 

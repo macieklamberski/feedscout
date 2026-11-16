@@ -104,6 +104,7 @@ describe('tourTravelWorldHandler', () => {
 
   describe('resolve', () => {
     it('should return the tour packages feed the page links', () => {
+      const value = 'https://www.example.com/'
       const expected = [
         {
           uri: 'https://www.example.com/tour-packages.rss',
@@ -111,9 +112,7 @@ describe('tourTravelWorldHandler', () => {
         },
       ]
 
-      expect(
-        tourTravelWorldHandler.resolve('https://www.example.com/', tourTravelWorldHtml),
-      ).toEqual(expected)
+      expect(tourTravelWorldHandler.resolve(value, tourTravelWorldHtml)).toEqual(expected)
     })
 
     it('should return nothing without content', () => {

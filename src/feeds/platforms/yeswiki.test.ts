@@ -94,15 +94,15 @@ describe('isYeswikiHeaders', () => {
 describe('yeswikiHandler', () => {
   describe('match', () => {
     it('should match a page with the session cookie', () => {
-      expect(
-        yeswikiHandler.match('https://example.com/?PagePrincipale', pageHtml, rootHeaders),
-      ).toBe(true)
+      const value = 'https://example.com/?PagePrincipale'
+
+      expect(yeswikiHandler.match(value, pageHtml, rootHeaders)).toBe(true)
     })
 
     it('should not match a page without the session cookie', () => {
-      expect(
-        yeswikiHandler.match('https://example.com/?PagePrincipale', pageHtml, otherHeaders),
-      ).toBe(false)
+      const value = 'https://example.com/?PagePrincipale'
+
+      expect(yeswikiHandler.match(value, pageHtml, otherHeaders)).toBe(false)
     })
   })
 

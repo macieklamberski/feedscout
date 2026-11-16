@@ -1,7 +1,7 @@
 import { parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
-  composeHint,
   findElement,
   getCookieNames,
   getScriptDirectory,
@@ -12,6 +12,15 @@ import {
 // Discoverability: Discoverable without handler.
 
 export type ShaarliPage = { baseUrl: string }
+
+// An instance of any domain is known only by its marker, so its feeds are built here but not
+// claimed. Installs older than 0.12 answer 404 on `/feed/*` and serve `/?do=rss` instead, and
+// later installs redirect `/?do=rss` to the same feed.
+const feeds = definePlatformFeeds([
+  { key: 'shaarli:posts', template: '{root}/feed/rss', format: 'rss' },
+  { key: 'shaarli:posts', template: '{root}/?do=rss', format: 'rss', isAlias: true },
+  { key: 'shaarli:posts', template: '{root}/feed/atom', format: 'atom' },
+])
 
 export const isShaarliHtml = (content: string): boolean => {
   return hasElementWithId(content, 'shaarli-menu')
@@ -56,13 +65,8 @@ export const shaarliHandler: PlatformHandler = {
     const { baseUrl } = page
 
     return [
-      // Installs older than 0.12 answer 404 on `/feed/*` and serve `/?do=rss` instead.
-      // Later installs redirect `/?do=rss` to the same feed.
-      {
-        uri: [`${baseUrl}/feed/rss`, `${baseUrl}/?do=rss`],
-        hint: composeHint('shaarli:posts', 'rss'),
-      },
-      { uri: `${baseUrl}/feed/atom`, hint: composeHint('shaarli:posts', 'atom') },
+      feeds.getFeedSpellings('shaarli:posts', { root: baseUrl }, 'rss'),
+      feeds.getFeedEntry('shaarli:posts', { root: baseUrl }, 'atom'),
     ]
   },
 }

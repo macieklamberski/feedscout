@@ -1,3 +1,4 @@
+import { coerceArray, isString } from 'trousse'
 import { discoverFeeds } from '../src/feeds/index.js'
 import feeds from './feeds.jsonc'
 import { checkPlatforms, fetchWithFallback } from './utils.js'
@@ -20,9 +21,7 @@ const checkUrl = async (url: string) => {
 // A kind with no public sample holds `{ "skip": reason }` in place of its URLs.
 const checkList: Record<string, Record<string, unknown>> = feeds
 const platforms = Object.entries(checkList).map(([platform, kinds]): [string, Array<string>] => {
-  const urls = Object.values(kinds).flatMap((entry) => {
-    return typeof entry === 'string' || Array.isArray(entry) ? entry : []
-  })
+  const urls = Object.values(kinds).flatMap(coerceArray).filter(isString)
 
   return [platform, urls]
 })

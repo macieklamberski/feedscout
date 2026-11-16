@@ -1,7 +1,7 @@
 import { encodePathSegment } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
+import { findElement, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -16,6 +16,45 @@ const domains = ['purot.net']
 // A profile id holds a slash, so a profile page never matches. A profile page links its user's
 // feeds even when it answers "User not found", and a real profile redirects to the home page.
 const pageChangesRegex = /^\/changes\/([^/?]+)\?mode=rss&messages=0$/i
+
+// The wiki's changes come first, so its feeds are not read as the feeds of a page named all.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'purot:recent-changes', template: '{scheme}://{host}/changes/all?mode=rss' },
+    {
+      key: 'purot:recent-page-changes',
+      template: '{scheme}://{host}/changes/all?mode=rss&messages=0',
+    },
+    {
+      key: 'purot:recent-discussions',
+      template: '{scheme}://{host}/changes/all?mode=rss&pages=0',
+    },
+    {
+      key: 'purot:page-changes',
+      template: '{scheme}://{host}/changes/{page}?mode=rss&messages=0',
+    },
+    {
+      key: 'purot:page-discussions',
+      template: '{scheme}://{host}/changes/{page}?mode=rss&pages=0',
+    },
+    { key: 'purot:page-activity', template: '{scheme}://{host}/changes/{page}?mode=rss' },
+    // A real user's profile feeds hold that user's own changes. Only a missing user's feeds list
+    // every user's profile changes.
+    {
+      key: 'purot:user-changes',
+      template: '{scheme}://{host}/changes/profile/{user}?mode=rss&messages=0',
+    },
+    {
+      key: 'purot:user-discussions',
+      template: '{scheme}://{host}/changes/profile/{user}?mode=rss&pages=0',
+    },
+    {
+      key: 'purot:user-activity',
+      template: '{scheme}://{host}/changes/profile/{user}?mode=rss',
+    },
+  ],
+  { domains },
+)
 
 export const parsePurotUrl = (url: string): PurotUrl | undefined => {
   const wiki = getTenantSubdomain(url, domains)
@@ -55,31 +94,31 @@ export const purotHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getPurotPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const origin = `https://${page.wiki}.purot.net`
-    const uris: Array<DiscoverUriEntry> = []
-
     if (page.kind === 'page') {
-      uris.push({
-        uri: `${origin}/changes/${page.page}?mode=rss&messages=0`,
-        hint: composeHint('purot:page-changes'),
-      })
-      uris.push({
-        uri: `${origin}/changes/${page.page}?mode=rss&pages=0`,
-        hint: composeHint('purot:page-discussions'),
-      })
-      uris.push({
-        uri: `${origin}/changes/${page.page}?mode=rss`,
-        hint: composeHint('purot:page-activity'),
-      })
+      const params = { page: page.page }
+
+      return [
+        pageFeeds.getFeedEntry('purot:page-changes', params),
+        pageFeeds.getFeedEntry('purot:page-discussions', params),
+        pageFeeds.getFeedEntry('purot:page-activity', params),
+        pageFeeds.getFeedEntry('purot:recent-changes'),
+        pageFeeds.getFeedEntry('purot:recent-page-changes'),
+        pageFeeds.getFeedEntry('purot:recent-discussions'),
+      ]
     }
 
-    uris.push({ uri: `${origin}/changes/all?mode=rss`, hint: composeHint('purot:recent-changes') })
-
-    return uris
+    return [
+      pageFeeds.getFeedEntry('purot:recent-changes'),
+      pageFeeds.getFeedEntry('purot:recent-page-changes'),
+      pageFeeds.getFeedEntry('purot:recent-discussions'),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

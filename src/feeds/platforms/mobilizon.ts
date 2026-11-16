@@ -1,7 +1,7 @@
 import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home (html), partly covers group.
@@ -9,6 +9,13 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 export type MobilizonUrl = { kind: 'group'; group: string } | { kind: 'instance' }
 
 const groupPathRegex = /^\/@([^/]+)/
+
+// Mobilizon is self-hosted and known only by its page marker, so nothing in a feed URL names it
+// and the table only builds.
+const feeds = definePlatformFeeds([
+  { key: 'mobilizon:group', template: '{root}/@{group}/feed/atom' },
+  { key: 'mobilizon:instance', template: '{root}/feed/instance/atom' },
+])
 
 // The page is a JavaScript shell, and this notice is the only text the server renders on every page.
 export const isMobilizonHtml = (content: string): boolean => {
@@ -42,26 +49,19 @@ export const mobilizonHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseMobilizonUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.kind === 'group') {
-      uris.push({
-        uri: `${origin}/@${parsed.group}/feed/atom`,
-        hint: composeHint('mobilizon:group'),
-      })
+      return [
+        pageFeeds.getFeedEntry('mobilizon:group', { group: parsed.group }),
+        pageFeeds.getFeedEntry('mobilizon:instance'),
+      ]
     }
 
-    uris.push({
-      uri: `${origin}/feed/instance/atom`,
-      hint: composeHint('mobilizon:instance'),
-    })
-
-    return uris
+    return [pageFeeds.getFeedEntry('mobilizon:instance')]
   },
 }

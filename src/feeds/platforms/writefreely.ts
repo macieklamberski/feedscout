@@ -1,8 +1,7 @@
-import { getPathSegments } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getPathSegments, startsWithAnyOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
-  composeHint,
   type Element,
   findDescendant,
   findElement,
@@ -19,11 +18,22 @@ const tagPathRegex = /\/tag:([^/]+)/i
 const rootRouteRegex = /^\/(?:(?:tag|lang):|page\/\d+(?:\/|$)|archive\/?$)/i
 const blogPathRegex = /^\/(?:[^/]+\/)?$/
 
+// An instance on any host is known only by its markup, which a feed URL does not carry, so the
+// feeds are built under the instance root and never claimed. A single-user instance serves its
+// one blog at the root, so its rows have no blog segment.
+const feeds = definePlatformFeeds([
+  { key: 'writefreely:tag', template: '{root}/{blog}/tag:{tag}/feed/' },
+  { key: 'writefreely:tag', template: '{root}/tag:{tag}/feed/' },
+  { key: 'writefreely:blog', template: '{root}/{blog}/feed/' },
+  { key: 'writefreely:blog', template: '{root}/feed/' },
+  { key: 'writefreely:reader', template: '{root}/read/feed/' },
+])
+
 const getUrlBlogPath = (url: string): string | undefined => {
   const { pathname } = new URL(url)
-  const [first] = getPathSegments(url)
+  const [blogOrRoute] = getPathSegments(url)
 
-  if (!first) {
+  if (!blogOrRoute) {
     return
   }
 
@@ -32,7 +42,7 @@ const getUrlBlogPath = (url: string): string | undefined => {
     return '/'
   }
 
-  return `/${first}/`
+  return `/${blogOrRoute}/`
 }
 
 // A single-user instance serves its one blog at the root, and the blog title links to it.
@@ -53,7 +63,7 @@ const getBlogPath = (content: string | undefined): string | undefined => {
 }
 
 const isWriteStylesheet = (element: Element): boolean => {
-  return element.attribs.href?.startsWith('/css/write.css') ?? false
+  return startsWithAnyOf(element.attribs.href, '/css/write.css')
 }
 
 export const isWritefreelyHtml = (content: string): boolean => {
@@ -99,28 +109,40 @@ export const writefreelyHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getWritefreelyPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const { blogPath, tag } = page
-    const uris: Array<DiscoverUriEntry> = []
-
-    if (tag) {
-      uris.push({
-        uri: `${origin}${blogPath}tag:${tag}/feed/`,
-        hint: composeHint('writefreely:tag'),
-      })
+    const params = {
+      blog: page.blogPath === '/' ? undefined : page.blogPath.slice(1, -1),
+      tag: page.tag,
     }
 
-    uris.push({ uri: `${origin}${blogPath}feed/`, hint: composeHint('writefreely:blog') })
-
-    if (blogPath !== '/') {
-      uris.push({ uri: `${origin}/read/feed/`, hint: composeHint('writefreely:reader') })
+    // The instance reader holds every blog of a multi-user instance.
+    if (params.blog && params.tag) {
+      return [
+        pageFeeds.getFeedEntry('writefreely:tag', params),
+        pageFeeds.getFeedEntry('writefreely:blog', params),
+        pageFeeds.getFeedEntry('writefreely:reader'),
+      ]
     }
 
-    return uris
+    if (params.blog) {
+      return [
+        pageFeeds.getFeedEntry('writefreely:blog', params),
+        pageFeeds.getFeedEntry('writefreely:reader'),
+      ]
+    }
+
+    if (params.tag) {
+      return [
+        pageFeeds.getFeedEntry('writefreely:tag', params),
+        pageFeeds.getFeedEntry('writefreely:blog', params),
+      ]
+    }
+
+    return [pageFeeds.getFeedEntry('writefreely:blog', params)]
   },
 }

@@ -1,20 +1,32 @@
-import { composeQuery, decodeSegment, getQueryParam, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { decodeSegment, getQueryParam, includesAnyOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers channel, instance, legacyAccount, legacyChannel (html), partly covers account.
 
 export type PeertubeUrl = { kind: 'channel' | 'account'; name: string } | { kind: 'instance' }
 
-const peertubeRegex = /peertube/i
 const channelPathRegex = /^\/(?:c|video-channels)\/([^/]+)/i
 const accountPathRegex = /^\/(?:a|accounts)\/([^/]+)/i
+
 const podcastFeedPath = '/feeds/podcast/videos.xml'
 
+// An instance is known only by its headers, so its feeds are built on the page's origin and
+// claimed on no host.
+const feeds = definePlatformFeeds([
+  { key: 'peertube:channel', template: '{root}/feeds/videos.xml?videoChannelName={name}' },
+  {
+    key: 'peertube:channel-podcast',
+    template: '{root}/feeds/podcast/videos.xml?videoChannelId={channelId}',
+  },
+  { key: 'peertube:account', template: '{root}/feeds/videos.xml?accountName={name}' },
+  { key: 'peertube:instance', template: '{root}/feeds/videos.xml' },
+])
+
 export const isPeertubeHeaders = (headers: Headers): boolean => {
-  return peertubeRegex.test(headers.get('x-powered-by') ?? '')
+  return includesAnyOf(headers.get('x-powered-by'), 'peertube')
 }
 
 // The podcast feed takes only the numeric channel id, which the channel page carries in its link
@@ -26,7 +38,7 @@ const getPodcastChannelId = (url: string, content: string | undefined): string |
       return false
     }
 
-    const feedUrl = parseUrl(element.attribs.href ?? '', url)
+    const feedUrl = parseUrl(element.attribs.href, url)
 
     return (
       feedUrl?.origin === origin &&
@@ -76,51 +88,41 @@ export const peertubeHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const parsed = parsePeertubeUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const instance: DiscoverUriEntry = {
-      uri: `${origin}/feeds/videos.xml`,
-      hint: composeHint('peertube:instance'),
-    }
-
     if (parsed.kind === 'channel') {
-      const query = composeQuery({ videoChannelName: decodeSegment(parsed.name) ?? parsed.name })
-      const uris: Array<DiscoverUriEntry> = [
-        {
-          uri: `${origin}/feeds/videos.xml${query}`,
-          hint: composeHint('peertube:channel'),
-        },
-      ]
-      const channelId = getPodcastChannelId(url, content)
-
-      if (channelId) {
-        uris.push({
-          uri: `${origin}${podcastFeedPath}${composeQuery({ videoChannelId: channelId })}`,
-          hint: composeHint('peertube:channel-podcast'),
-        })
+      const params = {
+        name: decodeSegment(parsed.name) ?? parsed.name,
+        channelId: getPodcastChannelId(url, content),
       }
 
-      uris.push(instance)
+      if (!params.channelId) {
+        return [
+          pageFeeds.getFeedEntry('peertube:channel', params),
+          pageFeeds.getFeedEntry('peertube:instance'),
+        ]
+      }
 
-      return uris
+      return [
+        pageFeeds.getFeedEntry('peertube:channel', params),
+        pageFeeds.getFeedEntry('peertube:channel-podcast', params),
+        pageFeeds.getFeedEntry('peertube:instance'),
+      ]
     }
 
     if (parsed.kind === 'account') {
-      const query = composeQuery({ accountName: decodeSegment(parsed.name) ?? parsed.name })
-
       return [
-        {
-          uri: `${origin}/feeds/videos.xml${query}`,
-          hint: composeHint('peertube:account'),
-        },
-        instance,
+        pageFeeds.getFeedEntry('peertube:account', {
+          name: decodeSegment(parsed.name) ?? parsed.name,
+        }),
+        pageFeeds.getFeedEntry('peertube:instance'),
       ]
     }
 
-    return [instance]
+    return [pageFeeds.getFeedEntry('peertube:instance')]
   },
 }

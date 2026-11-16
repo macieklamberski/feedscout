@@ -1,7 +1,7 @@
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { parseJson } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
-  composeHint,
   digitsRegex,
   type Element,
   findElements,
@@ -24,15 +24,21 @@ const whitespaceRegex = /\s+/
 
 const formElementClasses = ['BAZ_cadre_fiche', 'bazar-entry', 'bazar-list-dynamic-container']
 
+// A wiki on any host is known only by its session cookie, which a feed URL does not carry, so the
+// feeds are built under the install root and never claimed.
+const feeds = definePlatformFeeds([
+  { key: 'yeswiki:form-entries', template: '{root}/?BazaR/rss&id={formId}' },
+  { key: 'yeswiki:entries', template: '{root}/?BazaR/rss' },
+  { key: 'yeswiki:recent-changes', template: '{root}/?DerniersChangementsRSS/xml' },
+])
+
 // YesWiki names its session `YesWiki-main`, or `YesWiki-{path}` under a sub-path.
 export const isYeswikiHeaders = (headers: Headers): boolean => {
   return getCookieNames(headers).some((name) => sessionCookieRegex.test(name))
 }
 
 const parseListParams = (value: string | undefined): BazarListParams | undefined => {
-  try {
-    return JSON.parse(value ?? '')
-  } catch {}
+  return parseJson<BazarListParams>(value)
 }
 
 const readFormIds = (element: Element): Array<string> => {
@@ -94,23 +100,13 @@ export const yeswikiHandler: PlatformHandler = {
   },
 
   resolve: (url, content, headers) => {
-    const { origin } = new URL(url)
     const { installPath, formIds } = getYeswikiPage(content, headers)
-    const wikiUrl = `${origin}${installPath}`
-    const uris: Array<DiscoverUriEntry> = []
+    const root = `${new URL(url).origin}${installPath}`
 
-    for (const formId of formIds) {
-      uris.push({
-        uri: `${wikiUrl}?BazaR/rss&id=${encodeURIComponent(formId)}`,
-        hint: composeHint('yeswiki:form-entries'),
-      })
-    }
-
-    uris.push(
-      { uri: `${wikiUrl}?BazaR/rss`, hint: composeHint('yeswiki:entries') },
-      { uri: `${wikiUrl}?DerniersChangementsRSS/xml`, hint: composeHint('yeswiki:recent-changes') },
-    )
-
-    return uris
+    return [
+      ...formIds.map((formId) => feeds.getFeedEntry('yeswiki:form-entries', { root, formId })),
+      feeds.getFeedEntry('yeswiki:entries', { root }),
+      feeds.getFeedEntry('yeswiki:recent-changes', { root }),
+    ]
   },
 }

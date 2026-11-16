@@ -1,7 +1,7 @@
 import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex } from '../../common/utils.js'
+import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers branch, bug, bugsPerson, bugsProject, codeProject, home, person, project, sourcePackage (html).
@@ -14,7 +14,15 @@ type LaunchpadApplication = 'main' | 'bugs' | 'code'
 export type LaunchpadUrl =
   | { kind: 'home'; application: 'main' | 'bugs' }
   | { kind: 'bug'; bugId: string }
-  | { kind: 'branch'; path: string }
+  | { kind: 'branch'; owner: string; project: string; branch: string }
+  | {
+      kind: 'branch'
+      owner: string
+      distribution: string
+      series: string
+      sourcePackage: string
+      branch: string
+    }
   | { kind: 'sourcePackage'; distribution: string; sourcePackage: string }
   | { kind: 'person'; application: LaunchpadApplication; username: string }
   | { kind: 'project'; application: LaunchpadApplication; project: string }
@@ -23,8 +31,55 @@ const mainHosts = ['launchpad.net']
 const bugsHosts = ['bugs.launchpad.net']
 const codeHosts = ['code.launchpad.net']
 const hosts = [...mainHosts, ...bugsHosts, ...codeHosts]
-// Launchpad advertises its feeds over http, and the https URLs redirect there.
-const feedsOrigin = 'http://feeds.launchpad.net'
+
+// Launchpad advertises its feeds over http, and the http URLs redirect to https.
+const feeds = definePlatformFeeds([
+  {
+    key: 'launchpad:project-announcements',
+    template: 'http://feeds.launchpad.net/{project}/announcements.atom',
+  },
+  { key: 'launchpad:announcements', template: 'http://feeds.launchpad.net/announcements.atom' },
+  {
+    key: 'launchpad:package-bugs',
+    template: 'http://feeds.launchpad.net/{distribution}/+source/{sourcePackage}/latest-bugs.atom',
+  },
+  // The site-wide bugs feed sits where a project named `bugs` would, so it comes first.
+  { key: 'launchpad:bugs', template: 'http://feeds.launchpad.net/bugs/latest-bugs.atom' },
+  {
+    key: 'launchpad:person-bugs',
+    template: 'http://feeds.launchpad.net/~{username}/latest-bugs.atom',
+  },
+  {
+    key: 'launchpad:project-bugs',
+    template: 'http://feeds.launchpad.net/{project}/latest-bugs.atom',
+  },
+  { key: 'launchpad:bug', template: 'http://feeds.launchpad.net/bugs/{bugId}/bug.atom' },
+  {
+    key: 'launchpad:branch',
+    template:
+      'http://feeds.launchpad.net/~{owner}/{distribution}/{series}/{sourcePackage}/{branch}/branch.atom',
+  },
+  {
+    key: 'launchpad:branch',
+    template: 'http://feeds.launchpad.net/~{owner}/{project}/{branch}/branch.atom',
+  },
+  {
+    key: 'launchpad:person-branches',
+    template: 'http://feeds.launchpad.net/~{username}/branches.atom',
+  },
+  {
+    key: 'launchpad:project-branches',
+    template: 'http://feeds.launchpad.net/{project}/branches.atom',
+  },
+  {
+    key: 'launchpad:person-revisions',
+    template: 'http://feeds.launchpad.net/~{username}/revisions.atom',
+  },
+  {
+    key: 'launchpad:project-revisions',
+    template: 'http://feeds.launchpad.net/{project}/revisions.atom',
+  },
+])
 
 const getApplication = (parsedUrl: URL): LaunchpadApplication => {
   if (isHostOf(parsedUrl, bugsHosts)) {
@@ -46,16 +101,16 @@ export const parseLaunchpadUrl = (url: string): LaunchpadUrl | undefined => {
   }
 
   const segments = getPathSegments(parsedUrl)
-  const [first, second, third] = segments
+  const [pillarOrPerson, route, sourcePackage] = segments
   const application = getApplication(parsedUrl)
   const isCodeHost = application === 'code'
 
-  if (!first && application !== 'code') {
+  if (!pillarOrPerson && application !== 'code') {
     return { kind: 'home', application }
   }
 
   // Code has no site-wide feed.
-  if (!first) {
+  if (!pillarOrPerson) {
     return
   }
 
@@ -63,38 +118,50 @@ export const parseLaunchpadUrl = (url: string): LaunchpadUrl | undefined => {
     const bugIndex = segments.findIndex((segment, index) => {
       return isAnyOf(segment, '+bug') || (index === 0 && isAnyOf(segment, 'bugs'))
     })
-    const bugId = segments[bugIndex + 1]
+    const [, bugId] = segments.slice(bugIndex)
 
     if (bugIndex !== -1 && bugId && digitsRegex.test(bugId)) {
       return { kind: 'bug', bugId }
     }
   }
 
-  if (first.startsWith('~')) {
-    if (first.length > 1 && segments.length === 1) {
-      return { kind: 'person', application, username: first.slice(1) }
+  if (pillarOrPerson.startsWith('~')) {
+    if (pillarOrPerson.length > 1 && segments.length === 1) {
+      return { kind: 'person', application, username: pillarOrPerson.slice(1) }
+    }
+
+    if (!isCodeHost || segments.some((segment) => segment.startsWith('+'))) {
+      return
     }
 
     // Bazaar branches live at ~owner/project/branch or ~owner/distro/series/package/branch.
-    const isBranchPath = segments.length === 3 || segments.length === 5
+    const owner = pillarOrPerson.slice(1)
 
-    if (isCodeHost && isBranchPath && !segments.some((segment) => segment.startsWith('+'))) {
-      return { kind: 'branch', path: segments.join('/') }
+    if (segments.length === 3) {
+      const [, project, branch] = segments
+
+      return { kind: 'branch', owner, project, branch }
+    }
+
+    if (segments.length === 5) {
+      const [, distribution, series, sourcePackage, branch] = segments
+
+      return { kind: 'branch', owner, distribution, series, sourcePackage, branch }
     }
 
     return
   }
 
-  if (first.startsWith('+')) {
+  if (pillarOrPerson.startsWith('+')) {
     return
   }
 
   if (segments.length === 1) {
-    return { kind: 'project', application, project: first }
+    return { kind: 'project', application, project: pillarOrPerson }
   }
 
-  if (!isCodeHost && third && segments.length === 3 && isAnyOf(second, '+source')) {
-    return { kind: 'sourcePackage', distribution: first, sourcePackage: third }
+  if (!isCodeHost && sourcePackage && segments.length === 3 && isAnyOf(route, '+source')) {
+    return { kind: 'sourcePackage', distribution: pillarOrPerson, sourcePackage }
   }
 }
 
@@ -110,61 +177,97 @@ export const launchpadHandler: PlatformHandler = {
       return []
     }
 
+    // The site-wide announcements and bugs need no value from the page, so every page builds them
+    // after its own feeds.
     if (parsed.kind === 'home' && parsed.application === 'main') {
-      return [
-        { uri: `${feedsOrigin}/announcements.atom`, hint: composeHint('launchpad:announcements') },
-      ]
+      return [feeds.getFeedEntry('launchpad:announcements'), feeds.getFeedEntry('launchpad:bugs')]
     }
 
     if (parsed.kind === 'home') {
-      return [{ uri: `${feedsOrigin}/bugs/latest-bugs.atom`, hint: composeHint('launchpad:bugs') }]
+      return [feeds.getFeedEntry('launchpad:bugs'), feeds.getFeedEntry('launchpad:announcements')]
     }
 
     if (parsed.kind === 'bug') {
       return [
-        { uri: `${feedsOrigin}/bugs/${parsed.bugId}/bug.atom`, hint: composeHint('launchpad:bug') },
+        feeds.getFeedEntry('launchpad:bug', parsed),
+        feeds.getFeedEntry('launchpad:announcements'),
+        feeds.getFeedEntry('launchpad:bugs'),
       ]
     }
 
     if (parsed.kind === 'branch') {
       return [
-        { uri: `${feedsOrigin}/${parsed.path}/branch.atom`, hint: composeHint('launchpad:branch') },
+        feeds.getFeedEntry('launchpad:branch', parsed),
+        feeds.getFeedEntry('launchpad:announcements'),
+        feeds.getFeedEntry('launchpad:bugs'),
       ]
     }
 
     if (parsed.kind === 'sourcePackage') {
-      const { distribution, sourcePackage } = parsed
-
       return [
-        {
-          uri: `${feedsOrigin}/${distribution}/+source/${sourcePackage}/latest-bugs.atom`,
-          hint: composeHint('launchpad:bugs'),
-        },
+        feeds.getFeedEntry('launchpad:package-bugs', parsed),
+        feeds.getFeedEntry('launchpad:announcements'),
+        feeds.getFeedEntry('launchpad:bugs'),
       ]
     }
 
-    const base =
-      parsed.kind === 'person'
-        ? `${feedsOrigin}/~${parsed.username}`
-        : `${feedsOrigin}/${parsed.project}`
-    const feeds: Array<DiscoverUriEntry> = []
+    if (parsed.kind === 'project') {
+      const { application, project } = parsed
 
-    if (parsed.kind === 'project' && parsed.application === 'main') {
-      feeds.push({
-        uri: `${base}/announcements.atom`,
-        hint: composeHint('launchpad:announcements'),
-      })
+      if (application === 'bugs') {
+        return [
+          feeds.getFeedEntry('launchpad:project-bugs', { project }),
+          feeds.getFeedEntry('launchpad:announcements'),
+          feeds.getFeedEntry('launchpad:bugs'),
+        ]
+      }
+
+      if (application === 'code') {
+        return [
+          feeds.getFeedEntry('launchpad:project-branches', { project }),
+          feeds.getFeedEntry('launchpad:project-revisions', { project }),
+          feeds.getFeedEntry('launchpad:announcements'),
+          feeds.getFeedEntry('launchpad:bugs'),
+        ]
+      }
+
+      return [
+        feeds.getFeedEntry('launchpad:project-announcements', { project }),
+        feeds.getFeedEntry('launchpad:project-bugs', { project }),
+        feeds.getFeedEntry('launchpad:project-branches', { project }),
+        feeds.getFeedEntry('launchpad:project-revisions', { project }),
+        feeds.getFeedEntry('launchpad:announcements'),
+        feeds.getFeedEntry('launchpad:bugs'),
+      ]
     }
 
-    if (parsed.application !== 'code') {
-      feeds.push({ uri: `${base}/latest-bugs.atom`, hint: composeHint('launchpad:bugs') })
+    const { application, username } = parsed
+
+    if (application === 'bugs') {
+      return [
+        feeds.getFeedEntry('launchpad:person-bugs', { username }),
+        feeds.getFeedEntry('launchpad:announcements'),
+        feeds.getFeedEntry('launchpad:bugs'),
+      ]
     }
 
-    if (parsed.application !== 'bugs') {
-      feeds.push({ uri: `${base}/branches.atom`, hint: composeHint('launchpad:branches') })
-      feeds.push({ uri: `${base}/revisions.atom`, hint: composeHint('launchpad:revisions') })
+    if (application === 'code') {
+      return [
+        feeds.getFeedEntry('launchpad:person-branches', { username }),
+        feeds.getFeedEntry('launchpad:person-revisions', { username }),
+        feeds.getFeedEntry('launchpad:announcements'),
+        feeds.getFeedEntry('launchpad:bugs'),
+      ]
     }
 
-    return feeds
+    return [
+      feeds.getFeedEntry('launchpad:person-bugs', { username }),
+      feeds.getFeedEntry('launchpad:person-branches', { username }),
+      feeds.getFeedEntry('launchpad:person-revisions', { username }),
+      feeds.getFeedEntry('launchpad:announcements'),
+      feeds.getFeedEntry('launchpad:bugs'),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

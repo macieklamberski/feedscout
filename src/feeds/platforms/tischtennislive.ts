@@ -1,7 +1,7 @@
-import { composeQuery, getQueryParam, isAnyOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
+import { digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers group, league (html), partly covers association.
@@ -15,7 +15,35 @@ export type TischtennislivePage =
 
 const domains = ['tischtennislive.de']
 
-const resultsFeedPathRegex = /^\/Export\/Tischtennis\/RSS\.aspx$/i
+// Next=0 lists the matches of the last 10 days and Next=1 those of the next 10 days.
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'tischtennislive:group-results',
+      template: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next=0',
+    },
+    {
+      key: 'tischtennislive:group-fixtures',
+      template: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next=1',
+    },
+    {
+      key: 'tischtennislive:league-results',
+      template: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Wett&ID={league}&Next=0',
+    },
+    {
+      key: 'tischtennislive:league-fixtures',
+      template: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Wett&ID={league}&Next=1',
+    },
+    { key: 'tischtennislive:news', template: '{scheme}://{host}/Export/RSS.aspx' },
+    { key: 'tischtennislive:dates', template: '{scheme}://{host}/Export/RSS_Termine.aspx' },
+    { key: 'tischtennislive:documents', template: '{scheme}://{host}/Export/RSS_Dokumente.aspx' },
+    {
+      key: 'tischtennislive:tournaments',
+      template: '{scheme}://{host}/Export/Tischtennis/RSS_Turniere.aspx',
+    },
+  ],
+  { domains },
+)
 
 export const parseTischtennisliveUrl = (url: string): TischtennisliveUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -43,11 +71,15 @@ export const getTischtennislivePage = (
       return false
     }
 
-    const linkUrl = parseUrl(element.attribs.href ?? '', url)
+    const linkUrl = parseUrl(element.attribs.href, url)
 
-    return linkUrl?.hostname === hostname && resultsFeedPathRegex.test(linkUrl.pathname)
+    if (!linkUrl) {
+      return false
+    }
+
+    return isHostOf(linkUrl, hostname) && isAnyOf(linkUrl.pathname, '/Export/Tischtennis/RSS.aspx')
   })
-  const feedUrl = parseUrl(link?.attribs.href ?? '', url)
+  const feedUrl = parseUrl(link?.attribs.href, url)
   const id = getQueryParam(feedUrl?.searchParams, 'id') ?? ''
 
   if (!digitsRegex.test(id)) {
@@ -74,56 +106,43 @@ export const tischtennisliveHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getTischtennislivePage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const resultsUrl = `${origin}/Export/Tischtennis/RSS.aspx`
-    const uris: Array<DiscoverUriEntry> = []
-
-    // Next=0 lists the matches of the last 10 days and Next=1 those of the next 10 days.
+    // The association's news, dates, documents and tournaments need no value from the page, so
+    // every page builds them after its own feeds.
     if (page.kind === 'group') {
-      uris.push({
-        uri: `${resultsUrl}${composeQuery({ Typ: 'Gruppe', ID: page.group, Next: '0' })}`,
-        hint: composeHint('tischtennislive:group-results'),
-      })
-      uris.push({
-        uri: `${resultsUrl}${composeQuery({ Typ: 'Gruppe', ID: page.group, Next: '1' })}`,
-        hint: composeHint('tischtennislive:group-fixtures'),
-      })
-
-      return uris
+      return [
+        pageFeeds.getFeedEntry('tischtennislive:group-results', { group: page.group }),
+        pageFeeds.getFeedEntry('tischtennislive:group-fixtures', { group: page.group }),
+        pageFeeds.getFeedEntry('tischtennislive:news'),
+        pageFeeds.getFeedEntry('tischtennislive:dates'),
+        pageFeeds.getFeedEntry('tischtennislive:documents'),
+        pageFeeds.getFeedEntry('tischtennislive:tournaments'),
+      ]
     }
 
     if (page.kind === 'league') {
-      uris.push({
-        uri: `${resultsUrl}${composeQuery({ Typ: 'Wett', ID: page.league, Next: '0' })}`,
-        hint: composeHint('tischtennislive:league-results'),
-      })
-      uris.push({
-        uri: `${resultsUrl}${composeQuery({ Typ: 'Wett', ID: page.league, Next: '1' })}`,
-        hint: composeHint('tischtennislive:league-fixtures'),
-      })
-
-      return uris
+      return [
+        pageFeeds.getFeedEntry('tischtennislive:league-results', { league: page.league }),
+        pageFeeds.getFeedEntry('tischtennislive:league-fixtures', { league: page.league }),
+        pageFeeds.getFeedEntry('tischtennislive:news'),
+        pageFeeds.getFeedEntry('tischtennislive:dates'),
+        pageFeeds.getFeedEntry('tischtennislive:documents'),
+        pageFeeds.getFeedEntry('tischtennislive:tournaments'),
+      ]
     }
 
-    uris.push({ uri: `${origin}/Export/RSS.aspx`, hint: composeHint('tischtennislive:news') })
-    uris.push({
-      uri: `${origin}/Export/RSS_Termine.aspx`,
-      hint: composeHint('tischtennislive:dates'),
-    })
-    uris.push({
-      uri: `${origin}/Export/RSS_Dokumente.aspx`,
-      hint: composeHint('tischtennislive:documents'),
-    })
-    uris.push({
-      uri: `${origin}/Export/Tischtennis/RSS_Turniere.aspx`,
-      hint: composeHint('tischtennislive:tournaments'),
-    })
-
-    return uris
+    return [
+      pageFeeds.getFeedEntry('tischtennislive:news'),
+      pageFeeds.getFeedEntry('tischtennislive:dates'),
+      pageFeeds.getFeedEntry('tischtennislive:documents'),
+      pageFeeds.getFeedEntry('tischtennislive:tournaments'),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

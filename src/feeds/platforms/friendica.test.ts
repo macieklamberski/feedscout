@@ -83,9 +83,9 @@ describe('friendicaHandler', () => {
     })
 
     it('should return true for profile URL with Friendica headers', () => {
-      expect(
-        friendicaHandler.match('https://example.com/profile/admin', '', friendicaHeaders),
-      ).toBe(true)
+      const value = 'https://example.com/profile/admin'
+
+      expect(friendicaHandler.match(value, '', friendicaHeaders)).toBe(true)
     })
 
     it('should return false without content or headers', () => {

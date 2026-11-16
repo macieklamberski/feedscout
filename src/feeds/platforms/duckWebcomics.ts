@@ -1,7 +1,7 @@
-import { getPathSegments, isHostOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getPathSegments, isHostOf, isSameText } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, wordRegex } from '../../common/utils.js'
+import { findElement, wordRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -10,7 +10,11 @@ export type DuckWebcomicsUrl = { kind: 'comic'; comic: string }
 const hosts = ['theduckwebcomics.com', 'www.theduckwebcomics.com']
 
 const feedPathRegex = /^\/(\w+)\/rss\/$/i
-const feedRegex = /^https?:\/\/(?:www\.)?theduckwebcomics\.com\/\w+\/rss\/?$/i
+
+const feeds = definePlatformFeeds(
+  [{ key: 'duck-webcomics:comic', template: '{scheme}://{host}/{comic}/rss/' }],
+  { hosts },
+)
 
 export const parseDuckWebcomicsUrl = (url: string): DuckWebcomicsUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -29,7 +33,7 @@ export const parseDuckWebcomicsUrl = (url: string): DuckWebcomicsUrl | undefined
 // The site answers a comic in any case, and its pages link the feed in the comic's own spelling.
 const getFeedComic = (content: string | undefined, comic: string): string | undefined => {
   const anchor = findElement(content, (element) => {
-    return element.attribs.href?.match(feedPathRegex)?.[1]?.toLowerCase() === comic.toLowerCase()
+    return isSameText(element.attribs.href?.match(feedPathRegex)?.[1], comic)
   })
 
   return anchor?.attribs.href?.match(feedPathRegex)?.[1]
@@ -55,20 +59,14 @@ export const duckWebcomicsHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getDuckWebcomicsPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { comic } = page
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
-
-    uris.push({ uri: `${origin}/${comic}/rss/`, hint: composeHint('duck-webcomics:comic') })
-
-    return uris
+    return [pageFeeds.getFeedEntry('duck-webcomics:comic', { comic: page.comic })]
   },
 
-  // A guess keeps the URL's spelling of the comic, a second copy of the feed the page spells.
-  guessExclusionRegex: feedRegex,
+  getFeedHint: feeds.getFeedHint,
 }

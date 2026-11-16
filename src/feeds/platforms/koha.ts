@@ -1,4 +1,5 @@
-import { composeQuery, getQueryParam, getQueryParams, isAnyOf, parseUrl } from 'trousse'
+import { getQueryParam, getQueryParamValues, isAnyOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex, hasMarker } from '../../common/utils.js'
 
@@ -6,15 +7,47 @@ import { composeHint, digitsRegex, hasMarker } from '../../common/utils.js'
 // Generic covers comments, search (html).
 // Handler needed for: list.
 
-const scriptRegex = /^(.*)\/cgi-bin\/koha\/(opac-search|opac-shelves|opac-showreviews)\.pl$/i
+const domains = ['kohacatalog.com']
+
+// Every OPAC page is a script under /cgi-bin/koha/, as opac-main.pl or opac-detail.pl.
+const scriptRegex = /^(?<root>.*)\/cgi-bin\/koha\/(?<script>opac-[\w-]+)\.pl$/i
 
 // The feed link Koha prints drops the page's paging and sort for the newest acquisitions.
 const searchPageParams = ['count', 'format', 'offset', 'sort_by']
+
+// A search feed takes its query from the page, which no template holds, so resolve builds it by
+// hand. The list and comments feeds build through `{root}`, the install root with its base path.
+// The table claims a feed only on kohacatalog.com, since an install elsewhere is known by its
+// page markup, which a feed URL does not carry.
+const ownFeeds = definePlatformFeeds(
+  [
+    {
+      key: 'koha:search',
+      template: '{scheme}://{host}/cgi-bin/koha/opac-search.pl?format=rss',
+    },
+    {
+      key: 'koha:search',
+      template: '{scheme}://{host}/cgi-bin/koha/opac-search.pl?format=rss2',
+      isAlias: true,
+    },
+    {
+      key: 'koha:list',
+      template: '{root}/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber={shelfNumber}',
+    },
+    {
+      key: 'koha:comments',
+      template: '{root}/cgi-bin/koha/opac-showreviews.pl?format=rss',
+    },
+    { key: 'koha:news', template: '{root}/cgi-bin/koha/opac-news-rss.pl' },
+  ],
+  { domains },
+)
 
 export type KohaUrl =
   | { kind: 'search'; root: string; params: string }
   | { kind: 'list'; root: string; shelfNumber: string }
   | { kind: 'comments'; root: string }
+  | { kind: 'opac'; root: string }
 
 // Every OPAC theme loads its assets from the install's `/opac-tmpl/` directory.
 export const isKohaHtml = (content: string): boolean => {
@@ -23,20 +56,18 @@ export const isKohaHtml = (content: string): boolean => {
 
 export const parseKohaUrl = (url: string): KohaUrl | undefined => {
   const parsedUrl = parseUrl(url)
-  const [, root, script] = parsedUrl?.pathname.match(scriptRegex) ?? []
+  const { root, script } = parsedUrl?.pathname.match(scriptRegex)?.groups ?? {}
 
   if (!parsedUrl || root === undefined || !script) {
     return
   }
 
   const params = parsedUrl.searchParams
-  const page = script.toLowerCase()
+  if (isAnyOf(script, 'opac-search')) {
+    const terms = [...getQueryParamValues(params, 'q'), ...getQueryParamValues(params, 'limit')]
 
-  if (page === 'opac-search') {
-    const terms = [...getQueryParams(params, 'q'), ...getQueryParams(params, 'limit')]
-
-    if (!terms.some((term) => term.trim() !== '')) {
-      return
+    if (terms.length === 0) {
+      return { kind: 'opac', root }
     }
 
     const searchParams = new URLSearchParams()
@@ -50,17 +81,21 @@ export const parseKohaUrl = (url: string): KohaUrl | undefined => {
     return { kind: 'search', root, params: searchParams.toString() }
   }
 
-  if (page === 'opac-shelves') {
+  if (isAnyOf(script, 'opac-shelves')) {
     const shelfNumber = getQueryParam(params, 'shelfnumber')
 
     if (!shelfNumber || !digitsRegex.test(shelfNumber)) {
-      return
+      return { kind: 'opac', root }
     }
 
     return { kind: 'list', root, shelfNumber }
   }
 
-  return { kind: 'comments', root }
+  if (isAnyOf(script, 'opac-showreviews')) {
+    return { kind: 'comments', root }
+  }
+
+  return { kind: 'opac', root }
 }
 
 export const kohaHandler: PlatformHandler = {
@@ -74,17 +109,22 @@ export const kohaHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseKohaUrl(url)
+    const page = ownFeeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
     const { origin } = new URL(url)
-    const scriptsUrl = `${origin}${parsed.root}/cgi-bin/koha`
+    // The table drops one trailing slash from a root, so a root printed with a doubled slash, as
+    // `https://example.edu//cgi-bin/koha/`, keeps it.
+    const root = `${origin}${parsed.root}/`
 
+    // The library's news feed needs no value from the page, so every page builds it after its own
+    // feeds.
     if (parsed.kind === 'search') {
       // 50 is the default of numSearchRSSResults, the preference Koha prints as the feed's count.
-      const searchUrl = `${scriptsUrl}/opac-search.pl?${parsed.params}&count=50&sort_by=acqdate_dsc`
+      const searchUrl = `${origin}${parsed.root}/cgi-bin/koha/opac-search.pl?${parsed.params}&count=50&sort_by=acqdate_dsc`
 
       return [
         {
@@ -92,20 +132,26 @@ export const kohaHandler: PlatformHandler = {
           uri: [`${searchUrl}&format=rss`, `${searchUrl}&format=rss2`],
           hint: composeHint('koha:search'),
         },
+        page.getFeedEntry('koha:news', { root }),
       ]
     }
 
     if (parsed.kind === 'list') {
-      const params = composeQuery({ rss: '1', op: 'view', shelfnumber: parsed.shelfNumber })
-
-      return [{ uri: `${scriptsUrl}/opac-shelves.pl${params}`, hint: composeHint('koha:list') }]
+      return [
+        page.getFeedEntry('koha:list', { root, shelfNumber: parsed.shelfNumber }),
+        page.getFeedEntry('koha:news', { root }),
+      ]
     }
 
-    return [
-      {
-        uri: `${scriptsUrl}/opac-showreviews.pl?format=rss`,
-        hint: composeHint('koha:comments'),
-      },
-    ]
+    if (parsed.kind === 'comments') {
+      return [
+        page.getFeedEntry('koha:comments', { root }),
+        page.getFeedEntry('koha:news', { root }),
+      ]
+    }
+
+    return [page.getFeedEntry('koha:news', { root })]
   },
+
+  getFeedHint: ownFeeds.getFeedHint,
 }

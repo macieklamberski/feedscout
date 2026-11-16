@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   parseTravellerspointUrl,
   type TravellerspointUrl,
@@ -76,16 +78,83 @@ describe('travellerspointHandler', () => {
       expect(travellerspointHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the https feed for an http page', () => {
+    it('should keep the http scheme of an http page', () => {
       const value = 'http://alicetravels.travellerspoint.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alicetravels.travellerspoint.com/atom.xml',
+          uri: 'http://alicetravels.travellerspoint.com/atom.xml',
           hint: { key: 'travellerspoint:posts', label: 'Posts' },
         },
       ]
 
       expect(travellerspointHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a blog feed', () => {
+      const value = 'https://alicetravels.travellerspoint.com/atom.xml'
+      const expected: DiscoverUriHint = { key: 'travellerspoint:posts', label: 'Posts' }
+
+      expect(travellerspointHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a blog feed over http', () => {
+      const value = 'http://alicetravels.travellerspoint.com/atom.xml'
+      const expected: DiscoverUriHint = { key: 'travellerspoint:posts', label: 'Posts' }
+
+      expect(travellerspointHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for the rss.xml blog feed', () => {
+      const value = 'https://alicetravels.travellerspoint.com/rss.xml'
+      const expected: DiscoverUriHint = { key: 'travellerspoint:posts', label: 'Posts' }
+
+      expect(travellerspointHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://alicetravels.travellerspoint.com/426/'
+
+      expect(travellerspointHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the site host', () => {
+      const value = 'https://www.travellerspoint.com/atom.xml'
+
+      expect(travellerspointHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the apex domain', () => {
+      const value = 'https://travellerspoint.com/atom.xml'
+
+      expect(travellerspointHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://alicetravels.example.com/atom.xml'
+
+      expect(travellerspointHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const postsHint: DiscoverUriHint = { key: 'travellerspoint:posts', label: 'Posts' }
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://alicetravels.travellerspoint.com/atom.xml', postsHint],
+      ['http://alicetravels.travellerspoint.com/atom.xml', postsHint],
+      ['https://alicetravels.travellerspoint.com/rss.xml', postsHint],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [travellerspointHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

@@ -1,12 +1,7 @@
 import { parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  findElement,
-  getCookieNames,
-  hasMarker,
-  hasMetaContent,
-} from '../../common/utils.js'
+import { findElement, getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers listing (guess, html).
@@ -17,8 +12,17 @@ export type GravUrl = { kind: 'home' } | { kind: 'page'; path: string }
 const trailingSlashRegex = /\/$/
 const htmlSuffixRegex = /\.html$/i
 const paginationRegex = /\/page:\d+$/i
-const gravAssetRegex = /\/user\/(?:themes|plugins)\//
+const gravAssetRegex = /\/user\/(?:themes|plugins)\//i
 const gravCookieRegex = /^grav-site-[0-9a-f]+$/
+
+// A site is self-hosted on any domain, so the table only builds its feeds. The site root has no
+// path to suffix, so its feed is `/.rss`.
+const feeds = definePlatformFeeds([
+  { key: 'grav:page', template: '{root}/{path*}.rss', format: 'rss' },
+  { key: 'grav:page', template: '{root}/.rss', format: 'rss' },
+  { key: 'grav:page', template: '{root}/{path*}.atom', format: 'atom' },
+  { key: 'grav:page', template: '{root}/.atom', format: 'atom' },
+])
 
 // `GravCMS` in full, since the value is compared as a prefix and `Grav` matches `Gravity Forms`.
 export const isGravHtml = (content: string): boolean => {
@@ -77,18 +81,17 @@ export const gravHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseGravUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
-    // The site root has no path to suffix, so its feed is `/.rss`.
-    const pagePath = parsed.kind === 'home' ? `${origin}/` : `${origin}${parsed.path}`
+    const path = parsed.kind === 'page' ? parsed.path.slice(1) : undefined
 
     return [
-      { uri: `${pagePath}.rss`, hint: composeHint('grav:page', 'rss') },
-      { uri: `${pagePath}.atom`, hint: composeHint('grav:page', 'atom') },
+      page.getFeedEntry('grav:page', { path }, 'rss'),
+      page.getFeedEntry('grav:page', { path }, 'atom'),
     ]
   },
 }

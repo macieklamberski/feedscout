@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home, profile (guess, html), partly covers latest.
@@ -13,10 +13,21 @@ export type DevtoUrl =
   | { kind: 'home' }
 
 const hosts = ['dev.to', 'www.dev.to']
+
 // An article lives under its author's name, a user or an organization: /{name}/{slug}.
 const ownerRegex = /^\/([a-zA-Z0-9_-]+)(?:\/|$)/i
 const tagRegex = /^\/t\/([^/]+)/i
 const latestRegex = /^\/latest\/?$/i
+
+// `/feed/latest` reads before `/feed/{owner}`, so a user named latest reads as the latest feed.
+// `/rss` serves the same channel as `/feed`, which the page links, so its row only claims.
+const feeds = definePlatformFeeds([
+  { key: 'devto:community', template: 'https://dev.to/feed' },
+  { key: 'devto:community', template: 'https://dev.to/rss', isAlias: true },
+  { key: 'devto:latest', template: 'https://dev.to/feed/latest' },
+  { key: 'devto:tag', template: 'https://dev.to/feed/tag/{tag}' },
+  { key: 'devto:posts', template: 'https://dev.to/feed/{owner}' },
+])
 
 export const parseDevtoUrl = (url: string): DevtoUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -62,21 +73,30 @@ export const devtoHandler: PlatformHandler = {
       return []
     }
 
+    // The community and latest feeds need no value from the page, so every page builds them after
+    // its own feeds.
     if (parsed.kind === 'home') {
-      return [{ uri: 'https://dev.to/feed', hint: composeHint('devto:community') }]
+      return [feeds.getFeedEntry('devto:community'), feeds.getFeedEntry('devto:latest')]
     }
 
     if (parsed.kind === 'latest') {
-      return [
-        { uri: 'https://dev.to/feed/latest', hint: composeHint('devto:latest') },
-        { uri: 'https://dev.to/feed', hint: composeHint('devto:community') },
-      ]
+      return [feeds.getFeedEntry('devto:latest'), feeds.getFeedEntry('devto:community')]
     }
 
     if (parsed.kind === 'tag') {
-      return [{ uri: `https://dev.to/feed/tag/${parsed.tag}`, hint: composeHint('devto:tag') }]
+      return [
+        feeds.getFeedEntry('devto:tag', { tag: parsed.tag }),
+        feeds.getFeedEntry('devto:community'),
+        feeds.getFeedEntry('devto:latest'),
+      ]
     }
 
-    return [{ uri: `https://dev.to/feed/${parsed.owner}`, hint: composeHint('devto:posts') }]
+    return [
+      feeds.getFeedEntry('devto:posts', { owner: parsed.owner }),
+      feeds.getFeedEntry('devto:community'),
+      feeds.getFeedEntry('devto:latest'),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

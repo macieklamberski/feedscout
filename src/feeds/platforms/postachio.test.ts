@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type PostachioUrl, parsePostachioUrl, postachioHandler } from './postachio.js'
 
 describe('parsePostachioUrl', () => {
@@ -64,7 +66,7 @@ describe('postachioHandler', () => {
     })
 
     it('should return posts feed for site', () => {
-      const value = 'http://alice.postach.io/post/some-post'
+      const value = 'https://alice.postach.io/post/some-post'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://alice.postach.io/feed.xml',
@@ -73,6 +75,90 @@ describe('postachioHandler', () => {
       ]
 
       expect(postachioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the posts feed under the page scheme for an http site', () => {
+      const value = 'http://alice.postach.io/post/some-post'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://alice.postach.io/feed.xml',
+          hint: { key: 'postachio:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(postachioHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a posts feed', () => {
+      const value = 'https://alice.postach.io/feed.xml'
+      const expected: DiscoverUriHint = { key: 'postachio:posts', label: 'Posts' }
+
+      expect(postachioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for a posts feed over http', () => {
+      const value = 'http://alice.postach.io/feed.xml'
+      const expected: DiscoverUriHint = { key: 'postachio:posts', label: 'Posts' }
+
+      expect(postachioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the posts hint for the extensionless posts feed', () => {
+      const value = 'https://alice.postach.io/feed'
+      const expected: DiscoverUriHint = { key: 'postachio:posts', label: 'Posts' }
+
+      expect(postachioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a site page', () => {
+      const value = 'https://alice.postach.io/'
+
+      expect(postachioHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a post page', () => {
+      const value = 'https://alice.postach.io/post/some-post'
+
+      expect(postachioHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://blog.alice.postach.io/feed.xml'
+
+      expect(postachioHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://postach.io/feed.xml'
+
+      expect(postachioHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/feed.xml'
+
+      expect(postachioHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://alice.postach.io/feed.xml', { key: 'postachio:posts', label: 'Posts' }],
+      ['http://alice.postach.io/feed.xml', { key: 'postachio:posts', label: 'Posts' }],
+      ['https://alice.postach.io/feed', { key: 'postachio:posts', label: 'Posts' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [postachioHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

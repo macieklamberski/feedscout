@@ -513,7 +513,10 @@ describe('handleCloseTag', () => {
     value.currentAnchor.text = 'RSS Feed'
 
     handleCloseTag(value, 'a')
-    const expected = { href: '', text: '' }
+    const expected = {
+      href: '',
+      text: '',
+    }
 
     expect(value.currentAnchor).toEqual(expected)
   })
@@ -524,7 +527,10 @@ describe('handleCloseTag', () => {
     value.currentAnchor.text = 'RSS Feed'
 
     handleCloseTag(value, 'div')
-    const expected = { href: '/custom-feed', text: 'RSS Feed' }
+    const expected = {
+      href: '/custom-feed',
+      text: 'RSS Feed',
+    }
 
     expect(value.currentAnchor).toEqual(expected)
   })

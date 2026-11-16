@@ -1,6 +1,7 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, isRegion, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -13,20 +14,24 @@ export type PinterestUrl =
 export const hosts = ['pinterest.com', 'www.pinterest.com']
 const domains = ['pinterest.com']
 
-// A country site such as pinterest.co.uk redirects to its label on pinterest.com, uk.pinterest.com,
-// which serves the same profiles and boards.
-// length: keeps service hosts such as help out
-const countryLabelRegex = /^[a-z]{2}$/
-
 // Profile tabs of a user, which name the user, not a board.
 const userSubpaths = ['pins', 'boards', '_saved', '_created', 'followers', 'following']
 
-const isPinterestHost = (parsedUrl: URL): boolean => {
-  if (isHostOf(parsedUrl, hosts)) {
-    return true
-  }
+const feeds = definePlatformFeeds(
+  [
+    // Before the board rows, so a pins feed never reads as a board named feed.
+    { key: 'pinterest:pins', template: 'https://www.pinterest.com/{username}/feed.rss' },
+    { key: 'pinterest:pins', template: '{scheme}://{host}/{username}/feed.rss', isAlias: true },
+    { key: 'pinterest:board', template: 'https://www.pinterest.com/{username}/{board}.rss' },
+    { key: 'pinterest:board', template: '{scheme}://{host}/{username}/{board}.rss', isAlias: true },
+  ],
+  { hosts, domains },
+)
 
-  return countryLabelRegex.test(getTenantSubdomain(parsedUrl, domains) ?? '')
+// A country site such as pinterest.co.uk redirects to its label on pinterest.com, uk.pinterest.com,
+// which serves the same profiles and boards.
+const isPinterestHost = (parsedUrl: URL): boolean => {
+  return isHostOf(parsedUrl, hosts) || isRegion(getTenantSubdomain(parsedUrl, domains) ?? '')
 }
 
 export const parsePinterestUrl = (url: string): PinterestUrl | undefined => {
@@ -67,19 +72,21 @@ export const pinterestHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'board') {
-      return [
-        {
-          uri: `https://www.pinterest.com/${parsed.username}/${parsed.board}.rss`,
-          hint: composeHint('pinterest:board'),
-        },
-      ]
+      const params = { username: parsed.username, board: parsed.board }
+
+      return [feeds.getFeedEntry('pinterest:board', params)]
     }
 
-    return [
-      {
-        uri: `https://www.pinterest.com/${parsed.username}/feed.rss`,
-        hint: composeHint('pinterest:pins'),
-      },
-    ]
+    return [feeds.getFeedEntry('pinterest:pins', { username: parsed.username })]
+  },
+
+  getFeedHint: (url) => {
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl || !isPinterestHost(parsedUrl)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }

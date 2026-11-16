@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, findElements, hasMarker } from '../../common/utils.js'
@@ -7,8 +7,7 @@ import { composeHint, findElement, findElements, hasMarker } from '../../common/
 
 export type PlacementIndiaPage = { feedUrl: string; jobOpeningFeedUrl?: string }
 
-const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//
-const vacanciesFeedPathRegex = /^\/vacancy\.rss$/i
+const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//i
 const jobOpeningFeedPathRegex = /^\/vacancy_\d+\.rss$/i
 
 // Every Weblink.In catalog site loads its template stylesheet from the shared asset host.
@@ -34,26 +33,26 @@ const getPlacementIndiaPage = (
     return
   }
 
-  const { host } = new URL(url)
+  const { hostname } = new URL(url)
   const anchors = findElements(content, (element) => element.name === 'a')
   let feedUrl: string | undefined
   let jobOpeningFeedUrl: string | undefined
 
   for (const anchor of anchors) {
-    const target = parseUrl(anchor.attribs.href ?? '', url)
+    const target = parseUrl(anchor.attribs.href, url)
 
-    if (target?.host !== host) {
+    if (!target || !isHostOf(target, hostname)) {
       continue
     }
 
-    if (vacanciesFeedPathRegex.test(target.pathname)) {
-      feedUrl ??= target.href
+    if (isAnyOf(target.pathname, '/vacancy.rss') && feedUrl === undefined) {
+      feedUrl = target.href
     }
 
     // A `/vacancy_{id}.rss` with an id no opening has answers a blank HTML page, so the id comes
     // only from the job page's own link.
-    if (jobOpeningFeedPathRegex.test(target.pathname)) {
-      jobOpeningFeedUrl ??= target.href
+    if (jobOpeningFeedPathRegex.test(target.pathname) && jobOpeningFeedUrl === undefined) {
+      jobOpeningFeedUrl = target.href
     }
   }
 

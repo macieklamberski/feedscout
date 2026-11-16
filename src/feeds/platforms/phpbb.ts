@@ -1,11 +1,10 @@
-import { composeQuery, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getQueryParam, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
-  composeHint,
+  digitsRegex,
   findElement,
   getCookieNames,
-  getNumericId,
   getScriptDirectory,
   hasElementWithId,
   hasMarker,
@@ -17,8 +16,18 @@ import { isForumotionHtml } from './forumotion.js'
 
 export type PhpbbPage = { boardUrl: string; forumId?: string; topicId?: string }
 
-const forumIdRegex = /[?&]f=(?<id>[^&#]+)/i
-const topicIdRegex = /[?&]t=(?<id>[^&#]+)/i
+// A board is known only by its markup and cookies, so its feeds are built under the board root and
+// claimed on no host. Each board-wide feed is an administrator toggle, so a board serves any subset
+// of them.
+const feeds = definePlatformFeeds([
+  { key: 'phpbb:topic', template: '{root}/feed.php?t={topicId}' },
+  { key: 'phpbb:forum', template: '{root}/feed.php?f={forumId}' },
+  { key: 'phpbb:site', template: '{root}/feed.php' },
+  { key: 'phpbb:news', template: '{root}/feed.php?mode=news' },
+  { key: 'phpbb:new-topics', template: '{root}/feed.php?mode=topics' },
+  { key: 'phpbb:active-topics', template: '{root}/feed.php?mode=topics_active' },
+  { key: 'phpbb:forums', template: '{root}/feed.php?mode=forums' },
+])
 
 // Forumotion's phpBB3 template prints the same body id and serves none of phpBB's feeds.
 export const isPhpbbHtml = (content: string): boolean => {
@@ -40,6 +49,17 @@ export const isPhpbbHeaders = (headers: Headers): boolean => {
   })
 }
 
+const getNumericParam = (
+  searchParams: URLSearchParams | undefined,
+  name: string,
+): string | undefined => {
+  const value = getQueryParam(searchParams, name)
+
+  if (value && digitsRegex.test(value)) {
+    return value
+  }
+}
+
 const getPhpbbPage = (url: string, content: string | undefined): PhpbbPage | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -47,18 +67,18 @@ const getPhpbbPage = (url: string, content: string | undefined): PhpbbPage | und
     return
   }
 
-  const { origin, pathname, search } = parsedUrl
+  const { origin, pathname, searchParams } = parsedUrl
   // A post link, `viewtopic.php?p={id}`, names no topic, and the page's canonical link does.
   const canonicalLink = findElement(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'canonical'
   })
+  const canonicalUrl = parseUrl(canonicalLink?.attribs.href, url)
 
   return {
     // A board is routinely mounted under a sub-path such as `/community`.
     boardUrl: `${origin}${getScriptDirectory(pathname)}`,
-    forumId: getNumericId(search, forumIdRegex),
-    topicId:
-      getNumericId(search, topicIdRegex) ?? getNumericId(canonicalLink?.attribs.href, topicIdRegex),
+    forumId: getNumericParam(searchParams, 'f'),
+    topicId: getNumericParam(searchParams, 't') ?? getNumericParam(canonicalUrl?.searchParams, 't'),
   }
 }
 
@@ -69,37 +89,22 @@ export const phpbbHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getPhpbbPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { boardUrl, forumId, topicId } = page
-    const uris: Array<DiscoverUriEntry> = []
+    const { boardUrl: root, forumId, topicId } = page
 
-    if (topicId) {
-      uris.push({
-        uri: `${boardUrl}/feed.php${composeQuery({ t: topicId })}`,
-        hint: composeHint('phpbb:topic'),
-      })
-    }
-
-    if (forumId) {
-      uris.push({
-        uri: `${boardUrl}/feed.php${composeQuery({ f: forumId })}`,
-        hint: composeHint('phpbb:forum'),
-      })
-    }
-
-    // Each board-wide feed is an administrator toggle, so a board serves any subset of them.
-    uris.push(
-      { uri: `${boardUrl}/feed.php`, hint: composeHint('phpbb:site') },
-      { uri: `${boardUrl}/feed.php?mode=news`, hint: composeHint('phpbb:news') },
-      { uri: `${boardUrl}/feed.php?mode=topics`, hint: composeHint('phpbb:new-topics') },
-      { uri: `${boardUrl}/feed.php?mode=topics_active`, hint: composeHint('phpbb:active-topics') },
-      { uri: `${boardUrl}/feed.php?mode=forums`, hint: composeHint('phpbb:forums') },
-    )
-
-    return uris
+    return [
+      ...(topicId ? [pageFeeds.getFeedEntry('phpbb:topic', { root, topicId })] : []),
+      ...(forumId ? [pageFeeds.getFeedEntry('phpbb:forum', { root, forumId })] : []),
+      pageFeeds.getFeedEntry('phpbb:site', { root }),
+      pageFeeds.getFeedEntry('phpbb:news', { root }),
+      pageFeeds.getFeedEntry('phpbb:new-topics', { root }),
+      pageFeeds.getFeedEntry('phpbb:active-topics', { root }),
+      pageFeeds.getFeedEntry('phpbb:forums', { root }),
+    ]
   },
 }

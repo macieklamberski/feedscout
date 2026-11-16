@@ -1,11 +1,16 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type CanalblogUrl = { kind: 'blog' }
 
 const domains = ['canalblog.com']
+
+const feeds = definePlatformFeeds([{ key: 'canalblog:posts', template: '{scheme}://{host}/rss' }], {
+  domains,
+})
 
 export const parseCanalblogUrl = (url: string): CanalblogUrl | undefined => {
   // A nested subdomain like a.b.canalblog.com fails TLS, since the certificate covers one label.
@@ -23,13 +28,14 @@ export const canalblogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseCanalblogUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
-
-    return [{ uri: `${origin}/rss`, hint: composeHint('canalblog:posts') }]
+    return [page.getFeedEntry('canalblog:posts')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

@@ -1,11 +1,7 @@
-import { encodePathSegment, getPathSegments, isAnyOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  findElements,
-  formatSuffixRegex,
-  getTenantSubdomain,
-} from '../../common/utils.js'
+import { findElements, formatSuffixRegex, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -18,6 +14,11 @@ const domains = ['weebly.com']
 // other dot marks a file, such as `/favicon.ico`.
 const pageLinkRegex = /^\/([^/.]+)(?:\.html)?$/i
 
+const feeds = definePlatformFeeds(
+  [{ key: 'weebly:blog', template: '{scheme}://{host}/{page}/feed' }],
+  { domains },
+)
+
 export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
     return
@@ -26,14 +27,15 @@ export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
   // A blog sits under its page slug, such as /articles/feed, or under a numeric blog id, such as
   // /1/feed. A page address ends in `.html`, which redirects to the bare slug the blog feed sits
   // under.
-  const first = getPathSegments(url)[0]?.replace(formatSuffixRegex, '')
+  const [pageSegment] = getPathSegments(url)
+  const routeOrPage = pageSegment?.replace(formatSuffixRegex, '')
 
-  if (!first) {
+  if (!routeOrPage) {
     return { kind: 'home' }
   }
 
-  if (!isAnyOf(first, 'blog')) {
-    return { kind: 'blog', page: first }
+  if (!isAnyOf(routeOrPage, 'blog')) {
+    return { kind: 'blog', page: routeOrPage }
   }
 
   return { kind: 'blog' }
@@ -54,9 +56,9 @@ export const getWeeblyPage = (url: string, content: string | undefined): WeeblyP
   const anchors = content ? findElements(content, (element) => element.name === 'a') : []
 
   for (const anchor of anchors) {
-    const target = parseUrl(anchor.attribs.href ?? '', url)
+    const target = parseUrl(anchor.attribs.href, url)
 
-    if (target?.hostname !== hostname) {
+    if (!target || !isHostOf(target, hostname)) {
       continue
     }
 
@@ -77,27 +79,16 @@ export const weeblyHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getWeeblyPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
+    const slugs = page.kind === 'home' ? page.pages : [page.page ?? 'blog']
 
-    if (page.kind === 'home') {
-      return page.pages.map((slug) => {
-        return {
-          uri: `${origin}/${encodePathSegment(slug)}/feed`,
-          hint: composeHint('weebly:blog'),
-        }
-      })
-    }
-
-    return [
-      {
-        uri: `${origin}/${encodePathSegment(page.page ?? 'blog')}/feed`,
-        hint: composeHint('weebly:blog'),
-      },
-    ]
+    return slugs.map((slug) => pageFeeds.getFeedEntry('weebly:blog', { page: slug }))
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

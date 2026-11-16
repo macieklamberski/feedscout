@@ -1,6 +1,7 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { isHostOf, isLocale, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, wordOrHyphenRegex } from '../../common/utils.js'
+import { wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -13,6 +14,7 @@ export type DailymotionUrl =
   | { kind: 'trending' }
 
 const hosts = ['dailymotion.com', 'www.dailymotion.com']
+
 // The older /user/{name} address still serves the same page.
 // length: keeps a two-letter country home page out, as /fr serves the site-wide feed
 const userRegex = /^\/(?:user\/)?([a-zA-Z0-9_-]{3,})\/?$/i
@@ -20,6 +22,34 @@ const playlistRegex = /^\/playlist\/(?<playlistId>[^/]+)/i
 const channelRegex = /^\/channel\/(?<channel>[^/]+)/i
 const searchRegex = /^\/search\/([^/]+)/i
 const trendingRegex = /^\/(?:trending\/?)?$/i
+const searchLanguageRegex = /^\/rss\/[^/]+\/lang\/([^/]+)\/search\//i
+
+// `/rss/trending` reads before `/rss/{username}`, so a user named trending gets that feed.
+const feeds = definePlatformFeeds([
+  { key: 'dailymotion:trending', template: 'https://www.dailymotion.com/rss/trending' },
+  { key: 'dailymotion:playlist', template: 'https://www.dailymotion.com/rss/playlist/{id}' },
+  { key: 'dailymotion:search', template: 'https://www.dailymotion.com/rss/search/{query}' },
+  { key: 'dailymotion:channel', template: 'https://www.dailymotion.com/rss/channel/{channel}' },
+  { key: 'dailymotion:videos', template: 'https://www.dailymotion.com/rss/{username}' },
+  {
+    key: 'dailymotion:videos',
+    template: 'https://www.dailymotion.com/rss/user/{username}',
+    isAlias: true,
+  },
+  // The legacy routes take a page number, and the first page serves the same videos as the feed
+  // without one. A search there also names its sort and language.
+  {
+    key: 'dailymotion:videos',
+    template: 'https://www.dailymotion.com/rss/user/{username}/{page}',
+  },
+  { key: 'dailymotion:playlist', template: 'https://www.dailymotion.com/rss/playlist/{id}/{page}' },
+  {
+    key: 'dailymotion:search',
+    template: 'https://www.dailymotion.com/rss/{sort}/lang/{language}/search/{query}/{page}',
+  },
+  // A group feed, which no page links since groups left the site.
+  { key: 'dailymotion:group', template: 'https://www.dailymotion.com/rss/group/{id}/{page}' },
+])
 
 export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -35,8 +65,8 @@ export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => 
     return { kind: 'trending' }
   }
 
-  // A share url appends a `_title-slug` to the id, which the feed and the api ignore.
-  const playlistId = pathname.match(playlistRegex)?.groups?.playlistId?.split('_')[0]
+  // A share url appends a `_title-slug` to the id, and the feed answers with it as well.
+  const playlistId = pathname.match(playlistRegex)?.groups?.playlistId
 
   if (playlistId && wordOrHyphenRegex.test(playlistId)) {
     return { kind: 'playlist', playlistId }
@@ -76,47 +106,45 @@ export const dailymotionHandler: PlatformHandler = {
       return []
     }
 
+    // The trending feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'trending') {
-      return [
-        {
-          uri: 'https://www.dailymotion.com/rss/trending',
-          hint: composeHint('dailymotion:trending'),
-        },
-      ]
+      return [feeds.getFeedEntry('dailymotion:trending')]
     }
 
     if (parsed.kind === 'playlist') {
       return [
-        {
-          uri: `https://www.dailymotion.com/rss/playlist/${parsed.playlistId}`,
-          hint: composeHint('dailymotion:playlist'),
-        },
+        feeds.getFeedEntry('dailymotion:playlist', { id: parsed.playlistId }),
+        feeds.getFeedEntry('dailymotion:trending'),
       ]
     }
 
     if (parsed.kind === 'search') {
       return [
-        {
-          uri: `https://www.dailymotion.com/rss/search/${parsed.query}`,
-          hint: composeHint('dailymotion:search'),
-        },
+        feeds.getFeedEntry('dailymotion:search', { query: parsed.query }),
+        feeds.getFeedEntry('dailymotion:trending'),
       ]
     }
 
     if (parsed.kind === 'channel') {
       return [
-        {
-          uri: `https://www.dailymotion.com/rss/channel/${parsed.channel}`,
-          hint: composeHint('dailymotion:channel'),
-        },
+        feeds.getFeedEntry('dailymotion:channel', { channel: parsed.channel }),
+        feeds.getFeedEntry('dailymotion:trending'),
       ]
     }
 
     return [
-      {
-        uri: `https://www.dailymotion.com/rss/${parsed.username}`,
-        hint: composeHint('dailymotion:videos'),
-      },
+      feeds.getFeedEntry('dailymotion:videos', { username: parsed.username }),
+      feeds.getFeedEntry('dailymotion:trending'),
     ]
+  },
+
+  getFeedHint: (url) => {
+    const language = parseUrl(url)?.pathname.match(searchLanguageRegex)?.[1]
+
+    if (language && !isLocale(language)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }

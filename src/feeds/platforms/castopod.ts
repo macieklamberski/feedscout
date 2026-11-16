@@ -1,6 +1,7 @@
-import { decodeSegment, getPathSegments, parseUrl } from 'trousse'
+import { decodeSegment, getOrigin, getPathSegments, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, isRootOfPage } from '../../common/utils.js'
+import { findElement, isRootOfPage } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,6 +9,12 @@ export type CastopodPage = { rootUrl: string; handle: string }
 
 const colorsPathRegex = /\/themes\/colors$/i
 const handleRegex = /^@(\w+)$/
+
+// An install runs on its own domain, under the root its stylesheet names, and is known only by its
+// marker, so its feed is built here but not claimed.
+const feeds = definePlatformFeeds([
+  { key: 'castopod:podcast', template: '{root}/@{handle}/feed.xml' },
+])
 
 // Core prints the theme colors stylesheet in every page head, at the install's root. Every page
 // under `/@{handle}` belongs to that podcast, and a remote actor's `@user@domain` has no feed here.
@@ -17,19 +24,20 @@ const getCastopodPage = (url: string, content: string | undefined): CastopodPage
   })
 
   const linkUrl = link?.attribs.href ? parseUrl(link.attribs.href, url) : undefined
+  const linkOrigin = getOrigin(linkUrl)
 
-  if (!linkUrl) {
+  if (!linkUrl || !linkOrigin) {
     return
   }
 
   const rootPath = linkUrl.pathname.replace(colorsPathRegex, '')
 
-  if (!isRootOfPage(`${linkUrl.origin}${rootPath}`, url)) {
+  if (!isRootOfPage(`${linkOrigin}${rootPath}`, url)) {
     return
   }
 
   const rootUrl = `${new URL(url).origin}${rootPath}`
-  const handleSegment = getPathSegments(url)[getPathSegments(rootUrl).length]
+  const [handleSegment] = getPathSegments(url).slice(getPathSegments(rootUrl).length)
   const handle = decodeSegment(handleSegment)?.match(handleRegex)?.[1]
 
   if (!handle) {
@@ -51,8 +59,6 @@ export const castopodHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      { uri: `${page.rootUrl}/@${page.handle}/feed.xml`, hint: composeHint('castopod:podcast') },
-    ]
+    return [feeds.getFeedEntry('castopod:podcast', { root: page.rootUrl, handle: page.handle })]
   },
 }

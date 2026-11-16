@@ -1,8 +1,6 @@
-import { composeQuery } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
-  composeHint,
   getMetaContent,
   getTenantSubdomain,
   hasMarker,
@@ -17,10 +15,28 @@ const domains = ['atlassian.net']
 // Data Center installs sit under a context path such as `/jira`, so none of
 // these can anchor at the start of the pathname.
 const issueRegex = /\/browse\/([A-Za-z][A-Za-z0-9_]+)-\d+/i
+const issueKeyRegex = /\/browse\/([A-Za-z][A-Za-z0-9_]+-\d+)/i
 const projectRegex = /\/projects\/([A-Za-z][A-Za-z0-9_]+)(?:\/(?!repos\b)|$)/i
 const jiraPathRegex = /\/(?:jira|secure|issues)(?:\/|$)/i
 const trailingSlashRegex = /\/$/
 const confluencePathRegex = /^\/wiki(?:\/|$)/i
+
+// A Data Center install runs on its own host, under a root its page names.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'jira:project', template: '{root}/activity?key={key}' },
+    { key: 'jira:project', template: '{root}/plugins/servlet/streams?key={key}', isAlias: true },
+    { key: 'jira:site', template: '{root}/activity' },
+    { key: 'jira:site', template: '{root}/plugins/servlet/streams', isAlias: true },
+    // An issue's XML view is an RSS document of that one issue.
+    {
+      key: 'jira:issue',
+      template: '{root}/si/jira.issueviews:issue-xml/{issue}/{issue}.xml',
+      format: 'rss',
+    },
+  ],
+  { domains },
+)
 
 const isCloudHost = (url: string): boolean => {
   return getTenantSubdomain(url, domains) !== undefined
@@ -38,7 +54,12 @@ export const isJiraHtml = (content: string): boolean => {
   )
 }
 
-export type JiraPage = { baseUrl: string; projectKey?: string }
+export type JiraPage = {
+  baseUrl: string
+  tenant?: string
+  projectKey?: string
+  issueKey?: string
+}
 
 const getJiraPage = (url: string, content: string | undefined): JiraPage | undefined => {
   const { origin, pathname } = new URL(url)
@@ -52,7 +73,9 @@ const getJiraPage = (url: string, content: string | undefined): JiraPage | undef
 
   return {
     baseUrl: `${origin}${contextPath}`.replace(trailingSlashRegex, ''),
+    tenant: getTenantSubdomain(url, domains),
     projectKey: pathKey ?? getMetaContent(content ?? '', 'ajs-project-key'),
+    issueKey: pathname.match(issueKeyRegex)?.[1],
   }
 }
 
@@ -76,27 +99,33 @@ export const jiraHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const page = getJiraPage(url, content)
+    const jiraPage = getJiraPage(url, content)
+    const page = feeds.forUrl(url)
 
-    if (!page) {
+    if (!jiraPage || !page) {
       return []
     }
 
-    const { baseUrl, projectKey } = page
-    const uris: Array<DiscoverUriEntry> = []
-
-    if (projectKey) {
-      uris.push({
-        uri: `${baseUrl}/plugins/servlet/streams${composeQuery({ key: projectKey })}`,
-        hint: composeHint('jira:project'),
-      })
+    const { baseUrl, tenant, projectKey, issueKey } = jiraPage
+    // A cloud site serves from its origin.
+    const root = tenant ? undefined : baseUrl
+    if (issueKey) {
+      return [
+        page.getFeedEntry('jira:issue', { root, issue: issueKey }, 'rss'),
+        page.getFeedEntry('jira:project', { root, key: projectKey }),
+        page.getFeedEntry('jira:site', { root }),
+      ]
     }
 
-    uris.push({
-      uri: `${baseUrl}/plugins/servlet/streams`,
-      hint: composeHint('jira:site'),
-    })
+    if (projectKey) {
+      return [
+        page.getFeedEntry('jira:project', { root, key: projectKey }),
+        page.getFeedEntry('jira:site', { root }),
+      ]
+    }
 
-    return uris
+    return [page.getFeedEntry('jira:site', { root })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
