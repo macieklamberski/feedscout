@@ -3499,6 +3499,17 @@ Discovers the feeds of a user blog on Aladin, `blog.aladin.co.kr/{user}`. A cate
 
 <sup>†</sup> *Found only by the Platform method.*
 
+### Bangumi
+
+Discovers the collections and timeline feeds of a Bangumi user on `bgm.tv` or `bangumi.tv`, plus the site blog feed. A `chii.in` page gets the `bgm.tv` feeds, since `chii.in` answers a plain fetch of its feeds with a Cloudflare challenge.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `bgm.tv/user/{user}` | Collections · timeline<sup>†</sup> (RSS) |
+| Any other page | Blog (RSS) |
+
+<sup>†</sup> *Found only by the Platform method.*
+
 ### Bing
 
 Discovers the feed of a Bing web or news search. The news search page links no feed. `cn.bing.com` is matched too, unverified, since it redirects to `www.bing.com` outside China.
@@ -3570,6 +3581,7 @@ import {
   audioboomHandler,
   aushaHandler,
   b2evolutionHandler,
+  bangumiHandler,
   bearblogHandler,
   behanceHandler,
   bigCartelHandler,

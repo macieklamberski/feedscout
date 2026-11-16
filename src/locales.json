@@ -950,6 +950,9 @@
     "ojs:articles": "Articles",
     "aladin:posts": "Posts",
     "aladin:category": "Category",
+    "bangumi:collections": "Collections",
+    "bangumi:timeline": "Timeline",
+    "bangumi:blog": "Blog",
     "bing:search": "Search",
     "bing:news": "News search"
   }
