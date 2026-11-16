@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import type { BingUrl } from './bing.js'
 import { bingHandler, parseBingUrl } from './bing.js'
 
@@ -72,7 +73,7 @@ describe('bingHandler', () => {
 
     it('should return the search feed for a search page', () => {
       const value = 'https://www.bing.com/search?q=feedscout&form=QBLH'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.bing.com/search?q=feedscout&format=rss',
           hint: { key: 'bing:search', label: 'Search' },
@@ -84,7 +85,7 @@ describe('bingHandler', () => {
 
     it('should write the query of a search page as a query value', () => {
       const value = 'https://www.bing.com/search?q=site%3Agithub.io+c%2B%2B'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.bing.com/search?q=site:github.io%20c%2B%2B&format=rss',
           hint: { key: 'bing:search', label: 'Search' },
@@ -96,7 +97,7 @@ describe('bingHandler', () => {
 
     it('should return the news search feed for a news search page', () => {
       const value = 'https://www.bing.com/news/search?q=rss&FORM=HDRSC6'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.bing.com/news/search?q=rss&format=rss',
           hint: { key: 'bing:news', label: 'News search' },
@@ -108,7 +109,7 @@ describe('bingHandler', () => {
 
     it('should keep the cn.bing.com host', () => {
       const value = 'https://cn.bing.com/news/search?q=rss'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://cn.bing.com/news/search?q=rss&format=rss',
           hint: { key: 'bing:news', label: 'News search' },
@@ -116,6 +117,26 @@ describe('bingHandler', () => {
       ]
 
       expect(bingHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the search hint for a search feed', () => {
+      const value = 'https://www.bing.com/search?q=rss&format=rss'
+      const expected: DiscoverUriHint = { key: 'bing:search', label: 'Search' }
+
+      expect(bingHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the news hint for a news search feed', () => {
+      const value = 'https://www.bing.com/news/search?q=rss&format=rss'
+      const expected: DiscoverUriHint = { key: 'bing:news', label: 'News search' }
+
+      expect(bingHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a search page', () => {
+      expect(bingHandler.getFeedHint?.('https://www.bing.com/search?q=rss')).toBeUndefined()
     })
   })
 })

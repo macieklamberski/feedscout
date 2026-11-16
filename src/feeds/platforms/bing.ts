@@ -1,6 +1,6 @@
-import { composeQuery, getQueryParam, isHostOf, parseUrl } from 'trousse'
+import { getQueryParam, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers search (html).
@@ -13,6 +13,15 @@ const hosts = ['bing.com', 'cn.bing.com', 'www.bing.com']
 
 const searchRegex = /^\/search\/?$/i
 const newsRegex = /^\/news\/search\/?$/i
+
+// Web and news search answer with RSS when `format=rss` is set.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'bing:search', template: '{scheme}://{host}/search?q={query}&format=rss' },
+    { key: 'bing:news', template: '{scheme}://{host}/news/search?q={query}&format=rss' },
+  ],
+  { hosts },
+)
 
 export const parseBingUrl = (url: string): BingUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -45,19 +54,18 @@ export const bingHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseBingUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
-    // Web and news search answer with RSS when `format=rss` is set.
-    const query = composeQuery({ q: parsed.query, format: 'rss' })
-
     if (parsed.kind === 'news') {
-      return [{ uri: `${origin}/news/search${query}`, hint: composeHint('bing:news') }]
+      return [pageFeeds.getFeedEntry('bing:news', { query: parsed.query })]
     }
 
-    return [{ uri: `${origin}/search${query}`, hint: composeHint('bing:search') }]
+    return [pageFeeds.getFeedEntry('bing:search', { query: parsed.query })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
