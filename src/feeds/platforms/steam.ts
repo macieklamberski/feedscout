@@ -1,7 +1,7 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { steam } from 'feedintel'
+import { isHostOf, parseUrl } from 'trousse'
+import { withHintLabel, withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -25,58 +25,7 @@ const collectionRegex = /^\/news\/collection\/([^/]+)/i
 // The store front links to `/newshub/`, which redirects to `/news/`.
 const newsRegex = /^\/news(?:hub)?(?:\/|$)/i
 
-// The app page links /feeds/news/app/{id}/. The news hub path and a trailing name serve the same
-// feed, for an app, a group and a collection alike. The community /games/{id}/rss carries the
-// same announcements under its own guids.
-const feeds = definePlatformFeeds([
-  { key: 'steam:news', template: 'https://store.steampowered.com/feeds/news/app/{appId}/' },
-  {
-    key: 'steam:news',
-    template: 'https://store.steampowered.com/feeds/news/app/{appId}/{appName}',
-    isAlias: true,
-  },
-  {
-    key: 'steam:news',
-    template: 'https://store.steampowered.com/feeds/newshub/app/{appId}',
-    isAlias: true,
-  },
-  { key: 'steam:community-news', template: 'https://steamcommunity.com/games/{appId}/rss' },
-  { key: 'steam:group', template: 'https://steamcommunity.com/groups/{group}/rss' },
-  {
-    key: 'steam:group-news',
-    template: 'https://store.steampowered.com/feeds/news/group/{clanId}',
-  },
-  {
-    key: 'steam:group-news',
-    template: 'https://store.steampowered.com/feeds/news/group/{clanId}/{name}',
-    isAlias: true,
-  },
-  {
-    key: 'steam:group-news',
-    template: 'https://store.steampowered.com/feeds/newshub/group/{clanId}',
-    isAlias: true,
-  },
-  {
-    key: 'steam:news-collection',
-    template: 'https://store.steampowered.com/feeds/news/collection/{collection}',
-  },
-  {
-    key: 'steam:news-collection',
-    template: 'https://store.steampowered.com/feeds/news/collection/{collection}/{name}',
-    isAlias: true,
-  },
-  {
-    key: 'steam:news-collection',
-    template: 'https://store.steampowered.com/feeds/newshub/collection/{collection}',
-    isAlias: true,
-  },
-  { key: 'steam:daily-deals', template: 'https://store.steampowered.com/feeds/daily_deals.xml' },
-  { key: 'steam:new-releases', template: 'https://store.steampowered.com/feeds/newreleases.xml' },
-  {
-    key: 'steam:weekly-top-sellers',
-    template: 'https://store.steampowered.com/feeds/weeklytopsellers.xml',
-  },
-])
+const feeds = withHintLabels(steam.feeds)
 
 export const parseSteamUrl = (url: string): SteamUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -176,17 +125,5 @@ export const steamHandler: PlatformHandler = {
     ]
   },
 
-  // A store app or clan id is digits: /feeds/news/app/{word}/ answers 404 and
-  // /feeds/news/group/{word} an empty feed. The community feed also takes a game's name, as
-  // /games/CSGO/rss.
-  getFeedHint: (url) => {
-    const hint = feeds.getFeedHint(url)
-    const [, , , id] = getPathSegments(url)
-
-    if (isAnyOf(hint?.key, ['steam:news', 'steam:group-news']) && !digitsRegex.test(id ?? '')) {
-      return
-    }
-
-    return hint
-  },
+  getFeedHint: (url) => withHintLabel(steam.getFeedHint(url)),
 }

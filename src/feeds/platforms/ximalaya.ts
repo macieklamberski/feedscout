@@ -1,5 +1,6 @@
+import { ximalaya } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
@@ -8,14 +9,12 @@ import { digitsRegex } from '../../common/utils.js'
 
 export type XimalayaUrl = { kind: 'album'; albumId: string }
 
-const hosts = ['www.ximalaya.com', 'ximalaya.com']
+const hosts = ximalaya.hosts
 
 // Match /album/{id} (canonical) or /{userid}/album/{id} (legacy form).
 const albumRegex = /(?:^|\/)album\/(?<albumId>[^/]+)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'ximalaya:album', template: 'https://www.ximalaya.com/album/{albumId}.xml' },
-])
+const feeds = withHintLabels(ximalaya.feeds)
 
 export const parseXimalayaUrl = (url: string): XimalayaUrl | undefined => {
   const parsedUrl = parseUrl(url)

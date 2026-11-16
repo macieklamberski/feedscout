@@ -1,5 +1,6 @@
+import { alloforum } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -17,29 +18,14 @@ export type AlloforumUrl =
       subcategoryId: string
     }
 
-const domains = ['alloforum.com']
+const domains = alloforum.tenantDomains
 
 // The route letters are read in any case and the feed url is minted with them lowercase, because
 // the site answers 404 to an uppercase `C` or `S`.
 const categoryRegex = /^\/([^/]+)-c(\d+)-\d+\.html$/i
 const subcategoryRegex = /^\/([^/]+)-c(\d+)-([^/]+)-s(\d+)-\d+\.html$/i
 
-// The subcategory row comes first, since a subcategory feed also fits the category template.
-const feeds = definePlatformFeeds(
-  [
-    {
-      key: 'alloforum:subcategory',
-      template:
-        '{scheme}://{host}/derniers-sujets-{slug}-c{categoryId}-{subcategorySlug}-s{subcategoryId}.xml',
-    },
-    {
-      key: 'alloforum:category',
-      template: '{scheme}://{host}/derniers-sujets-{slug}-c{categoryId}.xml',
-    },
-    { key: 'alloforum:latest-topics', template: '{scheme}://{host}/derniers-sujets.xml' },
-  ],
-  { domains },
-)
+const feeds = withHintLabels(alloforum.feeds)
 
 export const parseAlloforumUrl = (url: string): AlloforumUrl | undefined => {
   const pathname = parseUrl(url)?.pathname

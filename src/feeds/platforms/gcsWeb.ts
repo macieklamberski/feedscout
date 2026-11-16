@@ -1,5 +1,6 @@
+import { gcsWeb } from 'feedintel'
 import { isHostOrSubdomainOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { type Element, findElement, getTenantSubdomain, isRootOfPage } from '../../common/utils.js'
 
@@ -8,36 +9,11 @@ import { type Element, findElement, getTenantSubdomain, isRootOfPage } from '../
 
 export type GcsWebUrl = { kind: 'site' }
 
-const domains = ['gcs-web.com']
+const domains = gcsWeb.tenantDomains
 
 const filesPathRegex = /\/sites\/g\/files\/knoqqb\d+\//i
 
-// A site on its own domain is known only by its markup, so its feeds are built but not claimed.
-// The news releases narrowed to a category and the SEC filings narrowed to a filing group are
-// claimed only, since no page URL names the category or the group. An `items` count stays under
-// the feed it sizes, and its rows come last, so a filter beside it decides the key.
-const feeds = definePlatformFeeds(
-  [
-    { key: 'gcs-web:news-releases', template: '{scheme}://{host}/rss/news-releases.xml' },
-    {
-      key: 'gcs-web:news-releases-category',
-      template: '{scheme}://{host}/rss/news-releases.xml?category={category}',
-    },
-    { key: 'gcs-web:sec-filings', template: '{scheme}://{host}/rss/sec-filings.xml' },
-    {
-      key: 'gcs-web:sec-filings-group',
-      template: '{scheme}://{host}/rss/sec-filings.xml?sub_group={group}',
-    },
-    { key: 'gcs-web:events', template: '{scheme}://{host}/rss/events.xml' },
-    {
-      key: 'gcs-web:news-releases',
-      template: '{scheme}://{host}/rss/news-releases.xml?items={items}',
-    },
-    { key: 'gcs-web:sec-filings', template: '{scheme}://{host}/rss/sec-filings.xml?items={items}' },
-    { key: 'gcs-web:events', template: '{scheme}://{host}/rss/events.xml?items={items}' },
-  ],
-  { domains },
-)
+const feeds = withHintLabels(gcsWeb.feeds)
 
 const getAssetUrl = (element: Element): string => {
   return element.attribs.href ?? element.attribs.src ?? ''

@@ -1,5 +1,6 @@
+import { neocities } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -8,12 +9,10 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type NeocitiesUrl = { kind: 'site'; username: string }
 
-const domains = ['neocities.org']
-const hosts = ['neocities.org', 'www.neocities.org']
+const domains = neocities.tenantDomains
+const hosts = neocities.hosts
 
-const feeds = definePlatformFeeds([
-  { key: 'neocities:updates', template: 'https://neocities.org/site/{username}.rss' },
-])
+const feeds = withHintLabels(neocities.feeds)
 
 export const parseNeocitiesUrl = (url: string): NeocitiesUrl | undefined => {
   const subdomain = getTenantSubdomain(url, domains)

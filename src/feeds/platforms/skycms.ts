@@ -1,5 +1,6 @@
+import { skycms } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
@@ -12,10 +13,7 @@ const pageRegex = /^\/(\d+)\/([^/]+)\.html$/i
 const rssListRegex = /\/\d+\/lista-kanalow-rss\.html$/i
 const templateRegex = /\/(?:cms\/public|clients\/cms_[^/]+)\/image\/default\/bip(?:_v\d+)?\//i
 
-// A site is known only by its marker, so its feed is built here but not claimed.
-const feeds = definePlatformFeeds([
-  { key: 'skycms:page', template: '{root}/rss/{pageId}/{slug}.html', format: 'rss' },
-])
+const feeds = withHintLabels(skycms.feeds)
 
 // SkyCMS sets its counter cookie whenever the page differs from the one the cookie holds.
 export const isSkycmsHeaders = (headers: Headers): boolean => {

@@ -1,69 +1,18 @@
+import { internetArchive } from 'feedintel'
 import { getQueryParam, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const hosts = ['archive.org', 'www.archive.org']
+const hosts = internetArchive.hosts
 
 const detailsRegex = /^\/details\/([^/@][^/]*)\/?$/i
 const accountRegex = /^\/details\/@([^/]+)/i
 const searchRegex = /^\/search\/?$/i
 
-const feeds = definePlatformFeeds([
-  {
-    key: 'internet-archive:collection',
-    template: 'https://archive.org/services/collection-rss.php?collection={collection}',
-  },
-  {
-    key: 'internet-archive:collection',
-    template: 'https://cors.archive.org/services/collection-rss.php?collection={collection}',
-    isAlias: true,
-  },
-  {
-    key: 'internet-archive:search',
-    template: 'https://archive.org/services/collection-rss.php?query={query}',
-  },
-  {
-    key: 'internet-archive:search',
-    template: 'https://cors.archive.org/services/collection-rss.php?query={query}',
-    isAlias: true,
-  },
-  // Claimed only: the advanced search serves the same items as the search feed.
-  {
-    key: 'internet-archive:search',
-    template: 'https://archive.org/advancedsearch.php?output=rss&q={query}',
-    isAlias: true,
-  },
-  // A collection's forum is named by the collection identifier, so `resolve` builds it on the
-  // collection page.
-  {
-    key: 'internet-archive:forum',
-    template: 'https://archive.org/iathreads/posts-display-new.php?forum={forum}&mode=rss',
-  },
-  {
-    key: 'internet-archive:forum',
-    template: 'https://cors.archive.org/iathreads/posts-display-new.php?forum={forum}&mode=rss',
-    isAlias: true,
-  },
-  // Claimed only: the media type feed names a value no page here gives.
-  {
-    key: 'internet-archive:mediatype',
-    template: 'https://archive.org/services/collection-rss.php?mediatype={mediatype}',
-  },
-  {
-    key: 'internet-archive:mediatype',
-    template: 'https://cors.archive.org/services/collection-rss.php?mediatype={mediatype}',
-    isAlias: true,
-  },
-  // An account page names the account, and the feed answers where the account's screen name is
-  // its handle.
-  {
-    key: 'internet-archive:bookmarks',
-    template: 'https://archive.org/bookmarks/{user}?output=rss',
-  },
-])
+const feeds = withHintLabels(internetArchive.feeds)
 
 export type InternetArchivePage =
   | { kind: 'collection'; collection: string }

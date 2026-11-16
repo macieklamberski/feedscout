@@ -1,5 +1,6 @@
+import { cratesIo } from 'feedintel'
 import { isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Not discoverable without handler.
@@ -7,15 +8,11 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type CratesIoUrl = { kind: 'crate'; crate: string } | { kind: 'home' }
 
-const hosts = ['crates.io', 'www.crates.io']
+const hosts = cratesIo.hosts
 
 const crateRegex = /^\/crates\/([\w-]+)(?:\/|$)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'crates-io:releases', template: 'https://static.crates.io/rss/crates/{crate}.xml' },
-  { key: 'crates-io:new-crates', template: 'https://static.crates.io/rss/crates.xml' },
-  { key: 'crates-io:updates', template: 'https://static.crates.io/rss/updates.xml' },
-])
+const feeds = withHintLabels(cratesIo.feeds)
 
 export const parseCratesIoUrl = (url: string): CratesIoUrl | undefined => {
   if (!isHostOf(url, hosts)) {
