@@ -47,4 +47,5 @@ export const listedHandler: PlatformHandler = {
   },
 
   getFeedHint: feeds.getFeedHint,
+  getSiblingFeeds: feeds.getSiblingFeeds,
 }

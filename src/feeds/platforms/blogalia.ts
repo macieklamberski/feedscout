@@ -50,4 +50,5 @@ export const blogaliaHandler: PlatformHandler = {
   },
 
   getFeedHint: feeds.getFeedHint,
+  getSiblingFeeds: feeds.getSiblingFeeds,
 }

@@ -228,4 +228,5 @@ export const bigcommerceHandler: PlatformHandler = {
   },
 
   getFeedHint: feeds.getFeedHint,
+  getSiblingFeeds: feeds.getSiblingFeeds,
 }

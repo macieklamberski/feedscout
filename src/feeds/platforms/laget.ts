@@ -78,4 +78,5 @@ export const lagetHandler: PlatformHandler = {
   },
 
   getFeedHint: teamFeeds.getFeedHint,
+  getSiblingFeeds: teamFeeds.getSiblingFeeds,
 }

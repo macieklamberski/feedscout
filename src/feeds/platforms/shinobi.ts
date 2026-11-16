@@ -88,4 +88,5 @@ export const shinobiHandler: PlatformHandler = {
   },
 
   getFeedHint: feeds.getFeedHint,
+  getSiblingFeeds: feeds.getSiblingFeeds,
 }

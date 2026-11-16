@@ -77,4 +77,5 @@ export const pikaHandler: PlatformHandler = {
   },
 
   getFeedHint: feeds.getFeedHint,
+  getSiblingFeeds: feeds.getSiblingFeeds,
 }

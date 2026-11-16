@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
-import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { discoverUrisFromPlatform, getSiblingFeeds } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import type { GithubUrl } from './github.js'
 import { githubHandler, parseGithubUrl } from './github.js'
@@ -923,6 +923,36 @@ describe('githubHandler', () => {
       const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
       expect(result).toEqual(expected)
+    })
+  })
+
+  describe('sibling feeds through the Platform export', () => {
+    it('should return the other feeds of a repository for its releases feed', () => {
+      const value = 'https://github.com/AliceCorp/alicetool/releases.atom'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://github.com/AliceCorp.atom',
+          hint: { key: 'github:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://github.com/AliceCorp/alicetool/commits.atom',
+          hint: { key: 'github:commits', label: 'Commits' },
+        },
+        {
+          uri: 'https://github.com/AliceCorp/alicetool/tags.atom',
+          hint: { key: 'github:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://github.com/AliceCorp/alicetool/wiki.atom',
+          hint: { key: 'github:wiki', label: 'Wiki' },
+        },
+        {
+          uri: 'https://github.com/AliceCorp/alicetool/discussions.atom',
+          hint: { key: 'github:discussions', label: 'Discussions' },
+        },
+      ]
+
+      expect(getSiblingFeeds(value, defaultPlatformOptions)).toEqual(expected)
     })
   })
 })

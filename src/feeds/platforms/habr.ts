@@ -49,7 +49,11 @@ const feeds = definePlatformFeeds([
     template: 'https://habr.com/{language}/rss/post/{post}/',
     isAlias: true,
   },
-  { key: 'habr:subscriptions', template: 'https://habr.com/{language}/rss/feed/{token}/' },
+  {
+    key: 'habr:subscriptions',
+    template: 'https://habr.com/{language}/rss/feed/{token}/',
+    isClaimOnly: true,
+  },
   { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hubs/{hub}/articles/' },
   {
     key: 'habr:hub',

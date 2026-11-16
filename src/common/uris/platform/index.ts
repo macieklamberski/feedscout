@@ -69,6 +69,24 @@ export const getFeedHint = (
   }
 }
 
+// The other feeds of the handler that claims the URL as its feed, read from the URL alone.
+export const getSiblingFeeds = (
+  url: string,
+  options: Pick<PlatformMethodOptions, 'handlers'>,
+): Array<DiscoverUriEntry> => {
+  for (const handler of options.handlers) {
+    try {
+      if (!handler.getFeedHint?.(url)) {
+        continue
+      }
+
+      return handler.getSiblingFeeds?.(url) ?? []
+    } catch {}
+  }
+
+  return []
+}
+
 export const discoverUrisFromPlatform = async (
   content: string | undefined,
   headers: Headers | undefined,

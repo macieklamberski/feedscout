@@ -30,7 +30,7 @@ const feeds = definePlatformFeeds(
 )
 // No page gives the token, so this row only claims the feed.
 const privateFeeds = definePlatformFeeds(
-  [{ key: 'ghost:private', template: '{scheme}://{host}/{token}/rss/' }],
+  [{ key: 'ghost:private', template: '{scheme}://{host}/{token}/rss/', isClaimOnly: true }],
   { domains },
 )
 

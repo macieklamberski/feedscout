@@ -219,4 +219,5 @@ export const chambermasterHandler: PlatformHandler = {
   // The table claims only one tenant label under the domains, so the apex and www, whose feeds
   // answer 404 or 500 or a page, get no hint. A preview host can nest, as in `example.preview`.
   getFeedHint: feeds.getFeedHint,
+  getSiblingFeeds: feeds.getSiblingFeeds,
 }

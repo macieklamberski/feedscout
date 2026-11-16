@@ -57,10 +57,12 @@ const feeds = definePlatformFeeds(
     {
       key: 'substack:private-podcast',
       template: '{scheme}://{host}/feed/podcast/{publication}/private/{token}.rss',
+      isClaimOnly: true,
     },
     {
       key: 'substack:spotify-podcast',
       template: '{scheme}://{host}/feed/podcast/spotify/{token}/{publication}.rss',
+      isClaimOnly: true,
     },
   ],
   { domains },

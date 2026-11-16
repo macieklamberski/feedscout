@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
-import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { discoverUrisFromPlatform, getSiblingFeeds } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import {
   type BlogspotPage,
@@ -1016,6 +1016,58 @@ describe('blogspotHandler', () => {
       const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
       expect(result).toEqual(expected)
+    })
+  })
+
+  describe('sibling feeds through the Platform export', () => {
+    it('should return the blog feeds for a post comments feed', () => {
+      const value = 'https://example.blogspot.com/feeds/123/comments/default'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.blogspot.com/feeds/posts/default',
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/posts/default?alt=rss',
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/posts/summary',
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/posts/summary?alt=rss',
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'rss' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/default',
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/default?alt=rss',
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'atom' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/summary?alt=rss',
+          hint: { key: 'blogspot:comments-summary', label: 'Comments summary', format: 'rss' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/123/comments/default?alt=rss',
+          hint: { key: 'blogspot:post-comments', label: 'Post comments', format: 'rss' },
+        },
+      ]
+
+      expect(getSiblingFeeds(value, defaultPlatformOptions)).toEqual(expected)
+    })
+
+    it('should return no feeds for a feed on www.blogger.com, whose other rows need the blog host', () => {
+      const value = 'https://www.blogger.com/feeds/123/posts/default'
+
+      expect(getSiblingFeeds(value, defaultPlatformOptions)).toEqual([])
     })
   })
 })

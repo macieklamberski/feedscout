@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
-import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { discoverUrisFromPlatform, getSiblingFeeds } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import type { RedditUrl } from './reddit.js'
 import { parseRedditUrl, redditHandler } from './reddit.js'
@@ -1148,6 +1148,36 @@ describe('redditHandler', () => {
       const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
       expect(result).toEqual(expected)
+    })
+  })
+
+  describe('sibling feeds through the Platform export', () => {
+    it('should return the feeds that take a value from a sorted subreddit feed', () => {
+      const value = 'https://www.reddit.com/r/rust/top/.rss'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://www.reddit.com/r/rust/wiki/index.rss',
+          hint: { key: 'reddit:wiki', label: 'Wiki' },
+        },
+        {
+          uri: 'https://www.reddit.com/r/rust/comments/.rss',
+          hint: { key: 'reddit:comments', label: 'Comments' },
+        },
+        {
+          uri: 'https://www.reddit.com/subreddits/top/.rss',
+          hint: { key: 'reddit:subreddits', label: 'Subreddits' },
+        },
+        {
+          uri: 'https://www.reddit.com/r/rust/.rss',
+          hint: { key: 'reddit:subreddit', label: 'Subreddit' },
+        },
+        {
+          uri: 'https://www.reddit.com/top/.rss',
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(getSiblingFeeds(value, defaultPlatformOptions)).toEqual(expected)
     })
   })
 })

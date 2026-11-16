@@ -18,6 +18,7 @@ const feeds = definePlatformFeeds([
   {
     key: 'art19:private',
     template: 'https://rss.art19.com/alternate_feeds/user/{slug}/{token}',
+    isClaimOnly: true,
   },
 ])
 
@@ -53,4 +54,5 @@ export const art19Handler: PlatformHandler = {
   },
 
   getFeedHint: feeds.getFeedHint,
+  getSiblingFeeds: feeds.getSiblingFeeds,
 }

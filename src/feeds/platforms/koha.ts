@@ -154,4 +154,5 @@ export const kohaHandler: PlatformHandler = {
   },
 
   getFeedHint: ownFeeds.getFeedHint,
+  getSiblingFeeds: ownFeeds.getSiblingFeeds,
 }

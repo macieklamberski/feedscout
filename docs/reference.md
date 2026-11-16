@@ -38,6 +38,12 @@ Import from `feedscout/methods`:
 | `generateUrlCombinations` | Combine base URLs with URI paths |
 | `extractSectionBaseUrls` | Find same-origin section links, like `/blog`, in HTML content |
 
+Import from `feedscout/platform`:
+
+| Function | Description |
+|----------|-------------|
+| [`getSiblingFeeds`](/feeds/platform#sibling-feeds) | List a handler's other feeds for a feed URL it claims |
+
 Import from `feedscout`:
 
 | Function | Description |

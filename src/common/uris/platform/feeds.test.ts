@@ -1335,6 +1335,217 @@ describe('definePlatformFeeds', () => {
     })
   })
 
+  describe('getSiblingFeeds', () => {
+    const siblingFeeds = definePlatformFeeds(
+      [
+        { key: 'example:posts', template: 'https://www.example.com/{username}/feed.rss' },
+        {
+          key: 'example:posts',
+          template: 'https://www.example.com/{username}/rss',
+          isAlias: true,
+        },
+        { key: 'example:comments', template: 'https://www.example.com/{username}/comments.rss' },
+        {
+          key: 'example:post-comments',
+          template: 'https://www.example.com/{username}/{postId}/comments.rss',
+        },
+        { key: 'example:tag', template: 'https://www.example.com/{username}/tag/{tag}.rss' },
+        { key: 'example:folder', template: 'https://www.example.com/docs/{path*}/feed' },
+        {
+          key: 'example:folder-comments',
+          template: 'https://www.example.com/docs/{path*}/comments',
+        },
+        { key: 'example:search', template: 'https://feeds.example.com/rss.xml?q=tag:{tag}' },
+        { key: 'example:search-atom', template: 'https://feeds.example.com/atom.xml?q=tag:{tag}' },
+        { key: 'example:blog', template: 'https://{blog}.example.org/feed' },
+        { key: 'example:blog-archive', template: 'https://{blog}.example.org/archive.rss' },
+        { key: 'example:journal', template: '{scheme}://{member}.{domain}/journal/feed' },
+        { key: 'example:photos', template: '{scheme}://{member}.{domain}/photos/feed' },
+        { key: 'example:site', template: '{scheme}://{host}/feeds/site' },
+        { key: 'example:news', template: '{scheme}://{host}/feeds/news' },
+        { key: 'example:legacy', template: 'https://legacy.example.com/{blogId}/feed' },
+        {
+          key: 'example:private',
+          template: 'https://www.example.com/{username}/private.rss',
+          isClaimOnly: true,
+        },
+      ],
+      { hosts: ['example.com'], domains: ['example.net', 'example.edu'] },
+    )
+
+    it('should return the feeds the values of the URL fill, in table order', () => {
+      const value = 'https://www.example.com/alice/123/comments.rss'
+      const expected = [
+        'https://www.example.com/alice/feed.rss',
+        'https://www.example.com/alice/comments.rss',
+      ]
+      const uris = siblingFeeds.getSiblingFeeds(value).map((entry) => entry.uri)
+
+      expect(uris).toEqual(expected)
+    })
+
+    it('should skip a row that needs a value the URL does not hold', () => {
+      const value = 'https://www.example.com/alice/comments.rss'
+      const expected = ['https://www.example.com/alice/feed.rss']
+      const uris = siblingFeeds.getSiblingFeeds(value).map((entry) => entry.uri)
+
+      expect(uris).toEqual(expected)
+    })
+
+    it('should skip the alias rows of the feed the URL is', () => {
+      const value = 'https://www.example.com/alice/feed.rss'
+      const expected = ['https://www.example.com/alice/comments.rss']
+      const uris = siblingFeeds.getSiblingFeeds(value).map((entry) => entry.uri)
+
+      expect(uris).toEqual(expected)
+    })
+
+    it('should skip the canonical row of an alias URL', () => {
+      const value = 'https://www.example.com/alice/rss'
+      const expected = ['https://www.example.com/alice/comments.rss']
+      const uris = siblingFeeds.getSiblingFeeds(value).map((entry) => entry.uri)
+
+      expect(uris).toEqual(expected)
+    })
+
+    it('should return each feed with the hint of its row', () => {
+      const labelledFeeds = definePlatformFeeds([
+        { key: 'plurk:plurks', template: 'https://www.example.com/{username}.xml' },
+        {
+          key: 'plurk:plurks',
+          template: 'https://www.example.com/{username}.atom',
+          format: 'atom',
+        },
+      ])
+      const value = 'https://www.example.com/alice.xml'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://www.example.com/alice.atom',
+          hint: { key: 'plurk:plurks', label: 'Plurks', format: 'atom' },
+        },
+      ]
+
+      expect(labelledFeeds.getSiblingFeeds(value)).toEqual(expected)
+    })
+
+    it('should read a multi-segment value', () => {
+      const value = 'https://www.example.com/docs/api/v2/feed'
+      const expected = ['https://www.example.com/docs/api/v2/comments']
+      const uris = siblingFeeds.getSiblingFeeds(value).map((entry) => entry.uri)
+
+      expect(uris).toEqual(expected)
+    })
+
+    it('should read a query value', () => {
+      const value = 'https://feeds.example.com/rss.xml?q=tag:news'
+      const expected = ['https://feeds.example.com/atom.xml?q=tag:news']
+      const uris = siblingFeeds.getSiblingFeeds(value).map((entry) => entry.uri)
+
+      expect(uris).toEqual(expected)
+    })
+
+    it('should read a host label', () => {
+      const value = 'https://alice.example.org/feed'
+      const expected = ['https://alice.example.org/archive.rss']
+      const uris = siblingFeeds.getSiblingFeeds(value).map((entry) => entry.uri)
+
+      expect(uris).toEqual(expected)
+    })
+
+    it('should read a host label under one of the domains', () => {
+      const value = 'https://alice.example.edu/journal/feed'
+      const expected = [
+        'https://alice.example.edu/photos/feed',
+        'https://alice.example.edu/feeds/site',
+        'https://alice.example.edu/feeds/news',
+      ]
+      const uris = siblingFeeds.getSiblingFeeds(value).map((entry) => entry.uri)
+
+      expect(uris).toEqual(expected)
+    })
+
+    it('should fill a host row with the host of a tenant URL', () => {
+      const value = 'https://alice.example.net/feeds/site'
+      const expected = ['https://alice.example.net/feeds/news']
+      const uris = siblingFeeds.getSiblingFeeds(value).map((entry) => entry.uri)
+
+      expect(uris).toEqual(expected)
+    })
+
+    it('should keep the scheme of the URL', () => {
+      const value = 'http://alice.example.net/feeds/site'
+      const expected = ['http://alice.example.net/feeds/news']
+      const uris = siblingFeeds.getSiblingFeeds(value).map((entry) => entry.uri)
+
+      expect(uris).toEqual(expected)
+    })
+
+    it('should skip a row that takes no value from the URL', () => {
+      const value = 'https://example.com/feeds/site'
+
+      expect(siblingFeeds.getSiblingFeeds(value)).toEqual([])
+    })
+
+    it('should skip a claim-only row', () => {
+      const value = 'https://www.example.com/alice/feed.rss'
+      const expected = ['https://www.example.com/alice/comments.rss']
+      const uris = siblingFeeds.getSiblingFeeds(value).map((entry) => entry.uri)
+
+      expect(uris).toEqual(expected)
+    })
+
+    it('should return the other feeds for a claim-only URL', () => {
+      const value = 'https://www.example.com/alice/private.rss'
+      const expected = [
+        'https://www.example.com/alice/feed.rss',
+        'https://www.example.com/alice/comments.rss',
+      ]
+      const uris = siblingFeeds.getSiblingFeeds(value).map((entry) => entry.uri)
+
+      expect(uris).toEqual(expected)
+    })
+
+    it('should not fill a host row from a URL on a fixed host', () => {
+      const value = 'https://legacy.example.com/123/feed'
+
+      expect(siblingFeeds.getSiblingFeeds(value)).toEqual([])
+    })
+
+    it('should write a percent-encoded value as pages link it', () => {
+      const value = 'https://www.example.com/%E6%8A%80%E8%A1%93/comments.rss'
+      const expected = ['https://www.example.com/%E6%8A%80%E8%A1%93/feed.rss']
+      const uris = siblingFeeds.getSiblingFeeds(value).map((entry) => entry.uri)
+
+      expect(uris).toEqual(expected)
+    })
+
+    it('should keep the case of a value', () => {
+      const value = 'https://www.example.com/AliceCorp/comments.rss'
+      const expected = ['https://www.example.com/AliceCorp/feed.rss']
+      const uris = siblingFeeds.getSiblingFeeds(value).map((entry) => entry.uri)
+
+      expect(uris).toEqual(expected)
+    })
+
+    it('should return an empty array for a URL that is none of the feeds', () => {
+      const value = 'https://www.example.com/alice/about'
+
+      expect(siblingFeeds.getSiblingFeeds(value)).toEqual([])
+    })
+
+    it('should return an empty array for a URL that is not an http URL', () => {
+      const value = 'ftp://www.example.com/alice/feed.rss'
+
+      expect(siblingFeeds.getSiblingFeeds(value)).toEqual([])
+    })
+
+    it('should return an empty array for a table that claims no URLs', () => {
+      const value = 'https://example.com/latest.rss'
+
+      expect(selfHostedRootFeeds.getSiblingFeeds(value)).toEqual([])
+    })
+  })
+
   describe('forUrl', () => {
     const siteFeeds = definePlatformFeeds(
       [

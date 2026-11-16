@@ -23,7 +23,11 @@ const feeds = definePlatformFeeds([
   { key: 'rubygems:latest-gems', template: 'https://bundler.rubygems.org/gems.atom' },
   // The dashboard feed of a signed-in user answers only with its `api_key`, so it is claimed and
   // never built.
-  { key: 'rubygems:dashboard', template: 'https://rubygems.org/dashboard.atom?api_key={apiKey}' },
+  {
+    key: 'rubygems:dashboard',
+    template: 'https://rubygems.org/dashboard.atom?api_key={apiKey}',
+    isClaimOnly: true,
+  },
 ])
 
 export const parseRubygemsUrl = (url: string): RubygemsUrl | undefined => {
@@ -70,4 +74,5 @@ export const rubygemsHandler: PlatformHandler = {
   },
 
   getFeedHint: feeds.getFeedHint,
+  getSiblingFeeds: feeds.getSiblingFeeds,
 }

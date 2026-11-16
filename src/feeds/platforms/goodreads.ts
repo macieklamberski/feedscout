@@ -24,14 +24,17 @@ const feeds = definePlatformFeeds([
   {
     key: 'goodreads:private-shelf',
     template: 'https://www.goodreads.com/review/list_rss/{userId}?key={key}&shelf={shelf}',
+    isClaimOnly: true,
   },
   {
     key: 'goodreads:private-reviews',
     template: 'https://www.goodreads.com/review/list_rss/{userId}?key={key}',
+    isClaimOnly: true,
   },
   {
     key: 'goodreads:private-updates',
     template: 'https://www.goodreads.com/user/updates_rss/{userId}?key={key}',
+    isClaimOnly: true,
   },
 ])
 
@@ -97,4 +100,5 @@ export const goodreadsHandler: PlatformHandler = {
   },
 
   getFeedHint: feeds.getFeedHint,
+  getSiblingFeeds: feeds.getSiblingFeeds,
 }

@@ -43,9 +43,13 @@ const feeds = definePlatformFeeds(
     { key: 'gitlab:merge-requests', template: '{root}/{project*}/-/merge_requests.atom' },
     // The signed-in user's dashboard feeds answer only with their `feed_token`, so they are
     // claimed and never built.
-    { key: 'gitlab:dashboard', template: '{root}/dashboard/projects.atom' },
-    { key: 'gitlab:dashboard-issues', template: '{root}/dashboard/issues.atom' },
-    { key: 'gitlab:dashboard-merge-requests', template: '{root}/dashboard/merge_requests.atom' },
+    { key: 'gitlab:dashboard', template: '{root}/dashboard/projects.atom', isClaimOnly: true },
+    { key: 'gitlab:dashboard-issues', template: '{root}/dashboard/issues.atom', isClaimOnly: true },
+    {
+      key: 'gitlab:dashboard-merge-requests',
+      template: '{root}/dashboard/merge_requests.atom',
+      isClaimOnly: true,
+    },
     // A namespace or a project of any depth, after the rows its paths overlap.
     { key: 'gitlab:activity', template: '{root}/{path*}.atom' },
   ],

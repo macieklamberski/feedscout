@@ -26,6 +26,7 @@ const feeds = definePlatformFeeds([
   {
     key: 'pinboard:private-bookmarks',
     template: 'https://feeds.pinboard.in/rss/secret:{token}/u:{username}/',
+    isClaimOnly: true,
   },
   { key: 'pinboard:recent', template: 'https://feeds.pinboard.in/rss/recent/' },
   { key: 'pinboard:popular', template: 'https://feeds.pinboard.in/rss/popular/' },
@@ -42,16 +43,19 @@ const feeds = definePlatformFeeds([
   {
     key: 'pinboard:private-tag',
     template: 'https://feeds.pinboard.in/rss/secret:{token}/u:{username}/t:{tags*}/',
+    isClaimOnly: true,
   },
   { key: 'pinboard:tag', template: 'https://feeds.pinboard.in/rss/t:{tags*}/' },
   // The network and starred feeds exist only as private feeds.
   {
     key: 'pinboard:network',
     template: 'https://feeds.pinboard.in/rss/secret:{token}/u:{username}/network/',
+    isClaimOnly: true,
   },
   {
     key: 'pinboard:starred',
     template: 'https://feeds.pinboard.in/rss/secret:{token}/u:{username}/starred/',
+    isClaimOnly: true,
   },
 ])
 
@@ -172,4 +176,5 @@ export const pinboardHandler: PlatformHandler = {
   },
 
   getFeedHint: feeds.getFeedHint,
+  getSiblingFeeds: feeds.getSiblingFeeds,
 }

@@ -89,4 +89,5 @@ export const wixHandler: PlatformHandler = {
   },
 
   getFeedHint: freeSiteFeeds.getFeedHint,
+  getSiblingFeeds: freeSiteFeeds.getSiblingFeeds,
 }

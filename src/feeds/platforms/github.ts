@@ -35,8 +35,13 @@ const feeds = definePlatformFeeds([
   {
     key: 'github:private-activity',
     template: 'https://github.com/{owner}.private.atom?token={token}',
+    isClaimOnly: true,
   },
-  { key: 'github:private-activity', template: 'https://github.com/{owner}.private.atom' },
+  {
+    key: 'github:private-activity',
+    template: 'https://github.com/{owner}.private.atom',
+    isClaimOnly: true,
+  },
   { key: 'github:activity', template: 'https://github.com/{owner}.atom' },
   { key: 'github:releases', template: 'https://github.com/{owner}/{repo}/releases.atom' },
   { key: 'github:commits', template: 'https://github.com/{owner}/{repo}/commits.atom' },
@@ -209,4 +214,5 @@ export const githubHandler: PlatformHandler = {
   },
 
   getFeedHint: feeds.getFeedHint,
+  getSiblingFeeds: feeds.getSiblingFeeds,
 }

@@ -3890,13 +3890,42 @@ The options also take an optional `requestedUrl`: the URL you asked for, when th
 > [!NOTE]
 > The YouTube handler requires HTML content for `@handle`, `/user/`, `/c/`, and video URLs to extract the channel ID. For `/channel/UC...` URLs, no content is needed.
 
+## Sibling Feeds
+
+A URL that is one of a handler's feeds comes back from the Platform method as itself. `getSiblingFeeds` lists that handler's other feeds for it. It reads the values out of the feed URL, such as a repository or a post id, and fills every other feed of the handler that needs only those values. Nothing is fetched and no page is read.
+
+```typescript
+import { defaultPlatformOptions, getSiblingFeeds } from 'feedscout/platform'
+
+const siblings = getSiblingFeeds(
+  'https://example.blogspot.com/feeds/123/comments/default',
+  defaultPlatformOptions,
+)
+
+// [
+//   {
+//     uri: 'https://example.blogspot.com/feeds/posts/default',
+//     hint: { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
+//   },
+//   {
+//     uri: 'https://example.blogspot.com/feeds/posts/default?alt=rss',
+//     hint: { key: 'blogspot:posts', label: 'Posts', format: 'rss' },
+//   },
+//   ...
+// ]
+```
+
+The feeds come in the order of the handler's [feed table](#declaring-feeds). The order says nothing about which feed is the main one, so treat every sibling as an equal candidate. A feed that needs a value the URL lacks is left out, as a label feed for a comment feed URL. A feed that needs fewer values is kept, as the blog's posts feed for one post's comment feed. A feed that takes no value from the URL is left out, so a site-wide feed such as Reddit's front page is no sibling of a subreddit feed. A blog's own host counts as a value. Other spellings of one feed are left out, and so are the feed the URL is and private feeds that need a token.
+
+The first handler that claims the URL through `getFeedHint` answers. A handler whose feeds take a value from the page content or compute one, such as YouTube and WordPress, lists no siblings, and neither does a URL no handler claims. Both return an empty array.
+
 ## Creating Custom Handlers
 
 You can create handlers for platforms not included by default.
 
 ### Handler Interface
 
-A `PlatformHandler` has two methods and an optional third:
+A `PlatformHandler` has two methods and two optional ones:
 
 ```typescript
 type PlatformHandler = {
@@ -3908,6 +3937,7 @@ type PlatformHandler = {
     fetchFn?: FetchFn,
   ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef | undefined>>
   getFeedHint?: (url: string) => DiscoverUriHint | undefined
+  getSiblingFeeds?: (url: string) => Array<DiscoverUriEntry>
 }
 ```
 
@@ -3916,6 +3946,7 @@ type PlatformHandler = {
 | `match(url, content?, headers?)` | Returns `true` if this handler should process the URL |
 | `resolve(url, content?, headers?, fetchFn?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL. A favicon handler can also return a [`DiscoverRef`](/reference/types#discoverref) for an icon that takes an extra request. See [Enriching Platform Icons](/other/favicons#enriching-platform-icons) |
 | `getFeedHint(url)` | Returns the [hint](/reference/types#discoverurihint) of the feed the URL is, when it is one of the feeds the handler builds. The Platform method returns such a URL as given with that hint, and the [Guess method](/feeds/guess) drops a guessed one |
+| `getSiblingFeeds(url)` | Returns the handler's other feeds for a URL its `getFeedHint` claims. See [Sibling Feeds](#sibling-feeds) |
 
 `guessExclusionRegex` is a deprecated field, kept so a handler that sets it still type-checks. It is ignored: the Guess method drops a guessed URL through `getFeedHint`, so declare the handler's feeds as in [Declaring Feeds](#declaring-feeds).
 
@@ -3968,6 +3999,8 @@ feeds.getFeedSpellings('example:posts', { root: 'https://example.com' })
 
 `forUrl(url)` returns the same `getFeedUrl`, `getFeedEntry` and `getFeedSpellings` with `{scheme}`, `{host}` and `{root}` filled from the page URL, `{root}` with its origin, and `{domain}` with the entry of `domains` its host is under, so a handler passes only the values the URL cannot give. A value the handler passes wins, so a handler that reads a base path from the page passes `root` with it. A value left `undefined` counts as no value: it never replaces a value from the page, and a key with several rows builds the first one whose placeholders all have a value, so `{ slug, id }` with no `id` builds the row without `{id}`. An empty value counts as no value too, in a host label, a path segment or a query value, so no row builds `/t//feed` or `?videoChannelId=`. A passed query is the exception: an empty one writes the row's own parameters alone. When no row of the key has a value for every placeholder, `getFeedUrl` and `getFeedEntry` return `undefined`, and the Platform method skips an `undefined` item `resolve` returns. It returns `undefined` for a URL that is not an http URL.
 
+`getSiblingFeeds(url)` reads the placeholder values out of a URL `getFeedHint` claims and builds every other row they fill, in table order, with each row's hint. A row that needs a value the URL lacks is skipped. An alias row and the rows of the URL's own feed are skipped too, since they spell a feed already known. `{host}`, `{root}` and `{domain}` are filled from the URL only when its row names them, so a feed URL on a fixed host such as `www.blogger.com` fills no `{host}` row. A row has to take at least one value from the URL. `{scheme}` never counts, and `{host}`, `{root}` and `{domain}` count only for a tenant under `domains`, so a site-wide row on a platform's own host is skipped. A row marked `isClaimOnly: true` is skipped too: mark a feed that answers only with a token its owner holds, such as a private feed, which `getFeedHint` claims and `resolve` never builds. It returns an empty array for a URL the table does not claim. Set it on the handler beside `getFeedHint` so [Sibling Feeds](#sibling-feeds) reaches it.
+
 ```typescript
 import { definePlatformFeeds, type PlatformHandler } from 'feedscout/platform'
 
@@ -3994,6 +4027,7 @@ const exampleHandler: PlatformHandler = {
     return [pageFeeds.getFeedEntry('example:posts', { username })]
   },
   getFeedHint: feeds.getFeedHint,
+  getSiblingFeeds: feeds.getSiblingFeeds,
 }
 ```
 

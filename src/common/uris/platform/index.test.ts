@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { youtubeHandler } from '../../../feeds/platforms/youtube.js'
 import type {
   DiscoverEnrichFn,
   DiscoverErrorContext,
@@ -8,7 +9,7 @@ import type {
   FetchFn,
 } from '../../types.js'
 import { definePlatformFeeds } from './feeds.js'
-import { discoverUrisFromPlatform } from './index.js'
+import { discoverUrisFromPlatform, getSiblingFeeds } from './index.js'
 import type { PlatformHandler } from './types.js'
 
 const samePageUrls = [
@@ -1261,5 +1262,83 @@ describe('discoverUrisFromPlatform', () => {
     await discoverUrisFromPlatform(undefined, undefined, options, undefined, onError)
 
     expect(reported).toEqual(expected)
+  })
+})
+
+describe('getSiblingFeeds', () => {
+  const siblingFeeds = definePlatformFeeds([
+    { key: 'plurk:plurks', template: 'https://example.com/{username}.xml' },
+    { key: 'plurk:plurks', template: 'https://example.com/{username}.atom', format: 'atom' },
+  ])
+  const tableHandler: PlatformHandler = {
+    match: () => false,
+    resolve: () => [],
+    getFeedHint: siblingFeeds.getFeedHint,
+    getSiblingFeeds: siblingFeeds.getSiblingFeeds,
+  }
+
+  it('should return the sibling feeds of the handler that claims the URL', () => {
+    const value = 'https://example.com/alice.xml'
+    const expected: Array<DiscoverUriEntry> = [
+      {
+        uri: 'https://example.com/alice.atom',
+        hint: { key: 'plurk:plurks', label: 'Plurks', format: 'atom' },
+      },
+    ]
+
+    expect(getSiblingFeeds(value, { handlers: [tableHandler] })).toEqual(expected)
+  })
+
+  it('should return an empty array for a URL no handler claims', () => {
+    const value = 'https://example.com/about'
+
+    expect(getSiblingFeeds(value, { handlers: [tableHandler] })).toEqual([])
+  })
+
+  it('should return an empty array for a claiming handler without sibling feeds', () => {
+    const value = 'https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ'
+
+    expect(getSiblingFeeds(value, { handlers: [youtubeHandler, tableHandler] })).toEqual([])
+  })
+
+  it('should read the URL through the first handler that claims it', () => {
+    const otherFeeds = definePlatformFeeds([
+      { key: 'plurk:plurks', template: 'https://example.com/{username}.xml' },
+      { key: 'plurk:plurks', template: 'https://example.org/{username}.atom', format: 'atom' },
+    ])
+    const otherHandler: PlatformHandler = {
+      match: () => false,
+      resolve: () => [],
+      getFeedHint: otherFeeds.getFeedHint,
+      getSiblingFeeds: otherFeeds.getSiblingFeeds,
+    }
+    const value = 'https://example.com/alice.xml'
+    const expected: Array<DiscoverUriEntry> = [
+      {
+        uri: 'https://example.org/alice.atom',
+        hint: { key: 'plurk:plurks', label: 'Plurks', format: 'atom' },
+      },
+    ]
+
+    expect(getSiblingFeeds(value, { handlers: [otherHandler, tableHandler] })).toEqual(expected)
+  })
+
+  it('should skip a handler that throws', () => {
+    const throwingHandler: PlatformHandler = {
+      match: () => false,
+      resolve: () => [],
+      getFeedHint: () => {
+        throw new Error('Unreadable URL')
+      },
+    }
+    const value = 'https://example.com/alice.xml'
+    const expected: Array<DiscoverUriEntry> = [
+      {
+        uri: 'https://example.com/alice.atom',
+        hint: { key: 'plurk:plurks', label: 'Plurks', format: 'atom' },
+      },
+    ]
+
+    expect(getSiblingFeeds(value, { handlers: [throwingHandler, tableHandler] })).toEqual(expected)
   })
 })

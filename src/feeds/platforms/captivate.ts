@@ -20,7 +20,11 @@ const feeds = definePlatformFeeds(
     { key: 'captivate:network', template: 'https://feeds.captivate.fm/n/{network}/' },
     { key: 'captivate:collection', template: 'https://feeds.captivate.fm/{slug}/{collection}/' },
     // A private feed for one listener, under tokens no page gives, is claimed and never built.
-    { key: 'captivate:private', template: 'https://private.captivate.fm/{show}/{listener}' },
+    {
+      key: 'captivate:private',
+      template: 'https://private.captivate.fm/{show}/{listener}',
+      isClaimOnly: true,
+    },
   ],
   { domains },
 )
@@ -54,4 +58,5 @@ export const captivateHandler: PlatformHandler = {
   },
 
   getFeedHint: feeds.getFeedHint,
+  getSiblingFeeds: feeds.getSiblingFeeds,
 }

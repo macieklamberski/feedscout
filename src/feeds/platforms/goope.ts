@@ -212,4 +212,5 @@ export const goopeHandler: PlatformHandler = {
   },
 
   getFeedHint: freeSiteFeeds.getFeedHint,
+  getSiblingFeeds: freeSiteFeeds.getSiblingFeeds,
 }
