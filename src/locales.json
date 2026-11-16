@@ -954,6 +954,9 @@
     "bangumi:timeline": "Timeline",
     "bangumi:blog": "Blog",
     "bing:search": "Search",
-    "bing:news": "News search"
+    "bing:news": "News search",
+    "greasy-fork:user": "User scripts",
+    "greasy-fork:new": "New scripts",
+    "greasy-fork:updated": "Updated scripts"
   }
 }

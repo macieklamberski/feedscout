@@ -3521,6 +3521,21 @@ Discovers the feed of a Bing web or news search. The news search page links no f
 
 <sup>†</sup> *Found only by the Platform method.*
 
+### Greasy Fork
+
+Discovers the scripts feed of a Greasy Fork user, read from the user page URL or from the author of a script page, plus the site's new and updated scripts feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `greasyfork.org/{locale}/users/{id}` | User scripts<sup>†</sup> (Atom) |
+| `greasyfork.org/{locale}/scripts/{id}` | Author's user scripts<sup>†</sup> (Atom) |
+| Any other page | New scripts<sup>†</sup> · updated scripts<sup>†</sup> (Atom) |
+
+<sup>†</sup> *Found only by the Platform method.*
+
+> [!NOTE]
+> The feeds live on `api.greasyfork.org` under the page's locale. Sleazy Fork, `sleazyfork.org`, runs the same software and is read the same way, with its feeds on `api.sleazyfork.org`. A script's feedback, code and version pages name no author, so they get no feed.
+
 ## Basic Usage
 
 ```typescript
@@ -3654,6 +3669,7 @@ import {
   goodreadsHandler,
   goopeHandler,
   gravHandler,
+  greasyForkHandler,
   habrHandler,
   hackernewsHandler,
   haleyJobsHandler,
