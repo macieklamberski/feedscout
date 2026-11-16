@@ -10,10 +10,10 @@ const profileRegex = /^\/(?:profile\/|u\/|~)([^/]+)/i
 
 // A server is self-hosted on any domain, so the table only builds its feeds.
 const feeds = definePlatformFeeds([
-  { key: 'friendica:posts', template: '{root}/feed/{username}' },
-  { key: 'friendica:comments', template: '{root}/feed/{username}/comments' },
-  { key: 'friendica:replies', template: '{root}/feed/{username}/replies' },
-  { key: 'friendica:activity', template: '{root}/feed/{username}/activity' },
+  { key: 'friendica:posts', main: '{root}/feed/{username}' },
+  { key: 'friendica:comments', main: '{root}/feed/{username}/comments' },
+  { key: 'friendica:replies', main: '{root}/feed/{username}/replies' },
+  { key: 'friendica:activity', main: '{root}/feed/{username}/activity' },
 ])
 
 export const isFriendicaHtml = (content: string): boolean => {

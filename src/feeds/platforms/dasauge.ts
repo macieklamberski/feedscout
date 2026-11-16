@@ -14,9 +14,9 @@ const hosts = [getBrandDomainRegex('dasauge')]
 // Its row stays so a stored profile feed is still claimed.
 const feeds = definePlatformFeeds(
   [
-    { key: 'dasauge:jobs', template: '{scheme}://{host}/jobs/feed', format: 'atom' },
-    { key: 'dasauge:workspaces', template: '{scheme}://{host}/workspaces/feed', format: 'atom' },
-    { key: 'dasauge:profile', template: '{scheme}://{host}/-{username}/?rss' },
+    { key: 'dasauge:jobs', main: '{scheme}://{host}/jobs/feed', format: 'atom' },
+    { key: 'dasauge:workspaces', main: '{scheme}://{host}/workspaces/feed', format: 'atom' },
+    { key: 'dasauge:profile', main: '{scheme}://{host}/-{username}/?rss' },
   ],
   { hosts },
 )

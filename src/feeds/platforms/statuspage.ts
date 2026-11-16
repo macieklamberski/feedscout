@@ -10,8 +10,8 @@ const domains = ['statuspage.io']
 // not claimed.
 const feeds = definePlatformFeeds(
   [
-    { key: 'statuspage:history', template: '{scheme}://{host}/history.rss', format: 'rss' },
-    { key: 'statuspage:history', template: '{scheme}://{host}/history.atom', format: 'atom' },
+    { key: 'statuspage:history', main: '{scheme}://{host}/history.rss', format: 'rss' },
+    { key: 'statuspage:history', main: '{scheme}://{host}/history.atom', format: 'atom' },
   ],
   { domains },
 )

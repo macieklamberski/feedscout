@@ -16,22 +16,19 @@ const routes = ['blogs', 'collections']
 // does not read, so the table only claims them.
 const feeds = definePlatformFeeds(
   [
-    { key: 'shopify:blog', template: '{scheme}://{host}/blogs/{handle}.atom' },
-    { key: 'shopify:blog', template: '{scheme}://{host}/{locale}/blogs/{handle}.atom' },
-    { key: 'shopify:blog-tag', template: '{scheme}://{host}/blogs/{handle}/tagged/{tag}.atom' },
+    { key: 'shopify:blog', main: '{scheme}://{host}/blogs/{handle}.atom' },
+    { key: 'shopify:blog', main: '{scheme}://{host}/{locale}/blogs/{handle}.atom' },
+    { key: 'shopify:blog-tag', main: '{scheme}://{host}/blogs/{handle}/tagged/{tag}.atom' },
     {
       key: 'shopify:blog-tag',
-      template: '{scheme}://{host}/{locale}/blogs/{handle}/tagged/{tag}.atom',
+      main: '{scheme}://{host}/{locale}/blogs/{handle}/tagged/{tag}.atom',
     },
-    { key: 'shopify:collection', template: '{scheme}://{host}/collections/{handle}.atom' },
-    { key: 'shopify:collection', template: '{scheme}://{host}/{locale}/collections/{handle}.atom' },
+    { key: 'shopify:collection', main: '{scheme}://{host}/collections/{handle}.atom' },
+    { key: 'shopify:collection', main: '{scheme}://{host}/{locale}/collections/{handle}.atom' },
+    { key: 'shopify:collection-tag', main: '{scheme}://{host}/collections/{handle}/{tags}.atom' },
     {
       key: 'shopify:collection-tag',
-      template: '{scheme}://{host}/collections/{handle}/{tags}.atom',
-    },
-    {
-      key: 'shopify:collection-tag',
-      template: '{scheme}://{host}/{locale}/collections/{handle}/{tags}.atom',
+      main: '{scheme}://{host}/{locale}/collections/{handle}/{tags}.atom',
     },
   ],
   { domains },

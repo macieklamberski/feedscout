@@ -27,11 +27,11 @@ const domains = [hubspotDomainRegex]
 // is only claimed.
 const feeds = definePlatformFeeds(
   [
-    { key: 'hubspot:author', template: '{root}/author/{name}/rss.xml' },
-    { key: 'hubspot:tag', template: '{root}/tag/{name}/rss.xml' },
-    { key: 'hubspot:tag', template: '{root}/topic/{topic}/rss.xml' },
-    { key: 'hubspot:blog', template: '{root}/rss.xml' },
-    { key: 'hubspot:podcast', template: '{root}/podcasts/{id}/rss.xml' },
+    { key: 'hubspot:author', main: '{root}/author/{name}/rss.xml' },
+    { key: 'hubspot:tag', main: '{root}/tag/{name}/rss.xml' },
+    { key: 'hubspot:tag', main: '{root}/topic/{topic}/rss.xml' },
+    { key: 'hubspot:blog', main: '{root}/rss.xml' },
+    { key: 'hubspot:podcast', main: '{root}/podcasts/{id}/rss.xml' },
   ],
   { domains },
 )

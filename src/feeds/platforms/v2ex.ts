@@ -16,10 +16,10 @@ const nodeRegex = /^\/go\/([^/]+)/i
 const memberRegex = /^\/member\/([^/]+)/i
 
 const feeds = definePlatformFeeds([
-  { key: 'v2ex:node', template: 'https://www.v2ex.com/feed/{node}.xml' },
-  { key: 'v2ex:member', template: 'https://www.v2ex.com/feed/member/{username}.xml' },
-  { key: 'v2ex:tab', template: 'https://www.v2ex.com/feed/tab/{tab}.xml' },
-  { key: 'v2ex:index', template: 'https://www.v2ex.com/index.xml' },
+  { key: 'v2ex:node', main: 'https://www.v2ex.com/feed/{node}.xml' },
+  { key: 'v2ex:member', main: 'https://www.v2ex.com/feed/member/{username}.xml' },
+  { key: 'v2ex:tab', main: 'https://www.v2ex.com/feed/tab/{tab}.xml' },
+  { key: 'v2ex:index', main: 'https://www.v2ex.com/index.xml' },
 ])
 
 export const parseV2exUrl = (url: string): V2exUrl | undefined => {

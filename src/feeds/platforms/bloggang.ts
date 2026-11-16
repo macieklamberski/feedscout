@@ -17,7 +17,7 @@ const mobileHosts = ['m.bloggang.com']
 
 const scriptRegex = /^\/(\w+)\.php$/i
 
-const feeds = definePlatformFeeds([{ key: 'bloggang:posts', template: '{scheme}://{host}/rss' }], {
+const feeds = definePlatformFeeds([{ key: 'bloggang:posts', main: '{scheme}://{host}/rss' }], {
   domains,
 })
 

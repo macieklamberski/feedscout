@@ -14,14 +14,14 @@ const domains = ['podigee.io']
 // answers 302 to /feed/mp3, so they are claimed and never built.
 const feeds = definePlatformFeeds(
   [
-    { key: 'podigee:podcast', template: '{scheme}://{host}/feed/mp3' },
-    { key: 'podigee:podcast-encoding', template: '{scheme}://{host}/feed/aac' },
-    { key: 'podigee:podcast-encoding', template: '{scheme}://{host}/feed/opus' },
-    { key: 'podigee:podcast-encoding', template: '{scheme}://{host}/feed/vorbis' },
-    { key: 'podigee:feed', template: '{scheme}://{host}/feeds/{feed}/mp3' },
-    { key: 'podigee:feed-encoding', template: '{scheme}://{host}/feeds/{feed}/aac' },
-    { key: 'podigee:feed-encoding', template: '{scheme}://{host}/feeds/{feed}/opus' },
-    { key: 'podigee:feed-encoding', template: '{scheme}://{host}/feeds/{feed}/vorbis' },
+    { key: 'podigee:podcast', main: '{scheme}://{host}/feed/mp3' },
+    { key: 'podigee:podcast-encoding', main: '{scheme}://{host}/feed/aac' },
+    { key: 'podigee:podcast-encoding', main: '{scheme}://{host}/feed/opus' },
+    { key: 'podigee:podcast-encoding', main: '{scheme}://{host}/feed/vorbis' },
+    { key: 'podigee:feed', main: '{scheme}://{host}/feeds/{feed}/mp3' },
+    { key: 'podigee:feed-encoding', main: '{scheme}://{host}/feeds/{feed}/aac' },
+    { key: 'podigee:feed-encoding', main: '{scheme}://{host}/feeds/{feed}/opus' },
+    { key: 'podigee:feed-encoding', main: '{scheme}://{host}/feeds/{feed}/vorbis' },
   ],
   { domains },
 )

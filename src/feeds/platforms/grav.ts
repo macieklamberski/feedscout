@@ -18,10 +18,10 @@ const gravCookieRegex = /^grav-site-[0-9a-f]+$/
 // A site is self-hosted on any domain, so the table only builds its feeds. The site root has no
 // path to suffix, so its feed is `/.rss`.
 const feeds = definePlatformFeeds([
-  { key: 'grav:page', template: '{root}/{path*}.rss', format: 'rss' },
-  { key: 'grav:page', template: '{root}/.rss', format: 'rss' },
-  { key: 'grav:page', template: '{root}/{path*}.atom', format: 'atom' },
-  { key: 'grav:page', template: '{root}/.atom', format: 'atom' },
+  { key: 'grav:page', main: '{root}/{path*}.rss', format: 'rss' },
+  { key: 'grav:page', main: '{root}/.rss', format: 'rss' },
+  { key: 'grav:page', main: '{root}/{path*}.atom', format: 'atom' },
+  { key: 'grav:page', main: '{root}/.atom', format: 'atom' },
 ])
 
 // `GravCMS` in full, since the value is compared as a prefix and `Grav` matches `Gravity Forms`.

@@ -21,21 +21,20 @@ const domains = ['wildapricot.org']
 // claimed under a key that names neither.
 const feeds = definePlatformFeeds(
   [
+    { key: 'wild-apricot:blog', main: '{root}/page-{page}/BlogPost/{id}/RSS' },
+    { key: 'wild-apricot:events', main: '{root}/page-{page}/EventModule/{id}/RSS' },
     {
-      key: 'wild-apricot:blog',
-      template: '{root}/page-{page}/BlogPost/{id}/RSS',
+      key: 'wild-apricot:page',
+      main: '{scheme}://{host}/page-{page}/RSS',
+      aliases: [
+        // A page's feed answers under its friendly path too, and in its widget view, as `/news/RSS`
+        // and `/widget/Events/RSS`. Each names its module feed as its self link.
+        '{root}/RSS',
+        '{root}/widget/RSS',
+        '{root}/{path}/RSS',
+        '{root}/widget/{path}/RSS',
+      ],
     },
-    {
-      key: 'wild-apricot:events',
-      template: '{root}/page-{page}/EventModule/{id}/RSS',
-    },
-    { key: 'wild-apricot:page', template: '{scheme}://{host}/page-{page}/RSS' },
-    // A page's feed answers under its friendly path too, and in its widget view, as `/news/RSS`
-    // and `/widget/Events/RSS`. Each names its module feed as its self link.
-    { key: 'wild-apricot:page', template: '{root}/RSS', isAlias: true },
-    { key: 'wild-apricot:page', template: '{root}/widget/RSS', isAlias: true },
-    { key: 'wild-apricot:page', template: '{root}/{path}/RSS', isAlias: true },
-    { key: 'wild-apricot:page', template: '{root}/widget/{path}/RSS', isAlias: true },
   ],
   { domains },
 )

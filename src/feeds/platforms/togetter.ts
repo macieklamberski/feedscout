@@ -13,12 +13,15 @@ export const hosts = ['togetter.com', 'www.togetter.com']
 const userPathRegex = /^\/id\/([^/]+)/i
 
 const feeds = definePlatformFeeds([
-  { key: 'togetter:news', template: 'https://togetter.com/rss/news' },
-  { key: 'togetter:hot', template: 'https://togetter.com/rss/hot' },
-  { key: 'togetter:recent', template: 'https://togetter.com/rss/recent' },
+  { key: 'togetter:news', main: 'https://togetter.com/rss/news' },
+  { key: 'togetter:hot', main: 'https://togetter.com/rss/hot' },
+  { key: 'togetter:recent', main: 'https://togetter.com/rss/recent' },
   // A curator's feed moved to posfie.com, and the togetter.com one redirects there with a 301.
-  { key: 'togetter:curator', template: 'https://posfie.com/@{username}/rss' },
-  { key: 'togetter:curator', template: 'https://togetter.com/rss/id/{username}', isAlias: true },
+  {
+    key: 'togetter:curator',
+    main: 'https://posfie.com/@{username}/rss',
+    aliases: ['https://togetter.com/rss/id/{username}'],
+  },
 ])
 
 export const parseTogetterUrl = (url: string): TogetterUrl | undefined => {

@@ -17,12 +17,12 @@ const labelPathRegex = /^\/labels\/([^/,]+)\/?$/i
 // the label rows, so a label named feed reads as the newspage feed.
 const feeds = definePlatformFeeds(
   [
-    { key: 'noticeable:posts', template: '{scheme}://{host}/feed.rss', format: 'rss' },
-    { key: 'noticeable:posts', template: '{scheme}://{host}/feed.atom', format: 'atom' },
-    { key: 'noticeable:posts', template: '{scheme}://{host}/feed.json', format: 'json' },
-    { key: 'noticeable:label', template: '{scheme}://{host}/{label}.rss', format: 'rss' },
-    { key: 'noticeable:label', template: '{scheme}://{host}/{label}.atom', format: 'atom' },
-    { key: 'noticeable:label', template: '{scheme}://{host}/{label}.json', format: 'json' },
+    { key: 'noticeable:posts', main: '{scheme}://{host}/feed.rss', format: 'rss' },
+    { key: 'noticeable:posts', main: '{scheme}://{host}/feed.atom', format: 'atom' },
+    { key: 'noticeable:posts', main: '{scheme}://{host}/feed.json', format: 'json' },
+    { key: 'noticeable:label', main: '{scheme}://{host}/{label}.rss', format: 'rss' },
+    { key: 'noticeable:label', main: '{scheme}://{host}/{label}.atom', format: 'atom' },
+    { key: 'noticeable:label', main: '{scheme}://{host}/{label}.json', format: 'json' },
   ],
   { domains },
 )

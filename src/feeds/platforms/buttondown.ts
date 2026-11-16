@@ -10,11 +10,10 @@ const hosts = ['buttondown.com', 'www.buttondown.com', 'buttondown.email', 'www.
 
 // The legacy buttondown.email host redirects each feed to the same path on buttondown.com.
 const feeds = definePlatformFeeds([
-  { key: 'buttondown:newsletter', template: 'https://buttondown.com/{username}/rss' },
   {
     key: 'buttondown:newsletter',
-    template: 'https://buttondown.email/{username}/rss',
-    isAlias: true,
+    main: 'https://buttondown.com/{username}/rss',
+    aliases: ['https://buttondown.email/{username}/rss'],
   },
 ])
 

@@ -14,18 +14,31 @@ const apexHosts = ['prose.sh']
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'prose:discovery', template: 'https://prose.sh/rss' },
-    { key: 'prose:discovery', template: 'https://prose.sh/rss.atom', isAlias: true },
-    { key: 'prose:tag', template: '{scheme}://{host}/rss?tag={tag}' },
-    { key: 'prose:tag', template: '{scheme}://{host}/atom?tag={tag}', isAlias: true },
-    { key: 'prose:tag', template: '{scheme}://{host}/rss.xml?tag={tag}', isAlias: true },
-    { key: 'prose:tag', template: '{scheme}://{host}/feed.xml?tag={tag}', isAlias: true },
-    { key: 'prose:tag', template: '{scheme}://{host}/atom.xml?tag={tag}', isAlias: true },
-    { key: 'prose:blog', template: '{scheme}://{host}/rss' },
-    { key: 'prose:blog', template: '{scheme}://{host}/atom', isAlias: true },
-    { key: 'prose:blog', template: '{scheme}://{host}/rss.xml', isAlias: true },
-    { key: 'prose:blog', template: '{scheme}://{host}/feed.xml', isAlias: true },
-    { key: 'prose:blog', template: '{scheme}://{host}/atom.xml', isAlias: true },
+    {
+      key: 'prose:discovery',
+      main: 'https://prose.sh/rss',
+      aliases: ['https://prose.sh/rss.atom'],
+    },
+    {
+      key: 'prose:tag',
+      main: '{scheme}://{host}/rss?tag={tag}',
+      aliases: [
+        '{scheme}://{host}/atom?tag={tag}',
+        '{scheme}://{host}/rss.xml?tag={tag}',
+        '{scheme}://{host}/feed.xml?tag={tag}',
+        '{scheme}://{host}/atom.xml?tag={tag}',
+      ],
+    },
+    {
+      key: 'prose:blog',
+      main: '{scheme}://{host}/rss',
+      aliases: [
+        '{scheme}://{host}/atom',
+        '{scheme}://{host}/rss.xml',
+        '{scheme}://{host}/feed.xml',
+        '{scheme}://{host}/atom.xml',
+      ],
+    },
   ],
   { domains, isWwwTenant: true },
 )

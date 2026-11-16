@@ -47,40 +47,26 @@ const searchFilters = ['target', 'sort', 'users', 'date_range', 'safe']
 // A search feed carries the filters its page carries, in the page's own query.
 // A site feed carries the site's whole path, and answers the same with or without a trailing slash.
 const feeds = definePlatformFeeds([
-  { key: 'hatena-bookmark:hot', template: 'https://b.hatena.ne.jp/hotentry.rss' },
   {
     key: 'hatena-bookmark:hot',
-    template: 'https://b.hatena.ne.jp/hotentry/all.rss',
-    isAlias: true,
+    main: 'https://b.hatena.ne.jp/hotentry.rss',
+    aliases: ['https://b.hatena.ne.jp/hotentry/all.rss'],
   },
-  {
-    key: 'hatena-bookmark:hot-category',
-    template: 'https://b.hatena.ne.jp/hotentry/{category}.rss',
-  },
-  { key: 'hatena-bookmark:new', template: 'https://b.hatena.ne.jp/entrylist.rss' },
+  { key: 'hatena-bookmark:hot-category', main: 'https://b.hatena.ne.jp/hotentry/{category}.rss' },
   {
     key: 'hatena-bookmark:new',
-    template: 'https://b.hatena.ne.jp/entrylist/all.rss',
-    isAlias: true,
+    main: 'https://b.hatena.ne.jp/entrylist.rss',
+    aliases: ['https://b.hatena.ne.jp/entrylist/all.rss'],
   },
-  {
-    key: 'hatena-bookmark:new-category',
-    template: 'https://b.hatena.ne.jp/entrylist/{category}.rss',
-  },
-  {
-    key: 'hatena-bookmark:search',
-    template: 'https://b.hatena.ne.jp/q/{query}?{filters}&mode=rss',
-  },
-  { key: 'hatena-bookmark:bookmarks', template: 'https://b.hatena.ne.jp/{username}/bookmark.rss' },
+  { key: 'hatena-bookmark:new-category', main: 'https://b.hatena.ne.jp/entrylist/{category}.rss' },
+  { key: 'hatena-bookmark:search', main: 'https://b.hatena.ne.jp/q/{query}?{filters}&mode=rss' },
+  { key: 'hatena-bookmark:bookmarks', main: 'https://b.hatena.ne.jp/{username}/bookmark.rss' },
   {
     key: 'hatena-bookmark:user-tag',
-    template: 'https://b.hatena.ne.jp/{username}/bookmark.rss?tag={tag}',
+    main: 'https://b.hatena.ne.jp/{username}/bookmark.rss?tag={tag}',
   },
-  {
-    key: 'hatena-bookmark:site',
-    template: 'https://b.hatena.ne.jp/site/{site*}?sort={sort}&mode=rss',
-  },
-  { key: 'hatena-bookmark:site', template: 'https://b.hatena.ne.jp/site/{site*}?mode=rss' },
+  { key: 'hatena-bookmark:site', main: 'https://b.hatena.ne.jp/site/{site*}?sort={sort}&mode=rss' },
+  { key: 'hatena-bookmark:site', main: 'https://b.hatena.ne.jp/site/{site*}?mode=rss' },
 ])
 
 const copySearchFilters = (

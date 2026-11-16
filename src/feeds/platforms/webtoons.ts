@@ -24,17 +24,11 @@ const canvasGenres = ['canvas', 'challenge']
 const feeds = definePlatformFeeds([
   {
     key: 'webtoons:series',
-    template: 'https://www.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
-  },
-  {
-    key: 'webtoons:series',
-    template: 'https://sg.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
-    isAlias: true,
-  },
-  {
-    key: 'webtoons:series',
-    template: 'https://us.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
-    isAlias: true,
+    main: 'https://www.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
+    aliases: [
+      'https://sg.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
+      'https://us.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
+    ],
   },
 ])
 

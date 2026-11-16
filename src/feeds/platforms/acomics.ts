@@ -11,8 +11,8 @@ export type AcomicsUrl = { kind: 'comic'; comic: string } | { kind: 'user'; user
 const hosts = ['acomics.ru', 'www.acomics.ru']
 
 const feeds = definePlatformFeeds([
-  { key: 'acomics:issues', template: 'https://acomics.ru/~{comic}/rss' },
-  { key: 'acomics:subscriptions', template: 'https://acomics.ru/-{username}/rss' },
+  { key: 'acomics:issues', main: 'https://acomics.ru/~{comic}/rss' },
+  { key: 'acomics:subscriptions', main: 'https://acomics.ru/-{username}/rss' },
 ])
 
 // A comic lives under /~{comic} and a user under /-{user}, and both keep their case in the feed

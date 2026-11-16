@@ -1,8 +1,8 @@
 export type {
+  PlatformFeed,
   PlatformFeedParams,
   PlatformFeedTable,
   PlatformFeedTableOptions,
-  PlatformFeedTemplate,
 } from '../common/uris/platform/feeds.js'
 export { definePlatformFeeds } from '../common/uris/platform/feeds.js'
 export { discoverUrisFromPlatform } from '../common/uris/platform/index.js'

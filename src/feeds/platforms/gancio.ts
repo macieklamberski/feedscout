@@ -16,10 +16,10 @@ const sections = ['tag', 'place', 'collection'] as const
 
 // An instance is self-hosted on any domain, so the table only builds its feeds.
 const feeds = definePlatformFeeds([
-  { key: 'gancio:tag', template: '{root}/feed/rss/tag/{tag}' },
-  { key: 'gancio:place', template: '{root}/feed/rss/place/{place}' },
-  { key: 'gancio:collection', template: '{root}/feed/rss/collection/{collection}' },
-  { key: 'gancio:site', template: '{root}/feed/rss' },
+  { key: 'gancio:tag', main: '{root}/feed/rss/tag/{tag}' },
+  { key: 'gancio:place', main: '{root}/feed/rss/place/{place}' },
+  { key: 'gancio:collection', main: '{root}/feed/rss/collection/{collection}' },
+  { key: 'gancio:site', main: '{root}/feed/rss' },
 ])
 
 // The default layout prints the `custom_css` stylesheet in every page head, at the install's root.

@@ -16,20 +16,20 @@ const groupRegex = /^\/~([^/]+)/
 const feeds = definePlatformFeeds([
   {
     key: 'tildes:group-tag',
-    template: 'https://tildes.net/~{group}/topics.rss?tag={tag}',
+    main: 'https://tildes.net/~{group}/topics.rss?tag={tag}',
     format: 'rss',
   },
   {
     key: 'tildes:group-tag',
-    template: 'https://tildes.net/~{group}/topics.atom?tag={tag}',
+    main: 'https://tildes.net/~{group}/topics.atom?tag={tag}',
     format: 'atom',
   },
-  { key: 'tildes:group', template: 'https://tildes.net/~{group}/topics.rss', format: 'rss' },
-  { key: 'tildes:group', template: 'https://tildes.net/~{group}/topics.atom', format: 'atom' },
-  { key: 'tildes:tag', template: 'https://tildes.net/topics.rss?tag={tag}', format: 'rss' },
-  { key: 'tildes:tag', template: 'https://tildes.net/topics.atom?tag={tag}', format: 'atom' },
-  { key: 'tildes:topics', template: 'https://tildes.net/topics.rss', format: 'rss' },
-  { key: 'tildes:topics', template: 'https://tildes.net/topics.atom', format: 'atom' },
+  { key: 'tildes:group', main: 'https://tildes.net/~{group}/topics.rss', format: 'rss' },
+  { key: 'tildes:group', main: 'https://tildes.net/~{group}/topics.atom', format: 'atom' },
+  { key: 'tildes:tag', main: 'https://tildes.net/topics.rss?tag={tag}', format: 'rss' },
+  { key: 'tildes:tag', main: 'https://tildes.net/topics.atom?tag={tag}', format: 'atom' },
+  { key: 'tildes:topics', main: 'https://tildes.net/topics.rss', format: 'rss' },
+  { key: 'tildes:topics', main: 'https://tildes.net/topics.atom', format: 'atom' },
 ])
 
 export const parseTildesUrl = (url: string): TildesUrl | undefined => {

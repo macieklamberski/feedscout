@@ -24,112 +24,74 @@ const domains = ['squarespace.com']
 // a jsessionid, and answers `?format=rss` with a page.
 const feeds = definePlatformFeeds(
   [
-    { key: 'squarespace:collection', template: '{scheme}://{host}/{collection}?format=rss' },
-    // One fixed value every site answers with the same feed as `format=rss`. Any other value after
-    // `sqsp_rss_` answers the page.
     {
       key: 'squarespace:collection',
-      template: '{scheme}://{host}/{collection}?format=sqsp_rss_wceoq1kgqnmf2cn9czutlluofr44tazt',
-      isAlias: true,
+      main: '{scheme}://{host}/{collection}?format=rss',
+      aliases: [
+        // One fixed value every site answers with the same feed as `format=rss`. Any other value
+        // after `sqsp_rss_` answers the page.
+        '{scheme}://{host}/{collection}?format=sqsp_rss_wceoq1kgqnmf2cn9czutlluofr44tazt',
+        '{scheme}://{host}/{collection}/rss.xml',
+        '{scheme}://{host}/{collection}/rss.xml;jsessionid={session}',
+      ],
     },
     {
       key: 'squarespace:collection',
-      template: '{scheme}://{host}/{collection}/rss.xml',
-      isAlias: true,
+      main: '{scheme}://{host}/?format=rss',
+      aliases: ['{scheme}://{host}/?format=sqsp_rss_wceoq1kgqnmf2cn9czutlluofr44tazt'],
     },
+    { key: 'squarespace:collection', main: '{scheme}://{host}/{parent}/{collection}?format=rss' },
     {
       key: 'squarespace:collection',
-      template: '{scheme}://{host}/{collection}/rss.xml;jsessionid={session}',
-      isAlias: true,
-    },
-    { key: 'squarespace:collection', template: '{scheme}://{host}/?format=rss' },
-    {
-      key: 'squarespace:collection',
-      template: '{scheme}://{host}/?format=sqsp_rss_wceoq1kgqnmf2cn9czutlluofr44tazt',
-      isAlias: true,
-    },
-    {
-      key: 'squarespace:collection',
-      template: '{scheme}://{host}/{parent}/{collection}?format=rss',
-    },
-    {
-      key: 'squarespace:collection',
-      template: '{scheme}://{host}/{collection}/atom.xml',
+      main: '{scheme}://{host}/{collection}/atom.xml',
       format: 'atom',
+      aliases: ['{scheme}://{host}/{collection}/atom.xml;jsessionid={session}'],
     },
     {
       key: 'squarespace:collection',
-      template: '{scheme}://{host}/{collection}/atom.xml;jsessionid={session}',
-      format: 'atom',
-      isAlias: true,
-    },
-    {
-      key: 'squarespace:collection',
-      template: '{scheme}://{host}/{collection}/rdf.xml',
+      main: '{scheme}://{host}/{collection}/rdf.xml',
       format: 'rdf',
-    },
-    {
-      key: 'squarespace:collection',
-      template: '{scheme}://{host}/{collection}/rdf.xml;jsessionid={session}',
-      format: 'rdf',
-      isAlias: true,
+      aliases: ['{scheme}://{host}/{collection}/rdf.xml;jsessionid={session}'],
     },
     {
       key: 'squarespace:category',
-      template: '{scheme}://{host}/{collection}?category={category}&format=rss',
+      main: '{scheme}://{host}/{collection}?category={category}&format=rss',
+      aliases: ['{scheme}://{host}/{collection}/category/{category}?format=rss'],
     },
+    { key: 'squarespace:category', main: '{scheme}://{host}/?category={category}&format=rss' },
     {
       key: 'squarespace:category',
-      template: '{scheme}://{host}/{collection}/category/{category}?format=rss',
-      isAlias: true,
-    },
-    { key: 'squarespace:category', template: '{scheme}://{host}/?category={category}&format=rss' },
-    {
-      key: 'squarespace:category',
-      template: '{scheme}://{host}/{collection}/rss.xml?categoryId={categoryId}',
-    },
-    {
-      key: 'squarespace:category',
-      template:
+      main: '{scheme}://{host}/{collection}/rss.xml?categoryId={categoryId}',
+      aliases: [
         '{scheme}://{host}/{collection}/rss.xml;jsessionid={session}?categoryId={categoryId}',
-      isAlias: true,
+      ],
     },
     {
       key: 'squarespace:category',
-      template: '{scheme}://{host}/{collection}/atom.xml?categoryId={categoryId}',
+      main: '{scheme}://{host}/{collection}/atom.xml?categoryId={categoryId}',
       format: 'atom',
-    },
-    {
-      key: 'squarespace:category',
-      template:
+      aliases: [
         '{scheme}://{host}/{collection}/atom.xml;jsessionid={session}?categoryId={categoryId}',
-      format: 'atom',
-      isAlias: true,
+      ],
     },
     {
       key: 'squarespace:category',
-      template: '{scheme}://{host}/{collection}/rdf.xml?categoryId={categoryId}',
+      main: '{scheme}://{host}/{collection}/rdf.xml?categoryId={categoryId}',
       format: 'rdf',
-    },
-    {
-      key: 'squarespace:category',
-      template:
+      aliases: [
         '{scheme}://{host}/{collection}/rdf.xml;jsessionid={session}?categoryId={categoryId}',
-      format: 'rdf',
-      isAlias: true,
+      ],
     },
-    { key: 'squarespace:tag', template: '{scheme}://{host}/{collection}?tag={tag}&format=rss' },
     {
       key: 'squarespace:tag',
-      template: '{scheme}://{host}/{collection}/tag/{tag}?format=rss',
-      isAlias: true,
+      main: '{scheme}://{host}/{collection}?tag={tag}&format=rss',
+      aliases: ['{scheme}://{host}/{collection}/tag/{tag}?format=rss'],
     },
-    { key: 'squarespace:tag', template: '{scheme}://{host}/?tag={tag}&format=rss' },
-    { key: 'squarespace:comments', template: '{scheme}://{host}/{collection}/rss-comments.xml' },
+    { key: 'squarespace:tag', main: '{scheme}://{host}/?tag={tag}&format=rss' },
     {
       key: 'squarespace:comments',
-      template: '{scheme}://{host}/{collection}/rss-comments.xml;jsessionid={session}',
-      isAlias: true,
+      main: '{scheme}://{host}/{collection}/rss-comments.xml',
+      aliases: ['{scheme}://{host}/{collection}/rss-comments.xml;jsessionid={session}'],
     },
   ],
   { domains },

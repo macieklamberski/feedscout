@@ -17,8 +17,8 @@ const playlistRegex = /^\/playlists\/(?<segment>[^/]+)/i
 const idRegex = /^(?<id>\d+)(?:-|$)/
 
 const feeds = definePlatformFeeds([
-  { key: 'audioboom:podcast', template: 'https://audioboom.com/channels/{channelId}.rss' },
-  { key: 'audioboom:playlist', template: 'https://audioboom.com/playlists/{playlistId}.rss' },
+  { key: 'audioboom:podcast', main: 'https://audioboom.com/channels/{channelId}.rss' },
+  { key: 'audioboom:playlist', main: 'https://audioboom.com/playlists/{playlistId}.rss' },
 ])
 
 export const parseAudioboomUrl = (url: string): AudioboomUrl | undefined => {

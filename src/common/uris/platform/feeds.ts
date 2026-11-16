@@ -1,26 +1,22 @@
 import { definePlatformFeeds as defineFeeds } from 'feedintel'
-import { t } from 'trousse'
-import locales from '../../../locales.json' with { type: 'json' }
 import type { DiscoverUriEntry, DiscoverUriHint, UriEntry } from '../../types.js'
 import { composeHint } from '../../utils.js'
 
-export type PlatformFeedTemplate<Key extends string = string> = {
+export type PlatformFeed<Key extends string = string> = {
   key: Key
-  // A feed URL with `{name}` placeholders, each one host label, path segment or query value, and
-  // `{scheme}` for a feed served under the page's own scheme. A template opening with `{root}`
+  // The feed's URL, with `{name}` placeholders, each one host label, path segment or query value,
+  // and `{scheme}` for a feed served under the page's own scheme. A URL opening with `{root}`
   // takes the scheme, the host and an optional base path, as `https://example.com/forum`. A
   // `{name*}` path placeholder takes one or more segments, filled from `name` as `docs/api`. A
   // placeholder standing as a whole query parameter, as in `?{query}&format=feed`, takes a query
   // the page passes, written as given.
-  template: string
+  main: string
+  // Other URLs that serve the same feed, such as a legacy host, written as `main` is.
+  aliases?: Array<string>
   format?: DiscoverUriHint['format']
-  // Another spelling of one feed, such as a legacy host, directly under the row it spells. Its
-  // canonical row is the nearest row above it with the same key and format and no `isAlias`, and
-  // the table throws when there is none.
-  isAlias?: boolean
-  // How the row's query values are written: `minimal`, the default, escapes only what would change
-  // the URL's structure, and `form` encodes as `URLSearchParams` does, `:` as `%3A` and a space as
-  // `+`. An alias row is written as its canonical row is.
+  // How the feed's query values are written: `minimal`, the default, escapes only what would
+  // change the URL's structure, and `form` encodes as `URLSearchParams` does, `:` as `%3A` and a
+  // space as `+`.
   queryEncoding?: 'minimal' | 'form'
 }
 
@@ -43,7 +39,7 @@ export type PlatformFeedTableOptions = {
   isWwwTenantPrefix?: boolean
 }
 
-// A table's methods take only the keys of its rows, so a key the table does not hold fails the
+// A table's methods take only the keys of its feeds, so a key the table does not hold fails the
 // typecheck.
 export type PlatformFeedTable<Key extends string = string> = {
   getFeedUrl: (
@@ -94,14 +90,6 @@ type UnlabelledFeedTable<Key extends string> = {
   ) =>
     | Pick<UnlabelledFeedTable<Key>, 'getFeedUrl' | 'getFeedEntry' | 'getFeedSpellings'>
     | undefined
-}
-
-type UnlabelledFeed<Key extends string> = {
-  key: Key
-  main: string
-  aliases: Array<string>
-  format?: DiscoverUriHint['format']
-  queryEncoding?: 'minimal' | 'form'
 }
 
 // A feedintel hint carries no label, since the labels are this package's.
@@ -157,26 +145,8 @@ export const withHintLabels = <Key extends string>(
 // a page gave, `getFeedEntry` adds its hint, `getFeedSpellings` lists every spelling of the feed
 // under one hint, and `getFeedHint` reads a URL back to the feed's hint.
 export const definePlatformFeeds = <const Key extends string>(
-  templates: Array<PlatformFeedTemplate<Key>>,
+  feeds: Array<PlatformFeed<Key>>,
   { domains, ...options }: PlatformFeedTableOptions = {},
 ): PlatformFeedTable<Key> => {
-  // feedintel writes a feed as one row with its aliases.
-  const feeds: Array<UnlabelledFeed<Key>> = []
-
-  for (const { key, template, format, isAlias, queryEncoding } of templates) {
-    if (!isAlias) {
-      feeds.push({ key, main: template, aliases: [], format, queryEncoding })
-      continue
-    }
-
-    const feed = feeds.findLast((candidate) => candidate.key === key && candidate.format === format)
-
-    if (!feed) {
-      throw new Error(t(locales.errors.missingCanonicalFeedTemplate, { key }))
-    }
-
-    feed.aliases.push(template)
-  }
-
   return withHintLabels(defineFeeds(feeds, { ...options, tenantDomains: domains }))
 }

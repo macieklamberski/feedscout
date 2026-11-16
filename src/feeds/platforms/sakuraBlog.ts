@@ -10,12 +10,18 @@ const domains = ['sblo.jp']
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'sakura-blog:posts', template: '{scheme}://{host}/index20.rdf', format: 'rss' },
-    // A blog made since the platform's redesign serves its posts at `/rss.xml` alone, and an older
-    // blog answers 404 there. It is built under the page's own origin, since a newer blog serves
-    // https and redirects http there.
-    { key: 'sakura-blog:posts', template: '{root}/rss.xml', format: 'rss', isAlias: true },
-    { key: 'sakura-blog:posts', template: '{scheme}://{host}/index.rdf', format: 'rdf' },
+    {
+      key: 'sakura-blog:posts',
+      main: '{scheme}://{host}/index20.rdf',
+      format: 'rss',
+      aliases: [
+        // A blog made since the platform's redesign serves its posts at `/rss.xml` alone, and an
+        // older blog answers 404 there. It is built under the page's own origin, since a newer blog
+        // serves https and redirects http there.
+        '{root}/rss.xml',
+      ],
+    },
+    { key: 'sakura-blog:posts', main: '{scheme}://{host}/index.rdf', format: 'rdf' },
   ],
   { domains, isWwwTenantPrefix: true },
 )

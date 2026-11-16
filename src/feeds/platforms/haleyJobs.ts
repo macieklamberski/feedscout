@@ -10,9 +10,7 @@ const boardRoutePrefix = '/index.smpl?arg=jb_'
 
 // A board runs on the employer's own domain, so the table only builds its feed. `ff=1` serves the
 // full job descriptions, which the bare feed cuts short.
-const feeds = definePlatformFeeds([
-  { key: 'haley-jobs:jobs', template: '{root}/rss/rss.smpl?ff=1' },
-])
+const feeds = definePlatformFeeds([{ key: 'haley-jobs:jobs', main: '{root}/rss/rss.smpl?ff=1' }])
 
 // Haley's resource centers and admin pages come from the same servers, so the job board is told
 // apart by its own `jb_` routes.

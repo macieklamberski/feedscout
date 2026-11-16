@@ -16,8 +16,8 @@ const connectHosts = ['connect.eklablog.com']
 // A blog off the domains is known only by its marker, so its feeds are built here but not claimed.
 const feeds = definePlatformFeeds(
   [
-    { key: 'eklablog:posts', template: '{scheme}://{host}/rss' },
-    { key: 'eklablog:comments', template: '{scheme}://{host}/rss/comments' },
+    { key: 'eklablog:posts', main: '{scheme}://{host}/rss' },
+    { key: 'eklablog:comments', main: '{scheme}://{host}/rss/comments' },
   ],
   { domains },
 )

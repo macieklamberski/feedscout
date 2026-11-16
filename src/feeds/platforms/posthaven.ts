@@ -14,9 +14,9 @@ const tagRegex = /^\/tag\/([^/]+)/i
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'posthaven:posts', template: '{scheme}://{host}/posts.atom' },
+    { key: 'posthaven:posts', main: '{scheme}://{host}/posts.atom' },
     // Posthaven serves an undocumented per-tag Atom feed.
-    { key: 'posthaven:tag', template: '{scheme}://{host}/tag/{tag}.atom' },
+    { key: 'posthaven:tag', main: '{scheme}://{host}/tag/{tag}.atom' },
   ],
   { domains },
 )

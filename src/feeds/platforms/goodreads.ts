@@ -15,23 +15,23 @@ const hosts = ['goodreads.com', 'www.goodreads.com']
 const feeds = definePlatformFeeds([
   {
     key: 'goodreads:shelf',
-    template: 'https://www.goodreads.com/review/list_rss/{userId}?shelf={shelf}',
+    main: 'https://www.goodreads.com/review/list_rss/{userId}?shelf={shelf}',
   },
-  { key: 'goodreads:reviews', template: 'https://www.goodreads.com/review/list_rss/{userId}' },
-  { key: 'goodreads:updates', template: 'https://www.goodreads.com/user/updates_rss/{userId}' },
+  { key: 'goodreads:reviews', main: 'https://www.goodreads.com/review/list_rss/{userId}' },
+  { key: 'goodreads:updates', main: 'https://www.goodreads.com/user/updates_rss/{userId}' },
   // A `key` parameter carries the account owner's private token, which no page gives, so these
   // rows only claim the feed.
   {
     key: 'goodreads:private-shelf',
-    template: 'https://www.goodreads.com/review/list_rss/{userId}?key={key}&shelf={shelf}',
+    main: 'https://www.goodreads.com/review/list_rss/{userId}?key={key}&shelf={shelf}',
   },
   {
     key: 'goodreads:private-reviews',
-    template: 'https://www.goodreads.com/review/list_rss/{userId}?key={key}',
+    main: 'https://www.goodreads.com/review/list_rss/{userId}?key={key}',
   },
   {
     key: 'goodreads:private-updates',
-    template: 'https://www.goodreads.com/user/updates_rss/{userId}?key={key}',
+    main: 'https://www.goodreads.com/user/updates_rss/{userId}?key={key}',
   },
 ])
 

@@ -19,18 +19,20 @@ const signUpPageRegex = /\/user_files\/index\/config\/favicon\.ico"/i
 
 const feeds = definePlatformFeeds(
   [
+    { key: 'is-programmer:post-comments', main: '{scheme}://{host}/posts/{postId}.rss' },
     {
-      key: 'is-programmer:post-comments',
-      template: '{scheme}://{host}/posts/{postId}.rss',
+      key: 'is-programmer:posts',
+      main: '{scheme}://{host}/feed',
+      aliases: [
+        '{scheme}://{host}/posts.rss',
+        '{scheme}://{host}/feed.rss',
+        '{scheme}://{host}/rss',
+        '{scheme}://{host}/?format=rss',
+      ],
     },
-    { key: 'is-programmer:posts', template: '{scheme}://{host}/feed' },
-    { key: 'is-programmer:posts', template: '{scheme}://{host}/posts.rss', isAlias: true },
-    { key: 'is-programmer:posts', template: '{scheme}://{host}/feed.rss', isAlias: true },
-    { key: 'is-programmer:posts', template: '{scheme}://{host}/rss', isAlias: true },
-    { key: 'is-programmer:posts', template: '{scheme}://{host}/?format=rss', isAlias: true },
-    { key: 'is-programmer:comments', template: '{scheme}://{host}/comments.rss' },
-    { key: 'is-programmer:messages', template: '{scheme}://{host}/messages.rss' },
-    { key: 'is-programmer:site', template: '{scheme}://{host}/site.rss' },
+    { key: 'is-programmer:comments', main: '{scheme}://{host}/comments.rss' },
+    { key: 'is-programmer:messages', main: '{scheme}://{host}/messages.rss' },
+    { key: 'is-programmer:site', main: '{scheme}://{host}/site.rss' },
   ],
   { domains },
 )

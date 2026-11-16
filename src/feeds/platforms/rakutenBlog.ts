@@ -11,11 +11,10 @@ const hosts = ['plaza.rakuten.co.jp']
 // A blog page links its feed under `/rss/`, and the feed host serves the same feed at the blog's
 // root too, so the table reads both paths.
 const feeds = definePlatformFeeds([
-  { key: 'rakuten-blog:posts', template: 'https://api.plaza.rakuten.ne.jp/{username}/rss/' },
   {
     key: 'rakuten-blog:posts',
-    template: 'https://api.plaza.rakuten.ne.jp/{username}/',
-    isAlias: true,
+    main: 'https://api.plaza.rakuten.ne.jp/{username}/rss/',
+    aliases: ['https://api.plaza.rakuten.ne.jp/{username}/'],
   },
 ])
 

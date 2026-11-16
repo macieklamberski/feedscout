@@ -17,8 +17,11 @@ export const hosts = ['postype.com', 'www.postype.com']
 // A subdomain feed redirects to the channel feed on www.postype.com, and http to https.
 const feeds = definePlatformFeeds(
   [
-    { key: 'postype:posts', template: 'https://www.postype.com/@{channel}/rss' },
-    { key: 'postype:posts', template: '{scheme}://{host}/rss', isAlias: true },
+    {
+      key: 'postype:posts',
+      main: 'https://www.postype.com/@{channel}/rss',
+      aliases: ['{scheme}://{host}/rss'],
+    },
   ],
   { domains },
 )

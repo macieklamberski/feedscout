@@ -23,31 +23,29 @@ const feeds = definePlatformFeeds(
   [
     {
       key: 'gitlab:branch-commits',
-      template: '{root}/{project*}/-/commits/{branch}?format=atom',
-    },
-    // `/-/commits/{branch}.atom` serves the bytes `?format=atom` does. Under a file path GitLab
-    // reads the suffix as part of the file and redirects to the tree.
-    {
-      key: 'gitlab:branch-commits',
-      template: '{root}/{project*}/-/commits/{branch}.atom',
-      isAlias: true,
+      main: '{root}/{project*}/-/commits/{branch}?format=atom',
+      aliases: [
+        // `/-/commits/{branch}.atom` serves the bytes `?format=atom` does. Under a file path GitLab
+        // reads the suffix as part of the file and redirects to the tree.
+        '{root}/{project*}/-/commits/{branch}.atom',
+      ],
     },
     // The commits of one file or folder under a branch, another feed under the same key.
     {
       key: 'gitlab:branch-commits',
-      template: '{root}/{project*}/-/commits/{branch}/{path*}?format=atom',
+      main: '{root}/{project*}/-/commits/{branch}/{path*}?format=atom',
     },
-    { key: 'gitlab:releases', template: '{root}/{project*}/-/releases.atom' },
-    { key: 'gitlab:tags', template: '{root}/{project*}/-/tags?format=atom' },
-    { key: 'gitlab:issues', template: '{root}/{project*}/-/issues.atom' },
-    { key: 'gitlab:merge-requests', template: '{root}/{project*}/-/merge_requests.atom' },
+    { key: 'gitlab:releases', main: '{root}/{project*}/-/releases.atom' },
+    { key: 'gitlab:tags', main: '{root}/{project*}/-/tags?format=atom' },
+    { key: 'gitlab:issues', main: '{root}/{project*}/-/issues.atom' },
+    { key: 'gitlab:merge-requests', main: '{root}/{project*}/-/merge_requests.atom' },
     // The signed-in user's dashboard feeds answer only with their `feed_token`, so they are
     // claimed and never built.
-    { key: 'gitlab:dashboard', template: '{root}/dashboard/projects.atom' },
-    { key: 'gitlab:dashboard-issues', template: '{root}/dashboard/issues.atom' },
-    { key: 'gitlab:dashboard-merge-requests', template: '{root}/dashboard/merge_requests.atom' },
+    { key: 'gitlab:dashboard', main: '{root}/dashboard/projects.atom' },
+    { key: 'gitlab:dashboard-issues', main: '{root}/dashboard/issues.atom' },
+    { key: 'gitlab:dashboard-merge-requests', main: '{root}/dashboard/merge_requests.atom' },
     // A namespace or a project of any depth, after the rows its paths overlap.
-    { key: 'gitlab:activity', template: '{root}/{path*}.atom' },
+    { key: 'gitlab:activity', main: '{root}/{path*}.atom' },
   ],
   { hosts },
 )

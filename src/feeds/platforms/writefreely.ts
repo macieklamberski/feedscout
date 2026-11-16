@@ -22,11 +22,11 @@ const blogPathRegex = /^\/(?:[^/]+\/)?$/
 // feeds are built under the instance root and never claimed. A single-user instance serves its
 // one blog at the root, so its rows have no blog segment.
 const feeds = definePlatformFeeds([
-  { key: 'writefreely:tag', template: '{root}/{blog}/tag:{tag}/feed/' },
-  { key: 'writefreely:tag', template: '{root}/tag:{tag}/feed/' },
-  { key: 'writefreely:blog', template: '{root}/{blog}/feed/' },
-  { key: 'writefreely:blog', template: '{root}/feed/' },
-  { key: 'writefreely:reader', template: '{root}/read/feed/' },
+  { key: 'writefreely:tag', main: '{root}/{blog}/tag:{tag}/feed/' },
+  { key: 'writefreely:tag', main: '{root}/tag:{tag}/feed/' },
+  { key: 'writefreely:blog', main: '{root}/{blog}/feed/' },
+  { key: 'writefreely:blog', main: '{root}/feed/' },
+  { key: 'writefreely:reader', main: '{root}/read/feed/' },
 ])
 
 const getUrlBlogPath = (url: string): string | undefined => {

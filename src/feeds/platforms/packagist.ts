@@ -20,62 +20,62 @@ const extensionsRegex = /^\/extensions(?:\/|$)/i
 const feeds = definePlatformFeeds([
   {
     key: 'packagist:releases',
-    template: 'https://packagist.org/feeds/package.{vendor}/{name}.rss',
+    main: 'https://packagist.org/feeds/package.{vendor}/{name}.rss',
     format: 'rss',
   },
   {
     key: 'packagist:releases',
-    template: 'https://packagist.org/feeds/package.{vendor}/{name}.atom',
+    main: 'https://packagist.org/feeds/package.{vendor}/{name}.atom',
     format: 'atom',
   },
   {
     key: 'packagist:vendor',
-    template: 'https://packagist.org/feeds/vendor.{vendor}.rss',
+    main: 'https://packagist.org/feeds/vendor.{vendor}.rss',
     format: 'rss',
   },
   {
     key: 'packagist:vendor',
-    template: 'https://packagist.org/feeds/vendor.{vendor}.atom',
+    main: 'https://packagist.org/feeds/vendor.{vendor}.atom',
     format: 'atom',
   },
   {
     key: 'packagist:new-packages',
-    template: 'https://packagist.org/feeds/packages.rss',
+    main: 'https://packagist.org/feeds/packages.rss',
     format: 'rss',
   },
   {
     key: 'packagist:new-packages',
-    template: 'https://packagist.org/feeds/packages.atom',
+    main: 'https://packagist.org/feeds/packages.atom',
     format: 'atom',
   },
   {
     key: 'packagist:new-releases',
-    template: 'https://packagist.org/feeds/releases.rss',
+    main: 'https://packagist.org/feeds/releases.rss',
     format: 'rss',
   },
   {
     key: 'packagist:new-releases',
-    template: 'https://packagist.org/feeds/releases.atom',
+    main: 'https://packagist.org/feeds/releases.atom',
     format: 'atom',
   },
   {
     key: 'packagist:new-extensions',
-    template: 'https://packagist.org/feeds/extensions.rss',
+    main: 'https://packagist.org/feeds/extensions.rss',
     format: 'rss',
   },
   {
     key: 'packagist:new-extensions',
-    template: 'https://packagist.org/feeds/extensions.atom',
+    main: 'https://packagist.org/feeds/extensions.atom',
     format: 'atom',
   },
   {
     key: 'packagist:extension-releases',
-    template: 'https://packagist.org/feeds/extension-releases.rss',
+    main: 'https://packagist.org/feeds/extension-releases.rss',
     format: 'rss',
   },
   {
     key: 'packagist:extension-releases',
-    template: 'https://packagist.org/feeds/extension-releases.atom',
+    main: 'https://packagist.org/feeds/extension-releases.atom',
     format: 'atom',
   },
 ])

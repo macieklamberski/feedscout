@@ -14,34 +14,22 @@ const componentRouterRegex = /^(https?:\/\/.+?)\/\$\$\$call\$\$\$\//i
 // OJS is self-hosted and known only by its page marker, so nothing in a feed URL names it and the
 // table only builds, under the journal root the page names.
 const feeds = definePlatformFeeds([
-  {
-    key: 'ojs:articles',
-    template: '{root}/gateway/plugin/WebFeedGatewayPlugin/atom',
-    format: 'atom',
-  },
-  {
-    key: 'ojs:articles',
-    template: '{root}/gateway/plugin/WebFeedGatewayPlugin/rss',
-    format: 'rdf',
-  },
-  {
-    key: 'ojs:articles',
-    template: '{root}/gateway/plugin/WebFeedGatewayPlugin/rss2',
-    format: 'rss',
-  },
+  { key: 'ojs:articles', main: '{root}/gateway/plugin/WebFeedGatewayPlugin/atom', format: 'atom' },
+  { key: 'ojs:articles', main: '{root}/gateway/plugin/WebFeedGatewayPlugin/rss', format: 'rdf' },
+  { key: 'ojs:articles', main: '{root}/gateway/plugin/WebFeedGatewayPlugin/rss2', format: 'rss' },
   {
     key: 'ojs:announcements',
-    template: '{root}/gateway/plugin/AnnouncementFeedGatewayPlugin/atom',
+    main: '{root}/gateway/plugin/AnnouncementFeedGatewayPlugin/atom',
     format: 'atom',
   },
   {
     key: 'ojs:announcements',
-    template: '{root}/gateway/plugin/AnnouncementFeedGatewayPlugin/rss',
+    main: '{root}/gateway/plugin/AnnouncementFeedGatewayPlugin/rss',
     format: 'rdf',
   },
   {
     key: 'ojs:announcements',
-    template: '{root}/gateway/plugin/AnnouncementFeedGatewayPlugin/rss2',
+    main: '{root}/gateway/plugin/AnnouncementFeedGatewayPlugin/rss2',
     format: 'rss',
   },
 ])

@@ -11,7 +11,7 @@ const domains = ['reformal.ru', 'idea.informer.com']
 // A project serves the same feed with an `ia` idea id in the query, which the table reads as an
 // extra parameter.
 const feeds = definePlatformFeeds(
-  [{ key: 'reformal:feedback', template: '{scheme}://{host}/proj/rss' }],
+  [{ key: 'reformal:feedback', main: '{scheme}://{host}/proj/rss' }],
   { domains },
 )
 

@@ -14,79 +14,48 @@ const apexHosts = ['bearblog.dev', 'www.bearblog.dev']
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'bearblog:discover', template: 'https://bearblog.dev/discover/feed/', format: 'atom' },
+    { key: 'bearblog:discover', main: 'https://bearblog.dev/discover/feed/', format: 'atom' },
     {
       key: 'bearblog:discover',
-      template: 'https://bearblog.dev/discover/feed/?type=rss',
-      format: 'rss',
-    },
-    { key: 'bearblog:tag', template: '{scheme}://{host}/feed/?q={tag}', format: 'atom' },
-    // A tag feed answers under these paths of the posts feed too, which the page does not link.
-    {
-      key: 'bearblog:tag',
-      template: '{scheme}://{host}/atom/?q={tag}',
-      format: 'atom',
-      isAlias: true,
-    },
-    {
-      key: 'bearblog:tag',
-      template: '{scheme}://{host}/atom.xml?q={tag}',
-      format: 'atom',
-      isAlias: true,
-    },
-    {
-      key: 'bearblog:tag',
-      template: '{scheme}://{host}/feed.xml?q={tag}',
-      format: 'atom',
-      isAlias: true,
-    },
-    {
-      key: 'bearblog:tag',
-      template: '{scheme}://{host}/index.xml?q={tag}',
-      format: 'atom',
-      isAlias: true,
-    },
-    {
-      key: 'bearblog:tag',
-      template: '{scheme}://{host}/feed/?type=rss&q={tag}',
+      main: 'https://bearblog.dev/discover/feed/?type=rss',
       format: 'rss',
     },
     {
       key: 'bearblog:tag',
-      template: '{scheme}://{host}/rss/?q={tag}',
-      format: 'rss',
-      isAlias: true,
+      main: '{scheme}://{host}/feed/?q={tag}',
+      format: 'atom',
+      aliases: [
+        // A tag feed answers under these paths of the posts feed too, which the page does not link.
+        '{scheme}://{host}/atom/?q={tag}',
+        '{scheme}://{host}/atom.xml?q={tag}',
+        '{scheme}://{host}/feed.xml?q={tag}',
+        '{scheme}://{host}/index.xml?q={tag}',
+      ],
     },
     {
       key: 'bearblog:tag',
-      template: '{scheme}://{host}/rss.xml?q={tag}',
+      main: '{scheme}://{host}/feed/?type=rss&q={tag}',
       format: 'rss',
-      isAlias: true,
-    },
-    { key: 'bearblog:posts', template: '{scheme}://{host}/feed/', format: 'atom' },
-    // Every blog serves the same two feeds under these paths too, which the page does not link.
-    { key: 'bearblog:posts', template: '{scheme}://{host}/atom/', format: 'atom', isAlias: true },
-    {
-      key: 'bearblog:posts',
-      template: '{scheme}://{host}/atom.xml',
-      format: 'atom',
-      isAlias: true,
+      aliases: ['{scheme}://{host}/rss/?q={tag}', '{scheme}://{host}/rss.xml?q={tag}'],
     },
     {
       key: 'bearblog:posts',
-      template: '{scheme}://{host}/feed.xml',
+      main: '{scheme}://{host}/feed/',
       format: 'atom',
-      isAlias: true,
+      aliases: [
+        // Every blog serves the same two feeds under these paths too, which the page does not link.
+        '{scheme}://{host}/atom/',
+        '{scheme}://{host}/atom.xml',
+        '{scheme}://{host}/feed.xml',
+        '{scheme}://{host}/index.xml',
+      ],
     },
     {
       key: 'bearblog:posts',
-      template: '{scheme}://{host}/index.xml',
-      format: 'atom',
-      isAlias: true,
+      main: '{scheme}://{host}/feed/?type=rss',
+      format: 'rss',
+      aliases: ['{scheme}://{host}/rss/', '{scheme}://{host}/rss.xml'],
     },
-    { key: 'bearblog:posts', template: '{scheme}://{host}/feed/?type=rss', format: 'rss' },
-    { key: 'bearblog:posts', template: '{scheme}://{host}/rss/', format: 'rss', isAlias: true },
-    { key: 'bearblog:posts', template: '{scheme}://{host}/rss.xml', format: 'rss', isAlias: true },
   ],
   { domains },
 )

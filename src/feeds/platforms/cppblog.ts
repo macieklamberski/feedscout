@@ -20,14 +20,14 @@ const feedLinkRegex = /^https?:\/\/(?:www\.)?cppblog\.com\/([^/]+)\/rss\.aspx$/i
 const feeds = definePlatformFeeds([
   {
     key: 'cppblog:category',
-    template: 'http://www.cppblog.com/{username}/category/{categoryId}.html/rss',
+    main: 'http://www.cppblog.com/{username}/category/{categoryId}.html/rss',
   },
   {
     key: 'cppblog:favorites',
-    template: 'http://www.cppblog.com/{username}/favorite/{favoriteId}.html/rss',
+    main: 'http://www.cppblog.com/{username}/favorite/{favoriteId}.html/rss',
   },
-  { key: 'cppblog:posts', template: 'http://www.cppblog.com/{username}/rss.aspx' },
-  { key: 'cppblog:comments', template: 'http://www.cppblog.com/{username}/CommentsRSS.aspx' },
+  { key: 'cppblog:posts', main: 'http://www.cppblog.com/{username}/rss.aspx' },
+  { key: 'cppblog:comments', main: 'http://www.cppblog.com/{username}/CommentsRSS.aspx' },
 ])
 
 export const parseCppblogUrl = (url: string): CppblogUrl | undefined => {

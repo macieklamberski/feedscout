@@ -25,44 +25,38 @@ const postFeedSegmentRegex = /\/(?:rss2|atom)\/?$/i
 // the items of the `rss2` feeds their pages link.
 const feeds = definePlatformFeeds(
   [
-    { key: 'blog-hu:posts', template: '{scheme}://{host}/rss2', format: 'rss' },
-    { key: 'blog-hu:posts', template: '{scheme}://{host}/rss', format: 'rss', isAlias: true },
-    { key: 'blog-hu:posts', template: '{scheme}://{host}/xml/rss2', format: 'rss', isAlias: true },
-    { key: 'blog-hu:posts', template: '{scheme}://{host}/atom', format: 'atom' },
-    { key: 'blog-hu:comments', template: '{scheme}://{host}/comments/rss2', format: 'rss' },
+    {
+      key: 'blog-hu:posts',
+      main: '{scheme}://{host}/rss2',
+      format: 'rss',
+      aliases: ['{scheme}://{host}/rss', '{scheme}://{host}/xml/rss2'],
+    },
+    { key: 'blog-hu:posts', main: '{scheme}://{host}/atom', format: 'atom' },
     {
       key: 'blog-hu:comments',
-      template: '{scheme}://{host}/comments/rss',
+      main: '{scheme}://{host}/comments/rss2',
       format: 'rss',
-      isAlias: true,
+      aliases: [
+        '{scheme}://{host}/comments/rss',
+        '{scheme}://{host}/comments/comments/rss',
+        '{scheme}://{host}/comments/comments/rss2',
+      ],
     },
-    {
-      key: 'blog-hu:comments',
-      template: '{scheme}://{host}/comments/comments/rss',
-      format: 'rss',
-      isAlias: true,
-    },
-    {
-      key: 'blog-hu:comments',
-      template: '{scheme}://{host}/comments/comments/rss2',
-      format: 'rss',
-      isAlias: true,
-    },
-    { key: 'blog-hu:comments', template: '{scheme}://{host}/comments/atom', format: 'atom' },
+    { key: 'blog-hu:comments', main: '{scheme}://{host}/comments/atom', format: 'atom' },
     {
       key: 'blog-hu:post-comments',
-      template: '{scheme}://{host}/{year}/{month}/{day}/{slug}/rss2',
+      main: '{scheme}://{host}/{year}/{month}/{day}/{slug}/rss2',
       format: 'rss',
     },
     {
       key: 'blog-hu:post-comments',
-      template: '{scheme}://{host}/{year}/{month}/{day}/{slug}/atom',
+      main: '{scheme}://{host}/{year}/{month}/{day}/{slug}/atom',
       format: 'atom',
     },
-    { key: 'blog-hu:tag', template: '{scheme}://{host}/rss/tags/{tag}', format: 'rss' },
-    { key: 'blog-hu:tag', template: '{scheme}://{host}/atom/tags/{tag}', format: 'atom' },
+    { key: 'blog-hu:tag', main: '{scheme}://{host}/rss/tags/{tag}', format: 'rss' },
+    { key: 'blog-hu:tag', main: '{scheme}://{host}/atom/tags/{tag}', format: 'atom' },
     // A user feed with a `token` query is the same feed signed for one reader.
-    { key: 'blog-hu:user', template: 'https://blog.hu/user/{userId}/rss' },
+    { key: 'blog-hu:user', main: 'https://blog.hu/user/{userId}/rss' },
   ],
   { domains },
 )

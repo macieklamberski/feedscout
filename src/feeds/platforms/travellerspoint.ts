@@ -10,8 +10,11 @@ const domains = ['travellerspoint.com']
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'travellerspoint:posts', template: '{scheme}://{host}/atom.xml' },
-    { key: 'travellerspoint:posts', template: '{scheme}://{host}/rss.xml', isAlias: true },
+    {
+      key: 'travellerspoint:posts',
+      main: '{scheme}://{host}/atom.xml',
+      aliases: ['{scheme}://{host}/rss.xml'],
+    },
   ],
   { domains },
 )

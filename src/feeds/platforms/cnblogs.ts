@@ -10,9 +10,14 @@ const hosts = ['cnblogs.com', 'www.cnblogs.com']
 const feedHosts = ['feed.cnblogs.com']
 
 const feeds = definePlatformFeeds([
-  { key: 'cnblogs:posts', template: 'https://www.cnblogs.com/{username}/rss' },
-  // The posts feed answers 302 to this spelling, under the blog's numeric id.
-  { key: 'cnblogs:posts', template: 'https://feed.cnblogs.com/blog/u/{blogId}/rss', isAlias: true },
+  {
+    key: 'cnblogs:posts',
+    main: 'https://www.cnblogs.com/{username}/rss',
+    aliases: [
+      // The posts feed answers 302 to this spelling, under the blog's numeric id.
+      'https://feed.cnblogs.com/blog/u/{blogId}/rss',
+    ],
+  },
 ])
 
 export const parseCnblogsUrl = (url: string): CnblogsUrl | undefined => {

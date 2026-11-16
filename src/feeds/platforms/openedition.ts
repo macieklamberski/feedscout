@@ -16,81 +16,43 @@ const hosts = ['journals.openedition.org']
 const feeds = definePlatformFeeds([
   {
     key: 'openedition:documents',
-    template: 'https://journals.openedition.org/{journal}/backend?format=rssdocuments',
-  },
-  {
-    key: 'openedition:documents',
-    template: 'https://journals.openedition.org/{journal}/backend.html?format=rssdocuments',
-    isAlias: true,
-  },
-  {
-    key: 'openedition:documents',
-    template: 'https://journals.openedition.org/{journal}/?page=backend&format=rssdocuments',
-    isAlias: true,
+    main: 'https://journals.openedition.org/{journal}/backend?format=rssdocuments',
+    aliases: [
+      'https://journals.openedition.org/{journal}/backend.html?format=rssdocuments',
+      'https://journals.openedition.org/{journal}/?page=backend&format=rssdocuments',
+    ],
   },
   {
     key: 'openedition:entity',
-    template:
-      'https://journals.openedition.org/{journal}/backend?format=rssdocuments&identity={entity}',
-  },
-  {
-    key: 'openedition:entity',
-    template:
+    main: 'https://journals.openedition.org/{journal}/backend?format=rssdocuments&identity={entity}',
+    aliases: [
       'https://journals.openedition.org/{journal}/backend.html?format=rssdocuments&identity={entity}',
-    isAlias: true,
-  },
-  {
-    key: 'openedition:entity',
-    template:
       'https://journals.openedition.org/{journal}/?page=backend&format=rssdocuments&identity={entity}',
-    isAlias: true,
+    ],
   },
   {
     key: 'openedition:index-entry',
-    template:
-      'https://journals.openedition.org/{journal}/backend?format=rssdocuments&idcontainer={entry}',
-  },
-  {
-    key: 'openedition:index-entry',
-    template:
+    main: 'https://journals.openedition.org/{journal}/backend?format=rssdocuments&idcontainer={entry}',
+    aliases: [
       'https://journals.openedition.org/{journal}/backend.html?format=rssdocuments&idcontainer={entry}',
-    isAlias: true,
-  },
-  {
-    key: 'openedition:index-entry',
-    template:
       'https://journals.openedition.org/{journal}/?page=backend&format=rssdocuments&idcontainer={entry}',
-    isAlias: true,
+    ],
   },
   {
     key: 'openedition:issues',
-    template: 'https://journals.openedition.org/{journal}/backend?format=rssnumeros',
-  },
-  {
-    key: 'openedition:issues',
-    template: 'https://journals.openedition.org/{journal}/backend.html?format=rssnumeros',
-    isAlias: true,
-  },
-  {
-    key: 'openedition:issues',
-    template: 'https://journals.openedition.org/{journal}/?page=backend&format=rssnumeros',
-    isAlias: true,
+    main: 'https://journals.openedition.org/{journal}/backend?format=rssnumeros',
+    aliases: [
+      'https://journals.openedition.org/{journal}/backend.html?format=rssnumeros',
+      'https://journals.openedition.org/{journal}/?page=backend&format=rssnumeros',
+    ],
   },
   {
     key: 'openedition:reviews',
-    template: 'https://journals.openedition.org/{journal}/backend?format=rssdocuments&type=review',
-  },
-  {
-    key: 'openedition:reviews',
-    template:
+    main: 'https://journals.openedition.org/{journal}/backend?format=rssdocuments&type=review',
+    aliases: [
       'https://journals.openedition.org/{journal}/backend.html?format=rssdocuments&type=review',
-    isAlias: true,
-  },
-  {
-    key: 'openedition:reviews',
-    template:
       'https://journals.openedition.org/{journal}/?page=backend&format=rssdocuments&type=review',
-    isAlias: true,
+    ],
   },
 ])
 

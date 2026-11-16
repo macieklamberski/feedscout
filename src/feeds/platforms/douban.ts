@@ -27,38 +27,25 @@ const userRegex = /^\/people\/([^/]+)/i
 const subjectRegex = /^\/subject\/(?<subjectId>[^/]+)/i
 
 const feeds = definePlatformFeeds([
-  {
-    key: 'douban:interests',
-    template: 'https://www.douban.com/feed/people/{username}/interests',
-  },
-  { key: 'douban:reviews', template: 'https://www.douban.com/feed/people/{username}/reviews' },
-  { key: 'douban:notes', template: 'https://www.douban.com/feed/people/{username}/notes' },
+  { key: 'douban:interests', main: 'https://www.douban.com/feed/people/{username}/interests' },
+  { key: 'douban:reviews', main: 'https://www.douban.com/feed/people/{username}/reviews' },
+  { key: 'douban:notes', main: 'https://www.douban.com/feed/people/{username}/notes' },
   {
     key: 'douban:subject-reviews',
-    template: 'https://www.douban.com/feed/subject/{subjectId}/reviews',
+    main: 'https://www.douban.com/feed/subject/{subjectId}/reviews',
+    aliases: [
+      // A subject page links the feed on its section's host, which answers 301 to www.douban.com.
+      'https://book.douban.com/feed/subject/{subjectId}/reviews',
+      'https://movie.douban.com/feed/subject/{subjectId}/reviews',
+      'https://music.douban.com/feed/subject/{subjectId}/reviews',
+    ],
   },
-  // A subject page links the feed on its section's host, which answers 301 to www.douban.com.
-  {
-    key: 'douban:subject-reviews',
-    template: 'https://book.douban.com/feed/subject/{subjectId}/reviews',
-    isAlias: true,
-  },
-  {
-    key: 'douban:subject-reviews',
-    template: 'https://movie.douban.com/feed/subject/{subjectId}/reviews',
-    isAlias: true,
-  },
-  {
-    key: 'douban:subject-reviews',
-    template: 'https://music.douban.com/feed/subject/{subjectId}/reviews',
-    isAlias: true,
-  },
-  { key: 'douban:book-reviews', template: 'https://www.douban.com/feed/review/book' },
-  { key: 'douban:movie-reviews', template: 'https://www.douban.com/feed/review/movie' },
-  { key: 'douban:music-reviews', template: 'https://www.douban.com/feed/review/music' },
-  { key: 'douban:drama-reviews', template: 'https://www.douban.com/feed/review/drama' },
-  { key: 'douban:new-movie-reviews', template: 'https://www.douban.com/feed/review/movie_new' },
-  { key: 'douban:popular-reviews', template: 'https://www.douban.com/feed/review/best' },
+  { key: 'douban:book-reviews', main: 'https://www.douban.com/feed/review/book' },
+  { key: 'douban:movie-reviews', main: 'https://www.douban.com/feed/review/movie' },
+  { key: 'douban:music-reviews', main: 'https://www.douban.com/feed/review/music' },
+  { key: 'douban:drama-reviews', main: 'https://www.douban.com/feed/review/drama' },
+  { key: 'douban:new-movie-reviews', main: 'https://www.douban.com/feed/review/movie_new' },
+  { key: 'douban:popular-reviews', main: 'https://www.douban.com/feed/review/best' },
 ])
 
 export const parseDoubanUrl = (url: string): DoubanUrl | undefined => {

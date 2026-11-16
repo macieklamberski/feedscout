@@ -19,11 +19,11 @@ const shelfSections = ['shelf', 'books']
 // An instance runs on its own domain and is known only by its marker, so its feeds are built here
 // but not claimed.
 const feeds = definePlatformFeeds([
-  { key: 'bookwyrm:shelf', template: '{root}/user/{username}/{section}/{shelf}/rss' },
-  { key: 'bookwyrm:activity', template: '{root}/user/{username}/rss' },
-  { key: 'bookwyrm:reviews', template: '{root}/user/{username}/rss-reviews' },
-  { key: 'bookwyrm:quotes', template: '{root}/user/{username}/rss-quotes' },
-  { key: 'bookwyrm:comments', template: '{root}/user/{username}/rss-comments' },
+  { key: 'bookwyrm:shelf', main: '{root}/user/{username}/{section}/{shelf}/rss' },
+  { key: 'bookwyrm:activity', main: '{root}/user/{username}/rss' },
+  { key: 'bookwyrm:reviews', main: '{root}/user/{username}/rss-reviews' },
+  { key: 'bookwyrm:quotes', main: '{root}/user/{username}/rss-quotes' },
+  { key: 'bookwyrm:comments', main: '{root}/user/{username}/rss-comments' },
 ])
 
 export const isBookwyrmHtml = (content: string): boolean => {

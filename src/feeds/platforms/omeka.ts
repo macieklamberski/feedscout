@@ -45,70 +45,38 @@ const feeds = definePlatformFeeds(
   [
     {
       key: 'omeka:items',
-      template: '{root}/items/browse?output=rss2',
+      main: '{root}/items/browse?output=rss2',
       format: 'rss',
+      aliases: [
+        '{root}/items?output=rss2',
+        // A site whose homepage is the items browse serves the items feed at its root too.
+        '{root}/?output=rss2',
+      ],
     },
     {
       key: 'omeka:items',
-      template: '{root}/items?output=rss2',
-      format: 'rss',
-      isAlias: true,
-    },
-    // A site whose homepage is the items browse serves the items feed at its root too.
-    {
-      key: 'omeka:items',
-      template: '{root}/?output=rss2',
-      format: 'rss',
-      isAlias: true,
-    },
-    {
-      key: 'omeka:items',
-      template: '{root}/items/browse?output=atom',
+      main: '{root}/items/browse?output=atom',
       format: 'atom',
-    },
-    {
-      key: 'omeka:items',
-      template: '{root}/items?output=atom',
-      format: 'atom',
-      isAlias: true,
-    },
-    {
-      key: 'omeka:items',
-      template: '{root}/?output=atom',
-      format: 'atom',
-      isAlias: true,
+      aliases: ['{root}/items?output=atom', '{root}/?output=atom'],
     },
     // The browse serves the items feed page by page.
-    {
-      key: 'omeka:items',
-      template: '{root}/items/browse/{page}?output=rss2',
-      format: 'rss',
-    },
-    {
-      key: 'omeka:items',
-      template: '{root}/items/browse/{page}?output=atom',
-      format: 'atom',
-    },
+    { key: 'omeka:items', main: '{root}/items/browse/{page}?output=rss2', format: 'rss' },
+    { key: 'omeka:items', main: '{root}/items/browse/{page}?output=atom', format: 'atom' },
     {
       key: 'omeka:filtered-items',
-      template: '{root}/items/browse/tag/{tag}?output=rss2',
+      main: '{root}/items/browse/tag/{tag}?output=rss2',
       format: 'rss',
     },
     {
       key: 'omeka:filtered-items',
-      template: '{root}/items/browse/tag/{tag}?output=atom',
+      main: '{root}/items/browse/tag/{tag}?output=atom',
       format: 'atom',
     },
     {
       key: 'omeka:item',
-      template: '{root}/items/show/{id}?output=atom',
+      main: '{root}/items/show/{id}?output=atom',
       format: 'atom',
-    },
-    {
-      key: 'omeka:item',
-      template: '{root}/exhibits/show/{exhibit}/item/{id}?output=atom',
-      format: 'atom',
-      isAlias: true,
+      aliases: ['{root}/exhibits/show/{exhibit}/item/{id}?output=atom'],
     },
   ],
   { domains },

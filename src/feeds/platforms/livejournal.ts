@@ -2,8 +2,8 @@ import { decodeSegment, isHostOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import {
   definePlatformFeeds,
+  type PlatformFeed,
   type PlatformFeedTable,
-  type PlatformFeedTemplate,
 } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
@@ -32,13 +32,13 @@ const journalTagRegex = /^\/tag\/([^/]+)/i
 // which ignores extra query parameters, does not read one as posts.
 const getJournalTemplates = <Platform extends string>(
   platform: Platform,
-): Array<PlatformFeedTemplate<JournalFeedKey<Platform>>> => {
+): Array<PlatformFeed<JournalFeedKey<Platform>>> => {
   return [
-    { key: `${platform}:posts-tag`, template: '{root}/data/rss?tag={tag}', format: 'rss' },
-    { key: `${platform}:posts-tag`, template: '{root}/data/atom?tag={tag}', format: 'atom' },
-    { key: `${platform}:posts`, template: '{root}/data/rss', format: 'rss' },
-    { key: `${platform}:posts`, template: '{root}/data/atom', format: 'atom' },
-    { key: `${platform}:userpics`, template: '{root}/data/userpics', format: 'atom' },
+    { key: `${platform}:posts-tag`, main: '{root}/data/rss?tag={tag}', format: 'rss' },
+    { key: `${platform}:posts-tag`, main: '{root}/data/atom?tag={tag}', format: 'atom' },
+    { key: `${platform}:posts`, main: '{root}/data/rss', format: 'rss' },
+    { key: `${platform}:posts`, main: '{root}/data/atom', format: 'atom' },
+    { key: `${platform}:userpics`, main: '{root}/data/userpics', format: 'atom' },
   ]
 }
 
@@ -50,23 +50,19 @@ const pathFeeds = definePlatformFeeds(
   [
     {
       key: 'livejournal:posts-tag',
-      template: '{scheme}://{host}/{journal}/data/rss?tag={tag}',
+      main: '{scheme}://{host}/{journal}/data/rss?tag={tag}',
       format: 'rss',
     },
     {
       key: 'livejournal:posts-tag',
-      template: '{scheme}://{host}/{journal}/data/atom?tag={tag}',
+      main: '{scheme}://{host}/{journal}/data/atom?tag={tag}',
       format: 'atom',
     },
-    { key: 'livejournal:posts', template: '{scheme}://{host}/{journal}/data/rss', format: 'rss' },
-    {
-      key: 'livejournal:posts',
-      template: '{scheme}://{host}/{journal}/data/atom',
-      format: 'atom',
-    },
+    { key: 'livejournal:posts', main: '{scheme}://{host}/{journal}/data/rss', format: 'rss' },
+    { key: 'livejournal:posts', main: '{scheme}://{host}/{journal}/data/atom', format: 'atom' },
     {
       key: 'livejournal:userpics',
-      template: '{scheme}://{host}/{journal}/data/userpics',
+      main: '{scheme}://{host}/{journal}/data/userpics',
       format: 'atom',
     },
   ],

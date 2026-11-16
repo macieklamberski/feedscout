@@ -17,24 +17,23 @@ const siteHosts = ['sites.libsyn.com']
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'libsyn:podcast', template: 'https://feeds.libsyn.com/{showId}/rss' },
-    { key: 'libsyn:podcast', template: 'https://feeds.libsyn.com/{showId}', isAlias: true },
-    { key: 'libsyn:podcast', template: '{scheme}://{host}/rss', isAlias: true },
+    {
+      key: 'libsyn:podcast',
+      main: 'https://feeds.libsyn.com/{showId}/rss',
+      aliases: ['https://feeds.libsyn.com/{showId}', '{scheme}://{host}/rss'],
+    },
     // Where feeds.libsyn.com/{showId}/rss redirects. The destination id is not in the show id.
     {
       key: 'libsyn:podcast',
-      template: 'https://rss.libsyn.com/shows/{showId}/destinations/{destinationId}.xml',
+      main: 'https://rss.libsyn.com/shows/{showId}/destinations/{destinationId}.xml',
     },
     // The sites host's feed, which on show 45546 redirects to an empty category feed, and the feed
     // cut to its last episodes, as `last100`.
-    { key: 'libsyn:podcast', template: 'https://sites.libsyn.com/{showId}/rss' },
-    { key: 'libsyn:podcast', template: 'https://feeds.libsyn.com/{showId}/last{count}' },
-    { key: 'libsyn:podcast', template: '{scheme}://{host}/rss/last{count}' },
-    { key: 'libsyn:category', template: '{scheme}://{host}/rss/category/{category}' },
-    {
-      key: 'libsyn:category',
-      template: 'https://sites.libsyn.com/{showId}/rss/category/{category}',
-    },
+    { key: 'libsyn:podcast', main: 'https://sites.libsyn.com/{showId}/rss' },
+    { key: 'libsyn:podcast', main: 'https://feeds.libsyn.com/{showId}/last{count}' },
+    { key: 'libsyn:podcast', main: '{scheme}://{host}/rss/last{count}' },
+    { key: 'libsyn:category', main: '{scheme}://{host}/rss/category/{category}' },
+    { key: 'libsyn:category', main: 'https://sites.libsyn.com/{showId}/rss/category/{category}' },
   ],
   { domains },
 )

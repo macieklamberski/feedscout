@@ -26,12 +26,12 @@ const friendlyForumIdRegex = /^\?(\d+)(?:-|&|$)/
 // spelling of the type. A forum on any host is known only by its scripts or cookies, which a feed
 // URL does not carry, so the feeds are built under the forum root and never claimed.
 const vbulletin4Feeds = definePlatformFeeds([
-  { key: 'vbulletin:forum', template: '{root}/external.php?type=RSS2&forumids={forumId}' },
-  { key: 'vbulletin:site', template: '{root}/external.php?type=RSS2' },
+  { key: 'vbulletin:forum', main: '{root}/external.php?type=RSS2&forumids={forumId}' },
+  { key: 'vbulletin:site', main: '{root}/external.php?type=RSS2' },
 ])
 const vbulletin5Feeds = definePlatformFeeds([
-  { key: 'vbulletin:forum', template: '{root}/external?type=rss2&nodeid={forumId}' },
-  { key: 'vbulletin:site', template: '{root}/external?type=rss2' },
+  { key: 'vbulletin:forum', main: '{root}/external?type=rss2&nodeid={forumId}' },
+  { key: 'vbulletin:site', main: '{root}/external?type=rss2' },
 ])
 
 // vBulletin 4 prints `clientscript/vbulletin-core.js` as an absolute URL under the forum root.

@@ -15,9 +15,9 @@ const hosts = ['blog.aladin.co.kr']
 const feeds = definePlatformFeeds([
   {
     key: 'aladin:category',
-    template: 'https://blog.aladin.co.kr/{username}/category/{categoryId}/rss',
+    main: 'https://blog.aladin.co.kr/{username}/category/{categoryId}/rss',
   },
-  { key: 'aladin:posts', template: 'https://blog.aladin.co.kr/{username}/rss' },
+  { key: 'aladin:posts', main: 'https://blog.aladin.co.kr/{username}/rss' },
 ])
 
 export const parseAladinUrl = (url: string): AladinUrl | undefined => {

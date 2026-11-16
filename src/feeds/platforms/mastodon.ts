@@ -21,11 +21,11 @@ const feedExtensionRegex = /\.(rss|atom|json)$/i
 // Mastodon is self-hosted and known only by its page marker, so nothing in a feed URL names it and
 // the table only builds.
 const feeds = definePlatformFeeds([
-  { key: 'mastodon:posts', template: '{root}/@{username}.rss' },
-  { key: 'mastodon:replies', template: '{root}/@{username}/with_replies.rss' },
-  { key: 'mastodon:media', template: '{root}/@{username}/media.rss' },
-  { key: 'mastodon:tagged', template: '{root}/@{username}/tagged/{tag}.rss' },
-  { key: 'mastodon:tag', template: '{root}/tags/{tag}.rss' },
+  { key: 'mastodon:posts', main: '{root}/@{username}.rss' },
+  { key: 'mastodon:replies', main: '{root}/@{username}/with_replies.rss' },
+  { key: 'mastodon:media', main: '{root}/@{username}/media.rss' },
+  { key: 'mastodon:tagged', main: '{root}/@{username}/tagged/{tag}.rss' },
+  { key: 'mastodon:tag', main: '{root}/tags/{tag}.rss' },
 ])
 
 // Current Mastodon serves no generator meta, so the `<div class="app-holder" id="mastodon">` app

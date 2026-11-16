@@ -17,9 +17,8 @@ export type ShaarliPage = { baseUrl: string }
 // claimed. Installs older than 0.12 answer 404 on `/feed/*` and serve `/?do=rss` instead, and
 // later installs redirect `/?do=rss` to the same feed.
 const feeds = definePlatformFeeds([
-  { key: 'shaarli:posts', template: '{root}/feed/rss', format: 'rss' },
-  { key: 'shaarli:posts', template: '{root}/?do=rss', format: 'rss', isAlias: true },
-  { key: 'shaarli:posts', template: '{root}/feed/atom', format: 'atom' },
+  { key: 'shaarli:posts', main: '{root}/feed/rss', format: 'rss', aliases: ['{root}/?do=rss'] },
+  { key: 'shaarli:posts', main: '{root}/feed/atom', format: 'atom' },
 ])
 
 export const isShaarliHtml = (content: string): boolean => {

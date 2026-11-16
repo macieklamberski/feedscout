@@ -11,7 +11,7 @@ const diasporaIdRegex = /"diaspora_id":"([^"@]+)@/
 // A pod runs on its own domain and is known only by its marker, so its feed is built here but not
 // claimed.
 const feeds = definePlatformFeeds([
-  { key: 'diaspora:posts', template: '{root}/public/{username}.atom' },
+  { key: 'diaspora:posts', main: '{root}/public/{username}.atom' },
 ])
 
 export const isDiasporaHtml = (content: string): boolean => {

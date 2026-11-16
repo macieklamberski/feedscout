@@ -16,7 +16,7 @@ const domains = ['geoblog.pl']
 const tripPathRegex = /^\/podroz\/(\d+)(?:\/|$)/i
 
 const feeds = definePlatformFeeds(
-  [{ key: 'geoblog:trip', template: '{scheme}://{host}/podroz/rss/{tripId}.xml' }],
+  [{ key: 'geoblog:trip', main: '{scheme}://{host}/podroz/rss/{tripId}.xml' }],
   { domains },
 )
 

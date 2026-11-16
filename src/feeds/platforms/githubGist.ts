@@ -22,14 +22,13 @@ const forksSections = ['forks', 'forked']
 // GitHub serves `/{username}/forks.atom` as the user's own gists, and the forked gists only at
 // `/{username}/forked.atom`.
 const feeds = definePlatformFeeds([
-  { key: 'github-gist:discover', template: 'https://gist.github.com/discover.atom' },
-  { key: 'github-gist:starred', template: 'https://gist.github.com/{username}/starred.atom' },
-  { key: 'github-gist:forks', template: 'https://gist.github.com/{username}/forked.atom' },
-  { key: 'github-gist:gists', template: 'https://gist.github.com/{username}.atom' },
+  { key: 'github-gist:discover', main: 'https://gist.github.com/discover.atom' },
+  { key: 'github-gist:starred', main: 'https://gist.github.com/{username}/starred.atom' },
+  { key: 'github-gist:forks', main: 'https://gist.github.com/{username}/forked.atom' },
   {
     key: 'github-gist:gists',
-    template: 'https://gist.github.com/{username}/forks.atom',
-    isAlias: true,
+    main: 'https://gist.github.com/{username}.atom',
+    aliases: ['https://gist.github.com/{username}/forks.atom'],
   },
 ])
 

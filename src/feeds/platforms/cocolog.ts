@@ -24,33 +24,13 @@ const feedPathRegex = /^\/([^/.]+)\/(?:atom\.xml|index\.rdf|rss\.xml)$/i
 
 const feeds = definePlatformFeeds(
   [
-    {
-      key: 'cocolog:posts',
-      template: '{scheme}://{host}/{blog}/atom.xml',
-      format: 'atom',
-    },
-    {
-      key: 'cocolog:posts',
-      template: '{scheme}://{host}/{blog}/index.rdf',
-      format: 'rdf',
-    },
-    {
-      key: 'cocolog:posts',
-      template: '{scheme}://{host}/{blog}/rss.xml',
-      format: 'rss',
-    },
+    { key: 'cocolog:posts', main: '{scheme}://{host}/{blog}/atom.xml', format: 'atom' },
+    { key: 'cocolog:posts', main: '{scheme}://{host}/{blog}/index.rdf', format: 'rdf' },
+    { key: 'cocolog:posts', main: '{scheme}://{host}/{blog}/rss.xml', format: 'rss' },
     // A blog's newest comments, which its skin names `comment-index.rdf` or `comments.xml`.
     // `resolve` cannot tell which one a blog serves, so it builds both.
-    {
-      key: 'cocolog:comments',
-      template: '{scheme}://{host}/{blog}/comment-index.rdf',
-      format: 'rdf',
-    },
-    {
-      key: 'cocolog:comments',
-      template: '{scheme}://{host}/{blog}/comments.xml',
-      format: 'rss',
-    },
+    { key: 'cocolog:comments', main: '{scheme}://{host}/{blog}/comment-index.rdf', format: 'rdf' },
+    { key: 'cocolog:comments', main: '{scheme}://{host}/{blog}/comments.xml', format: 'rss' },
   ],
   { domains },
 )

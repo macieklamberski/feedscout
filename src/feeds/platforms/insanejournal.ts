@@ -30,19 +30,15 @@ const firstSegmentRegex = /^\/([^/]+)/
 
 const journalFeeds = definePlatformFeeds(
   [
+    { key: 'insanejournal:posts-tag', main: '{scheme}://{host}/data/rss?tag={tag}', format: 'rss' },
     {
       key: 'insanejournal:posts-tag',
-      template: '{scheme}://{host}/data/rss?tag={tag}',
-      format: 'rss',
-    },
-    {
-      key: 'insanejournal:posts-tag',
-      template: '{scheme}://{host}/data/atom?tag={tag}',
+      main: '{scheme}://{host}/data/atom?tag={tag}',
       format: 'atom',
     },
-    { key: 'insanejournal:posts', template: '{scheme}://{host}/data/rss', format: 'rss' },
-    { key: 'insanejournal:posts', template: '{scheme}://{host}/data/atom', format: 'atom' },
-    { key: 'insanejournal:userpics', template: '{scheme}://{host}/data/userpics', format: 'atom' },
+    { key: 'insanejournal:posts', main: '{scheme}://{host}/data/rss', format: 'rss' },
+    { key: 'insanejournal:posts', main: '{scheme}://{host}/data/atom', format: 'atom' },
+    { key: 'insanejournal:userpics', main: '{scheme}://{host}/data/userpics', format: 'atom' },
   ],
   { domains },
 )
@@ -50,23 +46,19 @@ const pathFeeds = definePlatformFeeds(
   [
     {
       key: 'insanejournal:posts-tag',
-      template: '{scheme}://{host}/{journal}/data/rss?tag={tag}',
+      main: '{scheme}://{host}/{journal}/data/rss?tag={tag}',
       format: 'rss',
     },
     {
       key: 'insanejournal:posts-tag',
-      template: '{scheme}://{host}/{journal}/data/atom?tag={tag}',
+      main: '{scheme}://{host}/{journal}/data/atom?tag={tag}',
       format: 'atom',
     },
-    { key: 'insanejournal:posts', template: '{scheme}://{host}/{journal}/data/rss', format: 'rss' },
-    {
-      key: 'insanejournal:posts',
-      template: '{scheme}://{host}/{journal}/data/atom',
-      format: 'atom',
-    },
+    { key: 'insanejournal:posts', main: '{scheme}://{host}/{journal}/data/rss', format: 'rss' },
+    { key: 'insanejournal:posts', main: '{scheme}://{host}/{journal}/data/atom', format: 'atom' },
     {
       key: 'insanejournal:userpics',
-      template: '{scheme}://{host}/{journal}/data/userpics',
+      main: '{scheme}://{host}/{journal}/data/userpics',
       format: 'atom',
     },
   ],

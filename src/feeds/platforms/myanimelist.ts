@@ -20,19 +20,19 @@ const newsRegex = /^\/news(?:\/|$)/i
 const featuredRegex = /^\/featured(?:\/|$)/i
 
 const feeds = definePlatformFeeds([
-  { key: 'myanimelist:news', template: 'https://myanimelist.net/rss/news.xml' },
-  { key: 'myanimelist:featured', template: 'https://myanimelist.net/rss/featured.xml' },
-  { key: 'myanimelist:anime', template: 'https://myanimelist.net/rss.php?type=rw&u={username}' },
-  { key: 'myanimelist:manga', template: 'https://myanimelist.net/rss.php?type=rm&u={username}' },
+  { key: 'myanimelist:news', main: 'https://myanimelist.net/rss/news.xml' },
+  { key: 'myanimelist:featured', main: 'https://myanimelist.net/rss/featured.xml' },
+  { key: 'myanimelist:anime', main: 'https://myanimelist.net/rss.php?type=rw&u={username}' },
+  { key: 'myanimelist:manga', main: 'https://myanimelist.net/rss.php?type=rm&u={username}' },
   {
     key: 'myanimelist:recently-watched',
-    template: 'https://myanimelist.net/rss.php?type=rwe&u={username}',
+    main: 'https://myanimelist.net/rss.php?type=rwe&u={username}',
   },
   {
     key: 'myanimelist:recently-read',
-    template: 'https://myanimelist.net/rss.php?type=rrm&u={username}',
+    main: 'https://myanimelist.net/rss.php?type=rrm&u={username}',
   },
-  { key: 'myanimelist:blog', template: 'https://myanimelist.net/rss.php?type=blog&u={username}' },
+  { key: 'myanimelist:blog', main: 'https://myanimelist.net/rss.php?type=blog&u={username}' },
 ])
 
 export const parseMyanimelistUrl = (url: string): MyanimelistUrl | undefined => {

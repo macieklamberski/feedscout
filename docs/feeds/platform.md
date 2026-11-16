@@ -3906,7 +3906,7 @@ type PlatformHandler = {
 
 ### Declaring Feeds
 
-`definePlatformFeeds` holds a handler's feed URLs as templates keyed by hint key: `getFeedEntry` builds a feed with its hint, `getFeedHint` reads a URL back to its hint, with the row's `format`, `{host}` stands for any host in `hosts` or under `domains`, `{domain}` for one of `domains`, and `{scheme}` for the page's scheme on a platform that runs on the site's own host.
+`definePlatformFeeds` holds a handler's feeds, one row per feed, with its hint key in `key` and its URL in `main`: `getFeedEntry` builds a feed with its hint, `getFeedHint` reads a URL back to its hint, with the row's `format`, `{host}` stands for any host in `hosts` or under `domains`, `{domain}` for one of `domains`, and `{scheme}` for the page's scheme on a platform that runs on the site's own host.
 
 The table's keys are typed from its rows, so `getFeedUrl`, `getFeedEntry`, `getFeedSpellings` and the methods of `forUrl` take only those keys, and a key the table does not hold fails the typecheck. A key that reaches the table untyped still throws.
 
@@ -3914,7 +3914,7 @@ The table's keys are typed from its rows, so `getFeedUrl`, `getFeedEntry`, `getF
 
 An entry of `domains` can be a pattern standing for a family of domains, anchored at both ends, such as `/^blogspot\.(?:com|com\.[a-z]{2}|[a-z]{2})$/` for `blogspot.com`, `blogspot.de` and `blogspot.com.br`. `{host}` and `{domain}` then stand for any domain the pattern matches, and `forUrl` fills `{domain}` with the one the page's host is under.
 
-A template can open with `{root}`, which stands for the scheme, the host with its port and an optional base path, as `https://example.com/forum`, written as given. `getFeedHint` reads a `{root}` row as a `{host}` row, on the origin of a host in `hosts` or a tenant under `domains`, never under a base path, since a tenant serves from its origin. A table with neither builds the row without claiming it.
+A URL can open with `{root}`, which stands for the scheme, the host with its port and an optional base path, as `https://example.com/forum`, written as given. `getFeedHint` reads a `{root}` row as a `{host}` row, on the origin of a host in `hosts` or a tenant under `domains`, never under a base path, since a tenant serves from its origin. A table with neither builds the row without claiming it.
 
 A path value is written with `/`, `?`, `#`, `\` and whitespace escaped, a `%` that starts no escape as `%25`, and a non-ASCII character percent-encoded, so `{ username: '技術' }` builds `/%E6%8A%80%E8%A1%93/` and `100%off` builds `100%25off`. A valid escape is written as given, in its own case, so a value the page passed encoded is never encoded twice. `getFeedHint` reads a path decoded, so it claims either spelling.
 
@@ -3926,23 +3926,25 @@ A placeholder standing as a whole query parameter, as `{query}` in `{root}/index
 
 A row can list one parameter several times, as `?types=page&types=blogpost&types=comment`. It is built with every value in table order, and `getFeedHint` claims a URL that holds each of the values, in any order. A parameter the row lists once is read from its first value in the URL, as before.
 
-A query value is written with only the characters that would change the URL's structure escaped, so `?q=by:alice sort:time` builds `?q=by:alice%20sort:time`. On a row whose feed the pages link encoded as a form, set `queryEncoding: 'form'`: every query value of that row, the template's own text included, is then encoded as `URLSearchParams` does, so `?title={title}` with `Talk:Main Page` builds `?title=Talk%3AMain+Page`. A flag and a passed query are written as before. The other rows of the table keep the default, so one table holds a form-encoded feed beside feeds that are not. `getFeedHint` reads a value decoded, so it claims either spelling.
+A query value is written with only the characters that would change the URL's structure escaped, so `?q=by:alice sort:time` builds `?q=by:alice%20sort:time`. On a row whose feed the pages link encoded as a form, set `queryEncoding: 'form'`: every query value of that row, the URL's own text included, is then encoded as `URLSearchParams` does, so `?title={title}` with `Talk:Main Page` builds `?title=Talk%3AMain+Page`. A flag and a passed query are written as before. The other rows of the table keep the default, so one table holds a form-encoded feed beside feeds that are not. `getFeedHint` reads a value decoded, so it claims either spelling.
 
-A feed the platform serves under several spellings, such as a legacy host, has one row per spelling under its key. The spelling `getFeedEntry` builds is the canonical row, and each other spelling sits directly under it marked `isAlias: true`. An alias row belongs to the nearest row above it with the same key and format and no `isAlias`, so a key holding several feeds keeps each feed's spellings under its own canonical row. `getFeedHint` reads an alias row back to the same hint. `definePlatformFeeds` throws for an alias row with no canonical row above it, so a reorder that would build the alias fails at once. The table cannot tell whether two rows are one feed: that rests on a probe or a comment beside the row, and the placement on review. Keep `isAlias` off a row that is a different feed under the same key.
+A feed the platform serves under several spellings, such as a legacy host, lists the other spellings in `aliases` on its row. `getFeedEntry` builds `main`, and `getFeedHint` reads an alias back to the same hint. An alias takes its row's `format` and `queryEncoding`. Two rows with one key are two feeds of that kind, each with its own aliases. The table cannot tell whether two spellings are one feed: that rests on a probe or a comment beside the alias. Keep a different feed under the same key on a row of its own.
 
 ```typescript
 const feeds = definePlatformFeeds([
-  { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
-  { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
+  {
+    key: 'example:posts',
+    main: 'https://feeds.example.com/{username}.rss',
+    aliases: ['https://example.com/{username}/rss'],
+  },
 ])
 ```
 
-A platform whose sites answer under different spellings of one feed, as one site serves `/feed/` and another only `?feed=rss`, needs every spelling tried in turn. `getFeedSpellings` takes the same arguments as `getFeedEntry` and returns one entry whose `uri` lists the row `getFeedEntry` builds, then every alias row of that feed the values fill, in table order. Discovery tries them in order until one is a feed. The list stops at the next canonical row of the key and format, so it never mixes two feeds. With one spelling filled, `uri` is a string, as from `getFeedEntry`.
+A platform whose sites answer under different spellings of one feed, as one site serves `/feed/` and another only `?feed=rss`, needs every spelling tried in turn. `getFeedSpellings` takes the same arguments as `getFeedEntry` and returns one entry whose `uri` lists the URL `getFeedEntry` builds, then every alias of that feed the values fill, in order. Discovery tries them in order until one is a feed. The list stops at the next row of the key and format, so it never mixes two feeds. With one spelling filled, `uri` is a string, as from `getFeedEntry`.
 
 ```typescript
 const feeds = definePlatformFeeds([
-  { key: 'example:posts', template: '{root}/feed/' },
-  { key: 'example:posts', template: '{root}/?feed=rss', isAlias: true },
+  { key: 'example:posts', main: '{root}/feed/', aliases: ['{root}/?feed=rss'] },
 ])
 
 // { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'], hint }
@@ -3960,8 +3962,8 @@ const hosts = ['example.com', 'www.example.com']
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'example:posts', template: 'https://{host}/{username}/feed.rss' },
-    { key: 'example:search', template: 'https://feeds.example.com/rss.xml?q={query}' },
+    { key: 'example:posts', main: 'https://{host}/{username}/feed.rss' },
+    { key: 'example:search', main: 'https://feeds.example.com/rss.xml?q={query}' },
   ],
   { hosts },
 )

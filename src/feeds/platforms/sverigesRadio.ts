@@ -16,18 +16,18 @@ const hosts = ['sverigesradio.se', 'www.sverigesradio.se']
 // A podcast feed on /api/rss/pod/{id}, with or without /itunes, mostly answers a 301 to the program
 // feed on public-api.sr.se, and a few serve a podcast of their own. resolve builds neither.
 const feeds = definePlatformFeeds([
-  { key: 'sveriges-radio:program', template: 'https://api.sr.se/api/rss/program/{programId}' },
+  { key: 'sveriges-radio:program', main: 'https://api.sr.se/api/rss/program/{programId}' },
   // A format id filters the program's articles to one format, and no page links it.
   {
     key: 'sveriges-radio:program-format',
-    template: 'https://api.sr.se/api/rss/program/{programId}?format={format}',
+    main: 'https://api.sr.se/api/rss/program/{programId}?format={format}',
   },
-  { key: 'sveriges-radio:program', template: 'https://public-api.sr.se/rss/{slug}' },
-  { key: 'sveriges-radio:program', template: 'https://api.sr.se/api/rss/pod/{podId}' },
-  { key: 'sveriges-radio:program', template: 'https://api.sr.se/api/rss/pod/itunes/{podId}' },
+  { key: 'sveriges-radio:program', main: 'https://public-api.sr.se/rss/{slug}' },
+  { key: 'sveriges-radio:program', main: 'https://api.sr.se/api/rss/pod/{podId}' },
+  { key: 'sveriges-radio:program', main: 'https://api.sr.se/api/rss/pod/itunes/{podId}' },
   // A group of programs, and a region's traffic reports, which no page the handler reads names.
-  { key: 'sveriges-radio:group', template: 'https://api.sr.se/api/rss/group/{groupId}' },
-  { key: 'sveriges-radio:traffic', template: 'https://api.sr.se/api/rss/traffic/{areaId}' },
+  { key: 'sveriges-radio:group', main: 'https://api.sr.se/api/rss/group/{groupId}' },
+  { key: 'sveriges-radio:traffic', main: 'https://api.sr.se/api/rss/traffic/{areaId}' },
 ])
 
 export const parseSverigesRadioUrl = (url: string): SverigesRadioUrl | undefined => {

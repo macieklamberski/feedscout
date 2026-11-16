@@ -10,8 +10,8 @@ const domains = ['blogia.com']
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'blogia:posts', template: '{scheme}://{host}/feed.xml' },
-    { key: 'blogia:comments', template: '{scheme}://{host}/comentarios.xml' },
+    { key: 'blogia:posts', main: '{scheme}://{host}/feed.xml' },
+    { key: 'blogia:comments', main: '{scheme}://{host}/comentarios.xml' },
   ],
   { domains },
 )

@@ -17,11 +17,11 @@ const feeds = definePlatformFeeds(
   [
     {
       key: 'livedoor-blog:category',
-      template: '{scheme}://{host}/archives/cat_{category}.xml',
+      main: '{scheme}://{host}/archives/cat_{category}.xml',
       format: 'rdf',
     },
-    { key: 'livedoor-blog:posts', template: '{scheme}://{host}/index.rdf', format: 'rdf' },
-    { key: 'livedoor-blog:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
+    { key: 'livedoor-blog:posts', main: '{scheme}://{host}/index.rdf', format: 'rdf' },
+    { key: 'livedoor-blog:posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
   ],
   { domains },
 )

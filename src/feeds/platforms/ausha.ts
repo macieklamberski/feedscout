@@ -15,7 +15,7 @@ const hosts = ['podcast.ausha.co', 'smartlink.ausha.co']
 const feedIdRegex = /feed\.ausha\.co\/(\w+)/i
 
 const feeds = definePlatformFeeds([
-  { key: 'ausha:podcast', template: 'https://feed.ausha.co/{feedId}' },
+  { key: 'ausha:podcast', main: 'https://feed.ausha.co/{feedId}' },
 ])
 
 export const parseAushaUrl = (url: string): AushaUrl | undefined => {

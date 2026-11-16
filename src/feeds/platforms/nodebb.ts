@@ -21,10 +21,10 @@ const relativePathRegex = /"relative_path":"(?<relativePath>\/[^"]*)"/
 // NodeBB is self-hosted and known only by its headers, so nothing in a feed URL names it and the
 // table only builds, under the install root the page config names.
 const feeds = definePlatformFeeds([
-  { key: 'nodebb:topic', template: '{root}/topic/{topicId}.rss' },
-  { key: 'nodebb:category', template: '{root}/category/{categoryId}.rss' },
-  { key: 'nodebb:recent', template: '{root}/recent.rss' },
-  { key: 'nodebb:popular', template: '{root}/popular.rss' },
+  { key: 'nodebb:topic', main: '{root}/topic/{topicId}.rss' },
+  { key: 'nodebb:category', main: '{root}/category/{categoryId}.rss' },
+  { key: 'nodebb:recent', main: '{root}/recent.rss' },
+  { key: 'nodebb:popular', main: '{root}/popular.rss' },
 ])
 
 export const isNodebbHeaders = (headers: Headers): boolean => {

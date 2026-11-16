@@ -40,15 +40,18 @@ const domains = ['discourse.group', 'trydiscourse.com']
 // own domain can put under a sub-path its markup names.
 const feeds = definePlatformFeeds(
   [
-    { key: 'discourse:topic', template: '{root}/t/{slug}/{topicId}.rss' },
-    { key: 'discourse:activity', template: '{root}/u/{username}/activity.rss' },
-    { key: 'discourse:category', template: '{root}/c/{category*}.rss' },
-    { key: 'discourse:tag', template: '{root}/tag/{slug}/{id}.rss' },
-    { key: 'discourse:tag', template: '{root}/tag/{slug}.rss', isAlias: true },
-    { key: 'discourse:top', template: '{root}/top.rss?period={period}' },
-    { key: 'discourse:top', template: '{root}/top.rss' },
-    { key: 'discourse:latest', template: '{root}/latest.rss' },
-    { key: 'discourse:posts', template: '{root}/posts.rss' },
+    { key: 'discourse:topic', main: '{root}/t/{slug}/{topicId}.rss' },
+    { key: 'discourse:activity', main: '{root}/u/{username}/activity.rss' },
+    { key: 'discourse:category', main: '{root}/c/{category*}.rss' },
+    {
+      key: 'discourse:tag',
+      main: '{root}/tag/{slug}/{id}.rss',
+      aliases: ['{root}/tag/{slug}.rss'],
+    },
+    { key: 'discourse:top', main: '{root}/top.rss?period={period}' },
+    { key: 'discourse:top', main: '{root}/top.rss' },
+    { key: 'discourse:latest', main: '{root}/latest.rss' },
+    { key: 'discourse:posts', main: '{root}/posts.rss' },
   ],
   { domains },
 )

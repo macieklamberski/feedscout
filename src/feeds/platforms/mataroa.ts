@@ -8,7 +8,7 @@ export type MataroaUrl = { kind: 'blog' }
 
 const domains = ['mataroa.blog']
 
-const feeds = definePlatformFeeds([{ key: 'mataroa:blog', template: '{scheme}://{host}/rss/' }], {
+const feeds = definePlatformFeeds([{ key: 'mataroa:blog', main: '{scheme}://{host}/rss/' }], {
   domains,
 })
 

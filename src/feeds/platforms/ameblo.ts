@@ -19,36 +19,21 @@ const feeds = definePlatformFeeds(
   [
     {
       key: 'ameblo:posts',
-      template: 'https://rssblog.ameba.jp/{username}/rss20.xml',
+      main: 'https://rssblog.ameba.jp/{username}/rss20.xml',
       format: 'rss',
+      aliases: ['{scheme}://{host}/{username}/rss20.xml'],
     },
     {
       key: 'ameblo:posts',
-      template: '{scheme}://{host}/{username}/rss20.xml',
-      format: 'rss',
-      isAlias: true,
-    },
-    {
-      key: 'ameblo:posts',
-      template: 'https://rssblog.ameba.jp/{username}/atom.xml',
+      main: 'https://rssblog.ameba.jp/{username}/atom.xml',
       format: 'atom',
+      aliases: ['{scheme}://{host}/{username}/atom.xml'],
     },
     {
       key: 'ameblo:posts',
-      template: '{scheme}://{host}/{username}/atom.xml',
-      format: 'atom',
-      isAlias: true,
-    },
-    {
-      key: 'ameblo:posts',
-      template: 'https://rssblog.ameba.jp/{username}/rss.html',
+      main: 'https://rssblog.ameba.jp/{username}/rss.html',
       format: 'rdf',
-    },
-    {
-      key: 'ameblo:posts',
-      template: '{scheme}://{host}/{username}/rss.html',
-      format: 'rdf',
-      isAlias: true,
+      aliases: ['{scheme}://{host}/{username}/rss.html'],
     },
   ],
   { hosts },

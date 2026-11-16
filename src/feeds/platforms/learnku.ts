@@ -10,8 +10,8 @@ export type LearnkuUrl = { kind: 'community'; community: string } | { kind: 'hom
 const hosts = ['learnku.com', 'www.learnku.com']
 
 const feeds = definePlatformFeeds([
-  { key: 'learnku:site', template: 'https://learnku.com/feed' },
-  { key: 'learnku:community', template: 'https://learnku.com/{community}/feed' },
+  { key: 'learnku:site', main: 'https://learnku.com/feed' },
+  { key: 'learnku:community', main: 'https://learnku.com/{community}/feed' },
 ])
 
 export const parseLearnkuUrl = (url: string): LearnkuUrl | undefined => {

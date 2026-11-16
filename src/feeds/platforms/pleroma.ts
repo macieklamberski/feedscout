@@ -17,8 +17,8 @@ const profileAliasRegex = /^\/@?([^/]+)\/?$/
 // An instance is known only by its markup, so its feeds are built on the page's origin and claimed
 // on no host.
 const feeds = definePlatformFeeds([
-  { key: 'pleroma:posts', template: '{root}/users/{username}/feed.atom', format: 'atom' },
-  { key: 'pleroma:posts', template: '{root}/users/{username}/feed.rss', format: 'rss' },
+  { key: 'pleroma:posts', main: '{root}/users/{username}/feed.atom', format: 'atom' },
+  { key: 'pleroma:posts', main: '{root}/users/{username}/feed.rss', format: 'rss' },
 ])
 
 // The frontend preloads its config from the API, and older releases inline that response in the

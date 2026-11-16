@@ -28,32 +28,23 @@ const unreservedMarkRegex = /[-.!~*'()]/g
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'hatena-fotolife:photos', template: 'https://f.hatena.ne.jp/{username}/rss' },
-    {
-      key: 'hatena-fotolife:model',
-      template: 'https://f.hatena.ne.jp/{username}/rss?model={model}',
-    },
-    { key: 'hatena-fotolife:folder', template: 'https://f.hatena.ne.jp/{username}/{folder}/rss' },
-    { key: 'hatena-fotolife:tag', template: 'https://f.hatena.ne.jp/{username}/t/{tag}?mode=rss' },
-    {
-      key: 'hatena-fotolife:stars',
-      template: 'https://f.hatena.ne.jp/{username}/favorite?mode=rss',
-    },
+    { key: 'hatena-fotolife:photos', main: 'https://f.hatena.ne.jp/{username}/rss' },
+    { key: 'hatena-fotolife:model', main: 'https://f.hatena.ne.jp/{username}/rss?model={model}' },
+    { key: 'hatena-fotolife:folder', main: 'https://f.hatena.ne.jp/{username}/{folder}/rss' },
+    { key: 'hatena-fotolife:tag', main: 'https://f.hatena.ne.jp/{username}/t/{tag}?mode=rss' },
+    { key: 'hatena-fotolife:stars', main: 'https://f.hatena.ne.jp/{username}/favorite?mode=rss' },
     {
       key: 'hatena-fotolife:star-friends',
-      template: 'https://f.hatena.ne.jp/{username}/starfriends?mode=rss',
+      main: 'https://f.hatena.ne.jp/{username}/starfriends?mode=rss',
     },
     // Site-wide listings: the newest photos, and photos by camera model, focal length or color.
-    { key: 'hatena-fotolife:recent', template: 'https://f.hatena.ne.jp/userlist?mode=rss' },
-    {
-      key: 'hatena-fotolife:site-model',
-      template: 'https://f.hatena.ne.jp/model/{model}?mode=rss',
-    },
+    { key: 'hatena-fotolife:recent', main: 'https://f.hatena.ne.jp/userlist?mode=rss' },
+    { key: 'hatena-fotolife:site-model', main: 'https://f.hatena.ne.jp/model/{model}?mode=rss' },
     {
       key: 'hatena-fotolife:focal-length',
-      template: 'https://f.hatena.ne.jp/focallength/{focalLength}?mode=rss',
+      main: 'https://f.hatena.ne.jp/focallength/{focalLength}?mode=rss',
     },
-    { key: 'hatena-fotolife:color', template: 'https://f.hatena.ne.jp/fotocolor/{color}?mode=rss' },
+    { key: 'hatena-fotolife:color', main: 'https://f.hatena.ne.jp/fotocolor/{color}?mode=rss' },
   ],
   { hosts },
 )
