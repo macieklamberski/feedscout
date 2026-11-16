@@ -1,6 +1,7 @@
 import { getAnyOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -11,16 +12,27 @@ export type XenforoPage =
   | { kind: 'forum'; basePath: string; route: string; forumPath: string }
   | { kind: 'board'; basePath: string }
 
-// XF2 serves a forum at `/f/{slug.id}` or, on the default route, `/forums/{slug.id}`.
-const forumPathRegex = /\/(?<route>f|forums)\/(?<forumPath>[^/]+\.\d+)(?:\/|$)/i
 // The board feed sits under the same route prefix as the forums. A page outside a
 // forum does not carry the prefix, and a board that renamed its route can answer on both.
 const routePrefixes = ['forums', 'f']
+
+// XF2 serves a forum at `/f/{slug.id}` or, on the default route, `/forums/{slug.id}`.
+const forumPathRegex = /\/(?<route>f|forums)\/(?<forumPath>[^/]+\.\d+)(?:\/|$)/i
 // XF2 prints the path the board is mounted under in its script config.
 const basePathRegex = /\bbasePath:\s*'(?<basePath>(?:\/[^'/]+)*)\/?'/
 
 // XF2 puts `id="XF"` on the html element and XF1 put `id="XenForo"` there.
 const appRootIds = ['XF', 'XenForo']
+
+// A board on any host is known only by its markup, which a feed URL does not carry, so the feeds
+// are built under the board root and never claimed. A forum page names the route of the board
+// feed, and a board page does not, so it gets both routes in turn.
+const feeds = definePlatformFeeds([
+  { key: 'xenforo:forum', template: '{root}/{route}/{forumPath}/index.rss' },
+  { key: 'xenforo:site', template: '{root}/{route}/-/index.rss' },
+  { key: 'xenforo:site', template: '{root}/forums/-/index.rss' },
+  { key: 'xenforo:site', template: '{root}/f/-/index.rss', isAlias: true },
+])
 
 export const isXenforoHtml = (content: string): boolean => {
   const root = findElement(content, (element) => {
@@ -95,20 +107,15 @@ export const xenforoHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
+    const root = `${new URL(url).origin}${page.basePath}`
 
     if (page.kind === 'forum') {
-      const routeUrl = `${origin}${page.basePath}/${page.route}`
-
       return [
-        { uri: `${routeUrl}/${page.forumPath}/index.rss`, hint: composeHint('xenforo:forum') },
-        { uri: `${routeUrl}/-/index.rss`, hint: composeHint('xenforo:site') },
+        feeds.getFeedEntry('xenforo:forum', { root, route: page.route, forumPath: page.forumPath }),
+        feeds.getFeedEntry('xenforo:site', { root, route: page.route }),
       ]
     }
 
-    const boardUrl = `${origin}${page.basePath}`
-    const boardUris = routePrefixes.map((prefix) => `${boardUrl}/${prefix}/-/index.rss`)
-
-    return [{ uri: boardUris, hint: composeHint('xenforo:site') }]
+    return [feeds.getFeedSpellings('xenforo:site', { root })]
   },
 }

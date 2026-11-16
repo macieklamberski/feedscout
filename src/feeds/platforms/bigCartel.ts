@@ -1,6 +1,7 @@
-import { isHostOrSubdomainOf } from 'trousse'
+import { isAnyOf, isHostOrSubdomainOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers store (html).
@@ -11,13 +12,22 @@ export type BigCartelUrl = { kind: 'store' }
 const domains = ['bigcartel.com']
 
 const frameOptionsRegex = /https:\/\/my\.bigcartel\.com/i
-const themeStylesheetRegex = /^\/theme_stylesheets\/\d+\/\d+\/theme\.css$/
+const themeStylesheetRegex = /^\/theme_stylesheets\/\d+\/\d+\/theme\.css$/i
+
+// A store on its own domain is known only by its markers, so its feed is built but not claimed.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'big-cartel:products', template: '{scheme}://{host}/products.rss' },
+    { key: 'big-cartel:products', template: '{scheme}://{host}/products.xml' },
+  ],
+  { domains },
+)
 
 export const isBigCartelHtml = (content: string): boolean => {
   const stylesheet = findElement(content, (element) => {
     return (
       element.name === 'link' &&
-      element.attribs.rel?.toLowerCase() === 'stylesheet' &&
+      isAnyOf(element.attribs.rel, 'stylesheet') &&
       themeStylesheetRegex.test(element.attribs.href ?? '')
     )
   })
@@ -47,10 +57,16 @@ export const bigCartelHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
+    const page = feeds.forUrl(url)
+
+    if (!page) {
+      return []
+    }
 
     // The linked `/products.xml` is a Google Merchant feed whose items have no title or link, so it
     // parses with no items.
-    return [{ uri: `${origin}/products.rss`, hint: composeHint('big-cartel:products') }]
+    return [page.getFeedEntry('big-cartel:products')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

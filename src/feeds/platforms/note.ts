@@ -1,6 +1,6 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home, profile (guess, html).
@@ -13,12 +13,28 @@ export type NoteUrl =
   | { kind: 'user'; username: string }
   | { kind: 'home' }
 
-export const hosts = ['note.com', 'www.note.com']
+export const hosts = ['note.com', 'note.mu']
 
 // A hashtag page redirects to `/tag/{tag}`, and the feed stays under `/hashtag`.
 const hashtagRegex = /^\/(?:hashtag|tag)\/([^/]+)/i
 const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/i
 const noteRegex = /^\/([^/]+)\/n\/[^/]+/i
+
+// note.mu, the old domain, redirects every feed to the same path on note.com.
+const feeds = definePlatformFeeds([
+  { key: 'note:featured', template: 'https://note.com/rss' },
+  { key: 'note:featured', template: 'https://note.mu/rss', isAlias: true },
+  { key: 'note:hashtag', template: 'https://note.com/hashtag/{tag}/rss' },
+  { key: 'note:hashtag', template: 'https://note.mu/hashtag/{tag}/rss', isAlias: true },
+  { key: 'note:magazine', template: 'https://note.com/{username}/m/{magazine}/rss' },
+  {
+    key: 'note:magazine',
+    template: 'https://note.mu/{username}/m/{magazine}/rss',
+    isAlias: true,
+  },
+  { key: 'note:blog', template: 'https://note.com/{username}/rss' },
+  { key: 'note:blog', template: 'https://note.mu/{username}/rss', isAlias: true },
+])
 
 export const parseNoteUrl = (url: string): NoteUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -72,39 +88,43 @@ export const noteHandler: PlatformHandler = {
       return []
     }
 
+    // The featured notes feed needs no value from the page, so every page builds it after its own
+    // feeds.
     if (parsed.kind === 'hashtag') {
       return [
-        {
-          uri: `https://note.com/hashtag/${parsed.tag}/rss`,
-          hint: composeHint('note:hashtag'),
-        },
+        feeds.getFeedEntry('note:hashtag', { tag: parsed.tag }),
+        feeds.getFeedEntry('note:featured'),
       ]
     }
 
     if (parsed.kind === 'magazine') {
       return [
-        {
-          uri: `https://note.com/${parsed.username}/m/${parsed.magazine}/rss`,
-          hint: composeHint('note:magazine'),
-        },
+        feeds.getFeedEntry('note:magazine', {
+          username: parsed.username,
+          magazine: parsed.magazine,
+        }),
+        feeds.getFeedEntry('note:featured'),
       ]
     }
 
     // A note page leads to its author's blog feed.
     if (parsed.kind === 'note' || parsed.kind === 'user') {
       return [
-        {
-          uri: `https://note.com/${parsed.username}/rss`,
-          hint: composeHint('note:blog'),
-        },
+        feeds.getFeedEntry('note:blog', { username: parsed.username }),
+        feeds.getFeedEntry('note:featured'),
       ]
     }
 
-    return [
-      {
-        uri: 'https://note.com/rss',
-        hint: composeHint('note:featured'),
-      },
-    ]
+    return [feeds.getFeedEntry('note:featured')]
+  },
+
+  // The table reads any first segment as a name, so a dotted one, a file of the site, is refused
+  // by the page parser first: note.com/robots.txt/rss answers 404.
+  getFeedHint: (url) => {
+    if (!parseNoteUrl(url)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }

@@ -1,12 +1,7 @@
-import { getPathSegments, isAnyOf, parseUrl } from 'trousse'
+import { getPathSegments, includesAnyOf, isAnyOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  findElement,
-  hasClass,
-  hasMarker,
-  hasMetaContent,
-} from '../../common/utils.js'
+import { findElement, hasClass, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers profile, users (html), partly covers profileMedia, profileTagged, profileWithReplies.
@@ -19,10 +14,19 @@ export type MastodonUrl =
   | { kind: 'tagged'; username: string; tag: string }
   | { kind: 'tag'; tag: string }
 
-const mastodonRegex = /mastodon/i
-// A profile URL can end in .rss, a legacy .atom or the ActivityPub .json. A remote handle,
-// @user@host.tld, holds dots, so only these suffixes are stripped.
+// suffixes: Mastodon's own profile formats, .rss, a legacy .atom and the ActivityPub .json. A
+// remote handle, @user@host.tld, holds dots, so only these suffixes are stripped.
 const feedExtensionRegex = /\.(rss|atom|json)$/i
+
+// Mastodon is self-hosted and known only by its page marker, so nothing in a feed URL names it and
+// the table only builds.
+const feeds = definePlatformFeeds([
+  { key: 'mastodon:posts', template: '{root}/@{username}.rss' },
+  { key: 'mastodon:replies', template: '{root}/@{username}/with_replies.rss' },
+  { key: 'mastodon:media', template: '{root}/@{username}/media.rss' },
+  { key: 'mastodon:tagged', template: '{root}/@{username}/tagged/{tag}.rss' },
+  { key: 'mastodon:tag', template: '{root}/tags/{tag}.rss' },
+])
 
 // Current Mastodon serves no generator meta, so the `<div class="app-holder" id="mastodon">` app
 // root is matched too. A bare `mastodon` id is a common social-link id on blogs.
@@ -39,7 +43,7 @@ export const isMastodonHtml = (content: string): boolean => {
 }
 
 export const isMastodonHeaders = (headers: Headers): boolean => {
-  return mastodonRegex.test(headers.get('server') ?? '')
+  return includesAnyOf(headers.get('server'), 'mastodon')
 }
 
 export const parseMastodonUrl = (url: string): MastodonUrl | undefined => {
@@ -51,38 +55,40 @@ export const parseMastodonUrl = (url: string): MastodonUrl | undefined => {
 
   // Mastodon serves a page's feed at the page path plus .rss, as in /@user.rss.
   const segments = getPathSegments(parsedUrl)
-  const [first, second, third] = segments.map((segment) => segment.replace(feedExtensionRegex, ''))
+  const [routeOrHandle, nameOrRoute, tag] = segments.map((segment) =>
+    segment.replace(feedExtensionRegex, ''),
+  )
 
-  if (isAnyOf(first, 'tags') && second) {
-    return { kind: 'tag', tag: second }
+  if (isAnyOf(routeOrHandle, 'tags') && nameOrRoute) {
+    return { kind: 'tag', tag: nameOrRoute }
   }
 
   // Mastodon serves the profile at /users/{user} too, without redirecting, unless HTML is
   // asked for.
-  if (isAnyOf(first, 'users') && second) {
-    return { kind: 'profile', username: second }
+  if (isAnyOf(routeOrHandle, 'users') && nameOrRoute) {
+    return { kind: 'profile', username: nameOrRoute }
   }
 
-  if (!first?.startsWith('@')) {
+  if (!routeOrHandle?.startsWith('@')) {
     return
   }
 
-  const username = first.slice(1)
+  const username = routeOrHandle.slice(1)
 
   if (!username) {
     return
   }
 
-  if (isAnyOf(second, 'with_replies')) {
+  if (isAnyOf(nameOrRoute, 'with_replies')) {
     return { kind: 'replies', username }
   }
 
-  if (isAnyOf(second, 'media')) {
+  if (isAnyOf(nameOrRoute, 'media')) {
     return { kind: 'media', username }
   }
 
-  if (isAnyOf(second, 'tagged') && third) {
-    return { kind: 'tagged', username, tag: third }
+  if (isAnyOf(nameOrRoute, 'tagged') && tag) {
+    return { kind: 'tagged', username, tag }
   }
 
   return { kind: 'profile', username }
@@ -99,56 +105,37 @@ export const mastodonHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseMastodonUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
-
     if (parsed.kind === 'replies') {
       return [
-        {
-          uri: `${origin}/@${parsed.username}/with_replies.rss`,
-          hint: composeHint('mastodon:replies'),
-        },
-        {
-          uri: `${origin}/@${parsed.username}.rss`,
-          hint: composeHint('mastodon:posts'),
-        },
+        pageFeeds.getFeedEntry('mastodon:replies', { username: parsed.username }),
+        pageFeeds.getFeedEntry('mastodon:posts', { username: parsed.username }),
       ]
     }
 
     if (parsed.kind === 'media') {
       return [
-        {
-          uri: `${origin}/@${parsed.username}/media.rss`,
-          hint: composeHint('mastodon:media'),
-        },
-        {
-          uri: `${origin}/@${parsed.username}.rss`,
-          hint: composeHint('mastodon:posts'),
-        },
+        pageFeeds.getFeedEntry('mastodon:media', { username: parsed.username }),
+        pageFeeds.getFeedEntry('mastodon:posts', { username: parsed.username }),
       ]
     }
 
     if (parsed.kind === 'tagged') {
       return [
-        {
-          uri: `${origin}/@${parsed.username}/tagged/${parsed.tag}.rss`,
-          hint: composeHint('mastodon:tagged'),
-        },
-        {
-          uri: `${origin}/@${parsed.username}.rss`,
-          hint: composeHint('mastodon:posts'),
-        },
+        pageFeeds.getFeedEntry('mastodon:tagged', { username: parsed.username, tag: parsed.tag }),
+        pageFeeds.getFeedEntry('mastodon:posts', { username: parsed.username }),
       ]
     }
 
     if (parsed.kind === 'profile') {
-      return [{ uri: `${origin}/@${parsed.username}.rss`, hint: composeHint('mastodon:posts') }]
+      return [pageFeeds.getFeedEntry('mastodon:posts', { username: parsed.username })]
     }
 
-    return [{ uri: `${origin}/tags/${parsed.tag}.rss`, hint: composeHint('mastodon:tag') }]
+    return [pageFeeds.getFeedEntry('mastodon:tag', { tag: parsed.tag })]
   },
 }

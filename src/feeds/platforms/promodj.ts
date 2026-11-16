@@ -1,12 +1,25 @@
 import { getPathSegments, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type PromodjUrl = { kind: 'profile'; username: string }
 
 const hosts = ['promodj.com', 'www.promodj.com']
+
+const feeds = definePlatformFeeds([
+  { key: 'promodj:podcast', template: 'https://promodj.com/{username}/podcast.xml' },
+  {
+    key: 'promodj:podcast',
+    template: 'https://promodj.com/{username}/podcast_alt.xml',
+    isAlias: true,
+  },
+  { key: 'promodj:content', template: 'https://promodj.com/{username}/rss.xml' },
+  { key: 'promodj:blog', template: 'https://promodj.com/{username}/blog.xml' },
+  { key: 'promodj:favorites', template: 'https://promodj.com/{username}/bookmarks.xml' },
+  { key: 'promodj:events', template: 'https://promodj.com/{username}/avisha.xml' },
+])
 
 export const parsePromodjUrl = (url: string): PromodjUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -34,14 +47,16 @@ export const promodjHandler: PlatformHandler = {
       return []
     }
 
-    const profileUrl = `https://promodj.com/${parsed.username}`
+    const params = { username: parsed.username }
 
     return [
-      { uri: `${profileUrl}/podcast.xml`, hint: composeHint('promodj:podcast') },
-      { uri: `${profileUrl}/rss.xml`, hint: composeHint('promodj:content') },
-      { uri: `${profileUrl}/blog.xml`, hint: composeHint('promodj:blog') },
-      { uri: `${profileUrl}/bookmarks.xml`, hint: composeHint('promodj:favorites') },
-      { uri: `${profileUrl}/avisha.xml`, hint: composeHint('promodj:events') },
+      feeds.getFeedEntry('promodj:podcast', params),
+      feeds.getFeedEntry('promodj:content', params),
+      feeds.getFeedEntry('promodj:blog', params),
+      feeds.getFeedEntry('promodj:favorites', params),
+      feeds.getFeedEntry('promodj:events', params),
     ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

@@ -1,19 +1,28 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { parseRoyalroadUrl, type RoyalroadUrl, royalroadHandler } from './royalroad.js'
+
+const fictionHint: DiscoverUriHint = { key: 'royalroad:fiction', label: 'Fiction' }
+const feedCases: Array<[string, DiscoverUriHint]> = [
+  ['https://www.royalroad.com/syndication/12345', fictionHint],
+  ['https://www.royalroad.com/fiction/syndication/12345', fictionHint],
+  ['https://www.royalroad.com/syndication/12345?count=1', fictionHint],
+  ['http://royalroad.com/syndication/12345/', fictionHint],
+]
 
 describe('parseRoyalroadUrl', () => {
   it('should return the fiction for a chapter page', () => {
+    const value =
+      'https://www.royalroad.com/fiction/21220/mother-of-learning/chapter/301778/1-good-morning-brother'
     const expected: RoyalroadUrl = { kind: 'fiction', fictionId: '21220' }
 
-    expect(
-      parseRoyalroadUrl(
-        'https://www.royalroad.com/fiction/21220/mother-of-learning/chapter/301778/1-good-morning-brother',
-      ),
-    ).toEqual(expected)
+    expect(parseRoyalroadUrl(value)).toEqual(expected)
   })
 
   it('should return undefined for a profile page', () => {
-    expect(parseRoyalroadUrl('https://www.royalroad.com/profile/100374')).toBeUndefined()
+    expect(parseRoyalroadUrl('https://www.royalroad.com/profile/123456')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -49,7 +58,7 @@ describe('royalroadHandler', () => {
     })
 
     it('should not match a profile page', () => {
-      expect(royalroadHandler.match('https://www.royalroad.com/profile/100374')).toBe(false)
+      expect(royalroadHandler.match('https://www.royalroad.com/profile/123456')).toBe(false)
     })
 
     it('should not match a fiction list', () => {
@@ -78,7 +87,62 @@ describe('royalroadHandler', () => {
     })
 
     it('should return an empty array without a fiction id', () => {
-      expect(royalroadHandler.resolve('https://www.royalroad.com/profile/100374')).toEqual([])
+      expect(royalroadHandler.resolve('https://www.royalroad.com/profile/123456')).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the fiction hint for a fiction feed', () => {
+      const value = 'https://www.royalroad.com/syndication/12345'
+      const expected: DiscoverUriHint = { key: 'royalroad:fiction', label: 'Fiction' }
+
+      expect(royalroadHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the fiction hint for a fiction feed under the fiction path', () => {
+      const value = 'https://www.royalroad.com/fiction/syndication/12345'
+      const expected: DiscoverUriHint = { key: 'royalroad:fiction', label: 'Fiction' }
+
+      expect(royalroadHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the fiction hint for a fiction feed with a count', () => {
+      const value = 'https://www.royalroad.com/syndication/12345?count=1'
+      const expected: DiscoverUriHint = { key: 'royalroad:fiction', label: 'Fiction' }
+
+      expect(royalroadHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the fiction hint for a fiction feed on the bare host', () => {
+      const value = 'http://royalroad.com/syndication/12345/'
+      const expected: DiscoverUriHint = { key: 'royalroad:fiction', label: 'Fiction' }
+
+      expect(royalroadHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a fiction page', () => {
+      const value = 'https://www.royalroad.com/fiction/12345'
+
+      expect(royalroadHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/syndication/12345'
+
+      expect(royalroadHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('as a feed URL input', () => {
+    it.each(feedCases)('should return %s as given', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [royalroadHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

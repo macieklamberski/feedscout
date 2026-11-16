@@ -1,13 +1,26 @@
-import { parseUrl } from 'trousse'
+import { getPathSegments, isLocale, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames, hasMarker } from '../../common/utils.js'
+import { getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type OdooUrl = { kind: 'blog'; languagePath: string; blog: string }
+export type OdooUrl = { kind: 'blog'; blog: string }
 
 // The blog segment is `{slug}-{id}`, after an optional language prefix such as `/fr` or `/en_GB`.
-const blogRegex = /^((?:\/[a-z]+(?:_[a-z\d]+)?)?)\/blog\/([^/]+-\d+)(?:\/|$)/i
+const blogRegex = /^(?:\/([^/]+))?\/blog\/([^/]+-\d+)(?:\/|$)/i
+
+// Odoo's own site runs on www.odoo.com, and a database on its own domain is known only by its
+// cookies, so feeds on either are built here but not claimed.
+const domains = ['odoo.com']
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'odoo:blog', template: '{scheme}://{host}/blog/{blog}/feed', format: 'atom' },
+    { key: 'odoo:blog', template: '{scheme}://{host}/{language}/blog/{blog}/feed', format: 'atom' },
+  ],
+  { domains },
+)
 
 // Odoo 11 and later set both cookies on a first visit to any website page.
 export const isOdooHeaders = (headers: Headers): boolean => {
@@ -23,13 +36,13 @@ export const parseOdooUrl = (url: string): OdooUrl | undefined => {
     return
   }
 
-  const match = parsedUrl.pathname.match(blogRegex)
+  const [, language, blog] = parsedUrl.pathname.match(blogRegex) ?? []
 
-  if (!match?.[2]) {
+  if (!blog || (language && !isLocale(language, { underscore: true }))) {
     return
   }
 
-  return { kind: 'blog', languagePath: match[1] ?? '', blog: match[2] }
+  return { kind: 'blog', blog }
 }
 
 export const odooHandler: PlatformHandler = {
@@ -43,18 +56,23 @@ export const odooHandler: PlatformHandler = {
 
   resolve: (url) => {
     const odooUrl = parseOdooUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!odooUrl) {
+    if (!odooUrl || !page) {
       return []
     }
 
-    const { origin } = new URL(url)
+    return [page.getFeedEntry('odoo:blog', { blog: odooUrl.blog }, 'atom')]
+  },
 
-    return [
-      {
-        uri: `${origin}${odooUrl.languagePath}/blog/${odooUrl.blog}/feed`,
-        hint: composeHint('odoo:blog', 'atom'),
-      },
-    ]
+  // A segment before the blog is a language only in its own form.
+  getFeedHint: (url) => {
+    const [language, , , feed] = getPathSegments(url)
+
+    if (feed && !isLocale(language, { underscore: true })) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }

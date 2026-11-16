@@ -1,39 +1,56 @@
-import { composeQuery } from 'trousse'
+import { startsWithAnyOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
+import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const layoutAssetRegex = /^\/Areas\/Layout\/Assets\//
+// The module ids that serve an all-categories feed. A module id with no feed answers 200 with an
+// empty body.
+const moduleKeys = new Map<string, CivicplusFeedKey>([
+  ['1', 'civicplus:news-flash'],
+  ['51', 'civicplus:blog'],
+  ['53', 'civicplus:photo-gallery'],
+  ['58', 'civicplus:calendar'],
+  ['63', 'civicplus:alert-center'],
+  ['64', 'civicplus:real-estate'],
+  ['65', 'civicplus:agenda-center'],
+  ['66', 'civicplus:jobs'],
+  ['92', 'civicplus:media-center'],
+])
 
-type CivicplusModule = { query: Record<string, string>; hint: string }
+// A site runs on its own domain and is known only by its marker, so its feeds are built here but
+// not claimed. The Pages feed of new and updated pages is site-wide, for the home page and content
+// pages.
+const feeds = definePlatformFeeds([
+  { key: 'civicplus:news-flash', template: '{root}/RSSFeed.aspx?ModID=1&CID=All-newsflash.xml' },
+  { key: 'civicplus:blog', template: '{root}/RSSFeed.aspx?ModID=51&CID=All-blog.xml' },
+  { key: 'civicplus:photo-gallery', template: '{root}/RSSFeed.aspx?ModID=53&CID=All-0' },
+  { key: 'civicplus:calendar', template: '{root}/RSSFeed.aspx?ModID=58&CID=All-calendar.xml' },
+  { key: 'civicplus:alert-center', template: '{root}/RSSFeed.aspx?ModID=63&CID=All-0' },
+  { key: 'civicplus:real-estate', template: '{root}/RSSFeed.aspx?ModID=64&CID=All-0' },
+  { key: 'civicplus:agenda-center', template: '{root}/RSSFeed.aspx?ModID=65&CID=All-0' },
+  {
+    key: 'civicplus:jobs',
+    template: '{root}/RSSFeed.aspx?ModID=66&CID=All-0&CommunityJobs=False',
+  },
+  {
+    key: 'civicplus:media-center',
+    template: '{root}/RSSFeed.aspx?ModID=92&CID=All-civicmedia.xml',
+  },
+  { key: 'civicplus:pages', template: '{root}/RSSFeed.aspx?ModID=76&CID=All-0' },
+])
 
-// The all-categories feed of each module that serves one. A module id with no feed answers 200
-// with an empty body.
-const modules: Array<CivicplusModule> = [
-  { query: { ModID: '1', CID: 'All-newsflash.xml' }, hint: 'civicplus:news-flash' },
-  { query: { ModID: '51', CID: 'All-blog.xml' }, hint: 'civicplus:blog' },
-  { query: { ModID: '53', CID: 'All-0' }, hint: 'civicplus:photo-gallery' },
-  { query: { ModID: '58', CID: 'All-calendar.xml' }, hint: 'civicplus:calendar' },
-  { query: { ModID: '63', CID: 'All-0' }, hint: 'civicplus:alert-center' },
-  { query: { ModID: '64', CID: 'All-0' }, hint: 'civicplus:real-estate' },
-  { query: { ModID: '65', CID: 'All-0' }, hint: 'civicplus:agenda-center' },
-  { query: { ModID: '66', CID: 'All-0', CommunityJobs: 'False' }, hint: 'civicplus:jobs' },
-  { query: { ModID: '92', CID: 'All-civicmedia.xml' }, hint: 'civicplus:media-center' },
-]
+type CivicplusFeedKey = Parameters<typeof feeds.getFeedEntry>[0]
 
-// The site-wide feed of new and updated pages, for the home page and content pages.
-const pagesModule: CivicplusModule = {
-  query: { ModID: '76', CID: 'All-0' },
-  hint: 'civicplus:pages',
-}
-
-export type CivicplusPage = { kind: 'module'; origin: string; module: CivicplusModule }
+export type CivicplusPage = { kind: 'module'; key: CivicplusFeedKey }
 
 export const isCivicplusHtml = (content: string): boolean => {
   const script = findElement(content, (element) => {
-    return element.name === 'script' && layoutAssetRegex.test(element.attribs.src ?? '')
+    return (
+      element.name === 'script' && startsWithAnyOf(element.attribs.src, '/Areas/Layout/Assets/')
+    )
   })
 
   return script !== undefined
@@ -45,13 +62,12 @@ export const isCivicplusHeaders = (headers: Headers): boolean => {
 
 // Every module page prints its module id in a hidden `pageModuleID` input, left empty on the
 // home page and on content pages. A page with no module feed gets the site-wide Pages feed.
-const getCivicplusPage = (url: string, content: string | undefined): CivicplusPage => {
+const getCivicplusPage = (content: string | undefined): CivicplusPage => {
   const input = findElement(content, (element) => {
     return element.name === 'input' && element.attribs.id === 'pageModuleID'
   })
-  const pageModule = modules.find(({ query }) => query.ModID === input?.attribs.value)
 
-  return { kind: 'module', origin: new URL(url).origin, module: pageModule ?? pagesModule }
+  return { kind: 'module', key: moduleKeys.get(input?.attribs.value ?? '') ?? 'civicplus:pages' }
 }
 
 export const civicplusHandler: PlatformHandler = {
@@ -60,13 +76,13 @@ export const civicplusHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const page = getCivicplusPage(url, content)
+    const page = getCivicplusPage(content)
+    const pageFeeds = feeds.forUrl(url)
 
-    return [
-      {
-        uri: `${page.origin}/RSSFeed.aspx${composeQuery(page.module.query)}`,
-        hint: composeHint(page.module.hint),
-      },
-    ]
+    if (!pageFeeds) {
+      return []
+    }
+
+    return [pageFeeds.getFeedEntry(page.key)]
   },
 }

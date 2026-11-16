@@ -1,4 +1,4 @@
-import { isNonEmptyString, parseUrl } from 'trousse'
+import { composeQuery, isNonEmptyString, parseUrl, startsWithAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { parseDailymotionUrl } from '../../feeds/platforms/dailymotion.js'
 import type { FaviconEnricher } from '../types.js'
@@ -42,11 +42,13 @@ export const dailymotionEnricher: FaviconEnricher = async (ref, context) => {
 
   const field = ref.id.startsWith('playlist/') ? 'owner.avatar_720_url' : 'avatar_720_url'
 
-  const response = await context.fetchFn(`https://api.dailymotion.com/${ref.id}?fields=${field}`)
+  const response = await context.fetchFn(
+    `https://api.dailymotion.com/${ref.id}${composeQuery({ fields: field })}`,
+  )
   const avatar = parseResponseJson(response)?.[field]
 
   // An account without an avatar gets the generic silhouette served under /d/.
-  if (isNonEmptyString(avatar) && !parseUrl(avatar)?.pathname.startsWith('/d/')) {
+  if (isNonEmptyString(avatar) && !startsWithAnyOf(parseUrl(avatar)?.pathname, '/d/')) {
     return [avatar]
   }
 

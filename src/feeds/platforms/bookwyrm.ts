@@ -1,7 +1,7 @@
 import { getAnyOf, getPathSegments, isAnyOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
+import { hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers profile, shelf.
@@ -12,9 +12,19 @@ export type BookwyrmUrl =
   | { kind: 'subpage'; username: string }
 
 // The trailing boundary keeps sibling repositories such as `bookwyrm-docs` out.
-const sourceLinkRegex = /github\.com\/bookwyrm-social\/bookwyrm(?![\w-])/
+const sourceLinkRegex = /github\.com\/bookwyrm-social\/bookwyrm(?![\w-])/i
 
 const shelfSections = ['shelf', 'books']
+
+// An instance runs on its own domain and is known only by its marker, so its feeds are built here
+// but not claimed.
+const feeds = definePlatformFeeds([
+  { key: 'bookwyrm:shelf', template: '{root}/user/{username}/{section}/{shelf}/rss' },
+  { key: 'bookwyrm:activity', template: '{root}/user/{username}/rss' },
+  { key: 'bookwyrm:reviews', template: '{root}/user/{username}/rss-reviews' },
+  { key: 'bookwyrm:quotes', template: '{root}/user/{username}/rss-quotes' },
+  { key: 'bookwyrm:comments', template: '{root}/user/{username}/rss-comments' },
+])
 
 export const isBookwyrmHtml = (content: string): boolean => {
   return sourceLinkRegex.test(content) || hasMetaContent(content, 'generator', 'BookWyrm')
@@ -50,43 +60,35 @@ export const bookwyrmHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
     const parsed = parseBookwyrmUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
     const { username } = parsed
-    const uris: Array<DiscoverUriEntry> = []
 
     // Shelf page: /user/{username}/(shelf|books)/{shelf-id}, so the shelf feed goes first.
     if (parsed.kind === 'shelf') {
-      uris.push({
-        uri: `${origin}/user/${username}/${parsed.section}/${parsed.shelf}/rss`,
-        hint: composeHint('bookwyrm:shelf'),
-      })
+      return [
+        page.getFeedEntry('bookwyrm:shelf', {
+          username,
+          section: parsed.section,
+          shelf: parsed.shelf,
+        }),
+        page.getFeedEntry('bookwyrm:activity', { username }),
+        page.getFeedEntry('bookwyrm:reviews', { username }),
+        page.getFeedEntry('bookwyrm:quotes', { username }),
+        page.getFeedEntry('bookwyrm:comments', { username }),
+      ]
     }
 
-    uris.push(
-      {
-        uri: `${origin}/user/${username}/rss`,
-        hint: composeHint('bookwyrm:activity'),
-      },
-      {
-        uri: `${origin}/user/${username}/rss-reviews`,
-        hint: composeHint('bookwyrm:reviews'),
-      },
-      {
-        uri: `${origin}/user/${username}/rss-quotes`,
-        hint: composeHint('bookwyrm:quotes'),
-      },
-      {
-        uri: `${origin}/user/${username}/rss-comments`,
-        hint: composeHint('bookwyrm:comments'),
-      },
-    )
-
-    return uris
+    return [
+      page.getFeedEntry('bookwyrm:activity', { username }),
+      page.getFeedEntry('bookwyrm:reviews', { username }),
+      page.getFeedEntry('bookwyrm:quotes', { username }),
+      page.getFeedEntry('bookwyrm:comments', { username }),
+    ]
   },
 }

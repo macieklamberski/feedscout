@@ -1,12 +1,15 @@
-import { encodePathSegment } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
+import { hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type HubzillaUrl = { kind: 'channel'; channel: string }
 
 const channelPathRegex = /^\/(?:(?:channel|feed|profile)\/|@)([^/]+)/i
+
+// A hub is self-hosted on any domain, so the table only builds its feed.
+const feeds = definePlatformFeeds([{ key: 'hubzilla:channel', template: '{root}/feed/{channel}' }])
 
 // A custom theme can drop the generator, while core prints `var zid` in every page head.
 export const isHubzillaHtml = (content: string): boolean => {
@@ -33,15 +36,13 @@ export const hubzillaHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
     const parsed = parseHubzillaUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const channel = encodePathSegment(parsed.channel)
-
-    return [{ uri: `${origin}/feed/${channel}`, hint: composeHint('hubzilla:channel') }]
+    return [page.getFeedEntry('hubzilla:channel', { channel: parsed.channel })]
   },
 }

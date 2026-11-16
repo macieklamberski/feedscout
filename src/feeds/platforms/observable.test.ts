@@ -1,24 +1,27 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { ObservableUrl } from './observable.js'
 import { observableHandler, parseObservableUrl } from './observable.js'
 
 describe('parseObservableUrl', () => {
   it('should return the user for a profile page', () => {
-    const expected: ObservableUrl = { kind: 'user', owner: 'mbostock' }
+    const expected: ObservableUrl = { kind: 'user', owner: 'alice' }
 
-    expect(parseObservableUrl('https://observablehq.com/@mbostock')).toEqual(expected)
+    expect(parseObservableUrl('https://observablehq.com/@alice')).toEqual(expected)
   })
 
   it('should return the user for a notebook page', () => {
-    const expected: ObservableUrl = { kind: 'user', owner: 'mbostock' }
+    const expected: ObservableUrl = { kind: 'user', owner: 'alice' }
 
-    expect(parseObservableUrl('https://observablehq.com/@mbostock/some-notebook')).toEqual(expected)
+    expect(parseObservableUrl('https://observablehq.com/@alice/some-notebook')).toEqual(expected)
   })
 
   it('should return the user for the www host', () => {
-    const expected: ObservableUrl = { kind: 'user', owner: 'mbostock' }
+    const expected: ObservableUrl = { kind: 'user', owner: 'alice' }
 
-    expect(parseObservableUrl('https://www.observablehq.com/@mbostock')).toEqual(expected)
+    expect(parseObservableUrl('https://www.observablehq.com/@alice')).toEqual(expected)
   })
 
   it('should return the collection for a collection page', () => {
@@ -65,8 +68,8 @@ describe('parseObservableUrl', () => {
   })
 
   it('should return recent for the public page sorted by publish time', () => {
-    const expected: ObservableUrl = { kind: 'recent' }
     const value = 'https://observablehq.com/public?sort=publish_time'
+    const expected: ObservableUrl = { kind: 'recent' }
 
     expect(parseObservableUrl(value)).toEqual(expected)
   })
@@ -83,7 +86,7 @@ describe('parseObservableUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseObservableUrl('https://example.com/@mbostock')).toBeUndefined()
+    expect(parseObservableUrl('https://example.com/@alice')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -94,7 +97,7 @@ describe('parseObservableUrl', () => {
 describe('observableHandler', () => {
   describe('match', () => {
     it('should match an observablehq.com URL', () => {
-      expect(observableHandler.match('https://observablehq.com/@mbostock')).toBe(true)
+      expect(observableHandler.match('https://observablehq.com/@alice')).toBe(true)
     })
 
     it('should not match another host', () => {
@@ -104,11 +107,19 @@ describe('observableHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for user', () => {
-      const value = 'https://observablehq.com/@mbostock'
-      const expected = [
+      const value = 'https://observablehq.com/@alice'
+      const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://api.observablehq.com/documents/@mbostock.rss',
+          uri: 'https://api.observablehq.com/documents/@alice.rss',
           hint: { key: 'observable:notebooks', label: 'Notebooks' },
+        },
+        {
+          uri: 'https://api.observablehq.com/documents/public.rss',
+          hint: { key: 'observable:recent', label: 'Recent' },
+        },
+        {
+          uri: 'https://api.observablehq.com/documents/trending.rss',
+          hint: { key: 'observable:trending', label: 'Trending' },
         },
       ]
 
@@ -117,10 +128,18 @@ describe('observableHandler', () => {
 
     it('should return feed URL for collection', () => {
       const value = 'https://observablehq.com/@observablehq/collection/visualization'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://api.observablehq.com/collection/@observablehq/visualization.rss',
           hint: { key: 'observable:collection', label: 'Collection' },
+        },
+        {
+          uri: 'https://api.observablehq.com/documents/public.rss',
+          hint: { key: 'observable:recent', label: 'Recent' },
+        },
+        {
+          uri: 'https://api.observablehq.com/documents/trending.rss',
+          hint: { key: 'observable:trending', label: 'Trending' },
         },
       ]
 
@@ -129,10 +148,14 @@ describe('observableHandler', () => {
 
     it('should return recent feed for /public sorted by publish time', () => {
       const value = 'https://observablehq.com/public?sort=publish_time'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://api.observablehq.com/documents/public.rss',
           hint: { key: 'observable:recent', label: 'Recent' },
+        },
+        {
+          uri: 'https://api.observablehq.com/documents/trending.rss',
+          hint: { key: 'observable:trending', label: 'Trending' },
         },
       ]
 
@@ -141,7 +164,27 @@ describe('observableHandler', () => {
 
     it('should return recent feed for /public sorted by publish time in another case', () => {
       const value = 'https://observablehq.com/public?sort=Publish_Time'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://api.observablehq.com/documents/public.rss',
+          hint: { key: 'observable:recent', label: 'Recent' },
+        },
+        {
+          uri: 'https://api.observablehq.com/documents/trending.rss',
+          hint: { key: 'observable:trending', label: 'Trending' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return trending feed for /public', () => {
+      const value = 'https://observablehq.com/public'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://api.observablehq.com/documents/trending.rss',
+          hint: { key: 'observable:trending', label: 'Trending' },
+        },
         {
           uri: 'https://api.observablehq.com/documents/public.rss',
           hint: { key: 'observable:recent', label: 'Recent' },
@@ -151,24 +194,16 @@ describe('observableHandler', () => {
       expect(observableHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return trending feed for /public', () => {
-      const value = 'https://observablehq.com/public'
-      const expected = [
+    it('should return trending feed for /public with a capitalized public segment', () => {
+      const value = 'https://observablehq.com/Public'
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://api.observablehq.com/documents/trending.rss',
           hint: { key: 'observable:trending', label: 'Trending' },
         },
-      ]
-
-      expect(observableHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return trending feed for /public with a capitalized public segment', () => {
-      const value = 'https://observablehq.com/Public'
-      const expected = [
         {
-          uri: 'https://api.observablehq.com/documents/trending.rss',
-          hint: { key: 'observable:trending', label: 'Trending' },
+          uri: 'https://api.observablehq.com/documents/public.rss',
+          hint: { key: 'observable:recent', label: 'Recent' },
         },
       ]
 
@@ -177,10 +212,14 @@ describe('observableHandler', () => {
 
     it('should return trending feed for /public with trailing slash', () => {
       const value = 'https://observablehq.com/public/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://api.observablehq.com/documents/trending.rss',
           hint: { key: 'observable:trending', label: 'Trending' },
+        },
+        {
+          uri: 'https://api.observablehq.com/documents/public.rss',
+          hint: { key: 'observable:recent', label: 'Recent' },
         },
       ]
 
@@ -195,10 +234,14 @@ describe('observableHandler', () => {
 
     it('should return recent feed for /recent', () => {
       const value = 'https://observablehq.com/recent'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://api.observablehq.com/documents/public.rss',
           hint: { key: 'observable:recent', label: 'Recent' },
+        },
+        {
+          uri: 'https://api.observablehq.com/documents/trending.rss',
+          hint: { key: 'observable:trending', label: 'Trending' },
         },
       ]
 
@@ -207,10 +250,14 @@ describe('observableHandler', () => {
 
     it('should return recent feed for /recent with a capitalized recent segment', () => {
       const value = 'https://observablehq.com/Recent'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://api.observablehq.com/documents/public.rss',
           hint: { key: 'observable:recent', label: 'Recent' },
+        },
+        {
+          uri: 'https://api.observablehq.com/documents/trending.rss',
+          hint: { key: 'observable:trending', label: 'Trending' },
         },
       ]
 
@@ -219,31 +266,11 @@ describe('observableHandler', () => {
 
     it('should return trending feed for /trending', () => {
       const value = 'https://observablehq.com/trending'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://api.observablehq.com/documents/trending.rss',
           hint: { key: 'observable:trending', label: 'Trending' },
         },
-      ]
-
-      expect(observableHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return trending feed for /trending with a capitalized trending segment', () => {
-      const value = 'https://observablehq.com/Trending'
-      const expected = [
-        {
-          uri: 'https://api.observablehq.com/documents/trending.rss',
-          hint: { key: 'observable:trending', label: 'Trending' },
-        },
-      ]
-
-      expect(observableHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return recent feed for /recent with trailing slash', () => {
-      const value = 'https://observablehq.com/recent/'
-      const expected = [
         {
           uri: 'https://api.observablehq.com/documents/public.rss',
           hint: { key: 'observable:recent', label: 'Recent' },
@@ -253,9 +280,29 @@ describe('observableHandler', () => {
       expect(observableHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return trending feed for /trending with trailing slash', () => {
-      const value = 'https://observablehq.com/trending/'
-      const expected = [
+    it('should return trending feed for /trending with a capitalized trending segment', () => {
+      const value = 'https://observablehq.com/Trending'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://api.observablehq.com/documents/trending.rss',
+          hint: { key: 'observable:trending', label: 'Trending' },
+        },
+        {
+          uri: 'https://api.observablehq.com/documents/public.rss',
+          hint: { key: 'observable:recent', label: 'Recent' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return recent feed for /recent with trailing slash', () => {
+      const value = 'https://observablehq.com/recent/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://api.observablehq.com/documents/public.rss',
+          hint: { key: 'observable:recent', label: 'Recent' },
+        },
         {
           uri: 'https://api.observablehq.com/documents/trending.rss',
           hint: { key: 'observable:trending', label: 'Trending' },
@@ -263,6 +310,123 @@ describe('observableHandler', () => {
       ]
 
       expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return trending feed for /trending with trailing slash', () => {
+      const value = 'https://observablehq.com/trending/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://api.observablehq.com/documents/trending.rss',
+          hint: { key: 'observable:trending', label: 'Trending' },
+        },
+        {
+          uri: 'https://api.observablehq.com/documents/public.rss',
+          hint: { key: 'observable:recent', label: 'Recent' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the notebooks hint for a user feed', () => {
+      const value = 'https://api.observablehq.com/documents/@alicedraws.rss'
+      const expected: DiscoverUriHint = { key: 'observable:notebooks', label: 'Notebooks' }
+
+      expect(observableHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the collection hint for a collection feed', () => {
+      const value = 'https://api.observablehq.com/collection/@observablehq/visualization.rss'
+      const expected: DiscoverUriHint = { key: 'observable:collection', label: 'Collection' }
+
+      expect(observableHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the recent hint for the public feed', () => {
+      const value = 'https://api.observablehq.com/documents/public.rss'
+      const expected: DiscoverUriHint = { key: 'observable:recent', label: 'Recent' }
+
+      expect(observableHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the trending hint for the trending feed', () => {
+      const value = 'https://api.observablehq.com/documents/trending.rss'
+      const expected: DiscoverUriHint = { key: 'observable:trending', label: 'Trending' }
+
+      expect(observableHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the notebooks hint for a user feed over http', () => {
+      const value = 'http://api.observablehq.com/documents/@bobdata.rss'
+      const expected: DiscoverUriHint = { key: 'observable:notebooks', label: 'Notebooks' }
+
+      expect(observableHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a profile page', () => {
+      const value = 'https://observablehq.com/@alicedraws'
+
+      expect(observableHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a user feed path on the page host', () => {
+      const value = 'https://observablehq.com/documents/@alicedraws.rss'
+
+      expect(observableHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a user document without the rss extension', () => {
+      const value = 'https://api.observablehq.com/documents/@alicedraws'
+
+      expect(observableHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/documents/@alicedraws.rss'
+
+      expect(observableHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://api.observablehq.com/documents/@alicedraws.rss',
+        { key: 'observable:notebooks', label: 'Notebooks' },
+      ],
+      [
+        'https://api.observablehq.com/documents/@bobdata.rss',
+        { key: 'observable:notebooks', label: 'Notebooks' },
+      ],
+      [
+        'https://api.observablehq.com/collection/@observablehq/visualization.rss',
+        { key: 'observable:collection', label: 'Collection' },
+      ],
+      [
+        'https://api.observablehq.com/collection/@carolmath/math.rss',
+        { key: 'observable:collection', label: 'Collection' },
+      ],
+      [
+        'https://api.observablehq.com/documents/public.rss',
+        { key: 'observable:recent', label: 'Recent' },
+      ],
+      [
+        'https://api.observablehq.com/documents/trending.rss',
+        { key: 'observable:trending', label: 'Trending' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [observableHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

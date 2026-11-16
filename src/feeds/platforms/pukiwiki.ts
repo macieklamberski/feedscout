@@ -1,5 +1,7 @@
+import { endsWithAnyOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
+import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -10,7 +12,13 @@ const stylesheetRegex = /(?:^|\/)pukiwiki\.css(?:\.php)?(?:[?#]|$)/i
 // Quick Homepage Maker, a PukiWiki fork, numbers its session cookie per install.
 const sessionCookieRegex = /^QHMSSID\d*$/
 const skinRootRegex = /^(.*?\/)skin\//i
-const scriptPathRegex = /\.php$/i
+
+// A wiki of any domain is known only by its marker, so its feed is built here but not claimed. A
+// wiki served from its directory names no script in its URLs.
+const feeds = definePlatformFeeds([
+  { key: 'pukiwiki:recent-changes', template: '{root}/{script}?cmd=rss' },
+  { key: 'pukiwiki:recent-changes', template: '{root}/?cmd=rss' },
+])
 
 export const isPukiwikiHtml = (content: string): boolean => {
   const stylesheet = findElement(content, (element) => {
@@ -38,7 +46,7 @@ export const getPukiwikiPage = (url: string, content: string | undefined): Pukiw
   const root =
     stylesheetUrl?.origin === origin ? stylesheetUrl.pathname.match(skinRootRegex)?.[1] : undefined
 
-  if (scriptPathRegex.test(pathname) || !root || !pathname.startsWith(root)) {
+  if (endsWithAnyOf(pathname, '.php') || !root || !pathname.startsWith(root)) {
     return { kind: 'wiki', scriptUrl: `${origin}${pathname}` }
   }
 
@@ -52,12 +60,15 @@ export const pukiwikiHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getPukiwikiPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    return [
-      {
-        uri: `${page.scriptUrl}?cmd=rss`,
-        hint: composeHint('pukiwiki:recent-changes'),
-      },
-    ]
+    if (!pageFeeds) {
+      return []
+    }
+
+    const directoryUrl = new URL('./', page.scriptUrl).href
+    const script = page.scriptUrl.slice(directoryUrl.length) || undefined
+
+    return [pageFeeds.getFeedEntry('pukiwiki:recent-changes', { root: directoryUrl, script })]
   },
 }

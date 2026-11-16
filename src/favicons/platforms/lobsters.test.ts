@@ -4,7 +4,7 @@ import { lobstersHandler } from './lobsters.js'
 describe('lobstersHandler', () => {
   describe('match', () => {
     it('should match user URLs', () => {
-      expect(lobstersHandler.match('https://lobste.rs/~jcs')).toBe(true)
+      expect(lobstersHandler.match('https://lobste.rs/~alice')).toBe(true)
     })
 
     it('should not match tag pages', () => {
@@ -14,9 +14,9 @@ describe('lobstersHandler', () => {
 
   describe('resolve', () => {
     it('should resolve user avatar from user URL', () => {
-      const expected = [{ uri: 'https://lobste.rs/avatars/jcs-100.png' }]
+      const expected = [{ uri: 'https://lobste.rs/avatars/alice-100.png' }]
 
-      expect(lobstersHandler.resolve('https://lobste.rs/~jcs')).toEqual(expected)
+      expect(lobstersHandler.resolve('https://lobste.rs/~alice')).toEqual(expected)
     })
 
     it('should return empty array for non-user path', () => {

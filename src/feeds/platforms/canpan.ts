@@ -1,6 +1,6 @@
 import { getPathSegments, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog.
@@ -8,6 +8,11 @@ import { composeHint } from '../../common/utils.js'
 export type CanpanUrl = { kind: 'blog'; blog: string }
 
 const hosts = ['blog.canpan.info']
+
+const feeds = definePlatformFeeds([
+  { key: 'canpan:posts', template: 'https://blog.canpan.info/{blog}/index2_0.xml', format: 'rss' },
+  { key: 'canpan:posts', template: 'https://blog.canpan.info/{blog}/index1_0.rdf', format: 'rdf' },
+])
 
 export const parseCanpanUrl = (url: string): CanpanUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -35,17 +40,11 @@ export const canpanHandler: PlatformHandler = {
       return []
     }
 
-    const { blog } = parsed
-
     return [
-      {
-        uri: `https://blog.canpan.info/${blog}/index2_0.xml`,
-        hint: composeHint('canpan:posts', 'rss'),
-      },
-      {
-        uri: `https://blog.canpan.info/${blog}/index1_0.rdf`,
-        hint: composeHint('canpan:posts', 'rdf'),
-      },
+      feeds.getFeedEntry('canpan:posts', { blog: parsed.blog }, 'rss'),
+      feeds.getFeedEntry('canpan:posts', { blog: parsed.blog }, 'rdf'),
     ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

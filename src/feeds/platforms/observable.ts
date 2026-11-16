@@ -1,6 +1,6 @@
 import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -12,12 +12,23 @@ export type ObservableUrl =
   | { kind: 'trending' }
 
 export const hosts = ['observablehq.com', 'www.observablehq.com']
+
 // The live form carries a `-` segment, `/@{owner}/-/collection/{slug}`.
 const collectionRegex = /^\/@([^/]+)\/(?:-\/)?collection\/([^/]+)/i
 const ownerRegex = /^\/@([^/]+)/
 const publicRegex = /^\/public\/?$/i
 const recentRegex = /^\/recent\/?$/i
 const trendingRegex = /^\/trending\/?$/i
+
+const feeds = definePlatformFeeds([
+  { key: 'observable:recent', template: 'https://api.observablehq.com/documents/public.rss' },
+  { key: 'observable:trending', template: 'https://api.observablehq.com/documents/trending.rss' },
+  {
+    key: 'observable:collection',
+    template: 'https://api.observablehq.com/collection/@{owner}/{collection}.rss',
+  },
+  { key: 'observable:notebooks', template: 'https://api.observablehq.com/documents/@{owner}.rss' },
+])
 
 export const parseObservableUrl = (url: string): ObservableUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -66,38 +77,32 @@ export const observableHandler: PlatformHandler = {
       return []
     }
 
+    // The recent and trending feeds need no value from the page, so every page builds them after
+    // its own feeds.
     if (parsed.kind === 'recent') {
-      return [
-        {
-          uri: 'https://api.observablehq.com/documents/public.rss',
-          hint: composeHint('observable:recent'),
-        },
-      ]
+      return [feeds.getFeedEntry('observable:recent'), feeds.getFeedEntry('observable:trending')]
     }
 
     if (parsed.kind === 'trending') {
-      return [
-        {
-          uri: 'https://api.observablehq.com/documents/trending.rss',
-          hint: composeHint('observable:trending'),
-        },
-      ]
+      return [feeds.getFeedEntry('observable:trending'), feeds.getFeedEntry('observable:recent')]
     }
 
     if (parsed.kind === 'collection') {
+      const params = { owner: parsed.owner, collection: parsed.collection }
+
       return [
-        {
-          uri: `https://api.observablehq.com/collection/@${parsed.owner}/${parsed.collection}.rss`,
-          hint: composeHint('observable:collection'),
-        },
+        feeds.getFeedEntry('observable:collection', params),
+        feeds.getFeedEntry('observable:recent'),
+        feeds.getFeedEntry('observable:trending'),
       ]
     }
 
     return [
-      {
-        uri: `https://api.observablehq.com/documents/@${parsed.owner}.rss`,
-        hint: composeHint('observable:notebooks'),
-      },
+      feeds.getFeedEntry('observable:notebooks', { owner: parsed.owner }),
+      feeds.getFeedEntry('observable:recent'),
+      feeds.getFeedEntry('observable:trending'),
     ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

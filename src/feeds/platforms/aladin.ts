@@ -1,7 +1,7 @@
 import { escapeRegex, getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex } from '../../common/utils.js'
+import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (html), partly covers category.
@@ -11,6 +11,14 @@ export type AladinUrl =
   | { kind: 'category'; username: string; categoryId: string }
 
 const hosts = ['blog.aladin.co.kr']
+
+const feeds = definePlatformFeeds([
+  {
+    key: 'aladin:category',
+    template: 'https://blog.aladin.co.kr/{username}/category/{categoryId}/rss',
+  },
+  { key: 'aladin:posts', template: 'https://blog.aladin.co.kr/{username}/rss' },
+])
 
 export const parseAladinUrl = (url: string): AladinUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -63,21 +71,27 @@ export const aladinHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (page.kind === 'category') {
       // Only the blog's subscribe page links a category feed, as an http url that redirects here.
-      uris.push({
-        uri: `https://blog.aladin.co.kr/${page.username}/category/${page.categoryId}/rss`,
-        hint: composeHint('aladin:category'),
-      })
+      return [
+        feeds.getFeedEntry('aladin:category', {
+          username: page.username,
+          categoryId: page.categoryId,
+        }),
+        feeds.getFeedEntry('aladin:posts', { username: page.username }),
+      ]
     }
 
-    uris.push({
-      uri: `https://blog.aladin.co.kr/${page.username}/rss`,
-      hint: composeHint('aladin:posts'),
-    })
+    return [feeds.getFeedEntry('aladin:posts', { username: page.username })]
+  },
 
-    return uris
+  // The table reads any first segment as a username, so the page parser first refuses a dotted
+  // one, a file of the site.
+  getFeedHint: (url) => {
+    if (!parseAladinUrl(url)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }

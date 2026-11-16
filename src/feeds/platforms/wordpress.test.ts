@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { parseWordpressUrl, type WordpressUrl, wordpressHandler } from './wordpress.js'
 
 describe('parseWordpressUrl', () => {
@@ -14,27 +16,25 @@ describe('parseWordpressUrl', () => {
   })
 
   it('should return the archive for a nested category page', () => {
+    const value = 'https://example.wordpress.com/category/news/north-brentwood/'
     const expected: WordpressUrl = {
       kind: 'archive',
       path: '/category/news/north-brentwood',
       hintKey: 'wordpress:category',
     }
 
-    expect(
-      parseWordpressUrl('https://example.wordpress.com/category/news/north-brentwood/'),
-    ).toEqual(expected)
+    expect(parseWordpressUrl(value)).toEqual(expected)
   })
 
   it('should return the archive for a paginated nested category page', () => {
+    const value = 'https://example.wordpress.com/category/news/north-brentwood/page/2/'
     const expected: WordpressUrl = {
       kind: 'archive',
       path: '/category/news/north-brentwood',
       hintKey: 'wordpress:category',
     }
 
-    expect(
-      parseWordpressUrl('https://example.wordpress.com/category/news/north-brentwood/page/2/'),
-    ).toEqual(expected)
+    expect(parseWordpressUrl(value)).toEqual(expected)
   })
 
   const endpoints: Array<string> = ['feed', 'feed/atom', 'rdf', 'rss', 'rss2', 'atom', 'embed']
@@ -60,6 +60,17 @@ describe('parseWordpressUrl', () => {
     expect(parseWordpressUrl('https://example.wordpress.com/2024/05/')).toEqual(expected)
   })
 
+  it('should return the archive for a date page under the date prefix', () => {
+    const value = 'https://example.hypotheses.org/date/2024/05/'
+    const expected: WordpressUrl = {
+      kind: 'archive',
+      path: '/date/2024/05',
+      hintKey: 'wordpress:date-archive',
+    }
+
+    expect(parseWordpressUrl(value)).toEqual(expected)
+  })
+
   it('should return the post for a post page', () => {
     const expected: WordpressUrl = { kind: 'post', path: '/2024/05/01/hello' }
 
@@ -79,6 +90,31 @@ describe('parseWordpressUrl', () => {
     expect(parseWordpressUrl(`https://example.wordpress.com${path}`)).toEqual(expected)
   })
 
+  it('should return the tag named embed for its page', () => {
+    const value = 'https://example.edublogs.org/tag/embed/'
+    const expected: WordpressUrl = { kind: 'archive', path: '/tag/embed', hintKey: 'wordpress:tag' }
+
+    expect(parseWordpressUrl(value)).toEqual(expected)
+  })
+
+  it('should return the tag named amp for its page', () => {
+    const value = 'https://example.hypotheses.org/tag/amp/'
+    const expected: WordpressUrl = { kind: 'archive', path: '/tag/amp', hintKey: 'wordpress:tag' }
+
+    expect(parseWordpressUrl(value)).toEqual(expected)
+  })
+
+  it('should return the category for its AMP view', () => {
+    const value = 'https://example.wordpress.com/category/news/amp/'
+    const expected: WordpressUrl = {
+      kind: 'archive',
+      path: '/category/news',
+      hintKey: 'wordpress:category',
+    }
+
+    expect(parseWordpressUrl(value)).toEqual(expected)
+  })
+
   it('should keep a trailing number in the post path', () => {
     const expected: WordpressUrl = { kind: 'post', path: '/blog/123' }
 
@@ -96,7 +132,7 @@ describe('parseWordpressUrl', () => {
   it('should return the post for a hypotheses.org post id that looks like a year', () => {
     const expected: WordpressUrl = { kind: 'post', path: '/1009' }
 
-    expect(parseWordpressUrl('https://raffl.hypotheses.org/1009')).toEqual(expected)
+    expect(parseWordpressUrl('https://dave.hypotheses.org/1009')).toEqual(expected)
   })
 
   it('should return the home page for the root', () => {
@@ -106,15 +142,14 @@ describe('parseWordpressUrl', () => {
   })
 
   it('should return the archive for an Unblog tag page', () => {
+    const value = 'http://carol.unblog.fr/tag/pays-des-trois-frontieres/'
     const expected: WordpressUrl = {
       kind: 'archive',
       path: '/tag/pays-des-trois-frontieres',
       hintKey: 'wordpress:tag',
     }
 
-    expect(
-      parseWordpressUrl('http://blogerslorrainsengages.unblog.fr/tag/pays-des-trois-frontieres/'),
-    ).toEqual(expected)
+    expect(parseWordpressUrl(value)).toEqual(expected)
   })
 
   it('should return the home page for a feed path', () => {
@@ -193,8 +228,8 @@ describe('wordpressHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://example.wordpress.com'],
-      [true, 'http://gbessay.unblog.fr'],
-      [true, 'https://eurel.hypotheses.org'],
+      [true, 'http://bob.unblog.fr'],
+      [true, 'https://erin.hypotheses.org'],
       [false, 'https://wordpress.com'],
       [false, 'https://edublogs.org'],
       [false, 'http://unblog.fr'],
@@ -390,53 +425,53 @@ describe('wordpressHandler', () => {
     })
 
     it('should keep the http scheme of an Unblog post page in its feed URLs', () => {
-      const value = 'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/'
+      const value = 'http://aliceblog.unblog.fr/2010/11/14/divorce-ecologiste/'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: [
-            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/feed/',
-            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/?feed=rss',
-            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/feed/rss2/',
-            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/?feed=rss2',
+            'http://aliceblog.unblog.fr/2010/11/14/divorce-ecologiste/feed/',
+            'http://aliceblog.unblog.fr/2010/11/14/divorce-ecologiste/?feed=rss',
+            'http://aliceblog.unblog.fr/2010/11/14/divorce-ecologiste/feed/rss2/',
+            'http://aliceblog.unblog.fr/2010/11/14/divorce-ecologiste/?feed=rss2',
           ],
           hint: { key: 'wordpress:post-comments', label: 'Post comments', format: 'rss' },
         },
         {
           uri: [
-            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/feed/atom/',
-            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/?feed=atom',
+            'http://aliceblog.unblog.fr/2010/11/14/divorce-ecologiste/feed/atom/',
+            'http://aliceblog.unblog.fr/2010/11/14/divorce-ecologiste/?feed=atom',
           ],
           hint: { key: 'wordpress:post-comments', label: 'Post comments', format: 'atom' },
         },
         {
           uri: [
-            'http://dodiblog.unblog.fr/feed/',
-            'http://dodiblog.unblog.fr/?feed=rss',
-            'http://dodiblog.unblog.fr/feed/rss2/',
-            'http://dodiblog.unblog.fr/?feed=rss2',
+            'http://aliceblog.unblog.fr/feed/',
+            'http://aliceblog.unblog.fr/?feed=rss',
+            'http://aliceblog.unblog.fr/feed/rss2/',
+            'http://aliceblog.unblog.fr/?feed=rss2',
           ],
           hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: ['http://dodiblog.unblog.fr/feed/atom/', 'http://dodiblog.unblog.fr/?feed=atom'],
+          uri: ['http://aliceblog.unblog.fr/feed/atom/', 'http://aliceblog.unblog.fr/?feed=atom'],
           hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: ['http://dodiblog.unblog.fr/feed/rdf/', 'http://dodiblog.unblog.fr/?feed=rdf'],
+          uri: ['http://aliceblog.unblog.fr/feed/rdf/', 'http://aliceblog.unblog.fr/?feed=rdf'],
           hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
         },
         {
           uri: [
-            'http://dodiblog.unblog.fr/comments/feed/',
-            'http://dodiblog.unblog.fr/comments/feed/rss2/',
-            'http://dodiblog.unblog.fr/?feed=comments-rss2',
+            'http://aliceblog.unblog.fr/comments/feed/',
+            'http://aliceblog.unblog.fr/comments/feed/rss2/',
+            'http://aliceblog.unblog.fr/?feed=comments-rss2',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
         },
         {
           uri: [
-            'http://dodiblog.unblog.fr/comments/feed/atom/',
-            'http://dodiblog.unblog.fr/?feed=comments-atom',
+            'http://aliceblog.unblog.fr/comments/feed/atom/',
+            'http://aliceblog.unblog.fr/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
         },
@@ -997,6 +1032,75 @@ describe('wordpressHandler', () => {
       expect(wordpressHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should include year archive feed when on year page under the date prefix', () => {
+      const value = 'https://example.hypotheses.org/date/2024/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: [
+            'https://example.hypotheses.org/date/2024/feed/',
+            'https://example.hypotheses.org/date/2024/?feed=rss',
+            'https://example.hypotheses.org/date/2024/feed/rss2/',
+            'https://example.hypotheses.org/date/2024/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:date-archive', label: 'Date archive', format: 'rss' },
+        },
+        {
+          uri: [
+            'https://example.hypotheses.org/date/2024/feed/atom/',
+            'https://example.hypotheses.org/date/2024/?feed=atom',
+          ],
+          hint: { key: 'wordpress:date-archive', label: 'Date archive', format: 'atom' },
+        },
+        {
+          uri: [
+            'https://example.hypotheses.org/date/2024/feed/rdf/',
+            'https://example.hypotheses.org/date/2024/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:date-archive', label: 'Date archive', format: 'rdf' },
+        },
+        {
+          uri: [
+            'https://example.hypotheses.org/feed/',
+            'https://example.hypotheses.org/?feed=rss',
+            'https://example.hypotheses.org/feed/rss2/',
+            'https://example.hypotheses.org/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: [
+            'https://example.hypotheses.org/feed/atom/',
+            'https://example.hypotheses.org/?feed=atom',
+          ],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: [
+            'https://example.hypotheses.org/feed/rdf/',
+            'https://example.hypotheses.org/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
+        },
+        {
+          uri: [
+            'https://example.hypotheses.org/comments/feed/',
+            'https://example.hypotheses.org/comments/feed/rss2/',
+            'https://example.hypotheses.org/?feed=comments-rss2',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: [
+            'https://example.hypotheses.org/comments/feed/atom/',
+            'https://example.hypotheses.org/?feed=comments-atom',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
+        },
+      ]
+
+      expect(wordpressHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should include month archive feed when on year/month page', () => {
       const value = 'https://example.wordpress.com/2024/06/'
       const expected: Array<DiscoverUriEntry> = [
@@ -1241,6 +1345,323 @@ describe('wordpressHandler', () => {
       ]
 
       expect(wordpressHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the post comments hint for a post feed', () => {
+      const value = 'https://example.edublogs.org/2014/07/24/link-check-notice/feed/'
+      const expected: DiscoverUriHint = {
+        key: 'wordpress:post-comments',
+        label: 'Post comments',
+        format: 'rss',
+      }
+
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the post comments hint for a post Atom feed', () => {
+      const value = 'https://example.edublogs.org/2014/07/24/link-check-notice/feed/atom/'
+      const expected: DiscoverUriHint = {
+        key: 'wordpress:post-comments',
+        label: 'Post comments',
+        format: 'atom',
+      }
+
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the post comments hint for a post feed in another case', () => {
+      const value = 'https://example.edublogs.org/2014/07/24/link-check-notice/Feed/'
+      const expected: DiscoverUriHint = {
+        key: 'wordpress:post-comments',
+        label: 'Post comments',
+        format: 'rss',
+      }
+
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the post comments hint for a post feed query', () => {
+      const value = 'https://example.edublogs.org/2014/07/24/link-check-notice/?feed=rss'
+      const expected: DiscoverUriHint = {
+        key: 'wordpress:post-comments',
+        label: 'Post comments',
+        format: 'rss',
+      }
+
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the post comments hint for a post-id feed without a trailing slash', () => {
+      const value = 'https://example.hypotheses.org/1009/feed'
+      const expected: DiscoverUriHint = {
+        key: 'wordpress:post-comments',
+        label: 'Post comments',
+        format: 'rss',
+      }
+
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the post comments hint for the post whose slug is comments', () => {
+      const value = 'https://example.wordpress.com/2024/05/01/comments/feed/'
+      const expected: DiscoverUriHint = {
+        key: 'wordpress:post-comments',
+        label: 'Post comments',
+        format: 'rss',
+      }
+
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    const dateFeedPaths: Array<[string, DiscoverUriHint['format']]> = [
+      ['/feed/', 'rss'],
+      ['/feed/rss/', 'rss'],
+      ['/feed/rss2/', 'rss'],
+      ['/feed/atom/', 'atom'],
+      ['/feed/rdf/', 'rdf'],
+      ['/?feed=rss2', 'rss'],
+      ['/?feed=rdf', 'rdf'],
+    ]
+
+    it.each(dateFeedPaths)(
+      'should return the date archive hint for its %s feed',
+      (path, format) => {
+        const value = `https://example.edublogs.org/2008/04/24${path}`
+        const expected: DiscoverUriHint = {
+          key: 'wordpress:date-archive',
+          label: 'Date archive',
+          format,
+        }
+
+        expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+      },
+    )
+
+    it('should return the date archive hint for a feed under the date prefix', () => {
+      const value = 'https://example.hypotheses.org/date/2024/feed/'
+      const expected: DiscoverUriHint = {
+        key: 'wordpress:date-archive',
+        label: 'Date archive',
+        format: 'rss',
+      }
+
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    const postsFeedPaths: Array<[string, DiscoverUriHint['format']]> = [
+      ['/feed/', 'rss'],
+      ['/feed/rdf/', 'rdf'],
+      ['/?feed=atom', 'atom'],
+    ]
+
+    it.each(postsFeedPaths)('should return the posts hint for the site %s feed', (path, format) => {
+      const value = `https://example.wordpress.com${path}`
+      const expected: DiscoverUriHint = { key: 'wordpress:posts', label: 'Posts', format }
+
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    const commentsFeedPaths: Array<[string, DiscoverUriHint['format']]> = [
+      ['/comments/feed/', 'rss'],
+      ['/comments/feed/atom/', 'atom'],
+      ['/?feed=comments-rss2', 'rss'],
+      ['/?feed=comments-atom', 'atom'],
+    ]
+
+    it.each(commentsFeedPaths)(
+      'should return the comments hint for the site %s feed',
+      (path, format) => {
+        const value = `https://example.wordpress.com${path}`
+        const expected: DiscoverUriHint = { key: 'wordpress:comments', label: 'Comments', format }
+
+        expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+      },
+    )
+
+    it('should return the tag hint for a tag feed', () => {
+      const value = 'https://example.wordpress.com/tag/javascript/feed/'
+      const expected: DiscoverUriHint = { key: 'wordpress:tag', label: 'Tag', format: 'rss' }
+
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for the feed of the tag named feed', () => {
+      const value = 'https://example.wordpress.com/tag/feed/feed/'
+      const expected: DiscoverUriHint = { key: 'wordpress:tag', label: 'Tag', format: 'rss' }
+
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for the feed of the tag named amp', () => {
+      const value = 'https://example.hypotheses.org/tag/amp/feed'
+      const expected: DiscoverUriHint = { key: 'wordpress:tag', label: 'Tag', format: 'rss' }
+
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for the feed of the tag named embed', () => {
+      const value = 'https://example.edublogs.org/tag/embed/feed/'
+      const expected: DiscoverUriHint = { key: 'wordpress:tag', label: 'Tag', format: 'rss' }
+
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the category hint for a nested category feed', () => {
+      const value = 'https://example.wordpress.com/category/news/north-brentwood/feed/'
+      const expected: DiscoverUriHint = {
+        key: 'wordpress:category',
+        label: 'Category',
+        format: 'rss',
+      }
+
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the category hint for a URL-encoded category feed query', () => {
+      const value = 'https://example.wordpress.com/category/c%2B%2B/?feed=rss'
+      const expected: DiscoverUriHint = {
+        key: 'wordpress:category',
+        label: 'Category',
+        format: 'rss',
+      }
+
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the category hint for a capitalized category route', () => {
+      const value = 'https://example.wordpress.com/Category/tech/feed/'
+      const expected: DiscoverUriHint = {
+        key: 'wordpress:category',
+        label: 'Category',
+        format: 'rss',
+      }
+
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the author hint for an author Atom feed', () => {
+      const value = 'https://example.wordpress.com/author/johndoe/feed/atom/'
+      const expected: DiscoverUriHint = { key: 'wordpress:author', label: 'Author', format: 'atom' }
+
+      expect(wordpressHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    const tagNamedFeedPages = [
+      'https://example.wordpress.com/tag/feed/',
+      'https://example.edublogs.org/tag/feed/',
+      'https://example.hypotheses.org/tag/feed',
+    ]
+
+    it.each(tagNamedFeedPages)('should return undefined for the tag named feed at %s', (value) => {
+      expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    const archiveNamedFeedPages = [
+      'https://example.wordpress.com/category/feed/',
+      'https://example.wordpress.com/author/feed/',
+    ]
+
+    it.each(archiveNamedFeedPages)(
+      'should return undefined for the archive named feed at %s',
+      (value) => {
+        expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
+      },
+    )
+
+    it('should return undefined for the tag named embed', () => {
+      const value = 'https://example.edublogs.org/tag/embed/'
+
+      expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a post comments feed query', () => {
+      const value = 'https://example.wordpress.com/2024/05/01/hello/?feed=comments-rss2'
+
+      expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a plugin feed under the feed path', () => {
+      const value = 'https://example.wordpress.com/feed/podcast/'
+
+      expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a post page', () => {
+      const value = 'https://example.wordpress.com/2024/05/01/hello/'
+
+      expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www subdomain', () => {
+      const value = 'https://www.example.wordpress.com/feed/'
+
+      expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://wordpress.com/feed/'
+
+      expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on another host', () => {
+      const value = 'https://example.com/feed/'
+
+      expect(wordpressHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.edublogs.org/2014/07/24/link-check-notice/feed/',
+        { key: 'wordpress:post-comments', label: 'Post comments', format: 'rss' },
+      ],
+      [
+        'https://example.edublogs.org/2014/07/24/link-check-notice/feed/atom/',
+        { key: 'wordpress:post-comments', label: 'Post comments', format: 'atom' },
+      ],
+      [
+        'https://example.edublogs.org/2008/04/24/feed/',
+        { key: 'wordpress:date-archive', label: 'Date archive', format: 'rss' },
+      ],
+      [
+        'https://example.edublogs.org/2008/04/24/feed/atom/',
+        { key: 'wordpress:date-archive', label: 'Date archive', format: 'atom' },
+      ],
+      [
+        'https://example.wordpress.com/feed/',
+        { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'https://example.wordpress.com/comments/feed/',
+        { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
+      ],
+      [
+        'https://example.hypotheses.org/tag/amp/feed',
+        { key: 'wordpress:tag', label: 'Tag', format: 'rss' },
+      ],
+      [
+        'https://example.wordpress.com/category/news/north-brentwood/feed/',
+        { key: 'wordpress:category', label: 'Category', format: 'rss' },
+      ],
+      [
+        'https://example.wordpress.com/author/johndoe/?feed=rss',
+        { key: 'wordpress:author', label: 'Author', format: 'rss' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [wordpressHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

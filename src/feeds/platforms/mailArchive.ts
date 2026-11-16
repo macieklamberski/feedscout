@@ -1,6 +1,6 @@
-import { decodeSegment, encodePathSegment, getPathSegments, isHostOf } from 'trousse'
+import { decodeSegment, getPathSegments, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers list (html).
@@ -10,12 +10,20 @@ export type MailArchiveUrl = { kind: 'list'; list: string }
 
 const hosts = ['mail-archive.com', 'www.mail-archive.com']
 
+const feeds = definePlatformFeeds(
+  [
+    { key: 'mail-archive:list', template: '{scheme}://{host}/{list}/maillist.xml', format: 'rss' },
+    { key: 'mail-archive:list', template: '{scheme}://{host}/{list}/maillist.rdf', format: 'rdf' },
+  ],
+  { hosts },
+)
+
 export const parseMailArchiveUrl = (url: string): MailArchiveUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
   }
 
-  const list = getPathSegments(url)[0]
+  const [list] = getPathSegments(url)
 
   // A list is archived under its posting address, so the site's own pages carry no `@`. The address
   // stays as written, so a feed stored as `%40` keeps that spelling.
@@ -33,19 +41,25 @@ export const mailArchiveHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseMailArchiveUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const list = encodePathSegment(parsed.list)
-
     return [
-      {
-        uri: `${origin}/${list}/maillist.xml`,
-        hint: composeHint('mail-archive:list'),
-      },
+      pageFeeds.getFeedEntry('mail-archive:list', { list: parsed.list }, 'rss'),
+      pageFeeds.getFeedEntry('mail-archive:list', { list: parsed.list }, 'rdf'),
     ]
+  },
+
+  // The table reads any first segment as a list, so a segment without `@`, a page of the site, is
+  // refused by the page parser first.
+  getFeedHint: (url) => {
+    if (!parseMailArchiveUrl(url)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }

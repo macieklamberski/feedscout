@@ -1,8 +1,7 @@
-import { composeQuery, getQueryParam, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getQueryParam, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
-  composeHint,
   digitsRegex,
   getCookieNames,
   getMetaContent,
@@ -23,6 +22,18 @@ const archiverBoardRegex = /\/archiver\/\??fid-(\d+)\.html/i
 const archiverPathRegex = /\/archiver\/.*$/i
 const boardPathRegex = /\/forum-(\d+)-/i
 const legacyGeneratorRegex = /^Discuz! (?:Archiver )?\d/i
+
+// A board runs on its own domain and is known only by its marker, so its feeds are built here but
+// not claimed. Discuz! 7 and older serve the same feeds from `rss.php`.
+const feeds = definePlatformFeeds([
+  { key: 'discuz:board', template: '{root}/forum.php?mod=rss&fid={boardId}&auth=0' },
+  { key: 'discuz:site', template: '{root}/forum.php?mod=rss' },
+])
+
+const legacyFeeds = definePlatformFeeds([
+  { key: 'discuz:board', template: '{root}/rss.php?fid={boardId}&auth=0' },
+  { key: 'discuz:site', template: '{root}/rss.php?auth=0' },
+])
 
 export const isDiscuzHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Discuz!')
@@ -61,7 +72,7 @@ export const parseDiscuzUrl = (url: string): DiscuzUrl | undefined => {
   // The archiver carries the board in the query key, as in `archiver/?fid-22.html`, or in the path
   // with rewrites on, as in `archiver/fid-22.html`.
   const boardId =
-    pathname.match(boardPathRegex)?.[1] ?? `${pathname}${search}`.match(archiverBoardRegex)?.[1]
+    boardPathRegex.exec(pathname)?.[1] ?? archiverBoardRegex.exec(`${pathname}${search}`)?.[1]
 
   if (boardId) {
     return { kind: 'board', boardId }
@@ -96,47 +107,32 @@ export const discuzHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-    const installUrl = new URL(url)
+    const { origin, pathname } = new URL(url)
 
     // Discuz! pages sit in the install directory, such as `/forum/`, beside `forum.php` or
-    // `rss.php`, except the archiver, served from `archiver/` inside it.
-    const pagePath = installUrl.pathname.replace(archiverPathRegex, '/')
-
-    installUrl.pathname = `${getScriptDirectory(pagePath)}/`
+    // `rss.php`, except the archiver, served from `archiver/` inside it. The table drops one
+    // trailing slash from a root, so a directory with a doubled slash keeps one.
+    const pagePath = pathname.replace(archiverPathRegex, '/')
+    const root = `${origin}${getScriptDirectory(pagePath)}/`
 
     if (page.isLegacy) {
       if (page.kind === 'board') {
-        const boardQuery = composeQuery({ fid: page.boardId, auth: '0' })
-
-        uris.push({
-          uri: new URL(`rss.php${boardQuery}`, installUrl).href,
-          hint: composeHint('discuz:board'),
-        })
+        return [
+          legacyFeeds.getFeedEntry('discuz:board', { root, boardId: page.boardId }),
+          legacyFeeds.getFeedEntry('discuz:site', { root }),
+        ]
       }
 
-      uris.push({
-        uri: new URL('rss.php?auth=0', installUrl).href,
-        hint: composeHint('discuz:site'),
-      })
-
-      return uris
+      return [legacyFeeds.getFeedEntry('discuz:site', { root })]
     }
 
     if (page.kind === 'board') {
-      const boardQuery = composeQuery({ mod: 'rss', fid: page.boardId, auth: '0' })
-
-      uris.push({
-        uri: new URL(`forum.php${boardQuery}`, installUrl).href,
-        hint: composeHint('discuz:board'),
-      })
+      return [
+        feeds.getFeedEntry('discuz:board', { root, boardId: page.boardId }),
+        feeds.getFeedEntry('discuz:site', { root }),
+      ]
     }
 
-    uris.push({
-      uri: new URL('forum.php?mod=rss', installUrl).href,
-      hint: composeHint('discuz:site'),
-    })
-
-    return uris
+    return [feeds.getFeedEntry('discuz:site', { root })]
   },
 }

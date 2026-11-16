@@ -177,6 +177,18 @@ describe('ymCareersHandler', () => {
       expect(ymCareersHandler.resolve(value, '', ymCareersHeaders)).toEqual(expected)
     })
 
+    it('should drop a parameter with no name from the search query', () => {
+      const value = 'https://careers.example.com/jobs/?keywords=engineer&=x'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://careers.example.com/jobs/?display=rss&keywords=engineer',
+          hint: { key: 'ym-careers:search', label: 'Job search' },
+        },
+      ]
+
+      expect(ymCareersHandler.resolve(value, '', ymCareersHeaders)).toEqual(expected)
+    })
+
     it('should return the whole board feed', () => {
       const value = 'https://careers.example.com/jobs/12345678/assistant-coach'
       const expected: Array<DiscoverUriEntry> = [

@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -13,6 +13,12 @@ export const hosts = ['producthunt.com', 'www.producthunt.com']
 
 const productRegex = /^\/products\/([^/]+)(?:\/|$)/i
 const topicRegex = /^\/topics\/([^/]+)\/?$/i
+
+// The feed narrows to one topic under `category`, which takes the slug of a /topics/ page.
+const feeds = definePlatformFeeds([
+  { key: 'producthunt:products', template: 'https://www.producthunt.com/feed' },
+  { key: 'producthunt:category', template: 'https://www.producthunt.com/feed?category={category}' },
+])
 
 // Every page links the site-wide product feed, so any other page reads as the home page.
 export const parseProducthuntUrl = (url: string): ProducthuntUrl | undefined => {
@@ -49,11 +55,15 @@ export const producthuntHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: 'https://www.producthunt.com/feed',
-        hint: composeHint('producthunt:products'),
-      },
-    ]
+    if (parsed.kind === 'topic') {
+      return [
+        feeds.getFeedEntry('producthunt:category', { category: parsed.topic }),
+        feeds.getFeedEntry('producthunt:products'),
+      ]
+    }
+
+    return [feeds.getFeedEntry('producthunt:products')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

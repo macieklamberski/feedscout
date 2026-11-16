@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { LobstersUrl } from './lobsters.js'
 import { lobstersHandler, parseLobstersUrl } from './lobsters.js'
 
@@ -34,27 +37,27 @@ describe('parseLobstersUrl', () => {
   })
 
   it('should return the user for a user page', () => {
-    const expected: LobstersUrl = { kind: 'user', username: 'jcs' }
+    const expected: LobstersUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseLobstersUrl('https://lobste.rs/~jcs')).toEqual(expected)
+    expect(parseLobstersUrl('https://lobste.rs/~alice')).toEqual(expected)
   })
 
   it('should return the user for a user page with a trailing slash', () => {
-    const expected: LobstersUrl = { kind: 'user', username: 'pushcx' }
+    const expected: LobstersUrl = { kind: 'user', username: 'bob' }
 
-    expect(parseLobstersUrl('https://lobste.rs/~pushcx/')).toEqual(expected)
+    expect(parseLobstersUrl('https://lobste.rs/~bob/')).toEqual(expected)
   })
 
   it('should return the user for a user subpage', () => {
-    const expected: LobstersUrl = { kind: 'user', username: 'pushcx' }
+    const expected: LobstersUrl = { kind: 'user', username: 'bob' }
 
-    expect(parseLobstersUrl('https://lobste.rs/~pushcx/stories')).toEqual(expected)
+    expect(parseLobstersUrl('https://lobste.rs/~bob/stories')).toEqual(expected)
   })
 
   it('should keep the username case', () => {
-    const expected: LobstersUrl = { kind: 'user', username: 'PushCX' }
+    const expected: LobstersUrl = { kind: 'user', username: 'Bob' }
 
-    expect(parseLobstersUrl('https://lobste.rs/~PushCX')).toEqual(expected)
+    expect(parseLobstersUrl('https://lobste.rs/~Bob')).toEqual(expected)
   })
 
   it('should return the top page with its period', () => {
@@ -63,7 +66,7 @@ describe('parseLobstersUrl', () => {
     expect(parseLobstersUrl('https://lobste.rs/top/1d')).toEqual(expected)
   })
 
-  it('should return the all-time top page', () => {
+  it('should return the top page without a period', () => {
     const expected: LobstersUrl = { kind: 'top', period: undefined }
 
     expect(parseLobstersUrl('https://lobste.rs/top')).toEqual(expected)
@@ -102,7 +105,7 @@ describe('parseLobstersUrl', () => {
   it('should return the home page for a username with a dot', () => {
     const expected: LobstersUrl = { kind: 'home' }
 
-    expect(parseLobstersUrl('https://lobste.rs/~jcs.old')).toEqual(expected)
+    expect(parseLobstersUrl('https://lobste.rs/~alice.old')).toEqual(expected)
   })
 
   it('should return the newest page', () => {
@@ -130,7 +133,7 @@ describe('parseLobstersUrl', () => {
   })
 
   it('should return undefined for the www host', () => {
-    expect(parseLobstersUrl('https://www.lobste.rs/~jcs')).toBeUndefined()
+    expect(parseLobstersUrl('https://www.lobste.rs/~alice')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -154,27 +157,36 @@ describe('lobstersHandler', () => {
   })
 
   describe('resolve', () => {
+    const storiesFeed: DiscoverUriEntry = {
+      uri: 'https://lobste.rs/rss',
+      hint: { key: 'lobsters:stories', label: 'Stories' },
+    }
+    const newestFeed: DiscoverUriEntry = {
+      uri: 'https://lobste.rs/newest.rss',
+      hint: { key: 'lobsters:newest', label: 'Newest' },
+    }
+    const commentsFeed: DiscoverUriEntry = {
+      uri: 'https://lobste.rs/comments.rss',
+      hint: { key: 'lobsters:comments', label: 'Comments' },
+    }
+
     it('should return empty array for a URL outside Lobsters', () => {
       expect(lobstersHandler.resolve('https://example.com/')).toEqual([])
     })
 
     it('should return main RSS feed for homepage', () => {
       const value = 'https://lobste.rs/'
-      const expected = [
-        { uri: 'https://lobste.rs/rss', hint: { key: 'lobsters:stories', label: 'Stories' } },
-        {
-          uri: 'https://lobste.rs/comments.rss',
-          hint: { key: 'lobsters:comments', label: 'Comments' },
-        },
-      ]
+      const expected = [storiesFeed, newestFeed, commentsFeed]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return newest RSS feed for newest page', () => {
       const value = 'https://lobste.rs/newest'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://lobste.rs/newest.rss', hint: { key: 'lobsters:newest', label: 'Newest' } },
+        storiesFeed,
+        commentsFeed,
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
@@ -182,8 +194,10 @@ describe('lobstersHandler', () => {
 
     it('should return newest RSS feed for newest page with trailing slash', () => {
       const value = 'https://lobste.rs/newest/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://lobste.rs/newest.rss', hint: { key: 'lobsters:newest', label: 'Newest' } },
+        storiesFeed,
+        commentsFeed,
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
@@ -191,8 +205,10 @@ describe('lobstersHandler', () => {
 
     it('should return newest RSS feed for newest page with a capitalized newest segment', () => {
       const value = 'https://lobste.rs/Newest'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://lobste.rs/newest.rss', hint: { key: 'lobsters:newest', label: 'Newest' } },
+        storiesFeed,
+        commentsFeed,
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
@@ -200,8 +216,11 @@ describe('lobstersHandler', () => {
 
     it('should return tag RSS feed for single tag page', () => {
       const value = 'https://lobste.rs/t/programming'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://lobste.rs/t/programming.rss', hint: { key: 'lobsters:tag', label: 'Tag' } },
+        storiesFeed,
+        newestFeed,
+        commentsFeed,
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
@@ -209,23 +228,29 @@ describe('lobstersHandler', () => {
 
     it('should return domain RSS feed for domain page', () => {
       const value = 'https://lobste.rs/domains/example.com'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://lobste.rs/domains/example.com.rss',
           hint: { key: 'lobsters:domain', label: 'Domain' },
         },
+        storiesFeed,
+        newestFeed,
+        commentsFeed,
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return user stories feed for user page', () => {
-      const value = 'https://lobste.rs/~pushcx'
-      const expected = [
+      const value = 'https://lobste.rs/~bob'
+      const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://lobste.rs/~pushcx/stories.rss',
-          hint: { key: 'lobsters:stories', label: 'Stories' },
+          uri: 'https://lobste.rs/~bob/stories.rss',
+          hint: { key: 'lobsters:user-stories', label: 'User stories' },
         },
+        storiesFeed,
+        newestFeed,
+        commentsFeed,
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
@@ -233,8 +258,14 @@ describe('lobstersHandler', () => {
 
     it('should return top stories feed for top page', () => {
       const value = 'https://lobste.rs/top'
-      const expected = [
-        { uri: 'https://lobste.rs/top/rss', hint: { key: 'lobsters:top', label: 'Top stories' } },
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://lobste.rs/top/1w.rss',
+          hint: { key: 'lobsters:top', label: 'Top stories' },
+        },
+        storiesFeed,
+        newestFeed,
+        commentsFeed,
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
@@ -242,36 +273,46 @@ describe('lobstersHandler', () => {
 
     it('should return top stories feed with period', () => {
       const value = 'https://lobste.rs/top/1d'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://lobste.rs/top/1d/rss',
+          uri: 'https://lobste.rs/top/1d.rss',
           hint: { key: 'lobsters:top', label: 'Top stories' },
         },
+        storiesFeed,
+        newestFeed,
+        commentsFeed,
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
     })
 
     const topPeriodValues: Array<[string, string]> = [
-      ['https://lobste.rs/top/3d', 'https://lobste.rs/top/3d/rss'],
-      ['https://lobste.rs/top/1w', 'https://lobste.rs/top/1w/rss'],
-      ['https://lobste.rs/top/1m', 'https://lobste.rs/top/1m/rss'],
-      ['https://lobste.rs/top/1y', 'https://lobste.rs/top/1y/rss'],
+      ['https://lobste.rs/top/3d', 'https://lobste.rs/top/3d.rss'],
+      ['https://lobste.rs/top/1w', 'https://lobste.rs/top/1w.rss'],
+      ['https://lobste.rs/top/1m', 'https://lobste.rs/top/1m.rss'],
+      ['https://lobste.rs/top/1y', 'https://lobste.rs/top/1y.rss'],
     ]
 
     it.each(topPeriodValues)('should return top stories feed for %s', (value, uri) => {
-      const expected = [{ uri, hint: { key: 'lobsters:top', label: 'Top stories' } }]
+      const expected: Array<DiscoverUriEntry> = [
+        { uri, hint: { key: 'lobsters:top', label: 'Top stories' } },
+        storiesFeed,
+        newestFeed,
+        commentsFeed,
+      ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return comments feed for comments page', () => {
       const value = 'https://lobste.rs/comments'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://lobste.rs/comments.rss',
           hint: { key: 'lobsters:comments', label: 'Comments' },
         },
+        storiesFeed,
+        newestFeed,
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
@@ -279,11 +320,13 @@ describe('lobstersHandler', () => {
 
     it('should return comments feed for comments page with trailing slash', () => {
       const value = 'https://lobste.rs/comments/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://lobste.rs/comments.rss',
           hint: { key: 'lobsters:comments', label: 'Comments' },
         },
+        storiesFeed,
+        newestFeed,
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
@@ -291,14 +334,182 @@ describe('lobstersHandler', () => {
 
     it('should return comments feed for comments page with a capitalized comments segment', () => {
       const value = 'https://lobste.rs/Comments'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://lobste.rs/comments.rss',
           hint: { key: 'lobsters:comments', label: 'Comments' },
         },
+        storiesFeed,
+        newestFeed,
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the tag hint for a tag feed', () => {
+      const value = 'https://lobste.rs/t/kotlin.rss'
+      const expected: DiscoverUriHint = { key: 'lobsters:tag', label: 'Tag' }
+
+      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a multiple tags feed', () => {
+      const value = 'https://lobste.rs/t/programming,security.rss'
+      const expected: DiscoverUriHint = { key: 'lobsters:tag', label: 'Tag' }
+
+      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tag hint for a tag feed over http', () => {
+      const value = 'http://lobste.rs/t/openbsd.rss'
+      const expected: DiscoverUriHint = { key: 'lobsters:tag', label: 'Tag' }
+
+      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should read the tag feed route word in any case', () => {
+      const value = 'https://lobste.rs/T/kotlin.rss'
+      const expected: DiscoverUriHint = { key: 'lobsters:tag', label: 'Tag' }
+
+      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the domain hint for a domain feed', () => {
+      const value = 'https://lobste.rs/domains/github.com.rss'
+      const expected: DiscoverUriHint = { key: 'lobsters:domain', label: 'Domain' }
+
+      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the user stories hint for a user stories feed', () => {
+      const value = 'https://lobste.rs/~alice/stories.rss'
+      const expected: DiscoverUriHint = { key: 'lobsters:user-stories', label: 'User stories' }
+
+      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the stories hint for the site feed', () => {
+      const value = 'https://lobste.rs/rss'
+      const expected: DiscoverUriHint = { key: 'lobsters:stories', label: 'Stories' }
+
+      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the top hint for a top feed with its period', () => {
+      const value = 'https://lobste.rs/top/1w/rss'
+      const expected: DiscoverUriHint = { key: 'lobsters:top', label: 'Top stories' }
+
+      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the top hint for a top feed at the spelling its page links', () => {
+      const value = 'https://lobste.rs/top/1w.rss'
+      const expected: DiscoverUriHint = { key: 'lobsters:top', label: 'Top stories' }
+
+      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the top hint for the top feed without a period', () => {
+      const value = 'https://lobste.rs/top/rss'
+      const expected: DiscoverUriHint = { key: 'lobsters:top', label: 'Top stories' }
+
+      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the top hint for the top feed without a period in its .rss spelling', () => {
+      const value = 'https://lobste.rs/top.rss'
+      const expected: DiscoverUriHint = { key: 'lobsters:top', label: 'Top stories' }
+
+      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the newest hint for the newest feed', () => {
+      const value = 'https://lobste.rs/newest.rss'
+      const expected: DiscoverUriHint = { key: 'lobsters:newest', label: 'Newest' }
+
+      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the comments hint for the comments feed', () => {
+      const value = 'https://lobste.rs/comments.rss'
+      const expected: DiscoverUriHint = { key: 'lobsters:comments', label: 'Comments' }
+
+      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a tag page', () => {
+      const value = 'https://lobste.rs/t/kotlin'
+
+      expect(lobstersHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a user page', () => {
+      const value = 'https://lobste.rs/~alice'
+
+      expect(lobstersHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a top page', () => {
+      const value = 'https://lobste.rs/top/1w'
+
+      expect(lobstersHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a story page', () => {
+      const value = 'https://lobste.rs/s/abc123/some_story'
+
+      expect(lobstersHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return the private hint for a private token feed', () => {
+      const value = 'https://lobste.rs/rss?token=abc123'
+      const expected: DiscoverUriHint = { key: 'lobsters:private', label: 'Private feed' }
+
+      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a tag feed path on another host', () => {
+      const value = 'https://example.com/t/kotlin.rss'
+
+      expect(lobstersHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an invalid URL', () => {
+      const value = 'not a url'
+
+      expect(lobstersHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['http://www.lobste.rs/rss?token=abc123', { key: 'lobsters:private', label: 'Private feed' }],
+      ['https://lobste.rs/t/kotlin.rss', { key: 'lobsters:tag', label: 'Tag' }],
+      ['https://lobste.rs/domains/github.com.rss', { key: 'lobsters:domain', label: 'Domain' }],
+      [
+        'https://lobste.rs/~alice/stories.rss',
+        { key: 'lobsters:user-stories', label: 'User stories' },
+      ],
+      ['https://lobste.rs/rss', { key: 'lobsters:stories', label: 'Stories' }],
+      ['https://lobste.rs/top/1w/rss', { key: 'lobsters:top', label: 'Top stories' }],
+      ['https://lobste.rs/top/1w.rss', { key: 'lobsters:top', label: 'Top stories' }],
+      ['https://lobste.rs/top/rss', { key: 'lobsters:top', label: 'Top stories' }],
+      ['https://lobste.rs/top.rss', { key: 'lobsters:top', label: 'Top stories' }],
+      ['https://lobste.rs/newest.rss', { key: 'lobsters:newest', label: 'Newest' }],
+      ['https://lobste.rs/comments.rss', { key: 'lobsters:comments', label: 'Comments' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [lobstersHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

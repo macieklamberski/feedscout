@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, findElements, hasMarker } from '../../common/utils.js'
 
@@ -6,8 +6,7 @@ import { composeHint, findElement, findElements, hasMarker } from '../../common/
 
 export type RealEstateIndiaPage = { feedUrl: string }
 
-const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//
-const propertyFeedPathRegex = /^\/property\.rss$/i
+const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//i
 
 // Every Weblink.In catalog site loads its template stylesheet from the shared asset host.
 export const isRealEstateIndiaHtml = (content: string): boolean => {
@@ -32,13 +31,13 @@ const getRealEstateIndiaPage = (
     return
   }
 
-  const { host } = new URL(url)
+  const { hostname } = new URL(url)
   const anchors = findElements(content, (element) => element.name === 'a')
 
   for (const anchor of anchors) {
-    const target = parseUrl(anchor.attribs.href ?? '', url)
+    const target = parseUrl(anchor.attribs.href, url)
 
-    if (target?.host === host && propertyFeedPathRegex.test(target.pathname)) {
+    if (target && isHostOf(target, hostname) && isAnyOf(target.pathname, '/property.rss')) {
       return { feedUrl: target.href }
     }
   }

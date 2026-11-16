@@ -1,6 +1,7 @@
 import { parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
+import { hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,6 +9,10 @@ export type SnacUrl = { kind: 'user'; path: string }
 
 const trailingSlashRegex = /\/$/
 const postOrHistoryRegex = /\/[ph]\/[^/]+$/i
+
+// An instance of any domain is known only by its marker, so its feed is built here but not
+// claimed. The root holds the sub-path the instance is mounted under.
+const feeds = definePlatformFeeds([{ key: 'snac:posts', template: '{root}/{user}.rss' }])
 
 // `snac/` with the slash, since the value is compared as a prefix and `snac` matches `snacks`.
 export const isSnacHtml = (content: string): boolean => {
@@ -47,8 +52,10 @@ export const snacHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
+    const userUrl = `${new URL(url).origin}${parsed.path}`
+    const root = new URL('./', userUrl).href
+    const user = userUrl.slice(root.length)
 
-    return [{ uri: `${origin}${parsed.path}.rss`, hint: composeHint('snac:posts') }]
+    return [feeds.getFeedEntry('snac:posts', { root, user })]
   },
 }

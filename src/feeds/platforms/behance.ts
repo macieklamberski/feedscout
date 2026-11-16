@@ -1,6 +1,6 @@
-import { composeQuery, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Unmeasured, bot wall.
 
@@ -21,8 +21,14 @@ const profileTabs = [
 ]
 // Site routes whose tabs share the profile tab names, as /search/projects does.
 const sitePaths = ['search']
+
 const usernameRegex = /^[a-zA-Z0-9_-]+$/
 const homeRegex = /^\/(?:galleries\/?)?$/i
+
+const feeds = definePlatformFeeds([
+  { key: 'behance:portfolio', template: 'https://www.behance.net/feeds/user?username={username}' },
+  { key: 'behance:projects', template: 'https://www.behance.net/feeds/projects' },
+])
 
 export const parseBehanceUrl = (url: string): BehanceUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -66,22 +72,19 @@ export const behanceHandler: PlatformHandler = {
       return []
     }
 
+    // The featured projects feed needs no value from the page, so every page builds it after its
+    // own feeds.
     if (parsed.kind === 'home') {
-      return [
-        {
-          uri: 'https://www.behance.net/feeds/projects',
-          hint: composeHint('behance:projects'),
-        },
-      ]
+      return [feeds.getFeedEntry('behance:projects')]
     }
 
     // The appreciated page gets the portfolio feed: Behance ignores
     // `content=appreciated` and serves the user's own projects for it.
     return [
-      {
-        uri: `https://www.behance.net/feeds/user${composeQuery({ username: parsed.username })}`,
-        hint: composeHint('behance:portfolio'),
-      },
+      feeds.getFeedEntry('behance:portfolio', { username: parsed.username }),
+      feeds.getFeedEntry('behance:projects'),
     ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

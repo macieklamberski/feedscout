@@ -1,29 +1,28 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { parseSoundonUrl, type SoundonUrl, soundonHandler } from './soundon.js'
 
 describe('parseSoundonUrl', () => {
   it('should return the podcast for a podcast page', () => {
+    const value = 'https://player.soundon.fm/p/2b3a8f6c-1234-4abc-9def-0123456789ab'
     const expected: SoundonUrl = {
       kind: 'podcast',
       podcastId: '2b3a8f6c-1234-4abc-9def-0123456789ab',
     }
 
-    expect(
-      parseSoundonUrl('https://player.soundon.fm/p/2b3a8f6c-1234-4abc-9def-0123456789ab'),
-    ).toEqual(expected)
+    expect(parseSoundonUrl(value)).toEqual(expected)
   })
 
   it('should return the podcast for an embed page', () => {
+    const value = 'https://player.soundon.fm/embed/?podcast=2b3a8f6c-1234-4abc-9def-0123456789ab'
     const expected: SoundonUrl = {
       kind: 'podcast',
       podcastId: '2b3a8f6c-1234-4abc-9def-0123456789ab',
     }
 
-    expect(
-      parseSoundonUrl(
-        'https://player.soundon.fm/embed/?podcast=2b3a8f6c-1234-4abc-9def-0123456789ab',
-      ),
-    ).toEqual(expected)
+    expect(parseSoundonUrl(value)).toEqual(expected)
   })
 
   it('should return undefined for an id with a non-hex character', () => {
@@ -31,9 +30,9 @@ describe('parseSoundonUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(
-      parseSoundonUrl('https://example.com/p/2b3a8f6c-1234-4abc-9def-0123456789ab'),
-    ).toBeUndefined()
+    const value = 'https://example.com/p/2b3a8f6c-1234-4abc-9def-0123456789ab'
+
+    expect(parseSoundonUrl(value)).toBeUndefined()
   })
 })
 
@@ -123,6 +122,51 @@ describe('soundonHandler', () => {
       const value = 'https://player.soundon.fm/'
 
       expect(soundonHandler.resolve(value)).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for a podcast feed', () => {
+      const value = 'https://feeds.soundon.fm/podcasts/b6b84ca9-41ab-4b90-bd86-777ce7fcac02.xml'
+      const expected: DiscoverUriHint = { key: 'soundon:podcast', label: 'Podcast' }
+
+      expect(soundonHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for a podcast feed with a query', () => {
+      const value = 'https://feeds.soundon.fm/podcasts/99f9a86d-92bb-45ac-bf2d-162a74b28c76.xml?r=1'
+      const expected: DiscoverUriHint = { key: 'soundon:podcast', label: 'Podcast' }
+
+      expect(soundonHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a podcast page', () => {
+      const value = 'https://player.soundon.fm/p/b6b84ca9-41ab-4b90-bd86-777ce7fcac02'
+
+      expect(soundonHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('discoverUrisFromPlatform', () => {
+    const values = [
+      'https://feeds.soundon.fm/podcasts/b6b84ca9-41ab-4b90-bd86-777ce7fcac02.xml',
+      'https://feeds.soundon.fm/podcasts/99f9a86d-92bb-45ac-bf2d-162a74b28c76.xml?r=1',
+    ]
+
+    it.each(values)('should return the podcast feed %s as itself', async (value) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [soundonHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: value,
+          hint: { key: 'soundon:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

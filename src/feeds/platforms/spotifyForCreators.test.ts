@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   getSpotifyForCreatorsPage,
   parseSpotifyForCreatorsUrl,
@@ -125,6 +128,82 @@ describe('spotifyForCreatorsHandler', () => {
 
     it('should return empty array when no content provided', () => {
       expect(spotifyForCreatorsHandler.resolve(value)).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for a show feed', () => {
+      const value = 'https://anchor.fm/s/1a2b3c4d/podcast/rss'
+      const expected: DiscoverUriHint = { key: 'spotify-for-creators:podcast', label: 'Podcast' }
+
+      expect(spotifyForCreatorsHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for a show feed with a trailing slash', () => {
+      const value = 'https://anchor.fm/s/1a2b3c4d/podcast/rss/'
+      const expected: DiscoverUriHint = { key: 'spotify-for-creators:podcast', label: 'Podcast' }
+
+      expect(spotifyForCreatorsHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for a show feed with a tracking query', () => {
+      const value = 'https://anchor.fm/s/1a2b3c4d/podcast/rss?utm_source=newsletter'
+      const expected: DiscoverUriHint = { key: 'spotify-for-creators:podcast', label: 'Podcast' }
+
+      expect(spotifyForCreatorsHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for a station id with a trailing letter', () => {
+      const value = 'https://anchor.fm/s/1a2b3c4dp/podcast/rss'
+      const expected: DiscoverUriHint = { key: 'spotify-for-creators:podcast', label: 'Podcast' }
+
+      expect(spotifyForCreatorsHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a station id that does not start with hex', () => {
+      const value = 'https://anchor.fm/s/z5f7f0e18/podcast/rss'
+
+      expect(spotifyForCreatorsHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the alternate link without /s/', () => {
+      const value = 'https://anchor.fm/1a2b3c4d/podcast/rss'
+
+      expect(spotifyForCreatorsHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a show page', () => {
+      const value = 'https://creators.spotify.com/pod/show/example'
+
+      expect(spotifyForCreatorsHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/s/1a2b3c4d/podcast/rss'
+
+      expect(spotifyForCreatorsHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const hint: DiscoverUriHint = { key: 'spotify-for-creators:podcast', label: 'Podcast' }
+    const values = [
+      'https://anchor.fm/s/1a2b3c4d/podcast/rss',
+      'http://anchor.fm/s/1a2b3c4d/podcast/rss',
+      'https://www.anchor.fm/s/1a2b3c4d/podcast/rss',
+      'https://anchor.fm/s/1a2b3c4d/podcast/rss/',
+      'https://anchor.fm/s/1a2b3c4d/podcast/rss?feed=all',
+    ]
+
+    it.each(values)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [spotifyForCreatorsHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

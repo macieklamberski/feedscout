@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { SourceforgeUrl } from './sourceforge.js'
 import { parseSourceforgeUrl, sourceforgeHandler } from './sourceforge.js'
 
@@ -31,7 +33,58 @@ describe('parseSourceforgeUrl', () => {
   it('should return the project for a project subpage', () => {
     const expected: SourceforgeUrl = { kind: 'project', project: 'nmap' }
 
-    expect(parseSourceforgeUrl('https://sourceforge.net/p/nmap/bugs/123')).toEqual(expected)
+    expect(parseSourceforgeUrl('https://sourceforge.net/projects/nmap/reviews')).toEqual(expected)
+  })
+
+  it('should return the tool and page for a ticket page', () => {
+    const value = 'https://sourceforge.net/p/nmap/bugs/123'
+    const expected: SourceforgeUrl = { kind: 'project', project: 'nmap', tool: 'bugs', page: '123' }
+
+    expect(parseSourceforgeUrl(value)).toEqual(expected)
+  })
+
+  it('should return the tool without a page for a path below a tool page', () => {
+    const value = 'https://sourceforge.net/p/example/code/HEAD/tree/'
+    const expected: SourceforgeUrl = { kind: 'project', project: 'example', tool: 'code' }
+
+    expect(parseSourceforgeUrl(value)).toEqual(expected)
+  })
+
+  it('should return the forum for a discussion forum page', () => {
+    const value = 'https://sourceforge.net/p/example/discussion/12345/'
+    const expected: SourceforgeUrl = { kind: 'project', project: 'example', forum: '12345' }
+
+    expect(parseSourceforgeUrl(value)).toEqual(expected)
+  })
+
+  it('should return the decoded folder path for a files subfolder page', () => {
+    const value = 'https://sourceforge.net/projects/example/files/Win%2064/Release/'
+    const expected: SourceforgeUrl = {
+      kind: 'project',
+      project: 'example',
+      path: '/Win 64/Release',
+    }
+
+    expect(parseSourceforgeUrl(value)).toEqual(expected)
+  })
+
+  it('should return the project for the files page', () => {
+    const value = 'https://sourceforge.net/projects/example/files/'
+    const expected: SourceforgeUrl = { kind: 'project', project: 'example' }
+
+    expect(parseSourceforgeUrl(value)).toEqual(expected)
+  })
+
+  it('should return the forum and thread for a discussion thread page', () => {
+    const value = 'https://sourceforge.net/p/example/discussion/12345/thread/abc123/'
+    const expected: SourceforgeUrl = {
+      kind: 'project',
+      project: 'example',
+      forum: '12345',
+      thread: 'abc123',
+    }
+
+    expect(parseSourceforgeUrl(value)).toEqual(expected)
   })
 
   it('should return the project for a project name with hyphens', () => {
@@ -94,16 +147,71 @@ describe('sourceforgeHandler', () => {
   })
 
   describe('resolve', () => {
+    const exampleFeeds: Array<DiscoverUriEntry> = [
+      {
+        uri: 'https://sourceforge.net/p/example/activity/feed',
+        hint: { key: 'sourceforge:activity', label: 'Recent activity', format: 'rss' },
+      },
+      {
+        uri: 'https://sourceforge.net/p/example/activity/feed.atom',
+        hint: { key: 'sourceforge:activity', label: 'Recent activity', format: 'atom' },
+      },
+      {
+        uri: 'https://sourceforge.net/p/example/feed',
+        hint: { key: 'sourceforge:project-feed', label: 'Project feed', format: 'rss' },
+      },
+      {
+        uri: 'https://sourceforge.net/p/example/feed.atom',
+        hint: { key: 'sourceforge:project-feed', label: 'Project feed', format: 'atom' },
+      },
+      {
+        uri: 'https://sourceforge.net/projects/example/rss',
+        hint: { key: 'sourceforge:files', label: 'File releases' },
+      },
+      {
+        uri: 'https://sourceforge.net/p/example/news/feed.rss',
+        hint: { key: 'sourceforge:news', label: 'News', format: 'rss' },
+      },
+      {
+        uri: 'https://sourceforge.net/p/example/news/feed.atom',
+        hint: { key: 'sourceforge:news', label: 'News', format: 'atom' },
+      },
+      {
+        uri: 'https://sourceforge.net/p/example/discussion/feed',
+        hint: { key: 'sourceforge:discussion', label: 'Discussion', format: 'rss' },
+      },
+      {
+        uri: 'https://sourceforge.net/p/example/discussion/feed.atom',
+        hint: { key: 'sourceforge:discussion', label: 'Discussion', format: 'atom' },
+      },
+      {
+        uri: 'https://sourceforge.net/p/example/bugs/feed.rss',
+        hint: { key: 'sourceforge:bugs', label: 'Bugs', format: 'rss' },
+      },
+      {
+        uri: 'https://sourceforge.net/p/example/bugs/feed.atom',
+        hint: { key: 'sourceforge:bugs', label: 'Bugs', format: 'atom' },
+      },
+    ]
+
     it('should return all feeds for a project page', () => {
       const value = 'https://sourceforge.net/projects/filezilla'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://sourceforge.net/p/filezilla/activity/feed',
-          hint: { key: 'sourceforge:activity', label: 'Recent activity' },
+          hint: { key: 'sourceforge:activity', label: 'Recent activity', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/activity/feed.atom',
+          hint: { key: 'sourceforge:activity', label: 'Recent activity', format: 'atom' },
         },
         {
           uri: 'https://sourceforge.net/p/filezilla/feed',
-          hint: { key: 'sourceforge:project-feed', label: 'Project feed' },
+          hint: { key: 'sourceforge:project-feed', label: 'Project feed', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/feed.atom',
+          hint: { key: 'sourceforge:project-feed', label: 'Project feed', format: 'atom' },
         },
         {
           uri: 'https://sourceforge.net/projects/filezilla/rss',
@@ -126,18 +234,717 @@ describe('sourceforgeHandler', () => {
           hint: { key: 'sourceforge:discussion', label: 'Discussion', format: 'atom' },
         },
         {
-          uri: 'https://sourceforge.net/p/filezilla/bugs/feed',
-          hint: { key: 'sourceforge:bugs', label: 'Bugs' },
+          uri: 'https://sourceforge.net/p/filezilla/bugs/feed.rss',
+          hint: { key: 'sourceforge:bugs', label: 'Bugs', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/bugs/feed.atom',
+          hint: { key: 'sourceforge:bugs', label: 'Bugs', format: 'atom' },
         },
       ]
 
       expect(sourceforgeHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the thread feeds for a discussion thread page', () => {
+      const value = 'https://sourceforge.net/p/example/discussion/12345/thread/abc123/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://sourceforge.net/p/example/activity/feed',
+          hint: { key: 'sourceforge:activity', label: 'Recent activity', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/activity/feed.atom',
+          hint: { key: 'sourceforge:activity', label: 'Recent activity', format: 'atom' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/feed',
+          hint: { key: 'sourceforge:project-feed', label: 'Project feed', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/feed.atom',
+          hint: { key: 'sourceforge:project-feed', label: 'Project feed', format: 'atom' },
+        },
+        {
+          uri: 'https://sourceforge.net/projects/example/rss',
+          hint: { key: 'sourceforge:files', label: 'File releases' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/news/feed.rss',
+          hint: { key: 'sourceforge:news', label: 'News', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/news/feed.atom',
+          hint: { key: 'sourceforge:news', label: 'News', format: 'atom' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/discussion/feed',
+          hint: { key: 'sourceforge:discussion', label: 'Discussion', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/discussion/feed.atom',
+          hint: { key: 'sourceforge:discussion', label: 'Discussion', format: 'atom' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/bugs/feed.rss',
+          hint: { key: 'sourceforge:bugs', label: 'Bugs', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/bugs/feed.atom',
+          hint: { key: 'sourceforge:bugs', label: 'Bugs', format: 'atom' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/discussion/12345/thread/abc123/feed',
+          hint: { key: 'sourceforge:discussion-thread', label: 'Thread', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/discussion/12345/thread/abc123/feed.atom',
+          hint: { key: 'sourceforge:discussion-thread', label: 'Thread', format: 'atom' },
+        },
+      ]
+
+      expect(sourceforgeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the folder feed for a files subfolder page', () => {
+      const value = 'https://sourceforge.net/projects/example/files/Win%2064/'
+      const expected: Array<DiscoverUriEntry> = [
+        ...exampleFeeds,
+        {
+          uri: 'https://sourceforge.net/projects/example/rss?path=/Win%2064',
+          hint: { key: 'sourceforge:files-folder', label: 'Folder file releases' },
+        },
+      ]
+
+      expect(sourceforgeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the forum feeds for a discussion forum page', () => {
+      const value = 'https://sourceforge.net/p/example/discussion/12345/'
+      const expected: Array<DiscoverUriEntry> = [
+        ...exampleFeeds,
+        {
+          uri: 'https://sourceforge.net/p/example/discussion/12345/feed',
+          hint: { key: 'sourceforge:discussion-forum', label: 'Forum', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/discussion/12345/feed.atom',
+          hint: { key: 'sourceforge:discussion-forum', label: 'Forum', format: 'atom' },
+        },
+      ]
+
+      expect(sourceforgeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the tool and page feeds for a wiki page', () => {
+      const value = 'https://sourceforge.net/p/example/wiki/Home/'
+      const expected: Array<DiscoverUriEntry> = [
+        ...exampleFeeds,
+        {
+          uri: 'https://sourceforge.net/p/example/wiki/feed.rss',
+          hint: { key: 'sourceforge:tool', label: 'Tool changes', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/wiki/feed.atom',
+          hint: { key: 'sourceforge:tool', label: 'Tool changes', format: 'atom' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/wiki/Home/feed.rss',
+          hint: { key: 'sourceforge:tool-page', label: 'Page changes', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/wiki/Home/feed.atom',
+          hint: { key: 'sourceforge:tool-page', label: 'Page changes', format: 'atom' },
+        },
+      ]
+
+      expect(sourceforgeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the tool feeds for a code tree page', () => {
+      const value = 'https://sourceforge.net/p/example/code/HEAD/tree/'
+      const expected: Array<DiscoverUriEntry> = [
+        ...exampleFeeds,
+        {
+          uri: 'https://sourceforge.net/p/example/code/feed.rss',
+          hint: { key: 'sourceforge:tool', label: 'Tool changes', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/code/feed.atom',
+          hint: { key: 'sourceforge:tool', label: 'Tool changes', format: 'atom' },
+        },
+      ]
+
+      expect(sourceforgeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the page feeds without a tool feed for a ticket page', () => {
+      const value = 'https://sourceforge.net/p/example/bugs/2500/'
+      const expected: Array<DiscoverUriEntry> = [
+        ...exampleFeeds,
+        {
+          uri: 'https://sourceforge.net/p/example/bugs/2500/feed.rss',
+          hint: { key: 'sourceforge:tool-page', label: 'Page changes', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/bugs/2500/feed.atom',
+          hint: { key: 'sourceforge:tool-page', label: 'Page changes', format: 'atom' },
+        },
+      ]
+
+      expect(sourceforgeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the project feeds alone for a tool with rows of its own', () => {
+      const value = 'https://sourceforge.net/p/example/news/'
+
+      expect(sourceforgeHandler.resolve(value)).toEqual(exampleFeeds)
+    })
+
     it('should return empty array for root page', () => {
       const value = 'https://sourceforge.net'
 
       expect(sourceforgeHandler.resolve(value)).toEqual([])
+    })
+
+    it('should return https feeds for an http page', () => {
+      const value = 'http://sourceforge.net/projects/example'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://sourceforge.net/p/example/activity/feed',
+          hint: { key: 'sourceforge:activity', label: 'Recent activity', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/activity/feed.atom',
+          hint: { key: 'sourceforge:activity', label: 'Recent activity', format: 'atom' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/feed',
+          hint: { key: 'sourceforge:project-feed', label: 'Project feed', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/feed.atom',
+          hint: { key: 'sourceforge:project-feed', label: 'Project feed', format: 'atom' },
+        },
+        {
+          uri: 'https://sourceforge.net/projects/example/rss',
+          hint: { key: 'sourceforge:files', label: 'File releases' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/news/feed.rss',
+          hint: { key: 'sourceforge:news', label: 'News', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/news/feed.atom',
+          hint: { key: 'sourceforge:news', label: 'News', format: 'atom' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/discussion/feed',
+          hint: { key: 'sourceforge:discussion', label: 'Discussion', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/discussion/feed.atom',
+          hint: { key: 'sourceforge:discussion', label: 'Discussion', format: 'atom' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/bugs/feed.rss',
+          hint: { key: 'sourceforge:bugs', label: 'Bugs', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/bugs/feed.atom',
+          hint: { key: 'sourceforge:bugs', label: 'Bugs', format: 'atom' },
+        },
+      ]
+
+      expect(sourceforgeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return apex feeds for a www page', () => {
+      const value = 'https://www.sourceforge.net/p/example'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://sourceforge.net/p/example/activity/feed',
+          hint: { key: 'sourceforge:activity', label: 'Recent activity', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/activity/feed.atom',
+          hint: { key: 'sourceforge:activity', label: 'Recent activity', format: 'atom' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/feed',
+          hint: { key: 'sourceforge:project-feed', label: 'Project feed', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/feed.atom',
+          hint: { key: 'sourceforge:project-feed', label: 'Project feed', format: 'atom' },
+        },
+        {
+          uri: 'https://sourceforge.net/projects/example/rss',
+          hint: { key: 'sourceforge:files', label: 'File releases' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/news/feed.rss',
+          hint: { key: 'sourceforge:news', label: 'News', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/news/feed.atom',
+          hint: { key: 'sourceforge:news', label: 'News', format: 'atom' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/discussion/feed',
+          hint: { key: 'sourceforge:discussion', label: 'Discussion', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/discussion/feed.atom',
+          hint: { key: 'sourceforge:discussion', label: 'Discussion', format: 'atom' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/bugs/feed.rss',
+          hint: { key: 'sourceforge:bugs', label: 'Bugs', format: 'rss' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/example/bugs/feed.atom',
+          hint: { key: 'sourceforge:bugs', label: 'Bugs', format: 'atom' },
+        },
+      ]
+
+      expect(sourceforgeHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the activity key for an activity feed', () => {
+      const value = 'https://sourceforge.net/p/example/activity/feed'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:activity',
+        label: 'Recent activity',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the project feed key for a project feed', () => {
+      const value = 'https://sourceforge.net/p/example/feed'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:project-feed',
+        label: 'Project feed',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the project feed key for a project feed with an rss extension', () => {
+      const value = 'https://sourceforge.net/p/example/feed.rss'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:project-feed',
+        label: 'Project feed',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the project feed key for a project feed with an atom extension', () => {
+      const value = 'https://sourceforge.net/p/example/feed.atom'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:project-feed',
+        label: 'Project feed',
+        format: 'atom',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the files key for a files feed', () => {
+      const value = 'https://sourceforge.net/projects/example/rss'
+      const expected: DiscoverUriHint = { key: 'sourceforge:files', label: 'File releases' }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the files key for a files feed of the root folder', () => {
+      const value = 'https://sourceforge.net/projects/example/rss?path=/'
+      const expected: DiscoverUriHint = { key: 'sourceforge:files', label: 'File releases' }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the folder key for a files feed of one folder', () => {
+      const value = 'https://sourceforge.net/projects/example/rss?path=%2FExpect'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:files-folder',
+        label: 'Folder file releases',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the news key for a news rss feed', () => {
+      const value = 'https://sourceforge.net/p/example/news/feed.rss'
+      const expected: DiscoverUriHint = { key: 'sourceforge:news', label: 'News', format: 'rss' }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the news key for a news feed without an extension', () => {
+      const value = 'https://sourceforge.net/p/example/news/feed'
+      const expected: DiscoverUriHint = { key: 'sourceforge:news', label: 'News', format: 'rss' }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the news key for a news atom feed', () => {
+      const value = 'https://sourceforge.net/p/example/news/feed.atom'
+      const expected: DiscoverUriHint = { key: 'sourceforge:news', label: 'News', format: 'atom' }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the discussion key for a discussion rss feed', () => {
+      const value = 'https://sourceforge.net/p/example/discussion/feed'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:discussion',
+        label: 'Discussion',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the discussion key for a discussion atom feed', () => {
+      const value = 'https://sourceforge.net/p/example/discussion/feed.atom'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:discussion',
+        label: 'Discussion',
+        format: 'atom',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the bugs key for a bugs feed', () => {
+      const value = 'https://sourceforge.net/p/example/bugs/feed'
+      const expected: DiscoverUriHint = { key: 'sourceforge:bugs', label: 'Bugs', format: 'rss' }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the activity key for an activity feed with an rss extension', () => {
+      const value = 'https://sourceforge.net/p/example/activity/feed.rss'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:activity',
+        label: 'Recent activity',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the activity key for an activity feed with an atom extension', () => {
+      const value = 'https://sourceforge.net/p/example/activity/feed.atom'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:activity',
+        label: 'Recent activity',
+        format: 'atom',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the discussion key for a discussion feed with an rss extension', () => {
+      const value = 'https://sourceforge.net/p/example/discussion/feed.rss'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:discussion',
+        label: 'Discussion',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the bugs key for a bugs feed with an rss extension', () => {
+      const value = 'https://sourceforge.net/p/example/bugs/feed.rss'
+      const expected: DiscoverUriHint = { key: 'sourceforge:bugs', label: 'Bugs', format: 'rss' }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the bugs key for a bugs feed with an atom extension', () => {
+      const value = 'https://sourceforge.net/p/example/bugs/feed.atom'
+      const expected: DiscoverUriHint = { key: 'sourceforge:bugs', label: 'Bugs', format: 'atom' }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the activity key for an activity feed over http', () => {
+      const value = 'http://sourceforge.net/p/example/activity/feed'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:activity',
+        label: 'Recent activity',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the files key for a files feed on the www host', () => {
+      const value = 'https://www.sourceforge.net/projects/example/rss'
+      const expected: DiscoverUriHint = { key: 'sourceforge:files', label: 'File releases' }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a project page', () => {
+      const value = 'https://sourceforge.net/projects/example'
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return the thread key for a discussion thread feed', () => {
+      const value = 'https://sourceforge.net/p/example/discussion/12345/thread/abc123/feed.rss'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:discussion-thread',
+        label: 'Thread',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the thread key for a discussion thread atom feed', () => {
+      const value = 'https://sourceforge.net/p/example/discussion/12345/thread/abc123/feed.atom'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:discussion-thread',
+        label: 'Thread',
+        format: 'atom',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the forum key for a discussion forum feed', () => {
+      const value = 'https://sourceforge.net/p/example/discussion/12345/feed.rss'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:discussion-forum',
+        label: 'Forum',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tool key for a wiki feed', () => {
+      const value = 'https://sourceforge.net/p/example/wiki/feed.rss'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:tool',
+        label: 'Tool changes',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tool key for a code repository atom feed', () => {
+      const value = 'https://sourceforge.net/p/example/example-git/feed.atom'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:tool',
+        label: 'Tool changes',
+        format: 'atom',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tool page key for a wiki page feed', () => {
+      const value = 'https://sourceforge.net/p/example/wiki/Home/feed.atom'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:tool-page',
+        label: 'Page changes',
+        format: 'atom',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the tool page key for a ticket feed', () => {
+      const value = 'https://sourceforge.net/p/example/bugs/12345/feed.rss'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:tool-page',
+        label: 'Page changes',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the user key for a user feed', () => {
+      const value = 'https://sourceforge.net/u/alice/feed.rss'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:user',
+        label: 'User feed',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the user tool key for a user blog feed', () => {
+      const value = 'https://sourceforge.net/u/alice/blog/feed'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:user-tool',
+        label: 'User tool changes',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the activity key for a mirror activity feed', () => {
+      const value = 'https://sourceforge.net/mirror/example/activity/feed'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:activity',
+        label: 'Recent activity',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should keep the discussion key for a discussion feed beside the tool rows', () => {
+      const value = 'https://sourceforge.net/p/example/discussion/feed.rss'
+      const expected: DiscoverUriHint = {
+        key: 'sourceforge:discussion',
+        label: 'Discussion',
+        format: 'rss',
+      }
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/p/example/activity/feed'
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an invalid URL', () => {
+      const value = 'not a url'
+
+      expect(sourceforgeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'http://sourceforge.net/p/example/activity/feed',
+        { key: 'sourceforge:activity', label: 'Recent activity', format: 'rss' },
+      ],
+      [
+        'http://sourceforge.net/p/example/feed',
+        { key: 'sourceforge:project-feed', label: 'Project feed', format: 'rss' },
+      ],
+      [
+        'https://sourceforge.net/p/example/feed.atom',
+        { key: 'sourceforge:project-feed', label: 'Project feed', format: 'atom' },
+      ],
+      [
+        'http://sourceforge.net/projects/example/rss',
+        { key: 'sourceforge:files', label: 'File releases' },
+      ],
+      [
+        'https://sourceforge.net/projects/example/rss?path=%2FExpect',
+        { key: 'sourceforge:files-folder', label: 'Folder file releases' },
+      ],
+      [
+        'http://sourceforge.net/p/example/news/feed.rss',
+        { key: 'sourceforge:news', label: 'News', format: 'rss' },
+      ],
+      [
+        'https://sourceforge.net/p/example/news/feed',
+        { key: 'sourceforge:news', label: 'News', format: 'rss' },
+      ],
+      [
+        'http://sourceforge.net/p/example/news/feed.atom',
+        { key: 'sourceforge:news', label: 'News', format: 'atom' },
+      ],
+      [
+        'http://sourceforge.net/p/example/discussion/feed',
+        { key: 'sourceforge:discussion', label: 'Discussion', format: 'rss' },
+      ],
+      [
+        'http://sourceforge.net/p/example/discussion/feed.atom',
+        { key: 'sourceforge:discussion', label: 'Discussion', format: 'atom' },
+      ],
+      [
+        'http://sourceforge.net/p/example/bugs/feed',
+        { key: 'sourceforge:bugs', label: 'Bugs', format: 'rss' },
+      ],
+      [
+        'http://sourceforge.net/p/example/activity/feed.rss',
+        { key: 'sourceforge:activity', label: 'Recent activity', format: 'rss' },
+      ],
+      [
+        'http://sourceforge.net/p/example/activity/feed.atom',
+        { key: 'sourceforge:activity', label: 'Recent activity', format: 'atom' },
+      ],
+      [
+        'http://sourceforge.net/p/example/discussion/feed.rss',
+        { key: 'sourceforge:discussion', label: 'Discussion', format: 'rss' },
+      ],
+      [
+        'http://sourceforge.net/p/example/bugs/feed.rss',
+        { key: 'sourceforge:bugs', label: 'Bugs', format: 'rss' },
+      ],
+      [
+        'http://sourceforge.net/p/example/bugs/feed.atom',
+        { key: 'sourceforge:bugs', label: 'Bugs', format: 'atom' },
+      ],
+      [
+        'http://sourceforge.net/p/example/discussion/12345/thread/abc123/feed.rss',
+        { key: 'sourceforge:discussion-thread', label: 'Thread', format: 'rss' },
+      ],
+      [
+        'http://sourceforge.net/p/example/discussion/12345/feed.rss',
+        { key: 'sourceforge:discussion-forum', label: 'Forum', format: 'rss' },
+      ],
+      [
+        'http://sourceforge.net/p/example/wiki/feed',
+        { key: 'sourceforge:tool', label: 'Tool changes', format: 'rss' },
+      ],
+      [
+        'http://sourceforge.net/p/example/wiki/Home/feed.atom',
+        { key: 'sourceforge:tool-page', label: 'Page changes', format: 'atom' },
+      ],
+      [
+        'http://sourceforge.net/u/alice/feed.atom',
+        { key: 'sourceforge:user', label: 'User feed', format: 'atom' },
+      ],
+      [
+        'http://sourceforge.net/u/alice/blog/feed.rss',
+        { key: 'sourceforge:user-tool', label: 'User tool changes', format: 'rss' },
+      ],
+      [
+        'https://sourceforge.net/mirror/example/activity/feed.rss',
+        { key: 'sourceforge:activity', label: 'Recent activity', format: 'rss' },
+      ],
+      [
+        'https://sourceforge.net/mirror/example/activity/feed.atom',
+        { key: 'sourceforge:activity', label: 'Recent activity', format: 'atom' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [sourceforgeHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

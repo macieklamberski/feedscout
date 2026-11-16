@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type AudioboomUrl, audioboomHandler, parseAudioboomUrl } from './audioboom.js'
 
 describe('parseAudioboomUrl', () => {
@@ -14,6 +17,13 @@ describe('parseAudioboomUrl', () => {
     expect(parseAudioboomUrl('https://audioboom.com/channels/5071123-front-page-tech')).toEqual(
       expected,
     )
+  })
+
+  it('should return the playlist for a playlist page with its slug', () => {
+    const value = 'https://audioboom.com/playlists/12345-example'
+    const expected: AudioboomUrl = { kind: 'playlist', playlistId: '12345' }
+
+    expect(parseAudioboomUrl(value)).toEqual(expected)
   })
 
   it('should return a one-digit channel id whole', () => {
@@ -56,6 +66,18 @@ describe('audioboomHandler', () => {
   describe('resolve', () => {
     it('should return empty array for a URL outside the platform', () => {
       expect(audioboomHandler.resolve('https://example.com/')).toEqual([])
+    })
+
+    it('should return the playlist feed for a playlist page', () => {
+      const value = 'https://audioboom.com/playlists/12345-example'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://audioboom.com/playlists/12345.rss',
+          hint: { key: 'audioboom:playlist', label: 'Playlist' },
+        },
+      ]
+
+      expect(audioboomHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return podcast feed for channel', () => {
@@ -104,6 +126,77 @@ describe('audioboomHandler', () => {
       const value = 'https://audioboom.com/posts/12345'
 
       expect(audioboomHandler.resolve(value)).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the playlist hint for a playlist feed', () => {
+      const value = 'https://audioboom.com/playlists/12345.rss'
+      const expected: DiscoverUriHint = { key: 'audioboom:playlist', label: 'Playlist' }
+
+      expect(audioboomHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for a channel feed', () => {
+      const value = 'https://audioboom.com/channels/5016155.rss'
+      const expected: DiscoverUriHint = { key: 'audioboom:podcast', label: 'Podcast' }
+
+      expect(audioboomHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for a channel feed on the www host', () => {
+      const value = 'https://www.audioboom.com/channels/5050302.rss'
+      const expected: DiscoverUriHint = { key: 'audioboom:podcast', label: 'Podcast' }
+
+      expect(audioboomHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a channel page', () => {
+      const value = 'https://audioboom.com/channels/5016155'
+
+      expect(audioboomHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/channels/5016155.rss'
+
+      expect(audioboomHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    it('should return a channel feed as itself', async () => {
+      const value = 'https://audioboom.com/channels/5016155.rss'
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [audioboomHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: value,
+          hint: { key: 'audioboom:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should return a playlist feed as itself', async () => {
+      const value = 'http://www.audioboom.com/playlists/12345.rss'
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [audioboomHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: value,
+          hint: { key: 'audioboom:playlist', label: 'Playlist' },
+        },
+      ]
+
+      expect(result).toEqual(expected)
     })
   })
 })

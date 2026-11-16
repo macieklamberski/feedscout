@@ -1,35 +1,35 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers post, user, userPath (guess, html).
 // Handler needed for: mobile, mobilePost.
 
-export type PlurkUrl =
-  | { kind: 'post'; postId: string }
-  | { kind: 'user'; username: string }
-  | { kind: 'page' }
+export type PlurkUrl = { kind: 'post'; postId: string } | { kind: 'user'; username: string }
 
 const hosts = ['plurk.com', 'www.plurk.com']
 
-// A root `.xml` path is a user's feed, so a guessed /feed.xml is the feed of a user named feed.
-const userFeedRegex = /^https?:\/\/(?:www\.)?plurk\.com\/[^/]+\.xml$/i
+const feeds = definePlatformFeeds([
+  { key: 'plurk:responses', template: 'https://www.plurk.com/p/{postId}.xml' },
+  // A user page links this spelling, and the feed names the `/user/` one as its self link.
+  { key: 'plurk:plurks', template: 'https://www.plurk.com/{username}.xml' },
+  { key: 'plurk:plurks', template: 'https://www.plurk.com/user/{username}.xml', isAlias: true },
+])
 
-// A page that names no post or user still parses, so `match` stays true on every Plurk page and
-// the guess exclusion applies there.
 export const parsePlurkUrl = (url: string): PlurkUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
   }
 
   const segments = getPathSegments(url)
-  const isMobile = isAnyOf(segments[0], 'm')
+  const [mobileOrRoute] = segments
+  const isMobile = isAnyOf(mobileOrRoute, 'm')
   const [route, value] = isMobile ? segments.slice(1) : segments
 
   if (isAnyOf(route, 'p')) {
     if (!value) {
-      return { kind: 'page' }
+      return
     }
 
     return { kind: 'post', postId: value }
@@ -37,10 +37,9 @@ export const parsePlurkUrl = (url: string): PlurkUrl | undefined => {
 
   const username = isAnyOf(route, 'u') ? value : route
 
-  // Plurk names carry no dots, so a dotted segment such as robots.txt or alice.xml is a file of the
-  // site.
+  // Plurk names carry no dots, so a dotted segment such as robots.txt is a file of the site.
   if (!username || username.includes('.')) {
-    return { kind: 'page' }
+    return
   }
 
   return { kind: 'user', username }
@@ -59,25 +58,11 @@ export const plurkHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'post') {
-      return [
-        {
-          uri: `https://www.plurk.com/p/${parsed.postId}.xml`,
-          hint: composeHint('plurk:responses'),
-        },
-      ]
+      return [feeds.getFeedEntry('plurk:responses', { postId: parsed.postId })]
     }
 
-    if (parsed.kind === 'user') {
-      return [
-        {
-          uri: `https://www.plurk.com/${parsed.username}.xml`,
-          hint: composeHint('plurk:plurks'),
-        },
-      ]
-    }
-
-    return []
+    return [feeds.getFeedEntry('plurk:plurks', { username: parsed.username })]
   },
 
-  guessExclusionRegex: userFeedRegex,
+  getFeedHint: feeds.getFeedHint,
 }

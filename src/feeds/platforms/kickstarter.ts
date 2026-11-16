@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers discover, project (guess, html).
@@ -8,20 +8,36 @@ import { composeHint } from '../../common/utils.js'
 
 export type KickstarterUrl =
   | { kind: 'project'; creator: string; project: string }
+  | { kind: 'page'; name: string }
   | { kind: 'home' }
 
 const hosts = ['kickstarter.com', 'www.kickstarter.com']
+
+const feeds = definePlatformFeeds([
+  {
+    key: 'kickstarter:updates',
+    template: 'https://www.kickstarter.com/projects/{creator}/{project}/posts.atom',
+  },
+  { key: 'kickstarter:projects', template: 'https://www.kickstarter.com/projects/feed.atom' },
+  // A curated page of projects, such as `/pages/tees`.
+  { key: 'kickstarter:page', template: 'https://www.kickstarter.com/pages/{name}.atom' },
+])
 
 export const parseKickstarterUrl = (url: string): KickstarterUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
   }
 
-  const [first, creator, project] = getPathSegments(url)
+  const [route, creator, project] = getPathSegments(url)
 
   // Project page: kickstarter.com/projects/{creator}/{project}
-  if (isAnyOf(first, 'projects') && creator && project) {
+  if (isAnyOf(route, 'projects') && creator && project) {
     return { kind: 'project', creator, project }
+  }
+
+  // Curated page: kickstarter.com/pages/{name}
+  if (isAnyOf(route, 'pages') && creator) {
+    return { kind: 'page', name: creator }
   }
 
   return { kind: 'home' }
@@ -39,21 +55,28 @@ export const kickstarterHandler: PlatformHandler = {
       return []
     }
 
+    // The new projects feed needs no value from the page, so every page builds it after its own
+    // feeds.
     if (parsed.kind === 'project') {
       return [
-        {
-          uri: `https://www.kickstarter.com/projects/${parsed.creator}/${parsed.project}/posts.atom`,
-          hint: composeHint('kickstarter:updates'),
-        },
+        feeds.getFeedEntry('kickstarter:updates', {
+          creator: parsed.creator,
+          project: parsed.project,
+        }),
+        feeds.getFeedEntry('kickstarter:projects'),
+      ]
+    }
+
+    if (parsed.kind === 'page') {
+      return [
+        feeds.getFeedEntry('kickstarter:page', { name: parsed.name }),
+        feeds.getFeedEntry('kickstarter:projects'),
       ]
     }
 
     // Homepage or discover pages - return global new projects feed.
-    return [
-      {
-        uri: 'https://www.kickstarter.com/projects/feed.atom',
-        hint: composeHint('kickstarter:projects'),
-      },
-    ]
+    return [feeds.getFeedEntry('kickstarter:projects')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

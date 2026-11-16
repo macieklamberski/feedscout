@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type ParsiblogUrl, parseParsiblogUrl, parsiblogHandler } from './parsiblog.js'
 
 describe('parseParsiblogUrl', () => {
@@ -92,6 +94,124 @@ describe('parsiblogHandler', () => {
       ]
 
       expect(parsiblogHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    const feedHints: Array<[string, DiscoverUriHint]> = [
+      [
+        'http://alice.parsiblog.com/rss/',
+        { key: 'parsiblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'http://alice.parsiblog.com/atom/',
+        { key: 'parsiblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      ['http://alice.parsiblog.com/rss', { key: 'parsiblog:posts', label: 'Posts', format: 'rss' }],
+      ['http://alice.parsiblog.ir/rss', { key: 'parsiblog:posts', label: 'Posts', format: 'rss' }],
+      [
+        'http://alice.parsiblog.ir/atom',
+        { key: 'parsiblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'http://www.alice.parsiblog.com/rss',
+        { key: 'parsiblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'http://alice.parsiblog.com/RSS.aspx',
+        { key: 'parsiblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'http://alice.parsiblog.com/rss.aspx',
+        { key: 'parsiblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'http://alice.parsiblog.com/ATOM.aspx',
+        { key: 'parsiblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'http://alice.parsiblog.com/Mag/RSS.aspx',
+        { key: 'parsiblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'http://alice.parsiblog.com/Mag/RSS.aspx?SID=13',
+        { key: 'parsiblog:posts', label: 'Posts', format: 'rss' },
+      ],
+    ]
+
+    it.each(feedHints)('should return the posts hint for %s', (value, expected) => {
+      expect(parsiblogHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'http://alice.parsiblog.com/Posts/12/'
+
+      expect(parsiblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a portal magazine feed', () => {
+      const value = 'http://parsiblog.com/Mag/RSS.aspx?SID=13'
+
+      expect(parsiblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on the portal', () => {
+      const value = 'http://www.parsiblog.com/rss/'
+
+      expect(parsiblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'http://x.alice.parsiblog.com/rss/'
+
+      expect(parsiblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'http://example.com/rss/'
+
+      expect(parsiblogHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'http://alice.parsiblog.com/rss/',
+        { key: 'parsiblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      ['http://alice.parsiblog.com/rss', { key: 'parsiblog:posts', label: 'Posts', format: 'rss' }],
+      [
+        'http://alice.parsiblog.ir/atom',
+        { key: 'parsiblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'http://www.alice.parsiblog.com/rss',
+        { key: 'parsiblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'http://alice.parsiblog.com/RSS.aspx',
+        { key: 'parsiblog:posts', label: 'Posts', format: 'rss' },
+      ],
+      [
+        'http://alice.parsiblog.com/ATOM.aspx',
+        { key: 'parsiblog:posts', label: 'Posts', format: 'atom' },
+      ],
+      [
+        'http://alice.parsiblog.com/Mag/RSS.aspx',
+        { key: 'parsiblog:posts', label: 'Posts', format: 'rss' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [parsiblogHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

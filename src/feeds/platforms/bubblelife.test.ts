@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   type BubblelifePage,
   type BubblelifeUrl,
@@ -10,41 +12,35 @@ import {
 
 describe('parseBubblelifeUrl', () => {
   it('should return the community for a community page', () => {
-    const expected: BubblelifeUrl = { kind: 'community', community: 'idealplotter' }
+    const value = 'https://sandysprings.bubblelife.com/community/superplotter'
+    const expected: BubblelifeUrl = { kind: 'community', community: 'superplotter' }
 
-    expect(
-      parseBubblelifeUrl('https://sandysprings.bubblelife.com/community/idealplotter'),
-    ).toEqual(expected)
+    expect(parseBubblelifeUrl(value)).toEqual(expected)
   })
 
   it('should return the community for a page under the community', () => {
-    const expected: BubblelifeUrl = { kind: 'community', community: 'idealplotter' }
+    const value = 'https://sandysprings.bubblelife.com/community/superplotter/type/rssinfo'
+    const expected: BubblelifeUrl = { kind: 'community', community: 'superplotter' }
 
-    expect(
-      parseBubblelifeUrl('https://sandysprings.bubblelife.com/community/idealplotter/type/rssinfo'),
-    ).toEqual(expected)
+    expect(parseBubblelifeUrl(value)).toEqual(expected)
   })
 
   it('should keep the case of the community name', () => {
-    const expected: BubblelifeUrl = { kind: 'community', community: 'IdealPlotter' }
+    const value = 'https://sandysprings.bubblelife.com/Community/SuperPlotter'
+    const expected: BubblelifeUrl = { kind: 'community', community: 'SuperPlotter' }
 
-    expect(
-      parseBubblelifeUrl('https://sandysprings.bubblelife.com/Community/IdealPlotter'),
-    ).toEqual(expected)
+    expect(parseBubblelifeUrl(value)).toEqual(expected)
   })
 
   it('should return the library for a library page', () => {
+    const value = 'https://denver.bubblelife.com/community/denver_ireporter/library/35828711'
     const expected: BubblelifeUrl = {
       kind: 'library',
       community: 'denver_ireporter',
       libraryId: '35828711',
     }
 
-    expect(
-      parseBubblelifeUrl(
-        'https://denver.bubblelife.com/community/denver_ireporter/library/35828711',
-      ),
-    ).toEqual(expected)
+    expect(parseBubblelifeUrl(value)).toEqual(expected)
   })
 
   it('should return the library for a post page', () => {
@@ -64,26 +60,26 @@ describe('parseBubblelifeUrl', () => {
   })
 
   it('should return undefined for a path sharing the community prefix', () => {
-    expect(
-      parseBubblelifeUrl('https://coppell.bubblelife.com/communitys/hall_law_pc_56'),
-    ).toBeUndefined()
+    const value = 'https://coppell.bubblelife.com/communitys/acme_law_pc_56'
+
+    expect(parseBubblelifeUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for the apex domain', () => {
-    expect(parseBubblelifeUrl('https://bubblelife.com/community/idealplotter')).toBeUndefined()
+    expect(parseBubblelifeUrl('https://bubblelife.com/community/superplotter')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
-    expect(parseBubblelifeUrl('https://example.com/community/idealplotter')).toBeUndefined()
+    expect(parseBubblelifeUrl('https://example.com/community/superplotter')).toBeUndefined()
   })
 })
 
 describe('getBubblelifePage', () => {
   const libraryLinkHtml =
-    '<a href="/community/idealplotter/library/3569381092" title="News" class="blMobileItem">'
+    '<a href="/community/superplotter/library/3569381092" title="News" class="blMobileItem">'
 
   it('should return the community feed from its first library link', () => {
-    const value = 'https://sandysprings.bubblelife.com/community/idealplotter'
+    const value = 'https://sandysprings.bubblelife.com/community/superplotter'
     const expected: BubblelifePage = { kind: 'community', feedId: '3569381092' }
 
     expect(getBubblelifePage(value, libraryLinkHtml)).toEqual(expected)
@@ -110,15 +106,30 @@ describe('getBubblelifePage', () => {
     expect(getBubblelifePage(value, content)).toEqual(expected)
   })
 
+  it('should return the news alert feed an rssinfo page links', () => {
+    const value = 'https://maplegrove.bubblelife.com/community/maplegrove_news/type/rssinfo'
+    const content = `
+      <a href="/rss?c=35671970">All Posts</a>
+      <a href="/rss?c=35600714,nofriends">Flash News Alerts</a>
+    `
+    const expected: BubblelifePage = {
+      kind: 'community',
+      feedId: '35671970',
+      alertId: '35600714',
+    }
+
+    expect(getBubblelifePage(value, content)).toEqual(expected)
+  })
+
   it('should fall back to the community for a library id the footer does not name', () => {
-    const value = 'https://sandysprings.bubblelife.com/community/idealplotter/library/1'
+    const value = 'https://sandysprings.bubblelife.com/community/superplotter/library/1'
     const expected: BubblelifePage = { kind: 'community', feedId: '3569381092' }
 
     expect(getBubblelifePage(value, libraryLinkHtml)).toEqual(expected)
   })
 
   it('should return undefined without content', () => {
-    const value = 'https://sandysprings.bubblelife.com/community/idealplotter'
+    const value = 'https://sandysprings.bubblelife.com/community/superplotter'
 
     expect(getBubblelifePage(value, undefined)).toBeUndefined()
   })
@@ -127,7 +138,7 @@ describe('getBubblelifePage', () => {
 describe('bubblelifeHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://coppell.bubblelife.com/community/hall_law_pc_56'],
+      [true, 'https://coppell.bubblelife.com/community/acme_law_pc_56'],
       [false, 'https://coppell.bubblelife.com/'],
     ]
 
@@ -137,12 +148,26 @@ describe('bubblelifeHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should keep the scheme of an http community page', () => {
+      const value = 'http://sandysprings.bubblelife.com/community/superplotter'
+      const content =
+        '<a href="/community/superplotter/library/3569381092" title="News" class="blMobileItem">'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://sandysprings.bubblelife.com/rss?c=3569381092',
+          hint: { key: 'bubblelife:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(bubblelifeHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return the posts feed from the community library link', () => {
-      const value = 'https://sandysprings.bubblelife.com/community/idealplotter'
+      const value = 'https://sandysprings.bubblelife.com/community/superplotter'
       const content = `
         <link id="ctl00_linkRSS" rel="alternate" type="application/rss+xml" />
-        <a href="/community/idealplotter/library/3569381092" title="News" class="blMobileItem">
-        <a href="/community/idealplotter/library/3569381003" title="Calendar" class="blMobileItem">
+        <a href="/community/superplotter/library/3569381092" title="News" class="blMobileItem">
+        <a href="/community/superplotter/library/3569381003" title="Calendar" class="blMobileItem">
       `
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -171,9 +196,9 @@ describe('bubblelifeHandler', () => {
     })
 
     it('should match the community name ignoring case', () => {
-      const value = 'https://sandysprings.bubblelife.com/community/IdealPlotter'
+      const value = 'https://sandysprings.bubblelife.com/community/SuperPlotter'
       const content =
-        '<a href="/community/idealplotter/library/3569381092" title="News" class="blMobileItem">'
+        '<a href="/community/superplotter/library/3569381092" title="News" class="blMobileItem">'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://sandysprings.bubblelife.com/rss?c=3569381092',
@@ -195,7 +220,7 @@ describe('bubblelifeHandler', () => {
     })
 
     it('should return empty array without content', () => {
-      const value = 'https://sandysprings.bubblelife.com/community/idealplotter'
+      const value = 'https://sandysprings.bubblelife.com/community/superplotter'
 
       expect(bubblelifeHandler.resolve(value)).toEqual([])
     })
@@ -231,7 +256,7 @@ describe('bubblelifeHandler', () => {
       expect(bubblelifeHandler.resolve(value, content)).toEqual(expected)
     })
 
-    it('should return the posts feed from the rssinfo page', () => {
+    it('should return the posts and news alert feeds from the rssinfo page', () => {
       const value = 'https://plano.bubblelife.com/community/plano_news/type/rssinfo'
       const content = `
         <a href="/rss?c=35660940">All Posts</a>
@@ -241,6 +266,10 @@ describe('bubblelifeHandler', () => {
         {
           uri: 'https://plano.bubblelife.com/rss?c=35660940',
           hint: { key: 'bubblelife:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://plano.bubblelife.com/rss?c=35600714,nofriends',
+          hint: { key: 'bubblelife:news-alerts', label: 'News alerts' },
         },
       ]
 
@@ -255,6 +284,27 @@ describe('bubblelifeHandler', () => {
         {
           uri: 'https://denver.bubblelife.com/rss?c=35828711',
           hint: { key: 'bubblelife:library', label: 'Library' },
+        },
+      ]
+
+      expect(bubblelifeHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should return the library and news alert feeds from the library rssinfo page', () => {
+      const value =
+        'https://maplegrove.bubblelife.com/community/maplegrove_news/library/35660940/type/rssinfo'
+      const content = `
+        <a href="/rss?c=35660940">All Posts</a>
+        <a href="/rss?c=35600714,nofriends">Flash News Alerts</a>
+      `
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://maplegrove.bubblelife.com/rss?c=35660940',
+          hint: { key: 'bubblelife:library', label: 'Library' },
+        },
+        {
+          uri: 'https://maplegrove.bubblelife.com/rss?c=35600714,nofriends',
+          hint: { key: 'bubblelife:news-alerts', label: 'News alerts' },
         },
       ]
 
@@ -282,10 +332,10 @@ describe('bubblelifeHandler', () => {
     })
 
     it('should return the posts feed for a library id the footer does not name', () => {
-      const value = 'https://sandysprings.bubblelife.com/community/idealplotter/library/1'
+      const value = 'https://sandysprings.bubblelife.com/community/superplotter/library/1'
       const content = `
-        <a href="/community/idealplotter/library/3569381092" title="News" class="blMobileItem">
-        <a id="ctl00_CtrlPageFooter1_hlRSS" title="RSS" href="/community/idealplotter/type/rssinfo">
+        <a href="/community/superplotter/library/3569381092" title="News" class="blMobileItem">
+        <a id="ctl00_CtrlPageFooter1_hlRSS" title="RSS" href="/community/superplotter/type/rssinfo">
       `
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -295,6 +345,114 @@ describe('bubblelifeHandler', () => {
       ]
 
       expect(bubblelifeHandler.resolve(value, content)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the library hint for a feed', () => {
+      const value = 'https://alice.bubblelife.com/rss?c=12345'
+      const expected: DiscoverUriHint = { key: 'bubblelife:library', label: 'Library' }
+
+      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the library hint for a feed on a tenant with underscores', () => {
+      const value = 'https://alice_bob.bubblelife.com/rss?c=1234567'
+      const expected: DiscoverUriHint = { key: 'bubblelife:library', label: 'Library' }
+
+      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the library hint for a feed over http', () => {
+      const value = 'http://alice.bubblelife.com/rss?c=12345'
+      const expected: DiscoverUriHint = { key: 'bubblelife:library', label: 'Library' }
+
+      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the library hint for an uppercase feed path', () => {
+      const value = 'https://maplegrove.bubblelife.com/RSS?C=35660940'
+      const expected: DiscoverUriHint = { key: 'bubblelife:library', label: 'Library' }
+
+      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the topic hint for a topic feed', () => {
+      const value = 'https://example.bubblelife.com/rss?c=12345&t=67890'
+      const expected: DiscoverUriHint = { key: 'bubblelife:topic', label: 'Topic' }
+
+      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the topic hint for a topic feed with the parameters reordered', () => {
+      const value = 'http://example.bubblelife.com/rss?t=67890&c=12345'
+      const expected: DiscoverUriHint = { key: 'bubblelife:topic', label: 'Topic' }
+
+      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the news alerts hint for a news alert feed', () => {
+      const value = 'https://example.bubblelife.com/rss?c=12345,nofriends'
+      const expected: DiscoverUriHint = { key: 'bubblelife:news-alerts', label: 'News alerts' }
+
+      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the news alerts hint for a news alert feed with an encoded comma', () => {
+      const value = 'https://example.bubblelife.com/rss?c=12345%2Cnofriends'
+      const expected: DiscoverUriHint = { key: 'bubblelife:news-alerts', label: 'News alerts' }
+
+      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for an id with another suffix', () => {
+      const value = 'https://example.bubblelife.com/rss?c=12345,friends'
+
+      expect(bubblelifeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path without an id', () => {
+      const value = 'https://maplegrove.bubblelife.com/rss'
+
+      expect(bubblelifeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a community page', () => {
+      const value = 'https://sandysprings.bubblelife.com/community/superplotter'
+
+      expect(bubblelifeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/rss?c=12345'
+
+      expect(bubblelifeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://alice.bubblelife.com/rss?c=12345', { key: 'bubblelife:library', label: 'Library' }],
+      ['http://alice.bubblelife.com/rss?c=12345', { key: 'bubblelife:library', label: 'Library' }],
+      [
+        'https://example.bubblelife.com/rss?c=12345&t=67890',
+        { key: 'bubblelife:topic', label: 'Topic' },
+      ],
+      [
+        'https://example.bubblelife.com/rss?c=12345,nofriends',
+        { key: 'bubblelife:news-alerts', label: 'News alerts' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [bubblelifeHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

@@ -1,3 +1,4 @@
+import { includesAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getMetaContent, hasClass } from '../../common/utils.js'
 import { parseGoodreadsUrl } from '../../feeds/platforms/goodreads.js'
@@ -7,8 +8,7 @@ import { getResponseText } from '../utils.js'
 const platform = 'goodreads'
 
 // Avatars carry a size token before the file name, e.g. `1506617226p5/1.jpg`: p8 is the largest.
-const sizeTokenRegex = /(\/\d+)p\d\//
-const placeholderRegex = /\/nophoto\//
+const sizeTokenRegex = /(\/\d+)p\d\//i
 
 // Users without a photo get a silhouette from s.gr-assets.com/assets/nophoto/.
 const parseAvatar = (html: string): Array<string> => {
@@ -21,7 +21,7 @@ const parseAvatar = (html: string): Array<string> => {
   })
   const src = avatar?.attribs.src ?? getMetaContent(html, 'og:image')
 
-  if (!src || placeholderRegex.test(src)) {
+  if (!src || includesAnyOf(src, '/nophoto/')) {
     return []
   }
 

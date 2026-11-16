@@ -1,6 +1,7 @@
 import { isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers customDomain, profile, publication, publicationTag, subdomainTag (guess, html).
@@ -20,6 +21,22 @@ const tagRegex = /^\/tag\/([^/]+)/i
 const publicationTagRegex = /^\/([^/@][^/]+)\/tagged\/([^/]+)/i
 const publicationRegex = /^\/([^/@][^/]+)/
 const subdomainTagRegex = /^\/tagged\/([^/]+)/i
+
+// The `@` row comes before the publication row, which would read `@{username}` as a publication.
+// A user feed is also served at `/@{username}/feed`. A user subdomain serves its feeds on its own
+// host, since medium.com/feed/{subdomain} answers 404.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'medium:posts', template: 'https://medium.com/feed/@{username}' },
+    { key: 'medium:posts', template: 'https://medium.com/@{username}/feed', isAlias: true },
+    { key: 'medium:tag', template: 'https://medium.com/feed/tag/{tag}' },
+    { key: 'medium:tagged', template: 'https://medium.com/feed/{publication}/tagged/{tag}' },
+    { key: 'medium:tagged', template: '{scheme}://{host}/feed/tagged/{tag}' },
+    { key: 'medium:publication', template: 'https://medium.com/feed/{publication}' },
+    { key: 'medium:publication', template: '{scheme}://{host}/feed' },
+  ],
+  { domains },
+)
 
 export const parseMediumUrl = (url: string): MediumUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -86,52 +103,35 @@ export const mediumHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'user') {
-      return [
-        {
-          uri: `https://medium.com/feed/@${parsed.username}`,
-          hint: composeHint('medium:posts'),
-        },
-      ]
+      return [feeds.getFeedEntry('medium:posts', { username: parsed.username })]
     }
 
     if (parsed.kind === 'tag') {
-      return [{ uri: `https://medium.com/feed/tag/${parsed.tag}`, hint: composeHint('medium:tag') }]
+      return [feeds.getFeedEntry('medium:tag', { tag: parsed.tag })]
     }
 
     if (parsed.kind === 'publication' && parsed.tag) {
-      return [
-        {
-          uri: `https://medium.com/feed/${parsed.publication}/tagged/${parsed.tag}`,
-          hint: composeHint('medium:tagged'),
-        },
-      ]
+      const params = { publication: parsed.publication, tag: parsed.tag }
+
+      return [feeds.getFeedEntry('medium:tagged', params)]
     }
 
     if (parsed.kind === 'publication') {
-      return [
-        {
-          uri: `https://medium.com/feed/${parsed.publication}`,
-          hint: composeHint('medium:publication'),
-        },
-      ]
+      return [feeds.getFeedEntry('medium:publication', { publication: parsed.publication })]
     }
 
-    // A user subdomain answers 404 at medium.com/feed/{subdomain}, and its own host serves
-    // the feed.
-    if (parsed.kind === 'subdomain' && parsed.tag) {
-      return [
-        {
-          uri: `https://${parsed.subdomain}.medium.com/feed/tagged/${parsed.tag}`,
-          hint: composeHint('medium:tagged'),
-        },
-      ]
+    const page = feeds.forUrl(url)
+
+    if (!page) {
+      return []
     }
 
-    return [
-      {
-        uri: `https://${parsed.subdomain}.medium.com/feed`,
-        hint: composeHint('medium:publication'),
-      },
-    ]
+    if (parsed.tag) {
+      return [page.getFeedEntry('medium:tagged', { tag: parsed.tag })]
+    }
+
+    return [page.getFeedEntry('medium:publication')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

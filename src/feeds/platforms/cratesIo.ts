@@ -1,6 +1,6 @@
 import { isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -10,6 +10,12 @@ export type CratesIoUrl = { kind: 'crate'; crate: string } | { kind: 'home' }
 const hosts = ['crates.io', 'www.crates.io']
 
 const crateRegex = /^\/crates\/([\w-]+)(?:\/|$)/i
+
+const feeds = definePlatformFeeds([
+  { key: 'crates-io:releases', template: 'https://static.crates.io/rss/crates/{crate}.xml' },
+  { key: 'crates-io:new-crates', template: 'https://static.crates.io/rss/crates.xml' },
+  { key: 'crates-io:updates', template: 'https://static.crates.io/rss/updates.xml' },
+])
 
 export const parseCratesIoUrl = (url: string): CratesIoUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -40,26 +46,19 @@ export const cratesIoHandler: PlatformHandler = {
       return []
     }
 
-    // The feed path takes the crate name in its canonical case and separator, and any other
-    // spelling answers 403, while the page URL accepts both.
+    // The new crates and updates feeds need no value from the page, so every page builds them after
+    // its own feeds. The feed path takes the crate name in its canonical case and separator, and
+    // any other spelling answers 403, while the page URL accepts both.
     if (parsed.kind === 'crate') {
       return [
-        {
-          uri: `https://static.crates.io/rss/crates/${parsed.crate}.xml`,
-          hint: composeHint('crates-io:releases'),
-        },
+        feeds.getFeedEntry('crates-io:releases', { crate: parsed.crate }),
+        feeds.getFeedEntry('crates-io:new-crates'),
+        feeds.getFeedEntry('crates-io:updates'),
       ]
     }
 
-    return [
-      {
-        uri: 'https://static.crates.io/rss/crates.xml',
-        hint: composeHint('crates-io:new-crates'),
-      },
-      {
-        uri: 'https://static.crates.io/rss/updates.xml',
-        hint: composeHint('crates-io:updates'),
-      },
-    ]
+    return [feeds.getFeedEntry('crates-io:new-crates'), feeds.getFeedEntry('crates-io:updates')]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
