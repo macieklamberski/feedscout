@@ -1,0 +1,71 @@
+import { getQueryParam, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import type { PlatformHandler } from '../../common/uris/platform/types.js'
+
+// Discoverability: Partially discoverable without handler.
+// Generic covers search (html).
+// Handler needed for: news.
+
+export type BingUrl = { kind: 'search'; query: string } | { kind: 'news'; query: string }
+
+// Unverified: cn.bing.com redirects to www.bing.com outside China, so its feed was never read.
+const hosts = ['bing.com', 'cn.bing.com', 'www.bing.com']
+
+const searchRegex = /^\/search\/?$/i
+const newsRegex = /^\/news\/search\/?$/i
+
+// Web and news search answer with RSS when `format=rss` is set.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'bing:search', template: '{scheme}://{host}/search?q={query}&format=rss' },
+    { key: 'bing:news', template: '{scheme}://{host}/news/search?q={query}&format=rss' },
+  ],
+  { hosts },
+)
+
+export const parseBingUrl = (url: string): BingUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const { pathname, searchParams } = parsedUrl
+  const query = getQueryParam(searchParams, 'q')
+
+  // Bing answers any query, an empty one too, with a feed. Without a query it holds no results.
+  if (!query) {
+    return
+  }
+
+  if (searchRegex.test(pathname)) {
+    return { kind: 'search', query }
+  }
+
+  if (newsRegex.test(pathname)) {
+    return { kind: 'news', query }
+  }
+}
+
+export const bingHandler: PlatformHandler = {
+  match: (url) => {
+    return parseBingUrl(url) !== undefined
+  },
+
+  resolve: (url) => {
+    const parsed = parseBingUrl(url)
+    const pageFeeds = feeds.forUrl(url)
+
+    if (!parsed || !pageFeeds) {
+      return []
+    }
+
+    if (parsed.kind === 'news') {
+      return [pageFeeds.getFeedEntry('bing:news', { query: parsed.query })]
+    }
+
+    return [pageFeeds.getFeedEntry('bing:search', { query: parsed.query })]
+  },
+
+  getFeedHint: feeds.getFeedHint,
+}
