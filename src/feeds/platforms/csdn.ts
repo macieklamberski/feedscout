@@ -8,7 +8,6 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 export type CsdnUrl = { kind: 'blog'; username: string }
 
 const hosts = ['blog.csdn.net']
-const feedHosts = ['rss.csdn.net', 'blog.csdn.net']
 
 const userRegex = /^\/([^/]+)/
 
@@ -16,10 +15,11 @@ const userRegex = /^\/([^/]+)/
 // to it.
 const feeds = definePlatformFeeds(
   [
-    { key: 'csdn:blog', template: '{scheme}://{host}/{username}/rss/map' },
+    { key: 'csdn:blog', template: 'https://rss.csdn.net/{username}/rss/map' },
+    { key: 'csdn:blog', template: '{scheme}://{host}/{username}/rss/map', isAlias: true },
     { key: 'csdn:blog', template: 'https://blog.csdn.net/{username}/rss/list', isAlias: true },
   ],
-  { hosts: feedHosts },
+  { hosts },
 )
 
 export const parseCsdnUrl = (url: string): CsdnUrl | undefined => {
@@ -43,15 +43,14 @@ export const csdnHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseCsdnUrl(url)
-    const page = feeds.forUrl(url)
 
-    if (!parsed || !page) {
+    if (!parsed) {
       return []
     }
 
     const { username } = parsed
 
-    return [page.getFeedEntry('csdn:blog', { host: 'rss.csdn.net', username })]
+    return [feeds.getFeedEntry('csdn:blog', { username })]
   },
 
   getFeedHint: feeds.getFeedHint,

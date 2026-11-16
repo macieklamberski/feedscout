@@ -19,9 +19,11 @@ const userSubpaths = ['pins', 'boards', '_saved', '_created', 'followers', 'foll
 
 const feeds = definePlatformFeeds(
   [
-    // Before the board row, so a pins feed never reads as a board named feed.
-    { key: 'pinterest:pins', template: '{scheme}://{host}/{username}/feed.rss' },
-    { key: 'pinterest:board', template: '{scheme}://{host}/{username}/{board}.rss' },
+    // Before the board rows, so a pins feed never reads as a board named feed.
+    { key: 'pinterest:pins', template: 'https://www.pinterest.com/{username}/feed.rss' },
+    { key: 'pinterest:pins', template: '{scheme}://{host}/{username}/feed.rss', isAlias: true },
+    { key: 'pinterest:board', template: 'https://www.pinterest.com/{username}/{board}.rss' },
+    { key: 'pinterest:board', template: '{scheme}://{host}/{username}/{board}.rss', isAlias: true },
   ],
   { hosts, domains },
 )
@@ -64,21 +66,18 @@ export const pinterestHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePinterestUrl(url)
-    const page = feeds.forUrl(url)
 
-    if (!parsed || !page) {
+    if (!parsed) {
       return []
     }
 
-    const host = 'www.pinterest.com'
-
     if (parsed.kind === 'board') {
-      const params = { host, username: parsed.username, board: parsed.board }
+      const params = { username: parsed.username, board: parsed.board }
 
-      return [page.getFeedEntry('pinterest:board', params)]
+      return [feeds.getFeedEntry('pinterest:board', params)]
     }
 
-    return [page.getFeedEntry('pinterest:pins', { host, username: parsed.username })]
+    return [feeds.getFeedEntry('pinterest:pins', { username: parsed.username })]
   },
 
   getFeedHint: (url) => {
