@@ -93,6 +93,17 @@
       "http://agal-gz.org/blogues/index.php/gomes/?tempskin=_atom"
     ]
   },
+  "bangumi": {
+    "bangumi:blog": ["https://bgm.tv/feed/blog/all", "https://bangumi.tv/feed/blog/all"],
+    "bangumi:collections": [
+      "https://bgm.tv/feed/user/sai/interests",
+      "https://bangumi.tv/feed/user/sai/interests"
+    ],
+    "bangumi:timeline": [
+      "https://bgm.tv/feed/user/sai/timeline",
+      "https://bangumi.tv/feed/user/sai/timeline"
+    ]
+  },
   "bearblog": {
     "bearblog:discover": [
       "https://bearblog.dev/discover/feed/",
