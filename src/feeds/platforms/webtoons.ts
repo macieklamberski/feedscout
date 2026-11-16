@@ -1,6 +1,7 @@
-import { composeQuery, getAnyOf, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, getQueryParam, isAnyOf, isHostOf, isLocale, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex } from '../../common/utils.js'
+import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers canvas, series (html).
@@ -18,8 +19,24 @@ const hosts = ['webtoons.com', 'www.webtoons.com', 'm.webtoons.com']
 
 const seriesRegex = /^\/([^/]+)\/([^/]+)\/([^/]+)\/(?:list|[^/]+\/viewer)\/?$/i
 
-const languages = ['de', 'en', 'es', 'fr', 'id', 'th', 'zh-hant']
 const canvasGenres = ['canvas', 'challenge']
+
+const feeds = definePlatformFeeds([
+  {
+    key: 'webtoons:series',
+    template: 'https://www.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
+  },
+  {
+    key: 'webtoons:series',
+    template: 'https://sg.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
+    isAlias: true,
+  },
+  {
+    key: 'webtoons:series',
+    template: 'https://us.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
+    isAlias: true,
+  },
+])
 
 export const parseWebtoonsUrl = (url: string): WebtoonsUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -28,11 +45,17 @@ export const parseWebtoonsUrl = (url: string): WebtoonsUrl | undefined => {
     return
   }
 
-  const [, languageSegment, genre, name] = parsedUrl.pathname.match(seriesRegex) ?? []
-  const language = getAnyOf(languageSegment, languages)
+  const [, language, genre, name] = parsedUrl.pathname.match(seriesRegex) ?? []
   const titleNo = getQueryParam(parsedUrl.searchParams, 'title_no')
 
-  if (!language || !genre || !name || !titleNo || !digitsRegex.test(titleNo)) {
+  if (
+    !language ||
+    !isLocale(language) ||
+    !genre ||
+    !name ||
+    !titleNo ||
+    !digitsRegex.test(titleNo)
+  ) {
     return
   }
 
@@ -55,11 +78,16 @@ export const webtoonsHandler: PlatformHandler = {
     // 500 unless its genre and name match the series.
     const genre = isAnyOf(parsed.genre, canvasGenres) ? 'challenge' : parsed.genre
 
-    return [
-      {
-        uri: `https://www.webtoons.com/${parsed.language}/${genre}/${parsed.name}/rss${composeQuery({ title_no: parsed.titleNo })}`,
-        hint: composeHint('webtoons:series'),
-      },
-    ]
+    return [feeds.getFeedEntry('webtoons:series', { ...parsed, genre })]
+  },
+
+  getFeedHint: (url) => {
+    const [language] = getPathSegments(url)
+
+    if (!isLocale(language)) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }

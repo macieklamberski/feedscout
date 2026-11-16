@@ -1,4 +1,4 @@
-import { isNonEmptyString } from 'trousse'
+import { composeQuery, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
 import { lemmyHandler as lemmyFeedHandler, parseLemmyUrl } from '../../feeds/platforms/lemmy.js'
@@ -51,7 +51,7 @@ export const lemmyEnricher: FaviconEnricher = async (ref, context) => {
   const [kind, name] = ref.id.split('/')
 
   if (kind === 'c') {
-    const apiUrl = `${origin}/api/v3/community?name=${encodeURIComponent(name)}`
+    const apiUrl = `${origin}/api/v3/community${composeQuery({ name })}`
     const response = await context.fetchFn(apiUrl)
     const icon = parseResponseJson(response)?.community_view?.community?.icon
 
@@ -61,7 +61,7 @@ export const lemmyEnricher: FaviconEnricher = async (ref, context) => {
   }
 
   if (kind === 'u') {
-    const apiUrl = `${origin}/api/v3/user?username=${encodeURIComponent(name)}&limit=1`
+    const apiUrl = `${origin}/api/v3/user${composeQuery({ username: name, limit: 1 })}`
     const response = await context.fetchFn(apiUrl)
     const avatar = parseResponseJson(response)?.person_view?.person?.avatar
 

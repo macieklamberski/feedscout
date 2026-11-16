@@ -1,6 +1,6 @@
 import { isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -10,6 +10,17 @@ export type CsdnUrl = { kind: 'blog'; username: string }
 const hosts = ['blog.csdn.net']
 
 const userRegex = /^\/([^/]+)/
+
+// blog.csdn.net serves the feed of rss.csdn.net under the same path, and redirects `rss/list`
+// to it.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'csdn:blog', template: 'https://rss.csdn.net/{username}/rss/map' },
+    { key: 'csdn:blog', template: '{scheme}://{host}/{username}/rss/map', isAlias: true },
+    { key: 'csdn:blog', template: 'https://blog.csdn.net/{username}/rss/list', isAlias: true },
+  ],
+  { hosts },
+)
 
 export const parseCsdnUrl = (url: string): CsdnUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -37,14 +48,10 @@ export const csdnHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: [
-          `https://rss.csdn.net/${parsed.username}/rss/map`,
-          `https://blog.csdn.net/${parsed.username}/rss/list`,
-        ],
-        hint: composeHint('csdn:blog'),
-      },
-    ]
+    const { username } = parsed
+
+    return [feeds.getFeedEntry('csdn:blog', { username })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

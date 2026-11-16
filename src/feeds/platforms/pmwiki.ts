@@ -1,7 +1,7 @@
-import { composeQuery, getPathSegments, getQueryParam, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getPathSegments, getQueryParam, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers page, pageQuery.
@@ -14,6 +14,31 @@ export type PmwikiUrl =
 // PmWiki names a group with a leading capital, so the first such segment ends the script path.
 const groupRegex = /^\p{Lu}[\p{L}\d_]*(?:-[\p{L}\d_]+)*$/u
 const pageNameSeparatorRegex = /[./]/
+
+// A wiki is known only by its markup, so its feeds are built on the script URL and claimed on no
+// host. The query form answers under clean URLs, path info and the bare script alike.
+const feeds = definePlatformFeeds([
+  {
+    key: 'pmwiki:group-changes',
+    template: '{root}?n={group}.RecentChanges&action=rss',
+    format: 'rss',
+  },
+  {
+    key: 'pmwiki:group-changes',
+    template: '{root}?n={group}.RecentChanges&action=atom',
+    format: 'atom',
+  },
+  {
+    key: 'pmwiki:site-changes',
+    template: '{root}?n=Site.AllRecentChanges&action=rss',
+    format: 'rss',
+  },
+  {
+    key: 'pmwiki:site-changes',
+    template: '{root}?n=Site.AllRecentChanges&action=atom',
+    format: 'atom',
+  },
+])
 
 // Every skin template carries the directive comment, and PmWiki prints it into the page.
 export const isPmwikiHtml = (content: string): boolean => {
@@ -35,14 +60,15 @@ export const parsePmwikiUrl = (url: string): PmwikiUrl | undefined => {
   }
 
   const segments = getPathSegments(url)
-  const groupIndex = segments.findIndex((segment) => groupRegex.test(segment))
-  const group = segments[groupIndex]
+  const group = segments.find((segment) => groupRegex.test(segment))
 
   if (!group) {
     return { kind: 'home', scriptPath: parsedUrl.pathname }
   }
 
-  return { kind: 'page', scriptPath: `/${segments.slice(0, groupIndex).join('/')}`, group }
+  const scriptPath = `/${segments.slice(0, segments.indexOf(group)).join('/')}`
+
+  return { kind: 'page', scriptPath, group }
 }
 
 export const pmwikiHandler: PlatformHandler = {
@@ -56,42 +82,29 @@ export const pmwikiHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePmwikiUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
     const { origin } = new URL(url)
-    // The query form answers under clean URLs, path info and the bare script alike.
-    const scriptUrl = `${origin}${parsed.scriptPath}`
-    const uris: Array<DiscoverUriEntry> = []
+    // The table drops one trailing slash from a root, so a script path ending in one, as `/wiki/`,
+    // keeps it.
+    const root = `${origin}${parsed.scriptPath}/`
 
     if (parsed.kind === 'page') {
-      const groupChanges = `${parsed.group}.RecentChanges`
-
-      uris.push(
-        {
-          uri: `${scriptUrl}${composeQuery({ n: groupChanges, action: 'rss' })}`,
-          hint: composeHint('pmwiki:group-changes', 'rss'),
-        },
-        {
-          uri: `${scriptUrl}${composeQuery({ n: groupChanges, action: 'atom' })}`,
-          hint: composeHint('pmwiki:group-changes', 'atom'),
-        },
-      )
+      return [
+        pageFeeds.getFeedEntry('pmwiki:group-changes', { root, group: parsed.group }, 'rss'),
+        pageFeeds.getFeedEntry('pmwiki:group-changes', { root, group: parsed.group }, 'atom'),
+        pageFeeds.getFeedEntry('pmwiki:site-changes', { root }, 'rss'),
+        pageFeeds.getFeedEntry('pmwiki:site-changes', { root }, 'atom'),
+      ]
     }
 
-    uris.push(
-      {
-        uri: `${scriptUrl}${composeQuery({ n: 'Site.AllRecentChanges', action: 'rss' })}`,
-        hint: composeHint('pmwiki:site-changes', 'rss'),
-      },
-      {
-        uri: `${scriptUrl}${composeQuery({ n: 'Site.AllRecentChanges', action: 'atom' })}`,
-        hint: composeHint('pmwiki:site-changes', 'atom'),
-      },
-    )
-
-    return uris
+    return [
+      pageFeeds.getFeedEntry('pmwiki:site-changes', { root }, 'rss'),
+      pageFeeds.getFeedEntry('pmwiki:site-changes', { root }, 'atom'),
+    ]
   },
 }

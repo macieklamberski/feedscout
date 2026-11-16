@@ -22,8 +22,8 @@ const subredditRef: DiscoverRef = {
 
 const userRef: DiscoverRef = {
   platform: 'reddit',
-  id: 'user/spez',
-  url: 'https://reddit.com/u/spez',
+  id: 'user/alice',
+  url: 'https://reddit.com/u/alice',
 }
 
 describe('redditHandler', () => {
@@ -43,12 +43,12 @@ describe('redditHandler', () => {
     })
 
     it('should return a user ref for /u/ paths', async () => {
-      expect(await redditHandler.resolve('https://reddit.com/u/spez')).toEqual([userRef])
+      expect(await redditHandler.resolve('https://reddit.com/u/alice')).toEqual([userRef])
     })
 
     it('should return the owner ref for a multireddit', async () => {
-      const url = 'https://reddit.com/user/spez/m/news'
-      const expected = [{ platform: 'reddit', id: 'user/spez', url }]
+      const url = 'https://reddit.com/user/alice/m/news'
+      const expected = [{ platform: 'reddit', id: 'user/alice', url }]
 
       expect(await redditHandler.resolve(url)).toEqual(expected)
     })
@@ -86,7 +86,7 @@ describe('redditEnricher', () => {
 
   it('should resolve user icon from icon_img', async () => {
     const context = createContext({
-      'https://www.reddit.com/user/spez/about.json': JSON.stringify({
+      'https://www.reddit.com/user/alice/about.json': JSON.stringify({
         data: { icon_img: 'https://styles.redditmedia.com/user-icon.png' },
       }),
     })
@@ -98,7 +98,7 @@ describe('redditEnricher', () => {
 
   it('should resolve user icon from snoovatar_img when icon_img is empty', async () => {
     const context = createContext({
-      'https://www.reddit.com/user/spez/about.json': JSON.stringify({
+      'https://www.reddit.com/user/alice/about.json': JSON.stringify({
         data: { icon_img: '', snoovatar_img: 'https://i.redd.it/snoovatar/snoo.png' },
       }),
     })
@@ -132,7 +132,7 @@ describe('redditEnricher', () => {
 
   it('should return empty array when user icon fields are empty', async () => {
     const context = createContext({
-      'https://www.reddit.com/user/spez/about.json': JSON.stringify({
+      'https://www.reddit.com/user/alice/about.json': JSON.stringify({
         data: { icon_img: '', snoovatar_img: '' },
       }),
     })
@@ -142,35 +142,35 @@ describe('redditEnricher', () => {
 
   it('should return empty array when user data fields are missing', async () => {
     const context = createContext({
-      'https://www.reddit.com/user/spez/about.json': JSON.stringify({ data: {} }),
+      'https://www.reddit.com/user/alice/about.json': JSON.stringify({ data: {} }),
     })
 
     expect(await redditEnricher(userRef, context)).toEqual([])
   })
 
-  it('should reject when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', () => {
     const context = createContext({
       'https://www.reddit.com/r/javascript/about.json': 'not json',
     })
     const throwing = () => redditEnricher(subredditRef, context)
 
-    await expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
+    expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const throwing = () => redditEnricher(subredditRef, { fetchFn })
 
-    await expect(throwing()).rejects.toThrow('Network error')
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
+  it('should reject when the response is not 2xx', () => {
     const throwing = () => redditEnricher(subredditRef, createContext({}))
     const expected = 'Unexpected status 404 from https://www.reddit.com/r/javascript/about.json'
 
-    await expect(throwing()).rejects.toThrow(expected)
+    expect(throwing()).rejects.toThrow(expected)
   })
 
   it('should fall back to icon_img when community_icon is not a string', async () => {

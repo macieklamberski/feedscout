@@ -1,11 +1,20 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
+import { hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type FriendicaUrl = { kind: 'profile'; username: string }
 
 const profileRegex = /^\/(?:profile\/|u\/|~)([^/]+)/i
+
+// A server is self-hosted on any domain, so the table only builds its feeds.
+const feeds = definePlatformFeeds([
+  { key: 'friendica:posts', template: '{root}/feed/{username}' },
+  { key: 'friendica:comments', template: '{root}/feed/{username}/comments' },
+  { key: 'friendica:replies', template: '{root}/feed/{username}/replies' },
+  { key: 'friendica:activity', template: '{root}/feed/{username}/activity' },
+])
 
 export const isFriendicaHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Friendica')
@@ -35,30 +44,20 @@ export const friendicaHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
     const parsed = parseFriendicaUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
+    const { username } = parsed
+
     return [
-      {
-        uri: `${origin}/feed/${parsed.username}`,
-        hint: composeHint('friendica:posts'),
-      },
-      {
-        uri: `${origin}/feed/${parsed.username}/comments`,
-        hint: composeHint('friendica:comments'),
-      },
-      {
-        uri: `${origin}/feed/${parsed.username}/replies`,
-        hint: composeHint('friendica:replies'),
-      },
-      {
-        uri: `${origin}/feed/${parsed.username}/activity`,
-        hint: composeHint('friendica:activity'),
-      },
+      page.getFeedEntry('friendica:posts', { username }),
+      page.getFeedEntry('friendica:comments', { username }),
+      page.getFeedEntry('friendica:replies', { username }),
+      page.getFeedEntry('friendica:activity', { username }),
     ]
   },
 }

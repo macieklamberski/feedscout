@@ -1,30 +1,40 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type PodcloudUrl, parsePodcloudUrl, podcloudHandler } from './podcloud.js'
 
 describe('parsePodcloudUrl', () => {
   it('should return the show for a show subdomain', () => {
+    const value = 'https://alice-podcast.lepodcast.fr/'
     const expected: PodcloudUrl = { kind: 'show' }
 
-    expect(parsePodcloudUrl('https://alice-podcast.lepodcast.fr/')).toEqual(expected)
+    expect(parsePodcloudUrl(value)).toEqual(expected)
   })
 
   it('should return the show for an episode page', () => {
+    const value = 'https://alice-podcast.lepodcast.fr/first-episode'
     const expected: PodcloudUrl = { kind: 'show' }
 
-    expect(parsePodcloudUrl('https://alice-podcast.lepodcast.fr/first-episode')).toEqual(expected)
+    expect(parsePodcloudUrl(value)).toEqual(expected)
   })
 
   it('should return undefined for the apex domain', () => {
-    expect(parsePodcloudUrl('https://lepodcast.fr/')).toBeUndefined()
+    const value = 'https://lepodcast.fr/'
+
+    expect(parsePodcloudUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for a nested subdomain', () => {
-    expect(parsePodcloudUrl('https://www.example.lepodcast.fr/')).toBeUndefined()
+    const value = 'https://www.example.lepodcast.fr/'
+
+    expect(parsePodcloudUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
-    expect(parsePodcloudUrl('https://example.com/')).toBeUndefined()
+    const value = 'https://example.com/'
+
+    expect(parsePodcloudUrl(value)).toBeUndefined()
   })
 })
 
@@ -35,14 +45,16 @@ describe('podcloudHandler', () => {
       [false, 'https://www.lepodcast.fr'],
     ]
 
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(podcloudHandler.match(url)).toBe(expected)
+    it.each(values)('should return %s for %s', (expected, value) => {
+      expect(podcloudHandler.match(value)).toBe(expected)
     })
   })
 
   describe('resolve', () => {
     it('should return empty array for a URL outside the platform', () => {
-      expect(podcloudHandler.resolve('https://example.com/')).toEqual([])
+      const value = 'https://example.com/'
+
+      expect(podcloudHandler.resolve(value)).toEqual([])
     })
 
     it('should return the show feed for an episode page', () => {
@@ -57,16 +69,82 @@ describe('podcloudHandler', () => {
       expect(podcloudHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the https feed for an http page', () => {
+    it('should return the feed under the page scheme for an http show page', () => {
       const value = 'http://alice-podcast.lepodcast.fr/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice-podcast.lepodcast.fr/rss',
+          uri: 'http://alice-podcast.lepodcast.fr/rss',
           hint: { key: 'podcloud:podcast', label: 'Podcast' },
         },
       ]
 
       expect(podcloudHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for a show feed', () => {
+      const value = 'https://alice-podcast.lepodcast.fr/rss'
+      const expected: DiscoverUriHint = { key: 'podcloud:podcast', label: 'Podcast' }
+
+      expect(podcloudHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for a show feed over http', () => {
+      const value = 'http://alice-podcast.lepodcast.fr/rss'
+      const expected: DiscoverUriHint = { key: 'podcloud:podcast', label: 'Podcast' }
+
+      expect(podcloudHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the podcast hint for the /feed show feed', () => {
+      const value = 'https://alice-podcast.lepodcast.fr/feed'
+      const expected: DiscoverUriHint = { key: 'podcloud:podcast', label: 'Podcast' }
+
+      expect(podcloudHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for an episode page', () => {
+      const value = 'https://alice-podcast.lepodcast.fr/first-episode'
+
+      expect(podcloudHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the site feed on the apex domain', () => {
+      const value = 'https://lepodcast.fr/rss.xml'
+
+      expect(podcloudHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on a nested subdomain', () => {
+      const value = 'https://feeds.example.lepodcast.fr/rss'
+
+      expect(podcloudHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('discoverUrisFromPlatform', () => {
+    const values = [
+      'https://alice-podcast.lepodcast.fr/rss',
+      'http://alice-podcast.lepodcast.fr/rss',
+      'https://alice-podcast.lepodcast.fr/rss/',
+      'https://alice-podcast.lepodcast.fr/feed',
+    ]
+
+    it.each(values)('should return %s as given with its key', async (value) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [podcloudHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: value,
+          hint: { key: 'podcloud:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

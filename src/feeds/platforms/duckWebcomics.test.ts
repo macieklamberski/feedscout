@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import {
   type DuckWebcomicsUrl,
   duckWebcomicsHandler,
@@ -8,29 +8,29 @@ import {
 
 describe('parseDuckWebcomicsUrl', () => {
   it('should return the comic for a comic home page', () => {
-    const expected: DuckWebcomicsUrl = { kind: 'comic', comic: 'Quack_Tales' }
+    const expected: DuckWebcomicsUrl = { kind: 'comic', comic: 'Alice_Tales' }
 
-    expect(parseDuckWebcomicsUrl('https://www.theduckwebcomics.com/Quack_Tales/')).toEqual(expected)
+    expect(parseDuckWebcomicsUrl('https://www.theduckwebcomics.com/Alice_Tales/')).toEqual(expected)
   })
 
   it('should return the comic for a strip page', () => {
-    const expected: DuckWebcomicsUrl = { kind: 'comic', comic: 'Quack_Tales' }
+    const expected: DuckWebcomicsUrl = { kind: 'comic', comic: 'Alice_Tales' }
 
-    expect(parseDuckWebcomicsUrl('https://www.theduckwebcomics.com/Quack_Tales/1234567/')).toEqual(
+    expect(parseDuckWebcomicsUrl('https://www.theduckwebcomics.com/Alice_Tales/1234567/')).toEqual(
       expected,
     )
   })
 
   it('should return the comic for the bare host', () => {
-    const expected: DuckWebcomicsUrl = { kind: 'comic', comic: 'Quack_Tales' }
+    const expected: DuckWebcomicsUrl = { kind: 'comic', comic: 'Alice_Tales' }
 
-    expect(parseDuckWebcomicsUrl('https://theduckwebcomics.com/Quack_Tales')).toEqual(expected)
+    expect(parseDuckWebcomicsUrl('https://theduckwebcomics.com/Alice_Tales')).toEqual(expected)
   })
 
   it('should keep the comic case', () => {
-    const expected: DuckWebcomicsUrl = { kind: 'comic', comic: 'QuAcK' }
+    const expected: DuckWebcomicsUrl = { kind: 'comic', comic: 'AlIcE' }
 
-    expect(parseDuckWebcomicsUrl('https://www.theduckwebcomics.com/QuAcK/')).toEqual(expected)
+    expect(parseDuckWebcomicsUrl('https://www.theduckwebcomics.com/AlIcE/')).toEqual(expected)
   })
 
   it('should return undefined for a segment that is not a comic name', () => {
@@ -42,7 +42,7 @@ describe('parseDuckWebcomicsUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseDuckWebcomicsUrl('https://example.com/Quack_Tales/')).toBeUndefined()
+    expect(parseDuckWebcomicsUrl('https://example.com/Alice_Tales/')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -53,20 +53,32 @@ describe('parseDuckWebcomicsUrl', () => {
 describe('duckWebcomicsHandler', () => {
   describe('match', () => {
     it('should match a comic URL', () => {
-      expect(duckWebcomicsHandler.match('https://www.theduckwebcomics.com/Quack_Tales/')).toBe(true)
+      expect(duckWebcomicsHandler.match('https://www.theduckwebcomics.com/Alice_Tales/')).toBe(true)
     })
 
     it('should not match other hosts', () => {
-      expect(duckWebcomicsHandler.match('https://example.com/Quack_Tales/')).toBe(false)
+      expect(duckWebcomicsHandler.match('https://example.com/Alice_Tales/')).toBe(false)
     })
   })
 
   describe('resolve', () => {
     it('should return the comic feed on the page origin', () => {
-      const value = 'https://theduckwebcomics.com/Quack_Tales/1234567/'
+      const value = 'https://theduckwebcomics.com/Alice_Tales/1234567/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://theduckwebcomics.com/Quack_Tales/rss/',
+          uri: 'https://theduckwebcomics.com/Alice_Tales/rss/',
+          hint: { key: 'duck-webcomics:comic', label: 'Comic' },
+        },
+      ]
+
+      expect(duckWebcomicsHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the scheme of an http page', () => {
+      const value = 'http://www.theduckwebcomics.com/Alice_Tales/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://www.theduckwebcomics.com/Alice_Tales/rss/',
           hint: { key: 'duck-webcomics:comic', label: 'Comic' },
         },
       ]
@@ -75,11 +87,11 @@ describe('duckWebcomicsHandler', () => {
     })
 
     it('should spell the comic as the page links its feed', () => {
-      const value = 'https://www.theduckwebcomics.com/quack_tales/'
-      const content = '<a href="/Other_Comic/rss/">rss</a><a href="/Quack_Tales/rss/">rss</a>'
+      const value = 'https://www.theduckwebcomics.com/alice_tales/'
+      const content = '<a href="/Other_Comic/rss/">rss</a><a href="/Alice_Tales/rss/">rss</a>'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://www.theduckwebcomics.com/Quack_Tales/rss/',
+          uri: 'https://www.theduckwebcomics.com/Alice_Tales/rss/',
           hint: { key: 'duck-webcomics:comic', label: 'Comic' },
         },
       ]
@@ -88,11 +100,11 @@ describe('duckWebcomicsHandler', () => {
     })
 
     it('should spell the comic as a feed link with an uppercase route word does', () => {
-      const value = 'https://www.theduckwebcomics.com/quack_tales/'
-      const content = '<a href="/Quack_Tales/RSS/">rss</a>'
+      const value = 'https://www.theduckwebcomics.com/alice_tales/'
+      const content = '<a href="/Alice_Tales/RSS/">rss</a>'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://www.theduckwebcomics.com/Quack_Tales/rss/',
+          uri: 'https://www.theduckwebcomics.com/Alice_Tales/rss/',
           hint: { key: 'duck-webcomics:comic', label: 'Comic' },
         },
       ]
@@ -105,19 +117,32 @@ describe('duckWebcomicsHandler', () => {
     })
   })
 
-  describe('guessExclusionRegex', () => {
-    it('should match a guessed comic feed in another case', () => {
-      expect(
-        duckWebcomicsHandler.guessExclusionRegex?.test('https://www.theduckwebcomics.com/hats/rss'),
-      ).toBe(true)
+  describe('getFeedHint', () => {
+    it('should return the comic hint for a comic feed', () => {
+      const value = 'https://www.theduckwebcomics.com/hats/rss/'
+      const expected: DiscoverUriHint = { key: 'duck-webcomics:comic', label: 'Comic' }
+
+      expect(duckWebcomicsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should not match a strip page', () => {
-      expect(
-        duckWebcomicsHandler.guessExclusionRegex?.test(
-          'https://www.theduckwebcomics.com/HaTs/4960244/',
-        ),
-      ).toBe(false)
+    it('should return the comic hint for a comic feed without the trailing slash', () => {
+      const value = 'https://theduckwebcomics.com/hats/rss'
+      const expected: DiscoverUriHint = { key: 'duck-webcomics:comic', label: 'Comic' }
+
+      expect(duckWebcomicsHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the hint for an http comic feed', () => {
+      const value = 'http://theduckwebcomics.com/hats/rss/'
+      const expected: DiscoverUriHint = { key: 'duck-webcomics:comic', label: 'Comic' }
+
+      expect(duckWebcomicsHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a strip page', () => {
+      const value = 'https://www.theduckwebcomics.com/HaTs/4960244/'
+
+      expect(duckWebcomicsHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 })

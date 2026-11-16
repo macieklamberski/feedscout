@@ -1,17 +1,24 @@
 version: 2
+
+multi-ecosystem-groups:
+  dependencies:
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+
 updates:
   - package-ecosystem: bun
     directory: /
-    schedule:
-      interval: weekly
-    cooldown:
-      default-days: 1
-    target-branch: main
+    patterns: ['*']
+    multi-ecosystem-group: dependencies
+
+  - package-ecosystem: github-actions
+    directory: /
+    patterns: ['*']
+    multi-ecosystem-group: dependencies
 
   - package-ecosystem: docker
-    directory: /.github/workflows
-    schedule:
-      interval: weekly
-    cooldown:
-      default-days: 1
-    target-branch: main
+    directories: ['/**/*']
+    patterns: ['*']
+    multi-ecosystem-group: dependencies

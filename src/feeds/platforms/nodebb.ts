@@ -1,7 +1,7 @@
-import { parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { includesAnyOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getNumericId, hasMarker } from '../../common/utils.js'
+import { getNumericId, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers category, topic.
@@ -13,14 +13,22 @@ export type NodebbUrl =
   | { kind: 'forum' }
 export type NodebbPage = NodebbUrl & { siteUrl: string }
 
-const nodebbRegex = /nodebb/i
 const categoryRegex = /\/category\/(?<id>[^/]+)/i
 const topicRegex = /\/topic\/(?<id>[^/]+)/i
 // The page config prints the install's sub-path, such as `/forum`, and an empty one at the root.
 const relativePathRegex = /"relative_path":"(?<relativePath>\/[^"]*)"/
 
+// NodeBB is self-hosted and known only by its headers, so nothing in a feed URL names it and the
+// table only builds, under the install root the page config names.
+const feeds = definePlatformFeeds([
+  { key: 'nodebb:topic', template: '{root}/topic/{topicId}.rss' },
+  { key: 'nodebb:category', template: '{root}/category/{categoryId}.rss' },
+  { key: 'nodebb:recent', template: '{root}/recent.rss' },
+  { key: 'nodebb:popular', template: '{root}/popular.rss' },
+])
+
 export const isNodebbHeaders = (headers: Headers): boolean => {
-  return nodebbRegex.test(headers.get('x-powered-by') ?? '')
+  return includesAnyOf(headers.get('x-powered-by'), 'nodebb')
 }
 
 export const parseNodebbUrl = (url: string): NodebbUrl | undefined => {
@@ -73,26 +81,36 @@ export const nodebbHandler: PlatformHandler = {
       return []
     }
 
-    const { siteUrl } = page
-    const uris: Array<DiscoverUriEntry> = []
+    const root = page.siteUrl
+
+    if (page.kind === 'topic' && page.categoryId) {
+      return [
+        feeds.getFeedEntry('nodebb:topic', { root, topicId: page.topicId }),
+        feeds.getFeedEntry('nodebb:category', { root, categoryId: page.categoryId }),
+        feeds.getFeedEntry('nodebb:recent', { root }),
+        feeds.getFeedEntry('nodebb:popular', { root }),
+      ]
+    }
 
     if (page.kind === 'topic') {
-      uris.push({
-        uri: `${siteUrl}/topic/${page.topicId}.rss`,
-        hint: composeHint('nodebb:topic'),
-      })
+      return [
+        feeds.getFeedEntry('nodebb:topic', { root, topicId: page.topicId }),
+        feeds.getFeedEntry('nodebb:recent', { root }),
+        feeds.getFeedEntry('nodebb:popular', { root }),
+      ]
     }
 
-    if (page.kind !== 'forum' && page.categoryId) {
-      uris.push({
-        uri: `${siteUrl}/category/${page.categoryId}.rss`,
-        hint: composeHint('nodebb:category'),
-      })
+    if (page.kind === 'category') {
+      return [
+        feeds.getFeedEntry('nodebb:category', { root, categoryId: page.categoryId }),
+        feeds.getFeedEntry('nodebb:recent', { root }),
+        feeds.getFeedEntry('nodebb:popular', { root }),
+      ]
     }
 
-    uris.push({ uri: `${siteUrl}/recent.rss`, hint: composeHint('nodebb:recent') })
-    uris.push({ uri: `${siteUrl}/popular.rss`, hint: composeHint('nodebb:popular') })
-
-    return uris
+    return [
+      feeds.getFeedEntry('nodebb:recent', { root }),
+      feeds.getFeedEntry('nodebb:popular', { root }),
+    ]
   },
 }

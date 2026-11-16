@@ -1,24 +1,28 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { NoteUrl } from './note.js'
 import { noteHandler, parseNoteUrl } from './note.js'
 
 describe('parseNoteUrl', () => {
   it('should return the user for a profile page', () => {
-    const expected: NoteUrl = { kind: 'user', username: 'tsukasa_yamato' }
+    const expected: NoteUrl = { kind: 'user', username: 'bob_smith' }
 
-    expect(parseNoteUrl('https://note.com/tsukasa_yamato')).toEqual(expected)
+    expect(parseNoteUrl('https://note.com/bob_smith')).toEqual(expected)
   })
 
   it('should return the note for an article page', () => {
-    const expected: NoteUrl = { kind: 'note', username: 'tsukasa_yamato' }
+    const expected: NoteUrl = { kind: 'note', username: 'bob_smith' }
 
-    expect(parseNoteUrl('https://note.com/tsukasa_yamato/n/some-note')).toEqual(expected)
+    expect(parseNoteUrl('https://note.com/bob_smith/n/some-note')).toEqual(expected)
   })
 
-  it('should return the user for the www host', () => {
+  it('should return the user for the note.mu host', () => {
+    const value = 'https://note.mu/alice'
     const expected: NoteUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseNoteUrl('https://www.note.com/alice')).toEqual(expected)
+    expect(parseNoteUrl(value)).toEqual(expected)
   })
 
   it('should return the magazine for a magazine page', () => {
@@ -83,11 +87,15 @@ describe('noteHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for blog', () => {
-      const value = 'https://note.com/tsukasa_yamato'
-      const expected = [
+      const value = 'https://note.com/bob_smith'
+      const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://note.com/tsukasa_yamato/rss',
+          uri: 'https://note.com/bob_smith/rss',
           hint: { key: 'note:blog', label: 'Blog' },
+        },
+        {
+          uri: 'https://note.com/rss',
+          hint: { key: 'note:featured', label: 'Featured' },
         },
       ]
 
@@ -95,11 +103,15 @@ describe('noteHandler', () => {
     })
 
     it('should return the author blog feed for a note', () => {
-      const value = 'https://note.com/tsukasa_yamato/n/n1234567890ab'
-      const expected = [
+      const value = 'https://note.com/bob_smith/n/n1234567890ab'
+      const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://note.com/tsukasa_yamato/rss',
+          uri: 'https://note.com/bob_smith/rss',
           hint: { key: 'note:blog', label: 'Blog' },
+        },
+        {
+          uri: 'https://note.com/rss',
+          hint: { key: 'note:featured', label: 'Featured' },
         },
       ]
 
@@ -108,10 +120,14 @@ describe('noteHandler', () => {
 
     it('should return feed URL for hashtag page', () => {
       const value = 'https://note.com/hashtag/AI'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://note.com/hashtag/AI/rss',
           hint: { key: 'note:hashtag', label: 'Hashtag' },
+        },
+        {
+          uri: 'https://note.com/rss',
+          hint: { key: 'note:featured', label: 'Featured' },
         },
       ]
 
@@ -120,10 +136,14 @@ describe('noteHandler', () => {
 
     it('should return feed URL for magazine page', () => {
       const value = 'https://note.com/notemag/m/m7244518f06ae'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://note.com/notemag/m/m7244518f06ae/rss',
           hint: { key: 'note:magazine', label: 'Magazine' },
+        },
+        {
+          uri: 'https://note.com/rss',
+          hint: { key: 'note:featured', label: 'Featured' },
         },
       ]
 
@@ -140,6 +160,91 @@ describe('noteHandler', () => {
       ]
 
       expect(noteHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the blog hint for a blog feed', () => {
+      const value = 'https://note.com/bob_smith/rss'
+      const expected: DiscoverUriHint = { key: 'note:blog', label: 'Blog' }
+
+      expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the blog hint for a blog feed whose name ends in an encoded space', () => {
+      const value = 'https://note.com/alice%20/rss'
+      const expected: DiscoverUriHint = { key: 'note:blog', label: 'Blog' }
+
+      expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the hashtag hint for a hashtag feed', () => {
+      const value = 'https://note.com/hashtag/%E6%9D%BE%E5%B1%8B/rss'
+      const expected: DiscoverUriHint = { key: 'note:hashtag', label: 'Hashtag' }
+
+      expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the magazine hint for a magazine feed', () => {
+      const value = 'https://note.com/notemag/m/m7244518f06ae/rss'
+      const expected: DiscoverUriHint = { key: 'note:magazine', label: 'Magazine' }
+
+      expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the featured hint for the featured feed', () => {
+      const value = 'https://note.com/rss'
+      const expected: DiscoverUriHint = { key: 'note:featured', label: 'Featured' }
+
+      expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a profile page', () => {
+      const value = 'https://note.com/bob_smith'
+
+      expect(noteHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a hashtag page', () => {
+      const value = 'https://note.com/hashtag/AI'
+
+      expect(noteHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path under a dotted first segment', () => {
+      const value = 'https://note.com/robots.txt/rss'
+
+      expect(noteHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/bob_smith/rss'
+
+      expect(noteHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://note.com/alice%20/rss', { key: 'note:blog', label: 'Blog' }],
+      ['https://note.com/hashtag/AI/rss', { key: 'note:hashtag', label: 'Hashtag' }],
+      ['https://note.com/notemag/m/m7244518f06ae/rss', { key: 'note:magazine', label: 'Magazine' }],
+      ['https://note.com/rss', { key: 'note:featured', label: 'Featured' }],
+      ['https://note.mu/alice/rss', { key: 'note:blog', label: 'Blog' }],
+      ['https://note.mu/hashtag/AI/rss', { key: 'note:hashtag', label: 'Hashtag' }],
+      ['https://note.mu/notemag/m/m7244518f06ae/rss', { key: 'note:magazine', label: 'Magazine' }],
+      ['https://note.mu/rss', { key: 'note:featured', label: 'Featured' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [noteHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

@@ -1,6 +1,7 @@
 import { getPathSegments, isAnyOf, isHostOf, isHostOrSubdomainOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers profileSubdomain (html).
@@ -10,6 +11,16 @@ export type ArtstationUrl = { kind: 'profile'; username: string } | { kind: 'art
 
 const domains = ['artstation.com']
 const hosts = ['artstation.com', 'www.artstation.com']
+
+// `/artwork.rss` reads before `/{username}.rss`, so the site feed never reads as a user's.
+const feeds = definePlatformFeeds([
+  {
+    key: 'artstation:artwork',
+    template: 'https://www.artstation.com/artwork.rss?sorting={sorting}',
+  },
+  { key: 'artstation:artwork', template: 'https://www.artstation.com/artwork.rss' },
+  { key: 'artstation:portfolio', template: 'https://www.artstation.com/{username}.rss' },
+])
 
 export const parseArtstationUrl = (url: string): ArtstationUrl | undefined => {
   if (!isHostOrSubdomainOf(url, domains)) {
@@ -27,16 +38,16 @@ export const parseArtstationUrl = (url: string): ArtstationUrl | undefined => {
     return { kind: 'profile', username: subdomain }
   }
 
-  const [first, second] = getPathSegments(url)
+  const [routeOrUsername, artworkId] = getPathSegments(url)
 
-  if (!first) {
+  if (!routeOrUsername) {
     return { kind: 'artwork' }
   }
 
   // Global artwork page: /artwork. A single artwork at /artwork/{id} names its artist only in the
   // page.
-  if (isAnyOf(first, 'artwork')) {
-    if (second) {
+  if (isAnyOf(routeOrUsername, 'artwork')) {
+    if (artworkId) {
       return
     }
 
@@ -44,11 +55,11 @@ export const parseArtstationUrl = (url: string): ArtstationUrl | undefined => {
   }
 
   // ArtStation names carry no dots, so a dotted segment such as robots.txt is a file of the site.
-  if (first.includes('.')) {
+  if (routeOrUsername.includes('.')) {
     return
   }
 
-  return { kind: 'profile', username: first }
+  return { kind: 'profile', username: routeOrUsername }
 }
 
 export const artstationHandler: PlatformHandler = {
@@ -63,24 +74,19 @@ export const artstationHandler: PlatformHandler = {
       return []
     }
 
+    // The artwork feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'artwork') {
       return [
-        {
-          uri: 'https://www.artstation.com/artwork.rss',
-          hint: composeHint('artstation:artwork'),
-        },
-        {
-          uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
-          hint: composeHint('artstation:artwork-latest'),
-        },
+        feeds.getFeedEntry('artstation:artwork'),
+        feeds.getFeedEntry('artstation:artwork', { sorting: 'latest' }),
       ]
     }
 
     return [
-      {
-        uri: `https://www.artstation.com/${parsed.username}.rss`,
-        hint: composeHint('artstation:portfolio'),
-      },
+      feeds.getFeedEntry('artstation:portfolio', { username: parsed.username }),
+      feeds.getFeedEntry('artstation:artwork'),
     ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

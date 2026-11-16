@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { getOrigin, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
 import {
@@ -11,7 +11,7 @@ import { getResponseText } from '../utils.js'
 const platform = 'postype'
 
 // A channel without an avatar carries a placeholder from d33pksfia2a94m.cloudfront.net.
-const avatarHost = 'd3mcojo3jv0dbr.cloudfront.net'
+const avatarHosts = ['d3mcojo3jv0dbr.cloudfront.net']
 
 // The CDN center-crops to a square only when both sides fit inside the raw file, which is
 // often under 400 pixels on a side. Postype's own channel thumbnail asks for 200.
@@ -25,12 +25,13 @@ const parseAvatar = (html: string): string | undefined => {
   }
 
   const parsedUrl = parseUrl(image)
+  const origin = getOrigin(parsedUrl)
 
-  if (!parsedUrl || parsedUrl.hostname !== avatarHost) {
+  if (!parsedUrl || !origin || !isHostOf(parsedUrl, avatarHosts)) {
     return
   }
 
-  return `${parsedUrl.origin}${parsedUrl.pathname}${avatarQuery}`
+  return `${origin}${parsedUrl.pathname}${avatarQuery}`
 }
 
 export const postypeHandler: PlatformHandler = {

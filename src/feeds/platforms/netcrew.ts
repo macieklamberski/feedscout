@@ -1,7 +1,8 @@
 import { DomUtils } from 'htmlparser2'
 import { parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -9,8 +10,17 @@ import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 export type NetcrewUrl = { kind: 'home' }
 
 const homePathRegex = /^\/(?:index\.html)?$/i
-const searchScriptRegex = /^\/ssi\/js\/search-trend\.js(?:\?|$)/
-const styleImportRegex = /@import\s+url\(["']?\/ssi\/css\//
+const searchScriptRegex = /^\/ssi\/js\/search-trend\.js(?:\?|$)/i
+const styleImportRegex = /@import\s+url\(["']?\/ssi\/css\//i
+
+// NetCrew CMS runs on each site's own domain and is known only by its page marker, so nothing in a
+// feed URL names it and the table only builds. The list id names the format, `10` for RSS 1.0 and
+// `20` for RSS 2.0. An install serves one of the two, so both are spellings of one feed, tried in
+// turn.
+const feeds = definePlatformFeeds([
+  { key: 'netcrew:updates', template: '{root}/rss/10/list1.xml' },
+  { key: 'netcrew:updates', template: '{root}/rss/20/list1.xml', isAlias: true },
+])
 
 // Every NetCrew CMS template loads its search script from `/ssi/js/search-trend.js` and its styles
 // from `/ssi/css/` at the site root.
@@ -57,20 +67,12 @@ export const netcrewHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseNetcrewUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !pageFeeds) {
       return []
     }
 
-    const { origin } = new URL(url)
-
-    // The list id names the format, `10` for RSS 1.0 and `20` for RSS 2.0, and an install serves
-    // one of them.
-    return [
-      {
-        uri: [`${origin}/rss/10/list1.xml`, `${origin}/rss/20/list1.xml`],
-        hint: composeHint('netcrew:updates'),
-      },
-    ]
+    return [pageFeeds.getFeedSpellings('netcrew:updates')]
   },
 }

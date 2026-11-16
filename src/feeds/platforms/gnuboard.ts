@@ -1,6 +1,7 @@
-import { composeQuery, getQueryParam, parseUrl } from 'trousse'
+import { getQueryParam, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames, hasMarker } from '../../common/utils.js'
+import { getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -11,6 +12,11 @@ const boardScriptRegex = /^(.*)\/bbs\/board\.php$/i
 const boardVariableRegex = /var g[45]_bo_table\s*=\s*"(\w+)"/
 const installUrlRegex = /var g5_url\s*=\s*"([^"]+)"/
 const trailingSlashRegex = /\/$/
+
+// A board is self-hosted on any domain, so the table only builds its feed.
+const feeds = definePlatformFeeds([
+  { key: 'gnuboard:board', template: '{root}/bbs/rss.php?bo_table={board}' },
+])
 
 export type GnuboardPage = { kind: 'board'; root: string; board: string }
 
@@ -74,14 +80,8 @@ export const gnuboardHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-    const query = composeQuery({ bo_table: page.board })
+    const root = `${new URL(url).origin}${page.root}`
 
-    return [
-      {
-        uri: `${origin}${page.root}/bbs/rss.php${query}`,
-        hint: composeHint('gnuboard:board'),
-      },
-    ]
+    return [feeds.getFeedEntry('gnuboard:board', { root, board: page.board })]
   },
 }

@@ -1,14 +1,6 @@
-import {
-  encodePathSegment,
-  getPathSegments,
-  getQueryParam,
-  isAnyOf,
-  isHostOf,
-  parseUrl,
-} from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers channel, explore, home, videos (html), partly covers videosCategory.
@@ -20,6 +12,24 @@ export const hosts = ['nebula.tv', 'www.nebula.tv']
 // /explore is the canonical landing page (Nebula 301s root and /videos to it).
 // Treated as the global feed surface, not a creator slug.
 const globalPaths = ['videos', 'explore']
+
+// Originals is also a category, so its row comes before the category row that would read it.
+const feeds = definePlatformFeeds([
+  { key: 'nebula:videos', template: 'https://rss.nebula.app/video/channels/{slug}.rss' },
+  {
+    key: 'nebula:videos-plus',
+    template: 'https://rss.nebula.app/video/channels/{slug}.rss?plus=true',
+  },
+  { key: 'nebula:originals', template: 'https://rss.nebula.app/video/categories/originals.rss' },
+  { key: 'nebula:category', template: 'https://rss.nebula.app/video/categories/{category}.rss' },
+  {
+    key: 'nebula:category-plus',
+    template: 'https://rss.nebula.app/video/categories/{category}.rss?plus=true',
+  },
+  { key: 'nebula:videos-all', template: 'https://rss.nebula.app/video.rss' },
+  { key: 'nebula:videos-all-plus', template: 'https://rss.nebula.app/video.rss?plus=true' },
+  { key: 'nebula:channels', template: 'https://rss.nebula.app/video/channels.rss' },
+])
 
 export const parseNebulaUrl = (url: string): NebulaUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -51,53 +61,34 @@ export const nebulaHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'explore') {
-      // The category comes out of the query decoded, and it goes into a path.
-      const category = encodePathSegment(parsed.category ?? '')
-      const uris: Array<DiscoverUriEntry> = []
+      const { category } = parsed
 
       if (category) {
-        uris.push({
-          uri: `https://rss.nebula.app/video/categories/${category}.rss`,
-          hint: composeHint('nebula:category'),
-        })
-        uris.push({
-          uri: `https://rss.nebula.app/video/categories/${category}.rss?plus=true`,
-          hint: composeHint('nebula:category-plus'),
-        })
+        return [
+          feeds.getFeedEntry('nebula:category', { category }),
+          feeds.getFeedEntry('nebula:category-plus', { category }),
+          feeds.getFeedEntry('nebula:videos-all'),
+          feeds.getFeedEntry('nebula:videos-all-plus'),
+          feeds.getFeedEntry('nebula:originals'),
+          feeds.getFeedEntry('nebula:channels'),
+        ]
       }
 
-      uris.push({
-        uri: 'https://rss.nebula.app/video.rss',
-        hint: composeHint('nebula:videos-all'),
-      })
-      uris.push({
-        uri: 'https://rss.nebula.app/video.rss?plus=true',
-        hint: composeHint('nebula:videos-all-plus'),
-      })
-      uris.push({
-        uri: 'https://rss.nebula.app/video/categories/originals.rss',
-        hint: composeHint('nebula:originals'),
-      })
-      uris.push({
-        uri: 'https://rss.nebula.app/video/channels.rss',
-        hint: composeHint('nebula:channels'),
-      })
-
-      return uris
+      return [
+        feeds.getFeedEntry('nebula:videos-all'),
+        feeds.getFeedEntry('nebula:videos-all-plus'),
+        feeds.getFeedEntry('nebula:originals'),
+        feeds.getFeedEntry('nebula:channels'),
+      ]
     }
 
     const { slug } = parsed
-    const uris: Array<DiscoverUriEntry> = []
 
-    uris.push({
-      uri: `https://rss.nebula.app/video/channels/${slug}.rss`,
-      hint: composeHint('nebula:videos'),
-    })
-    uris.push({
-      uri: `https://rss.nebula.app/video/channels/${slug}.rss?plus=true`,
-      hint: composeHint('nebula:videos-plus'),
-    })
-
-    return uris
+    return [
+      feeds.getFeedEntry('nebula:videos', { slug }),
+      feeds.getFeedEntry('nebula:videos-plus', { slug }),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

@@ -1,12 +1,24 @@
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type SakuraBlogUrl = { kind: 'blog'; hostname: string }
 
 const domains = ['sblo.jp']
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'sakura-blog:posts', template: '{scheme}://{host}/index20.rdf', format: 'rss' },
+    // A blog made since the platform's redesign serves its posts at `/rss.xml` alone, and an older
+    // blog answers 404 there. It is built under the page's own origin, since a newer blog serves
+    // https and redirects http there.
+    { key: 'sakura-blog:posts', template: '{root}/rss.xml', format: 'rss', isAlias: true },
+    { key: 'sakura-blog:posts', template: '{scheme}://{host}/index.rdf', format: 'rdf' },
+  ],
+  { domains, isWwwTenantPrefix: true },
+)
 
 export const parseSakuraBlogUrl = (url: string): SakuraBlogUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -22,21 +34,19 @@ export const sakuraBlogHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsed = parseSakuraBlogUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parseSakuraBlogUrl(url) || !page) {
       return []
     }
 
     // Blogs on the classic engine answer over http only, as their alternate links spell it: https
-    // fails the TLS handshake with a certificate that names blog.sakura.ne.jp. Newer blogs serve
-    // https and /rss.xml instead, which generic discovery finds through the page's anchor.
-    const origin = `http://${parsed.hostname}`
-    const uris: Array<DiscoverUriEntry> = []
-
-    uris.push({ uri: `${origin}/index20.rdf`, hint: composeHint('sakura-blog:posts', 'rss') })
-    uris.push({ uri: `${origin}/index.rdf`, hint: composeHint('sakura-blog:posts', 'rdf') })
-
-    return uris
+    // fails the TLS handshake with a certificate that names blog.sakura.ne.jp.
+    return [
+      page.getFeedSpellings('sakura-blog:posts', { scheme: 'http' }, 'rss'),
+      page.getFeedEntry('sakura-blog:posts', { scheme: 'http' }, 'rdf'),
+    ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

@@ -1,17 +1,37 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   parseSverigesRadioUrl,
   type SverigesRadioUrl,
   sverigesRadioHandler,
 } from './sverigesRadio.js'
 
+const programHint: DiscoverUriHint = { key: 'sveriges-radio:program', label: 'Program' }
+const programFormatHint: DiscoverUriHint = {
+  key: 'sveriges-radio:program-format',
+  label: 'Program format',
+}
+const feedCases: Array<[string, DiscoverUriHint]> = [
+  ['https://api.sr.se/api/rss/program/12345', programHint],
+  ['http://api.sr.se/api/rss/program/12345/', programHint],
+  ['https://api.sr.se/api/rss/program/12345?format=145', programFormatHint],
+  ['http://api.sr.se/api/rss/program/12345/?format=1', programFormatHint],
+  ['https://public-api.sr.se/rss/example-program', programHint],
+  ['http://public-api.sr.se/rss/example-program/', programHint],
+  ['https://api.sr.se/api/rss/pod/12345', programHint],
+  ['http://api.sr.se/api/rss/pod/itunes/12345', programHint],
+  ['https://api.sr.se/api/rss/group/12345', { key: 'sveriges-radio:group', label: 'Group' }],
+  ['http://api.sr.se/api/rss/traffic/12345', { key: 'sveriges-radio:traffic', label: 'Traffic' }],
+]
+
 describe('parseSverigesRadioUrl', () => {
   it('should return the legacy program for a programid query', () => {
+    const value = 'https://sverigesradio.se/sida/default.aspx?programid=2519'
     const expected: SverigesRadioUrl = { kind: 'legacyProgram', programId: '2519' }
 
-    expect(
-      parseSverigesRadioUrl('https://sverigesradio.se/sida/default.aspx?programid=2519'),
-    ).toEqual(expected)
+    expect(parseSverigesRadioUrl(value)).toEqual(expected)
   })
 
   it('should return the program for a program slug', () => {
@@ -157,6 +177,110 @@ describe('sverigesRadioHandler', () => {
 
     it('should return empty array for the homepage', () => {
       expect(sverigesRadioHandler.resolve('https://sverigesradio.se/')).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the group hint for a group feed', () => {
+      const value = 'https://api.sr.se/api/rss/group/12345'
+      const expected: DiscoverUriHint = { key: 'sveriges-radio:group', label: 'Group' }
+
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the traffic hint for a traffic feed', () => {
+      const value = 'https://api.sr.se/api/rss/traffic/12345'
+      const expected: DiscoverUriHint = { key: 'sveriges-radio:traffic', label: 'Traffic' }
+
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the program hint for a program feed', () => {
+      const value = 'https://api.sr.se/api/rss/program/12345'
+      const expected: DiscoverUriHint = { key: 'sveriges-radio:program', label: 'Program' }
+
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the program format hint for a program feed with a format', () => {
+      const value = 'https://api.sr.se/api/rss/program/12345?format=145'
+      const expected: DiscoverUriHint = {
+        key: 'sveriges-radio:program-format',
+        label: 'Program format',
+      }
+
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the program hint for a program feed on public-api.sr.se', () => {
+      const value = 'https://public-api.sr.se/rss/example-program'
+      const expected: DiscoverUriHint = { key: 'sveriges-radio:program', label: 'Program' }
+
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the program hint for a podcast feed', () => {
+      const value = 'https://api.sr.se/api/rss/pod/12345'
+      const expected: DiscoverUriHint = { key: 'sveriges-radio:program', label: 'Program' }
+
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the program hint for a podcast feed under itunes', () => {
+      const value = 'https://api.sr.se/api/rss/pod/itunes/12345'
+      const expected: DiscoverUriHint = { key: 'sveriges-radio:program', label: 'Program' }
+
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the program hint for a program feed over http with a trailing slash', () => {
+      const value = 'http://api.sr.se/api/rss/program/12345/'
+      const expected: DiscoverUriHint = { key: 'sveriges-radio:program', label: 'Program' }
+
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a word in place of the program id', () => {
+      const value = 'https://api.sr.se/api/rss/program/example'
+
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the itunes path without a podcast id', () => {
+      const value = 'https://api.sr.se/api/rss/pod/itunes'
+
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a file in place of the program slug', () => {
+      const value = 'https://public-api.sr.se/rss/robots.txt'
+
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a program page', () => {
+      const value = 'https://sverigesradio.se/example-program'
+
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/api/rss/program/12345'
+
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('as a feed URL input', () => {
+    it.each(feedCases)('should return %s as given', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [sverigesRadioHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

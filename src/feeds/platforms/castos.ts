@@ -1,6 +1,6 @@
-import { isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,16 +8,23 @@ export type CastosUrl = { kind: 'show'; slug: string }
 export type CastosPage = { kind: 'show'; slug: string; feedId?: string }
 
 const domains = ['castos.com']
-// The feed host serves every show by path, so it names no show.
-const feedHosts = ['feeds.castos.com']
 
 // The feed id is opaque, so it is read from the feed link every show page carries.
 const feedIdRegex = /https:\/\/feeds\.castos\.com\/([a-z0-9]+)/i
 
+const feeds = definePlatformFeeds(
+  [
+    { key: 'castos:podcast', template: 'https://feeds.castos.com/{feedId}' },
+    // The show site redirects /feed to its feeds.castos.com URL.
+    { key: 'castos:podcast', template: '{scheme}://{host}/feed', isAlias: true },
+  ],
+  { domains },
+)
+
 export const parseCastosUrl = (url: string): CastosUrl | undefined => {
   const slug = getTenantSubdomain(url, domains)
 
-  if (!slug || isHostOf(url, feedHosts)) {
+  if (!slug) {
     return
   }
 
@@ -41,26 +48,14 @@ export const castosHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getCastosPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    if (page.feedId) {
-      return [
-        {
-          uri: `https://feeds.castos.com/${page.feedId}`,
-          hint: composeHint('castos:podcast'),
-        },
-      ]
-    }
-
-    // The show site redirects /feed to its feeds.castos.com URL.
-    return [
-      {
-        uri: `https://${page.slug}.castos.com/feed`,
-        hint: composeHint('castos:podcast'),
-      },
-    ]
+    return [pageFeeds.getFeedEntry('castos:podcast', { feedId: page.feedId })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

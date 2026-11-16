@@ -1,4 +1,4 @@
-import { coerceArray, isHttpUrl, resolveFeedProtocol } from 'trousse'
+import { coerceArray, isHttpUrl, isString, resolveFeedScheme } from 'trousse'
 import {
   type DiscoverInput,
   type DiscoverInputObject,
@@ -66,11 +66,11 @@ const runDiscover = async <TValid>(
 
   // Normalize input: string → fetch URL, object → use provided content.
   let hasInputFetchFailed = false
-  const inputUrl = typeof input === 'string' ? input : undefined
+  const inputUrl = isString(input) ? input : undefined
   let requestedUrl: string | undefined
 
   if (inputUrl) {
-    requestedUrl = resolveFeedProtocol(inputUrl)
+    requestedUrl = resolveFeedScheme(inputUrl)
     reportStep({ step: 'fetchInput', status: 'start', url: inputUrl })
   }
 
@@ -122,7 +122,7 @@ const runDiscover = async <TValid>(
 
         siteInput = {
           url: response.url,
-          content: typeof response.body === 'string' ? response.body : '',
+          content: isString(response.body) ? response.body : '',
           headers: response.headers,
         }
 
@@ -248,7 +248,7 @@ const runDiscover = async <TValid>(
 
       return await extractFn({
         url: fetchResult.url,
-        content: typeof fetchResult.body === 'string' ? fetchResult.body : '',
+        content: isString(fetchResult.body) ? fetchResult.body : '',
         headers: fetchResult.headers,
         status: fetchResult.status,
       })

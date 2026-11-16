@@ -164,38 +164,38 @@ describe('lemmyEnricher', () => {
       expect(await lemmyEnricher(ref, context)).toEqual([])
     })
 
-    it('should reject when API returns invalid JSON', async () => {
+    it('should reject when API returns invalid JSON', () => {
       const context = createContext({ [communityApiUrl]: 'not json' })
       const ref = createRef('https://example.com/c/technology', 'c/technology')
       const throwing = () => lemmyEnricher(ref, context)
 
-      await expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
+      expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
     })
 
-    it('should reject when fetch throws', async () => {
+    it('should reject when fetch throws', () => {
       const fetchFn: FetchFn = () => {
         throw new Error('Network error')
       }
       const ref = createRef('https://example.com/c/technology', 'c/technology')
       const throwing = () => lemmyEnricher(ref, { fetchFn })
 
-      await expect(throwing()).rejects.toThrow('Network error')
+      expect(throwing()).rejects.toThrow('Network error')
     })
 
-    it('should reject when the response is not 2xx', async () => {
+    it('should reject when the response is not 2xx', () => {
       const ref = createRef('https://example.com/c/technology', 'c/technology')
       const throwing = () => lemmyEnricher(ref, createContext({}))
       const expected =
         'Unexpected status 404 from https://example.com/api/v3/community?name=technology'
 
-      await expect(throwing()).rejects.toThrow(expected)
+      expect(throwing()).rejects.toThrow(expected)
     })
   })
 
   describe('edge cases', () => {
     it('should resolve federated community through the local instance API', async () => {
       const context = createContext({
-        'https://example.com/api/v3/community?name=rust%40example.net': JSON.stringify({
+        'https://example.com/api/v3/community?name=rust@example.net': JSON.stringify({
           community_view: {
             community: { icon: 'https://example.net/pictrs/image/rust.png' },
           },
@@ -210,7 +210,7 @@ describe('lemmyEnricher', () => {
 
     it('should resolve federated user through the local instance API', async () => {
       const context = createContext({
-        'https://example.com/api/v3/user?username=alice%40example.net&limit=1': JSON.stringify({
+        'https://example.com/api/v3/user?username=alice@example.net&limit=1': JSON.stringify({
           person_view: {
             person: { avatar: 'https://example.net/pictrs/image/alice.png' },
           },

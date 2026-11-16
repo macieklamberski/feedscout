@@ -1,4 +1,11 @@
-import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
+import {
+  endsWithAnyOf,
+  isAnyOf,
+  isHostOf,
+  isNonEmptyString,
+  parseUrl,
+  startsWithAnyOf,
+} from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
 import { parseVelogUrl } from '../../feeds/platforms/velog.js'
@@ -9,17 +16,19 @@ const platform = 'velog'
 
 const imageHosts = ['images.velog.io', 'velog.velcdn.com']
 
-// Velog shows this image for every user who has not uploaded an avatar.
-const placeholderRegex = /\/images\/user-thumbnail\.png$/
-
 const getSquareAvatar = (value: unknown): string | undefined => {
-  if (!isNonEmptyString(value) || placeholderRegex.test(value) || !isHostOf(value, imageHosts)) {
+  // Velog shows this image for every user who has not uploaded an avatar.
+  if (
+    !isNonEmptyString(value) ||
+    endsWithAnyOf(value, '/images/user-thumbnail.png') ||
+    !isHostOf(value, imageHosts)
+  ) {
     return
   }
 
   const parsedUrl = parseUrl(value)
 
-  if (!parsedUrl?.pathname.startsWith('/images/')) {
+  if (!parsedUrl || !startsWithAnyOf(parsedUrl.pathname, '/images/')) {
     return
   }
 

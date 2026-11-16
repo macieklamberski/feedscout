@@ -6,7 +6,7 @@ import type { HtmlMethodContext } from './types.js'
 export const handleOpenTag = (
   context: HtmlMethodContext,
   name: string,
-  attribs: { [key: string]: string },
+  attribs: Record<string, string>,
   _isImplied?: boolean,
 ): void => {
   // Capture the first <base href> to resolve relative URLs against (browser semantics).
@@ -32,10 +32,8 @@ export const handleOpenTag = (
 
   // Extract anchor elements by href suffix or track for text matching.
   if (name === 'a' && attribs.href) {
-    const lowerHref = attribs.href.toLowerCase()
-
     // Skip if href contains ignored patterns.
-    if (includesAnyOf(lowerHref, context.options.anchorIgnoredUris)) {
+    if (includesAnyOf(attribs.href, context.options.anchorIgnoredUris)) {
       context.currentAnchor.href = ''
       context.currentAnchor.text = ''
       return
@@ -46,7 +44,7 @@ export const handleOpenTag = (
     context.currentAnchor.text = ''
 
     // Check if href ends with any anchor URI pattern.
-    if (endsWithAnyOf(lowerHref, context.options.anchorUris)) {
+    if (endsWithAnyOf(attribs.href, context.options.anchorUris)) {
       context.discoveredUris.add(attribs.href)
     }
 
@@ -92,10 +90,10 @@ export const handleCloseTag = (
 ): void => {
   // Check anchor text patterns when anchor closes.
   if (name === 'a' && context.currentAnchor.href && context.currentAnchor.text) {
-    const normalizedText = context.currentAnchor.text.toLowerCase().trim()
+    const anchorText = context.currentAnchor.text.trim()
 
     // Check if anchor text contains any label pattern.
-    if (includesAnyOf(normalizedText, context.options.anchorLabels)) {
+    if (includesAnyOf(anchorText, context.options.anchorLabels)) {
       context.discoveredUris.add(context.currentAnchor.href)
     }
 

@@ -1,8 +1,7 @@
-import { composeQuery, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { endsWithAnyOf, getOrigin, getQueryParam, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
-  composeHint,
   digitsRegex,
   findElement,
   getCookieNames,
@@ -12,18 +11,28 @@ import {
 
 // Discoverability: Discoverable without handler.
 
-export type VbulletinPage = { siteFeedUrl: string; forumFeedUrl?: string }
+export type VbulletinPage = { version: 4 | 5; root: string; forumId?: string }
 
-const coreScriptRegex = /\/clientscript\/vbulletin-core\.js/
+const coreScriptRegex = /\/clientscript\/vbulletin-core\.js/i
 const clientscriptPathRegex = /\/clientscript\/.*$/i
-const rollupScriptRegex = /(?:^|\/)js\/header-rollup(?:-\d+)?\.js/
+const rollupScriptRegex = /(?:^|\/)js\/header-rollup(?:-\d+)?\.js/i
 const rollupPathRegex = /\/js\/[^/]*$/i
 // vBulletin 5 and 6.0 print `"channelid": "{id}"` in `pageData`,
 // 6.1 and later `data-channelid='{id}'`.
 const channelIdRegex = /(?:"channelid":\s*"|data-channelid=['"])(\d+)/
-const forumDisplayRegex = /\/forumdisplay\.php$/i
-const forumIdRegex = /[?&]f=(?<forumId>[^&]+)/i
 const friendlyForumIdRegex = /^\?(\d+)(?:-|&|$)/
+
+// vBulletin 3 and 4 serve `external.php` and vBulletin 5 and later `external`, each with its own
+// spelling of the type. A forum on any host is known only by its scripts or cookies, which a feed
+// URL does not carry, so the feeds are built under the forum root and never claimed.
+const vbulletin4Feeds = definePlatformFeeds([
+  { key: 'vbulletin:forum', template: '{root}/external.php?type=RSS2&forumids={forumId}' },
+  { key: 'vbulletin:site', template: '{root}/external.php?type=RSS2' },
+])
+const vbulletin5Feeds = definePlatformFeeds([
+  { key: 'vbulletin:forum', template: '{root}/external?type=rss2&nodeid={forumId}' },
+  { key: 'vbulletin:site', template: '{root}/external?type=rss2' },
+])
 
 // vBulletin 4 prints `clientscript/vbulletin-core.js` as an absolute URL under the forum root.
 // vBulletin 5 and 6 print `js/header-rollup-{version}.js` or `js/header-rollup.js?c={hash}`
@@ -59,13 +68,13 @@ export const isVbulletinHeaders = (headers: Headers): boolean => {
 }
 
 // Friendly URLs name the forum as `?{id}-{title}` or `?{id}`, and plain ones as `?f={id}`.
-const getForumId = (pathname: string, search: string): string | undefined => {
-  if (!forumDisplayRegex.test(pathname)) {
+const getForumId = (parsedUrl: URL): string | undefined => {
+  if (!endsWithAnyOf(parsedUrl.pathname, '/forumdisplay.php')) {
     return
   }
 
   const forumId =
-    search.match(forumIdRegex)?.groups?.forumId ?? search.match(friendlyForumIdRegex)?.[1]
+    getQueryParam(parsedUrl.searchParams, 'f') ?? friendlyForumIdRegex.exec(parsedUrl.search)?.[1]
 
   if (forumId && digitsRegex.test(forumId)) {
     return forumId
@@ -83,31 +92,33 @@ const getVbulletin5Page = (url: string, content: string | undefined): VbulletinP
   const baseElement = findElement(content, (element) => {
     return element.name === 'base'
   })
-  const baseUrl = parseUrl(baseElement?.attribs.href ?? '', url) ?? url
+  const baseUrl = parseUrl(baseElement?.attribs.href, url) ?? url
   const rollupScriptUrl = new URL(rollupScriptSrc, baseUrl)
-  const rootPath = rollupScriptUrl.pathname.replace(rollupPathRegex, '')
+  const rollupOrigin = getOrigin(rollupScriptUrl)
+
+  if (!rollupOrigin) {
+    return
+  }
+
+  const root = `${rollupOrigin}${rollupScriptUrl.pathname.replace(rollupPathRegex, '')}`
   const channelId = content?.match(channelIdRegex)?.[1]
-  const feedUrl = `${rollupScriptUrl.origin}${rootPath}/external`
-  const siteFeedUrl = `${feedUrl}?type=rss2`
 
   // The root channel, id 1, serves the same items as the site feed.
   if (channelId && channelId !== '1') {
-    return {
-      siteFeedUrl,
-      forumFeedUrl: `${feedUrl}${composeQuery({ type: 'rss2', nodeid: channelId })}`,
-    }
+    return { version: 5, root, forumId: channelId }
   }
 
-  return { siteFeedUrl }
+  return { version: 5, root }
 }
 
 // A rewritten page URL such as `/other-gps-systems.html` names no install root.
 const getVbulletin4RootUrl = (parsedUrl: URL, content: string | undefined): string => {
   const coreScriptSrc = getScriptSrc(content, coreScriptRegex)
   const coreScriptUrl = coreScriptSrc ? parseUrl(coreScriptSrc, parsedUrl) : undefined
+  const coreScriptOrigin = getOrigin(coreScriptUrl)
 
-  if (coreScriptUrl) {
-    return `${coreScriptUrl.origin}${coreScriptUrl.pathname.replace(clientscriptPathRegex, '')}`
+  if (coreScriptUrl && coreScriptOrigin) {
+    return `${coreScriptOrigin}${coreScriptUrl.pathname.replace(clientscriptPathRegex, '')}`
   }
 
   return `${parsedUrl.origin}${getScriptDirectory(parsedUrl.pathname)}`
@@ -126,15 +137,11 @@ const getVbulletinPage = (url: string, content: string | undefined): VbulletinPa
     return vbulletin5Page
   }
 
-  const rootUrl = getVbulletin4RootUrl(parsedUrl, content)
-  const forumId = getForumId(parsedUrl.pathname, parsedUrl.search)
-  const page: VbulletinPage = { siteFeedUrl: `${rootUrl}/external.php?type=RSS2` }
-
-  if (forumId) {
-    page.forumFeedUrl = `${rootUrl}/external.php${composeQuery({ type: 'RSS2', forumids: forumId })}`
+  return {
+    version: 4,
+    root: getVbulletin4RootUrl(parsedUrl, content),
+    forumId: getForumId(parsedUrl),
   }
-
-  return page
 }
 
 export const vbulletinHandler: PlatformHandler = {
@@ -149,15 +156,15 @@ export const vbulletinHandler: PlatformHandler = {
       return []
     }
 
-    const { siteFeedUrl, forumFeedUrl } = page
-    const uris: Array<DiscoverUriEntry> = []
+    const feeds = page.version === 5 ? vbulletin5Feeds : vbulletin4Feeds
 
-    if (forumFeedUrl) {
-      uris.push({ uri: forumFeedUrl, hint: composeHint('vbulletin:forum') })
+    if (page.forumId) {
+      return [
+        feeds.getFeedEntry('vbulletin:forum', { root: page.root, forumId: page.forumId }),
+        feeds.getFeedEntry('vbulletin:site', { root: page.root }),
+      ]
     }
 
-    uris.push({ uri: siteFeedUrl, hint: composeHint('vbulletin:site') })
-
-    return uris
+    return [feeds.getFeedEntry('vbulletin:site', { root: page.root })]
   },
 }

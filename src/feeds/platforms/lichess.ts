@@ -1,6 +1,6 @@
-import { composeQuery, getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, getQueryParam, isAnyOf, isHostOf, isLocale, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers community, home, languageCommunity, officialBlog, userBlog (html).
@@ -10,12 +10,18 @@ export type LichessUrl =
   | { kind: 'blog'; username: string }
   | { kind: 'community'; language?: string }
   | { kind: 'officialBlog' }
-  | { kind: 'home' }
 
 const hosts = ['lichess.org']
 
 const userBlogRegex = /^\/@\/([\w-]+)\/blog(?:\/|$)/i
-const communityRegex = /^(?:\/(\w+))?\/blog\/community\/?$/i
+const communityRegex = /^(?:\/([^/]+))?\/blog\/community\/?$/i
+
+const feeds = definePlatformFeeds([
+  { key: 'lichess:blog', template: 'https://lichess.org/@/{username}/blog.atom' },
+  { key: 'lichess:blog', template: 'https://lichess.org/blog.atom', isAlias: true },
+  { key: 'lichess:community', template: 'https://lichess.org/blog/community.atom?lang={language}' },
+  { key: 'lichess:community', template: 'https://lichess.org/blog/community.atom' },
+])
 
 export const parseLichessUrl = (url: string): LichessUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -31,22 +37,23 @@ export const parseLichessUrl = (url: string): LichessUrl | undefined => {
   }
 
   const communityMatch = pathname.match(communityRegex)
+  const language = communityMatch?.[1]
 
-  if (communityMatch) {
-    return { kind: 'community', language: communityMatch[1] }
+  if (communityMatch && (!language || isLocale(language))) {
+    return { kind: 'community', language }
   }
 
   const [section, id, slug, rest] = getPathSegments(url)
   const isOfficialBlog = isAnyOf(section, 'blog') && !id
   const isLegacyPost = isAnyOf(section, 'blog') && slug && !rest && !isAnyOf(id, 'topic')
 
-  // Lichess redirects /blog and the old /blog/{id}/{slug} post URLs to the @/Lichess blog.
-  if (isOfficialBlog || isLegacyPost) {
-    return { kind: 'officialBlog' }
+  // Every other page links only the site-wide updates feed, the platform's own news.
+  if (!isOfficialBlog && !isLegacyPost) {
+    return
   }
 
-  // Every other page, profiles included, advertises the site-wide updates feed.
-  return { kind: 'home' }
+  // Lichess redirects /blog and the old /blog/{id}/{slug} post URLs to the @/Lichess blog.
+  return { kind: 'officialBlog' }
 }
 
 export const lichessHandler: PlatformHandler = {
@@ -62,40 +69,23 @@ export const lichessHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'blog') {
-      return [
-        {
-          uri: `https://lichess.org/@/${parsed.username}/blog.atom`,
-          hint: composeHint('lichess:blog'),
-        },
-      ]
+      return [feeds.getFeedEntry('lichess:blog', { username: parsed.username })]
     }
 
     if (parsed.kind === 'community') {
-      const { language } = parsed
-      const query = language ? composeQuery({ lang: language }) : ''
-
-      return [
-        {
-          uri: `https://lichess.org/blog/community.atom${query}`,
-          hint: composeHint('lichess:community'),
-        },
-      ]
+      return [feeds.getFeedEntry('lichess:community', { language: parsed.language })]
     }
 
-    if (parsed.kind === 'officialBlog') {
-      return [
-        {
-          uri: 'https://lichess.org/@/Lichess/blog.atom',
-          hint: composeHint('lichess:blog'),
-        },
-      ]
+    return [feeds.getFeedEntry('lichess:blog', { username: 'Lichess' })]
+  },
+
+  getFeedHint: (url) => {
+    const language = getQueryParam(parseUrl(url), 'lang')
+
+    if (language && !isLocale(language)) {
+      return
     }
 
-    return [
-      {
-        uri: 'https://lichess.org/feed.atom',
-        hint: composeHint('lichess:updates'),
-      },
-    ]
+    return feeds.getFeedHint(url)
   },
 }

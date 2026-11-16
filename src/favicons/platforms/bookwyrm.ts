@@ -1,4 +1,4 @@
-import { isNonEmptyString, parseUrl } from 'trousse'
+import { endsWithAnyOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasClass } from '../../common/utils.js'
 import {
@@ -11,7 +11,7 @@ import { parseResponseJson } from '../utils.js'
 const platform = 'bookwyrm'
 
 // Served in place of an avatar to users who never uploaded one.
-const defaultAvatarRegex = /\/images\/default_avi\.jpg$/
+const defaultAvatarPath = '/images/default_avi.jpg'
 
 const findAvatarSrc = (content: string | undefined): string | undefined => {
   const avatar = findElement(content, (element) => {
@@ -38,7 +38,7 @@ export const bookwyrmHandler: PlatformHandler = {
       return [{ platform, id: parsed.username, url }]
     }
 
-    if (defaultAvatarRegex.test(avatarSrc)) {
+    if (endsWithAnyOf(avatarSrc, defaultAvatarPath)) {
       return []
     }
 
@@ -62,7 +62,7 @@ export const bookwyrmEnricher: FaviconEnricher = async (ref, context) => {
   const data = parseResponseJson(response)
   const iconUrl = data?.icon?.url
 
-  if (isNonEmptyString(iconUrl) && !defaultAvatarRegex.test(iconUrl)) {
+  if (isNonEmptyString(iconUrl) && !endsWithAnyOf(iconUrl, defaultAvatarPath)) {
     return [iconUrl]
   }
 

@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   type DiscoursePage,
   type DiscourseUrl,
@@ -52,6 +55,27 @@ describe('parseDiscourseUrl', () => {
     const expected: DiscourseUrl = { kind: 'category', category: 'dev/5' }
 
     expect(parseDiscourseUrl('https://forum.example.com/c/dev/5/l/latest')).toEqual(expected)
+  })
+
+  it('should return the tag of a tag page with its id', () => {
+    const value = 'https://forum.example.com/tag/news/11'
+    const expected: DiscourseUrl = { kind: 'tag', tag: 'news/11' }
+
+    expect(parseDiscourseUrl(value)).toEqual(expected)
+  })
+
+  it('should return the tag of a tag feed URL', () => {
+    const value = 'https://forum.example.com/tag/news/11.rss'
+    const expected: DiscourseUrl = { kind: 'tag', tag: 'news/11' }
+
+    expect(parseDiscourseUrl(value)).toEqual(expected)
+  })
+
+  it('should return the tag without its list tail', () => {
+    const value = 'https://forum.example.com/tag/news/l/top'
+    const expected: DiscourseUrl = { kind: 'tag', tag: 'news' }
+
+    expect(parseDiscourseUrl(value)).toEqual(expected)
   })
 
   it('should return the top page with a path period', () => {
@@ -165,10 +189,10 @@ describe('discourseHandler', () => {
 
   describe('match', () => {
     it('should return true for any URL with Discourse content', () => {
+      const value = 'https://forum.example.com/u/bob'
+
       expect(discourseHandler.match('https://forum.example.com/', discourseHtml)).toBe(true)
-      expect(
-        discourseHandler.match('https://forum.example.com/u/steveklabnik', discourseHtml),
-      ).toBe(true)
+      expect(discourseHandler.match(value, discourseHtml)).toBe(true)
     })
 
     it('should return true for any URL with Discourse headers', () => {
@@ -192,10 +216,18 @@ describe('discourseHandler', () => {
     it('should return the topic feed under the sub-path the setup meta names', () => {
       const value = 'https://example.com/forum/t/hello-world/123'
       const content = '<meta id="data-discourse-setup" data-base-uri="/forum">'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/forum/t/hello-world/123.rss',
           hint: { key: 'discourse:topic', label: 'Topic' },
+        },
+        {
+          uri: 'https://example.com/forum/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://example.com/forum/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
@@ -203,11 +235,19 @@ describe('discourseHandler', () => {
     })
 
     it('should return the activity feed for a capitalized u segment', () => {
-      const value = 'https://forum.example.com/U/steveklabnik'
-      const expected = [
+      const value = 'https://forum.example.com/U/bob'
+      const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://forum.example.com/u/steveklabnik/activity.rss',
+          uri: 'https://forum.example.com/u/bob/activity.rss',
           hint: { key: 'discourse:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://forum.example.com/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.com/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
@@ -215,11 +255,59 @@ describe('discourseHandler', () => {
     })
 
     it('should return user activity feed for /u/{user} path', () => {
-      const value = 'https://forum.example.com/u/steveklabnik'
-      const expected = [
+      const value = 'https://forum.example.com/u/bob'
+      const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://forum.example.com/u/steveklabnik/activity.rss',
+          uri: 'https://forum.example.com/u/bob/activity.rss',
           hint: { key: 'discourse:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://forum.example.com/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.com/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the tag feed for a tag page with its id', () => {
+      const value = 'https://forum.example.com/tag/news/11'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://forum.example.com/tag/news/11.rss',
+          hint: { key: 'discourse:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://forum.example.com/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.com/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the tag feed for a tag page without its id', () => {
+      const value = 'https://forum.example.com/tag/news/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://forum.example.com/tag/news.rss',
+          hint: { key: 'discourse:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://forum.example.com/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.com/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
@@ -228,10 +316,18 @@ describe('discourseHandler', () => {
 
     it('should return category feed for /c/{slug} path', () => {
       const value = 'https://forum.example.com/c/help'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://forum.example.com/c/help.rss',
           hint: { key: 'discourse:category', label: 'Category' },
+        },
+        {
+          uri: 'https://forum.example.com/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.com/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
@@ -240,22 +336,59 @@ describe('discourseHandler', () => {
 
     it('should return category feed for nested /c/{slug}/{slug}/{id} path', () => {
       const value = 'https://forum.example.org/c/contribute/feature/2'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://forum.example.org/c/contribute/feature/2.rss',
           hint: { key: 'discourse:category', label: 'Category' },
+        },
+        {
+          uri: 'https://forum.example.org/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.org/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
       expect(discourseHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the nested category feed under the sub-path the setup meta names', () => {
+      const value = 'http://example.com/forum/c/contribute/feature/2'
+      const content = '<meta id="data-discourse-setup" data-base-uri="/forum">'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.com/forum/c/contribute/feature/2.rss',
+          hint: { key: 'discourse:category', label: 'Category' },
+        },
+        {
+          uri: 'http://example.com/forum/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'http://example.com/forum/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return category feed for a category list filter path', () => {
       const value = 'https://forum.example.org/c/support/6/l/latest'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://forum.example.org/c/support/6.rss',
           hint: { key: 'discourse:category', label: 'Category' },
+        },
+        {
+          uri: 'https://forum.example.org/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.org/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
@@ -264,10 +397,18 @@ describe('discourseHandler', () => {
 
     it('should return category feed for a capitalized category list filter path', () => {
       const value = 'https://forum.example.org/c/support/6/L/Latest'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://forum.example.org/c/support/6.rss',
           hint: { key: 'discourse:category', label: 'Category' },
+        },
+        {
+          uri: 'https://forum.example.org/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.org/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
@@ -276,10 +417,18 @@ describe('discourseHandler', () => {
 
     it('should return category feed for a category without subcategories path', () => {
       const value = 'https://forum.example.org/c/support/6/none'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://forum.example.org/c/support/6.rss',
           hint: { key: 'discourse:category', label: 'Category' },
+        },
+        {
+          uri: 'https://forum.example.org/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.org/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
@@ -288,10 +437,18 @@ describe('discourseHandler', () => {
 
     it('should return category feed for a category with all subcategories path', () => {
       const value = 'https://forum.example.org/c/support/6/all'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://forum.example.org/c/support/6.rss',
           hint: { key: 'discourse:category', label: 'Category' },
+        },
+        {
+          uri: 'https://forum.example.org/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.org/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
@@ -300,10 +457,18 @@ describe('discourseHandler', () => {
 
     it('should return topic feed for /t/{slug}/{id} path', () => {
       const value = 'https://forum.example.com/t/welcome-to-the-rust-users-forum/2'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://forum.example.com/t/welcome-to-the-rust-users-forum/2.rss',
           hint: { key: 'discourse:topic', label: 'Topic' },
+        },
+        {
+          uri: 'https://forum.example.com/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.com/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
@@ -312,10 +477,18 @@ describe('discourseHandler', () => {
 
     it('should return topic feed for /t/{slug}/{id} path with a capitalized t segment', () => {
       const value = 'https://forum.example.com/T/welcome-to-the-rust-users-forum/2'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://forum.example.com/t/welcome-to-the-rust-users-forum/2.rss',
           hint: { key: 'discourse:topic', label: 'Topic' },
+        },
+        {
+          uri: 'https://forum.example.com/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.com/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
@@ -356,10 +529,18 @@ describe('discourseHandler', () => {
 
     it('should return top feed for /top path', () => {
       const value = 'https://forum.example.com/top'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://forum.example.com/top.rss',
           hint: { key: 'discourse:top', label: 'Top' },
+        },
+        {
+          uri: 'https://forum.example.com/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.com/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
@@ -368,10 +549,18 @@ describe('discourseHandler', () => {
 
     it('should return top feed for /top path with a capitalized top segment', () => {
       const value = 'https://forum.example.com/Top'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://forum.example.com/top.rss',
           hint: { key: 'discourse:top', label: 'Top' },
+        },
+        {
+          uri: 'https://forum.example.com/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.com/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
@@ -391,17 +580,35 @@ describe('discourseHandler', () => {
     ]
 
     it.each(topPeriodValues)('should pass through period for %s', (value, uri) => {
-      const expected = [{ uri, hint: { key: 'discourse:top', label: 'Top' } }]
+      const expected: Array<DiscoverUriEntry> = [
+        { uri, hint: { key: 'discourse:top', label: 'Top' } },
+        {
+          uri: 'https://forum.example.com/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.com/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
+        },
+      ]
 
       expect(discourseHandler.resolve(value)).toEqual(expected)
     })
 
     it('should pass through period via ?period= query param', () => {
       const value = 'https://forum.example.com/top?period=weekly'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://forum.example.com/top.rss?period=weekly',
           hint: { key: 'discourse:top', label: 'Top' },
+        },
+        {
+          uri: 'https://forum.example.com/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.com/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
@@ -410,10 +617,18 @@ describe('discourseHandler', () => {
 
     it('should spell a ?period= value in another case as Discourse does', () => {
       const value = 'https://forum.example.com/top?period=Weekly'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://forum.example.com/top.rss?period=weekly',
           hint: { key: 'discourse:top', label: 'Top' },
+        },
+        {
+          uri: 'https://forum.example.com/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.com/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
@@ -422,10 +637,18 @@ describe('discourseHandler', () => {
 
     it('should prefer path period over ?period= query param', () => {
       const value = 'https://forum.example.com/top/daily?period=weekly'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://forum.example.com/top.rss?period=daily',
           hint: { key: 'discourse:top', label: 'Top' },
+        },
+        {
+          uri: 'https://forum.example.com/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.com/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
@@ -434,10 +657,18 @@ describe('discourseHandler', () => {
 
     it('should return lowercase period for a capitalized path period', () => {
       const value = 'https://forum.example.com/top/Daily'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://forum.example.com/top.rss?period=daily',
           hint: { key: 'discourse:top', label: 'Top' },
+        },
+        {
+          uri: 'https://forum.example.com/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.com/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
@@ -446,10 +677,18 @@ describe('discourseHandler', () => {
 
     it('should fall back to ?period= query param for an unknown path period', () => {
       const value = 'https://forum.example.com/top/invalid?period=weekly'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://forum.example.com/top.rss?period=weekly',
           hint: { key: 'discourse:top', label: 'Top' },
+        },
+        {
+          uri: 'https://forum.example.com/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.com/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
 
@@ -458,14 +697,133 @@ describe('discourseHandler', () => {
 
     it('should drop unknown period values silently', () => {
       const value = 'https://forum.example.com/top/invalid'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://forum.example.com/top.rss',
           hint: { key: 'discourse:top', label: 'Top' },
         },
+        {
+          uri: 'https://forum.example.com/latest.rss',
+          hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://forum.example.com/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
+        },
       ]
 
       expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    const feedUrls: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.discourse.group/t/hello-world/123.rss',
+        { key: 'discourse:topic', label: 'Topic' },
+      ],
+      [
+        'https://example.discourse.group/u/alice/activity.rss',
+        { key: 'discourse:activity', label: 'Activity' },
+      ],
+      [
+        'https://example.discourse.group/c/support.rss',
+        { key: 'discourse:category', label: 'Category' },
+      ],
+      [
+        'https://example.discourse.group/c/support/6.rss',
+        { key: 'discourse:category', label: 'Category' },
+      ],
+      [
+        'https://example.discourse.group/c/contribute/feature/2.rss',
+        { key: 'discourse:category', label: 'Category' },
+      ],
+      ['https://example.discourse.group/tag/news/11.rss', { key: 'discourse:tag', label: 'Tag' }],
+      ['https://example.discourse.group/tag/news.rss', { key: 'discourse:tag', label: 'Tag' }],
+      ['https://example.discourse.group/top.rss', { key: 'discourse:top', label: 'Top' }],
+      [
+        'https://example.discourse.group/top.rss?period=weekly',
+        { key: 'discourse:top', label: 'Top' },
+      ],
+      ['https://example.discourse.group/latest.rss', { key: 'discourse:latest', label: 'Latest' }],
+      [
+        'https://example.discourse.group/posts.rss',
+        { key: 'discourse:posts', label: 'Latest posts' },
+      ],
+      ['http://example.trydiscourse.com/latest.rss', { key: 'discourse:latest', label: 'Latest' }],
+    ]
+
+    it.each(feedUrls)('should return the hint for %s', (value, expected) => {
+      expect(discourseHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a topic page on a forum subdomain', () => {
+      const value = 'https://example.discourse.group/t/hello-world/123'
+
+      expect(discourseHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://forum.example.org/latest.rss'
+
+      expect(discourseHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://discourse.group/latest.rss'
+
+      expect(discourseHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on www', () => {
+      const value = 'https://www.trydiscourse.com/latest.rss'
+
+      expect(discourseHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://forum.example.discourse.group/latest.rss'
+
+      expect(discourseHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://example.discourse.group/t/hello-world/123.rss',
+        { key: 'discourse:topic', label: 'Topic' },
+      ],
+      [
+        'https://example.discourse.group/u/alice/activity.rss',
+        { key: 'discourse:activity', label: 'Activity' },
+      ],
+      [
+        'https://example.discourse.group/c/support/6.rss',
+        { key: 'discourse:category', label: 'Category' },
+      ],
+      [
+        'https://example.discourse.group/top.rss?period=weekly',
+        { key: 'discourse:top', label: 'Top' },
+      ],
+      ['https://example.discourse.group/latest.rss', { key: 'discourse:latest', label: 'Latest' }],
+      [
+        'https://example.discourse.group/posts.rss',
+        { key: 'discourse:posts', label: 'Latest posts' },
+      ],
+      ['https://example.discourse.group/tag/news/11.rss', { key: 'discourse:tag', label: 'Tag' }],
+      ['http://example.discourse.group/tag/news.rss', { key: 'discourse:tag', label: 'Tag' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [discourseHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

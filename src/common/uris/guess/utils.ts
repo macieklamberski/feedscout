@@ -1,5 +1,5 @@
 import { Parser } from 'htmlparser2'
-import { getPathSegments, getRegistrableDomain, parseUrl } from 'trousse'
+import { getPathSegments, getRegistrableDomain, isString, parseUrl } from 'trousse'
 import type { UriEntry } from '../../types.js'
 
 const ipAddressRegex = /^\d+\.\d+\.\d+\.\d+$/
@@ -26,7 +26,7 @@ export const generateUrlCombinations = (
     const pathname = parsed.pathname
 
     return uris.map((uri) => {
-      if (typeof uri === 'string') {
+      if (isString(uri)) {
         return resolveUri(uri, base, origin, pathname)
       }
 
@@ -55,7 +55,7 @@ export const generatePathUrlCombinations = (
     const normalizedBase = base.endsWith('/') ? base : `${base}/`
 
     return uris.map((uri) => {
-      if (typeof uri === 'string') {
+      if (isString(uri)) {
         return resolvePathUri(uri, normalizedBase)
       }
 
@@ -78,7 +78,7 @@ export const getAncestorPathBases = (baseUrl: string, maxDepth: number): Array<s
   const segments = url.pathname
     .split('/')
     .slice(1, -1)
-    .filter((segment) => segment !== '')
+    .filter((segment) => segment)
   const bases: Array<string> = []
   let base = `${url.origin}/`
 
@@ -174,7 +174,7 @@ export const getSubdomainVariants = (baseUrl: string, prefixes: Array<string>): 
   const port = url.port ? `:${url.port}` : ''
 
   return prefixes.map((prefix) => {
-    const hostname = prefix === '' ? rootDomain : `${prefix}.${rootDomain}`
+    const hostname = prefix ? `${prefix}.${rootDomain}` : rootDomain
     return `${protocol}//${hostname}${port}`
   })
 }

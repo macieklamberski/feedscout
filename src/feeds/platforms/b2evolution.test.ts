@@ -281,6 +281,113 @@ describe('b2evolutionHandler', () => {
       expect(b2evolutionHandler.resolve('https://example.com/a-post', postHtml)).toEqual(expected)
     })
 
+    it('should return empty array for a feed link with no query before its skin', () => {
+      const value =
+        '<link rel="alternate" type="application/rss+xml" href="https://example.com/blogs/index.php&amp;tempskin=_rss2" />'
+
+      expect(b2evolutionHandler.resolve('https://example.com/blogs/', value)).toEqual([])
+    })
+
+    it('should drop a disp parameter in front of the skin from the comments feeds', () => {
+      const value =
+        '<a href="https://example.com/index.php?blog=2&amp;disp=posts&amp;tempskin=_rss2&amp;disp=comments">Comments</a>'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/index.php?blog=2&disp=posts&tempskin=_rss2',
+          hint: { key: 'b2evolution:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/index.php?blog=2&disp=posts&tempskin=_atom',
+          hint: { key: 'b2evolution:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://example.com/index.php?blog=2&tempskin=_rss2&disp=comments',
+          hint: { key: 'b2evolution:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/index.php?blog=2&tempskin=_atom&disp=comments',
+          hint: { key: 'b2evolution:comments', label: 'Comments', format: 'atom' },
+        },
+      ]
+
+      expect(b2evolutionHandler.resolve('https://example.com/', value)).toEqual(expected)
+    })
+
+    it('should drop an empty parameter from the feed link query', () => {
+      const value =
+        '<link rel="alternate" type="application/rss+xml" href="https://example.com/index.php?blog=2&amp;&amp;tempskin=_rss2" />'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/index.php?blog=2&tempskin=_rss2',
+          hint: { key: 'b2evolution:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/index.php?blog=2&tempskin=_atom',
+          hint: { key: 'b2evolution:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://example.com/index.php?blog=2&tempskin=_rss2&disp=comments',
+          hint: { key: 'b2evolution:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/index.php?blog=2&tempskin=_atom&disp=comments',
+          hint: { key: 'b2evolution:comments', label: 'Comments', format: 'atom' },
+        },
+      ]
+
+      expect(b2evolutionHandler.resolve('https://example.com/', value)).toEqual(expected)
+    })
+
+    it('should percent-encode a non-ASCII value in the feed link query', () => {
+      const value =
+        '<link rel="alternate" type="application/rss+xml" href="https://example.com/index.php?blog=2&amp;cat=日本&amp;tempskin=_rss2" />'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/index.php?blog=2&cat=%E6%97%A5%E6%9C%AC&tempskin=_rss2',
+          hint: { key: 'b2evolution:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/index.php?blog=2&cat=%E6%97%A5%E6%9C%AC&tempskin=_atom',
+          hint: { key: 'b2evolution:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://example.com/index.php?blog=2&cat=%E6%97%A5%E6%9C%AC&tempskin=_rss2&disp=comments',
+          hint: { key: 'b2evolution:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/index.php?blog=2&cat=%E6%97%A5%E6%9C%AC&tempskin=_atom&disp=comments',
+          hint: { key: 'b2evolution:comments', label: 'Comments', format: 'atom' },
+        },
+      ]
+
+      expect(b2evolutionHandler.resolve('https://example.com/', value)).toEqual(expected)
+    })
+
+    it('should drop a skin repeated in front of the feed link skin', () => {
+      const value =
+        '<link rel="alternate" type="application/rss+xml" href="https://example.com/index.php?blog=2&amp;tempskin=x&amp;tempskin=_rss2" />'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/index.php?blog=2&tempskin=_rss2',
+          hint: { key: 'b2evolution:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/index.php?blog=2&tempskin=_atom',
+          hint: { key: 'b2evolution:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://example.com/index.php?blog=2&tempskin=_rss2&disp=comments',
+          hint: { key: 'b2evolution:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/index.php?blog=2&tempskin=_atom&disp=comments',
+          hint: { key: 'b2evolution:comments', label: 'Comments', format: 'atom' },
+        },
+      ]
+
+      expect(b2evolutionHandler.resolve('https://example.com/', value)).toEqual(expected)
+    })
+
     it('should return empty array for the 404 page of an unknown blog path', () => {
       const value = 'https://example.com/blogs/index.php/no-such-blog/'
 

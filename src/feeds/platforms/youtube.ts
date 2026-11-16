@@ -1,5 +1,6 @@
-import { composeQuery, getQueryParam, isHostOf, parseUrl } from 'trousse'
+import { getQueryParam, isAnyOf, isHostOf, isPresent, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, formatSuffixRegex } from '../../common/utils.js'
 
@@ -11,10 +12,15 @@ export type YoutubeUrl =
   | { kind: 'channel'; channelId?: string; playlistId?: string }
   | { kind: 'watch'; playlistId?: string }
   | { kind: 'short'; playlistId?: string }
-  | { kind: 'player'; playlistId?: string }
+  | { kind: 'player'; channelId?: string; username?: string; playlistId?: string }
   | { kind: 'playlist'; playlistId: string }
 export type YoutubePage =
-  | { kind: 'channel' | 'watch' | 'short' | 'player'; channelId?: string; playlistId?: string }
+  | {
+      kind: 'channel' | 'watch' | 'short' | 'player'
+      channelId?: string
+      username?: string
+      playlistId?: string
+    }
   | { kind: 'playlist'; playlistId: string }
 
 export const hosts = [
@@ -26,6 +32,7 @@ export const hosts = [
   'www.youtu.be',
 ]
 const shortLinkHosts = ['youtu.be', 'www.youtu.be']
+const feedUrl = 'https://www.youtube.com/feeds/videos.xml'
 
 // A channel page also embeds the IDs of the channels it features, and a bare "channelId" matches
 // one of those before the page's own, which sits under "externalId". A video page has no
@@ -35,17 +42,49 @@ const channelIdRegexes = [
   /"externalChannelId":"(UC[a-zA-Z0-9_-]+)"/,
   /"channelId":"(UC[a-zA-Z0-9_-]+)"/,
 ]
-const channelRegex = /^\/channel\/([^/]+)/i
 const channelPathRegexes = [/^\/@[^/]+/, /^\/user\/[^/]+/i, /^\/c\/[^/]+/i]
+
+const channelRegex = /^\/channel\/([^/]+)/i
 const shortsRegex = /^\/shorts\/[\w-]+/i
 const liveRegex = /^\/live\/[\w-]+/i
 const watchRegex = /^\/watch\/?$/i
+const liveStreamEmbedRegex = /^\/embed\/live_stream\/?$/i
 const channelPrefixRegex = /^UC/
 // Channel IDs are case-sensitive, so the ID is checked apart from the case-insensitive route.
 const channelIdFormatRegex = /^UC[\w-]+$/
 // Watch Later, Liked videos and the Music likes are private, and a mix is generated per viewer, so
 // none of them has a feed. RDCLAK lists are curated YouTube Music playlists, not mixes.
 const feedlessListRegex = /^(?:WL|LL|LM)$|^RD(?!CLAK)/
+// A channel ID is UC and 22 characters, so the fixed length tells UULF{id} apart from UU{id}
+// whose ID starts with LF.
+const uploadsPlaylistRegex = /^(UU(?:LF|SH|LV|LP|PS|PV|MO|MS|MV)?)[\w-]{22}$/
+
+// The playlists YouTube derives from a channel, the UC of its ID replaced by the prefix. The bare
+// UU list is the channel's uploads, the second spelling of the channel feed.
+// See: https://stackoverflow.com/a/77816885.
+const uploadsPlaylistKeys: Record<string, string> = {
+  UULF: 'youtube:videos',
+  UUSH: 'youtube:shorts',
+  UULV: 'youtube:live',
+  UULP: 'youtube:popular-videos',
+  UUPS: 'youtube:popular-shorts',
+  UUPV: 'youtube:popular-live',
+  UUMO: 'youtube:member-videos',
+  UUMS: 'youtube:member-shorts',
+  UUMV: 'youtube:member-live',
+}
+// YouTube also supports a legacy ?user=username feed parameter, but it only works with old-style
+// usernames (not modern @handles) and returns the same Atom content as ?channel_id=. YouTube's own
+// autodiscovery always uses channel_id, so we treat it as the canonical format and build the legacy
+// one only for an embed that names a username and no channel ID.
+const feeds = definePlatformFeeds([
+  { key: 'youtube:all', template: `${feedUrl}?channel_id={channelId}` },
+  { key: 'youtube:all', template: `${feedUrl}?user={user}`, isAlias: true },
+  { key: 'youtube:playlist', template: `${feedUrl}?playlist_id={playlistId}` },
+  ...Object.values(uploadsPlaylistKeys).map((key) => {
+    return { key, template: `${feedUrl}?playlist_id={playlistId}` }
+  }),
+])
 
 const extractChannelIdFromContent = (content: string): string | undefined => {
   for (const regex of channelIdRegexes) {
@@ -57,64 +96,38 @@ const extractChannelIdFromContent = (content: string): string | undefined => {
   }
 }
 
-// Convert channel ID to playlist IDs for filtered feeds.
-// YouTube playlist prefixes: https://stackoverflow.com/a/77816885.
-const playlistPrefix = (prefix: string, channelId: string): string => {
+const toUploadsPlaylistId = (prefix: string, channelId: string): string => {
   return channelId.replace(channelPrefixRegex, prefix)
 }
 
-// YouTube also supports a legacy ?user=username feed parameter, but it only
-// works with old-style usernames (not modern @handles) and returns the same
-// Atom content as ?channel_id=. YouTube's own autodiscovery always uses
-// channel_id, so we treat it as the canonical format.
-const feedUrl = (param: string, value: string): string => {
-  return `https://www.youtube.com/feeds/videos.xml${composeQuery({ [param]: value })}`
+// An uploads list is one of the channel's feeds, whether a page or a feed URL names it.
+const getPlaylistKey = (playlistId: string | undefined): string => {
+  const uploadsPrefix = playlistId?.match(uploadsPlaylistRegex)?.[1]
+
+  if (uploadsPrefix === 'UU') {
+    return 'youtube:all'
+  }
+
+  if (uploadsPrefix) {
+    return uploadsPlaylistKeys[uploadsPrefix]
+  }
+
+  return 'youtube:playlist'
 }
 
-const pushChannelUris = (uris: Array<DiscoverUriEntry>, channelId: string): void => {
-  uris.push({
-    uri: [
-      feedUrl('channel_id', channelId),
-      feedUrl('playlist_id', playlistPrefix('UU', channelId)),
-    ],
-    hint: composeHint('youtube:all'),
-  })
-  uris.push({
-    uri: feedUrl('playlist_id', playlistPrefix('UULF', channelId)),
-    hint: composeHint('youtube:videos'),
-  })
-  uris.push({
-    uri: feedUrl('playlist_id', playlistPrefix('UUSH', channelId)),
-    hint: composeHint('youtube:shorts'),
-  })
-  uris.push({
-    uri: feedUrl('playlist_id', playlistPrefix('UULV', channelId)),
-    hint: composeHint('youtube:live'),
-  })
-  uris.push({
-    uri: feedUrl('playlist_id', playlistPrefix('UULP', channelId)),
-    hint: composeHint('youtube:popular-videos'),
-  })
-  uris.push({
-    uri: feedUrl('playlist_id', playlistPrefix('UUPS', channelId)),
-    hint: composeHint('youtube:popular-shorts'),
-  })
-  uris.push({
-    uri: feedUrl('playlist_id', playlistPrefix('UUPV', channelId)),
-    hint: composeHint('youtube:popular-live'),
-  })
-  uris.push({
-    uri: feedUrl('playlist_id', playlistPrefix('UUMO', channelId)),
-    hint: composeHint('youtube:member-videos'),
-  })
-  uris.push({
-    uri: feedUrl('playlist_id', playlistPrefix('UUMS', channelId)),
-    hint: composeHint('youtube:member-shorts'),
-  })
-  uris.push({
-    uri: feedUrl('playlist_id', playlistPrefix('UUMV', channelId)),
-    hint: composeHint('youtube:member-live'),
-  })
+const getChannelUris = (channelId: string): Array<DiscoverUriEntry | undefined> => {
+  return [
+    {
+      uri: [
+        feeds.getFeedUrl('youtube:all', { channelId }),
+        feeds.getFeedUrl('youtube:playlist', { playlistId: toUploadsPlaylistId('UU', channelId) }),
+      ].filter(isPresent),
+      hint: composeHint('youtube:all'),
+    },
+    ...Object.entries(uploadsPlaylistKeys).map(([prefix, key]) => {
+      return feeds.getFeedEntry(key, { playlistId: toUploadsPlaylistId(prefix, channelId) })
+    }),
+  ]
 }
 
 export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
@@ -125,14 +138,30 @@ export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
   }
 
   const { pathname, searchParams } = parsedUrl
+  const listType = getQueryParam(searchParams, 'listType')
   const listId = getQueryParam(searchParams, 'list')
-  const playlistId = listId && !feedlessListRegex.test(listId) ? listId : undefined
+  // An embed's `listType=user_uploads` names a legacy username in `list`, and `listType=search` a
+  // search query, so only a bare or `playlist` list is a playlist ID.
+  const isPlaylistList = listType === undefined || isAnyOf(listType, 'playlist')
+  const playlistId =
+    listId && isPlaylistList && !feedlessListRegex.test(listId) ? listId : undefined
+  const username = isAnyOf(listType, 'user_uploads') ? listId : undefined
   const rawChannelId = pathname.match(channelRegex)?.[1]?.replace(formatSuffixRegex, '')
   const channelId =
     rawChannelId && channelIdFormatRegex.test(rawChannelId) ? rawChannelId : undefined
 
   if (channelId) {
     return { kind: 'channel', channelId, playlistId }
+  }
+
+  if (liveStreamEmbedRegex.test(pathname)) {
+    const embedChannelId = getQueryParam(searchParams, 'channel')
+
+    if (!embedChannelId || !channelIdFormatRegex.test(embedChannelId)) {
+      return
+    }
+
+    return { kind: 'player', channelId: embedChannelId }
   }
 
   if (channelPathRegexes.some((regex) => regex.test(pathname))) {
@@ -158,6 +187,10 @@ export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
   if (playlistId) {
     return { kind: 'playlist', playlistId }
   }
+
+  if (username) {
+    return { kind: 'player', username }
+  }
 }
 
 export const getYoutubePage = (
@@ -175,6 +208,11 @@ export const getYoutubePage = (
   }
 
   if (parsed.kind === 'channel' && parsed.channelId) {
+    return parsed
+  }
+
+  // An embed names its channel or legacy username in the query, and its page carries neither.
+  if (parsed.kind === 'player' && (parsed.channelId || parsed.username)) {
     return parsed
   }
 
@@ -196,19 +234,44 @@ export const youtubeHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
+    const channelId = page.kind === 'playlist' ? undefined : page.channelId
+    const username = page.kind === 'playlist' ? undefined : page.username
+    const playlistUri = feeds.getFeedUrl('youtube:playlist', { playlistId: page.playlistId })
 
-    if (page.kind !== 'playlist' && page.channelId) {
-      pushChannelUris(uris, page.channelId)
+    return [
+      ...(channelId ? getChannelUris(channelId) : []),
+      ...(username ? [feeds.getFeedEntry('youtube:all', { user: username })] : []),
+      ...(playlistUri
+        ? [{ uri: playlistUri, hint: composeHint(getPlaylistKey(page.playlistId)) }]
+        : []),
+    ]
+  },
+
+  getFeedHint: (url) => {
+    const parsedUrl = parseUrl(url)
+    const hint = feeds.getFeedHint(url)
+
+    if (!parsedUrl || !hint) {
+      return
     }
 
-    if (page.playlistId) {
-      uris.push({
-        uri: feedUrl('playlist_id', page.playlistId),
-        hint: composeHint('youtube:playlist'),
-      })
+    const channelId = getQueryParam(parsedUrl, 'channel_id')
+
+    if (channelId) {
+      if (channelIdFormatRegex.test(channelId)) {
+        return composeHint('youtube:all')
+      }
+
+      return
     }
 
-    return uris
+    const playlistId = getQueryParam(parsedUrl, 'playlist_id')
+
+    // The legacy user feed names neither a channel ID nor a playlist.
+    if (!playlistId) {
+      return hint
+    }
+
+    return composeHint(getPlaylistKey(playlistId))
   },
 }

@@ -1,7 +1,7 @@
-import { composeQuery, getAnyOf, getQueryParam, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getAnyOf, getQueryParam, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex, findElement, hasMarker } from '../../common/utils.js'
+import { digitsRegex, findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers auteur, home, mot, rubrique (html), partly covers article.
@@ -19,6 +19,19 @@ const objectFileRegex = /^([a-z]+)(\d+)\.html$/i
 const notFoundClassRegex = /\bpage_404\b/
 
 const objects = ['article', 'rubrique', 'mot', 'auteur'] as const
+
+// A site of any domain is known only by its headers, so its feeds are built here but not claimed.
+// The root holds the sub-path the site is installed under.
+const feeds = definePlatformFeeds([
+  {
+    key: 'spip:article-comments',
+    template: '{root}/spip.php?page=comments-rss&id_article={id}',
+  },
+  { key: 'spip:section', template: '{root}/spip.php?page=backend&id_rubrique={id}' },
+  { key: 'spip:keyword', template: '{root}/spip.php?page=backend&id_mot={id}' },
+  { key: 'spip:author', template: '{root}/spip.php?page=backend&id_auteur={id}' },
+  { key: 'spip:articles', template: '{root}/spip.php?page=backend' },
+])
 
 // SPIP sends `Composed-By` on every page it composes, and `X-Spip-Cache` when its page cache is
 // on. An install can silence `Composed-By` and still send the cache header.
@@ -92,7 +105,7 @@ export const getSpipPage = (url: string, content: string | undefined): SpipPage 
   const base = findElement(content, (element) => {
     return element.name === 'base' && Boolean(element.attribs.href)
   })
-  const baseUrl = parseUrl(base?.attribs.href ?? '', parsedUrl) ?? parsedUrl
+  const baseUrl = parseUrl(base?.attribs.href, parsedUrl) ?? parsedUrl
   const scriptUrl = new URL('spip.php', baseUrl).href
   const objectId = getUrlObjectId(parsedUrl)
   // SPIP answers a made-up id with an empty feed, and its not-found page marks the root element.
@@ -123,42 +136,39 @@ export const spipHandler: PlatformHandler = {
       return []
     }
 
-    const { scriptUrl } = page
-    const uris: Array<DiscoverUriEntry> = []
+    const root = new URL('./', page.scriptUrl).href
 
     // The comments plugin serves this. An install without it answers 404 or 500. The plugin's
     // Atom template is Atom 0.3 with each entry wrapped in an `<item>`, which parses with no
     // entries, so only the RSS one is emitted.
     if (page.kind === 'article') {
-      uris.push({
-        uri: `${scriptUrl}${composeQuery({ page: 'comments-rss', id_article: page.id })}`,
-        hint: composeHint('spip:article-comments'),
-      })
+      return [
+        feeds.getFeedEntry('spip:article-comments', { root, id: page.id }),
+        feeds.getFeedEntry('spip:articles', { root }),
+      ]
     }
 
     if (page.kind === 'rubrique') {
-      uris.push({
-        uri: `${scriptUrl}${composeQuery({ page: 'backend', id_rubrique: page.id })}`,
-        hint: composeHint('spip:section'),
-      })
+      return [
+        feeds.getFeedEntry('spip:section', { root, id: page.id }),
+        feeds.getFeedEntry('spip:articles', { root }),
+      ]
     }
 
     if (page.kind === 'mot') {
-      uris.push({
-        uri: `${scriptUrl}${composeQuery({ page: 'backend', id_mot: page.id })}`,
-        hint: composeHint('spip:keyword'),
-      })
+      return [
+        feeds.getFeedEntry('spip:keyword', { root, id: page.id }),
+        feeds.getFeedEntry('spip:articles', { root }),
+      ]
     }
 
     if (page.kind === 'auteur') {
-      uris.push({
-        uri: `${scriptUrl}${composeQuery({ page: 'backend', id_auteur: page.id })}`,
-        hint: composeHint('spip:author'),
-      })
+      return [
+        feeds.getFeedEntry('spip:author', { root, id: page.id }),
+        feeds.getFeedEntry('spip:articles', { root }),
+      ]
     }
 
-    uris.push({ uri: `${scriptUrl}?page=backend`, hint: composeHint('spip:articles') })
-
-    return uris
+    return [feeds.getFeedEntry('spip:articles', { root })]
   },
 }

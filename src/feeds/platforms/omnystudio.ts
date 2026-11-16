@@ -1,13 +1,28 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type OmnystudioUrl = { kind: 'show'; show: string }
+export type OmnystudioUrl =
+  | { kind: 'show'; show: string }
+  | { kind: 'playlist'; show: string; playlist: string }
 
 const hosts = ['omny.fm', 'www.omny.fm']
-const showPathRegex = /^\/shows\/([^/]+)/i
+
+const showPathRegex = /^\/shows\/([^/]+)(?:\/playlists\/([^/]+))?/i
+
+const feeds = definePlatformFeeds([
+  { key: 'omnystudio:show', template: 'https://omny.fm/shows/{show}/playlists/podcast.rss' },
+  // Every show feed answers 302 to its playlist here. A named playlist redirects here too, and no
+  // URL tells it apart from the show's own.
+  {
+    key: 'omnystudio:show',
+    template: 'https://www.omnycontent.com/d/playlist/{orgId}/{programId}/{playlistId}/podcast.rss',
+    isAlias: true,
+  },
+  { key: 'omnystudio:playlist', template: 'https://omny.fm/shows/{show}/playlists/{playlist}.rss' },
+])
 
 export const parseOmnystudioUrl = (url: string): OmnystudioUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -16,10 +31,15 @@ export const parseOmnystudioUrl = (url: string): OmnystudioUrl | undefined => {
     return
   }
 
-  const show = parsedUrl.pathname.match(showPathRegex)?.[1]
+  const [, show, playlist] = parsedUrl.pathname.match(showPathRegex) ?? []
 
   if (!show) {
     return
+  }
+
+  // The show's own playlist, whose feed is the show feed.
+  if (playlist && !isAnyOf(playlist, 'podcast')) {
+    return { kind: 'playlist', show, playlist }
   }
 
   return { kind: 'show', show }
@@ -37,13 +57,16 @@ export const omnystudioHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
+    // Playlist page: omny.fm/shows/{show}/playlists/{playlist}.
+    if (parsed.kind === 'playlist') {
+      return [
+        feeds.getFeedEntry('omnystudio:playlist', { show: parsed.show, playlist: parsed.playlist }),
+        feeds.getFeedEntry('omnystudio:show', { show: parsed.show }),
+      ]
+    }
 
-    return [
-      {
-        uri: `${origin}/shows/${parsed.show}/playlists/podcast.rss`,
-        hint: composeHint('omnystudio:show'),
-      },
-    ]
+    return [feeds.getFeedEntry('omnystudio:show', { show: parsed.show })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

@@ -1,7 +1,7 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -12,11 +12,25 @@ export type PublicInboxPage =
 // lore.kernel.org answers a page request from a browser user agent with an Anubis challenge, and
 // from curl with 403, while its feeds still answer.
 const hosts = ['lore.kernel.org']
+
 // A file at the root, such as the list of inboxes, is no inbox.
 const fileRegex = /\.(?:html?|txt|json|xml|ico)$/i
 
 // The core navigation links help relative to the page, one `../` per level below the inbox root.
-const helpLinkRegex = /href="((?:\.\.\/)*)_\/text\/help\/?"/
+const helpLinkRegex = /href="((?:\.\.\/)*)_\/text\/help\/?"/i
+
+const feeds = definePlatformFeeds([
+  { key: 'public-inbox:messages', template: 'https://lore.kernel.org/{inbox}/new.atom' },
+  { key: 'public-inbox:thread', template: 'https://lore.kernel.org/{inbox}/{messageId}/t.atom' },
+])
+
+// An inbox can sit at any depth below its host, so its feeds are built under the inbox URL as the
+// root. A self-hosted inbox has nothing in its URL that names the software, so these are not
+// claimed.
+const inboxFeeds = definePlatformFeeds([
+  { key: 'public-inbox:messages', template: '{root}/new.atom' },
+  { key: 'public-inbox:thread', template: '{root}/{messageId}/t.atom' },
+])
 
 export const isPublicInboxHtml = (content: string): boolean => {
   return helpLinkRegex.test(content) && content.includes('_/text/color')
@@ -41,16 +55,15 @@ export const getPublicInboxPage = (url: string, content?: string): PublicInboxPa
     return
   }
 
-  if (rootLength < 0 || fileRegex.test(segments[rootLength - 1] ?? '')) {
+  const inboxSegments = segments.slice(0, rootLength)
+
+  if (rootLength < 0 || fileRegex.test(inboxSegments.at(-1) ?? '')) {
     return
   }
 
-  const inboxPath = segments
-    .slice(0, rootLength)
-    .map((segment) => `${segment}/`)
-    .join('')
+  const inboxPath = inboxSegments.map((segment) => `${segment}/`).join('')
   const inboxUrl = `${parsedUrl.origin}/${inboxPath}`
-  const messageId = segments[rootLength]
+  const [messageId] = segments.slice(rootLength)
 
   // Every Message-ID carries an `@`, and no route segment of an inbox does.
   if (messageId?.includes('@')) {
@@ -71,26 +84,25 @@ export const publicInboxHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getPublicInboxPage(url, content)
+    const pageFeeds = inboxFeeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const inboxFeed: DiscoverUriEntry = {
-      uri: `${page.inboxUrl}new.atom`,
-      hint: composeHint('public-inbox:messages'),
-    }
+    const root = page.inboxUrl
 
     if (page.kind === 'message') {
+      const params = { root, messageId: page.messageId }
+
       return [
-        {
-          uri: `${page.inboxUrl}${page.messageId}/t.atom`,
-          hint: composeHint('public-inbox:thread'),
-        },
-        inboxFeed,
+        pageFeeds.getFeedEntry('public-inbox:thread', params),
+        pageFeeds.getFeedEntry('public-inbox:messages', { root }),
       ]
     }
 
-    return [inboxFeed]
+    return [pageFeeds.getFeedEntry('public-inbox:messages', { root })]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }

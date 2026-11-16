@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'bun:test'
+import { sleep } from 'trousse'
 import { discoverFeeds } from '../../feeds/index.js'
 import type { FeedResult } from '../../feeds/types.js'
-import locales from '../locales.json' with { type: 'json' }
+import locales from '../../locales.json' with { type: 'json' }
 import type {
   DiscoverErrorContext,
   DiscoverExtractFn,
@@ -425,7 +426,7 @@ describe('discoverFeeds', () => {
         current: 'https://www.example.com/feed',
       }
 
-      expect(progressUpdates[progressUpdates.length - 1]).toMatchObject(expected)
+      expect(progressUpdates.at(-1)).toMatchObject(expected)
     })
 
     it('should count a candidate with several alternatives as tested once', async () => {
@@ -669,9 +670,9 @@ describe('discoverFeeds', () => {
           },
         },
       )
-      const validatedMethods = steps.flatMap((step) => {
-        return step.step === 'validate' && step.status === 'start' ? [step.method] : []
-      })
+      const validatedMethods = steps
+        .filter((step) => step.step === 'validate' && step.status === 'start')
+        .map((step) => step.method)
 
       expect(validatedMethods).toEqual(['platform'])
     })
@@ -858,7 +859,7 @@ describe('discoverFeeds', () => {
       expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
     })
 
-    it('should throw when the input fetch succeeds without headers', async () => {
+    it('should throw when the input fetch succeeds without headers', () => {
       const page = '<link rel="alternate" type="application/rss+xml" href="/feed">'
       // @ts-expect-error: This is for testing purposes.
       const mockFetch: FetchFn = (url) => {
@@ -871,7 +872,7 @@ describe('discoverFeeds', () => {
         })
       }
 
-      await expect(throwing()).rejects.toThrow(locales.errors.headersMethodRequiresHeaders)
+      expect(throwing()).rejects.toThrow(locales.errors.headersMethodRequiresHeaders)
     })
   })
 
@@ -1218,7 +1219,7 @@ describe('discoverFeeds', () => {
     it('should return results in the order the candidates were listed, whatever finishes first', async () => {
       const delays: Record<string, number> = { 'https://example.com/feed': 30 }
       const mockFetch: FetchFn = async (url) => {
-        await new Promise((resolve) => setTimeout(resolve, delays[url] ?? 0))
+        await sleep(delays[url] ?? 0)
 
         return { headers: new Headers(), body: rss, url, status: 200, statusText: 'OK' }
       }
@@ -1558,7 +1559,7 @@ describe('discoverFeeds', () => {
         found: 1,
       }
 
-      expect(progressUpdates[progressUpdates.length - 1]).toMatchObject(expected)
+      expect(progressUpdates.at(-1)).toMatchObject(expected)
     })
 
     it('should return one invalid result when several candidates redirect to the same page', async () => {
@@ -1598,7 +1599,7 @@ describe('discoverFeeds', () => {
       }
       const redirectingFetch: FetchFn = async (url) => {
         if (url === 'https://example.com/feed/') {
-          await new Promise((resolve) => setTimeout(resolve, 10))
+          await sleep(10)
         }
 
         return {
@@ -1656,7 +1657,10 @@ describe('discoverFeeds', () => {
           concurrency: 2,
         },
       )
-      const expected = { method: 'platform', hint: { key: 'posts', label: 'Posts' } }
+      const expected = {
+        method: 'platform',
+        hint: { key: 'posts', label: 'Posts' },
+      }
 
       expect(value.find((result) => result.url === 'https://example.com/feed/')).toMatchObject(
         expected,
@@ -1673,7 +1677,7 @@ describe('discoverFeeds', () => {
       }
       const redirectingFetch: FetchFn = async (url) => {
         if (url === 'https://example.com/feed/') {
-          await new Promise((resolve) => setTimeout(resolve, 10))
+          await sleep(10)
         }
 
         return {
@@ -1940,14 +1944,15 @@ describe('discoverFeeds', () => {
       type ExtendedFeedResult = FeedResult & {
         etag?: string
       }
-      const mockFetch: FetchFn = (url) =>
-        Promise.resolve({
+      const mockFetch: FetchFn = (url) => {
+        return Promise.resolve({
           headers: new Headers({ etag: '"abc123"' }),
           body: '<rss><channel><title>Test</title></channel></rss>',
           url,
           status: 200,
           statusText: 'OK',
         })
+      }
       const customExtractor: DiscoverExtractFn<ExtendedFeedResult> = ({
         url,
         content,
@@ -2125,23 +2130,23 @@ describe('discoverFeeds', () => {
   })
 
   describe('method validation', () => {
-    it('should throw error when html method requested without content', async () => {
+    it('should throw error when html method requested without content', () => {
       const throwing = () => discoverFeeds({ url: 'https://example.com' }, { methods: ['html'] })
 
-      await expect(throwing()).rejects.toThrow(locales.errors.htmlMethodRequiresContent)
+      expect(throwing()).rejects.toThrow(locales.errors.htmlMethodRequiresContent)
     })
 
-    it('should throw error when headers method requested without headers', async () => {
+    it('should throw error when headers method requested without headers', () => {
       const throwing = () => discoverFeeds({ url: 'https://example.com' }, { methods: ['headers'] })
 
-      await expect(throwing()).rejects.toThrow(locales.errors.headersMethodRequiresHeaders)
+      expect(throwing()).rejects.toThrow(locales.errors.headersMethodRequiresHeaders)
     })
 
-    it('should throw error when guess method requested without url', async () => {
+    it('should throw error when guess method requested without url', () => {
       // @ts-expect-error: This is for testing purposes.
       const throwing = () => discoverFeeds({ content: '<html></html>' }, { methods: ['guess'] })
 
-      await expect(throwing()).rejects.toThrow(locales.errors.guessMethodRequiresUrl)
+      expect(throwing()).rejects.toThrow(locales.errors.guessMethodRequiresUrl)
     })
   })
 
@@ -2160,14 +2165,15 @@ describe('discoverFeeds', () => {
 
         return { url, isValid: false }
       }
-      const mockFetch: FetchFn = (url: string) =>
-        Promise.resolve({
+      const mockFetch: FetchFn = (url: string) => {
+        return Promise.resolve({
           headers: responseHeaders,
           body: rss,
           url,
           status: 200,
           statusText: 'OK',
         })
+      }
       await discoverFeeds(
         { url: 'https://example.com', content: '<html></html>' },
         {

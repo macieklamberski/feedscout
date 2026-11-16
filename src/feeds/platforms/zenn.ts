@@ -1,6 +1,6 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -15,6 +15,16 @@ export const hosts = ['zenn.dev', 'www.zenn.dev']
 
 const topicRegex = /^\/topics\/([^/]+)/i
 const publicationRegex = /^\/p\/([^/]+)/i
+
+// A user's feed lists only the posts on their own page. With `all=1` it adds their posts in
+// publications.
+const feeds = definePlatformFeeds([
+  { key: 'zenn:topic', template: 'https://zenn.dev/topics/{topic}/feed' },
+  { key: 'zenn:publication', template: 'https://zenn.dev/p/{publication}/feed' },
+  { key: 'zenn:posts', template: 'https://zenn.dev/{username}/feed' },
+  { key: 'zenn:all-posts', template: 'https://zenn.dev/{username}/feed?all=1' },
+  { key: 'zenn:trending', template: 'https://zenn.dev/feed' },
+])
 
 export const parseZennUrl = (url: string): ZennUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -61,38 +71,42 @@ export const zennHandler: PlatformHandler = {
       return []
     }
 
+    // The trending feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'topic') {
       return [
-        {
-          uri: `https://zenn.dev/topics/${parsed.topic}/feed`,
-          hint: composeHint('zenn:topic'),
-        },
+        feeds.getFeedEntry('zenn:topic', { topic: parsed.topic }),
+        feeds.getFeedEntry('zenn:trending'),
       ]
     }
 
     if (parsed.kind === 'publication') {
       return [
-        {
-          uri: `https://zenn.dev/p/${parsed.publication}/feed`,
-          hint: composeHint('zenn:publication'),
-        },
+        feeds.getFeedEntry('zenn:publication', { publication: parsed.publication }),
+        feeds.getFeedEntry('zenn:trending'),
       ]
     }
 
     if (parsed.kind === 'user' || parsed.kind === 'post') {
       return [
-        {
-          uri: `https://zenn.dev/${parsed.username}/feed`,
-          hint: composeHint('zenn:posts'),
-        },
+        feeds.getFeedEntry('zenn:posts', { username: parsed.username }),
+        feeds.getFeedEntry('zenn:all-posts', { username: parsed.username }),
+        feeds.getFeedEntry('zenn:trending'),
       ]
     }
 
-    return [
-      {
-        uri: 'https://zenn.dev/feed',
-        hint: composeHint('zenn:trending'),
-      },
-    ]
+    return [feeds.getFeedEntry('zenn:trending')]
+  },
+
+  // The user rows read any first segment as a name, so zenn.dev/topics/feed, the page of a topic
+  // named feed, is refused when the page parser reads it as a topic or publication.
+  getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
+    const isUserFeed = hint?.key === 'zenn:posts' || hint?.key === 'zenn:all-posts'
+
+    if (isUserFeed && parseZennUrl(url)?.kind !== 'post') {
+      return
+    }
+
+    return hint
   },
 }

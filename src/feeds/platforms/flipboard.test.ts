@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { FlipboardUrl } from './flipboard.js'
 import { flipboardHandler, parseFlipboardUrl } from './flipboard.js'
 
@@ -156,6 +159,114 @@ describe('flipboardHandler', () => {
       const value = 'https://flipboard.com/@example/business-arsskhdiz/a-lx3ygqVrTUGLodLkg_7x2g'
 
       expect(flipboardHandler.resolve(value)).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the profile hint for a profile feed', () => {
+      const value = 'https://flipboard.com/@BobWrites.rss'
+      const expected: DiscoverUriHint = { key: 'flipboard:profile', label: 'Profile' }
+
+      expect(flipboardHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the profile hint for a profile feed on the www host', () => {
+      const value = 'https://www.flipboard.com/@AliceDrives.rss'
+      const expected: DiscoverUriHint = { key: 'flipboard:profile', label: 'Profile' }
+
+      expect(flipboardHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the profile hint for a profile feed over http', () => {
+      const value = 'http://flipboard.com/@AliceDrives.rss'
+      const expected: DiscoverUriHint = { key: 'flipboard:profile', label: 'Profile' }
+
+      expect(flipboardHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the magazine hint for a magazine feed', () => {
+      const value =
+        'https://flipboard.com/@davesaves/quiet-coastal-towns-worth-a-long-weekend-m7q2xk9vd4rt8bn3.rss'
+      const expected: DiscoverUriHint = { key: 'flipboard:magazine', label: 'Magazine' }
+
+      expect(flipboardHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the magazine hint for a magazine feed with an encoded slug', () => {
+      const value =
+        'https://flipboard.com/@carol3abc/cocina-espa%C3%B1ola-de-invierno-q4v8kz2mw.rss'
+      const expected: DiscoverUriHint = { key: 'flipboard:magazine', label: 'Magazine' }
+
+      expect(flipboardHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the topic hint for a topic feed', () => {
+      const value = 'https://flipboard.com/topic/africanculture.rss'
+      const expected: DiscoverUriHint = { key: 'flipboard:topic', label: 'Topic' }
+
+      expect(flipboardHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the topic hint for a topic feed with a capitalized route', () => {
+      const value = 'https://flipboard.com/Topic/aiart.rss'
+      const expected: DiscoverUriHint = { key: 'flipboard:topic', label: 'Topic' }
+
+      expect(flipboardHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a profile page', () => {
+      const value = 'https://flipboard.com/@BobWrites'
+
+      expect(flipboardHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a magazine page', () => {
+      const value = 'https://flipboard.com/@erincooks/sourdough-k3w8q2xvr'
+
+      expect(flipboardHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a topic page', () => {
+      const value = 'https://flipboard.com/topic/africanculture'
+
+      expect(flipboardHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an article page', () => {
+      const value = 'https://flipboard.com/@erincooks/sourdough-k3w8q2xvr/a-lx3ygqVrTUGLodLkg_7x2g'
+
+      expect(flipboardHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on another host', () => {
+      const value = 'https://example.com/@BobWrites.rss'
+
+      expect(flipboardHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://flipboard.com/@BobWrites.rss', { key: 'flipboard:profile', label: 'Profile' }],
+      [
+        'https://flipboard.com/@carol3abc/cocina-espa%C3%B1ola-de-invierno-q4v8kz2mw.rss',
+        { key: 'flipboard:magazine', label: 'Magazine' },
+      ],
+      [
+        'https://flipboard.com/topic/africanculture.rss',
+        { key: 'flipboard:topic', label: 'Topic' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [flipboardHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

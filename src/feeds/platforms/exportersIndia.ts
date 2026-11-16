@@ -1,13 +1,11 @@
-import { parseUrl } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, findElements, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//
-const productsFeedPathRegex = /^\/products\.rss$/i
-const servicesFeedPathRegex = /^\/services\.rss$/i
+const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//i
 
 export type ExportersIndiaPage = { productsFeedUrl?: string; servicesFeedUrl?: string }
 
@@ -35,24 +33,24 @@ const getExportersIndiaPage = (
     return
   }
 
-  const { host } = new URL(url)
+  const { hostname } = new URL(url)
   const anchors = findElements(content, (element) => element.name === 'a')
   let productsFeedUrl: string | undefined
   let servicesFeedUrl: string | undefined
 
   for (const anchor of anchors) {
-    const target = parseUrl(anchor.attribs.href ?? '', url)
+    const target = parseUrl(anchor.attribs.href, url)
 
-    if (target?.host !== host) {
+    if (!target || !isHostOf(target, hostname)) {
       continue
     }
 
-    if (productsFeedPathRegex.test(target.pathname)) {
-      productsFeedUrl ??= target.href
+    if (isAnyOf(target.pathname, '/products.rss') && productsFeedUrl === undefined) {
+      productsFeedUrl = target.href
     }
 
-    if (servicesFeedPathRegex.test(target.pathname)) {
-      servicesFeedUrl ??= target.href
+    if (isAnyOf(target.pathname, '/services.rss') && servicesFeedUrl === undefined) {
+      servicesFeedUrl = target.href
     }
   }
 

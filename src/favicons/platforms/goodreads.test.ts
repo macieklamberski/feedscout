@@ -11,7 +11,7 @@ const userPage = `
     content="https://images.gr-assets.com/users/1506617226p5/1.jpg"
   />
   <img
-    alt="Otis Chandler"
+    alt="Alice Smith"
     class="profilePictureIcon circularIcon circularIcon--huge"
     src="https://images.gr-assets.com/users/1506617226p6/1.jpg"
   />
@@ -23,7 +23,7 @@ const userPageWithoutPhoto = `
     content="https://s.gr-assets.com/assets/nophoto/user/u_200x266-e183445fd1a1b5cc7075bb1cf7043306.png"
   />
   <img
-    alt="Florence Chandler"
+    alt="Carol Smith"
     class="profilePictureIcon circularIcon circularIcon--huge"
     src="https://s.gr-assets.com/assets/nophoto/user/u_225x300-c928cbb998d4ac6dd1f0f66f31f74b81.png"
   />
@@ -47,7 +47,7 @@ const createRef = (id: string): DiscoverRef => {
 describe('goodreadsHandler', () => {
   describe('match', () => {
     it('should match a user page with a slug', () => {
-      const value = 'https://www.goodreads.com/user/show/1-otis-chandler'
+      const value = 'https://www.goodreads.com/user/show/1-alice-smith'
 
       expect(goodreadsHandler.match(value)).toBe(true)
     })
@@ -60,14 +60,14 @@ describe('goodreadsHandler', () => {
   describe('resolve', () => {
     describe('happy paths', () => {
       it('should return the largest variant of the avatar', () => {
-        const value = 'https://www.goodreads.com/user/show/1-otis-chandler'
+        const value = 'https://www.goodreads.com/user/show/1-alice-smith'
         const expected = [{ uri: avatarUrl }]
 
         expect(goodreadsHandler.resolve(value, userPage)).toEqual(expected)
       })
 
       it('should return the avatar from unquoted attributes', () => {
-        const value = 'https://www.goodreads.com/user/show/1-otis-chandler'
+        const value = 'https://www.goodreads.com/user/show/1-alice-smith'
         const content = `
           <img
             class=profilePictureIcon
@@ -80,7 +80,7 @@ describe('goodreadsHandler', () => {
       })
 
       it('should return the largest variant of og:image when the page has no avatar image', () => {
-        const value = 'https://www.goodreads.com/user/show/1-otis-chandler'
+        const value = 'https://www.goodreads.com/user/show/1-alice-smith'
         const content = `
           <meta
             property="og:image"
@@ -93,7 +93,7 @@ describe('goodreadsHandler', () => {
       })
 
       it('should return a ref to the user when content is absent', () => {
-        const value = 'https://www.goodreads.com/user/show/1-otis-chandler'
+        const value = 'https://www.goodreads.com/user/show/1-alice-smith'
         const expected = [{ platform: 'goodreads', id: '1', url: value }]
 
         expect(goodreadsHandler.resolve(value)).toEqual(expected)
@@ -146,7 +146,7 @@ describe('goodreadsEnricher', () => {
     expect(await goodreadsEnricher(createRef('10'), context)).toEqual([])
   })
 
-  it('should reject when the body is a stream', async () => {
+  it('should reject when the body is a stream', () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream(),
@@ -155,22 +155,22 @@ describe('goodreadsEnricher', () => {
     })
     const throwing = () => goodreadsEnricher(createRef('1'), { fetchFn })
 
-    await expect(throwing()).rejects.toThrow('Unexpected stream body')
+    expect(throwing()).rejects.toThrow('Unexpected stream body')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const throwing = () => goodreadsEnricher(createRef('1'), { fetchFn })
 
-    await expect(throwing()).rejects.toThrow('Network error')
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
+  it('should reject when the response is not 2xx', () => {
     const throwing = () => goodreadsEnricher(createRef('1'), createContext({}))
     const expected = 'Unexpected status 404 from https://www.goodreads.com/user/show/1'
 
-    await expect(throwing()).rejects.toThrow(expected)
+    expect(throwing()).rejects.toThrow(expected)
   })
 })

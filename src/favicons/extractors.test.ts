@@ -60,7 +60,11 @@ describe('defaultExtractFn', () => {
     })
 
     it('should return isValid: false for missing content-type without other signals', async () => {
-      const value = { url: 'https://example.com/icon.png', content: '', headers: new Headers() }
+      const value = {
+        url: 'https://example.com/icon.png',
+        content: '',
+        headers: new Headers(),
+      }
       const expected = {
         url: 'https://example.com/icon.png',
         isValid: false,
@@ -249,7 +253,10 @@ describe('defaultExtractFn', () => {
         url: 'https://example.com',
         content: '<html><head></head><body></body></html>',
       }
-      const expected = { url: 'https://example.com', isValid: false }
+      const expected = {
+        url: 'https://example.com',
+        isValid: false,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -260,7 +267,10 @@ describe('defaultExtractFn', () => {
         content:
           '<html><body><svg xmlns="http://www.w3.org/2000/svg"><circle r="10"/></svg></body></html>',
       }
-      const expected = { url: 'https://example.com', isValid: false }
+      const expected = {
+        url: 'https://example.com',
+        isValid: false,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -274,7 +284,11 @@ describe('defaultExtractFn', () => {
 
   describe('status code', () => {
     it('should return isValid: false for status 200 without an image signal', async () => {
-      const value = { url: 'https://example.com/icon.png', content: '', status: 200 }
+      const value = {
+        url: 'https://example.com/icon.png',
+        content: '',
+        status: 200,
+      }
       const expected = {
         url: 'https://example.com/icon.png',
         isValid: false,
@@ -284,7 +298,11 @@ describe('defaultExtractFn', () => {
     })
 
     it('should return isValid: false for status 299 without an image signal', async () => {
-      const value = { url: 'https://example.com/icon.png', content: '', status: 299 }
+      const value = {
+        url: 'https://example.com/icon.png',
+        content: '',
+        status: 299,
+      }
       const expected = {
         url: 'https://example.com/icon.png',
         isValid: false,
@@ -294,7 +312,11 @@ describe('defaultExtractFn', () => {
     })
 
     it('should return isValid: false for status 301 without an image signal', async () => {
-      const value = { url: 'https://example.com/icon.png', content: '', status: 301 }
+      const value = {
+        url: 'https://example.com/icon.png',
+        content: '',
+        status: 301,
+      }
       const expected = {
         url: 'https://example.com/icon.png',
         isValid: false,
@@ -304,7 +326,11 @@ describe('defaultExtractFn', () => {
     })
 
     it('should return isValid: false for status 400', async () => {
-      const value = { url: 'https://example.com/icon.png', content: '', status: 400 }
+      const value = {
+        url: 'https://example.com/icon.png',
+        content: '',
+        status: 400,
+      }
       const expected = {
         url: 'https://example.com/icon.png',
         isValid: false,
@@ -314,7 +340,11 @@ describe('defaultExtractFn', () => {
     })
 
     it('should return isValid: false for status 404', async () => {
-      const value = { url: 'https://example.com/icon.png', content: '', status: 404 }
+      const value = {
+        url: 'https://example.com/icon.png',
+        content: '',
+        status: 404,
+      }
       const expected = {
         url: 'https://example.com/icon.png',
         isValid: false,
@@ -324,7 +354,11 @@ describe('defaultExtractFn', () => {
     })
 
     it('should return isValid: false for status 500', async () => {
-      const value = { url: 'https://example.com/icon.png', content: '', status: 500 }
+      const value = {
+        url: 'https://example.com/icon.png',
+        content: '',
+        status: 500,
+      }
       const expected = {
         url: 'https://example.com/icon.png',
         isValid: false,
@@ -334,7 +368,11 @@ describe('defaultExtractFn', () => {
     })
 
     it('should return isValid: false for status 199', async () => {
-      const value = { url: 'https://example.com/icon.png', content: '', status: 199 }
+      const value = {
+        url: 'https://example.com/icon.png',
+        content: '',
+        status: 199,
+      }
       const expected = {
         url: 'https://example.com/icon.png',
         isValid: false,
@@ -344,7 +382,10 @@ describe('defaultExtractFn', () => {
     })
 
     it('should return isValid: false for undefined status without other signals', async () => {
-      const value = { url: 'https://example.com/icon.png', content: '' }
+      const value = {
+        url: 'https://example.com/icon.png',
+        content: '',
+      }
       const expected = {
         url: 'https://example.com/icon.png',
         isValid: false,

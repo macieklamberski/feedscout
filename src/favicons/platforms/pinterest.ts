@@ -1,4 +1,4 @@
-import { isNonEmptyString } from 'trousse'
+import { includesAnyOf, isNonEmptyString, isSameText } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getScriptText } from '../../common/utils.js'
 import { parsePinterestUrl } from '../../feeds/platforms/pinterest.js'
@@ -7,9 +7,6 @@ import { getResponseText } from '../utils.js'
 
 const platform = 'pinterest'
 
-// A user without an avatar gets the generic s.pinimg.com/images/user/default_280.png.
-const defaultAvatarRegex = /\/images\/user\/default_/
-
 const findProfileImage = (content: string, username: string): string | undefined => {
   const json = getScriptText(content, '__PWS_INITIAL_PROPS__')
 
@@ -17,7 +14,7 @@ const findProfileImage = (content: string, username: string): string | undefined
     return
   }
 
-  let users = {}
+  let users: Record<string, { username?: string; image_xlarge_url?: string }> = {}
 
   try {
     users = JSON.parse(json)?.initialReduxState?.users ?? {}
@@ -25,14 +22,15 @@ const findProfileImage = (content: string, username: string): string | undefined
     return
   }
 
-  for (const user of Object.values<{ username?: string; image_xlarge_url?: string }>(users)) {
-    if (user?.username?.toLowerCase() !== username.toLowerCase()) {
+  for (const user of Object.values(users)) {
+    if (!isSameText(user?.username, username)) {
       continue
     }
 
     const image = user.image_xlarge_url
 
-    if (isNonEmptyString(image) && !defaultAvatarRegex.test(image)) {
+    // A user without an avatar gets the generic s.pinimg.com/images/user/default_280.png.
+    if (isNonEmptyString(image) && !includesAnyOf(image, '/images/user/default_')) {
       return image
     }
   }

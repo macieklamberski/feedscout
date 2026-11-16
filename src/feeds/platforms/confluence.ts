@@ -1,17 +1,34 @@
-import { composeQuery } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getMetaContent, hasMarker } from '../../common/utils.js'
+import { getMetaContent, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
 const trailingSlashRegex = /\/$/
 
-// The dashboard links this feed with an empty `spaces`, which answers no items. `conf_all` names
-// every space.
-const dashboardFeedQuery =
-  'types=page&types=blogpost&types=comment&spaces=conf_all&sort=modified&title=Dashboard+RSS+Feed&maxResults=15&publicFeed=true'
+// A site runs on its own domain, under its context path, and is known only by its marker, so its
+// feeds are built here but not claimed. The dashboard links its feed with an empty `spaces`, which
+// answers no items, and `conf_all` names every space. Its query is written as a form, as the
+// dashboard writes it, while a space key keeps its `~` in the stream feeds.
+const feeds = definePlatformFeeds([
+  { key: 'confluence:space', template: '{root}/plugins/servlet/streams?key={spaceKey}' },
+  { key: 'confluence:site', template: '{root}/plugins/servlet/streams' },
+  {
+    key: 'confluence:dashboard',
+    template:
+      '{root}/spaces/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=conf_all&sort=modified&title=Dashboard+RSS+Feed&maxResults=15&publicFeed=true&rssType=rss2',
+    format: 'rss',
+    queryEncoding: 'form',
+  },
+  {
+    key: 'confluence:dashboard',
+    template:
+      '{root}/spaces/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=conf_all&sort=modified&title=Dashboard+RSS+Feed&maxResults=15&publicFeed=true&rssType=atom',
+    format: 'atom',
+    queryEncoding: 'form',
+  },
+])
 
 export type ConfluencePage =
   | { kind: 'site'; baseUrl: string }
@@ -40,29 +57,27 @@ export const confluenceHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getConfluencePage(url, content)
-    const { baseUrl } = page
-    const uris: Array<DiscoverUriEntry> = []
+    const pageFeeds = feeds.forUrl(url)
 
-    if (page.kind === 'space') {
-      uris.push({
-        uri: `${baseUrl}/plugins/servlet/streams${composeQuery({ key: page.spaceKey })}`,
-        hint: composeHint('confluence:space'),
-      })
+    if (!pageFeeds) {
+      return []
     }
 
-    uris.push({
-      uri: `${baseUrl}/plugins/servlet/streams`,
-      hint: composeHint('confluence:site'),
-    })
-    uris.push({
-      uri: `${baseUrl}/spaces/createrssfeed.action?${dashboardFeedQuery}&rssType=rss2`,
-      hint: composeHint('confluence:dashboard', 'rss'),
-    })
-    uris.push({
-      uri: `${baseUrl}/spaces/createrssfeed.action?${dashboardFeedQuery}&rssType=atom`,
-      hint: composeHint('confluence:dashboard', 'atom'),
-    })
+    const params = { root: page.baseUrl }
 
-    return uris
+    if (page.kind === 'space') {
+      return [
+        pageFeeds.getFeedEntry('confluence:space', { ...params, spaceKey: page.spaceKey }),
+        pageFeeds.getFeedEntry('confluence:site', params),
+        pageFeeds.getFeedEntry('confluence:dashboard', params, 'rss'),
+        pageFeeds.getFeedEntry('confluence:dashboard', params, 'atom'),
+      ]
+    }
+
+    return [
+      pageFeeds.getFeedEntry('confluence:site', params),
+      pageFeeds.getFeedEntry('confluence:dashboard', params, 'rss'),
+      pageFeeds.getFeedEntry('confluence:dashboard', params, 'atom'),
+    ]
   },
 }
