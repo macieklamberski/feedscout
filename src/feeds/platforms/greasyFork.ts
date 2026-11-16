@@ -1,13 +1,7 @@
-import { composeQuery, getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, isLocale, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  findDescendant,
-  findElement,
-  getNumericId,
-  hasClass,
-  letterGroupsRegex,
-} from '../../common/utils.js'
+import { findDescendant, findElement, getNumericId, hasClass } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -22,12 +16,32 @@ export type GreasyForkPage =
 
 // Sleazy Fork runs the same software, with its feeds on its own api host.
 const hosts = ['greasyfork.org', 'sleazyfork.org']
+const feedHosts = ['api.greasyfork.org', 'api.sleazyfork.org']
 
 const userRegex = /^\/users\/([^/]+)/i
 const scriptRegex = /^\/scripts\/\d/i
 // A user segment is `{id}-{name}`, and the name is optional.
 const userIdRegex = /^(?<id>[^-]+)/
 const authorHrefRegex = /\/users\/(?<id>[^/-]+)/i
+
+// The feeds answer with a redirect to an HTML page without a locale in the path. A user feed lists
+// only the scripts in the locale's language unless `filter_locale=0` is set, while the user page
+// lists them all.
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'greasy-fork:user',
+      template: '{scheme}://{host}/{locale}/scripts.atom?by={userId}&filter_locale=0',
+    },
+    { key: 'greasy-fork:user', template: '{scheme}://{host}/{locale}/scripts.atom?by={userId}' },
+    { key: 'greasy-fork:new', template: '{scheme}://{host}/{locale}/scripts.atom?sort=created' },
+    {
+      key: 'greasy-fork:updated',
+      template: '{scheme}://{host}/{locale}/scripts.atom?sort=updated',
+    },
+  ],
+  { hosts: feedHosts },
+)
 
 export const parseGreasyForkUrl = (url: string): GreasyForkUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -36,11 +50,11 @@ export const parseGreasyForkUrl = (url: string): GreasyForkUrl | undefined => {
     return
   }
 
-  const [first] = getPathSegments(parsedUrl)
-  const hasLocale = first !== undefined && letterGroupsRegex.test(first)
+  const [localeOrRoute] = getPathSegments(parsedUrl)
+  const hasLocale = localeOrRoute !== undefined && isLocale(localeOrRoute)
   // A page without a locale redirects to one by the browser language.
-  const locale = hasLocale ? first : 'en'
-  const path = hasLocale ? parsedUrl.pathname.slice(first.length + 1) : parsedUrl.pathname
+  const locale = hasLocale ? localeOrRoute : 'en'
+  const path = hasLocale ? parsedUrl.pathname.slice(localeOrRoute.length + 1) : parsedUrl.pathname
   const userId = getNumericId(path.match(userRegex)?.[1], userIdRegex)
 
   if (userId) {
@@ -86,25 +100,23 @@ export const greasyForkHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getGreasyForkPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    // The feeds answer 406 without a locale in the path.
-    const base = `https://api.${new URL(url).hostname}/${page.locale}/scripts.atom`
+    const params = { scheme: 'https', host: `api.${new URL(url).hostname}`, locale: page.locale }
 
     if (page.kind === 'user') {
-      // The feed lists only the scripts in the locale's language unless `filter_locale=0` is set,
-      // while the user page lists them all.
-      const query = composeQuery({ by: page.userId, filter_locale: '0' })
-
-      return [{ uri: `${base}${query}`, hint: composeHint('greasy-fork:user') }]
+      return [pageFeeds.getFeedEntry('greasy-fork:user', { ...params, userId: page.userId })]
     }
 
     return [
-      { uri: `${base}?sort=created`, hint: composeHint('greasy-fork:new') },
-      { uri: `${base}?sort=updated`, hint: composeHint('greasy-fork:updated') },
+      pageFeeds.getFeedEntry('greasy-fork:new', params),
+      pageFeeds.getFeedEntry('greasy-fork:updated', params),
     ]
   },
+
+  getFeedHint: feeds.getFeedHint,
 }
