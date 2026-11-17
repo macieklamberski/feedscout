@@ -1,5 +1,6 @@
+import { pinterest } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf, isRegion, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabel, withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -11,20 +12,13 @@ export type PinterestUrl =
   | { kind: 'tab'; username: string }
   | { kind: 'board'; username: string; board: string }
 
-export const hosts = ['pinterest.com', 'www.pinterest.com']
-const domains = ['pinterest.com']
+export const hosts = pinterest.hosts
+const domains = pinterest.tenantDomains
 
 // Profile tabs of a user, which name the user, not a board.
 const userSubpaths = ['pins', 'boards', '_saved', '_created', 'followers', 'following']
 
-const feeds = definePlatformFeeds(
-  [
-    // Before the board row, so a pins feed never reads as a board named feed.
-    { key: 'pinterest:pins', template: '{scheme}://{host}/{username}/feed.rss' },
-    { key: 'pinterest:board', template: '{scheme}://{host}/{username}/{board}.rss' },
-  ],
-  { hosts, domains, checks: { host: (host) => isPinterestHost(new URL(`https://${host}`)) } },
-)
+const feeds = withHintLabels(pinterest.feeds)
 
 // A country site such as pinterest.co.uk redirects to its label on pinterest.com, uk.pinterest.com,
 // which serves the same profiles and boards.
@@ -64,22 +58,19 @@ export const pinterestHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePinterestUrl(url)
-    const page = feeds.forUrl(url)
 
-    if (!parsed || !page) {
+    if (!parsed) {
       return []
     }
 
-    const host = 'www.pinterest.com'
-
     if (parsed.kind === 'board') {
-      const params = { host, username: parsed.username, board: parsed.board }
+      const params = { username: parsed.username, board: parsed.board }
 
-      return [page.getFeedEntry('pinterest:board', params)]
+      return [feeds.getFeedEntry('pinterest:board', params)]
     }
 
-    return [page.getFeedEntry('pinterest:pins', { host, username: parsed.username })]
+    return [feeds.getFeedEntry('pinterest:pins', { username: parsed.username })]
   },
 
-  getFeedHint: feeds.getFeedHint,
+  getFeedHint: (url) => withHintLabel(pinterest.getFeedHint(url)),
 }

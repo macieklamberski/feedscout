@@ -15,12 +15,12 @@ const zenfolioAssetRegex = /^(?:https?:)?\/\/cdn\.zenfolio\.com\/zf\//i
 // A custom domain is known only by its markers, so its feeds are built here but not claimed.
 const feeds = definePlatformFeeds(
   [
-    { key: 'zenfolio:recent', template: '{scheme}://{host}/recent.rss', format: 'rss' },
-    { key: 'zenfolio:recent', template: '{scheme}://{host}/recent.atom', format: 'atom' },
-    { key: 'zenfolio:featured', template: '{scheme}://{host}/featured.rss', format: 'rss' },
-    { key: 'zenfolio:featured', template: '{scheme}://{host}/featured.atom', format: 'atom' },
-    { key: 'zenfolio:blog', template: '{scheme}://{host}/blog.rss', format: 'rss' },
-    { key: 'zenfolio:blog', template: '{scheme}://{host}/blog.atom', format: 'atom' },
+    { key: 'zenfolio:recent', main: '{scheme}://{host}/recent.rss', format: 'rss' },
+    { key: 'zenfolio:recent', main: '{scheme}://{host}/recent.atom', format: 'atom' },
+    { key: 'zenfolio:featured', main: '{scheme}://{host}/featured.rss', format: 'rss' },
+    { key: 'zenfolio:featured', main: '{scheme}://{host}/featured.atom', format: 'atom' },
+    { key: 'zenfolio:blog', main: '{scheme}://{host}/blog.rss', format: 'rss' },
+    { key: 'zenfolio:blog', main: '{scheme}://{host}/blog.atom', format: 'atom' },
   ],
   { domains },
 )

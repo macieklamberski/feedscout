@@ -1,5 +1,6 @@
+import { observable } from 'feedintel'
 import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Not discoverable without handler.
@@ -11,7 +12,7 @@ export type ObservableUrl =
   | { kind: 'recent' }
   | { kind: 'trending' }
 
-export const hosts = ['observablehq.com', 'www.observablehq.com']
+export const hosts = observable.hosts
 
 // The live form carries a `-` segment, `/@{owner}/-/collection/{slug}`.
 const collectionRegex = /^\/@([^/]+)\/(?:-\/)?collection\/([^/]+)/i
@@ -20,15 +21,7 @@ const publicRegex = /^\/public\/?$/i
 const recentRegex = /^\/recent\/?$/i
 const trendingRegex = /^\/trending\/?$/i
 
-const feeds = definePlatformFeeds([
-  { key: 'observable:recent', template: 'https://api.observablehq.com/documents/public.rss' },
-  { key: 'observable:trending', template: 'https://api.observablehq.com/documents/trending.rss' },
-  {
-    key: 'observable:collection',
-    template: 'https://api.observablehq.com/collection/@{owner}/{collection}.rss',
-  },
-  { key: 'observable:notebooks', template: 'https://api.observablehq.com/documents/@{owner}.rss' },
-])
+const feeds = withHintLabels(observable.feeds)
 
 export const parseObservableUrl = (url: string): ObservableUrl | undefined => {
   const parsedUrl = parseUrl(url)

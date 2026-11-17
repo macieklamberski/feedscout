@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isLocale } from 'trousse'
+import { getPathSegments, includesAnyOf, isAnyOf, isLocale } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { formatSuffixRegex, hasMarker } from '../../common/utils.js'
@@ -7,8 +7,6 @@ import { formatSuffixRegex, hasMarker } from '../../common/utils.js'
 
 export type ShopifyUrl = { kind: 'blog'; handle: string; tag?: string }
 
-const shopifyRegex = /shopify/i
-
 const domains = ['myshopify.com']
 
 // A store on its own domain is known only by its header, so its feeds are built here but not
@@ -16,31 +14,28 @@ const domains = ['myshopify.com']
 // does not read, so the table only claims them.
 const feeds = definePlatformFeeds(
   [
-    { key: 'shopify:blog', template: '{scheme}://{host}/blogs/{handle}.atom' },
-    { key: 'shopify:blog-tag', template: '{scheme}://{host}/blogs/{handle}/tagged/{tag}.atom' },
-    { key: 'shopify:collection', template: '{scheme}://{host}/collections/{handle}.atom' },
-    {
-      key: 'shopify:collection-tag',
-      template: '{scheme}://{host}/collections/{handle}/{tags}.atom',
-    },
-    // Below the rows without a locale, so `/collections/collections/{tags}.atom` reads as a
+    { key: 'shopify:blog', main: '{scheme}://{host}/blogs/{handle}.atom' },
+    { key: 'shopify:blog-tag', main: '{scheme}://{host}/blogs/{handle}/tagged/{tag}.atom' },
+    { key: 'shopify:collection', main: '{scheme}://{host}/collections/{handle}.atom' },
+    { key: 'shopify:collection-tag', main: '{scheme}://{host}/collections/{handle}/{tags}.atom' },
+    // Below the feeds without a locale, so `/collections/collections/{tags}.atom` reads as a
     // collection named collections, not as the locale `collections`.
-    { key: 'shopify:blog', template: '{scheme}://{host}/{locale}/blogs/{handle}.atom' },
+    { key: 'shopify:blog', main: '{scheme}://{host}/{locale}/blogs/{handle}.atom' },
     {
       key: 'shopify:blog-tag',
-      template: '{scheme}://{host}/{locale}/blogs/{handle}/tagged/{tag}.atom',
+      main: '{scheme}://{host}/{locale}/blogs/{handle}/tagged/{tag}.atom',
     },
-    { key: 'shopify:collection', template: '{scheme}://{host}/{locale}/collections/{handle}.atom' },
+    { key: 'shopify:collection', main: '{scheme}://{host}/{locale}/collections/{handle}.atom' },
     {
       key: 'shopify:collection-tag',
-      template: '{scheme}://{host}/{locale}/collections/{handle}/{tags}.atom',
+      main: '{scheme}://{host}/{locale}/collections/{handle}/{tags}.atom',
     },
   ],
   { domains, checks: { locale: isLocale } },
 )
 
 export const isShopifyHeaders = (headers: Headers): boolean => {
-  return shopifyRegex.test(headers.get('powered-by') ?? '')
+  return includesAnyOf(headers.get('powered-by'), 'shopify')
 }
 
 export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {

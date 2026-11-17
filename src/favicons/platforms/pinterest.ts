@@ -1,4 +1,4 @@
-import { isNonEmptyString, isSameText } from 'trousse'
+import { includesAnyOf, isNonEmptyString, isSameText } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getScriptText } from '../../common/utils.js'
 import { parsePinterestUrl } from '../../feeds/platforms/pinterest.js'
@@ -6,9 +6,6 @@ import type { FaviconEnricher } from '../types.js'
 import { getResponseText } from '../utils.js'
 
 const platform = 'pinterest'
-
-// A user without an avatar gets the generic s.pinimg.com/images/user/default_280.png.
-const defaultAvatarRegex = /\/images\/user\/default_/i
 
 const findProfileImage = (content: string, username: string): string | undefined => {
   const json = getScriptText(content, '__PWS_INITIAL_PROPS__')
@@ -32,7 +29,8 @@ const findProfileImage = (content: string, username: string): string | undefined
 
     const image = user.image_xlarge_url
 
-    if (isNonEmptyString(image) && !defaultAvatarRegex.test(image)) {
+    // A user without an avatar gets the generic s.pinimg.com/images/user/default_280.png.
+    if (isNonEmptyString(image) && !includesAnyOf(image, '/images/user/default_')) {
       return image
     }
   }

@@ -19,12 +19,15 @@ const hosts = ['vimeo.com', 'www.vimeo.com']
 const albumSegments = ['album', 'showcase']
 
 const feeds = definePlatformFeeds([
-  { key: 'vimeo:channel', template: 'https://vimeo.com/channels/{channel}/videos/rss' },
-  { key: 'vimeo:group', template: 'https://vimeo.com/groups/{group}/videos/rss' },
-  { key: 'vimeo:album', template: 'https://vimeo.com/album/{albumId}/rss' },
-  { key: 'vimeo:likes', template: 'https://vimeo.com/{username}/likes/rss' },
-  { key: 'vimeo:videos', template: 'https://vimeo.com/{username}/videos/rss' },
-  { key: 'vimeo:videos', template: 'https://vimeo.com/{username}/videos/all/rss', isAlias: true },
+  { key: 'vimeo:channel', main: 'https://vimeo.com/channels/{channel}/videos/rss' },
+  { key: 'vimeo:group', main: 'https://vimeo.com/groups/{group}/videos/rss' },
+  { key: 'vimeo:album', main: 'https://vimeo.com/album/{albumId}/rss' },
+  { key: 'vimeo:likes', main: 'https://vimeo.com/{username}/likes/rss' },
+  {
+    key: 'vimeo:videos',
+    main: 'https://vimeo.com/{username}/videos/rss',
+    aliases: ['https://vimeo.com/{username}/videos/all/rss'],
+  },
 ])
 
 export const parseVimeoUrl = (url: string): VimeoUrl | undefined => {

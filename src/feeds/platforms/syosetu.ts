@@ -13,9 +13,9 @@ const hosts = ['mypage.syosetu.com']
 const writerRegex = /^\/(?<writerId>[^/]+)/
 
 const feeds = definePlatformFeeds([
-  { key: 'syosetu:author', template: 'https://api.syosetu.com/writernovel/{writerId}.Atom' },
-  { key: 'syosetu:activity', template: 'https://api.syosetu.com/writer/{writerId}.Atom' },
-  { key: 'syosetu:all-novels', template: 'https://api.syosetu.com/allnovel.Atom' },
+  { key: 'syosetu:author', main: 'https://api.syosetu.com/writernovel/{writerId}.Atom' },
+  { key: 'syosetu:activity', main: 'https://api.syosetu.com/writer/{writerId}.Atom' },
+  { key: 'syosetu:all-novels', main: 'https://api.syosetu.com/allnovel.Atom' },
 ])
 
 export const parseSyosetuUrl = (url: string): SyosetuUrl | undefined => {

@@ -82,41 +82,29 @@ const domains = ['forum.co.ee', ...brands.map(getBrandDomainRegex)]
 const feeds = definePlatformFeeds(
   [
     // Forumotion serves each feed at `/rss` too, which only claims.
-    { key: 'forumotion:forum', template: '{scheme}://{host}/feed/?f={forumId}', format: 'rss' },
     {
       key: 'forumotion:forum',
-      template: '{scheme}://{host}/rss?f={forumId}',
+      main: '{scheme}://{host}/feed/?f={forumId}',
       format: 'rss',
-      isAlias: true,
+      aliases: ['{scheme}://{host}/rss?f={forumId}'],
     },
     {
       key: 'forumotion:forum',
-      template: '{scheme}://{host}/feed/?f={forumId}&type=atom',
+      main: '{scheme}://{host}/feed/?f={forumId}&type=atom',
       format: 'atom',
+      aliases: ['{scheme}://{host}/rss?f={forumId}&type=atom'],
     },
-    {
-      key: 'forumotion:forum',
-      template: '{scheme}://{host}/rss?f={forumId}&type=atom',
-      format: 'atom',
-      isAlias: true,
-    },
-    { key: 'forumotion:latest-topics', template: '{scheme}://{host}/feed/', format: 'rss' },
     {
       key: 'forumotion:latest-topics',
-      template: '{scheme}://{host}/rss',
+      main: '{scheme}://{host}/feed/',
       format: 'rss',
-      isAlias: true,
+      aliases: ['{scheme}://{host}/rss'],
     },
     {
       key: 'forumotion:latest-topics',
-      template: '{scheme}://{host}/feed/?type=atom',
+      main: '{scheme}://{host}/feed/?type=atom',
       format: 'atom',
-    },
-    {
-      key: 'forumotion:latest-topics',
-      template: '{scheme}://{host}/rss?type=atom',
-      format: 'atom',
-      isAlias: true,
+      aliases: ['{scheme}://{host}/rss?type=atom'],
     },
   ],
   { domains },

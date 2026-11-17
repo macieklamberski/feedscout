@@ -12,7 +12,7 @@ const postOrHistoryRegex = /\/[ph]\/[^/]+$/i
 
 // An instance of any domain is known only by its marker, so its feed is built here but not
 // claimed. The root holds the sub-path the instance is mounted under.
-const feeds = definePlatformFeeds([{ key: 'snac:posts', template: '{root}/{user}.rss' }])
+const feeds = definePlatformFeeds([{ key: 'snac:posts', main: '{root}/{user}.rss' }])
 
 // `snac/` with the slash, since the value is compared as a prefix and `snac` matches `snacks`.
 export const isSnacHtml = (content: string): boolean => {

@@ -1,5 +1,6 @@
+import { velog } from 'feedintel'
 import { decodeSegment, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Not discoverable without handler.
@@ -7,18 +8,11 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type VelogUrl = { kind: 'user'; username: string } | { kind: 'home' }
 
-export const hosts = ['velog.io', 'www.velog.io']
+export const hosts = velog.hosts
 
 const userRegex = /^\/@([^/]+)/
 
-// v2.velog.io serves the same feed at `/rss/@{username}`, which the `{username}` row reads too.
-// api.velog.io serves the same bytes as v2.velog.io, so its rows only claim.
-const feeds = definePlatformFeeds([
-  { key: 'velog:trending', template: 'https://v2.velog.io/rss' },
-  { key: 'velog:trending', template: 'https://api.velog.io/rss', isAlias: true },
-  { key: 'velog:posts', template: 'https://v2.velog.io/rss/{username}' },
-  { key: 'velog:posts', template: 'https://api.velog.io/rss/{username}', isAlias: true },
-])
+const feeds = withHintLabels(velog.feeds)
 
 export const parseVelogUrl = (url: string): VelogUrl | undefined => {
   const parsedUrl = parseUrl(url)

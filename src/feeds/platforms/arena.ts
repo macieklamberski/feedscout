@@ -26,9 +26,9 @@ const profilePaths = [
 
 // `/editorial/feed/rss` reads before `/{username}/feed/rss`, so it reads as the editorial feed.
 const feeds = definePlatformFeeds([
-  { key: 'arena:editorial', template: 'https://www.are.na/editorial/feed/rss' },
-  { key: 'arena:profile', template: 'https://www.are.na/{username}/feed/rss' },
-  { key: 'arena:channel', template: 'https://www.are.na/{username}/{channel}/feed/rss' },
+  { key: 'arena:editorial', main: 'https://www.are.na/editorial/feed/rss' },
+  { key: 'arena:profile', main: 'https://www.are.na/{username}/feed/rss' },
+  { key: 'arena:channel', main: 'https://www.are.na/{username}/{channel}/feed/rss' },
 ])
 
 export const parseArenaUrl = (url: string): ArenaUrl | undefined => {

@@ -1,5 +1,6 @@
+import { odysee } from 'feedintel'
 import { decodeSegment, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hexRegex } from '../../common/utils.js'
 
@@ -8,15 +9,11 @@ import { hexRegex } from '../../common/utils.js'
 
 export type OdyseeUrl = { kind: 'channel'; name: string; claimId?: string }
 
-export const hosts = ['odysee.com', 'www.odysee.com']
+export const hosts = odysee.hosts
 
 const channelRegex = /^\/@(?<name>[^/:]+)(?::(?<claimId>[^/]+))?/
 
-const feeds = definePlatformFeeds([
-  { key: 'odysee:videos', template: 'https://odysee.com/$/rss/@{name}:{claimId}' },
-  // The same feed with the claim ID as its own path segment.
-  { key: 'odysee:videos', template: 'https://odysee.com/$/rss/@{name}/{claimId}', isAlias: true },
-])
+const feeds = withHintLabels(odysee.feeds)
 
 export const parseOdyseeUrl = (url: string): OdyseeUrl | undefined => {
   const parsedUrl = parseUrl(url)

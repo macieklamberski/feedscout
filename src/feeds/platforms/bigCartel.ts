@@ -17,8 +17,8 @@ const themeStylesheetRegex = /^\/theme_stylesheets\/\d+\/\d+\/theme\.css$/i
 // A store on its own domain is known only by its markers, so its feed is built but not claimed.
 const feeds = definePlatformFeeds(
   [
-    { key: 'big-cartel:products', template: '{scheme}://{host}/products.rss' },
-    { key: 'big-cartel:products', template: '{scheme}://{host}/products.xml' },
+    { key: 'big-cartel:products', main: '{scheme}://{host}/products.rss' },
+    { key: 'big-cartel:products', main: '{scheme}://{host}/products.xml' },
   ],
   { domains },
 )

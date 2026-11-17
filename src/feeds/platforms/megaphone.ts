@@ -18,7 +18,7 @@ const episodePathRegex = /^\/([^/]+)\/?$/
 const feedUrlRegex = /feeds\.megaphone\.fm\/([\w-]+)/i
 
 const feeds = definePlatformFeeds([
-  { key: 'megaphone:podcast', template: 'https://feeds.megaphone.fm/{showId}' },
+  { key: 'megaphone:podcast', main: 'https://feeds.megaphone.fm/{showId}' },
 ])
 
 export const parseMegaphoneUrl = (url: string): MegaphoneUrl | undefined => {

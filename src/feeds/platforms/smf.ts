@@ -13,10 +13,10 @@ const boardIdRegex = /[?;&]board=(\d+)/i
 // A forum of any domain is known only by its marker, so its feeds are built here but not claimed.
 // The feed arguments are joined by semicolons into the one `action` value.
 const feeds = definePlatformFeeds([
-  { key: 'smf:board', template: '{root}?action=.xml;type=rss2;board={board}', format: 'rss' },
-  { key: 'smf:board', template: '{root}?action=.xml;type=atom;board={board}', format: 'atom' },
-  { key: 'smf:posts', template: '{root}?action=.xml;type=rss2', format: 'rss' },
-  { key: 'smf:posts', template: '{root}?action=.xml;type=atom', format: 'atom' },
+  { key: 'smf:board', main: '{root}?action=.xml;type=rss2;board={board}', format: 'rss' },
+  { key: 'smf:board', main: '{root}?action=.xml;type=atom;board={board}', format: 'atom' },
+  { key: 'smf:posts', main: '{root}?action=.xml;type=rss2', format: 'rss' },
+  { key: 'smf:posts', main: '{root}?action=.xml;type=atom', format: 'atom' },
 ])
 
 // Core prints both script variables in every page head whatever the theme, from SMF 1.1 to 2.1.

@@ -8,12 +8,9 @@ export type JellypodUrl = { kind: 'show' }
 
 const domains = ['jellypod.com']
 
-const feeds = definePlatformFeeds(
-  [{ key: 'jellypod:podcast', template: '{scheme}://{host}/rss' }],
-  {
-    domains,
-  },
-)
+const feeds = definePlatformFeeds([{ key: 'jellypod:podcast', main: '{scheme}://{host}/rss' }], {
+  domains,
+})
 
 export const parseJellypodUrl = (url: string): JellypodUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

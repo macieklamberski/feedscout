@@ -13,11 +13,8 @@ export type PchomeUrl =
 const hosts = ['mypaper.pchome.com.tw', 'mypaper.m.pchome.com.tw']
 
 const feeds = definePlatformFeeds([
-  {
-    key: 'pchome:category',
-    template: 'https://mypaper.pchome.com.tw/{username}/rss?cid={category}',
-  },
-  { key: 'pchome:posts', template: 'https://mypaper.pchome.com.tw/{username}/rss' },
+  { key: 'pchome:category', main: 'https://mypaper.pchome.com.tw/{username}/rss?cid={category}' },
+  { key: 'pchome:posts', main: 'https://mypaper.pchome.com.tw/{username}/rss' },
 ])
 
 export const parsePchomeUrl = (url: string): PchomeUrl | undefined => {

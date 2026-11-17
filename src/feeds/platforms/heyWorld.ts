@@ -9,7 +9,7 @@ export type HeyWorldUrl = { kind: 'blog'; username: string }
 const hosts = ['world.hey.com']
 
 const feeds = definePlatformFeeds([
-  { key: 'hey-world:blog', template: 'https://world.hey.com/{username}/feed.atom' },
+  { key: 'hey-world:blog', main: 'https://world.hey.com/{username}/feed.atom' },
 ])
 
 export const parseHeyWorldUrl = (url: string): HeyWorldUrl | undefined => {

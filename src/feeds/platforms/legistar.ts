@@ -1,4 +1,4 @@
-import { getQueryParam, isSubdomainOf, parseUrl, resolveUrl } from 'trousse'
+import { getQueryParam, isAnyOf, isSubdomainOf, parseUrl, resolveUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -20,9 +20,6 @@ export type LegistarPage = { kind: 'legislation' | 'meeting'; feedUrl: string }
 
 const domains = ['legistar.com']
 
-const legislationPathRegex = /^\/LegislationDetail\.aspx$/i
-const meetingPathRegex = /^\/MeetingDetail\.aspx$/i
-
 // Legistar's load balancer sets this cookie on every page, on a client's custom domain too.
 const cookieName = 'BIGipServerinsite.legistar.com_443'
 
@@ -30,13 +27,10 @@ const cookieName = 'BIGipServerinsite.legistar.com_443'
 // feed only on a Legistar host and builds it on any.
 const feeds = definePlatformFeeds(
   [
-    {
-      key: 'legistar:legislation',
-      template: '{scheme}://{host}/Feed.ashx?M=LD&ID={id}&GUID={guid}',
-    },
+    { key: 'legistar:legislation', main: '{scheme}://{host}/Feed.ashx?M=LD&ID={id}&GUID={guid}' },
     {
       key: 'legistar:meeting',
-      template: '{scheme}://{host}/Feed.ashx?M=CalendarDetail&ID={id}&GUID={guid}',
+      main: '{scheme}://{host}/Feed.ashx?M=CalendarDetail&ID={id}&GUID={guid}',
     },
   ],
   { domains },
@@ -78,11 +72,11 @@ export const parseLegistarUrl = (url: string): LegistarUrl | undefined => {
 
   const { id, guid } = record
 
-  if (legislationPathRegex.test(parsedUrl.pathname)) {
+  if (isAnyOf(parsedUrl.pathname, '/LegislationDetail.aspx')) {
     return { kind: 'legislation', id, guid }
   }
 
-  if (!meetingPathRegex.test(parsedUrl.pathname)) {
+  if (!isAnyOf(parsedUrl.pathname, '/MeetingDetail.aspx')) {
     return
   }
 

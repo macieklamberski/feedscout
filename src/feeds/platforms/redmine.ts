@@ -57,37 +57,31 @@ const domains = ['plan.io', 'planio.com']
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'redmine:project-news', template: '{root}/projects/{project}/news.atom' },
-    { key: 'redmine:news', template: '{root}/news.atom' },
+    { key: 'redmine:project-news', main: '{root}/projects/{project}/news.atom' },
+    { key: 'redmine:news', main: '{root}/news.atom' },
     {
       key: 'redmine:project-user-activity',
-      template: '{root}/projects/{project}/activity.atom?user_id={userId}',
+      main: '{root}/projects/{project}/activity.atom?user_id={userId}',
     },
-    {
-      key: 'redmine:project-activity',
-      template: '{root}/projects/{project}/activity.atom',
-    },
-    { key: 'redmine:user-activity', template: '{root}/activity.atom?user_id={userId}' },
-    { key: 'redmine:activity', template: '{root}/activity.atom' },
-    { key: 'redmine:projects', template: '{root}/projects.atom' },
-    { key: 'redmine:project-issues', template: '{root}/projects/{project}/issues.atom' },
-    { key: 'redmine:issues', template: '{root}/issues.atom' },
-    { key: 'redmine:issue', template: '{root}/issues/{issueId}.atom' },
-    {
-      key: 'redmine:board',
-      template: '{root}/projects/{project}/boards/{boardId}.atom',
-    },
+    { key: 'redmine:project-activity', main: '{root}/projects/{project}/activity.atom' },
+    { key: 'redmine:user-activity', main: '{root}/activity.atom?user_id={userId}' },
+    { key: 'redmine:activity', main: '{root}/activity.atom' },
+    { key: 'redmine:projects', main: '{root}/projects.atom' },
+    { key: 'redmine:project-issues', main: '{root}/projects/{project}/issues.atom' },
+    { key: 'redmine:issues', main: '{root}/issues.atom' },
+    { key: 'redmine:issue', main: '{root}/issues/{issueId}.atom' },
+    { key: 'redmine:board', main: '{root}/projects/{project}/boards/{boardId}.atom' },
     {
       key: 'redmine:revisions',
-      template: '{root}/projects/{project}/repository/{repository}/revisions.atom',
+      main: '{root}/projects/{project}/repository/{repository}/revisions.atom',
     },
     // A repository's changes, also as of a revision with `?rev=`, and a project's forums are linked
     // from pages the handler does not read, so these rows only claim.
     {
       key: 'redmine:changes',
-      template: '{root}/projects/{project}/repository/{repository}/changes.atom',
+      main: '{root}/projects/{project}/repository/{repository}/changes.atom',
     },
-    { key: 'redmine:boards', template: '{root}/projects/{project}/boards.atom' },
+    { key: 'redmine:boards', main: '{root}/projects/{project}/boards.atom' },
   ],
   { domains },
 )

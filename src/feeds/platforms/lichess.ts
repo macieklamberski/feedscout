@@ -18,13 +18,13 @@ const communityRegex = /^(?:\/([^/]+))?\/blog\/community\/?$/i
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'lichess:blog', template: 'https://lichess.org/@/{username}/blog.atom' },
-    { key: 'lichess:blog', template: 'https://lichess.org/blog.atom', isAlias: true },
     {
-      key: 'lichess:community',
-      template: 'https://lichess.org/blog/community.atom?lang={language}',
+      key: 'lichess:blog',
+      main: 'https://lichess.org/@/{username}/blog.atom',
+      aliases: ['https://lichess.org/blog.atom'],
     },
-    { key: 'lichess:community', template: 'https://lichess.org/blog/community.atom' },
+    { key: 'lichess:community', main: 'https://lichess.org/blog/community.atom?lang={language}' },
+    { key: 'lichess:community', main: 'https://lichess.org/blog/community.atom' },
   ],
   { checks: { language: isLocale } },
 )

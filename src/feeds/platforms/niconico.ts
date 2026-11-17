@@ -14,9 +14,9 @@ export type NiconicoUrl =
 export const hosts = ['ch.nicovideo.jp']
 
 const feeds = definePlatformFeeds([
-  { key: 'niconico:videos', template: 'https://ch.nicovideo.jp/{channel}/video?rss=2.0' },
-  { key: 'niconico:live', template: 'https://ch.nicovideo.jp/{channel}/live?rss=2.0' },
-  { key: 'niconico:blog', template: 'https://ch.nicovideo.jp/{channel}/blomaga/nico/feed' },
+  { key: 'niconico:videos', main: 'https://ch.nicovideo.jp/{channel}/video?rss=2.0' },
+  { key: 'niconico:live', main: 'https://ch.nicovideo.jp/{channel}/live?rss=2.0' },
+  { key: 'niconico:blog', main: 'https://ch.nicovideo.jp/{channel}/blomaga/nico/feed' },
 ])
 
 export const parseNiconicoUrl = (url: string): NiconicoUrl | undefined => {

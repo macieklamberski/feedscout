@@ -28,10 +28,9 @@ const appRootIds = ['XF', 'XenForo']
 // are built under the board root and never claimed. A forum page names the route of the board
 // feed, and a board page does not, so it gets both routes in turn.
 const feeds = definePlatformFeeds([
-  { key: 'xenforo:forum', template: '{root}/{route}/{forumPath}/index.rss' },
-  { key: 'xenforo:site', template: '{root}/{route}/-/index.rss' },
-  { key: 'xenforo:site', template: '{root}/forums/-/index.rss' },
-  { key: 'xenforo:site', template: '{root}/f/-/index.rss', isAlias: true },
+  { key: 'xenforo:forum', main: '{root}/{route}/{forumPath}/index.rss' },
+  { key: 'xenforo:site', main: '{root}/{route}/-/index.rss' },
+  { key: 'xenforo:site', main: '{root}/forums/-/index.rss', aliases: ['{root}/f/-/index.rss'] },
 ])
 
 export const isXenforoHtml = (content: string): boolean => {

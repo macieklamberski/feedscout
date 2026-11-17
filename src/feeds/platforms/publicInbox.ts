@@ -20,16 +20,16 @@ const fileRegex = /\.(?:html?|txt|json|xml|ico)$/i
 const helpLinkRegex = /href="((?:\.\.\/)*)_\/text\/help\/?"/i
 
 const feeds = definePlatformFeeds([
-  { key: 'public-inbox:messages', template: 'https://lore.kernel.org/{inbox}/new.atom' },
-  { key: 'public-inbox:thread', template: 'https://lore.kernel.org/{inbox}/{messageId}/t.atom' },
+  { key: 'public-inbox:messages', main: 'https://lore.kernel.org/{inbox}/new.atom' },
+  { key: 'public-inbox:thread', main: 'https://lore.kernel.org/{inbox}/{messageId}/t.atom' },
 ])
 
 // An inbox can sit at any depth below its host, so its feeds are built under the inbox URL as the
 // root. A self-hosted inbox has nothing in its URL that names the software, so these are not
 // claimed.
 const inboxFeeds = definePlatformFeeds([
-  { key: 'public-inbox:messages', template: '{root}/new.atom' },
-  { key: 'public-inbox:thread', template: '{root}/{messageId}/t.atom' },
+  { key: 'public-inbox:messages', main: '{root}/new.atom' },
+  { key: 'public-inbox:thread', main: '{root}/{messageId}/t.atom' },
 ])
 
 export const isPublicInboxHtml = (content: string): boolean => {

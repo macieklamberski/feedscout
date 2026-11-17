@@ -15,9 +15,9 @@ const sessionCookiePathRegex = /(?:^|,)\s*DokuWiki=[^,]*?;\s*path=([^;,\s]+)/i
 // feeds are built here but not claimed. The template links the namespace's pages feed, not its
 // changes.
 const feeds = definePlatformFeeds([
-  { key: 'dokuwiki:namespace', template: '{root}/feed.php?ns={namespace}' },
-  { key: 'dokuwiki:namespace-pages', template: '{root}/feed.php?mode=list&ns={namespace}' },
-  { key: 'dokuwiki:recent-changes', template: '{root}/feed.php' },
+  { key: 'dokuwiki:namespace', main: '{root}/feed.php?ns={namespace}' },
+  { key: 'dokuwiki:namespace-pages', main: '{root}/feed.php?mode=list&ns={namespace}' },
+  { key: 'dokuwiki:recent-changes', main: '{root}/feed.php' },
 ])
 
 export const isDokuwikiHeaders = (headers: Headers): boolean => {

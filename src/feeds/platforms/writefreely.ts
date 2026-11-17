@@ -1,4 +1,4 @@
-import { getPathSegments } from 'trousse'
+import { getPathSegments, startsWithAnyOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -17,17 +17,16 @@ export type WritefreelyPage = { blogPath: string; tag?: string }
 const tagPathRegex = /\/tag:([^/]+)/i
 const rootRouteRegex = /^\/(?:(?:tag|lang):|page\/\d+(?:\/|$)|archive\/?$)/i
 const blogPathRegex = /^\/(?:[^/]+\/)?$/
-const writeStylesheetRegex = /^\/css\/write\.css/i
 
 // An instance on any host is known only by its markup, which a feed URL does not carry, so the
 // feeds are built under the instance root and never claimed. A single-user instance serves its
 // one blog at the root, so its rows have no blog segment.
 const feeds = definePlatformFeeds([
-  { key: 'writefreely:tag', template: '{root}/{blog}/tag:{tag}/feed/' },
-  { key: 'writefreely:tag', template: '{root}/tag:{tag}/feed/' },
-  { key: 'writefreely:blog', template: '{root}/{blog}/feed/' },
-  { key: 'writefreely:blog', template: '{root}/feed/' },
-  { key: 'writefreely:reader', template: '{root}/read/feed/' },
+  { key: 'writefreely:tag', main: '{root}/{blog}/tag:{tag}/feed/' },
+  { key: 'writefreely:tag', main: '{root}/tag:{tag}/feed/' },
+  { key: 'writefreely:blog', main: '{root}/{blog}/feed/' },
+  { key: 'writefreely:blog', main: '{root}/feed/' },
+  { key: 'writefreely:reader', main: '{root}/read/feed/' },
 ])
 
 const getUrlBlogPath = (url: string): string | undefined => {
@@ -64,7 +63,7 @@ const getBlogPath = (content: string | undefined): string | undefined => {
 }
 
 const isWriteStylesheet = (element: Element): boolean => {
-  return writeStylesheetRegex.test(element.attribs.href ?? '')
+  return startsWithAnyOf(element.attribs.href, '/css/write.css')
 }
 
 export const isWritefreelyHtml = (content: string): boolean => {

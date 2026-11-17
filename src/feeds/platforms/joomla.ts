@@ -15,10 +15,10 @@ const routingParams = ['option', 'view', 'layout', 'id', 'catid', 'Itemid', 'lan
 // not claimed. The feed is the view's own URL with the feed format in its query, and a view
 // without search-engine friendly URLs passes the routing parameters that name it.
 const feeds = definePlatformFeeds([
-  { key: 'joomla:view', template: '{root}?{query}&format=feed&type=rss', format: 'rss' },
-  { key: 'joomla:view', template: '{root}?format=feed&type=rss', format: 'rss' },
-  { key: 'joomla:view', template: '{root}?{query}&format=feed&type=atom', format: 'atom' },
-  { key: 'joomla:view', template: '{root}?format=feed&type=atom', format: 'atom' },
+  { key: 'joomla:view', main: '{root}?{query}&format=feed&type=rss', format: 'rss' },
+  { key: 'joomla:view', main: '{root}?format=feed&type=rss', format: 'rss' },
+  { key: 'joomla:view', main: '{root}?{query}&format=feed&type=atom', format: 'atom' },
+  { key: 'joomla:view', main: '{root}?format=feed&type=atom', format: 'atom' },
 ])
 
 // Templates such as Helix Ultimate rewrite the generator to a string that only

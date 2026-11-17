@@ -44,28 +44,21 @@ const validSorts = ['newest', 'active', 'votes', 'creation', 'hot', 'week', 'mon
 // Area 51 proposals and a network tag set.
 const feeds = definePlatformFeeds(
   [
-    { key: 'stackexchange:tag', template: '{scheme}://{host}/feeds/tag/{tag}?sort={sort}' },
-    { key: 'stackexchange:tag', template: '{scheme}://{host}/feeds/tag/{tag}' },
+    { key: 'stackexchange:tag', main: '{scheme}://{host}/feeds/tag/{tag}?sort={sort}' },
     {
       key: 'stackexchange:tag',
-      template: '{scheme}://{host}/feeds/tag?tagnames={tag}',
-      isAlias: true,
+      main: '{scheme}://{host}/feeds/tag/{tag}',
+      aliases: ['{scheme}://{host}/feeds/tag?tagnames={tag}'],
     },
-    { key: 'stackexchange:question', template: '{scheme}://{host}/feeds/question/{questionId}' },
-    { key: 'stackexchange:user', template: '{scheme}://{host}/feeds/user/{userId}' },
-    {
-      key: 'stackexchange:chat-starred',
-      template: '{scheme}://{host}/feeds/rooms/starred/{roomId}',
-    },
-    { key: 'stackexchange:proposal', template: '{scheme}://{host}/feeds/proposal/{proposalId}' },
-    { key: 'stackexchange:tagset', template: '{scheme}://{host}/feeds/tagsets/{tagsetId}/{name}' },
-    {
-      key: 'stackexchange:collective',
-      template: '{scheme}://{host}/feeds/collectives/{collective}',
-    },
-    { key: 'stackexchange:newest', template: '{scheme}://{host}/feeds' },
-    { key: 'stackexchange:newest', template: '{scheme}://{host}/feeds/week' },
-    { key: 'stackexchange:newest', template: '{scheme}://{host}/feeds/month' },
+    { key: 'stackexchange:question', main: '{scheme}://{host}/feeds/question/{questionId}' },
+    { key: 'stackexchange:user', main: '{scheme}://{host}/feeds/user/{userId}' },
+    { key: 'stackexchange:chat-starred', main: '{scheme}://{host}/feeds/rooms/starred/{roomId}' },
+    { key: 'stackexchange:proposal', main: '{scheme}://{host}/feeds/proposal/{proposalId}' },
+    { key: 'stackexchange:tagset', main: '{scheme}://{host}/feeds/tagsets/{tagsetId}/{name}' },
+    { key: 'stackexchange:collective', main: '{scheme}://{host}/feeds/collectives/{collective}' },
+    { key: 'stackexchange:newest', main: '{scheme}://{host}/feeds' },
+    { key: 'stackexchange:newest', main: '{scheme}://{host}/feeds/week' },
+    { key: 'stackexchange:newest', main: '{scheme}://{host}/feeds/month' },
   ],
   { hosts: domains, domains: feedDomains },
 )

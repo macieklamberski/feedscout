@@ -1,4 +1,4 @@
-import { isAnyOf, isHttpUrl, isString, parseUrl } from 'trousse'
+import { endsWithAnyOf, isAnyOf, isHttpUrl, isString, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -38,7 +38,6 @@ const scopePathRegex = /\/(?<route>collections|communities)\/(?<uuid>[^/]+)(?:\/
 const transferStateEntityRegex = /&([aglqs]);/g
 const legacyFeedPathRegex =
   /\/feed\/(?<format>rss_1\.0|rss_2\.0|atom_1\.0)\/(?<scope>site|[^/]+\/[^/]+)$/i
-const legacyStylesheetRegex = /\/static\/css\/bootstrap\/dspace-theme\.css$/i
 const generatorRegex = /^DSpace\b/
 
 // Angular before 16 escapes the transfer state with these entities, and later versions print JSON.
@@ -83,26 +82,26 @@ const legacyKeys: Record<LegacyKind, string> = {
 const feeds = definePlatformFeeds([
   {
     key: 'dspace:collection',
-    template: '{root}/opensearch/search?format=atom&scope={uuid}&query=*',
+    main: '{root}/opensearch/search?format=atom&scope={uuid}&query=*',
     format: 'atom',
   },
   {
     key: 'dspace:collection',
-    template: '{root}/opensearch/search?format=rss&scope={uuid}&query=*',
+    main: '{root}/opensearch/search?format=rss&scope={uuid}&query=*',
     format: 'rss',
   },
   {
     key: 'dspace:community',
-    template: '{root}/opensearch/search?format=atom&scope={uuid}&query=*',
+    main: '{root}/opensearch/search?format=atom&scope={uuid}&query=*',
     format: 'atom',
   },
   {
     key: 'dspace:community',
-    template: '{root}/opensearch/search?format=rss&scope={uuid}&query=*',
+    main: '{root}/opensearch/search?format=rss&scope={uuid}&query=*',
     format: 'rss',
   },
-  { key: 'dspace:site', template: '{root}/opensearch/search?format=atom&query=*', format: 'atom' },
-  { key: 'dspace:site', template: '{root}/opensearch/search?format=rss&query=*', format: 'rss' },
+  { key: 'dspace:site', main: '{root}/opensearch/search?format=atom&query=*', format: 'atom' },
+  { key: 'dspace:site', main: '{root}/opensearch/search?format=rss&query=*', format: 'rss' },
 ])
 
 // The Angular UI of DSpace 7 and later renders every page inside this root element.
@@ -115,7 +114,10 @@ export const isDspaceHtml = (content: string): boolean => {
 // carry are the second marker.
 export const isLegacyDspaceHtml = (content: string): boolean => {
   const stylesheet = findElement(content, (element) => {
-    return element.name === 'link' && legacyStylesheetRegex.test(element.attribs.href ?? '')
+    return (
+      element.name === 'link' &&
+      endsWithAnyOf(element.attribs.href, '/static/css/bootstrap/dspace-theme.css')
+    )
   })
 
   if (stylesheet) {

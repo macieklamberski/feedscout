@@ -1,4 +1,4 @@
-import { getQueryParam, isHostOf, parseUrl } from 'trousse'
+import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { alphanumericOrHyphenRegex, getTenantSubdomain } from '../../common/utils.js'
@@ -18,13 +18,12 @@ const domains = [
 ]
 const hosts = ['comicfury.com', 'www.comicfury.com']
 
-const profilePathRegex = /^\/comicprofile\.php$/i
 const readerPathRegex = /^\/read\/([^/]+)/i
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'comicfury:comic', template: '{scheme}://{host}/rss' },
-    { key: 'comicfury:reader', template: 'https://comicfury.com/read/{comic}/rss' },
+    { key: 'comicfury:comic', main: '{scheme}://{host}/rss' },
+    { key: 'comicfury:reader', main: 'https://comicfury.com/read/{comic}/rss' },
   ],
   { domains },
 )
@@ -46,7 +45,7 @@ export const parseComicfuryUrl = (url: string): ComicfuryUrl | undefined => {
     return { kind: 'comic', comic }
   }
 
-  if (profilePathRegex.test(parsedUrl.pathname)) {
+  if (isAnyOf(parsedUrl.pathname, '/comicprofile.php')) {
     const comic = getQueryParam(parsedUrl.searchParams, 'url')
 
     if (!comic || !alphanumericOrHyphenRegex.test(comic)) {

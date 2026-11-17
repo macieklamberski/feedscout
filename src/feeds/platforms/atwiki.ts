@@ -13,25 +13,12 @@ const hosts = ['w.atwiki.jp']
 const feeds = definePlatformFeeds([
   {
     key: 'atwiki:updated-pages',
-    template: 'https://w.atwiki.jp/{wiki}/rss10.xml',
+    main: 'https://w.atwiki.jp/{wiki}/rss10.xml',
     format: 'rdf',
+    aliases: ['https://w.atwiki.jp/{wiki}/rss'],
   },
-  {
-    key: 'atwiki:updated-pages',
-    template: 'https://w.atwiki.jp/{wiki}/rss',
-    format: 'rdf',
-    isAlias: true,
-  },
-  {
-    key: 'atwiki:updated-pages',
-    template: 'https://w.atwiki.jp/{wiki}/feed.atom',
-    format: 'atom',
-  },
-  {
-    key: 'atwiki:new-pages',
-    template: 'https://w.atwiki.jp/{wiki}/rss10_new.xml',
-    format: 'rdf',
-  },
+  { key: 'atwiki:updated-pages', main: 'https://w.atwiki.jp/{wiki}/feed.atom', format: 'atom' },
+  { key: 'atwiki:new-pages', main: 'https://w.atwiki.jp/{wiki}/rss10_new.xml', format: 'rdf' },
 ])
 
 export const parseAtwikiUrl = (url: string): AtwikiUrl | undefined => {

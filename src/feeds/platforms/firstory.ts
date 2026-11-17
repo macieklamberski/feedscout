@@ -12,10 +12,15 @@ const domains = ['firstory.cc']
 const feedUrlRegex = /feed\.firstory\.me\/rss\/user\/([a-z\d]+)/i
 
 const feeds = definePlatformFeeds([
-  { key: 'firstory:podcast', template: 'https://feed.firstory.me/rss/user/{cuid}' },
-  // Served spellings, which redirect to the one above. Claimed, never built.
-  { key: 'firstory:podcast', template: 'https://open.firstory.me/rss/user/{cuid}', isAlias: true },
-  { key: 'firstory:podcast', template: 'https://open.firstory.fm/rss/user/{cuid}', isAlias: true },
+  {
+    key: 'firstory:podcast',
+    main: 'https://feed.firstory.me/rss/user/{cuid}',
+    aliases: [
+      // Served spellings, which redirect to the one above. Claimed, never built.
+      'https://open.firstory.me/rss/user/{cuid}',
+      'https://open.firstory.fm/rss/user/{cuid}',
+    ],
+  },
 ])
 
 export type FirstoryPage = { kind: 'show'; cuid: string }

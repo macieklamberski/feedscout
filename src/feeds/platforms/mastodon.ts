@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, parseUrl } from 'trousse'
+import { getPathSegments, includesAnyOf, isAnyOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasClass, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -14,7 +14,6 @@ export type MastodonUrl =
   | { kind: 'tagged'; username: string; tag: string }
   | { kind: 'tag'; tag: string }
 
-const mastodonRegex = /mastodon/i
 // suffixes: Mastodon's own profile formats, .rss, a legacy .atom and the ActivityPub .json. A
 // remote handle, @user@host.tld, holds dots, so only these suffixes are stripped.
 const feedExtensionRegex = /\.(rss|atom|json)$/i
@@ -22,11 +21,11 @@ const feedExtensionRegex = /\.(rss|atom|json)$/i
 // Mastodon is self-hosted and known only by its page marker, so nothing in a feed URL names it and
 // the table only builds.
 const feeds = definePlatformFeeds([
-  { key: 'mastodon:posts', template: '{root}/@{username}.rss' },
-  { key: 'mastodon:replies', template: '{root}/@{username}/with_replies.rss' },
-  { key: 'mastodon:media', template: '{root}/@{username}/media.rss' },
-  { key: 'mastodon:tagged', template: '{root}/@{username}/tagged/{tag}.rss' },
-  { key: 'mastodon:tag', template: '{root}/tags/{tag}.rss' },
+  { key: 'mastodon:posts', main: '{root}/@{username}.rss' },
+  { key: 'mastodon:replies', main: '{root}/@{username}/with_replies.rss' },
+  { key: 'mastodon:media', main: '{root}/@{username}/media.rss' },
+  { key: 'mastodon:tagged', main: '{root}/@{username}/tagged/{tag}.rss' },
+  { key: 'mastodon:tag', main: '{root}/tags/{tag}.rss' },
 ])
 
 // Current Mastodon serves no generator meta, so the `<div class="app-holder" id="mastodon">` app
@@ -44,7 +43,7 @@ export const isMastodonHtml = (content: string): boolean => {
 }
 
 export const isMastodonHeaders = (headers: Headers): boolean => {
-  return mastodonRegex.test(headers.get('server') ?? '')
+  return includesAnyOf(headers.get('server'), 'mastodon')
 }
 
 export const parseMastodonUrl = (url: string): MastodonUrl | undefined => {

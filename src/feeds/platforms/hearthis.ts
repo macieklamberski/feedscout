@@ -9,19 +9,23 @@ export type HearthisUrl = { kind: 'profile'; username: string }
 const hosts = ['hearthis.at', 'www.hearthis.at']
 
 const feeds = definePlatformFeeds([
-  { key: 'hearthis:new-tracks', template: 'https://hearthis.at/new_tracks.rss' },
-  { key: 'hearthis:tracks', template: 'https://hearthis.at/{username}/podcast/' },
-  // The same feed, byte for byte, under a second spelling.
-  { key: 'hearthis:tracks', template: 'https://hearthis.at/{username}/podcast.xml', isAlias: true },
+  { key: 'hearthis:new-tracks', main: 'https://hearthis.at/new_tracks.rss' },
+  {
+    key: 'hearthis:tracks',
+    main: 'https://hearthis.at/{username}/podcast/',
+    aliases: [
+      // The same feed, byte for byte, under a second spelling.
+      'https://hearthis.at/{username}/podcast.xml',
+    ],
+  },
   // The same tracks as a plain list, with no audio enclosures.
-  { key: 'hearthis:track-list', template: 'https://hearthis.at/{username}/rss/' },
+  { key: 'hearthis:track-list', main: 'https://hearthis.at/{username}/rss/' },
   // A set's feed, which its page links. The set id is not in the page URL. Any one segment after
   // `podcast/`, such as `feed/` or `.rss/`, serves the same items.
-  { key: 'hearthis:set', template: 'https://hearthis.at/set/{setId}/podcast/' },
   {
     key: 'hearthis:set',
-    template: 'https://hearthis.at/set/{setId}/podcast/{spelling}/',
-    isAlias: true,
+    main: 'https://hearthis.at/set/{setId}/podcast/',
+    aliases: ['https://hearthis.at/set/{setId}/podcast/{spelling}/'],
   },
 ])
 

@@ -8,10 +8,9 @@ export type HashnodeUrl = { kind: 'blog' }
 
 const domains = ['hashnode.dev', 'hashnode.com']
 
-const feeds = definePlatformFeeds(
-  [{ key: 'hashnode:blog', template: '{scheme}://{host}/rss.xml' }],
-  { domains },
-)
+const feeds = definePlatformFeeds([{ key: 'hashnode:blog', main: '{scheme}://{host}/rss.xml' }], {
+  domains,
+})
 
 export const parseHashnodeUrl = (url: string): HashnodeUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

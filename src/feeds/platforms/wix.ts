@@ -14,11 +14,10 @@ const assetHosts = ['static.parastorage.com']
 // Wix answers a free site's feed under any one segment after the site path, such as a language.
 const freeSiteFeeds = definePlatformFeeds(
   [
-    { key: 'wix:blog', template: '{scheme}://{host}/{site}/blog-feed.xml' },
     {
       key: 'wix:blog',
-      template: '{scheme}://{host}/{site}/{section}/blog-feed.xml',
-      isAlias: true,
+      main: '{scheme}://{host}/{site}/blog-feed.xml',
+      aliases: ['{scheme}://{host}/{site}/{section}/blog-feed.xml'],
     },
   ],
   { domains },
@@ -26,7 +25,7 @@ const freeSiteFeeds = definePlatformFeeds(
 
 // A site on its own domain is known only by its markers, so its feed is built but not claimed.
 const siteFeeds = definePlatformFeeds(
-  [{ key: 'wix:blog', template: '{scheme}://{host}/blog-feed.xml' }],
+  [{ key: 'wix:blog', main: '{scheme}://{host}/blog-feed.xml' }],
   { domains },
 )
 

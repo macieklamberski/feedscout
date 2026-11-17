@@ -9,8 +9,8 @@ const domains = ['nethouse.ru', 'nethouse.me']
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'nethouse:news', template: '{scheme}://{host}/posts/rss' },
-    { key: 'nethouse:articles', template: '{scheme}://{host}/articles/rss' },
+    { key: 'nethouse:news', main: '{scheme}://{host}/posts/rss' },
+    { key: 'nethouse:articles', main: '{scheme}://{host}/articles/rss' },
   ],
   { domains },
 )

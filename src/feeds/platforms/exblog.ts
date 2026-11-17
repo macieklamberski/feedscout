@@ -15,18 +15,10 @@ const categoryRegex = /^\/i(\d+)(?:\/|$)/i
 
 const feeds = definePlatformFeeds(
   [
-    {
-      key: 'exblog:category',
-      template: '{scheme}://{host}/i{category}/index.xml',
-      format: 'rss',
-    },
-    {
-      key: 'exblog:category',
-      template: '{scheme}://{host}/i{category}/atom.xml',
-      format: 'atom',
-    },
-    { key: 'exblog:posts', template: '{scheme}://{host}/index.xml', format: 'rss' },
-    { key: 'exblog:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
+    { key: 'exblog:category', main: '{scheme}://{host}/i{category}/index.xml', format: 'rss' },
+    { key: 'exblog:category', main: '{scheme}://{host}/i{category}/atom.xml', format: 'atom' },
+    { key: 'exblog:posts', main: '{scheme}://{host}/index.xml', format: 'rss' },
+    { key: 'exblog:posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
   ],
   { domains },
 )

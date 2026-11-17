@@ -9,8 +9,8 @@ export type SmeBlogUrl = { kind: 'blog'; username: string } | { kind: 'home' }
 const hosts = ['blog.sme.sk']
 
 const feeds = definePlatformFeeds([
-  { key: 'sme-blog:site', template: 'https://blog.sme.sk/rss' },
-  { key: 'sme-blog:posts', template: 'https://blog.sme.sk/{username}/rss' },
+  { key: 'sme-blog:site', main: 'https://blog.sme.sk/rss' },
+  { key: 'sme-blog:posts', main: 'https://blog.sme.sk/{username}/rss' },
 ])
 
 export const parseSmeBlogUrl = (url: string): SmeBlogUrl | undefined => {

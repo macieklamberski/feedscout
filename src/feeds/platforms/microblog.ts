@@ -22,35 +22,28 @@ const feeds = definePlatformFeeds(
   [
     {
       key: 'microblog:category',
-      template: '{scheme}://{host}/categories/{category}/feed.xml',
+      main: '{scheme}://{host}/categories/{category}/feed.xml',
       format: 'rss',
     },
     {
       key: 'microblog:category',
-      template: '{scheme}://{host}/categories/{category}/feed.json',
+      main: '{scheme}://{host}/categories/{category}/feed.json',
       format: 'json',
     },
-    { key: 'microblog:archive', template: '{scheme}://{host}/archive/index.json' },
-    { key: 'microblog:photos', template: '{scheme}://{host}/photos/index.json' },
-    { key: 'microblog:posts', template: '{scheme}://{host}/feed.xml', format: 'rss' },
-    // replies.xml redirects to feed.xml, so a stored one is the posts feed.
+    { key: 'microblog:archive', main: '{scheme}://{host}/archive/index.json' },
+    { key: 'microblog:photos', main: '{scheme}://{host}/photos/index.json' },
     {
       key: 'microblog:posts',
-      template: '{scheme}://{host}/replies.xml',
+      main: '{scheme}://{host}/feed.xml',
       format: 'rss',
-      isAlias: true,
+      aliases: [
+        // replies.xml redirects to feed.xml, so a stored one is the posts feed.
+        '{scheme}://{host}/replies.xml',
+      ],
     },
-    { key: 'microblog:posts', template: '{scheme}://{host}/feed.json', format: 'json' },
-    {
-      key: 'microblog:podcast',
-      template: '{scheme}://{host}/podcast.xml',
-      format: 'rss',
-    },
-    {
-      key: 'microblog:podcast',
-      template: '{scheme}://{host}/podcast.json',
-      format: 'json',
-    },
+    { key: 'microblog:posts', main: '{scheme}://{host}/feed.json', format: 'json' },
+    { key: 'microblog:podcast', main: '{scheme}://{host}/podcast.xml', format: 'rss' },
+    { key: 'microblog:podcast', main: '{scheme}://{host}/podcast.json', format: 'json' },
   ],
   { domains },
 )

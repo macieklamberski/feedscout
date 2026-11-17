@@ -20,14 +20,9 @@ export type OpencartJournalPage = {
 const feeds = definePlatformFeeds([
   {
     key: 'opencart-journal:blog',
-    template: '{root}/index.php?route={version}/blog/feed',
+    main: '{root}/index.php?route={version}/blog/feed',
     format: 'rss',
-  },
-  {
-    key: 'opencart-journal:blog',
-    template: '{root}/index.php?route=journal3/blog.feed',
-    format: 'rss',
-    isAlias: true,
+    aliases: ['{root}/index.php?route=journal3/blog.feed'],
   },
 ])
 

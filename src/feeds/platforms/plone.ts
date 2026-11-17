@@ -29,13 +29,13 @@ const itemPortalTypes = [
 // A site is known only by its markup, so its feeds are built under the portal or folder URL the
 // page prints and claimed on no host. The search feed carries the search page's query as it is.
 const feeds = definePlatformFeeds([
-  { key: 'plone:search', template: '{root}/search_rss?{query}' },
-  { key: 'plone:site', template: '{root}/RSS', format: 'rdf' },
-  { key: 'plone:site', template: '{root}/rss.xml', format: 'rss' },
-  { key: 'plone:site', template: '{root}/atom.xml', format: 'atom' },
-  { key: 'plone:folder', template: '{root}/RSS', format: 'rdf' },
-  { key: 'plone:folder', template: '{root}/rss.xml', format: 'rss' },
-  { key: 'plone:folder', template: '{root}/atom.xml', format: 'atom' },
+  { key: 'plone:search', main: '{root}/search_rss?{query}' },
+  { key: 'plone:site', main: '{root}/RSS', format: 'rdf' },
+  { key: 'plone:site', main: '{root}/rss.xml', format: 'rss' },
+  { key: 'plone:site', main: '{root}/atom.xml', format: 'atom' },
+  { key: 'plone:folder', main: '{root}/RSS', format: 'rdf' },
+  { key: 'plone:folder', main: '{root}/rss.xml', format: 'rss' },
+  { key: 'plone:folder', main: '{root}/atom.xml', format: 'atom' },
 ])
 
 const findBody = (content: string | undefined) => {

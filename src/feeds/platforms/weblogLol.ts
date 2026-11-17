@@ -10,9 +10,9 @@ const domains = ['weblog.lol']
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'weblog-lol:posts', template: '{scheme}://{host}/rss.xml', format: 'rss' },
-    { key: 'weblog-lol:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
-    { key: 'weblog-lol:posts', template: '{scheme}://{host}/feed.json', format: 'json' },
+    { key: 'weblog-lol:posts', main: '{scheme}://{host}/rss.xml', format: 'rss' },
+    { key: 'weblog-lol:posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
+    { key: 'weblog-lol:posts', main: '{scheme}://{host}/feed.json', format: 'json' },
   ],
   { domains },
 )

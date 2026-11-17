@@ -16,27 +16,11 @@ const usersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 
 const feeds = definePlatformFeeds(
   [
-    {
-      key: 'dreamwidth:posts-tag',
-      template: '{scheme}://{host}/data/rss?tag={tag}',
-      format: 'rss',
-    },
-    {
-      key: 'dreamwidth:posts-tag',
-      template: '{scheme}://{host}/data/atom?tag={tag}',
-      format: 'atom',
-    },
-    { key: 'dreamwidth:posts', template: '{scheme}://{host}/data/rss', format: 'rss' },
-    {
-      key: 'dreamwidth:posts',
-      template: '{scheme}://{host}/data/atom',
-      format: 'atom',
-    },
-    {
-      key: 'dreamwidth:userpics',
-      template: '{scheme}://{host}/data/userpics',
-      format: 'atom',
-    },
+    { key: 'dreamwidth:posts-tag', main: '{scheme}://{host}/data/rss?tag={tag}', format: 'rss' },
+    { key: 'dreamwidth:posts-tag', main: '{scheme}://{host}/data/atom?tag={tag}', format: 'atom' },
+    { key: 'dreamwidth:posts', main: '{scheme}://{host}/data/rss', format: 'rss' },
+    { key: 'dreamwidth:posts', main: '{scheme}://{host}/data/atom', format: 'atom' },
+    { key: 'dreamwidth:userpics', main: '{scheme}://{host}/data/userpics', format: 'atom' },
   ],
   { domains },
 )

@@ -10,8 +10,8 @@ export type CanpanUrl = { kind: 'blog'; blog: string }
 const hosts = ['blog.canpan.info']
 
 const feeds = definePlatformFeeds([
-  { key: 'canpan:posts', template: 'https://blog.canpan.info/{blog}/index2_0.xml', format: 'rss' },
-  { key: 'canpan:posts', template: 'https://blog.canpan.info/{blog}/index1_0.rdf', format: 'rdf' },
+  { key: 'canpan:posts', main: 'https://blog.canpan.info/{blog}/index2_0.xml', format: 'rss' },
+  { key: 'canpan:posts', main: 'https://blog.canpan.info/{blog}/index1_0.rdf', format: 'rdf' },
 ])
 
 export const parseCanpanUrl = (url: string): CanpanUrl | undefined => {

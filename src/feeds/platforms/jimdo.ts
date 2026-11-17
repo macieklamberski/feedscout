@@ -11,8 +11,8 @@ const domains = ['jimdofree.com']
 // claimed. A post's tag links the blog narrowed to that tag, `/?tag={tag}`.
 const feeds = definePlatformFeeds(
   [
-    { key: 'jimdo:blog', template: '{scheme}://{host}/rss/blog' },
-    { key: 'jimdo:blog-tag', template: '{scheme}://{host}/rss/blog/{tag}' },
+    { key: 'jimdo:blog', main: '{scheme}://{host}/rss/blog' },
+    { key: 'jimdo:blog-tag', main: '{scheme}://{host}/rss/blog/{tag}' },
   ],
   { domains },
 )

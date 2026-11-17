@@ -15,33 +15,31 @@ export type TischtennislivePage =
 
 const domains = ['tischtennislive.de']
 
-const resultsFeedPathRegex = /^\/Export\/Tischtennis\/RSS\.aspx$/i
-
 // Next=0 lists the matches of the last 10 days and Next=1 those of the next 10 days.
 const feeds = definePlatformFeeds(
   [
     {
       key: 'tischtennislive:group-results',
-      template: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next=0',
+      main: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next=0',
     },
     {
       key: 'tischtennislive:group-fixtures',
-      template: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next=1',
+      main: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next=1',
     },
     {
       key: 'tischtennislive:league-results',
-      template: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Wett&ID={league}&Next=0',
+      main: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Wett&ID={league}&Next=0',
     },
     {
       key: 'tischtennislive:league-fixtures',
-      template: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Wett&ID={league}&Next=1',
+      main: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Wett&ID={league}&Next=1',
     },
-    { key: 'tischtennislive:news', template: '{scheme}://{host}/Export/RSS.aspx' },
-    { key: 'tischtennislive:dates', template: '{scheme}://{host}/Export/RSS_Termine.aspx' },
-    { key: 'tischtennislive:documents', template: '{scheme}://{host}/Export/RSS_Dokumente.aspx' },
+    { key: 'tischtennislive:news', main: '{scheme}://{host}/Export/RSS.aspx' },
+    { key: 'tischtennislive:dates', main: '{scheme}://{host}/Export/RSS_Termine.aspx' },
+    { key: 'tischtennislive:documents', main: '{scheme}://{host}/Export/RSS_Dokumente.aspx' },
     {
       key: 'tischtennislive:tournaments',
-      template: '{scheme}://{host}/Export/Tischtennis/RSS_Turniere.aspx',
+      main: '{scheme}://{host}/Export/Tischtennis/RSS_Turniere.aspx',
     },
   ],
   { domains },
@@ -79,7 +77,7 @@ export const getTischtennislivePage = (
       return false
     }
 
-    return isHostOf(linkUrl, hostname) && resultsFeedPathRegex.test(linkUrl.pathname)
+    return isHostOf(linkUrl, hostname) && isAnyOf(linkUrl.pathname, '/Export/Tischtennis/RSS.aspx')
   })
   const feedUrl = parseUrl(link?.attribs.href, url)
   const id = getQueryParam(feedUrl?.searchParams, 'id') ?? ''

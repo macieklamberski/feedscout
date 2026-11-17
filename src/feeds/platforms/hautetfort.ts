@@ -23,9 +23,9 @@ const archivesCategoryRegex = /^\/archives\/category\/([^/]+)(?:\/|$)/i
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'hautetfort:category', template: '{scheme}://{host}/{category}/index.rss' },
-    { key: 'hautetfort:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
-    { key: 'hautetfort:posts', template: '{scheme}://{host}/index.rss', format: 'rss' },
+    { key: 'hautetfort:category', main: '{scheme}://{host}/{category}/index.rss' },
+    { key: 'hautetfort:posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
+    { key: 'hautetfort:posts', main: '{scheme}://{host}/index.rss', format: 'rss' },
   ],
   { domains },
 )

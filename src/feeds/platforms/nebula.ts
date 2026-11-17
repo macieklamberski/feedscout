@@ -15,20 +15,17 @@ const globalPaths = ['videos', 'explore']
 
 // Originals is also a category, so its row comes before the category row that would read it.
 const feeds = definePlatformFeeds([
-  { key: 'nebula:videos', template: 'https://rss.nebula.app/video/channels/{slug}.rss' },
-  {
-    key: 'nebula:videos-plus',
-    template: 'https://rss.nebula.app/video/channels/{slug}.rss?plus=true',
-  },
-  { key: 'nebula:originals', template: 'https://rss.nebula.app/video/categories/originals.rss' },
-  { key: 'nebula:category', template: 'https://rss.nebula.app/video/categories/{category}.rss' },
+  { key: 'nebula:videos', main: 'https://rss.nebula.app/video/channels/{slug}.rss' },
+  { key: 'nebula:videos-plus', main: 'https://rss.nebula.app/video/channels/{slug}.rss?plus=true' },
+  { key: 'nebula:originals', main: 'https://rss.nebula.app/video/categories/originals.rss' },
+  { key: 'nebula:category', main: 'https://rss.nebula.app/video/categories/{category}.rss' },
   {
     key: 'nebula:category-plus',
-    template: 'https://rss.nebula.app/video/categories/{category}.rss?plus=true',
+    main: 'https://rss.nebula.app/video/categories/{category}.rss?plus=true',
   },
-  { key: 'nebula:videos-all', template: 'https://rss.nebula.app/video.rss' },
-  { key: 'nebula:videos-all-plus', template: 'https://rss.nebula.app/video.rss?plus=true' },
-  { key: 'nebula:channels', template: 'https://rss.nebula.app/video/channels.rss' },
+  { key: 'nebula:videos-all', main: 'https://rss.nebula.app/video.rss' },
+  { key: 'nebula:videos-all-plus', main: 'https://rss.nebula.app/video.rss?plus=true' },
+  { key: 'nebula:channels', main: 'https://rss.nebula.app/video/channels.rss' },
 ])
 
 export const parseNebulaUrl = (url: string): NebulaUrl | undefined => {

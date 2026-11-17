@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -11,19 +11,18 @@ export type OmnystudioUrl =
 const hosts = ['omny.fm', 'www.omny.fm']
 
 const showPathRegex = /^\/shows\/([^/]+)(?:\/playlists\/([^/]+))?/i
-// The show's own playlist, whose feed is the show feed.
-const showPlaylistRegex = /^podcast$/i
 
 const feeds = definePlatformFeeds([
-  { key: 'omnystudio:show', template: 'https://omny.fm/shows/{show}/playlists/podcast.rss' },
-  // Every show feed answers 302 to its playlist here. A named playlist redirects here too, and no
-  // URL tells it apart from the show's own.
   {
     key: 'omnystudio:show',
-    template: 'https://www.omnycontent.com/d/playlist/{orgId}/{programId}/{playlistId}/podcast.rss',
-    isAlias: true,
+    main: 'https://omny.fm/shows/{show}/playlists/podcast.rss',
+    aliases: [
+      // Every show feed answers 302 to its playlist here. A named playlist redirects here too, and
+      // no URL tells it apart from the show's own.
+      'https://www.omnycontent.com/d/playlist/{orgId}/{programId}/{playlistId}/podcast.rss',
+    ],
   },
-  { key: 'omnystudio:playlist', template: 'https://omny.fm/shows/{show}/playlists/{playlist}.rss' },
+  { key: 'omnystudio:playlist', main: 'https://omny.fm/shows/{show}/playlists/{playlist}.rss' },
 ])
 
 export const parseOmnystudioUrl = (url: string): OmnystudioUrl | undefined => {
@@ -39,7 +38,8 @@ export const parseOmnystudioUrl = (url: string): OmnystudioUrl | undefined => {
     return
   }
 
-  if (playlist && !showPlaylistRegex.test(playlist)) {
+  // The show's own playlist, whose feed is the show feed.
+  if (playlist && !isAnyOf(playlist, 'podcast')) {
     return { kind: 'playlist', show, playlist }
   }
 

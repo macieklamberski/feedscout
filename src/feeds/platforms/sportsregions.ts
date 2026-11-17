@@ -14,19 +14,19 @@ const eventsPathRegex = /^\/evenements\/?$/i
 // A club on its own domain is known only by its markers, so its feeds are built but not claimed.
 const feeds = definePlatformFeeds(
   [
-    { key: 'sportsregions:news', template: '{scheme}://{host}/rss/news' },
-    { key: 'sportsregions:events', template: '{scheme}://{host}/rss/evenement' },
+    { key: 'sportsregions:news', main: '{scheme}://{host}/rss/news' },
+    { key: 'sportsregions:events', main: '{scheme}://{host}/rss/evenement' },
     {
       key: 'sportsregions:filtered-events',
-      template: '{scheme}://{host}/rss/evenement?type_id={typeId}&groupe_id={groupId}',
+      main: '{scheme}://{host}/rss/evenement?type_id={typeId}&groupe_id={groupId}',
     },
     {
       key: 'sportsregions:filtered-events',
-      template: '{scheme}://{host}/rss/evenement?type_id={typeId}',
+      main: '{scheme}://{host}/rss/evenement?type_id={typeId}',
     },
     {
       key: 'sportsregions:filtered-events',
-      template: '{scheme}://{host}/rss/evenement?groupe_id={groupId}',
+      main: '{scheme}://{host}/rss/evenement?groupe_id={groupId}',
     },
   ],
   { domains },

@@ -27,13 +27,16 @@ const subdomainTagRegex = /^\/tagged\/([^/]+)/i
 // host, since medium.com/feed/{subdomain} answers 404.
 const feeds = definePlatformFeeds(
   [
-    { key: 'medium:posts', template: 'https://medium.com/feed/@{username}' },
-    { key: 'medium:posts', template: 'https://medium.com/@{username}/feed', isAlias: true },
-    { key: 'medium:tag', template: 'https://medium.com/feed/tag/{tag}' },
-    { key: 'medium:tagged', template: 'https://medium.com/feed/{publication}/tagged/{tag}' },
-    { key: 'medium:tagged', template: '{scheme}://{host}/feed/tagged/{tag}' },
-    { key: 'medium:publication', template: 'https://medium.com/feed/{publication}' },
-    { key: 'medium:publication', template: '{scheme}://{host}/feed' },
+    {
+      key: 'medium:posts',
+      main: 'https://medium.com/feed/@{username}',
+      aliases: ['https://medium.com/@{username}/feed'],
+    },
+    { key: 'medium:tag', main: 'https://medium.com/feed/tag/{tag}' },
+    { key: 'medium:tagged', main: 'https://medium.com/feed/{publication}/tagged/{tag}' },
+    { key: 'medium:tagged', main: '{scheme}://{host}/feed/tagged/{tag}' },
+    { key: 'medium:publication', main: 'https://medium.com/feed/{publication}' },
+    { key: 'medium:publication', main: '{scheme}://{host}/feed' },
   ],
   { domains },
 )

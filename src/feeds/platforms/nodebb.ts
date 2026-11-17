@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { includesAnyOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getNumericId, hasMarker } from '../../common/utils.js'
@@ -13,7 +13,6 @@ export type NodebbUrl =
   | { kind: 'forum' }
 export type NodebbPage = NodebbUrl & { siteUrl: string }
 
-const nodebbRegex = /nodebb/i
 const categoryRegex = /\/category\/(?<id>[^/]+)/i
 const topicRegex = /\/topic\/(?<id>[^/]+)/i
 // The page config prints the install's sub-path, such as `/forum`, and an empty one at the root.
@@ -22,14 +21,14 @@ const relativePathRegex = /"relative_path":"(?<relativePath>\/[^"]*)"/
 // NodeBB is self-hosted and known only by its headers, so nothing in a feed URL names it and the
 // table only builds, under the install root the page config names.
 const feeds = definePlatformFeeds([
-  { key: 'nodebb:topic', template: '{root}/topic/{topicId}.rss' },
-  { key: 'nodebb:category', template: '{root}/category/{categoryId}.rss' },
-  { key: 'nodebb:recent', template: '{root}/recent.rss' },
-  { key: 'nodebb:popular', template: '{root}/popular.rss' },
+  { key: 'nodebb:topic', main: '{root}/topic/{topicId}.rss' },
+  { key: 'nodebb:category', main: '{root}/category/{categoryId}.rss' },
+  { key: 'nodebb:recent', main: '{root}/recent.rss' },
+  { key: 'nodebb:popular', main: '{root}/popular.rss' },
 ])
 
 export const isNodebbHeaders = (headers: Headers): boolean => {
-  return nodebbRegex.test(headers.get('x-powered-by') ?? '')
+  return includesAnyOf(headers.get('x-powered-by'), 'nodebb')
 }
 
 export const parseNodebbUrl = (url: string): NodebbUrl | undefined => {

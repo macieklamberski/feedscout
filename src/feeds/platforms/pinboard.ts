@@ -1,5 +1,6 @@
+import { pinboard } from 'feedintel'
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Not discoverable without handler.
@@ -13,47 +14,14 @@ export type PinboardUrl =
   | { kind: 'recent' }
   | { kind: 'popular' }
 
-const hosts = ['pinboard.in', 'www.pinboard.in']
+const hosts = pinboard.hosts
 
 const userRegex = /^u:(.+)$/i
 const tagRegex = /^t:(.+)$/i
 const sourceRegex = /^from:(.+)$/i
 const recentRegex = /^\/recent\/?$/i
 
-const feeds = definePlatformFeeds([
-  { key: 'pinboard:bookmarks', template: 'https://feeds.pinboard.in/rss/u:{username}/' },
-  // A private feed, whose token only its owner knows, so it is claimed and never built.
-  {
-    key: 'pinboard:private-bookmarks',
-    template: 'https://feeds.pinboard.in/rss/secret:{token}/u:{username}/',
-  },
-  { key: 'pinboard:recent', template: 'https://feeds.pinboard.in/rss/recent/' },
-  { key: 'pinboard:popular', template: 'https://feeds.pinboard.in/rss/popular/' },
-  // Bookmarks saved from one source, as `from:twitter`, with or without tags. The row with tags
-  // comes first, so a page with tags builds it.
-  {
-    key: 'pinboard:source',
-    template: 'https://feeds.pinboard.in/rss/u:{username}/t:{tags*}/from:{source}/',
-  },
-  { key: 'pinboard:source', template: 'https://feeds.pinboard.in/rss/u:{username}/from:{source}/' },
-  // A tag feed repeats `t:{tag}` once per tag, so `tags` holds them joined by `/t:`. These rows go
-  // after the source rows their paths overlap.
-  { key: 'pinboard:user-tag', template: 'https://feeds.pinboard.in/rss/u:{username}/t:{tags*}/' },
-  {
-    key: 'pinboard:private-tag',
-    template: 'https://feeds.pinboard.in/rss/secret:{token}/u:{username}/t:{tags*}/',
-  },
-  { key: 'pinboard:tag', template: 'https://feeds.pinboard.in/rss/t:{tags*}/' },
-  // The network and starred feeds exist only as private feeds.
-  {
-    key: 'pinboard:network',
-    template: 'https://feeds.pinboard.in/rss/secret:{token}/u:{username}/network/',
-  },
-  {
-    key: 'pinboard:starred',
-    template: 'https://feeds.pinboard.in/rss/secret:{token}/u:{username}/starred/',
-  },
-])
+const feeds = withHintLabels(pinboard.feeds)
 
 const joinTags = (tags: Array<string>): string => {
   return tags.join('/t:')

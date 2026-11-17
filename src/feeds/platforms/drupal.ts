@@ -1,5 +1,5 @@
 import { DomUtils } from 'htmlparser2'
-import { isString } from 'trousse'
+import { includesAnyOf, isString } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -9,18 +9,16 @@ import { isGcsWebPage } from './gcsWeb.js'
 
 type DrupalSettings = { path?: { baseUrl?: unknown } }
 
-const drupalRegex = /drupal/i
-
 // A site runs on its own domain, under its base path, and is known only by its marker, so its
 // feed is built here but not claimed.
-const feeds = definePlatformFeeds([{ key: 'drupal:site', template: '{root}/rss.xml' }])
+const feeds = definePlatformFeeds([{ key: 'drupal:site', main: '{root}/rss.xml' }])
 
 export const isDrupalHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Drupal')
 }
 
 export const isDrupalHeaders = (headers: Headers): boolean => {
-  return drupalRegex.test(headers.get('x-generator') ?? '')
+  return includesAnyOf(headers.get('x-generator'), 'drupal')
 }
 
 export type DrupalPage = { kind: 'site'; baseUrl: string }

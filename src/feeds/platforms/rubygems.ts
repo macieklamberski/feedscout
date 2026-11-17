@@ -15,15 +15,15 @@ const gemRegex = /^\/gems\/([\w.-]+)(?:\/|$)/i
 // The index and bundler hosts serve the same entries as rubygems.org, with links and ids on their
 // own host.
 const feeds = definePlatformFeeds([
-  { key: 'rubygems:versions', template: 'https://rubygems.org/gems/{gem}/versions.atom' },
-  { key: 'rubygems:versions', template: 'https://index.rubygems.org/gems/{gem}/versions.atom' },
-  { key: 'rubygems:versions', template: 'https://bundler.rubygems.org/gems/{gem}/versions.atom' },
-  { key: 'rubygems:latest-gems', template: 'https://rubygems.org/gems.atom' },
-  { key: 'rubygems:latest-gems', template: 'https://index.rubygems.org/gems.atom' },
-  { key: 'rubygems:latest-gems', template: 'https://bundler.rubygems.org/gems.atom' },
+  { key: 'rubygems:versions', main: 'https://rubygems.org/gems/{gem}/versions.atom' },
+  { key: 'rubygems:versions', main: 'https://index.rubygems.org/gems/{gem}/versions.atom' },
+  { key: 'rubygems:versions', main: 'https://bundler.rubygems.org/gems/{gem}/versions.atom' },
+  { key: 'rubygems:latest-gems', main: 'https://rubygems.org/gems.atom' },
+  { key: 'rubygems:latest-gems', main: 'https://index.rubygems.org/gems.atom' },
+  { key: 'rubygems:latest-gems', main: 'https://bundler.rubygems.org/gems.atom' },
   // The dashboard feed of a signed-in user answers only with its `api_key`, so it is claimed and
   // never built.
-  { key: 'rubygems:dashboard', template: 'https://rubygems.org/dashboard.atom?api_key={apiKey}' },
+  { key: 'rubygems:dashboard', main: 'https://rubygems.org/dashboard.atom?api_key={apiKey}' },
 ])
 
 export const parseRubygemsUrl = (url: string): RubygemsUrl | undefined => {

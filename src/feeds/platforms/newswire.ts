@@ -22,17 +22,17 @@ const contentTypes = ['news', 'pr', 'social', 'image', 'video', 'audio', 'event'
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'newswire:beat', template: '{scheme}://{host}/browse/rss/beat/{beat}' },
-    { key: 'newswire:news', template: '{scheme}://{host}/browse/rss/news' },
-    { key: 'newswire:press-releases', template: '{scheme}://{host}/browse/rss/pr' },
-    { key: 'newswire:social', template: '{scheme}://{host}/browse/rss/social' },
-    { key: 'newswire:images', template: '{scheme}://{host}/browse/rss/image' },
-    { key: 'newswire:videos', template: '{scheme}://{host}/browse/rss/video' },
-    { key: 'newswire:audio', template: '{scheme}://{host}/browse/rss/audio' },
-    { key: 'newswire:events', template: '{scheme}://{host}/browse/rss/event' },
+    { key: 'newswire:beat', main: '{scheme}://{host}/browse/rss/beat/{beat}' },
+    { key: 'newswire:news', main: '{scheme}://{host}/browse/rss/news' },
+    { key: 'newswire:press-releases', main: '{scheme}://{host}/browse/rss/pr' },
+    { key: 'newswire:social', main: '{scheme}://{host}/browse/rss/social' },
+    { key: 'newswire:images', main: '{scheme}://{host}/browse/rss/image' },
+    { key: 'newswire:videos', main: '{scheme}://{host}/browse/rss/video' },
+    { key: 'newswire:audio', main: '{scheme}://{host}/browse/rss/audio' },
+    { key: 'newswire:events', main: '{scheme}://{host}/browse/rss/event' },
     // The social posts from one network, which no newsroom page names.
-    { key: 'newswire:social-network', template: '{scheme}://{host}/browse/rss/social/{network}' },
-    { key: 'newswire:newsroom', template: '{scheme}://{host}/browse/rss' },
+    { key: 'newswire:social-network', main: '{scheme}://{host}/browse/rss/social/{network}' },
+    { key: 'newswire:newsroom', main: '{scheme}://{host}/browse/rss' },
   ],
   { domains },
 )

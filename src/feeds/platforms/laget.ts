@@ -1,5 +1,6 @@
+import { laget } from 'feedintel'
 import { getPathSegments, isHostOf, isHostOrSubdomainOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
 
@@ -8,23 +9,15 @@ import { findElement, hasMarker } from '../../common/utils.js'
 
 export type LagetUrl = { kind: 'team'; team: string }
 
-const hosts = ['laget.se', 'www.laget.se']
-const domains = ['laget.se']
+const hosts = laget.hosts
+const domains = laget.tenantDomains
 
 // A bare `laget.se` also matches other domains, such as `snickeribolaget.se`.
 const lagetAssetRegex = /^(?:https?:)?\/\/[a-z]-content\.laget\.se\//i
 
 const assetTags = ['link', 'script']
 
-const teamFeeds = definePlatformFeeds([
-  { key: 'laget:news', template: 'https://www.laget.se/{team}/Home/NewsRss' },
-])
-
-// A club on its own domain is known only by its markers, so its feed is built but not claimed.
-const clubFeeds = definePlatformFeeds(
-  [{ key: 'laget:news', template: '{scheme}://{host}/Home/NewsRss' }],
-  { hosts },
-)
+const feeds = withHintLabels(laget.feeds)
 
 // Both club templates load their stylesheets and scripts from the asset host, on an own domain too.
 export const isLagetHtml = (content: string): boolean => {
@@ -65,10 +58,10 @@ export const lagetHandler: PlatformHandler = {
 
     if (parsed) {
       // The team page links its feed with the team spelled as the request spelled it.
-      return [teamFeeds.getFeedEntry('laget:news', { team: parsed.team })]
+      return [feeds.getFeedEntry('laget:news', { team: parsed.team })]
     }
 
-    const page = clubFeeds.forUrl(url)
+    const page = feeds.forUrl(url)
 
     if (isHostOrSubdomainOf(url, domains) || !page) {
       return []
@@ -77,5 +70,5 @@ export const lagetHandler: PlatformHandler = {
     return [page.getFeedEntry('laget:news')]
   },
 
-  getFeedHint: teamFeeds.getFeedHint,
+  getFeedHint: feeds.getFeedHint,
 }

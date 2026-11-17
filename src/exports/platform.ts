@@ -1,9 +1,9 @@
 export type {
+  PlatformFeed,
   PlatformFeedCheck,
   PlatformFeedParams,
   PlatformFeedTable,
   PlatformFeedTableOptions,
-  PlatformFeedTemplate,
 } from '../common/uris/platform/feeds.js'
 export { definePlatformFeeds } from '../common/uris/platform/feeds.js'
 export { discoverUrisFromPlatform } from '../common/uris/platform/index.js'
@@ -23,10 +23,12 @@ export { atyponHandler } from '../feeds/platforms/atypon.js'
 export { audioboomHandler } from '../feeds/platforms/audioboom.js'
 export { aushaHandler } from '../feeds/platforms/ausha.js'
 export { b2evolutionHandler } from '../feeds/platforms/b2evolution.js'
+export { bangumiHandler } from '../feeds/platforms/bangumi.js'
 export { bearblogHandler } from '../feeds/platforms/bearblog.js'
 export { behanceHandler } from '../feeds/platforms/behance.js'
 export { bigCartelHandler } from '../feeds/platforms/bigCartel.js'
 export { bigcommerceHandler } from '../feeds/platforms/bigcommerce.js'
+export { bingHandler } from '../feeds/platforms/bing.js'
 export { bitchuteHandler } from '../feeds/platforms/bitchute.js'
 export { blogaliaHandler } from '../feeds/platforms/blogalia.js'
 export { bloggangHandler } from '../feeds/platforms/bloggang.js'
@@ -51,7 +53,6 @@ export { cnblogsHandler } from '../feeds/platforms/cnblogs.js'
 export { cocologHandler } from '../feeds/platforms/cocolog.js'
 export { colorMeShopHandler } from '../feeds/platforms/colorMeShop.js'
 export { comicfuryHandler } from '../feeds/platforms/comicfury.js'
-export { confluenceHandler } from '../feeds/platforms/confluence.js'
 export { cppblogHandler } from '../feeds/platforms/cppblog.js'
 export { cratesIoHandler } from '../feeds/platforms/cratesIo.js'
 export { csdnHandler } from '../feeds/platforms/csdn.js'
@@ -94,6 +95,7 @@ export { gnuboardHandler } from '../feeds/platforms/gnuboard.js'
 export { goodreadsHandler } from '../feeds/platforms/goodreads.js'
 export { goopeHandler } from '../feeds/platforms/goope.js'
 export { gravHandler } from '../feeds/platforms/grav.js'
+export { greasyForkHandler } from '../feeds/platforms/greasyFork.js'
 export { habrHandler } from '../feeds/platforms/habr.js'
 export { hackernewsHandler } from '../feeds/platforms/hackernews.js'
 export { haleyJobsHandler } from '../feeds/platforms/haleyJobs.js'

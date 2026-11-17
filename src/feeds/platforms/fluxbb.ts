@@ -1,4 +1,4 @@
-import { getQueryParam, parseUrl } from 'trousse'
+import { endsWithAnyOf, getQueryParam, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getScriptDirectory, hasElementWithId, hasMarker } from '../../common/utils.js'
@@ -11,9 +11,6 @@ export type FluxbbUrl =
   | { kind: 'topic'; boardPath: string; topicId: string }
   | { kind: 'board'; boardPath: string }
 
-const forumPathRegex = /\/viewforum\.php$/i
-const topicPathRegex = /\/viewtopic\.php$/i
-
 // Each id of a pair alone is a plausible id on an unrelated page.
 const templateIds = ['brdheader', 'brdmain']
 // `header.php` and `footer.php` print these whatever template the board uses.
@@ -21,10 +18,10 @@ const coreIds = ['brdmenu', 'brdfooter']
 
 // A board is self-hosted on any domain, so the table only builds its feeds.
 const feeds = definePlatformFeeds([
-  { key: 'fluxbb:forum', template: '{root}/extern.php?action=feed&fid={forumId}&type=atom' },
-  { key: 'fluxbb:topic', template: '{root}/extern.php?action=feed&tid={topicId}&type=atom' },
-  { key: 'fluxbb:posts', template: '{root}/extern.php?action=feed&type=RSS', format: 'rss' },
-  { key: 'fluxbb:posts', template: '{root}/extern.php?action=feed&type=atom', format: 'atom' },
+  { key: 'fluxbb:forum', main: '{root}/extern.php?action=feed&fid={forumId}&type=atom' },
+  { key: 'fluxbb:topic', main: '{root}/extern.php?action=feed&tid={topicId}&type=atom' },
+  { key: 'fluxbb:posts', main: '{root}/extern.php?action=feed&type=RSS', format: 'rss' },
+  { key: 'fluxbb:posts', main: '{root}/extern.php?action=feed&type=atom', format: 'atom' },
 ])
 
 export const isFluxbbHtml = (content: string): boolean => {
@@ -45,11 +42,11 @@ export const parseFluxbbUrl = (url: string): FluxbbUrl | undefined => {
   const boardPath = getScriptDirectory(pathname)
   const id = getQueryParam(searchParams, 'id')
 
-  if (id && forumPathRegex.test(pathname)) {
+  if (id && endsWithAnyOf(pathname, '/viewforum.php')) {
     return { kind: 'forum', boardPath, forumId: id }
   }
 
-  if (id && topicPathRegex.test(pathname)) {
+  if (id && endsWithAnyOf(pathname, '/viewtopic.php')) {
     return { kind: 'topic', boardPath, topicId: id }
   }
 

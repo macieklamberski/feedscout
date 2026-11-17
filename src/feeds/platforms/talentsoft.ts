@@ -14,23 +14,20 @@ export type TalentsoftPage =
 const cookiesScriptPath = '/client/dist/talentsoft-cookies.iife.js'
 const domains = ['profils.org', 'talent-soft.com']
 
-const offerFeedPathRegex = /^\/handlers\/offerRss\.ashx$/i
+const offerFeedPath = '/handlers/offerRss.ashx'
 
 // A career site on a custom domain is known only by its marker, so its feeds are built here but
 // claimed only on Talentsoft's own domains. The site's own feed list spells the language as `LCID`,
 // and the feed answers without it. The feed list page's own link serves the same offers.
 const feeds = definePlatformFeeds(
   [
-    { key: 'talentsoft:offers', template: '{scheme}://{host}/handlers/offerRss.ashx?LCID={lcid}' },
     {
       key: 'talentsoft:offers',
-      template: '{scheme}://{host}/handlers/offerRss.ashx',
-      isAlias: true,
-    },
-    {
-      key: 'talentsoft:offers',
-      template: '{scheme}://{host}/offre-de-emploi/flux-rss.ashx',
-      isAlias: true,
+      main: '{scheme}://{host}/handlers/offerRss.ashx?LCID={lcid}',
+      aliases: [
+        '{scheme}://{host}/handlers/offerRss.ashx',
+        '{scheme}://{host}/offre-de-emploi/flux-rss.ashx',
+      ],
     },
   ],
   { domains },
@@ -69,7 +66,7 @@ const getTalentsoftPage = (url: string, content: string | undefined): Talentsoft
 
       return (
         feedUrl?.origin === origin &&
-        offerFeedPathRegex.test(feedUrl.pathname) &&
+        isAnyOf(feedUrl.pathname, offerFeedPath) &&
         isAnyOf([...feedUrl.searchParams.keys()].join(), 'lcid')
       )
     })
@@ -84,7 +81,7 @@ const getTalentsoftPage = (url: string, content: string | undefined): Talentsoft
   })
   const searchFeedUrl = parseUrl(searchLink?.attribs.href, url)
 
-  if (searchFeedUrl?.origin === origin && offerFeedPathRegex.test(searchFeedUrl.pathname)) {
+  if (searchFeedUrl?.origin === origin && isAnyOf(searchFeedUrl.pathname, offerFeedPath)) {
     return { kind: 'search', origin, lcid, searchFeedUrl: searchFeedUrl.href }
   }
 

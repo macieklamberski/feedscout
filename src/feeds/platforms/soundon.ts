@@ -1,5 +1,6 @@
+import { soundon } from 'feedintel'
 import { getQueryParam, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hexOrHyphenRegex } from '../../common/utils.js'
 
@@ -8,14 +9,12 @@ import { hexOrHyphenRegex } from '../../common/utils.js'
 
 export type SoundonUrl = { kind: 'podcast'; podcastId: string }
 
-const hosts = ['player.soundon.fm']
+const hosts = soundon.hosts
 
 const podcastRegex = /^\/p\/([^/]+)(?:\/|$)/i
 const embedRegex = /^\/embed\/?$/i
 
-const feeds = definePlatformFeeds([
-  { key: 'soundon:podcast', template: 'https://feeds.soundon.fm/podcasts/{podcastId}.xml' },
-])
+const feeds = withHintLabels(soundon.feeds)
 
 export const parseSoundonUrl = (url: string): SoundonUrl | undefined => {
   const parsedUrl = parseUrl(url)

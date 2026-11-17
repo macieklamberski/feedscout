@@ -1,5 +1,6 @@
+import { bitchute } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Not discoverable without handler.
@@ -7,20 +8,9 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type BitchuteUrl = { kind: 'channel'; channel: string }
 
-const hosts = ['bitchute.com', 'www.bitchute.com', 'old.bitchute.com']
+const hosts = bitchute.hosts
 
-// A channel page links no feed. The www feed redirects to api.bitchute.com, the spelling feeds are
-// stored at, so the table reads both and builds the api one. old.bitchute.com serves the same
-// items, but links each one on old.bitchute.com.
-const feeds = definePlatformFeeds([
-  { key: 'bitchute:channel', template: 'https://api.bitchute.com/feeds/rss/channel/{channel}/' },
-  {
-    key: 'bitchute:channel',
-    template: 'https://www.bitchute.com/feeds/rss/channel/{channel}/',
-    isAlias: true,
-  },
-  { key: 'bitchute:channel', template: 'https://old.bitchute.com/feeds/rss/channel/{channel}/' },
-])
+const feeds = withHintLabels(bitchute.feeds)
 
 export const parseBitchuteUrl = (url: string): BitchuteUrl | undefined => {
   if (!isHostOf(url, hosts)) {

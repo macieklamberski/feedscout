@@ -14,52 +14,32 @@ export const hosts = ['blog.naver.com', 'm.blog.naver.com']
 // The bare path and the old `blogRss.nhn` script serve the same items as `.xml`, and each serves
 // RSS 1.0 under `rss=1.0` and Atom under `atom=0.3`. The `.xml` path is the one blog pages link.
 const feeds = definePlatformFeeds([
-  { key: 'naver-blog:blog', template: 'https://rss.blog.naver.com/{blogId}.xml', format: 'rss' },
   {
     key: 'naver-blog:blog',
-    template: 'https://rss.blog.naver.com/{blogId}',
+    main: 'https://rss.blog.naver.com/{blogId}.xml',
     format: 'rss',
-    isAlias: true,
+    aliases: [
+      'https://rss.blog.naver.com/{blogId}',
+      'https://rss.blog.naver.com/rss/blogRss.nhn?blogId={blogId}',
+    ],
   },
   {
     key: 'naver-blog:blog',
-    template: 'https://rss.blog.naver.com/rss/blogRss.nhn?blogId={blogId}',
-    format: 'rss',
-    isAlias: true,
-  },
-  {
-    key: 'naver-blog:blog',
-    template: 'https://rss.blog.naver.com/{blogId}.xml?rss=1.0',
+    main: 'https://rss.blog.naver.com/{blogId}.xml?rss=1.0',
     format: 'rdf',
+    aliases: [
+      'https://rss.blog.naver.com/{blogId}?rss=1.0',
+      'https://rss.blog.naver.com/rss/blogRss.nhn?blogId={blogId}&rss=1.0',
+    ],
   },
   {
     key: 'naver-blog:blog',
-    template: 'https://rss.blog.naver.com/{blogId}?rss=1.0',
-    format: 'rdf',
-    isAlias: true,
-  },
-  {
-    key: 'naver-blog:blog',
-    template: 'https://rss.blog.naver.com/rss/blogRss.nhn?blogId={blogId}&rss=1.0',
-    format: 'rdf',
-    isAlias: true,
-  },
-  {
-    key: 'naver-blog:blog',
-    template: 'https://rss.blog.naver.com/{blogId}.xml?atom=0.3',
+    main: 'https://rss.blog.naver.com/{blogId}.xml?atom=0.3',
     format: 'atom',
-  },
-  {
-    key: 'naver-blog:blog',
-    template: 'https://rss.blog.naver.com/{blogId}?atom=0.3',
-    format: 'atom',
-    isAlias: true,
-  },
-  {
-    key: 'naver-blog:blog',
-    template: 'https://rss.blog.naver.com/rss/blogRss.nhn?atom=0.3&blogId={blogId}',
-    format: 'atom',
-    isAlias: true,
+    aliases: [
+      'https://rss.blog.naver.com/{blogId}?atom=0.3',
+      'https://rss.blog.naver.com/rss/blogRss.nhn?atom=0.3&blogId={blogId}',
+    ],
   },
 ])
 

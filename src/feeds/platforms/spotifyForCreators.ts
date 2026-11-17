@@ -17,7 +17,7 @@ const feedUrlRegex = /anchor\.fm\/(?:s\/)?([\da-f]+)\/podcast\/rss/i
 const stationIdRegex = /^[\da-f]/i
 
 const feeds = definePlatformFeeds([
-  { key: 'spotify-for-creators:podcast', template: 'https://anchor.fm/s/{stationId}/podcast/rss' },
+  { key: 'spotify-for-creators:podcast', main: 'https://anchor.fm/s/{stationId}/podcast/rss' },
 ])
 
 export const parseSpotifyForCreatorsUrl = (url: string): SpotifyForCreatorsUrl | undefined => {

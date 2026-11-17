@@ -29,18 +29,23 @@ const tagsValueRegex = /^[\w,-]+$/
 // A top page links its feed as /top/{period}.rss, which /top/{period}/rss redirects to. /top/rss
 // and /top.rss redirect to the one-week feed, so their rows only claim.
 const feeds = definePlatformFeeds([
-  { key: 'lobsters:tag', template: 'https://lobste.rs/t/{tags}.rss' },
-  { key: 'lobsters:domain', template: 'https://lobste.rs/domains/{domain}.rss' },
-  { key: 'lobsters:user-stories', template: 'https://lobste.rs/~{username}/stories.rss' },
-  { key: 'lobsters:stories', template: 'https://lobste.rs/rss' },
+  { key: 'lobsters:tag', main: 'https://lobste.rs/t/{tags}.rss' },
+  { key: 'lobsters:domain', main: 'https://lobste.rs/domains/{domain}.rss' },
+  { key: 'lobsters:user-stories', main: 'https://lobste.rs/~{username}/stories.rss' },
+  { key: 'lobsters:stories', main: 'https://lobste.rs/rss' },
   // A reader's private feed, filtered by their settings, is claimed and never built.
-  { key: 'lobsters:private', template: 'https://lobste.rs/rss?token={token}' },
-  { key: 'lobsters:top', template: 'https://lobste.rs/top/{period}.rss' },
-  { key: 'lobsters:top', template: 'https://lobste.rs/top/{period}/rss', isAlias: true },
-  { key: 'lobsters:top', template: 'https://lobste.rs/top/rss', isAlias: true },
-  { key: 'lobsters:top', template: 'https://lobste.rs/top.rss', isAlias: true },
-  { key: 'lobsters:newest', template: 'https://lobste.rs/newest.rss' },
-  { key: 'lobsters:comments', template: 'https://lobste.rs/comments.rss' },
+  { key: 'lobsters:private', main: 'https://lobste.rs/rss?token={token}' },
+  {
+    key: 'lobsters:top',
+    main: 'https://lobste.rs/top/{period}.rss',
+    aliases: [
+      'https://lobste.rs/top/{period}/rss',
+      'https://lobste.rs/top/rss',
+      'https://lobste.rs/top.rss',
+    ],
+  },
+  { key: 'lobsters:newest', main: 'https://lobste.rs/newest.rss' },
+  { key: 'lobsters:comments', main: 'https://lobste.rs/comments.rss' },
 ])
 
 export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {

@@ -1,16 +1,15 @@
+import { startsWithAnyOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const generatedPathRegex = /^\/hpgen\/hpb\//i
-
 // A shop is known only by its marker, so its feed is built here but not claimed.
-const feeds = definePlatformFeeds([{ key: 'shopserve:news', template: '{root}/hpgen/HPB/rss.xml' }])
+const feeds = definePlatformFeeds([{ key: 'shopserve:news', main: '{root}/hpgen/HPB/rss.xml' }])
 
 const isGeneratedPath = (value: string | undefined): boolean => {
-  return generatedPathRegex.test(value ?? '')
+  return startsWithAnyOf(value, '/hpgen/HPB/')
 }
 
 // Every desktop page Shopserve generates links its news entries, categories and theme images

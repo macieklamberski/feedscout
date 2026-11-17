@@ -6,11 +6,7 @@
     "headersMethodRequiresHeaders": "Headers method requires headers to be provided in input",
     "guessMethodRequiresUrl": "Guess method requires url to be provided in input",
     "unexpectedStreamBody": "Unexpected stream body from {{url}}",
-    "unexpectedStatus": "Unexpected status {{status}} from {{url}}",
-    "invalidFeedTemplate": "Not a feed URL template: {{template}}",
-    "missingFeedTemplate": "No feed template for {{key}}",
-    "missingFeedHosts": "No hosts for the {{key}} feed",
-    "missingCanonicalFeedTemplate": "No canonical template above the {{key}} alias"
+    "unexpectedStatus": "Unexpected status {{status}} from {{url}}"
   },
   "hints": {
     "youtube:all": "All uploads",
@@ -462,9 +458,6 @@
     "zenn:publication": "Publication",
     "zenn:trending": "Trending",
     "bitchute:channel": "Channel",
-    "confluence:space": "Space",
-    "confluence:site": "Site activity",
-    "confluence:dashboard": "Dashboard",
     "diaspora:posts": "Posts",
     "instatus:history": "Incident history",
     "jira:project": "Project",
@@ -949,6 +942,14 @@
     "ojs:announcements": "Announcements",
     "ojs:articles": "Articles",
     "aladin:posts": "Posts",
-    "aladin:category": "Category"
+    "aladin:category": "Category",
+    "bangumi:collections": "Collections",
+    "bangumi:timeline": "Timeline",
+    "bangumi:blog": "Blog",
+    "bing:search": "Search",
+    "bing:news": "News search",
+    "greasy-fork:user": "User scripts",
+    "greasy-fork:new": "New scripts",
+    "greasy-fork:updated": "Updated scripts"
   }
 }

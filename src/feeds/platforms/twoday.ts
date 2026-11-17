@@ -16,16 +16,21 @@ const topicRegex = /^\/topics\/([^/]+)(?:\/|$)/i
 // A blog's skin links its posts feed as `/index.rdf` or `/rss`, the same stories.
 const feeds = definePlatformFeeds(
   [
-    { key: 'twoday:posts', template: '{scheme}://{host}/rss' },
-    { key: 'twoday:posts', template: '{scheme}://{host}/index.rdf', isAlias: true },
-    { key: 'twoday:posts', template: '{scheme}://{host}/rss.xml', isAlias: true },
+    {
+      key: 'twoday:posts',
+      main: '{scheme}://{host}/rss',
+      aliases: ['{scheme}://{host}/index.rdf', '{scheme}://{host}/rss.xml'],
+    },
     // The same stories with shorter text, which some skins serve.
-    { key: 'twoday:summary', template: '{scheme}://{host}/summary.rdf' },
-    { key: 'twoday:topic', template: '{scheme}://{host}/topics/{topic}/index.rdf' },
-    { key: 'twoday:topic', template: '{scheme}://{host}/topics/{topic}/rss', isAlias: true },
+    { key: 'twoday:summary', main: '{scheme}://{host}/summary.rdf' },
+    {
+      key: 'twoday:topic',
+      main: '{scheme}://{host}/topics/{topic}/index.rdf',
+      aliases: ['{scheme}://{host}/topics/{topic}/rss'],
+    },
     // Every blog serves its newest comments, and its stories by their newest comment.
-    { key: 'twoday:comments', template: '{scheme}://{host}/latestcomments.rdf' },
-    { key: 'twoday:commented', template: '{scheme}://{host}/comments.rdf' },
+    { key: 'twoday:comments', main: '{scheme}://{host}/latestcomments.rdf' },
+    { key: 'twoday:commented', main: '{scheme}://{host}/comments.rdf' },
   ],
   { domains },
 )

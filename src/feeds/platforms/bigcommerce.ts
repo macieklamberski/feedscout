@@ -1,4 +1,4 @@
-import { getQueryParam } from 'trousse'
+import { getQueryParam, isAnyOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
@@ -6,7 +6,6 @@ import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers category, home, search.
 
-const searchPathRegex = /^\/search\.php$/i
 const categoryFeedRegex = /^[^?#]*\/rss\.php\?(?:[^#]*&)?categoryid=(?<categoryId>[1-9]\d*)/i
 
 export type BigcommercePage =
@@ -23,115 +22,79 @@ const feeds = definePlatformFeeds(
     // Without `type`, each feed answers its RSS twin.
     {
       key: 'bigcommerce:category-new-products',
-      template: '{scheme}://{host}/rss.php?categoryid={categoryId}&type=rss',
+      main: '{scheme}://{host}/rss.php?categoryid={categoryId}&type=rss',
       format: 'rss',
+      aliases: ['{scheme}://{host}/rss.php?categoryid={categoryId}'],
     },
     {
       key: 'bigcommerce:category-new-products',
-      template: '{scheme}://{host}/rss.php?categoryid={categoryId}',
-      format: 'rss',
-      isAlias: true,
-    },
-    {
-      key: 'bigcommerce:category-new-products',
-      template: '{scheme}://{host}/rss.php?categoryid={categoryId}&type=atom',
+      main: '{scheme}://{host}/rss.php?categoryid={categoryId}&type=atom',
       format: 'atom',
     },
     {
       key: 'bigcommerce:category-popular-products',
-      template: '{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}&type=rss',
+      main: '{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}&type=rss',
       format: 'rss',
+      aliases: ['{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}'],
     },
     {
       key: 'bigcommerce:category-popular-products',
-      template: '{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}',
-      format: 'rss',
-      isAlias: true,
-    },
-    {
-      key: 'bigcommerce:category-popular-products',
-      template:
-        '{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}&type=atom',
+      main: '{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}&type=atom',
       format: 'atom',
     },
     {
       key: 'bigcommerce:search',
-      template: '{scheme}://{host}/rss.php?action=searchproducts&search_query={query}&type=rss',
+      main: '{scheme}://{host}/rss.php?action=searchproducts&search_query={query}&type=rss',
       format: 'rss',
+      aliases: ['{scheme}://{host}/rss.php?action=searchproducts&search_query={query}'],
     },
     {
       key: 'bigcommerce:search',
-      template: '{scheme}://{host}/rss.php?action=searchproducts&search_query={query}',
-      format: 'rss',
-      isAlias: true,
-    },
-    {
-      key: 'bigcommerce:search',
-      template: '{scheme}://{host}/rss.php?action=searchproducts&search_query={query}&type=atom',
+      main: '{scheme}://{host}/rss.php?action=searchproducts&search_query={query}&type=atom',
       format: 'atom',
     },
     {
       key: 'bigcommerce:new-products',
-      template: '{scheme}://{host}/rss.php?type=rss',
+      main: '{scheme}://{host}/rss.php?type=rss',
       format: 'rss',
+      aliases: ['{scheme}://{host}/rss.php'],
     },
     {
       key: 'bigcommerce:new-products',
-      template: '{scheme}://{host}/rss.php',
-      format: 'rss',
-      isAlias: true,
-    },
-    {
-      key: 'bigcommerce:new-products',
-      template: '{scheme}://{host}/rss.php?type=atom',
+      main: '{scheme}://{host}/rss.php?type=atom',
       format: 'atom',
     },
     {
       key: 'bigcommerce:popular-products',
-      template: '{scheme}://{host}/rss.php?action=popularproducts&type=rss',
+      main: '{scheme}://{host}/rss.php?action=popularproducts&type=rss',
       format: 'rss',
+      aliases: ['{scheme}://{host}/rss.php?action=popularproducts'],
     },
     {
       key: 'bigcommerce:popular-products',
-      template: '{scheme}://{host}/rss.php?action=popularproducts',
-      format: 'rss',
-      isAlias: true,
-    },
-    {
-      key: 'bigcommerce:popular-products',
-      template: '{scheme}://{host}/rss.php?action=popularproducts&type=atom',
+      main: '{scheme}://{host}/rss.php?action=popularproducts&type=atom',
       format: 'atom',
     },
     {
       key: 'bigcommerce:featured-products',
-      template: '{scheme}://{host}/rss.php?action=featuredproducts&type=rss',
+      main: '{scheme}://{host}/rss.php?action=featuredproducts&type=rss',
       format: 'rss',
+      aliases: ['{scheme}://{host}/rss.php?action=featuredproducts'],
     },
     {
       key: 'bigcommerce:featured-products',
-      template: '{scheme}://{host}/rss.php?action=featuredproducts',
-      format: 'rss',
-      isAlias: true,
-    },
-    {
-      key: 'bigcommerce:featured-products',
-      template: '{scheme}://{host}/rss.php?action=featuredproducts&type=atom',
+      main: '{scheme}://{host}/rss.php?action=featuredproducts&type=atom',
       format: 'atom',
     },
     {
       key: 'bigcommerce:blog',
-      template: '{scheme}://{host}/rss.php?action=newblogs&type=rss',
+      main: '{scheme}://{host}/rss.php?action=newblogs&type=rss',
       format: 'rss',
+      aliases: ['{scheme}://{host}/rss.php?action=newblogs'],
     },
     {
       key: 'bigcommerce:blog',
-      template: '{scheme}://{host}/rss.php?action=newblogs',
-      format: 'rss',
-      isAlias: true,
-    },
-    {
-      key: 'bigcommerce:blog',
-      template: '{scheme}://{host}/rss.php?action=newblogs&type=atom',
+      main: '{scheme}://{host}/rss.php?action=newblogs&type=atom',
       format: 'atom',
     },
   ],
@@ -156,7 +119,7 @@ const getBigcommercePage = (url: string, content: string | undefined): Bigcommer
   const { pathname, searchParams } = new URL(url)
   const query = getQueryParam(searchParams, 'search_query')
 
-  if (searchPathRegex.test(pathname) && query) {
+  if (isAnyOf(pathname, '/search.php') && query) {
     return { kind: 'search', query }
   }
 

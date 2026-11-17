@@ -5,6 +5,7 @@ import {
   isHostOrSubdomainOf,
   parseUrl,
   resolveUrl,
+  startsWithAnyOf,
 } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
@@ -24,39 +25,27 @@ const domains = ['goope.jp']
 const assetHosts = ['cdn.goope.jp']
 
 const templateRegex = /^t_\d+$/i
-const qrCodePathRegex = /^\/qr\//i
 
 // A page under a `t_{id}` template segment links the plain feeds, so the template rows only claim.
 const freeSiteFeeds = definePlatformFeeds([
   {
     key: 'goope:member-news',
-    template: 'https://r.goope.jp/{site}/shokokai/member/feed.rss',
+    main: 'https://r.goope.jp/{site}/shokokai/member/feed.rss',
     format: 'rdf',
+    aliases: ['https://r.goope.jp/{site}/t_{templateId}/shokokai/member/feed.rss'],
   },
-  {
-    key: 'goope:member-news',
-    template: 'https://r.goope.jp/{site}/t_{templateId}/shokokai/member/feed.rss',
-    format: 'rdf',
-    isAlias: true,
-  },
-  { key: 'goope:news', template: 'https://r.goope.jp/{site}/feed.rss', format: 'rdf' },
   {
     key: 'goope:news',
-    template: 'https://r.goope.jp/{site}/t_{templateId}/feed.rss',
+    main: 'https://r.goope.jp/{site}/feed.rss',
     format: 'rdf',
-    isAlias: true,
+    aliases: ['https://r.goope.jp/{site}/t_{templateId}/feed.rss'],
   },
   // A federation of chambers of commerce collects its chambers' news under /shokokai.
   {
     key: 'goope:association-news',
-    template: 'https://r.goope.jp/{site}/shokokai/feed.rss',
+    main: 'https://r.goope.jp/{site}/shokokai/feed.rss',
     format: 'rdf',
-  },
-  {
-    key: 'goope:association-news',
-    template: 'https://r.goope.jp/{site}/t_{templateId}/shokokai/feed.rss',
-    format: 'rdf',
-    isAlias: true,
+    aliases: ['https://r.goope.jp/{site}/t_{templateId}/shokokai/feed.rss'],
   },
 ])
 
@@ -66,32 +55,21 @@ const siteFeeds = definePlatformFeeds(
   [
     {
       key: 'goope:member-news',
-      template: '{scheme}://{host}/shokokai/member/feed.rss',
+      main: '{scheme}://{host}/shokokai/member/feed.rss',
       format: 'rdf',
+      aliases: ['{scheme}://{host}/t_{templateId}/shokokai/member/feed.rss'],
     },
-    {
-      key: 'goope:member-news',
-      template: '{scheme}://{host}/t_{templateId}/shokokai/member/feed.rss',
-      format: 'rdf',
-      isAlias: true,
-    },
-    { key: 'goope:news', template: '{scheme}://{host}/feed.rss', format: 'rdf' },
     {
       key: 'goope:news',
-      template: '{scheme}://{host}/t_{templateId}/feed.rss',
+      main: '{scheme}://{host}/feed.rss',
       format: 'rdf',
-      isAlias: true,
+      aliases: ['{scheme}://{host}/t_{templateId}/feed.rss'],
     },
     {
       key: 'goope:association-news',
-      template: '{scheme}://{host}/shokokai/feed.rss',
+      main: '{scheme}://{host}/shokokai/feed.rss',
       format: 'rdf',
-    },
-    {
-      key: 'goope:association-news',
-      template: '{scheme}://{host}/t_{templateId}/shokokai/feed.rss',
-      format: 'rdf',
-      isAlias: true,
+      aliases: ['{scheme}://{host}/t_{templateId}/shokokai/feed.rss'],
     },
   ],
   { hosts },
@@ -104,7 +82,7 @@ const isQrCode = (src: string | undefined): boolean => {
     return false
   }
 
-  return isHostOf(qrCodeUrl, hosts) && qrCodePathRegex.test(qrCodeUrl.pathname)
+  return isHostOf(qrCodeUrl, hosts) && startsWithAnyOf(qrCodeUrl.pathname, '/qr/')
 }
 
 const isGoopeAsset = (href: string | undefined): boolean => {

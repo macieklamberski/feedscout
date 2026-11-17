@@ -10,9 +10,11 @@ const domains = ['tistory.com']
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'tistory:blog', template: '{scheme}://{host}/rss' },
-    { key: 'tistory:blog', template: '{scheme}://{host}/feed', isAlias: true },
-    { key: 'tistory:blog', template: '{scheme}://{host}/index.xml', isAlias: true },
+    {
+      key: 'tistory:blog',
+      main: '{scheme}://{host}/rss',
+      aliases: ['{scheme}://{host}/feed', '{scheme}://{host}/index.xml'],
+    },
   ],
   { domains },
 )

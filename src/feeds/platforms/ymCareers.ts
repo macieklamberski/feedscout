@@ -18,8 +18,8 @@ const excludedParams = ['display', 'page']
 // A board runs on its own domain and is known only by its headers, so its feeds are built here but
 // not claimed. The feed is the list's own path with `display=rss` in front of the page's query.
 const feeds = definePlatformFeeds([
-  { key: 'ym-careers:search', template: '{root}?display=rss&{query}' },
-  { key: 'ym-careers:browse', template: '{root}?display=rss&{query}' },
+  { key: 'ym-careers:search', main: '{root}?display=rss&{query}' },
+  { key: 'ym-careers:browse', main: '{root}?display=rss&{query}' },
 ])
 
 // Every board answers with the header, its bot check page included.

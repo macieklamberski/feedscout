@@ -9,12 +9,11 @@ export type LetterboxdUrl = { kind: 'member'; username: string } | { kind: 'jour
 const hosts = ['letterboxd.com', 'www.letterboxd.com']
 
 const feeds = definePlatformFeeds([
-  { key: 'letterboxd:journal', template: 'https://letterboxd.com/journal/rss/' },
-  { key: 'letterboxd:diary', template: 'https://letterboxd.com/{username}/rss/' },
+  { key: 'letterboxd:journal', main: 'https://letterboxd.com/journal/rss/' },
   {
     key: 'letterboxd:diary',
-    template: 'https://embed.letterboxd.com/{username}/rss/',
-    isAlias: true,
+    main: 'https://letterboxd.com/{username}/rss/',
+    aliases: ['https://embed.letterboxd.com/{username}/rss/'],
   },
 ])
 

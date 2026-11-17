@@ -11,7 +11,6 @@ import { castopodHandler } from './castopod.js'
 import { chambermasterHandler } from './chambermaster.js'
 import { civicplusHandler } from './civicplus.js'
 import { colorMeShopHandler } from './colorMeShop.js'
-import { confluenceHandler } from './confluence.js'
 import { diasporaHandler } from './diaspora.js'
 import { discourseHandler } from './discourse.js'
 import { discuzHandler } from './discuz.js'
@@ -203,11 +202,6 @@ const cases: Array<Case> = [
     colorMeShopHandler,
     '',
     new Headers({ 'set-cookie': 'colorme_PHPSESSID=abc; Path=/' }),
-  ],
-  [
-    'confluence',
-    confluenceHandler,
-    '<meta name="confluence-base-url" content="https://example.org">',
   ],
   ['diaspora', diasporaHandler, '<script>Diaspora.Page = "Home";</script>'],
   ['discourse', discourseHandler, '<meta id="data-discourse-setup" data-base-url="/">'],

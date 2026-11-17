@@ -11,7 +11,7 @@ const domains = ['svbtle.com']
 
 // A blog on a custom domain is known only by its marker, so its feed is built here but claimed
 // only on Svbtle's own domain.
-const feeds = definePlatformFeeds([{ key: 'svbtle:posts', template: '{scheme}://{host}/feed' }], {
+const feeds = definePlatformFeeds([{ key: 'svbtle:posts', main: '{scheme}://{host}/feed' }], {
   domains,
 })
 

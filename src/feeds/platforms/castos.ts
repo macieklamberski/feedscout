@@ -14,9 +14,14 @@ const feedIdRegex = /https:\/\/feeds\.castos\.com\/([a-z0-9]+)/i
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'castos:podcast', template: 'https://feeds.castos.com/{feedId}' },
-    // The show site redirects /feed to its feeds.castos.com URL.
-    { key: 'castos:podcast', template: '{scheme}://{host}/feed', isAlias: true },
+    {
+      key: 'castos:podcast',
+      main: 'https://feeds.castos.com/{feedId}',
+      aliases: [
+        // The show site redirects /feed to its feeds.castos.com URL.
+        '{scheme}://{host}/feed',
+      ],
+    },
   ],
   { domains },
 )

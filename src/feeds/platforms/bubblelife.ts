@@ -1,5 +1,6 @@
-import { getQueryParam, includesAnyOf, isSubdomainOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { bubblelife } from 'feedintel'
+import { includesAnyOf, isSubdomainOf } from 'trousse'
+import { withHintLabel, withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
 
@@ -15,27 +16,14 @@ export type BubblelifePage = {
   alertId?: string
 }
 
-const domains = ['bubblelife.com']
+const domains = bubblelife.tenantDomains
 
 const communityRegex =
   /^\/community\/(?<community>[a-z0-9_]+)(?:\/library\/(?<libraryId>\d+))?(?:\/|$)/i
 const feedHrefRegex = /^\/rss\?c=(\d+)$/i
 const alertHrefRegex = /^\/rss\?c=(\d+),nofriends$/i
-// A news alert feed suffixes its id with `,nofriends`.
-const feedIdRegex = /^\d+(?:,nofriends)?$/i
 
-// A community's posts feed is its first library's feed, so a feed URL reads back as a library. A
-// topic feed narrows a library to one topic. The news alert row goes before the library rows,
-// whose `{id}` would read its suffixed id.
-const feeds = definePlatformFeeds(
-  [
-    { key: 'bubblelife:topic', template: '{scheme}://{host}/rss?c={id}&t={topic}' },
-    { key: 'bubblelife:news-alerts', template: '{scheme}://{host}/rss?c={id},nofriends' },
-    { key: 'bubblelife:library', template: '{scheme}://{host}/rss?c={id}' },
-    { key: 'bubblelife:posts', template: '{scheme}://{host}/rss?c={id}' },
-  ],
-  { domains },
-)
+const feeds = withHintLabels(bubblelife.feeds)
 
 export const parseBubblelifeUrl = (url: string): BubblelifeUrl | undefined => {
   if (!isSubdomainOf(url, domains)) {
@@ -141,13 +129,5 @@ export const bubblelifeHandler: PlatformHandler = {
     return [pageFeeds.getFeedEntry('bubblelife:posts', params)]
   },
 
-  getFeedHint: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!feedIdRegex.test(getQueryParam(parsedUrl, 'c') ?? '')) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: (url) => withHintLabel(bubblelife.getFeedHint(url)),
 }

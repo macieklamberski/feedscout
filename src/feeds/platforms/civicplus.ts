@@ -1,11 +1,11 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { civicplus } from 'feedintel'
+import { startsWithAnyOf } from 'trousse'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
-
-const layoutAssetRegex = /^\/Areas\/Layout\/Assets\//i
 
 // The module ids that serve an all-categories feed. A module id with no feed answers 200 with an
 // empty body.
@@ -21,27 +21,7 @@ const moduleKeys = new Map<string, CivicplusFeedKey>([
   ['92', 'civicplus:media-center'],
 ])
 
-// A site runs on its own domain and is known only by its marker, so its feeds are built here but
-// not claimed. The Pages feed of new and updated pages is site-wide, for the home page and content
-// pages.
-const feeds = definePlatformFeeds([
-  { key: 'civicplus:news-flash', template: '{root}/RSSFeed.aspx?ModID=1&CID=All-newsflash.xml' },
-  { key: 'civicplus:blog', template: '{root}/RSSFeed.aspx?ModID=51&CID=All-blog.xml' },
-  { key: 'civicplus:photo-gallery', template: '{root}/RSSFeed.aspx?ModID=53&CID=All-0' },
-  { key: 'civicplus:calendar', template: '{root}/RSSFeed.aspx?ModID=58&CID=All-calendar.xml' },
-  { key: 'civicplus:alert-center', template: '{root}/RSSFeed.aspx?ModID=63&CID=All-0' },
-  { key: 'civicplus:real-estate', template: '{root}/RSSFeed.aspx?ModID=64&CID=All-0' },
-  { key: 'civicplus:agenda-center', template: '{root}/RSSFeed.aspx?ModID=65&CID=All-0' },
-  {
-    key: 'civicplus:jobs',
-    template: '{root}/RSSFeed.aspx?ModID=66&CID=All-0&CommunityJobs=False',
-  },
-  {
-    key: 'civicplus:media-center',
-    template: '{root}/RSSFeed.aspx?ModID=92&CID=All-civicmedia.xml',
-  },
-  { key: 'civicplus:pages', template: '{root}/RSSFeed.aspx?ModID=76&CID=All-0' },
-])
+const feeds = withHintLabels(civicplus.feeds)
 
 type CivicplusFeedKey = Parameters<typeof feeds.getFeedEntry>[0]
 
@@ -49,7 +29,9 @@ export type CivicplusPage = { kind: 'module'; key: CivicplusFeedKey }
 
 export const isCivicplusHtml = (content: string): boolean => {
   const script = findElement(content, (element) => {
-    return element.name === 'script' && layoutAssetRegex.test(element.attribs.src ?? '')
+    return (
+      element.name === 'script' && startsWithAnyOf(element.attribs.src, '/Areas/Layout/Assets/')
+    )
   })
 
   return script !== undefined

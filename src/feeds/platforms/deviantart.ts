@@ -1,5 +1,6 @@
+import { deviantart } from 'feedintel'
 import { decodeSegment, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Not discoverable without handler.
@@ -13,7 +14,7 @@ export type DeviantartUrl =
   | { kind: 'profile'; username: string }
   | { kind: 'dailyDeviations' }
 
-const hosts = ['deviantart.com', 'www.deviantart.com']
+const hosts = deviantart.hosts
 
 const tagRegex = /^\/tag\/([^/]+)/i
 const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/|$)/i
@@ -22,66 +23,7 @@ const folderRegex = /^\/[^/]+\/gallery\/(\d+)(?:\/|$)/i
 const journalRegex = /^\/[^/]+\/journal(?:\/|$)/i
 const dailyDeviationsRegex = /^\/daily-deviations\/?$/i
 
-// A user's deviations serve the same items with or without the sort and meta terms, under
-// `type=gallery`, without a type and as `gallery:{username}`. The journals are `type=journal` over
-// the same `by:` query, as `q=journal:{username}` serves the site-wide Popular feed. The tag and
-// daily deviations feeds serve the same popular pool whatever the query, so they are claimed and
-// never built.
-const feeds = definePlatformFeeds([
-  // A folder feed serves the same items without a type. Its rows come first, since the
-  // `gallery:{username}` row below takes a folder path too.
-  {
-    key: 'deviantart:gallery',
-    template:
-      'https://backend.deviantart.com/rss.xml?type=deviation&q=gallery:{username}/{folderId}',
-  },
-  {
-    key: 'deviantart:gallery',
-    template: 'https://backend.deviantart.com/rss.xml?q=gallery:{username}/{folderId}',
-    isAlias: true,
-  },
-  {
-    key: 'deviantart:deviations',
-    template:
-      'https://backend.deviantart.com/rss.xml?type=deviation&q=by:{username} sort:time meta:all',
-  },
-  {
-    key: 'deviantart:deviations',
-    template: 'https://backend.deviantart.com/rss.xml?type=deviation&q=by:{username}',
-    isAlias: true,
-  },
-  {
-    key: 'deviantart:deviations',
-    template: 'https://backend.deviantart.com/rss.xml?type=gallery&q=by:{username}',
-    isAlias: true,
-  },
-  {
-    key: 'deviantart:deviations',
-    template: 'https://backend.deviantart.com/rss.xml?q=by:{username}',
-    isAlias: true,
-  },
-  {
-    key: 'deviantart:deviations',
-    template: 'https://backend.deviantart.com/rss.xml?q=gallery:{username}',
-    isAlias: true,
-  },
-  {
-    key: 'deviantart:favorites',
-    template: 'https://backend.deviantart.com/rss.xml?type=deviation&q=favby:{username}',
-  },
-  {
-    key: 'deviantart:tag',
-    template: 'https://backend.deviantart.com/rss.xml?type=deviation&q=tag:{tag}',
-  },
-  {
-    key: 'deviantart:journal',
-    template: 'https://backend.deviantart.com/rss.xml?type=journal&q=by:{username}',
-  },
-  {
-    key: 'deviantart:daily-deviations',
-    template: 'https://backend.deviantart.com/rss.xml?q=special:dd',
-  },
-])
+const feeds = withHintLabels(deviantart.feeds)
 
 export const parseDeviantartUrl = (url: string): DeviantartUrl | undefined => {
   const parsedUrl = parseUrl(url)

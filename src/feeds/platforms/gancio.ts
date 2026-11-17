@@ -1,4 +1,4 @@
-import { getAnyOf, getPathSegments, isAnyOf, parseUrl } from 'trousse'
+import { endsWithAnyOf, getAnyOf, getPathSegments, isAnyOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
@@ -7,7 +7,6 @@ import { findElement } from '../../common/utils.js'
 
 const customCssPathRegex = /\/custom_css$/i
 const trailingSlashesRegex = /(?<!\/)\/+$/
-const eventsScriptRegex = /\/gancio-events\.es\.js$/i
 
 export type GancioPage =
   | { kind: 'tag' | 'place' | 'collection'; rootUrl: string; value: string }
@@ -17,10 +16,10 @@ const sections = ['tag', 'place', 'collection'] as const
 
 // An instance is self-hosted on any domain, so the table only builds its feeds.
 const feeds = definePlatformFeeds([
-  { key: 'gancio:tag', template: '{root}/feed/rss/tag/{tag}' },
-  { key: 'gancio:place', template: '{root}/feed/rss/place/{place}' },
-  { key: 'gancio:collection', template: '{root}/feed/rss/collection/{collection}' },
-  { key: 'gancio:site', template: '{root}/feed/rss' },
+  { key: 'gancio:tag', main: '{root}/feed/rss/tag/{tag}' },
+  { key: 'gancio:place', main: '{root}/feed/rss/place/{place}' },
+  { key: 'gancio:collection', main: '{root}/feed/rss/collection/{collection}' },
+  { key: 'gancio:site', main: '{root}/feed/rss' },
 ])
 
 // The default layout prints the `custom_css` stylesheet in every page head, at the install's root.
@@ -35,7 +34,7 @@ const getGancioPage = (url: string, content: string | undefined): GancioPage | u
 
   // The layout also loads the events web component, which a theme cannot drop.
   const script = findElement(content, (element) => {
-    return element.name === 'script' && eventsScriptRegex.test(element.attribs.src ?? '')
+    return element.name === 'script' && endsWithAnyOf(element.attribs.src, '/gancio-events.es.js')
   })
 
   if (!link?.attribs.href || !script) {

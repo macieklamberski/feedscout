@@ -14,19 +14,17 @@ const domains = ['instatus.com']
 // not claimed. A translation's feeds serve the same items as the bare ones.
 const feeds = definePlatformFeeds(
   [
-    { key: 'instatus:history', template: '{scheme}://{host}/history.rss', format: 'rss' },
     {
       key: 'instatus:history',
-      template: '{scheme}://{host}/{language}/history.rss',
+      main: '{scheme}://{host}/history.rss',
       format: 'rss',
-      isAlias: true,
+      aliases: ['{scheme}://{host}/{language}/history.rss'],
     },
-    { key: 'instatus:history', template: '{scheme}://{host}/history.atom', format: 'atom' },
     {
       key: 'instatus:history',
-      template: '{scheme}://{host}/{language}/history.atom',
+      main: '{scheme}://{host}/history.atom',
       format: 'atom',
-      isAlias: true,
+      aliases: ['{scheme}://{host}/{language}/history.atom'],
     },
   ],
   { domains, checks: { language: isLocale } },

@@ -8,21 +8,35 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 export type AmebloUrl = { kind: 'blog'; username: string }
 
 const hosts = ['ameblo.jp', 'www.ameblo.jp']
-const feedHosts = ['ameblo.jp', 'rssblog.ameba.jp']
 
 // Ameba's fixed embed routes name the blog after the route, before the catch-all username.
 const reblogCardRegex = /^\/s\/embed\/reblog-card\/([^/]+)\/entry-[^/]+\.html$/i
 const imagePageRegex = /^\/p\/embed\/([^/]+)\/image-[^/]+\.html$/i
 
 // A blog page links its feed on rssblog.ameba.jp, and ameblo.jp serves the same feeds under the
-// same paths, so the table reads both hosts.
+// same paths.
 const feeds = definePlatformFeeds(
   [
-    { key: 'ameblo:posts', template: '{scheme}://{host}/{username}/rss20.xml', format: 'rss' },
-    { key: 'ameblo:posts', template: '{scheme}://{host}/{username}/atom.xml', format: 'atom' },
-    { key: 'ameblo:posts', template: '{scheme}://{host}/{username}/rss.html', format: 'rdf' },
+    {
+      key: 'ameblo:posts',
+      main: 'https://rssblog.ameba.jp/{username}/rss20.xml',
+      format: 'rss',
+      aliases: ['{scheme}://{host}/{username}/rss20.xml'],
+    },
+    {
+      key: 'ameblo:posts',
+      main: 'https://rssblog.ameba.jp/{username}/atom.xml',
+      format: 'atom',
+      aliases: ['{scheme}://{host}/{username}/atom.xml'],
+    },
+    {
+      key: 'ameblo:posts',
+      main: 'https://rssblog.ameba.jp/{username}/rss.html',
+      format: 'rdf',
+      aliases: ['{scheme}://{host}/{username}/rss.html'],
+    },
   ],
-  { hosts: feedHosts },
+  { hosts },
 )
 
 export const parseAmebloUrl = (url: string): AmebloUrl | undefined => {
@@ -54,18 +68,16 @@ export const amebloHandler: PlatformHandler = {
   resolve: (url) => {
     const parsed = parseAmebloUrl(url)
 
-    const page = feeds.forUrl(url)
-
-    if (!parsed || !page) {
+    if (!parsed) {
       return []
     }
 
-    const params = { host: 'rssblog.ameba.jp', username: parsed.username }
+    const params = { username: parsed.username }
 
     return [
-      page.getFeedEntry('ameblo:posts', params, 'rss'),
-      page.getFeedEntry('ameblo:posts', params, 'atom'),
-      page.getFeedEntry('ameblo:posts', params, 'rdf'),
+      feeds.getFeedEntry('ameblo:posts', params, 'rss'),
+      feeds.getFeedEntry('ameblo:posts', params, 'atom'),
+      feeds.getFeedEntry('ameblo:posts', params, 'rdf'),
     ]
   },
 

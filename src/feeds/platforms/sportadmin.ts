@@ -17,8 +17,8 @@ const nextGameRegex = /wNextGame\.asp\?SID=(\d+)/i
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'sportadmin:team', template: '{scheme}://{host}/rss/?SID={sectionId}' },
-    { key: 'sportadmin:news', template: '{scheme}://{host}/rss/' },
+    { key: 'sportadmin:team', main: '{scheme}://{host}/rss/?SID={sectionId}' },
+    { key: 'sportadmin:news', main: '{scheme}://{host}/rss/' },
   ],
   { domains },
 )

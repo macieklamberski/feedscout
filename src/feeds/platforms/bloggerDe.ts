@@ -15,10 +15,13 @@ const domains = ['blogger.de']
 // the topic. `/rss?show=all` adds the comments to the posts.
 const feeds = definePlatformFeeds(
   [
-    { key: 'blogger-de:posts', template: '{scheme}://{host}/rss' },
-    { key: 'blogger-de:posts', template: '{scheme}://{host}/topics/{topic}/rss', isAlias: true },
-    { key: 'blogger-de:posts-comments', template: '{scheme}://{host}/rss?show=all' },
-    { key: 'blogger-de:topic', template: '{scheme}://{host}/rss?topic={topic}' },
+    {
+      key: 'blogger-de:posts',
+      main: '{scheme}://{host}/rss',
+      aliases: ['{scheme}://{host}/topics/{topic}/rss'],
+    },
+    { key: 'blogger-de:posts-comments', main: '{scheme}://{host}/rss?show=all' },
+    { key: 'blogger-de:topic', main: '{scheme}://{host}/rss?topic={topic}' },
   ],
   { domains },
 )

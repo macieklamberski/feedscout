@@ -14,8 +14,8 @@ const feedIdRegex = /href="(?:https?|itpc):\/\/librivox\.org\/rss\/(\d+)"/i
 const feeds = definePlatformFeeds([
   // The site's new releases. It needs no value from the page, so `resolve` builds it on every
   // LibriVox page. It goes before the audiobook row, whose placeholder its path also fills.
-  { key: 'librivox:latest', template: 'https://librivox.org/rss/latest_releases' },
-  { key: 'librivox:audiobook', template: 'https://librivox.org/rss/{audiobookId}' },
+  { key: 'librivox:latest', main: 'https://librivox.org/rss/latest_releases' },
+  { key: 'librivox:audiobook', main: 'https://librivox.org/rss/{audiobookId}' },
 ])
 
 export type LibrivoxPage = { audiobookId: string }

@@ -8,7 +8,7 @@ export type OverblogUrl = { kind: 'blog' }
 
 const domains = [getBrandDomainRegex('over-blog'), getBrandDomainRegex('overblog'), 'over.blog']
 
-const feeds = definePlatformFeeds([{ key: 'overblog:posts', template: '{scheme}://{host}/rss' }], {
+const feeds = definePlatformFeeds([{ key: 'overblog:posts', main: '{scheme}://{host}/rss' }], {
   domains,
 })
 

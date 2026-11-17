@@ -12,7 +12,7 @@ const hosts = ['rss.com', 'www.rss.com']
 const podcastRegex = /^\/(?:([^/]+)\/)?podcasts\/([^/]+)/i
 
 const feeds = definePlatformFeeds([
-  { key: 'rss-com:podcast', template: 'https://media.rss.com/{show}/feed.xml' },
+  { key: 'rss-com:podcast', main: 'https://media.rss.com/{show}/feed.xml' },
 ])
 
 export const parseRssComUrl = (url: string): RssComUrl | undefined => {

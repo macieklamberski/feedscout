@@ -1,5 +1,6 @@
+import { soundcloud } from 'feedintel'
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabel, withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
 
@@ -11,39 +12,12 @@ export type SoundcloudPage =
   | { kind: 'user'; userId: string }
   | { kind: 'playlist'; playlistId: string }
 
-export const hosts = ['soundcloud.com', 'www.soundcloud.com', 'm.soundcloud.com']
+export const hosts = soundcloud.hosts
 
 const userIdRegex = /soundcloud:\/\/users:(\d+)/
 const playlistIdRegex = /soundcloud:\/\/playlists:(\d+)/
-const feedSegmentRegex = /^soundcloud:(?:users|sets|playlists):\d+$/i
 
-const feeds = definePlatformFeeds([
-  {
-    key: 'soundcloud:tracks',
-    template: 'https://feeds.soundcloud.com/users/soundcloud:users:{userId}/sounds.rss',
-  },
-  // The user path without sounds.rss serves the same feed.
-  {
-    key: 'soundcloud:tracks',
-    template: 'https://feeds.soundcloud.com/users/soundcloud:users:{userId}',
-    isAlias: true,
-  },
-  {
-    key: 'soundcloud:playlist',
-    template: 'https://feeds.soundcloud.com/playlists/soundcloud:sets:{playlistId}/sounds.rss',
-  },
-  // The playlist path without sounds.rss, and with playlists in place of sets, serve the same feed.
-  {
-    key: 'soundcloud:playlist',
-    template: 'https://feeds.soundcloud.com/playlists/soundcloud:sets:{playlistId}',
-    isAlias: true,
-  },
-  {
-    key: 'soundcloud:playlist',
-    template: 'https://feeds.soundcloud.com/playlists/soundcloud:playlists:{playlistId}/sounds.rss',
-    isAlias: true,
-  },
-])
+const feeds = withHintLabels(soundcloud.feeds)
 
 export const parseSoundcloudUrl = (url: string): SoundcloudUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -103,14 +77,5 @@ export const soundcloudHandler: PlatformHandler = {
     return [feeds.getFeedEntry('soundcloud:tracks', { userId: page.userId })]
   },
 
-  // A user or playlist id is digits, and a word in its place answers 400 or 404.
-  getFeedHint: (url) => {
-    const [, feedSegment] = getPathSegments(url)
-
-    if (!feedSegment || !feedSegmentRegex.test(feedSegment)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: (url) => withHintLabel(soundcloud.getFeedHint(url)),
 }

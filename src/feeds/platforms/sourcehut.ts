@@ -16,19 +16,16 @@ const projectHosts = ['sr.ht']
 const userHosts = [...projectHosts, 'todo.sr.ht', ...hosts]
 
 const feeds = definePlatformFeeds([
-  { key: 'sourcehut:commits', template: 'https://git.sr.ht/~{owner}/{repo}/log/rss.xml' },
-  { key: 'sourcehut:commits', template: 'https://git.sr.ht/~{owner}/{repo}/log/{ref}/rss.xml' },
-  { key: 'sourcehut:refs', template: 'https://git.sr.ht/~{owner}/{repo}/refs/rss.xml' },
-  { key: 'sourcehut:project', template: 'https://sr.ht/~{owner}/{project}/feed.rss' },
+  { key: 'sourcehut:commits', main: 'https://git.sr.ht/~{owner}/{repo}/log/rss.xml' },
+  { key: 'sourcehut:commits', main: 'https://git.sr.ht/~{owner}/{repo}/log/{ref}/rss.xml' },
+  { key: 'sourcehut:refs', main: 'https://git.sr.ht/~{owner}/{repo}/refs/rss.xml' },
+  { key: 'sourcehut:project', main: 'https://sr.ht/~{owner}/{project}/feed.rss' },
 ])
 
 // A log at a full commit hash is the history up to that commit, which never changes, not the log
 // of a branch. No page links it, so `resolve` never builds it.
 const commitHistoryFeeds = definePlatformFeeds([
-  {
-    key: 'sourcehut:commit-history',
-    template: 'https://git.sr.ht/~{owner}/{repo}/log/{hash}/rss.xml',
-  },
+  { key: 'sourcehut:commit-history', main: 'https://git.sr.ht/~{owner}/{repo}/log/{hash}/rss.xml' },
 ])
 const commitHashRegex = /^[0-9a-f]{40}$/i
 

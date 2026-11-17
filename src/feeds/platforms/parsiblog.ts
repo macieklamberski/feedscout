@@ -12,25 +12,17 @@ const domains = ['parsiblog.com', 'parsiblog.ir']
 // .aspx paths.
 const feeds = definePlatformFeeds(
   [
-    { key: 'parsiblog:posts', template: '{scheme}://{host}/rss/', format: 'rss' },
     {
       key: 'parsiblog:posts',
-      template: '{scheme}://{host}/RSS.aspx',
+      main: '{scheme}://{host}/rss/',
       format: 'rss',
-      isAlias: true,
+      aliases: ['{scheme}://{host}/RSS.aspx', '{scheme}://{host}/Mag/RSS.aspx'],
     },
     {
       key: 'parsiblog:posts',
-      template: '{scheme}://{host}/Mag/RSS.aspx',
-      format: 'rss',
-      isAlias: true,
-    },
-    { key: 'parsiblog:posts', template: '{scheme}://{host}/atom/', format: 'atom' },
-    {
-      key: 'parsiblog:posts',
-      template: '{scheme}://{host}/ATOM.aspx',
+      main: '{scheme}://{host}/atom/',
       format: 'atom',
-      isAlias: true,
+      aliases: ['{scheme}://{host}/ATOM.aspx'],
     },
   ],
   { domains, isWwwTenantPrefix: true },

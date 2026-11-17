@@ -1,4 +1,4 @@
-import { getOrigin, getQueryParam, parseUrl } from 'trousse'
+import { endsWithAnyOf, getOrigin, getQueryParam, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -20,19 +20,18 @@ const rollupPathRegex = /\/js\/[^/]*$/i
 // vBulletin 5 and 6.0 print `"channelid": "{id}"` in `pageData`,
 // 6.1 and later `data-channelid='{id}'`.
 const channelIdRegex = /(?:"channelid":\s*"|data-channelid=['"])(\d+)/
-const forumDisplayRegex = /\/forumdisplay\.php$/i
 const friendlyForumIdRegex = /^\?(\d+)(?:-|&|$)/
 
 // vBulletin 3 and 4 serve `external.php` and vBulletin 5 and later `external`, each with its own
 // spelling of the type. A forum on any host is known only by its scripts or cookies, which a feed
 // URL does not carry, so the feeds are built under the forum root and never claimed.
 const vbulletin4Feeds = definePlatformFeeds([
-  { key: 'vbulletin:forum', template: '{root}/external.php?type=RSS2&forumids={forumId}' },
-  { key: 'vbulletin:site', template: '{root}/external.php?type=RSS2' },
+  { key: 'vbulletin:forum', main: '{root}/external.php?type=RSS2&forumids={forumId}' },
+  { key: 'vbulletin:site', main: '{root}/external.php?type=RSS2' },
 ])
 const vbulletin5Feeds = definePlatformFeeds([
-  { key: 'vbulletin:forum', template: '{root}/external?type=rss2&nodeid={forumId}' },
-  { key: 'vbulletin:site', template: '{root}/external?type=rss2' },
+  { key: 'vbulletin:forum', main: '{root}/external?type=rss2&nodeid={forumId}' },
+  { key: 'vbulletin:site', main: '{root}/external?type=rss2' },
 ])
 
 // vBulletin 4 prints `clientscript/vbulletin-core.js` as an absolute URL under the forum root.
@@ -70,7 +69,7 @@ export const isVbulletinHeaders = (headers: Headers): boolean => {
 
 // Friendly URLs name the forum as `?{id}-{title}` or `?{id}`, and plain ones as `?f={id}`.
 const getForumId = (parsedUrl: URL): string | undefined => {
-  if (!forumDisplayRegex.test(parsedUrl.pathname)) {
+  if (!endsWithAnyOf(parsedUrl.pathname, '/forumdisplay.php')) {
     return
   }
 

@@ -32,77 +32,46 @@ const feeds = definePlatformFeeds(
   [
     {
       key: 'atypon:journal',
-      template: 'https://onlinelibrary.wiley.com/action/showFeed?type=etoc&feed=rss&jc={code}',
+      main: 'https://onlinelibrary.wiley.com/action/showFeed?type=etoc&feed=rss&jc={code}',
       format: 'rss',
+      aliases: [
+        'https://onlinelibrary.wiley.com/action/showFeed/feed?type=etoc&jc={code}',
+        'https://onlinelibrary.wiley.com/feed/{code}/most-recent',
+      ],
     },
     {
       key: 'atypon:journal',
-      template: 'https://onlinelibrary.wiley.com/action/showFeed/feed?type=etoc&jc={code}',
-      format: 'rss',
-      isAlias: true,
-    },
-    {
-      key: 'atypon:journal',
-      template: 'https://onlinelibrary.wiley.com/feed/{code}/most-recent',
-      format: 'rss',
-      isAlias: true,
-    },
-    {
-      key: 'atypon:journal',
-      template: '{scheme}://{host}/action/showFeed?type=etoc&feed=rss&jc={code}',
+      main: '{scheme}://{host}/action/showFeed?type=etoc&feed=rss&jc={code}',
       format: 'rdf',
-    },
-    {
-      key: 'atypon:journal',
-      template: '{scheme}://{host}/action/showFeed/feed?type=etoc&jc={code}',
-      format: 'rdf',
-      isAlias: true,
-    },
-    {
-      key: 'atypon:journal',
-      template: 'https://www.tandfonline.com/feed/rss/{code}',
-      format: 'rdf',
-      isAlias: true,
+      aliases: [
+        '{scheme}://{host}/action/showFeed/feed?type=etoc&jc={code}',
+        'https://www.tandfonline.com/feed/rss/{code}',
+      ],
     },
     {
       key: 'atypon:most-cited',
-      template: 'https://onlinelibrary.wiley.com/feed/{code}/most-cited',
+      main: 'https://onlinelibrary.wiley.com/feed/{code}/most-cited',
       format: 'rss',
-    },
-    {
-      key: 'atypon:most-cited',
-      template:
+      aliases: [
         'https://onlinelibrary.wiley.com/action/showMostCitedArticlesFeed?journalCode={code}',
-      format: 'rss',
-      isAlias: true,
+      ],
     },
     {
       key: 'atypon:ahead-of-print',
-      template: '{scheme}://{host}/action/showFeed?type=axatoc&feed=rss&jc={code}',
+      main: '{scheme}://{host}/action/showFeed?type=axatoc&feed=rss&jc={code}',
       format: 'rdf',
-    },
-    {
-      key: 'atypon:ahead-of-print',
-      template: '{scheme}://{host}/action/showFeed/feed?type=axatoc&jc={code}',
-      format: 'rdf',
-      isAlias: true,
+      aliases: ['{scheme}://{host}/action/showFeed/feed?type=axatoc&jc={code}'],
     },
     // A saved search or a topic feed names its query in values no page URL gives.
     {
       key: 'atypon:search',
-      template: '{scheme}://{host}/action/showFeed?type=search&feed=rss&query={query}',
+      main: '{scheme}://{host}/action/showFeed?type=search&feed=rss&query={query}',
       format: 'rdf',
-    },
-    {
-      key: 'atypon:search',
-      template: '{scheme}://{host}/action/showFeed/feed?type=search&query={query}',
-      format: 'rdf',
-      isAlias: true,
+      aliases: ['{scheme}://{host}/action/showFeed/feed?type=search&query={query}'],
     },
     {
       key: 'atypon:topic',
-      template:
-        '{scheme}://{host}/action/showFeed?type=searchTopic&taxonomyCode={taxonomy}&tagCode={tag}',
+      main: '{scheme}://{host}/action/showFeed?type=searchTopic&taxonomyCode={taxonomy}&tagCode={tag}',
     },
   ],
   { hosts },

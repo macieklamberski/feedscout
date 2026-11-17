@@ -19,18 +19,18 @@ const privateFeedRegex = /^\/[\da-f]{30}\/rss\/?$/i
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'ghost:tag', template: '{scheme}://{host}/tag/{tag}/rss/' },
-    { key: 'ghost:author', template: '{scheme}://{host}/author/{author}/rss/' },
-    { key: 'ghost:blog', template: '{scheme}://{host}/rss/' },
+    { key: 'ghost:tag', main: '{scheme}://{host}/tag/{tag}/rss/' },
+    { key: 'ghost:author', main: '{scheme}://{host}/author/{author}/rss/' },
+    { key: 'ghost:blog', main: '{scheme}://{host}/rss/' },
     // A collection a site's routes define, as `/archive/`, which a page path cannot tell apart from
     // a post, so `resolve` never builds it.
-    { key: 'ghost:collection', template: '{scheme}://{host}/{collection}/rss/' },
+    { key: 'ghost:collection', main: '{scheme}://{host}/{collection}/rss/' },
   ],
   { domains },
 )
 // No page gives the token, so this row only claims the feed.
 const privateFeeds = definePlatformFeeds(
-  [{ key: 'ghost:private', template: '{scheme}://{host}/{token}/rss/' }],
+  [{ key: 'ghost:private', main: '{scheme}://{host}/{token}/rss/' }],
   { domains },
 )
 

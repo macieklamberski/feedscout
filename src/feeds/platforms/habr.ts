@@ -30,66 +30,52 @@ const flowRegex = /^\/flows\/([^/]+)/i
 // only claims it.
 const feeds = definePlatformFeeds(
   [
-    { key: 'habr:articles', template: 'https://habr.com/{language}/rss/articles/' },
-    { key: 'habr:articles', template: 'https://habr.com/{language}/rss/articles/top/' },
-    { key: 'habr:articles', template: 'https://habr.com/{language}/rss/articles/top/{period}/' },
-    { key: 'habr:news', template: 'https://habr.com/{language}/rss/news/' },
-    { key: 'habr:news', template: 'https://habr.com/{language}/rss/news/top/{period}/' },
-    { key: 'habr:hub-posts', template: 'https://habr.com/{language}/rss/hubs/{hub}/posts/' },
-    { key: 'habr:flow', template: 'https://habr.com/{language}/rss/flows/{flow}/articles/' },
-    { key: 'habr:tag', template: 'https://habr.com/{language}/rss/tag/{tag}/' },
-    { key: 'habr:tag', template: 'https://habr.com/rss/tag/{tag}/' },
+    { key: 'habr:articles', main: 'https://habr.com/{language}/rss/articles/' },
+    { key: 'habr:articles', main: 'https://habr.com/{language}/rss/articles/top/' },
+    { key: 'habr:articles', main: 'https://habr.com/{language}/rss/articles/top/{period}/' },
+    { key: 'habr:news', main: 'https://habr.com/{language}/rss/news/' },
+    { key: 'habr:news', main: 'https://habr.com/{language}/rss/news/top/{period}/' },
+    { key: 'habr:hub-posts', main: 'https://habr.com/{language}/rss/hubs/{hub}/posts/' },
+    { key: 'habr:flow', main: 'https://habr.com/{language}/rss/flows/{flow}/articles/' },
+    { key: 'habr:tag', main: 'https://habr.com/{language}/rss/tag/{tag}/' },
+    { key: 'habr:tag', main: 'https://habr.com/rss/tag/{tag}/' },
     {
       key: 'habr:search',
-      template: 'https://habr.com/{language}/rss/search/?q={query}&target_type=posts',
+      main: 'https://habr.com/{language}/rss/search/?q={query}&target_type=posts',
     },
-    { key: 'habr:comments', template: 'https://habr.com/{language}/rss/publications/{post}/' },
-    // An article page links this spelling, which redirects to the publications one with a 301.
     {
       key: 'habr:comments',
-      template: 'https://habr.com/{language}/rss/post/{post}/',
-      isAlias: true,
+      main: 'https://habr.com/{language}/rss/publications/{post}/',
+      aliases: [
+        // An article page links this spelling, which redirects to the publications one with a 301.
+        'https://habr.com/{language}/rss/post/{post}/',
+      ],
     },
-    { key: 'habr:subscriptions', template: 'https://habr.com/{language}/rss/feed/{token}/' },
-    { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hubs/{hub}/articles/' },
+    { key: 'habr:subscriptions', main: 'https://habr.com/{language}/rss/feed/{token}/' },
     {
       key: 'habr:hub',
-      template: 'https://habr.com/{language}/rss/hubs/{hub}/articles/all/',
-      isAlias: true,
-    },
-    { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hub/{hub}/', isAlias: true },
-    {
-      key: 'habr:user',
-      template: 'https://habr.com/{language}/rss/users/{username}/publications/articles/',
+      main: 'https://habr.com/{language}/rss/hubs/{hub}/articles/',
+      aliases: [
+        'https://habr.com/{language}/rss/hubs/{hub}/articles/all/',
+        'https://habr.com/{language}/rss/hub/{hub}/',
+      ],
     },
     {
       key: 'habr:user',
-      template: 'https://habr.com/{language}/rss/users/{username}/articles/',
-      isAlias: true,
-    },
-    {
-      key: 'habr:user',
-      template: 'https://habr.com/{language}/rss/users/{username}/posts/',
-      isAlias: true,
-    },
-    {
-      key: 'habr:user',
-      template: 'https://habr.com/{language}/rss/users/{username}/publications/posts/',
-      isAlias: true,
+      main: 'https://habr.com/{language}/rss/users/{username}/publications/articles/',
+      aliases: [
+        'https://habr.com/{language}/rss/users/{username}/articles/',
+        'https://habr.com/{language}/rss/users/{username}/posts/',
+        'https://habr.com/{language}/rss/users/{username}/publications/posts/',
+      ],
     },
     {
       key: 'habr:company',
-      template: 'https://habr.com/{language}/rss/companies/{company}/articles/',
-    },
-    {
-      key: 'habr:company',
-      template: 'https://habr.com/{language}/rss/companies/{company}/articles/all/',
-      isAlias: true,
-    },
-    {
-      key: 'habr:company',
-      template: 'https://habr.com/{language}/rss/company/{company}/blog/',
-      isAlias: true,
+      main: 'https://habr.com/{language}/rss/companies/{company}/articles/',
+      aliases: [
+        'https://habr.com/{language}/rss/companies/{company}/articles/all/',
+        'https://habr.com/{language}/rss/company/{company}/blog/',
+      ],
     },
   ],
   { checks: { language: isLocale } },

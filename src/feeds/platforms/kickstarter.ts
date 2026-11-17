@@ -16,11 +16,11 @@ const hosts = ['kickstarter.com', 'www.kickstarter.com']
 const feeds = definePlatformFeeds([
   {
     key: 'kickstarter:updates',
-    template: 'https://www.kickstarter.com/projects/{creator}/{project}/posts.atom',
+    main: 'https://www.kickstarter.com/projects/{creator}/{project}/posts.atom',
   },
-  { key: 'kickstarter:projects', template: 'https://www.kickstarter.com/projects/feed.atom' },
+  { key: 'kickstarter:projects', main: 'https://www.kickstarter.com/projects/feed.atom' },
   // A curated page of projects, such as `/pages/tees`.
-  { key: 'kickstarter:page', template: 'https://www.kickstarter.com/pages/{name}.atom' },
+  { key: 'kickstarter:page', main: 'https://www.kickstarter.com/pages/{name}.atom' },
 ])
 
 export const parseKickstarterUrl = (url: string): KickstarterUrl | undefined => {

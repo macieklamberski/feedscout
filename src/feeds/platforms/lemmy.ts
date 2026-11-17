@@ -1,4 +1,4 @@
-import { getAnyOf, getPathSegments, getQueryParam, isAnyOf, parseUrl } from 'trousse'
+import { getAnyOf, getPathSegments, getQueryParam, includesAnyOf, isAnyOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasClass, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -14,8 +14,6 @@ export type LemmyUrl =
   | ({ kind: 'home' } & LemmyQuery)
 
 export type LemmyPage = LemmyUrl
-
-const lemmyPoweredByRegex = /lemmy/i
 
 const validSorts = [
   'Active',
@@ -42,22 +40,22 @@ const validSorts = [
 // Lemmy is self-hosted, so nothing in a feed URL names it and the table only builds. A sort and a
 // limit from the page carry into the feed, and the row with the most of them filled is built.
 const feeds = definePlatformFeeds([
-  { key: 'lemmy:community', template: '{root}/feeds/c/{community}.xml?sort={sort}&limit={limit}' },
-  { key: 'lemmy:community', template: '{root}/feeds/c/{community}.xml?sort={sort}' },
-  { key: 'lemmy:community', template: '{root}/feeds/c/{community}.xml?limit={limit}' },
-  { key: 'lemmy:community', template: '{root}/feeds/c/{community}.xml' },
-  { key: 'lemmy:user', template: '{root}/feeds/u/{username}.xml?sort={sort}&limit={limit}' },
-  { key: 'lemmy:user', template: '{root}/feeds/u/{username}.xml?sort={sort}' },
-  { key: 'lemmy:user', template: '{root}/feeds/u/{username}.xml?limit={limit}' },
-  { key: 'lemmy:user', template: '{root}/feeds/u/{username}.xml' },
-  { key: 'lemmy:all', template: '{root}/feeds/all.xml?sort={sort}&limit={limit}' },
-  { key: 'lemmy:all', template: '{root}/feeds/all.xml?sort={sort}' },
-  { key: 'lemmy:all', template: '{root}/feeds/all.xml?limit={limit}' },
-  { key: 'lemmy:all', template: '{root}/feeds/all.xml' },
-  { key: 'lemmy:local', template: '{root}/feeds/local.xml?sort={sort}&limit={limit}' },
-  { key: 'lemmy:local', template: '{root}/feeds/local.xml?sort={sort}' },
-  { key: 'lemmy:local', template: '{root}/feeds/local.xml?limit={limit}' },
-  { key: 'lemmy:local', template: '{root}/feeds/local.xml' },
+  { key: 'lemmy:community', main: '{root}/feeds/c/{community}.xml?sort={sort}&limit={limit}' },
+  { key: 'lemmy:community', main: '{root}/feeds/c/{community}.xml?sort={sort}' },
+  { key: 'lemmy:community', main: '{root}/feeds/c/{community}.xml?limit={limit}' },
+  { key: 'lemmy:community', main: '{root}/feeds/c/{community}.xml' },
+  { key: 'lemmy:user', main: '{root}/feeds/u/{username}.xml?sort={sort}&limit={limit}' },
+  { key: 'lemmy:user', main: '{root}/feeds/u/{username}.xml?sort={sort}' },
+  { key: 'lemmy:user', main: '{root}/feeds/u/{username}.xml?limit={limit}' },
+  { key: 'lemmy:user', main: '{root}/feeds/u/{username}.xml' },
+  { key: 'lemmy:all', main: '{root}/feeds/all.xml?sort={sort}&limit={limit}' },
+  { key: 'lemmy:all', main: '{root}/feeds/all.xml?sort={sort}' },
+  { key: 'lemmy:all', main: '{root}/feeds/all.xml?limit={limit}' },
+  { key: 'lemmy:all', main: '{root}/feeds/all.xml' },
+  { key: 'lemmy:local', main: '{root}/feeds/local.xml?sort={sort}&limit={limit}' },
+  { key: 'lemmy:local', main: '{root}/feeds/local.xml?sort={sort}' },
+  { key: 'lemmy:local', main: '{root}/feeds/local.xml?limit={limit}' },
+  { key: 'lemmy:local', main: '{root}/feeds/local.xml' },
 ])
 
 export const parseLemmyUrl = (url: string): LemmyUrl | undefined => {
@@ -112,9 +110,7 @@ export const isLemmyHtml = (content: string): boolean => {
 }
 
 export const isLemmyHeaders = (headers: Headers): boolean => {
-  const poweredBy = headers.get('x-powered-by') ?? ''
-
-  return lemmyPoweredByRegex.test(poweredBy)
+  return includesAnyOf(headers.get('x-powered-by'), 'lemmy')
 }
 
 export const lemmyHandler: PlatformHandler = {

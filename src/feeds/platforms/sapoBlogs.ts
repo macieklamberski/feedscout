@@ -19,13 +19,13 @@ const tagRegex = /^\/tag\/(.+?)\/?$/i
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'sapo-blogs:posts', template: '{scheme}://{host}/data/rss', format: 'rss' },
-    { key: 'sapo-blogs:posts', template: '{scheme}://{host}/data/atom', format: 'atom' },
-    { key: 'sapo-blogs:tag', template: '{scheme}://{host}/data/rss?tag={tag}' },
-    { key: 'sapo-blogs:comments', template: 'https://blogs.sapo.pt/commentsrss.bml?blog={blog}' },
+    { key: 'sapo-blogs:posts', main: '{scheme}://{host}/data/rss', format: 'rss' },
+    { key: 'sapo-blogs:posts', main: '{scheme}://{host}/data/atom', format: 'atom' },
+    { key: 'sapo-blogs:tag', main: '{scheme}://{host}/data/rss?tag={tag}' },
+    { key: 'sapo-blogs:comments', main: 'https://blogs.sapo.pt/commentsrss.bml?blog={blog}' },
     {
       key: 'sapo-blogs:post-comments',
-      template: 'https://blogs.sapo.pt/commentsrss.bml?blog={blog}&ditemid={postId}',
+      main: 'https://blogs.sapo.pt/commentsrss.bml?blog={blog}&ditemid={postId}',
     },
   ],
   { domains },

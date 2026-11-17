@@ -23,28 +23,20 @@ const authorRegex = /^\/archive\/author\/([^/]+)/i
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'hatenablog:posts', template: '{scheme}://{host}/rss', format: 'rss' },
-    { key: 'hatenablog:posts', template: '{scheme}://{host}/feed', format: 'atom' },
+    { key: 'hatenablog:posts', main: '{scheme}://{host}/rss', format: 'rss' },
+    { key: 'hatenablog:posts', main: '{scheme}://{host}/feed', format: 'atom' },
     {
       key: 'hatenablog:category',
-      template: '{scheme}://{host}/rss/category/{category}',
+      main: '{scheme}://{host}/rss/category/{category}',
       format: 'rss',
     },
     {
       key: 'hatenablog:category',
-      template: '{scheme}://{host}/feed/category/{category}',
+      main: '{scheme}://{host}/feed/category/{category}',
       format: 'atom',
     },
-    {
-      key: 'hatenablog:author',
-      template: '{scheme}://{host}/rss/author/{author}',
-      format: 'rss',
-    },
-    {
-      key: 'hatenablog:author',
-      template: '{scheme}://{host}/feed/author/{author}',
-      format: 'atom',
-    },
+    { key: 'hatenablog:author', main: '{scheme}://{host}/rss/author/{author}', format: 'rss' },
+    { key: 'hatenablog:author', main: '{scheme}://{host}/feed/author/{author}', format: 'atom' },
   ],
   { domains },
 )

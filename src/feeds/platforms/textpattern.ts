@@ -19,12 +19,12 @@ const reservedRoutes = ['author', 'category', 'file_download']
 // A site on any host is known only by its generator tag, which a feed URL does not carry, so the
 // feeds are built under the site root and never claimed.
 const feeds = definePlatformFeeds([
-  { key: 'textpattern:section', template: '{root}/rss?section={section}', format: 'rss' },
-  { key: 'textpattern:section', template: '{root}/atom?section={section}', format: 'atom' },
-  { key: 'textpattern:category', template: '{root}/rss?category={category}', format: 'rss' },
-  { key: 'textpattern:category', template: '{root}/atom?category={category}', format: 'atom' },
-  { key: 'textpattern:posts', template: '{root}/rss', format: 'rss' },
-  { key: 'textpattern:posts', template: '{root}/atom', format: 'atom' },
+  { key: 'textpattern:section', main: '{root}/rss?section={section}', format: 'rss' },
+  { key: 'textpattern:section', main: '{root}/atom?section={section}', format: 'atom' },
+  { key: 'textpattern:category', main: '{root}/rss?category={category}', format: 'rss' },
+  { key: 'textpattern:category', main: '{root}/atom?category={category}', format: 'atom' },
+  { key: 'textpattern:posts', main: '{root}/rss', format: 'rss' },
+  { key: 'textpattern:posts', main: '{root}/atom', format: 'atom' },
 ])
 
 export const isTextpatternHtml = (content: string): boolean => {

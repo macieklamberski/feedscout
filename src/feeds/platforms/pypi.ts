@@ -13,9 +13,9 @@ const hosts = ['pypi.org', 'www.pypi.org']
 const projectRegex = /^\/project\/([\w.-]+)(?:\/|$)/i
 
 const feeds = definePlatformFeeds([
-  { key: 'pypi:releases', template: 'https://pypi.org/rss/project/{project}/releases.xml' },
-  { key: 'pypi:new-packages', template: 'https://pypi.org/rss/packages.xml' },
-  { key: 'pypi:updates', template: 'https://pypi.org/rss/updates.xml' },
+  { key: 'pypi:releases', main: 'https://pypi.org/rss/project/{project}/releases.xml' },
+  { key: 'pypi:new-packages', main: 'https://pypi.org/rss/packages.xml' },
+  { key: 'pypi:updates', main: 'https://pypi.org/rss/updates.xml' },
 ])
 
 export const parsePypiUrl = (url: string): PypiUrl | undefined => {

@@ -21,8 +21,8 @@ const itemPaths = ['archive', 'news', 'products']
 // claimed. The site-wide row comes first, as it also fits the section row.
 const feeds = definePlatformFeeds(
   [
-    { key: 'webnode:articles', template: '{scheme}://{host}/rss/all.xml' },
-    { key: 'webnode:section', template: '{scheme}://{host}/rss/{section}.xml' },
+    { key: 'webnode:articles', main: '{scheme}://{host}/rss/all.xml' },
+    { key: 'webnode:section', main: '{scheme}://{host}/rss/{section}.xml' },
   ],
   { domains },
 )
