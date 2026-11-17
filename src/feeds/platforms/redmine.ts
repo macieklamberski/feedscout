@@ -377,11 +377,43 @@ export const redmineHandler: PlatformHandler = {
       ]
     }
 
+    if (page.kind === 'project' && page.hasIssues && page.hasNews) {
+      return [
+        getFeedEntry('project-activity'),
+        getFeedEntry('project-issues'),
+        getFeedEntry('project-news'),
+        getFeedEntry('news'),
+        getFeedEntry('activity'),
+        getFeedEntry('projects'),
+        getFeedEntry('issues'),
+      ]
+    }
+
+    if (page.kind === 'project' && page.hasIssues) {
+      return [
+        getFeedEntry('project-activity'),
+        getFeedEntry('project-issues'),
+        getFeedEntry('news'),
+        getFeedEntry('activity'),
+        getFeedEntry('projects'),
+        getFeedEntry('issues'),
+      ]
+    }
+
+    if (page.kind === 'project' && page.hasNews) {
+      return [
+        getFeedEntry('project-activity'),
+        getFeedEntry('project-news'),
+        getFeedEntry('news'),
+        getFeedEntry('activity'),
+        getFeedEntry('projects'),
+        getFeedEntry('issues'),
+      ]
+    }
+
     if (page.kind === 'project') {
       return [
         getFeedEntry('project-activity'),
-        ...(page.hasIssues ? [getFeedEntry('project-issues')] : []),
-        ...(page.hasNews ? [getFeedEntry('project-news')] : []),
         getFeedEntry('news'),
         getFeedEntry('activity'),
         getFeedEntry('projects'),

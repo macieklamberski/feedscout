@@ -1,4 +1,4 @@
-import { escapeRegex, isHostOf, parseUrl } from 'trousse'
+import { escapeRegex, isHostOf, isPresent, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain, wordOrHyphenRegex } from '../../common/utils.js'
@@ -198,22 +198,32 @@ export const substackHandler: PlatformHandler = {
     if (!record || !publication) {
       return [
         pageFeeds.getFeedEntry('newsletter'),
-        ...(section ? [pageFeeds.getFeedEntry('newsletter-section', { section })] : []),
-      ]
+        pageFeeds.getFeedEntry('newsletter-section', { section }),
+      ].filter(isPresent)
     }
 
     const hasPodcast = podcastEnabledRegex.test(record) && !podcastFeedUrlRegex.test(record)
     // A podcast feed answers on the publication host too, but names the API host as its self link.
     const params = { publication }
 
+    if (hasPodcast) {
+      return [
+        pageFeeds.getFeedEntry('newsletter'),
+        pageFeeds.getFeedEntry('newsletter-section', { section }),
+        pageFeeds.getFeedEntry('podcast', params),
+        ...getPodcastSections(content, publication).map((section) => {
+          return pageFeeds.getFeedEntry('podcast-section', { ...params, section })
+        }),
+      ].filter(isPresent)
+    }
+
     return [
       pageFeeds.getFeedEntry('newsletter'),
-      ...(section ? [pageFeeds.getFeedEntry('newsletter-section', { section })] : []),
-      ...(hasPodcast ? [pageFeeds.getFeedEntry('podcast', params)] : []),
+      pageFeeds.getFeedEntry('newsletter-section', { section }),
       ...getPodcastSections(content, publication).map((section) => {
         return pageFeeds.getFeedEntry('podcast-section', { ...params, section })
       }),
-    ]
+    ].filter(isPresent)
   },
 
   // The table reads any single-label host under substack.com, so the page parser refuses a

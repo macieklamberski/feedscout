@@ -224,6 +224,16 @@ export const getYoutubePage = (
   return { ...parsed, channelId }
 }
 
+const getPlaylistEntry = (playlistId: string | undefined): DiscoverUriEntry | undefined => {
+  const uri = feeds.getFeedUrl('playlist', { playlistId })
+
+  if (!uri) {
+    return
+  }
+
+  return { uri, hint: composeHint(`youtube:${getPlaylistKey(playlistId)}`) }
+}
+
 export const youtubeHandler: PlatformHandler = {
   match: (url) => {
     return parseYoutubeUrl(url) !== undefined
@@ -236,17 +246,21 @@ export const youtubeHandler: PlatformHandler = {
       return []
     }
 
-    const channelId = page.kind === 'playlist' ? undefined : page.channelId
-    const username = page.kind === 'playlist' ? undefined : page.username
-    const playlistUri = feeds.getFeedUrl('playlist', { playlistId: page.playlistId })
+    const playlistEntry = getPlaylistEntry(page.playlistId)
 
-    return [
-      ...(channelId ? getChannelUris(channelId) : []),
-      ...(username ? [feeds.getFeedEntry('all', { user: username })] : []),
-      ...(playlistUri
-        ? [{ uri: playlistUri, hint: composeHint(`youtube:${getPlaylistKey(page.playlistId)}`) }]
-        : []),
-    ]
+    if (page.kind === 'playlist') {
+      return [playlistEntry].filter(isPresent)
+    }
+
+    if (page.channelId) {
+      return [
+        ...getChannelUris(page.channelId),
+        feeds.getFeedEntry('all', { user: page.username }),
+        playlistEntry,
+      ].filter(isPresent)
+    }
+
+    return [feeds.getFeedEntry('all', { user: page.username }), playlistEntry].filter(isPresent)
   },
 
   getFeedHint: (url) => {

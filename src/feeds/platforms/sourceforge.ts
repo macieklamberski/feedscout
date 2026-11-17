@@ -1,4 +1,4 @@
-import { decodePercent, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { decodePercent, getPathSegments, isAnyOf, isHostOf, isPresent, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -227,7 +227,80 @@ export const sourceforgeHandler: PlatformHandler = {
     }
 
     const { project, forum, thread, tool, page, path } = parsed
-    const hasToolFeed = tool !== undefined && isGenericTool(project, tool)
+
+    if (path) {
+      return [
+        feeds.getFeedEntry('activity', { project }, 'rss'),
+        feeds.getFeedEntry('activity', { project }, 'atom'),
+        feeds.getFeedEntry('project-feed', { project }, 'rss'),
+        feeds.getFeedEntry('project-feed', { project }, 'atom'),
+        feeds.getFeedEntry('files', { project }),
+        feeds.getFeedEntry('news', { project }, 'rss'),
+        feeds.getFeedEntry('news', { project }, 'atom'),
+        feeds.getFeedEntry('discussion', { project }, 'rss'),
+        feeds.getFeedEntry('discussion', { project }, 'atom'),
+        feeds.getFeedEntry('bugs', { project }, 'rss'),
+        feeds.getFeedEntry('bugs', { project }, 'atom'),
+        feeds.getFeedEntry('files-folder', { project, path }),
+      ].filter(isPresent)
+    }
+
+    if (thread) {
+      return [
+        feeds.getFeedEntry('activity', { project }, 'rss'),
+        feeds.getFeedEntry('activity', { project }, 'atom'),
+        feeds.getFeedEntry('project-feed', { project }, 'rss'),
+        feeds.getFeedEntry('project-feed', { project }, 'atom'),
+        feeds.getFeedEntry('files', { project }),
+        feeds.getFeedEntry('news', { project }, 'rss'),
+        feeds.getFeedEntry('news', { project }, 'atom'),
+        feeds.getFeedEntry('discussion', { project }, 'rss'),
+        feeds.getFeedEntry('discussion', { project }, 'atom'),
+        feeds.getFeedEntry('bugs', { project }, 'rss'),
+        feeds.getFeedEntry('bugs', { project }, 'atom'),
+        feeds.getFeedEntry('discussion-thread', { project, forum, thread }, 'rss'),
+        feeds.getFeedEntry('discussion-thread', { project, forum, thread }, 'atom'),
+      ].filter(isPresent)
+    }
+
+    if (forum) {
+      return [
+        feeds.getFeedEntry('activity', { project }, 'rss'),
+        feeds.getFeedEntry('activity', { project }, 'atom'),
+        feeds.getFeedEntry('project-feed', { project }, 'rss'),
+        feeds.getFeedEntry('project-feed', { project }, 'atom'),
+        feeds.getFeedEntry('files', { project }),
+        feeds.getFeedEntry('news', { project }, 'rss'),
+        feeds.getFeedEntry('news', { project }, 'atom'),
+        feeds.getFeedEntry('discussion', { project }, 'rss'),
+        feeds.getFeedEntry('discussion', { project }, 'atom'),
+        feeds.getFeedEntry('bugs', { project }, 'rss'),
+        feeds.getFeedEntry('bugs', { project }, 'atom'),
+        feeds.getFeedEntry('discussion-forum', { project, forum }, 'rss'),
+        feeds.getFeedEntry('discussion-forum', { project, forum }, 'atom'),
+      ].filter(isPresent)
+    }
+
+    // A tool every project has serves its own feed, and a page of any tool serves the page's.
+    if (tool && isGenericTool(project, tool)) {
+      return [
+        feeds.getFeedEntry('activity', { project }, 'rss'),
+        feeds.getFeedEntry('activity', { project }, 'atom'),
+        feeds.getFeedEntry('project-feed', { project }, 'rss'),
+        feeds.getFeedEntry('project-feed', { project }, 'atom'),
+        feeds.getFeedEntry('files', { project }),
+        feeds.getFeedEntry('news', { project }, 'rss'),
+        feeds.getFeedEntry('news', { project }, 'atom'),
+        feeds.getFeedEntry('discussion', { project }, 'rss'),
+        feeds.getFeedEntry('discussion', { project }, 'atom'),
+        feeds.getFeedEntry('bugs', { project }, 'rss'),
+        feeds.getFeedEntry('bugs', { project }, 'atom'),
+        feeds.getFeedEntry('tool', { project, tool }, 'rss'),
+        feeds.getFeedEntry('tool', { project, tool }, 'atom'),
+        feeds.getFeedEntry('tool-page', { project, tool, page }, 'rss'),
+        feeds.getFeedEntry('tool-page', { project, tool, page }, 'atom'),
+      ].filter(isPresent)
+    }
 
     return [
       feeds.getFeedEntry('activity', { project }, 'rss'),
@@ -241,32 +314,9 @@ export const sourceforgeHandler: PlatformHandler = {
       feeds.getFeedEntry('discussion', { project }, 'atom'),
       feeds.getFeedEntry('bugs', { project }, 'rss'),
       feeds.getFeedEntry('bugs', { project }, 'atom'),
-      ...(path ? [feeds.getFeedEntry('files-folder', { project, path })] : []),
-      ...(forum && !thread
-        ? [
-            feeds.getFeedEntry('discussion-forum', { project, forum }, 'rss'),
-            feeds.getFeedEntry('discussion-forum', { project, forum }, 'atom'),
-          ]
-        : []),
-      ...(thread
-        ? [
-            feeds.getFeedEntry('discussion-thread', { project, forum, thread }, 'rss'),
-            feeds.getFeedEntry('discussion-thread', { project, forum, thread }, 'atom'),
-          ]
-        : []),
-      ...(hasToolFeed
-        ? [
-            feeds.getFeedEntry('tool', { project, tool }, 'rss'),
-            feeds.getFeedEntry('tool', { project, tool }, 'atom'),
-          ]
-        : []),
-      ...(page
-        ? [
-            feeds.getFeedEntry('tool-page', { project, tool, page }, 'rss'),
-            feeds.getFeedEntry('tool-page', { project, tool, page }, 'atom'),
-          ]
-        : []),
-    ]
+      feeds.getFeedEntry('tool-page', { project, tool, page }, 'rss'),
+      feeds.getFeedEntry('tool-page', { project, tool, page }, 'atom'),
+    ].filter(isPresent)
   },
 
   getFeedHint: feeds.getFeedHint,

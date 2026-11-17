@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { isPresent, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
@@ -288,7 +288,7 @@ export const ningHandler: PlatformHandler = {
     if (parsed.kind === 'topic') {
       return [
         page.getFeedEntry('topic', { topic: parsed.topic, group: parsed.group }),
-        ...(parsed.group ? [page.getFeedEntry('forum-group', { group: parsed.group })] : []),
+        page.getFeedEntry('forum-group', { group: parsed.group }),
         page.getFeedEntry('activity'),
         page.getFeedEntry('blog'),
         page.getFeedEntry('blog-featured'),
@@ -305,7 +305,7 @@ export const ningHandler: PlatformHandler = {
         page.getFeedEntry('groups-featured'),
         page.getFeedEntry('pages'),
         page.getFeedEntry('notes'),
-      ]
+      ].filter(isPresent)
     }
 
     if (parsed.kind === 'group') {
