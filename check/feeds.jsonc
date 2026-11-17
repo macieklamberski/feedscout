@@ -93,6 +93,17 @@
       "http://agal-gz.org/blogues/index.php/gomes/?tempskin=_atom"
     ]
   },
+  "bangumi": {
+    "bangumi:blog": ["https://bgm.tv/feed/blog/all", "https://bangumi.tv/feed/blog/all"],
+    "bangumi:collections": [
+      "https://bgm.tv/feed/user/sai/interests",
+      "https://bangumi.tv/feed/user/sai/interests"
+    ],
+    "bangumi:timeline": [
+      "https://bgm.tv/feed/user/sai/timeline",
+      "https://bangumi.tv/feed/user/sai/timeline"
+    ]
+  },
   "bearblog": {
     "bearblog:discover": [
       "https://bearblog.dev/discover/feed/",
@@ -146,6 +157,10 @@
       "https://www.biggsports.com/rss.php?action=searchproducts&search_query=hat&type=rss",
       "https://www.biggsports.com/rss.php?action=searchproducts&search_query=hat&type=atom"
     ]
+  },
+  "bing": {
+    "bing:news": "https://www.bing.com/news/search?q=rss&format=rss",
+    "bing:search": "https://www.bing.com/search?q=rss&format=rss"
   },
   "bitchute": {
     "bitchute:channel": "https://api.bitchute.com/feeds/rss/channel/bcsupport/"
@@ -757,6 +772,11 @@
   },
   "grav": {
     "grav:page": ["https://getgrav.org/blog.rss", "https://getgrav.org/blog.atom"]
+  },
+  "greasyFork": {
+    "greasy-fork:new": "https://api.greasyfork.org/en/scripts.atom?sort=created",
+    "greasy-fork:updated": "https://api.greasyfork.org/en/scripts.atom?sort=updated",
+    "greasy-fork:user": "https://api.greasyfork.org/en/scripts.atom?by=1076667&filter_locale=0"
   },
   "habr": {
     "habr:articles": "https://habr.com/ru/rss/articles/",

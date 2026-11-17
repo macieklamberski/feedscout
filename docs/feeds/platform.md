@@ -3485,6 +3485,43 @@ Discovers the feeds of a user blog on Aladin, `blog.aladin.co.kr/{user}`. A cate
 
 <sup>†</sup> *Found only by the Platform method.*
 
+### Bangumi
+
+Discovers the collections and timeline feeds of a Bangumi user on `bgm.tv` or `bangumi.tv`, plus the site blog feed. A `chii.in` page gets the `bgm.tv` feeds, since `chii.in` answers a plain fetch of its feeds with a Cloudflare challenge.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `bgm.tv/user/{user}` | Collections · timeline<sup>†</sup> (RSS) |
+| Any other page | Blog (RSS) |
+
+<sup>†</sup> *Found only by the Platform method.*
+
+### Bing
+
+Discovers the feed of a Bing web or news search. The news search page links no feed. `cn.bing.com` is matched too, unverified, since it redirects to `www.bing.com` outside China.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `bing.com/search?q={query}` | Search (RSS) |
+| `bing.com/news/search?q={query}` | News search<sup>†</sup> (RSS) |
+
+<sup>†</sup> *Found only by the Platform method.*
+
+### Greasy Fork
+
+Discovers the scripts feed of a Greasy Fork user, read from the user page URL or from the author of a script page, plus the site's new and updated scripts feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `greasyfork.org/{locale}/users/{id}` | User scripts<sup>†</sup> (Atom) |
+| `greasyfork.org/{locale}/scripts/{id}` | Author's user scripts<sup>†</sup> (Atom) |
+| Any other page | New scripts<sup>†</sup> · updated scripts<sup>†</sup> (Atom) |
+
+<sup>†</sup> *Found only by the Platform method.*
+
+> [!NOTE]
+> The feeds live on `api.greasyfork.org` under the page's locale. Sleazy Fork, `sleazyfork.org`, runs the same software and is read the same way, with its feeds on `api.sleazyfork.org`. A script's feedback, code and version pages name no author, so they get no feed.
+
 ## Basic Usage
 
 ```typescript
@@ -3545,10 +3582,12 @@ import {
   audioboomHandler,
   aushaHandler,
   b2evolutionHandler,
+  bangumiHandler,
   bearblogHandler,
   behanceHandler,
   bigCartelHandler,
   bigcommerceHandler,
+  bingHandler,
   bitchuteHandler,
   blogHuHandler,
   blogaliaHandler,
@@ -3615,6 +3654,7 @@ import {
   goodreadsHandler,
   goopeHandler,
   gravHandler,
+  greasyForkHandler,
   habrHandler,
   hackernewsHandler,
   haleyJobsHandler,

@@ -18,10 +18,12 @@ import { atyponHandler } from './platforms/atypon.js'
 import { audioboomHandler } from './platforms/audioboom.js'
 import { aushaHandler } from './platforms/ausha.js'
 import { b2evolutionHandler } from './platforms/b2evolution.js'
+import { bangumiHandler } from './platforms/bangumi.js'
 import { bearblogHandler } from './platforms/bearblog.js'
 import { behanceHandler } from './platforms/behance.js'
 import { bigCartelHandler } from './platforms/bigCartel.js'
 import { bigcommerceHandler } from './platforms/bigcommerce.js'
+import { bingHandler } from './platforms/bing.js'
 import { bitchuteHandler } from './platforms/bitchute.js'
 import { blogaliaHandler } from './platforms/blogalia.js'
 import { bloggangHandler } from './platforms/bloggang.js'
@@ -88,6 +90,7 @@ import { gnuboardHandler } from './platforms/gnuboard.js'
 import { goodreadsHandler } from './platforms/goodreads.js'
 import { goopeHandler } from './platforms/goope.js'
 import { gravHandler } from './platforms/grav.js'
+import { greasyForkHandler } from './platforms/greasyFork.js'
 import { habrHandler } from './platforms/habr.js'
 import { hackernewsHandler } from './platforms/hackernews.js'
 import { haleyJobsHandler } from './platforms/haleyJobs.js'
@@ -404,10 +407,12 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     audioboomHandler,
     aushaHandler,
     b2evolutionHandler,
+    bangumiHandler,
     bearblogHandler,
     behanceHandler,
     bigCartelHandler,
     bigcommerceHandler,
+    bingHandler,
     bitchuteHandler,
     blogHuHandler,
     blogaliaHandler,
@@ -474,6 +479,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     goodreadsHandler,
     goopeHandler,
     gravHandler,
+    greasyForkHandler,
     habrHandler,
     hackernewsHandler,
     haleyJobsHandler,
