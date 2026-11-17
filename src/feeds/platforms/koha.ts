@@ -4,8 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers comments, search (html).
-// Handler needed for: list.
+// Generic finds: comments, search.
+// Handler needed for: list, news.
 
 const domains = ['kohacatalog.com']
 

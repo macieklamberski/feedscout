@@ -3,7 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers extensions, home, package, vendor.
+// Generic finds: extension-releases, new-extensions, releases, vendor.
+// Handler needed for: new-packages, new-releases.
 
 export type PackagistUrl =
   | { kind: 'package'; vendor: string; name: string }

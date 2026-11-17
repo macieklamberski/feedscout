@@ -3,7 +3,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog.
+// Generic finds: posts.
+// Handler needed for: category, comments, wiki.
 
 export type ViablogaUrl = { kind: 'blog' } | { kind: 'category'; category: string }
 

@@ -4,8 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers channel, group, likes, user, userVideos (guess, html).
-// Handler needed for: album.
+// Generic finds: channel, group, likes.
+// Handler needed for: album, videos.
 
 export type VimeoUrl =
   | { kind: 'channel'; channel: string }

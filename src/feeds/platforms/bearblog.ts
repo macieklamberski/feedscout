@@ -4,8 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers blog (guess, html).
-// Handler needed for: home.
+// Generic finds: posts.
+// Handler needed for: discover.
 
 export type BearblogUrl = { kind: 'discover' } | { kind: 'blog'; blog: string; tag?: string }
 

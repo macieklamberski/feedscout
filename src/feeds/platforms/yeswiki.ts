@@ -11,7 +11,8 @@ import {
 } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers home, list (html), partly covers entry.
+// Generic finds: recent-changes.
+// Handler needed for: entries, form-entries.
 
 export type YeswikiPage = { installPath: string; formIds: Array<string> }
 

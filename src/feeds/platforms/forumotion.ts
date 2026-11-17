@@ -9,7 +9,8 @@ import {
 } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers home (guess, html), partly covers forum, topic.
+// Generic finds: latest-topics.
+// Handler needed for: forum.
 
 export type ForumotionPage =
   | { kind: 'forum'; forumId: string }

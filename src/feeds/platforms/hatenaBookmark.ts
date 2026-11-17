@@ -3,8 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers category, home, newEntriesCategory, user (html).
-// Handler needed for: search, site.
+// Generic finds: bookmarks, hot-category, new-category.
+// Handler needed for: hot, new, search, site.
 
 export type HatenaBookmarkUrl =
   | { kind: 'hotentry'; category?: string }

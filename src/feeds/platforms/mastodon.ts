@@ -4,8 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasClass, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers profile, users (html), partly covers profileMedia, profileTagged, profileWithReplies.
-// Handler needed for: tag.
+// Generic finds: tagged.
+// Handler needed for: media, posts, replies, tag.
 
 export type MastodonUrl =
   | { kind: 'profile'; username: string }

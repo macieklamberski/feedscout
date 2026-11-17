@@ -4,8 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers comments, domain, home, multiTag, newest, tag, top (guess, html).
-// Handler needed for: user.
+// Generic finds: domain, stories, tag, top.
+// Handler needed for: comments, newest.
 
 export type LobstersUrl =
   | { kind: 'tag'; tags: string }

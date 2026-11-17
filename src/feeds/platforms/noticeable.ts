@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers label, newspage, publication.
+// Generic finds: posts.
+// Handler needed for: label.
 
 export type NoticeableUrl = { kind: 'newspage' } | { kind: 'label'; label: string }
 

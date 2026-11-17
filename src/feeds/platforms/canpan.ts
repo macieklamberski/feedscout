@@ -3,7 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog.
+// Generic finds: posts.
+// Handler adds formats for: posts (rss).
 
 export type CanpanUrl = { kind: 'blog'; blog: string }
 

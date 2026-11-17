@@ -3,8 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers home, profile (guess, html).
-// Handler needed for: hashtag, magazine, tagRedirect.
+// Generic finds: blog, featured.
+// Handler needed for: hashtag, magazine.
 
 export type NoteUrl =
   | { kind: 'hashtag'; tag: string }

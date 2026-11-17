@@ -5,7 +5,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: featured-events, featured-members, new-coupons, new-events, new-jobs, new-m2m-deals, new-market-items, new-members, news-releases, upcoming-events.
 
 export type ChambermasterUrl = {
   kind: 'events' | 'directory' | 'jobs' | 'hotDeals' | 'marketSpace' | 'news' | 'memberToMember'

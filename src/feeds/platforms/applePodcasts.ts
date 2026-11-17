@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: podcast.
 
 export type ApplePodcastsUrl = { kind: 'podcast' }
 export type ApplePodcastsPage = { kind: 'podcast'; feedUrl: string }

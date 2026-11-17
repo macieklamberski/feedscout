@@ -3,7 +3,9 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, findElement } from '../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic finds: category, posts, responses, tag.
+// Handler needed for: comments, lines, trackbacks.
 
 export type JinboUrl =
   | { kind: 'blog'; username: string }

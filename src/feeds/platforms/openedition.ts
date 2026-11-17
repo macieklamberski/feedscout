@@ -3,7 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers journal.
+// Generic finds: documents, issues.
+// Handler needed for: reviews.
 
 export type OpeneditionUrl = { kind: 'journal'; journal: string }
 

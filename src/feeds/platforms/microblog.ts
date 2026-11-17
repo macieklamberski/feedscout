@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers archive, blog, category, photos, replies.
+// Generic finds: category, posts.
+// Handler needed for: archive, photos, podcast.
 
 export type MicroblogUrl =
   | { kind: 'category'; username: string; category: string }

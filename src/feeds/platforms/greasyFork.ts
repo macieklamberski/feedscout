@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findDescendant, findElement, getNumericId, hasClass } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: new, updated, user.
 
 export type GreasyForkUrl =
   | { kind: 'user'; locale: string; userId: string }

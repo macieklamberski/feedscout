@@ -3,8 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers discover, project (guess, html).
-// Handler needed for: home.
+// Generic finds: updates.
+// Handler needed for: projects.
 
 export type KickstarterUrl =
   | { kind: 'project'; creator: string; project: string }

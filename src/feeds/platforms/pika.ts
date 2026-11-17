@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog, tag.
+// Generic finds: posts, tag.
+// Handler adds formats for: posts (rss), tag (rss).
 
 export type PikaUrl = { kind: 'tag'; tag: string } | { kind: 'blog' }
 

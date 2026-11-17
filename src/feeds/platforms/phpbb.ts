@@ -11,8 +11,7 @@ import {
 } from '../../common/utils.js'
 import { isForumotionHtml } from './forumotion.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic partly covers board, forum, post, topic.
+// Discoverability: Discoverable without handler.
 
 export type PhpbbPage = { boardUrl: string; forumId?: string; topicId?: string }
 

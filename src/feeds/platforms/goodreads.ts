@@ -2,9 +2,7 @@ import { getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'tro
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic covers userShow (html).
-// Handler needed for: reviewList, shelf.
+// Discoverability: Unmeasured, handler emits no feed.
 
 export type GoodreadsUrl =
   | { kind: 'user'; userId: string }

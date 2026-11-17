@@ -3,7 +3,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers forum (html), partly covers board, topic.
+// Generic finds: board.
+// Handler needed for: posts.
 
 export type SmfPage = { scriptUrl: string; boardId?: string }
 

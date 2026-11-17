@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getScriptDirectory, hasElementWithId, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers board, forum, topic.
+// Generic finds: forum, topic.
+// Handler needed for: posts.
 
 export type FluxbbUrl =
   | { kind: 'forum'; boardPath: string; forumId: string }

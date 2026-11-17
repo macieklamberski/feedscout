@@ -4,8 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers home, meta, question (html).
-// Handler needed for: collective, otherSite, tagged, user.
+// Generic finds: question.
+// Handler needed for: collective, newest, tag, user.
 
 export type StackExchangeUrl =
   | { kind: 'tag'; tag: string; sort?: string }

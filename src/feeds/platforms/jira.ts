@@ -9,7 +9,7 @@ import {
 } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: issue, project, site.
 
 const domains = jira.hosts.tenants
 

@@ -3,8 +3,7 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic covers blog, fc2Net, numberedBlog (html).
+// Discoverability: Discoverable without handler.
 
 export type Fc2Url =
   | { kind: 'blog' }

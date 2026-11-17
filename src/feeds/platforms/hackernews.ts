@@ -3,8 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers home, news, show (guess, html).
-// Handler needed for: shownew.
+// Generic finds: front.
+// Handler needed for: front-full, show.
 
 export type HackernewsUrl = { kind: 'show' } | { kind: 'home' }
 

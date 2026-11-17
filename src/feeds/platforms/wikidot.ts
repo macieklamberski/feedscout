@@ -5,7 +5,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: forum-posts, forum-threads, site-changes.
 
 export type WikidotUrl =
   | { kind: 'thread'; threadId: string }

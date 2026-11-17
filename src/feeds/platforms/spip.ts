@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers auteur, home, mot, rubrique (html), partly covers article.
+// Generic finds: articles, author, keyword, section.
+// Handler needed for: article-comments.
 
 type SpipObject = (typeof objects)[number]
 

@@ -3,7 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers other (guess, html), partly covers community.
+// Generic finds: site.
+// Handler needed for: community.
 
 export type LearnkuUrl = { kind: 'community'; community: string } | { kind: 'home' }
 

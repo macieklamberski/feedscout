@@ -5,7 +5,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasAnyMeta, hasElementWithId, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: posts.
 
 export type MisskeyUrl = { kind: 'profile'; username: string }
 

@@ -4,8 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers page, pageQuery.
-// Handler needed for: home.
+// Handler needed for: group-changes, site-changes.
 
 export type PmwikiUrl =
   | { kind: 'page'; scriptPath: string; group: string }

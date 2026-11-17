@@ -4,8 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers profileSubdomain (html).
-// Handler needed for: albums, explore, profile.
+// Handler needed for: artwork, portfolio.
 
 export type ArtstationUrl = { kind: 'profile'; username: string } | { kind: 'artwork' }
 

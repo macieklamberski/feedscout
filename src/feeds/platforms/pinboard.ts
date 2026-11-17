@@ -4,7 +4,7 @@ import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: bookmarks, popular, recent, user-tag.
 
 export type PinboardUrl =
   | { kind: 'userTag'; username: string; tags: Array<string> }

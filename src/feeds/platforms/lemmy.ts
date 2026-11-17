@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasClass, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers community, user (html), partly covers home.
+// Generic finds: community, local, user.
+// Handler needed for: all.
 
 type LemmyQuery = { sort?: string; limit?: string }
 

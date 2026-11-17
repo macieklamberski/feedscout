@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers topics (html), partly covers node.
+// Generic finds: topics.
+// Handler needed for: node.
 
 export type HomelandUrl = { kind: 'node'; node: string } | { kind: 'topics' }
 

@@ -3,7 +3,7 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Unmeasured, bot wall.
 
 // A shop is known only by its marker, so its feed is built here but not claimed.
 const feeds = definePlatformFeeds([{ key: 'shopserve:news', main: '{root}/hpgen/HPB/rss.xml' }])

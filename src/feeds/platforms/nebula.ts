@@ -3,7 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers channel, explore, home, videos (html), partly covers videosCategory.
+// Generic finds: category, category-plus, videos, videos-plus.
+// Handler needed for: channels, originals, videos-all, videos-all-plus.
 
 export type NebulaUrl = { kind: 'channel'; slug: string } | { kind: 'explore'; category?: string }
 

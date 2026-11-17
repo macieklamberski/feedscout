@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers customDomain, profile, publication, publicationTag, subdomainTag (guess, html).
+// Generic finds: publication.
 // Handler needed for: tag.
 
 export type MediumUrl =

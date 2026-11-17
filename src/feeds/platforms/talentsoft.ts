@@ -4,8 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasClass, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers search.
-// Handler needed for: home.
+// Generic finds: search.
+// Handler needed for: offers.
 
 export type TalentsoftPage =
   | { kind: 'search'; origin: string; lcid?: string; searchFeedUrl: string }

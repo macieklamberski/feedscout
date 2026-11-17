@@ -3,8 +3,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers news (guess, html).
-// Handler needed for: class, home.
+// Generic finds: news-category.
+// Handler needed for: assignments, news.
 
 const domains = ['edlio.com']
 const listPackPath = '/apps/js/common/list-pack.js'

@@ -4,8 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers episode (html).
-// Handler needed for: playlist.
+// Handler needed for: podcast.
 
 export type MegaphoneUrl = { kind: 'playlist'; showId: string } | { kind: 'episode' }
 export type MegaphonePage = { kind: 'playlist' | 'episode'; showId: string }

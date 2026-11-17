@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers home (html), partly covers group.
+// Generic finds: group.
+// Handler needed for: instance.
 
 export type MobilizonUrl = { kind: 'group'; group: string } | { kind: 'instance' }
 

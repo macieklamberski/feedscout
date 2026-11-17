@@ -5,7 +5,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hexRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: videos.
 
 export type OdyseeUrl = { kind: 'channel'; name: string; claimId?: string }
 

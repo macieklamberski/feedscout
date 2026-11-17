@@ -3,8 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers comic (html).
-// Handler needed for: user.
+// Generic finds: issues.
+// Handler needed for: subscriptions.
 
 export type AcomicsUrl = { kind: 'comic'; comic: string } | { kind: 'user'; username: string }
 

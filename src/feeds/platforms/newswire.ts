@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers newsroom (guess, html), partly covers beat, contentType.
+// Generic finds: newsroom.
+// Handler needed for: audio, beat, events, images, news, press-releases, social, videos.
 
 export type NewswireUrl =
   | { kind: 'newsroom'; newsroom: string }

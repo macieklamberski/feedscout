@@ -3,7 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers home (html), partly covers user.
+// Generic finds: blog, collections.
+// Handler needed for: timeline.
 
 export type BangumiUrl = { kind: 'user'; username: string } | { kind: 'home' }
 

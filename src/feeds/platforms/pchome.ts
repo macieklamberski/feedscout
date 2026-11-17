@@ -3,8 +3,7 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, wordRegex } from '../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic covers paper (html), partly covers category.
+// Discoverability: Unmeasured, bot wall.
 
 export type PchomeUrl =
   | { kind: 'paper'; username: string }

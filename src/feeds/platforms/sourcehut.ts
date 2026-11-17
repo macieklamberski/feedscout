@@ -2,9 +2,8 @@ import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic partly covers log.
-// Handler needed for: repo.
+// Discoverability: Not discoverable without handler.
+// Handler needed for: commits, refs.
 
 export type SourcehutUrl =
   | { kind: 'user'; owner: string }

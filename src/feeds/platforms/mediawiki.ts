@@ -3,7 +3,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getScriptDirectory, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers special (html), partly covers page.
+// Generic finds: recent-changes.
+// Handler needed for: history.
 
 export type MediawikiPage = { scriptRoot: string; pageName?: string }
 

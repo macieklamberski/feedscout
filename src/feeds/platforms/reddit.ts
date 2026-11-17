@@ -3,8 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers domain, subreddits (guess, html), partly covers multiSubreddit.
-// Handler needed for: home, multireddit, post, search, subreddit, subredditSort, user, userSubmitted.
+// Generic finds: domain, subreddits.
+// Handler needed for: comments, multireddit, post-comments, posts, search, subreddit, user, user-submitted.
 
 export type RedditUrl =
   | { kind: 'home' }

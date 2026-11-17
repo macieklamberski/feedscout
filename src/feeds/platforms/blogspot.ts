@@ -9,7 +9,8 @@ import {
 } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog, blogPost, customDomainBlog, customDomainLabel, label.
+// Generic finds: comments, post-comments, posts.
+// Handler needed for: comments-summary, label, label-summary, posts-summary.
 
 export type BlogspotUrl = { kind: 'label'; label: string } | { kind: 'post' } | { kind: 'blog' }
 export type BlogspotPage =

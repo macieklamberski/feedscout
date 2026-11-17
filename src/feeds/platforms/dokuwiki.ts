@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers root (html), partly covers namespace.
+// Generic finds: namespace-pages, recent-changes.
+// Handler needed for: namespace.
 
 export type DokuwikiPage = { installPath: string; namespace?: string }
 

@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog, customDomain.
+// Generic finds: posts.
+// Handler needed for: comments.
 
 export type EklablogUrl = { kind: 'blog' } | { kind: 'customDomain' }
 

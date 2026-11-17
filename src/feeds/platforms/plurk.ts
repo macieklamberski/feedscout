@@ -3,8 +3,7 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers post, user, userPath (guess, html).
-// Handler needed for: mobile, mobilePost.
+// Handler needed for: plurks, responses.
 
 export type PlurkUrl = { kind: 'post'; postId: string } | { kind: 'user'; username: string }
 

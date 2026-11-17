@@ -5,7 +5,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: agenda-center, alert-center, blog, calendar, jobs, media-center, news-flash, pages, photo-gallery, real-estate.
 
 // The module ids that serve an all-categories feed. A module id with no feed answers 200 with an
 // empty body.

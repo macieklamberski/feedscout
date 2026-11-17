@@ -3,7 +3,7 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers search (html).
+// Generic finds: search.
 // Handler needed for: news.
 
 export type BingUrl = { kind: 'search'; query: string } | { kind: 'news'; query: string }

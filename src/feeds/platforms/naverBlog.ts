@@ -3,8 +3,7 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers blog (html).
-// Handler needed for: mobile.
+// Handler needed for: blog.
 
 export type NaverBlogUrl = { kind: 'blog'; blogId: string } | { kind: 'post'; blogId: string }
 

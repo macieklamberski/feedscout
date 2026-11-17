@@ -6,8 +6,7 @@ import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 import { getJournalName, getJournalTag } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers asylum, blog, tildePath, userPath.
-// Handler needed for: syndicated.
+// Handler needed for: posts, userpics.
 
 export type InsanejournalUrl =
   | { kind: 'journal'; username?: string; tag?: string }

@@ -4,8 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers trip (html).
-// Handler needed for: entry.
+// Handler needed for: trip.
 
 export type GeoblogUrl = { kind: 'trip' } | { kind: 'entry' }
 

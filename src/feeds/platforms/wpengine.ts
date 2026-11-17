@@ -8,7 +8,8 @@ import {
 } from './wordpress.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog, legacyBlog.
+// Generic finds: comments, post-comments.
+// Handler needed for: posts.
 
 export type WpengineUrl = WordpressUrl
 
