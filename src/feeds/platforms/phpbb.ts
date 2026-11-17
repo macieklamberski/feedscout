@@ -96,9 +96,41 @@ export const phpbbHandler: PlatformHandler = {
 
     const { boardUrl: root, forumId, topicId } = page
 
+    if (topicId && forumId) {
+      return [
+        pageFeeds.getFeedEntry('topic', { root, topicId }),
+        pageFeeds.getFeedEntry('forum', { root, forumId }),
+        pageFeeds.getFeedEntry('site', { root }),
+        pageFeeds.getFeedEntry('news', { root }),
+        pageFeeds.getFeedEntry('new-topics', { root }),
+        pageFeeds.getFeedEntry('active-topics', { root }),
+        pageFeeds.getFeedEntry('forums', { root }),
+      ]
+    }
+
+    if (topicId) {
+      return [
+        pageFeeds.getFeedEntry('topic', { root, topicId }),
+        pageFeeds.getFeedEntry('site', { root }),
+        pageFeeds.getFeedEntry('news', { root }),
+        pageFeeds.getFeedEntry('new-topics', { root }),
+        pageFeeds.getFeedEntry('active-topics', { root }),
+        pageFeeds.getFeedEntry('forums', { root }),
+      ]
+    }
+
+    if (forumId) {
+      return [
+        pageFeeds.getFeedEntry('forum', { root, forumId }),
+        pageFeeds.getFeedEntry('site', { root }),
+        pageFeeds.getFeedEntry('news', { root }),
+        pageFeeds.getFeedEntry('new-topics', { root }),
+        pageFeeds.getFeedEntry('active-topics', { root }),
+        pageFeeds.getFeedEntry('forums', { root }),
+      ]
+    }
+
     return [
-      ...(topicId ? [pageFeeds.getFeedEntry('topic', { root, topicId })] : []),
-      ...(forumId ? [pageFeeds.getFeedEntry('forum', { root, forumId })] : []),
       pageFeeds.getFeedEntry('site', { root }),
       pageFeeds.getFeedEntry('news', { root }),
       pageFeeds.getFeedEntry('new-topics', { root }),
