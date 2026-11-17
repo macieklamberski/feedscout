@@ -246,21 +246,22 @@ export const youtubeHandler: PlatformHandler = {
       return []
     }
 
-    const playlistEntry = getPlaylistEntry(page.playlistId)
-
     if (page.kind === 'playlist') {
-      return [playlistEntry].filter(isPresent)
+      return [getPlaylistEntry(page.playlistId)].filter(isPresent)
     }
 
     if (page.channelId) {
       return [
         ...getChannelUris(page.channelId),
         feeds.getFeedEntry('all', { user: page.username }),
-        playlistEntry,
+        getPlaylistEntry(page.playlistId),
       ].filter(isPresent)
     }
 
-    return [feeds.getFeedEntry('all', { user: page.username }), playlistEntry].filter(isPresent)
+    return [
+      feeds.getFeedEntry('all', { user: page.username }),
+      getPlaylistEntry(page.playlistId),
+    ].filter(isPresent)
   },
 
   getFeedHint: (url) => {
