@@ -22,12 +22,12 @@ const categoryPathRegex = /^\/blog-category-(\d+)(?:-\d+)?\.html$/i
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'fc2:posts', template: '{scheme}://{host}/?xml' },
-    { key: 'fc2:comments', template: '{scheme}://{host}/?xml&comment' },
-    { key: 'fc2:trackbacks', template: '{scheme}://{host}/?xml&trackback' },
+    { key: 'fc2:posts', main: '{scheme}://{host}/?xml' },
+    { key: 'fc2:comments', main: '{scheme}://{host}/?xml&comment' },
+    { key: 'fc2:trackbacks', main: '{scheme}://{host}/?xml&trackback' },
     // The posts narrowed to one category or one tag. Their pages link only the posts feed.
-    { key: 'fc2:category', template: '{scheme}://{host}/?xml&category={category}' },
-    { key: 'fc2:tag', template: '{scheme}://{host}/?xml&utag={tag}' },
+    { key: 'fc2:category', main: '{scheme}://{host}/?xml&category={category}' },
+    { key: 'fc2:tag', main: '{scheme}://{host}/?xml&utag={tag}' },
   ],
   { domains: [...domains, blogDomainRegex] },
 )

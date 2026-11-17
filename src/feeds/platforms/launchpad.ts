@@ -36,48 +36,38 @@ const hosts = [...mainHosts, ...bugsHosts, ...codeHosts]
 const feeds = definePlatformFeeds([
   {
     key: 'launchpad:project-announcements',
-    template: 'http://feeds.launchpad.net/{project}/announcements.atom',
+    main: 'http://feeds.launchpad.net/{project}/announcements.atom',
   },
-  { key: 'launchpad:announcements', template: 'http://feeds.launchpad.net/announcements.atom' },
+  { key: 'launchpad:announcements', main: 'http://feeds.launchpad.net/announcements.atom' },
   {
     key: 'launchpad:package-bugs',
-    template: 'http://feeds.launchpad.net/{distribution}/+source/{sourcePackage}/latest-bugs.atom',
+    main: 'http://feeds.launchpad.net/{distribution}/+source/{sourcePackage}/latest-bugs.atom',
   },
   // The site-wide bugs feed sits where a project named `bugs` would, so it comes first.
-  { key: 'launchpad:bugs', template: 'http://feeds.launchpad.net/bugs/latest-bugs.atom' },
-  {
-    key: 'launchpad:person-bugs',
-    template: 'http://feeds.launchpad.net/~{username}/latest-bugs.atom',
-  },
-  {
-    key: 'launchpad:project-bugs',
-    template: 'http://feeds.launchpad.net/{project}/latest-bugs.atom',
-  },
-  { key: 'launchpad:bug', template: 'http://feeds.launchpad.net/bugs/{bugId}/bug.atom' },
+  { key: 'launchpad:bugs', main: 'http://feeds.launchpad.net/bugs/latest-bugs.atom' },
+  { key: 'launchpad:person-bugs', main: 'http://feeds.launchpad.net/~{username}/latest-bugs.atom' },
+  { key: 'launchpad:project-bugs', main: 'http://feeds.launchpad.net/{project}/latest-bugs.atom' },
+  { key: 'launchpad:bug', main: 'http://feeds.launchpad.net/bugs/{bugId}/bug.atom' },
   {
     key: 'launchpad:branch',
-    template:
-      'http://feeds.launchpad.net/~{owner}/{distribution}/{series}/{sourcePackage}/{branch}/branch.atom',
+    main: 'http://feeds.launchpad.net/~{owner}/{distribution}/{series}/{sourcePackage}/{branch}/branch.atom',
   },
   {
     key: 'launchpad:branch',
-    template: 'http://feeds.launchpad.net/~{owner}/{project}/{branch}/branch.atom',
+    main: 'http://feeds.launchpad.net/~{owner}/{project}/{branch}/branch.atom',
   },
   {
     key: 'launchpad:person-branches',
-    template: 'http://feeds.launchpad.net/~{username}/branches.atom',
+    main: 'http://feeds.launchpad.net/~{username}/branches.atom',
   },
-  {
-    key: 'launchpad:project-branches',
-    template: 'http://feeds.launchpad.net/{project}/branches.atom',
-  },
+  { key: 'launchpad:project-branches', main: 'http://feeds.launchpad.net/{project}/branches.atom' },
   {
     key: 'launchpad:person-revisions',
-    template: 'http://feeds.launchpad.net/~{username}/revisions.atom',
+    main: 'http://feeds.launchpad.net/~{username}/revisions.atom',
   },
   {
     key: 'launchpad:project-revisions',
-    template: 'http://feeds.launchpad.net/{project}/revisions.atom',
+    main: 'http://feeds.launchpad.net/{project}/revisions.atom',
   },
 ])
 

@@ -20,13 +20,13 @@ export type PhpbbPage = { boardUrl: string; forumId?: string; topicId?: string }
 // claimed on no host. Each board-wide feed is an administrator toggle, so a board serves any subset
 // of them.
 const feeds = definePlatformFeeds([
-  { key: 'phpbb:topic', template: '{root}/feed.php?t={topicId}' },
-  { key: 'phpbb:forum', template: '{root}/feed.php?f={forumId}' },
-  { key: 'phpbb:site', template: '{root}/feed.php' },
-  { key: 'phpbb:news', template: '{root}/feed.php?mode=news' },
-  { key: 'phpbb:new-topics', template: '{root}/feed.php?mode=topics' },
-  { key: 'phpbb:active-topics', template: '{root}/feed.php?mode=topics_active' },
-  { key: 'phpbb:forums', template: '{root}/feed.php?mode=forums' },
+  { key: 'phpbb:topic', main: '{root}/feed.php?t={topicId}' },
+  { key: 'phpbb:forum', main: '{root}/feed.php?f={forumId}' },
+  { key: 'phpbb:site', main: '{root}/feed.php' },
+  { key: 'phpbb:news', main: '{root}/feed.php?mode=news' },
+  { key: 'phpbb:new-topics', main: '{root}/feed.php?mode=topics' },
+  { key: 'phpbb:active-topics', main: '{root}/feed.php?mode=topics_active' },
+  { key: 'phpbb:forums', main: '{root}/feed.php?mode=forums' },
 ])
 
 // Forumotion's phpBB3 template prints the same body id and serves none of phpBB's feeds.

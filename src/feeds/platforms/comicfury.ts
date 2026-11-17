@@ -22,8 +22,8 @@ const readerPathRegex = /^\/read\/([^/]+)/i
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'comicfury:comic', template: '{scheme}://{host}/rss' },
-    { key: 'comicfury:reader', template: 'https://comicfury.com/read/{comic}/rss' },
+    { key: 'comicfury:comic', main: '{scheme}://{host}/rss' },
+    { key: 'comicfury:reader', main: 'https://comicfury.com/read/{comic}/rss' },
   ],
   { domains },
 )

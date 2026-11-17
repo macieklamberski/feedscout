@@ -14,8 +14,8 @@ const postBodyRegex = /<body[^<>]*\bpost-id-\d+/
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'bloggo:posts', template: '{scheme}://{host}/feed/' },
-    { key: 'bloggo:post-comments', template: '{scheme}://{host}/{slug}/feed/' },
+    { key: 'bloggo:posts', main: '{scheme}://{host}/feed/' },
+    { key: 'bloggo:post-comments', main: '{scheme}://{host}/{slug}/feed/' },
   ],
   { domains },
 )

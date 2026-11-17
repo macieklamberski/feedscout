@@ -26,8 +26,8 @@ const usernameRegex = /^[a-zA-Z0-9_-]+$/
 const homeRegex = /^\/(?:galleries\/?)?$/i
 
 const feeds = definePlatformFeeds([
-  { key: 'behance:portfolio', template: 'https://www.behance.net/feeds/user?username={username}' },
-  { key: 'behance:projects', template: 'https://www.behance.net/feeds/projects' },
+  { key: 'behance:portfolio', main: 'https://www.behance.net/feeds/user?username={username}' },
+  { key: 'behance:projects', main: 'https://www.behance.net/feeds/projects' },
 ])
 
 export const parseBehanceUrl = (url: string): BehanceUrl | undefined => {

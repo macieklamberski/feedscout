@@ -25,8 +25,8 @@ const samePageUrls = [
 ]
 
 const claimedFeeds = definePlatformFeeds([
-  { key: 'ocnk:products', template: 'https://example.com/{shop}/products.rdf', format: 'rdf' },
-  { key: 'youtube:videos', template: 'https://example.com/{username}/videos.xml' },
+  { key: 'ocnk:products', main: 'https://example.com/{shop}/products.rdf', format: 'rdf' },
+  { key: 'youtube:videos', main: 'https://example.com/{username}/videos.xml' },
 ])
 
 const claimedFeedCases: Array<[string, DiscoverUriEntry]> = [

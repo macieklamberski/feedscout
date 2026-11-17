@@ -12,9 +12,11 @@ const userRegex = /^\/@([^/]+)/
 
 // Listed serves the same feed at `/feed` and, by numeric author id, at `/authors/{id}/feed`.
 const feeds = definePlatformFeeds([
-  { key: 'listed:blog', template: 'https://listed.to/@{username}/feed.rss' },
-  { key: 'listed:blog', template: 'https://listed.to/@{username}/feed', isAlias: true },
-  { key: 'listed:blog', template: 'https://listed.to/authors/{id}/feed', isAlias: true },
+  {
+    key: 'listed:blog',
+    main: 'https://listed.to/@{username}/feed.rss',
+    aliases: ['https://listed.to/@{username}/feed', 'https://listed.to/authors/{id}/feed'],
+  },
 ])
 
 export const parseListedUrl = (url: string): ListedUrl | undefined => {

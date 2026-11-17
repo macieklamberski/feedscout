@@ -14,12 +14,9 @@ const hosts = ['artstation.com', 'www.artstation.com']
 
 // `/artwork.rss` reads before `/{username}.rss`, so the site feed never reads as a user's.
 const feeds = definePlatformFeeds([
-  {
-    key: 'artstation:artwork',
-    template: 'https://www.artstation.com/artwork.rss?sorting={sorting}',
-  },
-  { key: 'artstation:artwork', template: 'https://www.artstation.com/artwork.rss' },
-  { key: 'artstation:portfolio', template: 'https://www.artstation.com/{username}.rss' },
+  { key: 'artstation:artwork', main: 'https://www.artstation.com/artwork.rss?sorting={sorting}' },
+  { key: 'artstation:artwork', main: 'https://www.artstation.com/artwork.rss' },
+  { key: 'artstation:portfolio', main: 'https://www.artstation.com/{username}.rss' },
 ])
 
 export const parseArtstationUrl = (url: string): ArtstationUrl | undefined => {

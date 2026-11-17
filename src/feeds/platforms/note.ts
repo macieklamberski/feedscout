@@ -22,18 +22,22 @@ const noteRegex = /^\/([^/]+)\/n\/[^/]+/i
 
 // note.mu, the old domain, redirects every feed to the same path on note.com.
 const feeds = definePlatformFeeds([
-  { key: 'note:featured', template: 'https://note.com/rss' },
-  { key: 'note:featured', template: 'https://note.mu/rss', isAlias: true },
-  { key: 'note:hashtag', template: 'https://note.com/hashtag/{tag}/rss' },
-  { key: 'note:hashtag', template: 'https://note.mu/hashtag/{tag}/rss', isAlias: true },
-  { key: 'note:magazine', template: 'https://note.com/{username}/m/{magazine}/rss' },
+  { key: 'note:featured', main: 'https://note.com/rss', aliases: ['https://note.mu/rss'] },
+  {
+    key: 'note:hashtag',
+    main: 'https://note.com/hashtag/{tag}/rss',
+    aliases: ['https://note.mu/hashtag/{tag}/rss'],
+  },
   {
     key: 'note:magazine',
-    template: 'https://note.mu/{username}/m/{magazine}/rss',
-    isAlias: true,
+    main: 'https://note.com/{username}/m/{magazine}/rss',
+    aliases: ['https://note.mu/{username}/m/{magazine}/rss'],
   },
-  { key: 'note:blog', template: 'https://note.com/{username}/rss' },
-  { key: 'note:blog', template: 'https://note.mu/{username}/rss', isAlias: true },
+  {
+    key: 'note:blog',
+    main: 'https://note.com/{username}/rss',
+    aliases: ['https://note.mu/{username}/rss'],
+  },
 ])
 
 export const parseNoteUrl = (url: string): NoteUrl | undefined => {

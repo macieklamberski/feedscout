@@ -13,10 +13,10 @@ const hosts = ['news.ycombinator.com']
 const showRegex = /^\/show(?:new)?\/?$/i
 
 const feeds = definePlatformFeeds([
-  { key: 'hackernews:front', template: 'https://news.ycombinator.com/rss' },
-  { key: 'hackernews:show', template: 'https://news.ycombinator.com/showrss' },
+  { key: 'hackernews:front', main: 'https://news.ycombinator.com/rss' },
+  { key: 'hackernews:show', main: 'https://news.ycombinator.com/showrss' },
   // The front page ranking at 300 stories, against 30 in `/rss`.
-  { key: 'hackernews:front-full', template: 'https://news.ycombinator.com/bigrss' },
+  { key: 'hackernews:front-full', main: 'https://news.ycombinator.com/bigrss' },
 ])
 
 export const parseHackernewsUrl = (url: string): HackernewsUrl | undefined => {

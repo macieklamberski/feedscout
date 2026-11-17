@@ -14,15 +14,14 @@ const fictionIdRegex = /^\/fiction\/(\d+)(?:\/|$)/i
 // The fiction page advertises /syndication/{id}. The chapter page links /fiction/syndication/{id},
 // which serves the same feed. A `count` only caps how many chapters the feed lists.
 const feeds = definePlatformFeeds([
-  { key: 'royalroad:fiction', template: 'https://www.royalroad.com/syndication/{fictionId}' },
   {
     key: 'royalroad:fiction',
-    template: 'https://www.royalroad.com/fiction/syndication/{fictionId}',
-    isAlias: true,
+    main: 'https://www.royalroad.com/syndication/{fictionId}',
+    aliases: ['https://www.royalroad.com/fiction/syndication/{fictionId}'],
   },
   {
     key: 'royalroad:fiction',
-    template: 'https://www.royalroad.com/syndication/{fictionId}?count={count}',
+    main: 'https://www.royalroad.com/syndication/{fictionId}?count={count}',
   },
 ])
 

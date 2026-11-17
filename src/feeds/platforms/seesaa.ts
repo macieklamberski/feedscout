@@ -12,11 +12,11 @@ const domains = [getBrandDomainRegex('seesaa'), 'iiblog.jp', 'sokuho.org', 'stab
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'seesaa:posts', template: '{scheme}://{host}/index20.rdf', format: 'rss' },
-    { key: 'seesaa:posts', template: '{scheme}://{host}/index.rdf', format: 'rdf' },
+    { key: 'seesaa:posts', main: '{scheme}://{host}/index20.rdf', format: 'rss' },
+    { key: 'seesaa:posts', main: '{scheme}://{host}/index.rdf', format: 'rdf' },
     // The podcast feed, RSS 2.0 despite its `.rdf` name. A blog that never set one up mostly
     // answers 404, which discovery drops.
-    { key: 'seesaa:podcast', template: '{scheme}://{host}/index_custom.rdf', format: 'rss' },
+    { key: 'seesaa:podcast', main: '{scheme}://{host}/index_custom.rdf', format: 'rss' },
   ],
   { domains },
 )

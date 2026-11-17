@@ -15,9 +15,9 @@ export const hosts = ['flipboard.com', 'www.flipboard.com']
 const profileSubpaths = ['followers', 'following', 'magazines']
 
 const feeds = definePlatformFeeds([
-  { key: 'flipboard:profile', template: 'https://flipboard.com/@{username}.rss' },
-  { key: 'flipboard:magazine', template: 'https://flipboard.com/@{username}/{magazine}.rss' },
-  { key: 'flipboard:topic', template: 'https://flipboard.com/topic/{topic}.rss' },
+  { key: 'flipboard:profile', main: 'https://flipboard.com/@{username}.rss' },
+  { key: 'flipboard:magazine', main: 'https://flipboard.com/@{username}/{magazine}.rss' },
+  { key: 'flipboard:topic', main: 'https://flipboard.com/topic/{topic}.rss' },
 ])
 
 export const parseFlipboardUrl = (url: string): FlipboardUrl | undefined => {

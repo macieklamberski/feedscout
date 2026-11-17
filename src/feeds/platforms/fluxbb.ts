@@ -18,10 +18,10 @@ const coreIds = ['brdmenu', 'brdfooter']
 
 // A board is self-hosted on any domain, so the table only builds its feeds.
 const feeds = definePlatformFeeds([
-  { key: 'fluxbb:forum', template: '{root}/extern.php?action=feed&fid={forumId}&type=atom' },
-  { key: 'fluxbb:topic', template: '{root}/extern.php?action=feed&tid={topicId}&type=atom' },
-  { key: 'fluxbb:posts', template: '{root}/extern.php?action=feed&type=RSS', format: 'rss' },
-  { key: 'fluxbb:posts', template: '{root}/extern.php?action=feed&type=atom', format: 'atom' },
+  { key: 'fluxbb:forum', main: '{root}/extern.php?action=feed&fid={forumId}&type=atom' },
+  { key: 'fluxbb:topic', main: '{root}/extern.php?action=feed&tid={topicId}&type=atom' },
+  { key: 'fluxbb:posts', main: '{root}/extern.php?action=feed&type=RSS', format: 'rss' },
+  { key: 'fluxbb:posts', main: '{root}/extern.php?action=feed&type=atom', format: 'atom' },
 ])
 
 export const isFluxbbHtml = (content: string): boolean => {

@@ -8,7 +8,7 @@ export type CanalblogUrl = { kind: 'blog' }
 
 const domains = ['canalblog.com']
 
-const feeds = definePlatformFeeds([{ key: 'canalblog:posts', template: '{scheme}://{host}/rss' }], {
+const feeds = definePlatformFeeds([{ key: 'canalblog:posts', main: '{scheme}://{host}/rss' }], {
   domains,
 })
 

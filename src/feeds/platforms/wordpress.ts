@@ -1,6 +1,6 @@
 import { getQueryParam, isAnyOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
-import { definePlatformFeeds, type PlatformFeedTemplate } from '../../common/uris/platform/feeds.js'
+import { definePlatformFeeds, type PlatformFeed } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
 
@@ -93,13 +93,16 @@ const getFeedRows = (
   key: string,
   page: string,
   formats: Array<DiscoverUriHint['format']>,
-): Array<PlatformFeedTemplate> => {
+): Array<PlatformFeed> => {
   return feedSpellings
     .filter(([format]) => formats.includes(format))
-    .flatMap(([format, spellings]) => {
-      return spellings.map((spelling, index) => {
-        return { key, template: `{root}${page}${spelling}`, format, isAlias: index > 0 }
-      })
+    .map(([format, [main, ...aliases]]) => {
+      return {
+        key,
+        main: `{root}${page}${main}`,
+        format,
+        aliases: aliases.map((alias) => `{root}${page}${alias}`),
+      }
     })
 }
 
@@ -111,25 +114,17 @@ const feeds = definePlatformFeeds([
   ...archiveKeys.flatMap((key) => getFeedRows(key, '/{path*}', postsFormats)),
   ...getFeedRows('wordpress:post-comments', '/{path*}', commentsFormats),
   ...getFeedRows('wordpress:posts', '', postsFormats),
-  { key: 'wordpress:comments', template: '{root}/comments/feed/', format: 'rss' },
   {
     key: 'wordpress:comments',
-    template: '{root}/comments/feed/rss2/',
+    main: '{root}/comments/feed/',
     format: 'rss',
-    isAlias: true,
+    aliases: ['{root}/comments/feed/rss2/', '{root}/?feed=comments-rss2'],
   },
   {
     key: 'wordpress:comments',
-    template: '{root}/?feed=comments-rss2',
-    format: 'rss',
-    isAlias: true,
-  },
-  { key: 'wordpress:comments', template: '{root}/comments/feed/atom/', format: 'atom' },
-  {
-    key: 'wordpress:comments',
-    template: '{root}/?feed=comments-atom',
+    main: '{root}/comments/feed/atom/',
     format: 'atom',
-    isAlias: true,
+    aliases: ['{root}/?feed=comments-atom'],
   },
 ])
 

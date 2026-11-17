@@ -27,13 +27,10 @@ const cookieName = 'BIGipServerinsite.legistar.com_443'
 // feed only on a Legistar host and builds it on any.
 const feeds = definePlatformFeeds(
   [
-    {
-      key: 'legistar:legislation',
-      template: '{scheme}://{host}/Feed.ashx?M=LD&ID={id}&GUID={guid}',
-    },
+    { key: 'legistar:legislation', main: '{scheme}://{host}/Feed.ashx?M=LD&ID={id}&GUID={guid}' },
     {
       key: 'legistar:meeting',
-      template: '{scheme}://{host}/Feed.ashx?M=CalendarDetail&ID={id}&GUID={guid}',
+      main: '{scheme}://{host}/Feed.ashx?M=CalendarDetail&ID={id}&GUID={guid}',
     },
   ],
   { domains },

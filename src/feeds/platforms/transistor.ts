@@ -13,7 +13,7 @@ const domains = ['transistor.fm']
 const feedSlugRegex = /https:\/\/feeds\.transistor\.fm\/([^/"'?#\s<>&\\]+)/i
 
 const feeds = definePlatformFeeds([
-  { key: 'transistor:podcast', template: 'https://feeds.transistor.fm/{slug}' },
+  { key: 'transistor:podcast', main: 'https://feeds.transistor.fm/{slug}' },
 ])
 
 export const parseTransistorUrl = (url: string): TransistorUrl | undefined => {

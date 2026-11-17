@@ -14,8 +14,8 @@ const hosts = ['a.hatena.ne.jp']
 
 // The page links its feeds over http, and the same spelling dedupes against that link.
 const feeds = definePlatformFeeds([
-  { key: 'hatena-antenna:group', template: 'http://a.hatena.ne.jp/{username}/rss?gid={groupId}' },
-  { key: 'hatena-antenna:antenna', template: 'http://a.hatena.ne.jp/{username}/rss' },
+  { key: 'hatena-antenna:group', main: 'http://a.hatena.ne.jp/{username}/rss?gid={groupId}' },
+  { key: 'hatena-antenna:antenna', main: 'http://a.hatena.ne.jp/{username}/rss' },
 ])
 
 // The group nav with one group in bold, the one the page shows.

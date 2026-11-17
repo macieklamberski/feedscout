@@ -12,8 +12,8 @@ const nodePathRegex = /\/topics\/node(\d+)(?:\/|$)/i
 
 // A forum is self-hosted on any domain, so the table only builds its feeds.
 const feeds = definePlatformFeeds([
-  { key: 'homeland:node', template: '{root}/topics/node{node}/feed' },
-  { key: 'homeland:topics', template: '{root}/topics/feed' },
+  { key: 'homeland:node', main: '{root}/topics/node{node}/feed' },
+  { key: 'homeland:topics', main: '{root}/topics/feed' },
 ])
 
 export const isHomelandHtml = (content: string): boolean => {

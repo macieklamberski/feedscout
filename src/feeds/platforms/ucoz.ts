@@ -47,12 +47,15 @@ const feeds = definePlatformFeeds(
       .filter((module) => module !== 'forum')
       .map((module) => ({
         key: moduleHints[module],
-        template: `{scheme}://{host}/${module}/rss`,
+        main: `{scheme}://{host}/${module}/rss`,
       })),
-    { key: 'ucoz:forum', template: '{scheme}://{host}/forum/rss' },
-    // uCoz serves the forum feed as section 0 too.
-    { key: 'ucoz:forum', template: '{scheme}://{host}/forum/0-0-0-37', isAlias: true },
-    { key: 'ucoz:forum-section', template: '{scheme}://{host}/forum/{sectionId}-0-0-37' },
+    {
+      key: 'ucoz:forum',
+      main: '{scheme}://{host}/forum/rss',
+      // uCoz serves the forum feed as section 0 too.
+      aliases: ['{scheme}://{host}/forum/0-0-0-37'],
+    },
+    { key: 'ucoz:forum-section', main: '{scheme}://{host}/forum/{sectionId}-0-0-37' },
   ],
   { domains, isWwwTenantPrefix: true },
 )

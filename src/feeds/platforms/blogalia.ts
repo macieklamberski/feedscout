@@ -12,8 +12,8 @@ const domains = ['blogalia.com']
 // `www` is a tenant, as `www.blogalia.com` is Blogalia's own news blog.
 const feeds = definePlatformFeeds(
   [
-    { key: 'blogalia:posts', template: '{scheme}://{host}/rdf.xml', format: 'rdf' },
-    { key: 'blogalia:posts', template: '{scheme}://{host}/rss20.xml', format: 'rss' },
+    { key: 'blogalia:posts', main: '{scheme}://{host}/rdf.xml', format: 'rdf' },
+    { key: 'blogalia:posts', main: '{scheme}://{host}/rss20.xml', format: 'rss' },
   ],
   { domains, isWwwTenant: true },
 )

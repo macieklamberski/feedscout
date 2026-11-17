@@ -17,13 +17,13 @@ const namespaceNumberRegex = /"wgNamespaceNumber":(-?\d+)/
 const feeds = definePlatformFeeds([
   {
     key: 'mediawiki:history',
-    template: '{root}/index.php?title={title}&action=history&feed=atom',
+    main: '{root}/index.php?title={title}&action=history&feed=atom',
     format: 'atom',
     queryEncoding: 'form',
   },
   {
     key: 'mediawiki:recent-changes',
-    template: '{root}/index.php?title=Special:RecentChanges&feed=atom',
+    main: '{root}/index.php?title=Special:RecentChanges&feed=atom',
     format: 'atom',
     queryEncoding: 'form',
   },

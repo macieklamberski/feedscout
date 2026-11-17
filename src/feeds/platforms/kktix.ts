@@ -15,8 +15,11 @@ const domains = ['kktix.cc']
 // is also stored without the locale or with another one.
 const feeds = definePlatformFeeds(
   [
-    { key: 'kktix:events', template: '{scheme}://{host}/events.atom?locale=zh-TW' },
-    { key: 'kktix:events', template: '{scheme}://{host}/events.atom', isAlias: true },
+    {
+      key: 'kktix:events',
+      main: '{scheme}://{host}/events.atom?locale=zh-TW',
+      aliases: ['{scheme}://{host}/events.atom'],
+    },
   ],
   { domains },
 )

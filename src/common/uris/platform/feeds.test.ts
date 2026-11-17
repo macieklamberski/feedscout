@@ -4,49 +4,45 @@ import { definePlatformFeeds } from './feeds.js'
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'example:posts', template: 'https://www.example.com/{username}/feed.rss' },
-    {
-      key: 'example:posts',
-      template: 'https://www.example.com/{username}/feed.atom',
-      format: 'atom',
-    },
-    { key: 'example:board', template: 'https://www.example.com/{username}/{board}.rss' },
-    { key: 'example:tag', template: 'https://feeds.example.com/rss.xml?q=tag:{tag}' },
+    { key: 'example:posts', main: 'https://www.example.com/{username}/feed.rss' },
+    { key: 'example:posts', main: 'https://www.example.com/{username}/feed.atom', format: 'atom' },
+    { key: 'example:board', main: 'https://www.example.com/{username}/{board}.rss' },
+    { key: 'example:tag', main: 'https://feeds.example.com/rss.xml?q=tag:{tag}' },
     {
       key: 'example:search',
-      template: 'https://feeds.example.com/rss.xml?type=item&q=by:{username} sort:time',
+      main: 'https://feeds.example.com/rss.xml?type=item&q=by:{username} sort:time',
     },
-    { key: 'example:blog', template: 'https://{username}.example.org/feed' },
-    { key: 'example:site', template: 'https://{host}/feeds/site' },
-    { key: 'example:journal', template: 'https://{username}.{domain}/journal/feed' },
-    { key: 'example:site-feed', template: '{scheme}://{host}/feed' },
-    { key: 'example:channel', template: 'https://www.example.com/feed/{channel}' },
-    { key: 'example:channel', template: 'https://{subdomain}.example.org/feed' },
-    { key: 'example:profile', template: 'https://www.example.com/-{username}/?rss' },
-    { key: 'example:member', template: 'https://www.example.com/members/{username}?rss=' },
-    { key: 'example:page', template: 'https://www.example.com/pages/{username}?rss&page={page}' },
-    { key: 'example:handle', template: 'https://www.example.com/rss/@{username}' },
-    { key: 'example:topic', template: 'https://www.example.com/topics/tag:{tag}/feed' },
+    { key: 'example:blog', main: 'https://{username}.example.org/feed' },
+    { key: 'example:site', main: 'https://{host}/feeds/site' },
+    { key: 'example:journal', main: 'https://{username}.{domain}/journal/feed' },
+    { key: 'example:site-feed', main: '{scheme}://{host}/feed' },
+    { key: 'example:channel', main: 'https://www.example.com/feed/{channel}' },
+    { key: 'example:channel', main: 'https://{subdomain}.example.org/feed' },
+    { key: 'example:profile', main: 'https://www.example.com/-{username}/?rss' },
+    { key: 'example:member', main: 'https://www.example.com/members/{username}?rss=' },
+    { key: 'example:page', main: 'https://www.example.com/pages/{username}?rss&page={page}' },
+    { key: 'example:handle', main: 'https://www.example.com/rss/@{username}' },
+    { key: 'example:topic', main: 'https://www.example.com/topics/tag:{tag}/feed' },
   ],
   { hosts: ['example.com', 'www.example.com'], domains: ['example.net', 'example.edu'] },
 )
 
 const encodedFeeds = definePlatformFeeds([
-  { key: 'example:handle', template: 'https://www.example.com/rss/%40{username}' },
-  { key: 'example:slash', template: 'https://www.example.com/a%2Fb/{username}' },
-  { key: 'example:brace', template: 'https://www.example.com/b/%7Bx%7D/rss' },
+  { key: 'example:handle', main: 'https://www.example.com/rss/%40{username}' },
+  { key: 'example:slash', main: 'https://www.example.com/a%2Fb/{username}' },
+  { key: 'example:brace', main: 'https://www.example.com/b/%7Bx%7D/rss' },
 ])
 
 const hintFeeds = definePlatformFeeds([
-  { key: 'ocnk:products', template: 'https://example.com/{shop}/products.rdf', format: 'rdf' },
-  { key: 'youtube:videos', template: 'https://example.com/{username}/videos.xml' },
+  { key: 'ocnk:products', main: 'https://example.com/{shop}/products.rdf', format: 'rdf' },
+  { key: 'youtube:videos', main: 'https://example.com/{username}/videos.xml' },
 ])
 
 const wwwTenantTemplates = [
-  { key: 'example:site', template: 'https://example.org/rss' },
-  { key: 'example:blog', template: 'https://{username}.example.org/rss' },
-  { key: 'example:journal', template: 'https://{username}.example.org/feed' },
-  { key: 'example:videos', template: 'https://example.com/{username}/videos.xml' },
+  { key: 'example:site', main: 'https://example.org/rss' },
+  { key: 'example:blog', main: 'https://{username}.example.org/rss' },
+  { key: 'example:journal', main: 'https://{username}.example.org/feed' },
+  { key: 'example:videos', main: 'https://example.com/{username}/videos.xml' },
 ]
 
 const wwwTenantFeeds = definePlatformFeeds(wwwTenantTemplates, { isWwwTenant: true })
@@ -57,15 +53,15 @@ const wwwPrefixFeeds = definePlatformFeeds(wwwTenantTemplates, { isWwwTenantPref
 
 const wwwPrefixDomainFeeds = definePlatformFeeds(
   [
-    { key: 'example:blog', template: '{scheme}://{username}.{domain}/feed' },
-    { key: 'example:site', template: 'https://{host}/feeds/site' },
+    { key: 'example:blog', main: '{scheme}://{username}.{domain}/feed' },
+    { key: 'example:site', main: 'https://{host}/feeds/site' },
   ],
   { domains: ['example.net'], isWwwTenantPrefix: true },
 )
 
 const domainPatternTemplates = [
-  { key: 'example:blog', template: '{scheme}://{username}.{domain}/feed' },
-  { key: 'example:site', template: 'https://{host}/feeds/site' },
+  { key: 'example:blog', main: '{scheme}://{username}.{domain}/feed' },
+  { key: 'example:site', main: 'https://{host}/feeds/site' },
 ]
 
 const domainPatternOptions = {
@@ -75,13 +71,13 @@ const domainPatternOptions = {
 const domainPatternFeeds = definePlatformFeeds(domainPatternTemplates, domainPatternOptions)
 
 const hostPatternFeeds = definePlatformFeeds(
-  [{ key: 'example:profile', template: 'https://{host}/-{username}/feed' }],
+  [{ key: 'example:profile', main: 'https://{host}/-{username}/feed' }],
   { hosts: ['example.org', /^example\.(?:com|co\.[a-z]{2}|[a-z]{2})$/] },
 )
 
 const rootTemplates = [
-  { key: 'example:latest', template: '{root}/latest.rss' },
-  { key: 'example:search', template: '{root}/search.rss?q={query}' },
+  { key: 'example:latest', main: '{root}/latest.rss' },
+  { key: 'example:search', main: '{root}/search.rss?q={query}' },
 ]
 
 const rootFeeds = definePlatformFeeds(rootTemplates, {
@@ -92,27 +88,27 @@ const rootFeeds = definePlatformFeeds(rootTemplates, {
 const selfHostedRootFeeds = definePlatformFeeds(rootTemplates)
 
 const categoryFeeds = definePlatformFeeds([
-  { key: 'example:category', template: 'https://www.example.com/c/{slug}/{id}.rss' },
-  { key: 'example:category', template: 'https://www.example.com/c/{slug}.rss' },
+  { key: 'example:category', main: 'https://www.example.com/c/{slug}/{id}.rss' },
+  { key: 'example:category', main: 'https://www.example.com/c/{slug}.rss' },
 ])
 
 const pathFeeds = definePlatformFeeds(
   [
-    { key: 'example:tag', template: 'https://www.example.com/t/{tag}/feed' },
-    { key: 'example:folder', template: 'https://www.example.com/{path*}/feed' },
-    { key: 'discourse:category', template: 'https://www.example.com/c/{path*}.rss' },
-    { key: 'example:search', template: 'https://www.example.com/c/{path*}.rss?q={query}' },
-    { key: 'example:site', template: '{root}/site/{path*}.rss' },
+    { key: 'example:tag', main: 'https://www.example.com/t/{tag}/feed' },
+    { key: 'example:folder', main: 'https://www.example.com/{path*}/feed' },
+    { key: 'discourse:category', main: 'https://www.example.com/c/{path*}.rss' },
+    { key: 'example:search', main: 'https://www.example.com/c/{path*}.rss?q={query}' },
+    { key: 'example:site', main: '{root}/site/{path*}.rss' },
   ],
   { hosts: ['example.com', 'www.example.com'] },
 )
 
 const passedQueryFeeds = definePlatformFeeds(
   [
-    { key: 'joomla:view', template: '{root}/index.php?{query}&format=feed&type=rss' },
-    { key: 'b2evolution:posts', template: '{root}/index.php?{query}&tempskin=_rss2' },
-    { key: 'example:search', template: '{root}/jobs/feed?sort=date&{query}' },
-    { key: 'example:site', template: '{root}/index.php?format=feed&type=atom' },
+    { key: 'joomla:view', main: '{root}/index.php?{query}&format=feed&type=rss' },
+    { key: 'b2evolution:posts', main: '{root}/index.php?{query}&tempskin=_rss2' },
+    { key: 'example:search', main: '{root}/jobs/feed?sort=date&{query}' },
+    { key: 'example:site', main: '{root}/index.php?format=feed&type=atom' },
   ],
   { hosts: ['example.com'] },
 )
@@ -121,12 +117,11 @@ const repeatedQueryFeeds = definePlatformFeeds(
   [
     {
       key: 'confluence:space',
-      template:
-        'https://{host}/createrssfeed.action?types=page&types=blogpost&types=comment&spaces={space}',
+      main: 'https://{host}/createrssfeed.action?types=page&types=blogpost&types=comment&spaces={space}',
     },
     {
       key: 'confluence:site',
-      template: 'https://{host}/createrssfeed.action?types=page&spaces=conf_all',
+      main: 'https://{host}/createrssfeed.action?types=page&spaces=conf_all',
     },
   ],
   { hosts: ['example.com'] },
@@ -136,113 +131,46 @@ const formQueryFeeds = definePlatformFeeds(
   [
     {
       key: 'mediawiki:history',
-      template: '{root}/index.php?title={title}&action=history&feed=atom',
+      main: '{root}/index.php?title={title}&action=history&feed=atom',
       format: 'atom',
       queryEncoding: 'form',
     },
     {
       key: 'mediawiki:recent-changes',
-      template: '{root}/index.php?title=Special:RecentChanges&feed=atom&{query}',
+      main: '{root}/index.php?title=Special:RecentChanges&feed=atom&{query}',
       format: 'atom',
       queryEncoding: 'form',
     },
-    {
-      key: 'example:profile',
-      template: '{root}/index.php?title={title}&rss',
-      queryEncoding: 'form',
-    },
-    { key: 'example:search', template: '{root}/search?q={terms}&feed=atom' },
+    { key: 'example:profile', main: '{root}/index.php?title={title}&rss', queryEncoding: 'form' },
+    { key: 'example:search', main: '{root}/search?q={terms}&feed=atom' },
   ],
   { hosts: ['example.com'] },
 )
 
 const directoryFeeds = definePlatformFeeds([
-  { key: 'typecho:page', template: 'https://www.example.com/feed/{directory*}/' },
-  { key: 'typecho:page', template: 'https://www.example.com/feed/{path*}' },
+  { key: 'typecho:page', main: 'https://www.example.com/feed/{directory*}/' },
+  { key: 'typecho:page', main: 'https://www.example.com/feed/{path*}' },
 ])
 
 describe('definePlatformFeeds', () => {
   it('should throw for a template without an http scheme', () => {
-    const throwing = () =>
-      definePlatformFeeds([{ key: 'example:posts', template: 'example.com/feed' }])
+    const throwing = () => definePlatformFeeds([{ key: 'example:posts', main: 'example.com/feed' }])
 
     expect(throwing).toThrow('Not a feed URL template: example.com/feed')
   })
 
   it('should throw for a host placeholder without hosts', () => {
     const throwing = () =>
-      definePlatformFeeds([{ key: 'example:site', template: 'https://{host}/feed' }])
+      definePlatformFeeds([{ key: 'example:site', main: 'https://{host}/feed' }])
 
     expect(throwing).toThrow('No hosts for the example:site feed')
   })
 
   it('should throw for a domain placeholder without domains', () => {
     const throwing = () =>
-      definePlatformFeeds([{ key: 'example:blog', template: 'https://{username}.{domain}/feed' }])
+      definePlatformFeeds([{ key: 'example:blog', main: 'https://{username}.{domain}/feed' }])
 
     expect(throwing).toThrow('No hosts for the example:blog feed')
-  })
-
-  it('should accept an alias row below the canonical row of its key and format', () => {
-    const defining = () => {
-      return definePlatformFeeds([
-        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
-        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
-      ])
-    }
-
-    expect(defining).not.toThrow()
-  })
-
-  it('should throw for an alias row above the canonical row of its key', () => {
-    const throwing = () => {
-      return definePlatformFeeds([
-        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
-        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
-      ])
-    }
-
-    expect(throwing).toThrow('No canonical template above the example:posts alias')
-  })
-
-  it('should throw for an alias row whose key has a canonical row of another format only', () => {
-    const throwing = () => {
-      return definePlatformFeeds([
-        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
-        {
-          key: 'example:posts',
-          template: 'https://example.com/{username}/atom',
-          format: 'atom',
-          isAlias: true,
-        },
-      ])
-    }
-
-    expect(throwing).toThrow('No canonical template above the example:posts alias')
-  })
-
-  it('should accept an alias row below a canonical row of its key other than the first', () => {
-    const defining = () => {
-      return definePlatformFeeds([
-        { key: 'example:posts', template: 'https://feeds.example.com/{username}/{sort}.rss' },
-        { key: 'example:posts', template: 'https://feeds.example.com/{username}.rss' },
-        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
-      ])
-    }
-
-    expect(defining).not.toThrow()
-  })
-
-  it('should throw for an alias row below another alias row only', () => {
-    const throwing = () => {
-      return definePlatformFeeds([
-        { key: 'example:other', template: 'https://feeds.example.com/{username}.rss' },
-        { key: 'example:posts', template: 'https://example.com/{username}/rss', isAlias: true },
-        { key: 'example:posts', template: 'https://example.com/{username}.rss', isAlias: true },
-      ])
-    }
-
-    expect(throwing).toThrow('No canonical template above the example:posts alias')
   })
 
   describe('getFeedUrl', () => {
@@ -454,8 +382,8 @@ describe('definePlatformFeeds', () => {
 
   describe('getFeedEntry', () => {
     const labelled = definePlatformFeeds([
-      { key: 'plurk:plurks', template: 'https://www.example.com/{username}.xml' },
-      { key: 'plurk:plurks', template: 'https://www.example.com/{username}.atom', format: 'atom' },
+      { key: 'plurk:plurks', main: 'https://www.example.com/{username}.xml' },
+      { key: 'plurk:plurks', main: 'https://www.example.com/{username}.atom', format: 'atom' },
     ])
 
     it('should return the feed with its hint', () => {
@@ -487,23 +415,32 @@ describe('definePlatformFeeds', () => {
 
   describe('getFeedSpellings', () => {
     const spellingFeeds = definePlatformFeeds([
-      { key: 'wordpress:posts', template: '{root}/feed/' },
-      { key: 'wordpress:posts', template: '{root}/?feed=rss', isAlias: true },
-      { key: 'wordpress:posts', template: '{root}/feed/rss2/', isAlias: true },
-      { key: 'wordpress:posts', template: '{root}/?feed=rss2', isAlias: true },
-      { key: 'wordpress:posts', template: '{root}/feed/atom/', format: 'atom' },
-      { key: 'wordpress:posts', template: '{root}/?feed=atom', format: 'atom', isAlias: true },
-      { key: 'xenforo:forum', template: '{root}/forums/{forum}/index.rss' },
-      { key: 'xenforo:forum', template: '{root}/f/{forum}/index.rss', isAlias: true },
-      { key: 'xenforo:forum', template: '{root}/forums/index.rss' },
-      { key: 'xenforo:forum', template: '{root}/f/index.rss', isAlias: true },
-      { key: 'typecho:posts', template: '{root}/feed/{id}/' },
-      { key: 'typecho:posts', template: '{root}/index.php/feed/', isAlias: true },
-      { key: 'typecho:posts', template: '{root}/index.php/feed/{id}/', isAlias: true },
-      { key: 'typecho:page', template: '{root}/feed/{path*}/' },
+      {
+        key: 'wordpress:posts',
+        main: '{root}/feed/',
+        aliases: ['{root}/?feed=rss', '{root}/feed/rss2/', '{root}/?feed=rss2'],
+      },
+      {
+        key: 'wordpress:posts',
+        main: '{root}/feed/atom/',
+        format: 'atom',
+        aliases: ['{root}/?feed=atom'],
+      },
+      {
+        key: 'xenforo:forum',
+        main: '{root}/forums/{forum}/index.rss',
+        aliases: ['{root}/f/{forum}/index.rss'],
+      },
+      { key: 'xenforo:forum', main: '{root}/forums/index.rss', aliases: ['{root}/f/index.rss'] },
+      {
+        key: 'typecho:posts',
+        main: '{root}/feed/{id}/',
+        aliases: ['{root}/index.php/feed/', '{root}/index.php/feed/{id}/'],
+      },
+      { key: 'typecho:page', main: '{root}/feed/{path*}/' },
     ])
 
-    it('should return the canonical row and its alias rows in table order', () => {
+    it('should return the main URL and its aliases in order', () => {
       const value = { root: 'https://example.com' }
       const expected: DiscoverUriEntry = {
         uri: [
@@ -528,22 +465,7 @@ describe('definePlatformFeeds', () => {
       expect(spellingFeeds.getFeedSpellings('wordpress:posts', value, 'atom')).toEqual(expected)
     })
 
-    it('should keep an alias row below a canonical row of another format', () => {
-      const formatFeeds = definePlatformFeeds([
-        { key: 'wordpress:posts', template: '{root}/feed/' },
-        { key: 'wordpress:posts', template: '{root}/feed/atom/', format: 'atom' },
-        { key: 'wordpress:posts', template: '{root}/?feed=rss2', isAlias: true },
-      ])
-      const value = { root: 'https://example.com' }
-      const expected: DiscoverUriEntry = {
-        uri: ['https://example.com/feed/', 'https://example.com/?feed=rss2'],
-        hint: { key: 'wordpress:posts', label: 'Posts' },
-      }
-
-      expect(formatFeeds.getFeedSpellings('wordpress:posts', value)).toEqual(expected)
-    })
-
-    it('should stop at the next canonical row of the key', () => {
+    it('should stop at the next feed of the key', () => {
       const value = {
         root: 'https://example.com',
         forum: 'news.2',
@@ -569,7 +491,7 @@ describe('definePlatformFeeds', () => {
       expect(spellingFeeds.getFeedSpellings('xenforo:forum', value)).toEqual(expected)
     })
 
-    it('should start at an alias row when the values fill no canonical row', () => {
+    it('should start at an alias when the values do not fill the main URL', () => {
       const value = { root: 'https://example.com' }
       const expected: DiscoverUriEntry = {
         uri: 'https://example.com/index.php/feed/',
@@ -579,7 +501,7 @@ describe('definePlatformFeeds', () => {
       expect(spellingFeeds.getFeedSpellings('typecho:posts', value)).toEqual(expected)
     })
 
-    it('should list every alias row the values fill', () => {
+    it('should list every alias the values fill', () => {
       const value = {
         root: 'https://example.com',
         id: '13',
@@ -638,10 +560,13 @@ describe('definePlatformFeeds', () => {
       expect(hintFeeds.getFeedHint(value)).toEqual(expected)
     })
 
-    it('should return the hint of the key for a feed on an alias row', () => {
+    it('should return the hint of the key for a feed on an alias', () => {
       const aliasFeeds = definePlatformFeeds([
-        { key: 'youtube:videos', template: 'https://feeds.example.com/{username}.xml' },
-        { key: 'youtube:videos', template: 'https://example.com/{username}/rss', isAlias: true },
+        {
+          key: 'youtube:videos',
+          main: 'https://feeds.example.com/{username}.xml',
+          aliases: ['https://example.com/{username}/rss'],
+        },
       ])
       const value = 'https://example.com/alice/rss'
       const expected: DiscoverUriHint = { key: 'youtube:videos', label: 'Videos' }
@@ -787,7 +712,7 @@ describe('definePlatformFeeds', () => {
 
     it('should return the key of a feed on www of a listed domain with isWwwTenant', () => {
       const wwwTenantHostFeeds = definePlatformFeeds(
-        [{ key: 'example:site', template: 'https://{host}/feeds/site' }],
+        [{ key: 'example:site', main: 'https://{host}/feeds/site' }],
         { domains: ['example.net'], isWwwTenant: true },
       )
       const value = 'https://www.example.net/feeds/site'
@@ -805,7 +730,7 @@ describe('definePlatformFeeds', () => {
 
     it('should return the key of a feed on a listed host under a listed domain', () => {
       const hostFeeds = definePlatformFeeds(
-        [{ key: 'example:site', template: 'https://{host}/feeds/site' }],
+        [{ key: 'example:site', main: 'https://{host}/feeds/site' }],
         { hosts: ['example.net'], domains: ['example.net'] },
       )
       const value = 'https://example.net/feeds/site'
@@ -1338,8 +1263,8 @@ describe('definePlatformFeeds', () => {
   describe('forUrl', () => {
     const siteFeeds = definePlatformFeeds(
       [
-        { key: 'example:posts', template: '{scheme}://{blog}.{domain}/feed' },
-        { key: 'ocnk:products', template: '{scheme}://{host}/feed' },
+        { key: 'example:posts', main: '{scheme}://{blog}.{domain}/feed' },
+        { key: 'ocnk:products', main: '{scheme}://{host}/feed' },
       ],
       { domains: ['example.net', 'example.org'] },
     )
@@ -1464,8 +1389,7 @@ describe('definePlatformFeeds', () => {
 
     it('should return every spelling of the feed with its hint', () => {
       const spellingFeeds = definePlatformFeeds([
-        { key: 'typecho:posts', template: '{root}/feed/' },
-        { key: 'typecho:posts', template: '{root}/index.php/feed/', isAlias: true },
+        { key: 'typecho:posts', main: '{root}/feed/', aliases: ['{root}/index.php/feed/'] },
       ])
       const value = 'https://example.com/archives/13/'
       const expected: DiscoverUriEntry = {

@@ -23,16 +23,16 @@ const feedPrefixRegex = /^([^?]*)\?(.*)$/
 // An install runs on its own domain and is known only by its marker, so its feeds are built here
 // but not claimed. A feed is the blog's feed link with another skin.
 const feeds = definePlatformFeeds([
-  { key: 'b2evolution:posts', template: '{root}?{query}&tempskin=_rss2', format: 'rss' },
-  { key: 'b2evolution:posts', template: '{root}?{query}&tempskin=_atom', format: 'atom' },
+  { key: 'b2evolution:posts', main: '{root}?{query}&tempskin=_rss2', format: 'rss' },
+  { key: 'b2evolution:posts', main: '{root}?{query}&tempskin=_atom', format: 'atom' },
   {
     key: 'b2evolution:comments',
-    template: '{root}?{query}&tempskin=_rss2&disp=comments',
+    main: '{root}?{query}&tempskin=_rss2&disp=comments',
     format: 'rss',
   },
   {
     key: 'b2evolution:comments',
-    template: '{root}?{query}&tempskin=_atom&disp=comments',
+    main: '{root}?{query}&tempskin=_atom&disp=comments',
     format: 'atom',
   },
 ])

@@ -18,24 +18,16 @@ const pageNameSeparatorRegex = /[./]/
 // A wiki is known only by its markup, so its feeds are built on the script URL and claimed on no
 // host. The query form answers under clean URLs, path info and the bare script alike.
 const feeds = definePlatformFeeds([
+  { key: 'pmwiki:group-changes', main: '{root}?n={group}.RecentChanges&action=rss', format: 'rss' },
   {
     key: 'pmwiki:group-changes',
-    template: '{root}?n={group}.RecentChanges&action=rss',
-    format: 'rss',
-  },
-  {
-    key: 'pmwiki:group-changes',
-    template: '{root}?n={group}.RecentChanges&action=atom',
+    main: '{root}?n={group}.RecentChanges&action=atom',
     format: 'atom',
   },
+  { key: 'pmwiki:site-changes', main: '{root}?n=Site.AllRecentChanges&action=rss', format: 'rss' },
   {
     key: 'pmwiki:site-changes',
-    template: '{root}?n=Site.AllRecentChanges&action=rss',
-    format: 'rss',
-  },
-  {
-    key: 'pmwiki:site-changes',
-    template: '{root}?n=Site.AllRecentChanges&action=atom',
+    main: '{root}?n=Site.AllRecentChanges&action=atom',
     format: 'atom',
   },
 ])

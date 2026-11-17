@@ -16,30 +16,25 @@ const domains = ['blog.shinobi.jp']
 // so /RSS/200/RSS is the RSS 2.0 feed too.
 const feeds = definePlatformFeeds(
   [
-    { key: 'shinobi:posts', template: '{scheme}://{host}/RSS/', format: 'rss' },
-    { key: 'shinobi:posts', template: '{scheme}://{host}/RSS/200/', format: 'rss', isAlias: true },
-    { key: 'shinobi:posts', template: '{scheme}://{host}/RSS/RSS/', format: 'rss', isAlias: true },
     {
       key: 'shinobi:posts',
-      template: '{scheme}://{host}/RSS/200/RSS/',
+      main: '{scheme}://{host}/RSS/',
       format: 'rss',
-      isAlias: true,
+      aliases: [
+        '{scheme}://{host}/RSS/200/',
+        '{scheme}://{host}/RSS/RSS/',
+        '{scheme}://{host}/RSS/200/RSS/',
+        '{scheme}://{host}/OPML',
+        '{scheme}://{host}/RSS/091/',
+        '{scheme}://{host}/RSS/091/index.rdf',
+      ],
     },
-    { key: 'shinobi:posts', template: '{scheme}://{host}/OPML', format: 'rss', isAlias: true },
-    { key: 'shinobi:posts', template: '{scheme}://{host}/RSS/091/', format: 'rss', isAlias: true },
+    { key: 'shinobi:posts', main: '{scheme}://{host}/ATOM/', format: 'atom' },
     {
       key: 'shinobi:posts',
-      template: '{scheme}://{host}/RSS/091/index.rdf',
-      format: 'rss',
-      isAlias: true,
-    },
-    { key: 'shinobi:posts', template: '{scheme}://{host}/ATOM/', format: 'atom' },
-    { key: 'shinobi:posts', template: '{scheme}://{host}/RSS/100/', format: 'rdf' },
-    {
-      key: 'shinobi:posts',
-      template: '{scheme}://{host}/RSS/100/RSS/',
+      main: '{scheme}://{host}/RSS/100/',
       format: 'rdf',
-      isAlias: true,
+      aliases: ['{scheme}://{host}/RSS/100/RSS/'],
     },
   ],
   { domains },

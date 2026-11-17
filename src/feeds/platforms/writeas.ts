@@ -13,8 +13,8 @@ const hosts = ['write.as', 'www.write.as']
 const tagRegex = /^\/([^/]+)\/tag:([^/]+)/i
 
 const feeds = definePlatformFeeds([
-  { key: 'writeas:tag', template: 'https://write.as/{username}/tag:{tag}/feed/' },
-  { key: 'writeas:blog', template: 'https://write.as/{username}/feed/' },
+  { key: 'writeas:tag', main: 'https://write.as/{username}/tag:{tag}/feed/' },
+  { key: 'writeas:blog', main: 'https://write.as/{username}/feed/' },
 ])
 
 export const parseWriteasUrl = (url: string): WriteasUrl | undefined => {

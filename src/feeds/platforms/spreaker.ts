@@ -14,11 +14,11 @@ const podcastRegex = /^\/podcast\/[\w-]+--(\d+)(?:\/|$)/i
 const showRegex = /^\/show\/(\d+)(?:\/|$)/i
 
 const feeds = definePlatformFeeds([
-  { key: 'spreaker:podcast', template: 'https://www.spreaker.com/show/{showId}/episodes/feed' },
+  { key: 'spreaker:podcast', main: 'https://www.spreaker.com/show/{showId}/episodes/feed' },
   // The same feed cut to its newest episodes, as `items/3`.
   {
     key: 'spreaker:podcast',
-    template: 'https://www.spreaker.com/show/{showId}/episodes/feed/items/{count}',
+    main: 'https://www.spreaker.com/show/{showId}/episodes/feed/items/{count}',
   },
 ])
 

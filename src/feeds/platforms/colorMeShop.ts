@@ -14,8 +14,8 @@ const numberedHostRegex = /^(acclog|img)\d+$/
 // A shop on its own domain is known only by its cookie, so its feeds are built but not claimed.
 const feeds = definePlatformFeeds(
   [
-    { key: 'color-me-shop:products', template: '{scheme}://{host}/?mode=rss', format: 'rdf' },
-    { key: 'color-me-shop:products', template: '{scheme}://{host}/?mode=atom', format: 'atom' },
+    { key: 'color-me-shop:products', main: '{scheme}://{host}/?mode=rss', format: 'rdf' },
+    { key: 'color-me-shop:products', main: '{scheme}://{host}/?mode=atom', format: 'atom' },
   ],
   { domains },
 )

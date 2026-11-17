@@ -16,13 +16,13 @@ const podcastFeedPath = '/feeds/podcast/videos.xml'
 // An instance is known only by its headers, so its feeds are built on the page's origin and
 // claimed on no host.
 const feeds = definePlatformFeeds([
-  { key: 'peertube:channel', template: '{root}/feeds/videos.xml?videoChannelName={name}' },
+  { key: 'peertube:channel', main: '{root}/feeds/videos.xml?videoChannelName={name}' },
   {
     key: 'peertube:channel-podcast',
-    template: '{root}/feeds/podcast/videos.xml?videoChannelId={channelId}',
+    main: '{root}/feeds/podcast/videos.xml?videoChannelId={channelId}',
   },
-  { key: 'peertube:account', template: '{root}/feeds/videos.xml?accountName={name}' },
-  { key: 'peertube:instance', template: '{root}/feeds/videos.xml' },
+  { key: 'peertube:account', main: '{root}/feeds/videos.xml?accountName={name}' },
+  { key: 'peertube:instance', main: '{root}/feeds/videos.xml' },
 ])
 
 export const isPeertubeHeaders = (headers: Headers): boolean => {

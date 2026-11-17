@@ -30,34 +30,30 @@ const branchViews = ['src', 'commits']
 // before its owner's, so a page with a repo builds the repo's.
 const feeds = definePlatformFeeds(
   [
-    { key: 'gitea:activity', template: '{root}/{owner}/{repo}.atom', format: 'atom' },
-    { key: 'gitea:activity', template: '{root}/{owner}/{repo}.rss', format: 'rss' },
-    { key: 'gitea:activity', template: '{root}/{owner}.atom', format: 'atom' },
-    { key: 'gitea:activity', template: '{root}/{owner}.rss', format: 'rss' },
-    { key: 'gitea:releases', template: '{root}/{owner}/{repo}/releases.atom', format: 'atom' },
-    { key: 'gitea:releases', template: '{root}/{owner}/{repo}/releases.rss', format: 'rss' },
-    { key: 'gitea:tags', template: '{root}/{owner}/{repo}/tags.atom', format: 'atom' },
-    { key: 'gitea:tags', template: '{root}/{owner}/{repo}/tags.rss', format: 'rss' },
+    { key: 'gitea:activity', main: '{root}/{owner}/{repo}.atom', format: 'atom' },
+    { key: 'gitea:activity', main: '{root}/{owner}/{repo}.rss', format: 'rss' },
+    { key: 'gitea:activity', main: '{root}/{owner}.atom', format: 'atom' },
+    { key: 'gitea:activity', main: '{root}/{owner}.rss', format: 'rss' },
+    { key: 'gitea:releases', main: '{root}/{owner}/{repo}/releases.atom', format: 'atom' },
+    { key: 'gitea:releases', main: '{root}/{owner}/{repo}/releases.rss', format: 'rss' },
+    { key: 'gitea:tags', main: '{root}/{owner}/{repo}/tags.atom', format: 'atom' },
+    { key: 'gitea:tags', main: '{root}/{owner}/{repo}/tags.rss', format: 'rss' },
     {
       key: 'gitea:branch-commits',
-      template: '{root}/{owner}/{repo}/atom/branch/{branch}',
+      main: '{root}/{owner}/{repo}/atom/branch/{branch}',
       format: 'atom',
     },
     {
       key: 'gitea:branch-commits',
-      template: '{root}/{owner}/{repo}/rss/branch/{branch}',
+      main: '{root}/{owner}/{repo}/rss/branch/{branch}',
       format: 'rss',
     },
     {
       key: 'gitea:file-history',
-      template: '{root}/{owner}/{repo}/atom/branch/{path*}',
+      main: '{root}/{owner}/{repo}/atom/branch/{path*}',
       format: 'atom',
     },
-    {
-      key: 'gitea:file-history',
-      template: '{root}/{owner}/{repo}/rss/branch/{path*}',
-      format: 'rss',
-    },
+    { key: 'gitea:file-history', main: '{root}/{owner}/{repo}/rss/branch/{path*}', format: 'rss' },
   ],
   { hosts },
 )

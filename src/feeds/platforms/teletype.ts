@@ -13,8 +13,8 @@ const hosts = ['teletype.in']
 const blogRegex = /^\/@([^/]+)/
 
 const feeds = definePlatformFeeds([
-  { key: 'teletype:posts', template: 'https://teletype.in/rss/{username}', format: 'rss' },
-  { key: 'teletype:posts', template: 'https://teletype.in/atom/{username}', format: 'atom' },
+  { key: 'teletype:posts', main: 'https://teletype.in/rss/{username}', format: 'rss' },
+  { key: 'teletype:posts', main: 'https://teletype.in/atom/{username}', format: 'atom' },
 ])
 
 export const parseTeletypeUrl = (url: string): TeletypeUrl | undefined => {

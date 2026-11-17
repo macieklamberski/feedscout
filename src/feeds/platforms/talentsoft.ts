@@ -21,16 +21,13 @@ const offerFeedPath = '/handlers/offerRss.ashx'
 // and the feed answers without it. The feed list page's own link serves the same offers.
 const feeds = definePlatformFeeds(
   [
-    { key: 'talentsoft:offers', template: '{scheme}://{host}/handlers/offerRss.ashx?LCID={lcid}' },
     {
       key: 'talentsoft:offers',
-      template: '{scheme}://{host}/handlers/offerRss.ashx',
-      isAlias: true,
-    },
-    {
-      key: 'talentsoft:offers',
-      template: '{scheme}://{host}/offre-de-emploi/flux-rss.ashx',
-      isAlias: true,
+      main: '{scheme}://{host}/handlers/offerRss.ashx?LCID={lcid}',
+      aliases: [
+        '{scheme}://{host}/handlers/offerRss.ashx',
+        '{scheme}://{host}/offre-de-emploi/flux-rss.ashx',
+      ],
     },
   ],
   { domains },

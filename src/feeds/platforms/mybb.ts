@@ -22,14 +22,10 @@ const rootPathRegex = /var rootpath = "([^"]+)"/
 // MyBB is self-hosted and known only by its page marker, so nothing in a feed URL names it and the
 // table only builds, under the board URL the page names.
 const feeds = definePlatformFeeds([
-  { key: 'mybb:forum', template: '{root}/syndication.php?fid={forumId}', format: 'rss' },
-  {
-    key: 'mybb:forum',
-    template: '{root}/syndication.php?type=atom1.0&fid={forumId}',
-    format: 'atom',
-  },
-  { key: 'mybb:threads', template: '{root}/syndication.php', format: 'rss' },
-  { key: 'mybb:threads', template: '{root}/syndication.php?type=atom1.0', format: 'atom' },
+  { key: 'mybb:forum', main: '{root}/syndication.php?fid={forumId}', format: 'rss' },
+  { key: 'mybb:forum', main: '{root}/syndication.php?type=atom1.0&fid={forumId}', format: 'atom' },
+  { key: 'mybb:threads', main: '{root}/syndication.php', format: 'rss' },
+  { key: 'mybb:threads', main: '{root}/syndication.php?type=atom1.0', format: 'atom' },
 ])
 
 // MyBB prepends the board's cookie prefix setting to the name.

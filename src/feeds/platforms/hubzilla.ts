@@ -9,7 +9,7 @@ export type HubzillaUrl = { kind: 'channel'; channel: string }
 const channelPathRegex = /^\/(?:(?:channel|feed|profile)\/|@)([^/]+)/i
 
 // A hub is self-hosted on any domain, so the table only builds its feed.
-const feeds = definePlatformFeeds([{ key: 'hubzilla:channel', template: '{root}/feed/{channel}' }])
+const feeds = definePlatformFeeds([{ key: 'hubzilla:channel', main: '{root}/feed/{channel}' }])
 
 // A custom theme can drop the generator, while core prints `var zid` in every page head.
 export const isHubzillaHtml = (content: string): boolean => {

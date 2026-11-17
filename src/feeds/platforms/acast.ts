@@ -17,9 +17,14 @@ const legacyHosts = ['play.acast.com']
 // feeds.acast.com serves a show by slug or by id. It stays out of `hosts`, where the first path
 // segment would read as the slug.
 const feeds = definePlatformFeeds([
-  { key: 'acast:podcast', template: 'https://feeds.acast.com/public/shows/{slug}' },
-  // The legacy feed host answers 301 to the show's feed on feeds.acast.com, by its id.
-  { key: 'acast:podcast', template: 'https://rss.acast.com/{slug}', isAlias: true },
+  {
+    key: 'acast:podcast',
+    main: 'https://feeds.acast.com/public/shows/{slug}',
+    aliases: [
+      // The legacy feed host answers 301 to the show's feed on feeds.acast.com, by its id.
+      'https://rss.acast.com/{slug}',
+    ],
+  },
 ])
 
 export const parseAcastUrl = (url: string): AcastUrl | undefined => {

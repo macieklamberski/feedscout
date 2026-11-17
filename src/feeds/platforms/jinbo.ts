@@ -19,64 +19,48 @@ const feedLinkRegex = /^https:\/\/blog\.jinbo\.net\/([^/]+)\/rss$/i
 const feeds = definePlatformFeeds([
   {
     key: 'jinbo:category',
-    template: 'https://blog.jinbo.net/{username}/rss/category/{categoryId}',
+    main: 'https://blog.jinbo.net/{username}/rss/category/{categoryId}',
     format: 'rss',
   },
   {
     key: 'jinbo:category',
-    template: 'https://blog.jinbo.net/{username}/atom/category/{categoryId}',
+    main: 'https://blog.jinbo.net/{username}/atom/category/{categoryId}',
     format: 'atom',
   },
   // The tag feed exists only as Atom: the RSS spelling answers 404.
-  {
-    key: 'jinbo:tag',
-    template: 'https://blog.jinbo.net/{username}/atom/tag/{tag}',
-    format: 'atom',
-  },
-  { key: 'jinbo:posts', template: 'https://blog.jinbo.net/{username}/rss', format: 'rss' },
-  { key: 'jinbo:posts', template: 'https://blog.jinbo.net/{username}/atom', format: 'atom' },
+  { key: 'jinbo:tag', main: 'https://blog.jinbo.net/{username}/atom/tag/{tag}', format: 'atom' },
+  { key: 'jinbo:posts', main: 'https://blog.jinbo.net/{username}/rss', format: 'rss' },
+  { key: 'jinbo:posts', main: 'https://blog.jinbo.net/{username}/atom', format: 'atom' },
+  { key: 'jinbo:responses', main: 'https://blog.jinbo.net/{username}/rss/response', format: 'rss' },
   {
     key: 'jinbo:responses',
-    template: 'https://blog.jinbo.net/{username}/rss/response',
-    format: 'rss',
-  },
-  {
-    key: 'jinbo:responses',
-    template: 'https://blog.jinbo.net/{username}/atom/response',
+    main: 'https://blog.jinbo.net/{username}/atom/response',
     format: 'atom',
   },
   {
     key: 'jinbo:post-responses',
-    template: 'https://blog.jinbo.net/{username}/rss/response/{postId}',
+    main: 'https://blog.jinbo.net/{username}/rss/response/{postId}',
     format: 'rss',
   },
   {
     key: 'jinbo:post-responses',
-    template: 'https://blog.jinbo.net/{username}/atom/response/{postId}',
+    main: 'https://blog.jinbo.net/{username}/atom/response/{postId}',
     format: 'atom',
   },
-  {
-    key: 'jinbo:comments',
-    template: 'https://blog.jinbo.net/{username}/rss/comment',
-    format: 'rss',
-  },
-  {
-    key: 'jinbo:comments',
-    template: 'https://blog.jinbo.net/{username}/atom/comment',
-    format: 'atom',
-  },
+  { key: 'jinbo:comments', main: 'https://blog.jinbo.net/{username}/rss/comment', format: 'rss' },
+  { key: 'jinbo:comments', main: 'https://blog.jinbo.net/{username}/atom/comment', format: 'atom' },
   {
     key: 'jinbo:trackbacks',
-    template: 'https://blog.jinbo.net/{username}/rss/trackback',
+    main: 'https://blog.jinbo.net/{username}/rss/trackback',
     format: 'rss',
   },
   {
     key: 'jinbo:trackbacks',
-    template: 'https://blog.jinbo.net/{username}/atom/trackback',
+    main: 'https://blog.jinbo.net/{username}/atom/trackback',
     format: 'atom',
   },
-  { key: 'jinbo:lines', template: 'https://blog.jinbo.net/{username}/rss/line', format: 'rss' },
-  { key: 'jinbo:lines', template: 'https://blog.jinbo.net/{username}/atom/line', format: 'atom' },
+  { key: 'jinbo:lines', main: 'https://blog.jinbo.net/{username}/rss/line', format: 'rss' },
+  { key: 'jinbo:lines', main: 'https://blog.jinbo.net/{username}/atom/line', format: 'atom' },
 ])
 
 export const parseJinboUrl = (url: string): JinboUrl | undefined => {

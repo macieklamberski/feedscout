@@ -13,12 +13,18 @@ const tagPathRegex = /^\/tags\/([^/]+)\/?$/i
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'fireside:podcast', template: 'https://feeds.fireside.fm/{slug}/rss', format: 'rss' },
-    // `/rss` on a show's own host answers 301 to its feed on feeds.fireside.fm.
-    { key: 'fireside:podcast', template: '{scheme}://{host}/rss', format: 'rss', isAlias: true },
-    { key: 'fireside:podcast', template: '{scheme}://{host}/json', format: 'json' },
-    { key: 'fireside:tag', template: '{scheme}://{host}/tags/{tag}/rss' },
-    { key: 'fireside:blog', template: '{scheme}://{host}/articles/rss' },
+    {
+      key: 'fireside:podcast',
+      main: 'https://feeds.fireside.fm/{slug}/rss',
+      format: 'rss',
+      aliases: [
+        // `/rss` on a show's own host answers 301 to its feed on feeds.fireside.fm.
+        '{scheme}://{host}/rss',
+      ],
+    },
+    { key: 'fireside:podcast', main: '{scheme}://{host}/json', format: 'json' },
+    { key: 'fireside:tag', main: '{scheme}://{host}/tags/{tag}/rss' },
+    { key: 'fireside:blog', main: '{scheme}://{host}/articles/rss' },
   ],
   { domains },
 )

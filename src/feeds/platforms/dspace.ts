@@ -82,26 +82,26 @@ const legacyKeys: Record<LegacyKind, string> = {
 const feeds = definePlatformFeeds([
   {
     key: 'dspace:collection',
-    template: '{root}/opensearch/search?format=atom&scope={uuid}&query=*',
+    main: '{root}/opensearch/search?format=atom&scope={uuid}&query=*',
     format: 'atom',
   },
   {
     key: 'dspace:collection',
-    template: '{root}/opensearch/search?format=rss&scope={uuid}&query=*',
+    main: '{root}/opensearch/search?format=rss&scope={uuid}&query=*',
     format: 'rss',
   },
   {
     key: 'dspace:community',
-    template: '{root}/opensearch/search?format=atom&scope={uuid}&query=*',
+    main: '{root}/opensearch/search?format=atom&scope={uuid}&query=*',
     format: 'atom',
   },
   {
     key: 'dspace:community',
-    template: '{root}/opensearch/search?format=rss&scope={uuid}&query=*',
+    main: '{root}/opensearch/search?format=rss&scope={uuid}&query=*',
     format: 'rss',
   },
-  { key: 'dspace:site', template: '{root}/opensearch/search?format=atom&query=*', format: 'atom' },
-  { key: 'dspace:site', template: '{root}/opensearch/search?format=rss&query=*', format: 'rss' },
+  { key: 'dspace:site', main: '{root}/opensearch/search?format=atom&query=*', format: 'atom' },
+  { key: 'dspace:site', main: '{root}/opensearch/search?format=rss&query=*', format: 'rss' },
 ])
 
 // The Angular UI of DSpace 7 and later renders every page inside this root element.

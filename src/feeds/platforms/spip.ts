@@ -23,14 +23,11 @@ const objects = ['article', 'rubrique', 'mot', 'auteur'] as const
 // A site of any domain is known only by its headers, so its feeds are built here but not claimed.
 // The root holds the sub-path the site is installed under.
 const feeds = definePlatformFeeds([
-  {
-    key: 'spip:article-comments',
-    template: '{root}/spip.php?page=comments-rss&id_article={id}',
-  },
-  { key: 'spip:section', template: '{root}/spip.php?page=backend&id_rubrique={id}' },
-  { key: 'spip:keyword', template: '{root}/spip.php?page=backend&id_mot={id}' },
-  { key: 'spip:author', template: '{root}/spip.php?page=backend&id_auteur={id}' },
-  { key: 'spip:articles', template: '{root}/spip.php?page=backend' },
+  { key: 'spip:article-comments', main: '{root}/spip.php?page=comments-rss&id_article={id}' },
+  { key: 'spip:section', main: '{root}/spip.php?page=backend&id_rubrique={id}' },
+  { key: 'spip:keyword', main: '{root}/spip.php?page=backend&id_mot={id}' },
+  { key: 'spip:author', main: '{root}/spip.php?page=backend&id_auteur={id}' },
+  { key: 'spip:articles', main: '{root}/spip.php?page=backend' },
 ])
 
 // SPIP sends `Composed-By` on every page it composes, and `X-Spip-Cache` when its page cache is

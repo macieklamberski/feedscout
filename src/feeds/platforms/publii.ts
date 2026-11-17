@@ -10,8 +10,8 @@ const mediaUrlRegex = /["'](?<siteUrl>https?:\/\/[^"'\s]+?)\/media\/(?:website\/
 
 // A site of any domain is known only by its marker, so its feeds are built here but not claimed.
 const feeds = definePlatformFeeds([
-  { key: 'publii:posts', template: '{root}/feed.xml', format: 'atom' },
-  { key: 'publii:posts', template: '{root}/feed.json', format: 'json' },
+  { key: 'publii:posts', main: '{root}/feed.xml', format: 'atom' },
+  { key: 'publii:posts', main: '{root}/feed.json', format: 'json' },
 ])
 
 const hasGenerator = (content: string): boolean => {

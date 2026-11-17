@@ -30,64 +30,52 @@ const routes = ['articles', 'photos', 'comments', 'slices', 'section']
 // article, section or photo folder carry its id, which no page URL names, so they are only claimed.
 const feeds = definePlatformFeeds(
   [
-    { key: 'estranky:posts', template: '{scheme}://{host}/rss/articles/data.xml' },
-    // Any file name under `/rss/articles/` serves the posts feed.
     {
       key: 'estranky:posts',
-      template: '{scheme}://{host}/rss/articles/photos.xml',
-      isAlias: true,
+      main: '{scheme}://{host}/rss/articles/data.xml',
+      aliases: [
+        // Any file name under `/rss/articles/` serves the posts feed.
+        '{scheme}://{host}/rss/articles/photos.xml',
+        '{scheme}://{host}/rss/articles/comments.xml',
+      ],
     },
-    {
-      key: 'estranky:posts',
-      template: '{scheme}://{host}/rss/articles/comments.xml',
-      isAlias: true,
-    },
-    { key: 'estranky:posts', template: '{scheme}://{host}/rss/{language}/articles/data.xml' },
-    { key: 'estranky:photos', template: '{scheme}://{host}/rss/photos/data.xml' },
-    { key: 'estranky:photos', template: '{scheme}://{host}/rss/{language}/photos/data.xml' },
-    { key: 'estranky:comments', template: '{scheme}://{host}/rss/comments/data.xml' },
-    { key: 'estranky:comments', template: '{scheme}://{host}/rss/{language}/comments/data.xml' },
-    {
-      key: 'estranky:homepage-slice',
-      template: '{scheme}://{host}/rss/slices/l/homepage/data.xml',
-    },
+    { key: 'estranky:posts', main: '{scheme}://{host}/rss/{language}/articles/data.xml' },
+    { key: 'estranky:photos', main: '{scheme}://{host}/rss/photos/data.xml' },
+    { key: 'estranky:photos', main: '{scheme}://{host}/rss/{language}/photos/data.xml' },
+    { key: 'estranky:comments', main: '{scheme}://{host}/rss/comments/data.xml' },
+    { key: 'estranky:comments', main: '{scheme}://{host}/rss/{language}/comments/data.xml' },
+    { key: 'estranky:homepage-slice', main: '{scheme}://{host}/rss/slices/l/homepage/data.xml' },
     {
       key: 'estranky:homepage-slice',
-      template: '{scheme}://{host}/rss/{language}/slices/l/homepage/data.xml',
+      main: '{scheme}://{host}/rss/{language}/slices/l/homepage/data.xml',
     },
-    { key: 'estranky:photos-slice', template: '{scheme}://{host}/rss/slices/l/photos/data.xml' },
+    { key: 'estranky:photos-slice', main: '{scheme}://{host}/rss/slices/l/photos/data.xml' },
     {
       key: 'estranky:photos-slice',
-      template: '{scheme}://{host}/rss/{language}/slices/l/photos/data.xml',
+      main: '{scheme}://{host}/rss/{language}/slices/l/photos/data.xml',
     },
-    { key: 'estranky:section', template: '{scheme}://{host}/rss/section/{section}/data.xml' },
+    { key: 'estranky:section', main: '{scheme}://{host}/rss/section/{section}/data.xml' },
     {
       key: 'estranky:section',
-      template: '{scheme}://{host}/rss/{language}/section/{section}/data.xml',
+      main: '{scheme}://{host}/rss/{language}/section/{section}/data.xml',
     },
+    { key: 'estranky:article-slice', main: '{scheme}://{host}/rss/slices/a/{article}/data.xml' },
     {
       key: 'estranky:article-slice',
-      template: '{scheme}://{host}/rss/slices/a/{article}/data.xml',
+      main: '{scheme}://{host}/rss/{language}/slices/a/{article}/data.xml',
     },
-    {
-      key: 'estranky:article-slice',
-      template: '{scheme}://{host}/rss/{language}/slices/a/{article}/data.xml',
-    },
+    { key: 'estranky:section-slice', main: '{scheme}://{host}/rss/slices/s/{section}/data.xml' },
     {
       key: 'estranky:section-slice',
-      template: '{scheme}://{host}/rss/slices/s/{section}/data.xml',
-    },
-    {
-      key: 'estranky:section-slice',
-      template: '{scheme}://{host}/rss/{language}/slices/s/{section}/data.xml',
+      main: '{scheme}://{host}/rss/{language}/slices/s/{section}/data.xml',
     },
     {
       key: 'estranky:photo-folder-slice',
-      template: '{scheme}://{host}/rss/slices/d/{folder}/data.xml',
+      main: '{scheme}://{host}/rss/slices/d/{folder}/data.xml',
     },
     {
       key: 'estranky:photo-folder-slice',
-      template: '{scheme}://{host}/rss/{language}/slices/d/{folder}/data.xml',
+      main: '{scheme}://{host}/rss/{language}/slices/d/{folder}/data.xml',
     },
   ],
   { domains, isWwwTenantPrefix: true },

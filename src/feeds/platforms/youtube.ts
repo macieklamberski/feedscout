@@ -78,11 +78,14 @@ const uploadsPlaylistKeys: Record<string, string> = {
 // autodiscovery always uses channel_id, so we treat it as the canonical format and build the legacy
 // one only for an embed that names a username and no channel ID.
 const feeds = definePlatformFeeds([
-  { key: 'youtube:all', template: `${feedUrl}?channel_id={channelId}` },
-  { key: 'youtube:all', template: `${feedUrl}?user={user}`, isAlias: true },
-  { key: 'youtube:playlist', template: `${feedUrl}?playlist_id={playlistId}` },
+  {
+    key: 'youtube:all',
+    main: `${feedUrl}?channel_id={channelId}`,
+    aliases: [`${feedUrl}?user={user}`],
+  },
+  { key: 'youtube:playlist', main: `${feedUrl}?playlist_id={playlistId}` },
   ...Object.values(uploadsPlaylistKeys).map((key) => {
-    return { key, template: `${feedUrl}?playlist_id={playlistId}` }
+    return { key, main: `${feedUrl}?playlist_id={playlistId}` }
   }),
 ])
 

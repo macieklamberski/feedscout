@@ -14,15 +14,16 @@ const userRegex = /^\/@([^/]+)/
 // api.paragraph.com feed holds the same posts under other guids, and `/api/blogs/rss/` answers 308
 // to the linked feed.
 const feeds = definePlatformFeeds([
-  { key: 'paragraph:blog', template: 'https://paragraph.com/@{username}/rss.xml' },
-  { key: 'paragraph:blog', template: 'https://paragraph.com/@{username}/feed', isAlias: true },
-  { key: 'paragraph:blog', template: 'https://paragraph.com/@{username}/rss', isAlias: true },
   {
     key: 'paragraph:blog',
-    template: 'https://paragraph.com/api/blogs/rss/@{username}',
-    isAlias: true,
+    main: 'https://paragraph.com/@{username}/rss.xml',
+    aliases: [
+      'https://paragraph.com/@{username}/feed',
+      'https://paragraph.com/@{username}/rss',
+      'https://paragraph.com/api/blogs/rss/@{username}',
+    ],
   },
-  { key: 'paragraph:blog', template: 'https://api.paragraph.com/blogs/rss/@{username}' },
+  { key: 'paragraph:blog', main: 'https://api.paragraph.com/blogs/rss/@{username}' },
 ])
 
 export const parseParagraphUrl = (url: string): ParagraphUrl | undefined => {

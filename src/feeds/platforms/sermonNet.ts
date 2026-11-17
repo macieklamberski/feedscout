@@ -21,11 +21,11 @@ const channelRegex = /"is_series":(?:false|true),"url":"([^"]+)"/g
 // A channel serves four feeds: its audio, all its media, its video, and its audio with its PDFs.
 const feeds = definePlatformFeeds(
   [
-    { key: 'sermon-net:channel', template: '{scheme}://{host}/rss/{channel}/audio' },
-    { key: 'sermon-net:channel-media', template: '{scheme}://{host}/rss/{channel}' },
-    { key: 'sermon-net:channel-video', template: '{scheme}://{host}/rss/{channel}/video' },
-    { key: 'sermon-net:channel-audio-pdf', template: '{scheme}://{host}/rss/{channel}/audio_pdf' },
-    { key: 'sermon-net:church', template: '{scheme}://{host}/rss' },
+    { key: 'sermon-net:channel', main: '{scheme}://{host}/rss/{channel}/audio' },
+    { key: 'sermon-net:channel-media', main: '{scheme}://{host}/rss/{channel}' },
+    { key: 'sermon-net:channel-video', main: '{scheme}://{host}/rss/{channel}/video' },
+    { key: 'sermon-net:channel-audio-pdf', main: '{scheme}://{host}/rss/{channel}/audio_pdf' },
+    { key: 'sermon-net:church', main: '{scheme}://{host}/rss' },
   ],
   { domains },
 )

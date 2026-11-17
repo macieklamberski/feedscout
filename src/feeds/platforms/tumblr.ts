@@ -18,11 +18,14 @@ const tagRegex = /^\/tagged\/([^/]+)/i
 // answer a plain request with a browser check. `/podcast/rss` is a spelling of the podcast.
 const feeds = definePlatformFeeds(
   [
-    { key: 'tumblr:tag', template: '{scheme}://{host}/tagged/{tag}/rss' },
-    { key: 'tumblr:posts', template: '{scheme}://{host}/rss' },
-    { key: 'tumblr:theme-posts', template: '{scheme}://{host}/?format=rss' },
-    { key: 'tumblr:podcast', template: '{scheme}://{host}/podcast' },
-    { key: 'tumblr:podcast', template: '{scheme}://{host}/podcast/rss', isAlias: true },
+    { key: 'tumblr:tag', main: '{scheme}://{host}/tagged/{tag}/rss' },
+    { key: 'tumblr:posts', main: '{scheme}://{host}/rss' },
+    { key: 'tumblr:theme-posts', main: '{scheme}://{host}/?format=rss' },
+    {
+      key: 'tumblr:podcast',
+      main: '{scheme}://{host}/podcast',
+      aliases: ['{scheme}://{host}/podcast/rss'],
+    },
   ],
   { domains },
 )

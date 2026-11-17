@@ -17,7 +17,7 @@ const feedIdRegex =
   /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[0-9a-f]{32})$/i
 
 const feeds = definePlatformFeeds([
-  { key: 'podhome:podcast', template: 'https://serve.podhome.fm/rss/{feedId}' },
+  { key: 'podhome:podcast', main: 'https://serve.podhome.fm/rss/{feedId}' },
 ])
 
 const getPodhomePage = (url: string, content: string | undefined): PodhomePage | undefined => {

@@ -19,11 +19,11 @@ const publicationRegex = /^\/p\/([^/]+)/i
 // A user's feed lists only the posts on their own page. With `all=1` it adds their posts in
 // publications.
 const feeds = definePlatformFeeds([
-  { key: 'zenn:topic', template: 'https://zenn.dev/topics/{topic}/feed' },
-  { key: 'zenn:publication', template: 'https://zenn.dev/p/{publication}/feed' },
-  { key: 'zenn:posts', template: 'https://zenn.dev/{username}/feed' },
-  { key: 'zenn:all-posts', template: 'https://zenn.dev/{username}/feed?all=1' },
-  { key: 'zenn:trending', template: 'https://zenn.dev/feed' },
+  { key: 'zenn:topic', main: 'https://zenn.dev/topics/{topic}/feed' },
+  { key: 'zenn:publication', main: 'https://zenn.dev/p/{publication}/feed' },
+  { key: 'zenn:posts', main: 'https://zenn.dev/{username}/feed' },
+  { key: 'zenn:all-posts', main: 'https://zenn.dev/{username}/feed?all=1' },
+  { key: 'zenn:trending', main: 'https://zenn.dev/feed' },
 ])
 
 export const parseZennUrl = (url: string): ZennUrl | undefined => {

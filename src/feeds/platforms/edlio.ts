@@ -17,14 +17,11 @@ const classFeedHrefRegex = /^\/apps\/classes\/assignment_rss\.jsp\?classREC_ID=(
 // only on an edlio.com school.
 const feeds = definePlatformFeeds(
   [
-    { key: 'edlio:news', template: '{scheme}://{host}/apps/news/rss' },
-    {
-      key: 'edlio:news-category',
-      template: '{scheme}://{host}/apps/news/rss?categoryid={categoryId}',
-    },
+    { key: 'edlio:news', main: '{scheme}://{host}/apps/news/rss' },
+    { key: 'edlio:news-category', main: '{scheme}://{host}/apps/news/rss?categoryid={categoryId}' },
     {
       key: 'edlio:assignments',
-      template: '{scheme}://{host}/apps/classes/assignment_rss.jsp?classREC_ID={classId}',
+      main: '{scheme}://{host}/apps/classes/assignment_rss.jsp?classREC_ID={classId}',
     },
   ],
   { domains },
