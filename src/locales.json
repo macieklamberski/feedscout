@@ -6,7 +6,8 @@
     "headersMethodRequiresHeaders": "Headers method requires headers to be provided in input",
     "guessMethodRequiresUrl": "Guess method requires url to be provided in input",
     "unexpectedStreamBody": "Unexpected stream body from {{url}}",
-    "unexpectedStatus": "Unexpected status {{status}} from {{url}}"
+    "unexpectedStatus": "Unexpected status {{status}} from {{url}}",
+    "missingCanonicalFeedTemplate": "No canonical template above the {{key}} alias"
   },
   "hints": {
     "youtube:all": "All uploads",

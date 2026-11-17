@@ -1,4 +1,6 @@
 import { definePlatformFeeds as defineFeeds } from 'feedintel'
+import { t } from 'trousse'
+import locales from '../../../locales.json' with { type: 'json' }
 import type { DiscoverUriEntry, DiscoverUriHint, UriEntry } from '../../types.js'
 import { composeHint } from '../../utils.js'
 
@@ -18,7 +20,7 @@ export type PlatformFeedTemplate<Key extends string = string> = {
   isAlias?: boolean
   // How the row's query values are written: `minimal`, the default, escapes only what would change
   // the URL's structure, and `form` encodes as `URLSearchParams` does, `:` as `%3A` and a space as
-  // `+`.
+  // `+`. An alias row is written as its canonical row is.
   queryEncoding?: 'minimal' | 'form'
 }
 
@@ -94,6 +96,14 @@ type UnlabelledFeedTable<Key extends string> = {
     | undefined
 }
 
+type UnlabelledFeed<Key extends string> = {
+  key: Key
+  main: string
+  aliases: Array<string>
+  format?: DiscoverUriHint['format']
+  queryEncoding?: 'minimal' | 'form'
+}
+
 // A feedintel hint carries no label, since the labels are this package's.
 export const withHintLabel = (hint: UnlabelledHint | undefined): DiscoverUriHint | undefined => {
   if (!hint) {
@@ -150,5 +160,23 @@ export const definePlatformFeeds = <const Key extends string>(
   templates: Array<PlatformFeedTemplate<Key>>,
   { domains, ...options }: PlatformFeedTableOptions = {},
 ): PlatformFeedTable<Key> => {
-  return withHintLabels(defineFeeds(templates, { ...options, tenantDomains: domains }))
+  // feedintel writes a feed as one row with its aliases.
+  const feeds: Array<UnlabelledFeed<Key>> = []
+
+  for (const { key, template, format, isAlias, queryEncoding } of templates) {
+    if (!isAlias) {
+      feeds.push({ key, main: template, aliases: [], format, queryEncoding })
+      continue
+    }
+
+    const feed = feeds.findLast((candidate) => candidate.key === key && candidate.format === format)
+
+    if (!feed) {
+      throw new Error(t(locales.errors.missingCanonicalFeedTemplate, { key }))
+    }
+
+    feed.aliases.push(template)
+  }
+
+  return withHintLabels(defineFeeds(feeds, { ...options, tenantDomains: domains }))
 }
