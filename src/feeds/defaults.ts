@@ -48,7 +48,6 @@ import { cnblogsHandler } from './platforms/cnblogs.js'
 import { cocologHandler } from './platforms/cocolog.js'
 import { colorMeShopHandler } from './platforms/colorMeShop.js'
 import { comicfuryHandler } from './platforms/comicfury.js'
-import { confluenceHandler } from './platforms/confluence.js'
 import { cppblogHandler } from './platforms/cppblog.js'
 import { cratesIoHandler } from './platforms/cratesIo.js'
 import { csdnHandler } from './platforms/csdn.js'
@@ -438,7 +437,6 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     cocologHandler,
     colorMeShopHandler,
     comicfuryHandler,
-    confluenceHandler,
     cppblogHandler,
     cratesIoHandler,
     csdnHandler,
