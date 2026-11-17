@@ -93,16 +93,6 @@ const getJournalEntries = (
   ]
 }
 
-// Dreamwidth and InsaneJournal run the LiveJournal engine, so a journal on any of them serves
-// the same feeds, plus a tag's feeds on a tag page.
-export const getJournalFeeds = (
-  base: string,
-  tag: string | undefined,
-  platform: string,
-): Array<DiscoverUriEntry | undefined> => {
-  return getJournalEntries(definePlatformFeeds(platform, journalFeeds), base, tag)
-}
-
 // Journal names on the LiveJournal engine carry no dots, so a dotted segment such as robots.txt is
 // a file of the site.
 export const getJournalName = (pathname: string, regex: RegExp): string | undefined => {
