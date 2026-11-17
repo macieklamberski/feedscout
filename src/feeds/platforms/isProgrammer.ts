@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers blog (guess, html), partly covers post.
+// Generic finds: comments, messages, posts, site.
+// Handler needed for: post-comments.
 
 export type IsProgrammerUrl =
   | { kind: 'blog'; blog: string }

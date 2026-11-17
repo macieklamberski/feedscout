@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers profile, shelf.
+// Generic finds: activity, shelf.
+// Handler needed for: comments, quotes, reviews.
 
 export type BookwyrmUrl =
   | { kind: 'profile'; username: string }

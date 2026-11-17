@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers customDomainSite, site, skSite.
+// Generic finds: posts.
+// Handler needed for: comments, photos.
 
 export type EstrankyUrl = { kind: 'site' }
 

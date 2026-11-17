@@ -3,7 +3,9 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic finds: articles, company, hub, news, user.
+// Handler needed for: hub-posts.
 
 export type HabrUrl =
   | { kind: 'hub'; language: string; hub: string }

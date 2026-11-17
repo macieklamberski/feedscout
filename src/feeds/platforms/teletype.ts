@@ -3,8 +3,7 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers blog (html).
-// Handler needed for: post.
+// Handler needed for: posts.
 
 export type TeletypeUrl = { kind: 'blog'; username: string }
 

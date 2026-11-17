@@ -3,8 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic covers group, league (html), partly covers association.
+// Discoverability: Not discoverable without handler.
+// Handler needed for: dates, documents, news, tournaments.
 
 export type TischtennisliveUrl = { kind: 'association' }
 

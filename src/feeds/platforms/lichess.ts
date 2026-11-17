@@ -2,9 +2,7 @@ import { getPathSegments, isAnyOf, isHostOf, isLocale } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic covers community, home, languageCommunity, officialBlog, userBlog (html).
-// Handler needed for: blogPost, officialLegacyPost.
+// Discoverability: Discoverable without handler.
 
 export type LichessUrl =
   | { kind: 'blog'; username: string }

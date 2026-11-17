@@ -5,7 +5,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { type Element, findElement, getTenantSubdomain, isRootOfPage } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: events, news-releases, sec-filings.
 
 export type GcsWebUrl = { kind: 'site' }
 

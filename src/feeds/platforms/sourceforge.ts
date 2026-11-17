@@ -3,7 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers activity, files, project.
+// Generic finds: bugs.
+// Handler needed for: activity, discussion, files, news, project-feed.
 
 // A discussion page names its forum and thread, a tool page its tool and page, and a files page its
 // folder.

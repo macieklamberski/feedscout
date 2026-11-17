@@ -4,8 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers church.
-// Handler needed for: channel.
+// Generic finds: church.
+// Handler needed for: channel, channel-audio-pdf, channel-media, channel-video.
 
 export type SermonNetUrl = { kind: 'church' } | { kind: 'channel'; channel: string }
 export type SermonNetPage =

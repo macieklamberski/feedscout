@@ -4,8 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers listing (guess, html).
-// Handler needed for: home.
+// Handler needed for: page.
 
 export type GravUrl = { kind: 'home' } | { kind: 'page'; path: string }
 

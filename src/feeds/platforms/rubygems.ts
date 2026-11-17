@@ -3,8 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers gem, version (html).
-// Handler needed for: home.
+// Generic finds: versions.
+// Handler needed for: latest-gems.
 
 export type RubygemsUrl = { kind: 'gem'; gem: string } | { kind: 'home' }
 

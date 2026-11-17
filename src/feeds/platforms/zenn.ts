@@ -2,7 +2,9 @@ import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic finds: posts, publication, topic, trending.
+// Handler needed for: all-posts.
 
 export type ZennUrl =
   | { kind: 'user'; username: string }

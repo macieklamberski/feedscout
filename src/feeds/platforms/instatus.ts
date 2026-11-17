@@ -3,7 +3,9 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic finds: history.
+// Handler adds formats for: history (rss).
 
 export type InstatusUrl = { kind: 'status' }
 

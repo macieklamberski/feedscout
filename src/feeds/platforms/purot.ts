@@ -3,7 +3,9 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getTenantSubdomain } from '../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic finds: page-activity, page-changes, page-discussions, recent-changes.
+// Handler needed for: recent-discussions, recent-page-changes.
 
 export type PurotUrl = { kind: 'wiki'; wiki: string }
 

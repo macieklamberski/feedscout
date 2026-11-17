@@ -4,7 +4,7 @@ import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: collection, notebooks, recent, trending.
 
 export type ObservableUrl =
   | { kind: 'user'; owner: string }

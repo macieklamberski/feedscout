@@ -11,8 +11,8 @@ import {
 } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers category, home, top, topic (html).
-// Handler needed for: user.
+// Generic finds: category, top, topic.
+// Handler needed for: activity, latest, posts.
 
 export type DiscourseUrl =
   | { kind: 'topic'; slug: string; topicId: string }

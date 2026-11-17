@@ -2,7 +2,9 @@ import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic finds: channel, profile.
+// Handler needed for: editorial.
 
 export type ArenaUrl =
   | { kind: 'profile'; username: string }

@@ -5,7 +5,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: album.
 
 export type XimalayaUrl = { kind: 'album'; albumId: string }
 

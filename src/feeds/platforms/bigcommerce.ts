@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers category, home, search.
+// Generic finds: blog, category-new-products, category-popular-products, new-products, popular-products, search.
+// Handler needed for: featured-products.
 
 const categoryFeedRegex = /^[^?#]*\/rss\.php\?(?:[^#]*&)?categoryid=(?<categoryId>[1-9]\d*)/i
 

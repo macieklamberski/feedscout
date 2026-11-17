@@ -9,8 +9,7 @@ import {
   hasMarker,
 } from '../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic covers board, forum (html), partly covers thread.
+// Discoverability: Discoverable without handler.
 
 export type MybbPage = { boardUrl: string; forumId?: string }
 

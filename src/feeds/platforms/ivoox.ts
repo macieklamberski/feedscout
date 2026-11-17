@@ -4,7 +4,7 @@ import { withHintLabel, withHintLabels } from '../../common/uris/platform/feeds.
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: podcast.
 
 export type IvooxUrl = { kind: 'podcast'; podcastId: string } | { kind: 'episode' }
 export type IvooxPage = { kind: 'podcast' | 'episode'; podcastId: string }

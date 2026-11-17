@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers favorite (html), partly covers blog, category.
+// Generic finds: category, favorites, posts.
+// Handler needed for: comments.
 
 export type CppblogUrl =
   | { kind: 'blog'; username: string }

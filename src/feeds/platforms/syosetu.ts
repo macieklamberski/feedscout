@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, formatSuffixRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers author.
+// Generic finds: activity.
+// Handler needed for: all-novels, author.
 
 export type SyosetuUrl = { kind: 'writer'; writerId: string }
 

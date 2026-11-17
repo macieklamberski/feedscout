@@ -2,7 +2,9 @@ import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
-// Discoverability: Unmeasured, bot wall.
+// Discoverability: Partially discoverable without handler.
+// Generic finds: projects.
+// Handler needed for: portfolio.
 
 export type BehanceUrl = { kind: 'profile'; username: string } | { kind: 'home' }
 

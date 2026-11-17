@@ -2,7 +2,7 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Unmeasured, bot wall.
 
 export type BlogiaUrl = { kind: 'blog'; blog: string }
 

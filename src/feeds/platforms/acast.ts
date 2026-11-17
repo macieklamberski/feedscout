@@ -3,8 +3,7 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers player, show (html).
-// Handler needed for: embed, legacy-player.
+// Handler needed for: podcast.
 
 export type AcastUrl = { kind: 'show'; slug: string }
 

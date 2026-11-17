@@ -3,8 +3,7 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers list (html).
-// Handler needed for: message.
+// Handler needed for: list.
 
 export type MailArchiveUrl = { kind: 'list'; list: string }
 

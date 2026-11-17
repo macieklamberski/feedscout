@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers blog (html), partly covers category.
+// Generic finds: posts.
+// Handler needed for: category.
 
 export type AladinUrl =
   | { kind: 'blog'; username: string }

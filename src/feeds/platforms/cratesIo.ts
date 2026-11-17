@@ -4,7 +4,7 @@ import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: new-crates, releases, updates.
 
 export type CratesIoUrl = { kind: 'crate'; crate: string } | { kind: 'home' }
 

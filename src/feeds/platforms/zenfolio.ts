@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog, site.
+// Handler needed for: blog, featured, recent.
 
 export type ZenfolioUrl = { kind: 'site' }
 

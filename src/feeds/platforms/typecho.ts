@@ -11,7 +11,8 @@ import {
 } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers category, home, post.
+// Generic finds: page, posts.
+// Handler needed for: comments.
 
 export type TypechoPage =
   | { kind: 'home'; siteUrl: string }

@@ -4,8 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { alphanumericOrHyphenRegex, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers comic, reader (guess, html).
-// Handler needed for: profile.
+// Generic finds: reader.
+// Handler needed for: comic.
 
 export type ComicfuryUrl = { kind: 'comic' | 'profile' | 'reader'; comic: string }
 

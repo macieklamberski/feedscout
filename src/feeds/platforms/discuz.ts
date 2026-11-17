@@ -11,8 +11,7 @@ import {
 } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers home (html), partly covers board.
-// Handler needed for: archiverBoard.
+// Handler needed for: board, site.
 
 export type DiscuzUrl = { kind: 'board'; boardId: string } | { kind: 'site' }
 

@@ -4,8 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers topic.
-// Handler needed for: home.
+// Generic finds: topic.
+// Handler needed for: activity, blog, blog-featured, events, forum, forum-featured, groups, groups-featured, members, members-featured, photos, photos-featured, videos, videos-featured.
 
 export type NingUrl =
   | { kind: 'topic'; topic: string; group?: string }

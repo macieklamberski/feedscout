@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers profile, related (guess, html), partly covers huffduff.
+// Generic finds: huffduffs.
+// Handler needed for: new, popular, related.
 
 export type HuffdufferUrl =
   | { kind: 'profile'; username: string }

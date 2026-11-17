@@ -5,7 +5,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: channel, playlist, search, trending, videos.
 
 export type DailymotionUrl =
   | { kind: 'user'; username: string }

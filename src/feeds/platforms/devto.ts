@@ -3,8 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers home, profile (guess, html), partly covers latest.
-// Handler needed for: article, tag.
+// Generic finds: community.
+// Handler needed for: latest, posts, tag.
 
 export type DevtoUrl =
   | { kind: 'profile'; owner: string }

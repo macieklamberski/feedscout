@@ -5,7 +5,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers author, blog, category, edublogsBlog, hypothesesBlog, nestedCategory, post, tag, unblogBlog.
+// Generic finds: author, category, comments, post-comments, posts, tag.
+// Handler adds formats for: author (rdf), category (atom, rdf), comments (atom), post-comments (atom), posts (atom, rdf), tag (atom, rdf).
 
 export type WordpressUrl =
   | { kind: 'archive'; path: string; hintKey: string }

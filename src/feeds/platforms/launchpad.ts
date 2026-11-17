@@ -4,8 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers branch, bug, bugsPerson, bugsProject, codeProject, home, person, project, sourcePackage (html).
-// Handler needed for: bugsHome, codePerson.
+// Generic finds: branch, bug, package-bugs, person-bugs, project-announcements, project-branches, project-bugs, project-revisions.
+// Handler needed for: announcements, bugs, person-branches, person-revisions.
 
 // Launchpad serves its main site, Bugs and Code on separate hosts, and each answers with its
 // own feeds for the same person or project.

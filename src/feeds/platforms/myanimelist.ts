@@ -3,8 +3,7 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers featured, news (html), partly covers profile.
-// Handler needed for: animelist, history, mangalist.
+// Handler needed for: anime, blog, featured, manga, news, recently-read, recently-watched.
 
 export type MyanimelistUrl =
   | { kind: 'profile'; username: string }

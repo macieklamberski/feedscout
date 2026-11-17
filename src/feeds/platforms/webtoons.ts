@@ -4,8 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers canvas, series (html).
-// Handler needed for: episode.
+// Handler needed for: series.
 
 export type WebtoonsUrl = {
   kind: 'series'

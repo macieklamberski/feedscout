@@ -15,7 +15,8 @@ import {
 } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers activity, board, home, issue, issues, news, projectActivity, projectIssues, projectNews, projects, repository (html), partly covers project.
+// Generic finds: board, issue, project-activity, revisions.
+// Handler needed for: activity, issues, news, project-issues, project-news, projects.
 
 export type RedminePage = (
   | { kind: 'home'; root: string }

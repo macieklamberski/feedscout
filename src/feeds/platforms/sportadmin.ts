@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers club (guess), partly covers team, teamNewTemplate.
+// Generic finds: news.
+// Handler needed for: team.
 
 export type SportadminPage = { kind: 'club' } | { kind: 'team'; sectionId: string }
 

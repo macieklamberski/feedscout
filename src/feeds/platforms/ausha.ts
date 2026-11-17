@@ -3,8 +3,7 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers smartlink, smartlinkEpisode (html).
-// Handler needed for: episode, show.
+// Handler needed for: podcast.
 
 export type AushaUrl = { kind: 'show' }
 export type AushaPage = { kind: 'show'; feedId: string }

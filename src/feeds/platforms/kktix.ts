@@ -3,8 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers organizer (html).
-// Handler needed for: event.
+// Handler needed for: events.
 
 export type KktixUrl = { kind: 'organizer'; organizer: string }
 

@@ -4,8 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain, wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers blog (guess, html).
-// Handler needed for: profile.
+// Handler needed for: newsletter.
 
 export type SubstackUrl = { kind: 'newsletter' } | { kind: 'profile'; username: string }
 export type SubstackPage = { kind: 'newsletter' | 'profile'; origin: string }

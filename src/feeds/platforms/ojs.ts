@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers home, issue (html), partly covers article.
+// Generic finds: articles.
+// Handler needed for: announcements.
 
 export type OjsPage = { kind: 'journal'; journalUrl: string }
 

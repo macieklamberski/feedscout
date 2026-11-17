@@ -3,8 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers officialColumns, organization, profile, tag (guess, html).
-// Handler needed for: popular.
+// Generic finds: organization, posts, tag.
+// Handler needed for: popular, zine.
 
 export type QiitaUrl =
   | { kind: 'tag'; tag: string }

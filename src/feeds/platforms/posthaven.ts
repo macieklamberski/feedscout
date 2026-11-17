@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers blog (html), partly covers tag.
+// Generic finds: posts.
+// Handler needed for: tag.
 
 export type PosthavenUrl = { kind: 'tag'; tag: string } | { kind: 'blog' }
 

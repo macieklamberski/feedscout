@@ -5,7 +5,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: tracks.
 
 export type SoundcloudUrl = { kind: 'user'; username: string }
 export type SoundcloudPage =

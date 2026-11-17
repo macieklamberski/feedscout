@@ -4,7 +4,7 @@ import { withHintLabel, withHintLabels } from '../../common/uris/platform/feeds.
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: daily-deals, group, group-news, new-releases, news, news-collection, weekly-top-sellers.
 
 export type SteamUrl =
   | { kind: 'app'; appId: string }

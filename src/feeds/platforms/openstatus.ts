@@ -5,7 +5,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMetaContent, isRootOfPage } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: updates.
 
 const previewImageUrl = 'https://www.openstatus.dev/api/og/page'
 

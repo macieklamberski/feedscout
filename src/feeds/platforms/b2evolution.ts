@@ -9,7 +9,8 @@ import {
 } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog, post.
+// Generic finds: post-comments, posts.
+// Handler needed for: comments.
 
 const assetRegex = /\/rsc\/(?:build|css|js)\//i
 const sessionCookieRegex = /^session_b2evo(?:__.+)?$/

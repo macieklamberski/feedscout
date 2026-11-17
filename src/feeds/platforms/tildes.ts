@@ -2,7 +2,9 @@ import { getQueryParam, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic finds: group, tag.
+// Handler needed for: topics.
 
 export type TildesUrl =
   | { kind: 'group'; group: string; tag?: string }

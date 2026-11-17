@@ -4,8 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers blog (html).
-// Handler needed for: home.
+// Handler needed for: blog.
 
 export type OpencartJournalPage = {
   kind: 'store'

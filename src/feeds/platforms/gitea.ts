@@ -3,7 +3,8 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers user (guess, html), partly covers branch, commits, file, fileCommits, issues, repo.
+// Generic finds: activity.
+// Handler needed for: branch-commits, file-history, releases, tags.
 
 export type GiteaUrl =
   | { kind: 'user'; owner: string }

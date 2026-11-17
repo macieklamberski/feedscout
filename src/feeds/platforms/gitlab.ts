@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers group (guess, html), partly covers commits, project, tree.
+// Generic finds: branch-commits.
+// Handler needed for: activity, issues, merge-requests, releases, tags.
 
 export type GitlabUrl =
   | { kind: 'namespace'; namespace: string }

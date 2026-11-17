@@ -3,8 +3,7 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers page (html).
-// Handler needed for: user.
+// Handler needed for: curator, hot, news, recent.
 
 export type TogetterUrl = { kind: 'user'; username: string } | { kind: 'recent' } | { kind: 'home' }
 

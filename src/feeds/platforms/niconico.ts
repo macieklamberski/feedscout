@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers article, blomaga, channel, live, video.
+// Handler needed for: blog, live, videos.
 
 export type NiconicoUrl =
   | { kind: 'channel'; channel: string }

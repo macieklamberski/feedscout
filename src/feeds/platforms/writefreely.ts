@@ -10,7 +10,8 @@ import {
 } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers singleUserArchive, singleUserLanguage, singleUserPage, singleUserPost, tag (guess, html), partly covers blog, blogTag, post.
+// Generic finds: blog, tag.
+// Handler needed for: reader.
 
 export type WritefreelyPage = { blogPath: string; tag?: string }
 

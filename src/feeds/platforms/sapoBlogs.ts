@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog, post, tag, tagQuery.
+// Generic finds: posts.
+// Handler needed for: comments, post-comments, tag.
 
 export type SapoBlogsUrl =
   | { kind: 'blog'; blog: string }

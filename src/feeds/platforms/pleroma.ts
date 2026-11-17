@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getScriptText, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers profile.
+// Generic finds: posts.
+// Handler adds formats for: posts (rss).
 
 export type PleromaUrl = { kind: 'profile'; username: string }
 

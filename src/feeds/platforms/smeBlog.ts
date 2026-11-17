@@ -2,7 +2,7 @@ import { getPathSegments, isHostOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
-// Discoverability: Unmeasured, bot wall.
+// Discoverability: Discoverable without handler.
 
 export type SmeBlogUrl = { kind: 'blog'; username: string } | { kind: 'home' }
 

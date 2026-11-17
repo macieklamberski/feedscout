@@ -4,8 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { alphanumericOrHyphenRegex, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers podcast, program (html).
-// Handler needed for: programId.
+// Handler needed for: program.
 
 export type SverigesRadioUrl =
   | { kind: 'legacyProgram'; programId: string }

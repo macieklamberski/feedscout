@@ -5,7 +5,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Handler needed for: library, news-alerts, posts.
 
 export type BubblelifeUrl =
   | { kind: 'community'; community: string }

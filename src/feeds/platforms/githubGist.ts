@@ -3,7 +3,7 @@ import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers gist, publicGists, starred, user (guess, html).
+// Generic finds: gists, starred.
 // Handler needed for: discover, forks.
 
 export type GithubGistUrl =

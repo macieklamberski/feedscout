@@ -4,8 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers store (html).
-// Handler needed for: customDomainStore.
+// Handler needed for: products.
 
 export type BigCartelUrl = { kind: 'store' }
 

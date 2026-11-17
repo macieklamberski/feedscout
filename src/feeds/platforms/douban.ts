@@ -4,8 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers subject (html), partly covers people.
-// Handler needed for: book, home, movie, music.
+// Generic finds: interests, subject-reviews.
+// Handler needed for: book-reviews, drama-reviews, movie-reviews, music-reviews, new-movie-reviews, notes, popular-reviews, reviews.
 
 export type DoubanUrl =
   | { kind: 'user'; username: string }

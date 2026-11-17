@@ -8,7 +8,9 @@ import {
   hasMarker,
 } from '../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic finds: forum, forum-section, publ.
+// Handler needed for: news.
 
 type UcozModule = (typeof modules)[number]
 
