@@ -121,10 +121,10 @@ describe('squarespaceHandler', () => {
 
     it('should return the collection feed', () => {
       const value = 'https://example.com/blog'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/blog?format=rss',
-          hint: { key: 'squarespace:collection', label: 'Collection' },
+          hint: { key: 'squarespace:collection', label: 'Collection', format: 'rss' },
         },
       ]
 
@@ -133,10 +133,10 @@ describe('squarespaceHandler', () => {
 
     it('should use the first path segment of a deeper page', () => {
       const value = 'https://example.com/news/a-post'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/news?format=rss',
-          hint: { key: 'squarespace:collection', label: 'Collection' },
+          hint: { key: 'squarespace:collection', label: 'Collection', format: 'rss' },
         },
       ]
 
@@ -152,7 +152,7 @@ describe('squarespaceHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://alice.squarespace.com/blog?format=rss',
-          hint: { key: 'squarespace:collection', label: 'Collection' },
+          hint: { key: 'squarespace:collection', label: 'Collection', format: 'rss' },
         },
       ]
 
@@ -164,7 +164,7 @@ describe('squarespaceHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'http://alice.squarespace.com/blog?format=rss',
-          hint: { key: 'squarespace:collection', label: 'Collection' },
+          hint: { key: 'squarespace:collection', label: 'Collection', format: 'rss' },
         },
       ]
 
@@ -175,11 +175,11 @@ describe('squarespaceHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/blog?category=News&format=rss',
-          hint: { key: 'squarespace:category', label: 'Category' },
+          hint: { key: 'squarespace:category', label: 'Category', format: 'rss' },
         },
         {
           uri: 'https://example.com/blog?format=rss',
-          hint: { key: 'squarespace:collection', label: 'Collection' },
+          hint: { key: 'squarespace:collection', label: 'Collection', format: 'rss' },
         },
       ]
 
@@ -191,11 +191,11 @@ describe('squarespaceHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://alice.squarespace.com/blog?category=Example%20Talks&format=rss',
-          hint: { key: 'squarespace:category', label: 'Category' },
+          hint: { key: 'squarespace:category', label: 'Category', format: 'rss' },
         },
         {
           uri: 'https://alice.squarespace.com/blog?format=rss',
-          hint: { key: 'squarespace:collection', label: 'Collection' },
+          hint: { key: 'squarespace:collection', label: 'Collection', format: 'rss' },
         },
       ]
 
@@ -211,7 +211,7 @@ describe('squarespaceHandler', () => {
         },
         {
           uri: 'https://alice.squarespace.com/blog?format=rss',
-          hint: { key: 'squarespace:collection', label: 'Collection' },
+          hint: { key: 'squarespace:collection', label: 'Collection', format: 'rss' },
         },
       ]
 
@@ -220,8 +220,16 @@ describe('squarespaceHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const collection: DiscoverUriHint = { key: 'squarespace:collection', label: 'Collection' }
-    const category: DiscoverUriHint = { key: 'squarespace:category', label: 'Category' }
+    const collection: DiscoverUriHint = {
+      key: 'squarespace:collection',
+      label: 'Collection',
+      format: 'rss',
+    }
+    const category: DiscoverUriHint = {
+      key: 'squarespace:category',
+      label: 'Category',
+      format: 'rss',
+    }
     const tag: DiscoverUriHint = { key: 'squarespace:tag', label: 'Tag' }
     const comments: DiscoverUriHint = { key: 'squarespace:comments', label: 'Comments' }
     const atom: DiscoverUriHint = { ...collection, format: 'atom' }
@@ -272,35 +280,55 @@ describe('squarespaceHandler', () => {
 
     it('should return the collection hint for a collection feed on squarespace.com', () => {
       const value = 'https://alice.squarespace.com/blog?format=rss'
-      const expected: DiscoverUriHint = { key: 'squarespace:collection', label: 'Collection' }
+      const expected: DiscoverUriHint = {
+        key: 'squarespace:collection',
+        label: 'Collection',
+        format: 'rss',
+      }
 
       expect(squarespaceHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the collection hint for an http collection feed', () => {
       const value = 'http://alice.squarespace.com/podcast?format=rss'
-      const expected: DiscoverUriHint = { key: 'squarespace:collection', label: 'Collection' }
+      const expected: DiscoverUriHint = {
+        key: 'squarespace:collection',
+        label: 'Collection',
+        format: 'rss',
+      }
 
       expect(squarespaceHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the collection hint for a feed with a trailing slash', () => {
       const value = 'https://alice.squarespace.com/blog/?format=rss'
-      const expected: DiscoverUriHint = { key: 'squarespace:collection', label: 'Collection' }
+      const expected: DiscoverUriHint = {
+        key: 'squarespace:collection',
+        label: 'Collection',
+        format: 'rss',
+      }
 
       expect(squarespaceHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the category hint for a category feed', () => {
       const value = 'https://alice.squarespace.com/blog?category=News&format=rss'
-      const expected: DiscoverUriHint = { key: 'squarespace:category', label: 'Category' }
+      const expected: DiscoverUriHint = {
+        key: 'squarespace:category',
+        label: 'Category',
+        format: 'rss',
+      }
 
       expect(squarespaceHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the category hint for a category feed with a plus in the name', () => {
       const value = 'https://alice.squarespace.com/resources?category=Bible+Talks&format=rss'
-      const expected: DiscoverUriHint = { key: 'squarespace:category', label: 'Category' }
+      const expected: DiscoverUriHint = {
+        key: 'squarespace:category',
+        label: 'Category',
+        format: 'rss',
+      }
 
       expect(squarespaceHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -350,8 +378,16 @@ describe('squarespaceHandler', () => {
   })
 
   describe('own feeds through the Platform method', () => {
-    const collection: DiscoverUriHint = { key: 'squarespace:collection', label: 'Collection' }
-    const category: DiscoverUriHint = { key: 'squarespace:category', label: 'Category' }
+    const collection: DiscoverUriHint = {
+      key: 'squarespace:collection',
+      label: 'Collection',
+      format: 'rss',
+    }
+    const category: DiscoverUriHint = {
+      key: 'squarespace:category',
+      label: 'Category',
+      format: 'rss',
+    }
     const tag: DiscoverUriHint = { key: 'squarespace:tag', label: 'Tag' }
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://alice.squarespace.com/blog?format=rss', collection],
