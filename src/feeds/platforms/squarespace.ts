@@ -27,6 +27,7 @@ const feeds = definePlatformFeeds(
     {
       key: 'squarespace:collection',
       main: '{scheme}://{host}/{collection}?format=rss',
+      format: 'rss',
       aliases: [
         // One fixed value every site answers with the same feed as `format=rss`. Any other value
         // after `sqsp_rss_` answers the page.
@@ -38,9 +39,14 @@ const feeds = definePlatformFeeds(
     {
       key: 'squarespace:collection',
       main: '{scheme}://{host}/?format=rss',
+      format: 'rss',
       aliases: ['{scheme}://{host}/?format=sqsp_rss_wceoq1kgqnmf2cn9czutlluofr44tazt'],
     },
-    { key: 'squarespace:collection', main: '{scheme}://{host}/{parent}/{collection}?format=rss' },
+    {
+      key: 'squarespace:collection',
+      main: '{scheme}://{host}/{parent}/{collection}?format=rss',
+      format: 'rss',
+    },
     {
       key: 'squarespace:collection',
       main: '{scheme}://{host}/{collection}/atom.xml',
@@ -56,12 +62,18 @@ const feeds = definePlatformFeeds(
     {
       key: 'squarespace:category',
       main: '{scheme}://{host}/{collection}?category={category}&format=rss',
+      format: 'rss',
       aliases: ['{scheme}://{host}/{collection}/category/{category}?format=rss'],
     },
-    { key: 'squarespace:category', main: '{scheme}://{host}/?category={category}&format=rss' },
+    {
+      key: 'squarespace:category',
+      main: '{scheme}://{host}/?category={category}&format=rss',
+      format: 'rss',
+    },
     {
       key: 'squarespace:category',
       main: '{scheme}://{host}/{collection}/rss.xml?categoryId={categoryId}',
+      format: 'rss',
       aliases: [
         '{scheme}://{host}/{collection}/rss.xml;jsessionid={session}?categoryId={categoryId}',
       ],
@@ -154,8 +166,8 @@ export const squarespaceHandler: PlatformHandler = {
       const params = { collection: parsed.collection, category: parsed.category }
 
       return [
-        page.getFeedEntry('squarespace:category', params),
-        page.getFeedEntry('squarespace:collection', { collection: parsed.collection }),
+        page.getFeedEntry('squarespace:category', params, 'rss'),
+        page.getFeedEntry('squarespace:collection', { collection: parsed.collection }, 'rss'),
       ]
     }
 
@@ -164,11 +176,11 @@ export const squarespaceHandler: PlatformHandler = {
 
       return [
         page.getFeedEntry('squarespace:tag', params),
-        page.getFeedEntry('squarespace:collection', { collection: parsed.collection }),
+        page.getFeedEntry('squarespace:collection', { collection: parsed.collection }, 'rss'),
       ]
     }
 
-    return [page.getFeedEntry('squarespace:collection', { collection: parsed.collection })]
+    return [page.getFeedEntry('squarespace:collection', { collection: parsed.collection }, 'rss')]
   },
 
   getFeedHint: feeds.getFeedHint,
