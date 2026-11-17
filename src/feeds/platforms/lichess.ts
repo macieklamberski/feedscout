@@ -1,4 +1,4 @@
-import { getPathSegments, getQueryParam, isAnyOf, isHostOf, isLocale, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, isLocale } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -16,15 +16,18 @@ const hosts = ['lichess.org']
 const userBlogRegex = /^\/@\/([\w-]+)\/blog(?:\/|$)/i
 const communityRegex = /^(?:\/([^/]+))?\/blog\/community\/?$/i
 
-const feeds = definePlatformFeeds([
-  {
-    key: 'lichess:blog',
-    main: 'https://lichess.org/@/{username}/blog.atom',
-    aliases: ['https://lichess.org/blog.atom'],
-  },
-  { key: 'lichess:community', main: 'https://lichess.org/blog/community.atom?lang={language}' },
-  { key: 'lichess:community', main: 'https://lichess.org/blog/community.atom' },
-])
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'lichess:blog',
+      main: 'https://lichess.org/@/{username}/blog.atom',
+      aliases: ['https://lichess.org/blog.atom'],
+    },
+    { key: 'lichess:community', main: 'https://lichess.org/blog/community.atom?lang={language}' },
+    { key: 'lichess:community', main: 'https://lichess.org/blog/community.atom' },
+  ],
+  { checks: { language: isLocale } },
+)
 
 export const parseLichessUrl = (url: string): LichessUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -82,13 +85,5 @@ export const lichessHandler: PlatformHandler = {
     return [feeds.getFeedEntry('lichess:blog', { username: 'Lichess' })]
   },
 
-  getFeedHint: (url) => {
-    const language = getQueryParam(parseUrl(url), 'lang')
-
-    if (language && !isLocale(language)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

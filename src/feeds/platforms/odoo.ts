@@ -1,4 +1,4 @@
-import { getPathSegments, isLocale, parseUrl } from 'trousse'
+import { isLocale, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getCookieNames, hasMarker } from '../../common/utils.js'
@@ -19,7 +19,7 @@ const feeds = definePlatformFeeds(
     { key: 'odoo:blog', main: '{scheme}://{host}/blog/{blog}/feed', format: 'atom' },
     { key: 'odoo:blog', main: '{scheme}://{host}/{language}/blog/{blog}/feed', format: 'atom' },
   ],
-  { domains },
+  { domains, checks: { language: (value) => isLocale(value, { underscore: true }) } },
 )
 
 // Odoo 11 and later set both cookies on a first visit to any website page.
@@ -65,14 +65,5 @@ export const odooHandler: PlatformHandler = {
     return [page.getFeedEntry('odoo:blog', { blog: odooUrl.blog }, 'atom')]
   },
 
-  // A segment before the blog is a language only in its own form.
-  getFeedHint: (url) => {
-    const [language, , , feed] = getPathSegments(url)
-
-    if (feed && !isLocale(language, { underscore: true })) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

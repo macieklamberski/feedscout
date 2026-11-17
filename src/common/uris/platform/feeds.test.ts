@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { isLocale } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../types.js'
 import { definePlatformFeeds } from './feeds.js'
 
@@ -145,6 +146,25 @@ const formQueryFeeds = definePlatformFeeds(
     { key: 'example:search', main: '{root}/search?q={terms}&feed=atom' },
   ],
   { hosts: ['example.com'] },
+)
+
+const isShortLabel = (value: string): boolean => value.length === 2
+
+const checkedFeeds = definePlatformFeeds(
+  [
+    { key: 'example:blog', main: 'https://www.example.com/{locale}/blogs/{handle}.atom' },
+    { key: 'example:blog', main: 'https://www.example.com/blogs/{handle}.atom' },
+    { key: 'example:collection', main: 'https://www.example.com/collections/{handle}.atom' },
+    { key: 'example:community', main: 'https://www.example.com/community.atom?lang={locale}' },
+    { key: 'example:community', main: 'https://www.example.com/community.atom' },
+    { key: 'example:docs', main: 'https://www.example.com/{locale}/docs/{path*}.rss' },
+    { key: 'example:country', main: 'https://{country}.example.net/{username}.rss' },
+    { key: 'example:site', main: 'https://{host}/site.rss' },
+  ],
+  {
+    hosts: ['example.org', /^[a-z]{2}\.example\.org$/],
+    checks: { locale: isLocale, country: isShortLabel, host: (host) => host !== 'example.org' },
+  },
 )
 
 const directoryFeeds = definePlatformFeeds([
@@ -1930,6 +1950,146 @@ describe('definePlatformFeeds', () => {
         const pageFeeds = pathFeeds.forUrl(value)
 
         expect(pageFeeds?.getFeedUrl('example:site', params)).toBe(expected)
+      })
+    })
+  })
+
+  describe('with value checks', () => {
+    describe('getFeedUrl', () => {
+      it('should write a row whose value passes its check', () => {
+        const value = {
+          locale: 'fr',
+          handle: 'news',
+        }
+        const expected = 'https://www.example.com/fr/blogs/news.atom'
+
+        expect(checkedFeeds.getFeedUrl('example:blog', value)).toBe(expected)
+      })
+
+      it('should write the next row of the key for a value its check refuses', () => {
+        const value = {
+          locale: 'abcd',
+          handle: 'news',
+        }
+        const expected = 'https://www.example.com/blogs/news.atom'
+
+        expect(checkedFeeds.getFeedUrl('example:blog', value)).toBe(expected)
+      })
+
+      it('should write the next row of the key for a query value its check refuses', () => {
+        const value = { locale: 'abcd' }
+        const expected = 'https://www.example.com/community.atom'
+
+        expect(checkedFeeds.getFeedUrl('example:community', value)).toBe(expected)
+      })
+
+      it('should return undefined for a tenant label its check refuses', () => {
+        const value = {
+          country: 'usa',
+          username: 'alice',
+        }
+
+        expect(checkedFeeds.getFeedUrl('example:country', value)).toBeUndefined()
+      })
+
+      it('should check a multi-segment value under its bare name', () => {
+        const value = {
+          locale: 'abcd',
+          path: 'api/v2',
+        }
+
+        expect(checkedFeeds.getFeedUrl('example:docs', value)).toBeUndefined()
+      })
+    })
+
+    describe('getFeedSpellings', () => {
+      it('should skip a row whose value its check refuses', () => {
+        const value = {
+          locale: 'abcd',
+          handle: 'news',
+        }
+        const expected = 'https://www.example.com/blogs/news.atom'
+        const entry = checkedFeeds.getFeedSpellings('example:blog', value)
+
+        expect(entry?.uri).toBe(expected)
+      })
+    })
+
+    describe('getFeedHint', () => {
+      it('should return the key of a feed whose path value passes its check', () => {
+        const value = 'https://www.example.com/fr/blogs/news.atom'
+        const expected = 'example:blog'
+        const hint = checkedFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return undefined for a feed whose path value its check refuses', () => {
+        const value = 'https://www.example.com/abcd/blogs/news.atom'
+
+        expect(checkedFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return undefined for a route segment in the place of a checked value', () => {
+        const value = 'https://www.example.com/collections/blogs/news.atom'
+
+        expect(checkedFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return the key of a feed whose query value passes its check', () => {
+        const value = 'https://www.example.com/community.atom?lang=pt-BR'
+        const expected = 'example:community'
+        const hint = checkedFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return undefined for a query value its check refuses', () => {
+        const value = 'https://www.example.com/community.atom?lang=abcd'
+
+        expect(checkedFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return the key of a feed without the checked query', () => {
+        const value = 'https://www.example.com/community.atom'
+        const expected = 'example:community'
+        const hint = checkedFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return undefined for a multi-segment feed whose other value its check refuses', () => {
+        const value = 'https://www.example.com/abcd/docs/api/v2.rss'
+
+        expect(checkedFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return the key of a feed whose tenant label passes its check', () => {
+        const value = 'https://uk.example.net/alice.rss'
+        const expected = 'example:country'
+        const hint = checkedFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return undefined for a tenant label its check refuses', () => {
+        const value = 'https://usa.example.net/alice.rss'
+
+        expect(checkedFeeds.getFeedHint(value)).toBeUndefined()
+      })
+
+      it('should return the key of a feed whose host passes its check', () => {
+        const value = 'https://uk.example.org/site.rss'
+        const expected = 'example:site'
+        const hint = checkedFeeds.getFeedHint(value)
+
+        expect(hint?.key).toBe(expected)
+      })
+
+      it('should return undefined for a host its check refuses', () => {
+        const value = 'https://example.org/site.rss'
+
+        expect(checkedFeeds.getFeedHint(value)).toBeUndefined()
       })
     })
   })
