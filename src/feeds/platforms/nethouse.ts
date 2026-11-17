@@ -12,7 +12,7 @@ const feeds = definePlatformFeeds(
     { key: 'nethouse:news', main: '{scheme}://{host}/posts/rss' },
     { key: 'nethouse:articles', main: '{scheme}://{host}/articles/rss' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const isNethouseHeaders = (headers: Headers): boolean => {

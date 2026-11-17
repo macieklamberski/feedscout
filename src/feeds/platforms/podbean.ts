@@ -28,7 +28,7 @@ const feeds = definePlatformFeeds(
     // redirect away.
     { key: 'podbean:latest', main: 'https://feed.podbean.com/{show}/last1/feed.xml' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parsePodbeanUrl = (url: string): PodbeanUrl | undefined => {

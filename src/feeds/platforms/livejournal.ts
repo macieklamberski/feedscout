@@ -42,7 +42,9 @@ const getJournalTemplates = <Platform extends string>(
   ]
 }
 
-const feeds = definePlatformFeeds(getJournalTemplates('livejournal'), { domains })
+const feeds = definePlatformFeeds(getJournalTemplates('livejournal'), {
+  hosts: { tenants: domains },
+})
 
 // A `{root}` row claims a feed on a journal's subdomain, so the feeds the users or community host
 // serves under a journal's path are claimed by their own rows.
@@ -66,7 +68,7 @@ const pathFeeds = definePlatformFeeds(
       format: 'atom',
     },
   ],
-  { hosts: legacyUserHosts },
+  { hosts: { exact: legacyUserHosts } },
 )
 
 // The feeds of a journal from its root, plus a tag's feeds on a tag page.

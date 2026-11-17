@@ -9,8 +9,8 @@ import { findElement, hasMarker } from '../../common/utils.js'
 
 export type LagetUrl = { kind: 'team'; team: string }
 
-const hosts = laget.hosts
-const domains = laget.tenantDomains
+const hosts = laget.hosts.exact
+const domains = laget.hosts.tenants
 
 // A bare `laget.se` also matches other domains, such as `snickeribolaget.se`.
 const lagetAssetRegex = /^(?:https?:)?\/\/[a-z]-content\.laget\.se\//i

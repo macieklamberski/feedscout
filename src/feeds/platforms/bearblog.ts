@@ -57,7 +57,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/rss/', '{scheme}://{host}/rss.xml'],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseBearblogUrl = (url: string): BearblogUrl | undefined => {

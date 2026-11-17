@@ -9,8 +9,8 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type NeocitiesUrl = { kind: 'site'; username: string }
 
-const domains = neocities.tenantDomains
-const hosts = neocities.hosts
+const domains = neocities.hosts.tenants
+const hosts = neocities.hosts.exact
 
 const feeds = withHintLabels(neocities.feeds)
 

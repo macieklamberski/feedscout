@@ -23,7 +23,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/rss'],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parsePostypeUrl = (url: string): PostypeUrl | undefined => {

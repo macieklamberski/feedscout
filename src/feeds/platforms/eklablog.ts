@@ -19,7 +19,7 @@ const feeds = definePlatformFeeds(
     { key: 'eklablog:posts', main: '{scheme}://{host}/rss' },
     { key: 'eklablog:comments', main: '{scheme}://{host}/rss/comments' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 const isConnectScript = (src: string | undefined): boolean => {

@@ -9,7 +9,7 @@ export type HashnodeUrl = { kind: 'blog' }
 const domains = ['hashnode.dev', 'hashnode.com']
 
 const feeds = definePlatformFeeds([{ key: 'hashnode:blog', main: '{scheme}://{host}/rss.xml' }], {
-  domains,
+  hosts: { tenants: domains },
 })
 
 export const parseHashnodeUrl = (url: string): HashnodeUrl | undefined => {

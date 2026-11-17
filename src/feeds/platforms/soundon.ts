@@ -9,7 +9,7 @@ import { hexOrHyphenRegex } from '../../common/utils.js'
 
 export type SoundonUrl = { kind: 'podcast'; podcastId: string }
 
-const hosts = soundon.hosts
+const hosts = soundon.hosts.exact
 
 const podcastRegex = /^\/p\/([^/]+)(?:\/|$)/i
 const embedRegex = /^\/embed\/?$/i

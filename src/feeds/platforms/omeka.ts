@@ -79,7 +79,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{root}/exhibits/show/{exhibit}/item/{id}?output=atom'],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 const getBrowseQuery = (searchParams: URLSearchParams): string => {

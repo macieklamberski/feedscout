@@ -8,7 +8,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type CsdnUrl = { kind: 'blog'; username: string }
 
-const hosts = csdn.hosts
+const hosts = csdn.hosts.exact
 
 const userRegex = /^\/([^/]+)/
 

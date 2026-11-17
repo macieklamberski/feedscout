@@ -22,7 +22,7 @@ const feeds = definePlatformFeeds(
     { key: 'zenfolio:blog', main: '{scheme}://{host}/blog.rss', format: 'rss' },
     { key: 'zenfolio:blog', main: '{scheme}://{host}/blog.atom', format: 'atom' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const isZenfolioHtml = (content: string): boolean => {

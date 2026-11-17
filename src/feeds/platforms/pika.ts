@@ -29,7 +29,7 @@ const feeds = definePlatformFeeds(
     },
     { key: 'pika:tag', main: '{scheme}://{host}/tag/{tag}/feed.rss', format: 'rss' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parsePikaUrl = (url: string): PikaUrl | undefined => {

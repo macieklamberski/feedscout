@@ -32,7 +32,7 @@ const feeds = definePlatformFeeds(
     { key: 'cocolog:comments', main: '{scheme}://{host}/{blog}/comment-index.rdf', format: 'rdf' },
     { key: 'cocolog:comments', main: '{scheme}://{host}/{blog}/comments.xml', format: 'rss' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 const getCocologPage = (url: string, content: string | undefined): CocologPage | undefined => {

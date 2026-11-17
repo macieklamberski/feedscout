@@ -98,7 +98,7 @@ const feeds = definePlatformFeeds(
       format: 'atom',
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const isBigcommerceHeaders = (headers: Headers): boolean => {

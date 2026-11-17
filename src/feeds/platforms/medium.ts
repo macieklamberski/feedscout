@@ -38,7 +38,7 @@ const feeds = definePlatformFeeds(
     { key: 'medium:publication', main: 'https://medium.com/feed/{publication}' },
     { key: 'medium:publication', main: '{scheme}://{host}/feed' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseMediumUrl = (url: string): MediumUrl | undefined => {

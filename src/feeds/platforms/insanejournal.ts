@@ -40,7 +40,7 @@ const journalFeeds = definePlatformFeeds(
     { key: 'insanejournal:posts', main: '{scheme}://{host}/data/atom', format: 'atom' },
     { key: 'insanejournal:userpics', main: '{scheme}://{host}/data/userpics', format: 'atom' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 const pathFeeds = definePlatformFeeds(
   [
@@ -62,7 +62,7 @@ const pathFeeds = definePlatformFeeds(
       format: 'atom',
     },
   ],
-  { hosts: pathHosts },
+  { hosts: { exact: pathHosts } },
 )
 
 export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined => {

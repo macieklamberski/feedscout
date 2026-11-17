@@ -29,7 +29,7 @@ const feeds = definePlatformFeeds(
       main: '{scheme}://{host}/rss/evenement?groupe_id={groupId}',
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 // The footer of every club site links the platform's abuse report form, on custom domains too.

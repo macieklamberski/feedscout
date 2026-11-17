@@ -20,13 +20,13 @@ const freeSiteFeeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/{site}/{section}/blog-feed.xml'],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 // A site on its own domain is known only by its markers, so its feed is built but not claimed.
 const siteFeeds = definePlatformFeeds(
   [{ key: 'wix:blog', main: '{scheme}://{host}/blog-feed.xml' }],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const isWixHtml = (content: string): boolean => {

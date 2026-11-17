@@ -40,7 +40,7 @@ const feeds = definePlatformFeeds(
       ],
     },
   ],
-  { domains, isWwwTenant: true },
+  { hosts: { tenants: domains }, isWwwTenant: true },
 )
 
 export const parseProseUrl = (url: string): ProseUrl | undefined => {

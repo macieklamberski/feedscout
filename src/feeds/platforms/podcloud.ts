@@ -10,7 +10,7 @@ const domains = ['lepodcast.fr']
 
 const feeds = definePlatformFeeds(
   [{ key: 'podcloud:podcast', main: '{scheme}://{host}/rss', aliases: ['{scheme}://{host}/feed'] }],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parsePodcloudUrl = (url: string): PodcloudUrl | undefined => {

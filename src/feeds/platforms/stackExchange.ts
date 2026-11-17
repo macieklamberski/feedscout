@@ -60,7 +60,7 @@ const feeds = definePlatformFeeds(
     { key: 'stackexchange:newest', main: '{scheme}://{host}/feeds/week' },
     { key: 'stackexchange:newest', main: '{scheme}://{host}/feeds/month' },
   ],
-  { hosts: domains, domains: feedDomains },
+  { hosts: { exact: domains, tenants: feedDomains } },
 )
 
 const getSort = (searchParams: URLSearchParams): string | undefined => {

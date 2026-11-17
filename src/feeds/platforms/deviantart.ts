@@ -14,7 +14,7 @@ export type DeviantartUrl =
   | { kind: 'profile'; username: string }
   | { kind: 'dailyDeviations' }
 
-const hosts = deviantart.hosts
+const hosts = deviantart.hosts.exact
 
 const tagRegex = /^\/tag\/([^/]+)/i
 const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/|$)/i

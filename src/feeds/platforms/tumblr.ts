@@ -27,7 +27,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/podcast/rss'],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {

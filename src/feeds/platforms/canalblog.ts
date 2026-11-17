@@ -9,7 +9,7 @@ export type CanalblogUrl = { kind: 'blog' }
 const domains = ['canalblog.com']
 
 const feeds = definePlatformFeeds([{ key: 'canalblog:posts', main: '{scheme}://{host}/rss' }], {
-  domains,
+  hosts: { tenants: domains },
 })
 
 export const parseCanalblogUrl = (url: string): CanalblogUrl | undefined => {

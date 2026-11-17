@@ -27,7 +27,7 @@ const feeds = definePlatformFeeds(
     // A private feed for one listener, under tokens no page gives, is claimed and never built.
     { key: 'captivate:private', main: 'https://private.captivate.fm/{show}/{listener}' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseCaptivateUrl = (url: string): CaptivateUrl | undefined => {

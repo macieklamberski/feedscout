@@ -6,7 +6,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const hosts = internetArchive.hosts
+const hosts = internetArchive.hosts.exact
 
 const detailsRegex = /^\/details\/([^/@][^/]*)\/?$/i
 const accountRegex = /^\/details\/@([^/]+)/i

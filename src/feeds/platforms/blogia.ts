@@ -13,7 +13,7 @@ const feeds = definePlatformFeeds(
     { key: 'blogia:posts', main: '{scheme}://{host}/feed.xml' },
     { key: 'blogia:comments', main: '{scheme}://{host}/comentarios.xml' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseBlogiaUrl = (url: string): BlogiaUrl | undefined => {

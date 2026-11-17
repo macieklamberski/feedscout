@@ -149,7 +149,7 @@ const feeds = definePlatformFeeds(
       aliases: ['https://www.blogger.com/feeds/{blogId}/{postId}/comments/default?alt=rss'],
     },
   ],
-  { domains, isWwwTenantPrefix: true },
+  { hosts: { tenants: domains }, isWwwTenantPrefix: true },
 )
 
 // Blogger loads its widget script from this path on blogspot.com and custom domains alike,

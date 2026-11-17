@@ -38,7 +38,7 @@ const feeds = definePlatformFeeds(
     },
     { key: 'purot:user-activity', main: '{scheme}://{host}/changes/profile/{user}?mode=rss' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parsePurotUrl = (url: string): PurotUrl | undefined => {

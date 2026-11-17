@@ -24,7 +24,7 @@ const feeds = definePlatformFeeds(
     { key: 'webnode:articles', main: '{scheme}://{host}/rss/all.xml' },
     { key: 'webnode:section', main: '{scheme}://{host}/rss/{section}.xml' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 // The classic editor loads its client script from this host on every page. Webnode 2 pages load

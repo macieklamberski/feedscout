@@ -23,7 +23,7 @@ const feeds = definePlatformFeeds(
     { key: 'blogger-de:posts-comments', main: '{scheme}://{host}/rss?show=all' },
     { key: 'blogger-de:topic', main: '{scheme}://{host}/rss?topic={topic}' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseBloggerDeUrl = (url: string): BloggerDeUrl | undefined => {

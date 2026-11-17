@@ -36,7 +36,7 @@ const feeds = definePlatformFeeds(
       ],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 // Wild Apricot answers every page through its load balancer, on its own hosts and on custom

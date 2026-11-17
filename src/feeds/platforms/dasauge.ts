@@ -18,7 +18,7 @@ const feeds = definePlatformFeeds(
     { key: 'dasauge:workspaces', main: '{scheme}://{host}/workspaces/feed', format: 'atom' },
     { key: 'dasauge:profile', main: '{scheme}://{host}/-{username}/?rss' },
   ],
-  { hosts },
+  { hosts: { exact: hosts } },
 )
 
 export const parseDasaugeUrl = (url: string): DasaugeUrl | undefined => {

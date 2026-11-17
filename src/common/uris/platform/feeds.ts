@@ -25,15 +25,19 @@ export type PlatformFeedParams = Record<string, string | undefined>
 
 export type PlatformFeedCheck = (value: string) => boolean
 
+export type PlatformHosts = {
+  // The exact hosts a `{host}` placeholder stands for. A pattern stands for one name across
+  // suffixes, such as `/^example\.(?:com|de)$/`, anchored at both ends, and matches the host as
+  // given or without `www`.
+  exact?: Array<string | RegExp>
+  // The domains tenants live under: a `{domain}` placeholder stands for one, and `{host}` for every
+  // one-label tenant under one. A pattern stands for a family of domains, such as
+  // `/^blogspot\.(?:com|com\.[a-z]{2})$/`, anchored at both ends.
+  tenants?: Array<string | RegExp>
+}
+
 export type PlatformFeedTableOptions = {
-  // The hosts a `{host}` placeholder stands for, with every host under `domains`. `getFeedHint`
-  // claims a host under `domains` only for a single tenant label.
-  // A pattern stands for one name across suffixes, such as `/^example\.(?:com|de)$/`, anchored at
-  // both ends, and matches the host as given or without `www`.
-  hosts?: Array<string | RegExp>
-  // The domains a `{domain}` placeholder stands for. A pattern stands for a family of domains, such
-  // as `/^blogspot\.(?:com|com\.[a-z]{2})$/`, anchored at both ends.
-  domains?: Array<string | RegExp>
+  hosts?: PlatformHosts
   // Whether `www` can be a tenant, so `www.example.com` matches a `{user}.example.com` row.
   isWwwTenant?: boolean
   // Whether `www` in front of a tenant label is dropped, so `www.alice.example.com` matches as
@@ -151,7 +155,7 @@ export const withHintLabels = <Key extends string>(
 // under one hint, and `getFeedHint` reads a URL back to the feed's hint.
 export const definePlatformFeeds = <const Key extends string>(
   feeds: Array<PlatformFeed<Key>>,
-  { domains, ...options }: PlatformFeedTableOptions = {},
+  options: PlatformFeedTableOptions = {},
 ): PlatformFeedTable<Key> => {
-  return withHintLabels(defineFeeds(feeds, { ...options, tenantDomains: domains }))
+  return withHintLabels(defineFeeds(feeds, options))
 }

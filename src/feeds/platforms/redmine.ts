@@ -83,7 +83,7 @@ const feeds = definePlatformFeeds(
     },
     { key: 'redmine:boards', main: '{root}/projects/{project}/boards.atom' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 // The core layout prints the footer link, and Bitnami stacks swap it for their own, which

@@ -9,7 +9,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 export type IvooxUrl = { kind: 'podcast'; podcastId: string } | { kind: 'episode' }
 export type IvooxPage = { kind: 'podcast' | 'episode'; podcastId: string }
 
-const hosts = ivoox.hosts
+const hosts = ivoox.hosts.exact
 
 const podcastRegex = /_sq_f(\d+)_\d+\.html$/i
 const episodeRegex = /_rf_\d+_\d+\.html$/i

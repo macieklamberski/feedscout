@@ -72,7 +72,7 @@ const siteFeeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/t_{templateId}/shokokai/feed.rss'],
     },
   ],
-  { hosts },
+  { hosts: { exact: hosts } },
 )
 
 const isQrCode = (src: string | undefined): boolean => {

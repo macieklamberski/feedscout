@@ -13,7 +13,7 @@ const feedPathRegex = /^\/(\w+)\/rss\/$/i
 
 const feeds = definePlatformFeeds(
   [{ key: 'duck-webcomics:comic', main: '{scheme}://{host}/{comic}/rss/' }],
-  { hosts },
+  { hosts: { exact: hosts } },
 )
 
 export const parseDuckWebcomicsUrl = (url: string): DuckWebcomicsUrl | undefined => {

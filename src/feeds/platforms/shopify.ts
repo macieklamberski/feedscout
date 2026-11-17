@@ -31,7 +31,7 @@ const feeds = definePlatformFeeds(
       main: '{scheme}://{host}/{locale}/collections/{handle}/{tags}.atom',
     },
   ],
-  { domains, checks: { locale: isLocale } },
+  { hosts: { tenants: domains }, checks: { locale: isLocale } },
 )
 
 export const isShopifyHeaders = (headers: Headers): boolean => {

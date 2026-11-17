@@ -18,7 +18,7 @@ export type AlloforumUrl =
       subcategoryId: string
     }
 
-const domains = alloforum.tenantDomains
+const domains = alloforum.hosts.tenants
 
 // The route letters are read in any case and the feed url is minted with them lowercase, because
 // the site answers 404 to an uppercase `C` or `S`.

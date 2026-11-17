@@ -8,7 +8,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type VelogUrl = { kind: 'user'; username: string } | { kind: 'home' }
 
-export const hosts = velog.hosts
+export const hosts = velog.hosts.exact
 
 const userRegex = /^\/@([^/]+)/
 

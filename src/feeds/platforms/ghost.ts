@@ -26,12 +26,12 @@ const feeds = definePlatformFeeds(
     // a post, so `resolve` never builds it.
     { key: 'ghost:collection', main: '{scheme}://{host}/{collection}/rss/' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 // No page gives the token, so this row only claims the feed.
 const privateFeeds = definePlatformFeeds(
   [{ key: 'ghost:private', main: '{scheme}://{host}/{token}/rss/' }],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseGhostUrl = (url: string): GhostUrl | undefined => {

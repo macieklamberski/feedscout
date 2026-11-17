@@ -22,7 +22,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/feed?tag={tag}', '{scheme}://{host}/feed.rss?tag={tag}'],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parsePagecordUrl = (url: string): PagecordUrl | undefined => {

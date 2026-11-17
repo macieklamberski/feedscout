@@ -14,7 +14,7 @@ const feeds = definePlatformFeeds(
     { key: 'weblog-lol:posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
     { key: 'weblog-lol:posts', main: '{scheme}://{host}/feed.json', format: 'json' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseWeblogLolUrl = (url: string): WeblogLolUrl | undefined => {

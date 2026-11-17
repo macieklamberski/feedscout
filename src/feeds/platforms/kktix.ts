@@ -21,7 +21,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/events.atom'],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseKktixUrl = (url: string): KktixUrl | undefined => {

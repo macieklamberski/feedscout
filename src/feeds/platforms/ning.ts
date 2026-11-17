@@ -227,7 +227,7 @@ const feeds = definePlatformFeeds(
     { key: 'ning:section-featured', main: '{scheme}://{host}/{section*}/feed/featured' },
     { key: 'ning:section', main: '{scheme}://{host}/{section*}/feed/all' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 // Ning 3 networks send the same `ning_session` cookie and `x-xn-trace-token` header but serve

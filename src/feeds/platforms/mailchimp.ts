@@ -19,7 +19,7 @@ const listLinkRegex = /campaign-archive\.com\/(?:home\/|feed)\?u=\w+&(?:amp;)?id
 
 const feeds = definePlatformFeeds(
   [{ key: 'mailchimp:archive', main: '{scheme}://{host}/feed?u={userId}&id={listId}' }],
-  { domains: feedDomains },
+  { hosts: { tenants: feedDomains } },
 )
 
 export const parseMailchimpUrl = (url: string): MailchimpUrl | undefined => {

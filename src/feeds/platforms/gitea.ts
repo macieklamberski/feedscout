@@ -55,7 +55,7 @@ const feeds = definePlatformFeeds(
     },
     { key: 'gitea:file-history', main: '{root}/{owner}/{repo}/rss/branch/{path*}', format: 'rss' },
   ],
-  { hosts },
+  { hosts: { exact: hosts } },
 )
 
 export const isGiteaHeaders = (headers: Headers): boolean => {

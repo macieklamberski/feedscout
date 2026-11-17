@@ -47,7 +47,7 @@ const feeds = definePlatformFeeds(
     // A namespace or a project of any depth, after the rows its paths overlap.
     { key: 'gitlab:activity', main: '{root}/{path*}.atom' },
   ],
-  { hosts },
+  { hosts: { exact: hosts } },
 )
 
 // Every GitLab page prints its frontend config through the gon gem and loads its bundles from

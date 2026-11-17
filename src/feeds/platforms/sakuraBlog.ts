@@ -23,7 +23,7 @@ const feeds = definePlatformFeeds(
     },
     { key: 'sakura-blog:posts', main: '{scheme}://{host}/index.rdf', format: 'rdf' },
   ],
-  { domains, isWwwTenantPrefix: true },
+  { hosts: { tenants: domains }, isWwwTenantPrefix: true },
 )
 
 export const parseSakuraBlogUrl = (url: string): SakuraBlogUrl | undefined => {

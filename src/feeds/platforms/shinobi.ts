@@ -37,7 +37,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/RSS/100/RSS/'],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 // Every blog page prints the Ninja Blog banner, whose logo loads from the blog's own host.

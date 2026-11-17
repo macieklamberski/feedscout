@@ -107,7 +107,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/rss?type=atom'],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 // Core prints the `_userdata` script in every page head, on every template and domain.

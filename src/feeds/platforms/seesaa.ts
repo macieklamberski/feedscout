@@ -18,7 +18,7 @@ const feeds = definePlatformFeeds(
     // answers 404, which discovery drops.
     { key: 'seesaa:podcast', main: '{scheme}://{host}/index_custom.rdf', format: 'rss' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseSeesaaUrl = (url: string): SeesaaUrl | undefined => {

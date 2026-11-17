@@ -33,7 +33,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/{category}_full.xml'],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseViablogaUrl = (url: string): ViablogaUrl | undefined => {

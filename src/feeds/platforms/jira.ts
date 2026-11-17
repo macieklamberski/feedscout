@@ -11,7 +11,7 @@ import {
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const domains = jira.tenantDomains
+const domains = jira.hosts.tenants
 
 // Data Center installs sit under a context path such as `/jira`, so none of
 // these can anchor at the start of the pathname.

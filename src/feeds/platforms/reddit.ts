@@ -128,7 +128,7 @@ const feeds = definePlatformFeeds(
     { key: 'reddit:posts', main: 'https://www.reddit.com/{sort}/.rss' },
     { key: 'reddit:posts', main: 'https://www.reddit.com/.rss' },
   ],
-  { hosts: mirrorHosts },
+  { hosts: { exact: mirrorHosts } },
 )
 
 const getTimeframe = (sort: string, searchParams: URLSearchParams): string | undefined => {

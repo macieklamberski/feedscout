@@ -9,7 +9,7 @@ export type MataroaUrl = { kind: 'blog' }
 const domains = ['mataroa.blog']
 
 const feeds = definePlatformFeeds([{ key: 'mataroa:blog', main: '{scheme}://{host}/rss/' }], {
-  domains,
+  hosts: { tenants: domains },
 })
 
 export const parseMataroaUrl = (url: string): MataroaUrl | undefined => {

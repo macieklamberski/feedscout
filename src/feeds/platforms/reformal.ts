@@ -12,7 +12,7 @@ const domains = ['reformal.ru', 'idea.informer.com']
 // extra parameter.
 const feeds = definePlatformFeeds(
   [{ key: 'reformal:feedback', main: '{scheme}://{host}/proj/rss' }],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseReformalUrl = (url: string): ReformalUrl | undefined => {

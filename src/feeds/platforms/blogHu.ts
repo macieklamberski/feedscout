@@ -58,7 +58,7 @@ const feeds = definePlatformFeeds(
     // A user feed with a `token` query is the same feed signed for one reader.
     { key: 'blog-hu:user', main: 'https://blog.hu/user/{userId}/rss' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseBlogHuUrl = (url: string): BlogHuUrl | undefined => {

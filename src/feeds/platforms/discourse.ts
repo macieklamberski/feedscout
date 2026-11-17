@@ -53,7 +53,7 @@ const feeds = definePlatformFeeds(
     { key: 'discourse:latest', main: '{root}/latest.rss' },
     { key: 'discourse:posts', main: '{root}/posts.rss' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 const getTopPeriod = (

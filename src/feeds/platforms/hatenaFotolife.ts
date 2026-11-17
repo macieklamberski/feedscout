@@ -46,7 +46,7 @@ const feeds = definePlatformFeeds(
     },
     { key: 'hatena-fotolife:color', main: 'https://f.hatena.ne.jp/fotocolor/{color}?mode=rss' },
   ],
-  { hosts },
+  { hosts: { exact: hosts } },
 )
 
 // The page links its feeds with every byte outside [A-Za-z0-9_] percent-encoded, `-` and `.`

@@ -20,7 +20,7 @@ const feeds = definePlatformFeeds(
     { key: 'bing:search', main: '{scheme}://{host}/search?q={query}&format=rss' },
     { key: 'bing:news', main: '{scheme}://{host}/news/search?q={query}&format=rss' },
   ],
-  { hosts },
+  { hosts: { exact: hosts } },
 )
 
 export const parseBingUrl = (url: string): BingUrl | undefined => {

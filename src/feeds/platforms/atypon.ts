@@ -74,7 +74,7 @@ const feeds = definePlatformFeeds(
       main: '{scheme}://{host}/action/showFeed?type=searchTopic&taxonomyCode={taxonomy}&tagCode={tag}',
     },
   ],
-  { hosts },
+  { hosts: { exact: hosts } },
 )
 
 export const parseAtyponUrl = (url: string): AtyponUrl | undefined => {

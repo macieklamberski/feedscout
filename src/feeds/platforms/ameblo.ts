@@ -36,7 +36,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/{username}/rss.html'],
     },
   ],
-  { hosts },
+  { hosts: { exact: hosts } },
 )
 
 export const parseAmebloUrl = (url: string): AmebloUrl | undefined => {

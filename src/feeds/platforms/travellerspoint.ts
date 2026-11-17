@@ -16,7 +16,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/rss.xml'],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseTravellerspointUrl = (url: string): TravellerspointUrl | undefined => {

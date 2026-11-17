@@ -15,7 +15,7 @@ const feeds = definePlatformFeeds(
     { key: 'blogalia:posts', main: '{scheme}://{host}/rdf.xml', format: 'rdf' },
     { key: 'blogalia:posts', main: '{scheme}://{host}/rss20.xml', format: 'rss' },
   ],
-  { domains, isWwwTenant: true },
+  { hosts: { tenants: domains }, isWwwTenant: true },
 )
 
 export const parseBlogaliaUrl = (url: string): BlogaliaUrl | undefined => {

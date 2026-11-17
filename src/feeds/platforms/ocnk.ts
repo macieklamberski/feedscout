@@ -15,7 +15,7 @@ const cartScriptRegex =
 // A shop on its own domain is known only by its markers, so its feed is built but not claimed.
 const feeds = definePlatformFeeds(
   [{ key: 'ocnk:products', main: '{scheme}://{host}/rss/rss.php', format: 'rdf' }],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 // Every shop template loads the cart script from its `/res/{template}/js/` folder, on a custom
