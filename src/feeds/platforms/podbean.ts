@@ -14,9 +14,10 @@ const domains = ['podbean.com']
 const feedHosts = ['feed.podbean.com']
 
 const feeds = definePlatformFeeds(
+  'podbean',
   [
     {
-      key: 'podbean:podcast',
+      key: 'podcast',
       main: 'https://feed.podbean.com/{show}/feed.xml',
       aliases: [
         // The feed host's S3 bucket serves the same feed. S3 is shared, so the bucket segment is
@@ -28,7 +29,7 @@ const feeds = definePlatformFeeds(
     },
     // The show's feed cut to its latest episode. No other count is served: `last2` and `last5`
     // redirect away.
-    { key: 'podbean:latest', main: 'https://feed.podbean.com/{show}/last1/feed.xml' },
+    { key: 'latest', main: 'https://feed.podbean.com/{show}/last1/feed.xml' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -56,8 +57,8 @@ export const podbeanHandler: PlatformHandler = {
     }
 
     return [
-      feeds.getFeedEntry('podbean:podcast', { show: parsed.show }),
-      feeds.getFeedEntry('podbean:latest', { show: parsed.show }),
+      feeds.getFeedEntry('podcast', { show: parsed.show }),
+      feeds.getFeedEntry('latest', { show: parsed.show }),
     ]
   },
 

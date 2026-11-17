@@ -16,9 +16,10 @@ const connectHosts = ['connect.eklablog.com']
 
 // A blog off the domains is known only by its marker, so its feeds are built here but not claimed.
 const feeds = definePlatformFeeds(
+  'eklablog',
   [
-    { key: 'eklablog:posts', main: '{scheme}://{host}/rss' },
-    { key: 'eklablog:comments', main: '{scheme}://{host}/rss/comments' },
+    { key: 'posts', main: '{scheme}://{host}/rss' },
+    { key: 'comments', main: '{scheme}://{host}/rss/comments' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -69,7 +70,7 @@ export const eklablogHandler: PlatformHandler = {
       return []
     }
 
-    return [pageFeeds.getFeedEntry('eklablog:posts'), pageFeeds.getFeedEntry('eklablog:comments')]
+    return [pageFeeds.getFeedEntry('posts'), pageFeeds.getFeedEntry('comments')]
   },
 
   getFeedHint: feeds.getFeedHint,

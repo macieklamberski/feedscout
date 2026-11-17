@@ -22,18 +22,19 @@ const contentTypePathRegex = /^\/browse\/([^/]+)\/?$/i
 const contentTypes = ['news', 'pr', 'social', 'image', 'video', 'audio', 'event'] as const
 
 const feeds = definePlatformFeeds(
+  'newswire',
   [
-    { key: 'newswire:beat', main: '{scheme}://{host}/browse/rss/beat/{beat}' },
-    { key: 'newswire:news', main: '{scheme}://{host}/browse/rss/news' },
-    { key: 'newswire:press-releases', main: '{scheme}://{host}/browse/rss/pr' },
-    { key: 'newswire:social', main: '{scheme}://{host}/browse/rss/social' },
-    { key: 'newswire:images', main: '{scheme}://{host}/browse/rss/image' },
-    { key: 'newswire:videos', main: '{scheme}://{host}/browse/rss/video' },
-    { key: 'newswire:audio', main: '{scheme}://{host}/browse/rss/audio' },
-    { key: 'newswire:events', main: '{scheme}://{host}/browse/rss/event' },
+    { key: 'beat', main: '{scheme}://{host}/browse/rss/beat/{beat}' },
+    { key: 'news', main: '{scheme}://{host}/browse/rss/news' },
+    { key: 'press-releases', main: '{scheme}://{host}/browse/rss/pr' },
+    { key: 'social', main: '{scheme}://{host}/browse/rss/social' },
+    { key: 'images', main: '{scheme}://{host}/browse/rss/image' },
+    { key: 'videos', main: '{scheme}://{host}/browse/rss/video' },
+    { key: 'audio', main: '{scheme}://{host}/browse/rss/audio' },
+    { key: 'events', main: '{scheme}://{host}/browse/rss/event' },
     // The social posts from one network, which no newsroom page names.
-    { key: 'newswire:social-network', main: '{scheme}://{host}/browse/rss/social/{network}' },
-    { key: 'newswire:newsroom', main: '{scheme}://{host}/browse/rss' },
+    { key: 'social-network', main: '{scheme}://{host}/browse/rss/social/{network}' },
+    { key: 'newsroom', main: '{scheme}://{host}/browse/rss' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -79,118 +80,118 @@ export const newswireHandler: PlatformHandler = {
     // validation drops.
     if (parsed.kind === 'beat') {
       return [
-        page.getFeedEntry('newswire:beat', { beat: parsed.beat }),
-        page.getFeedEntry('newswire:newsroom'),
-        page.getFeedEntry('newswire:news'),
-        page.getFeedEntry('newswire:press-releases'),
-        page.getFeedEntry('newswire:social'),
-        page.getFeedEntry('newswire:images'),
-        page.getFeedEntry('newswire:videos'),
-        page.getFeedEntry('newswire:audio'),
-        page.getFeedEntry('newswire:events'),
+        page.getFeedEntry('beat', { beat: parsed.beat }),
+        page.getFeedEntry('newsroom'),
+        page.getFeedEntry('news'),
+        page.getFeedEntry('press-releases'),
+        page.getFeedEntry('social'),
+        page.getFeedEntry('images'),
+        page.getFeedEntry('videos'),
+        page.getFeedEntry('audio'),
+        page.getFeedEntry('events'),
       ]
     }
 
     if (parsed.kind === 'contentType' && parsed.contentType === 'news') {
       return [
-        page.getFeedEntry('newswire:news'),
-        page.getFeedEntry('newswire:newsroom'),
-        page.getFeedEntry('newswire:press-releases'),
-        page.getFeedEntry('newswire:social'),
-        page.getFeedEntry('newswire:images'),
-        page.getFeedEntry('newswire:videos'),
-        page.getFeedEntry('newswire:audio'),
-        page.getFeedEntry('newswire:events'),
+        page.getFeedEntry('news'),
+        page.getFeedEntry('newsroom'),
+        page.getFeedEntry('press-releases'),
+        page.getFeedEntry('social'),
+        page.getFeedEntry('images'),
+        page.getFeedEntry('videos'),
+        page.getFeedEntry('audio'),
+        page.getFeedEntry('events'),
       ]
     }
 
     if (parsed.kind === 'contentType' && parsed.contentType === 'pr') {
       return [
-        page.getFeedEntry('newswire:press-releases'),
-        page.getFeedEntry('newswire:newsroom'),
-        page.getFeedEntry('newswire:news'),
-        page.getFeedEntry('newswire:social'),
-        page.getFeedEntry('newswire:images'),
-        page.getFeedEntry('newswire:videos'),
-        page.getFeedEntry('newswire:audio'),
-        page.getFeedEntry('newswire:events'),
+        page.getFeedEntry('press-releases'),
+        page.getFeedEntry('newsroom'),
+        page.getFeedEntry('news'),
+        page.getFeedEntry('social'),
+        page.getFeedEntry('images'),
+        page.getFeedEntry('videos'),
+        page.getFeedEntry('audio'),
+        page.getFeedEntry('events'),
       ]
     }
 
     if (parsed.kind === 'contentType' && parsed.contentType === 'social') {
       return [
-        page.getFeedEntry('newswire:social'),
-        page.getFeedEntry('newswire:newsroom'),
-        page.getFeedEntry('newswire:news'),
-        page.getFeedEntry('newswire:press-releases'),
-        page.getFeedEntry('newswire:images'),
-        page.getFeedEntry('newswire:videos'),
-        page.getFeedEntry('newswire:audio'),
-        page.getFeedEntry('newswire:events'),
+        page.getFeedEntry('social'),
+        page.getFeedEntry('newsroom'),
+        page.getFeedEntry('news'),
+        page.getFeedEntry('press-releases'),
+        page.getFeedEntry('images'),
+        page.getFeedEntry('videos'),
+        page.getFeedEntry('audio'),
+        page.getFeedEntry('events'),
       ]
     }
 
     if (parsed.kind === 'contentType' && parsed.contentType === 'image') {
       return [
-        page.getFeedEntry('newswire:images'),
-        page.getFeedEntry('newswire:newsroom'),
-        page.getFeedEntry('newswire:news'),
-        page.getFeedEntry('newswire:press-releases'),
-        page.getFeedEntry('newswire:social'),
-        page.getFeedEntry('newswire:videos'),
-        page.getFeedEntry('newswire:audio'),
-        page.getFeedEntry('newswire:events'),
+        page.getFeedEntry('images'),
+        page.getFeedEntry('newsroom'),
+        page.getFeedEntry('news'),
+        page.getFeedEntry('press-releases'),
+        page.getFeedEntry('social'),
+        page.getFeedEntry('videos'),
+        page.getFeedEntry('audio'),
+        page.getFeedEntry('events'),
       ]
     }
 
     if (parsed.kind === 'contentType' && parsed.contentType === 'video') {
       return [
-        page.getFeedEntry('newswire:videos'),
-        page.getFeedEntry('newswire:newsroom'),
-        page.getFeedEntry('newswire:news'),
-        page.getFeedEntry('newswire:press-releases'),
-        page.getFeedEntry('newswire:social'),
-        page.getFeedEntry('newswire:images'),
-        page.getFeedEntry('newswire:audio'),
-        page.getFeedEntry('newswire:events'),
+        page.getFeedEntry('videos'),
+        page.getFeedEntry('newsroom'),
+        page.getFeedEntry('news'),
+        page.getFeedEntry('press-releases'),
+        page.getFeedEntry('social'),
+        page.getFeedEntry('images'),
+        page.getFeedEntry('audio'),
+        page.getFeedEntry('events'),
       ]
     }
 
     if (parsed.kind === 'contentType' && parsed.contentType === 'audio') {
       return [
-        page.getFeedEntry('newswire:audio'),
-        page.getFeedEntry('newswire:newsroom'),
-        page.getFeedEntry('newswire:news'),
-        page.getFeedEntry('newswire:press-releases'),
-        page.getFeedEntry('newswire:social'),
-        page.getFeedEntry('newswire:images'),
-        page.getFeedEntry('newswire:videos'),
-        page.getFeedEntry('newswire:events'),
+        page.getFeedEntry('audio'),
+        page.getFeedEntry('newsroom'),
+        page.getFeedEntry('news'),
+        page.getFeedEntry('press-releases'),
+        page.getFeedEntry('social'),
+        page.getFeedEntry('images'),
+        page.getFeedEntry('videos'),
+        page.getFeedEntry('events'),
       ]
     }
 
     if (parsed.kind === 'contentType' && parsed.contentType === 'event') {
       return [
-        page.getFeedEntry('newswire:events'),
-        page.getFeedEntry('newswire:newsroom'),
-        page.getFeedEntry('newswire:news'),
-        page.getFeedEntry('newswire:press-releases'),
-        page.getFeedEntry('newswire:social'),
-        page.getFeedEntry('newswire:images'),
-        page.getFeedEntry('newswire:videos'),
-        page.getFeedEntry('newswire:audio'),
+        page.getFeedEntry('events'),
+        page.getFeedEntry('newsroom'),
+        page.getFeedEntry('news'),
+        page.getFeedEntry('press-releases'),
+        page.getFeedEntry('social'),
+        page.getFeedEntry('images'),
+        page.getFeedEntry('videos'),
+        page.getFeedEntry('audio'),
       ]
     }
 
     return [
-      page.getFeedEntry('newswire:newsroom'),
-      page.getFeedEntry('newswire:news'),
-      page.getFeedEntry('newswire:press-releases'),
-      page.getFeedEntry('newswire:social'),
-      page.getFeedEntry('newswire:images'),
-      page.getFeedEntry('newswire:videos'),
-      page.getFeedEntry('newswire:audio'),
-      page.getFeedEntry('newswire:events'),
+      page.getFeedEntry('newsroom'),
+      page.getFeedEntry('news'),
+      page.getFeedEntry('press-releases'),
+      page.getFeedEntry('social'),
+      page.getFeedEntry('images'),
+      page.getFeedEntry('videos'),
+      page.getFeedEntry('audio'),
+      page.getFeedEntry('events'),
     ]
   },
 

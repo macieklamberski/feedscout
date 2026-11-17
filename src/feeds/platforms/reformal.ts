@@ -11,7 +11,8 @@ const domains = ['reformal.ru', 'idea.informer.com']
 // A project serves the same feed with an `ia` idea id in the query, which the table reads as an
 // extra parameter.
 const feeds = definePlatformFeeds(
-  [{ key: 'reformal:feedback', main: '{scheme}://{host}/proj/rss' }],
+  'reformal',
+  [{ key: 'feedback', main: '{scheme}://{host}/proj/rss' }],
   { hosts: { tenants: domains } },
 )
 
@@ -35,7 +36,7 @@ export const reformalHandler: PlatformHandler = {
       return []
     }
 
-    return [pageFeeds.getFeedEntry('reformal:feedback')]
+    return [pageFeeds.getFeedEntry('feedback')]
   },
 
   getFeedHint: feeds.getFeedHint,

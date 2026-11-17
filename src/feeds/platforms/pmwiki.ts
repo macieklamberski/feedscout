@@ -16,16 +16,16 @@ const pageNameSeparatorRegex = /[./]/
 
 // A wiki is known only by its markup, so its feeds are built on the script URL and claimed on no
 // host. The query form answers under clean URLs, path info and the bare script alike.
-const feeds = definePlatformFeeds([
-  { key: 'pmwiki:group-changes', main: '{root}?n={group}.RecentChanges&action=rss', format: 'rss' },
+const feeds = definePlatformFeeds('pmwiki', [
+  { key: 'group-changes', main: '{root}?n={group}.RecentChanges&action=rss', format: 'rss' },
   {
-    key: 'pmwiki:group-changes',
+    key: 'group-changes',
     main: '{root}?n={group}.RecentChanges&action=atom',
     format: 'atom',
   },
-  { key: 'pmwiki:site-changes', main: '{root}?n=Site.AllRecentChanges&action=rss', format: 'rss' },
+  { key: 'site-changes', main: '{root}?n=Site.AllRecentChanges&action=rss', format: 'rss' },
   {
-    key: 'pmwiki:site-changes',
+    key: 'site-changes',
     main: '{root}?n=Site.AllRecentChanges&action=atom',
     format: 'atom',
   },
@@ -86,16 +86,16 @@ export const pmwikiHandler: PlatformHandler = {
 
     if (parsed.kind === 'page') {
       return [
-        pageFeeds.getFeedEntry('pmwiki:group-changes', { root, group: parsed.group }, 'rss'),
-        pageFeeds.getFeedEntry('pmwiki:group-changes', { root, group: parsed.group }, 'atom'),
-        pageFeeds.getFeedEntry('pmwiki:site-changes', { root }, 'rss'),
-        pageFeeds.getFeedEntry('pmwiki:site-changes', { root }, 'atom'),
+        pageFeeds.getFeedEntry('group-changes', { root, group: parsed.group }, 'rss'),
+        pageFeeds.getFeedEntry('group-changes', { root, group: parsed.group }, 'atom'),
+        pageFeeds.getFeedEntry('site-changes', { root }, 'rss'),
+        pageFeeds.getFeedEntry('site-changes', { root }, 'atom'),
       ]
     }
 
     return [
-      pageFeeds.getFeedEntry('pmwiki:site-changes', { root }, 'rss'),
-      pageFeeds.getFeedEntry('pmwiki:site-changes', { root }, 'atom'),
+      pageFeeds.getFeedEntry('site-changes', { root }, 'rss'),
+      pageFeeds.getFeedEntry('site-changes', { root }, 'atom'),
     ]
   },
 }

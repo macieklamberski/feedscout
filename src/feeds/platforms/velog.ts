@@ -51,12 +51,12 @@ export const velogHandler: PlatformHandler = {
     // The trending feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'user') {
       return [
-        feeds.getFeedEntry('velog:posts', { username: parsed.username }),
-        feeds.getFeedEntry('velog:trending'),
+        feeds.getFeedEntry('posts', { username: parsed.username }),
+        feeds.getFeedEntry('trending'),
       ]
     }
 
-    return [feeds.getFeedEntry('velog:trending')]
+    return [feeds.getFeedEntry('trending')]
   },
 
   getFeedHint: feeds.getFeedHint,

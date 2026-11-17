@@ -27,12 +27,13 @@ const domains = [hubspotDomainRegex]
 // the page links, and claimed only for a blog at the root of HubSpot's own hosts. A podcast's feed
 // is only claimed.
 const feeds = definePlatformFeeds(
+  'hubspot',
   [
-    { key: 'hubspot:author', main: '{root}/author/{name}/rss.xml' },
-    { key: 'hubspot:tag', main: '{root}/tag/{name}/rss.xml' },
-    { key: 'hubspot:tag', main: '{root}/topic/{topic}/rss.xml' },
-    { key: 'hubspot:blog', main: '{root}/rss.xml' },
-    { key: 'hubspot:podcast', main: '{root}/podcasts/{id}/rss.xml' },
+    { key: 'author', main: '{root}/author/{name}/rss.xml' },
+    { key: 'tag', main: '{root}/tag/{name}/rss.xml' },
+    { key: 'tag', main: '{root}/topic/{topic}/rss.xml' },
+    { key: 'blog', main: '{root}/rss.xml' },
+    { key: 'podcast', main: '{root}/podcasts/{id}/rss.xml' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -155,27 +156,27 @@ export const hubspotHandler: PlatformHandler = {
 
     if (parsed.kind === 'author') {
       return [
-        page.getFeedEntry('hubspot:author', { root, name: parsed.name }),
-        page.getFeedEntry('hubspot:blog', { root }),
+        page.getFeedEntry('author', { root, name: parsed.name }),
+        page.getFeedEntry('blog', { root }),
       ]
     }
 
     // A topic listing takes its own row, so the name goes under the topic placeholder.
     if (parsed.kind === 'tag' && parsed.route === 'topic') {
       return [
-        page.getFeedEntry('hubspot:tag', { root, topic: parsed.name }),
-        page.getFeedEntry('hubspot:blog', { root }),
+        page.getFeedEntry('tag', { root, topic: parsed.name }),
+        page.getFeedEntry('blog', { root }),
       ]
     }
 
     if (parsed.kind === 'tag') {
       return [
-        page.getFeedEntry('hubspot:tag', { root, name: parsed.name }),
-        page.getFeedEntry('hubspot:blog', { root }),
+        page.getFeedEntry('tag', { root, name: parsed.name }),
+        page.getFeedEntry('blog', { root }),
       ]
     }
 
-    return [page.getFeedEntry('hubspot:blog', { root })]
+    return [page.getFeedEntry('blog', { root })]
   },
 
   getFeedHint: feeds.getFeedHint,

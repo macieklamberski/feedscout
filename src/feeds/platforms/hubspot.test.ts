@@ -170,6 +170,22 @@ describe('hubspotHandler', () => {
       expect(hubspotHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the tag and blog feeds for a tag page', () => {
+      const value = 'https://example.com/blog/tag/news'
+      const expected = [
+        {
+          uri: 'https://example.com/blog/tag/news/rss.xml',
+          hint: { key: 'hubspot:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://example.com/blog/rss.xml',
+          hint: { key: 'hubspot:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(hubspotHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the tag and blog feeds for a topic page', () => {
       const value = 'https://example.com/blog/topic/inbound'
       const expected = [

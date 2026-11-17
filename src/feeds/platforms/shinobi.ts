@@ -15,9 +15,10 @@ const domains = ['blog.shinobi.jp']
 // /RSS/091/, RSS 1.0 at /RSS/100/ and Atom at /ATOM/. The server ignores what follows a feed path,
 // so /RSS/200/RSS is the RSS 2.0 feed too.
 const feeds = definePlatformFeeds(
+  'shinobi',
   [
     {
-      key: 'shinobi:posts',
+      key: 'posts',
       main: '{scheme}://{host}/RSS/',
       format: 'rss',
       aliases: [
@@ -29,9 +30,9 @@ const feeds = definePlatformFeeds(
         '{scheme}://{host}/RSS/091/index.rdf',
       ],
     },
-    { key: 'shinobi:posts', main: '{scheme}://{host}/ATOM/', format: 'atom' },
+    { key: 'posts', main: '{scheme}://{host}/ATOM/', format: 'atom' },
     {
-      key: 'shinobi:posts',
+      key: 'posts',
       main: '{scheme}://{host}/RSS/100/',
       format: 'rdf',
       aliases: ['{scheme}://{host}/RSS/100/RSS/'],
@@ -76,9 +77,9 @@ export const shinobiHandler: PlatformHandler = {
     }
 
     return [
-      page.getFeedEntry('shinobi:posts', {}, 'rss'),
-      page.getFeedEntry('shinobi:posts', {}, 'atom'),
-      page.getFeedEntry('shinobi:posts', {}, 'rdf'),
+      page.getFeedEntry('posts', {}, 'rss'),
+      page.getFeedEntry('posts', {}, 'atom'),
+      page.getFeedEntry('posts', {}, 'rdf'),
     ]
   },
 

@@ -28,35 +28,37 @@ const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/i
 const firstSegmentRegex = /^\/([^/]+)/
 
 const journalFeeds = definePlatformFeeds(
+  'insanejournal',
   [
-    { key: 'insanejournal:posts-tag', main: '{scheme}://{host}/data/rss?tag={tag}', format: 'rss' },
+    { key: 'posts-tag', main: '{scheme}://{host}/data/rss?tag={tag}', format: 'rss' },
     {
-      key: 'insanejournal:posts-tag',
+      key: 'posts-tag',
       main: '{scheme}://{host}/data/atom?tag={tag}',
       format: 'atom',
     },
-    { key: 'insanejournal:posts', main: '{scheme}://{host}/data/rss', format: 'rss' },
-    { key: 'insanejournal:posts', main: '{scheme}://{host}/data/atom', format: 'atom' },
-    { key: 'insanejournal:userpics', main: '{scheme}://{host}/data/userpics', format: 'atom' },
+    { key: 'posts', main: '{scheme}://{host}/data/rss', format: 'rss' },
+    { key: 'posts', main: '{scheme}://{host}/data/atom', format: 'atom' },
+    { key: 'userpics', main: '{scheme}://{host}/data/userpics', format: 'atom' },
   ],
   { hosts: { tenants: domains } },
 )
 const pathFeeds = definePlatformFeeds(
+  'insanejournal',
   [
     {
-      key: 'insanejournal:posts-tag',
+      key: 'posts-tag',
       main: '{scheme}://{host}/{journal}/data/rss?tag={tag}',
       format: 'rss',
     },
     {
-      key: 'insanejournal:posts-tag',
+      key: 'posts-tag',
       main: '{scheme}://{host}/{journal}/data/atom?tag={tag}',
       format: 'atom',
     },
-    { key: 'insanejournal:posts', main: '{scheme}://{host}/{journal}/data/rss', format: 'rss' },
-    { key: 'insanejournal:posts', main: '{scheme}://{host}/{journal}/data/atom', format: 'atom' },
+    { key: 'posts', main: '{scheme}://{host}/{journal}/data/rss', format: 'rss' },
+    { key: 'posts', main: '{scheme}://{host}/{journal}/data/atom', format: 'atom' },
     {
-      key: 'insanejournal:userpics',
+      key: 'userpics',
       main: '{scheme}://{host}/{journal}/data/userpics',
       format: 'atom',
     },
@@ -132,20 +134,20 @@ const getFeeds = (
 ): Array<DiscoverUriEntry | undefined> => {
   if (!tag) {
     return [
-      table.getFeedEntry('insanejournal:posts', params, 'rss'),
-      table.getFeedEntry('insanejournal:posts', params, 'atom'),
-      table.getFeedEntry('insanejournal:userpics', params, 'atom'),
+      table.getFeedEntry('posts', params, 'rss'),
+      table.getFeedEntry('posts', params, 'atom'),
+      table.getFeedEntry('userpics', params, 'atom'),
     ]
   }
 
   const tagParams = { ...params, tag: decodeSegment(tag) ?? tag }
 
   return [
-    table.getFeedEntry('insanejournal:posts-tag', tagParams, 'rss'),
-    table.getFeedEntry('insanejournal:posts-tag', tagParams, 'atom'),
-    table.getFeedEntry('insanejournal:posts', params, 'rss'),
-    table.getFeedEntry('insanejournal:posts', params, 'atom'),
-    table.getFeedEntry('insanejournal:userpics', params, 'atom'),
+    table.getFeedEntry('posts-tag', tagParams, 'rss'),
+    table.getFeedEntry('posts-tag', tagParams, 'atom'),
+    table.getFeedEntry('posts', params, 'rss'),
+    table.getFeedEntry('posts', params, 'atom'),
+    table.getFeedEntry('userpics', params, 'atom'),
   ]
 }
 

@@ -21,11 +21,11 @@ const latestRegex = /^\/latest\/?$/i
 
 // `/feed/latest` reads before `/feed/{owner}`, so a user named latest reads as the latest feed.
 // `/rss` serves the same channel as `/feed`, which the page links, so its row only claims.
-const feeds = definePlatformFeeds([
-  { key: 'devto:community', main: 'https://dev.to/feed', aliases: ['https://dev.to/rss'] },
-  { key: 'devto:latest', main: 'https://dev.to/feed/latest' },
-  { key: 'devto:tag', main: 'https://dev.to/feed/tag/{tag}' },
-  { key: 'devto:posts', main: 'https://dev.to/feed/{owner}' },
+const feeds = definePlatformFeeds('devto', [
+  { key: 'community', main: 'https://dev.to/feed', aliases: ['https://dev.to/rss'] },
+  { key: 'latest', main: 'https://dev.to/feed/latest' },
+  { key: 'tag', main: 'https://dev.to/feed/tag/{tag}' },
+  { key: 'posts', main: 'https://dev.to/feed/{owner}' },
 ])
 
 export const parseDevtoUrl = (url: string): DevtoUrl | undefined => {
@@ -75,25 +75,25 @@ export const devtoHandler: PlatformHandler = {
     // The community and latest feeds need no value from the page, so every page builds them after
     // its own feeds.
     if (parsed.kind === 'home') {
-      return [feeds.getFeedEntry('devto:community'), feeds.getFeedEntry('devto:latest')]
+      return [feeds.getFeedEntry('community'), feeds.getFeedEntry('latest')]
     }
 
     if (parsed.kind === 'latest') {
-      return [feeds.getFeedEntry('devto:latest'), feeds.getFeedEntry('devto:community')]
+      return [feeds.getFeedEntry('latest'), feeds.getFeedEntry('community')]
     }
 
     if (parsed.kind === 'tag') {
       return [
-        feeds.getFeedEntry('devto:tag', { tag: parsed.tag }),
-        feeds.getFeedEntry('devto:community'),
-        feeds.getFeedEntry('devto:latest'),
+        feeds.getFeedEntry('tag', { tag: parsed.tag }),
+        feeds.getFeedEntry('community'),
+        feeds.getFeedEntry('latest'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('devto:posts', { owner: parsed.owner }),
-      feeds.getFeedEntry('devto:community'),
-      feeds.getFeedEntry('devto:latest'),
+      feeds.getFeedEntry('posts', { owner: parsed.owner }),
+      feeds.getFeedEntry('community'),
+      feeds.getFeedEntry('latest'),
     ]
   },
 

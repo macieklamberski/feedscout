@@ -26,17 +26,18 @@ const subdomainTagRegex = /^\/tagged\/([^/]+)/i
 // A user feed is also served at `/@{username}/feed`. A user subdomain serves its feeds on its own
 // host, since medium.com/feed/{subdomain} answers 404.
 const feeds = definePlatformFeeds(
+  'medium',
   [
     {
-      key: 'medium:posts',
+      key: 'posts',
       main: 'https://medium.com/feed/@{username}',
       aliases: ['https://medium.com/@{username}/feed'],
     },
-    { key: 'medium:tag', main: 'https://medium.com/feed/tag/{tag}' },
-    { key: 'medium:tagged', main: 'https://medium.com/feed/{publication}/tagged/{tag}' },
-    { key: 'medium:tagged', main: '{scheme}://{host}/feed/tagged/{tag}' },
-    { key: 'medium:publication', main: 'https://medium.com/feed/{publication}' },
-    { key: 'medium:publication', main: '{scheme}://{host}/feed' },
+    { key: 'tag', main: 'https://medium.com/feed/tag/{tag}' },
+    { key: 'tagged', main: 'https://medium.com/feed/{publication}/tagged/{tag}' },
+    { key: 'tagged', main: '{scheme}://{host}/feed/tagged/{tag}' },
+    { key: 'publication', main: 'https://medium.com/feed/{publication}' },
+    { key: 'publication', main: '{scheme}://{host}/feed' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -106,21 +107,21 @@ export const mediumHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'user') {
-      return [feeds.getFeedEntry('medium:posts', { username: parsed.username })]
+      return [feeds.getFeedEntry('posts', { username: parsed.username })]
     }
 
     if (parsed.kind === 'tag') {
-      return [feeds.getFeedEntry('medium:tag', { tag: parsed.tag })]
+      return [feeds.getFeedEntry('tag', { tag: parsed.tag })]
     }
 
     if (parsed.kind === 'publication' && parsed.tag) {
       const params = { publication: parsed.publication, tag: parsed.tag }
 
-      return [feeds.getFeedEntry('medium:tagged', params)]
+      return [feeds.getFeedEntry('tagged', params)]
     }
 
     if (parsed.kind === 'publication') {
-      return [feeds.getFeedEntry('medium:publication', { publication: parsed.publication })]
+      return [feeds.getFeedEntry('publication', { publication: parsed.publication })]
     }
 
     const page = feeds.forUrl(url)
@@ -130,10 +131,10 @@ export const mediumHandler: PlatformHandler = {
     }
 
     if (parsed.tag) {
-      return [page.getFeedEntry('medium:tagged', { tag: parsed.tag })]
+      return [page.getFeedEntry('tagged', { tag: parsed.tag })]
     }
 
-    return [page.getFeedEntry('medium:publication')]
+    return [page.getFeedEntry('publication')]
   },
 
   getFeedHint: feeds.getFeedHint,

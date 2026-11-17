@@ -10,9 +10,10 @@ const domains = ['jimdofree.com']
 // A site on its own domain is known only by its header, so its feeds are built here but not
 // claimed. A post's tag links the blog narrowed to that tag, `/?tag={tag}`.
 const feeds = definePlatformFeeds(
+  'jimdo',
   [
-    { key: 'jimdo:blog', main: '{scheme}://{host}/rss/blog' },
-    { key: 'jimdo:blog-tag', main: '{scheme}://{host}/rss/blog/{tag}' },
+    { key: 'blog', main: '{scheme}://{host}/rss/blog' },
+    { key: 'blog-tag', main: '{scheme}://{host}/rss/blog/{tag}' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -38,10 +39,10 @@ export const jimdoHandler: PlatformHandler = {
     const tag = getQueryParam(new URL(url), 'tag')
 
     if (tag) {
-      return [page.getFeedEntry('jimdo:blog'), page.getFeedEntry('jimdo:blog-tag', { tag })]
+      return [page.getFeedEntry('blog'), page.getFeedEntry('blog-tag', { tag })]
     }
 
-    return [page.getFeedEntry('jimdo:blog')]
+    return [page.getFeedEntry('blog')]
   },
 
   getFeedHint: feeds.getFeedHint,

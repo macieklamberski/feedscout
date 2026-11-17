@@ -13,9 +13,10 @@ const numberedHostRegex = /^(acclog|img)\d+$/
 
 // A shop on its own domain is known only by its cookie, so its feeds are built but not claimed.
 const feeds = definePlatformFeeds(
+  'color-me-shop',
   [
-    { key: 'color-me-shop:products', main: '{scheme}://{host}/?mode=rss', format: 'rdf' },
-    { key: 'color-me-shop:products', main: '{scheme}://{host}/?mode=atom', format: 'atom' },
+    { key: 'products', main: '{scheme}://{host}/?mode=rss', format: 'rdf' },
+    { key: 'products', main: '{scheme}://{host}/?mode=atom', format: 'atom' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -53,10 +54,7 @@ export const colorMeShopHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      page.getFeedEntry('color-me-shop:products', {}, 'rdf'),
-      page.getFeedEntry('color-me-shop:products', {}, 'atom'),
-    ]
+    return [page.getFeedEntry('products', {}, 'rdf'), page.getFeedEntry('products', {}, 'atom')]
   },
 
   // The table reads a numbered host such as img15 as a shop, so the page parser refuses it first.

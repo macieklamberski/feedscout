@@ -9,9 +9,10 @@ export type TistoryUrl = { kind: 'blog' }
 const domains = ['tistory.com']
 
 const feeds = definePlatformFeeds(
+  'tistory',
   [
     {
-      key: 'tistory:blog',
+      key: 'blog',
       main: '{scheme}://{host}/rss',
       aliases: ['{scheme}://{host}/feed', '{scheme}://{host}/index.xml'],
     },
@@ -39,7 +40,7 @@ export const tistoryHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('tistory:blog')]
+    return [page.getFeedEntry('blog')]
   },
 
   getFeedHint: feeds.getFeedHint,

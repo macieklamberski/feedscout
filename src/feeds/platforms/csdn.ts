@@ -42,7 +42,7 @@ export const csdnHandler: PlatformHandler = {
 
     const { username } = parsed
 
-    return [feeds.getFeedEntry('csdn:blog', { username })]
+    return [feeds.getFeedEntry('blog', { username })]
   },
 
   getFeedHint: feeds.getFeedHint,

@@ -27,10 +27,10 @@ const formElementClasses = ['BAZ_cadre_fiche', 'bazar-entry', 'bazar-list-dynami
 
 // A wiki on any host is known only by its session cookie, which a feed URL does not carry, so the
 // feeds are built under the install root and never claimed.
-const feeds = definePlatformFeeds([
-  { key: 'yeswiki:form-entries', main: '{root}/?BazaR/rss&id={formId}' },
-  { key: 'yeswiki:entries', main: '{root}/?BazaR/rss' },
-  { key: 'yeswiki:recent-changes', main: '{root}/?DerniersChangementsRSS/xml' },
+const feeds = definePlatformFeeds('yeswiki', [
+  { key: 'form-entries', main: '{root}/?BazaR/rss&id={formId}' },
+  { key: 'entries', main: '{root}/?BazaR/rss' },
+  { key: 'recent-changes', main: '{root}/?DerniersChangementsRSS/xml' },
 ])
 
 // YesWiki names its session `YesWiki-main`, or `YesWiki-{path}` under a sub-path.
@@ -105,9 +105,9 @@ export const yeswikiHandler: PlatformHandler = {
     const root = `${new URL(url).origin}${installPath}`
 
     return [
-      ...formIds.map((formId) => feeds.getFeedEntry('yeswiki:form-entries', { root, formId })),
-      feeds.getFeedEntry('yeswiki:entries', { root }),
-      feeds.getFeedEntry('yeswiki:recent-changes', { root }),
+      ...formIds.map((formId) => feeds.getFeedEntry('form-entries', { root, formId })),
+      feeds.getFeedEntry('entries', { root }),
+      feeds.getFeedEntry('recent-changes', { root }),
     ]
   },
 }

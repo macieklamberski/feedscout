@@ -10,9 +10,10 @@ export type MailArchiveUrl = { kind: 'list'; list: string }
 const hosts = ['mail-archive.com', 'www.mail-archive.com']
 
 const feeds = definePlatformFeeds(
+  'mail-archive',
   [
-    { key: 'mail-archive:list', main: '{scheme}://{host}/{list}/maillist.xml', format: 'rss' },
-    { key: 'mail-archive:list', main: '{scheme}://{host}/{list}/maillist.rdf', format: 'rdf' },
+    { key: 'list', main: '{scheme}://{host}/{list}/maillist.xml', format: 'rss' },
+    { key: 'list', main: '{scheme}://{host}/{list}/maillist.rdf', format: 'rdf' },
   ],
   { hosts: { exact: hosts } },
 )
@@ -47,8 +48,8 @@ export const mailArchiveHandler: PlatformHandler = {
     }
 
     return [
-      pageFeeds.getFeedEntry('mail-archive:list', { list: parsed.list }, 'rss'),
-      pageFeeds.getFeedEntry('mail-archive:list', { list: parsed.list }, 'rdf'),
+      pageFeeds.getFeedEntry('list', { list: parsed.list }, 'rss'),
+      pageFeeds.getFeedEntry('list', { list: parsed.list }, 'rdf'),
     ]
   },
 

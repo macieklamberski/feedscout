@@ -84,46 +84,46 @@ export const steamHandler: PlatformHandler = {
     // builds them after its own feeds. A community page is another site.
     if (parsed.kind === 'app') {
       return [
-        feeds.getFeedEntry('steam:news', { appId: parsed.appId }),
-        feeds.getFeedEntry('steam:community-news', { appId: parsed.appId }),
+        feeds.getFeedEntry('news', { appId: parsed.appId }),
+        feeds.getFeedEntry('community-news', { game: parsed.appId }),
         ...(isHostOf(url, storeHosts)
           ? [
-              feeds.getFeedEntry('steam:daily-deals'),
-              feeds.getFeedEntry('steam:new-releases'),
-              feeds.getFeedEntry('steam:weekly-top-sellers'),
+              feeds.getFeedEntry('daily-deals'),
+              feeds.getFeedEntry('new-releases'),
+              feeds.getFeedEntry('weekly-top-sellers'),
             ]
           : []),
       ]
     }
 
     if (parsed.kind === 'group') {
-      return [feeds.getFeedEntry('steam:group', { group: parsed.group })]
+      return [feeds.getFeedEntry('group', { group: parsed.group })]
     }
 
     if (parsed.kind === 'groupNews') {
       return [
-        feeds.getFeedEntry('steam:group-news', { clanId: parsed.clanId }),
-        feeds.getFeedEntry('steam:daily-deals'),
-        feeds.getFeedEntry('steam:new-releases'),
-        feeds.getFeedEntry('steam:weekly-top-sellers'),
+        feeds.getFeedEntry('group-news', { clanId: parsed.clanId }),
+        feeds.getFeedEntry('daily-deals'),
+        feeds.getFeedEntry('new-releases'),
+        feeds.getFeedEntry('weekly-top-sellers'),
       ]
     }
 
     if (parsed.kind === 'collection') {
       return [
-        feeds.getFeedEntry('steam:news-collection', { collection: parsed.collection }),
-        feeds.getFeedEntry('steam:daily-deals'),
-        feeds.getFeedEntry('steam:new-releases'),
-        feeds.getFeedEntry('steam:weekly-top-sellers'),
+        feeds.getFeedEntry('news-collection', { collection: parsed.collection }),
+        feeds.getFeedEntry('daily-deals'),
+        feeds.getFeedEntry('new-releases'),
+        feeds.getFeedEntry('weekly-top-sellers'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('steam:daily-deals'),
-      feeds.getFeedEntry('steam:new-releases'),
-      feeds.getFeedEntry('steam:weekly-top-sellers'),
+      feeds.getFeedEntry('daily-deals'),
+      feeds.getFeedEntry('new-releases'),
+      feeds.getFeedEntry('weekly-top-sellers'),
     ]
   },
 
-  getFeedHint: (url) => withHintLabel(steam.getFeedHint(url)),
+  getFeedHint: (url) => withHintLabel(steam.feeds.getFeedHint(url)),
 }

@@ -12,7 +12,7 @@ const pinwUrlRegex = /powerpress_pinw\('(?<homeUrl>[^'?]*)\?powerpress_pinw=/
 const trailingSlashRegex = /\/$/
 
 // A site of any domain is known only by its marker, so its feed is built here but not claimed.
-const feeds = definePlatformFeeds([{ key: 'powerpress:podcast', main: '{root}/feed/podcast/' }])
+const feeds = definePlatformFeeds('powerpress', [{ key: 'podcast', main: '{root}/feed/podcast/' }])
 
 export const isPowerpressHtml = (content: string): boolean => {
   return content.includes(playerFunction)
@@ -55,6 +55,6 @@ export const powerpressHandler: PlatformHandler = {
       return []
     }
 
-    return [pageFeeds.getFeedEntry('powerpress:podcast', { root: page.homeUrl })]
+    return [pageFeeds.getFeedEntry('podcast', { root: page.homeUrl })]
   },
 }

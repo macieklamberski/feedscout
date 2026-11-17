@@ -97,7 +97,7 @@ export const githubHandler: PlatformHandler = {
 
     // User or organization profile page: /{owner}.
     if (parsed.kind === 'user') {
-      return [feeds.getFeedEntry('github:activity', { owner: parsed.owner })]
+      return [feeds.getFeedEntry('activity', { owner: parsed.owner })]
     }
 
     // Organization discussions page: /orgs/{org}/discussions.
@@ -106,12 +106,12 @@ export const githubHandler: PlatformHandler = {
 
       if (discussionCategory) {
         return [
-          feeds.getFeedEntry('github:discussions', { org }),
-          feeds.getFeedEntry('github:discussion-category', { org, category: discussionCategory }),
+          feeds.getFeedEntry('discussions', { org }),
+          feeds.getFeedEntry('discussion-category', { org, category: discussionCategory }),
         ]
       }
 
-      return [feeds.getFeedEntry('github:discussions', { org })]
+      return [feeds.getFeedEntry('discussions', { org })]
     }
 
     const { owner, repo, section, discussionCategory, branch, file } = parsed
@@ -119,20 +119,20 @@ export const githubHandler: PlatformHandler = {
 
     if (section === 'wiki') {
       return [
-        feeds.getFeedEntry('github:releases', params),
-        feeds.getFeedEntry('github:commits', params),
-        feeds.getFeedEntry('github:tags', params),
-        feeds.getFeedEntry('github:wiki', params),
+        feeds.getFeedEntry('releases', params),
+        feeds.getFeedEntry('commits', params),
+        feeds.getFeedEntry('tags', params),
+        feeds.getFeedEntry('wiki', params),
       ]
     }
 
     if (section === 'discussions' && discussionCategory) {
       return [
-        feeds.getFeedEntry('github:releases', params),
-        feeds.getFeedEntry('github:commits', params),
-        feeds.getFeedEntry('github:tags', params),
-        feeds.getFeedEntry('github:discussions', params),
-        feeds.getFeedEntry('github:discussion-category', {
+        feeds.getFeedEntry('releases', params),
+        feeds.getFeedEntry('commits', params),
+        feeds.getFeedEntry('tags', params),
+        feeds.getFeedEntry('discussions', params),
+        feeds.getFeedEntry('discussion-category', {
           ...params,
           category: discussionCategory,
         }),
@@ -141,28 +141,28 @@ export const githubHandler: PlatformHandler = {
 
     if (section === 'discussions') {
       return [
-        feeds.getFeedEntry('github:releases', params),
-        feeds.getFeedEntry('github:commits', params),
-        feeds.getFeedEntry('github:tags', params),
-        feeds.getFeedEntry('github:discussions', params),
+        feeds.getFeedEntry('releases', params),
+        feeds.getFeedEntry('commits', params),
+        feeds.getFeedEntry('tags', params),
+        feeds.getFeedEntry('discussions', params),
       ]
     }
 
     if (branch) {
       return [
-        feeds.getFeedEntry('github:releases', params),
-        feeds.getFeedEntry('github:commits', params),
-        feeds.getFeedEntry('github:tags', params),
-        feeds.getFeedEntry('github:branch-commits', { ...params, branch }),
+        feeds.getFeedEntry('releases', params),
+        feeds.getFeedEntry('commits', params),
+        feeds.getFeedEntry('tags', params),
+        feeds.getFeedEntry('branch-commits', { ...params, branch }),
       ]
     }
 
     if (file) {
       return [
-        feeds.getFeedEntry('github:releases', params),
-        feeds.getFeedEntry('github:commits', params),
-        feeds.getFeedEntry('github:tags', params),
-        feeds.getFeedEntry('github:file-history', {
+        feeds.getFeedEntry('releases', params),
+        feeds.getFeedEntry('commits', params),
+        feeds.getFeedEntry('tags', params),
+        feeds.getFeedEntry('file-history', {
           ...params,
           branch: file.branch,
           path: file.path,
@@ -171,9 +171,9 @@ export const githubHandler: PlatformHandler = {
     }
 
     return [
-      feeds.getFeedEntry('github:releases', params),
-      feeds.getFeedEntry('github:commits', params),
-      feeds.getFeedEntry('github:tags', params),
+      feeds.getFeedEntry('releases', params),
+      feeds.getFeedEntry('commits', params),
+      feeds.getFeedEntry('tags', params),
     ]
   },
 

@@ -24,16 +24,17 @@ const postFeedSegmentRegex = /\/(?:rss2|atom)\/?$/i
 // Blogs serve `/rss`, `/comments/rss`, `/comments/comments/rss` and `/comments/comments/rss2` with
 // the items of the `rss2` feeds their pages link.
 const feeds = definePlatformFeeds(
+  'blog-hu',
   [
     {
-      key: 'blog-hu:posts',
+      key: 'posts',
       main: '{scheme}://{host}/rss2',
       format: 'rss',
       aliases: ['{scheme}://{host}/rss', '{scheme}://{host}/xml/rss2'],
     },
-    { key: 'blog-hu:posts', main: '{scheme}://{host}/atom', format: 'atom' },
+    { key: 'posts', main: '{scheme}://{host}/atom', format: 'atom' },
     {
-      key: 'blog-hu:comments',
+      key: 'comments',
       main: '{scheme}://{host}/comments/rss2',
       format: 'rss',
       aliases: [
@@ -42,21 +43,21 @@ const feeds = definePlatformFeeds(
         '{scheme}://{host}/comments/comments/rss2',
       ],
     },
-    { key: 'blog-hu:comments', main: '{scheme}://{host}/comments/atom', format: 'atom' },
+    { key: 'comments', main: '{scheme}://{host}/comments/atom', format: 'atom' },
     {
-      key: 'blog-hu:post-comments',
+      key: 'post-comments',
       main: '{scheme}://{host}/{year}/{month}/{day}/{slug}/rss2',
       format: 'rss',
     },
     {
-      key: 'blog-hu:post-comments',
+      key: 'post-comments',
       main: '{scheme}://{host}/{year}/{month}/{day}/{slug}/atom',
       format: 'atom',
     },
-    { key: 'blog-hu:tag', main: '{scheme}://{host}/rss/tags/{tag}', format: 'rss' },
-    { key: 'blog-hu:tag', main: '{scheme}://{host}/atom/tags/{tag}', format: 'atom' },
+    { key: 'tag', main: '{scheme}://{host}/rss/tags/{tag}', format: 'rss' },
+    { key: 'tag', main: '{scheme}://{host}/atom/tags/{tag}', format: 'atom' },
     // A user feed with a `token` query is the same feed signed for one reader.
-    { key: 'blog-hu:user', main: 'https://blog.hu/user/{userId}/rss' },
+    { key: 'user', main: 'https://blog.hu/user/{userId}/rss' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -117,7 +118,7 @@ export const blogHuHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'user') {
-      return [feeds.getFeedEntry('blog-hu:user', { userId: parsed.userId })]
+      return [feeds.getFeedEntry('user', { userId: parsed.userId })]
     }
 
     const page = feeds.forUrl(url)
@@ -128,31 +129,31 @@ export const blogHuHandler: PlatformHandler = {
 
     if (parsed.post) {
       return [
-        page.getFeedEntry('blog-hu:post-comments', parsed.post, 'rss'),
-        page.getFeedEntry('blog-hu:post-comments', parsed.post, 'atom'),
-        page.getFeedEntry('blog-hu:posts', {}, 'rss'),
-        page.getFeedEntry('blog-hu:posts', {}, 'atom'),
-        page.getFeedEntry('blog-hu:comments', {}, 'rss'),
-        page.getFeedEntry('blog-hu:comments', {}, 'atom'),
+        page.getFeedEntry('post-comments', parsed.post, 'rss'),
+        page.getFeedEntry('post-comments', parsed.post, 'atom'),
+        page.getFeedEntry('posts', {}, 'rss'),
+        page.getFeedEntry('posts', {}, 'atom'),
+        page.getFeedEntry('comments', {}, 'rss'),
+        page.getFeedEntry('comments', {}, 'atom'),
       ]
     }
 
     if (parsed.tag) {
       return [
-        page.getFeedEntry('blog-hu:tag', { tag: parsed.tag }, 'rss'),
-        page.getFeedEntry('blog-hu:tag', { tag: parsed.tag }, 'atom'),
-        page.getFeedEntry('blog-hu:posts', {}, 'rss'),
-        page.getFeedEntry('blog-hu:posts', {}, 'atom'),
-        page.getFeedEntry('blog-hu:comments', {}, 'rss'),
-        page.getFeedEntry('blog-hu:comments', {}, 'atom'),
+        page.getFeedEntry('tag', { tag: parsed.tag }, 'rss'),
+        page.getFeedEntry('tag', { tag: parsed.tag }, 'atom'),
+        page.getFeedEntry('posts', {}, 'rss'),
+        page.getFeedEntry('posts', {}, 'atom'),
+        page.getFeedEntry('comments', {}, 'rss'),
+        page.getFeedEntry('comments', {}, 'atom'),
       ]
     }
 
     return [
-      page.getFeedEntry('blog-hu:posts', {}, 'rss'),
-      page.getFeedEntry('blog-hu:posts', {}, 'atom'),
-      page.getFeedEntry('blog-hu:comments', {}, 'rss'),
-      page.getFeedEntry('blog-hu:comments', {}, 'atom'),
+      page.getFeedEntry('posts', {}, 'rss'),
+      page.getFeedEntry('posts', {}, 'atom'),
+      page.getFeedEntry('comments', {}, 'rss'),
+      page.getFeedEntry('comments', {}, 'atom'),
     ]
   },
 

@@ -26,19 +26,20 @@ const errorPageRegex = /<!-- This file lives in public\/404\.html -->/
 // claims a feed on a Tender host under its origin or `/help` only. A custom domain carries no
 // marker in the URL alone, so its feeds are built here but not claimed.
 const feeds = definePlatformFeeds(
+  'tender',
   [
-    { key: 'tender:discussions', main: '{root}/discussions.atom' },
-    { key: 'tender:discussions', main: '{root}/help/discussions.atom' },
-    { key: 'tender:comments', main: '{root}/comments/recent.atom' },
-    { key: 'tender:comments', main: '{root}/help/comments/recent.atom' },
+    { key: 'discussions', main: '{root}/discussions.atom' },
+    { key: 'discussions', main: '{root}/help/discussions.atom' },
+    { key: 'comments', main: '{root}/comments/recent.atom' },
+    { key: 'comments', main: '{root}/help/comments/recent.atom' },
     // The page links its comments feed with the discussion repeated as `discussion_id`, and the
     // feed answers without it too.
     {
-      key: 'tender:discussion',
+      key: 'discussion',
       main: '{root}/discussions/{category}/{discussion}.atom?discussion_id={discussionId}',
       aliases: ['{root}/discussions/{category}/{discussion}.atom'],
     },
-    { key: 'tender:discussion', main: '{root}/help/discussions/{category}/{discussion}.atom' },
+    { key: 'discussion', main: '{root}/help/discussions/{category}/{discussion}.atom' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -130,7 +131,7 @@ export const tenderHandler: PlatformHandler = {
       const discussionId = decodeSegment(discussion) ?? discussion
 
       return [
-        feeds.getFeedEntry('tender:discussion', {
+        feeds.getFeedEntry('discussion', {
           root: siteUrl,
           category,
           discussion,
@@ -140,8 +141,8 @@ export const tenderHandler: PlatformHandler = {
     }
 
     return [
-      feeds.getFeedEntry('tender:discussions', { root: page.siteUrl }),
-      feeds.getFeedEntry('tender:comments', { root: page.siteUrl }),
+      feeds.getFeedEntry('discussions', { root: page.siteUrl }),
+      feeds.getFeedEntry('comments', { root: page.siteUrl }),
     ]
   },
 

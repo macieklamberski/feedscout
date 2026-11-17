@@ -10,8 +10,8 @@ export type PrlogPage = PrlogUrl
 
 const hosts = ['pressroom.prlog.org']
 
-const feeds = definePlatformFeeds([
-  { key: 'prlog:press-releases', main: 'https://pressroom.prlog.org/{pressroomId}/latest.xml' },
+const feeds = definePlatformFeeds('prlog', [
+  { key: 'press-releases', main: 'https://pressroom.prlog.org/{pressroomId}/latest.xml' },
 ])
 
 export const parsePrlogUrl = (url: string): PrlogUrl | undefined => {
@@ -67,7 +67,7 @@ export const prlogHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('prlog:press-releases', { pressroomId: page.pressroomId })]
+    return [feeds.getFeedEntry('press-releases', { pressroomId: page.pressroomId })]
   },
 
   getFeedHint: feeds.getFeedHint,

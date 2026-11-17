@@ -17,13 +17,14 @@ const labelPathRegex = /^\/labels\/([^/,]+)\/?$/i
 // A newspage serves its feeds on its own host, custom domains too. The `feed.*` rows read before
 // the label rows, so a label named feed reads as the newspage feed.
 const feeds = definePlatformFeeds(
+  'noticeable',
   [
-    { key: 'noticeable:posts', main: '{scheme}://{host}/feed.rss', format: 'rss' },
-    { key: 'noticeable:posts', main: '{scheme}://{host}/feed.atom', format: 'atom' },
-    { key: 'noticeable:posts', main: '{scheme}://{host}/feed.json', format: 'json' },
-    { key: 'noticeable:label', main: '{scheme}://{host}/{label}.rss', format: 'rss' },
-    { key: 'noticeable:label', main: '{scheme}://{host}/{label}.atom', format: 'atom' },
-    { key: 'noticeable:label', main: '{scheme}://{host}/{label}.json', format: 'json' },
+    { key: 'posts', main: '{scheme}://{host}/feed.rss', format: 'rss' },
+    { key: 'posts', main: '{scheme}://{host}/feed.atom', format: 'atom' },
+    { key: 'posts', main: '{scheme}://{host}/feed.json', format: 'json' },
+    { key: 'label', main: '{scheme}://{host}/{label}.rss', format: 'rss' },
+    { key: 'label', main: '{scheme}://{host}/{label}.atom', format: 'atom' },
+    { key: 'label', main: '{scheme}://{host}/{label}.json', format: 'json' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -74,19 +75,19 @@ export const noticeableHandler: PlatformHandler = {
       const labelParams = { label: parsed.label }
 
       return [
-        page.getFeedEntry('noticeable:label', labelParams, 'rss'),
-        page.getFeedEntry('noticeable:label', labelParams, 'atom'),
-        page.getFeedEntry('noticeable:label', labelParams, 'json'),
-        page.getFeedEntry('noticeable:posts', {}, 'rss'),
-        page.getFeedEntry('noticeable:posts', {}, 'atom'),
-        page.getFeedEntry('noticeable:posts', {}, 'json'),
+        page.getFeedEntry('label', labelParams, 'rss'),
+        page.getFeedEntry('label', labelParams, 'atom'),
+        page.getFeedEntry('label', labelParams, 'json'),
+        page.getFeedEntry('posts', {}, 'rss'),
+        page.getFeedEntry('posts', {}, 'atom'),
+        page.getFeedEntry('posts', {}, 'json'),
       ]
     }
 
     return [
-      page.getFeedEntry('noticeable:posts', {}, 'rss'),
-      page.getFeedEntry('noticeable:posts', {}, 'atom'),
-      page.getFeedEntry('noticeable:posts', {}, 'json'),
+      page.getFeedEntry('posts', {}, 'rss'),
+      page.getFeedEntry('posts', {}, 'atom'),
+      page.getFeedEntry('posts', {}, 'json'),
     ]
   },
 

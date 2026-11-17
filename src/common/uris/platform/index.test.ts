@@ -24,9 +24,9 @@ const samePageUrls = [
   'https://example.com/p%61ge?a=1&b=2',
 ]
 
-const claimedFeeds = definePlatformFeeds([
-  { key: 'ocnk:products', main: 'https://example.com/{shop}/products.rdf', format: 'rdf' },
-  { key: 'youtube:videos', main: 'https://example.com/{username}/videos.xml' },
+const claimedFeeds = definePlatformFeeds('youtube', [
+  { key: 'shorts', main: 'https://example.com/{shop}/products.rdf', format: 'rdf' },
+  { key: 'videos', main: 'https://example.com/{username}/videos.xml' },
 ])
 
 const claimedFeedCases: Array<[string, DiscoverUriEntry]> = [
@@ -34,7 +34,7 @@ const claimedFeedCases: Array<[string, DiscoverUriEntry]> = [
     'https://example.com/alice/products.rdf',
     {
       uri: 'https://example.com/alice/products.rdf',
-      hint: { key: 'ocnk:products', label: 'Products', format: 'rdf' },
+      hint: { key: 'youtube:shorts', label: 'Shorts', format: 'rdf' },
     },
   ],
   [

@@ -38,7 +38,7 @@ export const bitchuteHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('bitchute:channel', { channel: parsed.channel })]
+    return [feeds.getFeedEntry('channel', { channel: parsed.channel })]
   },
 
   getFeedHint: feeds.getFeedHint,

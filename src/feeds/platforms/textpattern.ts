@@ -18,13 +18,13 @@ const reservedRoutes = ['author', 'category', 'file_download']
 
 // A site on any host is known only by its generator tag, which a feed URL does not carry, so the
 // feeds are built under the site root and never claimed.
-const feeds = definePlatformFeeds([
-  { key: 'textpattern:section', main: '{root}/rss?section={section}', format: 'rss' },
-  { key: 'textpattern:section', main: '{root}/atom?section={section}', format: 'atom' },
-  { key: 'textpattern:category', main: '{root}/rss?category={category}', format: 'rss' },
-  { key: 'textpattern:category', main: '{root}/atom?category={category}', format: 'atom' },
-  { key: 'textpattern:posts', main: '{root}/rss', format: 'rss' },
-  { key: 'textpattern:posts', main: '{root}/atom', format: 'atom' },
+const feeds = definePlatformFeeds('textpattern', [
+  { key: 'section', main: '{root}/rss?section={section}', format: 'rss' },
+  { key: 'section', main: '{root}/atom?section={section}', format: 'atom' },
+  { key: 'category', main: '{root}/rss?category={category}', format: 'rss' },
+  { key: 'category', main: '{root}/atom?category={category}', format: 'atom' },
+  { key: 'posts', main: '{root}/rss', format: 'rss' },
+  { key: 'posts', main: '{root}/atom', format: 'atom' },
 ])
 
 export const isTextpatternHtml = (content: string): boolean => {
@@ -104,10 +104,10 @@ export const textpatternHandler: PlatformHandler = {
       const params = { root: page.siteUrl, section: page.section }
 
       return [
-        feeds.getFeedEntry('textpattern:section', params, 'rss'),
-        feeds.getFeedEntry('textpattern:section', params, 'atom'),
-        feeds.getFeedEntry('textpattern:posts', params, 'rss'),
-        feeds.getFeedEntry('textpattern:posts', params, 'atom'),
+        feeds.getFeedEntry('section', params, 'rss'),
+        feeds.getFeedEntry('section', params, 'atom'),
+        feeds.getFeedEntry('posts', params, 'rss'),
+        feeds.getFeedEntry('posts', params, 'atom'),
       ]
     }
 
@@ -115,16 +115,16 @@ export const textpatternHandler: PlatformHandler = {
       const params = { root: page.siteUrl, category: page.category }
 
       return [
-        feeds.getFeedEntry('textpattern:category', params, 'rss'),
-        feeds.getFeedEntry('textpattern:category', params, 'atom'),
-        feeds.getFeedEntry('textpattern:posts', params, 'rss'),
-        feeds.getFeedEntry('textpattern:posts', params, 'atom'),
+        feeds.getFeedEntry('category', params, 'rss'),
+        feeds.getFeedEntry('category', params, 'atom'),
+        feeds.getFeedEntry('posts', params, 'rss'),
+        feeds.getFeedEntry('posts', params, 'atom'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('textpattern:posts', { root: page.siteUrl }, 'rss'),
-      feeds.getFeedEntry('textpattern:posts', { root: page.siteUrl }, 'atom'),
+      feeds.getFeedEntry('posts', { root: page.siteUrl }, 'rss'),
+      feeds.getFeedEntry('posts', { root: page.siteUrl }, 'atom'),
     ]
   },
 }

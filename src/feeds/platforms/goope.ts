@@ -27,22 +27,22 @@ const assetHosts = ['cdn.goope.jp']
 const templateRegex = /^t_\d+$/i
 
 // A page under a `t_{id}` template segment links the plain feeds, so the template rows only claim.
-const freeSiteFeeds = definePlatformFeeds([
+const freeSiteFeeds = definePlatformFeeds('goope', [
   {
-    key: 'goope:member-news',
+    key: 'member-news',
     main: 'https://r.goope.jp/{site}/shokokai/member/feed.rss',
     format: 'rdf',
     aliases: ['https://r.goope.jp/{site}/t_{templateId}/shokokai/member/feed.rss'],
   },
   {
-    key: 'goope:news',
+    key: 'news',
     main: 'https://r.goope.jp/{site}/feed.rss',
     format: 'rdf',
     aliases: ['https://r.goope.jp/{site}/t_{templateId}/feed.rss'],
   },
   // A federation of chambers of commerce collects its chambers' news under /shokokai.
   {
-    key: 'goope:association-news',
+    key: 'association-news',
     main: 'https://r.goope.jp/{site}/shokokai/feed.rss',
     format: 'rdf',
     aliases: ['https://r.goope.jp/{site}/t_{templateId}/shokokai/feed.rss'],
@@ -52,21 +52,22 @@ const freeSiteFeeds = definePlatformFeeds([
 // A site on its own domain is known only by its markers, so its feeds are built but not claimed.
 // Claimed, these rows would read r.goope.jp/shokokai/member/feed.rss, a redirect to goope.jp.
 const siteFeeds = definePlatformFeeds(
+  'goope',
   [
     {
-      key: 'goope:member-news',
+      key: 'member-news',
       main: '{scheme}://{host}/shokokai/member/feed.rss',
       format: 'rdf',
       aliases: ['{scheme}://{host}/t_{templateId}/shokokai/member/feed.rss'],
     },
     {
-      key: 'goope:news',
+      key: 'news',
       main: '{scheme}://{host}/feed.rss',
       format: 'rdf',
       aliases: ['{scheme}://{host}/t_{templateId}/feed.rss'],
     },
     {
-      key: 'goope:association-news',
+      key: 'association-news',
       main: '{scheme}://{host}/shokokai/feed.rss',
       format: 'rdf',
       aliases: ['{scheme}://{host}/t_{templateId}/shokokai/feed.rss'],
@@ -174,19 +175,19 @@ export const goopeHandler: PlatformHandler = {
     // A chamber of commerce site collects its members' news under /shokokai/member.
     if (parsed.isMemberPage) {
       return [
-        pageFeeds.getFeedEntry('goope:member-news', params, 'rdf'),
-        pageFeeds.getFeedEntry('goope:news', params, 'rdf'),
+        pageFeeds.getFeedEntry('member-news', params, 'rdf'),
+        pageFeeds.getFeedEntry('news', params, 'rdf'),
       ]
     }
 
     if (parsed.isAssociationPage) {
       return [
-        pageFeeds.getFeedEntry('goope:association-news', params, 'rdf'),
-        pageFeeds.getFeedEntry('goope:news', params, 'rdf'),
+        pageFeeds.getFeedEntry('association-news', params, 'rdf'),
+        pageFeeds.getFeedEntry('news', params, 'rdf'),
       ]
     }
 
-    return [pageFeeds.getFeedEntry('goope:news', params, 'rdf')]
+    return [pageFeeds.getFeedEntry('news', params, 'rdf')]
   },
 
   getFeedHint: freeSiteFeeds.getFeedHint,

@@ -20,11 +20,12 @@ const domains = ['wildapricot.org']
 // module's id, which names the blog or the events. A page's own `/RSS` can be either, so it is
 // claimed under a key that names neither.
 const feeds = definePlatformFeeds(
+  'wild-apricot',
   [
-    { key: 'wild-apricot:blog', main: '{root}/page-{page}/BlogPost/{id}/RSS' },
-    { key: 'wild-apricot:events', main: '{root}/page-{page}/EventModule/{id}/RSS' },
+    { key: 'blog', main: '{root}/page-{page}/BlogPost/{id}/RSS' },
+    { key: 'events', main: '{root}/page-{page}/EventModule/{id}/RSS' },
     {
-      key: 'wild-apricot:page',
+      key: 'page',
       main: '{scheme}://{host}/page-{page}/RSS',
       aliases: [
         // A page's feed answers under its friendly path too, and in its widget view, as `/news/RSS`

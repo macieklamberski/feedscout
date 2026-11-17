@@ -73,27 +73,27 @@ export const observableHandler: PlatformHandler = {
     // The recent and trending feeds need no value from the page, so every page builds them after
     // its own feeds.
     if (parsed.kind === 'recent') {
-      return [feeds.getFeedEntry('observable:recent'), feeds.getFeedEntry('observable:trending')]
+      return [feeds.getFeedEntry('recent'), feeds.getFeedEntry('trending')]
     }
 
     if (parsed.kind === 'trending') {
-      return [feeds.getFeedEntry('observable:trending'), feeds.getFeedEntry('observable:recent')]
+      return [feeds.getFeedEntry('trending'), feeds.getFeedEntry('recent')]
     }
 
     if (parsed.kind === 'collection') {
       const params = { owner: parsed.owner, collection: parsed.collection }
 
       return [
-        feeds.getFeedEntry('observable:collection', params),
-        feeds.getFeedEntry('observable:recent'),
-        feeds.getFeedEntry('observable:trending'),
+        feeds.getFeedEntry('collection', params),
+        feeds.getFeedEntry('recent'),
+        feeds.getFeedEntry('trending'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('observable:notebooks', { owner: parsed.owner }),
-      feeds.getFeedEntry('observable:recent'),
-      feeds.getFeedEntry('observable:trending'),
+      feeds.getFeedEntry('notebooks', { owner: parsed.owner }),
+      feeds.getFeedEntry('recent'),
+      feeds.getFeedEntry('trending'),
     ]
   },
 

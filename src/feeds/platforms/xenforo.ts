@@ -27,10 +27,10 @@ const appRootIds = ['XF', 'XenForo']
 // A board on any host is known only by its markup, which a feed URL does not carry, so the feeds
 // are built under the board root and never claimed. A forum page names the route of the board
 // feed, and a board page does not, so it gets both routes in turn.
-const feeds = definePlatformFeeds([
-  { key: 'xenforo:forum', main: '{root}/{route}/{forumPath}/index.rss' },
-  { key: 'xenforo:site', main: '{root}/{route}/-/index.rss' },
-  { key: 'xenforo:site', main: '{root}/forums/-/index.rss', aliases: ['{root}/f/-/index.rss'] },
+const feeds = definePlatformFeeds('xenforo', [
+  { key: 'forum', main: '{root}/{route}/{forumPath}/index.rss' },
+  { key: 'site', main: '{root}/{route}/-/index.rss' },
+  { key: 'site', main: '{root}/forums/-/index.rss', aliases: ['{root}/f/-/index.rss'] },
 ])
 
 export const isXenforoHtml = (content: string): boolean => {
@@ -110,11 +110,11 @@ export const xenforoHandler: PlatformHandler = {
 
     if (page.kind === 'forum') {
       return [
-        feeds.getFeedEntry('xenforo:forum', { root, route: page.route, forumPath: page.forumPath }),
-        feeds.getFeedEntry('xenforo:site', { root, route: page.route }),
+        feeds.getFeedEntry('forum', { root, route: page.route, forumPath: page.forumPath }),
+        feeds.getFeedEntry('site', { root, route: page.route }),
       ]
     }
 
-    return [feeds.getFeedSpellings('xenforo:site', { root })]
+    return [feeds.getFeedSpellings('site', { root })]
   },
 }

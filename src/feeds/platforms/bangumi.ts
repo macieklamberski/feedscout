@@ -16,10 +16,11 @@ const hosts = ['bgm.tv', 'bangumi.tv', ...challengedHosts]
 const userRegex = /^\/user\/([^/]+)/i
 
 const feeds = definePlatformFeeds(
+  'bangumi',
   [
-    { key: 'bangumi:collections', main: '{scheme}://{host}/feed/user/{username}/interests' },
-    { key: 'bangumi:timeline', main: '{scheme}://{host}/feed/user/{username}/timeline' },
-    { key: 'bangumi:blog', main: '{scheme}://{host}/feed/blog/all' },
+    { key: 'collections', main: '{scheme}://{host}/feed/user/{username}/interests' },
+    { key: 'timeline', main: '{scheme}://{host}/feed/user/{username}/timeline' },
+    { key: 'blog', main: '{scheme}://{host}/feed/blog/all' },
   ],
   { hosts: { exact: hosts } },
 )
@@ -55,12 +56,12 @@ export const bangumiHandler: PlatformHandler = {
 
     if (parsed.kind === 'user') {
       return [
-        pageFeeds.getFeedEntry('bangumi:collections', { username: parsed.username }),
-        pageFeeds.getFeedEntry('bangumi:timeline', { username: parsed.username }),
+        pageFeeds.getFeedEntry('collections', { username: parsed.username }),
+        pageFeeds.getFeedEntry('timeline', { username: parsed.username }),
       ]
     }
 
-    return [pageFeeds.getFeedEntry('bangumi:blog')]
+    return [pageFeeds.getFeedEntry('blog')]
   },
 
   getFeedHint: feeds.getFeedHint,

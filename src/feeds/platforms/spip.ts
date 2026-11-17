@@ -23,12 +23,12 @@ const objects = ['article', 'rubrique', 'mot', 'auteur'] as const
 
 // A site of any domain is known only by its headers, so its feeds are built here but not claimed.
 // The root holds the sub-path the site is installed under.
-const feeds = definePlatformFeeds([
-  { key: 'spip:article-comments', main: '{root}/spip.php?page=comments-rss&id_article={id}' },
-  { key: 'spip:section', main: '{root}/spip.php?page=backend&id_rubrique={id}' },
-  { key: 'spip:keyword', main: '{root}/spip.php?page=backend&id_mot={id}' },
-  { key: 'spip:author', main: '{root}/spip.php?page=backend&id_auteur={id}' },
-  { key: 'spip:articles', main: '{root}/spip.php?page=backend' },
+const feeds = definePlatformFeeds('spip', [
+  { key: 'article-comments', main: '{root}/spip.php?page=comments-rss&id_article={id}' },
+  { key: 'section', main: '{root}/spip.php?page=backend&id_rubrique={id}' },
+  { key: 'keyword', main: '{root}/spip.php?page=backend&id_mot={id}' },
+  { key: 'author', main: '{root}/spip.php?page=backend&id_auteur={id}' },
+  { key: 'articles', main: '{root}/spip.php?page=backend' },
 ])
 
 // SPIP sends `Composed-By` on every page it composes, and `X-Spip-Cache` when its page cache is
@@ -141,32 +141,32 @@ export const spipHandler: PlatformHandler = {
     // entries, so only the RSS one is emitted.
     if (page.kind === 'article') {
       return [
-        feeds.getFeedEntry('spip:article-comments', { root, id: page.id }),
-        feeds.getFeedEntry('spip:articles', { root }),
+        feeds.getFeedEntry('article-comments', { root, id: page.id }),
+        feeds.getFeedEntry('articles', { root }),
       ]
     }
 
     if (page.kind === 'rubrique') {
       return [
-        feeds.getFeedEntry('spip:section', { root, id: page.id }),
-        feeds.getFeedEntry('spip:articles', { root }),
+        feeds.getFeedEntry('section', { root, id: page.id }),
+        feeds.getFeedEntry('articles', { root }),
       ]
     }
 
     if (page.kind === 'mot') {
       return [
-        feeds.getFeedEntry('spip:keyword', { root, id: page.id }),
-        feeds.getFeedEntry('spip:articles', { root }),
+        feeds.getFeedEntry('keyword', { root, id: page.id }),
+        feeds.getFeedEntry('articles', { root }),
       ]
     }
 
     if (page.kind === 'auteur') {
       return [
-        feeds.getFeedEntry('spip:author', { root, id: page.id }),
-        feeds.getFeedEntry('spip:articles', { root }),
+        feeds.getFeedEntry('author', { root, id: page.id }),
+        feeds.getFeedEntry('articles', { root }),
       ]
     }
 
-    return [feeds.getFeedEntry('spip:articles', { root })]
+    return [feeds.getFeedEntry('articles', { root })]
   },
 }

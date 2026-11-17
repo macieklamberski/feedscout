@@ -15,14 +15,15 @@ const userBlogRegex = /^\/@\/([\w-]+)\/blog(?:\/|$)/i
 const communityRegex = /^(?:\/([^/]+))?\/blog\/community\/?$/i
 
 const feeds = definePlatformFeeds(
+  'lichess',
   [
     {
-      key: 'lichess:blog',
+      key: 'blog',
       main: 'https://lichess.org/@/{username}/blog.atom',
       aliases: ['https://lichess.org/blog.atom'],
     },
-    { key: 'lichess:community', main: 'https://lichess.org/blog/community.atom?lang={language}' },
-    { key: 'lichess:community', main: 'https://lichess.org/blog/community.atom' },
+    { key: 'community', main: 'https://lichess.org/blog/community.atom?lang={language}' },
+    { key: 'community', main: 'https://lichess.org/blog/community.atom' },
   ],
   { checks: { language: isLocale } },
 )
@@ -73,14 +74,14 @@ export const lichessHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'blog') {
-      return [feeds.getFeedEntry('lichess:blog', { username: parsed.username })]
+      return [feeds.getFeedEntry('blog', { username: parsed.username })]
     }
 
     if (parsed.kind === 'community') {
-      return [feeds.getFeedEntry('lichess:community', { language: parsed.language })]
+      return [feeds.getFeedEntry('community', { language: parsed.language })]
     }
 
-    return [feeds.getFeedEntry('lichess:blog', { username: 'Lichess' })]
+    return [feeds.getFeedEntry('blog', { username: 'Lichess' })]
   },
 
   getFeedHint: feeds.getFeedHint,

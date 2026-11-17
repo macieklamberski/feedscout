@@ -15,15 +15,16 @@ const domains = ['instatus.com']
 // A status page on its own domain is known only by its markers, so its feeds are built here but
 // not claimed. A translation's feeds serve the same items as the bare ones.
 const feeds = definePlatformFeeds(
+  'instatus',
   [
     {
-      key: 'instatus:history',
+      key: 'history',
       main: '{scheme}://{host}/history.rss',
       format: 'rss',
       aliases: ['{scheme}://{host}/{language}/history.rss'],
     },
     {
-      key: 'instatus:history',
+      key: 'history',
       main: '{scheme}://{host}/history.atom',
       format: 'atom',
       aliases: ['{scheme}://{host}/{language}/history.atom'],
@@ -70,8 +71,8 @@ export const instatusHandler: PlatformHandler = {
     }
 
     return [
-      pageFeeds.getFeedEntry('instatus:history', {}, 'rss'),
-      pageFeeds.getFeedEntry('instatus:history', {}, 'atom'),
+      pageFeeds.getFeedEntry('history', {}, 'rss'),
+      pageFeeds.getFeedEntry('history', {}, 'atom'),
     ]
   },
 

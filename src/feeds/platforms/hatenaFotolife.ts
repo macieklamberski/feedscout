@@ -29,24 +29,25 @@ const photoIdRegex = /^\d{14}$/
 const unreservedMarkRegex = /[-.!~*'()]/g
 
 const feeds = definePlatformFeeds(
+  'hatena-fotolife',
   [
-    { key: 'hatena-fotolife:photos', main: 'https://f.hatena.ne.jp/{username}/rss' },
-    { key: 'hatena-fotolife:model', main: 'https://f.hatena.ne.jp/{username}/rss?model={model}' },
-    { key: 'hatena-fotolife:folder', main: 'https://f.hatena.ne.jp/{username}/{folder}/rss' },
-    { key: 'hatena-fotolife:tag', main: 'https://f.hatena.ne.jp/{username}/t/{tag}?mode=rss' },
-    { key: 'hatena-fotolife:stars', main: 'https://f.hatena.ne.jp/{username}/favorite?mode=rss' },
+    { key: 'photos', main: 'https://f.hatena.ne.jp/{username}/rss' },
+    { key: 'model', main: 'https://f.hatena.ne.jp/{username}/rss?model={model}' },
+    { key: 'folder', main: 'https://f.hatena.ne.jp/{username}/{folder}/rss' },
+    { key: 'tag', main: 'https://f.hatena.ne.jp/{username}/t/{tag}?mode=rss' },
+    { key: 'stars', main: 'https://f.hatena.ne.jp/{username}/favorite?mode=rss' },
     {
-      key: 'hatena-fotolife:star-friends',
+      key: 'star-friends',
       main: 'https://f.hatena.ne.jp/{username}/starfriends?mode=rss',
     },
     // Site-wide listings: the newest photos, and photos by camera model, focal length or color.
-    { key: 'hatena-fotolife:recent', main: 'https://f.hatena.ne.jp/userlist?mode=rss' },
-    { key: 'hatena-fotolife:site-model', main: 'https://f.hatena.ne.jp/model/{model}?mode=rss' },
+    { key: 'recent', main: 'https://f.hatena.ne.jp/userlist?mode=rss' },
+    { key: 'site-model', main: 'https://f.hatena.ne.jp/model/{model}?mode=rss' },
     {
-      key: 'hatena-fotolife:focal-length',
+      key: 'focal-length',
       main: 'https://f.hatena.ne.jp/focallength/{focalLength}?mode=rss',
     },
-    { key: 'hatena-fotolife:color', main: 'https://f.hatena.ne.jp/fotocolor/{color}?mode=rss' },
+    { key: 'color', main: 'https://f.hatena.ne.jp/fotocolor/{color}?mode=rss' },
   ],
   { hosts: { exact: hosts } },
 )
@@ -139,76 +140,64 @@ export const hatenaFotolifeHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'userlist') {
-      return [feeds.getFeedEntry('hatena-fotolife:recent')]
+      return [feeds.getFeedEntry('recent')]
     }
 
     // A listing page links its feed with the value as the page URL spells it.
     if (parsed.kind === 'siteModel') {
       return [
-        feeds.getFeedEntry('hatena-fotolife:site-model', { model: parsed.model }),
-        feeds.getFeedEntry('hatena-fotolife:recent'),
+        feeds.getFeedEntry('site-model', { model: parsed.model }),
+        feeds.getFeedEntry('recent'),
       ]
     }
 
     if (parsed.kind === 'focalLength') {
       return [
-        feeds.getFeedEntry('hatena-fotolife:focal-length', { focalLength: parsed.focalLength }),
-        feeds.getFeedEntry('hatena-fotolife:recent'),
+        feeds.getFeedEntry('focal-length', { focalLength: parsed.focalLength }),
+        feeds.getFeedEntry('recent'),
       ]
     }
 
     if (parsed.kind === 'color') {
-      return [
-        feeds.getFeedEntry('hatena-fotolife:color', { color: parsed.color }),
-        feeds.getFeedEntry('hatena-fotolife:recent'),
-      ]
+      return [feeds.getFeedEntry('color', { color: parsed.color }), feeds.getFeedEntry('recent')]
     }
 
     const username = escapeSegment(parsed.username)
 
     if (parsed.kind === 'model') {
       return [
-        feeds.getFeedEntry('hatena-fotolife:model', { username, model: parsed.model }),
-        feeds.getFeedEntry('hatena-fotolife:recent'),
+        feeds.getFeedEntry('model', { username, model: parsed.model }),
+        feeds.getFeedEntry('recent'),
       ]
     }
 
     if (parsed.kind === 'folder') {
       const folder = escapeSegment(parsed.folder)
 
-      return [
-        feeds.getFeedEntry('hatena-fotolife:folder', { username, folder }),
-        feeds.getFeedEntry('hatena-fotolife:recent'),
-      ]
+      return [feeds.getFeedEntry('folder', { username, folder }), feeds.getFeedEntry('recent')]
     }
 
     if (parsed.kind === 'tag') {
       const tag = escapeSegment(parsed.tag)
 
-      return [
-        feeds.getFeedEntry('hatena-fotolife:tag', { username, tag }),
-        feeds.getFeedEntry('hatena-fotolife:recent'),
-      ]
+      return [feeds.getFeedEntry('tag', { username, tag }), feeds.getFeedEntry('recent')]
     }
 
     if (parsed.kind === 'favorite') {
       return [
-        feeds.getFeedEntry('hatena-fotolife:stars', { username: parsed.username }),
-        feeds.getFeedEntry('hatena-fotolife:recent'),
+        feeds.getFeedEntry('stars', { username: parsed.username }),
+        feeds.getFeedEntry('recent'),
       ]
     }
 
     if (parsed.kind === 'starfriends') {
       return [
-        feeds.getFeedEntry('hatena-fotolife:star-friends', { username: parsed.username }),
-        feeds.getFeedEntry('hatena-fotolife:recent'),
+        feeds.getFeedEntry('star-friends', { username: parsed.username }),
+        feeds.getFeedEntry('recent'),
       ]
     }
 
-    return [
-      feeds.getFeedEntry('hatena-fotolife:photos', { username }),
-      feeds.getFeedEntry('hatena-fotolife:recent'),
-    ]
+    return [feeds.getFeedEntry('photos', { username }), feeds.getFeedEntry('recent')]
   },
 
   getFeedHint: feeds.getFeedHint,

@@ -19,21 +19,22 @@ const themeCategoryRegex = /^c\d+$/
 // A custom domain is known only by its markers, so its feeds are built here but not claimed. An
 // older template links the same feeds at /index.rdf and /atom.xml.
 const feeds = definePlatformFeeds(
+  'jugem',
   [
     {
-      key: 'jugem:posts',
+      key: 'posts',
       main: '{scheme}://{host}/?mode=rss',
       format: 'rdf',
       aliases: ['{scheme}://{host}/index.rdf'],
     },
     {
-      key: 'jugem:posts',
+      key: 'posts',
       main: '{scheme}://{host}/?mode=atom',
       format: 'atom',
       aliases: ['{scheme}://{host}/atom.xml'],
     },
     // The portal answers https with a redirect to http, which the theme feed names as its own URL.
-    { key: 'jugem:theme', main: 'http://jugem.jp/theme/{category}/{theme}/rss', format: 'rdf' },
+    { key: 'theme', main: 'http://jugem.jp/theme/{category}/{theme}/rss', format: 'rdf' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -115,15 +116,10 @@ export const jugemHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'theme') {
-      return [
-        page.getFeedEntry('jugem:theme', { category: parsed.category, theme: parsed.theme }, 'rdf'),
-      ]
+      return [page.getFeedEntry('theme', { category: parsed.category, theme: parsed.theme }, 'rdf')]
     }
 
-    return [
-      page.getFeedEntry('jugem:posts', {}, 'rdf'),
-      page.getFeedEntry('jugem:posts', {}, 'atom'),
-    ]
+    return [page.getFeedEntry('posts', {}, 'rdf'), page.getFeedEntry('posts', {}, 'atom')]
   },
 
   getFeedHint: feeds.getFeedHint,

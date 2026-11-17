@@ -13,14 +13,15 @@ const domains = ['prose.sh']
 const apexHosts = ['prose.sh']
 
 const feeds = definePlatformFeeds(
+  'prose',
   [
     {
-      key: 'prose:discovery',
+      key: 'discovery',
       main: 'https://prose.sh/rss',
       aliases: ['https://prose.sh/rss.atom'],
     },
     {
-      key: 'prose:tag',
+      key: 'tag',
       main: '{scheme}://{host}/rss?tag={tag}',
       aliases: [
         '{scheme}://{host}/atom?tag={tag}',
@@ -30,7 +31,7 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'prose:blog',
+      key: 'blog',
       main: '{scheme}://{host}/rss',
       aliases: [
         '{scheme}://{host}/atom',
@@ -84,7 +85,7 @@ export const proseHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'home') {
-      return [feeds.getFeedEntry('prose:discovery')]
+      return [feeds.getFeedEntry('discovery')]
     }
 
     const page = feeds.forUrl(url)
@@ -94,10 +95,10 @@ export const proseHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'tag') {
-      return [page.getFeedEntry('prose:tag', { tag: parsed.tag })]
+      return [page.getFeedEntry('tag', { tag: parsed.tag })]
     }
 
-    return [page.getFeedEntry('prose:blog')]
+    return [page.getFeedEntry('blog')]
   },
 
   getFeedHint: feeds.getFeedHint,

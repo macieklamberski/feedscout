@@ -21,9 +21,10 @@ const hosts = ['comicfury.com', 'www.comicfury.com']
 const readerPathRegex = /^\/read\/([^/]+)/i
 
 const feeds = definePlatformFeeds(
+  'comicfury',
   [
-    { key: 'comicfury:comic', main: '{scheme}://{host}/rss' },
-    { key: 'comicfury:reader', main: 'https://comicfury.com/read/{comic}/rss' },
+    { key: 'comic', main: '{scheme}://{host}/rss' },
+    { key: 'reader', main: 'https://comicfury.com/read/{comic}/rss' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -78,17 +79,17 @@ export const comicfuryHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'comic') {
-      return [page.getFeedEntry('comicfury:comic')]
+      return [page.getFeedEntry('comic')]
     }
 
     if (parsed.kind === 'profile') {
       // Every comic answers on thecomicseries.com, whichever of the domains it picked.
       const params = { host: `${parsed.comic}.thecomicseries.com` }
 
-      return [page.getFeedEntry('comicfury:comic', params)]
+      return [page.getFeedEntry('comic', params)]
     }
 
-    return [page.getFeedEntry('comicfury:reader', { comic: parsed.comic })]
+    return [page.getFeedEntry('reader', { comic: parsed.comic })]
   },
 
   // The table reads any label or segment as a comic, the parser only a valid comic name.

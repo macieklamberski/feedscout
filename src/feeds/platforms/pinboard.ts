@@ -93,32 +93,32 @@ export const pinboardHandler: PlatformHandler = {
     // own feeds.
     if (parsed.kind === 'userTag') {
       return [
-        feeds.getFeedEntry('pinboard:user-tag', {
+        feeds.getFeedEntry('user-tag', {
           username: parsed.username,
           tags: joinTags(parsed.tags),
         }),
-        feeds.getFeedEntry('pinboard:recent'),
-        feeds.getFeedEntry('pinboard:popular'),
+        feeds.getFeedEntry('recent'),
+        feeds.getFeedEntry('popular'),
       ]
     }
 
     if (parsed.kind === 'userSource') {
       return [
-        feeds.getFeedEntry('pinboard:source', {
+        feeds.getFeedEntry('source', {
           username: parsed.username,
           tags: joinTags(parsed.tags),
           source: parsed.source,
         }),
-        feeds.getFeedEntry('pinboard:recent'),
-        feeds.getFeedEntry('pinboard:popular'),
+        feeds.getFeedEntry('recent'),
+        feeds.getFeedEntry('popular'),
       ]
     }
 
     if (parsed.kind === 'user') {
       return [
-        feeds.getFeedEntry('pinboard:bookmarks', { username: parsed.username }),
-        feeds.getFeedEntry('pinboard:recent'),
-        feeds.getFeedEntry('pinboard:popular'),
+        feeds.getFeedEntry('bookmarks', { username: parsed.username }),
+        feeds.getFeedEntry('recent'),
+        feeds.getFeedEntry('popular'),
       ]
     }
 
@@ -126,17 +126,17 @@ export const pinboardHandler: PlatformHandler = {
     // drops it until the backend is back.
     if (parsed.kind === 'tag') {
       return [
-        feeds.getFeedEntry('pinboard:tag', { tags: joinTags(parsed.tags) }),
-        feeds.getFeedEntry('pinboard:recent'),
-        feeds.getFeedEntry('pinboard:popular'),
+        feeds.getFeedEntry('tag', { tags: joinTags(parsed.tags) }),
+        feeds.getFeedEntry('recent'),
+        feeds.getFeedEntry('popular'),
       ]
     }
 
     if (parsed.kind === 'recent') {
-      return [feeds.getFeedEntry('pinboard:recent'), feeds.getFeedEntry('pinboard:popular')]
+      return [feeds.getFeedEntry('recent'), feeds.getFeedEntry('popular')]
     }
 
-    return [feeds.getFeedEntry('pinboard:popular'), feeds.getFeedEntry('pinboard:recent')]
+    return [feeds.getFeedEntry('popular'), feeds.getFeedEntry('recent')]
   },
 
   getFeedHint: feeds.getFeedHint,

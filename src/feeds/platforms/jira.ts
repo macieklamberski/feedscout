@@ -97,20 +97,20 @@ export const jiraHandler: PlatformHandler = {
     const root = tenant ? undefined : baseUrl
     if (issueKey) {
       return [
-        page.getFeedEntry('jira:issue', { root, issue: issueKey }, 'rss'),
-        page.getFeedEntry('jira:project', { root, key: projectKey }),
-        page.getFeedEntry('jira:site', { root }),
+        page.getFeedEntry('issue', { root, issue: issueKey }, 'rss'),
+        page.getFeedEntry('project', { root, key: projectKey }),
+        page.getFeedEntry('site', { root }),
       ]
     }
 
     if (projectKey) {
       return [
-        page.getFeedEntry('jira:project', { root, key: projectKey }),
-        page.getFeedEntry('jira:site', { root }),
+        page.getFeedEntry('project', { root, key: projectKey }),
+        page.getFeedEntry('site', { root }),
       ]
     }
 
-    return [page.getFeedEntry('jira:site', { root })]
+    return [page.getFeedEntry('site', { root })]
   },
 
   getFeedHint: feeds.getFeedHint,

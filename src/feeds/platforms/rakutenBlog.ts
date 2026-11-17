@@ -10,9 +10,9 @@ const hosts = ['plaza.rakuten.co.jp']
 
 // A blog page links its feed under `/rss/`, and the feed host serves the same feed at the blog's
 // root too, so the table reads both paths.
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('rakuten-blog', [
   {
-    key: 'rakuten-blog:posts',
+    key: 'posts',
     main: 'https://api.plaza.rakuten.ne.jp/{username}/rss/',
     aliases: ['https://api.plaza.rakuten.ne.jp/{username}/'],
   },
@@ -45,7 +45,7 @@ export const rakutenBlogHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('rakuten-blog:posts', { username: parsed.username })]
+    return [feeds.getFeedEntry('posts', { username: parsed.username })]
   },
 
   getFeedHint: feeds.getFeedHint,

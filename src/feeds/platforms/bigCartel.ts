@@ -15,9 +15,10 @@ const themeStylesheetRegex = /^\/theme_stylesheets\/\d+\/\d+\/theme\.css$/i
 
 // A store on its own domain is known only by its markers, so its feed is built but not claimed.
 const feeds = definePlatformFeeds(
+  'big-cartel',
   [
-    { key: 'big-cartel:products', main: '{scheme}://{host}/products.rss' },
-    { key: 'big-cartel:products', main: '{scheme}://{host}/products.xml' },
+    { key: 'products', main: '{scheme}://{host}/products.rss' },
+    { key: 'products', main: '{scheme}://{host}/products.xml' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -64,7 +65,7 @@ export const bigCartelHandler: PlatformHandler = {
 
     // The linked `/products.xml` is a Google Merchant feed whose items have no title or link, so it
     // parses with no items.
-    return [page.getFeedEntry('big-cartel:products')]
+    return [page.getFeedEntry('products')]
   },
 
   getFeedHint: feeds.getFeedHint,

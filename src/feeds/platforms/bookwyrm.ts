@@ -19,12 +19,12 @@ const shelfSections = ['shelf', 'books']
 
 // An instance runs on its own domain and is known only by its marker, so its feeds are built here
 // but not claimed.
-const feeds = definePlatformFeeds([
-  { key: 'bookwyrm:shelf', main: '{root}/user/{username}/{section}/{shelf}/rss' },
-  { key: 'bookwyrm:activity', main: '{root}/user/{username}/rss' },
-  { key: 'bookwyrm:reviews', main: '{root}/user/{username}/rss-reviews' },
-  { key: 'bookwyrm:quotes', main: '{root}/user/{username}/rss-quotes' },
-  { key: 'bookwyrm:comments', main: '{root}/user/{username}/rss-comments' },
+const feeds = definePlatformFeeds('bookwyrm', [
+  { key: 'shelf', main: '{root}/user/{username}/{section}/{shelf}/rss' },
+  { key: 'activity', main: '{root}/user/{username}/rss' },
+  { key: 'reviews', main: '{root}/user/{username}/rss-reviews' },
+  { key: 'quotes', main: '{root}/user/{username}/rss-quotes' },
+  { key: 'comments', main: '{root}/user/{username}/rss-comments' },
 ])
 
 export const isBookwyrmHtml = (content: string): boolean => {
@@ -73,23 +73,23 @@ export const bookwyrmHandler: PlatformHandler = {
     // Shelf page: /user/{username}/(shelf|books)/{shelf-id}, so the shelf feed goes first.
     if (parsed.kind === 'shelf') {
       return [
-        page.getFeedEntry('bookwyrm:shelf', {
+        page.getFeedEntry('shelf', {
           username,
           section: parsed.section,
           shelf: parsed.shelf,
         }),
-        page.getFeedEntry('bookwyrm:activity', { username }),
-        page.getFeedEntry('bookwyrm:reviews', { username }),
-        page.getFeedEntry('bookwyrm:quotes', { username }),
-        page.getFeedEntry('bookwyrm:comments', { username }),
+        page.getFeedEntry('activity', { username }),
+        page.getFeedEntry('reviews', { username }),
+        page.getFeedEntry('quotes', { username }),
+        page.getFeedEntry('comments', { username }),
       ]
     }
 
     return [
-      page.getFeedEntry('bookwyrm:activity', { username }),
-      page.getFeedEntry('bookwyrm:reviews', { username }),
-      page.getFeedEntry('bookwyrm:quotes', { username }),
-      page.getFeedEntry('bookwyrm:comments', { username }),
+      page.getFeedEntry('activity', { username }),
+      page.getFeedEntry('reviews', { username }),
+      page.getFeedEntry('quotes', { username }),
+      page.getFeedEntry('comments', { username }),
     ]
   },
 }

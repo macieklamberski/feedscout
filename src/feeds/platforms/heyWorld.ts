@@ -8,8 +8,8 @@ export type HeyWorldUrl = { kind: 'blog'; username: string }
 
 const hosts = ['world.hey.com']
 
-const feeds = definePlatformFeeds([
-  { key: 'hey-world:blog', main: 'https://world.hey.com/{username}/feed.atom' },
+const feeds = definePlatformFeeds('hey-world', [
+  { key: 'blog', main: 'https://world.hey.com/{username}/feed.atom' },
 ])
 
 export const parseHeyWorldUrl = (url: string): HeyWorldUrl | undefined => {
@@ -38,7 +38,7 @@ export const heyWorldHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('hey-world:blog', { username: parsed.username })]
+    return [feeds.getFeedEntry('blog', { username: parsed.username })]
   },
 
   getFeedHint: feeds.getFeedHint,

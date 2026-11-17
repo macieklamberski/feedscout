@@ -14,11 +14,12 @@ const domains = ['exblog.jp']
 const categoryRegex = /^\/i(\d+)(?:\/|$)/i
 
 const feeds = definePlatformFeeds(
+  'exblog',
   [
-    { key: 'exblog:category', main: '{scheme}://{host}/i{category}/index.xml', format: 'rss' },
-    { key: 'exblog:category', main: '{scheme}://{host}/i{category}/atom.xml', format: 'atom' },
-    { key: 'exblog:posts', main: '{scheme}://{host}/index.xml', format: 'rss' },
-    { key: 'exblog:posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
+    { key: 'category', main: '{scheme}://{host}/i{category}/index.xml', format: 'rss' },
+    { key: 'category', main: '{scheme}://{host}/i{category}/atom.xml', format: 'atom' },
+    { key: 'posts', main: '{scheme}://{host}/index.xml', format: 'rss' },
+    { key: 'posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -57,17 +58,14 @@ export const exblogHandler: PlatformHandler = {
       const params = { category: parsed.category }
 
       return [
-        page.getFeedEntry('exblog:category', params, 'rss'),
-        page.getFeedEntry('exblog:category', params, 'atom'),
-        page.getFeedEntry('exblog:posts', {}, 'rss'),
-        page.getFeedEntry('exblog:posts', {}, 'atom'),
+        page.getFeedEntry('category', params, 'rss'),
+        page.getFeedEntry('category', params, 'atom'),
+        page.getFeedEntry('posts', {}, 'rss'),
+        page.getFeedEntry('posts', {}, 'atom'),
       ]
     }
 
-    return [
-      page.getFeedEntry('exblog:posts', {}, 'rss'),
-      page.getFeedEntry('exblog:posts', {}, 'atom'),
-    ]
+    return [page.getFeedEntry('posts', {}, 'rss'), page.getFeedEntry('posts', {}, 'atom')]
   },
 
   getFeedHint: (url) => {

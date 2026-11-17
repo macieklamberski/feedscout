@@ -48,13 +48,13 @@ export const cratesIoHandler: PlatformHandler = {
     // any other spelling answers 403, while the page URL accepts both.
     if (parsed.kind === 'crate') {
       return [
-        feeds.getFeedEntry('crates-io:releases', { crate: parsed.crate }),
-        feeds.getFeedEntry('crates-io:new-crates'),
-        feeds.getFeedEntry('crates-io:updates'),
+        feeds.getFeedEntry('releases', { crate: parsed.crate }),
+        feeds.getFeedEntry('new-crates'),
+        feeds.getFeedEntry('updates'),
       ]
     }
 
-    return [feeds.getFeedEntry('crates-io:new-crates'), feeds.getFeedEntry('crates-io:updates')]
+    return [feeds.getFeedEntry('new-crates'), feeds.getFeedEntry('updates')]
   },
 
   getFeedHint: feeds.getFeedHint,

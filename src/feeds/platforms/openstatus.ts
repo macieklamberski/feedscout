@@ -48,8 +48,8 @@ export const openstatusHandler: PlatformHandler = {
     }
 
     return [
-      pageFeeds.getFeedEntry('openstatus:updates', {}, 'rss'),
-      pageFeeds.getFeedEntry('openstatus:updates', {}, 'atom'),
+      pageFeeds.getFeedEntry('updates', {}, 'rss'),
+      pageFeeds.getFeedEntry('updates', {}, 'atom'),
     ]
   },
 

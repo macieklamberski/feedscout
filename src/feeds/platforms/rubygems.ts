@@ -14,16 +14,16 @@ const gemRegex = /^\/gems\/([\w.-]+)(?:\/|$)/i
 
 // The index and bundler hosts serve the same entries as rubygems.org, with links and ids on their
 // own host.
-const feeds = definePlatformFeeds([
-  { key: 'rubygems:versions', main: 'https://rubygems.org/gems/{gem}/versions.atom' },
-  { key: 'rubygems:versions', main: 'https://index.rubygems.org/gems/{gem}/versions.atom' },
-  { key: 'rubygems:versions', main: 'https://bundler.rubygems.org/gems/{gem}/versions.atom' },
-  { key: 'rubygems:latest-gems', main: 'https://rubygems.org/gems.atom' },
-  { key: 'rubygems:latest-gems', main: 'https://index.rubygems.org/gems.atom' },
-  { key: 'rubygems:latest-gems', main: 'https://bundler.rubygems.org/gems.atom' },
+const feeds = definePlatformFeeds('rubygems', [
+  { key: 'versions', main: 'https://rubygems.org/gems/{gem}/versions.atom' },
+  { key: 'versions', main: 'https://index.rubygems.org/gems/{gem}/versions.atom' },
+  { key: 'versions', main: 'https://bundler.rubygems.org/gems/{gem}/versions.atom' },
+  { key: 'latest-gems', main: 'https://rubygems.org/gems.atom' },
+  { key: 'latest-gems', main: 'https://index.rubygems.org/gems.atom' },
+  { key: 'latest-gems', main: 'https://bundler.rubygems.org/gems.atom' },
   // The dashboard feed of a signed-in user answers only with its `api_key`, so it is claimed and
   // never built.
-  { key: 'rubygems:dashboard', main: 'https://rubygems.org/dashboard.atom?api_key={apiKey}' },
+  { key: 'dashboard', main: 'https://rubygems.org/dashboard.atom?api_key={apiKey}' },
 ])
 
 export const parseRubygemsUrl = (url: string): RubygemsUrl | undefined => {
@@ -60,13 +60,13 @@ export const rubygemsHandler: PlatformHandler = {
     // 404s.
     if (parsed.kind === 'gem') {
       return [
-        feeds.getFeedEntry('rubygems:versions', { gem: parsed.gem }),
-        feeds.getFeedEntry('rubygems:latest-gems'),
+        feeds.getFeedEntry('versions', { gem: parsed.gem }),
+        feeds.getFeedEntry('latest-gems'),
       ]
     }
 
     // Every page links the FeedBurner mirror of this feed, which now serves the home page HTML.
-    return [feeds.getFeedEntry('rubygems:latest-gems')]
+    return [feeds.getFeedEntry('latest-gems')]
   },
 
   getFeedHint: feeds.getFeedHint,

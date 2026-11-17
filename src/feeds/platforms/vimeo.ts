@@ -18,13 +18,13 @@ const hosts = ['vimeo.com', 'www.vimeo.com']
 
 const albumSegments = ['album', 'showcase']
 
-const feeds = definePlatformFeeds([
-  { key: 'vimeo:channel', main: 'https://vimeo.com/channels/{channel}/videos/rss' },
-  { key: 'vimeo:group', main: 'https://vimeo.com/groups/{group}/videos/rss' },
-  { key: 'vimeo:album', main: 'https://vimeo.com/album/{albumId}/rss' },
-  { key: 'vimeo:likes', main: 'https://vimeo.com/{username}/likes/rss' },
+const feeds = definePlatformFeeds('vimeo', [
+  { key: 'channel', main: 'https://vimeo.com/channels/{channel}/videos/rss' },
+  { key: 'group', main: 'https://vimeo.com/groups/{group}/videos/rss' },
+  { key: 'album', main: 'https://vimeo.com/album/{albumId}/rss' },
+  { key: 'likes', main: 'https://vimeo.com/{username}/likes/rss' },
   {
-    key: 'vimeo:videos',
+    key: 'videos',
     main: 'https://vimeo.com/{username}/videos/rss',
     aliases: ['https://vimeo.com/{username}/videos/all/rss'],
   },
@@ -83,25 +83,25 @@ export const vimeoHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'channel') {
-      return [feeds.getFeedEntry('vimeo:channel', { channel: parsed.channel })]
+      return [feeds.getFeedEntry('channel', { channel: parsed.channel })]
     }
 
     if (parsed.kind === 'group') {
-      return [feeds.getFeedEntry('vimeo:group', { group: parsed.group })]
+      return [feeds.getFeedEntry('group', { group: parsed.group })]
     }
 
     if (parsed.kind === 'album') {
-      return [feeds.getFeedEntry('vimeo:album', { albumId: parsed.albumId })]
+      return [feeds.getFeedEntry('album', { albumId: parsed.albumId })]
     }
 
     if (parsed.kind === 'likes') {
       return [
-        feeds.getFeedEntry('vimeo:likes', { username: parsed.username }),
-        feeds.getFeedEntry('vimeo:videos', { username: parsed.username }),
+        feeds.getFeedEntry('likes', { username: parsed.username }),
+        feeds.getFeedEntry('videos', { username: parsed.username }),
       ]
     }
 
-    return [feeds.getFeedEntry('vimeo:videos', { username: parsed.username })]
+    return [feeds.getFeedEntry('videos', { username: parsed.username })]
   },
 
   getFeedHint: feeds.getFeedHint,

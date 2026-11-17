@@ -8,16 +8,16 @@ export type PromodjUrl = { kind: 'profile'; username: string }
 
 const hosts = ['promodj.com', 'www.promodj.com']
 
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('promodj', [
   {
-    key: 'promodj:podcast',
+    key: 'podcast',
     main: 'https://promodj.com/{username}/podcast.xml',
     aliases: ['https://promodj.com/{username}/podcast_alt.xml'],
   },
-  { key: 'promodj:content', main: 'https://promodj.com/{username}/rss.xml' },
-  { key: 'promodj:blog', main: 'https://promodj.com/{username}/blog.xml' },
-  { key: 'promodj:favorites', main: 'https://promodj.com/{username}/bookmarks.xml' },
-  { key: 'promodj:events', main: 'https://promodj.com/{username}/avisha.xml' },
+  { key: 'content', main: 'https://promodj.com/{username}/rss.xml' },
+  { key: 'blog', main: 'https://promodj.com/{username}/blog.xml' },
+  { key: 'favorites', main: 'https://promodj.com/{username}/bookmarks.xml' },
+  { key: 'events', main: 'https://promodj.com/{username}/avisha.xml' },
 ])
 
 export const parsePromodjUrl = (url: string): PromodjUrl | undefined => {
@@ -49,11 +49,11 @@ export const promodjHandler: PlatformHandler = {
     const params = { username: parsed.username }
 
     return [
-      feeds.getFeedEntry('promodj:podcast', params),
-      feeds.getFeedEntry('promodj:content', params),
-      feeds.getFeedEntry('promodj:blog', params),
-      feeds.getFeedEntry('promodj:favorites', params),
-      feeds.getFeedEntry('promodj:events', params),
+      feeds.getFeedEntry('podcast', params),
+      feeds.getFeedEntry('content', params),
+      feeds.getFeedEntry('blog', params),
+      feeds.getFeedEntry('favorites', params),
+      feeds.getFeedEntry('events', params),
     ]
   },
 

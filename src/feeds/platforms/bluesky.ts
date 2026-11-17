@@ -10,13 +10,13 @@ const hosts = ['bsky.app', 'deer.social', 'main.bsky.dev']
 
 // web-cdn.bsky.app and main.bsky.dev serve the same app and the same feeds under the same paths.
 // main.bsky.dev links each post on main.bsky.dev.
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('bluesky', [
   {
-    key: 'bluesky:posts',
+    key: 'posts',
     main: 'https://bsky.app/profile/{handle}/rss',
     aliases: ['https://web-cdn.bsky.app/profile/{handle}/rss'],
   },
-  { key: 'bluesky:posts', main: 'https://main.bsky.dev/profile/{handle}/rss' },
+  { key: 'posts', main: 'https://main.bsky.dev/profile/{handle}/rss' },
 ])
 
 export const parseBlueskyUrl = (url: string): BlueskyUrl | undefined => {
@@ -45,7 +45,7 @@ export const blueskyHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('bluesky:posts', { handle: parsed.handle })]
+    return [feeds.getFeedEntry('posts', { handle: parsed.handle })]
   },
 
   getFeedHint: feeds.getFeedHint,

@@ -110,24 +110,24 @@ export const bubblelifeHandler: PlatformHandler = {
 
     if (page.kind === 'library' && page.alertId) {
       return [
-        pageFeeds.getFeedEntry('bubblelife:library', params),
-        pageFeeds.getFeedEntry('bubblelife:news-alerts', alertParams),
+        pageFeeds.getFeedEntry('library', params),
+        pageFeeds.getFeedEntry('news-alerts', alertParams),
       ]
     }
 
     if (page.kind === 'library') {
-      return [pageFeeds.getFeedEntry('bubblelife:library', params)]
+      return [pageFeeds.getFeedEntry('library', params)]
     }
 
     if (page.alertId) {
       return [
-        pageFeeds.getFeedEntry('bubblelife:posts', params),
-        pageFeeds.getFeedEntry('bubblelife:news-alerts', alertParams),
+        pageFeeds.getFeedEntry('posts', params),
+        pageFeeds.getFeedEntry('news-alerts', alertParams),
       ]
     }
 
-    return [pageFeeds.getFeedEntry('bubblelife:posts', params)]
+    return [pageFeeds.getFeedEntry('posts', params)]
   },
 
-  getFeedHint: (url) => withHintLabel(bubblelife.getFeedHint(url)),
+  getFeedHint: (url) => withHintLabel(bubblelife.feeds.getFeedHint(url)),
 }

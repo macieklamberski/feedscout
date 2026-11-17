@@ -71,20 +71,14 @@ export const alloforumHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'subcategory') {
-      return [
-        page.getFeedEntry('alloforum:subcategory', parsed),
-        page.getFeedEntry('alloforum:latest-topics'),
-      ]
+      return [page.getFeedEntry('subcategory', parsed), page.getFeedEntry('latest-topics')]
     }
 
     if (parsed.kind === 'category') {
-      return [
-        page.getFeedEntry('alloforum:category', parsed),
-        page.getFeedEntry('alloforum:latest-topics'),
-      ]
+      return [page.getFeedEntry('category', parsed), page.getFeedEntry('latest-topics')]
     }
 
-    return [page.getFeedEntry('alloforum:latest-topics')]
+    return [page.getFeedEntry('latest-topics')]
   },
 
   getFeedHint: feeds.getFeedHint,

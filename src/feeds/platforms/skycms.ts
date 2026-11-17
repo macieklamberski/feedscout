@@ -79,6 +79,6 @@ export const skycmsHandler: PlatformHandler = {
 
     const { pageId, slug } = skycmsUrl
 
-    return [pageFeeds.getFeedEntry('skycms:page', { pageId, slug }, 'rss')]
+    return [pageFeeds.getFeedEntry('page', { pageId, slug }, 'rss')]
   },
 }

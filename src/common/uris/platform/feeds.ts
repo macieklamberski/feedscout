@@ -1,4 +1,4 @@
-import { definePlatformFeeds as defineFeeds } from 'feedintel'
+import { defineFeedUrls } from 'feedintel'
 import type { DiscoverUriEntry, DiscoverUriHint, UriEntry } from '../../types.js'
 import { composeHint } from '../../utils.js'
 
@@ -150,12 +150,12 @@ export const withHintLabels = <Key extends string>(
   }
 }
 
-// One table of a handler's feed URLs, keyed by hint key. `getFeedUrl` writes a feed from the values
-// a page gave, `getFeedEntry` adds its hint, `getFeedSpellings` lists every spelling of the feed
-// under one hint, and `getFeedHint` reads a URL back to the feed's hint.
+// One table of a platform's feed URLs, each feed keyed by its kind. A hint is keyed
+// `{platform}:{kind}`, as `dailymotion:playlist`.
 export const definePlatformFeeds = <const Key extends string>(
+  platform: string,
   feeds: Array<PlatformFeed<Key>>,
   options: PlatformFeedTableOptions = {},
 ): PlatformFeedTable<Key> => {
-  return withHintLabels(defineFeeds(feeds, options))
+  return withHintLabels(defineFeedUrls(platform, feeds, options))
 }

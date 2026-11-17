@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { isPresent, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
@@ -23,9 +23,10 @@ const domains = ['ning.com']
 // named by its id, is still that one topic. A group topic page links its feed with `groupUrl`, so
 // that row goes first and builds when the page names a group.
 const feeds = definePlatformFeeds(
+  'ning',
   [
     {
-      key: 'ning:topic',
+      key: 'topic',
       main: '{scheme}://{host}/forum/topics/{topic}?groupUrl={group}&feed=yes&xn_auth=no',
       aliases: [
         '{scheme}://{host}/group/{group}/forum/topics/{topic}?feed=yes&xn_auth=no',
@@ -33,28 +34,28 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'ning:topic',
+      key: 'topic',
       main: '{scheme}://{host}/forum/topics/{topic}?feed=yes&xn_auth=no',
       aliases: ['{scheme}://{host}/forum/topic/show?feed=yes&id={topic}&xn_auth=no'],
     },
-    { key: 'ning:activity', main: '{scheme}://{host}/activity/log/list?fmt=rss' },
+    { key: 'activity', main: '{scheme}://{host}/activity/log/list?fmt=rss' },
     {
-      key: 'ning:activity-member',
+      key: 'activity-member',
       main: '{scheme}://{host}/activity/log/list?fmt=rss&screenName={member}',
     },
-    { key: 'ning:blog', main: '{scheme}://{host}/profiles/blog/feed?xn_auth=no' },
+    { key: 'blog', main: '{scheme}://{host}/profiles/blog/feed?xn_auth=no' },
     {
-      key: 'ning:blog-author',
+      key: 'blog-author',
       main: '{scheme}://{host}/profiles/blog/feed?user={user}&xn_auth=no',
     },
-    { key: 'ning:blog-tag', main: '{scheme}://{host}/profiles/blog/feed?tag={tag}&xn_auth=no' },
+    { key: 'blog-tag', main: '{scheme}://{host}/profiles/blog/feed?tag={tag}&xn_auth=no' },
     {
-      key: 'ning:blog-featured',
+      key: 'blog-featured',
       main: '{scheme}://{host}/profiles/blog/feed?promoted=1&xn_auth=no',
     },
     // The bare `/forum?feed=yes` answers with the forum page on some networks.
     {
-      key: 'ning:forum',
+      key: 'forum',
       main: '{scheme}://{host}/forum/topic/list?feed=yes&xn_auth=no',
       aliases: [
         '{scheme}://{host}/forum?feed=yes&xn_auth=no',
@@ -62,11 +63,11 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'ning:forum-featured',
+      key: 'forum-featured',
       main: '{scheme}://{host}/forum/topic/list?featured=1&feed=yes&xn_auth=no',
     },
     {
-      key: 'ning:forum-group',
+      key: 'forum-group',
       main: '{scheme}://{host}/groups/group/forum?feed=yes&groupUrl={group}&xn_auth=no',
       aliases: [
         '{scheme}://{host}/forum/topic/list?feed=yes&groupUrl={group}&xn_auth=no',
@@ -75,157 +76,157 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'ning:forum-group-featured',
+      key: 'forum-group-featured',
       main: '{scheme}://{host}/group/{group}/forum/topic/list?featured=1&feed=yes&xn_auth=no',
       aliases: [
         '{scheme}://{host}/forum/topic/list?featured=1&feed=yes&groupUrl={group}&xn_auth=no',
       ],
     },
     {
-      key: 'ning:forum-category',
+      key: 'forum-category',
       main: '{scheme}://{host}/forum/categories/{category}/listForCategory?feed=yes&xn_auth=no',
     },
     {
-      key: 'ning:forum-member',
+      key: 'forum-member',
       main: '{scheme}://{host}/forum/topic/listForContributor?feed=yes&user={user}&xn_auth=no',
     },
     {
-      key: 'ning:forum-group-member',
+      key: 'forum-group-member',
       main: '{scheme}://{host}/group/{group}/forum/topic/listForContributor?feed=yes&user={user}&xn_auth=no',
       aliases: [
         '{scheme}://{host}/forum/topic/listForContributor?feed=yes&groupUrl={group}&user={user}&xn_auth=no',
       ],
     },
     {
-      key: 'ning:forum-tag',
+      key: 'forum-tag',
       main: '{scheme}://{host}/forum/topic/listForTag?feed=yes&tag={tag}&xn_auth=no',
     },
     {
-      key: 'ning:forum-group-tag',
+      key: 'forum-group-tag',
       main: '{scheme}://{host}/group/{group}/forum/topic/listForTag?feed=yes&tag={tag}&xn_auth=no',
       aliases: [
         '{scheme}://{host}/forum/topic/listForTag?feed=yes&groupUrl={group}&tag={tag}&xn_auth=no',
       ],
     },
     {
-      key: 'ning:blog-post-comments',
+      key: 'blog-post-comments',
       main: '{scheme}://{host}/profiles/comment/feed?attachedTo={post}&xn_auth=no',
     },
     {
-      key: 'ning:status-comments',
+      key: 'status-comments',
       main: '{scheme}://{host}/profiles/statuscomment/feed?attachedTo={status}&xn_auth=no',
     },
     {
-      key: 'ning:album-comments',
+      key: 'album-comments',
       main: '{scheme}://{host}/photo/albumcomment/feed?attachedTo={album}&xn_auth=no',
     },
     {
-      key: 'ning:photos-member',
+      key: 'photos-member',
       main: '{scheme}://{host}/photo/photo/listForContributor?rss=yes&screenName={member}&xn_auth=no',
     },
     {
-      key: 'ning:videos-member',
+      key: 'videos-member',
       main: '{scheme}://{host}/video/video/listForContributor?rss=yes&screenName={member}&xn_auth=no',
     },
     {
-      key: 'ning:videos-tag',
+      key: 'videos-tag',
       main: '{scheme}://{host}/video/video/listTagged?rss=yes&tag={tag}&xn_auth=no',
     },
     {
-      key: 'ning:event-comments',
+      key: 'event-comments',
       main: '{scheme}://{host}/events/comment/feed?attachedTo={event}&xn_auth=no',
     },
-    { key: 'ning:activity-page', main: '{scheme}://{host}/activity/log/rss?sitePageId={page}' },
-    { key: 'ning:members', main: '{scheme}://{host}/profiles/friend/feed?xn_auth=no' },
+    { key: 'activity-page', main: '{scheme}://{host}/activity/log/rss?sitePageId={page}' },
+    { key: 'members', main: '{scheme}://{host}/profiles/friend/feed?xn_auth=no' },
     {
-      key: 'ning:members-featured',
+      key: 'members-featured',
       main: '{scheme}://{host}/profiles/friend/feed?featured=1&xn_auth=no',
     },
     {
-      key: 'ning:members-category',
+      key: 'members-category',
       main: '{scheme}://{host}/profiles/friend/feed?category={category}&xn_auth=no',
     },
-    { key: 'ning:photos', main: '{scheme}://{host}/photo/photo/rss?xn_auth=no' },
+    { key: 'photos', main: '{scheme}://{host}/photo/photo/rss?xn_auth=no' },
     {
-      key: 'ning:photos-featured',
+      key: 'photos-featured',
       main: '{scheme}://{host}/photo/photo/listFeatured?rss=yes&xn_auth=no',
     },
     {
-      key: 'ning:photos-tag',
+      key: 'photos-tag',
       main: '{scheme}://{host}/photo/photo/listTagged?rss=yes&tag={tag}&xn_auth=no',
     },
     {
-      key: 'ning:videos',
+      key: 'videos',
       main: '{scheme}://{host}/video/video/rss?xn_auth=no',
       aliases: ['{scheme}://{host}/video/video/rss'],
     },
     {
-      key: 'ning:videos-featured',
+      key: 'videos-featured',
       main: '{scheme}://{host}/video/video/rss?featured=1&xn_auth=no',
     },
     {
-      key: 'ning:videos-location',
+      key: 'videos-location',
       main: '{scheme}://{host}/video/video/listForLocation?location={location}&rss=yes&xn_auth=no',
     },
-    { key: 'ning:events', main: '{scheme}://{host}/events/event/feed?xn_auth=no' },
+    { key: 'events', main: '{scheme}://{host}/events/event/feed?xn_auth=no' },
     {
-      key: 'ning:events-member',
+      key: 'events-member',
       main: '{scheme}://{host}/events/event/feed?user={user}&xn_auth=no',
     },
-    { key: 'ning:groups', main: '{scheme}://{host}/groups/group/feed?xn_auth=no' },
+    { key: 'groups', main: '{scheme}://{host}/groups/group/feed?xn_auth=no' },
     {
-      key: 'ning:groups-featured',
+      key: 'groups-featured',
       main: '{scheme}://{host}/groups/group/feed?featured=1&xn_auth=no',
     },
-    { key: 'ning:pages', main: '{scheme}://{host}/page/page/list?feed=yes&xn_auth=no' },
+    { key: 'pages', main: '{scheme}://{host}/page/page/list?feed=yes&xn_auth=no' },
     {
-      key: 'ning:pages-group',
+      key: 'pages-group',
       main: '{scheme}://{host}/page/page/list?feed=yes&groupUrl={group}&xn_auth=no',
       aliases: ['{scheme}://{host}/group/{group}/page/page/list?feed=yes&xn_auth=no'],
     },
     {
-      key: 'ning:pages-member',
+      key: 'pages-member',
       main: '{scheme}://{host}/page/page/listForContributor?feed=yes&user={user}&xn_auth=no',
     },
-    { key: 'ning:notes', main: '{scheme}://{host}/notes/index/feed?xn_auth=no' },
+    { key: 'notes', main: '{scheme}://{host}/notes/index/feed?xn_auth=no' },
     {
-      key: 'ning:leaderboard',
+      key: 'leaderboard',
       main: '{scheme}://{host}/leaderboards/{type}/{period}?feed=yes&xn_auth=no',
     },
     // Ning 3 networks name their sections, so a section path takes any segments. The group rows
     // go first, and a filtered row before the bare one, so the longer shape wins.
     {
-      key: 'ning:group-section-tag',
+      key: 'group-section-tag',
       main: '{scheme}://{host}/group/{group}/{section*}/feed/tag/{tag}',
     },
     {
-      key: 'ning:group-section-tag',
+      key: 'group-section-tag',
       main: '{scheme}://{host}/groups/{group}/{section*}/feed/tag/{tag}',
     },
     {
-      key: 'ning:group-section-category',
+      key: 'group-section-category',
       main: '{scheme}://{host}/group/{group}/{section*}/feed/category/{category}',
     },
     {
-      key: 'ning:group-section-category',
+      key: 'group-section-category',
       main: '{scheme}://{host}/groups/{group}/{section*}/feed/category/{category}',
     },
     {
-      key: 'ning:group-section-featured',
+      key: 'group-section-featured',
       main: '{scheme}://{host}/group/{group}/{section*}/feed/featured',
     },
     {
-      key: 'ning:group-section-featured',
+      key: 'group-section-featured',
       main: '{scheme}://{host}/groups/{group}/{section*}/feed/featured',
     },
-    { key: 'ning:group-section', main: '{scheme}://{host}/group/{group}/{section*}/feed/all' },
-    { key: 'ning:group-section', main: '{scheme}://{host}/groups/{group}/{section*}/feed/all' },
-    { key: 'ning:section-tag', main: '{scheme}://{host}/{section*}/feed/tag/{tag}' },
-    { key: 'ning:section-author', main: '{scheme}://{host}/{section*}/feed/by/{user}' },
-    { key: 'ning:section-category', main: '{scheme}://{host}/{section*}/feed/category/{category}' },
-    { key: 'ning:section-location', main: '{scheme}://{host}/{section*}/feed/at/{location}' },
-    { key: 'ning:section-featured', main: '{scheme}://{host}/{section*}/feed/featured' },
-    { key: 'ning:section', main: '{scheme}://{host}/{section*}/feed/all' },
+    { key: 'group-section', main: '{scheme}://{host}/group/{group}/{section*}/feed/all' },
+    { key: 'group-section', main: '{scheme}://{host}/groups/{group}/{section*}/feed/all' },
+    { key: 'section-tag', main: '{scheme}://{host}/{section*}/feed/tag/{tag}' },
+    { key: 'section-author', main: '{scheme}://{host}/{section*}/feed/by/{user}' },
+    { key: 'section-category', main: '{scheme}://{host}/{section*}/feed/category/{category}' },
+    { key: 'section-location', main: '{scheme}://{host}/{section*}/feed/at/{location}' },
+    { key: 'section-featured', main: '{scheme}://{host}/{section*}/feed/featured' },
+    { key: 'section', main: '{scheme}://{host}/{section*}/feed/all' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -286,66 +287,66 @@ export const ningHandler: PlatformHandler = {
     // lists need no value from the page, so every page builds them after its own feeds.
     if (parsed.kind === 'topic') {
       return [
-        page.getFeedEntry('ning:topic', { topic: parsed.topic, group: parsed.group }),
-        ...(parsed.group ? [page.getFeedEntry('ning:forum-group', { group: parsed.group })] : []),
-        page.getFeedEntry('ning:activity'),
-        page.getFeedEntry('ning:blog'),
-        page.getFeedEntry('ning:blog-featured'),
-        page.getFeedEntry('ning:forum'),
-        page.getFeedEntry('ning:forum-featured'),
-        page.getFeedEntry('ning:members'),
-        page.getFeedEntry('ning:members-featured'),
-        page.getFeedEntry('ning:photos'),
-        page.getFeedEntry('ning:photos-featured'),
-        page.getFeedEntry('ning:videos'),
-        page.getFeedEntry('ning:videos-featured'),
-        page.getFeedEntry('ning:events'),
-        page.getFeedEntry('ning:groups'),
-        page.getFeedEntry('ning:groups-featured'),
-        page.getFeedEntry('ning:pages'),
-        page.getFeedEntry('ning:notes'),
-      ]
+        page.getFeedEntry('topic', { topic: parsed.topic, group: parsed.group }),
+        page.getFeedEntry('forum-group', { group: parsed.group }),
+        page.getFeedEntry('activity'),
+        page.getFeedEntry('blog'),
+        page.getFeedEntry('blog-featured'),
+        page.getFeedEntry('forum'),
+        page.getFeedEntry('forum-featured'),
+        page.getFeedEntry('members'),
+        page.getFeedEntry('members-featured'),
+        page.getFeedEntry('photos'),
+        page.getFeedEntry('photos-featured'),
+        page.getFeedEntry('videos'),
+        page.getFeedEntry('videos-featured'),
+        page.getFeedEntry('events'),
+        page.getFeedEntry('groups'),
+        page.getFeedEntry('groups-featured'),
+        page.getFeedEntry('pages'),
+        page.getFeedEntry('notes'),
+      ].filter(isPresent)
     }
 
     if (parsed.kind === 'group') {
       return [
-        page.getFeedEntry('ning:forum-group', { group: parsed.group }),
-        page.getFeedEntry('ning:activity'),
-        page.getFeedEntry('ning:blog'),
-        page.getFeedEntry('ning:blog-featured'),
-        page.getFeedEntry('ning:forum'),
-        page.getFeedEntry('ning:forum-featured'),
-        page.getFeedEntry('ning:members'),
-        page.getFeedEntry('ning:members-featured'),
-        page.getFeedEntry('ning:photos'),
-        page.getFeedEntry('ning:photos-featured'),
-        page.getFeedEntry('ning:videos'),
-        page.getFeedEntry('ning:videos-featured'),
-        page.getFeedEntry('ning:events'),
-        page.getFeedEntry('ning:groups'),
-        page.getFeedEntry('ning:groups-featured'),
-        page.getFeedEntry('ning:pages'),
-        page.getFeedEntry('ning:notes'),
+        page.getFeedEntry('forum-group', { group: parsed.group }),
+        page.getFeedEntry('activity'),
+        page.getFeedEntry('blog'),
+        page.getFeedEntry('blog-featured'),
+        page.getFeedEntry('forum'),
+        page.getFeedEntry('forum-featured'),
+        page.getFeedEntry('members'),
+        page.getFeedEntry('members-featured'),
+        page.getFeedEntry('photos'),
+        page.getFeedEntry('photos-featured'),
+        page.getFeedEntry('videos'),
+        page.getFeedEntry('videos-featured'),
+        page.getFeedEntry('events'),
+        page.getFeedEntry('groups'),
+        page.getFeedEntry('groups-featured'),
+        page.getFeedEntry('pages'),
+        page.getFeedEntry('notes'),
       ]
     }
 
     return [
-      page.getFeedEntry('ning:activity'),
-      page.getFeedEntry('ning:blog'),
-      page.getFeedEntry('ning:blog-featured'),
-      page.getFeedEntry('ning:forum'),
-      page.getFeedEntry('ning:forum-featured'),
-      page.getFeedEntry('ning:members'),
-      page.getFeedEntry('ning:members-featured'),
-      page.getFeedEntry('ning:photos'),
-      page.getFeedEntry('ning:photos-featured'),
-      page.getFeedEntry('ning:videos'),
-      page.getFeedEntry('ning:videos-featured'),
-      page.getFeedEntry('ning:events'),
-      page.getFeedEntry('ning:groups'),
-      page.getFeedEntry('ning:groups-featured'),
-      page.getFeedEntry('ning:pages'),
-      page.getFeedEntry('ning:notes'),
+      page.getFeedEntry('activity'),
+      page.getFeedEntry('blog'),
+      page.getFeedEntry('blog-featured'),
+      page.getFeedEntry('forum'),
+      page.getFeedEntry('forum-featured'),
+      page.getFeedEntry('members'),
+      page.getFeedEntry('members-featured'),
+      page.getFeedEntry('photos'),
+      page.getFeedEntry('photos-featured'),
+      page.getFeedEntry('videos'),
+      page.getFeedEntry('videos-featured'),
+      page.getFeedEntry('events'),
+      page.getFeedEntry('groups'),
+      page.getFeedEntry('groups-featured'),
+      page.getFeedEntry('pages'),
+      page.getFeedEntry('notes'),
     ]
   },
 

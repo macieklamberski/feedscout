@@ -26,12 +26,12 @@ const hosts = [
 const userRegex = /^\/people\/([^/]+)/i
 const subjectRegex = /^\/subject\/(?<subjectId>[^/]+)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'douban:interests', main: 'https://www.douban.com/feed/people/{username}/interests' },
-  { key: 'douban:reviews', main: 'https://www.douban.com/feed/people/{username}/reviews' },
-  { key: 'douban:notes', main: 'https://www.douban.com/feed/people/{username}/notes' },
+const feeds = definePlatformFeeds('douban', [
+  { key: 'interests', main: 'https://www.douban.com/feed/people/{username}/interests' },
+  { key: 'reviews', main: 'https://www.douban.com/feed/people/{username}/reviews' },
+  { key: 'notes', main: 'https://www.douban.com/feed/people/{username}/notes' },
   {
-    key: 'douban:subject-reviews',
+    key: 'subject-reviews',
     main: 'https://www.douban.com/feed/subject/{subjectId}/reviews',
     aliases: [
       // A subject page links the feed on its section's host, which answers 301 to www.douban.com.
@@ -40,12 +40,12 @@ const feeds = definePlatformFeeds([
       'https://music.douban.com/feed/subject/{subjectId}/reviews',
     ],
   },
-  { key: 'douban:book-reviews', main: 'https://www.douban.com/feed/review/book' },
-  { key: 'douban:movie-reviews', main: 'https://www.douban.com/feed/review/movie' },
-  { key: 'douban:music-reviews', main: 'https://www.douban.com/feed/review/music' },
-  { key: 'douban:drama-reviews', main: 'https://www.douban.com/feed/review/drama' },
-  { key: 'douban:new-movie-reviews', main: 'https://www.douban.com/feed/review/movie_new' },
-  { key: 'douban:popular-reviews', main: 'https://www.douban.com/feed/review/best' },
+  { key: 'book-reviews', main: 'https://www.douban.com/feed/review/book' },
+  { key: 'movie-reviews', main: 'https://www.douban.com/feed/review/movie' },
+  { key: 'music-reviews', main: 'https://www.douban.com/feed/review/music' },
+  { key: 'drama-reviews', main: 'https://www.douban.com/feed/review/drama' },
+  { key: 'new-movie-reviews', main: 'https://www.douban.com/feed/review/movie_new' },
+  { key: 'popular-reviews', main: 'https://www.douban.com/feed/review/best' },
 ])
 
 export const parseDoubanUrl = (url: string): DoubanUrl | undefined => {
@@ -91,37 +91,37 @@ export const doubanHandler: PlatformHandler = {
       const params = { username: parsed.username }
 
       return [
-        feeds.getFeedEntry('douban:interests', params),
-        feeds.getFeedEntry('douban:reviews', params),
-        feeds.getFeedEntry('douban:notes', params),
-        feeds.getFeedEntry('douban:book-reviews'),
-        feeds.getFeedEntry('douban:movie-reviews'),
-        feeds.getFeedEntry('douban:music-reviews'),
-        feeds.getFeedEntry('douban:drama-reviews'),
-        feeds.getFeedEntry('douban:new-movie-reviews'),
-        feeds.getFeedEntry('douban:popular-reviews'),
+        feeds.getFeedEntry('interests', params),
+        feeds.getFeedEntry('reviews', params),
+        feeds.getFeedEntry('notes', params),
+        feeds.getFeedEntry('book-reviews'),
+        feeds.getFeedEntry('movie-reviews'),
+        feeds.getFeedEntry('music-reviews'),
+        feeds.getFeedEntry('drama-reviews'),
+        feeds.getFeedEntry('new-movie-reviews'),
+        feeds.getFeedEntry('popular-reviews'),
       ]
     }
 
     if (parsed.kind === 'subject') {
       return [
-        feeds.getFeedEntry('douban:subject-reviews', { subjectId: parsed.subjectId }),
-        feeds.getFeedEntry('douban:book-reviews'),
-        feeds.getFeedEntry('douban:movie-reviews'),
-        feeds.getFeedEntry('douban:music-reviews'),
-        feeds.getFeedEntry('douban:drama-reviews'),
-        feeds.getFeedEntry('douban:new-movie-reviews'),
-        feeds.getFeedEntry('douban:popular-reviews'),
+        feeds.getFeedEntry('subject-reviews', { subjectId: parsed.subjectId }),
+        feeds.getFeedEntry('book-reviews'),
+        feeds.getFeedEntry('movie-reviews'),
+        feeds.getFeedEntry('music-reviews'),
+        feeds.getFeedEntry('drama-reviews'),
+        feeds.getFeedEntry('new-movie-reviews'),
+        feeds.getFeedEntry('popular-reviews'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('douban:book-reviews'),
-      feeds.getFeedEntry('douban:movie-reviews'),
-      feeds.getFeedEntry('douban:music-reviews'),
-      feeds.getFeedEntry('douban:drama-reviews'),
-      feeds.getFeedEntry('douban:new-movie-reviews'),
-      feeds.getFeedEntry('douban:popular-reviews'),
+      feeds.getFeedEntry('book-reviews'),
+      feeds.getFeedEntry('movie-reviews'),
+      feeds.getFeedEntry('music-reviews'),
+      feeds.getFeedEntry('drama-reviews'),
+      feeds.getFeedEntry('new-movie-reviews'),
+      feeds.getFeedEntry('popular-reviews'),
     ]
   },
 

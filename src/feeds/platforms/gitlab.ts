@@ -21,9 +21,10 @@ const feedSuffixRegex = /\.atom$/i
 // depth and ends at a `/-/` separator, not always the first: in
 // `/{ns}/{project}/-/{x}/-/releases.atom` the project is `{ns}/{project}/-/{x}`.
 const feeds = definePlatformFeeds(
+  'gitlab',
   [
     {
-      key: 'gitlab:branch-commits',
+      key: 'branch-commits',
       main: '{root}/{project*}/-/commits/{branch}?format=atom',
       aliases: [
         // `/-/commits/{branch}.atom` serves the bytes `?format=atom` does. Under a file path GitLab
@@ -33,20 +34,20 @@ const feeds = definePlatformFeeds(
     },
     // The commits of one file or folder under a branch, another feed under the same key.
     {
-      key: 'gitlab:branch-commits',
+      key: 'branch-commits',
       main: '{root}/{project*}/-/commits/{branch}/{path*}?format=atom',
     },
-    { key: 'gitlab:releases', main: '{root}/{project*}/-/releases.atom' },
-    { key: 'gitlab:tags', main: '{root}/{project*}/-/tags?format=atom' },
-    { key: 'gitlab:issues', main: '{root}/{project*}/-/issues.atom' },
-    { key: 'gitlab:merge-requests', main: '{root}/{project*}/-/merge_requests.atom' },
+    { key: 'releases', main: '{root}/{project*}/-/releases.atom' },
+    { key: 'tags', main: '{root}/{project*}/-/tags?format=atom' },
+    { key: 'issues', main: '{root}/{project*}/-/issues.atom' },
+    { key: 'merge-requests', main: '{root}/{project*}/-/merge_requests.atom' },
     // The signed-in user's dashboard feeds answer only with their `feed_token`, so they are
     // claimed and never built.
-    { key: 'gitlab:dashboard', main: '{root}/dashboard/projects.atom' },
-    { key: 'gitlab:dashboard-issues', main: '{root}/dashboard/issues.atom' },
-    { key: 'gitlab:dashboard-merge-requests', main: '{root}/dashboard/merge_requests.atom' },
+    { key: 'dashboard', main: '{root}/dashboard/projects.atom' },
+    { key: 'dashboard-issues', main: '{root}/dashboard/issues.atom' },
+    { key: 'dashboard-merge-requests', main: '{root}/dashboard/merge_requests.atom' },
     // A namespace or a project of any depth, after the rows its paths overlap.
-    { key: 'gitlab:activity', main: '{root}/{path*}.atom' },
+    { key: 'activity', main: '{root}/{path*}.atom' },
   ],
   { hosts: { exact: hosts } },
 )
@@ -153,7 +154,7 @@ export const gitlabHandler: PlatformHandler = {
 
     // User or group page: gitlab.com/{namespace}.
     if (parsed.kind === 'namespace') {
-      return [page.getFeedEntry('gitlab:activity', { path: parsed.namespace })]
+      return [page.getFeedEntry('activity', { path: parsed.namespace })]
     }
 
     // Project page: gitlab.com/{group}/{subgroup...}/{project}.
@@ -161,21 +162,21 @@ export const gitlabHandler: PlatformHandler = {
 
     if (branch) {
       return [
-        page.getFeedEntry('gitlab:branch-commits', { project, branch }),
-        page.getFeedEntry('gitlab:releases', { project }),
-        page.getFeedEntry('gitlab:tags', { project }),
-        page.getFeedEntry('gitlab:issues', { project }),
-        page.getFeedEntry('gitlab:merge-requests', { project }),
-        page.getFeedEntry('gitlab:activity', { path: project }),
+        page.getFeedEntry('branch-commits', { project, branch }),
+        page.getFeedEntry('releases', { project }),
+        page.getFeedEntry('tags', { project }),
+        page.getFeedEntry('issues', { project }),
+        page.getFeedEntry('merge-requests', { project }),
+        page.getFeedEntry('activity', { path: project }),
       ]
     }
 
     return [
-      page.getFeedEntry('gitlab:releases', { project }),
-      page.getFeedEntry('gitlab:tags', { project }),
-      page.getFeedEntry('gitlab:issues', { project }),
-      page.getFeedEntry('gitlab:merge-requests', { project }),
-      page.getFeedEntry('gitlab:activity', { path: project }),
+      page.getFeedEntry('releases', { project }),
+      page.getFeedEntry('tags', { project }),
+      page.getFeedEntry('issues', { project }),
+      page.getFeedEntry('merge-requests', { project }),
+      page.getFeedEntry('activity', { path: project }),
     ]
   },
 

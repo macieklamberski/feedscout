@@ -12,9 +12,10 @@ const domains = ['captivate.fm']
 
 // The feed URL without the trailing slash answers 301.
 const feeds = definePlatformFeeds(
+  'captivate',
   [
     {
-      key: 'captivate:podcast',
+      key: 'podcast',
       main: 'https://feeds.captivate.fm/{slug}/',
       aliases: [
         // `/feed` on a show's own host answers 302 to its feed on feeds.captivate.fm.
@@ -23,11 +24,11 @@ const feeds = definePlatformFeeds(
     },
     // Every show serves its newest episode alone at `latest`. A network's feed sits under `n`, and
     // a collection of a show's episodes under its own name, so the collection row comes last.
-    { key: 'captivate:latest', main: 'https://feeds.captivate.fm/{slug}/latest/' },
-    { key: 'captivate:network', main: 'https://feeds.captivate.fm/n/{network}/' },
-    { key: 'captivate:collection', main: 'https://feeds.captivate.fm/{slug}/{collection}/' },
+    { key: 'latest', main: 'https://feeds.captivate.fm/{slug}/latest/' },
+    { key: 'network', main: 'https://feeds.captivate.fm/n/{network}/' },
+    { key: 'collection', main: 'https://feeds.captivate.fm/{slug}/{collection}/' },
     // A private feed for one listener, under tokens no page gives, is claimed and never built.
-    { key: 'captivate:private', main: 'https://private.captivate.fm/{show}/{listener}' },
+    { key: 'private', main: 'https://private.captivate.fm/{show}/{listener}' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -55,8 +56,8 @@ export const captivateHandler: PlatformHandler = {
     }
 
     return [
-      feeds.getFeedEntry('captivate:podcast', { slug: parsed.slug }),
-      feeds.getFeedEntry('captivate:latest', { slug: parsed.slug }),
+      feeds.getFeedEntry('podcast', { slug: parsed.slug }),
+      feeds.getFeedEntry('latest', { slug: parsed.slug }),
     ]
   },
 

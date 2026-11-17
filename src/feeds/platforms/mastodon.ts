@@ -20,12 +20,12 @@ const feedExtensionRegex = /\.(rss|atom|json)$/i
 
 // Mastodon is self-hosted and known only by its page marker, so nothing in a feed URL names it and
 // the table only builds.
-const feeds = definePlatformFeeds([
-  { key: 'mastodon:posts', main: '{root}/@{username}.rss' },
-  { key: 'mastodon:replies', main: '{root}/@{username}/with_replies.rss' },
-  { key: 'mastodon:media', main: '{root}/@{username}/media.rss' },
-  { key: 'mastodon:tagged', main: '{root}/@{username}/tagged/{tag}.rss' },
-  { key: 'mastodon:tag', main: '{root}/tags/{tag}.rss' },
+const feeds = definePlatformFeeds('mastodon', [
+  { key: 'posts', main: '{root}/@{username}.rss' },
+  { key: 'replies', main: '{root}/@{username}/with_replies.rss' },
+  { key: 'media', main: '{root}/@{username}/media.rss' },
+  { key: 'tagged', main: '{root}/@{username}/tagged/{tag}.rss' },
+  { key: 'tag', main: '{root}/tags/{tag}.rss' },
 ])
 
 // Current Mastodon serves no generator meta, so the `<div class="app-holder" id="mastodon">` app
@@ -113,29 +113,29 @@ export const mastodonHandler: PlatformHandler = {
 
     if (parsed.kind === 'replies') {
       return [
-        pageFeeds.getFeedEntry('mastodon:replies', { username: parsed.username }),
-        pageFeeds.getFeedEntry('mastodon:posts', { username: parsed.username }),
+        pageFeeds.getFeedEntry('replies', { username: parsed.username }),
+        pageFeeds.getFeedEntry('posts', { username: parsed.username }),
       ]
     }
 
     if (parsed.kind === 'media') {
       return [
-        pageFeeds.getFeedEntry('mastodon:media', { username: parsed.username }),
-        pageFeeds.getFeedEntry('mastodon:posts', { username: parsed.username }),
+        pageFeeds.getFeedEntry('media', { username: parsed.username }),
+        pageFeeds.getFeedEntry('posts', { username: parsed.username }),
       ]
     }
 
     if (parsed.kind === 'tagged') {
       return [
-        pageFeeds.getFeedEntry('mastodon:tagged', { username: parsed.username, tag: parsed.tag }),
-        pageFeeds.getFeedEntry('mastodon:posts', { username: parsed.username }),
+        pageFeeds.getFeedEntry('tagged', { username: parsed.username, tag: parsed.tag }),
+        pageFeeds.getFeedEntry('posts', { username: parsed.username }),
       ]
     }
 
     if (parsed.kind === 'profile') {
-      return [pageFeeds.getFeedEntry('mastodon:posts', { username: parsed.username })]
+      return [pageFeeds.getFeedEntry('posts', { username: parsed.username })]
     }
 
-    return [pageFeeds.getFeedEntry('mastodon:tag', { tag: parsed.tag })]
+    return [pageFeeds.getFeedEntry('tag', { tag: parsed.tag })]
   },
 }

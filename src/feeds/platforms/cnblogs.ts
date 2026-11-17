@@ -9,9 +9,9 @@ export type CnblogsUrl = { kind: 'blog'; username: string }
 const hosts = ['cnblogs.com', 'www.cnblogs.com']
 const feedHosts = ['feed.cnblogs.com']
 
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('cnblogs', [
   {
-    key: 'cnblogs:posts',
+    key: 'posts',
     main: 'https://www.cnblogs.com/{username}/rss',
     aliases: [
       // The posts feed answers 302 to this spelling, under the blog's numeric id.
@@ -47,7 +47,7 @@ export const cnblogsHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('cnblogs:posts', { username: parsed.username })]
+    return [feeds.getFeedEntry('posts', { username: parsed.username })]
   },
 
   // The table reads any first segment as a name, so the page parser refuses a dotted one first:

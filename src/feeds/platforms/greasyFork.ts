@@ -28,14 +28,15 @@ const authorHrefRegex = /\/users\/(?<id>[^/-]+)/i
 // only the scripts in the locale's language unless `filter_locale=0` is set, while the user page
 // lists them all.
 const feeds = definePlatformFeeds(
+  'greasy-fork',
   [
     {
-      key: 'greasy-fork:user',
+      key: 'user',
       main: '{scheme}://{host}/{locale}/scripts.atom?by={userId}&filter_locale=0',
     },
-    { key: 'greasy-fork:user', main: '{scheme}://{host}/{locale}/scripts.atom?by={userId}' },
-    { key: 'greasy-fork:new', main: '{scheme}://{host}/{locale}/scripts.atom?sort=created' },
-    { key: 'greasy-fork:updated', main: '{scheme}://{host}/{locale}/scripts.atom?sort=updated' },
+    { key: 'user', main: '{scheme}://{host}/{locale}/scripts.atom?by={userId}' },
+    { key: 'new', main: '{scheme}://{host}/{locale}/scripts.atom?sort=created' },
+    { key: 'updated', main: '{scheme}://{host}/{locale}/scripts.atom?sort=updated' },
   ],
   { hosts: { exact: feedHosts } },
 )
@@ -106,13 +107,10 @@ export const greasyForkHandler: PlatformHandler = {
     const params = { scheme: 'https', host: `api.${new URL(url).hostname}`, locale: page.locale }
 
     if (page.kind === 'user') {
-      return [pageFeeds.getFeedEntry('greasy-fork:user', { ...params, userId: page.userId })]
+      return [pageFeeds.getFeedEntry('user', { ...params, userId: page.userId })]
     }
 
-    return [
-      pageFeeds.getFeedEntry('greasy-fork:new', params),
-      pageFeeds.getFeedEntry('greasy-fork:updated', params),
-    ]
+    return [pageFeeds.getFeedEntry('new', params), pageFeeds.getFeedEntry('updated', params)]
   },
 
   getFeedHint: feeds.getFeedHint,

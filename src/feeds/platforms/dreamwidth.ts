@@ -16,12 +16,13 @@ const wwwHosts = ['www.dreamwidth.org', 'dreamwidth.org']
 const usersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 
 const feeds = definePlatformFeeds(
+  'dreamwidth',
   [
-    { key: 'dreamwidth:posts-tag', main: '{scheme}://{host}/data/rss?tag={tag}', format: 'rss' },
-    { key: 'dreamwidth:posts-tag', main: '{scheme}://{host}/data/atom?tag={tag}', format: 'atom' },
-    { key: 'dreamwidth:posts', main: '{scheme}://{host}/data/rss', format: 'rss' },
-    { key: 'dreamwidth:posts', main: '{scheme}://{host}/data/atom', format: 'atom' },
-    { key: 'dreamwidth:userpics', main: '{scheme}://{host}/data/userpics', format: 'atom' },
+    { key: 'posts-tag', main: '{scheme}://{host}/data/rss?tag={tag}', format: 'rss' },
+    { key: 'posts-tag', main: '{scheme}://{host}/data/atom?tag={tag}', format: 'atom' },
+    { key: 'posts', main: '{scheme}://{host}/data/rss', format: 'rss' },
+    { key: 'posts', main: '{scheme}://{host}/data/atom', format: 'atom' },
+    { key: 'userpics', main: '{scheme}://{host}/data/userpics', format: 'atom' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -87,18 +88,18 @@ export const dreamwidthHandler: PlatformHandler = {
       const tag = decodeSegment(parsed.tag) ?? parsed.tag
 
       return [
-        page.getFeedEntry('dreamwidth:posts-tag', { host, tag }, 'rss'),
-        page.getFeedEntry('dreamwidth:posts-tag', { host, tag }, 'atom'),
-        page.getFeedEntry('dreamwidth:posts', { host }, 'rss'),
-        page.getFeedEntry('dreamwidth:posts', { host }, 'atom'),
-        page.getFeedEntry('dreamwidth:userpics', { host }, 'atom'),
+        page.getFeedEntry('posts-tag', { host, tag }, 'rss'),
+        page.getFeedEntry('posts-tag', { host, tag }, 'atom'),
+        page.getFeedEntry('posts', { host }, 'rss'),
+        page.getFeedEntry('posts', { host }, 'atom'),
+        page.getFeedEntry('userpics', { host }, 'atom'),
       ]
     }
 
     return [
-      page.getFeedEntry('dreamwidth:posts', { host }, 'rss'),
-      page.getFeedEntry('dreamwidth:posts', { host }, 'atom'),
-      page.getFeedEntry('dreamwidth:userpics', { host }, 'atom'),
+      page.getFeedEntry('posts', { host }, 'rss'),
+      page.getFeedEntry('posts', { host }, 'atom'),
+      page.getFeedEntry('userpics', { host }, 'atom'),
     ]
   },
 

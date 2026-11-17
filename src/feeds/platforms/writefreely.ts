@@ -22,12 +22,12 @@ const blogPathRegex = /^\/(?:[^/]+\/)?$/
 // An instance on any host is known only by its markup, which a feed URL does not carry, so the
 // feeds are built under the instance root and never claimed. A single-user instance serves its
 // one blog at the root, so its rows have no blog segment.
-const feeds = definePlatformFeeds([
-  { key: 'writefreely:tag', main: '{root}/{blog}/tag:{tag}/feed/' },
-  { key: 'writefreely:tag', main: '{root}/tag:{tag}/feed/' },
-  { key: 'writefreely:blog', main: '{root}/{blog}/feed/' },
-  { key: 'writefreely:blog', main: '{root}/feed/' },
-  { key: 'writefreely:reader', main: '{root}/read/feed/' },
+const feeds = definePlatformFeeds('writefreely', [
+  { key: 'tag', main: '{root}/{blog}/tag:{tag}/feed/' },
+  { key: 'tag', main: '{root}/tag:{tag}/feed/' },
+  { key: 'blog', main: '{root}/{blog}/feed/' },
+  { key: 'blog', main: '{root}/feed/' },
+  { key: 'reader', main: '{root}/read/feed/' },
 ])
 
 const getUrlBlogPath = (url: string): string | undefined => {
@@ -124,26 +124,20 @@ export const writefreelyHandler: PlatformHandler = {
     // The instance reader holds every blog of a multi-user instance.
     if (params.blog && params.tag) {
       return [
-        pageFeeds.getFeedEntry('writefreely:tag', params),
-        pageFeeds.getFeedEntry('writefreely:blog', params),
-        pageFeeds.getFeedEntry('writefreely:reader'),
+        pageFeeds.getFeedEntry('tag', params),
+        pageFeeds.getFeedEntry('blog', params),
+        pageFeeds.getFeedEntry('reader'),
       ]
     }
 
     if (params.blog) {
-      return [
-        pageFeeds.getFeedEntry('writefreely:blog', params),
-        pageFeeds.getFeedEntry('writefreely:reader'),
-      ]
+      return [pageFeeds.getFeedEntry('blog', params), pageFeeds.getFeedEntry('reader')]
     }
 
     if (params.tag) {
-      return [
-        pageFeeds.getFeedEntry('writefreely:tag', params),
-        pageFeeds.getFeedEntry('writefreely:blog', params),
-      ]
+      return [pageFeeds.getFeedEntry('tag', params), pageFeeds.getFeedEntry('blog', params)]
     }
 
-    return [pageFeeds.getFeedEntry('writefreely:blog', params)]
+    return [pageFeeds.getFeedEntry('blog', params)]
   },
 }

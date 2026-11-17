@@ -12,9 +12,9 @@ const hosts = ['write.as', 'www.write.as']
 
 const tagRegex = /^\/([^/]+)\/tag:([^/]+)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'writeas:tag', main: 'https://write.as/{username}/tag:{tag}/feed/' },
-  { key: 'writeas:blog', main: 'https://write.as/{username}/feed/' },
+const feeds = definePlatformFeeds('writeas', [
+  { key: 'tag', main: 'https://write.as/{username}/tag:{tag}/feed/' },
+  { key: 'blog', main: 'https://write.as/{username}/feed/' },
 ])
 
 export const parseWriteasUrl = (url: string): WriteasUrl | undefined => {
@@ -55,12 +55,12 @@ export const writeasHandler: PlatformHandler = {
 
     if (parsed.kind === 'tag') {
       return [
-        feeds.getFeedEntry('writeas:tag', { username: parsed.username, tag: parsed.tag }),
-        feeds.getFeedEntry('writeas:blog', { username: parsed.username }),
+        feeds.getFeedEntry('tag', { username: parsed.username, tag: parsed.tag }),
+        feeds.getFeedEntry('blog', { username: parsed.username }),
       ]
     }
 
-    return [feeds.getFeedEntry('writeas:blog', { username: parsed.username })]
+    return [feeds.getFeedEntry('blog', { username: parsed.username })]
   },
 
   getFeedHint: feeds.getFeedHint,

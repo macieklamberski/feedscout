@@ -31,31 +31,32 @@ const flowRegex = /^\/flows\/([^/]+)/i
 // prefix is the same tag. A subscription feed carries the reader's private token, so the table
 // only claims it.
 const feeds = definePlatformFeeds(
+  'habr',
   [
-    { key: 'habr:articles', main: 'https://habr.com/{language}/rss/articles/' },
-    { key: 'habr:articles', main: 'https://habr.com/{language}/rss/articles/top/' },
-    { key: 'habr:articles', main: 'https://habr.com/{language}/rss/articles/top/{period}/' },
-    { key: 'habr:news', main: 'https://habr.com/{language}/rss/news/' },
-    { key: 'habr:news', main: 'https://habr.com/{language}/rss/news/top/{period}/' },
-    { key: 'habr:hub-posts', main: 'https://habr.com/{language}/rss/hubs/{hub}/posts/' },
-    { key: 'habr:flow', main: 'https://habr.com/{language}/rss/flows/{flow}/articles/' },
-    { key: 'habr:tag', main: 'https://habr.com/{language}/rss/tag/{tag}/' },
-    { key: 'habr:tag', main: 'https://habr.com/rss/tag/{tag}/' },
+    { key: 'articles', main: 'https://habr.com/{language}/rss/articles/' },
+    { key: 'articles', main: 'https://habr.com/{language}/rss/articles/top/' },
+    { key: 'articles', main: 'https://habr.com/{language}/rss/articles/top/{period}/' },
+    { key: 'news', main: 'https://habr.com/{language}/rss/news/' },
+    { key: 'news', main: 'https://habr.com/{language}/rss/news/top/{period}/' },
+    { key: 'hub-posts', main: 'https://habr.com/{language}/rss/hubs/{hub}/posts/' },
+    { key: 'flow', main: 'https://habr.com/{language}/rss/flows/{flow}/articles/' },
+    { key: 'tag', main: 'https://habr.com/{language}/rss/tag/{tag}/' },
+    { key: 'tag', main: 'https://habr.com/rss/tag/{tag}/' },
     {
-      key: 'habr:search',
+      key: 'search',
       main: 'https://habr.com/{language}/rss/search/?q={query}&target_type=posts',
     },
     {
-      key: 'habr:comments',
+      key: 'comments',
       main: 'https://habr.com/{language}/rss/publications/{post}/',
       aliases: [
         // An article page links this spelling, which redirects to the publications one with a 301.
         'https://habr.com/{language}/rss/post/{post}/',
       ],
     },
-    { key: 'habr:subscriptions', main: 'https://habr.com/{language}/rss/feed/{token}/' },
+    { key: 'subscriptions', main: 'https://habr.com/{language}/rss/feed/{token}/' },
     {
-      key: 'habr:hub',
+      key: 'hub',
       main: 'https://habr.com/{language}/rss/hubs/{hub}/articles/',
       aliases: [
         'https://habr.com/{language}/rss/hubs/{hub}/articles/all/',
@@ -63,7 +64,7 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'habr:user',
+      key: 'user',
       main: 'https://habr.com/{language}/rss/users/{username}/publications/articles/',
       aliases: [
         'https://habr.com/{language}/rss/users/{username}/articles/',
@@ -72,7 +73,7 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'habr:company',
+      key: 'company',
       main: 'https://habr.com/{language}/rss/companies/{company}/articles/',
       aliases: [
         'https://habr.com/{language}/rss/companies/{company}/articles/all/',
@@ -145,10 +146,10 @@ export const habrHandler: PlatformHandler = {
       const params = { language: parsed.language, hub: parsed.hub }
 
       return [
-        feeds.getFeedEntry('habr:hub', params),
-        feeds.getFeedEntry('habr:hub-posts', params),
-        feeds.getFeedEntry('habr:articles', { language: parsed.language }),
-        feeds.getFeedEntry('habr:news', { language: parsed.language }),
+        feeds.getFeedEntry('hub', params),
+        feeds.getFeedEntry('hub-posts', params),
+        feeds.getFeedEntry('articles', { language: parsed.language }),
+        feeds.getFeedEntry('news', { language: parsed.language }),
       ]
     }
 
@@ -156,9 +157,9 @@ export const habrHandler: PlatformHandler = {
       const params = { language: parsed.language, username: parsed.username }
 
       return [
-        feeds.getFeedEntry('habr:user', params),
-        feeds.getFeedEntry('habr:articles', { language: parsed.language }),
-        feeds.getFeedEntry('habr:news', { language: parsed.language }),
+        feeds.getFeedEntry('user', params),
+        feeds.getFeedEntry('articles', { language: parsed.language }),
+        feeds.getFeedEntry('news', { language: parsed.language }),
       ]
     }
 
@@ -166,9 +167,9 @@ export const habrHandler: PlatformHandler = {
       const params = { language: parsed.language, company: parsed.company }
 
       return [
-        feeds.getFeedEntry('habr:company', params),
-        feeds.getFeedEntry('habr:articles', { language: parsed.language }),
-        feeds.getFeedEntry('habr:news', { language: parsed.language }),
+        feeds.getFeedEntry('company', params),
+        feeds.getFeedEntry('articles', { language: parsed.language }),
+        feeds.getFeedEntry('news', { language: parsed.language }),
       ]
     }
 
@@ -177,20 +178,20 @@ export const habrHandler: PlatformHandler = {
 
       if (parsed.company) {
         return [
-          feeds.getFeedEntry('habr:comments', params),
-          feeds.getFeedEntry('habr:company', {
+          feeds.getFeedEntry('comments', params),
+          feeds.getFeedEntry('company', {
             language: parsed.language,
             company: parsed.company,
           }),
-          feeds.getFeedEntry('habr:articles', { language: parsed.language }),
-          feeds.getFeedEntry('habr:news', { language: parsed.language }),
+          feeds.getFeedEntry('articles', { language: parsed.language }),
+          feeds.getFeedEntry('news', { language: parsed.language }),
         ]
       }
 
       return [
-        feeds.getFeedEntry('habr:comments', params),
-        feeds.getFeedEntry('habr:articles', { language: parsed.language }),
-        feeds.getFeedEntry('habr:news', { language: parsed.language }),
+        feeds.getFeedEntry('comments', params),
+        feeds.getFeedEntry('articles', { language: parsed.language }),
+        feeds.getFeedEntry('news', { language: parsed.language }),
       ]
     }
 
@@ -198,15 +199,15 @@ export const habrHandler: PlatformHandler = {
       const params = { language: parsed.language, flow: parsed.flow }
 
       return [
-        feeds.getFeedEntry('habr:flow', params),
-        feeds.getFeedEntry('habr:articles', { language: parsed.language }),
-        feeds.getFeedEntry('habr:news', { language: parsed.language }),
+        feeds.getFeedEntry('flow', params),
+        feeds.getFeedEntry('articles', { language: parsed.language }),
+        feeds.getFeedEntry('news', { language: parsed.language }),
       ]
     }
 
     return [
-      feeds.getFeedEntry('habr:articles', { language: parsed.language }),
-      feeds.getFeedEntry('habr:news', { language: parsed.language }),
+      feeds.getFeedEntry('articles', { language: parsed.language }),
+      feeds.getFeedEntry('news', { language: parsed.language }),
     ]
   },
 

@@ -13,19 +13,20 @@ const eventsPathRegex = /^\/evenements\/?$/i
 
 // A club on its own domain is known only by its markers, so its feeds are built but not claimed.
 const feeds = definePlatformFeeds(
+  'sportsregions',
   [
-    { key: 'sportsregions:news', main: '{scheme}://{host}/rss/news' },
-    { key: 'sportsregions:events', main: '{scheme}://{host}/rss/evenement' },
+    { key: 'news', main: '{scheme}://{host}/rss/news' },
+    { key: 'events', main: '{scheme}://{host}/rss/evenement' },
     {
-      key: 'sportsregions:filtered-events',
+      key: 'filtered-events',
       main: '{scheme}://{host}/rss/evenement?type_id={typeId}&groupe_id={groupId}',
     },
     {
-      key: 'sportsregions:filtered-events',
+      key: 'filtered-events',
       main: '{scheme}://{host}/rss/evenement?type_id={typeId}',
     },
     {
-      key: 'sportsregions:filtered-events',
+      key: 'filtered-events',
       main: '{scheme}://{host}/rss/evenement?groupe_id={groupId}',
     },
   ],
@@ -97,13 +98,13 @@ export const sportsregionsHandler: PlatformHandler = {
 
     if (filters) {
       return [
-        page.getFeedEntry('sportsregions:filtered-events', filters),
-        page.getFeedEntry('sportsregions:news'),
-        page.getFeedEntry('sportsregions:events'),
+        page.getFeedEntry('filtered-events', filters),
+        page.getFeedEntry('news'),
+        page.getFeedEntry('events'),
       ]
     }
 
-    return [page.getFeedEntry('sportsregions:news'), page.getFeedEntry('sportsregions:events')]
+    return [page.getFeedEntry('news'), page.getFeedEntry('events')]
   },
 
   getFeedHint: feeds.getFeedHint,

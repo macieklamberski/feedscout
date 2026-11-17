@@ -15,11 +15,11 @@ const hosts = ['www.v2ex.com', 'v2ex.com']
 const nodeRegex = /^\/go\/([^/]+)/i
 const memberRegex = /^\/member\/([^/]+)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'v2ex:node', main: 'https://www.v2ex.com/feed/{node}.xml' },
-  { key: 'v2ex:member', main: 'https://www.v2ex.com/feed/member/{username}.xml' },
-  { key: 'v2ex:tab', main: 'https://www.v2ex.com/feed/tab/{tab}.xml' },
-  { key: 'v2ex:index', main: 'https://www.v2ex.com/index.xml' },
+const feeds = definePlatformFeeds('v2ex', [
+  { key: 'node', main: 'https://www.v2ex.com/feed/{node}.xml' },
+  { key: 'member', main: 'https://www.v2ex.com/feed/member/{username}.xml' },
+  { key: 'tab', main: 'https://www.v2ex.com/feed/tab/{tab}.xml' },
+  { key: 'index', main: 'https://www.v2ex.com/index.xml' },
 ])
 
 export const parseV2exUrl = (url: string): V2exUrl | undefined => {
@@ -65,24 +65,21 @@ export const v2exHandler: PlatformHandler = {
 
     // The index feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'node') {
-      return [
-        feeds.getFeedEntry('v2ex:node', { node: parsed.node }),
-        feeds.getFeedEntry('v2ex:index'),
-      ]
+      return [feeds.getFeedEntry('node', { node: parsed.node }), feeds.getFeedEntry('index')]
     }
 
     if (parsed.kind === 'member') {
       return [
-        feeds.getFeedEntry('v2ex:member', { username: parsed.username }),
-        feeds.getFeedEntry('v2ex:index'),
+        feeds.getFeedEntry('member', { username: parsed.username }),
+        feeds.getFeedEntry('index'),
       ]
     }
 
     if (parsed.kind === 'tab') {
-      return [feeds.getFeedEntry('v2ex:tab', { tab: parsed.tab }), feeds.getFeedEntry('v2ex:index')]
+      return [feeds.getFeedEntry('tab', { tab: parsed.tab }), feeds.getFeedEntry('index')]
     }
 
-    return [feeds.getFeedEntry('v2ex:index')]
+    return [feeds.getFeedEntry('index')]
   },
 
   getFeedHint: feeds.getFeedHint,

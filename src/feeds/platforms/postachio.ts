@@ -9,9 +9,10 @@ export type PostachioUrl = { kind: 'site'; subdomain: string }
 const domains = ['postach.io']
 
 const feeds = definePlatformFeeds(
+  'postachio',
   [
     {
-      key: 'postachio:posts',
+      key: 'posts',
       main: '{scheme}://{host}/feed.xml',
       aliases: ['{scheme}://{host}/feed'],
     },
@@ -42,7 +43,7 @@ export const postachioHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('postachio:posts')]
+    return [page.getFeedEntry('posts')]
   },
 
   getFeedHint: feeds.getFeedHint,

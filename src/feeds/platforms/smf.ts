@@ -13,11 +13,11 @@ const boardIdRegex = /[?;&]board=(\d+)/i
 
 // A forum of any domain is known only by its marker, so its feeds are built here but not claimed.
 // The feed arguments are joined by semicolons into the one `action` value.
-const feeds = definePlatformFeeds([
-  { key: 'smf:board', main: '{root}?action=.xml;type=rss2;board={board}', format: 'rss' },
-  { key: 'smf:board', main: '{root}?action=.xml;type=atom;board={board}', format: 'atom' },
-  { key: 'smf:posts', main: '{root}?action=.xml;type=rss2', format: 'rss' },
-  { key: 'smf:posts', main: '{root}?action=.xml;type=atom', format: 'atom' },
+const feeds = definePlatformFeeds('smf', [
+  { key: 'board', main: '{root}?action=.xml;type=rss2;board={board}', format: 'rss' },
+  { key: 'board', main: '{root}?action=.xml;type=atom;board={board}', format: 'atom' },
+  { key: 'posts', main: '{root}?action=.xml;type=rss2', format: 'rss' },
+  { key: 'posts', main: '{root}?action=.xml;type=atom', format: 'atom' },
 ])
 
 // Core prints both script variables in every page head whatever the theme, from SMF 1.1 to 2.1.
@@ -72,16 +72,16 @@ export const smfHandler: PlatformHandler = {
       const params = { root, board: page.boardId }
 
       return [
-        pageFeeds.getFeedEntry('smf:board', params, 'rss'),
-        pageFeeds.getFeedEntry('smf:board', params, 'atom'),
-        pageFeeds.getFeedEntry('smf:posts', { root }, 'rss'),
-        pageFeeds.getFeedEntry('smf:posts', { root }, 'atom'),
+        pageFeeds.getFeedEntry('board', params, 'rss'),
+        pageFeeds.getFeedEntry('board', params, 'atom'),
+        pageFeeds.getFeedEntry('posts', { root }, 'rss'),
+        pageFeeds.getFeedEntry('posts', { root }, 'atom'),
       ]
     }
 
     return [
-      pageFeeds.getFeedEntry('smf:posts', { root }, 'rss'),
-      pageFeeds.getFeedEntry('smf:posts', { root }, 'atom'),
+      pageFeeds.getFeedEntry('posts', { root }, 'rss'),
+      pageFeeds.getFeedEntry('posts', { root }, 'atom'),
     ]
   },
 }

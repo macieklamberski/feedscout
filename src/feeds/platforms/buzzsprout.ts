@@ -9,9 +9,9 @@ export type BuzzsproutUrl = { kind: 'podcast'; podcastId: string }
 
 const hosts = ['buzzsprout.com', 'www.buzzsprout.com']
 
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('buzzsprout', [
   {
-    key: 'buzzsprout:podcast',
+    key: 'podcast',
     main: 'https://rss.buzzsprout.com/{podcastId}.rss',
     aliases: [
       // Served spellings, which redirect to the one above. Claimed, never built.
@@ -47,7 +47,7 @@ export const buzzsproutHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('buzzsprout:podcast', { podcastId: parsed.podcastId })]
+    return [feeds.getFeedEntry('podcast', { podcastId: parsed.podcastId })]
   },
 
   getFeedHint: feeds.getFeedHint,

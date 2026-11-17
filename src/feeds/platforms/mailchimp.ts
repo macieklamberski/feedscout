@@ -18,7 +18,8 @@ const archivePathRegex = /^\/home\/?$/i
 const listLinkRegex = /campaign-archive\.com\/(?:home\/|feed)\?u=\w+&(?:amp;)?id=(?<listId>\w+)/i
 
 const feeds = definePlatformFeeds(
-  [{ key: 'mailchimp:archive', main: '{scheme}://{host}/feed?u={userId}&id={listId}' }],
+  'mailchimp',
+  [{ key: 'archive', main: '{scheme}://{host}/feed?u={userId}&id={listId}' }],
   { hosts: { tenants: feedDomains } },
 )
 
@@ -84,7 +85,7 @@ export const mailchimpHandler: PlatformHandler = {
       listId: page.listId,
     }
 
-    return [pageFeeds.getFeedEntry('mailchimp:archive', params)]
+    return [pageFeeds.getFeedEntry('archive', params)]
   },
 
   getFeedHint: feeds.getFeedHint,

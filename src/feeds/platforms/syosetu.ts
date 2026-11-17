@@ -13,10 +13,10 @@ const hosts = ['mypage.syosetu.com']
 
 const writerRegex = /^\/(?<writerId>[^/]+)/
 
-const feeds = definePlatformFeeds([
-  { key: 'syosetu:author', main: 'https://api.syosetu.com/writernovel/{writerId}.Atom' },
-  { key: 'syosetu:activity', main: 'https://api.syosetu.com/writer/{writerId}.Atom' },
-  { key: 'syosetu:all-novels', main: 'https://api.syosetu.com/allnovel.Atom' },
+const feeds = definePlatformFeeds('syosetu', [
+  { key: 'author', main: 'https://api.syosetu.com/writernovel/{writerId}.Atom' },
+  { key: 'activity', main: 'https://api.syosetu.com/writer/{writerId}.Atom' },
+  { key: 'all-novels', main: 'https://api.syosetu.com/allnovel.Atom' },
 ])
 
 export const parseSyosetuUrl = (url: string): SyosetuUrl | undefined => {
@@ -48,9 +48,9 @@ export const syosetuHandler: PlatformHandler = {
     }
 
     return [
-      feeds.getFeedEntry('syosetu:author', { writerId: parsed.writerId }),
-      feeds.getFeedEntry('syosetu:activity', { writerId: parsed.writerId }),
-      feeds.getFeedEntry('syosetu:all-novels'),
+      feeds.getFeedEntry('author', { writerId: parsed.writerId }),
+      feeds.getFeedEntry('activity', { writerId: parsed.writerId }),
+      feeds.getFeedEntry('all-novels'),
     ]
   },
 

@@ -9,7 +9,8 @@ export type PodcloudUrl = { kind: 'show' }
 const domains = ['lepodcast.fr']
 
 const feeds = definePlatformFeeds(
-  [{ key: 'podcloud:podcast', main: '{scheme}://{host}/rss', aliases: ['{scheme}://{host}/feed'] }],
+  'podcloud',
+  [{ key: 'podcast', main: '{scheme}://{host}/rss', aliases: ['{scheme}://{host}/feed'] }],
   { hosts: { tenants: domains } },
 )
 
@@ -34,7 +35,7 @@ export const podcloudHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('podcloud:podcast')]
+    return [page.getFeedEntry('podcast')]
   },
 
   getFeedHint: feeds.getFeedHint,

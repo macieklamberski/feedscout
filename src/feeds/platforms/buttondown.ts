@@ -9,9 +9,9 @@ export type ButtondownUrl = { kind: 'newsletter'; username: string }
 const hosts = ['buttondown.com', 'www.buttondown.com', 'buttondown.email', 'www.buttondown.email']
 
 // The legacy buttondown.email host redirects each feed to the same path on buttondown.com.
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('buttondown', [
   {
-    key: 'buttondown:newsletter',
+    key: 'newsletter',
     main: 'https://buttondown.com/{username}/rss',
     aliases: ['https://buttondown.email/{username}/rss'],
   },
@@ -43,7 +43,7 @@ export const buttondownHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('buttondown:newsletter', { username: parsed.username })]
+    return [feeds.getFeedEntry('newsletter', { username: parsed.username })]
   },
 
   getFeedHint: feeds.getFeedHint,

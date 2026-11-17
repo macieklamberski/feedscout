@@ -30,31 +30,32 @@ const branchViews = ['src', 'commits']
 // reads as the file history, so the one-segment rows come first, and a repo's activity comes
 // before its owner's, so a page with a repo builds the repo's.
 const feeds = definePlatformFeeds(
+  'gitea',
   [
-    { key: 'gitea:activity', main: '{root}/{owner}/{repo}.atom', format: 'atom' },
-    { key: 'gitea:activity', main: '{root}/{owner}/{repo}.rss', format: 'rss' },
-    { key: 'gitea:activity', main: '{root}/{owner}.atom', format: 'atom' },
-    { key: 'gitea:activity', main: '{root}/{owner}.rss', format: 'rss' },
-    { key: 'gitea:releases', main: '{root}/{owner}/{repo}/releases.atom', format: 'atom' },
-    { key: 'gitea:releases', main: '{root}/{owner}/{repo}/releases.rss', format: 'rss' },
-    { key: 'gitea:tags', main: '{root}/{owner}/{repo}/tags.atom', format: 'atom' },
-    { key: 'gitea:tags', main: '{root}/{owner}/{repo}/tags.rss', format: 'rss' },
+    { key: 'activity', main: '{root}/{owner}/{repo}.atom', format: 'atom' },
+    { key: 'activity', main: '{root}/{owner}/{repo}.rss', format: 'rss' },
+    { key: 'activity', main: '{root}/{owner}.atom', format: 'atom' },
+    { key: 'activity', main: '{root}/{owner}.rss', format: 'rss' },
+    { key: 'releases', main: '{root}/{owner}/{repo}/releases.atom', format: 'atom' },
+    { key: 'releases', main: '{root}/{owner}/{repo}/releases.rss', format: 'rss' },
+    { key: 'tags', main: '{root}/{owner}/{repo}/tags.atom', format: 'atom' },
+    { key: 'tags', main: '{root}/{owner}/{repo}/tags.rss', format: 'rss' },
     {
-      key: 'gitea:branch-commits',
+      key: 'branch-commits',
       main: '{root}/{owner}/{repo}/atom/branch/{branch}',
       format: 'atom',
     },
     {
-      key: 'gitea:branch-commits',
+      key: 'branch-commits',
       main: '{root}/{owner}/{repo}/rss/branch/{branch}',
       format: 'rss',
     },
     {
-      key: 'gitea:file-history',
+      key: 'file-history',
       main: '{root}/{owner}/{repo}/atom/branch/{path*}',
       format: 'atom',
     },
-    { key: 'gitea:file-history', main: '{root}/{owner}/{repo}/rss/branch/{path*}', format: 'rss' },
+    { key: 'file-history', main: '{root}/{owner}/{repo}/rss/branch/{path*}', format: 'rss' },
   ],
   { hosts: { exact: hosts } },
 )
@@ -136,8 +137,8 @@ export const giteaHandler: PlatformHandler = {
     // User or organization page: codeberg.org/{owner}.
     if (page.kind === 'user') {
       return [
-        feeds.getFeedEntry('gitea:activity', { root, owner }, 'atom'),
-        feeds.getFeedEntry('gitea:activity', { root, owner }, 'rss'),
+        feeds.getFeedEntry('activity', { root, owner }, 'atom'),
+        feeds.getFeedEntry('activity', { root, owner }, 'rss'),
       ]
     }
 
@@ -146,12 +147,12 @@ export const giteaHandler: PlatformHandler = {
 
     if (!branchPath) {
       return [
-        feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'atom'),
-        feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'rss'),
-        feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'atom'),
-        feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'rss'),
-        feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'atom'),
-        feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'rss'),
+        feeds.getFeedEntry('releases', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('releases', { root, owner, repo }, 'rss'),
+        feeds.getFeedEntry('tags', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('tags', { root, owner, repo }, 'rss'),
+        feeds.getFeedEntry('activity', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('activity', { root, owner, repo }, 'rss'),
       ]
     }
 
@@ -160,26 +161,26 @@ export const giteaHandler: PlatformHandler = {
     // /atom/branch with a cookie challenge, so both are emitted.
     if (branchPath.includes('/')) {
       return [
-        feeds.getFeedEntry('gitea:file-history', { root, owner, repo, path: branchPath }, 'atom'),
-        feeds.getFeedEntry('gitea:file-history', { root, owner, repo, path: branchPath }, 'rss'),
-        feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'atom'),
-        feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'rss'),
-        feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'atom'),
-        feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'rss'),
-        feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'atom'),
-        feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'rss'),
+        feeds.getFeedEntry('file-history', { root, owner, repo, path: branchPath }, 'atom'),
+        feeds.getFeedEntry('file-history', { root, owner, repo, path: branchPath }, 'rss'),
+        feeds.getFeedEntry('releases', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('releases', { root, owner, repo }, 'rss'),
+        feeds.getFeedEntry('tags', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('tags', { root, owner, repo }, 'rss'),
+        feeds.getFeedEntry('activity', { root, owner, repo }, 'atom'),
+        feeds.getFeedEntry('activity', { root, owner, repo }, 'rss'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('gitea:branch-commits', { root, owner, repo, branch: branchPath }, 'atom'),
-      feeds.getFeedEntry('gitea:branch-commits', { root, owner, repo, branch: branchPath }, 'rss'),
-      feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'atom'),
-      feeds.getFeedEntry('gitea:releases', { root, owner, repo }, 'rss'),
-      feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'atom'),
-      feeds.getFeedEntry('gitea:tags', { root, owner, repo }, 'rss'),
-      feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'atom'),
-      feeds.getFeedEntry('gitea:activity', { root, owner, repo }, 'rss'),
+      feeds.getFeedEntry('branch-commits', { root, owner, repo, branch: branchPath }, 'atom'),
+      feeds.getFeedEntry('branch-commits', { root, owner, repo, branch: branchPath }, 'rss'),
+      feeds.getFeedEntry('releases', { root, owner, repo }, 'atom'),
+      feeds.getFeedEntry('releases', { root, owner, repo }, 'rss'),
+      feeds.getFeedEntry('tags', { root, owner, repo }, 'atom'),
+      feeds.getFeedEntry('tags', { root, owner, repo }, 'rss'),
+      feeds.getFeedEntry('activity', { root, owner, repo }, 'atom'),
+      feeds.getFeedEntry('activity', { root, owner, repo }, 'rss'),
     ]
   },
 

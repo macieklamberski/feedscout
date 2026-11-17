@@ -17,9 +17,9 @@ const profileAliasRegex = /^\/@?([^/]+)\/?$/
 
 // An instance is known only by its markup, so its feeds are built on the page's origin and claimed
 // on no host.
-const feeds = definePlatformFeeds([
-  { key: 'pleroma:posts', main: '{root}/users/{username}/feed.atom', format: 'atom' },
-  { key: 'pleroma:posts', main: '{root}/users/{username}/feed.rss', format: 'rss' },
+const feeds = definePlatformFeeds('pleroma', [
+  { key: 'posts', main: '{root}/users/{username}/feed.atom', format: 'atom' },
+  { key: 'posts', main: '{root}/users/{username}/feed.rss', format: 'rss' },
 ])
 
 // The frontend preloads its config from the API, and older releases inline that response in the
@@ -67,8 +67,8 @@ export const pleromaHandler: PlatformHandler = {
     const params = { username: parsed.username }
 
     return [
-      pageFeeds.getFeedEntry('pleroma:posts', params, 'atom'),
-      pageFeeds.getFeedEntry('pleroma:posts', params, 'rss'),
+      pageFeeds.getFeedEntry('posts', params, 'atom'),
+      pageFeeds.getFeedEntry('posts', params, 'rss'),
     ]
   },
 }

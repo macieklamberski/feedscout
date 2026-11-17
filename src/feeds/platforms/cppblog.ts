@@ -18,17 +18,17 @@ const listPageRegex = /^(\d+)\.html$/i
 const feedLinkRegex = /^https?:\/\/(?:www\.)?cppblog\.com\/([^/]+)\/rss\.aspx$/i
 
 // The https certificate has expired, and every page links its feeds at this origin, the apex too.
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('cppblog', [
   {
-    key: 'cppblog:category',
+    key: 'category',
     main: 'http://www.cppblog.com/{username}/category/{categoryId}.html/rss',
   },
   {
-    key: 'cppblog:favorites',
+    key: 'favorites',
     main: 'http://www.cppblog.com/{username}/favorite/{favoriteId}.html/rss',
   },
-  { key: 'cppblog:posts', main: 'http://www.cppblog.com/{username}/rss.aspx' },
-  { key: 'cppblog:comments', main: 'http://www.cppblog.com/{username}/CommentsRSS.aspx' },
+  { key: 'posts', main: 'http://www.cppblog.com/{username}/rss.aspx' },
+  { key: 'comments', main: 'http://www.cppblog.com/{username}/CommentsRSS.aspx' },
 ])
 
 export const parseCppblogUrl = (url: string): CppblogUrl | undefined => {
@@ -90,24 +90,21 @@ export const cppblogHandler: PlatformHandler = {
 
     if (page.kind === 'category') {
       return [
-        feeds.getFeedEntry('cppblog:category', { username, categoryId: page.categoryId }),
-        feeds.getFeedEntry('cppblog:posts', { username }),
-        feeds.getFeedEntry('cppblog:comments', { username }),
+        feeds.getFeedEntry('category', { username, categoryId: page.categoryId }),
+        feeds.getFeedEntry('posts', { username }),
+        feeds.getFeedEntry('comments', { username }),
       ]
     }
 
     if (page.kind === 'favorite') {
       return [
-        feeds.getFeedEntry('cppblog:favorites', { username, favoriteId: page.favoriteId }),
-        feeds.getFeedEntry('cppblog:posts', { username }),
-        feeds.getFeedEntry('cppblog:comments', { username }),
+        feeds.getFeedEntry('favorites', { username, favoriteId: page.favoriteId }),
+        feeds.getFeedEntry('posts', { username }),
+        feeds.getFeedEntry('comments', { username }),
       ]
     }
 
-    return [
-      feeds.getFeedEntry('cppblog:posts', { username }),
-      feeds.getFeedEntry('cppblog:comments', { username }),
-    ]
+    return [feeds.getFeedEntry('posts', { username }), feeds.getFeedEntry('comments', { username })]
   },
 
   getFeedHint: feeds.getFeedHint,

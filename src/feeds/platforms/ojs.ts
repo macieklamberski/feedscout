@@ -14,22 +14,22 @@ const componentRouterRegex = /^(https?:\/\/.+?)\/\$\$\$call\$\$\$\//i
 
 // OJS is self-hosted and known only by its page marker, so nothing in a feed URL names it and the
 // table only builds, under the journal root the page names.
-const feeds = definePlatformFeeds([
-  { key: 'ojs:articles', main: '{root}/gateway/plugin/WebFeedGatewayPlugin/atom', format: 'atom' },
-  { key: 'ojs:articles', main: '{root}/gateway/plugin/WebFeedGatewayPlugin/rss', format: 'rdf' },
-  { key: 'ojs:articles', main: '{root}/gateway/plugin/WebFeedGatewayPlugin/rss2', format: 'rss' },
+const feeds = definePlatformFeeds('ojs', [
+  { key: 'articles', main: '{root}/gateway/plugin/WebFeedGatewayPlugin/atom', format: 'atom' },
+  { key: 'articles', main: '{root}/gateway/plugin/WebFeedGatewayPlugin/rss', format: 'rdf' },
+  { key: 'articles', main: '{root}/gateway/plugin/WebFeedGatewayPlugin/rss2', format: 'rss' },
   {
-    key: 'ojs:announcements',
+    key: 'announcements',
     main: '{root}/gateway/plugin/AnnouncementFeedGatewayPlugin/atom',
     format: 'atom',
   },
   {
-    key: 'ojs:announcements',
+    key: 'announcements',
     main: '{root}/gateway/plugin/AnnouncementFeedGatewayPlugin/rss',
     format: 'rdf',
   },
   {
-    key: 'ojs:announcements',
+    key: 'announcements',
     main: '{root}/gateway/plugin/AnnouncementFeedGatewayPlugin/rss2',
     format: 'rss',
   },
@@ -82,12 +82,12 @@ export const ojsHandler: PlatformHandler = {
     const params = { root: page.journalUrl }
 
     return [
-      feeds.getFeedEntry('ojs:articles', params, 'atom'),
-      feeds.getFeedEntry('ojs:articles', params, 'rdf'),
-      feeds.getFeedEntry('ojs:articles', params, 'rss'),
-      feeds.getFeedEntry('ojs:announcements', params, 'atom'),
-      feeds.getFeedEntry('ojs:announcements', params, 'rdf'),
-      feeds.getFeedEntry('ojs:announcements', params, 'rss'),
+      feeds.getFeedEntry('articles', params, 'atom'),
+      feeds.getFeedEntry('articles', params, 'rdf'),
+      feeds.getFeedEntry('articles', params, 'rss'),
+      feeds.getFeedEntry('announcements', params, 'atom'),
+      feeds.getFeedEntry('announcements', params, 'rdf'),
+      feeds.getFeedEntry('announcements', params, 'rss'),
     ]
   },
 }

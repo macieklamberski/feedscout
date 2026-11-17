@@ -10,10 +10,10 @@ const hosts = ['pypi.org', 'www.pypi.org']
 
 const projectRegex = /^\/project\/([\w.-]+)(?:\/|$)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'pypi:releases', main: 'https://pypi.org/rss/project/{project}/releases.xml' },
-  { key: 'pypi:new-packages', main: 'https://pypi.org/rss/packages.xml' },
-  { key: 'pypi:updates', main: 'https://pypi.org/rss/updates.xml' },
+const feeds = definePlatformFeeds('pypi', [
+  { key: 'releases', main: 'https://pypi.org/rss/project/{project}/releases.xml' },
+  { key: 'new-packages', main: 'https://pypi.org/rss/packages.xml' },
+  { key: 'updates', main: 'https://pypi.org/rss/updates.xml' },
 ])
 
 export const parsePypiUrl = (url: string): PypiUrl | undefined => {
@@ -49,13 +49,13 @@ export const pypiHandler: PlatformHandler = {
     // `-`, `_` and `.` in the project name.
     if (parsed.kind === 'project') {
       return [
-        feeds.getFeedEntry('pypi:releases', { project: parsed.project }),
-        feeds.getFeedEntry('pypi:new-packages'),
-        feeds.getFeedEntry('pypi:updates'),
+        feeds.getFeedEntry('releases', { project: parsed.project }),
+        feeds.getFeedEntry('new-packages'),
+        feeds.getFeedEntry('updates'),
       ]
     }
 
-    return [feeds.getFeedEntry('pypi:new-packages'), feeds.getFeedEntry('pypi:updates')]
+    return [feeds.getFeedEntry('new-packages'), feeds.getFeedEntry('updates')]
   },
 
   getFeedHint: feeds.getFeedHint,

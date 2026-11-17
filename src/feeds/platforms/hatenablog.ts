@@ -22,21 +22,22 @@ const categoryRegex = /^\/archive\/category\/([^/]+)/i
 const authorRegex = /^\/archive\/author\/([^/]+)/i
 
 const feeds = definePlatformFeeds(
+  'hatenablog',
   [
-    { key: 'hatenablog:posts', main: '{scheme}://{host}/rss', format: 'rss' },
-    { key: 'hatenablog:posts', main: '{scheme}://{host}/feed', format: 'atom' },
+    { key: 'posts', main: '{scheme}://{host}/rss', format: 'rss' },
+    { key: 'posts', main: '{scheme}://{host}/feed', format: 'atom' },
     {
-      key: 'hatenablog:category',
+      key: 'category',
       main: '{scheme}://{host}/rss/category/{category}',
       format: 'rss',
     },
     {
-      key: 'hatenablog:category',
+      key: 'category',
       main: '{scheme}://{host}/feed/category/{category}',
       format: 'atom',
     },
-    { key: 'hatenablog:author', main: '{scheme}://{host}/rss/author/{author}', format: 'rss' },
-    { key: 'hatenablog:author', main: '{scheme}://{host}/feed/author/{author}', format: 'atom' },
+    { key: 'author', main: '{scheme}://{host}/rss/author/{author}', format: 'rss' },
+    { key: 'author', main: '{scheme}://{host}/feed/author/{author}', format: 'atom' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -79,10 +80,10 @@ export const hatenablogHandler: PlatformHandler = {
       const params = { category: parsed.category }
 
       return [
-        page.getFeedEntry('hatenablog:category', params, 'rss'),
-        page.getFeedEntry('hatenablog:category', params, 'atom'),
-        page.getFeedEntry('hatenablog:posts', {}, 'rss'),
-        page.getFeedEntry('hatenablog:posts', {}, 'atom'),
+        page.getFeedEntry('category', params, 'rss'),
+        page.getFeedEntry('category', params, 'atom'),
+        page.getFeedEntry('posts', {}, 'rss'),
+        page.getFeedEntry('posts', {}, 'atom'),
       ]
     }
 
@@ -90,17 +91,14 @@ export const hatenablogHandler: PlatformHandler = {
       const params = { author: parsed.author }
 
       return [
-        page.getFeedEntry('hatenablog:author', params, 'rss'),
-        page.getFeedEntry('hatenablog:author', params, 'atom'),
-        page.getFeedEntry('hatenablog:posts', {}, 'rss'),
-        page.getFeedEntry('hatenablog:posts', {}, 'atom'),
+        page.getFeedEntry('author', params, 'rss'),
+        page.getFeedEntry('author', params, 'atom'),
+        page.getFeedEntry('posts', {}, 'rss'),
+        page.getFeedEntry('posts', {}, 'atom'),
       ]
     }
 
-    return [
-      page.getFeedEntry('hatenablog:posts', {}, 'rss'),
-      page.getFeedEntry('hatenablog:posts', {}, 'atom'),
-    ]
+    return [page.getFeedEntry('posts', {}, 'rss'), page.getFeedEntry('posts', {}, 'atom')]
   },
 
   getFeedHint: feeds.getFeedHint,

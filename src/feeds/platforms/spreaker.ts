@@ -13,11 +13,11 @@ const podcastRegex = /^\/podcast\/[\w-]+--(\d+)(?:\/|$)/i
 // /show/{id} bare numeric form 301-redirects to the slug-suffixed canonical.
 const showRegex = /^\/show\/(\d+)(?:\/|$)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'spreaker:podcast', main: 'https://www.spreaker.com/show/{showId}/episodes/feed' },
+const feeds = definePlatformFeeds('spreaker', [
+  { key: 'podcast', main: 'https://www.spreaker.com/show/{showId}/episodes/feed' },
   // The same feed cut to its newest episodes, as `items/3`.
   {
-    key: 'spreaker:podcast',
+    key: 'podcast',
     main: 'https://www.spreaker.com/show/{showId}/episodes/feed/items/{count}',
   },
 ])
@@ -51,7 +51,7 @@ export const spreakerHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('spreaker:podcast', { showId: parsed.showId })]
+    return [feeds.getFeedEntry('podcast', { showId: parsed.showId })]
   },
 
   // A show id is digits, and a word in its place answers 404.

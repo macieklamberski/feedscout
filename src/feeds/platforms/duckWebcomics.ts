@@ -12,7 +12,8 @@ const hosts = ['theduckwebcomics.com', 'www.theduckwebcomics.com']
 const feedPathRegex = /^\/(\w+)\/rss\/$/i
 
 const feeds = definePlatformFeeds(
-  [{ key: 'duck-webcomics:comic', main: '{scheme}://{host}/{comic}/rss/' }],
+  'duck-webcomics',
+  [{ key: 'comic', main: '{scheme}://{host}/{comic}/rss/' }],
   { hosts: { exact: hosts } },
 )
 
@@ -65,7 +66,7 @@ export const duckWebcomicsHandler: PlatformHandler = {
       return []
     }
 
-    return [pageFeeds.getFeedEntry('duck-webcomics:comic', { comic: page.comic })]
+    return [pageFeeds.getFeedEntry('comic', { comic: page.comic })]
   },
 
   getFeedHint: feeds.getFeedHint,

@@ -20,21 +20,22 @@ const archiveRegex = /^\/archive(?:\/|$)/i
 const photosRegex = /^\/photos(?:\/|$)/i
 
 const feeds = definePlatformFeeds(
+  'microblog',
   [
     {
-      key: 'microblog:category',
+      key: 'category',
       main: '{scheme}://{host}/categories/{category}/feed.xml',
       format: 'rss',
     },
     {
-      key: 'microblog:category',
+      key: 'category',
       main: '{scheme}://{host}/categories/{category}/feed.json',
       format: 'json',
     },
-    { key: 'microblog:archive', main: '{scheme}://{host}/archive/index.json' },
-    { key: 'microblog:photos', main: '{scheme}://{host}/photos/index.json' },
+    { key: 'archive', main: '{scheme}://{host}/archive/index.json' },
+    { key: 'photos', main: '{scheme}://{host}/photos/index.json' },
     {
-      key: 'microblog:posts',
+      key: 'posts',
       main: '{scheme}://{host}/feed.xml',
       format: 'rss',
       aliases: [
@@ -42,9 +43,9 @@ const feeds = definePlatformFeeds(
         '{scheme}://{host}/replies.xml',
       ],
     },
-    { key: 'microblog:posts', main: '{scheme}://{host}/feed.json', format: 'json' },
-    { key: 'microblog:podcast', main: '{scheme}://{host}/podcast.xml', format: 'rss' },
-    { key: 'microblog:podcast', main: '{scheme}://{host}/podcast.json', format: 'json' },
+    { key: 'posts', main: '{scheme}://{host}/feed.json', format: 'json' },
+    { key: 'podcast', main: '{scheme}://{host}/podcast.xml', format: 'rss' },
+    { key: 'podcast', main: '{scheme}://{host}/podcast.json', format: 'json' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -94,46 +95,46 @@ export const microblogHandler: PlatformHandler = {
       const params = { category: parsed.category }
 
       return [
-        page.getFeedEntry('microblog:category', params, 'rss'),
-        page.getFeedEntry('microblog:category', params, 'json'),
-        page.getFeedEntry('microblog:posts', {}, 'rss'),
-        page.getFeedEntry('microblog:posts', {}, 'json'),
-        page.getFeedEntry('microblog:podcast', {}, 'rss'),
-        page.getFeedEntry('microblog:podcast', {}, 'json'),
-        page.getFeedEntry('microblog:archive'),
-        page.getFeedEntry('microblog:photos'),
+        page.getFeedEntry('category', params, 'rss'),
+        page.getFeedEntry('category', params, 'json'),
+        page.getFeedEntry('posts', {}, 'rss'),
+        page.getFeedEntry('posts', {}, 'json'),
+        page.getFeedEntry('podcast', {}, 'rss'),
+        page.getFeedEntry('podcast', {}, 'json'),
+        page.getFeedEntry('archive'),
+        page.getFeedEntry('photos'),
       ]
     }
 
     if (parsed.kind === 'archive') {
       return [
-        page.getFeedEntry('microblog:archive'),
-        page.getFeedEntry('microblog:posts', {}, 'rss'),
-        page.getFeedEntry('microblog:posts', {}, 'json'),
-        page.getFeedEntry('microblog:podcast', {}, 'rss'),
-        page.getFeedEntry('microblog:podcast', {}, 'json'),
-        page.getFeedEntry('microblog:photos'),
+        page.getFeedEntry('archive'),
+        page.getFeedEntry('posts', {}, 'rss'),
+        page.getFeedEntry('posts', {}, 'json'),
+        page.getFeedEntry('podcast', {}, 'rss'),
+        page.getFeedEntry('podcast', {}, 'json'),
+        page.getFeedEntry('photos'),
       ]
     }
 
     if (parsed.kind === 'photos') {
       return [
-        page.getFeedEntry('microblog:photos'),
-        page.getFeedEntry('microblog:posts', {}, 'rss'),
-        page.getFeedEntry('microblog:posts', {}, 'json'),
-        page.getFeedEntry('microblog:podcast', {}, 'rss'),
-        page.getFeedEntry('microblog:podcast', {}, 'json'),
-        page.getFeedEntry('microblog:archive'),
+        page.getFeedEntry('photos'),
+        page.getFeedEntry('posts', {}, 'rss'),
+        page.getFeedEntry('posts', {}, 'json'),
+        page.getFeedEntry('podcast', {}, 'rss'),
+        page.getFeedEntry('podcast', {}, 'json'),
+        page.getFeedEntry('archive'),
       ]
     }
 
     return [
-      page.getFeedEntry('microblog:posts', {}, 'rss'),
-      page.getFeedEntry('microblog:posts', {}, 'json'),
-      page.getFeedEntry('microblog:podcast', {}, 'rss'),
-      page.getFeedEntry('microblog:podcast', {}, 'json'),
-      page.getFeedEntry('microblog:archive'),
-      page.getFeedEntry('microblog:photos'),
+      page.getFeedEntry('posts', {}, 'rss'),
+      page.getFeedEntry('posts', {}, 'json'),
+      page.getFeedEntry('podcast', {}, 'rss'),
+      page.getFeedEntry('podcast', {}, 'json'),
+      page.getFeedEntry('archive'),
+      page.getFeedEntry('photos'),
     ]
   },
 

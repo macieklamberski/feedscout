@@ -10,15 +10,15 @@ export type AtwikiUrl = { kind: 'wiki'; wiki: string }
 const hosts = ['w.atwiki.jp']
 
 // The wiki also serves its rss10.xml at /rss, a spelling feeds are stored under but never built.
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('atwiki', [
   {
-    key: 'atwiki:updated-pages',
+    key: 'updated-pages',
     main: 'https://w.atwiki.jp/{wiki}/rss10.xml',
     format: 'rdf',
     aliases: ['https://w.atwiki.jp/{wiki}/rss'],
   },
-  { key: 'atwiki:updated-pages', main: 'https://w.atwiki.jp/{wiki}/feed.atom', format: 'atom' },
-  { key: 'atwiki:new-pages', main: 'https://w.atwiki.jp/{wiki}/rss10_new.xml', format: 'rdf' },
+  { key: 'updated-pages', main: 'https://w.atwiki.jp/{wiki}/feed.atom', format: 'atom' },
+  { key: 'new-pages', main: 'https://w.atwiki.jp/{wiki}/rss10_new.xml', format: 'rdf' },
 ])
 
 export const parseAtwikiUrl = (url: string): AtwikiUrl | undefined => {
@@ -50,9 +50,9 @@ export const atwikiHandler: PlatformHandler = {
     const { wiki } = parsed
 
     return [
-      feeds.getFeedEntry('atwiki:updated-pages', { wiki }, 'rdf'),
-      feeds.getFeedEntry('atwiki:updated-pages', { wiki }, 'atom'),
-      feeds.getFeedEntry('atwiki:new-pages', { wiki }, 'rdf'),
+      feeds.getFeedEntry('updated-pages', { wiki }, 'rdf'),
+      feeds.getFeedEntry('updated-pages', { wiki }, 'atom'),
+      feeds.getFeedEntry('new-pages', { wiki }, 'rdf'),
     ]
   },
 

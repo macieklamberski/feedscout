@@ -12,9 +12,10 @@ const domains = ['fireside.fm']
 const tagPathRegex = /^\/tags\/([^/]+)\/?$/i
 
 const feeds = definePlatformFeeds(
+  'fireside',
   [
     {
-      key: 'fireside:podcast',
+      key: 'podcast',
       main: 'https://feeds.fireside.fm/{slug}/rss',
       format: 'rss',
       aliases: [
@@ -22,9 +23,9 @@ const feeds = definePlatformFeeds(
         '{scheme}://{host}/rss',
       ],
     },
-    { key: 'fireside:podcast', main: '{scheme}://{host}/json', format: 'json' },
-    { key: 'fireside:tag', main: '{scheme}://{host}/tags/{tag}/rss' },
-    { key: 'fireside:blog', main: '{scheme}://{host}/articles/rss' },
+    { key: 'podcast', main: '{scheme}://{host}/json', format: 'json' },
+    { key: 'tag', main: '{scheme}://{host}/tags/{tag}/rss' },
+    { key: 'blog', main: '{scheme}://{host}/articles/rss' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -61,17 +62,17 @@ export const firesideHandler: PlatformHandler = {
 
     if (parsed.tag) {
       return [
-        page.getFeedEntry('fireside:tag', { tag: parsed.tag }),
-        page.getFeedEntry('fireside:podcast', { slug: parsed.slug }, 'rss'),
-        page.getFeedEntry('fireside:podcast', { slug: parsed.slug }, 'json'),
-        page.getFeedEntry('fireside:blog'),
+        page.getFeedEntry('tag', { tag: parsed.tag }),
+        page.getFeedEntry('podcast', { slug: parsed.slug }, 'rss'),
+        page.getFeedEntry('podcast', { slug: parsed.slug }, 'json'),
+        page.getFeedEntry('blog'),
       ]
     }
 
     return [
-      page.getFeedEntry('fireside:podcast', { slug: parsed.slug }, 'rss'),
-      page.getFeedEntry('fireside:podcast', { slug: parsed.slug }, 'json'),
-      page.getFeedEntry('fireside:blog'),
+      page.getFeedEntry('podcast', { slug: parsed.slug }, 'rss'),
+      page.getFeedEntry('podcast', { slug: parsed.slug }, 'json'),
+      page.getFeedEntry('blog'),
     ]
   },
 

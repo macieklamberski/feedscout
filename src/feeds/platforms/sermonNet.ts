@@ -20,12 +20,13 @@ const channelRegex = /"is_series":(?:false|true),"url":"([^"]+)"/g
 
 // A channel serves four feeds: its audio, all its media, its video, and its audio with its PDFs.
 const feeds = definePlatformFeeds(
+  'sermon-net',
   [
-    { key: 'sermon-net:channel', main: '{scheme}://{host}/rss/{channel}/audio' },
-    { key: 'sermon-net:channel-media', main: '{scheme}://{host}/rss/{channel}' },
-    { key: 'sermon-net:channel-video', main: '{scheme}://{host}/rss/{channel}/video' },
-    { key: 'sermon-net:channel-audio-pdf', main: '{scheme}://{host}/rss/{channel}/audio_pdf' },
-    { key: 'sermon-net:church', main: '{scheme}://{host}/rss' },
+    { key: 'channel', main: '{scheme}://{host}/rss/{channel}/audio' },
+    { key: 'channel-media', main: '{scheme}://{host}/rss/{channel}' },
+    { key: 'channel-video', main: '{scheme}://{host}/rss/{channel}/video' },
+    { key: 'channel-audio-pdf', main: '{scheme}://{host}/rss/{channel}/audio_pdf' },
+    { key: 'church', main: '{scheme}://{host}/rss' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -93,11 +94,11 @@ export const sermonNetHandler: PlatformHandler = {
     // The church's feed needs no value from the page, so every page builds it after its own feeds.
     if (page.kind === 'channel') {
       return [
-        pageFeeds.getFeedEntry('sermon-net:channel', { channel: page.channel }),
-        pageFeeds.getFeedEntry('sermon-net:channel-media', { channel: page.channel }),
-        pageFeeds.getFeedEntry('sermon-net:channel-video', { channel: page.channel }),
-        pageFeeds.getFeedEntry('sermon-net:channel-audio-pdf', { channel: page.channel }),
-        pageFeeds.getFeedEntry('sermon-net:church'),
+        pageFeeds.getFeedEntry('channel', { channel: page.channel }),
+        pageFeeds.getFeedEntry('channel-media', { channel: page.channel }),
+        pageFeeds.getFeedEntry('channel-video', { channel: page.channel }),
+        pageFeeds.getFeedEntry('channel-audio-pdf', { channel: page.channel }),
+        pageFeeds.getFeedEntry('church'),
       ]
     }
 
@@ -105,13 +106,13 @@ export const sermonNetHandler: PlatformHandler = {
     return [
       ...page.channels.flatMap((channel) => {
         return [
-          pageFeeds.getFeedEntry('sermon-net:channel', { channel }),
-          pageFeeds.getFeedEntry('sermon-net:channel-media', { channel }),
-          pageFeeds.getFeedEntry('sermon-net:channel-video', { channel }),
-          pageFeeds.getFeedEntry('sermon-net:channel-audio-pdf', { channel }),
+          pageFeeds.getFeedEntry('channel', { channel }),
+          pageFeeds.getFeedEntry('channel-media', { channel }),
+          pageFeeds.getFeedEntry('channel-video', { channel }),
+          pageFeeds.getFeedEntry('channel-audio-pdf', { channel }),
         ]
       }),
-      pageFeeds.getFeedEntry('sermon-net:church'),
+      pageFeeds.getFeedEntry('church'),
     ]
   },
 

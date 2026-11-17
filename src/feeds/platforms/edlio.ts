@@ -16,11 +16,12 @@ const classFeedHrefRegex = /^\/apps\/classes\/assignment_rss\.jsp\?classREC_ID=(
 // A school on its own domain is known only by its marker, so its feeds are built here but claimed
 // only on an edlio.com school.
 const feeds = definePlatformFeeds(
+  'edlio',
   [
-    { key: 'edlio:news', main: '{scheme}://{host}/apps/news/rss' },
-    { key: 'edlio:news-category', main: '{scheme}://{host}/apps/news/rss?categoryid={categoryId}' },
+    { key: 'news', main: '{scheme}://{host}/apps/news/rss' },
+    { key: 'news-category', main: '{scheme}://{host}/apps/news/rss?categoryid={categoryId}' },
     {
-      key: 'edlio:assignments',
+      key: 'assignments',
       main: '{scheme}://{host}/apps/classes/assignment_rss.jsp?classREC_ID={classId}',
     },
   ],
@@ -76,18 +77,18 @@ export const edlioHandler: PlatformHandler = {
     // The school's news needs no value from the page, so every page builds it after its own feeds.
     if (page.kind === 'class') {
       return [
-        pageFeeds.getFeedEntry('edlio:assignments', { classId: page.classId }),
-        pageFeeds.getFeedEntry('edlio:news'),
+        pageFeeds.getFeedEntry('assignments', { classId: page.classId }),
+        pageFeeds.getFeedEntry('news'),
       ]
     }
 
     if (!page.categoryId) {
-      return [pageFeeds.getFeedEntry('edlio:news')]
+      return [pageFeeds.getFeedEntry('news')]
     }
 
     return [
-      pageFeeds.getFeedEntry('edlio:news-category', { categoryId: page.categoryId }),
-      pageFeeds.getFeedEntry('edlio:news'),
+      pageFeeds.getFeedEntry('news-category', { categoryId: page.categoryId }),
+      pageFeeds.getFeedEntry('news'),
     ]
   },
 

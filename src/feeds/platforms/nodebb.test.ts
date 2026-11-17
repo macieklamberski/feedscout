@@ -152,6 +152,30 @@ describe('nodebbHandler', () => {
       expect(nodebbHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should return the topic, category and site feeds for a topic under a category', () => {
+      const value = 'https://example.org/category/3/topic/42'
+      const expected = [
+        {
+          uri: 'https://example.org/topic/42.rss',
+          hint: { key: 'nodebb:topic', label: 'Topic' },
+        },
+        {
+          uri: 'https://example.org/category/3.rss',
+          hint: { key: 'nodebb:category', label: 'Category' },
+        },
+        {
+          uri: 'https://example.org/recent.rss',
+          hint: { key: 'nodebb:recent', label: 'Recent' },
+        },
+        {
+          uri: 'https://example.org/popular.rss',
+          hint: { key: 'nodebb:popular', label: 'Popular' },
+        },
+      ]
+
+      expect(nodebbHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the category feed for a capitalized category segment', () => {
       const value = 'https://example.org/Category/2/general'
       const expected = [

@@ -12,8 +12,8 @@ const domains = ['transistor.fm']
 // The show page links its feed, and the feed slug is not always the subdomain.
 const feedSlugRegex = /https:\/\/feeds\.transistor\.fm\/([^/"'?#\s<>&\\]+)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'transistor:podcast', main: 'https://feeds.transistor.fm/{slug}' },
+const feeds = definePlatformFeeds('transistor', [
+  { key: 'podcast', main: 'https://feeds.transistor.fm/{slug}' },
 ])
 
 export const parseTransistorUrl = (url: string): TransistorUrl | undefined => {
@@ -51,7 +51,7 @@ export const transistorHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('transistor:podcast', { slug: page.slug })]
+    return [feeds.getFeedEntry('podcast', { slug: page.slug })]
   },
 
   getFeedHint: feeds.getFeedHint,

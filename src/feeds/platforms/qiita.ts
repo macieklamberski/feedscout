@@ -22,25 +22,25 @@ const officialColumnsRegex = /^\/official-columns(\/|$)/i
 
 // Qiita serves the user, tag and popular feeds at `/feed.atom` too. The literal rows read before
 // `/{username}/feed`, so a user named popular-items or official-columns reads as the site feed.
-const feeds = definePlatformFeeds([
-  { key: 'qiita:zine', main: 'https://qiita.com/official-columns/feed/', format: 'rss' },
-  { key: 'qiita:zine', main: 'https://qiita.com/official-columns/feed/atom/', format: 'atom' },
+const feeds = definePlatformFeeds('qiita', [
+  { key: 'zine', main: 'https://qiita.com/official-columns/feed/', format: 'rss' },
+  { key: 'zine', main: 'https://qiita.com/official-columns/feed/atom/', format: 'atom' },
   {
-    key: 'qiita:popular',
+    key: 'popular',
     main: 'https://qiita.com/popular-items/feed',
     aliases: ['https://qiita.com/popular-items/feed.atom'],
   },
   {
-    key: 'qiita:organization',
+    key: 'organization',
     main: 'https://qiita.com/organizations/{organization}/activities.atom',
   },
   {
-    key: 'qiita:tag',
+    key: 'tag',
     main: 'https://qiita.com/tags/{tag}/feed',
     aliases: ['https://qiita.com/tags/{tag}/feed.atom'],
   },
   {
-    key: 'qiita:posts',
+    key: 'posts',
     main: 'https://qiita.com/{username}/feed',
     aliases: ['https://qiita.com/{username}/feed.atom'],
   },
@@ -100,43 +100,43 @@ export const qiitaHandler: PlatformHandler = {
     // after its own feeds.
     if (parsed.kind === 'tag') {
       return [
-        feeds.getFeedEntry('qiita:tag', { tag: parsed.tag }),
-        feeds.getFeedEntry('qiita:popular'),
-        feeds.getFeedEntry('qiita:zine', {}, 'rss'),
-        feeds.getFeedEntry('qiita:zine', {}, 'atom'),
+        feeds.getFeedEntry('tag', { tag: parsed.tag }),
+        feeds.getFeedEntry('popular'),
+        feeds.getFeedEntry('zine', {}, 'rss'),
+        feeds.getFeedEntry('zine', {}, 'atom'),
       ]
     }
 
     if (parsed.kind === 'organization') {
       return [
-        feeds.getFeedEntry('qiita:organization', { organization: parsed.organization }),
-        feeds.getFeedEntry('qiita:popular'),
-        feeds.getFeedEntry('qiita:zine', {}, 'rss'),
-        feeds.getFeedEntry('qiita:zine', {}, 'atom'),
+        feeds.getFeedEntry('organization', { organization: parsed.organization }),
+        feeds.getFeedEntry('popular'),
+        feeds.getFeedEntry('zine', {}, 'rss'),
+        feeds.getFeedEntry('zine', {}, 'atom'),
       ]
     }
 
     if (parsed.kind === 'popularItems') {
       return [
-        feeds.getFeedEntry('qiita:popular'),
-        feeds.getFeedEntry('qiita:zine', {}, 'rss'),
-        feeds.getFeedEntry('qiita:zine', {}, 'atom'),
+        feeds.getFeedEntry('popular'),
+        feeds.getFeedEntry('zine', {}, 'rss'),
+        feeds.getFeedEntry('zine', {}, 'atom'),
       ]
     }
 
     if (parsed.kind === 'officialColumns') {
       return [
-        feeds.getFeedEntry('qiita:zine', {}, 'rss'),
-        feeds.getFeedEntry('qiita:zine', {}, 'atom'),
-        feeds.getFeedEntry('qiita:popular'),
+        feeds.getFeedEntry('zine', {}, 'rss'),
+        feeds.getFeedEntry('zine', {}, 'atom'),
+        feeds.getFeedEntry('popular'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('qiita:posts', { username: parsed.username }),
-      feeds.getFeedEntry('qiita:popular'),
-      feeds.getFeedEntry('qiita:zine', {}, 'rss'),
-      feeds.getFeedEntry('qiita:zine', {}, 'atom'),
+      feeds.getFeedEntry('posts', { username: parsed.username }),
+      feeds.getFeedEntry('popular'),
+      feeds.getFeedEntry('zine', {}, 'rss'),
+      feeds.getFeedEntry('zine', {}, 'atom'),
     ]
   },
 

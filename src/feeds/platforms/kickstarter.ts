@@ -13,14 +13,14 @@ export type KickstarterUrl =
 
 const hosts = ['kickstarter.com', 'www.kickstarter.com']
 
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('kickstarter', [
   {
-    key: 'kickstarter:updates',
+    key: 'updates',
     main: 'https://www.kickstarter.com/projects/{creator}/{project}/posts.atom',
   },
-  { key: 'kickstarter:projects', main: 'https://www.kickstarter.com/projects/feed.atom' },
+  { key: 'projects', main: 'https://www.kickstarter.com/projects/feed.atom' },
   // A curated page of projects, such as `/pages/tees`.
-  { key: 'kickstarter:page', main: 'https://www.kickstarter.com/pages/{name}.atom' },
+  { key: 'page', main: 'https://www.kickstarter.com/pages/{name}.atom' },
 ])
 
 export const parseKickstarterUrl = (url: string): KickstarterUrl | undefined => {
@@ -59,23 +59,20 @@ export const kickstarterHandler: PlatformHandler = {
     // feeds.
     if (parsed.kind === 'project') {
       return [
-        feeds.getFeedEntry('kickstarter:updates', {
+        feeds.getFeedEntry('updates', {
           creator: parsed.creator,
           project: parsed.project,
         }),
-        feeds.getFeedEntry('kickstarter:projects'),
+        feeds.getFeedEntry('projects'),
       ]
     }
 
     if (parsed.kind === 'page') {
-      return [
-        feeds.getFeedEntry('kickstarter:page', { name: parsed.name }),
-        feeds.getFeedEntry('kickstarter:projects'),
-      ]
+      return [feeds.getFeedEntry('page', { name: parsed.name }), feeds.getFeedEntry('projects')]
     }
 
     // Homepage or discover pages - return global new projects feed.
-    return [feeds.getFeedEntry('kickstarter:projects')]
+    return [feeds.getFeedEntry('projects')]
   },
 
   getFeedHint: feeds.getFeedHint,

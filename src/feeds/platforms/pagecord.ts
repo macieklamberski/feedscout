@@ -10,14 +10,15 @@ export type PagecordUrl = { kind: 'blog' } | { kind: 'tag'; tag: string }
 const domains = ['pagecord.com']
 
 const feeds = definePlatformFeeds(
+  'pagecord',
   [
     {
-      key: 'pagecord:blog',
+      key: 'blog',
       main: '{scheme}://{host}/feed.xml',
       aliases: ['{scheme}://{host}/feed', '{scheme}://{host}/feed.rss'],
     },
     {
-      key: 'pagecord:tag',
+      key: 'tag',
       main: '{scheme}://{host}/feed.xml?tag={tag}',
       aliases: ['{scheme}://{host}/feed?tag={tag}', '{scheme}://{host}/feed.rss?tag={tag}'],
     },
@@ -56,13 +57,10 @@ export const pagecordHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'tag') {
-      return [
-        page.getFeedEntry('pagecord:tag', { tag: parsed.tag }),
-        page.getFeedEntry('pagecord:blog'),
-      ]
+      return [page.getFeedEntry('tag', { tag: parsed.tag }), page.getFeedEntry('blog')]
     }
 
-    return [page.getFeedEntry('pagecord:blog')]
+    return [page.getFeedEntry('blog')]
   },
 
   getFeedHint: feeds.getFeedHint,

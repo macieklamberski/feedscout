@@ -21,20 +21,20 @@ const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/i
 const noteRegex = /^\/([^/]+)\/n\/[^/]+/i
 
 // note.mu, the old domain, redirects every feed to the same path on note.com.
-const feeds = definePlatformFeeds([
-  { key: 'note:featured', main: 'https://note.com/rss', aliases: ['https://note.mu/rss'] },
+const feeds = definePlatformFeeds('note', [
+  { key: 'featured', main: 'https://note.com/rss', aliases: ['https://note.mu/rss'] },
   {
-    key: 'note:hashtag',
+    key: 'hashtag',
     main: 'https://note.com/hashtag/{tag}/rss',
     aliases: ['https://note.mu/hashtag/{tag}/rss'],
   },
   {
-    key: 'note:magazine',
+    key: 'magazine',
     main: 'https://note.com/{username}/m/{magazine}/rss',
     aliases: ['https://note.mu/{username}/m/{magazine}/rss'],
   },
   {
-    key: 'note:blog',
+    key: 'blog',
     main: 'https://note.com/{username}/rss',
     aliases: ['https://note.mu/{username}/rss'],
   },
@@ -95,31 +95,28 @@ export const noteHandler: PlatformHandler = {
     // The featured notes feed needs no value from the page, so every page builds it after its own
     // feeds.
     if (parsed.kind === 'hashtag') {
-      return [
-        feeds.getFeedEntry('note:hashtag', { tag: parsed.tag }),
-        feeds.getFeedEntry('note:featured'),
-      ]
+      return [feeds.getFeedEntry('hashtag', { tag: parsed.tag }), feeds.getFeedEntry('featured')]
     }
 
     if (parsed.kind === 'magazine') {
       return [
-        feeds.getFeedEntry('note:magazine', {
+        feeds.getFeedEntry('magazine', {
           username: parsed.username,
           magazine: parsed.magazine,
         }),
-        feeds.getFeedEntry('note:featured'),
+        feeds.getFeedEntry('featured'),
       ]
     }
 
     // A note page leads to its author's blog feed.
     if (parsed.kind === 'note' || parsed.kind === 'user') {
       return [
-        feeds.getFeedEntry('note:blog', { username: parsed.username }),
-        feeds.getFeedEntry('note:featured'),
+        feeds.getFeedEntry('blog', { username: parsed.username }),
+        feeds.getFeedEntry('featured'),
       ]
     }
 
-    return [feeds.getFeedEntry('note:featured')]
+    return [feeds.getFeedEntry('featured')]
   },
 
   // The table reads any first segment as a name, so a dotted one, a file of the site, is refused

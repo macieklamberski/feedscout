@@ -16,9 +16,10 @@ const newsRegex = /^\/news\/search\/?$/i
 
 // Web and news search answer with RSS when `format=rss` is set.
 const feeds = definePlatformFeeds(
+  'bing',
   [
-    { key: 'bing:search', main: '{scheme}://{host}/search?q={query}&format=rss' },
-    { key: 'bing:news', main: '{scheme}://{host}/news/search?q={query}&format=rss' },
+    { key: 'search', main: '{scheme}://{host}/search?q={query}&format=rss' },
+    { key: 'news', main: '{scheme}://{host}/news/search?q={query}&format=rss' },
   ],
   { hosts: { exact: hosts } },
 )
@@ -61,10 +62,10 @@ export const bingHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'news') {
-      return [pageFeeds.getFeedEntry('bing:news', { query: parsed.query })]
+      return [pageFeeds.getFeedEntry('news', { query: parsed.query })]
     }
 
-    return [pageFeeds.getFeedEntry('bing:search', { query: parsed.query })]
+    return [pageFeeds.getFeedEntry('search', { query: parsed.query })]
   },
 
   getFeedHint: feeds.getFeedHint,

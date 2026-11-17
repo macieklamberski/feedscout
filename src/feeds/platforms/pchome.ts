@@ -11,9 +11,9 @@ export type PchomeUrl =
 
 const hosts = ['mypaper.pchome.com.tw', 'mypaper.m.pchome.com.tw']
 
-const feeds = definePlatformFeeds([
-  { key: 'pchome:category', main: 'https://mypaper.pchome.com.tw/{username}/rss?cid={category}' },
-  { key: 'pchome:posts', main: 'https://mypaper.pchome.com.tw/{username}/rss' },
+const feeds = definePlatformFeeds('pchome', [
+  { key: 'category', main: 'https://mypaper.pchome.com.tw/{username}/rss?cid={category}' },
+  { key: 'posts', main: 'https://mypaper.pchome.com.tw/{username}/rss' },
 ])
 
 export const parsePchomeUrl = (url: string): PchomeUrl | undefined => {
@@ -49,15 +49,15 @@ export const pchomeHandler: PlatformHandler = {
 
     if (parsed.kind === 'category') {
       return [
-        feeds.getFeedEntry('pchome:category', {
+        feeds.getFeedEntry('category', {
           username: parsed.username,
           category: parsed.category,
         }),
-        feeds.getFeedEntry('pchome:posts', { username: parsed.username }),
+        feeds.getFeedEntry('posts', { username: parsed.username }),
       ]
     }
 
-    return [feeds.getFeedEntry('pchome:posts', { username: parsed.username })]
+    return [feeds.getFeedEntry('posts', { username: parsed.username })]
   },
 
   getFeedHint: feeds.getFeedHint,

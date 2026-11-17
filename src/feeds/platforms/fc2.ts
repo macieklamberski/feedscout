@@ -20,13 +20,14 @@ const blogDomainRegex = /^blog\d*\.fc2\.com$/i
 const categoryPathRegex = /^\/blog-category-(\d+)(?:-\d+)?\.html$/i
 
 const feeds = definePlatformFeeds(
+  'fc2',
   [
-    { key: 'fc2:posts', main: '{scheme}://{host}/?xml' },
-    { key: 'fc2:comments', main: '{scheme}://{host}/?xml&comment' },
-    { key: 'fc2:trackbacks', main: '{scheme}://{host}/?xml&trackback' },
+    { key: 'posts', main: '{scheme}://{host}/?xml' },
+    { key: 'comments', main: '{scheme}://{host}/?xml&comment' },
+    { key: 'trackbacks', main: '{scheme}://{host}/?xml&trackback' },
     // The posts narrowed to one category or one tag. Their pages link only the posts feed.
-    { key: 'fc2:category', main: '{scheme}://{host}/?xml&category={category}' },
-    { key: 'fc2:tag', main: '{scheme}://{host}/?xml&utag={tag}' },
+    { key: 'category', main: '{scheme}://{host}/?xml&category={category}' },
+    { key: 'tag', main: '{scheme}://{host}/?xml&utag={tag}' },
   ],
   { hosts: { tenants: [...domains, blogDomainRegex] } },
 )
@@ -80,26 +81,26 @@ export const fc2Handler: PlatformHandler = {
 
     if (parsed.kind === 'category') {
       return [
-        page.getFeedEntry('fc2:category', { category: parsed.category }),
-        page.getFeedEntry('fc2:posts'),
-        page.getFeedEntry('fc2:comments'),
-        page.getFeedEntry('fc2:trackbacks'),
+        page.getFeedEntry('category', { category: parsed.category }),
+        page.getFeedEntry('posts'),
+        page.getFeedEntry('comments'),
+        page.getFeedEntry('trackbacks'),
       ]
     }
 
     if (parsed.kind === 'tag') {
       return [
-        page.getFeedEntry('fc2:tag', { tag: parsed.tag }),
-        page.getFeedEntry('fc2:posts'),
-        page.getFeedEntry('fc2:comments'),
-        page.getFeedEntry('fc2:trackbacks'),
+        page.getFeedEntry('tag', { tag: parsed.tag }),
+        page.getFeedEntry('posts'),
+        page.getFeedEntry('comments'),
+        page.getFeedEntry('trackbacks'),
       ]
     }
 
     return [
-      page.getFeedEntry('fc2:posts'),
-      page.getFeedEntry('fc2:comments'),
-      page.getFeedEntry('fc2:trackbacks'),
+      page.getFeedEntry('posts'),
+      page.getFeedEntry('comments'),
+      page.getFeedEntry('trackbacks'),
     ]
   },
 

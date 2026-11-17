@@ -9,9 +9,10 @@ const domains = ['statuspage.io']
 // A status page on its own domain is known only by its markers, so its feeds are built here but
 // not claimed.
 const feeds = definePlatformFeeds(
+  'statuspage',
   [
-    { key: 'statuspage:history', main: '{scheme}://{host}/history.rss', format: 'rss' },
-    { key: 'statuspage:history', main: '{scheme}://{host}/history.atom', format: 'atom' },
+    { key: 'history', main: '{scheme}://{host}/history.rss', format: 'rss' },
+    { key: 'history', main: '{scheme}://{host}/history.atom', format: 'atom' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -37,10 +38,7 @@ export const statuspageHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      page.getFeedEntry('statuspage:history', {}, 'rss'),
-      page.getFeedEntry('statuspage:history', {}, 'atom'),
-    ]
+    return [page.getFeedEntry('history', {}, 'rss'), page.getFeedEntry('history', {}, 'atom')]
   },
 
   getFeedHint: feeds.getFeedHint,

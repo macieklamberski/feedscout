@@ -15,9 +15,9 @@ const skinRootRegex = /^(.*?\/)skin\//i
 
 // A wiki of any domain is known only by its marker, so its feed is built here but not claimed. A
 // wiki served from its directory names no script in its URLs.
-const feeds = definePlatformFeeds([
-  { key: 'pukiwiki:recent-changes', main: '{root}/{script}?cmd=rss' },
-  { key: 'pukiwiki:recent-changes', main: '{root}/?cmd=rss' },
+const feeds = definePlatformFeeds('pukiwiki', [
+  { key: 'recent-changes', main: '{root}/{script}?cmd=rss' },
+  { key: 'recent-changes', main: '{root}/?cmd=rss' },
 ])
 
 export const isPukiwikiHtml = (content: string): boolean => {
@@ -69,6 +69,6 @@ export const pukiwikiHandler: PlatformHandler = {
     const directoryUrl = new URL('./', page.scriptUrl).href
     const script = page.scriptUrl.slice(directoryUrl.length) || undefined
 
-    return [pageFeeds.getFeedEntry('pukiwiki:recent-changes', { root: directoryUrl, script })]
+    return [pageFeeds.getFeedEntry('recent-changes', { root: directoryUrl, script })]
   },
 }

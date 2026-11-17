@@ -13,10 +13,11 @@ const hosts = [getBrandDomainRegex('dasauge')]
 // The 2026-10-26 relaunch removed the profile feed: `/-{username}?rss` serves the profile page.
 // Its row stays so a stored profile feed is still claimed.
 const feeds = definePlatformFeeds(
+  'dasauge',
   [
-    { key: 'dasauge:jobs', main: '{scheme}://{host}/jobs/feed', format: 'atom' },
-    { key: 'dasauge:workspaces', main: '{scheme}://{host}/workspaces/feed', format: 'atom' },
-    { key: 'dasauge:profile', main: '{scheme}://{host}/-{username}/?rss' },
+    { key: 'jobs', main: '{scheme}://{host}/jobs/feed', format: 'atom' },
+    { key: 'workspaces', main: '{scheme}://{host}/workspaces/feed', format: 'atom' },
+    { key: 'profile', main: '{scheme}://{host}/-{username}/?rss' },
   ],
   { hosts: { exact: hosts } },
 )
@@ -41,10 +42,7 @@ export const dasaugeHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      page.getFeedEntry('dasauge:jobs', {}, 'atom'),
-      page.getFeedEntry('dasauge:workspaces', {}, 'atom'),
-    ]
+    return [page.getFeedEntry('jobs', {}, 'atom'), page.getFeedEntry('workspaces', {}, 'atom')]
   },
 
   getFeedHint: feeds.getFeedHint,

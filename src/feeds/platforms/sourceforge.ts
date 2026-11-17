@@ -1,4 +1,4 @@
-import { decodePercent, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { decodePercent, getPathSegments, isAnyOf, isHostOf, isPresent, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -23,144 +23,144 @@ const projectPrefixes = ['projects', 'p']
 
 // SourceForge serves each feed at `feed`, `feed.rss` and `feed.atom`. The rows `resolve` never
 // builds claim the other two spellings of each feed it emits.
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('sourceforge', [
   {
-    key: 'sourceforge:activity',
+    key: 'activity',
     main: 'https://sourceforge.net/p/{project}/activity/feed',
     format: 'rss',
     aliases: ['https://sourceforge.net/p/{project}/activity/feed.rss'],
   },
   {
-    key: 'sourceforge:activity',
+    key: 'activity',
     main: 'https://sourceforge.net/p/{project}/activity/feed.atom',
     format: 'atom',
   },
   {
-    key: 'sourceforge:project-feed',
+    key: 'project-feed',
     main: 'https://sourceforge.net/p/{project}/feed',
     format: 'rss',
     aliases: ['https://sourceforge.net/p/{project}/feed.rss'],
   },
   {
-    key: 'sourceforge:project-feed',
+    key: 'project-feed',
     main: 'https://sourceforge.net/p/{project}/feed.atom',
     format: 'atom',
   },
   {
-    key: 'sourceforge:files',
+    key: 'files',
     main: 'https://sourceforge.net/projects/{project}/rss',
     aliases: ['https://sourceforge.net/projects/{project}/rss?path=/'],
   },
   {
-    key: 'sourceforge:files-folder',
+    key: 'files-folder',
     main: 'https://sourceforge.net/projects/{project}/rss?path={path}',
   },
   {
-    key: 'sourceforge:news',
+    key: 'news',
     main: 'https://sourceforge.net/p/{project}/news/feed.rss',
     format: 'rss',
     aliases: ['https://sourceforge.net/p/{project}/news/feed'],
   },
   {
-    key: 'sourceforge:news',
+    key: 'news',
     main: 'https://sourceforge.net/p/{project}/news/feed.atom',
     format: 'atom',
   },
   {
-    key: 'sourceforge:discussion',
+    key: 'discussion',
     main: 'https://sourceforge.net/p/{project}/discussion/feed',
     format: 'rss',
     aliases: ['https://sourceforge.net/p/{project}/discussion/feed.rss'],
   },
   {
-    key: 'sourceforge:discussion',
+    key: 'discussion',
     main: 'https://sourceforge.net/p/{project}/discussion/feed.atom',
     format: 'atom',
   },
   // The bugs page links `feed.rss`, so that spelling is the one `resolve` builds.
   {
-    key: 'sourceforge:bugs',
+    key: 'bugs',
     main: 'https://sourceforge.net/p/{project}/bugs/feed.rss',
     format: 'rss',
     aliases: ['https://sourceforge.net/p/{project}/bugs/feed'],
   },
   {
-    key: 'sourceforge:bugs',
+    key: 'bugs',
     main: 'https://sourceforge.net/p/{project}/bugs/feed.atom',
     format: 'atom',
   },
   {
-    key: 'sourceforge:activity',
+    key: 'activity',
     main: 'https://sourceforge.net/mirror/{project}/activity/feed',
     format: 'rss',
     aliases: ['https://sourceforge.net/mirror/{project}/activity/feed.rss'],
   },
   {
-    key: 'sourceforge:activity',
+    key: 'activity',
     main: 'https://sourceforge.net/mirror/{project}/activity/feed.atom',
     format: 'atom',
   },
   {
-    key: 'sourceforge:discussion-thread',
+    key: 'discussion-thread',
     main: 'https://sourceforge.net/p/{project}/discussion/{forum}/thread/{thread}/feed',
     format: 'rss',
     aliases: ['https://sourceforge.net/p/{project}/discussion/{forum}/thread/{thread}/feed.rss'],
   },
   {
-    key: 'sourceforge:discussion-thread',
+    key: 'discussion-thread',
     main: 'https://sourceforge.net/p/{project}/discussion/{forum}/thread/{thread}/feed.atom',
     format: 'atom',
   },
   {
-    key: 'sourceforge:discussion-forum',
+    key: 'discussion-forum',
     main: 'https://sourceforge.net/p/{project}/discussion/{forum}/feed',
     format: 'rss',
     aliases: ['https://sourceforge.net/p/{project}/discussion/{forum}/feed.rss'],
   },
   {
-    key: 'sourceforge:discussion-forum',
+    key: 'discussion-forum',
     main: 'https://sourceforge.net/p/{project}/discussion/{forum}/feed.atom',
     format: 'atom',
   },
   // A tool mount names itself, as `wiki`, `blog` or a code repository, so these rows go after the
   // mounts above. Tool pages link `feed.rss`, so that spelling is the one `resolve` builds.
   {
-    key: 'sourceforge:tool',
+    key: 'tool',
     main: 'https://sourceforge.net/p/{project}/{tool}/feed.rss',
     format: 'rss',
     aliases: ['https://sourceforge.net/p/{project}/{tool}/feed'],
   },
   {
-    key: 'sourceforge:tool',
+    key: 'tool',
     main: 'https://sourceforge.net/p/{project}/{tool}/feed.atom',
     format: 'atom',
   },
   {
-    key: 'sourceforge:tool-page',
+    key: 'tool-page',
     main: 'https://sourceforge.net/p/{project}/{tool}/{page}/feed.rss',
     format: 'rss',
     aliases: ['https://sourceforge.net/p/{project}/{tool}/{page}/feed'],
   },
   {
-    key: 'sourceforge:tool-page',
+    key: 'tool-page',
     main: 'https://sourceforge.net/p/{project}/{tool}/{page}/feed.atom',
     format: 'atom',
   },
   {
-    key: 'sourceforge:user',
+    key: 'user',
     main: 'https://sourceforge.net/u/{user}/feed',
     format: 'rss',
     aliases: ['https://sourceforge.net/u/{user}/feed.rss'],
   },
-  { key: 'sourceforge:user', main: 'https://sourceforge.net/u/{user}/feed.atom', format: 'atom' },
+  { key: 'user', main: 'https://sourceforge.net/u/{user}/feed.atom', format: 'atom' },
   {
-    key: 'sourceforge:user-tool',
+    key: 'user-tool',
     main: 'https://sourceforge.net/u/{user}/{tool}/feed',
     format: 'rss',
     aliases: ['https://sourceforge.net/u/{user}/{tool}/feed.rss'],
   },
   {
-    key: 'sourceforge:user-tool',
+    key: 'user-tool',
     main: 'https://sourceforge.net/u/{user}/{tool}/feed.atom',
     format: 'atom',
   },
@@ -205,7 +205,7 @@ export const parseSourceforgeUrl = (url: string): SourceforgeUrl | undefined => 
 // A tool with rows of its own, as `bugs` or `news`, is read by them, and its feeds are among the
 // project's.
 const isGenericTool = (project: string, tool: string): boolean => {
-  const toolFeedUrl = feeds.getFeedUrl('sourceforge:tool', { project, tool }, 'rss')
+  const toolFeedUrl = feeds.getFeedUrl('tool', { project, tool }, 'rss')
 
   if (!toolFeedUrl) {
     return false
@@ -227,46 +227,96 @@ export const sourceforgeHandler: PlatformHandler = {
     }
 
     const { project, forum, thread, tool, page, path } = parsed
-    const hasToolFeed = tool !== undefined && isGenericTool(project, tool)
+
+    if (path) {
+      return [
+        feeds.getFeedEntry('activity', { project }, 'rss'),
+        feeds.getFeedEntry('activity', { project }, 'atom'),
+        feeds.getFeedEntry('project-feed', { project }, 'rss'),
+        feeds.getFeedEntry('project-feed', { project }, 'atom'),
+        feeds.getFeedEntry('files', { project }),
+        feeds.getFeedEntry('news', { project }, 'rss'),
+        feeds.getFeedEntry('news', { project }, 'atom'),
+        feeds.getFeedEntry('discussion', { project }, 'rss'),
+        feeds.getFeedEntry('discussion', { project }, 'atom'),
+        feeds.getFeedEntry('bugs', { project }, 'rss'),
+        feeds.getFeedEntry('bugs', { project }, 'atom'),
+        feeds.getFeedEntry('files-folder', { project, path }),
+      ].filter(isPresent)
+    }
+
+    if (thread) {
+      return [
+        feeds.getFeedEntry('activity', { project }, 'rss'),
+        feeds.getFeedEntry('activity', { project }, 'atom'),
+        feeds.getFeedEntry('project-feed', { project }, 'rss'),
+        feeds.getFeedEntry('project-feed', { project }, 'atom'),
+        feeds.getFeedEntry('files', { project }),
+        feeds.getFeedEntry('news', { project }, 'rss'),
+        feeds.getFeedEntry('news', { project }, 'atom'),
+        feeds.getFeedEntry('discussion', { project }, 'rss'),
+        feeds.getFeedEntry('discussion', { project }, 'atom'),
+        feeds.getFeedEntry('bugs', { project }, 'rss'),
+        feeds.getFeedEntry('bugs', { project }, 'atom'),
+        feeds.getFeedEntry('discussion-thread', { project, forum, thread }, 'rss'),
+        feeds.getFeedEntry('discussion-thread', { project, forum, thread }, 'atom'),
+      ].filter(isPresent)
+    }
+
+    if (forum) {
+      return [
+        feeds.getFeedEntry('activity', { project }, 'rss'),
+        feeds.getFeedEntry('activity', { project }, 'atom'),
+        feeds.getFeedEntry('project-feed', { project }, 'rss'),
+        feeds.getFeedEntry('project-feed', { project }, 'atom'),
+        feeds.getFeedEntry('files', { project }),
+        feeds.getFeedEntry('news', { project }, 'rss'),
+        feeds.getFeedEntry('news', { project }, 'atom'),
+        feeds.getFeedEntry('discussion', { project }, 'rss'),
+        feeds.getFeedEntry('discussion', { project }, 'atom'),
+        feeds.getFeedEntry('bugs', { project }, 'rss'),
+        feeds.getFeedEntry('bugs', { project }, 'atom'),
+        feeds.getFeedEntry('discussion-forum', { project, forum }, 'rss'),
+        feeds.getFeedEntry('discussion-forum', { project, forum }, 'atom'),
+      ].filter(isPresent)
+    }
+
+    // A tool every project has serves its own feed, and a page of any tool serves the page's.
+    if (tool && isGenericTool(project, tool)) {
+      return [
+        feeds.getFeedEntry('activity', { project }, 'rss'),
+        feeds.getFeedEntry('activity', { project }, 'atom'),
+        feeds.getFeedEntry('project-feed', { project }, 'rss'),
+        feeds.getFeedEntry('project-feed', { project }, 'atom'),
+        feeds.getFeedEntry('files', { project }),
+        feeds.getFeedEntry('news', { project }, 'rss'),
+        feeds.getFeedEntry('news', { project }, 'atom'),
+        feeds.getFeedEntry('discussion', { project }, 'rss'),
+        feeds.getFeedEntry('discussion', { project }, 'atom'),
+        feeds.getFeedEntry('bugs', { project }, 'rss'),
+        feeds.getFeedEntry('bugs', { project }, 'atom'),
+        feeds.getFeedEntry('tool', { project, tool }, 'rss'),
+        feeds.getFeedEntry('tool', { project, tool }, 'atom'),
+        feeds.getFeedEntry('tool-page', { project, tool, page }, 'rss'),
+        feeds.getFeedEntry('tool-page', { project, tool, page }, 'atom'),
+      ].filter(isPresent)
+    }
 
     return [
-      feeds.getFeedEntry('sourceforge:activity', { project }, 'rss'),
-      feeds.getFeedEntry('sourceforge:activity', { project }, 'atom'),
-      feeds.getFeedEntry('sourceforge:project-feed', { project }, 'rss'),
-      feeds.getFeedEntry('sourceforge:project-feed', { project }, 'atom'),
-      feeds.getFeedEntry('sourceforge:files', { project }),
-      feeds.getFeedEntry('sourceforge:news', { project }, 'rss'),
-      feeds.getFeedEntry('sourceforge:news', { project }, 'atom'),
-      feeds.getFeedEntry('sourceforge:discussion', { project }, 'rss'),
-      feeds.getFeedEntry('sourceforge:discussion', { project }, 'atom'),
-      feeds.getFeedEntry('sourceforge:bugs', { project }, 'rss'),
-      feeds.getFeedEntry('sourceforge:bugs', { project }, 'atom'),
-      ...(path ? [feeds.getFeedEntry('sourceforge:files-folder', { project, path })] : []),
-      ...(forum && !thread
-        ? [
-            feeds.getFeedEntry('sourceforge:discussion-forum', { project, forum }, 'rss'),
-            feeds.getFeedEntry('sourceforge:discussion-forum', { project, forum }, 'atom'),
-          ]
-        : []),
-      ...(thread
-        ? [
-            feeds.getFeedEntry('sourceforge:discussion-thread', { project, forum, thread }, 'rss'),
-            feeds.getFeedEntry('sourceforge:discussion-thread', { project, forum, thread }, 'atom'),
-          ]
-        : []),
-      ...(hasToolFeed
-        ? [
-            feeds.getFeedEntry('sourceforge:tool', { project, tool }, 'rss'),
-            feeds.getFeedEntry('sourceforge:tool', { project, tool }, 'atom'),
-          ]
-        : []),
-      ...(page
-        ? [
-            feeds.getFeedEntry('sourceforge:tool-page', { project, tool, page }, 'rss'),
-            feeds.getFeedEntry('sourceforge:tool-page', { project, tool, page }, 'atom'),
-          ]
-        : []),
-    ]
+      feeds.getFeedEntry('activity', { project }, 'rss'),
+      feeds.getFeedEntry('activity', { project }, 'atom'),
+      feeds.getFeedEntry('project-feed', { project }, 'rss'),
+      feeds.getFeedEntry('project-feed', { project }, 'atom'),
+      feeds.getFeedEntry('files', { project }),
+      feeds.getFeedEntry('news', { project }, 'rss'),
+      feeds.getFeedEntry('news', { project }, 'atom'),
+      feeds.getFeedEntry('discussion', { project }, 'rss'),
+      feeds.getFeedEntry('discussion', { project }, 'atom'),
+      feeds.getFeedEntry('bugs', { project }, 'rss'),
+      feeds.getFeedEntry('bugs', { project }, 'atom'),
+      feeds.getFeedEntry('tool-page', { project, tool, page }, 'rss'),
+      feeds.getFeedEntry('tool-page', { project, tool, page }, 'atom'),
+    ].filter(isPresent)
   },
 
   getFeedHint: feeds.getFeedHint,

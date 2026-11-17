@@ -19,17 +19,17 @@ const fileRegex = /\.(?:html?|txt|json|xml|ico)$/i
 // The core navigation links help relative to the page, one `../` per level below the inbox root.
 const helpLinkRegex = /href="((?:\.\.\/)*)_\/text\/help\/?"/i
 
-const feeds = definePlatformFeeds([
-  { key: 'public-inbox:messages', main: 'https://lore.kernel.org/{inbox}/new.atom' },
-  { key: 'public-inbox:thread', main: 'https://lore.kernel.org/{inbox}/{messageId}/t.atom' },
+const feeds = definePlatformFeeds('public-inbox', [
+  { key: 'messages', main: 'https://lore.kernel.org/{inbox}/new.atom' },
+  { key: 'thread', main: 'https://lore.kernel.org/{inbox}/{messageId}/t.atom' },
 ])
 
 // An inbox can sit at any depth below its host, so its feeds are built under the inbox URL as the
 // root. A self-hosted inbox has nothing in its URL that names the software, so these are not
 // claimed.
-const inboxFeeds = definePlatformFeeds([
-  { key: 'public-inbox:messages', main: '{root}/new.atom' },
-  { key: 'public-inbox:thread', main: '{root}/{messageId}/t.atom' },
+const inboxFeeds = definePlatformFeeds('public-inbox', [
+  { key: 'messages', main: '{root}/new.atom' },
+  { key: 'thread', main: '{root}/{messageId}/t.atom' },
 ])
 
 export const isPublicInboxHtml = (content: string): boolean => {
@@ -96,12 +96,12 @@ export const publicInboxHandler: PlatformHandler = {
       const params = { root, messageId: page.messageId }
 
       return [
-        pageFeeds.getFeedEntry('public-inbox:thread', params),
-        pageFeeds.getFeedEntry('public-inbox:messages', { root }),
+        pageFeeds.getFeedEntry('thread', params),
+        pageFeeds.getFeedEntry('messages', { root }),
       ]
     }
 
-    return [pageFeeds.getFeedEntry('public-inbox:messages', { root })]
+    return [pageFeeds.getFeedEntry('messages', { root })]
   },
 
   getFeedHint: feeds.getFeedHint,

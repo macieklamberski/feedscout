@@ -12,9 +12,10 @@ const domains = ['blogalia.com']
 
 // `www` is a tenant, as `www.blogalia.com` is Blogalia's own news blog.
 const feeds = definePlatformFeeds(
+  'blogalia',
   [
-    { key: 'blogalia:posts', main: '{scheme}://{host}/rdf.xml', format: 'rdf' },
-    { key: 'blogalia:posts', main: '{scheme}://{host}/rss20.xml', format: 'rss' },
+    { key: 'posts', main: '{scheme}://{host}/rdf.xml', format: 'rdf' },
+    { key: 'posts', main: '{scheme}://{host}/rss20.xml', format: 'rss' },
   ],
   { hosts: { tenants: domains }, isWwwTenant: true },
 )
@@ -44,10 +45,7 @@ export const blogaliaHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      page.getFeedEntry('blogalia:posts', {}, 'rdf'),
-      page.getFeedEntry('blogalia:posts', {}, 'rss'),
-    ]
+    return [page.getFeedEntry('posts', {}, 'rdf'), page.getFeedEntry('posts', {}, 'rss')]
   },
 
   getFeedHint: feeds.getFeedHint,

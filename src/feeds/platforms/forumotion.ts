@@ -81,28 +81,29 @@ const domains = ['forum.co.ee', ...brands.map(getBrandDomainRegex)]
 // A forum on its own domain is known only by its marker, so its feeds are built here but not
 // claimed.
 const feeds = definePlatformFeeds(
+  'forumotion',
   [
     // Forumotion serves each feed at `/rss` too, which only claims.
     {
-      key: 'forumotion:forum',
+      key: 'forum',
       main: '{scheme}://{host}/feed/?f={forumId}',
       format: 'rss',
       aliases: ['{scheme}://{host}/rss?f={forumId}'],
     },
     {
-      key: 'forumotion:forum',
+      key: 'forum',
       main: '{scheme}://{host}/feed/?f={forumId}&type=atom',
       format: 'atom',
       aliases: ['{scheme}://{host}/rss?f={forumId}&type=atom'],
     },
     {
-      key: 'forumotion:latest-topics',
+      key: 'latest-topics',
       main: '{scheme}://{host}/feed/',
       format: 'rss',
       aliases: ['{scheme}://{host}/rss'],
     },
     {
-      key: 'forumotion:latest-topics',
+      key: 'latest-topics',
       main: '{scheme}://{host}/feed/?type=atom',
       format: 'atom',
       aliases: ['{scheme}://{host}/rss?type=atom'],
@@ -186,16 +187,16 @@ export const forumotionHandler: PlatformHandler = {
       const params = { forumId: page.forumId }
 
       return [
-        pageFeeds.getFeedEntry('forumotion:forum', params, 'rss'),
-        pageFeeds.getFeedEntry('forumotion:forum', params, 'atom'),
-        pageFeeds.getFeedEntry('forumotion:latest-topics', {}, 'rss'),
-        pageFeeds.getFeedEntry('forumotion:latest-topics', {}, 'atom'),
+        pageFeeds.getFeedEntry('forum', params, 'rss'),
+        pageFeeds.getFeedEntry('forum', params, 'atom'),
+        pageFeeds.getFeedEntry('latest-topics', {}, 'rss'),
+        pageFeeds.getFeedEntry('latest-topics', {}, 'atom'),
       ]
     }
 
     return [
-      pageFeeds.getFeedEntry('forumotion:latest-topics', {}, 'rss'),
-      pageFeeds.getFeedEntry('forumotion:latest-topics', {}, 'atom'),
+      pageFeeds.getFeedEntry('latest-topics', {}, 'rss'),
+      pageFeeds.getFeedEntry('latest-topics', {}, 'atom'),
     ]
   },
 

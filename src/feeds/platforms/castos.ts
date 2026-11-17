@@ -13,9 +13,10 @@ const domains = ['castos.com']
 const feedIdRegex = /https:\/\/feeds\.castos\.com\/([a-z0-9]+)/i
 
 const feeds = definePlatformFeeds(
+  'castos',
   [
     {
-      key: 'castos:podcast',
+      key: 'podcast',
       main: 'https://feeds.castos.com/{feedId}',
       aliases: [
         // The show site redirects /feed to its feeds.castos.com URL.
@@ -59,7 +60,7 @@ export const castosHandler: PlatformHandler = {
       return []
     }
 
-    return [pageFeeds.getFeedEntry('castos:podcast', { feedId: page.feedId })]
+    return [pageFeeds.getFeedEntry('podcast', { feedId: page.feedId })]
   },
 
   getFeedHint: feeds.getFeedHint,

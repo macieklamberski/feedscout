@@ -14,21 +14,22 @@ const domains = ['pika.page']
 const tagRegex = /^\/tag\/([^/]+)/i
 
 const feeds = definePlatformFeeds(
+  'pika',
   [
     {
-      key: 'pika:posts',
+      key: 'posts',
       main: '{scheme}://{host}/posts_feed',
       format: 'atom',
       aliases: ['{scheme}://{host}/posts_feed.atom', '{scheme}://{host}/feed'],
     },
-    { key: 'pika:posts', main: '{scheme}://{host}/posts_feed.rss', format: 'rss' },
+    { key: 'posts', main: '{scheme}://{host}/posts_feed.rss', format: 'rss' },
     {
-      key: 'pika:tag',
+      key: 'tag',
       main: '{scheme}://{host}/tag/{tag}/feed',
       format: 'atom',
       aliases: ['{scheme}://{host}/tag/{tag}/feed.atom'],
     },
-    { key: 'pika:tag', main: '{scheme}://{host}/tag/{tag}/feed.rss', format: 'rss' },
+    { key: 'tag', main: '{scheme}://{host}/tag/{tag}/feed.rss', format: 'rss' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -64,14 +65,14 @@ export const pikaHandler: PlatformHandler = {
 
     if (parsed.kind === 'tag') {
       return [
-        page.getFeedEntry('pika:tag', { tag: parsed.tag }, 'atom'),
-        page.getFeedEntry('pika:tag', { tag: parsed.tag }, 'rss'),
-        page.getFeedEntry('pika:posts', {}, 'atom'),
-        page.getFeedEntry('pika:posts', {}, 'rss'),
+        page.getFeedEntry('tag', { tag: parsed.tag }, 'atom'),
+        page.getFeedEntry('tag', { tag: parsed.tag }, 'rss'),
+        page.getFeedEntry('posts', {}, 'atom'),
+        page.getFeedEntry('posts', {}, 'rss'),
       ]
     }
 
-    return [page.getFeedEntry('pika:posts', {}, 'atom'), page.getFeedEntry('pika:posts', {}, 'rss')]
+    return [page.getFeedEntry('posts', {}, 'atom'), page.getFeedEntry('posts', {}, 'rss')]
   },
 
   getFeedHint: feeds.getFeedHint,

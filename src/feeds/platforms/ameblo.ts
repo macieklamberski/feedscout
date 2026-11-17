@@ -16,21 +16,22 @@ const imagePageRegex = /^\/p\/embed\/([^/]+)\/image-[^/]+\.html$/i
 // A blog page links its feed on rssblog.ameba.jp, and ameblo.jp serves the same feeds under the
 // same paths.
 const feeds = definePlatformFeeds(
+  'ameblo',
   [
     {
-      key: 'ameblo:posts',
+      key: 'posts',
       main: 'https://rssblog.ameba.jp/{username}/rss20.xml',
       format: 'rss',
       aliases: ['{scheme}://{host}/{username}/rss20.xml'],
     },
     {
-      key: 'ameblo:posts',
+      key: 'posts',
       main: 'https://rssblog.ameba.jp/{username}/atom.xml',
       format: 'atom',
       aliases: ['{scheme}://{host}/{username}/atom.xml'],
     },
     {
-      key: 'ameblo:posts',
+      key: 'posts',
       main: 'https://rssblog.ameba.jp/{username}/rss.html',
       format: 'rdf',
       aliases: ['{scheme}://{host}/{username}/rss.html'],
@@ -75,9 +76,9 @@ export const amebloHandler: PlatformHandler = {
     const params = { username: parsed.username }
 
     return [
-      feeds.getFeedEntry('ameblo:posts', params, 'rss'),
-      feeds.getFeedEntry('ameblo:posts', params, 'atom'),
-      feeds.getFeedEntry('ameblo:posts', params, 'rdf'),
+      feeds.getFeedEntry('posts', params, 'rss'),
+      feeds.getFeedEntry('posts', params, 'atom'),
+      feeds.getFeedEntry('posts', params, 'rdf'),
     ]
   },
 

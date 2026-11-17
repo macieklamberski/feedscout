@@ -14,21 +14,22 @@ const domains = ['viabloga.com']
 const categoryRegex = /^\/([^/.]+)\.shtml$/i
 
 const feeds = definePlatformFeeds(
+  'viabloga',
   [
-    { key: 'viabloga:posts', main: '{scheme}://{host}/index.xml', format: 'rss' },
+    { key: 'posts', main: '{scheme}://{host}/index.xml', format: 'rss' },
     {
-      key: 'viabloga:posts',
+      key: 'posts',
       main: '{scheme}://{host}/atom.xml',
       format: 'atom',
       aliases: ['{scheme}://{host}/atom'],
     },
-    { key: 'viabloga:posts', main: '{scheme}://{host}/index.rdf', format: 'rdf' },
-    { key: 'viabloga:comments', main: '{scheme}://{host}/comments.xml', format: 'rss' },
-    { key: 'viabloga:wiki', main: '{scheme}://{host}/wiki.rdf', format: 'rdf' },
+    { key: 'posts', main: '{scheme}://{host}/index.rdf', format: 'rdf' },
+    { key: 'comments', main: '{scheme}://{host}/comments.xml', format: 'rss' },
+    { key: 'wiki', main: '{scheme}://{host}/wiki.rdf', format: 'rdf' },
     // A category serves the same items with full text at `{category}_full.xml`. These rows go
     // after the named files above.
     {
-      key: 'viabloga:category',
+      key: 'category',
       main: '{scheme}://{host}/{category}.xml',
       format: 'rss',
       aliases: ['{scheme}://{host}/{category}_full.xml'],
@@ -66,21 +67,21 @@ export const viablogaHandler: PlatformHandler = {
 
     if (parsed.kind === 'category') {
       return [
-        page.getFeedEntry('viabloga:category', { category: parsed.category }, 'rss'),
-        page.getFeedEntry('viabloga:posts', {}, 'rss'),
-        page.getFeedEntry('viabloga:posts', {}, 'atom'),
-        page.getFeedEntry('viabloga:posts', {}, 'rdf'),
-        page.getFeedEntry('viabloga:comments', {}, 'rss'),
-        page.getFeedEntry('viabloga:wiki', {}, 'rdf'),
+        page.getFeedEntry('category', { category: parsed.category }, 'rss'),
+        page.getFeedEntry('posts', {}, 'rss'),
+        page.getFeedEntry('posts', {}, 'atom'),
+        page.getFeedEntry('posts', {}, 'rdf'),
+        page.getFeedEntry('comments', {}, 'rss'),
+        page.getFeedEntry('wiki', {}, 'rdf'),
       ]
     }
 
     return [
-      page.getFeedEntry('viabloga:posts', {}, 'rss'),
-      page.getFeedEntry('viabloga:posts', {}, 'atom'),
-      page.getFeedEntry('viabloga:posts', {}, 'rdf'),
-      page.getFeedEntry('viabloga:comments', {}, 'rss'),
-      page.getFeedEntry('viabloga:wiki', {}, 'rdf'),
+      page.getFeedEntry('posts', {}, 'rss'),
+      page.getFeedEntry('posts', {}, 'atom'),
+      page.getFeedEntry('posts', {}, 'rdf'),
+      page.getFeedEntry('comments', {}, 'rss'),
+      page.getFeedEntry('wiki', {}, 'rdf'),
     ]
   },
 

@@ -9,10 +9,11 @@ export type WeblogLolUrl = { kind: 'blog' }
 const domains = ['weblog.lol']
 
 const feeds = definePlatformFeeds(
+  'weblog-lol',
   [
-    { key: 'weblog-lol:posts', main: '{scheme}://{host}/rss.xml', format: 'rss' },
-    { key: 'weblog-lol:posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
-    { key: 'weblog-lol:posts', main: '{scheme}://{host}/feed.json', format: 'json' },
+    { key: 'posts', main: '{scheme}://{host}/rss.xml', format: 'rss' },
+    { key: 'posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
+    { key: 'posts', main: '{scheme}://{host}/feed.json', format: 'json' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -41,9 +42,9 @@ export const weblogLolHandler: PlatformHandler = {
     const params = { scheme: 'https' }
 
     return [
-      page.getFeedEntry('weblog-lol:posts', params, 'rss'),
-      page.getFeedEntry('weblog-lol:posts', params, 'atom'),
-      page.getFeedEntry('weblog-lol:posts', params, 'json'),
+      page.getFeedEntry('posts', params, 'rss'),
+      page.getFeedEntry('posts', params, 'atom'),
+      page.getFeedEntry('posts', params, 'json'),
     ]
   },
 

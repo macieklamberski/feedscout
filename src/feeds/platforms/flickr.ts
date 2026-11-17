@@ -32,69 +32,70 @@ const groupSections = ['pool', 'discuss']
 const albumSections = ['albums', 'sets']
 
 const feeds = definePlatformFeeds(
+  'flickr',
   [
     {
-      key: 'flickr:forum',
+      key: 'forum',
       main: 'https://www.flickr.com/services/feeds/forums.gne',
       format: 'atom',
       aliases: ['{scheme}://{host}/services/feeds/forums.gne'],
     },
     {
-      key: 'flickr:forum',
+      key: 'forum',
       main: 'https://www.flickr.com/services/feeds/forums.gne?format=rss_200',
       format: 'rss',
       aliases: ['{scheme}://{host}/services/feeds/forums.gne?format=rss_200'],
     },
     {
-      key: 'flickr:recent',
+      key: 'recent',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne',
       format: 'atom',
       aliases: ['{scheme}://{host}/services/feeds/photos_public.gne'],
     },
     {
-      key: 'flickr:recent',
+      key: 'recent',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?format=rss_200',
       format: 'rss',
       aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?format=rss_200'],
     },
     {
-      key: 'flickr:recent-geo',
+      key: 'recent-geo',
       main: 'https://www.flickr.com/services/feeds/geo',
       format: 'atom',
       aliases: ['{scheme}://{host}/services/feeds/geo'],
     },
     {
-      key: 'flickr:recent-geo',
+      key: 'recent-geo',
       main: 'https://www.flickr.com/services/feeds/geo?format=rss_200',
       format: 'rss',
       aliases: ['{scheme}://{host}/services/feeds/geo?format=rss_200'],
     },
     {
-      key: 'flickr:tag',
+      key: 'tag',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?tags={tags}',
       format: 'atom',
       aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?tags={tags}'],
     },
     {
-      key: 'flickr:tag',
+      key: 'tag',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?tags={tags}&format=rss_200',
       format: 'rss',
       aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?tags={tags}&format=rss_200'],
     },
     {
-      key: 'flickr:photos',
+      key: 'photos',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?id={id}',
       format: 'atom',
       aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?id={id}'],
     },
     {
-      key: 'flickr:photos',
+      key: 'photos',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?id={id}&format=rss_200',
       format: 'rss',
       aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?id={id}&format=rss_200'],
     },
     {
-      key: 'flickr:faves',
+      key: 'faves',
       main: 'https://www.flickr.com/services/feeds/photos_faves.gne?id={id}',
       format: 'atom',
       aliases: [
@@ -103,7 +104,7 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'flickr:faves',
+      key: 'faves',
       main: 'https://www.flickr.com/services/feeds/photos_faves.gne?id={id}&format=rss_200',
       format: 'rss',
       aliases: [
@@ -112,51 +113,51 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'flickr:group-pool',
+      key: 'group-pool',
       main: 'https://www.flickr.com/services/feeds/groups_pool.gne?id={id}',
       format: 'atom',
       aliases: ['{scheme}://{host}/services/feeds/groups_pool.gne?id={id}'],
     },
     {
-      key: 'flickr:group-pool',
+      key: 'group-pool',
       main: 'https://www.flickr.com/services/feeds/groups_pool.gne?id={id}&format=rss_200',
       format: 'rss',
       aliases: ['{scheme}://{host}/services/feeds/groups_pool.gne?id={id}&format=rss_200'],
     },
     {
-      key: 'flickr:group-discuss',
+      key: 'group-discuss',
       main: 'https://www.flickr.com/services/feeds/groups_discuss.gne?id={id}',
       format: 'atom',
       aliases: ['{scheme}://{host}/services/feeds/groups_discuss.gne?id={id}'],
     },
     {
-      key: 'flickr:group-discuss',
+      key: 'group-discuss',
       main: 'https://www.flickr.com/services/feeds/groups_discuss.gne?id={id}&format=rss_200',
       format: 'rss',
       aliases: ['{scheme}://{host}/services/feeds/groups_discuss.gne?id={id}&format=rss_200'],
     },
     // The pool photos through the uploads feed, which reads `g` as the group.
     {
-      key: 'flickr:group-photos',
+      key: 'group-photos',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?g={id}',
       format: 'atom',
       aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?g={id}'],
     },
     {
-      key: 'flickr:group-photos',
+      key: 'group-photos',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?g={id}&format=rss_200',
       format: 'rss',
       aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?g={id}&format=rss_200'],
     },
     // The pool photos that carry a location.
     {
-      key: 'flickr:group-geo',
+      key: 'group-geo',
       main: 'https://www.flickr.com/services/feeds/geo/?g={id}',
       format: 'atom',
       aliases: ['{scheme}://{host}/services/feeds/geo/?g={id}'],
     },
     {
-      key: 'flickr:group-geo',
+      key: 'group-geo',
       main: 'https://www.flickr.com/services/feeds/geo/?g={id}&format=rss_200',
       format: 'rss',
       aliases: ['{scheme}://{host}/services/feeds/geo/?g={id}&format=rss_200'],
@@ -165,13 +166,13 @@ const feeds = definePlatformFeeds(
     // photos of a member's contacts, a group pool narrowed to a tag, and the photos that carry a
     // location by member, by tag, or by member or group pool narrowed to a tag.
     {
-      key: 'flickr:photos-tag',
+      key: 'photos-tag',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?id={id}&tags={tags}',
       format: 'atom',
       aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?id={id}&tags={tags}'],
     },
     {
-      key: 'flickr:photos-tag',
+      key: 'photos-tag',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?id={id}&tags={tags}&format=rss_200',
       format: 'rss',
       aliases: [
@@ -179,61 +180,61 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'flickr:photoset',
+      key: 'photoset',
       main: 'https://www.flickr.com/services/feeds/photoset.gne?nsid={id}&set={set}',
       format: 'atom',
       aliases: ['{scheme}://{host}/services/feeds/photoset.gne?nsid={id}&set={set}'],
     },
     {
-      key: 'flickr:photoset',
+      key: 'photoset',
       main: 'https://www.flickr.com/services/feeds/photoset.gne?nsid={id}&set={set}&format=rss_200',
       format: 'rss',
       aliases: ['{scheme}://{host}/services/feeds/photoset.gne?nsid={id}&set={set}&format=rss_200'],
     },
     {
-      key: 'flickr:contacts',
+      key: 'contacts',
       main: 'https://www.flickr.com/services/feeds/photos_friends.gne?user_id={id}',
       format: 'atom',
       aliases: ['{scheme}://{host}/services/feeds/photos_friends.gne?user_id={id}'],
     },
     {
-      key: 'flickr:contacts',
+      key: 'contacts',
       main: 'https://www.flickr.com/services/feeds/photos_friends.gne?user_id={id}&format=rss_200',
       format: 'rss',
       aliases: ['{scheme}://{host}/services/feeds/photos_friends.gne?user_id={id}&format=rss_200'],
     },
     {
-      key: 'flickr:photos-geo',
+      key: 'photos-geo',
       main: 'https://www.flickr.com/services/feeds/geo?id={id}',
       format: 'atom',
       aliases: ['{scheme}://{host}/services/feeds/geo?id={id}'],
     },
     {
-      key: 'flickr:photos-geo',
+      key: 'photos-geo',
       main: 'https://www.flickr.com/services/feeds/geo?id={id}&format=rss_200',
       format: 'rss',
       aliases: ['{scheme}://{host}/services/feeds/geo?id={id}&format=rss_200'],
     },
     {
-      key: 'flickr:tag-geo',
+      key: 'tag-geo',
       main: 'https://www.flickr.com/services/feeds/geo?tags={tags}',
       format: 'atom',
       aliases: ['{scheme}://{host}/services/feeds/geo?tags={tags}'],
     },
     {
-      key: 'flickr:tag-geo',
+      key: 'tag-geo',
       main: 'https://www.flickr.com/services/feeds/geo?tags={tags}&format=rss_200',
       format: 'rss',
       aliases: ['{scheme}://{host}/services/feeds/geo?tags={tags}&format=rss_200'],
     },
     {
-      key: 'flickr:group-photos-tag',
+      key: 'group-photos-tag',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?g={id}&tags={tags}',
       format: 'atom',
       aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?g={id}&tags={tags}'],
     },
     {
-      key: 'flickr:group-photos-tag',
+      key: 'group-photos-tag',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?g={id}&tags={tags}&format=rss_200',
       format: 'rss',
       aliases: [
@@ -241,25 +242,25 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'flickr:photos-tag-geo',
+      key: 'photos-tag-geo',
       main: 'https://www.flickr.com/services/feeds/geo?id={id}&tags={tags}',
       format: 'atom',
       aliases: ['{scheme}://{host}/services/feeds/geo?id={id}&tags={tags}'],
     },
     {
-      key: 'flickr:photos-tag-geo',
+      key: 'photos-tag-geo',
       main: 'https://www.flickr.com/services/feeds/geo?id={id}&tags={tags}&format=rss_200',
       format: 'rss',
       aliases: ['{scheme}://{host}/services/feeds/geo?id={id}&tags={tags}&format=rss_200'],
     },
     {
-      key: 'flickr:group-tag-geo',
+      key: 'group-tag-geo',
       main: 'https://www.flickr.com/services/feeds/geo/?g={id}&tags={tags}',
       format: 'atom',
       aliases: ['{scheme}://{host}/services/feeds/geo/?g={id}&tags={tags}'],
     },
     {
-      key: 'flickr:group-tag-geo',
+      key: 'group-tag-geo',
       main: 'https://www.flickr.com/services/feeds/geo/?g={id}&tags={tags}&format=rss_200',
       format: 'rss',
       aliases: ['{scheme}://{host}/services/feeds/geo/?g={id}&tags={tags}&format=rss_200'],
@@ -354,12 +355,12 @@ export const flickrHandler: PlatformHandler = {
     // page, so every page builds them after its own feeds. Each feed comes in Atom and then in RSS.
     if (parsed.kind === 'forum') {
       return [
-        feeds.getFeedEntry('flickr:forum', {}, 'atom'),
-        feeds.getFeedEntry('flickr:forum', {}, 'rss'),
-        feeds.getFeedEntry('flickr:recent', {}, 'atom'),
-        feeds.getFeedEntry('flickr:recent', {}, 'rss'),
-        feeds.getFeedEntry('flickr:recent-geo', {}, 'atom'),
-        feeds.getFeedEntry('flickr:recent-geo', {}, 'rss'),
+        feeds.getFeedEntry('forum', {}, 'atom'),
+        feeds.getFeedEntry('forum', {}, 'rss'),
+        feeds.getFeedEntry('recent', {}, 'atom'),
+        feeds.getFeedEntry('recent', {}, 'rss'),
+        feeds.getFeedEntry('recent-geo', {}, 'atom'),
+        feeds.getFeedEntry('recent-geo', {}, 'rss'),
       ]
     }
 
@@ -368,14 +369,14 @@ export const flickrHandler: PlatformHandler = {
       const tags = decodeSegment(parsed.tag) ?? parsed.tag
 
       return [
-        feeds.getFeedEntry('flickr:tag', { tags }, 'atom'),
-        feeds.getFeedEntry('flickr:tag', { tags }, 'rss'),
-        feeds.getFeedEntry('flickr:forum', {}, 'atom'),
-        feeds.getFeedEntry('flickr:forum', {}, 'rss'),
-        feeds.getFeedEntry('flickr:recent', {}, 'atom'),
-        feeds.getFeedEntry('flickr:recent', {}, 'rss'),
-        feeds.getFeedEntry('flickr:recent-geo', {}, 'atom'),
-        feeds.getFeedEntry('flickr:recent-geo', {}, 'rss'),
+        feeds.getFeedEntry('tag', { tags }, 'atom'),
+        feeds.getFeedEntry('tag', { tags }, 'rss'),
+        feeds.getFeedEntry('forum', {}, 'atom'),
+        feeds.getFeedEntry('forum', {}, 'rss'),
+        feeds.getFeedEntry('recent', {}, 'atom'),
+        feeds.getFeedEntry('recent', {}, 'rss'),
+        feeds.getFeedEntry('recent-geo', {}, 'atom'),
+        feeds.getFeedEntry('recent-geo', {}, 'rss'),
       ]
     }
 
@@ -385,49 +386,49 @@ export const flickrHandler: PlatformHandler = {
 
       if (parsed.section === 'discuss') {
         return [
-          feeds.getFeedEntry('flickr:group-discuss', params, 'atom'),
-          feeds.getFeedEntry('flickr:group-discuss', params, 'rss'),
-          feeds.getFeedEntry('flickr:forum', {}, 'atom'),
-          feeds.getFeedEntry('flickr:forum', {}, 'rss'),
-          feeds.getFeedEntry('flickr:recent', {}, 'atom'),
-          feeds.getFeedEntry('flickr:recent', {}, 'rss'),
-          feeds.getFeedEntry('flickr:recent-geo', {}, 'atom'),
-          feeds.getFeedEntry('flickr:recent-geo', {}, 'rss'),
+          feeds.getFeedEntry('group-discuss', params, 'atom'),
+          feeds.getFeedEntry('group-discuss', params, 'rss'),
+          feeds.getFeedEntry('forum', {}, 'atom'),
+          feeds.getFeedEntry('forum', {}, 'rss'),
+          feeds.getFeedEntry('recent', {}, 'atom'),
+          feeds.getFeedEntry('recent', {}, 'rss'),
+          feeds.getFeedEntry('recent-geo', {}, 'atom'),
+          feeds.getFeedEntry('recent-geo', {}, 'rss'),
         ]
       }
 
       if (parsed.section === 'pool') {
         return [
-          feeds.getFeedEntry('flickr:group-pool', params, 'atom'),
-          feeds.getFeedEntry('flickr:group-pool', params, 'rss'),
-          feeds.getFeedEntry('flickr:group-photos', params, 'atom'),
-          feeds.getFeedEntry('flickr:group-photos', params, 'rss'),
-          feeds.getFeedEntry('flickr:group-geo', params, 'atom'),
-          feeds.getFeedEntry('flickr:group-geo', params, 'rss'),
-          feeds.getFeedEntry('flickr:forum', {}, 'atom'),
-          feeds.getFeedEntry('flickr:forum', {}, 'rss'),
-          feeds.getFeedEntry('flickr:recent', {}, 'atom'),
-          feeds.getFeedEntry('flickr:recent', {}, 'rss'),
-          feeds.getFeedEntry('flickr:recent-geo', {}, 'atom'),
-          feeds.getFeedEntry('flickr:recent-geo', {}, 'rss'),
+          feeds.getFeedEntry('group-pool', params, 'atom'),
+          feeds.getFeedEntry('group-pool', params, 'rss'),
+          feeds.getFeedEntry('group-photos', params, 'atom'),
+          feeds.getFeedEntry('group-photos', params, 'rss'),
+          feeds.getFeedEntry('group-geo', params, 'atom'),
+          feeds.getFeedEntry('group-geo', params, 'rss'),
+          feeds.getFeedEntry('forum', {}, 'atom'),
+          feeds.getFeedEntry('forum', {}, 'rss'),
+          feeds.getFeedEntry('recent', {}, 'atom'),
+          feeds.getFeedEntry('recent', {}, 'rss'),
+          feeds.getFeedEntry('recent-geo', {}, 'atom'),
+          feeds.getFeedEntry('recent-geo', {}, 'rss'),
         ]
       }
 
       return [
-        feeds.getFeedEntry('flickr:group-pool', params, 'atom'),
-        feeds.getFeedEntry('flickr:group-pool', params, 'rss'),
-        feeds.getFeedEntry('flickr:group-photos', params, 'atom'),
-        feeds.getFeedEntry('flickr:group-photos', params, 'rss'),
-        feeds.getFeedEntry('flickr:group-discuss', params, 'atom'),
-        feeds.getFeedEntry('flickr:group-discuss', params, 'rss'),
-        feeds.getFeedEntry('flickr:group-geo', params, 'atom'),
-        feeds.getFeedEntry('flickr:group-geo', params, 'rss'),
-        feeds.getFeedEntry('flickr:forum', {}, 'atom'),
-        feeds.getFeedEntry('flickr:forum', {}, 'rss'),
-        feeds.getFeedEntry('flickr:recent', {}, 'atom'),
-        feeds.getFeedEntry('flickr:recent', {}, 'rss'),
-        feeds.getFeedEntry('flickr:recent-geo', {}, 'atom'),
-        feeds.getFeedEntry('flickr:recent-geo', {}, 'rss'),
+        feeds.getFeedEntry('group-pool', params, 'atom'),
+        feeds.getFeedEntry('group-pool', params, 'rss'),
+        feeds.getFeedEntry('group-photos', params, 'atom'),
+        feeds.getFeedEntry('group-photos', params, 'rss'),
+        feeds.getFeedEntry('group-discuss', params, 'atom'),
+        feeds.getFeedEntry('group-discuss', params, 'rss'),
+        feeds.getFeedEntry('group-geo', params, 'atom'),
+        feeds.getFeedEntry('group-geo', params, 'rss'),
+        feeds.getFeedEntry('forum', {}, 'atom'),
+        feeds.getFeedEntry('forum', {}, 'rss'),
+        feeds.getFeedEntry('recent', {}, 'atom'),
+        feeds.getFeedEntry('recent', {}, 'rss'),
+        feeds.getFeedEntry('recent-geo', {}, 'atom'),
+        feeds.getFeedEntry('recent-geo', {}, 'rss'),
       ]
     }
 
@@ -439,16 +440,16 @@ export const flickrHandler: PlatformHandler = {
 
     if (parsed.kind === 'album') {
       return [
-        feeds.getFeedEntry('flickr:photoset', { ...params, set: parsed.set }, 'atom'),
-        feeds.getFeedEntry('flickr:photoset', { ...params, set: parsed.set }, 'rss'),
-        feeds.getFeedEntry('flickr:photos', params, 'atom'),
-        feeds.getFeedEntry('flickr:photos', params, 'rss'),
-        feeds.getFeedEntry('flickr:forum', {}, 'atom'),
-        feeds.getFeedEntry('flickr:forum', {}, 'rss'),
-        feeds.getFeedEntry('flickr:recent', {}, 'atom'),
-        feeds.getFeedEntry('flickr:recent', {}, 'rss'),
-        feeds.getFeedEntry('flickr:recent-geo', {}, 'atom'),
-        feeds.getFeedEntry('flickr:recent-geo', {}, 'rss'),
+        feeds.getFeedEntry('photoset', { ...params, set: parsed.set }, 'atom'),
+        feeds.getFeedEntry('photoset', { ...params, set: parsed.set }, 'rss'),
+        feeds.getFeedEntry('photos', params, 'atom'),
+        feeds.getFeedEntry('photos', params, 'rss'),
+        feeds.getFeedEntry('forum', {}, 'atom'),
+        feeds.getFeedEntry('forum', {}, 'rss'),
+        feeds.getFeedEntry('recent', {}, 'atom'),
+        feeds.getFeedEntry('recent', {}, 'rss'),
+        feeds.getFeedEntry('recent-geo', {}, 'atom'),
+        feeds.getFeedEntry('recent-geo', {}, 'rss'),
       ]
     }
 
@@ -456,41 +457,41 @@ export const flickrHandler: PlatformHandler = {
       const tags = decodeSegment(parsed.tag) ?? parsed.tag
 
       return [
-        feeds.getFeedEntry('flickr:photos-tag', { ...params, tags }, 'atom'),
-        feeds.getFeedEntry('flickr:photos-tag', { ...params, tags }, 'rss'),
-        feeds.getFeedEntry('flickr:photos', params, 'atom'),
-        feeds.getFeedEntry('flickr:photos', params, 'rss'),
-        feeds.getFeedEntry('flickr:forum', {}, 'atom'),
-        feeds.getFeedEntry('flickr:forum', {}, 'rss'),
-        feeds.getFeedEntry('flickr:recent', {}, 'atom'),
-        feeds.getFeedEntry('flickr:recent', {}, 'rss'),
-        feeds.getFeedEntry('flickr:recent-geo', {}, 'atom'),
-        feeds.getFeedEntry('flickr:recent-geo', {}, 'rss'),
+        feeds.getFeedEntry('photos-tag', { ...params, tags }, 'atom'),
+        feeds.getFeedEntry('photos-tag', { ...params, tags }, 'rss'),
+        feeds.getFeedEntry('photos', params, 'atom'),
+        feeds.getFeedEntry('photos', params, 'rss'),
+        feeds.getFeedEntry('forum', {}, 'atom'),
+        feeds.getFeedEntry('forum', {}, 'rss'),
+        feeds.getFeedEntry('recent', {}, 'atom'),
+        feeds.getFeedEntry('recent', {}, 'rss'),
+        feeds.getFeedEntry('recent-geo', {}, 'atom'),
+        feeds.getFeedEntry('recent-geo', {}, 'rss'),
       ]
     }
 
     if (parsed.kind === 'favorites') {
       return [
-        feeds.getFeedEntry('flickr:faves', params, 'atom'),
-        feeds.getFeedEntry('flickr:faves', params, 'rss'),
-        feeds.getFeedEntry('flickr:forum', {}, 'atom'),
-        feeds.getFeedEntry('flickr:forum', {}, 'rss'),
-        feeds.getFeedEntry('flickr:recent', {}, 'atom'),
-        feeds.getFeedEntry('flickr:recent', {}, 'rss'),
-        feeds.getFeedEntry('flickr:recent-geo', {}, 'atom'),
-        feeds.getFeedEntry('flickr:recent-geo', {}, 'rss'),
+        feeds.getFeedEntry('faves', params, 'atom'),
+        feeds.getFeedEntry('faves', params, 'rss'),
+        feeds.getFeedEntry('forum', {}, 'atom'),
+        feeds.getFeedEntry('forum', {}, 'rss'),
+        feeds.getFeedEntry('recent', {}, 'atom'),
+        feeds.getFeedEntry('recent', {}, 'rss'),
+        feeds.getFeedEntry('recent-geo', {}, 'atom'),
+        feeds.getFeedEntry('recent-geo', {}, 'rss'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('flickr:photos', params, 'atom'),
-      feeds.getFeedEntry('flickr:photos', params, 'rss'),
-      feeds.getFeedEntry('flickr:forum', {}, 'atom'),
-      feeds.getFeedEntry('flickr:forum', {}, 'rss'),
-      feeds.getFeedEntry('flickr:recent', {}, 'atom'),
-      feeds.getFeedEntry('flickr:recent', {}, 'rss'),
-      feeds.getFeedEntry('flickr:recent-geo', {}, 'atom'),
-      feeds.getFeedEntry('flickr:recent-geo', {}, 'rss'),
+      feeds.getFeedEntry('photos', params, 'atom'),
+      feeds.getFeedEntry('photos', params, 'rss'),
+      feeds.getFeedEntry('forum', {}, 'atom'),
+      feeds.getFeedEntry('forum', {}, 'rss'),
+      feeds.getFeedEntry('recent', {}, 'atom'),
+      feeds.getFeedEntry('recent', {}, 'rss'),
+      feeds.getFeedEntry('recent-geo', {}, 'atom'),
+      feeds.getFeedEntry('recent-geo', {}, 'rss'),
     ]
   },
 

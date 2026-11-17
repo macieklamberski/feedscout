@@ -21,12 +21,12 @@ const forksSections = ['forks', 'forked']
 
 // GitHub serves `/{username}/forks.atom` as the user's own gists, and the forked gists only at
 // `/{username}/forked.atom`.
-const feeds = definePlatformFeeds([
-  { key: 'github-gist:discover', main: 'https://gist.github.com/discover.atom' },
-  { key: 'github-gist:starred', main: 'https://gist.github.com/{username}/starred.atom' },
-  { key: 'github-gist:forks', main: 'https://gist.github.com/{username}/forked.atom' },
+const feeds = definePlatformFeeds('github-gist', [
+  { key: 'discover', main: 'https://gist.github.com/discover.atom' },
+  { key: 'starred', main: 'https://gist.github.com/{username}/starred.atom' },
+  { key: 'forks', main: 'https://gist.github.com/{username}/forked.atom' },
   {
-    key: 'github-gist:gists',
+    key: 'gists',
     main: 'https://gist.github.com/{username}.atom',
     aliases: ['https://gist.github.com/{username}/forks.atom'],
   },
@@ -78,26 +78,26 @@ export const githubGistHandler: PlatformHandler = {
 
     // The discover feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'discover') {
-      return [feeds.getFeedEntry('github-gist:discover')]
+      return [feeds.getFeedEntry('discover')]
     }
 
     if (parsed.kind === 'starred') {
       return [
-        feeds.getFeedEntry('github-gist:starred', { username: parsed.username }),
-        feeds.getFeedEntry('github-gist:discover'),
+        feeds.getFeedEntry('starred', { username: parsed.username }),
+        feeds.getFeedEntry('discover'),
       ]
     }
 
     if (parsed.kind === 'forks') {
       return [
-        feeds.getFeedEntry('github-gist:forks', { username: parsed.username }),
-        feeds.getFeedEntry('github-gist:discover'),
+        feeds.getFeedEntry('forks', { username: parsed.username }),
+        feeds.getFeedEntry('discover'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('github-gist:gists', { username: parsed.username }),
-      feeds.getFeedEntry('github-gist:discover'),
+      feeds.getFeedEntry('gists', { username: parsed.username }),
+      feeds.getFeedEntry('discover'),
     ]
   },
 

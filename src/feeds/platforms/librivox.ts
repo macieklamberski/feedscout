@@ -13,11 +13,11 @@ const audiobookRegex = /^\/[^/]+\/?$/
 // An audiobook page links its feed by numeric id, which the slug does not carry.
 const feedIdRegex = /href="(?:https?|itpc):\/\/librivox\.org\/rss\/(\d+)"/i
 
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('librivox', [
   // The site's new releases. It needs no value from the page, so `resolve` builds it on every
   // LibriVox page. It goes before the audiobook row, whose placeholder its path also fills.
-  { key: 'librivox:latest', main: 'https://librivox.org/rss/latest_releases' },
-  { key: 'librivox:audiobook', main: 'https://librivox.org/rss/{audiobookId}' },
+  { key: 'latest', main: 'https://librivox.org/rss/latest_releases' },
+  { key: 'audiobook', main: 'https://librivox.org/rss/{audiobookId}' },
 ])
 
 export type LibrivoxPage = { audiobookId: string }
@@ -45,12 +45,12 @@ export const librivoxHandler: PlatformHandler = {
     const page = getLibrivoxPage(url, content)
 
     if (!page) {
-      return [feeds.getFeedEntry('librivox:latest')]
+      return [feeds.getFeedEntry('latest')]
     }
 
     return [
-      feeds.getFeedEntry('librivox:audiobook', { audiobookId: page.audiobookId }),
-      feeds.getFeedEntry('librivox:latest'),
+      feeds.getFeedEntry('audiobook', { audiobookId: page.audiobookId }),
+      feeds.getFeedEntry('latest'),
     ]
   },
 

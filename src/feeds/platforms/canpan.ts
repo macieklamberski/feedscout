@@ -10,9 +10,9 @@ export type CanpanUrl = { kind: 'blog'; blog: string }
 
 const hosts = ['blog.canpan.info']
 
-const feeds = definePlatformFeeds([
-  { key: 'canpan:posts', main: 'https://blog.canpan.info/{blog}/index2_0.xml', format: 'rss' },
-  { key: 'canpan:posts', main: 'https://blog.canpan.info/{blog}/index1_0.rdf', format: 'rdf' },
+const feeds = definePlatformFeeds('canpan', [
+  { key: 'posts', main: 'https://blog.canpan.info/{blog}/index2_0.xml', format: 'rss' },
+  { key: 'posts', main: 'https://blog.canpan.info/{blog}/index1_0.rdf', format: 'rdf' },
 ])
 
 export const parseCanpanUrl = (url: string): CanpanUrl | undefined => {
@@ -42,8 +42,8 @@ export const canpanHandler: PlatformHandler = {
     }
 
     return [
-      feeds.getFeedEntry('canpan:posts', { blog: parsed.blog }, 'rss'),
-      feeds.getFeedEntry('canpan:posts', { blog: parsed.blog }, 'rdf'),
+      feeds.getFeedEntry('posts', { blog: parsed.blog }, 'rss'),
+      feeds.getFeedEntry('posts', { blog: parsed.blog }, 'rdf'),
     ]
   },
 

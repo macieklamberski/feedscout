@@ -14,14 +14,15 @@ const domains = ['blog.jp', 'doorblog.jp', 'ldblog.jp', 'livedoor.biz']
 const categoryRegex = /^\/archives\/cat_(\d+)\.html$/i
 
 const feeds = definePlatformFeeds(
+  'livedoor-blog',
   [
     {
-      key: 'livedoor-blog:category',
+      key: 'category',
       main: '{scheme}://{host}/archives/cat_{category}.xml',
       format: 'rdf',
     },
-    { key: 'livedoor-blog:posts', main: '{scheme}://{host}/index.rdf', format: 'rdf' },
-    { key: 'livedoor-blog:posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
+    { key: 'posts', main: '{scheme}://{host}/index.rdf', format: 'rdf' },
+    { key: 'posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -58,16 +59,13 @@ export const livedoorBlogHandler: PlatformHandler = {
 
     if (parsed.kind === 'category') {
       return [
-        page.getFeedEntry('livedoor-blog:category', { category: parsed.category }, 'rdf'),
-        page.getFeedEntry('livedoor-blog:posts', {}, 'rdf'),
-        page.getFeedEntry('livedoor-blog:posts', {}, 'atom'),
+        page.getFeedEntry('category', { category: parsed.category }, 'rdf'),
+        page.getFeedEntry('posts', {}, 'rdf'),
+        page.getFeedEntry('posts', {}, 'atom'),
       ]
     }
 
-    return [
-      page.getFeedEntry('livedoor-blog:posts', {}, 'rdf'),
-      page.getFeedEntry('livedoor-blog:posts', {}, 'atom'),
-    ]
+    return [page.getFeedEntry('posts', {}, 'rdf'), page.getFeedEntry('posts', {}, 'atom')]
   },
 
   getFeedHint: feeds.getFeedHint,

@@ -13,9 +13,9 @@ export type HatenaAntennaPage = HatenaAntennaUrl
 const hosts = ['a.hatena.ne.jp']
 
 // The page links its feeds over http, and the same spelling dedupes against that link.
-const feeds = definePlatformFeeds([
-  { key: 'hatena-antenna:group', main: 'http://a.hatena.ne.jp/{username}/rss?gid={groupId}' },
-  { key: 'hatena-antenna:antenna', main: 'http://a.hatena.ne.jp/{username}/rss' },
+const feeds = definePlatformFeeds('hatena-antenna', [
+  { key: 'group', main: 'http://a.hatena.ne.jp/{username}/rss?gid={groupId}' },
+  { key: 'antenna', main: 'http://a.hatena.ne.jp/{username}/rss' },
 ])
 
 // The group nav with one group in bold, the one the page shows.
@@ -88,14 +88,14 @@ export const hatenaAntennaHandler: PlatformHandler = {
 
     if (page.kind === 'group') {
       return [
-        feeds.getFeedEntry('hatena-antenna:group', {
+        feeds.getFeedEntry('group', {
           username: page.username,
           groupId: page.groupId,
         }),
       ]
     }
 
-    return [feeds.getFeedEntry('hatena-antenna:antenna', { username: page.username })]
+    return [feeds.getFeedEntry('antenna', { username: page.username })]
   },
 
   // The table reads any first segment as a user, so the page parser refuses a segment that is no

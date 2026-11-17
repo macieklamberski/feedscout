@@ -8,7 +8,7 @@ export type JellypodUrl = { kind: 'show' }
 
 const domains = ['jellypod.com']
 
-const feeds = definePlatformFeeds([{ key: 'jellypod:podcast', main: '{scheme}://{host}/rss' }], {
+const feeds = definePlatformFeeds('jellypod', [{ key: 'podcast', main: '{scheme}://{host}/rss' }], {
   hosts: { tenants: domains },
 })
 
@@ -32,7 +32,7 @@ export const jellypodHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('jellypod:podcast')]
+    return [page.getFeedEntry('podcast')]
   },
 
   getFeedHint: feeds.getFeedHint,

@@ -13,9 +13,9 @@ const userRegex = /^\/@([^/]+)/
 // A blog page links `/@{username}/rss.xml`, and `/feed` and `/rss` answer 308 to it. The
 // api.paragraph.com feed holds the same posts under other guids, and `/api/blogs/rss/` answers 308
 // to the linked feed.
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('paragraph', [
   {
-    key: 'paragraph:blog',
+    key: 'blog',
     main: 'https://paragraph.com/@{username}/rss.xml',
     aliases: [
       'https://paragraph.com/@{username}/feed',
@@ -23,7 +23,7 @@ const feeds = definePlatformFeeds([
       'https://paragraph.com/api/blogs/rss/@{username}',
     ],
   },
-  { key: 'paragraph:blog', main: 'https://api.paragraph.com/blogs/rss/@{username}' },
+  { key: 'blog', main: 'https://api.paragraph.com/blogs/rss/@{username}' },
 ])
 
 export const parseParagraphUrl = (url: string): ParagraphUrl | undefined => {
@@ -54,7 +54,7 @@ export const paragraphHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('paragraph:blog', { username: parsed.username })]
+    return [feeds.getFeedEntry('blog', { username: parsed.username })]
   },
 
   getFeedHint: feeds.getFeedHint,

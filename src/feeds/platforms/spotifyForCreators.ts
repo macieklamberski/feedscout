@@ -16,8 +16,8 @@ const showRegex = /^\/pod\/(?:show|profile)\/[^/]+(?:\/|$)/i
 const feedUrlRegex = /anchor\.fm\/(?:s\/)?([\da-f]+)\/podcast\/rss/i
 const stationIdRegex = /^[\da-f]/i
 
-const feeds = definePlatformFeeds([
-  { key: 'spotify-for-creators:podcast', main: 'https://anchor.fm/s/{stationId}/podcast/rss' },
+const feeds = definePlatformFeeds('spotify-for-creators', [
+  { key: 'podcast', main: 'https://anchor.fm/s/{stationId}/podcast/rss' },
 ])
 
 export const parseSpotifyForCreatorsUrl = (url: string): SpotifyForCreatorsUrl | undefined => {
@@ -56,7 +56,7 @@ export const spotifyForCreatorsHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('spotify-for-creators:podcast', { stationId: page.stationId })]
+    return [feeds.getFeedEntry('podcast', { stationId: page.stationId })]
   },
 
   // A station id starts with hex, and a word in its place answers 404.

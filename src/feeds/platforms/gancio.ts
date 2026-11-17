@@ -15,11 +15,11 @@ export type GancioPage =
 const sections = ['tag', 'place', 'collection'] as const
 
 // An instance is self-hosted on any domain, so the table only builds its feeds.
-const feeds = definePlatformFeeds([
-  { key: 'gancio:tag', main: '{root}/feed/rss/tag/{tag}' },
-  { key: 'gancio:place', main: '{root}/feed/rss/place/{place}' },
-  { key: 'gancio:collection', main: '{root}/feed/rss/collection/{collection}' },
-  { key: 'gancio:site', main: '{root}/feed/rss' },
+const feeds = definePlatformFeeds('gancio', [
+  { key: 'tag', main: '{root}/feed/rss/tag/{tag}' },
+  { key: 'place', main: '{root}/feed/rss/place/{place}' },
+  { key: 'collection', main: '{root}/feed/rss/collection/{collection}' },
+  { key: 'site', main: '{root}/feed/rss' },
 ])
 
 // The default layout prints the `custom_css` stylesheet in every page head, at the install's root.
@@ -86,17 +86,17 @@ export const gancioHandler: PlatformHandler = {
     // Gancio 1 ignores `?tags=` and `?places=` on an instance that sets a home collection,
     // and serves that collection in their place.
     if (page.kind === 'tag') {
-      return [feeds.getFeedEntry('gancio:tag', { root, tag: page.value })]
+      return [feeds.getFeedEntry('tag', { root, tag: page.value })]
     }
 
     if (page.kind === 'place') {
-      return [feeds.getFeedEntry('gancio:place', { root, place: page.value })]
+      return [feeds.getFeedEntry('place', { root, place: page.value })]
     }
 
     if (page.kind === 'collection') {
-      return [feeds.getFeedEntry('gancio:collection', { root, collection: page.value })]
+      return [feeds.getFeedEntry('collection', { root, collection: page.value })]
     }
 
-    return [feeds.getFeedEntry('gancio:site', { root })]
+    return [feeds.getFeedEntry('site', { root })]
   },
 }

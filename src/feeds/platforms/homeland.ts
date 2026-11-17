@@ -12,9 +12,9 @@ export type HomelandUrl = { kind: 'node'; node: string } | { kind: 'topics' }
 const nodePathRegex = /\/topics\/node(\d+)(?:\/|$)/i
 
 // A forum is self-hosted on any domain, so the table only builds its feeds.
-const feeds = definePlatformFeeds([
-  { key: 'homeland:node', main: '{root}/topics/node{node}/feed' },
-  { key: 'homeland:topics', main: '{root}/topics/feed' },
+const feeds = definePlatformFeeds('homeland', [
+  { key: 'node', main: '{root}/topics/node{node}/feed' },
+  { key: 'topics', main: '{root}/topics/feed' },
 ])
 
 export const isHomelandHtml = (content: string): boolean => {
@@ -59,12 +59,9 @@ export const homelandHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'node') {
-      return [
-        page.getFeedEntry('homeland:node', { node: parsed.node }),
-        page.getFeedEntry('homeland:topics'),
-      ]
+      return [page.getFeedEntry('node', { node: parsed.node }), page.getFeedEntry('topics')]
     }
 
-    return [page.getFeedEntry('homeland:topics')]
+    return [page.getFeedEntry('topics')]
   },
 }

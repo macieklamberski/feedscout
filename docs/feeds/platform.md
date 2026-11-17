@@ -3982,7 +3982,7 @@ type PlatformHandler = {
 
 ### Declaring Feeds
 
-`definePlatformFeeds` holds a handler's feeds, one row per feed, with its hint key in `key` and its URL in `main`: `getFeedEntry` builds a feed with its hint, `getFeedHint` reads a URL back to its hint, with the row's `format`, `{host}` stands for any host in `hosts` or under `domains`, `{domain}` for one of `domains`, and `{scheme}` for the page's scheme on a platform that runs on the site's own host.
+`definePlatformFeeds` takes the platform's name and its feeds, one row per feed, with the feed's kind in `key` and its URL in `main`. A hint is keyed `{platform}:{kind}`, so the `posts` row of `example` gives `example:posts`. `getFeedEntry` builds a feed with its hint, `getFeedHint` reads a URL back to its hint, with the row's `format`, `{host}` stands for any host in `hosts.exact` or under `hosts.tenants`, `{domain}` for one of `hosts.tenants`, and `{scheme}` for the page's scheme on a platform that runs on the site's own host.
 
 The table's keys are typed from its rows, so `getFeedUrl`, `getFeedEntry`, `getFeedSpellings` and the methods of `forUrl` take only those keys, and a key the table does not hold fails the typecheck. A key that reaches the table untyped still throws.
 
@@ -4007,9 +4007,9 @@ A query value is written with only the characters that would change the URL's st
 A feed the platform serves under several spellings, such as a legacy host, lists the other spellings in `aliases` on its row. `getFeedEntry` builds `main`, and `getFeedHint` reads an alias back to the same hint. An alias takes its row's `format` and `queryEncoding`. Two rows with one key are two feeds of that kind, each with its own aliases. The table cannot tell whether two spellings are one feed: that rests on a probe or a comment beside the alias. Keep a different feed under the same key on a row of its own.
 
 ```typescript
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('example', [
   {
-    key: 'example:posts',
+    key: 'posts',
     main: 'https://feeds.example.com/{username}.rss',
     aliases: ['https://example.com/{username}/rss'],
   },
@@ -4019,12 +4019,12 @@ const feeds = definePlatformFeeds([
 A platform whose sites answer under different spellings of one feed, as one site serves `/feed/` and another only `?feed=rss`, needs every spelling tried in turn. `getFeedSpellings` takes the same arguments as `getFeedEntry` and returns one entry whose `uri` lists the URL `getFeedEntry` builds, then every alias of that feed the values fill, in order. Discovery tries them in order until one is a feed. The list stops at the next row of the key and format, so it never mixes two feeds. With one spelling filled, `uri` is a string, as from `getFeedEntry`.
 
 ```typescript
-const feeds = definePlatformFeeds([
-  { key: 'example:posts', main: '{root}/feed/', aliases: ['{root}/?feed=rss'] },
+const feeds = definePlatformFeeds('example', [
+  { key: 'posts', main: '{root}/feed/', aliases: ['{root}/?feed=rss'] },
 ])
 
 // { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'], hint }
-feeds.getFeedSpellings('example:posts', { root: 'https://example.com' })
+feeds.getFeedSpellings('posts', { root: 'https://example.com' })
 ```
 
 `getFeedHint` ignores a leading `www` on a fixed host, so `www.example.com/rss` reads as an `example.com/rss` row. A tenant host with `www` in front matches no row, and neither does `www` as a tenant. On a platform where `www` can be a tenant, set `isWwwTenant: true`: a row is then tried on the host as given first, so `www.example.com/rss` reads as the tenant `www` on a `{username}.example.com/rss` row, and the host without `www` only when no row matches. On a platform where `www.alice.example.com` serves the same feeds as `alice.example.com`, set `isWwwTenantPrefix: true`: the `www` in front of a tenant label is then dropped, so `www.alice.example.com/rss` reads as the tenant `alice`. `www.example.com/rss` still reads as no tenant unless `isWwwTenant` is set too.
@@ -4039,11 +4039,12 @@ import { definePlatformFeeds, type PlatformHandler } from 'feedscout/platform'
 const hosts = ['example.com', 'www.example.com']
 
 const feeds = definePlatformFeeds(
+  'example',
   [
-    { key: 'example:posts', main: 'https://{host}/{username}/feed.rss' },
-    { key: 'example:search', main: 'https://feeds.example.com/rss.xml?q={query}' },
+    { key: 'posts', main: 'https://{host}/{username}/feed.rss' },
+    { key: 'search', main: 'https://feeds.example.com/rss.xml?q={query}' },
   ],
-  { hosts },
+  { hosts: { exact: hosts } },
 )
 
 const exampleHandler: PlatformHandler = {
@@ -4056,7 +4057,7 @@ const exampleHandler: PlatformHandler = {
       return []
     }
 
-    return [pageFeeds.getFeedEntry('example:posts', { username })]
+    return [pageFeeds.getFeedEntry('posts', { username })]
   },
   getFeedHint: feeds.getFeedHint,
 }

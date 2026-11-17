@@ -16,24 +16,25 @@ const feedHosts = ['feeds.libsyn.com']
 const siteHosts = ['sites.libsyn.com']
 
 const feeds = definePlatformFeeds(
+  'libsyn',
   [
     {
-      key: 'libsyn:podcast',
+      key: 'podcast',
       main: 'https://feeds.libsyn.com/{showId}/rss',
       aliases: ['https://feeds.libsyn.com/{showId}', '{scheme}://{host}/rss'],
     },
     // Where feeds.libsyn.com/{showId}/rss redirects. The destination id is not in the show id.
     {
-      key: 'libsyn:podcast',
+      key: 'podcast',
       main: 'https://rss.libsyn.com/shows/{showId}/destinations/{destinationId}.xml',
     },
     // The sites host's feed, which on show 45546 redirects to an empty category feed, and the feed
     // cut to its last episodes, as `last100`.
-    { key: 'libsyn:podcast', main: 'https://sites.libsyn.com/{showId}/rss' },
-    { key: 'libsyn:podcast', main: 'https://feeds.libsyn.com/{showId}/last{count}' },
-    { key: 'libsyn:podcast', main: '{scheme}://{host}/rss/last{count}' },
-    { key: 'libsyn:category', main: '{scheme}://{host}/rss/category/{category}' },
-    { key: 'libsyn:category', main: 'https://sites.libsyn.com/{showId}/rss/category/{category}' },
+    { key: 'podcast', main: 'https://sites.libsyn.com/{showId}/rss' },
+    { key: 'podcast', main: 'https://feeds.libsyn.com/{showId}/last{count}' },
+    { key: 'podcast', main: '{scheme}://{host}/rss/last{count}' },
+    { key: 'category', main: '{scheme}://{host}/rss/category/{category}' },
+    { key: 'category', main: 'https://sites.libsyn.com/{showId}/rss/category/{category}' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -83,7 +84,7 @@ export const libsynHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'feed' || parsed.kind === 'site') {
-      return [feeds.getFeedEntry('libsyn:podcast', { showId: parsed.showId })]
+      return [feeds.getFeedEntry('podcast', { showId: parsed.showId })]
     }
 
     const page = feeds.forUrl(url)
@@ -92,7 +93,7 @@ export const libsynHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('libsyn:podcast')]
+    return [page.getFeedEntry('podcast')]
   },
 
   // The table reads any subdomain as a show, so the page parser refuses feeds.libsyn.com/rss,

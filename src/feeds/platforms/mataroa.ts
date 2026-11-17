@@ -8,7 +8,7 @@ export type MataroaUrl = { kind: 'blog' }
 
 const domains = ['mataroa.blog']
 
-const feeds = definePlatformFeeds([{ key: 'mataroa:blog', main: '{scheme}://{host}/rss/' }], {
+const feeds = definePlatformFeeds('mataroa', [{ key: 'blog', main: '{scheme}://{host}/rss/' }], {
   hosts: { tenants: domains },
 })
 
@@ -33,7 +33,7 @@ export const mataroaHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('mataroa:blog')]
+    return [page.getFeedEntry('blog')]
   },
 
   getFeedHint: feeds.getFeedHint,

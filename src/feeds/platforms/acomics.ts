@@ -10,9 +10,9 @@ export type AcomicsUrl = { kind: 'comic'; comic: string } | { kind: 'user'; user
 
 const hosts = ['acomics.ru', 'www.acomics.ru']
 
-const feeds = definePlatformFeeds([
-  { key: 'acomics:issues', main: 'https://acomics.ru/~{comic}/rss' },
-  { key: 'acomics:subscriptions', main: 'https://acomics.ru/-{username}/rss' },
+const feeds = definePlatformFeeds('acomics', [
+  { key: 'issues', main: 'https://acomics.ru/~{comic}/rss' },
+  { key: 'subscriptions', main: 'https://acomics.ru/-{username}/rss' },
 ])
 
 // A comic lives under /~{comic} and a user under /-{user}, and both keep their case in the feed
@@ -51,10 +51,10 @@ export const acomicsHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'comic') {
-      return [feeds.getFeedEntry('acomics:issues', { comic: parsed.comic })]
+      return [feeds.getFeedEntry('issues', { comic: parsed.comic })]
     }
 
-    return [feeds.getFeedEntry('acomics:subscriptions', { username: parsed.username })]
+    return [feeds.getFeedEntry('subscriptions', { username: parsed.username })]
   },
 
   getFeedHint: feeds.getFeedHint,
