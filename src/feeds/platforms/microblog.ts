@@ -45,7 +45,7 @@ const feeds = definePlatformFeeds(
     { key: 'microblog:podcast', main: '{scheme}://{host}/podcast.xml', format: 'rss' },
     { key: 'microblog:podcast', main: '{scheme}://{host}/podcast.json', format: 'json' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseMicroblogUrl = (url: string): MicroblogUrl | undefined => {

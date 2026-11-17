@@ -33,7 +33,7 @@ const ownFeeds = definePlatformFeeds(
     { key: 'koha:comments', main: '{root}/cgi-bin/koha/opac-showreviews.pl?format=rss' },
     { key: 'koha:news', main: '{root}/cgi-bin/koha/opac-news-rss.pl' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export type KohaUrl =

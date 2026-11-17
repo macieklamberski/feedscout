@@ -8,7 +8,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type BitchuteUrl = { kind: 'channel'; channel: string }
 
-const hosts = bitchute.hosts
+const hosts = bitchute.hosts.exact
 
 const feeds = withHintLabels(bitchute.feeds)
 

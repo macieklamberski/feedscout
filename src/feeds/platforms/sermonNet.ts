@@ -27,7 +27,7 @@ const feeds = definePlatformFeeds(
     { key: 'sermon-net:channel-audio-pdf', main: '{scheme}://{host}/rss/{channel}/audio_pdf' },
     { key: 'sermon-net:church', main: '{scheme}://{host}/rss' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseSermonNetUrl = (url: string): SermonNetUrl | undefined => {

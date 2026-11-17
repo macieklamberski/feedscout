@@ -14,7 +14,7 @@ export type DailymotionUrl =
   | { kind: 'search'; query: string }
   | { kind: 'trending' }
 
-const hosts = dailymotion.hosts
+const hosts = dailymotion.hosts.exact
 
 // The older /user/{name} address still serves the same page.
 // length: keeps a two-letter country home page out, as /fr serves the site-wide feed

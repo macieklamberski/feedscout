@@ -9,7 +9,7 @@ import { type Element, findElement, getTenantSubdomain, isRootOfPage } from '../
 
 export type GcsWebUrl = { kind: 'site' }
 
-const domains = gcsWeb.tenantDomains
+const domains = gcsWeb.hosts.tenants
 
 const filesPathRegex = /\/sites\/g\/files\/knoqqb\d+\//i
 

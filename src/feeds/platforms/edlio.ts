@@ -24,7 +24,7 @@ const feeds = definePlatformFeeds(
       main: '{scheme}://{host}/apps/classes/assignment_rss.jsp?classREC_ID={classId}',
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export type EdlioPage = { kind: 'site'; categoryId?: string } | { kind: 'class'; classId: string }

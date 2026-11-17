@@ -18,7 +18,7 @@ const feeds = definePlatformFeeds(
     // Posthaven serves an undocumented per-tag Atom feed.
     { key: 'posthaven:tag', main: '{scheme}://{host}/tag/{tag}.atom' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parsePosthavenUrl = (url: string): PosthavenUrl | undefined => {

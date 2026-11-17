@@ -25,7 +25,7 @@ const feeds = definePlatformFeeds(
     { key: 'comicfury:comic', main: '{scheme}://{host}/rss' },
     { key: 'comicfury:reader', main: 'https://comicfury.com/read/{comic}/rss' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseComicfuryUrl = (url: string): ComicfuryUrl | undefined => {

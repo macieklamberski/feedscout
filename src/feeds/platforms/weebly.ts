@@ -15,7 +15,7 @@ const domains = ['weebly.com']
 const pageLinkRegex = /^\/([^/.]+)(?:\.html)?$/i
 
 const feeds = definePlatformFeeds([{ key: 'weebly:blog', main: '{scheme}://{host}/{page}/feed' }], {
-  domains,
+  hosts: { tenants: domains },
 })
 
 export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {

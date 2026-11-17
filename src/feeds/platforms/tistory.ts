@@ -16,7 +16,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/feed', '{scheme}://{host}/index.xml'],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseTistoryUrl = (url: string): TistoryUrl | undefined => {

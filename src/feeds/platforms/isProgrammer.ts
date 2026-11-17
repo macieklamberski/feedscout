@@ -34,7 +34,7 @@ const feeds = definePlatformFeeds(
     { key: 'is-programmer:messages', main: '{scheme}://{host}/messages.rss' },
     { key: 'is-programmer:site', main: '{scheme}://{host}/site.rss' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseIsProgrammerUrl = (url: string): IsProgrammerUrl | undefined => {

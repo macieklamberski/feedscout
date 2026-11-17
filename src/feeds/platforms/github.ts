@@ -19,7 +19,7 @@ export type GithubUrl =
     }
   | { kind: 'discussions'; org: string; discussionCategory?: string }
 
-const hosts = github.hosts
+const hosts = github.hosts.exact
 
 const wikiRegex = /^\/[^/]+\/[^/]+\/wiki(?:\/|$)/i
 const discussionsRegex = /^\/[^/]+\/[^/]+\/discussions(?:\/|$)/i

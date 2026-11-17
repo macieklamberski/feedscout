@@ -9,7 +9,7 @@ import { hexRegex } from '../../common/utils.js'
 
 export type OdyseeUrl = { kind: 'channel'; name: string; claimId?: string }
 
-export const hosts = odysee.hosts
+export const hosts = odysee.hosts.exact
 
 const channelRegex = /^\/@(?<name>[^/:]+)(?::(?<claimId>[^/]+))?/
 

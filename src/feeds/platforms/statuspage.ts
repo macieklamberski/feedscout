@@ -13,7 +13,7 @@ const feeds = definePlatformFeeds(
     { key: 'statuspage:history', main: '{scheme}://{host}/history.rss', format: 'rss' },
     { key: 'statuspage:history', main: '{scheme}://{host}/history.atom', format: 'atom' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const isStatuspageHtml = (content: string): boolean => {

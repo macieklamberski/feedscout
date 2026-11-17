@@ -20,7 +20,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/archive/rss2.xml'],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parsePodomaticUrl = (url: string): PodomaticUrl | undefined => {

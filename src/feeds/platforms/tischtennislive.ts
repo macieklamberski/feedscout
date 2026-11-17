@@ -42,7 +42,7 @@ const feeds = definePlatformFeeds(
       main: '{scheme}://{host}/Export/Tischtennis/RSS_Turniere.aspx',
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseTischtennisliveUrl = (url: string): TischtennisliveUrl | undefined => {

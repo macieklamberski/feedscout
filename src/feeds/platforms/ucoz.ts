@@ -57,7 +57,7 @@ const feeds = definePlatformFeeds(
     },
     { key: 'ucoz:forum-section', main: '{scheme}://{host}/forum/{sectionId}-0-0-37' },
   ],
-  { domains, isWwwTenantPrefix: true },
+  { hosts: { tenants: domains }, isWwwTenantPrefix: true },
 )
 
 export const isUcozHeaders = (headers: Headers): boolean => {

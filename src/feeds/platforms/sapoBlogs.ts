@@ -28,7 +28,7 @@ const feeds = definePlatformFeeds(
       main: 'https://blogs.sapo.pt/commentsrss.bml?blog={blog}&ditemid={postId}',
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseSapoBlogsUrl = (url: string): SapoBlogsUrl | undefined => {

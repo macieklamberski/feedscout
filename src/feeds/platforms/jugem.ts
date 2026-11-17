@@ -35,7 +35,7 @@ const feeds = definePlatformFeeds(
     // The portal answers https with a redirect to http, which the theme feed names as its own URL.
     { key: 'jugem:theme', main: 'http://jugem.jp/theme/{category}/{theme}/rss', format: 'rdf' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 const isJugemAsset = (assetUrl: string | undefined): boolean => {

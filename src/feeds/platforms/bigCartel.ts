@@ -20,7 +20,7 @@ const feeds = definePlatformFeeds(
     { key: 'big-cartel:products', main: '{scheme}://{host}/products.rss' },
     { key: 'big-cartel:products', main: '{scheme}://{host}/products.xml' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const isBigCartelHtml = (content: string): boolean => {

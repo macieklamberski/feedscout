@@ -23,7 +23,7 @@ const feeds = definePlatformFeeds(
     { key: 'livedoor-blog:posts', main: '{scheme}://{host}/index.rdf', format: 'rdf' },
     { key: 'livedoor-blog:posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseLivedoorBlogUrl = (url: string): LivedoorBlogUrl | undefined => {

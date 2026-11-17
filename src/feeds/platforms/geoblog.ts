@@ -17,7 +17,7 @@ const tripPathRegex = /^\/podroz\/(\d+)(?:\/|$)/i
 
 const feeds = definePlatformFeeds(
   [{ key: 'geoblog:trip', main: '{scheme}://{host}/podroz/rss/{tripId}.xml' }],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseGeoblogUrl = (url: string): GeoblogUrl | undefined => {

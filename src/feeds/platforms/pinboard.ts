@@ -14,7 +14,7 @@ export type PinboardUrl =
   | { kind: 'recent' }
   | { kind: 'popular' }
 
-const hosts = pinboard.hosts
+const hosts = pinboard.hosts.exact
 
 const userRegex = /^u:(.+)$/i
 const tagRegex = /^t:(.+)$/i

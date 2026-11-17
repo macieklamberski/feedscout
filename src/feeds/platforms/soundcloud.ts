@@ -12,7 +12,7 @@ export type SoundcloudPage =
   | { kind: 'user'; userId: string }
   | { kind: 'playlist'; playlistId: string }
 
-export const hosts = soundcloud.hosts
+export const hosts = soundcloud.hosts.exact
 
 const userIdRegex = /soundcloud:\/\/users:(\d+)/
 const playlistIdRegex = /soundcloud:\/\/playlists:(\d+)/

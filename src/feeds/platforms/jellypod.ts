@@ -9,7 +9,7 @@ export type JellypodUrl = { kind: 'show' }
 const domains = ['jellypod.com']
 
 const feeds = definePlatformFeeds([{ key: 'jellypod:podcast', main: '{scheme}://{host}/rss' }], {
-  domains,
+  hosts: { tenants: domains },
 })
 
 export const parseJellypodUrl = (url: string): JellypodUrl | undefined => {

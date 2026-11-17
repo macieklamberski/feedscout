@@ -20,7 +20,7 @@ const feeds = definePlatformFeeds(
     { key: 'bangumi:timeline', main: '{scheme}://{host}/feed/user/{username}/timeline' },
     { key: 'bangumi:blog', main: '{scheme}://{host}/feed/blog/all' },
   ],
-  { hosts },
+  { hosts: { exact: hosts } },
 )
 
 export const parseBangumiUrl = (url: string): BangumiUrl | undefined => {

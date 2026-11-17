@@ -14,7 +14,7 @@ const feeds = definePlatformFeeds(
     { key: 'jimdo:blog', main: '{scheme}://{host}/rss/blog' },
     { key: 'jimdo:blog-tag', main: '{scheme}://{host}/rss/blog/{tag}' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 // Jimdo Creator answers every page with the site's id in this header, on its own hosts and on

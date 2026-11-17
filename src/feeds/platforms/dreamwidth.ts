@@ -22,7 +22,7 @@ const feeds = definePlatformFeeds(
     { key: 'dreamwidth:posts', main: '{scheme}://{host}/data/atom', format: 'atom' },
     { key: 'dreamwidth:userpics', main: '{scheme}://{host}/data/userpics', format: 'atom' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseDreamwidthUrl = (url: string): DreamwidthUrl | undefined => {

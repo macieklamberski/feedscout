@@ -17,7 +17,7 @@ const feeds = definePlatformFeeds(
     { key: 'color-me-shop:products', main: '{scheme}://{host}/?mode=rss', format: 'rdf' },
     { key: 'color-me-shop:products', main: '{scheme}://{host}/?mode=atom', format: 'atom' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 // Every shop page sets the session cookie, on shop-pro.jp and on a shop's own domain alike, and

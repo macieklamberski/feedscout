@@ -9,7 +9,7 @@ import { digitsRegex } from '../../common/utils.js'
 
 export type XimalayaUrl = { kind: 'album'; albumId: string }
 
-const hosts = ximalaya.hosts
+const hosts = ximalaya.hosts.exact
 
 // Match /album/{id} (canonical) or /{userid}/album/{id} (legacy form).
 const albumRegex = /(?:^|\/)album\/(?<albumId>[^/]+)/i

@@ -27,7 +27,7 @@ const feeds = definePlatformFeeds(
     { key: 'hautetfort:posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
     { key: 'hautetfort:posts', main: '{scheme}://{host}/index.rss', format: 'rss' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseHautetfortUrl = (url: string): HautetfortUrl | undefined => {

@@ -15,7 +15,7 @@ const feeds = definePlatformFeeds(
     { key: 'mail-archive:list', main: '{scheme}://{host}/{list}/maillist.xml', format: 'rss' },
     { key: 'mail-archive:list', main: '{scheme}://{host}/{list}/maillist.rdf', format: 'rdf' },
   ],
-  { hosts },
+  { hosts: { exact: hosts } },
 )
 
 export const parseMailArchiveUrl = (url: string): MailArchiveUrl | undefined => {

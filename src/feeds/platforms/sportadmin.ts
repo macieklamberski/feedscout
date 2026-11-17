@@ -20,7 +20,7 @@ const feeds = definePlatformFeeds(
     { key: 'sportadmin:team', main: '{scheme}://{host}/rss/?SID={sectionId}' },
     { key: 'sportadmin:news', main: '{scheme}://{host}/rss/' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 const findLayoutSectionId = (content: string | undefined): string | undefined => {

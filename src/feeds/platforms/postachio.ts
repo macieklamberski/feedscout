@@ -16,7 +16,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/feed'],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parsePostachioUrl = (url: string): PostachioUrl | undefined => {

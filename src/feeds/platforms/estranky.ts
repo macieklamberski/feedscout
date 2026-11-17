@@ -69,7 +69,7 @@ const feeds = definePlatformFeeds(
       main: '{scheme}://{host}/rss/{language}/slices/d/{folder}/data.xml',
     },
   ],
-  { domains, isWwwTenantPrefix: true, checks: { language: isLocale } },
+  { hosts: { tenants: domains }, isWwwTenantPrefix: true, checks: { language: isLocale } },
 )
 
 // Every template loads its stylesheet and `ui.js` from the asset hosts, on a custom domain too.

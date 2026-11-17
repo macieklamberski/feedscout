@@ -12,7 +12,7 @@ const domains = ['proboards.com', 'freeforums.net', 'boards.net']
 // A forum on its own domain is known only by its markers, so its feed is built but not claimed.
 const feeds = definePlatformFeeds(
   [{ key: 'proboards:posts', main: '{scheme}://{host}/rss/public' }],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 // Every forum page loads the core script from storage.proboards.com or storage.forums.net, on a

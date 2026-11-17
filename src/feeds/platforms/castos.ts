@@ -23,7 +23,7 @@ const feeds = definePlatformFeeds(
       ],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseCastosUrl = (url: string): CastosUrl | undefined => {

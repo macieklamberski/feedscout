@@ -247,7 +247,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/services/feeds/geo/?g={id}&tags={tags}&format=rss_200'],
     },
   ],
-  { hosts: feedHosts },
+  { hosts: { exact: feedHosts } },
 )
 
 export const parseFlickrUrl = (url: string): FlickrUrl | undefined => {

@@ -30,7 +30,7 @@ const feeds = definePlatformFeeds(
       ],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 // Every career site loads the cookie banner script from this path, on every page and theme.

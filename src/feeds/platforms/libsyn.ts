@@ -35,7 +35,7 @@ const feeds = definePlatformFeeds(
     { key: 'libsyn:category', main: '{scheme}://{host}/rss/category/{category}' },
     { key: 'libsyn:category', main: 'https://sites.libsyn.com/{showId}/rss/category/{category}' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseLibsynUrl = (url: string): LibsynUrl | undefined => {

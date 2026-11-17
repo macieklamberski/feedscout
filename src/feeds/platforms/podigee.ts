@@ -23,7 +23,7 @@ const feeds = definePlatformFeeds(
     { key: 'podigee:feed-encoding', main: '{scheme}://{host}/feeds/{feed}/opus' },
     { key: 'podigee:feed-encoding', main: '{scheme}://{host}/feeds/{feed}/vorbis' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parsePodigeeUrl = (url: string): PodigeeUrl | undefined => {

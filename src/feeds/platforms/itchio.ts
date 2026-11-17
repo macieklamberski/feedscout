@@ -82,7 +82,7 @@ const feeds = definePlatformFeeds(
     { key: 'itchio:sales', main: 'https://itch.io/feed/sales.xml' },
     { key: 'itchio:section', main: 'https://itch.io/{section}.xml' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseItchioUrl = (url: string): ItchioUrl | undefined => {

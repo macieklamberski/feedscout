@@ -12,8 +12,8 @@ export type PinterestUrl =
   | { kind: 'tab'; username: string }
   | { kind: 'board'; username: string; board: string }
 
-export const hosts = pinterest.hosts
-const domains = pinterest.tenantDomains
+export const hosts = pinterest.hosts.exact
+const domains = pinterest.hosts.tenants
 
 // Profile tabs of a user, which name the user, not a board.
 const userSubpaths = ['pins', 'boards', '_saved', '_created', 'followers', 'following']

@@ -32,7 +32,7 @@ const feeds = definePlatformFeeds(
     { key: 'twoday:comments', main: '{scheme}://{host}/latestcomments.rdf' },
     { key: 'twoday:commented', main: '{scheme}://{host}/comments.rdf' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseTwodayUrl = (url: string): TwodayUrl | undefined => {

@@ -13,7 +13,7 @@ export type ChambermasterUrl = {
 
 // A chamber's feeds on its chambermaster.com or memberzone.com subdomain redirect to the sign-in
 // page over http and https alike, so the table only claims them there.
-const domains = chambermaster.tenantDomains
+const domains = chambermaster.hosts.tenants
 
 const feeds = withHintLabels(chambermaster.feeds)
 

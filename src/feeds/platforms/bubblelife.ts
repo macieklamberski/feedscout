@@ -16,7 +16,7 @@ export type BubblelifePage = {
   alertId?: string
 }
 
-const domains = bubblelife.tenantDomains
+const domains = bubblelife.hosts.tenants
 
 const communityRegex =
   /^\/community\/(?<community>[a-z0-9_]+)(?:\/library\/(?<libraryId>\d+))?(?:\/|$)/i

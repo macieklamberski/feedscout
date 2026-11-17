@@ -19,7 +19,10 @@ const feeds = definePlatformFeeds(
     { key: 'odoo:blog', main: '{scheme}://{host}/blog/{blog}/feed', format: 'atom' },
     { key: 'odoo:blog', main: '{scheme}://{host}/{language}/blog/{blog}/feed', format: 'atom' },
   ],
-  { domains, checks: { language: (value) => isLocale(value, { underscore: true }) } },
+  {
+    hosts: { tenants: domains },
+    checks: { language: (value) => isLocale(value, { underscore: true }) },
+  },
 )
 
 // Odoo 11 and later set both cookies on a first visit to any website page.

@@ -8,7 +8,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type CratesIoUrl = { kind: 'crate'; crate: string } | { kind: 'home' }
 
-const hosts = cratesIo.hosts
+const hosts = cratesIo.hosts.exact
 
 const crateRegex = /^\/crates\/([\w-]+)(?:\/|$)/i
 

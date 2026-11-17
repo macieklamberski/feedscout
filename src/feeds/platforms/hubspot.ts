@@ -33,7 +33,7 @@ const feeds = definePlatformFeeds(
     { key: 'hubspot:blog', main: '{root}/rss.xml' },
     { key: 'hubspot:podcast', main: '{root}/podcasts/{id}/rss.xml' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 // Every blog page links its blog's feed, `{blog}/rss.xml`, which names the blog's root. A blog can

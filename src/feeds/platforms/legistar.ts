@@ -33,7 +33,7 @@ const feeds = definePlatformFeeds(
       main: '{scheme}://{host}/Feed.ashx?M=CalendarDetail&ID={id}&GUID={guid}',
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 // Every page loads the share widget under Legistar's own account, on a custom domain too.

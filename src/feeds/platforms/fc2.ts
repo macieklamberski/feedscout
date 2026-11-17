@@ -29,7 +29,7 @@ const feeds = definePlatformFeeds(
     { key: 'fc2:category', main: '{scheme}://{host}/?xml&category={category}' },
     { key: 'fc2:tag', main: '{scheme}://{host}/?xml&utag={tag}' },
   ],
-  { domains: [...domains, blogDomainRegex] },
+  { hosts: { tenants: [...domains, blogDomainRegex] } },
 )
 
 const isFc2Blog = (url: URL): boolean => {

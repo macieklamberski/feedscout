@@ -24,7 +24,7 @@ const feeds = definePlatformFeeds(
     { key: 'noticeable:label', main: '{scheme}://{host}/{label}.atom', format: 'atom' },
     { key: 'noticeable:label', main: '{scheme}://{host}/{label}.json', format: 'json' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 // Every newspage template loads its styles from the Noticeable asset host, custom domains too.

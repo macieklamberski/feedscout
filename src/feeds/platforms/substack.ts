@@ -70,7 +70,7 @@ const feeds = definePlatformFeeds(
       main: '{scheme}://{host}/feed/podcast/spotify/{token}/{publication}.rss',
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 const getPodcastSections = (content: string, publication: string): Array<string> => {

@@ -20,7 +20,7 @@ const feeds = definePlatformFeeds(
     { key: 'exblog:posts', main: '{scheme}://{host}/index.xml', format: 'rss' },
     { key: 'exblog:posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseExblogUrl = (url: string): ExblogUrl | undefined => {

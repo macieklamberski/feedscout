@@ -94,7 +94,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/{collection}/rss-comments.xml;jsessionid={session}'],
     },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const isSquarespaceHeaders = (headers: Headers): boolean => {

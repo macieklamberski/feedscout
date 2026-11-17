@@ -17,7 +17,7 @@ const feeds = definePlatformFeeds(
     { key: 'bloggo:posts', main: '{scheme}://{host}/feed/' },
     { key: 'bloggo:post-comments', main: '{scheme}://{host}/{slug}/feed/' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 // The about page belongs to the blog, not to a post.

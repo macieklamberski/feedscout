@@ -27,7 +27,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/{language}/history.atom'],
     },
   ],
-  { domains, checks: { language: isLocale } },
+  { hosts: { tenants: domains }, checks: { language: isLocale } },
 )
 
 export const isInstatusHtml = (content: string): boolean => {

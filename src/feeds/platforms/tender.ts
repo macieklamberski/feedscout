@@ -40,7 +40,7 @@ const feeds = definePlatformFeeds(
     },
     { key: 'tender:discussion', main: '{root}/help/discussions/{category}/{discussion}.atom' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 const getSettingsRoot = (content: string | undefined): string | undefined => {

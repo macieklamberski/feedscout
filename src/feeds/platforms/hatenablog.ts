@@ -38,7 +38,7 @@ const feeds = definePlatformFeeds(
     { key: 'hatenablog:author', main: '{scheme}://{host}/rss/author/{author}', format: 'rss' },
     { key: 'hatenablog:author', main: '{scheme}://{host}/feed/author/{author}', format: 'atom' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseHatenablogUrl = (url: string): HatenablogUrl | undefined => {

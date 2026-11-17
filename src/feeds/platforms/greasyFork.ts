@@ -37,7 +37,7 @@ const feeds = definePlatformFeeds(
     { key: 'greasy-fork:new', main: '{scheme}://{host}/{locale}/scripts.atom?sort=created' },
     { key: 'greasy-fork:updated', main: '{scheme}://{host}/{locale}/scripts.atom?sort=updated' },
   ],
-  { hosts: feedHosts },
+  { hosts: { exact: feedHosts } },
 )
 
 export const parseGreasyForkUrl = (url: string): GreasyForkUrl | undefined => {

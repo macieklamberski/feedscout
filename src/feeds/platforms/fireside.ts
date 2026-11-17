@@ -26,7 +26,7 @@ const feeds = definePlatformFeeds(
     { key: 'fireside:tag', main: '{scheme}://{host}/tags/{tag}/rss' },
     { key: 'fireside:blog', main: '{scheme}://{host}/articles/rss' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseFiresideUrl = (url: string): FiresideUrl | undefined => {

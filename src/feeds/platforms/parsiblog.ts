@@ -25,7 +25,7 @@ const feeds = definePlatformFeeds(
       aliases: ['{scheme}://{host}/ATOM.aspx'],
     },
   ],
-  { domains, isWwwTenantPrefix: true },
+  { hosts: { tenants: domains }, isWwwTenantPrefix: true },
 )
 
 export const parseParsiblogUrl = (url: string): ParsiblogUrl | undefined => {

@@ -34,7 +34,7 @@ const feeds = definePlatformFeeds(
     { key: 'newswire:social-network', main: '{scheme}://{host}/browse/rss/social/{network}' },
     { key: 'newswire:newsroom', main: '{scheme}://{host}/browse/rss' },
   ],
-  { domains },
+  { hosts: { tenants: domains } },
 )
 
 export const parseNewswireUrl = (url: string): NewswireUrl | undefined => {

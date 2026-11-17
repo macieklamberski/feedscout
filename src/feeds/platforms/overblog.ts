@@ -9,7 +9,7 @@ export type OverblogUrl = { kind: 'blog' }
 const domains = [getBrandDomainRegex('over-blog'), getBrandDomainRegex('overblog'), 'over.blog']
 
 const feeds = definePlatformFeeds([{ key: 'overblog:posts', main: '{scheme}://{host}/rss' }], {
-  domains,
+  hosts: { tenants: domains },
 })
 
 export const parseOverblogUrl = (url: string): OverblogUrl | undefined => {
