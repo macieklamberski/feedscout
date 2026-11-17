@@ -110,5 +110,5 @@ export const dailymotionHandler: PlatformHandler = {
     ]
   },
 
-  getFeedHint: (url) => withHintLabel(dailymotion.getFeedHint(url)),
+  getFeedHint: (url) => withHintLabel(dailymotion.feeds.getFeedHint(url)),
 }

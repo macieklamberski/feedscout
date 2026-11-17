@@ -72,5 +72,5 @@ export const pinterestHandler: PlatformHandler = {
     return [feeds.getFeedEntry('pins', { username: parsed.username })]
   },
 
-  getFeedHint: (url) => withHintLabel(pinterest.getFeedHint(url)),
+  getFeedHint: (url) => withHintLabel(pinterest.feeds.getFeedHint(url)),
 }

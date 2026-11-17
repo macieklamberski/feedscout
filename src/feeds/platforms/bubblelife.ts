@@ -129,5 +129,5 @@ export const bubblelifeHandler: PlatformHandler = {
     return [pageFeeds.getFeedEntry('posts', params)]
   },
 
-  getFeedHint: (url) => withHintLabel(bubblelife.getFeedHint(url)),
+  getFeedHint: (url) => withHintLabel(bubblelife.feeds.getFeedHint(url)),
 }

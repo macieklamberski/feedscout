@@ -85,7 +85,7 @@ export const steamHandler: PlatformHandler = {
     if (parsed.kind === 'app') {
       return [
         feeds.getFeedEntry('news', { appId: parsed.appId }),
-        feeds.getFeedEntry('community-news', { appId: parsed.appId }),
+        feeds.getFeedEntry('community-news', { game: parsed.appId }),
         ...(isHostOf(url, storeHosts)
           ? [
               feeds.getFeedEntry('daily-deals'),
@@ -125,5 +125,5 @@ export const steamHandler: PlatformHandler = {
     ]
   },
 
-  getFeedHint: (url) => withHintLabel(steam.getFeedHint(url)),
+  getFeedHint: (url) => withHintLabel(steam.feeds.getFeedHint(url)),
 }
