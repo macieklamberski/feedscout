@@ -31,14 +31,11 @@ const feeds = definePlatformFeeds(
   [
     {
       key: 'greasy-fork:user',
-      template: '{scheme}://{host}/{locale}/scripts.atom?by={userId}&filter_locale=0',
+      main: '{scheme}://{host}/{locale}/scripts.atom?by={userId}&filter_locale=0',
     },
-    { key: 'greasy-fork:user', template: '{scheme}://{host}/{locale}/scripts.atom?by={userId}' },
-    { key: 'greasy-fork:new', template: '{scheme}://{host}/{locale}/scripts.atom?sort=created' },
-    {
-      key: 'greasy-fork:updated',
-      template: '{scheme}://{host}/{locale}/scripts.atom?sort=updated',
-    },
+    { key: 'greasy-fork:user', main: '{scheme}://{host}/{locale}/scripts.atom?by={userId}' },
+    { key: 'greasy-fork:new', main: '{scheme}://{host}/{locale}/scripts.atom?sort=created' },
+    { key: 'greasy-fork:updated', main: '{scheme}://{host}/{locale}/scripts.atom?sort=updated' },
   ],
   { hosts: feedHosts },
 )

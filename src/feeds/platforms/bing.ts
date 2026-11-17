@@ -17,8 +17,8 @@ const newsRegex = /^\/news\/search\/?$/i
 // Web and news search answer with RSS when `format=rss` is set.
 const feeds = definePlatformFeeds(
   [
-    { key: 'bing:search', template: '{scheme}://{host}/search?q={query}&format=rss' },
-    { key: 'bing:news', template: '{scheme}://{host}/news/search?q={query}&format=rss' },
+    { key: 'bing:search', main: '{scheme}://{host}/search?q={query}&format=rss' },
+    { key: 'bing:news', main: '{scheme}://{host}/news/search?q={query}&format=rss' },
   ],
   { hosts },
 )

@@ -16,9 +16,9 @@ const userRegex = /^\/user\/([^/]+)/i
 
 const feeds = definePlatformFeeds(
   [
-    { key: 'bangumi:collections', template: '{scheme}://{host}/feed/user/{username}/interests' },
-    { key: 'bangumi:timeline', template: '{scheme}://{host}/feed/user/{username}/timeline' },
-    { key: 'bangumi:blog', template: '{scheme}://{host}/feed/blog/all' },
+    { key: 'bangumi:collections', main: '{scheme}://{host}/feed/user/{username}/interests' },
+    { key: 'bangumi:timeline', main: '{scheme}://{host}/feed/user/{username}/timeline' },
+    { key: 'bangumi:blog', main: '{scheme}://{host}/feed/blog/all' },
   ],
   { hosts },
 )
