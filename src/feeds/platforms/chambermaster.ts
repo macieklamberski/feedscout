@@ -1,5 +1,6 @@
+import { chambermaster } from 'feedintel'
 import { getPathSegments, isAnyOf, isSubdomainOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
@@ -12,41 +13,9 @@ export type ChambermasterUrl = {
 
 // A chamber's feeds on its chambermaster.com or memberzone.com subdomain redirect to the sign-in
 // page over http and https alike, so the table only claims them there.
-const domains = ['chambermaster.com', 'memberzone.com']
-// A preview host keeps the page's own scheme, and serves the feeds over both. It is one label
-// under gochambermaster.com or under its preview subdomain.
-const previewDomains = ['gochambermaster.com', 'preview.gochambermaster.com']
+const domains = chambermaster.tenantDomains
 
-// A custom domain is known only by its marker, so its feeds are built here but not claimed.
-const feeds = definePlatformFeeds(
-  [
-    {
-      key: 'chambermaster:upcoming-events',
-      template: '{scheme}://{host}/Feed/rss/UpcomingEvents.rss',
-    },
-    { key: 'chambermaster:new-events', template: '{scheme}://{host}/Feed/rss/NewEvents.rss' },
-    {
-      key: 'chambermaster:featured-events',
-      template: '{scheme}://{host}/Feed/rss/FeaturedEvents.rss',
-    },
-    { key: 'chambermaster:new-members', template: '{scheme}://{host}/Feed/rss/NewMembers.rss' },
-    {
-      key: 'chambermaster:featured-members',
-      template: '{scheme}://{host}/Feed/rss/FeaturedMembers.rss',
-    },
-    { key: 'chambermaster:new-jobs', template: '{scheme}://{host}/Feed/rss/NewJobs.rss' },
-    { key: 'chambermaster:new-coupons', template: '{scheme}://{host}/Feed/rss/NewCoupons.rss' },
-    {
-      key: 'chambermaster:new-market-items',
-      template: '{scheme}://{host}/Feed/rss/NewMarketItems.rss',
-    },
-    { key: 'chambermaster:news-releases', template: '{scheme}://{host}/Feed/rss/NewsReleases.rss' },
-    { key: 'chambermaster:new-m2m-deals', template: '{scheme}://{host}/Feed/rss/NewM2MDeals.rss' },
-    // The page parser reads no store page, so this row only claims.
-    { key: 'chambermaster:new-products', template: '{scheme}://{host}/store/newproducts/rss' },
-  ],
-  { domains: [...domains, ...previewDomains] },
-)
+const feeds = withHintLabels(chambermaster.feeds)
 
 // The value names the server, as in `cmdotnetJYPM06`, so only the prefix is fixed.
 export const isChambermasterHeaders = (headers: Headers): boolean => {

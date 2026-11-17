@@ -14,7 +14,7 @@ import {
   trimObject,
 } from 'trousse'
 import locales from '../../../locales.json' with { type: 'json' }
-import type { DiscoverUriEntry, DiscoverUriHint } from '../../types.js'
+import type { DiscoverUriEntry, DiscoverUriHint, UriEntry } from '../../types.js'
 import { composeHint } from '../../utils.js'
 
 export type PlatformFeedTemplate<Key extends string = string> = {
@@ -589,4 +589,82 @@ export const definePlatformFeeds = <const Key extends string>(
   }
 
   return { getFeedUrl, getFeedEntry, getFeedSpellings, getFeedHint, forUrl }
+}
+
+// A feedintel table, written out here, since the build reads no types from a package that ships
+// its source.
+type UnlabelledHint = Omit<DiscoverUriHint, 'label'>
+
+type UnlabelledEntry = {
+  uri: UriEntry
+  hint: UnlabelledHint
+}
+
+type UnlabelledFeedTable<Key extends string> = {
+  getFeedUrl: PlatformFeedTable<Key>['getFeedUrl']
+  getFeedEntry: (
+    key: Key,
+    params?: PlatformFeedParams,
+    format?: DiscoverUriHint['format'],
+  ) => UnlabelledEntry | undefined
+  getFeedSpellings: (
+    key: Key,
+    params?: PlatformFeedParams,
+    format?: DiscoverUriHint['format'],
+  ) => UnlabelledEntry | undefined
+  getFeedHint: (url: string) => UnlabelledHint | undefined
+  forUrl: (
+    url: string,
+  ) =>
+    | Pick<UnlabelledFeedTable<Key>, 'getFeedUrl' | 'getFeedEntry' | 'getFeedSpellings'>
+    | undefined
+}
+
+// A feedintel hint carries no label, since the labels are this package's.
+export const withHintLabel = (hint: UnlabelledHint | undefined): DiscoverUriHint | undefined => {
+  if (!hint) {
+    return
+  }
+
+  return composeHint(hint.key, hint.format)
+}
+
+const withEntryLabel = (entry: UnlabelledEntry | undefined): DiscoverUriEntry | undefined => {
+  if (!entry) {
+    return
+  }
+
+  return { uri: entry.uri, hint: composeHint(entry.hint.key, entry.hint.format) }
+}
+
+export const withHintLabels = <Key extends string>(
+  table: UnlabelledFeedTable<Key>,
+): PlatformFeedTable<Key> => {
+  return {
+    getFeedUrl: table.getFeedUrl,
+    getFeedEntry: (key, params, format) => {
+      return withEntryLabel(table.getFeedEntry(key, params, format))
+    },
+    getFeedSpellings: (key, params, format) => {
+      return withEntryLabel(table.getFeedSpellings(key, params, format))
+    },
+    getFeedHint: (url) => withHintLabel(table.getFeedHint(url)),
+    forUrl: (url) => {
+      const pageTable = table.forUrl(url)
+
+      if (!pageTable) {
+        return
+      }
+
+      return {
+        getFeedUrl: pageTable.getFeedUrl,
+        getFeedEntry: (key, params, format) => {
+          return withEntryLabel(pageTable.getFeedEntry(key, params, format))
+        },
+        getFeedSpellings: (key, params, format) => {
+          return withEntryLabel(pageTable.getFeedSpellings(key, params, format))
+        },
+      }
+    },
+  }
 }

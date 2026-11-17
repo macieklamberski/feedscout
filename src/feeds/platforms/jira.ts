@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { jira } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   getMetaContent,
@@ -10,7 +11,7 @@ import {
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const domains = ['atlassian.net']
+const domains = jira.tenantDomains
 
 // Data Center installs sit under a context path such as `/jira`, so none of
 // these can anchor at the start of the pathname.
@@ -21,22 +22,7 @@ const jiraPathRegex = /\/(?:jira|secure|issues)(?:\/|$)/i
 const trailingSlashRegex = /\/$/
 const confluencePathRegex = /^\/wiki(?:\/|$)/i
 
-// A Data Center install runs on its own host, under a root its page names.
-const feeds = definePlatformFeeds(
-  [
-    { key: 'jira:project', template: '{root}/activity?key={key}' },
-    { key: 'jira:project', template: '{root}/plugins/servlet/streams?key={key}', isAlias: true },
-    { key: 'jira:site', template: '{root}/activity' },
-    { key: 'jira:site', template: '{root}/plugins/servlet/streams', isAlias: true },
-    // An issue's XML view is an RSS document of that one issue.
-    {
-      key: 'jira:issue',
-      template: '{root}/si/jira.issueviews:issue-xml/{issue}/{issue}.xml',
-      format: 'rss',
-    },
-  ],
-  { domains },
-)
+const feeds = withHintLabels(jira.feeds)
 
 const isCloudHost = (url: string): boolean => {
   return getTenantSubdomain(url, domains) !== undefined

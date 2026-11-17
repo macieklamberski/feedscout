@@ -1,5 +1,6 @@
+import { pinterest } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf, isRegion, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabel, withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -11,22 +12,13 @@ export type PinterestUrl =
   | { kind: 'tab'; username: string }
   | { kind: 'board'; username: string; board: string }
 
-export const hosts = ['pinterest.com', 'www.pinterest.com']
-const domains = ['pinterest.com']
+export const hosts = pinterest.hosts
+const domains = pinterest.tenantDomains
 
 // Profile tabs of a user, which name the user, not a board.
 const userSubpaths = ['pins', 'boards', '_saved', '_created', 'followers', 'following']
 
-const feeds = definePlatformFeeds(
-  [
-    // Before the board rows, so a pins feed never reads as a board named feed.
-    { key: 'pinterest:pins', template: 'https://www.pinterest.com/{username}/feed.rss' },
-    { key: 'pinterest:pins', template: '{scheme}://{host}/{username}/feed.rss', isAlias: true },
-    { key: 'pinterest:board', template: 'https://www.pinterest.com/{username}/{board}.rss' },
-    { key: 'pinterest:board', template: '{scheme}://{host}/{username}/{board}.rss', isAlias: true },
-  ],
-  { hosts, domains },
-)
+const feeds = withHintLabels(pinterest.feeds)
 
 // A country site such as pinterest.co.uk redirects to its label on pinterest.com, uk.pinterest.com,
 // which serves the same profiles and boards.
@@ -80,13 +72,5 @@ export const pinterestHandler: PlatformHandler = {
     return [feeds.getFeedEntry('pinterest:pins', { username: parsed.username })]
   },
 
-  getFeedHint: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl || !isPinterestHost(parsedUrl)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: (url) => withHintLabel(pinterest.getFeedHint(url)),
 }

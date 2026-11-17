@@ -1,5 +1,6 @@
+import { github } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Not discoverable without handler.
@@ -18,7 +19,7 @@ export type GithubUrl =
     }
   | { kind: 'discussions'; org: string; discussionCategory?: string }
 
-const hosts = ['github.com', 'www.github.com']
+const hosts = github.hosts
 
 const wikiRegex = /^\/[^/]+\/[^/]+\/wiki(?:\/|$)/i
 const discussionsRegex = /^\/[^/]+\/[^/]+\/discussions(?:\/|$)/i
@@ -28,39 +29,7 @@ const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/([^/].*?)\/*$/i
 // suffixes: GitHub's own user routes, a name with .atom, .gpg, .keys or .png
 const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png)$/i
 
-// The private feed of a signed-in user answers only with its `token`, so it is claimed and never
-// built. Its tokenless spelling goes before the activity row, which would read it as the owner
-// `{owner}.private`.
-const feeds = definePlatformFeeds([
-  {
-    key: 'github:private-activity',
-    template: 'https://github.com/{owner}.private.atom?token={token}',
-  },
-  { key: 'github:private-activity', template: 'https://github.com/{owner}.private.atom' },
-  { key: 'github:activity', template: 'https://github.com/{owner}.atom' },
-  { key: 'github:releases', template: 'https://github.com/{owner}/{repo}/releases.atom' },
-  { key: 'github:commits', template: 'https://github.com/{owner}/{repo}/commits.atom' },
-  { key: 'github:tags', template: 'https://github.com/{owner}/{repo}/tags.atom' },
-  { key: 'github:wiki', template: 'https://github.com/{owner}/{repo}/wiki.atom' },
-  { key: 'github:discussions', template: 'https://github.com/{owner}/{repo}/discussions.atom' },
-  { key: 'github:discussions', template: 'https://github.com/orgs/{org}/discussions.atom' },
-  {
-    key: 'github:discussion-category',
-    template: 'https://github.com/{owner}/{repo}/discussions/categories/{category}.atom',
-  },
-  {
-    key: 'github:discussion-category',
-    template: 'https://github.com/orgs/{org}/discussions/categories/{category}.atom',
-  },
-  {
-    key: 'github:branch-commits',
-    template: 'https://github.com/{owner}/{repo}/commits/{branch}.atom',
-  },
-  {
-    key: 'github:file-history',
-    template: 'https://github.com/{owner}/{repo}/commits/{branch}/{path*}.atom',
-  },
-])
+const feeds = withHintLabels(github.feeds)
 
 const getRepoSection = (pathname: string): 'wiki' | 'discussions' | undefined => {
   if (wikiRegex.test(pathname)) {
