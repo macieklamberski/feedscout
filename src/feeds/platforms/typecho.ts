@@ -33,75 +33,75 @@ const formats: Array<DiscoverUriHint['format']> = ['rss', 'rdf', 'atom']
 // slash, as `/archives/13/`, or its lack of one, as `/archives/13.html`, so each has its own row.
 // The `/index.php` spelling answers whether or not the site rewrites URLs, the short one only when
 // it does, so a site without rewriting gets its feeds through the script.
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('typecho', [
   {
-    key: 'typecho:posts',
+    key: 'posts',
     main: '{root}/feed/',
     format: 'rss',
     aliases: ['{root}/index.php/feed/'],
   },
   {
-    key: 'typecho:posts',
+    key: 'posts',
     main: '{root}/feed/rss/',
     format: 'rdf',
     aliases: ['{root}/index.php/feed/rss/'],
   },
   {
-    key: 'typecho:posts',
+    key: 'posts',
     main: '{root}/feed/atom/',
     format: 'atom',
     aliases: ['{root}/index.php/feed/atom/'],
   },
   {
-    key: 'typecho:comments',
+    key: 'comments',
     main: '{root}/feed/comments/',
     format: 'rss',
     aliases: ['{root}/index.php/feed/comments/'],
   },
   {
-    key: 'typecho:comments',
+    key: 'comments',
     main: '{root}/feed/rss/comments/',
     format: 'rdf',
     aliases: ['{root}/index.php/feed/rss/comments/'],
   },
   {
-    key: 'typecho:comments',
+    key: 'comments',
     main: '{root}/feed/atom/comments/',
     format: 'atom',
     aliases: ['{root}/index.php/feed/atom/comments/'],
   },
   {
-    key: 'typecho:page',
+    key: 'page',
     main: '{root}/feed/{directory*}/',
     format: 'rss',
     aliases: ['{root}/index.php/feed/{directory*}/'],
   },
   {
-    key: 'typecho:page',
+    key: 'page',
     main: '{root}/feed/{path*}',
     format: 'rss',
     aliases: ['{root}/index.php/feed/{path*}'],
   },
   {
-    key: 'typecho:page',
+    key: 'page',
     main: '{root}/feed/rss/{directory*}/',
     format: 'rdf',
     aliases: ['{root}/index.php/feed/rss/{directory*}/'],
   },
   {
-    key: 'typecho:page',
+    key: 'page',
     main: '{root}/feed/rss/{path*}',
     format: 'rdf',
     aliases: ['{root}/index.php/feed/rss/{path*}'],
   },
   {
-    key: 'typecho:page',
+    key: 'page',
     main: '{root}/feed/atom/{directory*}/',
     format: 'atom',
     aliases: ['{root}/index.php/feed/atom/{directory*}/'],
   },
   {
-    key: 'typecho:page',
+    key: 'page',
     main: '{root}/feed/atom/{path*}',
     format: 'atom',
     aliases: ['{root}/index.php/feed/atom/{path*}'],
@@ -193,16 +193,13 @@ export const typechoHandler: PlatformHandler = {
     }
 
     if (page.kind === 'home') {
-      return [
-        ...getFeedEntries(page.siteUrl, 'typecho:posts'),
-        ...getFeedEntries(page.siteUrl, 'typecho:comments'),
-      ]
+      return [...getFeedEntries(page.siteUrl, 'posts'), ...getFeedEntries(page.siteUrl, 'comments')]
     }
 
     return [
-      ...getFeedEntries(page.siteUrl, 'typecho:page', getPathParams(page.path)),
-      ...getFeedEntries(page.siteUrl, 'typecho:posts'),
-      ...getFeedEntries(page.siteUrl, 'typecho:comments'),
+      ...getFeedEntries(page.siteUrl, 'page', getPathParams(page.path)),
+      ...getFeedEntries(page.siteUrl, 'posts'),
+      ...getFeedEntries(page.siteUrl, 'comments'),
     ]
   },
 }

@@ -67,7 +67,7 @@ export const ivooxHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('ivoox:podcast', { podcastId: page.podcastId })]
+    return [feeds.getFeedEntry('podcast', { podcastId: page.podcastId })]
   },
 
   getFeedHint: (url) => withHintLabel(ivoox.getFeedHint(url)),

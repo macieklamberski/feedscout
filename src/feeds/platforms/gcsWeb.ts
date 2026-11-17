@@ -55,9 +55,9 @@ export const gcsWebHandler: PlatformHandler = {
     }
 
     return [
-      page.getFeedEntry('gcs-web:news-releases'),
-      page.getFeedEntry('gcs-web:sec-filings'),
-      page.getFeedEntry('gcs-web:events'),
+      page.getFeedEntry('news-releases'),
+      page.getFeedEntry('sec-filings'),
+      page.getFeedEntry('events'),
     ]
   },
 

@@ -21,9 +21,10 @@ const seriesRegex = /^\/([^/]+)\/([^/]+)\/([^/]+)\/(?:list|[^/]+\/viewer)\/?$/i
 const canvasGenres = ['canvas', 'challenge']
 
 const feeds = definePlatformFeeds(
+  'webtoons',
   [
     {
-      key: 'webtoons:series',
+      key: 'series',
       main: 'https://www.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
       aliases: [
         'https://sg.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
@@ -74,7 +75,7 @@ export const webtoonsHandler: PlatformHandler = {
     // 500 unless its genre and name match the series.
     const genre = isAnyOf(parsed.genre, canvasGenres) ? 'challenge' : parsed.genre
 
-    return [feeds.getFeedEntry('webtoons:series', { ...parsed, genre })]
+    return [feeds.getFeedEntry('series', { ...parsed, genre })]
   },
 
   getFeedHint: feeds.getFeedHint,

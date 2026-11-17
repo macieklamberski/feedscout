@@ -64,23 +64,24 @@ const sorts = [
 // the listing it sorts, so a sorted tag or creator listing is that tag's or creator's feed, and a
 // listing with any other filters is a games listing.
 const feeds = definePlatformFeeds(
+  'itchio',
   [
-    { key: 'itchio:devlog', main: '{scheme}://{host}/{game}/devlog.rss' },
-    { key: 'itchio:creator', main: 'https://itch.io/games/{sort}/by-{creator}.xml' },
-    { key: 'itchio:creator', main: 'https://itch.io/games/by-{creator}.xml' },
-    { key: 'itchio:tag', main: 'https://itch.io/games/{sort}/tag-{tag}.xml' },
-    { key: 'itchio:tag', main: 'https://itch.io/games/tag-{tag}.xml' },
-    { key: 'itchio:platform', main: 'https://itch.io/games/platform-{platform}.xml' },
-    { key: 'itchio:genre', main: 'https://itch.io/games/genre-{genre}.xml' },
-    { key: 'itchio:made-with', main: 'https://itch.io/games/made-with-{engine}.xml' },
-    { key: 'itchio:games', main: 'https://itch.io/games/{sort}.xml' },
-    { key: 'itchio:games', main: 'https://itch.io/games/{filters*}.xml' },
-    { key: 'itchio:games', main: 'https://itch.io/games.xml' },
-    { key: 'itchio:devlogs', main: 'https://itch.io/devlogs.xml' },
-    { key: 'itchio:featured', main: 'https://itch.io/feed/featured.xml' },
-    { key: 'itchio:new', main: 'https://itch.io/feed/new.xml' },
-    { key: 'itchio:sales', main: 'https://itch.io/feed/sales.xml' },
-    { key: 'itchio:section', main: 'https://itch.io/{section}.xml' },
+    { key: 'devlog', main: '{scheme}://{host}/{game}/devlog.rss' },
+    { key: 'creator', main: 'https://itch.io/games/{sort}/by-{creator}.xml' },
+    { key: 'creator', main: 'https://itch.io/games/by-{creator}.xml' },
+    { key: 'tag', main: 'https://itch.io/games/{sort}/tag-{tag}.xml' },
+    { key: 'tag', main: 'https://itch.io/games/tag-{tag}.xml' },
+    { key: 'platform', main: 'https://itch.io/games/platform-{platform}.xml' },
+    { key: 'genre', main: 'https://itch.io/games/genre-{genre}.xml' },
+    { key: 'made-with', main: 'https://itch.io/games/made-with-{engine}.xml' },
+    { key: 'games', main: 'https://itch.io/games/{sort}.xml' },
+    { key: 'games', main: 'https://itch.io/games/{filters*}.xml' },
+    { key: 'games', main: 'https://itch.io/games.xml' },
+    { key: 'devlogs', main: 'https://itch.io/devlogs.xml' },
+    { key: 'featured', main: 'https://itch.io/feed/featured.xml' },
+    { key: 'new', main: 'https://itch.io/feed/new.xml' },
+    { key: 'sales', main: 'https://itch.io/feed/sales.xml' },
+    { key: 'section', main: 'https://itch.io/{section}.xml' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -202,118 +203,118 @@ export const itchioHandler: PlatformHandler = {
       }
 
       return [
-        pageFeeds.getFeedEntry('itchio:devlog', { game: parsed.game }),
-        feeds.getFeedEntry('itchio:featured'),
-        feeds.getFeedEntry('itchio:new'),
-        feeds.getFeedEntry('itchio:sales'),
-        feeds.getFeedEntry('itchio:devlogs'),
+        pageFeeds.getFeedEntry('devlog', { game: parsed.game }),
+        feeds.getFeedEntry('featured'),
+        feeds.getFeedEntry('new'),
+        feeds.getFeedEntry('sales'),
+        feeds.getFeedEntry('devlogs'),
       ]
     }
 
     if (parsed.kind === 'creator') {
       return [
-        feeds.getFeedEntry('itchio:creator', { creator: parsed.creator, sort: parsed.sort }),
-        feeds.getFeedEntry('itchio:featured'),
-        feeds.getFeedEntry('itchio:new'),
-        feeds.getFeedEntry('itchio:sales'),
-        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('creator', { creator: parsed.creator, sort: parsed.sort }),
+        feeds.getFeedEntry('featured'),
+        feeds.getFeedEntry('new'),
+        feeds.getFeedEntry('sales'),
+        feeds.getFeedEntry('devlogs'),
       ]
     }
 
     if (parsed.kind === 'tag') {
       return [
-        feeds.getFeedEntry('itchio:tag', { tag: parsed.tag, sort: parsed.sort }),
-        feeds.getFeedEntry('itchio:featured'),
-        feeds.getFeedEntry('itchio:new'),
-        feeds.getFeedEntry('itchio:sales'),
-        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('tag', { tag: parsed.tag, sort: parsed.sort }),
+        feeds.getFeedEntry('featured'),
+        feeds.getFeedEntry('new'),
+        feeds.getFeedEntry('sales'),
+        feeds.getFeedEntry('devlogs'),
       ]
     }
 
     if (parsed.kind === 'platform') {
       return [
-        feeds.getFeedEntry('itchio:platform', { platform: parsed.platform }),
-        feeds.getFeedEntry('itchio:featured'),
-        feeds.getFeedEntry('itchio:new'),
-        feeds.getFeedEntry('itchio:sales'),
-        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('platform', { platform: parsed.platform }),
+        feeds.getFeedEntry('featured'),
+        feeds.getFeedEntry('new'),
+        feeds.getFeedEntry('sales'),
+        feeds.getFeedEntry('devlogs'),
       ]
     }
 
     if (parsed.kind === 'genre') {
       return [
-        feeds.getFeedEntry('itchio:genre', { genre: parsed.genre }),
-        feeds.getFeedEntry('itchio:featured'),
-        feeds.getFeedEntry('itchio:new'),
-        feeds.getFeedEntry('itchio:sales'),
-        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('genre', { genre: parsed.genre }),
+        feeds.getFeedEntry('featured'),
+        feeds.getFeedEntry('new'),
+        feeds.getFeedEntry('sales'),
+        feeds.getFeedEntry('devlogs'),
       ]
     }
 
     if (parsed.kind === 'madeWith') {
       return [
-        feeds.getFeedEntry('itchio:made-with', { engine: parsed.engine }),
-        feeds.getFeedEntry('itchio:featured'),
-        feeds.getFeedEntry('itchio:new'),
-        feeds.getFeedEntry('itchio:sales'),
-        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('made-with', { engine: parsed.engine }),
+        feeds.getFeedEntry('featured'),
+        feeds.getFeedEntry('new'),
+        feeds.getFeedEntry('sales'),
+        feeds.getFeedEntry('devlogs'),
       ]
     }
 
     if (parsed.kind === 'listing') {
       return [
-        feeds.getFeedEntry('itchio:games', { filters: parsed.filters }),
-        feeds.getFeedEntry('itchio:featured'),
-        feeds.getFeedEntry('itchio:new'),
-        feeds.getFeedEntry('itchio:sales'),
-        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('games', { filters: parsed.filters }),
+        feeds.getFeedEntry('featured'),
+        feeds.getFeedEntry('new'),
+        feeds.getFeedEntry('sales'),
+        feeds.getFeedEntry('devlogs'),
       ]
     }
 
     if (parsed.kind === 'games' && parsed.sort) {
       return [
-        feeds.getFeedEntry('itchio:games', { sort: parsed.sort }),
-        feeds.getFeedEntry('itchio:featured'),
-        feeds.getFeedEntry('itchio:new'),
-        feeds.getFeedEntry('itchio:sales'),
-        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('games', { sort: parsed.sort }),
+        feeds.getFeedEntry('featured'),
+        feeds.getFeedEntry('new'),
+        feeds.getFeedEntry('sales'),
+        feeds.getFeedEntry('devlogs'),
       ]
     }
 
     if (parsed.kind === 'games') {
       return [
-        feeds.getFeedEntry('itchio:games'),
-        feeds.getFeedEntry('itchio:featured'),
-        feeds.getFeedEntry('itchio:new'),
-        feeds.getFeedEntry('itchio:sales'),
-        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('games'),
+        feeds.getFeedEntry('featured'),
+        feeds.getFeedEntry('new'),
+        feeds.getFeedEntry('sales'),
+        feeds.getFeedEntry('devlogs'),
       ]
     }
 
     if (parsed.kind === 'devlogs') {
       return [
-        feeds.getFeedEntry('itchio:devlogs'),
-        feeds.getFeedEntry('itchio:featured'),
-        feeds.getFeedEntry('itchio:new'),
-        feeds.getFeedEntry('itchio:sales'),
+        feeds.getFeedEntry('devlogs'),
+        feeds.getFeedEntry('featured'),
+        feeds.getFeedEntry('new'),
+        feeds.getFeedEntry('sales'),
       ]
     }
 
     if (parsed.kind === 'section') {
       return [
-        feeds.getFeedEntry('itchio:section', { section: parsed.section }),
-        feeds.getFeedEntry('itchio:featured'),
-        feeds.getFeedEntry('itchio:new'),
-        feeds.getFeedEntry('itchio:sales'),
-        feeds.getFeedEntry('itchio:devlogs'),
+        feeds.getFeedEntry('section', { section: parsed.section }),
+        feeds.getFeedEntry('featured'),
+        feeds.getFeedEntry('new'),
+        feeds.getFeedEntry('sales'),
+        feeds.getFeedEntry('devlogs'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('itchio:featured'),
-      feeds.getFeedEntry('itchio:new'),
-      feeds.getFeedEntry('itchio:sales'),
-      feeds.getFeedEntry('itchio:devlogs'),
+      feeds.getFeedEntry('featured'),
+      feeds.getFeedEntry('new'),
+      feeds.getFeedEntry('sales'),
+      feeds.getFeedEntry('devlogs'),
     ]
   },
 

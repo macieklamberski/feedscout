@@ -27,10 +27,10 @@ const profilePaths = [
 ]
 
 // `/editorial/feed/rss` reads before `/{username}/feed/rss`, so it reads as the editorial feed.
-const feeds = definePlatformFeeds([
-  { key: 'arena:editorial', main: 'https://www.are.na/editorial/feed/rss' },
-  { key: 'arena:profile', main: 'https://www.are.na/{username}/feed/rss' },
-  { key: 'arena:channel', main: 'https://www.are.na/{username}/{channel}/feed/rss' },
+const feeds = definePlatformFeeds('arena', [
+  { key: 'editorial', main: 'https://www.are.na/editorial/feed/rss' },
+  { key: 'profile', main: 'https://www.are.na/{username}/feed/rss' },
+  { key: 'channel', main: 'https://www.are.na/{username}/{channel}/feed/rss' },
 ])
 
 export const parseArenaUrl = (url: string): ArenaUrl | undefined => {
@@ -70,18 +70,18 @@ export const arenaHandler: PlatformHandler = {
 
     // The editorial feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'editorial') {
-      return [feeds.getFeedEntry('arena:editorial')]
+      return [feeds.getFeedEntry('editorial')]
     }
 
     if (parsed.kind === 'channel') {
       const params = { username: parsed.username, channel: parsed.channel }
 
-      return [feeds.getFeedEntry('arena:channel', params), feeds.getFeedEntry('arena:editorial')]
+      return [feeds.getFeedEntry('channel', params), feeds.getFeedEntry('editorial')]
     }
 
     return [
-      feeds.getFeedEntry('arena:profile', { username: parsed.username }),
-      feeds.getFeedEntry('arena:editorial'),
+      feeds.getFeedEntry('profile', { username: parsed.username }),
+      feeds.getFeedEntry('editorial'),
     ]
   },
 

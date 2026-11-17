@@ -59,10 +59,10 @@ export const wikidotHandler: PlatformHandler = {
 
     if (parsed.kind === 'thread') {
       return [
-        page.getFeedEntry('wikidot:forum-thread', { threadId: parsed.threadId }),
-        page.getFeedEntry('wikidot:site-changes'),
-        page.getFeedEntry('wikidot:forum-threads'),
-        page.getFeedEntry('wikidot:forum-posts'),
+        page.getFeedEntry('forum-thread', { threadId: parsed.threadId }),
+        page.getFeedEntry('site-changes'),
+        page.getFeedEntry('forum-threads'),
+        page.getFeedEntry('forum-posts'),
       ]
     }
 
@@ -70,18 +70,18 @@ export const wikidotHandler: PlatformHandler = {
       const params = { categoryId: parsed.categoryId }
 
       return [
-        page.getFeedEntry('wikidot:forum-category-threads', params),
-        page.getFeedEntry('wikidot:forum-category-posts', params),
-        page.getFeedEntry('wikidot:site-changes'),
-        page.getFeedEntry('wikidot:forum-threads'),
-        page.getFeedEntry('wikidot:forum-posts'),
+        page.getFeedEntry('forum-category-threads', params),
+        page.getFeedEntry('forum-category-posts', params),
+        page.getFeedEntry('site-changes'),
+        page.getFeedEntry('forum-threads'),
+        page.getFeedEntry('forum-posts'),
       ]
     }
 
     return [
-      page.getFeedEntry('wikidot:site-changes'),
-      page.getFeedEntry('wikidot:forum-threads'),
-      page.getFeedEntry('wikidot:forum-posts'),
+      page.getFeedEntry('site-changes'),
+      page.getFeedEntry('forum-threads'),
+      page.getFeedEntry('forum-posts'),
     ]
   },
 

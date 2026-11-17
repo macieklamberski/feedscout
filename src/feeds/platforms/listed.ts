@@ -11,9 +11,9 @@ const hosts = ['listed.to', 'www.listed.to']
 const userRegex = /^\/@([^/]+)/
 
 // Listed serves the same feed at `/feed` and, by numeric author id, at `/authors/{id}/feed`.
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('listed', [
   {
-    key: 'listed:blog',
+    key: 'blog',
     main: 'https://listed.to/@{username}/feed.rss',
     aliases: ['https://listed.to/@{username}/feed', 'https://listed.to/authors/{id}/feed'],
   },
@@ -45,7 +45,7 @@ export const listedHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('listed:blog', { username: parsed.username })]
+    return [feeds.getFeedEntry('blog', { username: parsed.username })]
   },
 
   getFeedHint: feeds.getFeedHint,

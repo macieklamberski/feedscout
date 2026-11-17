@@ -8,7 +8,7 @@ export type CanalblogUrl = { kind: 'blog' }
 
 const domains = ['canalblog.com']
 
-const feeds = definePlatformFeeds([{ key: 'canalblog:posts', main: '{scheme}://{host}/rss' }], {
+const feeds = definePlatformFeeds('canalblog', [{ key: 'posts', main: '{scheme}://{host}/rss' }], {
   hosts: { tenants: domains },
 })
 
@@ -34,7 +34,7 @@ export const canalblogHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('canalblog:posts')]
+    return [page.getFeedEntry('posts')]
   },
 
   getFeedHint: feeds.getFeedHint,

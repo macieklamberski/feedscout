@@ -11,7 +11,7 @@ type DrupalSettings = { path?: { baseUrl?: unknown } }
 
 // A site runs on its own domain, under its base path, and is known only by its marker, so its
 // feed is built here but not claimed.
-const feeds = definePlatformFeeds([{ key: 'drupal:site', main: '{root}/rss.xml' }])
+const feeds = definePlatformFeeds('drupal', [{ key: 'site', main: '{root}/rss.xml' }])
 
 export const isDrupalHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Drupal')
@@ -60,6 +60,6 @@ export const drupalHandler: PlatformHandler = {
   resolve: (url, content) => {
     const page = getDrupalPage(url, content)
 
-    return [feeds.getFeedEntry('drupal:site', { root: page.baseUrl })]
+    return [feeds.getFeedEntry('site', { root: page.baseUrl })]
   },
 }

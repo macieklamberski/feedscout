@@ -20,11 +20,11 @@ const relativePathRegex = /"relative_path":"(?<relativePath>\/[^"]*)"/
 
 // NodeBB is self-hosted and known only by its headers, so nothing in a feed URL names it and the
 // table only builds, under the install root the page config names.
-const feeds = definePlatformFeeds([
-  { key: 'nodebb:topic', main: '{root}/topic/{topicId}.rss' },
-  { key: 'nodebb:category', main: '{root}/category/{categoryId}.rss' },
-  { key: 'nodebb:recent', main: '{root}/recent.rss' },
-  { key: 'nodebb:popular', main: '{root}/popular.rss' },
+const feeds = definePlatformFeeds('nodebb', [
+  { key: 'topic', main: '{root}/topic/{topicId}.rss' },
+  { key: 'category', main: '{root}/category/{categoryId}.rss' },
+  { key: 'recent', main: '{root}/recent.rss' },
+  { key: 'popular', main: '{root}/popular.rss' },
 ])
 
 export const isNodebbHeaders = (headers: Headers): boolean => {
@@ -85,32 +85,29 @@ export const nodebbHandler: PlatformHandler = {
 
     if (page.kind === 'topic' && page.categoryId) {
       return [
-        feeds.getFeedEntry('nodebb:topic', { root, topicId: page.topicId }),
-        feeds.getFeedEntry('nodebb:category', { root, categoryId: page.categoryId }),
-        feeds.getFeedEntry('nodebb:recent', { root }),
-        feeds.getFeedEntry('nodebb:popular', { root }),
+        feeds.getFeedEntry('topic', { root, topicId: page.topicId }),
+        feeds.getFeedEntry('category', { root, categoryId: page.categoryId }),
+        feeds.getFeedEntry('recent', { root }),
+        feeds.getFeedEntry('popular', { root }),
       ]
     }
 
     if (page.kind === 'topic') {
       return [
-        feeds.getFeedEntry('nodebb:topic', { root, topicId: page.topicId }),
-        feeds.getFeedEntry('nodebb:recent', { root }),
-        feeds.getFeedEntry('nodebb:popular', { root }),
+        feeds.getFeedEntry('topic', { root, topicId: page.topicId }),
+        feeds.getFeedEntry('recent', { root }),
+        feeds.getFeedEntry('popular', { root }),
       ]
     }
 
     if (page.kind === 'category') {
       return [
-        feeds.getFeedEntry('nodebb:category', { root, categoryId: page.categoryId }),
-        feeds.getFeedEntry('nodebb:recent', { root }),
-        feeds.getFeedEntry('nodebb:popular', { root }),
+        feeds.getFeedEntry('category', { root, categoryId: page.categoryId }),
+        feeds.getFeedEntry('recent', { root }),
+        feeds.getFeedEntry('popular', { root }),
       ]
     }
 
-    return [
-      feeds.getFeedEntry('nodebb:recent', { root }),
-      feeds.getFeedEntry('nodebb:popular', { root }),
-    ]
+    return [feeds.getFeedEntry('recent', { root }), feeds.getFeedEntry('popular', { root })]
   },
 }

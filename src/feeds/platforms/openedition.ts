@@ -14,9 +14,9 @@ const hosts = ['journals.openedition.org']
 // documents feed narrows to one entity, such as an issue, by `identity`, and to one index entry
 // by `idcontainer`. The page URL does not say which kind of entity it shows, and an article id
 // gives an empty feed, so those two are claimed and never built.
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('openedition', [
   {
-    key: 'openedition:documents',
+    key: 'documents',
     main: 'https://journals.openedition.org/{journal}/backend?format=rssdocuments',
     aliases: [
       'https://journals.openedition.org/{journal}/backend.html?format=rssdocuments',
@@ -24,7 +24,7 @@ const feeds = definePlatformFeeds([
     ],
   },
   {
-    key: 'openedition:entity',
+    key: 'entity',
     main: 'https://journals.openedition.org/{journal}/backend?format=rssdocuments&identity={entity}',
     aliases: [
       'https://journals.openedition.org/{journal}/backend.html?format=rssdocuments&identity={entity}',
@@ -32,7 +32,7 @@ const feeds = definePlatformFeeds([
     ],
   },
   {
-    key: 'openedition:index-entry',
+    key: 'index-entry',
     main: 'https://journals.openedition.org/{journal}/backend?format=rssdocuments&idcontainer={entry}',
     aliases: [
       'https://journals.openedition.org/{journal}/backend.html?format=rssdocuments&idcontainer={entry}',
@@ -40,7 +40,7 @@ const feeds = definePlatformFeeds([
     ],
   },
   {
-    key: 'openedition:issues',
+    key: 'issues',
     main: 'https://journals.openedition.org/{journal}/backend?format=rssnumeros',
     aliases: [
       'https://journals.openedition.org/{journal}/backend.html?format=rssnumeros',
@@ -48,7 +48,7 @@ const feeds = definePlatformFeeds([
     ],
   },
   {
-    key: 'openedition:reviews',
+    key: 'reviews',
     main: 'https://journals.openedition.org/{journal}/backend?format=rssdocuments&type=review',
     aliases: [
       'https://journals.openedition.org/{journal}/backend.html?format=rssdocuments&type=review',
@@ -87,9 +87,9 @@ export const openeditionHandler: PlatformHandler = {
     const params = { journal: parsed.journal }
 
     return [
-      feeds.getFeedEntry('openedition:documents', params),
-      feeds.getFeedEntry('openedition:issues', params),
-      feeds.getFeedEntry('openedition:reviews', params),
+      feeds.getFeedEntry('documents', params),
+      feeds.getFeedEntry('issues', params),
+      feeds.getFeedEntry('reviews', params),
     ]
   },
 

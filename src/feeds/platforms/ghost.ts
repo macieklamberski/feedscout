@@ -18,19 +18,21 @@ const authorRegex = /^\/author\/([^/]+)/i
 const privateFeedRegex = /^\/[\da-f]{30}\/rss\/?$/i
 
 const feeds = definePlatformFeeds(
+  'ghost',
   [
-    { key: 'ghost:tag', main: '{scheme}://{host}/tag/{tag}/rss/' },
-    { key: 'ghost:author', main: '{scheme}://{host}/author/{author}/rss/' },
-    { key: 'ghost:blog', main: '{scheme}://{host}/rss/' },
+    { key: 'tag', main: '{scheme}://{host}/tag/{tag}/rss/' },
+    { key: 'author', main: '{scheme}://{host}/author/{author}/rss/' },
+    { key: 'blog', main: '{scheme}://{host}/rss/' },
     // A collection a site's routes define, as `/archive/`, which a page path cannot tell apart from
     // a post, so `resolve` never builds it.
-    { key: 'ghost:collection', main: '{scheme}://{host}/{collection}/rss/' },
+    { key: 'collection', main: '{scheme}://{host}/{collection}/rss/' },
   ],
   { hosts: { tenants: domains } },
 )
 // No page gives the token, so this row only claims the feed.
 const privateFeeds = definePlatformFeeds(
-  [{ key: 'ghost:private', main: '{scheme}://{host}/{token}/rss/' }],
+  'ghost',
+  [{ key: 'private', main: '{scheme}://{host}/{token}/rss/' }],
   { hosts: { tenants: domains } },
 )
 
@@ -69,17 +71,14 @@ export const ghostHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'tag') {
-      return [page.getFeedEntry('ghost:tag', { tag: parsed.tag }), page.getFeedEntry('ghost:blog')]
+      return [page.getFeedEntry('tag', { tag: parsed.tag }), page.getFeedEntry('blog')]
     }
 
     if (parsed.kind === 'author') {
-      return [
-        page.getFeedEntry('ghost:author', { author: parsed.author }),
-        page.getFeedEntry('ghost:blog'),
-      ]
+      return [page.getFeedEntry('author', { author: parsed.author }), page.getFeedEntry('blog')]
     }
 
-    return [page.getFeedEntry('ghost:blog')]
+    return [page.getFeedEntry('blog')]
   },
 
   getFeedHint: (url) => {

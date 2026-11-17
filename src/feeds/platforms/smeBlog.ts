@@ -8,9 +8,9 @@ export type SmeBlogUrl = { kind: 'blog'; username: string } | { kind: 'home' }
 
 const hosts = ['blog.sme.sk']
 
-const feeds = definePlatformFeeds([
-  { key: 'sme-blog:site', main: 'https://blog.sme.sk/rss' },
-  { key: 'sme-blog:posts', main: 'https://blog.sme.sk/{username}/rss' },
+const feeds = definePlatformFeeds('sme-blog', [
+  { key: 'site', main: 'https://blog.sme.sk/rss' },
+  { key: 'posts', main: 'https://blog.sme.sk/{username}/rss' },
 ])
 
 export const parseSmeBlogUrl = (url: string): SmeBlogUrl | undefined => {
@@ -42,12 +42,12 @@ export const smeBlogHandler: PlatformHandler = {
     // The site feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'blog') {
       return [
-        feeds.getFeedEntry('sme-blog:posts', { username: parsed.username }),
-        feeds.getFeedEntry('sme-blog:site'),
+        feeds.getFeedEntry('posts', { username: parsed.username }),
+        feeds.getFeedEntry('site'),
       ]
     }
 
-    return [feeds.getFeedEntry('sme-blog:site')]
+    return [feeds.getFeedEntry('site')]
   },
 
   getFeedHint: feeds.getFeedHint,

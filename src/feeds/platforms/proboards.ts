@@ -11,7 +11,8 @@ const domains = ['proboards.com', 'freeforums.net', 'boards.net']
 
 // A forum on its own domain is known only by its markers, so its feed is built but not claimed.
 const feeds = definePlatformFeeds(
-  [{ key: 'proboards:posts', main: '{scheme}://{host}/rss/public' }],
+  'proboards',
+  [{ key: 'posts', main: '{scheme}://{host}/rss/public' }],
   { hosts: { tenants: domains } },
 )
 
@@ -52,7 +53,7 @@ export const proboardsHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('proboards:posts')]
+    return [page.getFeedEntry('posts')]
   },
 
   getFeedHint: feeds.getFeedHint,

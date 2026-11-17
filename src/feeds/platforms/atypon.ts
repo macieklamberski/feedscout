@@ -29,9 +29,10 @@ const journalRegex = /^\/(?:toc|journals?|loi|home)\/(\w+)(?:\/|$)/i
 // serves its journal and most cited feeds as RSS and every other feed as RSS 1.0, so its journal
 // rows come before the rows of every other host.
 const feeds = definePlatformFeeds(
+  'atypon',
   [
     {
-      key: 'atypon:journal',
+      key: 'journal',
       main: 'https://onlinelibrary.wiley.com/action/showFeed?type=etoc&feed=rss&jc={code}',
       format: 'rss',
       aliases: [
@@ -40,7 +41,7 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'atypon:journal',
+      key: 'journal',
       main: '{scheme}://{host}/action/showFeed?type=etoc&feed=rss&jc={code}',
       format: 'rdf',
       aliases: [
@@ -49,7 +50,7 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'atypon:most-cited',
+      key: 'most-cited',
       main: 'https://onlinelibrary.wiley.com/feed/{code}/most-cited',
       format: 'rss',
       aliases: [
@@ -57,20 +58,20 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'atypon:ahead-of-print',
+      key: 'ahead-of-print',
       main: '{scheme}://{host}/action/showFeed?type=axatoc&feed=rss&jc={code}',
       format: 'rdf',
       aliases: ['{scheme}://{host}/action/showFeed/feed?type=axatoc&jc={code}'],
     },
     // A saved search or a topic feed names its query in values no page URL gives.
     {
-      key: 'atypon:search',
+      key: 'search',
       main: '{scheme}://{host}/action/showFeed?type=search&feed=rss&query={query}',
       format: 'rdf',
       aliases: ['{scheme}://{host}/action/showFeed/feed?type=search&query={query}'],
     },
     {
-      key: 'atypon:topic',
+      key: 'topic',
       main: '{scheme}://{host}/action/showFeed?type=searchTopic&taxonomyCode={taxonomy}&tagCode={tag}',
     },
   ],
@@ -107,15 +108,15 @@ export const atyponHandler: PlatformHandler = {
 
     if (parsed.isWiley) {
       return [
-        page.getFeedEntry('atypon:journal', { code: parsed.code }, 'rss'),
-        page.getFeedEntry('atypon:ahead-of-print', { code: parsed.code }, 'rdf'),
-        page.getFeedEntry('atypon:most-cited', { code: parsed.code }, 'rss'),
+        page.getFeedEntry('journal', { code: parsed.code }, 'rss'),
+        page.getFeedEntry('ahead-of-print', { code: parsed.code }, 'rdf'),
+        page.getFeedEntry('most-cited', { code: parsed.code }, 'rss'),
       ]
     }
 
     return [
-      page.getFeedEntry('atypon:journal', { code: parsed.code }, 'rdf'),
-      page.getFeedEntry('atypon:ahead-of-print', { code: parsed.code }, 'rdf'),
+      page.getFeedEntry('journal', { code: parsed.code }, 'rdf'),
+      page.getFeedEntry('ahead-of-print', { code: parsed.code }, 'rdf'),
     ]
   },
 

@@ -18,51 +18,51 @@ const hosts = ['blog.jinbo.net']
 // A category named by text answers an empty feed under another category's title.
 const feedLinkRegex = /^https:\/\/blog\.jinbo\.net\/([^/]+)\/rss$/i
 
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('jinbo', [
   {
-    key: 'jinbo:category',
+    key: 'category',
     main: 'https://blog.jinbo.net/{username}/rss/category/{categoryId}',
     format: 'rss',
   },
   {
-    key: 'jinbo:category',
+    key: 'category',
     main: 'https://blog.jinbo.net/{username}/atom/category/{categoryId}',
     format: 'atom',
   },
   // The tag feed exists only as Atom: the RSS spelling answers 404.
-  { key: 'jinbo:tag', main: 'https://blog.jinbo.net/{username}/atom/tag/{tag}', format: 'atom' },
-  { key: 'jinbo:posts', main: 'https://blog.jinbo.net/{username}/rss', format: 'rss' },
-  { key: 'jinbo:posts', main: 'https://blog.jinbo.net/{username}/atom', format: 'atom' },
-  { key: 'jinbo:responses', main: 'https://blog.jinbo.net/{username}/rss/response', format: 'rss' },
+  { key: 'tag', main: 'https://blog.jinbo.net/{username}/atom/tag/{tag}', format: 'atom' },
+  { key: 'posts', main: 'https://blog.jinbo.net/{username}/rss', format: 'rss' },
+  { key: 'posts', main: 'https://blog.jinbo.net/{username}/atom', format: 'atom' },
+  { key: 'responses', main: 'https://blog.jinbo.net/{username}/rss/response', format: 'rss' },
   {
-    key: 'jinbo:responses',
+    key: 'responses',
     main: 'https://blog.jinbo.net/{username}/atom/response',
     format: 'atom',
   },
   {
-    key: 'jinbo:post-responses',
+    key: 'post-responses',
     main: 'https://blog.jinbo.net/{username}/rss/response/{postId}',
     format: 'rss',
   },
   {
-    key: 'jinbo:post-responses',
+    key: 'post-responses',
     main: 'https://blog.jinbo.net/{username}/atom/response/{postId}',
     format: 'atom',
   },
-  { key: 'jinbo:comments', main: 'https://blog.jinbo.net/{username}/rss/comment', format: 'rss' },
-  { key: 'jinbo:comments', main: 'https://blog.jinbo.net/{username}/atom/comment', format: 'atom' },
+  { key: 'comments', main: 'https://blog.jinbo.net/{username}/rss/comment', format: 'rss' },
+  { key: 'comments', main: 'https://blog.jinbo.net/{username}/atom/comment', format: 'atom' },
   {
-    key: 'jinbo:trackbacks',
+    key: 'trackbacks',
     main: 'https://blog.jinbo.net/{username}/rss/trackback',
     format: 'rss',
   },
   {
-    key: 'jinbo:trackbacks',
+    key: 'trackbacks',
     main: 'https://blog.jinbo.net/{username}/atom/trackback',
     format: 'atom',
   },
-  { key: 'jinbo:lines', main: 'https://blog.jinbo.net/{username}/rss/line', format: 'rss' },
-  { key: 'jinbo:lines', main: 'https://blog.jinbo.net/{username}/atom/line', format: 'atom' },
+  { key: 'lines', main: 'https://blog.jinbo.net/{username}/rss/line', format: 'rss' },
+  { key: 'lines', main: 'https://blog.jinbo.net/{username}/atom/line', format: 'atom' },
 ])
 
 export const parseJinboUrl = (url: string): JinboUrl | undefined => {
@@ -135,65 +135,65 @@ export const jinboHandler: PlatformHandler = {
 
     if (page.kind === 'category') {
       return [
-        feeds.getFeedEntry('jinbo:category', { username, categoryId: page.categoryId }, 'rss'),
-        feeds.getFeedEntry('jinbo:category', { username, categoryId: page.categoryId }, 'atom'),
-        feeds.getFeedEntry('jinbo:posts', { username }, 'rss'),
-        feeds.getFeedEntry('jinbo:posts', { username }, 'atom'),
-        feeds.getFeedEntry('jinbo:responses', { username }, 'rss'),
-        feeds.getFeedEntry('jinbo:responses', { username }, 'atom'),
-        feeds.getFeedEntry('jinbo:comments', { username }, 'rss'),
-        feeds.getFeedEntry('jinbo:comments', { username }, 'atom'),
-        feeds.getFeedEntry('jinbo:trackbacks', { username }, 'rss'),
-        feeds.getFeedEntry('jinbo:trackbacks', { username }, 'atom'),
-        feeds.getFeedEntry('jinbo:lines', { username }, 'rss'),
-        feeds.getFeedEntry('jinbo:lines', { username }, 'atom'),
+        feeds.getFeedEntry('category', { username, categoryId: page.categoryId }, 'rss'),
+        feeds.getFeedEntry('category', { username, categoryId: page.categoryId }, 'atom'),
+        feeds.getFeedEntry('posts', { username }, 'rss'),
+        feeds.getFeedEntry('posts', { username }, 'atom'),
+        feeds.getFeedEntry('responses', { username }, 'rss'),
+        feeds.getFeedEntry('responses', { username }, 'atom'),
+        feeds.getFeedEntry('comments', { username }, 'rss'),
+        feeds.getFeedEntry('comments', { username }, 'atom'),
+        feeds.getFeedEntry('trackbacks', { username }, 'rss'),
+        feeds.getFeedEntry('trackbacks', { username }, 'atom'),
+        feeds.getFeedEntry('lines', { username }, 'rss'),
+        feeds.getFeedEntry('lines', { username }, 'atom'),
       ]
     }
 
     if (page.kind === 'tag') {
       return [
-        feeds.getFeedEntry('jinbo:tag', { username, tag: page.tag }, 'atom'),
-        feeds.getFeedEntry('jinbo:posts', { username }, 'rss'),
-        feeds.getFeedEntry('jinbo:posts', { username }, 'atom'),
-        feeds.getFeedEntry('jinbo:responses', { username }, 'rss'),
-        feeds.getFeedEntry('jinbo:responses', { username }, 'atom'),
-        feeds.getFeedEntry('jinbo:comments', { username }, 'rss'),
-        feeds.getFeedEntry('jinbo:comments', { username }, 'atom'),
-        feeds.getFeedEntry('jinbo:trackbacks', { username }, 'rss'),
-        feeds.getFeedEntry('jinbo:trackbacks', { username }, 'atom'),
-        feeds.getFeedEntry('jinbo:lines', { username }, 'rss'),
-        feeds.getFeedEntry('jinbo:lines', { username }, 'atom'),
+        feeds.getFeedEntry('tag', { username, tag: page.tag }, 'atom'),
+        feeds.getFeedEntry('posts', { username }, 'rss'),
+        feeds.getFeedEntry('posts', { username }, 'atom'),
+        feeds.getFeedEntry('responses', { username }, 'rss'),
+        feeds.getFeedEntry('responses', { username }, 'atom'),
+        feeds.getFeedEntry('comments', { username }, 'rss'),
+        feeds.getFeedEntry('comments', { username }, 'atom'),
+        feeds.getFeedEntry('trackbacks', { username }, 'rss'),
+        feeds.getFeedEntry('trackbacks', { username }, 'atom'),
+        feeds.getFeedEntry('lines', { username }, 'rss'),
+        feeds.getFeedEntry('lines', { username }, 'atom'),
       ]
     }
 
     if (page.kind === 'post') {
       return [
-        feeds.getFeedEntry('jinbo:post-responses', { username, postId: page.postId }, 'rss'),
-        feeds.getFeedEntry('jinbo:post-responses', { username, postId: page.postId }, 'atom'),
-        feeds.getFeedEntry('jinbo:posts', { username }, 'rss'),
-        feeds.getFeedEntry('jinbo:posts', { username }, 'atom'),
-        feeds.getFeedEntry('jinbo:responses', { username }, 'rss'),
-        feeds.getFeedEntry('jinbo:responses', { username }, 'atom'),
-        feeds.getFeedEntry('jinbo:comments', { username }, 'rss'),
-        feeds.getFeedEntry('jinbo:comments', { username }, 'atom'),
-        feeds.getFeedEntry('jinbo:trackbacks', { username }, 'rss'),
-        feeds.getFeedEntry('jinbo:trackbacks', { username }, 'atom'),
-        feeds.getFeedEntry('jinbo:lines', { username }, 'rss'),
-        feeds.getFeedEntry('jinbo:lines', { username }, 'atom'),
+        feeds.getFeedEntry('post-responses', { username, postId: page.postId }, 'rss'),
+        feeds.getFeedEntry('post-responses', { username, postId: page.postId }, 'atom'),
+        feeds.getFeedEntry('posts', { username }, 'rss'),
+        feeds.getFeedEntry('posts', { username }, 'atom'),
+        feeds.getFeedEntry('responses', { username }, 'rss'),
+        feeds.getFeedEntry('responses', { username }, 'atom'),
+        feeds.getFeedEntry('comments', { username }, 'rss'),
+        feeds.getFeedEntry('comments', { username }, 'atom'),
+        feeds.getFeedEntry('trackbacks', { username }, 'rss'),
+        feeds.getFeedEntry('trackbacks', { username }, 'atom'),
+        feeds.getFeedEntry('lines', { username }, 'rss'),
+        feeds.getFeedEntry('lines', { username }, 'atom'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('jinbo:posts', { username }, 'rss'),
-      feeds.getFeedEntry('jinbo:posts', { username }, 'atom'),
-      feeds.getFeedEntry('jinbo:responses', { username }, 'rss'),
-      feeds.getFeedEntry('jinbo:responses', { username }, 'atom'),
-      feeds.getFeedEntry('jinbo:comments', { username }, 'rss'),
-      feeds.getFeedEntry('jinbo:comments', { username }, 'atom'),
-      feeds.getFeedEntry('jinbo:trackbacks', { username }, 'rss'),
-      feeds.getFeedEntry('jinbo:trackbacks', { username }, 'atom'),
-      feeds.getFeedEntry('jinbo:lines', { username }, 'rss'),
-      feeds.getFeedEntry('jinbo:lines', { username }, 'atom'),
+      feeds.getFeedEntry('posts', { username }, 'rss'),
+      feeds.getFeedEntry('posts', { username }, 'atom'),
+      feeds.getFeedEntry('responses', { username }, 'rss'),
+      feeds.getFeedEntry('responses', { username }, 'atom'),
+      feeds.getFeedEntry('comments', { username }, 'rss'),
+      feeds.getFeedEntry('comments', { username }, 'atom'),
+      feeds.getFeedEntry('trackbacks', { username }, 'rss'),
+      feeds.getFeedEntry('trackbacks', { username }, 'atom'),
+      feeds.getFeedEntry('lines', { username }, 'rss'),
+      feeds.getFeedEntry('lines', { username }, 'atom'),
     ]
   },
 

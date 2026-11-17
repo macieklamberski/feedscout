@@ -9,11 +9,11 @@ export type FriendicaUrl = { kind: 'profile'; username: string }
 const profileRegex = /^\/(?:profile\/|u\/|~)([^/]+)/i
 
 // A server is self-hosted on any domain, so the table only builds its feeds.
-const feeds = definePlatformFeeds([
-  { key: 'friendica:posts', main: '{root}/feed/{username}' },
-  { key: 'friendica:comments', main: '{root}/feed/{username}/comments' },
-  { key: 'friendica:replies', main: '{root}/feed/{username}/replies' },
-  { key: 'friendica:activity', main: '{root}/feed/{username}/activity' },
+const feeds = definePlatformFeeds('friendica', [
+  { key: 'posts', main: '{root}/feed/{username}' },
+  { key: 'comments', main: '{root}/feed/{username}/comments' },
+  { key: 'replies', main: '{root}/feed/{username}/replies' },
+  { key: 'activity', main: '{root}/feed/{username}/activity' },
 ])
 
 export const isFriendicaHtml = (content: string): boolean => {
@@ -54,10 +54,10 @@ export const friendicaHandler: PlatformHandler = {
     const { username } = parsed
 
     return [
-      page.getFeedEntry('friendica:posts', { username }),
-      page.getFeedEntry('friendica:comments', { username }),
-      page.getFeedEntry('friendica:replies', { username }),
-      page.getFeedEntry('friendica:activity', { username }),
+      page.getFeedEntry('posts', { username }),
+      page.getFeedEntry('comments', { username }),
+      page.getFeedEntry('replies', { username }),
+      page.getFeedEntry('activity', { username }),
     ]
   },
 }

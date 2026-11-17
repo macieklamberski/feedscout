@@ -16,7 +16,9 @@ const metaMarkers: Array<[string, string]> = [
 
 // An instance is known only by its markup, so its feeds are built on the page's origin and claimed
 // on no host.
-const feeds = definePlatformFeeds([{ key: 'pixelfed:posts', main: '{root}/users/{username}.atom' }])
+const feeds = definePlatformFeeds('pixelfed', [
+  { key: 'posts', main: '{root}/users/{username}.atom' },
+])
 
 export const isPixelfedHtml = (content: string): boolean => {
   return hasAnyMeta(content, metaMarkers)
@@ -55,6 +57,6 @@ export const pixelfedHandler: PlatformHandler = {
       return []
     }
 
-    return [pageFeeds.getFeedEntry('pixelfed:posts', { username: parsed.username })]
+    return [pageFeeds.getFeedEntry('posts', { username: parsed.username })]
   },
 }

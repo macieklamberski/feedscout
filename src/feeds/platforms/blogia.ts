@@ -9,9 +9,10 @@ export type BlogiaUrl = { kind: 'blog'; blog: string }
 const domains = ['blogia.com']
 
 const feeds = definePlatformFeeds(
+  'blogia',
   [
-    { key: 'blogia:posts', main: '{scheme}://{host}/feed.xml' },
-    { key: 'blogia:comments', main: '{scheme}://{host}/comentarios.xml' },
+    { key: 'posts', main: '{scheme}://{host}/feed.xml' },
+    { key: 'comments', main: '{scheme}://{host}/comentarios.xml' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -39,7 +40,7 @@ export const blogiaHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('blogia:posts'), page.getFeedEntry('blogia:comments')]
+    return [page.getFeedEntry('posts'), page.getFeedEntry('comments')]
   },
 
   getFeedHint: feeds.getFeedHint,

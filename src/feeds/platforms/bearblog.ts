@@ -13,15 +13,16 @@ const domains = ['bearblog.dev']
 const apexHosts = ['bearblog.dev', 'www.bearblog.dev']
 
 const feeds = definePlatformFeeds(
+  'bearblog',
   [
-    { key: 'bearblog:discover', main: 'https://bearblog.dev/discover/feed/', format: 'atom' },
+    { key: 'discover', main: 'https://bearblog.dev/discover/feed/', format: 'atom' },
     {
-      key: 'bearblog:discover',
+      key: 'discover',
       main: 'https://bearblog.dev/discover/feed/?type=rss',
       format: 'rss',
     },
     {
-      key: 'bearblog:tag',
+      key: 'tag',
       main: '{scheme}://{host}/feed/?q={tag}',
       format: 'atom',
       aliases: [
@@ -33,13 +34,13 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'bearblog:tag',
+      key: 'tag',
       main: '{scheme}://{host}/feed/?type=rss&q={tag}',
       format: 'rss',
       aliases: ['{scheme}://{host}/rss/?q={tag}', '{scheme}://{host}/rss.xml?q={tag}'],
     },
     {
-      key: 'bearblog:posts',
+      key: 'posts',
       main: '{scheme}://{host}/feed/',
       format: 'atom',
       aliases: [
@@ -51,7 +52,7 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'bearblog:posts',
+      key: 'posts',
       main: '{scheme}://{host}/feed/?type=rss',
       format: 'rss',
       aliases: ['{scheme}://{host}/rss/', '{scheme}://{host}/rss.xml'],
@@ -92,27 +93,21 @@ export const bearblogHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'discover') {
-      return [
-        page.getFeedEntry('bearblog:discover', {}, 'atom'),
-        page.getFeedEntry('bearblog:discover', {}, 'rss'),
-      ]
+      return [page.getFeedEntry('discover', {}, 'atom'), page.getFeedEntry('discover', {}, 'rss')]
     }
 
     if (parsed.tag) {
       const params = { tag: parsed.tag }
 
       return [
-        page.getFeedEntry('bearblog:tag', params, 'atom'),
-        page.getFeedEntry('bearblog:tag', params, 'rss'),
-        page.getFeedEntry('bearblog:posts', {}, 'atom'),
-        page.getFeedEntry('bearblog:posts', {}, 'rss'),
+        page.getFeedEntry('tag', params, 'atom'),
+        page.getFeedEntry('tag', params, 'rss'),
+        page.getFeedEntry('posts', {}, 'atom'),
+        page.getFeedEntry('posts', {}, 'rss'),
       ]
     }
 
-    return [
-      page.getFeedEntry('bearblog:posts', {}, 'atom'),
-      page.getFeedEntry('bearblog:posts', {}, 'rss'),
-    ]
+    return [page.getFeedEntry('posts', {}, 'atom'), page.getFeedEntry('posts', {}, 'rss')]
   },
 
   getFeedHint: feeds.getFeedHint,

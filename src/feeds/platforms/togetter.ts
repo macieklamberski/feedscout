@@ -11,13 +11,13 @@ export const hosts = ['togetter.com', 'www.togetter.com']
 
 const userPathRegex = /^\/id\/([^/]+)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'togetter:news', main: 'https://togetter.com/rss/news' },
-  { key: 'togetter:hot', main: 'https://togetter.com/rss/hot' },
-  { key: 'togetter:recent', main: 'https://togetter.com/rss/recent' },
+const feeds = definePlatformFeeds('togetter', [
+  { key: 'news', main: 'https://togetter.com/rss/news' },
+  { key: 'hot', main: 'https://togetter.com/rss/hot' },
+  { key: 'recent', main: 'https://togetter.com/rss/recent' },
   // A curator's feed moved to posfie.com, and the togetter.com one redirects there with a 301.
   {
-    key: 'togetter:curator',
+    key: 'curator',
     main: 'https://posfie.com/@{username}/rss',
     aliases: ['https://togetter.com/rss/id/{username}'],
   },
@@ -61,26 +61,18 @@ export const togetterHandler: PlatformHandler = {
     // after its own feeds.
     if (parsed.kind === 'user') {
       return [
-        feeds.getFeedEntry('togetter:curator', { username: parsed.username }),
-        feeds.getFeedEntry('togetter:news'),
-        feeds.getFeedEntry('togetter:recent'),
-        feeds.getFeedEntry('togetter:hot'),
+        feeds.getFeedEntry('curator', { username: parsed.username }),
+        feeds.getFeedEntry('news'),
+        feeds.getFeedEntry('recent'),
+        feeds.getFeedEntry('hot'),
       ]
     }
 
     if (parsed.kind === 'recent') {
-      return [
-        feeds.getFeedEntry('togetter:recent'),
-        feeds.getFeedEntry('togetter:news'),
-        feeds.getFeedEntry('togetter:hot'),
-      ]
+      return [feeds.getFeedEntry('recent'), feeds.getFeedEntry('news'), feeds.getFeedEntry('hot')]
     }
 
-    return [
-      feeds.getFeedEntry('togetter:news'),
-      feeds.getFeedEntry('togetter:recent'),
-      feeds.getFeedEntry('togetter:hot'),
-    ]
+    return [feeds.getFeedEntry('news'), feeds.getFeedEntry('recent'), feeds.getFeedEntry('hot')]
   },
 
   getFeedHint: feeds.getFeedHint,

@@ -8,7 +8,7 @@ export type OverblogUrl = { kind: 'blog' }
 
 const domains = [getBrandDomainRegex('over-blog'), getBrandDomainRegex('overblog'), 'over.blog']
 
-const feeds = definePlatformFeeds([{ key: 'overblog:posts', main: '{scheme}://{host}/rss' }], {
+const feeds = definePlatformFeeds('overblog', [{ key: 'posts', main: '{scheme}://{host}/rss' }], {
   hosts: { tenants: domains },
 })
 
@@ -33,7 +33,7 @@ export const overblogHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('overblog:posts')]
+    return [page.getFeedEntry('posts')]
   },
 
   getFeedHint: feeds.getFeedHint,

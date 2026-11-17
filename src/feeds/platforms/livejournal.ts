@@ -13,7 +13,7 @@ import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 
 export type LivejournalUrl = { kind: 'journal'; username?: string; tag?: string }
 
-type JournalFeedKey<Platform extends string> = `${Platform}:${'posts' | 'posts-tag' | 'userpics'}`
+type JournalFeedKey = 'posts' | 'posts-tag' | 'userpics'
 
 const domains = ['livejournal.com']
 const wwwHosts = ['www.livejournal.com']
@@ -30,40 +30,37 @@ const journalTagRegex = /^\/tag\/([^/]+)/i
 // `https://alice.livejournal.com`, or the path the users host serves it under, as
 // `https://users.livejournal.com/-alice-`. A tag's feeds keep their own rows, so the posts row,
 // which ignores extra query parameters, does not read one as posts.
-const getJournalTemplates = <Platform extends string>(
-  platform: Platform,
-): Array<PlatformFeed<JournalFeedKey<Platform>>> => {
-  return [
-    { key: `${platform}:posts-tag`, main: '{root}/data/rss?tag={tag}', format: 'rss' },
-    { key: `${platform}:posts-tag`, main: '{root}/data/atom?tag={tag}', format: 'atom' },
-    { key: `${platform}:posts`, main: '{root}/data/rss', format: 'rss' },
-    { key: `${platform}:posts`, main: '{root}/data/atom', format: 'atom' },
-    { key: `${platform}:userpics`, main: '{root}/data/userpics', format: 'atom' },
-  ]
-}
+const journalFeeds: Array<PlatformFeed<JournalFeedKey>> = [
+  { key: 'posts-tag', main: '{root}/data/rss?tag={tag}', format: 'rss' },
+  { key: 'posts-tag', main: '{root}/data/atom?tag={tag}', format: 'atom' },
+  { key: 'posts', main: '{root}/data/rss', format: 'rss' },
+  { key: 'posts', main: '{root}/data/atom', format: 'atom' },
+  { key: 'userpics', main: '{root}/data/userpics', format: 'atom' },
+]
 
-const feeds = definePlatformFeeds(getJournalTemplates('livejournal'), {
+const feeds = definePlatformFeeds('livejournal', journalFeeds, {
   hosts: { tenants: domains },
 })
 
 // A `{root}` row claims a feed on a journal's subdomain, so the feeds the users or community host
 // serves under a journal's path are claimed by their own rows.
 const pathFeeds = definePlatformFeeds(
+  'livejournal',
   [
     {
-      key: 'livejournal:posts-tag',
+      key: 'posts-tag',
       main: '{scheme}://{host}/{journal}/data/rss?tag={tag}',
       format: 'rss',
     },
     {
-      key: 'livejournal:posts-tag',
+      key: 'posts-tag',
       main: '{scheme}://{host}/{journal}/data/atom?tag={tag}',
       format: 'atom',
     },
-    { key: 'livejournal:posts', main: '{scheme}://{host}/{journal}/data/rss', format: 'rss' },
-    { key: 'livejournal:posts', main: '{scheme}://{host}/{journal}/data/atom', format: 'atom' },
+    { key: 'posts', main: '{scheme}://{host}/{journal}/data/rss', format: 'rss' },
+    { key: 'posts', main: '{scheme}://{host}/{journal}/data/atom', format: 'atom' },
     {
-      key: 'livejournal:userpics',
+      key: 'userpics',
       main: '{scheme}://{host}/{journal}/data/userpics',
       format: 'atom',
     },
@@ -72,28 +69,27 @@ const pathFeeds = definePlatformFeeds(
 )
 
 // The feeds of a journal from its root, plus a tag's feeds on a tag page.
-const getJournalEntries = <Platform extends string>(
-  table: Pick<PlatformFeedTable<JournalFeedKey<Platform>>, 'getFeedEntry'>,
+const getJournalEntries = (
+  table: Pick<PlatformFeedTable<JournalFeedKey>, 'getFeedEntry'>,
   root: string,
   tag: string | undefined,
-  platform: Platform,
 ): Array<DiscoverUriEntry | undefined> => {
   if (tag) {
     const params = { root, tag: decodeSegment(tag) ?? tag }
 
     return [
-      table.getFeedEntry(`${platform}:posts-tag`, params, 'rss'),
-      table.getFeedEntry(`${platform}:posts-tag`, params, 'atom'),
-      table.getFeedEntry(`${platform}:posts`, params, 'rss'),
-      table.getFeedEntry(`${platform}:posts`, params, 'atom'),
-      table.getFeedEntry(`${platform}:userpics`, params, 'atom'),
+      table.getFeedEntry('posts-tag', params, 'rss'),
+      table.getFeedEntry('posts-tag', params, 'atom'),
+      table.getFeedEntry('posts', params, 'rss'),
+      table.getFeedEntry('posts', params, 'atom'),
+      table.getFeedEntry('userpics', params, 'atom'),
     ]
   }
 
   return [
-    table.getFeedEntry(`${platform}:posts`, { root }, 'rss'),
-    table.getFeedEntry(`${platform}:posts`, { root }, 'atom'),
-    table.getFeedEntry(`${platform}:userpics`, { root }, 'atom'),
+    table.getFeedEntry('posts', { root }, 'rss'),
+    table.getFeedEntry('posts', { root }, 'atom'),
+    table.getFeedEntry('userpics', { root }, 'atom'),
   ]
 }
 
@@ -104,7 +100,7 @@ export const getJournalFeeds = (
   tag: string | undefined,
   platform: string,
 ): Array<DiscoverUriEntry | undefined> => {
-  return getJournalEntries(definePlatformFeeds(getJournalTemplates(platform)), base, tag, platform)
+  return getJournalEntries(definePlatformFeeds(platform, journalFeeds), base, tag)
 }
 
 // Journal names on the LiveJournal engine carry no dots, so a dotted segment such as robots.txt is
@@ -200,7 +196,7 @@ export const livejournalHandler: PlatformHandler = {
       return []
     }
 
-    return getJournalEntries(page, root, parsed.tag, 'livejournal')
+    return getJournalEntries(page, root, parsed.tag)
   },
 
   // The table reads any label or first segment as a journal, so the page parser refuses the mobile,

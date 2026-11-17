@@ -11,8 +11,8 @@ const hosts = ['redcircle.com', 'www.redcircle.com']
 
 const showRegex = /^\/shows\/([^/]+)(?:\/|$)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'redcircle:show', main: 'https://feeds.redcircle.com/{showUuid}' },
+const feeds = definePlatformFeeds('redcircle', [
+  { key: 'show', main: 'https://feeds.redcircle.com/{showUuid}' },
 ])
 
 const getUuidFromPath = (pathname: string): string | undefined => {
@@ -75,7 +75,7 @@ export const redcircleHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('redcircle:show', { showUuid: page.showUuid })]
+    return [feeds.getFeedEntry('show', { showUuid: page.showUuid })]
   },
 
   getFeedHint: feeds.getFeedHint,

@@ -83,105 +83,105 @@ export const chambermasterHandler: PlatformHandler = {
     // feeds.
     if (parsed.kind === 'events') {
       return [
-        feedEntry('chambermaster:upcoming-events'),
-        feedEntry('chambermaster:new-events'),
-        feedEntry('chambermaster:featured-events'),
-        feedEntry('chambermaster:new-members'),
-        feedEntry('chambermaster:featured-members'),
-        feedEntry('chambermaster:new-jobs'),
-        feedEntry('chambermaster:new-coupons'),
-        feedEntry('chambermaster:new-market-items'),
-        feedEntry('chambermaster:news-releases'),
-        feedEntry('chambermaster:new-m2m-deals'),
+        feedEntry('upcoming-events'),
+        feedEntry('new-events'),
+        feedEntry('featured-events'),
+        feedEntry('new-members'),
+        feedEntry('featured-members'),
+        feedEntry('new-jobs'),
+        feedEntry('new-coupons'),
+        feedEntry('new-market-items'),
+        feedEntry('news-releases'),
+        feedEntry('new-m2m-deals'),
       ]
     }
 
     if (parsed.kind === 'directory') {
       return [
-        feedEntry('chambermaster:new-members'),
-        feedEntry('chambermaster:featured-members'),
-        feedEntry('chambermaster:upcoming-events'),
-        feedEntry('chambermaster:new-events'),
-        feedEntry('chambermaster:featured-events'),
-        feedEntry('chambermaster:new-jobs'),
-        feedEntry('chambermaster:new-coupons'),
-        feedEntry('chambermaster:new-market-items'),
-        feedEntry('chambermaster:news-releases'),
-        feedEntry('chambermaster:new-m2m-deals'),
+        feedEntry('new-members'),
+        feedEntry('featured-members'),
+        feedEntry('upcoming-events'),
+        feedEntry('new-events'),
+        feedEntry('featured-events'),
+        feedEntry('new-jobs'),
+        feedEntry('new-coupons'),
+        feedEntry('new-market-items'),
+        feedEntry('news-releases'),
+        feedEntry('new-m2m-deals'),
       ]
     }
 
     if (parsed.kind === 'jobs') {
       return [
-        feedEntry('chambermaster:new-jobs'),
-        feedEntry('chambermaster:upcoming-events'),
-        feedEntry('chambermaster:new-events'),
-        feedEntry('chambermaster:featured-events'),
-        feedEntry('chambermaster:new-members'),
-        feedEntry('chambermaster:featured-members'),
-        feedEntry('chambermaster:new-coupons'),
-        feedEntry('chambermaster:new-market-items'),
-        feedEntry('chambermaster:news-releases'),
-        feedEntry('chambermaster:new-m2m-deals'),
+        feedEntry('new-jobs'),
+        feedEntry('upcoming-events'),
+        feedEntry('new-events'),
+        feedEntry('featured-events'),
+        feedEntry('new-members'),
+        feedEntry('featured-members'),
+        feedEntry('new-coupons'),
+        feedEntry('new-market-items'),
+        feedEntry('news-releases'),
+        feedEntry('new-m2m-deals'),
       ]
     }
 
     if (parsed.kind === 'hotDeals') {
       return [
-        feedEntry('chambermaster:new-coupons'),
-        feedEntry('chambermaster:upcoming-events'),
-        feedEntry('chambermaster:new-events'),
-        feedEntry('chambermaster:featured-events'),
-        feedEntry('chambermaster:new-members'),
-        feedEntry('chambermaster:featured-members'),
-        feedEntry('chambermaster:new-jobs'),
-        feedEntry('chambermaster:new-market-items'),
-        feedEntry('chambermaster:news-releases'),
-        feedEntry('chambermaster:new-m2m-deals'),
+        feedEntry('new-coupons'),
+        feedEntry('upcoming-events'),
+        feedEntry('new-events'),
+        feedEntry('featured-events'),
+        feedEntry('new-members'),
+        feedEntry('featured-members'),
+        feedEntry('new-jobs'),
+        feedEntry('new-market-items'),
+        feedEntry('news-releases'),
+        feedEntry('new-m2m-deals'),
       ]
     }
 
     if (parsed.kind === 'marketSpace') {
       return [
-        feedEntry('chambermaster:new-market-items'),
-        feedEntry('chambermaster:upcoming-events'),
-        feedEntry('chambermaster:new-events'),
-        feedEntry('chambermaster:featured-events'),
-        feedEntry('chambermaster:new-members'),
-        feedEntry('chambermaster:featured-members'),
-        feedEntry('chambermaster:new-jobs'),
-        feedEntry('chambermaster:new-coupons'),
-        feedEntry('chambermaster:news-releases'),
-        feedEntry('chambermaster:new-m2m-deals'),
+        feedEntry('new-market-items'),
+        feedEntry('upcoming-events'),
+        feedEntry('new-events'),
+        feedEntry('featured-events'),
+        feedEntry('new-members'),
+        feedEntry('featured-members'),
+        feedEntry('new-jobs'),
+        feedEntry('new-coupons'),
+        feedEntry('news-releases'),
+        feedEntry('new-m2m-deals'),
       ]
     }
 
     if (parsed.kind === 'news') {
       return [
-        feedEntry('chambermaster:news-releases'),
-        feedEntry('chambermaster:upcoming-events'),
-        feedEntry('chambermaster:new-events'),
-        feedEntry('chambermaster:featured-events'),
-        feedEntry('chambermaster:new-members'),
-        feedEntry('chambermaster:featured-members'),
-        feedEntry('chambermaster:new-jobs'),
-        feedEntry('chambermaster:new-coupons'),
-        feedEntry('chambermaster:new-market-items'),
-        feedEntry('chambermaster:new-m2m-deals'),
+        feedEntry('news-releases'),
+        feedEntry('upcoming-events'),
+        feedEntry('new-events'),
+        feedEntry('featured-events'),
+        feedEntry('new-members'),
+        feedEntry('featured-members'),
+        feedEntry('new-jobs'),
+        feedEntry('new-coupons'),
+        feedEntry('new-market-items'),
+        feedEntry('new-m2m-deals'),
       ]
     }
 
     return [
-      feedEntry('chambermaster:new-m2m-deals'),
-      feedEntry('chambermaster:upcoming-events'),
-      feedEntry('chambermaster:new-events'),
-      feedEntry('chambermaster:featured-events'),
-      feedEntry('chambermaster:new-members'),
-      feedEntry('chambermaster:featured-members'),
-      feedEntry('chambermaster:new-jobs'),
-      feedEntry('chambermaster:new-coupons'),
-      feedEntry('chambermaster:new-market-items'),
-      feedEntry('chambermaster:news-releases'),
+      feedEntry('new-m2m-deals'),
+      feedEntry('upcoming-events'),
+      feedEntry('new-events'),
+      feedEntry('featured-events'),
+      feedEntry('new-members'),
+      feedEntry('featured-members'),
+      feedEntry('new-jobs'),
+      feedEntry('new-coupons'),
+      feedEntry('new-market-items'),
+      feedEntry('news-releases'),
     ]
   },
 

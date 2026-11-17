@@ -83,12 +83,9 @@ const feedSpellings: Array<[DiscoverUriHint['format'], Array<string>]> = [
 const postsFormats: Array<DiscoverUriHint['format']> = ['rss', 'atom', 'rdf']
 // WordPress has no RDF comment template, so the RDF form of a comment feed lists posts.
 const commentsFormats: Array<DiscoverUriHint['format']> = ['rss', 'atom']
-const archiveKeys = [
-  'wordpress:category',
-  'wordpress:tag',
-  'wordpress:author',
-  'wordpress:date-archive',
-]
+const hintPrefix = 'wordpress:'
+
+const archiveKeys = ['category', 'tag', 'author', 'date-archive']
 
 const getFeedRows = (
   key: string,
@@ -111,18 +108,18 @@ const getFeedRows = (
 // claim reads a feed URL back to its page in `getWordpressFeedHint`, which no row can express.
 // The site-wide comments feed takes its query form from the site root, not /comments. Without
 // pretty permalinks, ?feed=comments-rss serves the RSS 0.92 posts template.
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('wordpress', [
   ...archiveKeys.flatMap((key) => getFeedRows(key, '/{path*}', postsFormats)),
-  ...getFeedRows('wordpress:post-comments', '/{path*}', commentsFormats),
-  ...getFeedRows('wordpress:posts', '', postsFormats),
+  ...getFeedRows('post-comments', '/{path*}', commentsFormats),
+  ...getFeedRows('posts', '', postsFormats),
   {
-    key: 'wordpress:comments',
+    key: 'comments',
     main: '{root}/comments/feed/',
     format: 'rss',
     aliases: ['{root}/comments/feed/rss2/', '{root}/?feed=comments-rss2'],
   },
   {
-    key: 'wordpress:comments',
+    key: 'comments',
     main: '{root}/comments/feed/atom/',
     format: 'atom',
     aliases: ['{root}/?feed=comments-atom'],
@@ -228,11 +225,11 @@ export const getWordpressFeedHint = (url: string): DiscoverUriHint | undefined =
 // The site-wide feeds, which every page gets after its own.
 const getSiteFeeds = (root: string): Array<DiscoverUriEntry | undefined> => {
   return [
-    feeds.getFeedSpellings('wordpress:posts', { root }, 'rss'),
-    feeds.getFeedSpellings('wordpress:posts', { root }, 'atom'),
-    feeds.getFeedSpellings('wordpress:posts', { root }, 'rdf'),
-    feeds.getFeedSpellings('wordpress:comments', { root }, 'rss'),
-    feeds.getFeedSpellings('wordpress:comments', { root }, 'atom'),
+    feeds.getFeedSpellings('posts', { root }, 'rss'),
+    feeds.getFeedSpellings('posts', { root }, 'atom'),
+    feeds.getFeedSpellings('posts', { root }, 'rdf'),
+    feeds.getFeedSpellings('comments', { root }, 'rss'),
+    feeds.getFeedSpellings('comments', { root }, 'atom'),
   ]
 }
 
@@ -244,9 +241,9 @@ export const composeWordpressFeeds = (
     const params = { root: origin, path: parsed.path }
 
     return [
-      feeds.getFeedSpellings(parsed.hintKey, params, 'rss'),
-      feeds.getFeedSpellings(parsed.hintKey, params, 'atom'),
-      feeds.getFeedSpellings(parsed.hintKey, params, 'rdf'),
+      feeds.getFeedSpellings(parsed.hintKey.slice(hintPrefix.length), params, 'rss'),
+      feeds.getFeedSpellings(parsed.hintKey.slice(hintPrefix.length), params, 'atom'),
+      feeds.getFeedSpellings(parsed.hintKey.slice(hintPrefix.length), params, 'rdf'),
       ...getSiteFeeds(origin),
     ]
   }
@@ -255,8 +252,8 @@ export const composeWordpressFeeds = (
     const params = { root: origin, path: parsed.path }
 
     return [
-      feeds.getFeedSpellings('wordpress:post-comments', params, 'rss'),
-      feeds.getFeedSpellings('wordpress:post-comments', params, 'atom'),
+      feeds.getFeedSpellings('post-comments', params, 'rss'),
+      feeds.getFeedSpellings('post-comments', params, 'atom'),
       ...getSiteFeeds(origin),
     ]
   }

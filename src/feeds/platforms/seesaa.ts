@@ -12,12 +12,13 @@ export type SeesaaUrl = { kind: 'blog' }
 const domains = [getBrandDomainRegex('seesaa'), 'iiblog.jp', 'sokuho.org', 'stablo.jp', 'xblog.jp']
 
 const feeds = definePlatformFeeds(
+  'seesaa',
   [
-    { key: 'seesaa:posts', main: '{scheme}://{host}/index20.rdf', format: 'rss' },
-    { key: 'seesaa:posts', main: '{scheme}://{host}/index.rdf', format: 'rdf' },
+    { key: 'posts', main: '{scheme}://{host}/index20.rdf', format: 'rss' },
+    { key: 'posts', main: '{scheme}://{host}/index.rdf', format: 'rdf' },
     // The podcast feed, RSS 2.0 despite its `.rdf` name. A blog that never set one up mostly
     // answers 404, which discovery drops.
-    { key: 'seesaa:podcast', main: '{scheme}://{host}/index_custom.rdf', format: 'rss' },
+    { key: 'podcast', main: '{scheme}://{host}/index_custom.rdf', format: 'rss' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -48,9 +49,9 @@ export const seesaaHandler: PlatformHandler = {
     const params = { scheme: domain === 'stablo.jp' ? 'http' : 'https' }
 
     return [
-      page.getFeedEntry('seesaa:posts', params, 'rss'),
-      page.getFeedEntry('seesaa:posts', params, 'rdf'),
-      page.getFeedEntry('seesaa:podcast', params, 'rss'),
+      page.getFeedEntry('posts', params, 'rss'),
+      page.getFeedEntry('posts', params, 'rdf'),
+      page.getFeedEntry('podcast', params, 'rss'),
     ]
   },
 

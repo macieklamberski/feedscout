@@ -14,7 +14,8 @@ const cartScriptRegex =
 
 // A shop on its own domain is known only by its markers, so its feed is built but not claimed.
 const feeds = definePlatformFeeds(
-  [{ key: 'ocnk:products', main: '{scheme}://{host}/rss/rss.php', format: 'rdf' }],
+  'ocnk',
+  [{ key: 'products', main: '{scheme}://{host}/rss/rss.php', format: 'rdf' }],
   { hosts: { tenants: domains } },
 )
 
@@ -61,7 +62,7 @@ export const ocnkHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('ocnk:products', {}, 'rdf')]
+    return [page.getFeedEntry('products', {}, 'rdf')]
   },
 
   getFeedHint: feeds.getFeedHint,

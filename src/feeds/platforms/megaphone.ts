@@ -16,8 +16,8 @@ const episodeIdRegex = /^[A-Z]+\d+$/
 const episodePathRegex = /^\/([^/]+)\/?$/
 const feedUrlRegex = /feeds\.megaphone\.fm\/([\w-]+)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'megaphone:podcast', main: 'https://feeds.megaphone.fm/{showId}' },
+const feeds = definePlatformFeeds('megaphone', [
+  { key: 'podcast', main: 'https://feeds.megaphone.fm/{showId}' },
 ])
 
 export const parseMegaphoneUrl = (url: string): MegaphoneUrl | undefined => {
@@ -83,7 +83,7 @@ export const megaphoneHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('megaphone:podcast', { showId: page.showId })]
+    return [feeds.getFeedEntry('podcast', { showId: page.showId })]
   },
 
   // The feeds host also serves files such as robots.txt, so a show id is word characters and

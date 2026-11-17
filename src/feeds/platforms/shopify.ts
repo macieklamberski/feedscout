@@ -13,21 +13,22 @@ const domains = ['myshopify.com']
 // claimed. A collection and a collection narrowed to product tags are linked from pages `resolve`
 // does not read, so the table only claims them.
 const feeds = definePlatformFeeds(
+  'shopify',
   [
-    { key: 'shopify:blog', main: '{scheme}://{host}/blogs/{handle}.atom' },
-    { key: 'shopify:blog-tag', main: '{scheme}://{host}/blogs/{handle}/tagged/{tag}.atom' },
-    { key: 'shopify:collection', main: '{scheme}://{host}/collections/{handle}.atom' },
-    { key: 'shopify:collection-tag', main: '{scheme}://{host}/collections/{handle}/{tags}.atom' },
+    { key: 'blog', main: '{scheme}://{host}/blogs/{handle}.atom' },
+    { key: 'blog-tag', main: '{scheme}://{host}/blogs/{handle}/tagged/{tag}.atom' },
+    { key: 'collection', main: '{scheme}://{host}/collections/{handle}.atom' },
+    { key: 'collection-tag', main: '{scheme}://{host}/collections/{handle}/{tags}.atom' },
     // Below the feeds without a locale, so `/collections/collections/{tags}.atom` reads as a
     // collection named collections, not as the locale `collections`.
-    { key: 'shopify:blog', main: '{scheme}://{host}/{locale}/blogs/{handle}.atom' },
+    { key: 'blog', main: '{scheme}://{host}/{locale}/blogs/{handle}.atom' },
     {
-      key: 'shopify:blog-tag',
+      key: 'blog-tag',
       main: '{scheme}://{host}/{locale}/blogs/{handle}/tagged/{tag}.atom',
     },
-    { key: 'shopify:collection', main: '{scheme}://{host}/{locale}/collections/{handle}.atom' },
+    { key: 'collection', main: '{scheme}://{host}/{locale}/collections/{handle}.atom' },
     {
-      key: 'shopify:collection-tag',
+      key: 'collection-tag',
       main: '{scheme}://{host}/{locale}/collections/{handle}/{tags}.atom',
     },
   ],
@@ -77,12 +78,12 @@ export const shopifyHandler: PlatformHandler = {
 
     if (parsed.tag) {
       return [
-        page.getFeedEntry('shopify:blog', { handle: parsed.handle }),
-        page.getFeedEntry('shopify:blog-tag', { handle: parsed.handle, tag: parsed.tag }),
+        page.getFeedEntry('blog', { handle: parsed.handle }),
+        page.getFeedEntry('blog-tag', { handle: parsed.handle, tag: parsed.tag }),
       ]
     }
 
-    return [page.getFeedEntry('shopify:blog', { handle: parsed.handle })]
+    return [page.getFeedEntry('blog', { handle: parsed.handle })]
   },
 
   getFeedHint: feeds.getFeedHint,

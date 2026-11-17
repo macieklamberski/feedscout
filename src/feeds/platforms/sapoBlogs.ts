@@ -19,13 +19,14 @@ const postRegex = /^\/(?:[^/]+-(\d+)|(\d+)\.html)\/?$/i
 const tagRegex = /^\/tag\/(.+?)\/?$/i
 
 const feeds = definePlatformFeeds(
+  'sapo-blogs',
   [
-    { key: 'sapo-blogs:posts', main: '{scheme}://{host}/data/rss', format: 'rss' },
-    { key: 'sapo-blogs:posts', main: '{scheme}://{host}/data/atom', format: 'atom' },
-    { key: 'sapo-blogs:tag', main: '{scheme}://{host}/data/rss?tag={tag}' },
-    { key: 'sapo-blogs:comments', main: 'https://blogs.sapo.pt/commentsrss.bml?blog={blog}' },
+    { key: 'posts', main: '{scheme}://{host}/data/rss', format: 'rss' },
+    { key: 'posts', main: '{scheme}://{host}/data/atom', format: 'atom' },
+    { key: 'tag', main: '{scheme}://{host}/data/rss?tag={tag}' },
+    { key: 'comments', main: 'https://blogs.sapo.pt/commentsrss.bml?blog={blog}' },
     {
-      key: 'sapo-blogs:post-comments',
+      key: 'post-comments',
       main: 'https://blogs.sapo.pt/commentsrss.bml?blog={blog}&ditemid={postId}',
     },
   ],
@@ -103,26 +104,26 @@ export const sapoBlogsHandler: PlatformHandler = {
 
     if (page.kind === 'post') {
       return [
-        pageFeeds.getFeedEntry('sapo-blogs:post-comments', { blog, postId: page.postId }),
-        pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'rss'),
-        pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'atom'),
-        pageFeeds.getFeedEntry('sapo-blogs:comments', { blog }),
+        pageFeeds.getFeedEntry('post-comments', { blog, postId: page.postId }),
+        pageFeeds.getFeedEntry('posts', {}, 'rss'),
+        pageFeeds.getFeedEntry('posts', {}, 'atom'),
+        pageFeeds.getFeedEntry('comments', { blog }),
       ]
     }
 
     if (page.kind === 'tag') {
       return [
-        pageFeeds.getFeedEntry('sapo-blogs:tag', { tag: page.tag }),
-        pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'rss'),
-        pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'atom'),
-        pageFeeds.getFeedEntry('sapo-blogs:comments', { blog }),
+        pageFeeds.getFeedEntry('tag', { tag: page.tag }),
+        pageFeeds.getFeedEntry('posts', {}, 'rss'),
+        pageFeeds.getFeedEntry('posts', {}, 'atom'),
+        pageFeeds.getFeedEntry('comments', { blog }),
       ]
     }
 
     return [
-      pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'rss'),
-      pageFeeds.getFeedEntry('sapo-blogs:posts', {}, 'atom'),
-      pageFeeds.getFeedEntry('sapo-blogs:comments', { blog }),
+      pageFeeds.getFeedEntry('posts', {}, 'rss'),
+      pageFeeds.getFeedEntry('posts', {}, 'atom'),
+      pageFeeds.getFeedEntry('comments', { blog }),
     ]
   },
 

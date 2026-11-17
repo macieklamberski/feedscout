@@ -13,9 +13,9 @@ const groupPathRegex = /^\/@([^/]+)/
 
 // Mobilizon is self-hosted and known only by its page marker, so nothing in a feed URL names it
 // and the table only builds.
-const feeds = definePlatformFeeds([
-  { key: 'mobilizon:group', main: '{root}/@{group}/feed/atom' },
-  { key: 'mobilizon:instance', main: '{root}/feed/instance/atom' },
+const feeds = definePlatformFeeds('mobilizon', [
+  { key: 'group', main: '{root}/@{group}/feed/atom' },
+  { key: 'instance', main: '{root}/feed/instance/atom' },
 ])
 
 // The page is a JavaScript shell, and this notice is the only text the server renders on every page.
@@ -58,11 +58,11 @@ export const mobilizonHandler: PlatformHandler = {
 
     if (parsed.kind === 'group') {
       return [
-        pageFeeds.getFeedEntry('mobilizon:group', { group: parsed.group }),
-        pageFeeds.getFeedEntry('mobilizon:instance'),
+        pageFeeds.getFeedEntry('group', { group: parsed.group }),
+        pageFeeds.getFeedEntry('instance'),
       ]
     }
 
-    return [pageFeeds.getFeedEntry('mobilizon:instance')]
+    return [pageFeeds.getFeedEntry('instance')]
   },
 }

@@ -18,14 +18,14 @@ export type PhpbbPage = { boardUrl: string; forumId?: string; topicId?: string }
 // A board is known only by its markup and cookies, so its feeds are built under the board root and
 // claimed on no host. Each board-wide feed is an administrator toggle, so a board serves any subset
 // of them.
-const feeds = definePlatformFeeds([
-  { key: 'phpbb:topic', main: '{root}/feed.php?t={topicId}' },
-  { key: 'phpbb:forum', main: '{root}/feed.php?f={forumId}' },
-  { key: 'phpbb:site', main: '{root}/feed.php' },
-  { key: 'phpbb:news', main: '{root}/feed.php?mode=news' },
-  { key: 'phpbb:new-topics', main: '{root}/feed.php?mode=topics' },
-  { key: 'phpbb:active-topics', main: '{root}/feed.php?mode=topics_active' },
-  { key: 'phpbb:forums', main: '{root}/feed.php?mode=forums' },
+const feeds = definePlatformFeeds('phpbb', [
+  { key: 'topic', main: '{root}/feed.php?t={topicId}' },
+  { key: 'forum', main: '{root}/feed.php?f={forumId}' },
+  { key: 'site', main: '{root}/feed.php' },
+  { key: 'news', main: '{root}/feed.php?mode=news' },
+  { key: 'new-topics', main: '{root}/feed.php?mode=topics' },
+  { key: 'active-topics', main: '{root}/feed.php?mode=topics_active' },
+  { key: 'forums', main: '{root}/feed.php?mode=forums' },
 ])
 
 // Forumotion's phpBB3 template prints the same body id and serves none of phpBB's feeds.
@@ -97,13 +97,13 @@ export const phpbbHandler: PlatformHandler = {
     const { boardUrl: root, forumId, topicId } = page
 
     return [
-      ...(topicId ? [pageFeeds.getFeedEntry('phpbb:topic', { root, topicId })] : []),
-      ...(forumId ? [pageFeeds.getFeedEntry('phpbb:forum', { root, forumId })] : []),
-      pageFeeds.getFeedEntry('phpbb:site', { root }),
-      pageFeeds.getFeedEntry('phpbb:news', { root }),
-      pageFeeds.getFeedEntry('phpbb:new-topics', { root }),
-      pageFeeds.getFeedEntry('phpbb:active-topics', { root }),
-      pageFeeds.getFeedEntry('phpbb:forums', { root }),
+      ...(topicId ? [pageFeeds.getFeedEntry('topic', { root, topicId })] : []),
+      ...(forumId ? [pageFeeds.getFeedEntry('forum', { root, forumId })] : []),
+      pageFeeds.getFeedEntry('site', { root }),
+      pageFeeds.getFeedEntry('news', { root }),
+      pageFeeds.getFeedEntry('new-topics', { root }),
+      pageFeeds.getFeedEntry('active-topics', { root }),
+      pageFeeds.getFeedEntry('forums', { root }),
     ]
   },
 }

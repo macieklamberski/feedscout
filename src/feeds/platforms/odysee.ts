@@ -52,7 +52,7 @@ export const odyseeHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('odysee:videos', { name: parsed.name, claimId: parsed.claimId })]
+    return [feeds.getFeedEntry('videos', { name: parsed.name, claimId: parsed.claimId })]
   },
 
   getFeedHint: feeds.getFeedHint,

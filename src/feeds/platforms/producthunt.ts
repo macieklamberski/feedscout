@@ -15,9 +15,9 @@ const productRegex = /^\/products\/([^/]+)(?:\/|$)/i
 const topicRegex = /^\/topics\/([^/]+)\/?$/i
 
 // The feed narrows to one topic under `category`, which takes the slug of a /topics/ page.
-const feeds = definePlatformFeeds([
-  { key: 'producthunt:products', main: 'https://www.producthunt.com/feed' },
-  { key: 'producthunt:category', main: 'https://www.producthunt.com/feed?category={category}' },
+const feeds = definePlatformFeeds('producthunt', [
+  { key: 'products', main: 'https://www.producthunt.com/feed' },
+  { key: 'category', main: 'https://www.producthunt.com/feed?category={category}' },
 ])
 
 // Every page links the site-wide product feed, so any other page reads as the home page.
@@ -57,12 +57,12 @@ export const producthuntHandler: PlatformHandler = {
 
     if (parsed.kind === 'topic') {
       return [
-        feeds.getFeedEntry('producthunt:category', { category: parsed.topic }),
-        feeds.getFeedEntry('producthunt:products'),
+        feeds.getFeedEntry('category', { category: parsed.topic }),
+        feeds.getFeedEntry('products'),
       ]
     }
 
-    return [feeds.getFeedEntry('producthunt:products')]
+    return [feeds.getFeedEntry('products')]
   },
 
   getFeedHint: feeds.getFeedHint,

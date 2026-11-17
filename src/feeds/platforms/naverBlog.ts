@@ -12,9 +12,9 @@ export const hosts = ['blog.naver.com', 'm.blog.naver.com']
 // The feed host serves feeds only, so it stays out of `hosts` and its pages are not read as blogs.
 // The bare path and the old `blogRss.nhn` script serve the same items as `.xml`, and each serves
 // RSS 1.0 under `rss=1.0` and Atom under `atom=0.3`. The `.xml` path is the one blog pages link.
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('naver-blog', [
   {
-    key: 'naver-blog:blog',
+    key: 'blog',
     main: 'https://rss.blog.naver.com/{blogId}.xml',
     format: 'rss',
     aliases: [
@@ -23,7 +23,7 @@ const feeds = definePlatformFeeds([
     ],
   },
   {
-    key: 'naver-blog:blog',
+    key: 'blog',
     main: 'https://rss.blog.naver.com/{blogId}.xml?rss=1.0',
     format: 'rdf',
     aliases: [
@@ -32,7 +32,7 @@ const feeds = definePlatformFeeds([
     ],
   },
   {
-    key: 'naver-blog:blog',
+    key: 'blog',
     main: 'https://rss.blog.naver.com/{blogId}.xml?atom=0.3',
     format: 'atom',
     aliases: [
@@ -89,9 +89,9 @@ export const naverBlogHandler: PlatformHandler = {
     }
 
     return [
-      feeds.getFeedEntry('naver-blog:blog', { blogId: parsed.blogId }, 'rss'),
-      feeds.getFeedEntry('naver-blog:blog', { blogId: parsed.blogId }, 'rdf'),
-      feeds.getFeedEntry('naver-blog:blog', { blogId: parsed.blogId }, 'atom'),
+      feeds.getFeedEntry('blog', { blogId: parsed.blogId }, 'rss'),
+      feeds.getFeedEntry('blog', { blogId: parsed.blogId }, 'rdf'),
+      feeds.getFeedEntry('blog', { blogId: parsed.blogId }, 'atom'),
     ]
   },
 

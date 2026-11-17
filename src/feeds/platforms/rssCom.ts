@@ -11,8 +11,8 @@ const hosts = ['rss.com', 'www.rss.com']
 // An optional locale prefix, e.g. /es/podcasts/, /it/podcasts/.
 const podcastRegex = /^\/(?:([^/]+)\/)?podcasts\/([^/]+)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'rss-com:podcast', main: 'https://media.rss.com/{show}/feed.xml' },
+const feeds = definePlatformFeeds('rss-com', [
+  { key: 'podcast', main: 'https://media.rss.com/{show}/feed.xml' },
 ])
 
 export const parseRssComUrl = (url: string): RssComUrl | undefined => {
@@ -43,7 +43,7 @@ export const rssComHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('rss-com:podcast', { show: parsed.show })]
+    return [feeds.getFeedEntry('podcast', { show: parsed.show })]
   },
 
   getFeedHint: feeds.getFeedHint,

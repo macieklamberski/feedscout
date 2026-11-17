@@ -23,16 +23,16 @@ const feedPrefixRegex = /^([^?]*)\?(.*)$/
 
 // An install runs on its own domain and is known only by its marker, so its feeds are built here
 // but not claimed. A feed is the blog's feed link with another skin.
-const feeds = definePlatformFeeds([
-  { key: 'b2evolution:posts', main: '{root}?{query}&tempskin=_rss2', format: 'rss' },
-  { key: 'b2evolution:posts', main: '{root}?{query}&tempskin=_atom', format: 'atom' },
+const feeds = definePlatformFeeds('b2evolution', [
+  { key: 'posts', main: '{root}?{query}&tempskin=_rss2', format: 'rss' },
+  { key: 'posts', main: '{root}?{query}&tempskin=_atom', format: 'atom' },
   {
-    key: 'b2evolution:comments',
+    key: 'comments',
     main: '{root}?{query}&tempskin=_rss2&disp=comments',
     format: 'rss',
   },
   {
-    key: 'b2evolution:comments',
+    key: 'comments',
     main: '{root}?{query}&tempskin=_atom&disp=comments',
     format: 'atom',
   },
@@ -117,18 +117,18 @@ export const b2evolutionHandler: PlatformHandler = {
     if (page.kind === 'post') {
       return [
         { uri: page.postCommentsUrl, hint: composeHint('b2evolution:post-comments') },
-        pageFeeds.getFeedEntry('b2evolution:posts', params, 'rss'),
-        pageFeeds.getFeedEntry('b2evolution:posts', params, 'atom'),
-        pageFeeds.getFeedEntry('b2evolution:comments', params, 'rss'),
-        pageFeeds.getFeedEntry('b2evolution:comments', params, 'atom'),
+        pageFeeds.getFeedEntry('posts', params, 'rss'),
+        pageFeeds.getFeedEntry('posts', params, 'atom'),
+        pageFeeds.getFeedEntry('comments', params, 'rss'),
+        pageFeeds.getFeedEntry('comments', params, 'atom'),
       ]
     }
 
     return [
-      pageFeeds.getFeedEntry('b2evolution:posts', params, 'rss'),
-      pageFeeds.getFeedEntry('b2evolution:posts', params, 'atom'),
-      pageFeeds.getFeedEntry('b2evolution:comments', params, 'rss'),
-      pageFeeds.getFeedEntry('b2evolution:comments', params, 'atom'),
+      pageFeeds.getFeedEntry('posts', params, 'rss'),
+      pageFeeds.getFeedEntry('posts', params, 'atom'),
+      pageFeeds.getFeedEntry('comments', params, 'rss'),
+      pageFeeds.getFeedEntry('comments', params, 'atom'),
     ]
   },
 }

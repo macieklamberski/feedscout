@@ -43,22 +43,23 @@ const validSorts = ['newest', 'active', 'votes', 'creation', 'hot', 'week', 'mon
 // are the site feed sorted. The rows past the user feed are claimed only: chat starred messages,
 // Area 51 proposals and a network tag set.
 const feeds = definePlatformFeeds(
+  'stackexchange',
   [
-    { key: 'stackexchange:tag', main: '{scheme}://{host}/feeds/tag/{tag}?sort={sort}' },
+    { key: 'tag', main: '{scheme}://{host}/feeds/tag/{tag}?sort={sort}' },
     {
-      key: 'stackexchange:tag',
+      key: 'tag',
       main: '{scheme}://{host}/feeds/tag/{tag}',
       aliases: ['{scheme}://{host}/feeds/tag?tagnames={tag}'],
     },
-    { key: 'stackexchange:question', main: '{scheme}://{host}/feeds/question/{questionId}' },
-    { key: 'stackexchange:user', main: '{scheme}://{host}/feeds/user/{userId}' },
-    { key: 'stackexchange:chat-starred', main: '{scheme}://{host}/feeds/rooms/starred/{roomId}' },
-    { key: 'stackexchange:proposal', main: '{scheme}://{host}/feeds/proposal/{proposalId}' },
-    { key: 'stackexchange:tagset', main: '{scheme}://{host}/feeds/tagsets/{tagsetId}/{name}' },
-    { key: 'stackexchange:collective', main: '{scheme}://{host}/feeds/collectives/{collective}' },
-    { key: 'stackexchange:newest', main: '{scheme}://{host}/feeds' },
-    { key: 'stackexchange:newest', main: '{scheme}://{host}/feeds/week' },
-    { key: 'stackexchange:newest', main: '{scheme}://{host}/feeds/month' },
+    { key: 'question', main: '{scheme}://{host}/feeds/question/{questionId}' },
+    { key: 'user', main: '{scheme}://{host}/feeds/user/{userId}' },
+    { key: 'chat-starred', main: '{scheme}://{host}/feeds/rooms/starred/{roomId}' },
+    { key: 'proposal', main: '{scheme}://{host}/feeds/proposal/{proposalId}' },
+    { key: 'tagset', main: '{scheme}://{host}/feeds/tagsets/{tagsetId}/{name}' },
+    { key: 'collective', main: '{scheme}://{host}/feeds/collectives/{collective}' },
+    { key: 'newest', main: '{scheme}://{host}/feeds' },
+    { key: 'newest', main: '{scheme}://{host}/feeds/week' },
+    { key: 'newest', main: '{scheme}://{host}/feeds/month' },
   ],
   { hosts: { exact: domains, tenants: feedDomains } },
 )
@@ -131,33 +132,30 @@ export const stackExchangeHandler: PlatformHandler = {
     // feeds.
     if (parsed.kind === 'tag') {
       return [
-        page.getFeedEntry('stackexchange:tag', { tag: parsed.tag, sort: parsed.sort }),
-        page.getFeedEntry('stackexchange:newest'),
+        page.getFeedEntry('tag', { tag: parsed.tag, sort: parsed.sort }),
+        page.getFeedEntry('newest'),
       ]
     }
 
     if (parsed.kind === 'question') {
       return [
-        page.getFeedEntry('stackexchange:question', { questionId: parsed.questionId }),
-        page.getFeedEntry('stackexchange:newest'),
+        page.getFeedEntry('question', { questionId: parsed.questionId }),
+        page.getFeedEntry('newest'),
       ]
     }
 
     if (parsed.kind === 'user') {
-      return [
-        page.getFeedEntry('stackexchange:user', { userId: parsed.userId }),
-        page.getFeedEntry('stackexchange:newest'),
-      ]
+      return [page.getFeedEntry('user', { userId: parsed.userId }), page.getFeedEntry('newest')]
     }
 
     if (parsed.kind === 'collective') {
       return [
-        page.getFeedEntry('stackexchange:collective', { collective: parsed.collective }),
-        page.getFeedEntry('stackexchange:newest'),
+        page.getFeedEntry('collective', { collective: parsed.collective }),
+        page.getFeedEntry('newest'),
       ]
     }
 
-    return [page.getFeedEntry('stackexchange:newest')]
+    return [page.getFeedEntry('newest')]
   },
 
   getFeedHint: (url) => {

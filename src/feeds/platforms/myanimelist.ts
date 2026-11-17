@@ -18,20 +18,20 @@ const userRegex = /^\/(?:profile|animelist|mangalist|history)\/([^/]+)/i
 const newsRegex = /^\/news(?:\/|$)/i
 const featuredRegex = /^\/featured(?:\/|$)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'myanimelist:news', main: 'https://myanimelist.net/rss/news.xml' },
-  { key: 'myanimelist:featured', main: 'https://myanimelist.net/rss/featured.xml' },
-  { key: 'myanimelist:anime', main: 'https://myanimelist.net/rss.php?type=rw&u={username}' },
-  { key: 'myanimelist:manga', main: 'https://myanimelist.net/rss.php?type=rm&u={username}' },
+const feeds = definePlatformFeeds('myanimelist', [
+  { key: 'news', main: 'https://myanimelist.net/rss/news.xml' },
+  { key: 'featured', main: 'https://myanimelist.net/rss/featured.xml' },
+  { key: 'anime', main: 'https://myanimelist.net/rss.php?type=rw&u={username}' },
+  { key: 'manga', main: 'https://myanimelist.net/rss.php?type=rm&u={username}' },
   {
-    key: 'myanimelist:recently-watched',
+    key: 'recently-watched',
     main: 'https://myanimelist.net/rss.php?type=rwe&u={username}',
   },
   {
-    key: 'myanimelist:recently-read',
+    key: 'recently-read',
     main: 'https://myanimelist.net/rss.php?type=rrm&u={username}',
   },
-  { key: 'myanimelist:blog', main: 'https://myanimelist.net/rss.php?type=blog&u={username}' },
+  { key: 'blog', main: 'https://myanimelist.net/rss.php?type=blog&u={username}' },
 ])
 
 export const parseMyanimelistUrl = (url: string): MyanimelistUrl | undefined => {
@@ -82,23 +82,23 @@ export const myanimelistHandler: PlatformHandler = {
     // The news and featured articles feeds need no value from the page, so every page builds them
     // after its own feeds.
     if (parsed.kind === 'news') {
-      return [feeds.getFeedEntry('myanimelist:news'), feeds.getFeedEntry('myanimelist:featured')]
+      return [feeds.getFeedEntry('news'), feeds.getFeedEntry('featured')]
     }
 
     if (parsed.kind === 'featured') {
-      return [feeds.getFeedEntry('myanimelist:featured'), feeds.getFeedEntry('myanimelist:news')]
+      return [feeds.getFeedEntry('featured'), feeds.getFeedEntry('news')]
     }
 
     const username = decodeSegment(parsed.username) ?? parsed.username
 
     return [
-      feeds.getFeedEntry('myanimelist:anime', { username }),
-      feeds.getFeedEntry('myanimelist:manga', { username }),
-      feeds.getFeedEntry('myanimelist:recently-watched', { username }),
-      feeds.getFeedEntry('myanimelist:recently-read', { username }),
-      feeds.getFeedEntry('myanimelist:blog', { username }),
-      feeds.getFeedEntry('myanimelist:news'),
-      feeds.getFeedEntry('myanimelist:featured'),
+      feeds.getFeedEntry('anime', { username }),
+      feeds.getFeedEntry('manga', { username }),
+      feeds.getFeedEntry('recently-watched', { username }),
+      feeds.getFeedEntry('recently-read', { username }),
+      feeds.getFeedEntry('blog', { username }),
+      feeds.getFeedEntry('news'),
+      feeds.getFeedEntry('featured'),
     ]
   },
 

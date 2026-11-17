@@ -15,10 +15,10 @@ const sessionCookiePathRegex = /(?:^|,)\s*DokuWiki=[^,]*?;\s*path=([^;,\s]+)/i
 // A wiki runs on its own domain, under its install path, and is known only by its marker, so its
 // feeds are built here but not claimed. The template links the namespace's pages feed, not its
 // changes.
-const feeds = definePlatformFeeds([
-  { key: 'dokuwiki:namespace', main: '{root}/feed.php?ns={namespace}' },
-  { key: 'dokuwiki:namespace-pages', main: '{root}/feed.php?mode=list&ns={namespace}' },
-  { key: 'dokuwiki:recent-changes', main: '{root}/feed.php' },
+const feeds = definePlatformFeeds('dokuwiki', [
+  { key: 'namespace', main: '{root}/feed.php?ns={namespace}' },
+  { key: 'namespace-pages', main: '{root}/feed.php?mode=list&ns={namespace}' },
+  { key: 'recent-changes', main: '{root}/feed.php' },
 ])
 
 export const isDokuwikiHeaders = (headers: Headers): boolean => {
@@ -61,12 +61,12 @@ export const dokuwikiHandler: PlatformHandler = {
 
     if (namespace) {
       return [
-        feeds.getFeedEntry('dokuwiki:namespace', { root, namespace }),
-        feeds.getFeedEntry('dokuwiki:namespace-pages', { root, namespace }),
-        feeds.getFeedEntry('dokuwiki:recent-changes', { root }),
+        feeds.getFeedEntry('namespace', { root, namespace }),
+        feeds.getFeedEntry('namespace-pages', { root, namespace }),
+        feeds.getFeedEntry('recent-changes', { root }),
       ]
     }
 
-    return [feeds.getFeedEntry('dokuwiki:recent-changes', { root })]
+    return [feeds.getFeedEntry('recent-changes', { root })]
   },
 }

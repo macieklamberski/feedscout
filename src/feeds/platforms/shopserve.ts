@@ -6,7 +6,7 @@ import { findElement, hasMarker } from '../../common/utils.js'
 // Discoverability: Unmeasured, bot wall.
 
 // A shop is known only by its marker, so its feed is built here but not claimed.
-const feeds = definePlatformFeeds([{ key: 'shopserve:news', main: '{root}/hpgen/HPB/rss.xml' }])
+const feeds = definePlatformFeeds('shopserve', [{ key: 'news', main: '{root}/hpgen/HPB/rss.xml' }])
 
 const isGeneratedPath = (value: string | undefined): boolean => {
   return startsWithAnyOf(value, '/hpgen/HPB/')
@@ -34,6 +34,6 @@ export const shopserveHandler: PlatformHandler = {
       return []
     }
 
-    return [pageFeeds.getFeedEntry('shopserve:news')]
+    return [pageFeeds.getFeedEntry('news')]
   },
 }

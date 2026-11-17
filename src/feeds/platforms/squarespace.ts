@@ -23,9 +23,10 @@ const domains = ['squarespace.com']
 // is claimed. A Squarespace 5 site serves the `.xml` feeds, redirects them from https to http with
 // a jsessionid, and answers `?format=rss` with a page.
 const feeds = definePlatformFeeds(
+  'squarespace',
   [
     {
-      key: 'squarespace:collection',
+      key: 'collection',
       main: '{scheme}://{host}/{collection}?format=rss',
       aliases: [
         // One fixed value every site answers with the same feed as `format=rss`. Any other value
@@ -36,38 +37,38 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'squarespace:collection',
+      key: 'collection',
       main: '{scheme}://{host}/?format=rss',
       aliases: ['{scheme}://{host}/?format=sqsp_rss_wceoq1kgqnmf2cn9czutlluofr44tazt'],
     },
-    { key: 'squarespace:collection', main: '{scheme}://{host}/{parent}/{collection}?format=rss' },
+    { key: 'collection', main: '{scheme}://{host}/{parent}/{collection}?format=rss' },
     {
-      key: 'squarespace:collection',
+      key: 'collection',
       main: '{scheme}://{host}/{collection}/atom.xml',
       format: 'atom',
       aliases: ['{scheme}://{host}/{collection}/atom.xml;jsessionid={session}'],
     },
     {
-      key: 'squarespace:collection',
+      key: 'collection',
       main: '{scheme}://{host}/{collection}/rdf.xml',
       format: 'rdf',
       aliases: ['{scheme}://{host}/{collection}/rdf.xml;jsessionid={session}'],
     },
     {
-      key: 'squarespace:category',
+      key: 'category',
       main: '{scheme}://{host}/{collection}?category={category}&format=rss',
       aliases: ['{scheme}://{host}/{collection}/category/{category}?format=rss'],
     },
-    { key: 'squarespace:category', main: '{scheme}://{host}/?category={category}&format=rss' },
+    { key: 'category', main: '{scheme}://{host}/?category={category}&format=rss' },
     {
-      key: 'squarespace:category',
+      key: 'category',
       main: '{scheme}://{host}/{collection}/rss.xml?categoryId={categoryId}',
       aliases: [
         '{scheme}://{host}/{collection}/rss.xml;jsessionid={session}?categoryId={categoryId}',
       ],
     },
     {
-      key: 'squarespace:category',
+      key: 'category',
       main: '{scheme}://{host}/{collection}/atom.xml?categoryId={categoryId}',
       format: 'atom',
       aliases: [
@@ -75,7 +76,7 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'squarespace:category',
+      key: 'category',
       main: '{scheme}://{host}/{collection}/rdf.xml?categoryId={categoryId}',
       format: 'rdf',
       aliases: [
@@ -83,13 +84,13 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'squarespace:tag',
+      key: 'tag',
       main: '{scheme}://{host}/{collection}?tag={tag}&format=rss',
       aliases: ['{scheme}://{host}/{collection}/tag/{tag}?format=rss'],
     },
-    { key: 'squarespace:tag', main: '{scheme}://{host}/?tag={tag}&format=rss' },
+    { key: 'tag', main: '{scheme}://{host}/?tag={tag}&format=rss' },
     {
-      key: 'squarespace:comments',
+      key: 'comments',
       main: '{scheme}://{host}/{collection}/rss-comments.xml',
       aliases: ['{scheme}://{host}/{collection}/rss-comments.xml;jsessionid={session}'],
     },
@@ -154,8 +155,8 @@ export const squarespaceHandler: PlatformHandler = {
       const params = { collection: parsed.collection, category: parsed.category }
 
       return [
-        page.getFeedEntry('squarespace:category', params),
-        page.getFeedEntry('squarespace:collection', { collection: parsed.collection }),
+        page.getFeedEntry('category', params),
+        page.getFeedEntry('collection', { collection: parsed.collection }),
       ]
     }
 
@@ -163,12 +164,12 @@ export const squarespaceHandler: PlatformHandler = {
       const params = { collection: parsed.collection, tag: parsed.tag }
 
       return [
-        page.getFeedEntry('squarespace:tag', params),
-        page.getFeedEntry('squarespace:collection', { collection: parsed.collection }),
+        page.getFeedEntry('tag', params),
+        page.getFeedEntry('collection', { collection: parsed.collection }),
       ]
     }
 
-    return [page.getFeedEntry('squarespace:collection', { collection: parsed.collection })]
+    return [page.getFeedEntry('collection', { collection: parsed.collection })]
   },
 
   getFeedHint: feeds.getFeedHint,

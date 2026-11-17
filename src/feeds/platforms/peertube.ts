@@ -16,14 +16,14 @@ const podcastFeedPath = '/feeds/podcast/videos.xml'
 
 // An instance is known only by its headers, so its feeds are built on the page's origin and
 // claimed on no host.
-const feeds = definePlatformFeeds([
-  { key: 'peertube:channel', main: '{root}/feeds/videos.xml?videoChannelName={name}' },
+const feeds = definePlatformFeeds('peertube', [
+  { key: 'channel', main: '{root}/feeds/videos.xml?videoChannelName={name}' },
   {
-    key: 'peertube:channel-podcast',
+    key: 'channel-podcast',
     main: '{root}/feeds/podcast/videos.xml?videoChannelId={channelId}',
   },
-  { key: 'peertube:account', main: '{root}/feeds/videos.xml?accountName={name}' },
-  { key: 'peertube:instance', main: '{root}/feeds/videos.xml' },
+  { key: 'account', main: '{root}/feeds/videos.xml?accountName={name}' },
+  { key: 'instance', main: '{root}/feeds/videos.xml' },
 ])
 
 export const isPeertubeHeaders = (headers: Headers): boolean => {
@@ -102,28 +102,25 @@ export const peertubeHandler: PlatformHandler = {
       }
 
       if (!params.channelId) {
-        return [
-          pageFeeds.getFeedEntry('peertube:channel', params),
-          pageFeeds.getFeedEntry('peertube:instance'),
-        ]
+        return [pageFeeds.getFeedEntry('channel', params), pageFeeds.getFeedEntry('instance')]
       }
 
       return [
-        pageFeeds.getFeedEntry('peertube:channel', params),
-        pageFeeds.getFeedEntry('peertube:channel-podcast', params),
-        pageFeeds.getFeedEntry('peertube:instance'),
+        pageFeeds.getFeedEntry('channel', params),
+        pageFeeds.getFeedEntry('channel-podcast', params),
+        pageFeeds.getFeedEntry('instance'),
       ]
     }
 
     if (parsed.kind === 'account') {
       return [
-        pageFeeds.getFeedEntry('peertube:account', {
+        pageFeeds.getFeedEntry('account', {
           name: decodeSegment(parsed.name) ?? parsed.name,
         }),
-        pageFeeds.getFeedEntry('peertube:instance'),
+        pageFeeds.getFeedEntry('instance'),
       ]
     }
 
-    return [pageFeeds.getFeedEntry('peertube:instance')]
+    return [pageFeeds.getFeedEntry('instance')]
   },
 }

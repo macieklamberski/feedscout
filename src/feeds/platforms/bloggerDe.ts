@@ -16,14 +16,15 @@ const domains = ['blogger.de']
 // `/topics/{topic}/rss` serves the posts feed unfiltered, while `/rss?topic={topic}` narrows it to
 // the topic. `/rss?show=all` adds the comments to the posts.
 const feeds = definePlatformFeeds(
+  'blogger-de',
   [
     {
-      key: 'blogger-de:posts',
+      key: 'posts',
       main: '{scheme}://{host}/rss',
       aliases: ['{scheme}://{host}/topics/{topic}/rss'],
     },
-    { key: 'blogger-de:posts-comments', main: '{scheme}://{host}/rss?show=all' },
-    { key: 'blogger-de:topic', main: '{scheme}://{host}/rss?topic={topic}' },
+    { key: 'posts-comments', main: '{scheme}://{host}/rss?show=all' },
+    { key: 'topic', main: '{scheme}://{host}/rss?topic={topic}' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -62,13 +63,13 @@ export const bloggerDeHandler: PlatformHandler = {
 
     if (parsed.kind === 'topic') {
       return [
-        page.getFeedEntry('blogger-de:topic', { topic: parsed.topic }),
-        page.getFeedEntry('blogger-de:posts'),
-        page.getFeedEntry('blogger-de:posts-comments'),
+        page.getFeedEntry('topic', { topic: parsed.topic }),
+        page.getFeedEntry('posts'),
+        page.getFeedEntry('posts-comments'),
       ]
     }
 
-    return [page.getFeedEntry('blogger-de:posts'), page.getFeedEntry('blogger-de:posts-comments')]
+    return [page.getFeedEntry('posts'), page.getFeedEntry('posts-comments')]
   },
 
   getFeedHint: feeds.getFeedHint,

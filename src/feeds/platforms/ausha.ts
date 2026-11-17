@@ -13,8 +13,8 @@ const hosts = ['podcast.ausha.co', 'smartlink.ausha.co']
 // The feed id is opaque: show and episode pages carry it only in the markup.
 const feedIdRegex = /feed\.ausha\.co\/(\w+)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'ausha:podcast', main: 'https://feed.ausha.co/{feedId}' },
+const feeds = definePlatformFeeds('ausha', [
+  { key: 'podcast', main: 'https://feed.ausha.co/{feedId}' },
 ])
 
 export const parseAushaUrl = (url: string): AushaUrl | undefined => {
@@ -54,7 +54,7 @@ export const aushaHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('ausha:podcast', { feedId: page.feedId })]
+    return [feeds.getFeedEntry('podcast', { feedId: page.feedId })]
   },
 
   getFeedHint: feeds.getFeedHint,

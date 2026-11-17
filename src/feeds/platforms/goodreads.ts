@@ -10,25 +10,25 @@ export type GoodreadsUrl =
 
 const hosts = ['goodreads.com', 'www.goodreads.com']
 
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('goodreads', [
   {
-    key: 'goodreads:shelf',
+    key: 'shelf',
     main: 'https://www.goodreads.com/review/list_rss/{userId}?shelf={shelf}',
   },
-  { key: 'goodreads:reviews', main: 'https://www.goodreads.com/review/list_rss/{userId}' },
-  { key: 'goodreads:updates', main: 'https://www.goodreads.com/user/updates_rss/{userId}' },
+  { key: 'reviews', main: 'https://www.goodreads.com/review/list_rss/{userId}' },
+  { key: 'updates', main: 'https://www.goodreads.com/user/updates_rss/{userId}' },
   // A `key` parameter carries the account owner's private token, which no page gives, so these
   // rows only claim the feed.
   {
-    key: 'goodreads:private-shelf',
+    key: 'private-shelf',
     main: 'https://www.goodreads.com/review/list_rss/{userId}?key={key}&shelf={shelf}',
   },
   {
-    key: 'goodreads:private-reviews',
+    key: 'private-reviews',
     main: 'https://www.goodreads.com/review/list_rss/{userId}?key={key}',
   },
   {
-    key: 'goodreads:private-updates',
+    key: 'private-updates',
     main: 'https://www.goodreads.com/user/updates_rss/{userId}?key={key}',
   },
 ])
@@ -74,24 +74,18 @@ export const goodreadsHandler: PlatformHandler = {
     const { userId } = parsed
 
     if (parsed.kind === 'user') {
-      return [
-        feeds.getFeedEntry('goodreads:updates', { userId }),
-        feeds.getFeedEntry('goodreads:reviews', { userId }),
-      ]
+      return [feeds.getFeedEntry('updates', { userId }), feeds.getFeedEntry('reviews', { userId })]
     }
 
     if (parsed.shelf) {
       return [
-        feeds.getFeedEntry('goodreads:shelf', { userId, shelf: parsed.shelf }),
-        feeds.getFeedEntry('goodreads:reviews', { userId }),
-        feeds.getFeedEntry('goodreads:updates', { userId }),
+        feeds.getFeedEntry('shelf', { userId, shelf: parsed.shelf }),
+        feeds.getFeedEntry('reviews', { userId }),
+        feeds.getFeedEntry('updates', { userId }),
       ]
     }
 
-    return [
-      feeds.getFeedEntry('goodreads:reviews', { userId }),
-      feeds.getFeedEntry('goodreads:updates', { userId }),
-    ]
+    return [feeds.getFeedEntry('reviews', { userId }), feeds.getFeedEntry('updates', { userId })]
   },
 
   getFeedHint: feeds.getFeedHint,

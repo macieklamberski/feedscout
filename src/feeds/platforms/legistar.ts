@@ -26,10 +26,11 @@ const cookieName = 'BIGipServerinsite.legistar.com_443'
 // A feed on a client's custom domain carries nothing that names Legistar, so the table claims a
 // feed only on a Legistar host and builds it on any.
 const feeds = definePlatformFeeds(
+  'legistar',
   [
-    { key: 'legistar:legislation', main: '{scheme}://{host}/Feed.ashx?M=LD&ID={id}&GUID={guid}' },
+    { key: 'legislation', main: '{scheme}://{host}/Feed.ashx?M=LD&ID={id}&GUID={guid}' },
     {
-      key: 'legistar:meeting',
+      key: 'meeting',
       main: '{scheme}://{host}/Feed.ashx?M=CalendarDetail&ID={id}&GUID={guid}',
     },
   ],
@@ -121,7 +122,7 @@ export const getLegistarPage = (
   const { id, guid } = parsed
 
   if (parsed.kind === 'legislation') {
-    const feedUrl = pageFeeds.getFeedUrl('legistar:legislation', { id, guid })
+    const feedUrl = pageFeeds.getFeedUrl('legislation', { id, guid })
 
     if (!feedUrl) {
       return
@@ -130,7 +131,7 @@ export const getLegistarPage = (
     return { kind: 'legislation', feedUrl: getFeedUrl(url, content, feedUrl) }
   }
 
-  const feedUrl = pageFeeds.getFeedUrl('legistar:meeting', { id, guid })
+  const feedUrl = pageFeeds.getFeedUrl('meeting', { id, guid })
 
   if (!feedUrl) {
     return

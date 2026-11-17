@@ -9,11 +9,11 @@ export type PlurkUrl = { kind: 'post'; postId: string } | { kind: 'user'; userna
 
 const hosts = ['plurk.com', 'www.plurk.com']
 
-const feeds = definePlatformFeeds([
-  { key: 'plurk:responses', main: 'https://www.plurk.com/p/{postId}.xml' },
+const feeds = definePlatformFeeds('plurk', [
+  { key: 'responses', main: 'https://www.plurk.com/p/{postId}.xml' },
   // A user page links this spelling, and the feed names the `/user/` one as its self link.
   {
-    key: 'plurk:plurks',
+    key: 'plurks',
     main: 'https://www.plurk.com/{username}.xml',
     aliases: ['https://www.plurk.com/user/{username}.xml'],
   },
@@ -60,10 +60,10 @@ export const plurkHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'post') {
-      return [feeds.getFeedEntry('plurk:responses', { postId: parsed.postId })]
+      return [feeds.getFeedEntry('responses', { postId: parsed.postId })]
     }
 
-    return [feeds.getFeedEntry('plurk:plurks', { username: parsed.username })]
+    return [feeds.getFeedEntry('plurks', { username: parsed.username })]
   },
 
   getFeedHint: feeds.getFeedHint,

@@ -15,9 +15,10 @@ const blogRegex = /^(?:\/([^/]+))?\/blog\/([^/]+-\d+)(?:\/|$)/i
 const domains = ['odoo.com']
 
 const feeds = definePlatformFeeds(
+  'odoo',
   [
-    { key: 'odoo:blog', main: '{scheme}://{host}/blog/{blog}/feed', format: 'atom' },
-    { key: 'odoo:blog', main: '{scheme}://{host}/{language}/blog/{blog}/feed', format: 'atom' },
+    { key: 'blog', main: '{scheme}://{host}/blog/{blog}/feed', format: 'atom' },
+    { key: 'blog', main: '{scheme}://{host}/{language}/blog/{blog}/feed', format: 'atom' },
   ],
   {
     hosts: { tenants: domains },
@@ -65,7 +66,7 @@ export const odooHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('odoo:blog', { blog: odooUrl.blog }, 'atom')]
+    return [page.getFeedEntry('blog', { blog: odooUrl.blog }, 'atom')]
   },
 
   getFeedHint: feeds.getFeedHint,

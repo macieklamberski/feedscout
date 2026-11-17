@@ -13,12 +13,12 @@ export type AladinUrl =
 
 const hosts = ['blog.aladin.co.kr']
 
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('aladin', [
   {
-    key: 'aladin:category',
+    key: 'category',
     main: 'https://blog.aladin.co.kr/{username}/category/{categoryId}/rss',
   },
-  { key: 'aladin:posts', main: 'https://blog.aladin.co.kr/{username}/rss' },
+  { key: 'posts', main: 'https://blog.aladin.co.kr/{username}/rss' },
 ])
 
 export const parseAladinUrl = (url: string): AladinUrl | undefined => {
@@ -75,15 +75,15 @@ export const aladinHandler: PlatformHandler = {
     if (page.kind === 'category') {
       // Only the blog's subscribe page links a category feed, as an http url that redirects here.
       return [
-        feeds.getFeedEntry('aladin:category', {
+        feeds.getFeedEntry('category', {
           username: page.username,
           categoryId: page.categoryId,
         }),
-        feeds.getFeedEntry('aladin:posts', { username: page.username }),
+        feeds.getFeedEntry('posts', { username: page.username }),
       ]
     }
 
-    return [feeds.getFeedEntry('aladin:posts', { username: page.username })]
+    return [feeds.getFeedEntry('posts', { username: page.username })]
   },
 
   // The table reads any first segment as a username, so the page parser first refuses a dotted

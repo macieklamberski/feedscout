@@ -40,9 +40,10 @@ const userPrefixes = ['u', 'user']
 // a row with more placeholders sits above one with fewer, since the first row the values fill is
 // built.
 const feeds = definePlatformFeeds(
+  'reddit',
   [
     {
-      key: 'reddit:subreddit-search',
+      key: 'subreddit-search',
       main: 'https://www.reddit.com/r/{subreddit}/search.rss?q={query}&restrict_sr=on',
       aliases: [
         // Each `{host}` row is the feed above it on old. and new., which the page parser reads as
@@ -50,63 +51,63 @@ const feeds = definePlatformFeeds(
         '{scheme}://{host}/r/{subreddit}/search.rss?q={query}&restrict_sr=on',
       ],
     },
-    { key: 'reddit:search', main: 'https://www.reddit.com/search.rss?q={query}' },
+    { key: 'search', main: 'https://www.reddit.com/search.rss?q={query}' },
     {
-      key: 'reddit:wiki',
+      key: 'wiki',
       main: 'https://www.reddit.com/r/{subreddit}/wiki/index.rss',
       aliases: ['{scheme}://{host}/r/{subreddit}/wiki/index.rss'],
     },
     {
-      key: 'reddit:post-comments',
+      key: 'post-comments',
       main: 'https://www.reddit.com/r/{subreddit}/comments/{postId}/.rss',
       aliases: ['{scheme}://{host}/r/{subreddit}/comments/{postId}/.rss'],
     },
     {
-      key: 'reddit:post-comments',
+      key: 'post-comments',
       main: 'https://www.reddit.com/user/{username}/comments/{postId}/.rss',
       aliases: ['{scheme}://{host}/user/{username}/comments/{postId}/.rss'],
     },
     {
-      key: 'reddit:comments',
+      key: 'comments',
       main: 'https://www.reddit.com/r/{subreddit}/comments/.rss',
       aliases: ['{scheme}://{host}/r/{subreddit}/comments/.rss'],
     },
     {
-      key: 'reddit:multireddit',
+      key: 'multireddit',
       main: 'https://www.reddit.com/user/{username}/m/{multireddit}/.rss',
       aliases: ['{scheme}://{host}/user/{username}/m/{multireddit}/.rss'],
     },
     {
-      key: 'reddit:user-submitted',
+      key: 'user-submitted',
       main: 'https://www.reddit.com/user/{username}/submitted/.rss',
       aliases: ['{scheme}://{host}/user/{username}/submitted/.rss'],
     },
     {
-      key: 'reddit:user-comments',
+      key: 'user-comments',
       main: 'https://www.reddit.com/user/{username}/comments/.rss',
       aliases: ['{scheme}://{host}/user/{username}/comments/.rss'],
     },
     {
-      key: 'reddit:subreddits',
+      key: 'subreddits',
       main: 'https://www.reddit.com/subreddits/{sort}/.rss',
       aliases: ['{scheme}://{host}/subreddits/{sort}/.rss'],
     },
     {
-      key: 'reddit:subreddits',
+      key: 'subreddits',
       main: 'https://www.reddit.com/subreddits/.rss',
       aliases: ['{scheme}://{host}/subreddits/.rss'],
     },
     {
-      key: 'reddit:subreddit',
+      key: 'subreddit',
       main: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss?t={timeframe}',
     },
     {
-      key: 'reddit:subreddit',
+      key: 'subreddit',
       main: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss',
       aliases: ['{scheme}://{host}/r/{subreddit}/{sort}/.rss'],
     },
     {
-      key: 'reddit:subreddit',
+      key: 'subreddit',
       main: 'https://www.reddit.com/r/{subreddit}/.rss',
       aliases: [
         'https://www.reddit.com/r/{subreddit}.rss',
@@ -115,18 +116,18 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'reddit:user',
+      key: 'user',
       main: 'https://www.reddit.com/user/{username}/.rss',
       aliases: ['{scheme}://{host}/user/{username}/.rss'],
     },
     {
-      key: 'reddit:domain',
+      key: 'domain',
       main: 'https://www.reddit.com/domain/{domain}/.rss',
       aliases: ['{scheme}://{host}/domain/{domain}/.rss'],
     },
-    { key: 'reddit:posts', main: 'https://www.reddit.com/{sort}/.rss?t={timeframe}' },
-    { key: 'reddit:posts', main: 'https://www.reddit.com/{sort}/.rss' },
-    { key: 'reddit:posts', main: 'https://www.reddit.com/.rss' },
+    { key: 'posts', main: 'https://www.reddit.com/{sort}/.rss?t={timeframe}' },
+    { key: 'posts', main: 'https://www.reddit.com/{sort}/.rss' },
+    { key: 'posts', main: 'https://www.reddit.com/.rss' },
   ],
   { hosts: { exact: mirrorHosts } },
 )
@@ -252,26 +253,26 @@ export const redditHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'home') {
-      return [feeds.getFeedEntry('reddit:posts')]
+      return [feeds.getFeedEntry('posts')]
     }
 
     if (parsed.kind === 'siteSort') {
       const { sort, timeframe } = parsed
 
-      return [feeds.getFeedEntry('reddit:posts', { sort, timeframe })]
+      return [feeds.getFeedEntry('posts', { sort, timeframe })]
     }
 
     if (parsed.kind === 'siteSearch') {
-      return [feeds.getFeedEntry('reddit:search', { query: parsed.query })]
+      return [feeds.getFeedEntry('search', { query: parsed.query })]
     }
 
     if (parsed.kind === 'subreddits') {
-      return [feeds.getFeedEntry('reddit:subreddits', { sort: parsed.sort })]
+      return [feeds.getFeedEntry('subreddits', { sort: parsed.sort })]
     }
 
     if (parsed.kind === 'search' && parsed.query) {
       return [
-        feeds.getFeedEntry('reddit:subreddit-search', {
+        feeds.getFeedEntry('subreddit-search', {
           subreddit: parsed.subreddit,
           query: parsed.query,
         }),
@@ -279,21 +280,21 @@ export const redditHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'wiki') {
-      return [feeds.getFeedEntry('reddit:wiki', { subreddit: parsed.subreddit })]
+      return [feeds.getFeedEntry('wiki', { subreddit: parsed.subreddit })]
     }
 
     if (parsed.kind === 'post') {
       const { subreddit, postId } = parsed
 
-      return [feeds.getFeedEntry('reddit:post-comments', { subreddit, postId })]
+      return [feeds.getFeedEntry('post-comments', { subreddit, postId })]
     }
 
     if (parsed.kind === 'subreddit') {
       const { subreddit, sort, timeframe } = parsed
 
       return [
-        feeds.getFeedEntry('reddit:subreddit', { subreddit, sort, timeframe }),
-        feeds.getFeedEntry('reddit:comments', { subreddit }),
+        feeds.getFeedEntry('subreddit', { subreddit, sort, timeframe }),
+        feeds.getFeedEntry('comments', { subreddit }),
       ]
     }
 
@@ -302,46 +303,46 @@ export const redditHandler: PlatformHandler = {
       const { subreddit } = parsed
 
       return [
-        feeds.getFeedEntry('reddit:subreddit', { subreddit }),
-        feeds.getFeedEntry('reddit:comments', { subreddit }),
+        feeds.getFeedEntry('subreddit', { subreddit }),
+        feeds.getFeedEntry('comments', { subreddit }),
       ]
     }
 
     if (parsed.kind === 'multireddit') {
       const { username, multireddit } = parsed
 
-      return [feeds.getFeedEntry('reddit:multireddit', { username, multireddit })]
+      return [feeds.getFeedEntry('multireddit', { username, multireddit })]
     }
 
     if (parsed.kind === 'submitted') {
       const { username } = parsed
 
       return [
-        feeds.getFeedEntry('reddit:user-submitted', { username }),
-        feeds.getFeedEntry('reddit:user', { username }),
+        feeds.getFeedEntry('user-submitted', { username }),
+        feeds.getFeedEntry('user', { username }),
       ]
     }
 
     if (parsed.kind === 'userPost') {
       const { username, postId } = parsed
 
-      return [feeds.getFeedEntry('reddit:post-comments', { username, postId })]
+      return [feeds.getFeedEntry('post-comments', { username, postId })]
     }
 
     if (parsed.kind === 'comments') {
       const { username } = parsed
 
       return [
-        feeds.getFeedEntry('reddit:user-comments', { username }),
-        feeds.getFeedEntry('reddit:user', { username }),
+        feeds.getFeedEntry('user-comments', { username }),
+        feeds.getFeedEntry('user', { username }),
       ]
     }
 
     if (parsed.kind === 'user') {
-      return [feeds.getFeedEntry('reddit:user', { username: parsed.username })]
+      return [feeds.getFeedEntry('user', { username: parsed.username })]
     }
 
-    return [feeds.getFeedEntry('reddit:domain', { domain: parsed.domain })]
+    return [feeds.getFeedEntry('domain', { domain: parsed.domain })]
   },
 
   getFeedHint: feeds.getFeedHint,

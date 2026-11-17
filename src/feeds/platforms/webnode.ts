@@ -21,9 +21,10 @@ const itemPaths = ['archive', 'news', 'products']
 // A site on its own domain is known only by its marker, so its feeds are built here but not
 // claimed. The site-wide row comes first, as it also fits the section row.
 const feeds = definePlatformFeeds(
+  'webnode',
   [
-    { key: 'webnode:articles', main: '{scheme}://{host}/rss/all.xml' },
-    { key: 'webnode:section', main: '{scheme}://{host}/rss/{section}.xml' },
+    { key: 'articles', main: '{scheme}://{host}/rss/all.xml' },
+    { key: 'section', main: '{scheme}://{host}/rss/{section}.xml' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -72,12 +73,12 @@ export const webnodeHandler: PlatformHandler = {
 
     if (parsed.kind === 'section') {
       return [
-        page.getFeedEntry('webnode:section', { section: parsed.section }),
-        page.getFeedEntry('webnode:articles'),
+        page.getFeedEntry('section', { section: parsed.section }),
+        page.getFeedEntry('articles'),
       ]
     }
 
-    return [page.getFeedEntry('webnode:articles')]
+    return [page.getFeedEntry('articles')]
   },
 
   getFeedHint: feeds.getFeedHint,

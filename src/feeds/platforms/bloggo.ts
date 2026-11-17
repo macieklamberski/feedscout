@@ -13,9 +13,10 @@ const domains = ['bloggo.nu']
 const postBodyRegex = /<body[^<>]*\bpost-id-\d+/
 
 const feeds = definePlatformFeeds(
+  'bloggo',
   [
-    { key: 'bloggo:posts', main: '{scheme}://{host}/feed/' },
-    { key: 'bloggo:post-comments', main: '{scheme}://{host}/{slug}/feed/' },
+    { key: 'posts', main: '{scheme}://{host}/feed/' },
+    { key: 'post-comments', main: '{scheme}://{host}/{slug}/feed/' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -71,12 +72,12 @@ export const bloggoHandler: PlatformHandler = {
 
     if (page.kind === 'post') {
       return [
-        pageFeeds.getFeedEntry('bloggo:post-comments', { slug: page.slug }),
-        pageFeeds.getFeedEntry('bloggo:posts'),
+        pageFeeds.getFeedEntry('post-comments', { slug: page.slug }),
+        pageFeeds.getFeedEntry('posts'),
       ]
     }
 
-    return [pageFeeds.getFeedEntry('bloggo:posts')]
+    return [pageFeeds.getFeedEntry('posts')]
   },
 
   getFeedHint: feeds.getFeedHint,

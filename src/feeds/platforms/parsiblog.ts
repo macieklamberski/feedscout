@@ -11,15 +11,16 @@ const domains = ['parsiblog.com', 'parsiblog.ir']
 // Parsiblog serves no HTTPS, and a blog serves the same feeds on either domain and on its older
 // .aspx paths.
 const feeds = definePlatformFeeds(
+  'parsiblog',
   [
     {
-      key: 'parsiblog:posts',
+      key: 'posts',
       main: '{scheme}://{host}/rss/',
       format: 'rss',
       aliases: ['{scheme}://{host}/RSS.aspx', '{scheme}://{host}/Mag/RSS.aspx'],
     },
     {
-      key: 'parsiblog:posts',
+      key: 'posts',
       main: '{scheme}://{host}/atom/',
       format: 'atom',
       aliases: ['{scheme}://{host}/ATOM.aspx'],
@@ -55,10 +56,7 @@ export const parsiblogHandler: PlatformHandler = {
     // HTTPS, so an https page still gets http feeds.
     const params = { scheme: 'http', host: `${parsed.blog}.parsiblog.com` }
 
-    return [
-      page.getFeedEntry('parsiblog:posts', params, 'rss'),
-      page.getFeedEntry('parsiblog:posts', params, 'atom'),
-    ]
+    return [page.getFeedEntry('posts', params, 'rss'), page.getFeedEntry('posts', params, 'atom')]
   },
 
   getFeedHint: feeds.getFeedHint,

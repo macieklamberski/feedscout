@@ -32,9 +32,10 @@ const widgetsScriptRegex = /^(?:https?:)?\/\/www\.blogger\.com\/static\/v1\/widg
 // /feeds/comments/full. Every feed but the multi-label ones is served on www.blogger.com too,
 // under the blog's id.
 const feeds = definePlatformFeeds(
+  'blogspot',
   [
     {
-      key: 'blogspot:posts',
+      key: 'posts',
       main: '{scheme}://{host}/feeds/posts/default',
       format: 'atom',
       aliases: [
@@ -44,7 +45,7 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'blogspot:posts',
+      key: 'posts',
       main: '{scheme}://{host}/feeds/posts/default?alt=rss',
       format: 'rss',
       aliases: [
@@ -53,19 +54,19 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'blogspot:posts-summary',
+      key: 'posts-summary',
       main: '{scheme}://{host}/feeds/posts/summary',
       format: 'atom',
       aliases: ['https://www.blogger.com/feeds/{blogId}/posts/summary'],
     },
     {
-      key: 'blogspot:posts-summary',
+      key: 'posts-summary',
       main: '{scheme}://{host}/feeds/posts/summary?alt=rss',
       format: 'rss',
       aliases: ['https://www.blogger.com/feeds/{blogId}/posts/summary?alt=rss'],
     },
     {
-      key: 'blogspot:comments',
+      key: 'comments',
       main: '{scheme}://{host}/feeds/comments/default',
       format: 'atom',
       aliases: [
@@ -74,43 +75,43 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'blogspot:comments',
+      key: 'comments',
       main: '{scheme}://{host}/feeds/comments/default?alt=rss',
       format: 'rss',
       aliases: ['https://www.blogger.com/feeds/{blogId}/comments/default?alt=rss'],
     },
     {
-      key: 'blogspot:comments-summary',
+      key: 'comments-summary',
       main: '{scheme}://{host}/feeds/comments/summary',
       format: 'atom',
       aliases: ['https://www.blogger.com/feeds/{blogId}/comments/summary'],
     },
     {
-      key: 'blogspot:comments-summary',
+      key: 'comments-summary',
       main: '{scheme}://{host}/feeds/comments/summary?alt=rss',
       format: 'rss',
       aliases: ['https://www.blogger.com/feeds/{blogId}/comments/summary?alt=rss'],
     },
     {
-      key: 'blogspot:label',
+      key: 'label',
       main: '{scheme}://{host}/feeds/posts/default/-/{label}',
       format: 'atom',
       aliases: ['https://www.blogger.com/feeds/{blogId}/posts/default/-/{label}'],
     },
     {
-      key: 'blogspot:label',
+      key: 'label',
       main: '{scheme}://{host}/feeds/posts/default/-/{label}?alt=rss',
       format: 'rss',
       aliases: ['https://www.blogger.com/feeds/{blogId}/posts/default/-/{label}?alt=rss'],
     },
     {
-      key: 'blogspot:label-summary',
+      key: 'label-summary',
       main: '{scheme}://{host}/feeds/posts/summary/-/{label}',
       format: 'atom',
       aliases: ['https://www.blogger.com/feeds/{blogId}/posts/summary/-/{label}'],
     },
     {
-      key: 'blogspot:label-summary',
+      key: 'label-summary',
       main: '{scheme}://{host}/feeds/posts/summary/-/{label}?alt=rss',
       format: 'rss',
       aliases: ['https://www.blogger.com/feeds/{blogId}/posts/summary/-/{label}?alt=rss'],
@@ -118,33 +119,33 @@ const feeds = definePlatformFeeds(
     // Several labels, as `/-/{a}/{b}`, give the posts carrying all of them. These rows go after the
     // single-label ones, which `resolve` builds, since a label can hold a slash.
     {
-      key: 'blogspot:label',
+      key: 'label',
       main: '{scheme}://{host}/feeds/posts/default/-/{labels*}',
       format: 'atom',
     },
     {
-      key: 'blogspot:label',
+      key: 'label',
       main: '{scheme}://{host}/feeds/posts/default/-/{labels*}?alt=rss',
       format: 'rss',
     },
     {
-      key: 'blogspot:label-summary',
+      key: 'label-summary',
       main: '{scheme}://{host}/feeds/posts/summary/-/{labels*}',
       format: 'atom',
     },
     {
-      key: 'blogspot:label-summary',
+      key: 'label-summary',
       main: '{scheme}://{host}/feeds/posts/summary/-/{labels*}?alt=rss',
       format: 'rss',
     },
     {
-      key: 'blogspot:post-comments',
+      key: 'post-comments',
       main: '{scheme}://{host}/feeds/{postId}/comments/default',
       format: 'atom',
       aliases: ['https://www.blogger.com/feeds/{blogId}/{postId}/comments/default'],
     },
     {
-      key: 'blogspot:post-comments',
+      key: 'post-comments',
       main: '{scheme}://{host}/feeds/{postId}/comments/default?alt=rss',
       format: 'rss',
       aliases: ['https://www.blogger.com/feeds/{blogId}/{postId}/comments/default?alt=rss'],
@@ -224,45 +225,45 @@ export const blogspotHandler: PlatformHandler = {
 
     if (page.kind === 'label') {
       return [
-        pageFeeds.getFeedEntry('blogspot:label', { label: page.label }, 'atom'),
-        pageFeeds.getFeedEntry('blogspot:label', { label: page.label }, 'rss'),
-        pageFeeds.getFeedEntry('blogspot:label-summary', { label: page.label }, 'atom'),
-        pageFeeds.getFeedEntry('blogspot:label-summary', { label: page.label }, 'rss'),
-        pageFeeds.getFeedEntry('blogspot:posts', {}, 'atom'),
-        pageFeeds.getFeedEntry('blogspot:posts', {}, 'rss'),
-        pageFeeds.getFeedEntry('blogspot:posts-summary', {}, 'atom'),
-        pageFeeds.getFeedEntry('blogspot:posts-summary', {}, 'rss'),
-        pageFeeds.getFeedEntry('blogspot:comments', {}, 'atom'),
-        pageFeeds.getFeedEntry('blogspot:comments', {}, 'rss'),
-        pageFeeds.getFeedEntry('blogspot:comments-summary', {}, 'atom'),
-        pageFeeds.getFeedEntry('blogspot:comments-summary', {}, 'rss'),
+        pageFeeds.getFeedEntry('label', { label: page.label }, 'atom'),
+        pageFeeds.getFeedEntry('label', { label: page.label }, 'rss'),
+        pageFeeds.getFeedEntry('label-summary', { label: page.label }, 'atom'),
+        pageFeeds.getFeedEntry('label-summary', { label: page.label }, 'rss'),
+        pageFeeds.getFeedEntry('posts', {}, 'atom'),
+        pageFeeds.getFeedEntry('posts', {}, 'rss'),
+        pageFeeds.getFeedEntry('posts-summary', {}, 'atom'),
+        pageFeeds.getFeedEntry('posts-summary', {}, 'rss'),
+        pageFeeds.getFeedEntry('comments', {}, 'atom'),
+        pageFeeds.getFeedEntry('comments', {}, 'rss'),
+        pageFeeds.getFeedEntry('comments-summary', {}, 'atom'),
+        pageFeeds.getFeedEntry('comments-summary', {}, 'rss'),
       ]
     }
 
     if (page.kind === 'post' && page.postId) {
       return [
-        pageFeeds.getFeedEntry('blogspot:post-comments', { postId: page.postId }, 'atom'),
-        pageFeeds.getFeedEntry('blogspot:post-comments', { postId: page.postId }, 'rss'),
-        pageFeeds.getFeedEntry('blogspot:posts', {}, 'atom'),
-        pageFeeds.getFeedEntry('blogspot:posts', {}, 'rss'),
-        pageFeeds.getFeedEntry('blogspot:posts-summary', {}, 'atom'),
-        pageFeeds.getFeedEntry('blogspot:posts-summary', {}, 'rss'),
-        pageFeeds.getFeedEntry('blogspot:comments', {}, 'atom'),
-        pageFeeds.getFeedEntry('blogspot:comments', {}, 'rss'),
-        pageFeeds.getFeedEntry('blogspot:comments-summary', {}, 'atom'),
-        pageFeeds.getFeedEntry('blogspot:comments-summary', {}, 'rss'),
+        pageFeeds.getFeedEntry('post-comments', { postId: page.postId }, 'atom'),
+        pageFeeds.getFeedEntry('post-comments', { postId: page.postId }, 'rss'),
+        pageFeeds.getFeedEntry('posts', {}, 'atom'),
+        pageFeeds.getFeedEntry('posts', {}, 'rss'),
+        pageFeeds.getFeedEntry('posts-summary', {}, 'atom'),
+        pageFeeds.getFeedEntry('posts-summary', {}, 'rss'),
+        pageFeeds.getFeedEntry('comments', {}, 'atom'),
+        pageFeeds.getFeedEntry('comments', {}, 'rss'),
+        pageFeeds.getFeedEntry('comments-summary', {}, 'atom'),
+        pageFeeds.getFeedEntry('comments-summary', {}, 'rss'),
       ]
     }
 
     return [
-      pageFeeds.getFeedEntry('blogspot:posts', {}, 'atom'),
-      pageFeeds.getFeedEntry('blogspot:posts', {}, 'rss'),
-      pageFeeds.getFeedEntry('blogspot:posts-summary', {}, 'atom'),
-      pageFeeds.getFeedEntry('blogspot:posts-summary', {}, 'rss'),
-      pageFeeds.getFeedEntry('blogspot:comments', {}, 'atom'),
-      pageFeeds.getFeedEntry('blogspot:comments', {}, 'rss'),
-      pageFeeds.getFeedEntry('blogspot:comments-summary', {}, 'atom'),
-      pageFeeds.getFeedEntry('blogspot:comments-summary', {}, 'rss'),
+      pageFeeds.getFeedEntry('posts', {}, 'atom'),
+      pageFeeds.getFeedEntry('posts', {}, 'rss'),
+      pageFeeds.getFeedEntry('posts-summary', {}, 'atom'),
+      pageFeeds.getFeedEntry('posts-summary', {}, 'rss'),
+      pageFeeds.getFeedEntry('comments', {}, 'atom'),
+      pageFeeds.getFeedEntry('comments', {}, 'rss'),
+      pageFeeds.getFeedEntry('comments-summary', {}, 'atom'),
+      pageFeeds.getFeedEntry('comments-summary', {}, 'rss'),
     ]
   },
 

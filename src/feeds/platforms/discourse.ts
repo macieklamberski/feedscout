@@ -39,19 +39,20 @@ const domains = ['discourse.group', 'trydiscourse.com']
 // The feeds of a forum from its root, which a platform subdomain serves from and an install on its
 // own domain can put under a sub-path its markup names.
 const feeds = definePlatformFeeds(
+  'discourse',
   [
-    { key: 'discourse:topic', main: '{root}/t/{slug}/{topicId}.rss' },
-    { key: 'discourse:activity', main: '{root}/u/{username}/activity.rss' },
-    { key: 'discourse:category', main: '{root}/c/{category*}.rss' },
+    { key: 'topic', main: '{root}/t/{slug}/{topicId}.rss' },
+    { key: 'activity', main: '{root}/u/{username}/activity.rss' },
+    { key: 'category', main: '{root}/c/{category*}.rss' },
     {
-      key: 'discourse:tag',
+      key: 'tag',
       main: '{root}/tag/{slug}/{id}.rss',
       aliases: ['{root}/tag/{slug}.rss'],
     },
-    { key: 'discourse:top', main: '{root}/top.rss?period={period}' },
-    { key: 'discourse:top', main: '{root}/top.rss' },
-    { key: 'discourse:latest', main: '{root}/latest.rss' },
-    { key: 'discourse:posts', main: '{root}/posts.rss' },
+    { key: 'top', main: '{root}/top.rss?period={period}' },
+    { key: 'top', main: '{root}/top.rss' },
+    { key: 'latest', main: '{root}/latest.rss' },
+    { key: 'posts', main: '{root}/posts.rss' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -177,29 +178,29 @@ export const discourseHandler: PlatformHandler = {
     // own feeds.
     if (page.kind === 'topic') {
       return [
-        pageFeeds.getFeedEntry('discourse:topic', {
+        pageFeeds.getFeedEntry('topic', {
           root,
           slug: page.slug,
           topicId: page.topicId,
         }),
-        pageFeeds.getFeedEntry('discourse:latest', { root }),
-        pageFeeds.getFeedEntry('discourse:posts', { root }),
+        pageFeeds.getFeedEntry('latest', { root }),
+        pageFeeds.getFeedEntry('posts', { root }),
       ]
     }
 
     if (page.kind === 'user') {
       return [
-        pageFeeds.getFeedEntry('discourse:activity', { root, username: page.username }),
-        pageFeeds.getFeedEntry('discourse:latest', { root }),
-        pageFeeds.getFeedEntry('discourse:posts', { root }),
+        pageFeeds.getFeedEntry('activity', { root, username: page.username }),
+        pageFeeds.getFeedEntry('latest', { root }),
+        pageFeeds.getFeedEntry('posts', { root }),
       ]
     }
 
     if (page.kind === 'category') {
       return [
-        pageFeeds.getFeedEntry('discourse:category', { root, category: page.category }),
-        pageFeeds.getFeedEntry('discourse:latest', { root }),
-        pageFeeds.getFeedEntry('discourse:posts', { root }),
+        pageFeeds.getFeedEntry('category', { root, category: page.category }),
+        pageFeeds.getFeedEntry('latest', { root }),
+        pageFeeds.getFeedEntry('posts', { root }),
       ]
     }
 
@@ -207,24 +208,21 @@ export const discourseHandler: PlatformHandler = {
       const [slug, id] = page.tag.split('/')
 
       return [
-        pageFeeds.getFeedEntry('discourse:tag', { root, slug, id }),
-        pageFeeds.getFeedEntry('discourse:latest', { root }),
-        pageFeeds.getFeedEntry('discourse:posts', { root }),
+        pageFeeds.getFeedEntry('tag', { root, slug, id }),
+        pageFeeds.getFeedEntry('latest', { root }),
+        pageFeeds.getFeedEntry('posts', { root }),
       ]
     }
 
     if (page.kind === 'top') {
       return [
-        pageFeeds.getFeedEntry('discourse:top', { root, period: page.period }),
-        pageFeeds.getFeedEntry('discourse:latest', { root }),
-        pageFeeds.getFeedEntry('discourse:posts', { root }),
+        pageFeeds.getFeedEntry('top', { root, period: page.period }),
+        pageFeeds.getFeedEntry('latest', { root }),
+        pageFeeds.getFeedEntry('posts', { root }),
       ]
     }
 
-    return [
-      pageFeeds.getFeedEntry('discourse:latest', { root }),
-      pageFeeds.getFeedEntry('discourse:posts', { root }),
-    ]
+    return [pageFeeds.getFeedEntry('latest', { root }), pageFeeds.getFeedEntry('posts', { root })]
   },
 
   getFeedHint: feeds.getFeedHint,

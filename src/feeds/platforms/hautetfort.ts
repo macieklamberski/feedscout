@@ -22,10 +22,11 @@ const categoryRegex = /^\/([^/.]+)\/?$/
 const archivesCategoryRegex = /^\/archives\/category\/([^/]+)(?:\/|$)/i
 
 const feeds = definePlatformFeeds(
+  'hautetfort',
   [
-    { key: 'hautetfort:category', main: '{scheme}://{host}/{category}/index.rss' },
-    { key: 'hautetfort:posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
-    { key: 'hautetfort:posts', main: '{scheme}://{host}/index.rss', format: 'rss' },
+    { key: 'category', main: '{scheme}://{host}/{category}/index.rss' },
+    { key: 'posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
+    { key: 'posts', main: '{scheme}://{host}/index.rss', format: 'rss' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -76,16 +77,13 @@ export const hautetfortHandler: PlatformHandler = {
 
     if (parsed.kind === 'category') {
       return [
-        page.getFeedEntry('hautetfort:category', { ...params, category: parsed.category }),
-        page.getFeedEntry('hautetfort:posts', params, 'atom'),
-        page.getFeedEntry('hautetfort:posts', params, 'rss'),
+        page.getFeedEntry('category', { ...params, category: parsed.category }),
+        page.getFeedEntry('posts', params, 'atom'),
+        page.getFeedEntry('posts', params, 'rss'),
       ]
     }
 
-    return [
-      page.getFeedEntry('hautetfort:posts', params, 'atom'),
-      page.getFeedEntry('hautetfort:posts', params, 'rss'),
-    ]
+    return [page.getFeedEntry('posts', params, 'atom'), page.getFeedEntry('posts', params, 'rss')]
   },
 
   getFeedHint: feeds.getFeedHint,

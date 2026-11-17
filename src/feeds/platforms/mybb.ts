@@ -20,11 +20,11 @@ const rootPathRegex = /var rootpath = "([^"]+)"/
 
 // MyBB is self-hosted and known only by its page marker, so nothing in a feed URL names it and the
 // table only builds, under the board URL the page names.
-const feeds = definePlatformFeeds([
-  { key: 'mybb:forum', main: '{root}/syndication.php?fid={forumId}', format: 'rss' },
-  { key: 'mybb:forum', main: '{root}/syndication.php?type=atom1.0&fid={forumId}', format: 'atom' },
-  { key: 'mybb:threads', main: '{root}/syndication.php', format: 'rss' },
-  { key: 'mybb:threads', main: '{root}/syndication.php?type=atom1.0', format: 'atom' },
+const feeds = definePlatformFeeds('mybb', [
+  { key: 'forum', main: '{root}/syndication.php?fid={forumId}', format: 'rss' },
+  { key: 'forum', main: '{root}/syndication.php?type=atom1.0&fid={forumId}', format: 'atom' },
+  { key: 'threads', main: '{root}/syndication.php', format: 'rss' },
+  { key: 'threads', main: '{root}/syndication.php?type=atom1.0', format: 'atom' },
 ])
 
 // MyBB prepends the board's cookie prefix setting to the name.
@@ -114,16 +114,16 @@ export const mybbHandler: PlatformHandler = {
 
     if (page.forumId) {
       return [
-        pageFeeds.getFeedEntry('mybb:forum', { root, forumId: page.forumId }, 'rss'),
-        pageFeeds.getFeedEntry('mybb:forum', { root, forumId: page.forumId }, 'atom'),
-        pageFeeds.getFeedEntry('mybb:threads', { root }, 'rss'),
-        pageFeeds.getFeedEntry('mybb:threads', { root }, 'atom'),
+        pageFeeds.getFeedEntry('forum', { root, forumId: page.forumId }, 'rss'),
+        pageFeeds.getFeedEntry('forum', { root, forumId: page.forumId }, 'atom'),
+        pageFeeds.getFeedEntry('threads', { root }, 'rss'),
+        pageFeeds.getFeedEntry('threads', { root }, 'atom'),
       ]
     }
 
     return [
-      pageFeeds.getFeedEntry('mybb:threads', { root }, 'rss'),
-      pageFeeds.getFeedEntry('mybb:threads', { root }, 'atom'),
+      pageFeeds.getFeedEntry('threads', { root }, 'rss'),
+      pageFeeds.getFeedEntry('threads', { root }, 'atom'),
     ]
   },
 }

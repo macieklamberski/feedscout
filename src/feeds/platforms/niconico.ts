@@ -13,10 +13,10 @@ export type NiconicoUrl =
 
 export const hosts = ['ch.nicovideo.jp']
 
-const feeds = definePlatformFeeds([
-  { key: 'niconico:videos', main: 'https://ch.nicovideo.jp/{channel}/video?rss=2.0' },
-  { key: 'niconico:live', main: 'https://ch.nicovideo.jp/{channel}/live?rss=2.0' },
-  { key: 'niconico:blog', main: 'https://ch.nicovideo.jp/{channel}/blomaga/nico/feed' },
+const feeds = definePlatformFeeds('niconico', [
+  { key: 'videos', main: 'https://ch.nicovideo.jp/{channel}/video?rss=2.0' },
+  { key: 'live', main: 'https://ch.nicovideo.jp/{channel}/live?rss=2.0' },
+  { key: 'blog', main: 'https://ch.nicovideo.jp/{channel}/blomaga/nico/feed' },
 ])
 
 export const parseNiconicoUrl = (url: string): NiconicoUrl | undefined => {
@@ -57,24 +57,24 @@ export const niconicoHandler: PlatformHandler = {
 
     if (parsed.kind === 'live') {
       return [
-        feeds.getFeedEntry('niconico:live', params),
-        feeds.getFeedEntry('niconico:videos', params),
-        feeds.getFeedEntry('niconico:blog', params),
+        feeds.getFeedEntry('live', params),
+        feeds.getFeedEntry('videos', params),
+        feeds.getFeedEntry('blog', params),
       ]
     }
 
     if (parsed.kind === 'blomaga') {
       return [
-        feeds.getFeedEntry('niconico:blog', params),
-        feeds.getFeedEntry('niconico:videos', params),
-        feeds.getFeedEntry('niconico:live', params),
+        feeds.getFeedEntry('blog', params),
+        feeds.getFeedEntry('videos', params),
+        feeds.getFeedEntry('live', params),
       ]
     }
 
     return [
-      feeds.getFeedEntry('niconico:videos', params),
-      feeds.getFeedEntry('niconico:live', params),
-      feeds.getFeedEntry('niconico:blog', params),
+      feeds.getFeedEntry('videos', params),
+      feeds.getFeedEntry('live', params),
+      feeds.getFeedEntry('blog', params),
     ]
   },
 

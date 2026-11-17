@@ -14,8 +14,8 @@ const installUrlRegex = /var g5_url\s*=\s*"([^"]+)"/
 const trailingSlashRegex = /\/$/
 
 // A board is self-hosted on any domain, so the table only builds its feed.
-const feeds = definePlatformFeeds([
-  { key: 'gnuboard:board', main: '{root}/bbs/rss.php?bo_table={board}' },
+const feeds = definePlatformFeeds('gnuboard', [
+  { key: 'board', main: '{root}/bbs/rss.php?bo_table={board}' },
 ])
 
 export type GnuboardPage = { kind: 'board'; root: string; board: string }
@@ -82,6 +82,6 @@ export const gnuboardHandler: PlatformHandler = {
 
     const root = `${new URL(url).origin}${page.root}`
 
-    return [feeds.getFeedEntry('gnuboard:board', { root, board: page.board })]
+    return [feeds.getFeedEntry('board', { root, board: page.board })]
   },
 }

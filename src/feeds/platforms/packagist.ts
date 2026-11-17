@@ -18,64 +18,64 @@ const packageRegex = /^\/packages\/([^/]+)\/([^/]+)(?:\/|$)/i
 const vendorRegex = /^\/packages\/([^/]+)\/?$/i
 const extensionsRegex = /^\/extensions(?:\/|$)/i
 
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('packagist', [
   {
-    key: 'packagist:releases',
+    key: 'releases',
     main: 'https://packagist.org/feeds/package.{vendor}/{name}.rss',
     format: 'rss',
   },
   {
-    key: 'packagist:releases',
+    key: 'releases',
     main: 'https://packagist.org/feeds/package.{vendor}/{name}.atom',
     format: 'atom',
   },
   {
-    key: 'packagist:vendor',
+    key: 'vendor',
     main: 'https://packagist.org/feeds/vendor.{vendor}.rss',
     format: 'rss',
   },
   {
-    key: 'packagist:vendor',
+    key: 'vendor',
     main: 'https://packagist.org/feeds/vendor.{vendor}.atom',
     format: 'atom',
   },
   {
-    key: 'packagist:new-packages',
+    key: 'new-packages',
     main: 'https://packagist.org/feeds/packages.rss',
     format: 'rss',
   },
   {
-    key: 'packagist:new-packages',
+    key: 'new-packages',
     main: 'https://packagist.org/feeds/packages.atom',
     format: 'atom',
   },
   {
-    key: 'packagist:new-releases',
+    key: 'new-releases',
     main: 'https://packagist.org/feeds/releases.rss',
     format: 'rss',
   },
   {
-    key: 'packagist:new-releases',
+    key: 'new-releases',
     main: 'https://packagist.org/feeds/releases.atom',
     format: 'atom',
   },
   {
-    key: 'packagist:new-extensions',
+    key: 'new-extensions',
     main: 'https://packagist.org/feeds/extensions.rss',
     format: 'rss',
   },
   {
-    key: 'packagist:new-extensions',
+    key: 'new-extensions',
     main: 'https://packagist.org/feeds/extensions.atom',
     format: 'atom',
   },
   {
-    key: 'packagist:extension-releases',
+    key: 'extension-releases',
     main: 'https://packagist.org/feeds/extension-releases.rss',
     format: 'rss',
   },
   {
-    key: 'packagist:extension-releases',
+    key: 'extension-releases',
     main: 'https://packagist.org/feeds/extension-releases.atom',
     format: 'atom',
   },
@@ -133,44 +133,44 @@ export const packagistHandler: PlatformHandler = {
       const params = { vendor: parsed.vendor, name: parsed.name }
 
       return [
-        feeds.getFeedEntry('packagist:releases', params, 'rss'),
-        feeds.getFeedEntry('packagist:releases', params, 'atom'),
-        feeds.getFeedEntry('packagist:new-packages', undefined, 'rss'),
-        feeds.getFeedEntry('packagist:new-packages', undefined, 'atom'),
-        feeds.getFeedEntry('packagist:new-releases', undefined, 'rss'),
-        feeds.getFeedEntry('packagist:new-releases', undefined, 'atom'),
+        feeds.getFeedEntry('releases', params, 'rss'),
+        feeds.getFeedEntry('releases', params, 'atom'),
+        feeds.getFeedEntry('new-packages', undefined, 'rss'),
+        feeds.getFeedEntry('new-packages', undefined, 'atom'),
+        feeds.getFeedEntry('new-releases', undefined, 'rss'),
+        feeds.getFeedEntry('new-releases', undefined, 'atom'),
       ]
     }
 
     if (parsed.kind === 'vendor') {
       return [
-        feeds.getFeedEntry('packagist:vendor', { vendor: parsed.vendor }, 'rss'),
-        feeds.getFeedEntry('packagist:vendor', { vendor: parsed.vendor }, 'atom'),
-        feeds.getFeedEntry('packagist:new-packages', undefined, 'rss'),
-        feeds.getFeedEntry('packagist:new-packages', undefined, 'atom'),
-        feeds.getFeedEntry('packagist:new-releases', undefined, 'rss'),
-        feeds.getFeedEntry('packagist:new-releases', undefined, 'atom'),
+        feeds.getFeedEntry('vendor', { vendor: parsed.vendor }, 'rss'),
+        feeds.getFeedEntry('vendor', { vendor: parsed.vendor }, 'atom'),
+        feeds.getFeedEntry('new-packages', undefined, 'rss'),
+        feeds.getFeedEntry('new-packages', undefined, 'atom'),
+        feeds.getFeedEntry('new-releases', undefined, 'rss'),
+        feeds.getFeedEntry('new-releases', undefined, 'atom'),
       ]
     }
 
     if (parsed.kind === 'extensions') {
       return [
-        feeds.getFeedEntry('packagist:new-extensions', undefined, 'rss'),
-        feeds.getFeedEntry('packagist:new-extensions', undefined, 'atom'),
-        feeds.getFeedEntry('packagist:extension-releases', undefined, 'rss'),
-        feeds.getFeedEntry('packagist:extension-releases', undefined, 'atom'),
-        feeds.getFeedEntry('packagist:new-packages', undefined, 'rss'),
-        feeds.getFeedEntry('packagist:new-packages', undefined, 'atom'),
-        feeds.getFeedEntry('packagist:new-releases', undefined, 'rss'),
-        feeds.getFeedEntry('packagist:new-releases', undefined, 'atom'),
+        feeds.getFeedEntry('new-extensions', undefined, 'rss'),
+        feeds.getFeedEntry('new-extensions', undefined, 'atom'),
+        feeds.getFeedEntry('extension-releases', undefined, 'rss'),
+        feeds.getFeedEntry('extension-releases', undefined, 'atom'),
+        feeds.getFeedEntry('new-packages', undefined, 'rss'),
+        feeds.getFeedEntry('new-packages', undefined, 'atom'),
+        feeds.getFeedEntry('new-releases', undefined, 'rss'),
+        feeds.getFeedEntry('new-releases', undefined, 'atom'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('packagist:new-packages', undefined, 'rss'),
-      feeds.getFeedEntry('packagist:new-packages', undefined, 'atom'),
-      feeds.getFeedEntry('packagist:new-releases', undefined, 'rss'),
-      feeds.getFeedEntry('packagist:new-releases', undefined, 'atom'),
+      feeds.getFeedEntry('new-packages', undefined, 'rss'),
+      feeds.getFeedEntry('new-packages', undefined, 'atom'),
+      feeds.getFeedEntry('new-releases', undefined, 'rss'),
+      feeds.getFeedEntry('new-releases', undefined, 'atom'),
     ]
   },
 

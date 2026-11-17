@@ -20,18 +20,19 @@ const searchPageParams = ['count', 'format', 'offset', 'sort_by']
 // The table claims a feed only on kohacatalog.com, since an install elsewhere is known by its
 // page markup, which a feed URL does not carry.
 const ownFeeds = definePlatformFeeds(
+  'koha',
   [
     {
-      key: 'koha:search',
+      key: 'search',
       main: '{scheme}://{host}/cgi-bin/koha/opac-search.pl?format=rss',
       aliases: ['{scheme}://{host}/cgi-bin/koha/opac-search.pl?format=rss2'],
     },
     {
-      key: 'koha:list',
+      key: 'list',
       main: '{root}/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber={shelfNumber}',
     },
-    { key: 'koha:comments', main: '{root}/cgi-bin/koha/opac-showreviews.pl?format=rss' },
-    { key: 'koha:news', main: '{root}/cgi-bin/koha/opac-news-rss.pl' },
+    { key: 'comments', main: '{root}/cgi-bin/koha/opac-showreviews.pl?format=rss' },
+    { key: 'news', main: '{root}/cgi-bin/koha/opac-news-rss.pl' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -125,25 +126,22 @@ export const kohaHandler: PlatformHandler = {
           uri: [`${searchUrl}&format=rss`, `${searchUrl}&format=rss2`],
           hint: composeHint('koha:search'),
         },
-        page.getFeedEntry('koha:news', { root }),
+        page.getFeedEntry('news', { root }),
       ]
     }
 
     if (parsed.kind === 'list') {
       return [
-        page.getFeedEntry('koha:list', { root, shelfNumber: parsed.shelfNumber }),
-        page.getFeedEntry('koha:news', { root }),
+        page.getFeedEntry('list', { root, shelfNumber: parsed.shelfNumber }),
+        page.getFeedEntry('news', { root }),
       ]
     }
 
     if (parsed.kind === 'comments') {
-      return [
-        page.getFeedEntry('koha:comments', { root }),
-        page.getFeedEntry('koha:news', { root }),
-      ]
+      return [page.getFeedEntry('comments', { root }), page.getFeedEntry('news', { root })]
     }
 
-    return [page.getFeedEntry('koha:news', { root })]
+    return [page.getFeedEntry('news', { root })]
   },
 
   getFeedHint: ownFeeds.getFeedHint,

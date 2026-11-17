@@ -17,9 +17,10 @@ const layoutLinkRegex = /^\.\.\/\?SID=(\d+)&platform=(?:app|web)$/i
 const nextGameRegex = /wNextGame\.asp\?SID=(\d+)/i
 
 const feeds = definePlatformFeeds(
+  'sportadmin',
   [
-    { key: 'sportadmin:team', main: '{scheme}://{host}/rss/?SID={sectionId}' },
-    { key: 'sportadmin:news', main: '{scheme}://{host}/rss/' },
+    { key: 'team', main: '{scheme}://{host}/rss/?SID={sectionId}' },
+    { key: 'news', main: '{scheme}://{host}/rss/' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -87,12 +88,12 @@ export const sportadminHandler: PlatformHandler = {
 
     if (page.kind === 'team') {
       return [
-        pageFeeds.getFeedEntry('sportadmin:team', { sectionId: page.sectionId }),
-        pageFeeds.getFeedEntry('sportadmin:news'),
+        pageFeeds.getFeedEntry('team', { sectionId: page.sectionId }),
+        pageFeeds.getFeedEntry('news'),
       ]
     }
 
-    return [pageFeeds.getFeedEntry('sportadmin:news')]
+    return [pageFeeds.getFeedEntry('news')]
   },
 
   getFeedHint: feeds.getFeedHint,

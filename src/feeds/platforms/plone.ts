@@ -28,14 +28,14 @@ const itemPortalTypes = [
 
 // A site is known only by its markup, so its feeds are built under the portal or folder URL the
 // page prints and claimed on no host. The search feed carries the search page's query as it is.
-const feeds = definePlatformFeeds([
-  { key: 'plone:search', main: '{root}/search_rss?{query}' },
-  { key: 'plone:site', main: '{root}/RSS', format: 'rdf' },
-  { key: 'plone:site', main: '{root}/rss.xml', format: 'rss' },
-  { key: 'plone:site', main: '{root}/atom.xml', format: 'atom' },
-  { key: 'plone:folder', main: '{root}/RSS', format: 'rdf' },
-  { key: 'plone:folder', main: '{root}/rss.xml', format: 'rss' },
-  { key: 'plone:folder', main: '{root}/atom.xml', format: 'atom' },
+const feeds = definePlatformFeeds('plone', [
+  { key: 'search', main: '{root}/search_rss?{query}' },
+  { key: 'site', main: '{root}/RSS', format: 'rdf' },
+  { key: 'site', main: '{root}/rss.xml', format: 'rss' },
+  { key: 'site', main: '{root}/atom.xml', format: 'atom' },
+  { key: 'folder', main: '{root}/RSS', format: 'rdf' },
+  { key: 'folder', main: '{root}/rss.xml', format: 'rss' },
+  { key: 'folder', main: '{root}/atom.xml', format: 'atom' },
 ])
 
 const findBody = (content: string | undefined) => {
@@ -140,25 +140,25 @@ export const ploneHandler: PlatformHandler = {
     }
 
     if (page.kind === 'search') {
-      return [pageFeeds.getFeedEntry('plone:search', { root: page.portalUrl, query: page.query })]
+      return [pageFeeds.getFeedEntry('search', { root: page.portalUrl, query: page.query })]
     }
 
     if (page.kind === 'site') {
       const params = { root: page.portalUrl }
 
       return [
-        pageFeeds.getFeedEntry('plone:site', params, 'rdf'),
-        pageFeeds.getFeedEntry('plone:site', params, 'rss'),
-        pageFeeds.getFeedEntry('plone:site', params, 'atom'),
+        pageFeeds.getFeedEntry('site', params, 'rdf'),
+        pageFeeds.getFeedEntry('site', params, 'rss'),
+        pageFeeds.getFeedEntry('site', params, 'atom'),
       ]
     }
 
     const params = { root: page.folderUrl }
 
     return [
-      pageFeeds.getFeedEntry('plone:folder', params, 'rdf'),
-      pageFeeds.getFeedEntry('plone:folder', params, 'rss'),
-      pageFeeds.getFeedEntry('plone:folder', params, 'atom'),
+      pageFeeds.getFeedEntry('folder', params, 'rdf'),
+      pageFeeds.getFeedEntry('folder', params, 'rss'),
+      pageFeeds.getFeedEntry('folder', params, 'atom'),
     ]
   },
 }

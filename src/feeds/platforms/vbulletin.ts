@@ -25,13 +25,13 @@ const friendlyForumIdRegex = /^\?(\d+)(?:-|&|$)/
 // vBulletin 3 and 4 serve `external.php` and vBulletin 5 and later `external`, each with its own
 // spelling of the type. A forum on any host is known only by its scripts or cookies, which a feed
 // URL does not carry, so the feeds are built under the forum root and never claimed.
-const vbulletin4Feeds = definePlatformFeeds([
-  { key: 'vbulletin:forum', main: '{root}/external.php?type=RSS2&forumids={forumId}' },
-  { key: 'vbulletin:site', main: '{root}/external.php?type=RSS2' },
+const vbulletin4Feeds = definePlatformFeeds('vbulletin', [
+  { key: 'forum', main: '{root}/external.php?type=RSS2&forumids={forumId}' },
+  { key: 'site', main: '{root}/external.php?type=RSS2' },
 ])
-const vbulletin5Feeds = definePlatformFeeds([
-  { key: 'vbulletin:forum', main: '{root}/external?type=rss2&nodeid={forumId}' },
-  { key: 'vbulletin:site', main: '{root}/external?type=rss2' },
+const vbulletin5Feeds = definePlatformFeeds('vbulletin', [
+  { key: 'forum', main: '{root}/external?type=rss2&nodeid={forumId}' },
+  { key: 'site', main: '{root}/external?type=rss2' },
 ])
 
 // vBulletin 4 prints `clientscript/vbulletin-core.js` as an absolute URL under the forum root.
@@ -160,11 +160,11 @@ export const vbulletinHandler: PlatformHandler = {
 
     if (page.forumId) {
       return [
-        feeds.getFeedEntry('vbulletin:forum', { root: page.root, forumId: page.forumId }),
-        feeds.getFeedEntry('vbulletin:site', { root: page.root }),
+        feeds.getFeedEntry('forum', { root: page.root, forumId: page.forumId }),
+        feeds.getFeedEntry('site', { root: page.root }),
       ]
     }
 
-    return [feeds.getFeedEntry('vbulletin:site', { root: page.root })]
+    return [feeds.getFeedEntry('site', { root: page.root })]
   },
 }

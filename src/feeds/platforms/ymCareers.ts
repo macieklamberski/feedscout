@@ -17,9 +17,9 @@ const excludedParams = ['display', 'page']
 
 // A board runs on its own domain and is known only by its headers, so its feeds are built here but
 // not claimed. The feed is the list's own path with `display=rss` in front of the page's query.
-const feeds = definePlatformFeeds([
-  { key: 'ym-careers:search', main: '{root}?display=rss&{query}' },
-  { key: 'ym-careers:browse', main: '{root}?display=rss&{query}' },
+const feeds = definePlatformFeeds('ym-careers', [
+  { key: 'search', main: '{root}?display=rss&{query}' },
+  { key: 'browse', main: '{root}?display=rss&{query}' },
 ])
 
 // Every board answers with the header, its bot check page included.
@@ -80,12 +80,12 @@ export const ymCareersHandler: PlatformHandler = {
     if (parsed?.kind === 'browse') {
       const root = `${origin}/jobs${parsed.facets}`
 
-      return [pageFeeds.getFeedEntry('ym-careers:browse', { root, query })]
+      return [pageFeeds.getFeedEntry('browse', { root, query })]
     }
 
     // The table drops one trailing slash from a root, so a search path ending in one keeps it.
     const root = `${origin}${parsed?.path ?? '/jobs'}/`
 
-    return [pageFeeds.getFeedEntry('ym-careers:search', { root, query })]
+    return [pageFeeds.getFeedEntry('search', { root, query })]
   },
 }

@@ -10,9 +10,9 @@ export type LearnkuUrl = { kind: 'community'; community: string } | { kind: 'hom
 
 const hosts = ['learnku.com', 'www.learnku.com']
 
-const feeds = definePlatformFeeds([
-  { key: 'learnku:site', main: 'https://learnku.com/feed' },
-  { key: 'learnku:community', main: 'https://learnku.com/{community}/feed' },
+const feeds = definePlatformFeeds('learnku', [
+  { key: 'site', main: 'https://learnku.com/feed' },
+  { key: 'community', main: 'https://learnku.com/{community}/feed' },
 ])
 
 export const parseLearnkuUrl = (url: string): LearnkuUrl | undefined => {
@@ -43,12 +43,12 @@ export const learnkuHandler: PlatformHandler = {
 
     if (parsed.kind === 'community') {
       return [
-        feeds.getFeedEntry('learnku:community', { community: parsed.community }),
-        feeds.getFeedEntry('learnku:site'),
+        feeds.getFeedEntry('community', { community: parsed.community }),
+        feeds.getFeedEntry('site'),
       ]
     }
 
-    return [feeds.getFeedEntry('learnku:site')]
+    return [feeds.getFeedEntry('site')]
   },
 
   getFeedHint: feeds.getFeedHint,

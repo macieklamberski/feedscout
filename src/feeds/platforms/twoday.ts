@@ -17,22 +17,23 @@ const topicRegex = /^\/topics\/([^/]+)(?:\/|$)/i
 
 // A blog's skin links its posts feed as `/index.rdf` or `/rss`, the same stories.
 const feeds = definePlatformFeeds(
+  'twoday',
   [
     {
-      key: 'twoday:posts',
+      key: 'posts',
       main: '{scheme}://{host}/rss',
       aliases: ['{scheme}://{host}/index.rdf', '{scheme}://{host}/rss.xml'],
     },
     // The same stories with shorter text, which some skins serve.
-    { key: 'twoday:summary', main: '{scheme}://{host}/summary.rdf' },
+    { key: 'summary', main: '{scheme}://{host}/summary.rdf' },
     {
-      key: 'twoday:topic',
+      key: 'topic',
       main: '{scheme}://{host}/topics/{topic}/index.rdf',
       aliases: ['{scheme}://{host}/topics/{topic}/rss'],
     },
     // Every blog serves its newest comments, and its stories by their newest comment.
-    { key: 'twoday:comments', main: '{scheme}://{host}/latestcomments.rdf' },
-    { key: 'twoday:commented', main: '{scheme}://{host}/comments.rdf' },
+    { key: 'comments', main: '{scheme}://{host}/latestcomments.rdf' },
+    { key: 'commented', main: '{scheme}://{host}/comments.rdf' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -74,19 +75,19 @@ export const twodayHandler: PlatformHandler = {
 
     if (parsed.kind === 'topic') {
       return [
-        page.getFeedEntry('twoday:topic', { topic: parsed.topic }),
-        page.getFeedEntry('twoday:posts'),
-        page.getFeedEntry('twoday:summary'),
-        page.getFeedEntry('twoday:comments'),
-        page.getFeedEntry('twoday:commented'),
+        page.getFeedEntry('topic', { topic: parsed.topic }),
+        page.getFeedEntry('posts'),
+        page.getFeedEntry('summary'),
+        page.getFeedEntry('comments'),
+        page.getFeedEntry('commented'),
       ]
     }
 
     return [
-      page.getFeedEntry('twoday:posts'),
-      page.getFeedEntry('twoday:summary'),
-      page.getFeedEntry('twoday:comments'),
-      page.getFeedEntry('twoday:commented'),
+      page.getFeedEntry('posts'),
+      page.getFeedEntry('summary'),
+      page.getFeedEntry('comments'),
+      page.getFeedEntry('commented'),
     ]
   },
 

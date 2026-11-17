@@ -9,9 +9,10 @@ export type SakuraBlogUrl = { kind: 'blog'; hostname: string }
 const domains = ['sblo.jp']
 
 const feeds = definePlatformFeeds(
+  'sakura-blog',
   [
     {
-      key: 'sakura-blog:posts',
+      key: 'posts',
       main: '{scheme}://{host}/index20.rdf',
       format: 'rss',
       aliases: [
@@ -21,7 +22,7 @@ const feeds = definePlatformFeeds(
         '{root}/rss.xml',
       ],
     },
-    { key: 'sakura-blog:posts', main: '{scheme}://{host}/index.rdf', format: 'rdf' },
+    { key: 'posts', main: '{scheme}://{host}/index.rdf', format: 'rdf' },
   ],
   { hosts: { tenants: domains }, isWwwTenantPrefix: true },
 )
@@ -49,8 +50,8 @@ export const sakuraBlogHandler: PlatformHandler = {
     // Blogs on the classic engine answer over http only, as their alternate links spell it: https
     // fails the TLS handshake with a certificate that names blog.sakura.ne.jp.
     return [
-      page.getFeedSpellings('sakura-blog:posts', { scheme: 'http' }, 'rss'),
-      page.getFeedEntry('sakura-blog:posts', { scheme: 'http' }, 'rdf'),
+      page.getFeedSpellings('posts', { scheme: 'http' }, 'rss'),
+      page.getFeedEntry('posts', { scheme: 'http' }, 'rdf'),
     ]
   },
 

@@ -10,15 +10,15 @@ import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 // The module ids that serve an all-categories feed. A module id with no feed answers 200 with an
 // empty body.
 const moduleKeys = new Map<string, CivicplusFeedKey>([
-  ['1', 'civicplus:news-flash'],
-  ['51', 'civicplus:blog'],
-  ['53', 'civicplus:photo-gallery'],
-  ['58', 'civicplus:calendar'],
-  ['63', 'civicplus:alert-center'],
-  ['64', 'civicplus:real-estate'],
-  ['65', 'civicplus:agenda-center'],
-  ['66', 'civicplus:jobs'],
-  ['92', 'civicplus:media-center'],
+  ['1', 'news-flash'],
+  ['51', 'blog'],
+  ['53', 'photo-gallery'],
+  ['58', 'calendar'],
+  ['63', 'alert-center'],
+  ['64', 'real-estate'],
+  ['65', 'agenda-center'],
+  ['66', 'jobs'],
+  ['92', 'media-center'],
 ])
 
 const feeds = withHintLabels(civicplus.feeds)
@@ -48,7 +48,7 @@ const getCivicplusPage = (content: string | undefined): CivicplusPage => {
     return element.name === 'input' && element.attribs.id === 'pageModuleID'
   })
 
-  return { kind: 'module', key: moduleKeys.get(input?.attribs.value ?? '') ?? 'civicplus:pages' }
+  return { kind: 'module', key: moduleKeys.get(input?.attribs.value ?? '') ?? 'pages' }
 }
 
 export const civicplusHandler: PlatformHandler = {

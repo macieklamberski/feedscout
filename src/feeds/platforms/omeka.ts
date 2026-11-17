@@ -42,9 +42,10 @@ const domains = ['omeka.net']
 // than the dropped parameters makes a feed the filtered items one. The short `/items` route and an
 // item shown inside an exhibit serve the same feeds, so they are claimed under the same keys.
 const feeds = definePlatformFeeds(
+  'omeka',
   [
     {
-      key: 'omeka:items',
+      key: 'items',
       main: '{root}/items/browse?output=rss2',
       format: 'rss',
       aliases: [
@@ -54,26 +55,26 @@ const feeds = definePlatformFeeds(
       ],
     },
     {
-      key: 'omeka:items',
+      key: 'items',
       main: '{root}/items/browse?output=atom',
       format: 'atom',
       aliases: ['{root}/items?output=atom', '{root}/?output=atom'],
     },
     // The browse serves the items feed page by page.
-    { key: 'omeka:items', main: '{root}/items/browse/{page}?output=rss2', format: 'rss' },
-    { key: 'omeka:items', main: '{root}/items/browse/{page}?output=atom', format: 'atom' },
+    { key: 'items', main: '{root}/items/browse/{page}?output=rss2', format: 'rss' },
+    { key: 'items', main: '{root}/items/browse/{page}?output=atom', format: 'atom' },
     {
-      key: 'omeka:filtered-items',
+      key: 'filtered-items',
       main: '{root}/items/browse/tag/{tag}?output=rss2',
       format: 'rss',
     },
     {
-      key: 'omeka:filtered-items',
+      key: 'filtered-items',
       main: '{root}/items/browse/tag/{tag}?output=atom',
       format: 'atom',
     },
     {
-      key: 'omeka:item',
+      key: 'item',
       main: '{root}/items/show/{id}?output=atom',
       format: 'atom',
       aliases: ['{root}/exhibits/show/{exhibit}/item/{id}?output=atom'],
@@ -193,24 +194,24 @@ export const omekaHandler: PlatformHandler = {
 
     if (page.kind === 'tag') {
       return [
-        feeds.getFeedEntry('omeka:filtered-items', { root: page.rootUrl, tag: page.tag }, 'rss'),
-        feeds.getFeedEntry('omeka:filtered-items', { root: page.rootUrl, tag: page.tag }, 'atom'),
-        feeds.getFeedEntry('omeka:items', { root: page.rootUrl }, 'rss'),
-        feeds.getFeedEntry('omeka:items', { root: page.rootUrl }, 'atom'),
+        feeds.getFeedEntry('filtered-items', { root: page.rootUrl, tag: page.tag }, 'rss'),
+        feeds.getFeedEntry('filtered-items', { root: page.rootUrl, tag: page.tag }, 'atom'),
+        feeds.getFeedEntry('items', { root: page.rootUrl }, 'rss'),
+        feeds.getFeedEntry('items', { root: page.rootUrl }, 'atom'),
       ]
     }
 
     if (page.kind === 'item') {
       return [
-        feeds.getFeedEntry('omeka:item', { root: page.rootUrl, id: page.id }, 'atom'),
-        feeds.getFeedEntry('omeka:items', { root: page.rootUrl }, 'rss'),
-        feeds.getFeedEntry('omeka:items', { root: page.rootUrl }, 'atom'),
+        feeds.getFeedEntry('item', { root: page.rootUrl, id: page.id }, 'atom'),
+        feeds.getFeedEntry('items', { root: page.rootUrl }, 'rss'),
+        feeds.getFeedEntry('items', { root: page.rootUrl }, 'atom'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('omeka:items', { root: page.rootUrl }, 'rss'),
-      feeds.getFeedEntry('omeka:items', { root: page.rootUrl }, 'atom'),
+      feeds.getFeedEntry('items', { root: page.rootUrl }, 'rss'),
+      feeds.getFeedEntry('items', { root: page.rootUrl }, 'atom'),
     ]
   },
 

@@ -14,9 +14,13 @@ const domains = ['weebly.com']
 // other dot marks a file, such as `/favicon.ico`.
 const pageLinkRegex = /^\/([^/.]+)(?:\.html)?$/i
 
-const feeds = definePlatformFeeds([{ key: 'weebly:blog', main: '{scheme}://{host}/{page}/feed' }], {
-  hosts: { tenants: domains },
-})
+const feeds = definePlatformFeeds(
+  'weebly',
+  [{ key: 'blog', main: '{scheme}://{host}/{page}/feed' }],
+  {
+    hosts: { tenants: domains },
+  },
+)
 
 export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -86,7 +90,7 @@ export const weeblyHandler: PlatformHandler = {
 
     const slugs = page.kind === 'home' ? page.pages : [page.page ?? 'blog']
 
-    return slugs.map((slug) => pageFeeds.getFeedEntry('weebly:blog', { page: slug }))
+    return slugs.map((slug) => pageFeeds.getFeedEntry('blog', { page: slug }))
   },
 
   getFeedHint: feeds.getFeedHint,

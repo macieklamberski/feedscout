@@ -14,13 +14,14 @@ const zenfolioAssetRegex = /^(?:https?:)?\/\/cdn\.zenfolio\.com\/zf\//i
 
 // A custom domain is known only by its markers, so its feeds are built here but not claimed.
 const feeds = definePlatformFeeds(
+  'zenfolio',
   [
-    { key: 'zenfolio:recent', main: '{scheme}://{host}/recent.rss', format: 'rss' },
-    { key: 'zenfolio:recent', main: '{scheme}://{host}/recent.atom', format: 'atom' },
-    { key: 'zenfolio:featured', main: '{scheme}://{host}/featured.rss', format: 'rss' },
-    { key: 'zenfolio:featured', main: '{scheme}://{host}/featured.atom', format: 'atom' },
-    { key: 'zenfolio:blog', main: '{scheme}://{host}/blog.rss', format: 'rss' },
-    { key: 'zenfolio:blog', main: '{scheme}://{host}/blog.atom', format: 'atom' },
+    { key: 'recent', main: '{scheme}://{host}/recent.rss', format: 'rss' },
+    { key: 'recent', main: '{scheme}://{host}/recent.atom', format: 'atom' },
+    { key: 'featured', main: '{scheme}://{host}/featured.rss', format: 'rss' },
+    { key: 'featured', main: '{scheme}://{host}/featured.atom', format: 'atom' },
+    { key: 'blog', main: '{scheme}://{host}/blog.rss', format: 'rss' },
+    { key: 'blog', main: '{scheme}://{host}/blog.atom', format: 'atom' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -76,12 +77,12 @@ export const zenfolioHandler: PlatformHandler = {
     }
 
     return [
-      page.getFeedEntry('zenfolio:recent', {}, 'rss'),
-      page.getFeedEntry('zenfolio:recent', {}, 'atom'),
-      page.getFeedEntry('zenfolio:featured', {}, 'rss'),
-      page.getFeedEntry('zenfolio:featured', {}, 'atom'),
-      page.getFeedEntry('zenfolio:blog', {}, 'rss'),
-      page.getFeedEntry('zenfolio:blog', {}, 'atom'),
+      page.getFeedEntry('recent', {}, 'rss'),
+      page.getFeedEntry('recent', {}, 'atom'),
+      page.getFeedEntry('featured', {}, 'rss'),
+      page.getFeedEntry('featured', {}, 'atom'),
+      page.getFeedEntry('blog', {}, 'rss'),
+      page.getFeedEntry('blog', {}, 'atom'),
     ]
   },
 

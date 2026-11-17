@@ -20,9 +20,10 @@ const offerFeedPath = '/handlers/offerRss.ashx'
 // claimed only on Talentsoft's own domains. The site's own feed list spells the language as `LCID`,
 // and the feed answers without it. The feed list page's own link serves the same offers.
 const feeds = definePlatformFeeds(
+  'talentsoft',
   [
     {
-      key: 'talentsoft:offers',
+      key: 'offers',
       main: '{scheme}://{host}/handlers/offerRss.ashx?LCID={lcid}',
       aliases: [
         '{scheme}://{host}/handlers/offerRss.ashx',
@@ -104,11 +105,11 @@ export const talentsoftHandler: PlatformHandler = {
     if (page.kind === 'search') {
       return [
         { uri: page.searchFeedUrl, hint: composeHint('talentsoft:search') },
-        pageFeeds.getFeedEntry('talentsoft:offers', { lcid: page.lcid }),
+        pageFeeds.getFeedEntry('offers', { lcid: page.lcid }),
       ]
     }
 
-    return [pageFeeds.getFeedEntry('talentsoft:offers', { lcid: page.lcid })]
+    return [pageFeeds.getFeedEntry('offers', { lcid: page.lcid })]
   },
 
   // A criterion beyond the language makes it a search feed.

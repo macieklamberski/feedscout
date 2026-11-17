@@ -8,10 +8,10 @@ export type HearthisUrl = { kind: 'profile'; username: string }
 
 const hosts = ['hearthis.at', 'www.hearthis.at']
 
-const feeds = definePlatformFeeds([
-  { key: 'hearthis:new-tracks', main: 'https://hearthis.at/new_tracks.rss' },
+const feeds = definePlatformFeeds('hearthis', [
+  { key: 'new-tracks', main: 'https://hearthis.at/new_tracks.rss' },
   {
-    key: 'hearthis:tracks',
+    key: 'tracks',
     main: 'https://hearthis.at/{username}/podcast/',
     aliases: [
       // The same feed, byte for byte, under a second spelling.
@@ -19,11 +19,11 @@ const feeds = definePlatformFeeds([
     ],
   },
   // The same tracks as a plain list, with no audio enclosures.
-  { key: 'hearthis:track-list', main: 'https://hearthis.at/{username}/rss/' },
+  { key: 'track-list', main: 'https://hearthis.at/{username}/rss/' },
   // A set's feed, which its page links. The set id is not in the page URL. Any one segment after
   // `podcast/`, such as `feed/` or `.rss/`, serves the same items.
   {
-    key: 'hearthis:set',
+    key: 'set',
     main: 'https://hearthis.at/set/{setId}/podcast/',
     aliases: ['https://hearthis.at/set/{setId}/podcast/{spelling}/'],
   },
@@ -56,9 +56,9 @@ export const hearthisHandler: PlatformHandler = {
     }
 
     return [
-      feeds.getFeedEntry('hearthis:tracks', { username: parsed.username }),
-      feeds.getFeedEntry('hearthis:track-list', { username: parsed.username }),
-      feeds.getFeedEntry('hearthis:new-tracks'),
+      feeds.getFeedEntry('tracks', { username: parsed.username }),
+      feeds.getFeedEntry('track-list', { username: parsed.username }),
+      feeds.getFeedEntry('new-tracks'),
     ]
   },
 

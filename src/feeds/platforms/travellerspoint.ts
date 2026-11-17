@@ -9,9 +9,10 @@ export type TravellerspointUrl = { kind: 'blog'; blog: string }
 const domains = ['travellerspoint.com']
 
 const feeds = definePlatformFeeds(
+  'travellerspoint',
   [
     {
-      key: 'travellerspoint:posts',
+      key: 'posts',
       main: '{scheme}://{host}/atom.xml',
       aliases: ['{scheme}://{host}/rss.xml'],
     },
@@ -41,7 +42,7 @@ export const travellerspointHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('travellerspoint:posts')]
+    return [page.getFeedEntry('posts')]
   },
 
   getFeedHint: feeds.getFeedHint,

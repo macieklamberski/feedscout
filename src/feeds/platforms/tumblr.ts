@@ -17,12 +17,13 @@ const tagRegex = /^\/tagged\/([^/]+)/i
 // `?format=rss` holds the posts as the theme renders them, `/podcast` the audio posts. Both
 // answer a plain request with a browser check. `/podcast/rss` is a spelling of the podcast.
 const feeds = definePlatformFeeds(
+  'tumblr',
   [
-    { key: 'tumblr:tag', main: '{scheme}://{host}/tagged/{tag}/rss' },
-    { key: 'tumblr:posts', main: '{scheme}://{host}/rss' },
-    { key: 'tumblr:theme-posts', main: '{scheme}://{host}/?format=rss' },
+    { key: 'tag', main: '{scheme}://{host}/tagged/{tag}/rss' },
+    { key: 'posts', main: '{scheme}://{host}/rss' },
+    { key: 'theme-posts', main: '{scheme}://{host}/?format=rss' },
     {
-      key: 'tumblr:podcast',
+      key: 'podcast',
       main: '{scheme}://{host}/podcast',
       aliases: ['{scheme}://{host}/podcast/rss'],
     },
@@ -90,17 +91,17 @@ export const tumblrHandler: PlatformHandler = {
     // them after its own feeds.
     if (parsed.kind === 'tag') {
       return [
-        page.getFeedEntry('tumblr:tag', { host, tag: parsed.tag }),
-        page.getFeedEntry('tumblr:posts', { host }),
-        page.getFeedEntry('tumblr:theme-posts', { host }),
-        page.getFeedEntry('tumblr:podcast', { host }),
+        page.getFeedEntry('tag', { host, tag: parsed.tag }),
+        page.getFeedEntry('posts', { host }),
+        page.getFeedEntry('theme-posts', { host }),
+        page.getFeedEntry('podcast', { host }),
       ]
     }
 
     return [
-      page.getFeedEntry('tumblr:posts', { host }),
-      page.getFeedEntry('tumblr:theme-posts', { host }),
-      page.getFeedEntry('tumblr:podcast', { host }),
+      page.getFeedEntry('posts', { host }),
+      page.getFeedEntry('theme-posts', { host }),
+      page.getFeedEntry('podcast', { host }),
     ]
   },
 

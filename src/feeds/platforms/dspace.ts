@@ -79,29 +79,29 @@ const legacyKeys: Record<LegacyKind, string> = {
 // A repository runs on its own domain and is known only by its marker, so its search feeds are
 // built here, under the REST API root, but not claimed. DSpace 6 and older feeds are the links the
 // page prints.
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('dspace', [
   {
-    key: 'dspace:collection',
+    key: 'collection',
     main: '{root}/opensearch/search?format=atom&scope={uuid}&query=*',
     format: 'atom',
   },
   {
-    key: 'dspace:collection',
+    key: 'collection',
     main: '{root}/opensearch/search?format=rss&scope={uuid}&query=*',
     format: 'rss',
   },
   {
-    key: 'dspace:community',
+    key: 'community',
     main: '{root}/opensearch/search?format=atom&scope={uuid}&query=*',
     format: 'atom',
   },
   {
-    key: 'dspace:community',
+    key: 'community',
     main: '{root}/opensearch/search?format=rss&scope={uuid}&query=*',
     format: 'rss',
   },
-  { key: 'dspace:site', main: '{root}/opensearch/search?format=atom&query=*', format: 'atom' },
-  { key: 'dspace:site', main: '{root}/opensearch/search?format=rss&query=*', format: 'rss' },
+  { key: 'site', main: '{root}/opensearch/search?format=atom&query=*', format: 'atom' },
+  { key: 'site', main: '{root}/opensearch/search?format=rss&query=*', format: 'rss' },
 ])
 
 // The Angular UI of DSpace 7 and later renders every page inside this root element.
@@ -271,25 +271,25 @@ export const dspaceHandler: PlatformHandler = {
 
     if (page.kind === 'collection') {
       return [
-        feeds.getFeedEntry('dspace:collection', { root, uuid: page.uuid }, 'atom'),
-        feeds.getFeedEntry('dspace:collection', { root, uuid: page.uuid }, 'rss'),
-        feeds.getFeedEntry('dspace:site', { root }, 'atom'),
-        feeds.getFeedEntry('dspace:site', { root }, 'rss'),
+        feeds.getFeedEntry('collection', { root, uuid: page.uuid }, 'atom'),
+        feeds.getFeedEntry('collection', { root, uuid: page.uuid }, 'rss'),
+        feeds.getFeedEntry('site', { root }, 'atom'),
+        feeds.getFeedEntry('site', { root }, 'rss'),
       ]
     }
 
     if (page.kind === 'community') {
       return [
-        feeds.getFeedEntry('dspace:community', { root, uuid: page.uuid }, 'atom'),
-        feeds.getFeedEntry('dspace:community', { root, uuid: page.uuid }, 'rss'),
-        feeds.getFeedEntry('dspace:site', { root }, 'atom'),
-        feeds.getFeedEntry('dspace:site', { root }, 'rss'),
+        feeds.getFeedEntry('community', { root, uuid: page.uuid }, 'atom'),
+        feeds.getFeedEntry('community', { root, uuid: page.uuid }, 'rss'),
+        feeds.getFeedEntry('site', { root }, 'atom'),
+        feeds.getFeedEntry('site', { root }, 'rss'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('dspace:site', { root }, 'atom'),
-      feeds.getFeedEntry('dspace:site', { root }, 'rss'),
+      feeds.getFeedEntry('site', { root }, 'atom'),
+      feeds.getFeedEntry('site', { root }, 'rss'),
     ]
   },
 }

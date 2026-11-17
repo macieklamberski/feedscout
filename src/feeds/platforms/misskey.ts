@@ -55,9 +55,9 @@ export const misskeyHandler: PlatformHandler = {
     }
 
     return [
-      pageFeeds.getFeedEntry('misskey:posts', { username: parsed.username }, 'atom'),
-      pageFeeds.getFeedEntry('misskey:posts', { username: parsed.username }, 'rss'),
-      pageFeeds.getFeedEntry('misskey:posts', { username: parsed.username }, 'json'),
+      pageFeeds.getFeedEntry('posts', { username: parsed.username }, 'atom'),
+      pageFeeds.getFeedEntry('posts', { username: parsed.username }, 'rss'),
+      pageFeeds.getFeedEntry('posts', { username: parsed.username }, 'json'),
     ]
   },
 }

@@ -19,10 +19,11 @@ const postRegex = /^\/posts\/(\d+)(?:\.html)?(?:\/|$)/i
 const signUpPageRegex = /\/user_files\/index\/config\/favicon\.ico"/i
 
 const feeds = definePlatformFeeds(
+  'is-programmer',
   [
-    { key: 'is-programmer:post-comments', main: '{scheme}://{host}/posts/{postId}.rss' },
+    { key: 'post-comments', main: '{scheme}://{host}/posts/{postId}.rss' },
     {
-      key: 'is-programmer:posts',
+      key: 'posts',
       main: '{scheme}://{host}/feed',
       aliases: [
         '{scheme}://{host}/posts.rss',
@@ -31,9 +32,9 @@ const feeds = definePlatformFeeds(
         '{scheme}://{host}/?format=rss',
       ],
     },
-    { key: 'is-programmer:comments', main: '{scheme}://{host}/comments.rss' },
-    { key: 'is-programmer:messages', main: '{scheme}://{host}/messages.rss' },
-    { key: 'is-programmer:site', main: '{scheme}://{host}/site.rss' },
+    { key: 'comments', main: '{scheme}://{host}/comments.rss' },
+    { key: 'messages', main: '{scheme}://{host}/messages.rss' },
+    { key: 'site', main: '{scheme}://{host}/site.rss' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -83,19 +84,19 @@ export const isProgrammerHandler: PlatformHandler = {
 
     if (parsed.kind === 'post') {
       return [
-        page.getFeedEntry('is-programmer:post-comments', { ...params, postId: parsed.postId }),
-        page.getFeedEntry('is-programmer:posts', params),
-        page.getFeedEntry('is-programmer:comments', params),
-        page.getFeedEntry('is-programmer:messages', params),
-        page.getFeedEntry('is-programmer:site', params),
+        page.getFeedEntry('post-comments', { ...params, postId: parsed.postId }),
+        page.getFeedEntry('posts', params),
+        page.getFeedEntry('comments', params),
+        page.getFeedEntry('messages', params),
+        page.getFeedEntry('site', params),
       ]
     }
 
     return [
-      page.getFeedEntry('is-programmer:posts', params),
-      page.getFeedEntry('is-programmer:comments', params),
-      page.getFeedEntry('is-programmer:messages', params),
-      page.getFeedEntry('is-programmer:site', params),
+      page.getFeedEntry('posts', params),
+      page.getFeedEntry('comments', params),
+      page.getFeedEntry('messages', params),
+      page.getFeedEntry('site', params),
     ]
   },
 

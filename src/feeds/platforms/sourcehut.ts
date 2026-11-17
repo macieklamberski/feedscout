@@ -14,17 +14,17 @@ export const hosts = ['git.sr.ht']
 const projectHosts = ['sr.ht']
 const userHosts = [...projectHosts, 'todo.sr.ht', ...hosts]
 
-const feeds = definePlatformFeeds([
-  { key: 'sourcehut:commits', main: 'https://git.sr.ht/~{owner}/{repo}/log/rss.xml' },
-  { key: 'sourcehut:commits', main: 'https://git.sr.ht/~{owner}/{repo}/log/{ref}/rss.xml' },
-  { key: 'sourcehut:refs', main: 'https://git.sr.ht/~{owner}/{repo}/refs/rss.xml' },
-  { key: 'sourcehut:project', main: 'https://sr.ht/~{owner}/{project}/feed.rss' },
+const feeds = definePlatformFeeds('sourcehut', [
+  { key: 'commits', main: 'https://git.sr.ht/~{owner}/{repo}/log/rss.xml' },
+  { key: 'commits', main: 'https://git.sr.ht/~{owner}/{repo}/log/{ref}/rss.xml' },
+  { key: 'refs', main: 'https://git.sr.ht/~{owner}/{repo}/refs/rss.xml' },
+  { key: 'project', main: 'https://sr.ht/~{owner}/{project}/feed.rss' },
 ])
 
 // A log at a full commit hash is the history up to that commit, which never changes, not the log
 // of a branch. No page links it, so `resolve` never builds it.
-const commitHistoryFeeds = definePlatformFeeds([
-  { key: 'sourcehut:commit-history', main: 'https://git.sr.ht/~{owner}/{repo}/log/{hash}/rss.xml' },
+const commitHistoryFeeds = definePlatformFeeds('sourcehut', [
+  { key: 'commit-history', main: 'https://git.sr.ht/~{owner}/{repo}/log/{hash}/rss.xml' },
 ])
 const commitHashRegex = /^[0-9a-f]{40}$/i
 
@@ -68,9 +68,7 @@ export const sourcehutHandler: PlatformHandler = {
     const parsed = parseSourcehutUrl(url)
 
     if (parsed?.kind === 'project') {
-      return [
-        feeds.getFeedEntry('sourcehut:project', { owner: parsed.owner, project: parsed.project }),
-      ]
+      return [feeds.getFeedEntry('project', { owner: parsed.owner, project: parsed.project })]
     }
 
     if (parsed?.kind !== 'repo') {
@@ -79,10 +77,7 @@ export const sourcehutHandler: PlatformHandler = {
 
     const params = { owner: parsed.owner, repo: parsed.repo }
 
-    return [
-      feeds.getFeedEntry('sourcehut:commits', params),
-      feeds.getFeedEntry('sourcehut:refs', params),
-    ]
+    return [feeds.getFeedEntry('commits', params), feeds.getFeedEntry('refs', params)]
   },
 
   getFeedHint: (url) => {

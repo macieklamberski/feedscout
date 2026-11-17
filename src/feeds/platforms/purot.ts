@@ -21,24 +21,25 @@ const pageChangesRegex = /^\/changes\/([^/?]+)\?mode=rss&messages=0$/i
 
 // The wiki's changes come first, so its feeds are not read as the feeds of a page named all.
 const feeds = definePlatformFeeds(
+  'purot',
   [
-    { key: 'purot:recent-changes', main: '{scheme}://{host}/changes/all?mode=rss' },
-    { key: 'purot:recent-page-changes', main: '{scheme}://{host}/changes/all?mode=rss&messages=0' },
-    { key: 'purot:recent-discussions', main: '{scheme}://{host}/changes/all?mode=rss&pages=0' },
-    { key: 'purot:page-changes', main: '{scheme}://{host}/changes/{page}?mode=rss&messages=0' },
-    { key: 'purot:page-discussions', main: '{scheme}://{host}/changes/{page}?mode=rss&pages=0' },
-    { key: 'purot:page-activity', main: '{scheme}://{host}/changes/{page}?mode=rss' },
+    { key: 'recent-changes', main: '{scheme}://{host}/changes/all?mode=rss' },
+    { key: 'recent-page-changes', main: '{scheme}://{host}/changes/all?mode=rss&messages=0' },
+    { key: 'recent-discussions', main: '{scheme}://{host}/changes/all?mode=rss&pages=0' },
+    { key: 'page-changes', main: '{scheme}://{host}/changes/{page}?mode=rss&messages=0' },
+    { key: 'page-discussions', main: '{scheme}://{host}/changes/{page}?mode=rss&pages=0' },
+    { key: 'page-activity', main: '{scheme}://{host}/changes/{page}?mode=rss' },
     // A real user's profile feeds hold that user's own changes. Only a missing user's feeds list
     // every user's profile changes.
     {
-      key: 'purot:user-changes',
+      key: 'user-changes',
       main: '{scheme}://{host}/changes/profile/{user}?mode=rss&messages=0',
     },
     {
-      key: 'purot:user-discussions',
+      key: 'user-discussions',
       main: '{scheme}://{host}/changes/profile/{user}?mode=rss&pages=0',
     },
-    { key: 'purot:user-activity', main: '{scheme}://{host}/changes/profile/{user}?mode=rss' },
+    { key: 'user-activity', main: '{scheme}://{host}/changes/profile/{user}?mode=rss' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -91,19 +92,19 @@ export const purotHandler: PlatformHandler = {
       const params = { page: page.page }
 
       return [
-        pageFeeds.getFeedEntry('purot:page-changes', params),
-        pageFeeds.getFeedEntry('purot:page-discussions', params),
-        pageFeeds.getFeedEntry('purot:page-activity', params),
-        pageFeeds.getFeedEntry('purot:recent-changes'),
-        pageFeeds.getFeedEntry('purot:recent-page-changes'),
-        pageFeeds.getFeedEntry('purot:recent-discussions'),
+        pageFeeds.getFeedEntry('page-changes', params),
+        pageFeeds.getFeedEntry('page-discussions', params),
+        pageFeeds.getFeedEntry('page-activity', params),
+        pageFeeds.getFeedEntry('recent-changes'),
+        pageFeeds.getFeedEntry('recent-page-changes'),
+        pageFeeds.getFeedEntry('recent-discussions'),
       ]
     }
 
     return [
-      pageFeeds.getFeedEntry('purot:recent-changes'),
-      pageFeeds.getFeedEntry('purot:recent-page-changes'),
-      pageFeeds.getFeedEntry('purot:recent-discussions'),
+      pageFeeds.getFeedEntry('recent-changes'),
+      pageFeeds.getFeedEntry('recent-page-changes'),
+      pageFeeds.getFeedEntry('recent-discussions'),
     ]
   },
 

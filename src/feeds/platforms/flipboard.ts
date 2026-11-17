@@ -14,10 +14,10 @@ export const hosts = ['flipboard.com', 'www.flipboard.com']
 // Flipboard redirects these profile tabs to the profile itself.
 const profileSubpaths = ['followers', 'following', 'magazines']
 
-const feeds = definePlatformFeeds([
-  { key: 'flipboard:profile', main: 'https://flipboard.com/@{username}.rss' },
-  { key: 'flipboard:magazine', main: 'https://flipboard.com/@{username}/{magazine}.rss' },
-  { key: 'flipboard:topic', main: 'https://flipboard.com/topic/{topic}.rss' },
+const feeds = definePlatformFeeds('flipboard', [
+  { key: 'profile', main: 'https://flipboard.com/@{username}.rss' },
+  { key: 'magazine', main: 'https://flipboard.com/@{username}/{magazine}.rss' },
+  { key: 'topic', main: 'https://flipboard.com/topic/{topic}.rss' },
 ])
 
 export const parseFlipboardUrl = (url: string): FlipboardUrl | undefined => {
@@ -68,16 +68,16 @@ export const flipboardHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'profile') {
-      return [feeds.getFeedEntry('flipboard:profile', { username: parsed.username })]
+      return [feeds.getFeedEntry('profile', { username: parsed.username })]
     }
 
     if (parsed.kind === 'magazine') {
       const { username, magazine } = parsed
 
-      return [feeds.getFeedEntry('flipboard:magazine', { username, magazine })]
+      return [feeds.getFeedEntry('magazine', { username, magazine })]
     }
 
-    return [feeds.getFeedEntry('flipboard:topic', { topic: parsed.topic })]
+    return [feeds.getFeedEntry('topic', { topic: parsed.topic })]
   },
 
   getFeedHint: feeds.getFeedHint,

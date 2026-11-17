@@ -83,33 +83,30 @@ export const dailymotionHandler: PlatformHandler = {
 
     // The trending feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'trending') {
-      return [feeds.getFeedEntry('dailymotion:trending')]
+      return [feeds.getFeedEntry('trending')]
     }
 
     if (parsed.kind === 'playlist') {
       return [
-        feeds.getFeedEntry('dailymotion:playlist', { id: parsed.playlistId }),
-        feeds.getFeedEntry('dailymotion:trending'),
+        feeds.getFeedEntry('playlist', { id: parsed.playlistId }),
+        feeds.getFeedEntry('trending'),
       ]
     }
 
     if (parsed.kind === 'search') {
-      return [
-        feeds.getFeedEntry('dailymotion:search', { query: parsed.query }),
-        feeds.getFeedEntry('dailymotion:trending'),
-      ]
+      return [feeds.getFeedEntry('search', { query: parsed.query }), feeds.getFeedEntry('trending')]
     }
 
     if (parsed.kind === 'channel') {
       return [
-        feeds.getFeedEntry('dailymotion:channel', { channel: parsed.channel }),
-        feeds.getFeedEntry('dailymotion:trending'),
+        feeds.getFeedEntry('channel', { channel: parsed.channel }),
+        feeds.getFeedEntry('trending'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('dailymotion:videos', { username: parsed.username }),
-      feeds.getFeedEntry('dailymotion:trending'),
+      feeds.getFeedEntry('videos', { username: parsed.username }),
+      feeds.getFeedEntry('trending'),
     ]
   },
 

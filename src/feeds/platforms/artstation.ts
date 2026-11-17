@@ -12,10 +12,10 @@ const domains = ['artstation.com']
 const hosts = ['artstation.com', 'www.artstation.com']
 
 // `/artwork.rss` reads before `/{username}.rss`, so the site feed never reads as a user's.
-const feeds = definePlatformFeeds([
-  { key: 'artstation:artwork', main: 'https://www.artstation.com/artwork.rss?sorting={sorting}' },
-  { key: 'artstation:artwork', main: 'https://www.artstation.com/artwork.rss' },
-  { key: 'artstation:portfolio', main: 'https://www.artstation.com/{username}.rss' },
+const feeds = definePlatformFeeds('artstation', [
+  { key: 'artwork', main: 'https://www.artstation.com/artwork.rss?sorting={sorting}' },
+  { key: 'artwork', main: 'https://www.artstation.com/artwork.rss' },
+  { key: 'portfolio', main: 'https://www.artstation.com/{username}.rss' },
 ])
 
 export const parseArtstationUrl = (url: string): ArtstationUrl | undefined => {
@@ -72,15 +72,12 @@ export const artstationHandler: PlatformHandler = {
 
     // The artwork feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'artwork') {
-      return [
-        feeds.getFeedEntry('artstation:artwork'),
-        feeds.getFeedEntry('artstation:artwork', { sorting: 'latest' }),
-      ]
+      return [feeds.getFeedEntry('artwork'), feeds.getFeedEntry('artwork', { sorting: 'latest' })]
     }
 
     return [
-      feeds.getFeedEntry('artstation:portfolio', { username: parsed.username }),
-      feeds.getFeedEntry('artstation:artwork'),
+      feeds.getFeedEntry('portfolio', { username: parsed.username }),
+      feeds.getFeedEntry('artwork'),
     ]
   },
 

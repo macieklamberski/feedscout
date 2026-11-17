@@ -67,6 +67,6 @@ export const netcrewHandler: PlatformHandler = {
       return []
     }
 
-    return [pageFeeds.getFeedSpellings('netcrew:updates')]
+    return [pageFeeds.getFeedSpellings('updates')]
   },
 }

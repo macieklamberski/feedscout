@@ -14,11 +14,11 @@ const routingParams = ['option', 'view', 'layout', 'id', 'catid', 'Itemid', 'lan
 // A site runs on its own domain and is known only by its marker, so its feeds are built here but
 // not claimed. The feed is the view's own URL with the feed format in its query, and a view
 // without search-engine friendly URLs passes the routing parameters that name it.
-const feeds = definePlatformFeeds([
-  { key: 'joomla:view', main: '{root}?{query}&format=feed&type=rss', format: 'rss' },
-  { key: 'joomla:view', main: '{root}?format=feed&type=rss', format: 'rss' },
-  { key: 'joomla:view', main: '{root}?{query}&format=feed&type=atom', format: 'atom' },
-  { key: 'joomla:view', main: '{root}?format=feed&type=atom', format: 'atom' },
+const feeds = definePlatformFeeds('joomla', [
+  { key: 'view', main: '{root}?{query}&format=feed&type=rss', format: 'rss' },
+  { key: 'view', main: '{root}?format=feed&type=rss', format: 'rss' },
+  { key: 'view', main: '{root}?{query}&format=feed&type=atom', format: 'atom' },
+  { key: 'view', main: '{root}?format=feed&type=atom', format: 'atom' },
 ])
 
 // Templates such as Helix Ultimate rewrite the generator to a string that only
@@ -79,8 +79,8 @@ export const joomlaHandler: PlatformHandler = {
     const params = { root: `${origin}${parsed.path}/`, query: getRoutingQuery(searchParams) }
 
     return [
-      pageFeeds.getFeedEntry('joomla:view', params, 'rss'),
-      pageFeeds.getFeedEntry('joomla:view', params, 'atom'),
+      pageFeeds.getFeedEntry('view', params, 'rss'),
+      pageFeeds.getFeedEntry('view', params, 'atom'),
     ]
   },
 }

@@ -69,16 +69,16 @@ export const internetArchiveHandler: PlatformHandler = {
 
     if (page.kind === 'collection') {
       return [
-        feeds.getFeedEntry('internet-archive:collection', { collection: page.collection }),
-        feeds.getFeedEntry('internet-archive:forum', { forum: page.collection }),
+        feeds.getFeedEntry('collection', { collection: page.collection }),
+        feeds.getFeedEntry('forum', { forum: page.collection }),
       ]
     }
 
     if (page.kind === 'account') {
-      return [feeds.getFeedEntry('internet-archive:bookmarks', { user: page.user })]
+      return [feeds.getFeedEntry('bookmarks', { user: page.user })]
     }
 
-    return [feeds.getFeedEntry('internet-archive:search', { query: page.query })]
+    return [feeds.getFeedEntry('search', { query: page.query })]
   },
 
   getFeedHint: feeds.getFeedHint,

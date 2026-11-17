@@ -84,20 +84,20 @@ export const deviantartHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'favourites') {
-      return [feeds.getFeedEntry('deviantart:favorites', { username: parsed.username })]
+      return [feeds.getFeedEntry('favorites', { username: parsed.username })]
     }
 
     if (parsed.kind === 'folder') {
       const params = { username: parsed.username, folderId: parsed.folderId }
 
-      return [feeds.getFeedEntry('deviantart:gallery', params)]
+      return [feeds.getFeedEntry('gallery', params)]
     }
 
     if (parsed.kind === 'journal') {
-      return [feeds.getFeedEntry('deviantart:journal', { username: parsed.username })]
+      return [feeds.getFeedEntry('journal', { username: parsed.username })]
     }
 
-    return [feeds.getFeedEntry('deviantart:deviations', { username: parsed.username })]
+    return [feeds.getFeedEntry('deviations', { username: parsed.username })]
   },
 
   getFeedHint: feeds.getFeedHint,

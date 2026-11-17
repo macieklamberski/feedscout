@@ -9,9 +9,9 @@ import { hasMarker, hasMetaContent, isRootOfPage } from '../../common/utils.js'
 const mediaUrlRegex = /["'](?<siteUrl>https?:\/\/[^"'\s]+?)\/media\/(?:website\/|posts\/\d+\/)/i
 
 // A site of any domain is known only by its marker, so its feeds are built here but not claimed.
-const feeds = definePlatformFeeds([
-  { key: 'publii:posts', main: '{root}/feed.xml', format: 'atom' },
-  { key: 'publii:posts', main: '{root}/feed.json', format: 'json' },
+const feeds = definePlatformFeeds('publii', [
+  { key: 'posts', main: '{root}/feed.xml', format: 'atom' },
+  { key: 'posts', main: '{root}/feed.json', format: 'json' },
 ])
 
 const hasGenerator = (content: string): boolean => {
@@ -69,8 +69,8 @@ export const publiiHandler: PlatformHandler = {
     }
 
     return [
-      pageFeeds.getFeedEntry('publii:posts', { root: page.siteUrl }, 'atom'),
-      pageFeeds.getFeedEntry('publii:posts', { root: page.siteUrl }, 'json'),
+      pageFeeds.getFeedEntry('posts', { root: page.siteUrl }, 'atom'),
+      pageFeeds.getFeedEntry('posts', { root: page.siteUrl }, 'json'),
     ]
   },
 }

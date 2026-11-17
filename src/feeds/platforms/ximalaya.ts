@@ -44,7 +44,7 @@ export const ximalayaHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('ximalaya:album', { albumId: parsed.albumId })]
+    return [feeds.getFeedEntry('album', { albumId: parsed.albumId })]
   },
 
   getFeedHint: feeds.getFeedHint,

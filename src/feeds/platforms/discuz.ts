@@ -24,14 +24,14 @@ const legacyGeneratorRegex = /^Discuz! (?:Archiver )?\d/i
 
 // A board runs on its own domain and is known only by its marker, so its feeds are built here but
 // not claimed. Discuz! 7 and older serve the same feeds from `rss.php`.
-const feeds = definePlatformFeeds([
-  { key: 'discuz:board', main: '{root}/forum.php?mod=rss&fid={boardId}&auth=0' },
-  { key: 'discuz:site', main: '{root}/forum.php?mod=rss' },
+const feeds = definePlatformFeeds('discuz', [
+  { key: 'board', main: '{root}/forum.php?mod=rss&fid={boardId}&auth=0' },
+  { key: 'site', main: '{root}/forum.php?mod=rss' },
 ])
 
-const legacyFeeds = definePlatformFeeds([
-  { key: 'discuz:board', main: '{root}/rss.php?fid={boardId}&auth=0' },
-  { key: 'discuz:site', main: '{root}/rss.php?auth=0' },
+const legacyFeeds = definePlatformFeeds('discuz', [
+  { key: 'board', main: '{root}/rss.php?fid={boardId}&auth=0' },
+  { key: 'site', main: '{root}/rss.php?auth=0' },
 ])
 
 export const isDiscuzHtml = (content: string): boolean => {
@@ -117,21 +117,21 @@ export const discuzHandler: PlatformHandler = {
     if (page.isLegacy) {
       if (page.kind === 'board') {
         return [
-          legacyFeeds.getFeedEntry('discuz:board', { root, boardId: page.boardId }),
-          legacyFeeds.getFeedEntry('discuz:site', { root }),
+          legacyFeeds.getFeedEntry('board', { root, boardId: page.boardId }),
+          legacyFeeds.getFeedEntry('site', { root }),
         ]
       }
 
-      return [legacyFeeds.getFeedEntry('discuz:site', { root })]
+      return [legacyFeeds.getFeedEntry('site', { root })]
     }
 
     if (page.kind === 'board') {
       return [
-        feeds.getFeedEntry('discuz:board', { root, boardId: page.boardId }),
-        feeds.getFeedEntry('discuz:site', { root }),
+        feeds.getFeedEntry('board', { root, boardId: page.boardId }),
+        feeds.getFeedEntry('site', { root }),
       ]
     }
 
-    return [feeds.getFeedEntry('discuz:site', { root })]
+    return [feeds.getFeedEntry('site', { root })]
   },
 }

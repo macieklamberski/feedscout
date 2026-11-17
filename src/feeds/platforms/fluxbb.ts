@@ -18,11 +18,11 @@ const templateIds = ['brdheader', 'brdmain']
 const coreIds = ['brdmenu', 'brdfooter']
 
 // A board is self-hosted on any domain, so the table only builds its feeds.
-const feeds = definePlatformFeeds([
-  { key: 'fluxbb:forum', main: '{root}/extern.php?action=feed&fid={forumId}&type=atom' },
-  { key: 'fluxbb:topic', main: '{root}/extern.php?action=feed&tid={topicId}&type=atom' },
-  { key: 'fluxbb:posts', main: '{root}/extern.php?action=feed&type=RSS', format: 'rss' },
-  { key: 'fluxbb:posts', main: '{root}/extern.php?action=feed&type=atom', format: 'atom' },
+const feeds = definePlatformFeeds('fluxbb', [
+  { key: 'forum', main: '{root}/extern.php?action=feed&fid={forumId}&type=atom' },
+  { key: 'topic', main: '{root}/extern.php?action=feed&tid={topicId}&type=atom' },
+  { key: 'posts', main: '{root}/extern.php?action=feed&type=RSS', format: 'rss' },
+  { key: 'posts', main: '{root}/extern.php?action=feed&type=atom', format: 'atom' },
 ])
 
 export const isFluxbbHtml = (content: string): boolean => {
@@ -74,23 +74,23 @@ export const fluxbbHandler: PlatformHandler = {
 
     if (parsed.kind === 'forum') {
       return [
-        feeds.getFeedEntry('fluxbb:forum', { root, forumId: parsed.forumId }),
-        feeds.getFeedEntry('fluxbb:posts', { root }, 'rss'),
-        feeds.getFeedEntry('fluxbb:posts', { root }, 'atom'),
+        feeds.getFeedEntry('forum', { root, forumId: parsed.forumId }),
+        feeds.getFeedEntry('posts', { root }, 'rss'),
+        feeds.getFeedEntry('posts', { root }, 'atom'),
       ]
     }
 
     if (parsed.kind === 'topic') {
       return [
-        feeds.getFeedEntry('fluxbb:topic', { root, topicId: parsed.topicId }),
-        feeds.getFeedEntry('fluxbb:posts', { root }, 'rss'),
-        feeds.getFeedEntry('fluxbb:posts', { root }, 'atom'),
+        feeds.getFeedEntry('topic', { root, topicId: parsed.topicId }),
+        feeds.getFeedEntry('posts', { root }, 'rss'),
+        feeds.getFeedEntry('posts', { root }, 'atom'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('fluxbb:posts', { root }, 'rss'),
-      feeds.getFeedEntry('fluxbb:posts', { root }, 'atom'),
+      feeds.getFeedEntry('posts', { root }, 'rss'),
+      feeds.getFeedEntry('posts', { root }, 'atom'),
     ]
   },
 }

@@ -8,9 +8,10 @@ import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 const domains = ['nethouse.ru', 'nethouse.me']
 
 const feeds = definePlatformFeeds(
+  'nethouse',
   [
-    { key: 'nethouse:news', main: '{scheme}://{host}/posts/rss' },
-    { key: 'nethouse:articles', main: '{scheme}://{host}/articles/rss' },
+    { key: 'news', main: '{scheme}://{host}/posts/rss' },
+    { key: 'articles', main: '{scheme}://{host}/articles/rss' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -36,7 +37,7 @@ export const nethouseHandler: PlatformHandler = {
     }
 
     // A site with a section turned off answers its feed with 404.
-    return [page.getFeedEntry('nethouse:news'), page.getFeedEntry('nethouse:articles')]
+    return [page.getFeedEntry('news'), page.getFeedEntry('articles')]
   },
 
   getFeedHint: feeds.getFeedHint,

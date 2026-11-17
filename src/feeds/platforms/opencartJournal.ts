@@ -16,9 +16,9 @@ export type OpencartJournalPage = {
 // no host. The blog route is named for the Journal version. OpenCart 4 separates a route's method
 // with a dot and answers the slash form with a 404, and only Journal 3 runs on it, so its dot form
 // is a second spelling of the Journal 3 feed.
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('opencart-journal', [
   {
-    key: 'opencart-journal:blog',
+    key: 'blog',
     main: '{root}/index.php?route={version}/blog/feed',
     format: 'rss',
     aliases: ['{root}/index.php?route=journal3/blog.feed'],
@@ -82,13 +82,9 @@ export const opencartJournalHandler: PlatformHandler = {
     const root = page.storeUrl
 
     if (page.version === 'journal2') {
-      return [
-        pageFeeds.getFeedEntry('opencart-journal:blog', { root, version: page.version }, 'rss'),
-      ]
+      return [pageFeeds.getFeedEntry('blog', { root, version: page.version }, 'rss')]
     }
 
-    return [
-      pageFeeds.getFeedSpellings('opencart-journal:blog', { root, version: page.version }, 'rss'),
-    ]
+    return [pageFeeds.getFeedSpellings('blog', { root, version: page.version }, 'rss')]
   },
 }

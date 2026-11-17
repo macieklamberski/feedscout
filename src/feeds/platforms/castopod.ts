@@ -12,7 +12,9 @@ const handleRegex = /^@(\w+)$/
 
 // An install runs on its own domain, under the root its stylesheet names, and is known only by its
 // marker, so its feed is built here but not claimed.
-const feeds = definePlatformFeeds([{ key: 'castopod:podcast', main: '{root}/@{handle}/feed.xml' }])
+const feeds = definePlatformFeeds('castopod', [
+  { key: 'podcast', main: '{root}/@{handle}/feed.xml' },
+])
 
 // Core prints the theme colors stylesheet in every page head, at the install's root. Every page
 // under `/@{handle}` belongs to that podcast, and a remote actor's `@user@domain` has no feed here.
@@ -57,6 +59,6 @@ export const castopodHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('castopod:podcast', { root: page.rootUrl, handle: page.handle })]
+    return [feeds.getFeedEntry('podcast', { root: page.rootUrl, handle: page.handle })]
   },
 }

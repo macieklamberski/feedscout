@@ -15,15 +15,15 @@ const namespaceNumberRegex = /"wgNamespaceNumber":(-?\d+)/
 // A wiki runs on its own domain, under its script path, and is known only by its marker, so its
 // feeds are built here but not claimed. Its pages link a title encoded as a form, as
 // `title=Talk%3AMain+Page`.
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('mediawiki', [
   {
-    key: 'mediawiki:history',
+    key: 'history',
     main: '{root}/index.php?title={title}&action=history&feed=atom',
     format: 'atom',
     queryEncoding: 'form',
   },
   {
-    key: 'mediawiki:recent-changes',
+    key: 'recent-changes',
     main: '{root}/index.php?title=Special:RecentChanges&feed=atom',
     format: 'atom',
     queryEncoding: 'form',
@@ -95,12 +95,12 @@ export const mediawikiHandler: PlatformHandler = {
     const params = { root: page.scriptRoot, title: page.pageName }
 
     if (!page.pageName) {
-      return [pageFeeds.getFeedEntry('mediawiki:recent-changes', params, 'atom')]
+      return [pageFeeds.getFeedEntry('recent-changes', params, 'atom')]
     }
 
     return [
-      pageFeeds.getFeedEntry('mediawiki:history', params, 'atom'),
-      pageFeeds.getFeedEntry('mediawiki:recent-changes', params, 'atom'),
+      pageFeeds.getFeedEntry('history', params, 'atom'),
+      pageFeeds.getFeedEntry('recent-changes', params, 'atom'),
     ]
   },
 }

@@ -16,9 +16,9 @@ export type ShaarliPage = { baseUrl: string }
 // An instance of any domain is known only by its marker, so its feeds are built here but not
 // claimed. Installs older than 0.12 answer 404 on `/feed/*` and serve `/?do=rss` instead, and
 // later installs redirect `/?do=rss` to the same feed.
-const feeds = definePlatformFeeds([
-  { key: 'shaarli:posts', main: '{root}/feed/rss', format: 'rss', aliases: ['{root}/?do=rss'] },
-  { key: 'shaarli:posts', main: '{root}/feed/atom', format: 'atom' },
+const feeds = definePlatformFeeds('shaarli', [
+  { key: 'posts', main: '{root}/feed/rss', format: 'rss', aliases: ['{root}/?do=rss'] },
+  { key: 'posts', main: '{root}/feed/atom', format: 'atom' },
 ])
 
 export const isShaarliHtml = (content: string): boolean => {
@@ -64,8 +64,8 @@ export const shaarliHandler: PlatformHandler = {
     const { baseUrl } = page
 
     return [
-      feeds.getFeedSpellings('shaarli:posts', { root: baseUrl }, 'rss'),
-      feeds.getFeedEntry('shaarli:posts', { root: baseUrl }, 'atom'),
+      feeds.getFeedSpellings('posts', { root: baseUrl }, 'rss'),
+      feeds.getFeedEntry('posts', { root: baseUrl }, 'atom'),
     ]
   },
 }

@@ -12,11 +12,11 @@ const hosts = ['news.ycombinator.com']
 
 const showRegex = /^\/show(?:new)?\/?$/i
 
-const feeds = definePlatformFeeds([
-  { key: 'hackernews:front', main: 'https://news.ycombinator.com/rss' },
-  { key: 'hackernews:show', main: 'https://news.ycombinator.com/showrss' },
+const feeds = definePlatformFeeds('hackernews', [
+  { key: 'front', main: 'https://news.ycombinator.com/rss' },
+  { key: 'show', main: 'https://news.ycombinator.com/showrss' },
   // The front page ranking at 300 stories, against 30 in `/rss`.
-  { key: 'hackernews:front-full', main: 'https://news.ycombinator.com/bigrss' },
+  { key: 'front-full', main: 'https://news.ycombinator.com/bigrss' },
 ])
 
 export const parseHackernewsUrl = (url: string): HackernewsUrl | undefined => {
@@ -46,16 +46,16 @@ export const hackernewsHandler: PlatformHandler = {
     // Every feed needs no value from the page, so every page builds them, its own first.
     if (parsed.kind === 'show') {
       return [
-        feeds.getFeedEntry('hackernews:show'),
-        feeds.getFeedEntry('hackernews:front'),
-        feeds.getFeedEntry('hackernews:front-full'),
+        feeds.getFeedEntry('show'),
+        feeds.getFeedEntry('front'),
+        feeds.getFeedEntry('front-full'),
       ]
     }
 
     return [
-      feeds.getFeedEntry('hackernews:front'),
-      feeds.getFeedEntry('hackernews:show'),
-      feeds.getFeedEntry('hackernews:front-full'),
+      feeds.getFeedEntry('front'),
+      feeds.getFeedEntry('show'),
+      feeds.getFeedEntry('front-full'),
     ]
   },
 

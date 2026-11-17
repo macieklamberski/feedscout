@@ -15,18 +15,18 @@ export const hosts = ['nebula.tv', 'www.nebula.tv']
 const globalPaths = ['videos', 'explore']
 
 // Originals is also a category, so its row comes before the category row that would read it.
-const feeds = definePlatformFeeds([
-  { key: 'nebula:videos', main: 'https://rss.nebula.app/video/channels/{slug}.rss' },
-  { key: 'nebula:videos-plus', main: 'https://rss.nebula.app/video/channels/{slug}.rss?plus=true' },
-  { key: 'nebula:originals', main: 'https://rss.nebula.app/video/categories/originals.rss' },
-  { key: 'nebula:category', main: 'https://rss.nebula.app/video/categories/{category}.rss' },
+const feeds = definePlatformFeeds('nebula', [
+  { key: 'videos', main: 'https://rss.nebula.app/video/channels/{slug}.rss' },
+  { key: 'videos-plus', main: 'https://rss.nebula.app/video/channels/{slug}.rss?plus=true' },
+  { key: 'originals', main: 'https://rss.nebula.app/video/categories/originals.rss' },
+  { key: 'category', main: 'https://rss.nebula.app/video/categories/{category}.rss' },
   {
-    key: 'nebula:category-plus',
+    key: 'category-plus',
     main: 'https://rss.nebula.app/video/categories/{category}.rss?plus=true',
   },
-  { key: 'nebula:videos-all', main: 'https://rss.nebula.app/video.rss' },
-  { key: 'nebula:videos-all-plus', main: 'https://rss.nebula.app/video.rss?plus=true' },
-  { key: 'nebula:channels', main: 'https://rss.nebula.app/video/channels.rss' },
+  { key: 'videos-all', main: 'https://rss.nebula.app/video.rss' },
+  { key: 'videos-all-plus', main: 'https://rss.nebula.app/video.rss?plus=true' },
+  { key: 'channels', main: 'https://rss.nebula.app/video/channels.rss' },
 ])
 
 export const parseNebulaUrl = (url: string): NebulaUrl | undefined => {
@@ -63,29 +63,26 @@ export const nebulaHandler: PlatformHandler = {
 
       if (category) {
         return [
-          feeds.getFeedEntry('nebula:category', { category }),
-          feeds.getFeedEntry('nebula:category-plus', { category }),
-          feeds.getFeedEntry('nebula:videos-all'),
-          feeds.getFeedEntry('nebula:videos-all-plus'),
-          feeds.getFeedEntry('nebula:originals'),
-          feeds.getFeedEntry('nebula:channels'),
+          feeds.getFeedEntry('category', { category }),
+          feeds.getFeedEntry('category-plus', { category }),
+          feeds.getFeedEntry('videos-all'),
+          feeds.getFeedEntry('videos-all-plus'),
+          feeds.getFeedEntry('originals'),
+          feeds.getFeedEntry('channels'),
         ]
       }
 
       return [
-        feeds.getFeedEntry('nebula:videos-all'),
-        feeds.getFeedEntry('nebula:videos-all-plus'),
-        feeds.getFeedEntry('nebula:originals'),
-        feeds.getFeedEntry('nebula:channels'),
+        feeds.getFeedEntry('videos-all'),
+        feeds.getFeedEntry('videos-all-plus'),
+        feeds.getFeedEntry('originals'),
+        feeds.getFeedEntry('channels'),
       ]
     }
 
     const { slug } = parsed
 
-    return [
-      feeds.getFeedEntry('nebula:videos', { slug }),
-      feeds.getFeedEntry('nebula:videos-plus', { slug }),
-    ]
+    return [feeds.getFeedEntry('videos', { slug }), feeds.getFeedEntry('videos-plus', { slug })]
   },
 
   getFeedHint: feeds.getFeedHint,

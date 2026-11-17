@@ -71,10 +71,10 @@ export const soundcloudHandler: PlatformHandler = {
     }
 
     if (page.kind === 'playlist') {
-      return [feeds.getFeedEntry('soundcloud:playlist', { playlistId: page.playlistId })]
+      return [feeds.getFeedEntry('playlist', { playlistId: page.playlistId })]
     }
 
-    return [feeds.getFeedEntry('soundcloud:tracks', { userId: page.userId })]
+    return [feeds.getFeedEntry('tracks', { userId: page.userId })]
   },
 
   getFeedHint: (url) => withHintLabel(soundcloud.getFeedHint(url)),

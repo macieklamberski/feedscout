@@ -12,9 +12,9 @@ const hosts = ['omny.fm', 'www.omny.fm']
 
 const showPathRegex = /^\/shows\/([^/]+)(?:\/playlists\/([^/]+))?/i
 
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('omnystudio', [
   {
-    key: 'omnystudio:show',
+    key: 'show',
     main: 'https://omny.fm/shows/{show}/playlists/podcast.rss',
     aliases: [
       // Every show feed answers 302 to its playlist here. A named playlist redirects here too, and
@@ -22,7 +22,7 @@ const feeds = definePlatformFeeds([
       'https://www.omnycontent.com/d/playlist/{orgId}/{programId}/{playlistId}/podcast.rss',
     ],
   },
-  { key: 'omnystudio:playlist', main: 'https://omny.fm/shows/{show}/playlists/{playlist}.rss' },
+  { key: 'playlist', main: 'https://omny.fm/shows/{show}/playlists/{playlist}.rss' },
 ])
 
 export const parseOmnystudioUrl = (url: string): OmnystudioUrl | undefined => {
@@ -61,12 +61,12 @@ export const omnystudioHandler: PlatformHandler = {
     // Playlist page: omny.fm/shows/{show}/playlists/{playlist}.
     if (parsed.kind === 'playlist') {
       return [
-        feeds.getFeedEntry('omnystudio:playlist', { show: parsed.show, playlist: parsed.playlist }),
-        feeds.getFeedEntry('omnystudio:show', { show: parsed.show }),
+        feeds.getFeedEntry('playlist', { show: parsed.show, playlist: parsed.playlist }),
+        feeds.getFeedEntry('show', { show: parsed.show }),
       ]
     }
 
-    return [feeds.getFeedEntry('omnystudio:show', { show: parsed.show })]
+    return [feeds.getFeedEntry('show', { show: parsed.show })]
   },
 
   getFeedHint: feeds.getFeedHint,

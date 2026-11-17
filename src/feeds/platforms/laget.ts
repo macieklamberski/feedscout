@@ -58,7 +58,7 @@ export const lagetHandler: PlatformHandler = {
 
     if (parsed) {
       // The team page links its feed with the team spelled as the request spelled it.
-      return [feeds.getFeedEntry('laget:news', { team: parsed.team })]
+      return [feeds.getFeedEntry('news', { team: parsed.team })]
     }
 
     const page = feeds.forUrl(url)
@@ -67,7 +67,7 @@ export const lagetHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('laget:news')]
+    return [page.getFeedEntry('news')]
   },
 
   getFeedHint: feeds.getFeedHint,

@@ -27,9 +27,9 @@ const sitePaths = ['search']
 const usernameRegex = /^[a-zA-Z0-9_-]+$/
 const homeRegex = /^\/(?:galleries\/?)?$/i
 
-const feeds = definePlatformFeeds([
-  { key: 'behance:portfolio', main: 'https://www.behance.net/feeds/user?username={username}' },
-  { key: 'behance:projects', main: 'https://www.behance.net/feeds/projects' },
+const feeds = definePlatformFeeds('behance', [
+  { key: 'portfolio', main: 'https://www.behance.net/feeds/user?username={username}' },
+  { key: 'projects', main: 'https://www.behance.net/feeds/projects' },
 ])
 
 export const parseBehanceUrl = (url: string): BehanceUrl | undefined => {
@@ -77,14 +77,14 @@ export const behanceHandler: PlatformHandler = {
     // The featured projects feed needs no value from the page, so every page builds it after its
     // own feeds.
     if (parsed.kind === 'home') {
-      return [feeds.getFeedEntry('behance:projects')]
+      return [feeds.getFeedEntry('projects')]
     }
 
     // The appreciated page gets the portfolio feed: Behance ignores
     // `content=appreciated` and serves the user's own projects for it.
     return [
-      feeds.getFeedEntry('behance:portfolio', { username: parsed.username }),
-      feeds.getFeedEntry('behance:projects'),
+      feeds.getFeedEntry('portfolio', { username: parsed.username }),
+      feeds.getFeedEntry('projects'),
     ]
   },
 

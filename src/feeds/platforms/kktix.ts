@@ -13,9 +13,10 @@ const domains = ['kktix.cc']
 // Accept-Language header, and only that spelling dedupes against the page's own link. The feed
 // is also stored without the locale or with another one.
 const feeds = definePlatformFeeds(
+  'kktix',
   [
     {
-      key: 'kktix:events',
+      key: 'events',
       main: '{scheme}://{host}/events.atom?locale=zh-TW',
       aliases: ['{scheme}://{host}/events.atom'],
     },
@@ -46,7 +47,7 @@ export const kktixHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('kktix:events')]
+    return [page.getFeedEntry('events')]
   },
 
   getFeedHint: feeds.getFeedHint,

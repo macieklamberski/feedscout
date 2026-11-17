@@ -21,9 +21,10 @@ const assetTags = ['link', 'script']
 // segment too, as `/rss/en/slices/l/homepage/data.xml`. A section feed and the Web Slices of one
 // article, section or photo folder carry its id, which no page URL names, so they are only claimed.
 const feeds = definePlatformFeeds(
+  'estranky',
   [
     {
-      key: 'estranky:posts',
+      key: 'posts',
       main: '{scheme}://{host}/rss/articles/data.xml',
       aliases: [
         // Any file name under `/rss/articles/` serves the posts feed.
@@ -31,42 +32,42 @@ const feeds = definePlatformFeeds(
         '{scheme}://{host}/rss/articles/comments.xml',
       ],
     },
-    { key: 'estranky:posts', main: '{scheme}://{host}/rss/{language}/articles/data.xml' },
-    { key: 'estranky:photos', main: '{scheme}://{host}/rss/photos/data.xml' },
-    { key: 'estranky:photos', main: '{scheme}://{host}/rss/{language}/photos/data.xml' },
-    { key: 'estranky:comments', main: '{scheme}://{host}/rss/comments/data.xml' },
-    { key: 'estranky:comments', main: '{scheme}://{host}/rss/{language}/comments/data.xml' },
-    { key: 'estranky:homepage-slice', main: '{scheme}://{host}/rss/slices/l/homepage/data.xml' },
+    { key: 'posts', main: '{scheme}://{host}/rss/{language}/articles/data.xml' },
+    { key: 'photos', main: '{scheme}://{host}/rss/photos/data.xml' },
+    { key: 'photos', main: '{scheme}://{host}/rss/{language}/photos/data.xml' },
+    { key: 'comments', main: '{scheme}://{host}/rss/comments/data.xml' },
+    { key: 'comments', main: '{scheme}://{host}/rss/{language}/comments/data.xml' },
+    { key: 'homepage-slice', main: '{scheme}://{host}/rss/slices/l/homepage/data.xml' },
     {
-      key: 'estranky:homepage-slice',
+      key: 'homepage-slice',
       main: '{scheme}://{host}/rss/{language}/slices/l/homepage/data.xml',
     },
-    { key: 'estranky:photos-slice', main: '{scheme}://{host}/rss/slices/l/photos/data.xml' },
+    { key: 'photos-slice', main: '{scheme}://{host}/rss/slices/l/photos/data.xml' },
     {
-      key: 'estranky:photos-slice',
+      key: 'photos-slice',
       main: '{scheme}://{host}/rss/{language}/slices/l/photos/data.xml',
     },
-    { key: 'estranky:section', main: '{scheme}://{host}/rss/section/{section}/data.xml' },
+    { key: 'section', main: '{scheme}://{host}/rss/section/{section}/data.xml' },
     {
-      key: 'estranky:section',
+      key: 'section',
       main: '{scheme}://{host}/rss/{language}/section/{section}/data.xml',
     },
-    { key: 'estranky:article-slice', main: '{scheme}://{host}/rss/slices/a/{article}/data.xml' },
+    { key: 'article-slice', main: '{scheme}://{host}/rss/slices/a/{article}/data.xml' },
     {
-      key: 'estranky:article-slice',
+      key: 'article-slice',
       main: '{scheme}://{host}/rss/{language}/slices/a/{article}/data.xml',
     },
-    { key: 'estranky:section-slice', main: '{scheme}://{host}/rss/slices/s/{section}/data.xml' },
+    { key: 'section-slice', main: '{scheme}://{host}/rss/slices/s/{section}/data.xml' },
     {
-      key: 'estranky:section-slice',
+      key: 'section-slice',
       main: '{scheme}://{host}/rss/{language}/slices/s/{section}/data.xml',
     },
     {
-      key: 'estranky:photo-folder-slice',
+      key: 'photo-folder-slice',
       main: '{scheme}://{host}/rss/slices/d/{folder}/data.xml',
     },
     {
-      key: 'estranky:photo-folder-slice',
+      key: 'photo-folder-slice',
       main: '{scheme}://{host}/rss/{language}/slices/d/{folder}/data.xml',
     },
   ],
@@ -138,11 +139,11 @@ export const estrankyHandler: PlatformHandler = {
     }
 
     return [
-      siteFeeds.getFeedEntry('estranky:posts'),
-      siteFeeds.getFeedEntry('estranky:photos'),
-      siteFeeds.getFeedEntry('estranky:comments'),
-      sliceFeeds.getFeedEntry('estranky:homepage-slice'),
-      sliceFeeds.getFeedEntry('estranky:photos-slice'),
+      siteFeeds.getFeedEntry('posts'),
+      siteFeeds.getFeedEntry('photos'),
+      siteFeeds.getFeedEntry('comments'),
+      sliceFeeds.getFeedEntry('homepage-slice'),
+      sliceFeeds.getFeedEntry('photos-slice'),
     ]
   },
 

@@ -14,10 +14,11 @@ const domains = ['posthaven.com']
 const tagRegex = /^\/tag\/([^/]+)/i
 
 const feeds = definePlatformFeeds(
+  'posthaven',
   [
-    { key: 'posthaven:posts', main: '{scheme}://{host}/posts.atom' },
+    { key: 'posts', main: '{scheme}://{host}/posts.atom' },
     // Posthaven serves an undocumented per-tag Atom feed.
-    { key: 'posthaven:tag', main: '{scheme}://{host}/tag/{tag}.atom' },
+    { key: 'tag', main: '{scheme}://{host}/tag/{tag}.atom' },
   ],
   { hosts: { tenants: domains } },
 )
@@ -52,13 +53,10 @@ export const posthavenHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'tag') {
-      return [
-        page.getFeedEntry('posthaven:tag', { tag: parsed.tag }),
-        page.getFeedEntry('posthaven:posts'),
-      ]
+      return [page.getFeedEntry('tag', { tag: parsed.tag }), page.getFeedEntry('posts')]
     }
 
-    return [page.getFeedEntry('posthaven:posts')]
+    return [page.getFeedEntry('posts')]
   },
 
   getFeedHint: feeds.getFeedHint,

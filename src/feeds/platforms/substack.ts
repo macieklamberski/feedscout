@@ -40,32 +40,33 @@ const podcastSectionRegex =
 // A custom domain is read only from a profile page, so its feed is built here but not claimed.
 // The same feed answers at feed.xml and feed.rss.
 const feeds = definePlatformFeeds(
+  'substack',
   [
     {
-      key: 'substack:newsletter',
+      key: 'newsletter',
       main: '{scheme}://{host}/feed',
       aliases: ['{scheme}://{host}/feed.xml', '{scheme}://{host}/feed.rss'],
     },
     // One section of the newsletter, which holds only that section's posts.
-    { key: 'substack:newsletter-section', main: '{scheme}://{host}/feed?sectionId={section}' },
+    { key: 'newsletter-section', main: '{scheme}://{host}/feed?sectionId={section}' },
     // A publication's podcast, mostly linked on api.substack.com, and one section of it, under ids
     // no page URL gives. A private or Spotify feed adds a listener token.
     {
-      key: 'substack:podcast',
+      key: 'podcast',
       main: 'https://api.substack.com/feed/podcast/{publication}.rss',
       aliases: ['{scheme}://{host}/feed/podcast/{publication}.rss'],
     },
     {
-      key: 'substack:podcast-section',
+      key: 'podcast-section',
       main: 'https://api.substack.com/feed/podcast/{publication}/s/{section}.rss',
       aliases: ['{scheme}://{host}/feed/podcast/{publication}/s/{section}.rss'],
     },
     {
-      key: 'substack:private-podcast',
+      key: 'private-podcast',
       main: '{scheme}://{host}/feed/podcast/{publication}/private/{token}.rss',
     },
     {
-      key: 'substack:spotify-podcast',
+      key: 'spotify-podcast',
       main: '{scheme}://{host}/feed/podcast/spotify/{token}/{publication}.rss',
     },
   ],
@@ -196,8 +197,8 @@ export const substackHandler: PlatformHandler = {
 
     if (!record || !publication) {
       return [
-        pageFeeds.getFeedEntry('substack:newsletter'),
-        ...(section ? [pageFeeds.getFeedEntry('substack:newsletter-section', { section })] : []),
+        pageFeeds.getFeedEntry('newsletter'),
+        ...(section ? [pageFeeds.getFeedEntry('newsletter-section', { section })] : []),
       ]
     }
 
@@ -206,11 +207,11 @@ export const substackHandler: PlatformHandler = {
     const params = { publication }
 
     return [
-      pageFeeds.getFeedEntry('substack:newsletter'),
-      ...(section ? [pageFeeds.getFeedEntry('substack:newsletter-section', { section })] : []),
-      ...(hasPodcast ? [pageFeeds.getFeedEntry('substack:podcast', params)] : []),
+      pageFeeds.getFeedEntry('newsletter'),
+      ...(section ? [pageFeeds.getFeedEntry('newsletter-section', { section })] : []),
+      ...(hasPodcast ? [pageFeeds.getFeedEntry('podcast', params)] : []),
       ...getPodcastSections(content, publication).map((section) => {
-        return pageFeeds.getFeedEntry('substack:podcast-section', { ...params, section })
+        return pageFeeds.getFeedEntry('podcast-section', { ...params, section })
       }),
     ]
   },

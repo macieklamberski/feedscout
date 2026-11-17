@@ -8,10 +8,10 @@ export type LetterboxdUrl = { kind: 'member'; username: string } | { kind: 'jour
 
 const hosts = ['letterboxd.com', 'www.letterboxd.com']
 
-const feeds = definePlatformFeeds([
-  { key: 'letterboxd:journal', main: 'https://letterboxd.com/journal/rss/' },
+const feeds = definePlatformFeeds('letterboxd', [
+  { key: 'journal', main: 'https://letterboxd.com/journal/rss/' },
   {
-    key: 'letterboxd:diary',
+    key: 'diary',
     main: 'https://letterboxd.com/{username}/rss/',
     aliases: ['https://embed.letterboxd.com/{username}/rss/'],
   },
@@ -51,12 +51,12 @@ export const letterboxdHandler: PlatformHandler = {
 
     // The journal feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'journal') {
-      return [feeds.getFeedEntry('letterboxd:journal')]
+      return [feeds.getFeedEntry('journal')]
     }
 
     return [
-      feeds.getFeedEntry('letterboxd:diary', { username: parsed.username }),
-      feeds.getFeedEntry('letterboxd:journal'),
+      feeds.getFeedEntry('diary', { username: parsed.username }),
+      feeds.getFeedEntry('journal'),
     ]
   },
 

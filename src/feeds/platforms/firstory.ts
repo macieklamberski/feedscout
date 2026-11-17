@@ -11,9 +11,9 @@ const domains = ['firstory.cc']
 // Show, episode and firstory.cc pages each link the show's feed.
 const feedUrlRegex = /feed\.firstory\.me\/rss\/user\/([a-z\d]+)/i
 
-const feeds = definePlatformFeeds([
+const feeds = definePlatformFeeds('firstory', [
   {
-    key: 'firstory:podcast',
+    key: 'podcast',
     main: 'https://feed.firstory.me/rss/user/{cuid}',
     aliases: [
       // Served spellings, which redirect to the one above. Claimed, never built.
@@ -54,7 +54,7 @@ export const firstoryHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('firstory:podcast', { cuid: page.cuid })]
+    return [feeds.getFeedEntry('podcast', { cuid: page.cuid })]
   },
 
   getFeedHint: feeds.getFeedHint,

@@ -31,33 +31,22 @@ const forumSectionRegex = /^([1-9]\d*)(?:-|$)/
 
 const modules = ['blog', 'board', 'dir', 'forum', 'load', 'news', 'photo', 'publ', 'stuff'] as const
 
-const moduleHints: Record<UcozModule, string> = {
-  blog: 'ucoz:blog',
-  board: 'ucoz:board',
-  dir: 'ucoz:dir',
-  forum: 'ucoz:forum',
-  load: 'ucoz:load',
-  news: 'ucoz:news',
-  photo: 'ucoz:photo',
-  publ: 'ucoz:publ',
-  stuff: 'ucoz:stuff',
-}
-
 const feeds = definePlatformFeeds(
+  'ucoz',
   [
     ...modules
       .filter((module) => module !== 'forum')
       .map((module) => ({
-        key: moduleHints[module],
+        key: module,
         main: `{scheme}://{host}/${module}/rss`,
       })),
     {
-      key: 'ucoz:forum',
+      key: 'forum',
       main: '{scheme}://{host}/forum/rss',
       // uCoz serves the forum feed as section 0 too.
       aliases: ['{scheme}://{host}/forum/0-0-0-37'],
     },
-    { key: 'ucoz:forum-section', main: '{scheme}://{host}/forum/{sectionId}-0-0-37' },
+    { key: 'forum-section', main: '{scheme}://{host}/forum/{sectionId}-0-0-37' },
   ],
   { hosts: { tenants: domains }, isWwwTenantPrefix: true },
 )
@@ -124,20 +113,17 @@ export const ucozHandler: PlatformHandler = {
     // home page lists its news.
     if (parsed.kind === 'forumSection') {
       return [
-        pageFeeds.getFeedEntry('ucoz:forum-section', { sectionId: parsed.sectionId }),
-        pageFeeds.getFeedEntry('ucoz:forum'),
-        pageFeeds.getFeedEntry('ucoz:news'),
+        pageFeeds.getFeedEntry('forum-section', { sectionId: parsed.sectionId }),
+        pageFeeds.getFeedEntry('forum'),
+        pageFeeds.getFeedEntry('news'),
       ]
     }
 
     if (parsed.kind === 'module' && parsed.module !== 'news') {
-      return [
-        pageFeeds.getFeedEntry(moduleHints[parsed.module]),
-        pageFeeds.getFeedEntry('ucoz:news'),
-      ]
+      return [pageFeeds.getFeedEntry(parsed.module), pageFeeds.getFeedEntry('news')]
     }
 
-    return [pageFeeds.getFeedEntry('ucoz:news')]
+    return [pageFeeds.getFeedEntry('news')]
   },
 
   getFeedHint: feeds.getFeedHint,

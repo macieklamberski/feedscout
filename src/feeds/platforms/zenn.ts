@@ -20,12 +20,12 @@ const publicationRegex = /^\/p\/([^/]+)/i
 
 // A user's feed lists only the posts on their own page. With `all=1` it adds their posts in
 // publications.
-const feeds = definePlatformFeeds([
-  { key: 'zenn:topic', main: 'https://zenn.dev/topics/{topic}/feed' },
-  { key: 'zenn:publication', main: 'https://zenn.dev/p/{publication}/feed' },
-  { key: 'zenn:posts', main: 'https://zenn.dev/{username}/feed' },
-  { key: 'zenn:all-posts', main: 'https://zenn.dev/{username}/feed?all=1' },
-  { key: 'zenn:trending', main: 'https://zenn.dev/feed' },
+const feeds = definePlatformFeeds('zenn', [
+  { key: 'topic', main: 'https://zenn.dev/topics/{topic}/feed' },
+  { key: 'publication', main: 'https://zenn.dev/p/{publication}/feed' },
+  { key: 'posts', main: 'https://zenn.dev/{username}/feed' },
+  { key: 'all-posts', main: 'https://zenn.dev/{username}/feed?all=1' },
+  { key: 'trending', main: 'https://zenn.dev/feed' },
 ])
 
 export const parseZennUrl = (url: string): ZennUrl | undefined => {
@@ -75,28 +75,25 @@ export const zennHandler: PlatformHandler = {
 
     // The trending feed needs no value from the page, so every page builds it after its own feeds.
     if (parsed.kind === 'topic') {
-      return [
-        feeds.getFeedEntry('zenn:topic', { topic: parsed.topic }),
-        feeds.getFeedEntry('zenn:trending'),
-      ]
+      return [feeds.getFeedEntry('topic', { topic: parsed.topic }), feeds.getFeedEntry('trending')]
     }
 
     if (parsed.kind === 'publication') {
       return [
-        feeds.getFeedEntry('zenn:publication', { publication: parsed.publication }),
-        feeds.getFeedEntry('zenn:trending'),
+        feeds.getFeedEntry('publication', { publication: parsed.publication }),
+        feeds.getFeedEntry('trending'),
       ]
     }
 
     if (parsed.kind === 'user' || parsed.kind === 'post') {
       return [
-        feeds.getFeedEntry('zenn:posts', { username: parsed.username }),
-        feeds.getFeedEntry('zenn:all-posts', { username: parsed.username }),
-        feeds.getFeedEntry('zenn:trending'),
+        feeds.getFeedEntry('posts', { username: parsed.username }),
+        feeds.getFeedEntry('all-posts', { username: parsed.username }),
+        feeds.getFeedEntry('trending'),
       ]
     }
 
-    return [feeds.getFeedEntry('zenn:trending')]
+    return [feeds.getFeedEntry('trending')]
   },
 
   // The user rows read any first segment as a name, so zenn.dev/topics/feed, the page of a topic

@@ -8,9 +8,13 @@ export type HashnodeUrl = { kind: 'blog' }
 
 const domains = ['hashnode.dev', 'hashnode.com']
 
-const feeds = definePlatformFeeds([{ key: 'hashnode:blog', main: '{scheme}://{host}/rss.xml' }], {
-  hosts: { tenants: domains },
-})
+const feeds = definePlatformFeeds(
+  'hashnode',
+  [{ key: 'blog', main: '{scheme}://{host}/rss.xml' }],
+  {
+    hosts: { tenants: domains },
+  },
+)
 
 export const parseHashnodeUrl = (url: string): HashnodeUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -32,7 +36,7 @@ export const hashnodeHandler: PlatformHandler = {
       return []
     }
 
-    return [page.getFeedEntry('hashnode:blog')]
+    return [page.getFeedEntry('blog')]
   },
 
   getFeedHint: feeds.getFeedHint,

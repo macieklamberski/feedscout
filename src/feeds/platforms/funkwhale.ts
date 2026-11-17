@@ -13,8 +13,8 @@ const leadingAtRegex = /^@/
 
 // A pod is self-hosted on any domain, so the table only builds its feed. v2 answers 404 on some
 // instances that still serve v1.
-const feeds = definePlatformFeeds([
-  { key: 'funkwhale:channel', main: '{root}/api/v1/channels/{channel}/rss' },
+const feeds = definePlatformFeeds('funkwhale', [
+  { key: 'channel', main: '{root}/api/v1/channels/{channel}/rss' },
 ])
 
 export const isFunkwhaleHtml = (content: string): boolean => {
@@ -62,7 +62,7 @@ export const funkwhaleHandler: PlatformHandler = {
 
     // The name comes out of the path decoded, and the table encodes it back into one.
     return [
-      feeds.getFeedEntry('funkwhale:channel', {
+      feeds.getFeedEntry('channel', {
         root: channelOrigin,
         channel: domain ? name : channel,
       }),
