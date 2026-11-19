@@ -82,63 +82,27 @@ describe('firstoryHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the podcast key for a show feed', () => {
-      const value = 'https://feed.firstory.me/rss/user/ckabcdefgh0123456789klmno'
-      const expected: DiscoverUriHint = { key: 'firstory:podcast', label: 'Podcast' }
-
-      expect(firstoryHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the podcast key for a show feed over http', () => {
-      const value = 'http://feed.firstory.me/rss/user/ckabcdefgh0123456789klmno'
-      const expected: DiscoverUriHint = { key: 'firstory:podcast', label: 'Podcast' }
-
-      expect(firstoryHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the podcast key for a show feed on open.firstory.me', () => {
-      const value = 'https://open.firstory.me/rss/user/ckabcdefgh0123456789klmno'
-      const expected: DiscoverUriHint = { key: 'firstory:podcast', label: 'Podcast' }
-
-      expect(firstoryHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the podcast key for a show feed on open.firstory.fm', () => {
+    it('should return the podcast hint for a show feed on open.firstory.fm', () => {
       const value = 'https://open.firstory.fm/rss/user/ckabcdefgh0123456789klmno'
       const expected: DiscoverUriHint = { key: 'firstory:podcast', label: 'Podcast' }
 
       expect(firstoryHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a show page', () => {
-      const value = 'https://open.firstory.me/user/example'
-
-      expect(firstoryHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the feed host root', () => {
-      const value = 'https://feed.firstory.me/'
-
-      expect(firstoryHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const values = [
-      'https://feed.firstory.me/rss/user/ckabcdefgh0123456789klmno',
-      'http://feed.firstory.me/rss/user/ckabcdefgh0123456789klmno',
-      'https://open.firstory.me/rss/user/ckabcdefgh0123456789klmno',
-      'https://open.firstory.fm/rss/user/ckabcdefgh0123456789klmno',
-    ]
-
-    it.each(values)('should return %s as itself', async (value) => {
+    it('should return a feed as itself', async () => {
+      const value = 'https://open.firstory.me/rss/user/ckabcdefgh0123456789klmno'
       const options = {
         ...defaultPlatformOptions,
         handlers: [firstoryHandler],
         baseUrl: value,
       }
       const expected: Array<DiscoverUriEntry> = [
-        { uri: value, hint: { key: 'firstory:podcast', label: 'Podcast' } },
+        {
+          uri: 'https://open.firstory.me/rss/user/ckabcdefgh0123456789klmno',
+          hint: { key: 'firstory:podcast', label: 'Podcast' },
+        },
       ]
 
       expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)

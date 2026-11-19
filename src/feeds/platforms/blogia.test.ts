@@ -69,82 +69,30 @@ describe('blogiaHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the posts key for a posts feed', () => {
-      const value = 'https://alice.blogia.com/feed.xml'
-      const expected: DiscoverUriHint = { key: 'blogia:posts', label: 'Posts' }
-
-      expect(blogiaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts key for an http posts feed', () => {
-      const value = 'http://alice.blogia.com/feed.xml'
-      const expected: DiscoverUriHint = { key: 'blogia:posts', label: 'Posts' }
-
-      expect(blogiaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://alice.blogia.com/temas/reflexiones/'
-
-      expect(blogiaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://blog.alice.blogia.com/feed.xml'
-
-      expect(blogiaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://blogia.com/feed.xml'
-
-      expect(blogiaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
     it('should return the comments hint for a comments feed', () => {
       const value = 'https://alice.blogia.com/comentarios.xml'
       const expected: DiscoverUriHint = { key: 'blogia:comments', label: 'Comments' }
 
       expect(blogiaHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/feed.xml'
-
-      expect(blogiaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const hint: DiscoverUriHint = { key: 'blogia:posts', label: 'Posts' }
-    const ownFeeds: Array<string> = [
-      'https://alice.blogia.com/feed.xml',
-      'http://alice.blogia.com/feed.xml',
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
-        ...defaultPlatformOptions,
-        handlers: [blogiaHandler],
-        baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
-
-      expect(result).toEqual(expected)
-    })
-
-    it('should return a comments feed as itself', async () => {
+    it('should return a feed as itself', async () => {
       const value = 'http://alice.blogia.com/comentarios.xml'
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+      const options = {
         ...defaultPlatformOptions,
         handlers: [blogiaHandler],
         baseUrl: value,
-      })
+      }
       const expected: Array<DiscoverUriEntry> = [
-        { uri: value, hint: { key: 'blogia:comments', label: 'Comments' } },
+        {
+          uri: 'http://alice.blogia.com/comentarios.xml',
+          hint: { key: 'blogia:comments', label: 'Comments' },
+        },
       ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

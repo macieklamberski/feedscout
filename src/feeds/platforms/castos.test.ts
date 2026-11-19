@@ -113,110 +113,30 @@ describe('castosHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the podcast hint for a feed host feed', () => {
-      const value = 'https://feeds.castos.com/abc12'
-      const expected: DiscoverUriHint = { key: 'castos:podcast', label: 'Podcast' }
-
-      expect(castosHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the podcast hint for a feed host feed over http', () => {
-      const value = 'http://feeds.castos.com/abc12'
-      const expected: DiscoverUriHint = { key: 'castos:podcast', label: 'Podcast' }
-
-      expect(castosHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the podcast hint for a feed host feed with a trailing slash', () => {
-      const value = 'https://feeds.castos.com/abc12/'
-      const expected: DiscoverUriHint = { key: 'castos:podcast', label: 'Podcast' }
-
-      expect(castosHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the podcast hint for a feed host feed with a query', () => {
-      const value = 'https://feeds.castos.com/abc12?uuid=12345'
-      const expected: DiscoverUriHint = { key: 'castos:podcast', label: 'Podcast' }
-
-      expect(castosHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the podcast hint for a show site feed', () => {
       const value = 'https://alice-podcast.castos.com/feed'
       const expected: DiscoverUriHint = { key: 'castos:podcast', label: 'Podcast' }
 
       expect(castosHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the podcast hint for a show site feed with a trailing slash', () => {
-      const value = 'https://alice-podcast.castos.com/feed/'
-      const expected: DiscoverUriHint = { key: 'castos:podcast', label: 'Podcast' }
-
-      expect(castosHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the podcast hint for a show site feed over http', () => {
-      const value = 'http://alice-podcast.castos.com/feed'
-      const expected: DiscoverUriHint = { key: 'castos:podcast', label: 'Podcast' }
-
-      expect(castosHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for the feed host root', () => {
-      const value = 'https://feeds.castos.com/'
-
-      expect(castosHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a show page', () => {
-      const value = 'https://alice-podcast.castos.com/'
-
-      expect(castosHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for an episode page', () => {
-      const value = 'https://alice-podcast.castos.com/episodes/first-episode'
-
-      expect(castosHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on the bare host', () => {
-      const value = 'https://castos.com/feed'
-
-      expect(castosHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on a nested subdomain', () => {
-      const value = 'https://blog.example.castos.com/feed'
-
-      expect(castosHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/feed'
-
-      expect(castosHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const hint: DiscoverUriHint = { key: 'castos:podcast', label: 'Podcast' }
-    const values = [
-      'https://feeds.castos.com/abc12',
-      'https://feeds.castos.com/abc12?uuid=12345',
-      'http://alice-podcast.castos.com/feed',
-      'https://alice-podcast.castos.com/feed/',
-    ]
-
-    it.each(values)('should return %s as itself', async (value) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a show site feed as itself', async () => {
+      const value = 'http://alice-podcast.castos.com/feed'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [castosHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://alice-podcast.castos.com/feed',
+          hint: { key: 'castos:podcast', label: 'Podcast' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

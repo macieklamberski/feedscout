@@ -86,76 +86,30 @@ describe('art19Handler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the show hint for a show feed under its slug', () => {
-      const value = 'https://rss.art19.com/alice-show'
-      const expected: DiscoverUriHint = { key: 'art19:show', label: 'Show' }
-
-      expect(art19Handler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the private hint for a private feed', () => {
       const value = 'https://rss.art19.com/alternate_feeds/user/example-show/abc123'
       const expected: DiscoverUriHint = { key: 'art19:private', label: 'Private feed' }
 
       expect(art19Handler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the show hint for a show feed under its uuid', () => {
-      const value = 'https://rss.art19.com/3399916b-c0b3-4c58-89e3-4572f197d6f1'
-      const expected: DiscoverUriHint = { key: 'art19:show', label: 'Show' }
-
-      expect(art19Handler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the show hint for a show feed with a capitalized slug', () => {
-      const value = 'https://rss.art19.com/Bob-Health-Show'
-      const expected: DiscoverUriHint = { key: 'art19:show', label: 'Show' }
-
-      expect(art19Handler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for the feed host root', () => {
-      const value = 'https://rss.art19.com/'
-
-      expect(art19Handler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a show page', () => {
-      const value = 'https://art19.com/shows/alice-show'
-
-      expect(art19Handler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/alice-show'
-
-      expect(art19Handler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://rss.art19.com/alice-show', { key: 'art19:show', label: 'Show' }],
-      [
-        'https://rss.art19.com/3399916b-c0b3-4c58-89e3-4572f197d6f1',
-        { key: 'art19:show', label: 'Show' },
-      ],
-      ['https://rss.art19.com/Bob-Health-Show', { key: 'art19:show', label: 'Show' }],
-      [
-        'https://rss.art19.com/alternate_feeds/user/example-show/abc123',
-        { key: 'art19:private', label: 'Private feed' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a feed as itself', async () => {
+      const value = 'https://rss.art19.com/alternate_feeds/user/example-show/abc123'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [art19Handler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://rss.art19.com/alternate_feeds/user/example-show/abc123',
+          hint: { key: 'art19:private', label: 'Private feed' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

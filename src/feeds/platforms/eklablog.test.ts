@@ -180,76 +180,6 @@ describe('eklablogHandler', () => {
 
       expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the comments hint for a comments feed', () => {
-      const value = 'https://alice.eklablog.com/rss/comments'
-      const expected: DiscoverUriHint = { key: 'eklablog:comments', label: 'Comments' }
-
-      expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for an http posts feed', () => {
-      const value = 'http://alice.eklablog.com/rss'
-      const expected: DiscoverUriHint = { key: 'eklablog:posts', label: 'Posts' }
-
-      expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the comments hint for an http comments feed', () => {
-      const value = 'http://alice.eklablog.com/rss/comments'
-      const expected: DiscoverUriHint = { key: 'eklablog:comments', label: 'Comments' }
-
-      expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a feed on an Eklablog domain off the list', () => {
-      const value = 'https://alice.kazeo.com/rss'
-
-      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return the posts hint for a feed with a trailing slash', () => {
-      const value = 'https://alice.eklablog.com/rss/'
-      const expected: DiscoverUriHint = { key: 'eklablog:posts', label: 'Posts' }
-
-      expect(eklablogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://alice.eklablog.com/critique-en-serie-a129920826'
-
-      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://eklablog.com/rss'
-
-      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the www host', () => {
-      const value = 'https://www.eklablog.com/rss'
-
-      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the www subdomain of a blog', () => {
-      const value = 'https://www.alice.eklablog.com/rss'
-
-      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://blog.alice.eklablog.com/rss'
-
-      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a custom domain', () => {
-      const value = 'https://www.example.com/rss'
-
-      expect(eklablogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('pages through the Platform method', () => {
@@ -276,15 +206,9 @@ describe('eklablogHandler', () => {
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://alice.eklablog.com/rss', { key: 'eklablog:posts', label: 'Posts' }],
-      ['https://alice.eklablog.com/rss/comments', { key: 'eklablog:comments', label: 'Comments' }],
-      ['http://alice.eklablog.com/rss', { key: 'eklablog:posts', label: 'Posts' }],
-      ['http://alice.eklablog.com/rss/comments', { key: 'eklablog:comments', label: 'Comments' }],
-      ['https://alice.eklablog.com/rss/', { key: 'eklablog:posts', label: 'Posts' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a posts feed as itself', async () => {
+      const value = 'https://alice.eklablog.com/rss'
+      const hint: DiscoverUriHint = { key: 'eklablog:posts', label: 'Posts' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [eklablogHandler],

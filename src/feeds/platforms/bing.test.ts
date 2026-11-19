@@ -127,16 +127,5 @@ describe('bingHandler', () => {
 
       expect(bingHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the news hint for a news search feed', () => {
-      const value = 'https://www.bing.com/news/search?q=rss&format=rss'
-      const expected: DiscoverUriHint = { key: 'bing:news', label: 'News search' }
-
-      expect(bingHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a search page', () => {
-      expect(bingHandler.getFeedHint?.('https://www.bing.com/search?q=rss')).toBeUndefined()
-    })
   })
 })

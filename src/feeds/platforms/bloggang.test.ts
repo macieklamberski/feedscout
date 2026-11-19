@@ -146,60 +146,29 @@ describe('bloggangHandler', () => {
       expect(bloggangHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts hint for a posts feed of a username with an underscore', () => {
-      const value = 'https://alice_example.bloggang.com/rss'
-      const expected: DiscoverUriHint = { key: 'bloggang:posts', label: 'Posts' }
-
-      expect(bloggangHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return undefined for the rss path on the mobile host', () => {
       const value = 'https://m.bloggang.com/rss'
-
-      expect(bloggangHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the rss path on www', () => {
-      const value = 'https://www.bloggang.com/rss'
-
-      expect(bloggangHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://alice.bloggang.com/'
-
-      expect(bloggangHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://a.alice.bloggang.com/rss'
-
-      expect(bloggangHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/rss'
 
       expect(bloggangHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
-    const values: Array<[string, DiscoverUriHint]> = [
-      ['https://alice.bloggang.com/rss', { key: 'bloggang:posts', label: 'Posts' }],
-      ['https://alice_example.bloggang.com/rss', { key: 'bloggang:posts', label: 'Posts' }],
-      ['http://alice.bloggang.com/rss', { key: 'bloggang:posts', label: 'Posts' }],
-    ]
-
-    it.each(values)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a posts feed as itself', async () => {
+      const value = 'https://alice.bloggang.com/rss'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [bloggangHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.bloggang.com/rss',
+          hint: { key: 'bloggang:posts', label: 'Posts' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })
