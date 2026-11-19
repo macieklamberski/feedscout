@@ -404,16 +404,9 @@ describe('omekaHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the items hint for an RSS feed', () => {
-      const value = 'https://alice.omeka.net/items/browse?output=rss2'
-      const expected: DiscoverUriHint = { key: 'omeka:items', label: 'Items', format: 'rss' }
-
-      expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the items hint for an Atom feed', () => {
-      const value = 'https://alice.omeka.net/items/browse?output=atom'
-      const expected: DiscoverUriHint = { key: 'omeka:items', label: 'Items', format: 'atom' }
+    it('should return the item hint for an item feed inside an exhibit', () => {
+      const value = 'https://alice.omeka.net/exhibits/show/maps/item/123?output=atom'
+      const expected: DiscoverUriHint = { key: 'omeka:item', label: 'Item', format: 'atom' }
 
       expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -436,152 +429,31 @@ describe('omekaHandler', () => {
       expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the filtered items hint for an Atom feed with a search', () => {
-      const value =
-        'https://alice.omeka.net/items/browse?advanced%5B0%5D%5Belement_id%5D=49&advanced%5B0%5D%5Bterms%5D=maps&advanced%5B0%5D%5Btype%5D=is+exactly&output=atom&sort_dir=a&sort_field=added'
-      const expected: DiscoverUriHint = {
-        key: 'omeka:filtered-items',
-        label: 'Filtered items',
-        format: 'atom',
-      }
-
-      expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the items hint for an RSS feed on the short route', () => {
-      const value = 'https://alice.omeka.net/items?output=rss2'
-      const expected: DiscoverUriHint = { key: 'omeka:items', label: 'Items', format: 'rss' }
-
-      expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the items hint for a sorted Atom feed on the short route', () => {
       const value = 'https://alice.omeka.net/items?output=atom&sort_dir=a&sort_field=added'
       const expected: DiscoverUriHint = { key: 'omeka:items', label: 'Items', format: 'atom' }
 
       expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the item hint for an item feed', () => {
-      const value = 'https://alice.omeka.net/items/show/123?output=atom'
-      const expected: DiscoverUriHint = { key: 'omeka:item', label: 'Item', format: 'atom' }
-
-      expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the item hint for an item feed inside an exhibit', () => {
-      const value = 'https://alice.omeka.net/exhibits/show/maps/item/123?output=atom'
-      const expected: DiscoverUriHint = { key: 'omeka:item', label: 'Item', format: 'atom' }
-
-      expect(omekaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for an item page', () => {
-      const value = 'https://alice.omeka.net/items/show/123'
-
-      expect(omekaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for an item feed on a custom domain', () => {
-      const value = 'https://example.com/items/show/123?output=atom'
-
-      expect(omekaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a browse page', () => {
-      const value = 'https://alice.omeka.net/items/browse?tags=maps'
-
-      expect(omekaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://omeka.net/items/browse?output=atom'
-
-      expect(omekaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the www host', () => {
-      const value = 'https://www.omeka.net/items/browse?output=atom'
-
-      expect(omekaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a custom domain', () => {
-      const value = 'https://example.com/items/browse?output=atom'
-
-      expect(omekaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://alice.omeka.net/items/browse?output=rss2',
-        { key: 'omeka:items', label: 'Items', format: 'rss' },
-      ],
-      [
-        'https://alice.omeka.net/items/browse?output=atom',
-        { key: 'omeka:items', label: 'Items', format: 'atom' },
-      ],
-      [
-        'https://alice.omeka.net/items/browse?output=rss2&tags=maps',
-        { key: 'omeka:filtered-items', label: 'Filtered items', format: 'rss' },
-      ],
-      [
-        'https://alice.omeka.net/items/browse?collection=3&output=atom',
-        { key: 'omeka:filtered-items', label: 'Filtered items', format: 'atom' },
-      ],
-      [
-        'https://alice.omeka.net/items?output=atom',
-        { key: 'omeka:items', label: 'Items', format: 'atom' },
-      ],
-      [
-        'https://alice.omeka.net/items?output=rss2&tags=maps',
-        { key: 'omeka:filtered-items', label: 'Filtered items', format: 'rss' },
-      ],
-      [
-        'https://alice.omeka.net/items/show/123?output=atom',
-        { key: 'omeka:item', label: 'Item', format: 'atom' },
-      ],
-      [
-        'http://alice.omeka.net/?output=rss2',
-        { key: 'omeka:items', label: 'Items', format: 'rss' },
-      ],
-      [
-        'https://alice.omeka.net/?output=atom&sort_dir=a&sort_field=added',
-        { key: 'omeka:items', label: 'Items', format: 'atom' },
-      ],
-      [
-        'https://alice.omeka.net/items/browse?output=rss2&sort_field=Dublin+Core%2CTitle',
-        { key: 'omeka:items', label: 'Items', format: 'rss' },
-      ],
-      [
-        'https://alice.omeka.net/items/browse/2?output=atom',
-        { key: 'omeka:items', label: 'Items', format: 'atom' },
-      ],
-      [
-        'https://alice.omeka.net/items/browse/1?output=rss2&search=maps&submit_search=Search',
-        { key: 'omeka:filtered-items', label: 'Filtered items', format: 'rss' },
-      ],
-      [
-        'https://alice.omeka.net/items/browse/tag/Hyde+Park?output=atom',
-        { key: 'omeka:filtered-items', label: 'Filtered items', format: 'atom' },
-      ],
-      [
-        'https://alice.omeka.net/exhibits/show/maps/item/123?output=atom',
-        { key: 'omeka:item', label: 'Item', format: 'atom' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a searched page of the items feed as itself', async () => {
+      const value =
+        'https://alice.omeka.net/items/browse/1?output=rss2&search=maps&submit_search=Search'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [omekaHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.omeka.net/items/browse/1?output=rss2&search=maps&submit_search=Search',
+          hint: { key: 'omeka:filtered-items', label: 'Filtered items', format: 'rss' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

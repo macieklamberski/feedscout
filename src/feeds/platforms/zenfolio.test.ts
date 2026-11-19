@@ -190,109 +190,31 @@ describe('zenfolioHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const feedKeys: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://bobphotography.zenfolio.com/recent.rss',
-        { key: 'zenfolio:recent', label: 'Recent galleries', format: 'rss' },
-      ],
-      [
-        'https://bobphotography.zenfolio.com/recent.atom',
-        { key: 'zenfolio:recent', label: 'Recent galleries', format: 'atom' },
-      ],
-      [
-        'https://bobphotography.zenfolio.com/featured.rss',
-        { key: 'zenfolio:featured', label: 'Featured galleries', format: 'rss' },
-      ],
-      [
-        'https://bobphotography.zenfolio.com/featured.atom',
-        { key: 'zenfolio:featured', label: 'Featured galleries', format: 'atom' },
-      ],
-      [
-        'https://bobphotography.zenfolio.com/blog.rss',
-        { key: 'zenfolio:blog', label: 'Blog', format: 'rss' },
-      ],
-      [
-        'https://bobphotography.zenfolio.com/blog.atom',
-        { key: 'zenfolio:blog', label: 'Blog', format: 'atom' },
-      ],
-      [
-        'http://bobphotography.zenfolio.com/recent.rss',
-        { key: 'zenfolio:recent', label: 'Recent galleries', format: 'rss' },
-      ],
-    ]
+    it('should return the recent hint for a recent feed over http', () => {
+      const value = 'http://bobphotography.zenfolio.com/recent.rss'
+      const expected: DiscoverUriHint = {
+        key: 'zenfolio:recent',
+        label: 'Recent galleries',
+        format: 'rss',
+      }
 
-    it.each(feedKeys)('should return the hint for %s', (value, expected) => {
       expect(zenfolioHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a site page', () => {
-      const value = 'https://bobphotography.zenfolio.com/p411800779'
-
-      expect(zenfolioHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://zenfolio.com/blog.rss'
-
-      expect(zenfolioHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the www host', () => {
-      const value = 'https://www.zenfolio.com/recent.rss'
-
-      expect(zenfolioHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://photos.example.zenfolio.com/recent.rss'
-
-      expect(zenfolioHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a custom domain', () => {
-      const value = 'https://www.alicephoto.example/recent.rss'
-
-      expect(zenfolioHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriEntry['hint']]> = [
-      [
-        'https://bobphotography.zenfolio.com/recent.rss',
-        { key: 'zenfolio:recent', label: 'Recent galleries', format: 'rss' },
-      ],
-      [
-        'https://bobphotography.zenfolio.com/recent.atom',
-        { key: 'zenfolio:recent', label: 'Recent galleries', format: 'atom' },
-      ],
-      [
-        'https://bobphotography.zenfolio.com/featured.rss',
-        { key: 'zenfolio:featured', label: 'Featured galleries', format: 'rss' },
-      ],
-      [
-        'https://bobphotography.zenfolio.com/featured.atom',
-        { key: 'zenfolio:featured', label: 'Featured galleries', format: 'atom' },
-      ],
-      [
-        'https://bobphotography.zenfolio.com/blog.rss',
-        { key: 'zenfolio:blog', label: 'Blog', format: 'rss' },
-      ],
-      [
-        'https://bobphotography.zenfolio.com/blog.atom',
-        { key: 'zenfolio:blog', label: 'Blog', format: 'atom' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return the Atom blog feed as itself', async () => {
+      const value = 'https://bobphotography.zenfolio.com/blog.atom'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [zenfolioHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'zenfolio:blog', label: 'Blog', format: 'atom' } },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

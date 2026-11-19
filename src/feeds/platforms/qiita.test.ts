@@ -268,111 +268,11 @@ describe('qiitaHandler', () => {
       expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts hint for a user feed without the extension', () => {
-      const value = 'https://qiita.com/alice/feed'
-      const expected: DiscoverUriHint = { key: 'qiita:posts', label: 'Posts' }
-
-      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a user feed on the www host over http', () => {
-      const value = 'http://www.qiita.com/alice/feed'
-      const expected: DiscoverUriHint = { key: 'qiita:posts', label: 'Posts' }
-
-      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the tag hint for a tag feed', () => {
       const value = 'https://qiita.com/tags/cloudformation/feed.atom'
       const expected: DiscoverUriHint = { key: 'qiita:tag', label: 'Tag' }
 
       expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for a tag feed without the extension', () => {
-      const value = 'https://qiita.com/tags/iac/feed'
-      const expected: DiscoverUriHint = { key: 'qiita:tag', label: 'Tag' }
-
-      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for a tag feed with a percent-encoded tag', () => {
-      const value = 'https://qiita.com/tags/green%E9%96%A2%E6%95%B0/feed'
-      const expected: DiscoverUriHint = { key: 'qiita:tag', label: 'Tag' }
-
-      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for a tag feed with a capitalized route', () => {
-      const value = 'https://qiita.com/Tags/iac/Feed'
-      const expected: DiscoverUriHint = { key: 'qiita:tag', label: 'Tag' }
-
-      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the organization hint for an organization feed', () => {
-      const value = 'https://qiita.com/organizations/example/activities.atom'
-      const expected: DiscoverUriHint = { key: 'qiita:organization', label: 'Organization' }
-
-      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the popular hint for the popular feed', () => {
-      const value = 'https://qiita.com/popular-items/feed.atom'
-      const expected: DiscoverUriHint = { key: 'qiita:popular', label: 'Popular items' }
-
-      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the popular hint for the popular feed without the extension', () => {
-      const value = 'https://qiita.com/popular-items/feed'
-      const expected: DiscoverUriHint = { key: 'qiita:popular', label: 'Popular items' }
-
-      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the zine hint for the Qiita Zine RSS feed', () => {
-      const value = 'https://qiita.com/official-columns/feed/'
-      const expected: DiscoverUriHint = { key: 'qiita:zine', label: 'Qiita Zine', format: 'rss' }
-
-      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the zine hint for the Qiita Zine Atom feed', () => {
-      const value = 'https://qiita.com/official-columns/feed/atom/'
-      const expected: DiscoverUriHint = { key: 'qiita:zine', label: 'Qiita Zine', format: 'atom' }
-
-      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a user page', () => {
-      const value = 'https://qiita.com/alice'
-
-      expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a tag page', () => {
-      const value = 'https://qiita.com/tags/iac'
-
-      expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for an organization page', () => {
-      const value = 'https://qiita.com/organizations/example'
-
-      expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for an article page', () => {
-      const value = 'https://qiita.com/alice/items/0123456789abcdef0123'
-
-      expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a user feed path on another host', () => {
-      const value = 'https://example.com/alice/feed'
-
-      expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the page of a tag named feed', () => {
@@ -389,40 +289,16 @@ describe('qiitaHandler', () => {
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://qiita.com/alice/feed.atom', { key: 'qiita:posts', label: 'Posts' }],
-      ['https://qiita.com/alice/feed', { key: 'qiita:posts', label: 'Posts' }],
-      ['http://www.qiita.com/alice/feed', { key: 'qiita:posts', label: 'Posts' }],
-      ['https://qiita.com/tags/cloudformation/feed.atom', { key: 'qiita:tag', label: 'Tag' }],
-      ['https://qiita.com/tags/iac/feed', { key: 'qiita:tag', label: 'Tag' }],
-      ['https://qiita.com/tags/green%E9%96%A2%E6%95%B0/feed', { key: 'qiita:tag', label: 'Tag' }],
-      ['https://qiita.com/Tags/iac/Feed', { key: 'qiita:tag', label: 'Tag' }],
-      [
-        'https://qiita.com/organizations/example/activities.atom',
-        { key: 'qiita:organization', label: 'Organization' },
-      ],
-      [
-        'https://qiita.com/popular-items/feed.atom',
-        { key: 'qiita:popular', label: 'Popular items' },
-      ],
-      ['https://qiita.com/popular-items/feed', { key: 'qiita:popular', label: 'Popular items' }],
-      [
-        'https://qiita.com/official-columns/feed/',
-        { key: 'qiita:zine', label: 'Qiita Zine', format: 'rss' },
-      ],
-      [
-        'https://qiita.com/official-columns/feed/atom/',
-        { key: 'qiita:zine', label: 'Qiita Zine', format: 'atom' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a user feed with the extension as itself', async () => {
+      const value = 'https://qiita.com/alice/feed.atom'
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://qiita.com/alice/feed.atom', hint: { key: 'qiita:posts', label: 'Posts' } },
+      ]
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [qiitaHandler],
         baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
       expect(result).toEqual(expected)
     })

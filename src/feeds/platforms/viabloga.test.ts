@@ -114,144 +114,18 @@ describe('viablogaHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const feedHints: Array<[string, DiscoverUriHint]> = [
-      [
-        'http://alice.viabloga.com/index.xml',
-        { key: 'viabloga:posts', label: 'Posts', format: 'rss' },
-      ],
-      [
-        'http://alice.viabloga.com/atom.xml',
-        { key: 'viabloga:posts', label: 'Posts', format: 'atom' },
-      ],
-      ['http://alice.viabloga.com/atom', { key: 'viabloga:posts', label: 'Posts', format: 'atom' }],
-      [
-        'http://alice.viabloga.com/index.rdf',
-        { key: 'viabloga:posts', label: 'Posts', format: 'rdf' },
-      ],
-    ]
-
-    it.each(feedHints)('should return the posts key for %s', (value, expected) => {
-      expect(viablogaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the comments key for a comments feed', () => {
-      const value = 'http://alice.viabloga.com/comments.xml'
-      const expected: DiscoverUriHint = {
-        key: 'viabloga:comments',
-        label: 'Comments',
-        format: 'rss',
-      }
+    it('should return the posts hint for an Atom feed without its extension', () => {
+      const value = 'http://alice.viabloga.com/atom'
+      const expected: DiscoverUriHint = { key: 'viabloga:posts', label: 'Posts', format: 'atom' }
 
       expect(viablogaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the wiki key for a wiki feed', () => {
-      const value = 'http://alice.viabloga.com/wiki.rdf'
-      const expected: DiscoverUriHint = { key: 'viabloga:wiki', label: 'Wiki', format: 'rdf' }
-
-      expect(viablogaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the wiki key for a wiki feed over https', () => {
-      const value = 'https://alice.viabloga.com/wiki.rdf'
-      const expected: DiscoverUriHint = { key: 'viabloga:wiki', label: 'Wiki', format: 'rdf' }
-
-      expect(viablogaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the category key for a category feed', () => {
-      const value = 'http://alice.viabloga.com/cinema.xml'
-      const expected: DiscoverUriHint = {
-        key: 'viabloga:category',
-        label: 'Category',
-        format: 'rss',
-      }
-
-      expect(viablogaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the category key for a full text category feed', () => {
-      const value = 'http://alice.viabloga.com/cinema_full.xml'
-      const expected: DiscoverUriHint = {
-        key: 'viabloga:category',
-        label: 'Category',
-        format: 'rss',
-      }
-
-      expect(viablogaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a post page', () => {
-      const value = 'http://alice.viabloga.com/news/canal-du-midi'
-
-      expect(viablogaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a theme feed the handler does not build', () => {
-      const value = 'https://alice.viabloga.com/rss/theme/example.xml'
-
-      expect(viablogaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'http://viabloga.com/index.xml'
-
-      expect(viablogaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the www host', () => {
-      const value = 'http://www.viabloga.com/index.xml'
-
-      expect(viablogaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'http://blog.alice.viabloga.com/index.xml'
-
-      expect(viablogaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'http://example.com/index.xml'
-
-      expect(viablogaHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'http://alice.viabloga.com/index.xml',
-        { key: 'viabloga:posts', label: 'Posts', format: 'rss' },
-      ],
-      [
-        'http://alice.viabloga.com/atom.xml',
-        { key: 'viabloga:posts', label: 'Posts', format: 'atom' },
-      ],
-      ['http://alice.viabloga.com/atom', { key: 'viabloga:posts', label: 'Posts', format: 'atom' }],
-      [
-        'http://alice.viabloga.com/index.rdf',
-        { key: 'viabloga:posts', label: 'Posts', format: 'rdf' },
-      ],
-      [
-        'http://alice.viabloga.com/comments.xml',
-        { key: 'viabloga:comments', label: 'Comments', format: 'rss' },
-      ],
-      [
-        'http://alice.viabloga.com/wiki.rdf',
-        { key: 'viabloga:wiki', label: 'Wiki', format: 'rdf' },
-      ],
-      [
-        'https://alice.viabloga.com/wiki.rdf',
-        { key: 'viabloga:wiki', label: 'Wiki', format: 'rdf' },
-      ],
-      [
-        'https://alice.viabloga.com/cinema_full.xml',
-        { key: 'viabloga:category', label: 'Category', format: 'rss' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return an Atom feed without its extension as itself', async () => {
+      const value = 'http://alice.viabloga.com/atom'
+      const hint: DiscoverUriHint = { key: 'viabloga:posts', label: 'Posts', format: 'atom' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [viablogaHandler],

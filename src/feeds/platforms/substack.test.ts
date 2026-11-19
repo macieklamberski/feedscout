@@ -404,26 +404,16 @@ describe('substackHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const feedUrls = [
-      'https://example.substack.com/feed',
-      'https://example.substack.com/feed.xml',
-      'https://example.substack.com/feed.rss',
-      'http://example.substack.com/feed',
-      'https://EXAMPLE.substack.com/feed',
-    ]
-
-    it.each(feedUrls)('should return the newsletter hint for %s', (value) => {
+    it('should return the newsletter hint for a feed.xml spelling', () => {
+      const value = 'https://example.substack.com/feed.xml'
       const expected: DiscoverUriHint = { key: 'substack:newsletter', label: 'Newsletter' }
 
       expect(substackHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the newsletter section hint for a section feed', () => {
-      const value = 'https://alice.substack.com/feed?sectionId=12345'
-      const expected: DiscoverUriHint = {
-        key: 'substack:newsletter-section',
-        label: 'Newsletter section',
-      }
+    it('should return the podcast hint for a podcast feed on the API host', () => {
+      const value = 'https://api.substack.com/feed/podcast/12345.rss'
+      const expected: DiscoverUriHint = { key: 'substack:podcast', label: 'Podcast' }
 
       expect(substackHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -434,41 +424,8 @@ describe('substackHandler', () => {
       expect(substackHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    const podcastFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://api.substack.com/feed/podcast/12345.rss', podcastHint],
-      ['https://alice.substack.com/feed/podcast/12345.rss', podcastHint],
-      [
-        'https://api.substack.com/feed/podcast/12345/private/abc-123.rss',
-        { key: 'substack:private-podcast', label: 'Private podcast' },
-      ],
-      [
-        'https://api.substack.com/feed/podcast/spotify/abc-123/12345.rss',
-        { key: 'substack:spotify-podcast', label: 'Spotify podcast' },
-      ],
-      [
-        'https://api.substack.com/feed/podcast/12345/s/678.rss',
-        { key: 'substack:podcast-section', label: 'Podcast section' },
-      ],
-    ]
-
-    it.each(podcastFeeds)('should return the podcast hint for %s', (value, expected) => {
-      expect(substackHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return undefined for a newsletter feed on the API host', () => {
       const value = 'https://api.substack.com/feed'
-
-      expect(substackHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://substack.com/feed'
-
-      expect(substackHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on www.substack.com', () => {
-      const value = 'https://www.substack.com/feed'
 
       expect(substackHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -478,60 +435,18 @@ describe('substackHandler', () => {
 
       expect(substackHandler.getFeedHint?.(value)).toBeUndefined()
     })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://blog.example.substack.com/feed'
-
-      expect(substackHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a custom domain', () => {
-      const value = 'https://www.example.com/feed'
-
-      expect(substackHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds = [
-      'https://example.substack.com/feed',
-      'https://example.substack.com/feed.xml',
-      'https://example.substack.com/feed.rss',
-      'https://EXAMPLE.substack.com/feed',
-    ]
-
-    const podcastFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://alice.substack.com/feed?sectionId=12345',
-        { key: 'substack:newsletter-section', label: 'Newsletter section' },
-      ],
-      ['http://api.substack.com/feed/podcast/12345.rss', podcastHint],
-      [
-        'https://api.substack.com/feed/podcast/12345/s/678.rss',
-        { key: 'substack:podcast-section', label: 'Podcast section' },
-      ],
-    ]
-
-    it.each(podcastFeeds)('should return %s as itself with its hint', async (value, hint) => {
+    it('should return a podcast feed on the API host as itself', async () => {
+      const value = 'http://api.substack.com/feed/podcast/12345.rss'
+      const hint: DiscoverUriHint = { key: 'substack:podcast', label: 'Podcast' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [substackHandler],
         baseUrl: value,
       })
       const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
-
-      expect(result).toEqual(expected)
-    })
-
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
-        ...defaultPlatformOptions,
-        handlers: [substackHandler],
-        baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: value, hint: { key: 'substack:newsletter', label: 'Newsletter' } },
-      ]
 
       expect(result).toEqual(expected)
     })

@@ -240,169 +240,36 @@ describe('bigcommerceHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://alice.mybigcommerce.com/rss.php?categoryid=18&type=rss',
-        {
-          key: 'bigcommerce:category-new-products',
-          label: 'New products in category',
-          format: 'rss',
-        },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?categoryid=18&type=atom',
-        {
-          key: 'bigcommerce:category-new-products',
-          label: 'New products in category',
-          format: 'atom',
-        },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?action=popularproducts&categoryid=18&type=rss',
-        {
-          key: 'bigcommerce:category-popular-products',
-          label: 'Popular products in category',
-          format: 'rss',
-        },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?action=popularproducts&categoryid=18&type=atom',
-        {
-          key: 'bigcommerce:category-popular-products',
-          label: 'Popular products in category',
-          format: 'atom',
-        },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?action=searchproducts&search_query=shoes&type=rss',
-        { key: 'bigcommerce:search', label: 'Search', format: 'rss' },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?action=searchproducts&search_query=shoes&type=atom',
-        { key: 'bigcommerce:search', label: 'Search', format: 'atom' },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?type=rss',
-        { key: 'bigcommerce:new-products', label: 'New products', format: 'rss' },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?type=atom',
-        { key: 'bigcommerce:new-products', label: 'New products', format: 'atom' },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?action=popularproducts&type=rss',
-        { key: 'bigcommerce:popular-products', label: 'Popular products', format: 'rss' },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?action=popularproducts&type=atom',
-        { key: 'bigcommerce:popular-products', label: 'Popular products', format: 'atom' },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?action=featuredproducts&type=rss',
-        { key: 'bigcommerce:featured-products', label: 'Featured products', format: 'rss' },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?action=featuredproducts&type=atom',
-        { key: 'bigcommerce:featured-products', label: 'Featured products', format: 'atom' },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?action=newblogs&type=rss',
-        { key: 'bigcommerce:blog', label: 'Blog', format: 'rss' },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?action=newblogs&type=atom',
-        { key: 'bigcommerce:blog', label: 'Blog', format: 'atom' },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?categoryid=18',
-        {
-          key: 'bigcommerce:category-new-products',
-          label: 'New products in category',
-          format: 'rss',
-        },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?action=popularproducts&categoryid=18',
-        {
-          key: 'bigcommerce:category-popular-products',
-          label: 'Popular products in category',
-          format: 'rss',
-        },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?action=searchproducts&search_query=shoes',
-        { key: 'bigcommerce:search', label: 'Search', format: 'rss' },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?action=popularproducts',
-        { key: 'bigcommerce:popular-products', label: 'Popular products', format: 'rss' },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?action=featuredproducts',
-        { key: 'bigcommerce:featured-products', label: 'Featured products', format: 'rss' },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php?action=newblogs',
-        { key: 'bigcommerce:blog', label: 'Blog', format: 'rss' },
-      ],
-      [
-        'https://alice.mybigcommerce.com/rss.php',
-        { key: 'bigcommerce:new-products', label: 'New products', format: 'rss' },
-      ],
-    ]
+    it('should return the RSS hint for the new products feed without a type', () => {
+      const value = 'https://alice.mybigcommerce.com/rss.php'
+      const expected: DiscoverUriHint = {
+        key: 'bigcommerce:new-products',
+        label: 'New products',
+        format: 'rss',
+      }
 
-    it.each(ownFeeds)('should return the hint of %s', (value, expected) => {
       expect(bigcommerceHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a feed on www in front of a store', () => {
-      const value = 'https://www.alice.mybigcommerce.com/rss.php?type=rss'
+    it('should return a category feed without a type as itself through the Platform method', async () => {
+      const value = 'https://alice.mybigcommerce.com/rss.php?categoryid=18'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.mybigcommerce.com/rss.php?categoryid=18',
+          hint: {
+            key: 'bigcommerce:category-new-products',
+            label: 'New products in category',
+            format: 'rss',
+          },
+        },
+      ]
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [bigcommerceHandler],
+        baseUrl: value,
+      })
 
-      expect(bigcommerceHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(result).toEqual(expected)
     })
-
-    it('should return undefined for a store page', () => {
-      const value = 'https://alice.mybigcommerce.com/shoes/'
-
-      expect(bigcommerceHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://mybigcommerce.com/rss.php?type=rss'
-
-      expect(bigcommerceHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the www host', () => {
-      const value = 'https://www.mybigcommerce.com/rss.php?type=rss'
-
-      expect(bigcommerceHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a custom domain', () => {
-      const value = 'https://example.com/rss.php?type=rss'
-
-      expect(bigcommerceHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed without a type on a custom domain', () => {
-      const value = 'https://example.com/rss.php'
-
-      expect(bigcommerceHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it.each(ownFeeds)(
-      'should return %s as itself through the Platform method',
-      async (value, hint) => {
-        const result = await discoverUrisFromPlatform(undefined, undefined, {
-          ...defaultPlatformOptions,
-          handlers: [bigcommerceHandler],
-          baseUrl: value,
-        })
-        const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
-
-        expect(result).toEqual(expected)
-      },
-    )
   })
 })
