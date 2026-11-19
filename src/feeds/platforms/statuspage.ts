@@ -1,21 +1,11 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { statuspage } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const domains = ['statuspage.io']
-
-// A status page on its own domain is known only by its markers, so its feeds are built here but
-// not claimed.
-const feeds = definePlatformFeeds(
-  'statuspage',
-  [
-    { key: 'history', main: '{scheme}://{host}/history.rss', format: 'rss' },
-    { key: 'history', main: '{scheme}://{host}/history.atom', format: 'atom' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(statuspage.feeds)
 
 export const isStatuspageHtml = (content: string): boolean => {
   return content.includes('dka575ofm4ao0.cloudfront.net/packs/')

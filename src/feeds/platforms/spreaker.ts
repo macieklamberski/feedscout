@@ -1,5 +1,6 @@
+import { spreaker } from 'feedintel'
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
@@ -7,20 +8,13 @@ import { digitsRegex } from '../../common/utils.js'
 
 export type SpreakerUrl = { kind: 'show'; showId: string }
 
-const hosts = ['spreaker.com', 'www.spreaker.com']
+const hosts = spreaker.hosts.exact
 
 const podcastRegex = /^\/podcast\/[\w-]+--(\d+)(?:\/|$)/i
 // /show/{id} bare numeric form 301-redirects to the slug-suffixed canonical.
 const showRegex = /^\/show\/(\d+)(?:\/|$)/i
 
-const feeds = definePlatformFeeds('spreaker', [
-  { key: 'podcast', main: 'https://www.spreaker.com/show/{showId}/episodes/feed' },
-  // The same feed cut to its newest episodes, as `items/3`.
-  {
-    key: 'podcast',
-    main: 'https://www.spreaker.com/show/{showId}/episodes/feed/items/{count}',
-  },
-])
+const feeds = withHintLabels(spreaker.feeds)
 
 export const parseSpreakerUrl = (url: string): SpreakerUrl | undefined => {
   const parsedUrl = parseUrl(url)

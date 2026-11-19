@@ -1,5 +1,6 @@
+import { weebly } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElements, formatSuffixRegex, getTenantSubdomain } from '../../common/utils.js'
 
@@ -8,19 +9,13 @@ import { findElements, formatSuffixRegex, getTenantSubdomain } from '../../commo
 export type WeeblyUrl = { kind: 'home' } | { kind: 'blog'; page?: string }
 export type WeeblyPage = { kind: 'home'; pages: Array<string> } | { kind: 'blog'; page?: string }
 
-const domains = ['weebly.com']
+const domains = weebly.hosts.tenants
 
 // A page link is one segment with an optional .html, as `/newsletter.html` or `/newsletter`. Any
 // other dot marks a file, such as `/favicon.ico`.
 const pageLinkRegex = /^\/([^/.]+)(?:\.html)?$/i
 
-const feeds = definePlatformFeeds(
-  'weebly',
-  [{ key: 'blog', main: '{scheme}://{host}/{page}/feed' }],
-  {
-    hosts: { tenants: domains },
-  },
-)
+const feeds = withHintLabels(weebly.feeds)
 
 export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

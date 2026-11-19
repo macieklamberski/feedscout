@@ -1,5 +1,6 @@
+import { sportadmin } from 'feedintel'
 import { getQueryParam, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
 
@@ -9,21 +10,14 @@ import { digitsRegex, findElement, getTenantSubdomain } from '../../common/utils
 
 export type SportadminPage = { kind: 'club' } | { kind: 'team'; sectionId: string }
 
-const domains = ['web.sportadmin.se']
+const domains = sportadmin.hosts.tenants
 
 // The link to the other layout, "Gå till Webbversion" or its app counterpart.
 const layoutLinkRegex = /^\.\.\/\?SID=(\d+)&platform=(?:app|web)$/i
 // The next game widget, which the classic template prints on the club home page alone.
 const nextGameRegex = /wNextGame\.asp\?SID=(\d+)/i
 
-const feeds = definePlatformFeeds(
-  'sportadmin',
-  [
-    { key: 'team', main: '{scheme}://{host}/rss/?SID={sectionId}' },
-    { key: 'news', main: '{scheme}://{host}/rss/' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(sportadmin.feeds)
 
 const findLayoutSectionId = (content: string | undefined): string | undefined => {
   const link = findElement(content, (element) => {

@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { tistory } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -6,19 +7,9 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type TistoryUrl = { kind: 'blog' }
 
-const domains = ['tistory.com']
+const domains = tistory.hosts.tenants
 
-const feeds = definePlatformFeeds(
-  'tistory',
-  [
-    {
-      key: 'blog',
-      main: '{scheme}://{host}/rss',
-      aliases: ['{scheme}://{host}/feed', '{scheme}://{host}/index.xml'],
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(tistory.feeds)
 
 export const parseTistoryUrl = (url: string): TistoryUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

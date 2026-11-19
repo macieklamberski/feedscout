@@ -1,5 +1,6 @@
+import { xenforo } from 'feedintel'
 import { getAnyOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
 
@@ -24,14 +25,7 @@ const basePathRegex = /\bbasePath:\s*'(?<basePath>(?:\/[^'/]+)*)\/?'/
 // XF2 puts `id="XF"` on the html element and XF1 put `id="XenForo"` there.
 const appRootIds = ['XF', 'XenForo']
 
-// A board on any host is known only by its markup, which a feed URL does not carry, so the feeds
-// are built under the board root and never claimed. A forum page names the route of the board
-// feed, and a board page does not, so it gets both routes in turn.
-const feeds = definePlatformFeeds('xenforo', [
-  { key: 'forum', main: '{root}/{route}/{forumPath}/index.rss' },
-  { key: 'site', main: '{root}/{route}/-/index.rss' },
-  { key: 'site', main: '{root}/forums/-/index.rss', aliases: ['{root}/f/-/index.rss'] },
-])
+const feeds = withHintLabels(xenforo.feeds)
 
 export const isXenforoHtml = (content: string): boolean => {
   const root = findElement(content, (element) => {

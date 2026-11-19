@@ -1,5 +1,6 @@
+import { livedoorBlog } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -9,23 +10,11 @@ export type LivedoorBlogUrl =
   | { kind: 'blog'; blog: string }
   | { kind: 'category'; blog: string; category: string }
 
-const domains = ['blog.jp', 'doorblog.jp', 'ldblog.jp', 'livedoor.biz']
+const domains = livedoorBlog.hosts.tenants
 
 const categoryRegex = /^\/archives\/cat_(\d+)\.html$/i
 
-const feeds = definePlatformFeeds(
-  'livedoor-blog',
-  [
-    {
-      key: 'category',
-      main: '{scheme}://{host}/archives/cat_{category}.xml',
-      format: 'rdf',
-    },
-    { key: 'posts', main: '{scheme}://{host}/index.rdf', format: 'rdf' },
-    { key: 'posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(livedoorBlog.feeds)
 
 export const parseLivedoorBlogUrl = (url: string): LivedoorBlogUrl | undefined => {
   // A nested subdomain answers with a self-signed certificate and is no blog.

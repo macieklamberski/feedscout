@@ -1,5 +1,6 @@
+import { yeswiki } from 'feedintel'
 import { parseJson } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   digitsRegex,
@@ -25,13 +26,7 @@ const whitespaceRegex = /\s+/
 
 const formElementClasses = ['BAZ_cadre_fiche', 'bazar-entry', 'bazar-list-dynamic-container']
 
-// A wiki on any host is known only by its session cookie, which a feed URL does not carry, so the
-// feeds are built under the install root and never claimed.
-const feeds = definePlatformFeeds('yeswiki', [
-  { key: 'form-entries', main: '{root}/?BazaR/rss&id={formId}' },
-  { key: 'entries', main: '{root}/?BazaR/rss' },
-  { key: 'recent-changes', main: '{root}/?DerniersChangementsRSS/xml' },
-])
+const feeds = withHintLabels(yeswiki.feeds)
 
 // YesWiki names its session `YesWiki-main`, or `YesWiki-{path}` under a sub-path.
 export const isYeswikiHeaders = (headers: Headers): boolean => {

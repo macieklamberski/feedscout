@@ -1,5 +1,6 @@
+import { prose } from 'feedintel'
 import { getQueryParam, getSubdomain, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
@@ -9,40 +10,10 @@ export type ProseUrl =
   | { kind: 'tag'; username: string; tag: string }
   | { kind: 'blog'; username: string }
 
-const domains = ['prose.sh']
+const domains = prose.hosts.tenants
 const apexHosts = ['prose.sh']
 
-const feeds = definePlatformFeeds(
-  'prose',
-  [
-    {
-      key: 'discovery',
-      main: 'https://prose.sh/rss',
-      aliases: ['https://prose.sh/rss.atom'],
-    },
-    {
-      key: 'tag',
-      main: '{scheme}://{host}/rss?tag={tag}',
-      aliases: [
-        '{scheme}://{host}/atom?tag={tag}',
-        '{scheme}://{host}/rss.xml?tag={tag}',
-        '{scheme}://{host}/feed.xml?tag={tag}',
-        '{scheme}://{host}/atom.xml?tag={tag}',
-      ],
-    },
-    {
-      key: 'blog',
-      main: '{scheme}://{host}/rss',
-      aliases: [
-        '{scheme}://{host}/atom',
-        '{scheme}://{host}/rss.xml',
-        '{scheme}://{host}/feed.xml',
-        '{scheme}://{host}/atom.xml',
-      ],
-    },
-  ],
-  { hosts: { tenants: domains }, isWwwTenant: true },
-)
+const feeds = withHintLabels(prose.feeds)
 
 export const parseProseUrl = (url: string): ProseUrl | undefined => {
   const parsedUrl = parseUrl(url)

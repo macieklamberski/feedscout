@@ -1,12 +1,12 @@
+import { shopserve } from 'feedintel'
 import { startsWithAnyOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Unmeasured, bot wall.
 
-// A shop is known only by its marker, so its feed is built here but not claimed.
-const feeds = definePlatformFeeds('shopserve', [{ key: 'news', main: '{root}/hpgen/HPB/rss.xml' }])
+const feeds = withHintLabels(shopserve.feeds)
 
 const isGeneratedPath = (value: string | undefined): boolean => {
   return startsWithAnyOf(value, '/hpgen/HPB/')

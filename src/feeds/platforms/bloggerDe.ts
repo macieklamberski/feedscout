@@ -1,5 +1,6 @@
+import { bloggerDe } from 'feedintel'
 import { decodeSegment, getPathSegments } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -11,23 +12,9 @@ export type BloggerDeUrl =
   | { kind: 'blog'; blog: string }
   | { kind: 'topic'; blog: string; topic: string }
 
-const domains = ['blogger.de']
+const domains = bloggerDe.hosts.tenants
 
-// `/topics/{topic}/rss` serves the posts feed unfiltered, while `/rss?topic={topic}` narrows it to
-// the topic. `/rss?show=all` adds the comments to the posts.
-const feeds = definePlatformFeeds(
-  'blogger-de',
-  [
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/rss',
-      aliases: ['{scheme}://{host}/topics/{topic}/rss'],
-    },
-    { key: 'posts-comments', main: '{scheme}://{host}/rss?show=all' },
-    { key: 'topic', main: '{scheme}://{host}/rss?topic={topic}' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(bloggerDe.feeds)
 
 export const parseBloggerDeUrl = (url: string): BloggerDeUrl | undefined => {
   // A nested subdomain like a.b.blogger.de fails TLS, since the certificate covers one label.

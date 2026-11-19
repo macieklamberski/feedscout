@@ -1,5 +1,6 @@
+import { spotifyForCreators } from 'feedintel'
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
@@ -7,7 +8,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 export type SpotifyForCreatorsUrl = { kind: 'show' }
 export type SpotifyForCreatorsPage = { kind: 'show'; stationId: string }
 
-const hosts = ['creators.spotify.com']
+const hosts = spotifyForCreators.hosts.exact
 
 const showRegex = /^\/pod\/(?:show|profile)\/[^/]+(?:\/|$)/i
 // The alternate link omits `/s/` and ends on HTML, and a show without RSS answers 404 on `/s/`.
@@ -16,9 +17,7 @@ const showRegex = /^\/pod\/(?:show|profile)\/[^/]+(?:\/|$)/i
 const feedUrlRegex = /anchor\.fm\/(?:s\/)?([\da-f]+)\/podcast\/rss/i
 const stationIdRegex = /^[\da-f]/i
 
-const feeds = definePlatformFeeds('spotify-for-creators', [
-  { key: 'podcast', main: 'https://anchor.fm/s/{stationId}/podcast/rss' },
-])
+const feeds = withHintLabels(spotifyForCreators.feeds)
 
 export const parseSpotifyForCreatorsUrl = (url: string): SpotifyForCreatorsUrl | undefined => {
   const parsedUrl = parseUrl(url)

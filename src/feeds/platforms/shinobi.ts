@@ -1,5 +1,6 @@
+import { shinobi } from 'feedintel'
 import { isAnyOf, isHostOrSubdomainOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
@@ -9,37 +10,9 @@ export type ShinobiUrl = { kind: 'blog'; blog: string }
 
 // Ninja Blog serves its blogs as subdomains of 101 domains. Only its branded one is listed, and a
 // blog on any other is known by the banner its pages print.
-const domains = ['blog.shinobi.jp']
+const domains = shinobi.hosts.tenants
 
-// A blog serves one feed under every path below: RSS 2.0 at /RSS/, /RSS/200/ and /OPML, RSS 0.91 at
-// /RSS/091/, RSS 1.0 at /RSS/100/ and Atom at /ATOM/. The server ignores what follows a feed path,
-// so /RSS/200/RSS is the RSS 2.0 feed too.
-const feeds = definePlatformFeeds(
-  'shinobi',
-  [
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/RSS/',
-      format: 'rss',
-      aliases: [
-        '{scheme}://{host}/RSS/200/',
-        '{scheme}://{host}/RSS/RSS/',
-        '{scheme}://{host}/RSS/200/RSS/',
-        '{scheme}://{host}/OPML',
-        '{scheme}://{host}/RSS/091/',
-        '{scheme}://{host}/RSS/091/index.rdf',
-      ],
-    },
-    { key: 'posts', main: '{scheme}://{host}/ATOM/', format: 'atom' },
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/RSS/100/',
-      format: 'rdf',
-      aliases: ['{scheme}://{host}/RSS/100/RSS/'],
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(shinobi.feeds)
 
 // Every blog page prints the Ninja Blog banner, whose logo loads from the blog's own host.
 export const isShinobiHtml = (content: string): boolean => {

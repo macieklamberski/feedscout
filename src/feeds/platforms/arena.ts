@@ -1,5 +1,6 @@
+import { arena } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -11,7 +12,7 @@ export type ArenaUrl =
   | { kind: 'channel'; username: string; channel: string }
   | { kind: 'editorial' }
 
-const hosts = ['are.na', 'www.are.na']
+const hosts = arena.hosts.exact
 
 // Views of a profile. The profile feed sits at /{username}/feed/rss, so `feed` names no channel.
 const profilePaths = [
@@ -26,12 +27,7 @@ const profilePaths = [
   'table',
 ]
 
-// `/editorial/feed/rss` reads before `/{username}/feed/rss`, so it reads as the editorial feed.
-const feeds = definePlatformFeeds('arena', [
-  { key: 'editorial', main: 'https://www.are.na/editorial/feed/rss' },
-  { key: 'profile', main: 'https://www.are.na/{username}/feed/rss' },
-  { key: 'channel', main: 'https://www.are.na/{username}/{channel}/feed/rss' },
-])
+const feeds = withHintLabels(arena.feeds)
 
 export const parseArenaUrl = (url: string): ArenaUrl | undefined => {
   if (!isHostOf(url, hosts)) {

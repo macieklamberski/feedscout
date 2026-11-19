@@ -1,20 +1,17 @@
+import { pypi } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
 
 export type PypiUrl = { kind: 'project'; project: string } | { kind: 'home' }
 
-const hosts = ['pypi.org', 'www.pypi.org']
+const hosts = pypi.hosts.exact
 
 const projectRegex = /^\/project\/([\w.-]+)(?:\/|$)/i
 
-const feeds = definePlatformFeeds('pypi', [
-  { key: 'releases', main: 'https://pypi.org/rss/project/{project}/releases.xml' },
-  { key: 'new-packages', main: 'https://pypi.org/rss/packages.xml' },
-  { key: 'updates', main: 'https://pypi.org/rss/updates.xml' },
-])
+const feeds = withHintLabels(pypi.feeds)
 
 export const parsePypiUrl = (url: string): PypiUrl | undefined => {
   const parsedUrl = parseUrl(url)

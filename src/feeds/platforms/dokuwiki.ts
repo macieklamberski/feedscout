@@ -1,5 +1,6 @@
+import { dokuwiki } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
@@ -12,14 +13,7 @@ export type DokuwikiPage = { installPath: string; namespace?: string }
 const namespaceRegex = /var NS='([^']+)'/
 const sessionCookiePathRegex = /(?:^|,)\s*DokuWiki=[^,]*?;\s*path=([^;,\s]+)/i
 
-// A wiki runs on its own domain, under its install path, and is known only by its marker, so its
-// feeds are built here but not claimed. The template links the namespace's pages feed, not its
-// changes.
-const feeds = definePlatformFeeds('dokuwiki', [
-  { key: 'namespace', main: '{root}/feed.php?ns={namespace}' },
-  { key: 'namespace-pages', main: '{root}/feed.php?mode=list&ns={namespace}' },
-  { key: 'recent-changes', main: '{root}/feed.php' },
-])
+const feeds = withHintLabels(dokuwiki.feeds)
 
 export const isDokuwikiHeaders = (headers: Headers): boolean => {
   return getCookieNames(headers).includes('DokuWiki')

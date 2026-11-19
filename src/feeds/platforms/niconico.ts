@@ -1,5 +1,6 @@
+import { niconico } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
 
@@ -11,13 +12,9 @@ export type NiconicoUrl =
   | { kind: 'live'; channel: string }
   | { kind: 'blomaga'; channel: string }
 
-export const hosts = ['ch.nicovideo.jp']
+export const hosts = niconico.hosts.exact
 
-const feeds = definePlatformFeeds('niconico', [
-  { key: 'videos', main: 'https://ch.nicovideo.jp/{channel}/video?rss=2.0' },
-  { key: 'live', main: 'https://ch.nicovideo.jp/{channel}/live?rss=2.0' },
-  { key: 'blog', main: 'https://ch.nicovideo.jp/{channel}/blomaga/nico/feed' },
-])
+const feeds = withHintLabels(niconico.feeds)
 
 export const parseNiconicoUrl = (url: string): NiconicoUrl | undefined => {
   if (!isHostOf(url, hosts)) {

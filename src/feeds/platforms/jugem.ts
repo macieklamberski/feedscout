@@ -1,5 +1,6 @@
+import { jugem } from 'feedintel'
 import { getPathSegments, isHostOf, isHostOrSubdomainOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
@@ -10,34 +11,13 @@ export type JugemUrl =
   | { kind: 'theme'; category: string; theme: string }
   | { kind: 'customDomain' }
 
-const domains = ['jugem.cc', 'jugem.jp']
+const domains = jugem.hosts.tenants
 const assetHosts = ['imaging.jugem.jp']
 const cookieScriptPath = './template/js/cookie.js'
 const portalHosts = ['jugem.jp']
 const themeCategoryRegex = /^c\d+$/
 
-// A custom domain is known only by its markers, so its feeds are built here but not claimed. An
-// older template links the same feeds at /index.rdf and /atom.xml.
-const feeds = definePlatformFeeds(
-  'jugem',
-  [
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/?mode=rss',
-      format: 'rdf',
-      aliases: ['{scheme}://{host}/index.rdf'],
-    },
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/?mode=atom',
-      format: 'atom',
-      aliases: ['{scheme}://{host}/atom.xml'],
-    },
-    // The portal answers https with a redirect to http, which the theme feed names as its own URL.
-    { key: 'theme', main: 'http://jugem.jp/theme/{category}/{theme}/rss', format: 'rdf' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(jugem.feeds)
 
 const isJugemAsset = (assetUrl: string | undefined): boolean => {
   if (!assetUrl) {
