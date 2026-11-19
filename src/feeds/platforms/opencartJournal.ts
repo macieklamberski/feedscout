@@ -1,5 +1,6 @@
+import { opencartJournal } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
 
@@ -12,18 +13,7 @@ export type OpencartJournalPage = {
   version: 'journal2' | 'journal3'
 }
 
-// A store is known only by its markup, so its feeds are built under the store root and claimed on
-// no host. The blog route is named for the Journal version. OpenCart 4 separates a route's method
-// with a dot and answers the slash form with a 404, and only Journal 3 runs on it, so its dot form
-// is a second spelling of the Journal 3 feed.
-const feeds = definePlatformFeeds('opencart-journal', [
-  {
-    key: 'blog',
-    main: '{root}/index.php?route={version}/blog/feed',
-    format: 'rss',
-    aliases: ['{root}/index.php?route=journal3/blog.feed'],
-  },
-])
+const feeds = withHintLabels(opencartJournal.feeds)
 
 // Journal prints its version on the `<html>` element of every page: `data-j2v` on Journal 2,
 // `data-jv` on Journal 3. Other scripts put `data-jv` on form fields, never on `<html>`.

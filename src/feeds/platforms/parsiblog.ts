@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { parsiblog } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -6,28 +7,9 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type ParsiblogUrl = { kind: 'blog'; blog: string }
 
-const domains = ['parsiblog.com', 'parsiblog.ir']
+const domains = parsiblog.hosts.tenants
 
-// Parsiblog serves no HTTPS, and a blog serves the same feeds on either domain and on its older
-// .aspx paths.
-const feeds = definePlatformFeeds(
-  'parsiblog',
-  [
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/rss/',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/RSS.aspx', '{scheme}://{host}/Mag/RSS.aspx'],
-    },
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/atom/',
-      format: 'atom',
-      aliases: ['{scheme}://{host}/ATOM.aspx'],
-    },
-  ],
-  { hosts: { tenants: domains }, isWwwTenantPrefix: true },
-)
+const feeds = withHintLabels(parsiblog.feeds)
 
 export const parseParsiblogUrl = (url: string): ParsiblogUrl | undefined => {
   const blog = getTenantSubdomain(url, domains)

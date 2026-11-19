@@ -1,20 +1,14 @@
+import { nethouse } from 'feedintel'
 import { isSubdomainOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const domains = ['nethouse.ru', 'nethouse.me']
+const domains = nethouse.hosts.tenants
 
-const feeds = definePlatformFeeds(
-  'nethouse',
-  [
-    { key: 'news', main: '{scheme}://{host}/posts/rss' },
-    { key: 'articles', main: '{scheme}://{host}/articles/rss' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(nethouse.feeds)
 
 export const isNethouseHeaders = (headers: Headers): boolean => {
   return headers.get('x-generator') === 'nethouse'

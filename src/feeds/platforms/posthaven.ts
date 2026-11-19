@@ -1,5 +1,6 @@
+import { posthaven } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -9,19 +10,11 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type PosthavenUrl = { kind: 'tag'; tag: string } | { kind: 'blog' }
 
-const domains = ['posthaven.com']
+const domains = posthaven.hosts.tenants
 
 const tagRegex = /^\/tag\/([^/]+)/i
 
-const feeds = definePlatformFeeds(
-  'posthaven',
-  [
-    { key: 'posts', main: '{scheme}://{host}/posts.atom' },
-    // Posthaven serves an undocumented per-tag Atom feed.
-    { key: 'tag', main: '{scheme}://{host}/tag/{tag}.atom' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(posthaven.feeds)
 
 export const parsePosthavenUrl = (url: string): PosthavenUrl | undefined => {
   const parsedUrl = parseUrl(url)

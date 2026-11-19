@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { sakuraBlog } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -6,26 +7,9 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type SakuraBlogUrl = { kind: 'blog'; hostname: string }
 
-const domains = ['sblo.jp']
+const domains = sakuraBlog.hosts.tenants
 
-const feeds = definePlatformFeeds(
-  'sakura-blog',
-  [
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/index20.rdf',
-      format: 'rss',
-      aliases: [
-        // A blog made since the platform's redesign serves its posts at `/rss.xml` alone, and an
-        // older blog answers 404 there. It is built under the page's own origin, since a newer blog
-        // serves https and redirects http there.
-        '{root}/rss.xml',
-      ],
-    },
-    { key: 'posts', main: '{scheme}://{host}/index.rdf', format: 'rdf' },
-  ],
-  { hosts: { tenants: domains }, isWwwTenantPrefix: true },
-)
+const feeds = withHintLabels(sakuraBlog.feeds)
 
 export const parseSakuraBlogUrl = (url: string): SakuraBlogUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

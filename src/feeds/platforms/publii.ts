@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { publii } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker, hasMetaContent, isRootOfPage } from '../../common/utils.js'
 
@@ -8,11 +9,7 @@ import { hasMarker, hasMetaContent, isRootOfPage } from '../../common/utils.js'
 // `https://example.com/blog/media/posts/12/cover.jpg`.
 const mediaUrlRegex = /["'](?<siteUrl>https?:\/\/[^"'\s]+?)\/media\/(?:website\/|posts\/\d+\/)/i
 
-// A site of any domain is known only by its marker, so its feeds are built here but not claimed.
-const feeds = definePlatformFeeds('publii', [
-  { key: 'posts', main: '{root}/feed.xml', format: 'atom' },
-  { key: 'posts', main: '{root}/feed.json', format: 'json' },
-])
+const feeds = withHintLabels(publii.feeds)
 
 const hasGenerator = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Publii')

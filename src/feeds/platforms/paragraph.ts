@@ -1,30 +1,17 @@
+import { paragraph } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
 
 export type ParagraphUrl = { kind: 'blog'; username: string }
 
-const hosts = ['paragraph.com', 'www.paragraph.com']
+const hosts = paragraph.hosts.exact
 
 const userRegex = /^\/@([^/]+)/
 
-// A blog page links `/@{username}/rss.xml`, and `/feed` and `/rss` answer 308 to it. The
-// api.paragraph.com feed holds the same posts under other guids, and `/api/blogs/rss/` answers 308
-// to the linked feed.
-const feeds = definePlatformFeeds('paragraph', [
-  {
-    key: 'blog',
-    main: 'https://paragraph.com/@{username}/rss.xml',
-    aliases: [
-      'https://paragraph.com/@{username}/feed',
-      'https://paragraph.com/@{username}/rss',
-      'https://paragraph.com/api/blogs/rss/@{username}',
-    ],
-  },
-  { key: 'blog', main: 'https://api.paragraph.com/blogs/rss/@{username}' },
-])
+const feeds = withHintLabels(paragraph.feeds)
 
 export const parseParagraphUrl = (url: string): ParagraphUrl | undefined => {
   const parsedUrl = parseUrl(url)

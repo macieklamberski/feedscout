@@ -1,5 +1,6 @@
+import { mailArchive } from 'feedintel'
 import { decodeSegment, getPathSegments, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -7,16 +8,9 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type MailArchiveUrl = { kind: 'list'; list: string }
 
-const hosts = ['mail-archive.com', 'www.mail-archive.com']
+const hosts = mailArchive.hosts.exact
 
-const feeds = definePlatformFeeds(
-  'mail-archive',
-  [
-    { key: 'list', main: '{scheme}://{host}/{list}/maillist.xml', format: 'rss' },
-    { key: 'list', main: '{scheme}://{host}/{list}/maillist.rdf', format: 'rdf' },
-  ],
-  { hosts: { exact: hosts } },
-)
+const feeds = withHintLabels(mailArchive.feeds)
 
 export const parseMailArchiveUrl = (url: string): MailArchiveUrl | undefined => {
   if (!isHostOf(url, hosts)) {

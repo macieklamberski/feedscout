@@ -1,5 +1,6 @@
+import { proboards } from 'feedintel'
 import { isHostOrSubdomainOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
@@ -7,14 +8,9 @@ import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 export type ProboardsUrl = { kind: 'forum' } | { kind: 'customDomain' }
 
-const domains = ['proboards.com', 'freeforums.net', 'boards.net']
+const domains = proboards.hosts.tenants
 
-// A forum on its own domain is known only by its markers, so its feed is built but not claimed.
-const feeds = definePlatformFeeds(
-  'proboards',
-  [{ key: 'posts', main: '{scheme}://{host}/rss/public' }],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(proboards.feeds)
 
 // Every forum page loads the core script from storage.proboards.com or storage.forums.net, on a
 // custom domain too.

@@ -1,23 +1,17 @@
+import { listed } from 'feedintel'
 import { isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
 
 export type ListedUrl = { kind: 'blog'; username: string }
 
-const hosts = ['listed.to', 'www.listed.to']
+const hosts = listed.hosts.exact
 
 const userRegex = /^\/@([^/]+)/
 
-// Listed serves the same feed at `/feed` and, by numeric author id, at `/authors/{id}/feed`.
-const feeds = definePlatformFeeds('listed', [
-  {
-    key: 'blog',
-    main: 'https://listed.to/@{username}/feed.rss',
-    aliases: ['https://listed.to/@{username}/feed', 'https://listed.to/authors/{id}/feed'],
-  },
-])
+const feeds = withHintLabels(listed.feeds)
 
 export const parseListedUrl = (url: string): ListedUrl | undefined => {
   if (!isHostOf(url, hosts)) {

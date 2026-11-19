@@ -1,3 +1,4 @@
+import { legistar } from 'feedintel'
 import {
   getQueryParam,
   getQueryParamValues,
@@ -6,7 +7,7 @@ import {
   parseUrl,
   resolveUrl,
 } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -25,25 +26,12 @@ export type LegistarUrl =
 type LegistarRecord = { id: string; guid: string }
 export type LegistarPage = { kind: 'legislation' | 'meeting'; feedUrl: string }
 
-const domains = ['legistar.com']
+const domains = legistar.hosts.tenants
 
 // Legistar's load balancer sets this cookie on every page, on a client's custom domain too.
 const cookieName = 'BIGipServerinsite.legistar.com_443'
 
-// A feed on a client's custom domain carries nothing that names Legistar, so the table claims a
-// feed only on a Legistar host and builds it on any.
-const feeds = definePlatformFeeds(
-  'legistar',
-  [
-    { key: 'legislation', main: '{scheme}://{host}/Feed.ashx?M=LD&ID={id}&GUID={guid}' },
-    {
-      key: 'meeting',
-      main: '{scheme}://{host}/Feed.ashx?M=CalendarDetail&ID={id}&GUID={guid}',
-    },
-  ],
-  // Legistar's server reads `&amp;` between parameters as `&`.
-  { hosts: { tenants: domains }, lenient: { ampersandEntity: true } },
-)
+const feeds = withHintLabels(legistar.feeds)
 
 // Every page loads the share widget under Legistar's own account, on a custom domain too.
 export const isLegistarHtml = (content: string): boolean => {

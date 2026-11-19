@@ -1,5 +1,6 @@
+import { podbean } from 'feedintel'
 import { isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -9,30 +10,11 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type PodbeanUrl = { kind: 'podcast'; show: string }
 
-const domains = ['podbean.com']
+const domains = podbean.hosts.tenants
 // The feed host serves every show by path, so it names no show.
 const feedHosts = ['feed.podbean.com']
 
-const feeds = definePlatformFeeds(
-  'podbean',
-  [
-    {
-      key: 'podcast',
-      main: 'https://feed.podbean.com/{show}/feed.xml',
-      aliases: [
-        // The feed host's S3 bucket serves the same feed. S3 is shared, so the bucket segment is
-        // literal.
-        'https://s3.amazonaws.com/feed.podbean.com/{show}/feed.xml',
-        // The show's old feed path, which redirects to the feed host.
-        '{scheme}://{host}/feed.xml',
-      ],
-    },
-    // The show's feed cut to its latest episode. No other count is served: `last2` and `last5`
-    // redirect away.
-    { key: 'latest', main: 'https://feed.podbean.com/{show}/last1/feed.xml' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(podbean.feeds)
 
 export const parsePodbeanUrl = (url: string): PodbeanUrl | undefined => {
   const show = getTenantSubdomain(url, domains)

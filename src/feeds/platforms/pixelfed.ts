@@ -1,5 +1,6 @@
+import { pixelfed } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasAnyMeta, hasMarker } from '../../common/utils.js'
 
@@ -14,11 +15,7 @@ const metaMarkers: Array<[string, string]> = [
   ['application-name', 'Pixelfed'],
 ]
 
-// An instance is known only by its markup, so its feeds are built on the page's origin and claimed
-// on no host.
-const feeds = definePlatformFeeds('pixelfed', [
-  { key: 'posts', main: '{root}/users/{username}.atom' },
-])
+const feeds = withHintLabels(pixelfed.feeds)
 
 export const isPixelfedHtml = (content: string): boolean => {
   return hasAnyMeta(content, metaMarkers)

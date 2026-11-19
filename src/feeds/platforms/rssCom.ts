@@ -1,19 +1,18 @@
+import { rssCom } from 'feedintel'
 import { isHostOf, isLocale, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
 
 export type RssComUrl = { kind: 'podcast'; show: string }
 
-const hosts = ['rss.com', 'www.rss.com']
+const hosts = rssCom.hosts.exact
 
 // An optional locale prefix, e.g. /es/podcasts/, /it/podcasts/.
 const podcastRegex = /^\/(?:([^/]+)\/)?podcasts\/([^/]+)/i
 
-const feeds = definePlatformFeeds('rss-com', [
-  { key: 'podcast', main: 'https://media.rss.com/{show}/feed.xml' },
-])
+const feeds = withHintLabels(rssCom.feeds)
 
 export const parseRssComUrl = (url: string): RssComUrl | undefined => {
   const parsedUrl = parseUrl(url)

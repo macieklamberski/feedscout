@@ -1,5 +1,6 @@
+import { megaphone } from 'feedintel'
 import { getPathSegments, getQueryParam, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
 
@@ -16,9 +17,7 @@ const episodeIdRegex = /^[A-Z]+\d+$/
 const episodePathRegex = /^\/([^/]+)\/?$/
 const feedUrlRegex = /feeds\.megaphone\.fm\/([\w-]+)/i
 
-const feeds = definePlatformFeeds('megaphone', [
-  { key: 'podcast', main: 'https://feeds.megaphone.fm/{showId}' },
-])
+const feeds = withHintLabels(megaphone.feeds)
 
 export const parseMegaphoneUrl = (url: string): MegaphoneUrl | undefined => {
   const { pathname, searchParams } = new URL(url)

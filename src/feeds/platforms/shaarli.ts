@@ -1,5 +1,6 @@
+import { shaarli } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   findElement,
@@ -13,13 +14,7 @@ import {
 
 export type ShaarliPage = { baseUrl: string }
 
-// An instance of any domain is known only by its marker, so its feeds are built here but not
-// claimed. Installs older than 0.12 answer 404 on `/feed/*` and serve `/?do=rss` instead, and
-// later installs redirect `/?do=rss` to the same feed.
-const feeds = definePlatformFeeds('shaarli', [
-  { key: 'posts', main: '{root}/feed/rss', format: 'rss', aliases: ['{root}/?do=rss'] },
-  { key: 'posts', main: '{root}/feed/atom', format: 'atom' },
-])
+const feeds = withHintLabels(shaarli.feeds)
 
 export const isShaarliHtml = (content: string): boolean => {
   return hasElementWithId(content, 'shaarli-menu')

@@ -1,5 +1,6 @@
+import { podomatic } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 
@@ -7,22 +8,12 @@ import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 
 export type PodomaticUrl = { kind: 'podcast'; show: string }
 
-const domains = ['podomatic.com']
-const hosts = ['podomatic.com', 'www.podomatic.com']
+const domains = podomatic.hosts.tenants
+const hosts = podomatic.hosts.exact
 
 const directoryPathRegex = /^\/podcasts\/([^/]+)/i
 
-const feeds = definePlatformFeeds(
-  'podomatic',
-  [
-    {
-      key: 'show',
-      main: '{scheme}://{host}/rss2.xml',
-      aliases: ['{scheme}://{host}/archive/rss2.xml'],
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(podomatic.feeds)
 
 export const parsePodomaticUrl = (url: string): PodomaticUrl | undefined => {
   const parsedUrl = parseUrl(url)

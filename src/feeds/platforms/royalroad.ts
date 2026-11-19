@@ -1,29 +1,18 @@
+import { royalroad } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
 
 export type RoyalroadUrl = { kind: 'fiction'; fictionId: string }
 
-const hosts = ['royalroad.com', 'www.royalroad.com']
+const hosts = royalroad.hosts.exact
 
 // A chapter URL sits under its fiction, so it carries the fiction id too.
 const fictionIdRegex = /^\/fiction\/(\d+)(?:\/|$)/i
 
-// The fiction page advertises /syndication/{id}. The chapter page links /fiction/syndication/{id},
-// which serves the same feed. A `count` only caps how many chapters the feed lists.
-const feeds = definePlatformFeeds('royalroad', [
-  {
-    key: 'fiction',
-    main: 'https://www.royalroad.com/syndication/{fictionId}',
-    aliases: ['https://www.royalroad.com/fiction/syndication/{fictionId}'],
-  },
-  {
-    key: 'fiction',
-    main: 'https://www.royalroad.com/syndication/{fictionId}?count={count}',
-  },
-])
+const feeds = withHintLabels(royalroad.feeds)
 
 export const parseRoyalroadUrl = (url: string): RoyalroadUrl | undefined => {
   const parsedUrl = parseUrl(url)

@@ -1,5 +1,6 @@
+import { ocnk } from 'feedintel'
 import { isHostOrSubdomainOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
@@ -7,17 +8,12 @@ import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.j
 
 export type OcnkUrl = { kind: 'shop'; shop: string } | { kind: 'customDomain' }
 
-const domains = ['ocnk.net']
+const domains = ocnk.hosts.tenants
 
 const cartScriptRegex =
   /^(?:https?:\/\/[^/]+)?\/res\/[^/]+\/js\/(?:ocnk|pack\/ocnk-min)\.js(?:\?|$)/i
 
-// A shop on its own domain is known only by its markers, so its feed is built but not claimed.
-const feeds = definePlatformFeeds(
-  'ocnk',
-  [{ key: 'products', main: '{scheme}://{host}/rss/rss.php', format: 'rdf' }],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(ocnk.feeds)
 
 // Every shop template loads the cart script from its `/res/{template}/js/` folder, on a custom
 // domain too: `ocnk.js` in the PC templates, `pack/ocnk-min.js` in the responsive ones.
