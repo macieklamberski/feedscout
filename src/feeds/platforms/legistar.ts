@@ -1,4 +1,11 @@
-import { getQueryParam, isAnyOf, isSubdomainOf, parseUrl, resolveUrl } from 'trousse'
+import {
+  getQueryParam,
+  getQueryParamValues,
+  isAnyOf,
+  isSubdomainOf,
+  parseUrl,
+  resolveUrl,
+} from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -34,7 +41,8 @@ const feeds = definePlatformFeeds(
       main: '{scheme}://{host}/Feed.ashx?M=CalendarDetail&ID={id}&GUID={guid}',
     },
   ],
-  { hosts: { tenants: domains } },
+  // Legistar's server reads `&amp;` between parameters as `&`.
+  { hosts: { tenants: domains }, lenient: { ampersandEntity: true } },
 )
 
 // Every page loads the share widget under Legistar's own account, on a custom domain too.
@@ -84,6 +92,23 @@ export const parseLegistarUrl = (url: string): LegistarUrl | undefined => {
   return { kind: 'meeting', id, guid }
 }
 
+// The page link writes the feed's parameters in its own order, beside others such as `Title`.
+const isSameFeed = (feed: URL, linked: URL): boolean => {
+  if (linked.origin !== feed.origin || linked.pathname !== feed.pathname) {
+    return false
+  }
+
+  for (const [name, value] of feed.searchParams) {
+    const values = getQueryParamValues(linked.searchParams, name)
+
+    if (values.length !== 1 || values[0] !== value) {
+      return false
+    }
+  }
+
+  return true
+}
+
 // A meeting page's alternate link appends a `Title` the page URL does not carry, so the feed is
 // spelled as the page links it when the page names the same feed, and from the page URL otherwise.
 const getFeedUrl = (url: string, content: string | undefined, feedUrl: string): string => {
@@ -91,16 +116,16 @@ const getFeedUrl = (url: string, content: string | undefined, feedUrl: string): 
     return feedUrl
   }
 
-  const feedKey = feedUrl.toLowerCase()
+  const feed = parseUrl(feedUrl.toLowerCase())
   const links = findElements(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'alternate'
   })
 
   for (const link of links) {
     const href = resolveUrl(link.attribs.href ?? '', url)
-    const hrefKey = href?.toLowerCase()
+    const linked = parseUrl(href?.toLowerCase())
 
-    if (href && (hrefKey === feedKey || hrefKey?.startsWith(`${feedKey}&`))) {
+    if (href && feed && linked && isSameFeed(feed, linked)) {
       return href
     }
   }
