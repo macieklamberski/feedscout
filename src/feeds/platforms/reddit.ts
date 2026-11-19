@@ -1,5 +1,6 @@
+import { reddit } from 'feedintel'
 import { getAnyOf, getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -22,8 +23,7 @@ export type RedditUrl =
   | { kind: 'multireddit'; username: string; multireddit: string }
   | { kind: 'domain'; domain: string }
 
-export const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
-const mirrorHosts = ['old.reddit.com', 'new.reddit.com']
+export const hosts = reddit.hosts.exact
 
 const subredditsRegex = /^\/(?:subreddits|reddits)(?:\/([^/.]+))?(?:[/.]|$)/i
 // Stops at a dot, so a feed URL like /r/{sub}.rss, /user/{user}/submitted.rss or
@@ -36,101 +36,7 @@ const timeOptions = ['hour', 'day', 'week', 'month', 'year', 'all']
 const timeFilteredSorts = ['top', 'controversial']
 const userPrefixes = ['u', 'user']
 
-// Rows with a fixed segment sit above the `{sort}` rows that would read it as a sort. Within a key,
-// a row with more placeholders sits above one with fewer, since the first row the values fill is
-// built.
-const feeds = definePlatformFeeds(
-  'reddit',
-  [
-    {
-      key: 'subreddit-search',
-      main: 'https://www.reddit.com/r/{subreddit}/search.rss?q={query}&restrict_sr=on',
-      aliases: [
-        // Each `{host}` row is the feed above it on old. and new., which the page parser reads as
-        // pages. `resolve` passes no `host`, so it builds on www.
-        '{scheme}://{host}/r/{subreddit}/search.rss?q={query}&restrict_sr=on',
-      ],
-    },
-    { key: 'search', main: 'https://www.reddit.com/search.rss?q={query}' },
-    {
-      key: 'wiki',
-      main: 'https://www.reddit.com/r/{subreddit}/wiki/index.rss',
-      aliases: ['{scheme}://{host}/r/{subreddit}/wiki/index.rss'],
-    },
-    {
-      key: 'post-comments',
-      main: 'https://www.reddit.com/r/{subreddit}/comments/{postId}/.rss',
-      aliases: ['{scheme}://{host}/r/{subreddit}/comments/{postId}/.rss'],
-    },
-    {
-      key: 'post-comments',
-      main: 'https://www.reddit.com/user/{username}/comments/{postId}/.rss',
-      aliases: ['{scheme}://{host}/user/{username}/comments/{postId}/.rss'],
-    },
-    {
-      key: 'comments',
-      main: 'https://www.reddit.com/r/{subreddit}/comments/.rss',
-      aliases: ['{scheme}://{host}/r/{subreddit}/comments/.rss'],
-    },
-    {
-      key: 'multireddit',
-      main: 'https://www.reddit.com/user/{username}/m/{multireddit}/.rss',
-      aliases: ['{scheme}://{host}/user/{username}/m/{multireddit}/.rss'],
-    },
-    {
-      key: 'user-submitted',
-      main: 'https://www.reddit.com/user/{username}/submitted/.rss',
-      aliases: ['{scheme}://{host}/user/{username}/submitted/.rss'],
-    },
-    {
-      key: 'user-comments',
-      main: 'https://www.reddit.com/user/{username}/comments/.rss',
-      aliases: ['{scheme}://{host}/user/{username}/comments/.rss'],
-    },
-    {
-      key: 'subreddits',
-      main: 'https://www.reddit.com/subreddits/{sort}/.rss',
-      aliases: ['{scheme}://{host}/subreddits/{sort}/.rss'],
-    },
-    {
-      key: 'subreddits',
-      main: 'https://www.reddit.com/subreddits/.rss',
-      aliases: ['{scheme}://{host}/subreddits/.rss'],
-    },
-    {
-      key: 'subreddit',
-      main: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss?t={timeframe}',
-    },
-    {
-      key: 'subreddit',
-      main: 'https://www.reddit.com/r/{subreddit}/{sort}/.rss',
-      aliases: ['{scheme}://{host}/r/{subreddit}/{sort}/.rss'],
-    },
-    {
-      key: 'subreddit',
-      main: 'https://www.reddit.com/r/{subreddit}/.rss',
-      aliases: [
-        'https://www.reddit.com/r/{subreddit}.rss',
-        '{scheme}://{host}/r/{subreddit}/.rss',
-        '{scheme}://{host}/r/{subreddit}.rss',
-      ],
-    },
-    {
-      key: 'user',
-      main: 'https://www.reddit.com/user/{username}/.rss',
-      aliases: ['{scheme}://{host}/user/{username}/.rss'],
-    },
-    {
-      key: 'domain',
-      main: 'https://www.reddit.com/domain/{domain}/.rss',
-      aliases: ['{scheme}://{host}/domain/{domain}/.rss'],
-    },
-    { key: 'posts', main: 'https://www.reddit.com/{sort}/.rss?t={timeframe}' },
-    { key: 'posts', main: 'https://www.reddit.com/{sort}/.rss' },
-    { key: 'posts', main: 'https://www.reddit.com/.rss' },
-  ],
-  { hosts: { exact: mirrorHosts } },
-)
+const feeds = withHintLabels(reddit.feeds)
 
 const getTimeframe = (sort: string, searchParams: URLSearchParams): string | undefined => {
   if (!timeFilteredSorts.includes(sort)) {

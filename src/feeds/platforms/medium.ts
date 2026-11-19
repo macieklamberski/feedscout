@@ -1,5 +1,6 @@
+import { medium } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -13,8 +14,8 @@ export type MediumUrl =
   | { kind: 'publication'; publication: string; tag?: string }
   | { kind: 'subdomain'; subdomain: string; tag?: string }
 
-const domains = ['medium.com']
-export const hosts = ['medium.com', 'www.medium.com']
+const domains = medium.hosts.tenants
+export const hosts = medium.hosts.exact
 
 const userRegex = /^\/@([^/]+)/
 const tagRegex = /^\/tag\/([^/]+)/i
@@ -22,25 +23,7 @@ const publicationTagRegex = /^\/([^/@][^/]+)\/tagged\/([^/]+)/i
 const publicationRegex = /^\/([^/@][^/]+)/
 const subdomainTagRegex = /^\/tagged\/([^/]+)/i
 
-// The `@` row comes before the publication row, which would read `@{username}` as a publication.
-// A user feed is also served at `/@{username}/feed`. A user subdomain serves its feeds on its own
-// host, since medium.com/feed/{subdomain} answers 404.
-const feeds = definePlatformFeeds(
-  'medium',
-  [
-    {
-      key: 'posts',
-      main: 'https://medium.com/feed/@{username}',
-      aliases: ['https://medium.com/@{username}/feed'],
-    },
-    { key: 'tag', main: 'https://medium.com/feed/tag/{tag}' },
-    { key: 'tagged', main: 'https://medium.com/feed/{publication}/tagged/{tag}' },
-    { key: 'tagged', main: '{scheme}://{host}/feed/tagged/{tag}' },
-    { key: 'publication', main: 'https://medium.com/feed/{publication}' },
-    { key: 'publication', main: '{scheme}://{host}/feed' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(medium.feeds)
 
 export const parseMediumUrl = (url: string): MediumUrl | undefined => {
   const parsedUrl = parseUrl(url)
