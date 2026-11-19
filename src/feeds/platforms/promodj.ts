@@ -1,24 +1,15 @@
+import { promodj } from 'feedintel'
 import { getPathSegments, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
 
 export type PromodjUrl = { kind: 'profile'; username: string }
 
-const hosts = ['promodj.com', 'www.promodj.com']
+const hosts = promodj.hosts.exact
 
-const feeds = definePlatformFeeds('promodj', [
-  {
-    key: 'podcast',
-    main: 'https://promodj.com/{username}/podcast.xml',
-    aliases: ['https://promodj.com/{username}/podcast_alt.xml'],
-  },
-  { key: 'content', main: 'https://promodj.com/{username}/rss.xml' },
-  { key: 'blog', main: 'https://promodj.com/{username}/blog.xml' },
-  { key: 'favorites', main: 'https://promodj.com/{username}/bookmarks.xml' },
-  { key: 'events', main: 'https://promodj.com/{username}/avisha.xml' },
-])
+const feeds = withHintLabels(promodj.feeds)
 
 export const parsePromodjUrl = (url: string): PromodjUrl | undefined => {
   if (!isHostOf(url, hosts)) {

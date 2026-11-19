@@ -1,5 +1,6 @@
+import { togetter } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -7,21 +8,11 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type TogetterUrl = { kind: 'user'; username: string } | { kind: 'recent' } | { kind: 'home' }
 
-export const hosts = ['togetter.com', 'www.togetter.com']
+export const hosts = togetter.hosts.exact
 
 const userPathRegex = /^\/id\/([^/]+)/i
 
-const feeds = definePlatformFeeds('togetter', [
-  { key: 'news', main: 'https://togetter.com/rss/news' },
-  { key: 'hot', main: 'https://togetter.com/rss/hot' },
-  { key: 'recent', main: 'https://togetter.com/rss/recent' },
-  // A curator's feed moved to posfie.com, and the togetter.com one redirects there with a 301.
-  {
-    key: 'curator',
-    main: 'https://posfie.com/@{username}/rss',
-    aliases: ['https://togetter.com/rss/id/{username}'],
-  },
-])
+const feeds = withHintLabels(togetter.feeds)
 
 export const parseTogetterUrl = (url: string): TogetterUrl | undefined => {
   const parsedUrl = parseUrl(url)

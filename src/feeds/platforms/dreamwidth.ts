@@ -1,5 +1,6 @@
+import { dreamwidth } from 'feedintel'
 import { decodeSegment, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 import { getJournalName, getJournalTag } from './livejournal.js'
@@ -10,22 +11,12 @@ import { getJournalName, getJournalTag } from './livejournal.js'
 
 export type DreamwidthUrl = { kind: 'journal'; username?: string; tag?: string }
 
-const domains = ['dreamwidth.org']
+const domains = dreamwidth.hosts.tenants
 const wwwHosts = ['www.dreamwidth.org', 'dreamwidth.org']
 
 const usersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 
-const feeds = definePlatformFeeds(
-  'dreamwidth',
-  [
-    { key: 'posts-tag', main: '{scheme}://{host}/data/rss?tag={tag}', format: 'rss' },
-    { key: 'posts-tag', main: '{scheme}://{host}/data/atom?tag={tag}', format: 'atom' },
-    { key: 'posts', main: '{scheme}://{host}/data/rss', format: 'rss' },
-    { key: 'posts', main: '{scheme}://{host}/data/atom', format: 'atom' },
-    { key: 'userpics', main: '{scheme}://{host}/data/userpics', format: 'atom' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(dreamwidth.feeds)
 
 export const parseDreamwidthUrl = (url: string): DreamwidthUrl | undefined => {
   const pathname = parseUrl(url)?.pathname

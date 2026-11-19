@@ -1,5 +1,6 @@
+import { spip } from 'feedintel'
 import { getAnyOf, getQueryParam, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, findElement, hasMarker } from '../../common/utils.js'
 
@@ -21,15 +22,7 @@ const notFoundClassRegex = /\bpage_404\b/
 
 const objects = ['article', 'rubrique', 'mot', 'auteur'] as const
 
-// A site of any domain is known only by its headers, so its feeds are built here but not claimed.
-// The root holds the sub-path the site is installed under.
-const feeds = definePlatformFeeds('spip', [
-  { key: 'article-comments', main: '{root}/spip.php?page=comments-rss&id_article={id}' },
-  { key: 'section', main: '{root}/spip.php?page=backend&id_rubrique={id}' },
-  { key: 'keyword', main: '{root}/spip.php?page=backend&id_mot={id}' },
-  { key: 'author', main: '{root}/spip.php?page=backend&id_auteur={id}' },
-  { key: 'articles', main: '{root}/spip.php?page=backend' },
-])
+const feeds = withHintLabels(spip.feeds)
 
 // SPIP sends `Composed-By` on every page it composes, and `X-Spip-Cache` when its page cache is
 // on. An install can silence `Composed-By` and still send the cache header.

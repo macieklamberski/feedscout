@@ -1,5 +1,6 @@
+import { mastodon } from 'feedintel'
 import { getPathSegments, includesAnyOf, isAnyOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasClass, hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -18,15 +19,7 @@ export type MastodonUrl =
 // remote handle, @user@host.tld, holds dots, so only these suffixes are stripped.
 const feedExtensionRegex = /\.(rss|atom|json)$/i
 
-// Mastodon is self-hosted and known only by its page marker, so nothing in a feed URL names it and
-// the table only builds.
-const feeds = definePlatformFeeds('mastodon', [
-  { key: 'posts', main: '{root}/@{username}.rss' },
-  { key: 'replies', main: '{root}/@{username}/with_replies.rss' },
-  { key: 'media', main: '{root}/@{username}/media.rss' },
-  { key: 'tagged', main: '{root}/@{username}/tagged/{tag}.rss' },
-  { key: 'tag', main: '{root}/tags/{tag}.rss' },
-])
+const feeds = withHintLabels(mastodon.feeds)
 
 // Current Mastodon serves no generator meta, so the `<div class="app-holder" id="mastodon">` app
 // root is matched too. A bare `mastodon` id is a common social-link id on blogs.

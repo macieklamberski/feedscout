@@ -1,5 +1,6 @@
+import { note } from 'feedintel'
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -13,32 +14,14 @@ export type NoteUrl =
   | { kind: 'user'; username: string }
   | { kind: 'home' }
 
-export const hosts = ['note.com', 'note.mu']
+export const hosts = note.hosts.exact
 
 // A hashtag page redirects to `/tag/{tag}`, and the feed stays under `/hashtag`.
 const hashtagRegex = /^\/(?:hashtag|tag)\/([^/]+)/i
 const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/i
 const noteRegex = /^\/([^/]+)\/n\/[^/]+/i
 
-// note.mu, the old domain, redirects every feed to the same path on note.com.
-const feeds = definePlatformFeeds('note', [
-  { key: 'featured', main: 'https://note.com/rss', aliases: ['https://note.mu/rss'] },
-  {
-    key: 'hashtag',
-    main: 'https://note.com/hashtag/{tag}/rss',
-    aliases: ['https://note.mu/hashtag/{tag}/rss'],
-  },
-  {
-    key: 'magazine',
-    main: 'https://note.com/{username}/m/{magazine}/rss',
-    aliases: ['https://note.mu/{username}/m/{magazine}/rss'],
-  },
-  {
-    key: 'blog',
-    main: 'https://note.com/{username}/rss',
-    aliases: ['https://note.mu/{username}/rss'],
-  },
-])
+const feeds = withHintLabels(note.feeds)
 
 export const parseNoteUrl = (url: string): NoteUrl | undefined => {
   const parsedUrl = parseUrl(url)

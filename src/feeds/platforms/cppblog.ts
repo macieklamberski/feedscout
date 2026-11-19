@@ -1,5 +1,6 @@
+import { cppblog } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
 
@@ -12,24 +13,12 @@ export type CppblogUrl =
   | { kind: 'category'; username: string; categoryId: string }
   | { kind: 'favorite'; username: string; favoriteId: string }
 
-const hosts = ['cppblog.com', 'www.cppblog.com']
+const hosts = cppblog.hosts.exact
 
 const listPageRegex = /^(\d+)\.html$/i
 const feedLinkRegex = /^https?:\/\/(?:www\.)?cppblog\.com\/([^/]+)\/rss\.aspx$/i
 
-// The https certificate has expired, and every page links its feeds at this origin, the apex too.
-const feeds = definePlatformFeeds('cppblog', [
-  {
-    key: 'category',
-    main: 'http://www.cppblog.com/{username}/category/{categoryId}.html/rss',
-  },
-  {
-    key: 'favorites',
-    main: 'http://www.cppblog.com/{username}/favorite/{favoriteId}.html/rss',
-  },
-  { key: 'posts', main: 'http://www.cppblog.com/{username}/rss.aspx' },
-  { key: 'comments', main: 'http://www.cppblog.com/{username}/CommentsRSS.aspx' },
-])
+const feeds = withHintLabels(cppblog.feeds)
 
 export const parseCppblogUrl = (url: string): CppblogUrl | undefined => {
   if (!isHostOf(url, hosts)) {

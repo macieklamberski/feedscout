@@ -1,5 +1,6 @@
+import { cocolog } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getTenantSubdomain } from '../../common/utils.js'
 
@@ -7,34 +8,13 @@ import { findElement, getTenantSubdomain } from '../../common/utils.js'
 
 export type CocologPage = { blog: string }
 
-const domains = [
-  'air-nifty.com',
-  'cocolog-nifty.com',
-  'cocolog-tnc.com',
-  'cocolog-wbs.com',
-  'moe-nifty.com',
-  'tea-nifty.com',
-  'txt-nifty.com',
-  'way-nifty.com',
-]
+const domains = cocolog.hosts.tenants
 
 // A first segment with a dot is an uploaded file or the `.shared` assets, never a blog.
 const blogRegex = /^\/([^/.]+)(?:\/|$)/
 const feedPathRegex = /^\/([^/.]+)\/(?:atom\.xml|index\.rdf|rss\.xml)$/i
 
-const feeds = definePlatformFeeds(
-  'cocolog',
-  [
-    { key: 'posts', main: '{scheme}://{host}/{blog}/atom.xml', format: 'atom' },
-    { key: 'posts', main: '{scheme}://{host}/{blog}/index.rdf', format: 'rdf' },
-    { key: 'posts', main: '{scheme}://{host}/{blog}/rss.xml', format: 'rss' },
-    // A blog's newest comments, which its skin names `comment-index.rdf` or `comments.xml`.
-    // `resolve` cannot tell which one a blog serves, so it builds both.
-    { key: 'comments', main: '{scheme}://{host}/{blog}/comment-index.rdf', format: 'rdf' },
-    { key: 'comments', main: '{scheme}://{host}/{blog}/comments.xml', format: 'rss' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(cocolog.feeds)
 
 const getCocologPage = (url: string, content: string | undefined): CocologPage | undefined => {
   // A nested label such as app.f.cocolog-nifty.com is a service host, never a blog.

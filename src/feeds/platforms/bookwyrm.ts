@@ -1,5 +1,6 @@
+import { bookwyrm } from 'feedintel'
 import { getAnyOf, getPathSegments, isAnyOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -17,15 +18,7 @@ const sourceLinkRegex = /github\.com\/bookwyrm-social\/bookwyrm(?![\w-])/i
 
 const shelfSections = ['shelf', 'books']
 
-// An instance runs on its own domain and is known only by its marker, so its feeds are built here
-// but not claimed.
-const feeds = definePlatformFeeds('bookwyrm', [
-  { key: 'shelf', main: '{root}/user/{username}/{section}/{shelf}/rss' },
-  { key: 'activity', main: '{root}/user/{username}/rss' },
-  { key: 'reviews', main: '{root}/user/{username}/rss-reviews' },
-  { key: 'quotes', main: '{root}/user/{username}/rss-quotes' },
-  { key: 'comments', main: '{root}/user/{username}/rss-comments' },
-])
+const feeds = withHintLabels(bookwyrm.feeds)
 
 export const isBookwyrmHtml = (content: string): boolean => {
   return sourceLinkRegex.test(content) || hasMetaContent(content, 'generator', 'BookWyrm')

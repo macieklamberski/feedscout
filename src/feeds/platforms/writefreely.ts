@@ -1,5 +1,6 @@
+import { writefreely } from 'feedintel'
 import { getPathSegments, startsWithAnyOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   type Element,
@@ -19,16 +20,7 @@ const tagPathRegex = /\/tag:([^/]+)/i
 const rootRouteRegex = /^\/(?:(?:tag|lang):|page\/\d+(?:\/|$)|archive\/?$)/i
 const blogPathRegex = /^\/(?:[^/]+\/)?$/
 
-// An instance on any host is known only by its markup, which a feed URL does not carry, so the
-// feeds are built under the instance root and never claimed. A single-user instance serves its
-// one blog at the root, so its rows have no blog segment.
-const feeds = definePlatformFeeds('writefreely', [
-  { key: 'tag', main: '{root}/{blog}/tag:{tag}/feed/' },
-  { key: 'tag', main: '{root}/tag:{tag}/feed/' },
-  { key: 'blog', main: '{root}/{blog}/feed/' },
-  { key: 'blog', main: '{root}/feed/' },
-  { key: 'reader', main: '{root}/read/feed/' },
-])
+const feeds = withHintLabels(writefreely.feeds)
 
 const getUrlBlogPath = (url: string): string | undefined => {
   const { pathname } = new URL(url)

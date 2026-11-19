@@ -1,5 +1,6 @@
+import { sapoBlogs } from 'feedintel'
 import { decodeSegment, getQueryParam, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -13,25 +14,12 @@ export type SapoBlogsUrl =
   | { kind: 'tag'; blog: string; tag: string }
 export type SapoBlogsPage = SapoBlogsUrl
 
-const domains = ['blogs.sapo.pt']
+const domains = sapoBlogs.hosts.tenants
 
 const postRegex = /^\/(?:[^/]+-(\d+)|(\d+)\.html)\/?$/i
 const tagRegex = /^\/tag\/(.+?)\/?$/i
 
-const feeds = definePlatformFeeds(
-  'sapo-blogs',
-  [
-    { key: 'posts', main: '{scheme}://{host}/data/rss', format: 'rss' },
-    { key: 'posts', main: '{scheme}://{host}/data/atom', format: 'atom' },
-    { key: 'tag', main: '{scheme}://{host}/data/rss?tag={tag}' },
-    { key: 'comments', main: 'https://blogs.sapo.pt/commentsrss.bml?blog={blog}' },
-    {
-      key: 'post-comments',
-      main: 'https://blogs.sapo.pt/commentsrss.bml?blog={blog}&ditemid={postId}',
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(sapoBlogs.feeds)
 
 export const parseSapoBlogsUrl = (url: string): SapoBlogsUrl | undefined => {
   const parsedUrl = parseUrl(url)

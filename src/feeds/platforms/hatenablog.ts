@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { hatenablog } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -9,38 +10,12 @@ export type HatenablogUrl =
   | { kind: 'author'; author: string }
   | { kind: 'blog' }
 
-const domains = [
-  'hatenablog.com',
-  'hatenablog.jp',
-  'hateblo.jp',
-  'hatenadiary.com',
-  'hatenadiary.jp',
-  'hatenadiary.org',
-]
+const domains = hatenablog.hosts.tenants
 
 const categoryRegex = /^\/archive\/category\/([^/]+)/i
 const authorRegex = /^\/archive\/author\/([^/]+)/i
 
-const feeds = definePlatformFeeds(
-  'hatenablog',
-  [
-    { key: 'posts', main: '{scheme}://{host}/rss', format: 'rss' },
-    { key: 'posts', main: '{scheme}://{host}/feed', format: 'atom' },
-    {
-      key: 'category',
-      main: '{scheme}://{host}/rss/category/{category}',
-      format: 'rss',
-    },
-    {
-      key: 'category',
-      main: '{scheme}://{host}/feed/category/{category}',
-      format: 'atom',
-    },
-    { key: 'author', main: '{scheme}://{host}/rss/author/{author}', format: 'rss' },
-    { key: 'author', main: '{scheme}://{host}/feed/author/{author}', format: 'atom' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(hatenablog.feeds)
 
 export const parseHatenablogUrl = (url: string): HatenablogUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

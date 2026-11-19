@@ -1,5 +1,6 @@
+import { zenn } from 'feedintel'
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -13,20 +14,12 @@ export type ZennUrl =
   | { kind: 'publication'; publication: string }
   | { kind: 'home' }
 
-export const hosts = ['zenn.dev', 'www.zenn.dev']
+export const hosts = zenn.hosts.exact
 
 const topicRegex = /^\/topics\/([^/]+)/i
 const publicationRegex = /^\/p\/([^/]+)/i
 
-// A user's feed lists only the posts on their own page. With `all=1` it adds their posts in
-// publications.
-const feeds = definePlatformFeeds('zenn', [
-  { key: 'topic', main: 'https://zenn.dev/topics/{topic}/feed' },
-  { key: 'publication', main: 'https://zenn.dev/p/{publication}/feed' },
-  { key: 'posts', main: 'https://zenn.dev/{username}/feed' },
-  { key: 'all-posts', main: 'https://zenn.dev/{username}/feed?all=1' },
-  { key: 'trending', main: 'https://zenn.dev/feed' },
-])
+const feeds = withHintLabels(zenn.feeds)
 
 export const parseZennUrl = (url: string): ZennUrl | undefined => {
   const parsedUrl = parseUrl(url)

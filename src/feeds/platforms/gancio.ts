@@ -1,5 +1,6 @@
+import { gancio } from 'feedintel'
 import { endsWithAnyOf, getAnyOf, getPathSegments, isAnyOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
 
@@ -14,13 +15,7 @@ export type GancioPage =
 
 const sections = ['tag', 'place', 'collection'] as const
 
-// An instance is self-hosted on any domain, so the table only builds its feeds.
-const feeds = definePlatformFeeds('gancio', [
-  { key: 'tag', main: '{root}/feed/rss/tag/{tag}' },
-  { key: 'place', main: '{root}/feed/rss/place/{place}' },
-  { key: 'collection', main: '{root}/feed/rss/collection/{collection}' },
-  { key: 'site', main: '{root}/feed/rss' },
-])
+const feeds = withHintLabels(gancio.feeds)
 
 // The default layout prints the `custom_css` stylesheet in every page head, at the install's root.
 const getGancioPage = (url: string, content: string | undefined): GancioPage | undefined => {

@@ -1,5 +1,6 @@
+import { pika } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -9,30 +10,11 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type PikaUrl = { kind: 'tag'; tag: string } | { kind: 'blog' }
 
-const domains = ['pika.page']
+const domains = pika.hosts.tenants
 
 const tagRegex = /^\/tag\/([^/]+)/i
 
-const feeds = definePlatformFeeds(
-  'pika',
-  [
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/posts_feed',
-      format: 'atom',
-      aliases: ['{scheme}://{host}/posts_feed.atom', '{scheme}://{host}/feed'],
-    },
-    { key: 'posts', main: '{scheme}://{host}/posts_feed.rss', format: 'rss' },
-    {
-      key: 'tag',
-      main: '{scheme}://{host}/tag/{tag}/feed',
-      format: 'atom',
-      aliases: ['{scheme}://{host}/tag/{tag}/feed.atom'],
-    },
-    { key: 'tag', main: '{scheme}://{host}/tag/{tag}/feed.rss', format: 'rss' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(pika.feeds)
 
 export const parsePikaUrl = (url: string): PikaUrl | undefined => {
   const parsedUrl = parseUrl(url)

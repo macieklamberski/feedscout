@@ -1,5 +1,6 @@
+import { joomla } from 'feedintel'
 import { composeQuery, getQueryParam, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -11,15 +12,7 @@ export type JoomlaUrl = { kind: 'view'; path: string }
 // `index.php?option=com_content&view=category&id=8`.
 const routingParams = ['option', 'view', 'layout', 'id', 'catid', 'Itemid', 'lang']
 
-// A site runs on its own domain and is known only by its marker, so its feeds are built here but
-// not claimed. The feed is the view's own URL with the feed format in its query, and a view
-// without search-engine friendly URLs passes the routing parameters that name it.
-const feeds = definePlatformFeeds('joomla', [
-  { key: 'view', main: '{root}?{query}&format=feed&type=rss', format: 'rss' },
-  { key: 'view', main: '{root}?format=feed&type=rss', format: 'rss' },
-  { key: 'view', main: '{root}?{query}&format=feed&type=atom', format: 'atom' },
-  { key: 'view', main: '{root}?format=feed&type=atom', format: 'atom' },
-])
+const feeds = withHintLabels(joomla.feeds)
 
 // Templates such as Helix Ultimate rewrite the generator to a string that only
 // contains `Joomla!`, while every Joomla 3, 4 and 5 page ships the script options.

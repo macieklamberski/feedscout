@@ -1,5 +1,6 @@
+import { twoday } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -11,32 +12,11 @@ export type TwodayUrl =
   | { kind: 'blog'; blog: string }
   | { kind: 'topic'; blog: string; topic: string }
 
-const domains = ['twoday.net']
+const domains = twoday.hosts.tenants
 
 const topicRegex = /^\/topics\/([^/]+)(?:\/|$)/i
 
-// A blog's skin links its posts feed as `/index.rdf` or `/rss`, the same stories.
-const feeds = definePlatformFeeds(
-  'twoday',
-  [
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/rss',
-      aliases: ['{scheme}://{host}/index.rdf', '{scheme}://{host}/rss.xml'],
-    },
-    // The same stories with shorter text, which some skins serve.
-    { key: 'summary', main: '{scheme}://{host}/summary.rdf' },
-    {
-      key: 'topic',
-      main: '{scheme}://{host}/topics/{topic}/index.rdf',
-      aliases: ['{scheme}://{host}/topics/{topic}/rss'],
-    },
-    // Every blog serves its newest comments, and its stories by their newest comment.
-    { key: 'comments', main: '{scheme}://{host}/latestcomments.rdf' },
-    { key: 'commented', main: '{scheme}://{host}/comments.rdf' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(twoday.feeds)
 
 export const parseTwodayUrl = (url: string): TwodayUrl | undefined => {
   const pathname = parseUrl(url)?.pathname

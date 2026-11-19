@@ -1,5 +1,6 @@
+import { githubGist } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -12,25 +13,14 @@ export type GithubGistUrl =
   | { kind: 'forks'; username: string }
   | { kind: 'discover' }
 
-const hosts = ['gist.github.com']
+const hosts = githubGist.hosts.exact
 
 const discoverRegex = /^\/discover(?:\.atom)?\/?$/i
 const feedSuffixRegex = /\.atom$/i
 
 const forksSections = ['forks', 'forked']
 
-// GitHub serves `/{username}/forks.atom` as the user's own gists, and the forked gists only at
-// `/{username}/forked.atom`.
-const feeds = definePlatformFeeds('github-gist', [
-  { key: 'discover', main: 'https://gist.github.com/discover.atom' },
-  { key: 'starred', main: 'https://gist.github.com/{username}/starred.atom' },
-  { key: 'forks', main: 'https://gist.github.com/{username}/forked.atom' },
-  {
-    key: 'gists',
-    main: 'https://gist.github.com/{username}.atom',
-    aliases: ['https://gist.github.com/{username}/forks.atom'],
-  },
-])
+const feeds = withHintLabels(githubGist.feeds)
 
 // A gist page, /{username}/{gist-id}, and the /public and /secret listings belong to the
 // user's gists.

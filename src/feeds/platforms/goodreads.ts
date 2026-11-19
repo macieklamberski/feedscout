@@ -1,5 +1,6 @@
+import { goodreads } from 'feedintel'
 import { getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Unmeasured, handler emits no feed.
@@ -8,30 +9,9 @@ export type GoodreadsUrl =
   | { kind: 'user'; userId: string }
   | { kind: 'reviews'; userId: string; shelf?: string }
 
-const hosts = ['goodreads.com', 'www.goodreads.com']
+const hosts = goodreads.hosts.exact
 
-const feeds = definePlatformFeeds('goodreads', [
-  {
-    key: 'shelf',
-    main: 'https://www.goodreads.com/review/list_rss/{userId}?shelf={shelf}',
-  },
-  { key: 'reviews', main: 'https://www.goodreads.com/review/list_rss/{userId}' },
-  { key: 'updates', main: 'https://www.goodreads.com/user/updates_rss/{userId}' },
-  // A `key` parameter carries the account owner's private token, which no page gives, so these
-  // rows only claim the feed.
-  {
-    key: 'private-shelf',
-    main: 'https://www.goodreads.com/review/list_rss/{userId}?key={key}&shelf={shelf}',
-  },
-  {
-    key: 'private-reviews',
-    main: 'https://www.goodreads.com/review/list_rss/{userId}?key={key}',
-  },
-  {
-    key: 'private-updates',
-    main: 'https://www.goodreads.com/user/updates_rss/{userId}?key={key}',
-  },
-])
+const feeds = withHintLabels(goodreads.feeds)
 
 // A user page is /user/show/{id}-{slug} and their review list /review/list/{id}-{slug}.
 export const parseGoodreadsUrl = (url: string): GoodreadsUrl | undefined => {
