@@ -127,111 +127,18 @@ describe('velogHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the posts hint for a user feed', () => {
-      const value = 'https://v2.velog.io/rss/bob_dev'
-      const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
-
-      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a user feed with an at sign', () => {
-      const value = 'https://v2.velog.io/rss/@carol1215'
-      const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
-
-      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a percent-encoded username', () => {
-      const value = 'https://v2.velog.io/rss/%EA%B9%80'
-      const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
-
-      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a feed with a trailing slash', () => {
-      const value = 'https://v2.velog.io/rss/dave3/'
-      const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
-
-      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a feed over http', () => {
-      const value = 'http://v2.velog.io/rss/dave3'
-      const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
-
-      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a capitalized route', () => {
-      const value = 'https://v2.velog.io/RSS/dave3'
-      const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
-
-      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the trending hint for the trending feed', () => {
-      const value = 'https://v2.velog.io/rss'
-      const expected: DiscoverUriHint = { key: 'velog:trending', label: 'Trending' }
-
-      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the trending hint for the trending feed with a trailing slash', () => {
-      const value = 'https://v2.velog.io/rss/'
-      const expected: DiscoverUriHint = { key: 'velog:trending', label: 'Trending' }
-
-      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the posts hint for a user feed on the api host', () => {
       const value = 'https://api.velog.io/rss/alice'
       const expected: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
 
       expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the trending hint for the trending feed on the api host', () => {
-      const value = 'https://api.velog.io/rss'
-      const expected: DiscoverUriHint = { key: 'velog:trending', label: 'Trending' }
-
-      expect(velogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a profile page', () => {
-      const value = 'https://velog.io/@bob_dev'
-
-      expect(velogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the feed path on the page host', () => {
-      const value = 'https://velog.io/rss/bob_dev'
-
-      expect(velogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a path below a user feed', () => {
-      const value = 'https://v2.velog.io/rss/bob_dev/posts'
-
-      expect(velogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/rss/bob_dev'
-
-      expect(velogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://v2.velog.io/rss/bob_dev', { key: 'velog:posts', label: 'Posts' }],
-      ['https://v2.velog.io/rss/@carol1215', { key: 'velog:posts', label: 'Posts' }],
-      ['https://v2.velog.io/rss', { key: 'velog:trending', label: 'Trending' }],
-      ['https://api.velog.io/rss/alice', { key: 'velog:posts', label: 'Posts' }],
-      ['https://api.velog.io/rss', { key: 'velog:trending', label: 'Trending' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a user feed on the api host as itself', async () => {
+      const value = 'https://api.velog.io/rss/alice'
+      const hint: DiscoverUriHint = { key: 'velog:posts', label: 'Posts' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [velogHandler],

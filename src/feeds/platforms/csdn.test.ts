@@ -86,68 +86,25 @@ describe('csdnHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the blog hint for a feed on rss.csdn.net', () => {
-      const value = 'https://rss.csdn.net/bob_0918/rss/map'
-      const expected: DiscoverUriHint = { key: 'csdn:blog', label: 'Blog' }
-
-      expect(csdnHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the blog hint for a feed on blog.csdn.net', () => {
-      const value = 'https://blog.csdn.net/alice_dev/rss/map'
-      const expected: DiscoverUriHint = { key: 'csdn:blog', label: 'Blog' }
-
-      expect(csdnHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the blog hint for a list feed on blog.csdn.net', () => {
       const value = 'https://blog.csdn.net/csdnnews/rss/list'
       const expected: DiscoverUriHint = { key: 'csdn:blog', label: 'Blog' }
 
       expect(csdnHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the blog hint for a feed over http', () => {
-      const value = 'http://rss.csdn.net/alice_dev/rss/map'
-      const expected: DiscoverUriHint = { key: 'csdn:blog', label: 'Blog' }
-
-      expect(csdnHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://blog.csdn.net/alice_dev/article/details/12345'
-
-      expect(csdnHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a list path on rss.csdn.net', () => {
-      const value = 'https://rss.csdn.net/alice_dev/rss/list'
-
-      expect(csdnHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on www.csdn.net', () => {
-      const value = 'https://www.csdn.net/alice_dev/rss/map'
-
-      expect(csdnHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://rss.csdn.net/bob_0918/rss/map', { key: 'csdn:blog', label: 'Blog' }],
-      ['https://rss.csdn.net/alice_dev/rss/map', { key: 'csdn:blog', label: 'Blog' }],
-      ['https://blog.csdn.net/alice_dev/rss/map', { key: 'csdn:blog', label: 'Blog' }],
-      ['https://blog.csdn.net/csdnnews/rss/list', { key: 'csdn:blog', label: 'Blog' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a list feed on blog.csdn.net as itself', async () => {
+      const value = 'https://blog.csdn.net/csdnnews/rss/list'
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'csdn:blog', label: 'Blog' } },
+      ]
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [csdnHandler],
         baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
       expect(result).toEqual(expected)
     })

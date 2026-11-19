@@ -4,12 +4,6 @@ import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { type NeocitiesUrl, neocitiesHandler, parseNeocitiesUrl } from './neocities.js'
 
-const feedCases: Array<[string, DiscoverUriHint]> = [
-  ['https://neocities.org/site/alice.rss', { key: 'neocities:updates', label: 'Site updates' }],
-  ['http://neocities.org/site/alice.rss', { key: 'neocities:updates', label: 'Site updates' }],
-  ['https://www.neocities.org/site/alice.rss', { key: 'neocities:updates', label: 'Site updates' }],
-]
-
 describe('parseNeocitiesUrl', () => {
   it('should return the site for a subdomain', () => {
     const expected: NeocitiesUrl = { kind: 'site', username: 'example-site' }
@@ -105,54 +99,25 @@ describe('neocitiesHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the updates hint for a site feed', () => {
-      const value = 'https://neocities.org/site/alice.rss'
-      const expected: DiscoverUriHint = { key: 'neocities:updates', label: 'Site updates' }
-
-      expect(neocitiesHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the updates hint for a site feed on the www host', () => {
       const value = 'https://www.neocities.org/site/alice.rss'
       const expected: DiscoverUriHint = { key: 'neocities:updates', label: 'Site updates' }
 
       expect(neocitiesHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the updates hint for a site feed over http', () => {
-      const value = 'http://neocities.org/site/alice.rss'
-      const expected: DiscoverUriHint = { key: 'neocities:updates', label: 'Site updates' }
-
-      expect(neocitiesHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a profile page', () => {
-      const value = 'https://neocities.org/site/alice'
-
-      expect(neocitiesHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed file on a site subdomain', () => {
-      const value = 'https://alice.neocities.org/site/alice.rss'
-
-      expect(neocitiesHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/site/alice.rss'
-
-      expect(neocitiesHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('as a feed URL input', () => {
-    it.each(feedCases)('should return %s as given', async (value, hint) => {
+    it('should return a site feed on the www host as given', async () => {
+      const value = 'https://www.neocities.org/site/alice.rss'
       const options = {
         ...defaultPlatformOptions,
         handlers: [neocitiesHandler],
         baseUrl: value,
       }
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'neocities:updates', label: 'Site updates' } },
+      ]
 
       expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })

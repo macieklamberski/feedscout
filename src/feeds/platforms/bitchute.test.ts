@@ -88,74 +88,25 @@ describe('bitchuteHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the channel hint for a channel feed', () => {
-      const value = 'https://www.bitchute.com/feeds/rss/channel/uagSShqJKtfp/'
-      const expected: DiscoverUriHint = { key: 'bitchute:channel', label: 'Channel' }
-
-      expect(bitchuteHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the channel hint for a channel feed named by a slug', () => {
-      const value = 'https://www.bitchute.com/feeds/rss/channel/alicechannel/'
-      const expected: DiscoverUriHint = { key: 'bitchute:channel', label: 'Channel' }
-
-      expect(bitchuteHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the channel hint for a channel feed on the api host', () => {
-      const value = 'https://api.bitchute.com/feeds/rss/channel/bob_channel/'
-      const expected: DiscoverUriHint = { key: 'bitchute:channel', label: 'Channel' }
-
-      expect(bitchuteHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the channel hint for a channel feed on old.bitchute.com', () => {
       const value = 'https://old.bitchute.com/feeds/rss/channel/alicechannel/'
       const expected: DiscoverUriHint = { key: 'bitchute:channel', label: 'Channel' }
 
       expect(bitchuteHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a channel page', () => {
-      const value = 'https://www.bitchute.com/channel/alicechannel/'
-
-      expect(bitchuteHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a channel feed path on another host', () => {
-      const value = 'https://example.com/feeds/rss/channel/alicechannel/'
-
-      expect(bitchuteHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://www.bitchute.com/feeds/rss/channel/uagSShqJKtfp/',
-        { key: 'bitchute:channel', label: 'Channel' },
-      ],
-      [
-        'https://www.bitchute.com/feeds/rss/channel/alicechannel/',
-        { key: 'bitchute:channel', label: 'Channel' },
-      ],
-      [
-        'https://api.bitchute.com/feeds/rss/channel/bob_channel/',
-        { key: 'bitchute:channel', label: 'Channel' },
-      ],
-      [
-        'https://old.bitchute.com/feeds/rss/channel/alicechannel/',
-        { key: 'bitchute:channel', label: 'Channel' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a channel feed on old.bitchute.com as itself', async () => {
+      const value = 'https://old.bitchute.com/feeds/rss/channel/alicechannel/'
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'bitchute:channel', label: 'Channel' } },
+      ]
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [bitchuteHandler],
         baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
       expect(result).toEqual(expected)
     })

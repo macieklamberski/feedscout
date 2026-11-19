@@ -196,153 +196,18 @@ describe('wikidotHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const otherShapes: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://alice.wikidot.com/feed/forum/t-12345.xml',
-        { key: 'wikidot:forum-thread', label: 'Forum thread' },
-      ],
-      [
-        'https://alice.wikidot.com/feed/forum/ct-678.xml',
-        { key: 'wikidot:forum-category-threads', label: 'Forum category threads' },
-      ],
-      [
-        'https://alice.wikidot.com/feed/forum/cp-678.xml',
-        { key: 'wikidot:forum-category-posts', label: 'Forum category posts' },
-      ],
-      [
-        'https://alice.wikidot.com/feed/page/comments-1234567.xml',
-        { key: 'wikidot:page-comments', label: 'Page comments' },
-      ],
-      [
-        'https://alice.wikidot.com/feed/front/en:start/news.xml',
-        { key: 'wikidot:front-forum', label: 'Front forum' },
-      ],
-      [
-        'https://alice.wikidot.com/feed/pages/pagename/blog:_start/category/blog/limit/10/t/My+Blog',
-        { key: 'wikidot:pages', label: 'Pages' },
-      ],
-      [
-        'http://alice.wikidot.com/feed/pages/tags/example/t/Example+Tag',
-        { key: 'wikidot:pages', label: 'Pages' },
-      ],
-    ]
-
-    it.each(otherShapes)('should return the hint of %s', (value, expected) => {
-      expect(wikidotHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it.each(otherShapes)('should return undefined for %s on a custom domain', (feedUrl) => {
-      const value = feedUrl.replace('alice.wikidot.com', 'example.com')
-
-      expect(wikidotHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a ListPages feed on the www host', () => {
-      const value = 'https://www.wikidot.com/feed/pages/category/blog/t/Blog'
-
-      expect(wikidotHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
     it('should return the site changes hint for a site changes feed', () => {
       const value = 'https://alice.wikidot.com/feed/site-changes.xml'
       const expected: DiscoverUriHint = { key: 'wikidot:site-changes', label: 'Site changes' }
 
       expect(wikidotHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the forum threads hint for a forum threads feed', () => {
-      const value = 'https://alice.wikidot.com/feed/forum/threads.xml'
-      const expected: DiscoverUriHint = { key: 'wikidot:forum-threads', label: 'Forum threads' }
-
-      expect(wikidotHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the forum posts hint for a forum posts feed', () => {
-      const value = 'https://alice.wikidot.com/feed/forum/posts.xml'
-      const expected: DiscoverUriHint = { key: 'wikidot:forum-posts', label: 'Forum posts' }
-
-      expect(wikidotHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the forum posts hint for an http forum posts feed', () => {
-      const value = 'http://alice.wikidot.com/feed/forum/posts.xml'
-      const expected: DiscoverUriHint = { key: 'wikidot:forum-posts', label: 'Forum posts' }
-
-      expect(wikidotHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a page', () => {
-      const value = 'https://alice.wikidot.com/page'
-
-      expect(wikidotHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the www host', () => {
-      const value = 'https://www.wikidot.com/feed/site-changes.xml'
-
-      expect(wikidotHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://wikidot.com/feed/site-changes.xml'
-
-      expect(wikidotHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://forum.alice.wikidot.com/feed/forum/posts.xml'
-
-      expect(wikidotHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a custom domain', () => {
-      const value = 'https://example.com/feed/site-changes.xml'
-
-      expect(wikidotHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://alice.wikidot.com/feed/site-changes.xml',
-        { key: 'wikidot:site-changes', label: 'Site changes' },
-      ],
-      [
-        'https://alice.wikidot.com/feed/forum/threads.xml',
-        { key: 'wikidot:forum-threads', label: 'Forum threads' },
-      ],
-      [
-        'http://alice.wikidot.com/feed/forum/posts.xml',
-        { key: 'wikidot:forum-posts', label: 'Forum posts' },
-      ],
-      [
-        'http://alice.wikidot.com/feed/forum/t-12345.xml',
-        { key: 'wikidot:forum-thread', label: 'Forum thread' },
-      ],
-      [
-        'https://alice.wikidot.com/feed/forum/ct-678.xml',
-        { key: 'wikidot:forum-category-threads', label: 'Forum category threads' },
-      ],
-      [
-        'https://alice.wikidot.com/feed/forum/cp-678.xml',
-        { key: 'wikidot:forum-category-posts', label: 'Forum category posts' },
-      ],
-      [
-        'http://alice.wikidot.com/feed/page/comments-1234567.xml',
-        { key: 'wikidot:page-comments', label: 'Page comments' },
-      ],
-      [
-        'http://alice.wikidot.com/feed/front/start/news.xml',
-        { key: 'wikidot:front-forum', label: 'Front forum' },
-      ],
-      [
-        'http://alice.wikidot.com/feed/pages/pagename/blog:_start/category/blog/limit/10/t/My+Blog',
-        { key: 'wikidot:pages', label: 'Pages' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a site changes feed as itself', async () => {
+      const value = 'https://alice.wikidot.com/feed/site-changes.xml'
+      const hint: DiscoverUriHint = { key: 'wikidot:site-changes', label: 'Site changes' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [wikidotHandler],

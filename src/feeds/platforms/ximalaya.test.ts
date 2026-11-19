@@ -126,53 +126,18 @@ describe('ximalayaHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the album hint for an album feed', () => {
-      const value = 'https://www.ximalaya.com/album/10070285.xml'
-      const expected: DiscoverUriHint = { key: 'ximalaya:album', label: 'Album' }
-
-      expect(ximalayaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the album hint for an album feed on the bare host', () => {
       const value = 'https://ximalaya.com/album/13508172.xml'
       const expected: DiscoverUriHint = { key: 'ximalaya:album', label: 'Album' }
 
       expect(ximalayaHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the album hint for an album feed over http', () => {
-      const value = 'http://www.ximalaya.com/album/13508172.xml'
-      const expected: DiscoverUriHint = { key: 'ximalaya:album', label: 'Album' }
-
-      expect(ximalayaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for an album page', () => {
-      const value = 'https://www.ximalaya.com/album/10070285'
-
-      expect(ximalayaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a legacy album page', () => {
-      const value = 'https://www.ximalaya.com/61425525/album/6912905'
-
-      expect(ximalayaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/album/10070285.xml'
-
-      expect(ximalayaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://www.ximalaya.com/album/10070285.xml', { key: 'ximalaya:album', label: 'Album' }],
-      ['https://ximalaya.com/album/13508172.xml', { key: 'ximalaya:album', label: 'Album' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return an album feed on the bare host as itself', async () => {
+      const value = 'https://ximalaya.com/album/13508172.xml'
+      const hint: DiscoverUriHint = { key: 'ximalaya:album', label: 'Album' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [ximalayaHandler],

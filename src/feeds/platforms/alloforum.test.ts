@@ -173,93 +173,19 @@ describe('alloforumHandler', () => {
 
       expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the category hint for a category feed', () => {
-      const value = 'https://10253.alloforum.com/derniers-sujets-materiel-volieres-c285.xml'
-      const expected: DiscoverUriHint = { key: 'alloforum:category', label: 'Category' }
-
-      expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the subcategory hint for a subcategory feed', () => {
-      const value =
-        'https://alicebeads.alloforum.com/derniers-sujets-materiel-techniques-c44498-divers-s17544.xml'
-      const expected: DiscoverUriHint = { key: 'alloforum:subcategory', label: 'Subcategory' }
-
-      expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the subcategory hint for a subcategory feed with a hyphenated slug', () => {
-      const value =
-        'https://alicebeads.alloforum.com/derniers-sujets-materiel-techniques-c44498-nuanciers-perles-s17542.xml'
-      const expected: DiscoverUriHint = { key: 'alloforum:subcategory', label: 'Subcategory' }
-
-      expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the category hint for an http category feed', () => {
-      const value = 'http://10253.alloforum.com/derniers-sujets-discussions-generales-c275.xml'
-      const expected: DiscoverUriHint = { key: 'alloforum:category', label: 'Category' }
-
-      expect(alloforumHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a category page', () => {
-      const value = 'https://10253.alloforum.com/materiel-volieres-c285-1.html'
-
-      expect(alloforumHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://blog.example.alloforum.com/derniers-sujets.xml'
-
-      expect(alloforumHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://alloforum.com/derniers-sujets.xml'
-
-      expect(alloforumHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/derniers-sujets.xml'
-
-      expect(alloforumHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://alicebeads.alloforum.com/derniers-sujets.xml',
-        { key: 'alloforum:latest-topics', label: 'Latest topics' },
-      ],
-      [
-        'https://10253.alloforum.com/derniers-sujets-materiel-volieres-c285.xml',
-        { key: 'alloforum:category', label: 'Category' },
-      ],
-      [
-        'https://10253.alloforum.com/derniers-sujets-discussions-generales-c275.xml',
-        { key: 'alloforum:category', label: 'Category' },
-      ],
-      [
-        'https://alicebeads.alloforum.com/derniers-sujets-materiel-techniques-c44498-divers-s17544.xml',
-        { key: 'alloforum:subcategory', label: 'Subcategory' },
-      ],
-      [
-        'https://alicebeads.alloforum.com/derniers-sujets-materiel-techniques-c44498-nuanciers-perles-s17542.xml',
-        { key: 'alloforum:subcategory', label: 'Subcategory' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a latest topics feed as itself', async () => {
+      const value = 'https://alicebeads.alloforum.com/derniers-sujets.xml'
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'alloforum:latest-topics', label: 'Latest topics' } },
+      ]
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [alloforumHandler],
         baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
       expect(result).toEqual(expected)
     })

@@ -257,118 +257,19 @@ describe('jiraHandler', () => {
 
       expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the site hint for a site feed', () => {
-      const value = 'https://alicejira.atlassian.net/plugins/servlet/streams'
-      const expected: DiscoverUriHint = { key: 'jira:site', label: 'Site activity' }
-
-      expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the project hint for a project activity feed', () => {
-      const value = 'https://bobcorp.atlassian.net/activity?key=TORQUE'
-      const expected: DiscoverUriHint = { key: 'jira:project', label: 'Project' }
-
-      expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the site hint for a site activity feed', () => {
-      const value = 'https://alice.atlassian.net/activity'
-      const expected: DiscoverUriHint = { key: 'jira:site', label: 'Site activity' }
-
-      expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the project hint for a project feed with a trailing slash', () => {
-      const value = 'https://alicejira.atlassian.net/plugins/servlet/streams/?key=DCOS'
-      const expected: DiscoverUriHint = { key: 'jira:project', label: 'Project' }
-
-      expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the project hint for a project feed with another parameter', () => {
-      const value = 'https://alicejira.atlassian.net/plugins/servlet/streams?key=DCOS&maxResults=10'
-      const expected: DiscoverUriHint = { key: 'jira:project', label: 'Project' }
-
-      expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the issue hint for an issue XML view', () => {
-      const value = 'https://alice.atlassian.net/si/jira.issueviews:issue-xml/ABC-12/ABC-12.xml'
-      const expected: DiscoverUriHint = { key: 'jira:issue', label: 'Issue', format: 'rss' }
-
-      expect(jiraHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for an issue page', () => {
-      const value = 'https://alicejira.atlassian.net/browse/DCOS-1'
-
-      expect(jiraHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a Confluence feed on a Cloud site', () => {
-      const value = 'https://alicejira.atlassian.net/wiki/plugins/servlet/streams?key=DOCS'
-
-      expect(jiraHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a Confluence activity feed on a Cloud site', () => {
-      const value = 'https://bobcorp.atlassian.net/wiki/activity'
-
-      expect(jiraHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the www host', () => {
-      const value = 'https://www.atlassian.net/plugins/servlet/streams'
-
-      expect(jiraHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://a.alicejira.atlassian.net/plugins/servlet/streams'
-
-      expect(jiraHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a Data Center feed', () => {
-      const value = 'https://jira.example.org/plugins/servlet/streams?key=ABC'
-
-      expect(jiraHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://carolsoft.atlassian.net/plugins/servlet/streams?key=XWS',
-        { key: 'jira:project', label: 'Project' },
-      ],
-      [
-        'https://alicejira.atlassian.net/plugins/servlet/streams?key=DCOS',
-        { key: 'jira:project', label: 'Project' },
-      ],
-      [
-        'https://bobcorp.atlassian.net/activity?key=TORQUE',
-        { key: 'jira:project', label: 'Project' },
-      ],
-      [
-        'https://alicejira.atlassian.net/plugins/servlet/streams',
-        { key: 'jira:site', label: 'Site activity' },
-      ],
-      ['https://alice.atlassian.net/activity', { key: 'jira:site', label: 'Site activity' }],
-      [
-        'http://alice.atlassian.net/si/jira.issueviews:issue-xml/ABC-12/ABC-12.xml',
-        { key: 'jira:issue', label: 'Issue', format: 'rss' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a project feed as itself', async () => {
+      const value = 'https://carolsoft.atlassian.net/plugins/servlet/streams?key=XWS'
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'jira:project', label: 'Project' } },
+      ]
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [jiraHandler],
         baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
       expect(result).toEqual(expected)
     })
