@@ -28,6 +28,18 @@ const groupRegex = /^\/groups\/([^/]+)(?:\/([^/]+))?/i
 const forumRegex = /^\/help\/forum(?:\/|$)/i
 const nsidRegex = /^\d+@N\d+$/
 
+// The other names Flickr answers each format under.
+const atomFormats = ['atom', 'atom_1', 'atom_03']
+const rssFormats = ['rss', 'rss2', 'rss_091', 'rss_092']
+
+const isAtomFormat = (value: string): boolean => {
+  return isAnyOf(value, atomFormats)
+}
+
+const isRssFormat = (value: string): boolean => {
+  return isAnyOf(value, rssFormats)
+}
+
 const groupSections = ['pool', 'discuss']
 const albumSections = ['albums', 'sets']
 
@@ -38,61 +50,91 @@ const feeds = definePlatformFeeds(
       key: 'forum',
       main: 'https://www.flickr.com/services/feeds/forums.gne',
       format: 'atom',
-      aliases: ['{scheme}://{host}/services/feeds/forums.gne'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/forums.gne',
+        '{scheme}://{host}/services/feeds/forums.gne?format={atomFormat}',
+      ],
     },
     {
       key: 'forum',
       main: 'https://www.flickr.com/services/feeds/forums.gne?format=rss_200',
       format: 'rss',
-      aliases: ['{scheme}://{host}/services/feeds/forums.gne?format=rss_200'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/forums.gne?format=rss_200',
+        '{scheme}://{host}/services/feeds/forums.gne?format={rssFormat}',
+      ],
     },
     {
       key: 'recent',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne',
       format: 'atom',
-      aliases: ['{scheme}://{host}/services/feeds/photos_public.gne'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/photos_public.gne',
+        '{scheme}://{host}/services/feeds/photos_public.gne?format={atomFormat}',
+      ],
     },
     {
       key: 'recent',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?format=rss_200',
       format: 'rss',
-      aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?format=rss_200'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/photos_public.gne?format=rss_200',
+        '{scheme}://{host}/services/feeds/photos_public.gne?format={rssFormat}',
+      ],
     },
     {
       key: 'recent-geo',
       main: 'https://www.flickr.com/services/feeds/geo',
       format: 'atom',
-      aliases: ['{scheme}://{host}/services/feeds/geo'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/geo',
+        '{scheme}://{host}/services/feeds/geo?format={atomFormat}',
+      ],
     },
     {
       key: 'recent-geo',
       main: 'https://www.flickr.com/services/feeds/geo?format=rss_200',
       format: 'rss',
-      aliases: ['{scheme}://{host}/services/feeds/geo?format=rss_200'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/geo?format=rss_200',
+        '{scheme}://{host}/services/feeds/geo?format={rssFormat}',
+      ],
     },
     {
       key: 'tag',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?tags={tags}',
       format: 'atom',
-      aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?tags={tags}'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/photos_public.gne?tags={tags}',
+        '{scheme}://{host}/services/feeds/photos_public.gne?tags={tags}&format={atomFormat}',
+      ],
     },
     {
       key: 'tag',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?tags={tags}&format=rss_200',
       format: 'rss',
-      aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?tags={tags}&format=rss_200'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/photos_public.gne?tags={tags}&format=rss_200',
+        '{scheme}://{host}/services/feeds/photos_public.gne?tags={tags}&format={rssFormat}',
+      ],
     },
     {
       key: 'photos',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?id={id}',
       format: 'atom',
-      aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?id={id}'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/photos_public.gne?id={id}',
+        '{scheme}://{host}/services/feeds/photos_public.gne?id={id}&format={atomFormat}',
+      ],
     },
     {
       key: 'photos',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?id={id}&format=rss_200',
       format: 'rss',
-      aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?id={id}&format=rss_200'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/photos_public.gne?id={id}&format=rss_200',
+        '{scheme}://{host}/services/feeds/photos_public.gne?id={id}&format={rssFormat}',
+      ],
     },
     {
       key: 'faves',
@@ -101,6 +143,8 @@ const feeds = definePlatformFeeds(
       aliases: [
         '{scheme}://{host}/services/feeds/photos_faves.gne?id={id}',
         '{scheme}://{host}/services/feeds/photos_faves.gne?nsid={id}',
+        '{scheme}://{host}/services/feeds/photos_faves.gne?id={id}&format={atomFormat}',
+        '{scheme}://{host}/services/feeds/photos_faves.gne?nsid={id}&format={atomFormat}',
       ],
     },
     {
@@ -110,57 +154,83 @@ const feeds = definePlatformFeeds(
       aliases: [
         '{scheme}://{host}/services/feeds/photos_faves.gne?id={id}&format=rss_200',
         '{scheme}://{host}/services/feeds/photos_faves.gne?nsid={id}&format=rss_200',
+        '{scheme}://{host}/services/feeds/photos_faves.gne?id={id}&format={rssFormat}',
+        '{scheme}://{host}/services/feeds/photos_faves.gne?nsid={id}&format={rssFormat}',
       ],
     },
     {
       key: 'group-pool',
       main: 'https://www.flickr.com/services/feeds/groups_pool.gne?id={id}',
       format: 'atom',
-      aliases: ['{scheme}://{host}/services/feeds/groups_pool.gne?id={id}'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/groups_pool.gne?id={id}',
+        '{scheme}://{host}/services/feeds/groups_pool.gne?id={id}&format={atomFormat}',
+      ],
     },
     {
       key: 'group-pool',
       main: 'https://www.flickr.com/services/feeds/groups_pool.gne?id={id}&format=rss_200',
       format: 'rss',
-      aliases: ['{scheme}://{host}/services/feeds/groups_pool.gne?id={id}&format=rss_200'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/groups_pool.gne?id={id}&format=rss_200',
+        '{scheme}://{host}/services/feeds/groups_pool.gne?id={id}&format={rssFormat}',
+      ],
     },
     {
       key: 'group-discuss',
       main: 'https://www.flickr.com/services/feeds/groups_discuss.gne?id={id}',
       format: 'atom',
-      aliases: ['{scheme}://{host}/services/feeds/groups_discuss.gne?id={id}'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/groups_discuss.gne?id={id}',
+        '{scheme}://{host}/services/feeds/groups_discuss.gne?id={id}&format={atomFormat}',
+      ],
     },
     {
       key: 'group-discuss',
       main: 'https://www.flickr.com/services/feeds/groups_discuss.gne?id={id}&format=rss_200',
       format: 'rss',
-      aliases: ['{scheme}://{host}/services/feeds/groups_discuss.gne?id={id}&format=rss_200'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/groups_discuss.gne?id={id}&format=rss_200',
+        '{scheme}://{host}/services/feeds/groups_discuss.gne?id={id}&format={rssFormat}',
+      ],
     },
     // The pool photos through the uploads feed, which reads `g` as the group.
     {
       key: 'group-photos',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?g={id}',
       format: 'atom',
-      aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?g={id}'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/photos_public.gne?g={id}',
+        '{scheme}://{host}/services/feeds/photos_public.gne?g={id}&format={atomFormat}',
+      ],
     },
     {
       key: 'group-photos',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?g={id}&format=rss_200',
       format: 'rss',
-      aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?g={id}&format=rss_200'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/photos_public.gne?g={id}&format=rss_200',
+        '{scheme}://{host}/services/feeds/photos_public.gne?g={id}&format={rssFormat}',
+      ],
     },
     // The pool photos that carry a location.
     {
       key: 'group-geo',
       main: 'https://www.flickr.com/services/feeds/geo/?g={id}',
       format: 'atom',
-      aliases: ['{scheme}://{host}/services/feeds/geo/?g={id}'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/geo/?g={id}',
+        '{scheme}://{host}/services/feeds/geo/?g={id}&format={atomFormat}',
+      ],
     },
     {
       key: 'group-geo',
       main: 'https://www.flickr.com/services/feeds/geo/?g={id}&format=rss_200',
       format: 'rss',
-      aliases: ['{scheme}://{host}/services/feeds/geo/?g={id}&format=rss_200'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/geo/?g={id}&format=rss_200',
+        '{scheme}://{host}/services/feeds/geo/?g={id}&format={rssFormat}',
+      ],
     },
     // Past here the table only claims, but for an album and a photostream narrowed to a tag: the
     // photos of a member's contacts, a group pool narrowed to a tag, and the photos that carry a
@@ -169,7 +239,10 @@ const feeds = definePlatformFeeds(
       key: 'photos-tag',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?id={id}&tags={tags}',
       format: 'atom',
-      aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?id={id}&tags={tags}'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/photos_public.gne?id={id}&tags={tags}',
+        '{scheme}://{host}/services/feeds/photos_public.gne?id={id}&tags={tags}&format={atomFormat}',
+      ],
     },
     {
       key: 'photos-tag',
@@ -177,61 +250,89 @@ const feeds = definePlatformFeeds(
       format: 'rss',
       aliases: [
         '{scheme}://{host}/services/feeds/photos_public.gne?id={id}&tags={tags}&format=rss_200',
+        '{scheme}://{host}/services/feeds/photos_public.gne?id={id}&tags={tags}&format={rssFormat}',
       ],
     },
     {
       key: 'photoset',
       main: 'https://www.flickr.com/services/feeds/photoset.gne?nsid={id}&set={set}',
       format: 'atom',
-      aliases: ['{scheme}://{host}/services/feeds/photoset.gne?nsid={id}&set={set}'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/photoset.gne?nsid={id}&set={set}',
+        '{scheme}://{host}/services/feeds/photoset.gne?nsid={id}&set={set}&format={atomFormat}',
+      ],
     },
     {
       key: 'photoset',
       main: 'https://www.flickr.com/services/feeds/photoset.gne?nsid={id}&set={set}&format=rss_200',
       format: 'rss',
-      aliases: ['{scheme}://{host}/services/feeds/photoset.gne?nsid={id}&set={set}&format=rss_200'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/photoset.gne?nsid={id}&set={set}&format=rss_200',
+        '{scheme}://{host}/services/feeds/photoset.gne?nsid={id}&set={set}&format={rssFormat}',
+      ],
     },
     {
       key: 'contacts',
       main: 'https://www.flickr.com/services/feeds/photos_friends.gne?user_id={id}',
       format: 'atom',
-      aliases: ['{scheme}://{host}/services/feeds/photos_friends.gne?user_id={id}'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/photos_friends.gne?user_id={id}',
+        '{scheme}://{host}/services/feeds/photos_friends.gne?user_id={id}&format={atomFormat}',
+      ],
     },
     {
       key: 'contacts',
       main: 'https://www.flickr.com/services/feeds/photos_friends.gne?user_id={id}&format=rss_200',
       format: 'rss',
-      aliases: ['{scheme}://{host}/services/feeds/photos_friends.gne?user_id={id}&format=rss_200'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/photos_friends.gne?user_id={id}&format=rss_200',
+        '{scheme}://{host}/services/feeds/photos_friends.gne?user_id={id}&format={rssFormat}',
+      ],
     },
     {
       key: 'photos-geo',
       main: 'https://www.flickr.com/services/feeds/geo?id={id}',
       format: 'atom',
-      aliases: ['{scheme}://{host}/services/feeds/geo?id={id}'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/geo?id={id}',
+        '{scheme}://{host}/services/feeds/geo?id={id}&format={atomFormat}',
+      ],
     },
     {
       key: 'photos-geo',
       main: 'https://www.flickr.com/services/feeds/geo?id={id}&format=rss_200',
       format: 'rss',
-      aliases: ['{scheme}://{host}/services/feeds/geo?id={id}&format=rss_200'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/geo?id={id}&format=rss_200',
+        '{scheme}://{host}/services/feeds/geo?id={id}&format={rssFormat}',
+      ],
     },
     {
       key: 'tag-geo',
       main: 'https://www.flickr.com/services/feeds/geo?tags={tags}',
       format: 'atom',
-      aliases: ['{scheme}://{host}/services/feeds/geo?tags={tags}'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/geo?tags={tags}',
+        '{scheme}://{host}/services/feeds/geo?tags={tags}&format={atomFormat}',
+      ],
     },
     {
       key: 'tag-geo',
       main: 'https://www.flickr.com/services/feeds/geo?tags={tags}&format=rss_200',
       format: 'rss',
-      aliases: ['{scheme}://{host}/services/feeds/geo?tags={tags}&format=rss_200'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/geo?tags={tags}&format=rss_200',
+        '{scheme}://{host}/services/feeds/geo?tags={tags}&format={rssFormat}',
+      ],
     },
     {
       key: 'group-photos-tag',
       main: 'https://www.flickr.com/services/feeds/photos_public.gne?g={id}&tags={tags}',
       format: 'atom',
-      aliases: ['{scheme}://{host}/services/feeds/photos_public.gne?g={id}&tags={tags}'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/photos_public.gne?g={id}&tags={tags}',
+        '{scheme}://{host}/services/feeds/photos_public.gne?g={id}&tags={tags}&format={atomFormat}',
+      ],
     },
     {
       key: 'group-photos-tag',
@@ -239,34 +340,50 @@ const feeds = definePlatformFeeds(
       format: 'rss',
       aliases: [
         '{scheme}://{host}/services/feeds/photos_public.gne?g={id}&tags={tags}&format=rss_200',
+        '{scheme}://{host}/services/feeds/photos_public.gne?g={id}&tags={tags}&format={rssFormat}',
       ],
     },
     {
       key: 'photos-tag-geo',
       main: 'https://www.flickr.com/services/feeds/geo?id={id}&tags={tags}',
       format: 'atom',
-      aliases: ['{scheme}://{host}/services/feeds/geo?id={id}&tags={tags}'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/geo?id={id}&tags={tags}',
+        '{scheme}://{host}/services/feeds/geo?id={id}&tags={tags}&format={atomFormat}',
+      ],
     },
     {
       key: 'photos-tag-geo',
       main: 'https://www.flickr.com/services/feeds/geo?id={id}&tags={tags}&format=rss_200',
       format: 'rss',
-      aliases: ['{scheme}://{host}/services/feeds/geo?id={id}&tags={tags}&format=rss_200'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/geo?id={id}&tags={tags}&format=rss_200',
+        '{scheme}://{host}/services/feeds/geo?id={id}&tags={tags}&format={rssFormat}',
+      ],
     },
     {
       key: 'group-tag-geo',
       main: 'https://www.flickr.com/services/feeds/geo/?g={id}&tags={tags}',
       format: 'atom',
-      aliases: ['{scheme}://{host}/services/feeds/geo/?g={id}&tags={tags}'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/geo/?g={id}&tags={tags}',
+        '{scheme}://{host}/services/feeds/geo/?g={id}&tags={tags}&format={atomFormat}',
+      ],
     },
     {
       key: 'group-tag-geo',
       main: 'https://www.flickr.com/services/feeds/geo/?g={id}&tags={tags}&format=rss_200',
       format: 'rss',
-      aliases: ['{scheme}://{host}/services/feeds/geo/?g={id}&tags={tags}&format=rss_200'],
+      aliases: [
+        '{scheme}://{host}/services/feeds/geo/?g={id}&tags={tags}&format=rss_200',
+        '{scheme}://{host}/services/feeds/geo/?g={id}&tags={tags}&format={rssFormat}',
+      ],
     },
   ],
-  { hosts: { exact: feedHosts } },
+  {
+    hosts: { exact: feedHosts },
+    checks: { atomFormat: isAtomFormat, rssFormat: isRssFormat },
+  },
 )
 
 export const parseFlickrUrl = (url: string): FlickrUrl | undefined => {

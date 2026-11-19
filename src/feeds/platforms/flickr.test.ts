@@ -876,6 +876,18 @@ describe('flickrHandler', () => {
       expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the RSS photostream hint for a feed under another RSS format name', () => {
+      const value =
+        'https://www.flickr.com/services/feeds/photos_public.gne?id=87654321@N07&format=rss2'
+      const expected: DiscoverUriHint = {
+        key: 'flickr:photos',
+        label: 'Photostream',
+        format: 'rss',
+      }
+
+      expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the photostream hint for a photostream feed on the bare host', () => {
       const value =
         'https://flickr.com/services/feeds/photos_public.gne?id=87654321@N07&format=rss_200'
