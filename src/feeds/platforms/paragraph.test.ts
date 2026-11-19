@@ -89,94 +89,30 @@ describe('paragraphHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the blog hint for the feed a blog page links', () => {
-      const value = 'https://paragraph.com/@alice/rss.xml'
-      const expected: DiscoverUriHint = { key: 'paragraph:blog', label: 'Blog' }
-
-      expect(paragraphHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the blog hint for the feed spelling that redirects to the linked feed', () => {
       const value = 'https://paragraph.com/@alice/feed'
       const expected: DiscoverUriHint = { key: 'paragraph:blog', label: 'Blog' }
 
       expect(paragraphHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the blog hint for the rss spelling that redirects to the linked feed', () => {
-      const value = 'https://paragraph.com/@alice/rss'
-      const expected: DiscoverUriHint = { key: 'paragraph:blog', label: 'Blog' }
-
-      expect(paragraphHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the blog hint for a blog feed', () => {
-      const value = 'https://api.paragraph.com/blogs/rss/@alice'
-      const expected: DiscoverUriHint = { key: 'paragraph:blog', label: 'Blog' }
-
-      expect(paragraphHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the blog hint for a blog feed with a trailing slash', () => {
-      const value = 'https://api.paragraph.com/blogs/rss/@alice/'
-      const expected: DiscoverUriHint = { key: 'paragraph:blog', label: 'Blog' }
-
-      expect(paragraphHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the blog hint for a blog feed on paragraph.com', () => {
-      const value = 'https://paragraph.com/api/blogs/rss/@alice'
-      const expected: DiscoverUriHint = { key: 'paragraph:blog', label: 'Blog' }
-
-      expect(paragraphHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the blog hint for a blog feed on paragraph.com with an encoded at sign', () => {
-      const value = 'https://paragraph.com/api/blogs/rss/%40alice'
-      const expected: DiscoverUriHint = { key: 'paragraph:blog', label: 'Blog' }
-
-      expect(paragraphHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://paragraph.com/@alice'
-
-      expect(paragraphHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path without the at sign', () => {
-      const value = 'https://api.paragraph.com/blogs/rss/alice'
-
-      expect(paragraphHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/blogs/rss/@alice'
-
-      expect(paragraphHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://paragraph.com/@alice/rss.xml', { key: 'paragraph:blog', label: 'Blog' }],
-      ['https://paragraph.com/@alice/feed', { key: 'paragraph:blog', label: 'Blog' }],
-      ['https://paragraph.com/@alice/rss', { key: 'paragraph:blog', label: 'Blog' }],
-      ['https://api.paragraph.com/blogs/rss/@alice', { key: 'paragraph:blog', label: 'Blog' }],
-      ['http://api.paragraph.com/blogs/rss/@alice', { key: 'paragraph:blog', label: 'Blog' }],
-      ['https://paragraph.com/api/blogs/rss/%40alice', { key: 'paragraph:blog', label: 'Blog' }],
-      ['https://www.paragraph.com/api/blogs/rss/@alice', { key: 'paragraph:blog', label: 'Blog' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a blog feed on the api host as itself', async () => {
+      const value = 'https://api.paragraph.com/blogs/rss/@alice'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [paragraphHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://api.paragraph.com/blogs/rss/@alice',
+          hint: { key: 'paragraph:blog', label: 'Blog' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

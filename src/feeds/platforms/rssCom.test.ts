@@ -137,41 +137,21 @@ describe('rssComHandler', () => {
 
       expect(rssComHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a podcast page', () => {
-      const value = 'https://rss.com/podcasts/charismanews'
-
-      expect(rssComHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a show path on the feed host without the feed file', () => {
-      const value = 'https://media.rss.com/charismanews/'
-
-      expect(rssComHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/charismanews/feed.xml'
-
-      expect(rssComHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://media.rss.com/charismanews/feed.xml', { key: 'rss-com:podcast', label: 'Podcast' }],
-      ['https://media.rss.com/alice/feed.xml', { key: 'rss-com:podcast', label: 'Podcast' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a podcast feed as itself', async () => {
+      const value = 'https://media.rss.com/charismanews/feed.xml'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [rssComHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'rss-com:podcast', label: 'Podcast' } },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

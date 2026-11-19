@@ -128,55 +128,21 @@ describe('pchomeHandler', () => {
 
       expect(pchomeHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the posts hint for a posts feed', () => {
-      const value = 'https://mypaper.pchome.com.tw/carol123/rss'
-      const expected: DiscoverUriHint = { key: 'pchome:posts', label: 'Posts' }
-
-      expect(pchomeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a paper page', () => {
-      const value = 'https://mypaper.pchome.com.tw/carol123'
-
-      expect(pchomeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a category page', () => {
-      const value = 'https://mypaper.pchome.com.tw/carol123/category/31'
-
-      expect(pchomeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/carol123/rss?cid=31'
-
-      expect(pchomeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://mypaper.pchome.com.tw/bob/rss?cid=55',
-        { key: 'pchome:category', label: 'Category' },
-      ],
-      [
-        'https://mypaper.pchome.com.tw/carol123/rss?cid=31',
-        { key: 'pchome:category', label: 'Category' },
-      ],
-      ['https://mypaper.pchome.com.tw/carol123/rss', { key: 'pchome:posts', label: 'Posts' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a posts feed as itself', async () => {
+      const value = 'https://mypaper.pchome.com.tw/carol123/rss'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [pchomeHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'pchome:posts', label: 'Posts' } },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

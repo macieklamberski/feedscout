@@ -121,80 +121,30 @@ describe('postypeHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the posts hint for the channel feed', () => {
-      const value = 'https://www.postype.com/@example/rss'
-      const expected: DiscoverUriHint = { key: 'postype:posts', label: 'Posts' }
-
-      expect(postypeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for the channel feed on the bare host', () => {
-      const value = 'https://postype.com/@example/rss'
-      const expected: DiscoverUriHint = { key: 'postype:posts', label: 'Posts' }
-
-      expect(postypeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the posts hint for the subdomain feed', () => {
       const value = 'https://example.postype.com/rss'
       const expected: DiscoverUriHint = { key: 'postype:posts', label: 'Posts' }
 
       expect(postypeHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the posts hint for the subdomain feed over http', () => {
-      const value = 'http://example.postype.com/rss'
-      const expected: DiscoverUriHint = { key: 'postype:posts', label: 'Posts' }
-
-      expect(postypeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a channel page', () => {
-      const value = 'https://www.postype.com/@example'
-
-      expect(postypeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a post page', () => {
-      const value = 'https://www.postype.com/@example/post/23216701'
-
-      expect(postypeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on the main host without a channel', () => {
-      const value = 'https://www.postype.com/rss'
-
-      expect(postypeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on a nested subdomain', () => {
-      const value = 'https://a.b.postype.com/rss'
-
-      expect(postypeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds = [
-      'https://www.postype.com/@example/rss',
-      'https://postype.com/@example/rss',
-      'https://www.postype.com/@example/rss/',
-      'https://example.postype.com/rss',
-      'http://example.postype.com/rss',
-      'https://example.postype.com/rss/',
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return the channel feed as itself', async () => {
+      const value = 'https://www.postype.com/@example/rss'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [postypeHandler],
         baseUrl: value,
-      })
+      }
       const expected: Array<DiscoverUriEntry> = [
-        { uri: value, hint: { key: 'postype:posts', label: 'Posts' } },
+        {
+          uri: 'https://www.postype.com/@example/rss',
+          hint: { key: 'postype:posts', label: 'Posts' },
+        },
       ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

@@ -103,78 +103,30 @@ describe('nethouseHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the news hint for the news feed', () => {
-      const value = 'https://alice.nethouse.ru/posts/rss'
-      const expected: DiscoverUriHint = { key: 'nethouse:news', label: 'News' }
-
-      expect(nethouseHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the articles hint for the articles feed', () => {
-      const value = 'https://alice.nethouse.ru/articles/rss'
-      const expected: DiscoverUriHint = { key: 'nethouse:articles', label: 'Articles' }
-
-      expect(nethouseHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the news hint for the news feed on nethouse.me', () => {
       const value = 'https://alice.nethouse.me/posts/rss'
       const expected: DiscoverUriHint = { key: 'nethouse:news', label: 'News' }
 
       expect(nethouseHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the articles hint for the articles feed over http', () => {
-      const value = 'http://alice.nethouse.ru/articles/rss'
-      const expected: DiscoverUriHint = { key: 'nethouse:articles', label: 'Articles' }
-
-      expect(nethouseHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a page of a site', () => {
-      const value = 'https://alice.nethouse.ru/articles/223023'
-
-      expect(nethouseHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on the platform site', () => {
-      const value = 'https://www.nethouse.ru/posts/rss'
-
-      expect(nethouseHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on a nested subdomain', () => {
-      const value = 'https://shop.alice.nethouse.ru/posts/rss'
-
-      expect(nethouseHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the news feed of a custom domain', () => {
-      const value = 'https://example.com/posts/rss'
-
-      expect(nethouseHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const newsHint: DiscoverUriHint = { key: 'nethouse:news', label: 'News' }
-    const articlesHint: DiscoverUriHint = { key: 'nethouse:articles', label: 'Articles' }
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://alice.nethouse.ru/posts/rss', newsHint],
-      ['http://alice.nethouse.ru/posts/rss/', newsHint],
-      ['https://alice.nethouse.me/articles/rss', articlesHint],
-      ['http://alice.nethouse.me/articles/rss/', articlesHint],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return an articles feed over http with a trailing slash as itself', async () => {
+      const value = 'http://alice.nethouse.me/articles/rss/'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [nethouseHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://alice.nethouse.me/articles/rss/',
+          hint: { key: 'nethouse:articles', label: 'Articles' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

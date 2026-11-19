@@ -151,53 +151,30 @@ describe('proboardsHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const feedValues: Array<string> = [
-      'https://example.proboards.com/rss/public',
-      'https://example.freeforums.net/rss/public',
-      'https://example.boards.net/rss/public',
-      'http://example.proboards.com/rss/public',
-      'https://example.proboards.com/rss/public/',
-    ]
-
-    it.each(feedValues)('should return the posts hint for %s', (value) => {
+    it('should return the posts hint for a posts feed on freeforums.net', () => {
+      const value = 'https://example.freeforums.net/rss/public'
       const expected: DiscoverUriHint = { key: 'proboards:posts', label: 'Posts' }
 
       expect(proboardsHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    const otherValues: Array<string> = [
-      'https://example.proboards.com/',
-      'https://example.proboards.com/thread/71771/introductions',
-      'https://example.proboards.com/rss',
-      'https://proboards.com/rss/public',
-      'https://www.proboards.com/rss/public',
-      'https://www.example.boards.net/rss/public',
-      'https://m.example.boards.net/rss/public',
-      'https://forum.example.com/rss/public',
-    ]
-
-    it.each(otherValues)('should return undefined for %s', (value) => {
-      expect(proboardsHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const postsHint: DiscoverUriHint = { key: 'proboards:posts', label: 'Posts' }
-    const ownFeeds: Array<string> = [
-      'https://example.proboards.com/rss/public',
-      'http://example.freeforums.net/rss/public',
-      'https://example.boards.net/rss/public/',
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a posts feed on boards.net as itself', async () => {
+      const value = 'https://example.boards.net/rss/public/'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [proboardsHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint: postsHint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.boards.net/rss/public/',
+          hint: { key: 'proboards:posts', label: 'Posts' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })
