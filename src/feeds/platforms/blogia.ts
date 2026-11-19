@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { blogia } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -6,16 +7,9 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type BlogiaUrl = { kind: 'blog'; blog: string }
 
-const domains = ['blogia.com']
+const domains = blogia.hosts.tenants
 
-const feeds = definePlatformFeeds(
-  'blogia',
-  [
-    { key: 'posts', main: '{scheme}://{host}/feed.xml' },
-    { key: 'comments', main: '{scheme}://{host}/comentarios.xml' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(blogia.feeds)
 
 export const parseBlogiaUrl = (url: string): BlogiaUrl | undefined => {
   const blog = getTenantSubdomain(url, domains)

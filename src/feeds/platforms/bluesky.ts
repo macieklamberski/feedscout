@@ -1,23 +1,15 @@
+import { bluesky } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
 
 export type BlueskyUrl = { kind: 'profile'; handle: string }
 
-const hosts = ['bsky.app', 'deer.social', 'main.bsky.dev']
+const hosts = bluesky.hosts.exact
 
-// web-cdn.bsky.app and main.bsky.dev serve the same app and the same feeds under the same paths.
-// main.bsky.dev links each post on main.bsky.dev.
-const feeds = definePlatformFeeds('bluesky', [
-  {
-    key: 'posts',
-    main: 'https://bsky.app/profile/{handle}/rss',
-    aliases: ['https://web-cdn.bsky.app/profile/{handle}/rss'],
-  },
-  { key: 'posts', main: 'https://main.bsky.dev/profile/{handle}/rss' },
-])
+const feeds = withHintLabels(bluesky.feeds)
 
 export const parseBlueskyUrl = (url: string): BlueskyUrl | undefined => {
   if (!isHostOf(url, hosts)) {

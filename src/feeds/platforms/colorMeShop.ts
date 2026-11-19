@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { colorMeShop } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
@@ -6,20 +7,12 @@ import { getCookieNames, getTenantSubdomain, hasMarker } from '../../common/util
 
 export type ColorMeShopUrl = { kind: 'shop' }
 
-const domains = ['shop-pro.jp']
+const domains = colorMeShop.hosts.tenants
 
 // Numbered image and access-log hosts, such as img15 and acclog001.
 const numberedHostRegex = /^(acclog|img)\d+$/
 
-// A shop on its own domain is known only by its cookie, so its feeds are built but not claimed.
-const feeds = definePlatformFeeds(
-  'color-me-shop',
-  [
-    { key: 'products', main: '{scheme}://{host}/?mode=rss', format: 'rdf' },
-    { key: 'products', main: '{scheme}://{host}/?mode=atom', format: 'atom' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(colorMeShop.feeds)
 
 // Every shop page sets the session cookie, on shop-pro.jp and on a shop's own domain alike, and
 // the service hosts of shop-pro.jp set none.

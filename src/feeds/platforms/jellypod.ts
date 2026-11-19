@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { jellypod } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -6,11 +7,9 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type JellypodUrl = { kind: 'show' }
 
-const domains = ['jellypod.com']
+const domains = jellypod.hosts.tenants
 
-const feeds = definePlatformFeeds('jellypod', [{ key: 'podcast', main: '{scheme}://{host}/rss' }], {
-  hosts: { tenants: domains },
-})
+const feeds = withHintLabels(jellypod.feeds)
 
 export const parseJellypodUrl = (url: string): JellypodUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

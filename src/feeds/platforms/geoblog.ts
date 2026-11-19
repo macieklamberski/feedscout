@@ -1,5 +1,6 @@
+import { geoblog } from 'feedintel'
 import { getPathSegments, isAnyOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
 
@@ -10,15 +11,11 @@ export type GeoblogUrl = { kind: 'trip' } | { kind: 'entry' }
 
 export type GeoblogPage = GeoblogUrl & { tripId: string }
 
-const domains = ['geoblog.pl']
+const domains = geoblog.hosts.tenants
 
 const tripPathRegex = /^\/podroz\/(\d+)(?:\/|$)/i
 
-const feeds = definePlatformFeeds(
-  'geoblog',
-  [{ key: 'trip', main: '{scheme}://{host}/podroz/rss/{tripId}.xml' }],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(geoblog.feeds)
 
 export const parseGeoblogUrl = (url: string): GeoblogUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

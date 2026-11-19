@@ -1,5 +1,6 @@
+import { funkwhale } from 'feedintel'
 import { decodeSegment } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, hasElementWithId, hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -11,11 +12,7 @@ const channelPathRegex = /^\/channels\/([^/]+)/i
 // A remote channel can be written in the fediverse form, `@{name}@{domain}`.
 const leadingAtRegex = /^@/
 
-// A pod is self-hosted on any domain, so the table only builds its feed. v2 answers 404 on some
-// instances that still serve v1.
-const feeds = definePlatformFeeds('funkwhale', [
-  { key: 'channel', main: '{root}/api/v1/channels/{channel}/rss' },
-])
+const feeds = withHintLabels(funkwhale.feeds)
 
 export const isFunkwhaleHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Funkwhale') || hasElementWithId(content, 'fake-app')

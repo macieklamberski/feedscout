@@ -1,5 +1,6 @@
+import { diaspora } from 'feedintel'
 import { isAnyOf, startsWithAnyOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { formatSuffixRegex, hasMarker } from '../../common/utils.js'
 
@@ -8,11 +9,7 @@ import { formatSuffixRegex, hasMarker } from '../../common/utils.js'
 const profileRegex = /^\/(?<route>u|public|people)\/(?<segment>[^/]+)/i
 const diasporaIdRegex = /"diaspora_id":"([^"@]+)@/
 
-// A pod runs on its own domain and is known only by its marker, so its feed is built here but not
-// claimed.
-const feeds = definePlatformFeeds('diaspora', [
-  { key: 'posts', main: '{root}/public/{username}.atom' },
-])
+const feeds = withHintLabels(diaspora.feeds)
 
 export const isDiasporaHtml = (content: string): boolean => {
   return content.includes('Diaspora.Page')

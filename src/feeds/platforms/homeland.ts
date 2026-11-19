@@ -1,5 +1,6 @@
+import { homeland } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -11,11 +12,7 @@ export type HomelandUrl = { kind: 'node'; node: string } | { kind: 'topics' }
 
 const nodePathRegex = /\/topics\/node(\d+)(?:\/|$)/i
 
-// A forum is self-hosted on any domain, so the table only builds its feeds.
-const feeds = definePlatformFeeds('homeland', [
-  { key: 'node', main: '{root}/topics/node{node}/feed' },
-  { key: 'topics', main: '{root}/topics/feed' },
-])
+const feeds = withHintLabels(homeland.feeds)
 
 export const isHomelandHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Homeland')

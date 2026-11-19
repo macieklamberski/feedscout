@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { hashnode } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -6,15 +7,9 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type HashnodeUrl = { kind: 'blog' }
 
-const domains = ['hashnode.dev', 'hashnode.com']
+const domains = hashnode.hosts.tenants
 
-const feeds = definePlatformFeeds(
-  'hashnode',
-  [{ key: 'blog', main: '{scheme}://{host}/rss.xml' }],
-  {
-    hosts: { tenants: domains },
-  },
-)
+const feeds = withHintLabels(hashnode.feeds)
 
 export const parseHashnodeUrl = (url: string): HashnodeUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

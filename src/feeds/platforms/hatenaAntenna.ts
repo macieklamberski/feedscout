@@ -1,5 +1,6 @@
+import { hatenaAntenna } from 'feedintel'
 import { getPathSegments, getQueryParam, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findDescendant, findElement, letterThenWordOrHyphenRegex } from '../../common/utils.js'
 
@@ -10,13 +11,9 @@ export type HatenaAntennaUrl =
   | { kind: 'group'; username: string; groupId: string }
 export type HatenaAntennaPage = HatenaAntennaUrl
 
-const hosts = ['a.hatena.ne.jp']
+const hosts = hatenaAntenna.hosts.exact
 
-// The page links its feeds over http, and the same spelling dedupes against that link.
-const feeds = definePlatformFeeds('hatena-antenna', [
-  { key: 'group', main: 'http://a.hatena.ne.jp/{username}/rss?gid={groupId}' },
-  { key: 'antenna', main: 'http://a.hatena.ne.jp/{username}/rss' },
-])
+const feeds = withHintLabels(hatenaAntenna.feeds)
 
 // The group nav with one group in bold, the one the page shows.
 const hasSelectedGroup = (content: string): boolean => {

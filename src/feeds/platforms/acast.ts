@@ -1,5 +1,6 @@
+import { acast } from 'feedintel'
 import { getPathSegments, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -10,21 +11,10 @@ export type AcastUrl = { kind: 'show'; slug: string }
 // shows.acast.com is the canonical web host. play.acast.com is a legacy host that
 // 302-redirects to shows.acast.com (slug at path index 1, after /s/). embed.acast.com
 // and the older player.acast.com, which 302-redirects to it, put the slug at path index 0.
-const hosts = ['shows.acast.com', 'play.acast.com', 'embed.acast.com', 'player.acast.com']
+const hosts = acast.hosts.exact
 const legacyHosts = ['play.acast.com']
 
-// feeds.acast.com serves a show by slug or by id. It stays out of `hosts`, where the first path
-// segment would read as the slug.
-const feeds = definePlatformFeeds('acast', [
-  {
-    key: 'podcast',
-    main: 'https://feeds.acast.com/public/shows/{slug}',
-    aliases: [
-      // The legacy feed host answers 301 to the show's feed on feeds.acast.com, by its id.
-      'https://rss.acast.com/{slug}',
-    ],
-  },
-])
+const feeds = withHintLabels(acast.feeds)
 
 export const parseAcastUrl = (url: string): AcastUrl | undefined => {
   if (!isHostOf(url, hosts)) {

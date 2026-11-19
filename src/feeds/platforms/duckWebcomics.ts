@@ -1,5 +1,6 @@
+import { duckWebcomics } from 'feedintel'
 import { getPathSegments, isHostOf, isSameText } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, wordRegex } from '../../common/utils.js'
 
@@ -7,15 +8,11 @@ import { findElement, wordRegex } from '../../common/utils.js'
 
 export type DuckWebcomicsUrl = { kind: 'comic'; comic: string }
 
-const hosts = ['theduckwebcomics.com', 'www.theduckwebcomics.com']
+const hosts = duckWebcomics.hosts.exact
 
 const feedPathRegex = /^\/(\w+)\/rss\/$/i
 
-const feeds = definePlatformFeeds(
-  'duck-webcomics',
-  [{ key: 'comic', main: '{scheme}://{host}/{comic}/rss/' }],
-  { hosts: { exact: hosts } },
-)
+const feeds = withHintLabels(duckWebcomics.feeds)
 
 export const parseDuckWebcomicsUrl = (url: string): DuckWebcomicsUrl | undefined => {
   if (!isHostOf(url, hosts)) {

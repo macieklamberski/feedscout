@@ -1,5 +1,6 @@
+import { ausha } from 'feedintel'
 import { getPathSegments, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -8,14 +9,12 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 export type AushaUrl = { kind: 'show' }
 export type AushaPage = { kind: 'show'; feedId: string }
 
-const hosts = ['podcast.ausha.co', 'smartlink.ausha.co']
+const hosts = ausha.hosts.exact
 
 // The feed id is opaque: show and episode pages carry it only in the markup.
 const feedIdRegex = /feed\.ausha\.co\/(\w+)/i
 
-const feeds = definePlatformFeeds('ausha', [
-  { key: 'podcast', main: 'https://feed.ausha.co/{feedId}' },
-])
+const feeds = withHintLabels(ausha.feeds)
 
 export const parseAushaUrl = (url: string): AushaUrl | undefined => {
   if (!isHostOf(url, hosts)) {

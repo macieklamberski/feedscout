@@ -1,5 +1,6 @@
+import { blogalia } from 'feedintel'
 import { getSubdomain } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -8,17 +9,9 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type BlogaliaUrl = { kind: 'blog' }
 
-const domains = ['blogalia.com']
+const domains = blogalia.hosts.tenants
 
-// `www` is a tenant, as `www.blogalia.com` is Blogalia's own news blog.
-const feeds = definePlatformFeeds(
-  'blogalia',
-  [
-    { key: 'posts', main: '{scheme}://{host}/rdf.xml', format: 'rdf' },
-    { key: 'posts', main: '{scheme}://{host}/rss20.xml', format: 'rss' },
-  ],
-  { hosts: { tenants: domains }, isWwwTenant: true },
-)
+const feeds = withHintLabels(blogalia.feeds)
 
 export const parseBlogaliaUrl = (url: string): BlogaliaUrl | undefined => {
   const blog = getSubdomain(url, domains)
