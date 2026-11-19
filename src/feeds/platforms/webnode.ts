@@ -1,7 +1,8 @@
+import { webnode } from 'feedintel'
 import { getPathSegments, isAnyOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getBrandDomainRegex, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: articles.
@@ -9,25 +10,13 @@ import { findElement, getBrandDomainRegex, hasMarker } from '../../common/utils.
 
 export type WebnodeUrl = { kind: 'section'; section: string } | { kind: 'site' }
 
-// Webnode's country domains, with `webnode.page` and `webnode.cat`.
-const domains = [getBrandDomainRegex('webnode')]
-
 const clientScriptPrefix = 'https://d11bh4d8fhuq47.cloudfront.net/_system/client/'
 
 // Articles, e-shop products and article archives belong to the site, and their slugs can repeat a
 // section's slug.
 const itemPaths = ['archive', 'news', 'products']
 
-// A site on its own domain is known only by its marker, so its feeds are built here but not
-// claimed. The site-wide row comes first, as it also fits the section row.
-const feeds = definePlatformFeeds(
-  'webnode',
-  [
-    { key: 'articles', main: '{scheme}://{host}/rss/all.xml' },
-    { key: 'section', main: '{scheme}://{host}/rss/{section}.xml' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(webnode.feeds)
 
 // The classic editor loads its client script from this host on every page. Webnode 2 pages load
 // none of it and serve no feeds.

@@ -1,3 +1,4 @@
+import { goope } from 'feedintel'
 import {
   getPathSegments,
   isAnyOf,
@@ -7,7 +8,7 @@ import {
   resolveUrl,
   startsWithAnyOf,
 } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
 
@@ -20,61 +21,13 @@ export type GoopeUrl = {
   isAssociationPage: boolean
 }
 
-const hosts = ['r.goope.jp']
+const hosts = goope.hosts.exact
 const domains = ['goope.jp']
 const assetHosts = ['cdn.goope.jp']
 
 const templateRegex = /^t_\d+$/i
 
-// A page under a `t_{id}` template segment links the plain feeds, so the template rows only claim.
-const freeSiteFeeds = definePlatformFeeds('goope', [
-  {
-    key: 'member-news',
-    main: 'https://r.goope.jp/{site}/shokokai/member/feed.rss',
-    format: 'rdf',
-    aliases: ['https://r.goope.jp/{site}/t_{templateId}/shokokai/member/feed.rss'],
-  },
-  {
-    key: 'news',
-    main: 'https://r.goope.jp/{site}/feed.rss',
-    format: 'rdf',
-    aliases: ['https://r.goope.jp/{site}/t_{templateId}/feed.rss'],
-  },
-  // A federation of chambers of commerce collects its chambers' news under /shokokai.
-  {
-    key: 'association-news',
-    main: 'https://r.goope.jp/{site}/shokokai/feed.rss',
-    format: 'rdf',
-    aliases: ['https://r.goope.jp/{site}/t_{templateId}/shokokai/feed.rss'],
-  },
-])
-
-// A site on its own domain is known only by its markers, so its feeds are built but not claimed.
-// Claimed, these rows would read r.goope.jp/shokokai/member/feed.rss, a redirect to goope.jp.
-const siteFeeds = definePlatformFeeds(
-  'goope',
-  [
-    {
-      key: 'member-news',
-      main: '{scheme}://{host}/shokokai/member/feed.rss',
-      format: 'rdf',
-      aliases: ['{scheme}://{host}/t_{templateId}/shokokai/member/feed.rss'],
-    },
-    {
-      key: 'news',
-      main: '{scheme}://{host}/feed.rss',
-      format: 'rdf',
-      aliases: ['{scheme}://{host}/t_{templateId}/feed.rss'],
-    },
-    {
-      key: 'association-news',
-      main: '{scheme}://{host}/shokokai/feed.rss',
-      format: 'rdf',
-      aliases: ['{scheme}://{host}/t_{templateId}/shokokai/feed.rss'],
-    },
-  ],
-  { hosts: { exact: hosts } },
-)
+const feeds = withHintLabels(goope.feeds)
 
 const isQrCode = (src: string | undefined): boolean => {
   const qrCodeUrl = parseUrl(resolveUrl(src ?? ''))
@@ -164,7 +117,7 @@ export const goopeHandler: PlatformHandler = {
       return []
     }
 
-    const pageFeeds = (parsed.kind === 'freeSite' ? freeSiteFeeds : siteFeeds).forUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
     if (!pageFeeds) {
       return []
@@ -190,5 +143,5 @@ export const goopeHandler: PlatformHandler = {
     return [pageFeeds.getFeedEntry('news', params, 'rdf')]
   },
 
-  getFeedHint: freeSiteFeeds.getFeedHint,
+  getFeedHint: feeds.getFeedHint,
 }

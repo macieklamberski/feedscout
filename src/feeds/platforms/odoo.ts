@@ -1,5 +1,6 @@
+import { odoo } from 'feedintel'
 import { isLocale, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getCookieNames, hasMarker } from '../../common/utils.js'
 
@@ -10,21 +11,7 @@ export type OdooUrl = { kind: 'blog'; blog: string }
 // The blog segment is `{slug}-{id}`, after an optional language prefix such as `/fr` or `/en_GB`.
 const blogRegex = /^(?:\/([^/]+))?\/blog\/([^/]+-\d+)(?:\/|$)/i
 
-// Odoo's own site runs on www.odoo.com, and a database on its own domain is known only by its
-// cookies, so feeds on either are built here but not claimed.
-const domains = ['odoo.com']
-
-const feeds = definePlatformFeeds(
-  'odoo',
-  [
-    { key: 'blog', main: '{scheme}://{host}/blog/{blog}/feed', format: 'atom' },
-    { key: 'blog', main: '{scheme}://{host}/{language}/blog/{blog}/feed', format: 'atom' },
-  ],
-  {
-    hosts: { tenants: domains },
-    checks: { language: (value) => isLocale(value, { underscore: true }) },
-  },
-)
+const feeds = withHintLabels(odoo.feeds)
 
 // Odoo 11 and later set both cookies on a first visit to any website page.
 export const isOdooHeaders = (headers: Headers): boolean => {

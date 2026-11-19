@@ -1,5 +1,6 @@
+import { greasyFork } from 'feedintel'
 import { getPathSegments, isHostOf, isLocale, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findDescendant, findElement, getNumericId, hasClass } from '../../common/utils.js'
 
@@ -14,9 +15,7 @@ export type GreasyForkPage =
   | { kind: 'user'; locale: string; userId: string }
   | { kind: 'home'; locale: string }
 
-// Sleazy Fork runs the same software, with its feeds on its own api host.
-const hosts = ['greasyfork.org', 'sleazyfork.org']
-const feedHosts = ['api.greasyfork.org', 'api.sleazyfork.org']
+const hosts = greasyFork.hosts.exact
 
 const userRegex = /^\/users\/([^/]+)/i
 const scriptRegex = /^\/scripts\/\d/i
@@ -24,22 +23,7 @@ const scriptRegex = /^\/scripts\/\d/i
 const userIdRegex = /^(?<id>[^-]+)/
 const authorHrefRegex = /\/users\/(?<id>[^/-]+)/i
 
-// The feeds answer with a redirect to an HTML page without a locale in the path. A user feed lists
-// only the scripts in the locale's language unless `filter_locale=0` is set, while the user page
-// lists them all.
-const feeds = definePlatformFeeds(
-  'greasy-fork',
-  [
-    {
-      key: 'user',
-      main: '{scheme}://{host}/{locale}/scripts.atom?by={userId}&filter_locale=0',
-    },
-    { key: 'user', main: '{scheme}://{host}/{locale}/scripts.atom?by={userId}' },
-    { key: 'new', main: '{scheme}://{host}/{locale}/scripts.atom?sort=created' },
-    { key: 'updated', main: '{scheme}://{host}/{locale}/scripts.atom?sort=updated' },
-  ],
-  { hosts: { exact: feedHosts } },
-)
+const feeds = withHintLabels(greasyFork.feeds)
 
 export const parseGreasyForkUrl = (url: string): GreasyForkUrl | undefined => {
   const parsedUrl = parseUrl(url)

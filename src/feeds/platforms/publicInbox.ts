@@ -1,5 +1,6 @@
+import { publicInbox } from 'feedintel'
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
@@ -9,9 +10,7 @@ export type PublicInboxPage =
   | { kind: 'inbox'; inboxUrl: string }
   | { kind: 'message'; inboxUrl: string; messageId: string }
 
-// lore.kernel.org answers a page request from a browser user agent with an Anubis challenge, and
-// from curl with 403, while its feeds still answer.
-const hosts = ['lore.kernel.org']
+const hosts = publicInbox.hosts.exact
 
 // A file at the root, such as the list of inboxes, is no inbox.
 const fileRegex = /\.(?:html?|txt|json|xml|ico)$/i
@@ -19,18 +18,7 @@ const fileRegex = /\.(?:html?|txt|json|xml|ico)$/i
 // The core navigation links help relative to the page, one `../` per level below the inbox root.
 const helpLinkRegex = /href="((?:\.\.\/)*)_\/text\/help\/?"/i
 
-const feeds = definePlatformFeeds('public-inbox', [
-  { key: 'messages', main: 'https://lore.kernel.org/{inbox}/new.atom' },
-  { key: 'thread', main: 'https://lore.kernel.org/{inbox}/{messageId}/t.atom' },
-])
-
-// An inbox can sit at any depth below its host, so its feeds are built under the inbox URL as the
-// root. A self-hosted inbox has nothing in its URL that names the software, so these are not
-// claimed.
-const inboxFeeds = definePlatformFeeds('public-inbox', [
-  { key: 'messages', main: '{root}/new.atom' },
-  { key: 'thread', main: '{root}/{messageId}/t.atom' },
-])
+const feeds = withHintLabels(publicInbox.feeds)
 
 export const isPublicInboxHtml = (content: string): boolean => {
   return helpLinkRegex.test(content) && content.includes('_/text/color')
@@ -84,7 +72,7 @@ export const publicInboxHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getPublicInboxPage(url, content)
-    const pageFeeds = inboxFeeds.forUrl(url)
+    const pageFeeds = feeds.forUrl(url)
 
     if (!page || !pageFeeds) {
       return []

@@ -1,16 +1,15 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { overblog } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getBrandDomainRegex, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type OverblogUrl = { kind: 'blog' }
 
-const domains = [getBrandDomainRegex('over-blog'), getBrandDomainRegex('overblog'), 'over.blog']
+const domains = overblog.hosts.tenants
 
-const feeds = definePlatformFeeds('overblog', [{ key: 'posts', main: '{scheme}://{host}/rss' }], {
-  hosts: { tenants: domains },
-})
+const feeds = withHintLabels(overblog.feeds)
 
 export const parseOverblogUrl = (url: string): OverblogUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

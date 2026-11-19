@@ -1,5 +1,6 @@
+import { mailchimp } from 'feedintel'
 import { getQueryParam, isSubdomainOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
@@ -9,19 +10,13 @@ export type MailchimpUrl =
   | { kind: 'campaign'; userId: string }
 export type MailchimpPage = { kind: 'archive' | 'campaign'; userId: string; listId: string }
 
-const domains = ['campaign-archive.com']
-// A feed on these answers 302 to the same feed on campaign-archive.com.
-const feedDomains = [...domains, 'campaign-archive1.com', 'campaign-archive2.com']
+const domains = mailchimp.hosts.tenants
 
 const archivePathRegex = /^\/home\/?$/i
 // A campaign page links its archive and feed, whose id is the list the campaign went to.
 const listLinkRegex = /campaign-archive\.com\/(?:home\/|feed)\?u=\w+&(?:amp;)?id=(?<listId>\w+)/i
 
-const feeds = definePlatformFeeds(
-  'mailchimp',
-  [{ key: 'archive', main: '{scheme}://{host}/feed?u={userId}&id={listId}' }],
-  { hosts: { tenants: feedDomains } },
-)
+const feeds = withHintLabels(mailchimp.feeds)
 
 export const parseMailchimpUrl = (url: string): MailchimpUrl | undefined => {
   if (!isSubdomainOf(url, domains)) {

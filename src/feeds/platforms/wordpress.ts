@@ -1,6 +1,7 @@
+import { wordpress } from 'feedintel'
 import { getQueryParam, isAnyOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
-import { definePlatformFeeds, type PlatformFeed } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
 
@@ -13,14 +14,7 @@ export type WordpressUrl =
   | { kind: 'post'; path: string }
   | { kind: 'home' }
 
-const domains = [
-  'edublogs.org',
-  'home.blog',
-  'hypotheses.org',
-  'unblog.fr',
-  'wordpress.com',
-  'wpcomstaging.com',
-]
+const domains = wordpress.hosts.tenants
 const postIdDomains = ['hypotheses.org']
 
 // A nested category's path holds every parent slug and ends at WordPress's endpoint words.
@@ -72,59 +66,9 @@ const archives: Array<{ regex: RegExp; hintKey: string; route?: string }> = [
   { regex: yearRegex, hintKey: 'wordpress:date-archive' },
 ]
 
-// WordPress serves every feed of a page both under its /feed/ path and as a ?feed= query, so each
-// spelling after the first is an alias of it.
-const feedSpellings: Array<[DiscoverUriHint['format'], Array<string>]> = [
-  ['rss', ['/feed/', '/?feed=rss', '/feed/rss2/', '/?feed=rss2']],
-  ['atom', ['/feed/atom/', '/?feed=atom']],
-  ['rdf', ['/feed/rdf/', '/?feed=rdf']],
-]
-
-const postsFormats: Array<DiscoverUriHint['format']> = ['rss', 'atom', 'rdf']
-// WordPress has no RDF comment template, so the RDF form of a comment feed lists posts.
-const commentsFormats: Array<DiscoverUriHint['format']> = ['rss', 'atom']
 const hintPrefix = 'wordpress:'
 
-const archiveKeys = ['category', 'tag', 'author', 'date-archive']
-
-const getFeedRows = (
-  key: string,
-  page: string,
-  formats: Array<DiscoverUriHint['format']>,
-): Array<PlatformFeed> => {
-  return feedSpellings
-    .filter(([format]) => formats.includes(format))
-    .map(([format, [main, ...aliases]]) => {
-      return {
-        key,
-        main: `{root}${page}${main}`,
-        format,
-        aliases: aliases.map((alias) => `{root}${page}${alias}`),
-      }
-    })
-}
-
-// A site on any host is a WordPress site, so the feeds are built under the page's origin, and the
-// claim reads a feed URL back to its page in `getWordpressFeedHint`, which no row can express.
-// The site-wide comments feed takes its query form from the site root, not /comments. Without
-// pretty permalinks, ?feed=comments-rss serves the RSS 0.92 posts template.
-const feeds = definePlatformFeeds('wordpress', [
-  ...archiveKeys.flatMap((key) => getFeedRows(key, '/{path*}', postsFormats)),
-  ...getFeedRows('post-comments', '/{path*}', commentsFormats),
-  ...getFeedRows('posts', '', postsFormats),
-  {
-    key: 'comments',
-    main: '{root}/comments/feed/',
-    format: 'rss',
-    aliases: ['{root}/comments/feed/rss2/', '{root}/?feed=comments-rss2'],
-  },
-  {
-    key: 'comments',
-    main: '{root}/comments/feed/atom/',
-    format: 'atom',
-    aliases: ['{root}/?feed=comments-atom'],
-  },
-])
+const feeds = withHintLabels(wordpress.feeds)
 
 // The page a WordPress URL shows, read from the path, so a WP Engine site reads the same. Only
 // hypotheses.org's post-id paths need the host.

@@ -1,6 +1,7 @@
+import { typecho } from 'feedintel'
 import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
-import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
+import { type PlatformFeedParams, withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   type Element,
@@ -28,85 +29,7 @@ const homePathRegex = /^(?:\/|\/page\/\d+\/?)?$/i
 const assetTags = ['link', 'script']
 const formats: Array<DiscoverUriHint['format']> = ['rss', 'rdf', 'atom']
 
-// A blog on any host is known only by its theme or plugin assets, which a feed URL does not carry,
-// so the feeds are built under the site root and never claimed. A page path keeps its trailing
-// slash, as `/archives/13/`, or its lack of one, as `/archives/13.html`, so each has its own row.
-// The `/index.php` spelling answers whether or not the site rewrites URLs, the short one only when
-// it does, so a site without rewriting gets its feeds through the script.
-const feeds = definePlatformFeeds('typecho', [
-  {
-    key: 'posts',
-    main: '{root}/feed/',
-    format: 'rss',
-    aliases: ['{root}/index.php/feed/'],
-  },
-  {
-    key: 'posts',
-    main: '{root}/feed/rss/',
-    format: 'rdf',
-    aliases: ['{root}/index.php/feed/rss/'],
-  },
-  {
-    key: 'posts',
-    main: '{root}/feed/atom/',
-    format: 'atom',
-    aliases: ['{root}/index.php/feed/atom/'],
-  },
-  {
-    key: 'comments',
-    main: '{root}/feed/comments/',
-    format: 'rss',
-    aliases: ['{root}/index.php/feed/comments/'],
-  },
-  {
-    key: 'comments',
-    main: '{root}/feed/rss/comments/',
-    format: 'rdf',
-    aliases: ['{root}/index.php/feed/rss/comments/'],
-  },
-  {
-    key: 'comments',
-    main: '{root}/feed/atom/comments/',
-    format: 'atom',
-    aliases: ['{root}/index.php/feed/atom/comments/'],
-  },
-  {
-    key: 'page',
-    main: '{root}/feed/{directory*}/',
-    format: 'rss',
-    aliases: ['{root}/index.php/feed/{directory*}/'],
-  },
-  {
-    key: 'page',
-    main: '{root}/feed/{path*}',
-    format: 'rss',
-    aliases: ['{root}/index.php/feed/{path*}'],
-  },
-  {
-    key: 'page',
-    main: '{root}/feed/rss/{directory*}/',
-    format: 'rdf',
-    aliases: ['{root}/index.php/feed/rss/{directory*}/'],
-  },
-  {
-    key: 'page',
-    main: '{root}/feed/rss/{path*}',
-    format: 'rdf',
-    aliases: ['{root}/index.php/feed/rss/{path*}'],
-  },
-  {
-    key: 'page',
-    main: '{root}/feed/atom/{directory*}/',
-    format: 'atom',
-    aliases: ['{root}/index.php/feed/atom/{directory*}/'],
-  },
-  {
-    key: 'page',
-    main: '{root}/feed/atom/{path*}',
-    format: 'atom',
-    aliases: ['{root}/index.php/feed/atom/{path*}'],
-  },
-])
+const feeds = withHintLabels(typecho.feeds)
 
 type TypechoFeedKey = Parameters<typeof feeds.getFeedSpellings>[0]
 

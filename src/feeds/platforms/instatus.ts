@@ -1,5 +1,6 @@
-import { isHostOrSubdomainOf, isLocale, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { instatus } from 'feedintel'
+import { isHostOrSubdomainOf, parseUrl } from 'trousse'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
@@ -10,28 +11,9 @@ import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 export type InstatusUrl = { kind: 'status' }
 
 const pageMarkers = ['custom-html-above-header', 'custom-html-below-footer']
-const domains = ['instatus.com']
+const domains = instatus.hosts.tenants
 
-// A status page on its own domain is known only by its markers, so its feeds are built here but
-// not claimed. A translation's feeds serve the same items as the bare ones.
-const feeds = definePlatformFeeds(
-  'instatus',
-  [
-    {
-      key: 'history',
-      main: '{scheme}://{host}/history.rss',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/{language}/history.rss'],
-    },
-    {
-      key: 'history',
-      main: '{scheme}://{host}/history.atom',
-      format: 'atom',
-      aliases: ['{scheme}://{host}/{language}/history.atom'],
-    },
-  ],
-  { hosts: { tenants: domains }, checks: { language: isLocale } },
-)
+const feeds = withHintLabels(instatus.feeds)
 
 export const isInstatusHtml = (content: string): boolean => {
   return pageMarkers.every((marker) => content.includes(marker))

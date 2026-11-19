@@ -1,12 +1,8 @@
+import { ucoz } from 'feedintel'
 import { getAnyOf, getPathSegments, isHostOrSubdomainOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  getBrandDomainRegex,
-  getCookieNames,
-  getTenantSubdomain,
-  hasMarker,
-} from '../../common/utils.js'
+import { getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: forum, forum-section, publ.
@@ -19,9 +15,7 @@ export type UcozUrl =
   | { kind: 'module'; module: UcozModule }
   | { kind: 'forumSection'; sectionId: string }
 
-// uCoz's own `ucoz.*` domains. A site on uCoz's free domains, such as at.ua or narod.ru, or on its
-// own domain is known only by its marker, so its feeds are built but not claimed.
-const domains = [getBrandDomainRegex('ucoz')]
+const domains = ucoz.hosts.tenants
 
 // uCoz names its cookie `{cluster}{site}uCoz` after the site's system subdomain, custom domains
 // too, where the cluster is a digit or, on narod.ru, a letter.
@@ -31,25 +25,7 @@ const forumSectionRegex = /^([1-9]\d*)(?:-|$)/
 
 const modules = ['blog', 'board', 'dir', 'forum', 'load', 'news', 'photo', 'publ', 'stuff'] as const
 
-const feeds = definePlatformFeeds(
-  'ucoz',
-  [
-    ...modules
-      .filter((module) => module !== 'forum')
-      .map((module) => ({
-        key: module,
-        main: `{scheme}://{host}/${module}/rss`,
-      })),
-    {
-      key: 'forum',
-      main: '{scheme}://{host}/forum/rss',
-      // uCoz serves the forum feed as section 0 too.
-      aliases: ['{scheme}://{host}/forum/0-0-0-37'],
-    },
-    { key: 'forum-section', main: '{scheme}://{host}/forum/{sectionId}-0-0-37' },
-  ],
-  { hosts: { tenants: domains }, isWwwTenantPrefix: true },
-)
+const feeds = withHintLabels(ucoz.feeds)
 
 export const isUcozHeaders = (headers: Headers): boolean => {
   return getCookieNames(headers).some((name) => cookieNameRegex.test(name))
