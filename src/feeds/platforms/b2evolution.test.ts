@@ -135,11 +135,11 @@ const blogFeeds: Array<DiscoverUriEntry> = [
     hint: { key: 'b2evolution:posts', label: 'Posts', format: 'atom' },
   },
   {
-    uri: 'https://example.com/?tempskin=_rss2&disp=comments',
+    uri: 'https://example.com/?disp=comments&tempskin=_rss2',
     hint: { key: 'b2evolution:comments', label: 'Comments', format: 'rss' },
   },
   {
-    uri: 'https://example.com/?tempskin=_atom&disp=comments',
+    uri: 'https://example.com/?disp=comments&tempskin=_atom',
     hint: { key: 'b2evolution:comments', label: 'Comments', format: 'atom' },
   },
 ]
@@ -253,11 +253,11 @@ describe('b2evolutionHandler', () => {
           hint: { key: 'b2evolution:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://example.com/blogs/index.php?blog=3&tempskin=_rss2&disp=comments',
+          uri: 'https://example.com/blogs/index.php?blog=3&disp=comments&tempskin=_rss2',
           hint: { key: 'b2evolution:comments', label: 'Comments', format: 'rss' },
         },
         {
-          uri: 'https://example.com/blogs/index.php?blog=3&tempskin=_atom&disp=comments',
+          uri: 'https://example.com/blogs/index.php?blog=3&disp=comments&tempskin=_atom',
           hint: { key: 'b2evolution:comments', label: 'Comments', format: 'atom' },
         },
       ]
@@ -301,11 +301,11 @@ describe('b2evolutionHandler', () => {
           hint: { key: 'b2evolution:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://example.com/index.php?blog=2&tempskin=_rss2&disp=comments',
+          uri: 'https://example.com/index.php?blog=2&disp=comments&tempskin=_rss2',
           hint: { key: 'b2evolution:comments', label: 'Comments', format: 'rss' },
         },
         {
-          uri: 'https://example.com/index.php?blog=2&tempskin=_atom&disp=comments',
+          uri: 'https://example.com/index.php?blog=2&disp=comments&tempskin=_atom',
           hint: { key: 'b2evolution:comments', label: 'Comments', format: 'atom' },
         },
       ]
@@ -326,11 +326,11 @@ describe('b2evolutionHandler', () => {
           hint: { key: 'b2evolution:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://example.com/index.php?blog=2&tempskin=_rss2&disp=comments',
+          uri: 'https://example.com/index.php?blog=2&disp=comments&tempskin=_rss2',
           hint: { key: 'b2evolution:comments', label: 'Comments', format: 'rss' },
         },
         {
-          uri: 'https://example.com/index.php?blog=2&tempskin=_atom&disp=comments',
+          uri: 'https://example.com/index.php?blog=2&disp=comments&tempskin=_atom',
           hint: { key: 'b2evolution:comments', label: 'Comments', format: 'atom' },
         },
       ]
@@ -351,11 +351,11 @@ describe('b2evolutionHandler', () => {
           hint: { key: 'b2evolution:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://example.com/index.php?blog=2&cat=%E6%97%A5%E6%9C%AC&tempskin=_rss2&disp=comments',
+          uri: 'https://example.com/index.php?blog=2&cat=%E6%97%A5%E6%9C%AC&disp=comments&tempskin=_rss2',
           hint: { key: 'b2evolution:comments', label: 'Comments', format: 'rss' },
         },
         {
-          uri: 'https://example.com/index.php?blog=2&cat=%E6%97%A5%E6%9C%AC&tempskin=_atom&disp=comments',
+          uri: 'https://example.com/index.php?blog=2&cat=%E6%97%A5%E6%9C%AC&disp=comments&tempskin=_atom',
           hint: { key: 'b2evolution:comments', label: 'Comments', format: 'atom' },
         },
       ]
@@ -376,11 +376,11 @@ describe('b2evolutionHandler', () => {
           hint: { key: 'b2evolution:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://example.com/index.php?blog=2&tempskin=_rss2&disp=comments',
+          uri: 'https://example.com/index.php?blog=2&disp=comments&tempskin=_rss2',
           hint: { key: 'b2evolution:comments', label: 'Comments', format: 'rss' },
         },
         {
-          uri: 'https://example.com/index.php?blog=2&tempskin=_atom&disp=comments',
+          uri: 'https://example.com/index.php?blog=2&disp=comments&tempskin=_atom',
           hint: { key: 'b2evolution:comments', label: 'Comments', format: 'atom' },
         },
       ]

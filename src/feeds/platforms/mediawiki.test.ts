@@ -56,11 +56,11 @@ describe('mediawikiHandler', () => {
       `
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.org/w/index.php?title=Atom_%28web_standard%29&action=history&feed=atom',
+          uri: 'https://example.org/w/index.php?action=history&feed=atom&title=Atom_%28web_standard%29',
           hint: { key: 'mediawiki:history', label: 'Page history', format: 'atom' },
         },
         {
-          uri: 'https://example.org/w/index.php?title=Special%3ARecentChanges&feed=atom',
+          uri: 'https://example.org/w/index.php?feed=atom&title=Special%3ARecentChanges',
           hint: { key: 'mediawiki:recent-changes', label: 'Recent changes', format: 'atom' },
         },
       ]
@@ -104,7 +104,7 @@ describe('mediawikiHandler', () => {
       `
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.org/w/index.php?title=Special%3ARecentChanges&feed=atom',
+          uri: 'https://example.org/w/index.php?feed=atom&title=Special%3ARecentChanges',
           hint: { key: 'mediawiki:recent-changes', label: 'Recent changes', format: 'atom' },
         },
       ]
@@ -116,7 +116,7 @@ describe('mediawikiHandler', () => {
       const value = 'https://example.org/wiki/Main_Page'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.org/w/index.php?title=Special%3ARecentChanges&feed=atom',
+          uri: 'https://example.org/w/index.php?feed=atom&title=Special%3ARecentChanges',
           hint: { key: 'mediawiki:recent-changes', label: 'Recent changes', format: 'atom' },
         },
       ]
@@ -135,7 +135,7 @@ describe('mediawikiHandler', () => {
       `
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.org/w/index.php?title=Special%3ARecentChanges&feed=atom',
+          uri: 'https://example.org/w/index.php?feed=atom&title=Special%3ARecentChanges',
           hint: { key: 'mediawiki:recent-changes', label: 'Recent changes', format: 'atom' },
         },
       ]

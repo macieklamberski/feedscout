@@ -544,11 +544,11 @@ describe('dspaceHandler', () => {
       const value = 'https://example.com/collections/376236b0-16ee-4ede-a680-dfa9c0b88e70'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://api.example.org/server/opensearch/search?format=atom&scope=376236b0-16ee-4ede-a680-dfa9c0b88e70&query=*',
+          uri: 'https://api.example.org/server/opensearch/search?format=atom&query=*&scope=376236b0-16ee-4ede-a680-dfa9c0b88e70',
           hint: { key: 'dspace:collection', label: 'Collection', format: 'atom' },
         },
         {
-          uri: 'https://api.example.org/server/opensearch/search?format=rss&scope=376236b0-16ee-4ede-a680-dfa9c0b88e70&query=*',
+          uri: 'https://api.example.org/server/opensearch/search?format=rss&query=*&scope=376236b0-16ee-4ede-a680-dfa9c0b88e70',
           hint: { key: 'dspace:collection', label: 'Collection', format: 'rss' },
         },
         {
@@ -568,11 +568,11 @@ describe('dspaceHandler', () => {
       const value = 'https://example.com/communities/0785bafa-41ec-44b7-b228-246c5981f4e0'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://api.example.org/server/opensearch/search?format=atom&scope=0785bafa-41ec-44b7-b228-246c5981f4e0&query=*',
+          uri: 'https://api.example.org/server/opensearch/search?format=atom&query=*&scope=0785bafa-41ec-44b7-b228-246c5981f4e0',
           hint: { key: 'dspace:community', label: 'Community', format: 'atom' },
         },
         {
-          uri: 'https://api.example.org/server/opensearch/search?format=rss&scope=0785bafa-41ec-44b7-b228-246c5981f4e0&query=*',
+          uri: 'https://api.example.org/server/opensearch/search?format=rss&query=*&scope=0785bafa-41ec-44b7-b228-246c5981f4e0',
           hint: { key: 'dspace:community', label: 'Community', format: 'rss' },
         },
         {

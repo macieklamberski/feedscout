@@ -166,7 +166,7 @@ describe('sportsregionsHandler', () => {
       const value = 'https://example-club.sportsregions.fr/evenements?type_id=1&groupe_id=12345'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example-club.sportsregions.fr/rss/evenement?type_id=1&groupe_id=12345',
+          uri: 'https://example-club.sportsregions.fr/rss/evenement?groupe_id=12345&type_id=1',
           hint: { key: 'sportsregions:filtered-events', label: 'Filtered events' },
         },
         {

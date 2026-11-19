@@ -117,19 +117,19 @@ describe('pmwikiHandler', () => {
       const value = 'https://example.com/wiki/Cookbook/WebFeeds'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/wiki?n=Cookbook.RecentChanges&action=rss',
+          uri: 'https://example.com/wiki?action=rss&n=Cookbook.RecentChanges',
           hint: { key: 'pmwiki:group-changes', label: 'Group changes', format: 'rss' },
         },
         {
-          uri: 'https://example.com/wiki?n=Cookbook.RecentChanges&action=atom',
+          uri: 'https://example.com/wiki?action=atom&n=Cookbook.RecentChanges',
           hint: { key: 'pmwiki:group-changes', label: 'Group changes', format: 'atom' },
         },
         {
-          uri: 'https://example.com/wiki?n=Site.AllRecentChanges&action=rss',
+          uri: 'https://example.com/wiki?action=rss&n=Site.AllRecentChanges',
           hint: { key: 'pmwiki:site-changes', label: 'Site changes', format: 'rss' },
         },
         {
-          uri: 'https://example.com/wiki?n=Site.AllRecentChanges&action=atom',
+          uri: 'https://example.com/wiki?action=atom&n=Site.AllRecentChanges',
           hint: { key: 'pmwiki:site-changes', label: 'Site changes', format: 'atom' },
         },
       ]
@@ -151,11 +151,11 @@ describe('pmwikiHandler', () => {
       const value = 'https://example.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/?n=Site.AllRecentChanges&action=rss',
+          uri: 'https://example.com/?action=rss&n=Site.AllRecentChanges',
           hint: { key: 'pmwiki:site-changes', label: 'Site changes', format: 'rss' },
         },
         {
-          uri: 'https://example.com/?n=Site.AllRecentChanges&action=atom',
+          uri: 'https://example.com/?action=atom&n=Site.AllRecentChanges',
           hint: { key: 'pmwiki:site-changes', label: 'Site changes', format: 'atom' },
         },
       ]

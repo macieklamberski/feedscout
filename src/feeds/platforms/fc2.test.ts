@@ -95,11 +95,11 @@ describe('fc2Handler', () => {
       const expected = [
         { uri: 'https://example.blog.fc2.com/?xml', hint: { key: 'fc2:posts', label: 'Posts' } },
         {
-          uri: 'https://example.blog.fc2.com/?xml&comment',
+          uri: 'https://example.blog.fc2.com/?comment&xml',
           hint: { key: 'fc2:comments', label: 'Comments' },
         },
         {
-          uri: 'https://example.blog.fc2.com/?xml&trackback',
+          uri: 'https://example.blog.fc2.com/?trackback&xml',
           hint: { key: 'fc2:trackbacks', label: 'Trackbacks' },
         },
       ]
@@ -111,16 +111,16 @@ describe('fc2Handler', () => {
       const value = 'http://example.blog26.fc2.com/blog-category-12.html'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://example.blog26.fc2.com/?xml&category=12',
+          uri: 'http://example.blog26.fc2.com/?category=12&xml',
           hint: { key: 'fc2:category', label: 'Category' },
         },
         { uri: 'http://example.blog26.fc2.com/?xml', hint: { key: 'fc2:posts', label: 'Posts' } },
         {
-          uri: 'http://example.blog26.fc2.com/?xml&comment',
+          uri: 'http://example.blog26.fc2.com/?comment&xml',
           hint: { key: 'fc2:comments', label: 'Comments' },
         },
         {
-          uri: 'http://example.blog26.fc2.com/?xml&trackback',
+          uri: 'http://example.blog26.fc2.com/?trackback&xml',
           hint: { key: 'fc2:trackbacks', label: 'Trackbacks' },
         },
       ]
@@ -132,16 +132,16 @@ describe('fc2Handler', () => {
       const value = 'https://example.fc2.net/?tag=example'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.fc2.net/?xml&utag=example',
+          uri: 'https://example.fc2.net/?utag=example&xml',
           hint: { key: 'fc2:tag', label: 'Tag' },
         },
         { uri: 'https://example.fc2.net/?xml', hint: { key: 'fc2:posts', label: 'Posts' } },
         {
-          uri: 'https://example.fc2.net/?xml&comment',
+          uri: 'https://example.fc2.net/?comment&xml',
           hint: { key: 'fc2:comments', label: 'Comments' },
         },
         {
-          uri: 'https://example.fc2.net/?xml&trackback',
+          uri: 'https://example.fc2.net/?trackback&xml',
           hint: { key: 'fc2:trackbacks', label: 'Trackbacks' },
         },
       ]
@@ -154,11 +154,11 @@ describe('fc2Handler', () => {
       const expected = [
         { uri: 'http://example.blog26.fc2.com/?xml', hint: { key: 'fc2:posts', label: 'Posts' } },
         {
-          uri: 'http://example.blog26.fc2.com/?xml&comment',
+          uri: 'http://example.blog26.fc2.com/?comment&xml',
           hint: { key: 'fc2:comments', label: 'Comments' },
         },
         {
-          uri: 'http://example.blog26.fc2.com/?xml&trackback',
+          uri: 'http://example.blog26.fc2.com/?trackback&xml',
           hint: { key: 'fc2:trackbacks', label: 'Trackbacks' },
         },
       ]
@@ -275,7 +275,7 @@ describe('fc2Handler', () => {
       ['http://example.blog26.fc2.com/?comment=&xml=', { key: 'fc2:comments', label: 'Comments' }],
       ['https://example.fc2.net/?trackback=&xml=', { key: 'fc2:trackbacks', label: 'Trackbacks' }],
       [
-        'http://example.blog26.fc2.com/?xml&category=12',
+        'http://example.blog26.fc2.com/?category=12&xml',
         { key: 'fc2:category', label: 'Category' },
       ],
       ['https://example.fc2.net/?utag=example&xml', { key: 'fc2:tag', label: 'Tag' }],

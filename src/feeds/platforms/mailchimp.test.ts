@@ -118,7 +118,7 @@ describe('mailchimpHandler', () => {
       const value = 'https://us1.campaign-archive.com/home/?u=abc&id=def%23x'
       const expected = [
         {
-          uri: 'https://us1.campaign-archive.com/feed?u=abc&id=def%23x',
+          uri: 'https://us1.campaign-archive.com/feed?id=def%23x&u=abc',
           hint: { key: 'mailchimp:archive', label: 'Archive' },
         },
       ]
@@ -134,7 +134,7 @@ describe('mailchimpHandler', () => {
       const value = 'https://us17.campaign-archive.com/home/?u=abc123&id=def456'
       const expected = [
         {
-          uri: 'https://us17.campaign-archive.com/feed?u=abc123&id=def456',
+          uri: 'https://us17.campaign-archive.com/feed?id=def456&u=abc123',
           hint: { key: 'mailchimp:archive', label: 'Archive' },
         },
       ]
@@ -152,7 +152,7 @@ describe('mailchimpHandler', () => {
       `
       const expected = [
         {
-          uri: 'https://us17.campaign-archive.com/feed?u=abc123&id=fed789',
+          uri: 'https://us17.campaign-archive.com/feed?id=fed789&u=abc123',
           hint: { key: 'mailchimp:archive', label: 'Archive' },
         },
       ]
@@ -170,7 +170,7 @@ describe('mailchimpHandler', () => {
       `
       const expected = [
         {
-          uri: 'https://us17.campaign-archive.com/feed?u=abc123&id=fed789',
+          uri: 'https://us17.campaign-archive.com/feed?id=fed789&u=abc123',
           hint: { key: 'mailchimp:archive', label: 'Archive' },
         },
       ]

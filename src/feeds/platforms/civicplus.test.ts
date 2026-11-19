@@ -119,7 +119,7 @@ describe('civicplusHandler', () => {
     it('should return the news flash feed', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/RSSFeed.aspx?ModID=1&CID=All-newsflash.xml',
+          uri: 'https://example.com/RSSFeed.aspx?CID=All-newsflash.xml&ModID=1',
           hint: { key: 'civicplus:news-flash', label: 'News Flash' },
         },
       ]
@@ -132,7 +132,7 @@ describe('civicplusHandler', () => {
     it('should return the jobs feed', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/RSSFeed.aspx?ModID=66&CID=All-0&CommunityJobs=False',
+          uri: 'https://example.com/RSSFeed.aspx?CID=All-0&CommunityJobs=False&ModID=66',
           hint: { key: 'civicplus:jobs', label: 'Jobs' },
         },
       ]
@@ -143,7 +143,7 @@ describe('civicplusHandler', () => {
     it('should return the pages feed for the home page', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/RSSFeed.aspx?ModID=76&CID=All-0',
+          uri: 'https://example.com/RSSFeed.aspx?CID=All-0&ModID=76',
           hint: { key: 'civicplus:pages', label: 'Pages' },
         },
       ]
@@ -155,7 +155,7 @@ describe('civicplusHandler', () => {
       const value = 'https://example.com/QuickLinks.aspx'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/RSSFeed.aspx?ModID=76&CID=All-0',
+          uri: 'https://example.com/RSSFeed.aspx?CID=All-0&ModID=76',
           hint: { key: 'civicplus:pages', label: 'Pages' },
         },
       ]

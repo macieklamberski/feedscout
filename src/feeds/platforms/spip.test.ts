@@ -236,7 +236,7 @@ describe('spipHandler', () => {
       const value = 'https://example.com/spip.php?article869'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/spip.php?page=comments-rss&id_article=869',
+          uri: 'https://example.com/spip.php?id_article=869&page=comments-rss',
           hint: { key: 'spip:article-comments', label: 'Article comments' },
         },
         {
@@ -252,7 +252,7 @@ describe('spipHandler', () => {
       const value = 'https://example.com/spip.php?rubrique1'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/spip.php?page=backend&id_rubrique=1',
+          uri: 'https://example.com/spip.php?id_rubrique=1&page=backend',
           hint: { key: 'spip:section', label: 'Section' },
         },
         {
@@ -268,7 +268,7 @@ describe('spipHandler', () => {
       const value = 'https://example.com/spip.php?mot70'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/spip.php?page=backend&id_mot=70',
+          uri: 'https://example.com/spip.php?id_mot=70&page=backend',
           hint: { key: 'spip:keyword', label: 'Keyword' },
         },
         {
@@ -284,7 +284,7 @@ describe('spipHandler', () => {
       const value = 'https://example.com/spip.php?auteur413'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/spip.php?page=backend&id_auteur=413',
+          uri: 'https://example.com/spip.php?id_auteur=413&page=backend',
           hint: { key: 'spip:author', label: 'Author' },
         },
         {

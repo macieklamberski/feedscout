@@ -489,7 +489,7 @@ describe('lemmyHandler', () => {
       const value = 'https://example.com/c/programming?sort=Hot&limit=5'
       const expected = [
         {
-          uri: 'https://example.com/feeds/c/programming.xml?sort=Hot&limit=5',
+          uri: 'https://example.com/feeds/c/programming.xml?limit=5&sort=Hot',
           hint: { key: 'lemmy:community', label: 'Community' },
         },
       ]

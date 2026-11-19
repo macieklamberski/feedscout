@@ -227,7 +227,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:tag', label: 'Tag', format: 'atom' },
         },
         {
-          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?tags=rock&format=rss_200',
+          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?format=rss_200&tags=rock',
           hint: { key: 'flickr:tag', label: 'Tag', format: 'rss' },
         },
         {
@@ -275,7 +275,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:tag', label: 'Tag', format: 'atom' },
         },
         {
-          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?tags=rock%26roll&format=rss_200',
+          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?format=rss_200&tags=rock%26roll',
           hint: { key: 'flickr:tag', label: 'Tag', format: 'rss' },
         },
         {
@@ -323,7 +323,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:tag', label: 'Tag', format: 'atom' },
         },
         {
-          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?tags=c%2B%2B&format=rss_200',
+          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?format=rss_200&tags=c%2B%2B',
           hint: { key: 'flickr:tag', label: 'Tag', format: 'rss' },
         },
         {
@@ -1246,7 +1246,7 @@ describe('flickrHandler', () => {
         { key: 'flickr:recent-geo', label: 'Uploads from everyone with location', format: 'atom' },
       ],
       [
-        'https://www.flickr.com/services/feeds/groups_pool.gne?id=42097308@N00&format=rss_200',
+        'https://www.flickr.com/services/feeds/groups_pool.gne?format=rss_200&id=42097308@N00',
         { key: 'flickr:group-pool', label: 'Group pool', format: 'rss' },
       ],
       [

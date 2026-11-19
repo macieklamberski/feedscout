@@ -75,7 +75,7 @@ describe('bingHandler', () => {
       const value = 'https://www.bing.com/search?q=feedscout&form=QBLH'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://www.bing.com/search?q=feedscout&format=rss',
+          uri: 'https://www.bing.com/search?format=rss&q=feedscout',
           hint: { key: 'bing:search', label: 'Search' },
         },
       ]
@@ -87,7 +87,7 @@ describe('bingHandler', () => {
       const value = 'https://www.bing.com/search?q=site%3Agithub.io+c%2B%2B'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://www.bing.com/search?q=site:github.io%20c%2B%2B&format=rss',
+          uri: 'https://www.bing.com/search?format=rss&q=site:github.io%20c%2B%2B',
           hint: { key: 'bing:search', label: 'Search' },
         },
       ]
@@ -99,7 +99,7 @@ describe('bingHandler', () => {
       const value = 'https://www.bing.com/news/search?q=rss&FORM=HDRSC6'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://www.bing.com/news/search?q=rss&format=rss',
+          uri: 'https://www.bing.com/news/search?format=rss&q=rss',
           hint: { key: 'bing:news', label: 'News search' },
         },
       ]
@@ -111,7 +111,7 @@ describe('bingHandler', () => {
       const value = 'https://cn.bing.com/news/search?q=rss'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://cn.bing.com/news/search?q=rss&format=rss',
+          uri: 'https://cn.bing.com/news/search?format=rss&q=rss',
           hint: { key: 'bing:news', label: 'News search' },
         },
       ]

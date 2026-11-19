@@ -206,7 +206,7 @@ describe('squarespaceHandler', () => {
       const value = 'https://alice.squarespace.com/blog?tag=podcast'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.squarespace.com/blog?tag=podcast&format=rss',
+          uri: 'https://alice.squarespace.com/blog?format=rss&tag=podcast',
           hint: { key: 'squarespace:tag', label: 'Tag' },
         },
         {

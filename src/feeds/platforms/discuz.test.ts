@@ -145,7 +145,7 @@ describe('discuzHandler', () => {
       const value = 'https://example.com/Forum-22-1.html'
       const expected = [
         {
-          uri: 'https://example.com/forum.php?mod=rss&fid=22&auth=0',
+          uri: 'https://example.com/forum.php?auth=0&fid=22&mod=rss',
           hint: { key: 'discuz:board', label: 'Board' },
         },
         {
@@ -161,7 +161,7 @@ describe('discuzHandler', () => {
       const value = 'https://example.com/forum-22-1.html'
       const expected = [
         {
-          uri: 'https://example.com/forum.php?mod=rss&fid=22&auth=0',
+          uri: 'https://example.com/forum.php?auth=0&fid=22&mod=rss',
           hint: { key: 'discuz:board', label: 'Board' },
         },
         {
@@ -177,7 +177,7 @@ describe('discuzHandler', () => {
       const value = 'https://example.com/forum.php?mod=forumdisplay&fid=45'
       const expected = [
         {
-          uri: 'https://example.com/forum.php?mod=rss&fid=45&auth=0',
+          uri: 'https://example.com/forum.php?auth=0&fid=45&mod=rss',
           hint: { key: 'discuz:board', label: 'Board' },
         },
         {
@@ -193,7 +193,7 @@ describe('discuzHandler', () => {
       const value = 'https://example.com/forum.php?mod=forumdisplay&fid=45'
       const expected = [
         {
-          uri: 'https://example.com/forum.php?mod=rss&fid=45&auth=0',
+          uri: 'https://example.com/forum.php?auth=0&fid=45&mod=rss',
           hint: { key: 'discuz:board', label: 'Board' },
         },
         {
@@ -209,7 +209,7 @@ describe('discuzHandler', () => {
       const value = 'https://example.com/forum/forum-32-1.html'
       const expected = [
         {
-          uri: 'https://example.com/forum/forum.php?mod=rss&fid=32&auth=0',
+          uri: 'https://example.com/forum/forum.php?auth=0&fid=32&mod=rss',
           hint: { key: 'discuz:board', label: 'Board' },
         },
         {
@@ -273,7 +273,7 @@ describe('discuzHandler', () => {
       const value = 'https://example.com/forum/archiver/?fid-32.html'
       const expected = [
         {
-          uri: 'https://example.com/forum/forum.php?mod=rss&fid=32&auth=0',
+          uri: 'https://example.com/forum/forum.php?auth=0&fid=32&mod=rss',
           hint: { key: 'discuz:board', label: 'Board' },
         },
         {
@@ -301,7 +301,7 @@ describe('discuzHandler', () => {
       const value = 'http://example.com/bbs/archiver/?fid-113.html'
       const expected = [
         {
-          uri: 'http://example.com/bbs/rss.php?fid=113&auth=0',
+          uri: 'http://example.com/bbs/rss.php?auth=0&fid=113',
           hint: { key: 'discuz:board', label: 'Board' },
         },
         {
@@ -317,7 +317,7 @@ describe('discuzHandler', () => {
       const value = 'http://example.com/forumdisplay.php?fid=113'
       const expected = [
         {
-          uri: 'http://example.com/rss.php?fid=113&auth=0',
+          uri: 'http://example.com/rss.php?auth=0&fid=113',
           hint: { key: 'discuz:board', label: 'Board' },
         },
         {
@@ -345,7 +345,7 @@ describe('discuzHandler', () => {
       const value = 'http://example.com/forumdisplay.php?fid=6'
       const expected = [
         {
-          uri: 'http://example.com/rss.php?fid=6&auth=0',
+          uri: 'http://example.com/rss.php?auth=0&fid=6',
           hint: { key: 'discuz:board', label: 'Board' },
         },
         {
@@ -361,7 +361,7 @@ describe('discuzHandler', () => {
       const value = 'http://example.com/bbs/forumdisplay.php?fid=27'
       const expected = [
         {
-          uri: 'http://example.com/bbs/rss.php?fid=27&auth=0',
+          uri: 'http://example.com/bbs/rss.php?auth=0&fid=27',
           hint: { key: 'discuz:board', label: 'Board' },
         },
         {
@@ -377,7 +377,7 @@ describe('discuzHandler', () => {
       const value = 'http://example.com/bbs/forumdisplay.php?fid=6'
       const expected = [
         {
-          uri: 'http://example.com/bbs/rss.php?fid=6&auth=0',
+          uri: 'http://example.com/bbs/rss.php?auth=0&fid=6',
           hint: { key: 'discuz:board', label: 'Board' },
         },
         {

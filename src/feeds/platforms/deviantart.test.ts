@@ -159,7 +159,7 @@ describe('deviantartHandler', () => {
       const value = 'https://deviantart.com/alice'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=by:alice%20sort:time%20meta:all',
+          uri: 'https://backend.deviantart.com/rss.xml?q=by:alice%20sort:time%20meta:all&type=deviation',
           hint: { key: 'deviantart:deviations', label: 'Deviations' },
         },
       ]
@@ -171,7 +171,7 @@ describe('deviantartHandler', () => {
       const value = 'https://deviantart.com/alice/gallery/123456/folder-name'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=gallery:alice/123456',
+          uri: 'https://backend.deviantart.com/rss.xml?q=gallery:alice/123456&type=deviation',
           hint: { key: 'deviantart:gallery', label: 'Gallery' },
         },
       ]
@@ -183,7 +183,7 @@ describe('deviantartHandler', () => {
       const value = 'https://deviantart.com/alice/favourites'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=favby:alice',
+          uri: 'https://backend.deviantart.com/rss.xml?q=favby:alice&type=deviation',
           hint: { key: 'deviantart:favorites', label: 'Favorites' },
         },
       ]
@@ -201,7 +201,7 @@ describe('deviantartHandler', () => {
       const value = 'https://deviantart.com/alice/journal'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?type=journal&q=by:alice',
+          uri: 'https://backend.deviantart.com/rss.xml?q=by:alice&type=journal',
           hint: { key: 'deviantart:journal', label: 'Journal' },
         },
       ]

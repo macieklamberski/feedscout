@@ -254,7 +254,7 @@ describe('definePlatformFeeds', () => {
 
     it('should write a query value through composeQuery', () => {
       const value = feeds.getFeedUrl('search', { username: 'alice' })
-      const expected = 'https://feeds.example.com/rss.xml?type=item&q=by:alice%20sort:time'
+      const expected = 'https://feeds.example.com/rss.xml?q=by:alice%20sort:time&type=item'
 
       expect(value).toBe(expected)
     })
@@ -275,7 +275,7 @@ describe('definePlatformFeeds', () => {
 
     it('should write a query flag beside a query value', () => {
       const value = feeds.getFeedUrl('page', { username: 'alice', page: '2' })
-      const expected = 'https://www.example.com/pages/alice?rss&page=2'
+      const expected = 'https://www.example.com/pages/alice?page=2&rss'
 
       expect(value).toBe(expected)
     })
@@ -1494,7 +1494,7 @@ describe('definePlatformFeeds', () => {
           query: 'option=com_content&view=category&id=12',
         }
         const expected =
-          'https://example.com/index.php?option=com_content&view=category&id=12&format=feed&type=rss'
+          'https://example.com/index.php?format=feed&id=12&option=com_content&type=rss&view=category'
 
         expect(passedQueryFeeds.getFeedUrl('view', value)).toBe(expected)
       })
@@ -1504,7 +1504,7 @@ describe('definePlatformFeeds', () => {
           root: 'https://example.com',
           query: 'keywords=nurse',
         }
-        const expected = 'https://example.com/jobs/feed?sort=date&keywords=nurse'
+        const expected = 'https://example.com/jobs/feed?keywords=nurse&sort=date'
 
         expect(passedQueryFeeds.getFeedUrl('search', value)).toBe(expected)
       })
@@ -1524,7 +1524,7 @@ describe('definePlatformFeeds', () => {
           root: 'https://example.com',
           query: 'option=com_content&format=html',
         }
-        const expected = 'https://example.com/index.php?option=com_content&format=feed&type=rss'
+        const expected = 'https://example.com/index.php?format=feed&option=com_content&type=rss'
 
         expect(passedQueryFeeds.getFeedUrl('view', value)).toBe(expected)
       })
@@ -1534,7 +1534,7 @@ describe('definePlatformFeeds', () => {
           root: 'https://example.com',
           query: 'option=com_content&Format=html',
         }
-        const expected = 'https://example.com/index.php?option=com_content&format=feed&type=rss'
+        const expected = 'https://example.com/index.php?format=feed&option=com_content&type=rss'
 
         expect(passedQueryFeeds.getFeedUrl('view', value)).toBe(expected)
       })
@@ -1555,7 +1555,7 @@ describe('definePlatformFeeds', () => {
           query: 'keywords=caf%C3%A9+nurse&where=a:b',
         }
         const expected =
-          'https://example.com/jobs/feed?sort=date&keywords=caf%C3%A9+nurse&where=a:b'
+          'https://example.com/jobs/feed?keywords=caf%C3%A9+nurse&sort=date&where=a:b'
 
         expect(passedQueryFeeds.getFeedUrl('search', value)).toBe(expected)
       })
@@ -1565,7 +1565,7 @@ describe('definePlatformFeeds', () => {
           root: 'https://example.com',
           query: 'keywords=技術',
         }
-        const expected = 'https://example.com/jobs/feed?sort=date&keywords=%E6%8A%80%E8%A1%93'
+        const expected = 'https://example.com/jobs/feed?keywords=%E6%8A%80%E8%A1%93&sort=date'
 
         expect(passedQueryFeeds.getFeedUrl('search', value)).toBe(expected)
       })
@@ -1629,7 +1629,7 @@ describe('definePlatformFeeds', () => {
           space: 'DOC',
         }
         const expected =
-          'https://example.com/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=DOC'
+          'https://example.com/createrssfeed.action?spaces=DOC&types=page&types=blogpost&types=comment'
 
         expect(repeatedQueryFeeds.getFeedUrl('space', value)).toBe(expected)
       })
@@ -1687,7 +1687,7 @@ describe('definePlatformFeeds', () => {
           title: 'Talk:Main Page',
         }
         const expected =
-          'https://example.com/index.php?title=Talk%3AMain+Page&action=history&feed=atom'
+          'https://example.com/index.php?action=history&feed=atom&title=Talk%3AMain+Page'
 
         expect(formQueryFeeds.getFeedUrl('history', value)).toBe(expected)
       })
@@ -1697,7 +1697,7 @@ describe('definePlatformFeeds', () => {
           root: 'https://example.com',
           query: '',
         }
-        const expected = 'https://example.com/index.php?title=Special%3ARecentChanges&feed=atom'
+        const expected = 'https://example.com/index.php?feed=atom&title=Special%3ARecentChanges'
 
         expect(formQueryFeeds.getFeedUrl('recent-changes', value)).toBe(expected)
       })
@@ -1708,7 +1708,7 @@ describe('definePlatformFeeds', () => {
           title: '技術',
         }
         const expected =
-          'https://example.com/index.php?title=%E6%8A%80%E8%A1%93&action=history&feed=atom'
+          'https://example.com/index.php?action=history&feed=atom&title=%E6%8A%80%E8%A1%93'
 
         expect(formQueryFeeds.getFeedUrl('history', value)).toBe(expected)
       })
@@ -1727,7 +1727,7 @@ describe('definePlatformFeeds', () => {
           root: 'https://example.com',
           title: 'User:Alice',
         }
-        const expected = 'https://example.com/index.php?title=User%3AAlice&rss'
+        const expected = 'https://example.com/index.php?rss&title=User%3AAlice'
 
         expect(formQueryFeeds.getFeedUrl('profile', value)).toBe(expected)
       })
@@ -1738,7 +1738,7 @@ describe('definePlatformFeeds', () => {
           query: 'days=7&namespace=0:1',
         }
         const expected =
-          'https://example.com/index.php?title=Special%3ARecentChanges&feed=atom&days=7&namespace=0:1'
+          'https://example.com/index.php?days=7&feed=atom&namespace=0:1&title=Special%3ARecentChanges'
 
         expect(formQueryFeeds.getFeedUrl('recent-changes', value)).toBe(expected)
       })
@@ -1748,7 +1748,7 @@ describe('definePlatformFeeds', () => {
           root: 'https://example.com',
           terms: 'by:alice sort:time',
         }
-        const expected = 'https://example.com/search?q=by:alice%20sort:time&feed=atom'
+        const expected = 'https://example.com/search?feed=atom&q=by:alice%20sort:time'
 
         expect(formQueryFeeds.getFeedUrl('search', value)).toBe(expected)
       })

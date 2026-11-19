@@ -319,7 +319,7 @@ describe('ningHandler', () => {
       const value = 'https://example.ning.com/group/hikers/forum/topics/a-trail'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.ning.com/forum/topics/a-trail?groupUrl=hikers&feed=yes&xn_auth=no',
+          uri: 'https://example.ning.com/forum/topics/a-trail?feed=yes&groupUrl=hikers&xn_auth=no',
           hint: { key: 'ning:topic', label: 'Topic' },
         },
         {
@@ -397,7 +397,7 @@ describe('ningHandler', () => {
         { key: 'ning:topic', label: 'Topic' },
       ],
       [
-        'https://example.ning.com/forum/topics/a-trail?groupUrl=hikers&feed=yes&xn_auth=no',
+        'https://example.ning.com/forum/topics/a-trail?feed=yes&groupUrl=hikers&xn_auth=no',
         { key: 'ning:topic', label: 'Topic' },
       ],
       [
@@ -710,7 +710,7 @@ describe('ningHandler', () => {
         { key: 'ning:topic', label: 'Topic' },
       ],
       [
-        'https://example.ning.com/forum/topics/a-trail?groupUrl=hikers&feed=yes&xn_auth=no',
+        'https://example.ning.com/forum/topics/a-trail?feed=yes&groupUrl=hikers&xn_auth=no',
         { key: 'ning:topic', label: 'Topic' },
       ],
       [

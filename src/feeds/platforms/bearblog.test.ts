@@ -133,7 +133,7 @@ describe('bearblogHandler', () => {
           hint: { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
         },
         {
-          uri: 'https://alice.bearblog.dev/feed/?type=rss&q=tips',
+          uri: 'https://alice.bearblog.dev/feed/?q=tips&type=rss',
           hint: { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
         },
         {

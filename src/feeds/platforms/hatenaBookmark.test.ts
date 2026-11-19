@@ -530,7 +530,7 @@ describe('hatenaBookmarkHandler', () => {
         { key: 'hatena-bookmark:search', label: 'Search' },
       ],
       [
-        'https://b.hatena.ne.jp/q/c++%20web?target=title&mode=rss',
+        'https://b.hatena.ne.jp/q/c++%20web?mode=rss&target=title',
         { key: 'hatena-bookmark:search', label: 'Search' },
       ],
       [

@@ -86,11 +86,11 @@ describe('joomlaHandler', () => {
       const value = 'https://example.com/index.php?option=com_content&view=category&id=8%3Anews'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/index.php?option=com_content&view=category&id=8:news&format=feed&type=rss',
+          uri: 'https://example.com/index.php?format=feed&id=8:news&option=com_content&type=rss&view=category',
           hint: { key: 'joomla:view', label: 'View', format: 'rss' },
         },
         {
-          uri: 'https://example.com/index.php?option=com_content&view=category&id=8:news&format=feed&type=atom',
+          uri: 'https://example.com/index.php?format=feed&id=8:news&option=com_content&type=atom&view=category',
           hint: { key: 'joomla:view', label: 'View', format: 'atom' },
         },
       ]
@@ -103,11 +103,11 @@ describe('joomlaHandler', () => {
         'https://example.com/index.php?option=com_content&view=category&id=5:%D0%BD%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D0%B8'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/index.php?option=com_content&view=category&id=5:%D0%BD%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D0%B8&format=feed&type=rss',
+          uri: 'https://example.com/index.php?format=feed&id=5:%D0%BD%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D0%B8&option=com_content&type=rss&view=category',
           hint: { key: 'joomla:view', label: 'View', format: 'rss' },
         },
         {
-          uri: 'https://example.com/index.php?option=com_content&view=category&id=5:%D0%BD%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D0%B8&format=feed&type=atom',
+          uri: 'https://example.com/index.php?format=feed&id=5:%D0%BD%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D0%B8&option=com_content&type=atom&view=category',
           hint: { key: 'joomla:view', label: 'View', format: 'atom' },
         },
       ]
