@@ -1,4 +1,4 @@
-import { defineFeedUrls, type UrlLenient } from 'feedintel'
+import { defineFeedUrls } from 'feedintel'
 import type { DiscoverUriEntry, DiscoverUriHint, UriEntry } from '../../types.js'
 import { composeHint } from '../../utils.js'
 
@@ -36,6 +36,16 @@ export type PlatformHosts = {
   tenants?: Array<string | RegExp>
 }
 
+// Written out here, since the build reads no types from a package that ships its source.
+export type PlatformFeedLenient = {
+  // The placeholders whose value is read in any letter case.
+  case?: Array<string>
+  // A URL with or without a trailing slash.
+  trailingSlash?: boolean
+  // `&amp;` between query pairs read as `&`.
+  ampersandEntity?: boolean
+}
+
 export type PlatformFeedTableOptions = {
   hosts?: PlatformHosts
   // Whether `www` can be a tenant, so `www.example.com` matches a `{user}.example.com` row.
@@ -49,7 +59,7 @@ export type PlatformFeedTableOptions = {
   // The parameters a feed's main URL keeps. With a list, every other parameter is dropped.
   keptParams?: Array<string>
   // The other spellings the platform reads as the same URL, each mark resting on a fetch.
-  lenient?: UrlLenient
+  lenient?: PlatformFeedLenient
 }
 
 // A table's methods take only the keys of its feeds, so a key the table does not hold fails the
