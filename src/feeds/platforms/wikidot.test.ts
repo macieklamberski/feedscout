@@ -202,6 +202,28 @@ describe('wikidotHandler', () => {
 
       expect(wikidotHandler.getFeedHint?.(value)).toEqual(expected)
     })
+
+    it('should return the page comments hint for a page comments feed', () => {
+      const value = 'https://alice.wikidot.com/feed/page/comments-1234567.xml'
+      const expected: DiscoverUriHint = { key: 'wikidot:page-comments', label: 'Page comments' }
+
+      expect(wikidotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the front forum hint for a front forum feed', () => {
+      const value = 'https://alice.wikidot.com/feed/front/en:start/news.xml'
+      const expected: DiscoverUriHint = { key: 'wikidot:front-forum', label: 'Front forum' }
+
+      expect(wikidotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the pages hint for a pages feed', () => {
+      const value =
+        'https://alice.wikidot.com/feed/pages/pagename/blog:_start/category/blog/limit/10/t/My+Blog'
+      const expected: DiscoverUriHint = { key: 'wikidot:pages', label: 'Pages' }
+
+      expect(wikidotHandler.getFeedHint?.(value)).toEqual(expected)
+    })
   })
 
   describe('own feeds through the Platform method', () => {

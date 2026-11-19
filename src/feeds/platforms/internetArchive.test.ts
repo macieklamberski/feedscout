@@ -151,6 +151,13 @@ describe('internetArchiveHandler', () => {
 
       expect(internetArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
+
+    it('should return the media type hint for a media type feed', () => {
+      const value = 'http://archive.org/services/collection-rss.php?mediatype=audio'
+      const expected: DiscoverUriHint = { key: 'internet-archive:mediatype', label: 'Media type' }
+
+      expect(internetArchiveHandler.getFeedHint?.(value)).toEqual(expected)
+    })
   })
 
   describe('own feeds through the Platform method', () => {

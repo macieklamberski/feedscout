@@ -685,6 +685,16 @@ describe('githubHandler', () => {
 
       expect(githubHandler.getFeedHint?.(value)).toEqual(expected)
     })
+
+    it('should return the private activity hint for a private feed without a token', () => {
+      const value = 'https://github.com/alice.private.atom'
+      const expected: DiscoverUriHint = {
+        key: 'github:private-activity',
+        label: 'Private activity',
+      }
+
+      expect(githubHandler.getFeedHint?.(value)).toEqual(expected)
+    })
   })
 
   describe('own feeds through the Platform method', () => {

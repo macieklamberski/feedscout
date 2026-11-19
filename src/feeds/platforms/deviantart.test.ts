@@ -230,6 +230,23 @@ describe('deviantartHandler', () => {
 
       expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
     })
+
+    it('should return the tag hint for a plain tag feed', () => {
+      const value = 'https://backend.deviantart.com/rss.xml?type=deviation&q=tag:green'
+      const expected: DiscoverUriHint = { key: 'deviantart:tag', label: 'Tag' }
+
+      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the daily deviations hint for the daily deviations feed', () => {
+      const value = 'https://backend.deviantart.com/rss.xml?q=special:dd'
+      const expected: DiscoverUriHint = {
+        key: 'deviantart:daily-deviations',
+        label: 'Daily Deviations',
+      }
+
+      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
+    })
   })
 })
 

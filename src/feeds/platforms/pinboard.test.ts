@@ -236,6 +236,37 @@ describe('pinboardHandler', () => {
 
       expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
     })
+
+    it('should return the private bookmarks hint for a private user feed', () => {
+      const value = 'https://feeds.pinboard.in/rss/secret:abc123/u:example'
+      const expected: DiscoverUriHint = {
+        key: 'pinboard:private-bookmarks',
+        label: 'Private bookmarks',
+      }
+
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the private tag hint for a private tag feed', () => {
+      const value = 'https://feeds.pinboard.in/rss/secret:abc123/u:example/t:programming'
+      const expected: DiscoverUriHint = { key: 'pinboard:private-tag', label: 'Private tag' }
+
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the network hint for a private network feed', () => {
+      const value = 'https://feeds.pinboard.in/rss/secret:abc123/u:example/network'
+      const expected: DiscoverUriHint = { key: 'pinboard:network', label: 'Network' }
+
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the starred hint for a private starred feed', () => {
+      const value = 'https://feeds.pinboard.in/rss/secret:abc123/u:example/starred'
+      const expected: DiscoverUriHint = { key: 'pinboard:starred', label: 'Starred' }
+
+      expect(pinboardHandler.getFeedHint?.(value)).toEqual(expected)
+    })
   })
 
   describe('own feeds through the Platform method', () => {

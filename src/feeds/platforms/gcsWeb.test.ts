@@ -174,6 +174,27 @@ describe('gcsWebHandler', () => {
 
       expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
     })
+
+    it('should return the SEC filings group hint for a feed filtered by item count and group', () => {
+      const value = 'https://example.gcs-web.com/rss/sec-filings.xml?items=15&sub_group=4'
+      const expected: DiscoverUriHint = {
+        key: 'gcs-web:sec-filings-group',
+        label: 'SEC filings group',
+      }
+
+      expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the news releases category hint for a feed filtered by category', () => {
+      const value =
+        'https://example.gcs-web.com/rss/news-releases.xml?category=Corporate%2FFinancial'
+      const expected: DiscoverUriHint = {
+        key: 'gcs-web:news-releases-category',
+        label: 'News releases category',
+      }
+
+      expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
+    })
   })
 
   describe('own feeds through the Platform method', () => {

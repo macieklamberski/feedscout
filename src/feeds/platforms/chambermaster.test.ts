@@ -532,6 +532,13 @@ describe('chambermasterHandler', () => {
 
       expect(chambermasterHandler.getFeedHint?.(value)).toEqual(expected)
     })
+
+    it('should return the new products hint for a new products feed', () => {
+      const value = 'https://examplechamber.chambermaster.com/store/newproducts/rss'
+      const expected: DiscoverUriHint = { key: 'chambermaster:new-products', label: 'New products' }
+
+      expect(chambermasterHandler.getFeedHint?.(value)).toEqual(expected)
+    })
   })
 
   describe('own feeds through the Platform method', () => {
