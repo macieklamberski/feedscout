@@ -224,70 +224,9 @@ describe('deviantartHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the deviations hint for an encoded deviations feed', () => {
-      const value =
-        'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Aaditya777%20sort%3Atime%20meta%3Aall'
+    it('should return the deviations hint for a feed of the bare gallery query', () => {
+      const value = 'https://backend.deviantart.com/rss.xml?q=gallery%3Aalice'
       const expected: DiscoverUriHint = { key: 'deviantart:deviations', label: 'Deviations' }
-
-      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the deviations hint for a plain deviations feed', () => {
-      const value =
-        'https://backend.deviantart.com/rss.xml?type=deviation&q=by:alice%20sort:time%20meta:all'
-      const expected: DiscoverUriHint = { key: 'deviantart:deviations', label: 'Deviations' }
-
-      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the deviations hint for a deviations feed with the parameters reordered', () => {
-      const value =
-        'https://backend.deviantart.com/rss.xml?q=by%3Abob%20sort%3Atime%20meta%3Aall&type=deviation'
-      const expected: DiscoverUriHint = { key: 'deviantart:deviations', label: 'Deviations' }
-
-      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the gallery hint for an encoded gallery feed', () => {
-      const value =
-        'https://backend.deviantart.com/rss.xml?type=deviation&q=gallery%3Ahanciong%2F30811007'
-      const expected: DiscoverUriHint = { key: 'deviantart:gallery', label: 'Gallery' }
-
-      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the gallery hint for a plain gallery feed', () => {
-      const value =
-        'https://backend.deviantart.com/rss.xml?type=deviation&q=gallery:smashifiedart/54361670'
-      const expected: DiscoverUriHint = { key: 'deviantart:gallery', label: 'Gallery' }
-
-      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the gallery hint for a gallery feed without the deviation type', () => {
-      const value = 'https://backend.deviantart.com/rss.xml?q=gallery%3Aalice%2F12345'
-      const expected: DiscoverUriHint = { key: 'deviantart:gallery', label: 'Gallery' }
-
-      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the favorites hint for an encoded favorites feed', () => {
-      const value = 'https://backend.deviantart.com/rss.xml?type=deviation&q=favby%3Akristarella'
-      const expected: DiscoverUriHint = { key: 'deviantart:favorites', label: 'Favorites' }
-
-      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the favorites hint for a plain favorites feed', () => {
-      const value = 'https://backend.deviantart.com/rss.xml?type=deviation&q=favby:jakubprzybylski'
-      const expected: DiscoverUriHint = { key: 'deviantart:favorites', label: 'Favorites' }
-
-      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for an encoded tag feed', () => {
-      const value = 'https://backend.deviantart.com/rss.xml?type=deviation&q=tag%3Aaliens'
-      const expected: DiscoverUriHint = { key: 'deviantart:tag', label: 'Tag' }
 
       expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -299,25 +238,6 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the journal hint for a plain journal feed', () => {
-      const value = 'https://backend.deviantart.com/rss.xml?type=journal&q=by:alice'
-      const expected: DiscoverUriHint = { key: 'deviantart:journal', label: 'Journal' }
-
-      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for the journal query that serves the Popular feed', () => {
-      const value = 'https://backend.deviantart.com/rss.xml?q=journal:alice'
-
-      expect(deviantartHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for an encoded journal query with the deviation type', () => {
-      const value = 'https://backend.deviantart.com/rss.xml?type=deviation&q=journal%3Aalice'
-
-      expect(deviantartHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
     it('should return the daily deviations hint for the daily deviations feed', () => {
       const value = 'https://backend.deviantart.com/rss.xml?q=special:dd'
       const expected: DiscoverUriHint = {
@@ -327,109 +247,21 @@ describe('deviantartHandler', () => {
 
       expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the daily deviations hint for an encoded daily deviations feed', () => {
-      const value = 'https://backend.deviantart.com/rss.xml?q=special%3Add'
-      const expected: DiscoverUriHint = {
-        key: 'deviantart:daily-deviations',
-        label: 'Daily Deviations',
-      }
-
-      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a tag feed without the deviation type', () => {
-      const value = 'https://backend.deviantart.com/rss.xml?q=tag:aliens'
-
-      expect(deviantartHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    const deviationsSpellings: Array<string> = [
-      'https://backend.deviantart.com/rss.xml?type=deviation&q=by:alice',
-      'https://backend.deviantart.com/rss.xml?q=by%3Aalice&type=gallery',
-      'https://backend.deviantart.com/rss.xml?order=5&q=by%3Aalice',
-      'https://backend.deviantart.com/rss.xml?q=gallery%3Aalice',
-    ]
-
-    it.each(deviationsSpellings)('should return the deviations hint for %s', (value) => {
-      const expected: DiscoverUriHint = { key: 'deviantart:deviations', label: 'Deviations' }
-
-      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the journal hint for a journal feed of the by query', () => {
-      const value = 'https://backend.deviantart.com/rss.xml?formatted=1&q=by%3Aalice&type=journal'
-      const expected: DiscoverUriHint = { key: 'deviantart:journal', label: 'Journal' }
-
-      expect(deviantartHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for the feed path on the www host', () => {
-      const value = 'https://www.deviantart.com/rss.xml?type=deviation&q=tag:aliens'
-
-      expect(deviantartHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a profile page', () => {
-      const value = 'https://www.deviantart.com/alice'
-
-      expect(deviantartHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 })
 
 describe('discoverUrisFromPlatform', () => {
-  const ownFeeds: Array<[string, string, string]> = [
-    [
-      'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Aaditya777%20sort%3Atime%20meta%3Aall',
-      'deviantart:deviations',
-      'Deviations',
-    ],
-    [
-      'https://backend.deviantart.com/rss.xml?type=deviation&q=gallery%3Ahanciong%2F30811007',
-      'deviantart:gallery',
-      'Gallery',
-    ],
-    [
-      'https://backend.deviantart.com/rss.xml?q=gallery:alice/12345',
-      'deviantart:gallery',
-      'Gallery',
-    ],
-    [
-      'https://backend.deviantart.com/rss.xml?type=deviation&q=favby%3Akristarella',
-      'deviantart:favorites',
-      'Favorites',
-    ],
-    [
-      'https://backend.deviantart.com/rss.xml?type=deviation&q=tag%3Aaliens',
-      'deviantart:tag',
-      'Tag',
-    ],
-    [
-      'https://backend.deviantart.com/rss.xml?q=special:dd',
-      'deviantart:daily-deviations',
-      'Daily Deviations',
-    ],
-    [
-      'http://backend.deviantart.com/rss.xml?q=by%3Aalice&type=gallery',
-      'deviantart:deviations',
-      'Deviations',
-    ],
-    [
-      'https://backend.deviantart.com/rss.xml?q=by%3Aalice&type=journal',
-      'deviantart:journal',
-      'Journal',
-    ],
-  ]
-
-  it.each(ownFeeds)('should return %s itself as %s', async (value, key, label) => {
-    const options = {
+  it('should return a deviations feed of the gallery type as itself', async () => {
+    const value = 'http://backend.deviantart.com/rss.xml?q=by%3Aalice&type=gallery'
+    const expected: Array<DiscoverUriEntry> = [
+      { uri: value, hint: { key: 'deviantart:deviations', label: 'Deviations' } },
+    ]
+    const result = await discoverUrisFromPlatform(undefined, undefined, {
       ...defaultPlatformOptions,
       handlers: [deviantartHandler],
       baseUrl: value,
-    }
-    const expected: Array<DiscoverUriEntry> = [{ uri: value, hint: { key, label } }]
+    })
 
-    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 })

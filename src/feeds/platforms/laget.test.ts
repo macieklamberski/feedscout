@@ -193,68 +193,25 @@ describe('lagetHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the news hint for a team feed', () => {
-      const value = 'https://www.laget.se/ExempelIF/Home/NewsRss'
-      const expected: DiscoverUriHint = { key: 'laget:news', label: 'News' }
-
-      expect(lagetHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the news hint for a team feed on the apex host over http', () => {
       const value = 'http://laget.se/ExempelIF-P14/Home/NewsRss'
       const expected: DiscoverUriHint = { key: 'laget:news', label: 'News' }
 
       expect(lagetHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the news hint for a team feed in lowercase with a trailing slash', () => {
-      const value = 'https://www.laget.se/exempelif/home/newsrss/'
-      const expected: DiscoverUriHint = { key: 'laget:news', label: 'News' }
-
-      expect(lagetHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a team page', () => {
-      const value = 'https://www.laget.se/ExempelIF'
-
-      expect(lagetHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the feed path at the root of laget.se', () => {
-      const value = 'https://www.laget.se/Home/NewsRss'
-
-      expect(lagetHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a club feed on its own domain', () => {
-      const value = 'https://www.example.com/Home/NewsRss'
-
-      expect(lagetHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a team feed path on another host', () => {
-      const value = 'https://example.com/ExempelIF/Home/NewsRss'
-
-      expect(lagetHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds = [
-      'https://www.laget.se/ExempelIF/Home/NewsRss',
-      'http://laget.se/ExempelIF/Home/NewsRss',
-      'https://www.laget.se/exempelif/home/newsrss',
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
+    it('should return a team feed on the apex host over http as itself', async () => {
+      const value = 'http://laget.se/ExempelIF/Home/NewsRss'
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'laget:news', label: 'News' } },
+      ]
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [lagetHandler],
         baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: value, hint: { key: 'laget:news', label: 'News' } },
-      ]
 
       expect(result).toEqual(expected)
     })

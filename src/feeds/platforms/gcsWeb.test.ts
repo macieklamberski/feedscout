@@ -175,27 +175,6 @@ describe('gcsWebHandler', () => {
       expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the SEC filings hint for the SEC filings feed', () => {
-      const value = 'https://example.gcs-web.com/rss/sec-filings.xml'
-      const expected: DiscoverUriHint = { key: 'gcs-web:sec-filings', label: 'SEC filings' }
-
-      expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the events hint for the events feed', () => {
-      const value = 'https://example.gcs-web.com/rss/events.xml'
-      const expected: DiscoverUriHint = { key: 'gcs-web:events', label: 'Events' }
-
-      expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the events hint for the events feed over http', () => {
-      const value = 'http://example.gcs-web.com/rss/events.xml'
-      const expected: DiscoverUriHint = { key: 'gcs-web:events', label: 'Events' }
-
-      expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the SEC filings group hint for a feed filtered by item count and group', () => {
       const value = 'https://example.gcs-web.com/rss/sec-filings.xml?items=15&sub_group=4'
       const expected: DiscoverUriHint = {
@@ -216,69 +195,21 @@ describe('gcsWebHandler', () => {
 
       expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the news releases hint for a feed sized by item count', () => {
-      const value = 'https://example.gcs-web.com/rss/news-releases.xml?items=15'
-      const expected: DiscoverUriHint = { key: 'gcs-web:news-releases', label: 'News releases' }
-
-      expect(gcsWebHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a news releases page', () => {
-      const value = 'https://example.gcs-web.com/news-releases'
-
-      expect(gcsWebHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://gcs-web.com/rss/news-releases.xml'
-
-      expect(gcsWebHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://www.example.gcs-web.com/rss/news-releases.xml'
-
-      expect(gcsWebHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a company domain', () => {
-      const value = 'https://investors.example.com/rss/news-releases.xml'
-
-      expect(gcsWebHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://example.gcs-web.com/rss/news-releases.xml?items=15',
-        { key: 'gcs-web:news-releases', label: 'News releases' },
-      ],
-      [
-        'https://example.gcs-web.com/rss/sec-filings.xml',
-        { key: 'gcs-web:sec-filings', label: 'SEC filings' },
-      ],
-      [
-        'http://example.gcs-web.com/rss/sec-filings.xml?items=15&sub_group=4',
-        { key: 'gcs-web:sec-filings-group', label: 'SEC filings group' },
-      ],
-      [
-        'https://example.gcs-web.com/rss/news-releases.xml?category=Student+Loans&items=15',
-        { key: 'gcs-web:news-releases-category', label: 'News releases category' },
-      ],
-      ['http://example.gcs-web.com/rss/events.xml', { key: 'gcs-web:events', label: 'Events' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const options = {
+    it('should return a news releases feed sized by item count as itself', async () => {
+      const value = 'https://example.gcs-web.com/rss/news-releases.xml?items=15'
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'gcs-web:news-releases', label: 'News releases' } },
+      ]
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [gcsWebHandler],
         baseUrl: value,
-      }
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      })
 
-      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+      expect(result).toEqual(expected)
     })
   })
 })

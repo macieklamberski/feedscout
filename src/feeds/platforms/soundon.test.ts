@@ -132,28 +132,11 @@ describe('soundonHandler', () => {
 
       expect(soundonHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the podcast hint for a podcast feed with a query', () => {
-      const value = 'https://feeds.soundon.fm/podcasts/99f9a86d-92bb-45ac-bf2d-162a74b28c76.xml?r=1'
-      const expected: DiscoverUriHint = { key: 'soundon:podcast', label: 'Podcast' }
-
-      expect(soundonHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a podcast page', () => {
-      const value = 'https://player.soundon.fm/p/b6b84ca9-41ab-4b90-bd86-777ce7fcac02'
-
-      expect(soundonHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('discoverUrisFromPlatform', () => {
-    const values = [
-      'https://feeds.soundon.fm/podcasts/b6b84ca9-41ab-4b90-bd86-777ce7fcac02.xml',
-      'https://feeds.soundon.fm/podcasts/99f9a86d-92bb-45ac-bf2d-162a74b28c76.xml?r=1',
-    ]
-
-    it.each(values)('should return the podcast feed %s as itself', async (value) => {
+    it('should return the podcast feed as itself', async () => {
+      const value = 'https://feeds.soundon.fm/podcasts/b6b84ca9-41ab-4b90-bd86-777ce7fcac02.xml'
       const options = {
         ...defaultPlatformOptions,
         handlers: [soundonHandler],

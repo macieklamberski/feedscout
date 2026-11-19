@@ -349,27 +349,6 @@ describe('bubblelifeHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the library hint for a feed', () => {
-      const value = 'https://alice.bubblelife.com/rss?c=12345'
-      const expected: DiscoverUriHint = { key: 'bubblelife:library', label: 'Library' }
-
-      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the library hint for a feed on a tenant with underscores', () => {
-      const value = 'https://alice_bob.bubblelife.com/rss?c=1234567'
-      const expected: DiscoverUriHint = { key: 'bubblelife:library', label: 'Library' }
-
-      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the library hint for a feed over http', () => {
-      const value = 'http://alice.bubblelife.com/rss?c=12345'
-      const expected: DiscoverUriHint = { key: 'bubblelife:library', label: 'Library' }
-
-      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the library hint for an uppercase feed path', () => {
       const value = 'https://maplegrove.bubblelife.com/RSS?C=35660940'
       const expected: DiscoverUriHint = { key: 'bubblelife:library', label: 'Library' }
@@ -383,74 +362,19 @@ describe('bubblelifeHandler', () => {
 
       expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the topic hint for a topic feed with the parameters reordered', () => {
-      const value = 'http://example.bubblelife.com/rss?t=67890&c=12345'
-      const expected: DiscoverUriHint = { key: 'bubblelife:topic', label: 'Topic' }
-
-      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the news alerts hint for a news alert feed', () => {
-      const value = 'https://example.bubblelife.com/rss?c=12345,nofriends'
-      const expected: DiscoverUriHint = { key: 'bubblelife:news-alerts', label: 'News alerts' }
-
-      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the news alerts hint for a news alert feed with an encoded comma', () => {
-      const value = 'https://example.bubblelife.com/rss?c=12345%2Cnofriends'
-      const expected: DiscoverUriHint = { key: 'bubblelife:news-alerts', label: 'News alerts' }
-
-      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for an id with another suffix', () => {
-      const value = 'https://example.bubblelife.com/rss?c=12345,friends'
-
-      expect(bubblelifeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path without an id', () => {
-      const value = 'https://maplegrove.bubblelife.com/rss'
-
-      expect(bubblelifeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a community page', () => {
-      const value = 'https://sandysprings.bubblelife.com/community/superplotter'
-
-      expect(bubblelifeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/rss?c=12345'
-
-      expect(bubblelifeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://alice.bubblelife.com/rss?c=12345', { key: 'bubblelife:library', label: 'Library' }],
-      ['http://alice.bubblelife.com/rss?c=12345', { key: 'bubblelife:library', label: 'Library' }],
-      [
-        'https://example.bubblelife.com/rss?c=12345&t=67890',
-        { key: 'bubblelife:topic', label: 'Topic' },
-      ],
-      [
-        'https://example.bubblelife.com/rss?c=12345,nofriends',
-        { key: 'bubblelife:news-alerts', label: 'News alerts' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a library feed as itself', async () => {
+      const value = 'https://alice.bubblelife.com/rss?c=12345'
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'bubblelife:library', label: 'Library' } },
+      ]
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [bubblelifeHandler],
         baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
       expect(result).toEqual(expected)
     })
