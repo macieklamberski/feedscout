@@ -1,5 +1,6 @@
+import { purot } from 'feedintel'
 import { encodePathSegment } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getTenantSubdomain } from '../../common/utils.js'
 
@@ -13,36 +14,13 @@ export type PurotPage =
   | { kind: 'wiki'; wiki: string }
   | { kind: 'page'; wiki: string; page: string }
 
-const domains = ['purot.net']
+const domains = purot.hosts.tenants
 
 // A profile id holds a slash, so a profile page never matches. A profile page links its user's
 // feeds even when it answers "User not found", and a real profile redirects to the home page.
 const pageChangesRegex = /^\/changes\/([^/?]+)\?mode=rss&messages=0$/i
 
-// The wiki's changes come first, so its feeds are not read as the feeds of a page named all.
-const feeds = definePlatformFeeds(
-  'purot',
-  [
-    { key: 'recent-changes', main: '{scheme}://{host}/changes/all?mode=rss' },
-    { key: 'recent-page-changes', main: '{scheme}://{host}/changes/all?mode=rss&messages=0' },
-    { key: 'recent-discussions', main: '{scheme}://{host}/changes/all?mode=rss&pages=0' },
-    { key: 'page-changes', main: '{scheme}://{host}/changes/{page}?mode=rss&messages=0' },
-    { key: 'page-discussions', main: '{scheme}://{host}/changes/{page}?mode=rss&pages=0' },
-    { key: 'page-activity', main: '{scheme}://{host}/changes/{page}?mode=rss' },
-    // A real user's profile feeds hold that user's own changes. Only a missing user's feeds list
-    // every user's profile changes.
-    {
-      key: 'user-changes',
-      main: '{scheme}://{host}/changes/profile/{user}?mode=rss&messages=0',
-    },
-    {
-      key: 'user-discussions',
-      main: '{scheme}://{host}/changes/profile/{user}?mode=rss&pages=0',
-    },
-    { key: 'user-activity', main: '{scheme}://{host}/changes/profile/{user}?mode=rss' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(purot.feeds)
 
 export const parsePurotUrl = (url: string): PurotUrl | undefined => {
   const wiki = getTenantSubdomain(url, domains)

@@ -1,5 +1,6 @@
+import { bigcommerce } from 'feedintel'
 import { getQueryParam, isAnyOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
@@ -14,94 +15,7 @@ export type BigcommercePage =
   | { kind: 'search'; query: string }
   | { kind: 'home' }
 
-const domains = ['mybigcommerce.com']
-
-// A store on a custom domain is known only by its session cookie, so its feeds are built here but
-// claimed only on BigCommerce's own domain.
-const feeds = definePlatformFeeds(
-  'bigcommerce',
-  [
-    // Without `type`, each feed answers its RSS twin.
-    {
-      key: 'category-new-products',
-      main: '{scheme}://{host}/rss.php?categoryid={categoryId}&type=rss',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/rss.php?categoryid={categoryId}'],
-    },
-    {
-      key: 'category-new-products',
-      main: '{scheme}://{host}/rss.php?categoryid={categoryId}&type=atom',
-      format: 'atom',
-    },
-    {
-      key: 'category-popular-products',
-      main: '{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}&type=rss',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}'],
-    },
-    {
-      key: 'category-popular-products',
-      main: '{scheme}://{host}/rss.php?action=popularproducts&categoryid={categoryId}&type=atom',
-      format: 'atom',
-    },
-    {
-      key: 'search',
-      main: '{scheme}://{host}/rss.php?action=searchproducts&search_query={query}&type=rss',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/rss.php?action=searchproducts&search_query={query}'],
-    },
-    {
-      key: 'search',
-      main: '{scheme}://{host}/rss.php?action=searchproducts&search_query={query}&type=atom',
-      format: 'atom',
-    },
-    {
-      key: 'new-products',
-      main: '{scheme}://{host}/rss.php?type=rss',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/rss.php'],
-    },
-    {
-      key: 'new-products',
-      main: '{scheme}://{host}/rss.php?type=atom',
-      format: 'atom',
-    },
-    {
-      key: 'popular-products',
-      main: '{scheme}://{host}/rss.php?action=popularproducts&type=rss',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/rss.php?action=popularproducts'],
-    },
-    {
-      key: 'popular-products',
-      main: '{scheme}://{host}/rss.php?action=popularproducts&type=atom',
-      format: 'atom',
-    },
-    {
-      key: 'featured-products',
-      main: '{scheme}://{host}/rss.php?action=featuredproducts&type=rss',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/rss.php?action=featuredproducts'],
-    },
-    {
-      key: 'featured-products',
-      main: '{scheme}://{host}/rss.php?action=featuredproducts&type=atom',
-      format: 'atom',
-    },
-    {
-      key: 'blog',
-      main: '{scheme}://{host}/rss.php?action=newblogs&type=rss',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/rss.php?action=newblogs'],
-    },
-    {
-      key: 'blog',
-      main: '{scheme}://{host}/rss.php?action=newblogs&type=atom',
-      format: 'atom',
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(bigcommerce.feeds)
 
 export const isBigcommerceHeaders = (headers: Headers): boolean => {
   return getCookieNames(headers).includes('SHOP_SESSION_TOKEN')

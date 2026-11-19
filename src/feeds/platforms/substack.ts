@@ -1,5 +1,6 @@
+import { substack } from 'feedintel'
 import { escapeRegex, isHostOf, isPresent, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain, wordOrHyphenRegex } from '../../common/utils.js'
 
@@ -9,7 +10,7 @@ import { getHostOrigin, getTenantSubdomain, wordOrHyphenRegex } from '../../comm
 export type SubstackUrl = { kind: 'newsletter' } | { kind: 'profile'; username: string }
 export type SubstackPage = { kind: 'newsletter' | 'profile'; origin: string }
 
-const domains = ['substack.com']
+const domains = substack.hosts.tenants
 // The app host names a publication in the path and the API host serves podcast feeds, so neither
 // is a publication itself.
 const appHosts = ['open.substack.com', 'api.substack.com']
@@ -37,41 +38,7 @@ const podcastFeedUrlRegex = /"podcast_feed_url":"/
 const podcastSectionRegex =
   /"publication_id":(?<owner>\d+)|"podcastSettings":\{"section_id":(?<section>\d+)/g
 
-// A custom domain is read only from a profile page, so its feed is built here but not claimed.
-// The same feed answers at feed.xml and feed.rss.
-const feeds = definePlatformFeeds(
-  'substack',
-  [
-    {
-      key: 'newsletter',
-      main: '{scheme}://{host}/feed',
-      aliases: ['{scheme}://{host}/feed.xml', '{scheme}://{host}/feed.rss'],
-    },
-    // One section of the newsletter, which holds only that section's posts.
-    { key: 'newsletter-section', main: '{scheme}://{host}/feed?sectionId={section}' },
-    // A publication's podcast, mostly linked on api.substack.com, and one section of it, under ids
-    // no page URL gives. A private or Spotify feed adds a listener token.
-    {
-      key: 'podcast',
-      main: 'https://api.substack.com/feed/podcast/{publication}.rss',
-      aliases: ['{scheme}://{host}/feed/podcast/{publication}.rss'],
-    },
-    {
-      key: 'podcast-section',
-      main: 'https://api.substack.com/feed/podcast/{publication}/s/{section}.rss',
-      aliases: ['{scheme}://{host}/feed/podcast/{publication}/s/{section}.rss'],
-    },
-    {
-      key: 'private-podcast',
-      main: '{scheme}://{host}/feed/podcast/{publication}/private/{token}.rss',
-    },
-    {
-      key: 'spotify-podcast',
-      main: '{scheme}://{host}/feed/podcast/spotify/{token}/{publication}.rss',
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(substack.feeds)
 
 const getPodcastSections = (content: string, publication: string): Array<string> => {
   const sections: Array<string> = []

@@ -1,5 +1,6 @@
+import { sourceforge } from 'feedintel'
 import { decodePercent, getPathSegments, isAnyOf, isHostOf, isPresent, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -18,153 +19,10 @@ export type SourceforgeUrl = {
   path?: string
 }
 
-const hosts = ['sourceforge.net', 'www.sourceforge.net']
+const hosts = sourceforge.hosts.exact
 const projectPrefixes = ['projects', 'p']
 
-// SourceForge serves each feed at `feed`, `feed.rss` and `feed.atom`. The rows `resolve` never
-// builds claim the other two spellings of each feed it emits.
-const feeds = definePlatformFeeds('sourceforge', [
-  {
-    key: 'activity',
-    main: 'https://sourceforge.net/p/{project}/activity/feed',
-    format: 'rss',
-    aliases: ['https://sourceforge.net/p/{project}/activity/feed.rss'],
-  },
-  {
-    key: 'activity',
-    main: 'https://sourceforge.net/p/{project}/activity/feed.atom',
-    format: 'atom',
-  },
-  {
-    key: 'project-feed',
-    main: 'https://sourceforge.net/p/{project}/feed',
-    format: 'rss',
-    aliases: ['https://sourceforge.net/p/{project}/feed.rss'],
-  },
-  {
-    key: 'project-feed',
-    main: 'https://sourceforge.net/p/{project}/feed.atom',
-    format: 'atom',
-  },
-  {
-    key: 'files',
-    main: 'https://sourceforge.net/projects/{project}/rss',
-    aliases: ['https://sourceforge.net/projects/{project}/rss?path=/'],
-  },
-  {
-    key: 'files-folder',
-    main: 'https://sourceforge.net/projects/{project}/rss?path={path}',
-  },
-  {
-    key: 'news',
-    main: 'https://sourceforge.net/p/{project}/news/feed.rss',
-    format: 'rss',
-    aliases: ['https://sourceforge.net/p/{project}/news/feed'],
-  },
-  {
-    key: 'news',
-    main: 'https://sourceforge.net/p/{project}/news/feed.atom',
-    format: 'atom',
-  },
-  {
-    key: 'discussion',
-    main: 'https://sourceforge.net/p/{project}/discussion/feed',
-    format: 'rss',
-    aliases: ['https://sourceforge.net/p/{project}/discussion/feed.rss'],
-  },
-  {
-    key: 'discussion',
-    main: 'https://sourceforge.net/p/{project}/discussion/feed.atom',
-    format: 'atom',
-  },
-  // The bugs page links `feed.rss`, so that spelling is the one `resolve` builds.
-  {
-    key: 'bugs',
-    main: 'https://sourceforge.net/p/{project}/bugs/feed.rss',
-    format: 'rss',
-    aliases: ['https://sourceforge.net/p/{project}/bugs/feed'],
-  },
-  {
-    key: 'bugs',
-    main: 'https://sourceforge.net/p/{project}/bugs/feed.atom',
-    format: 'atom',
-  },
-  {
-    key: 'activity',
-    main: 'https://sourceforge.net/mirror/{project}/activity/feed',
-    format: 'rss',
-    aliases: ['https://sourceforge.net/mirror/{project}/activity/feed.rss'],
-  },
-  {
-    key: 'activity',
-    main: 'https://sourceforge.net/mirror/{project}/activity/feed.atom',
-    format: 'atom',
-  },
-  {
-    key: 'discussion-thread',
-    main: 'https://sourceforge.net/p/{project}/discussion/{forum}/thread/{thread}/feed',
-    format: 'rss',
-    aliases: ['https://sourceforge.net/p/{project}/discussion/{forum}/thread/{thread}/feed.rss'],
-  },
-  {
-    key: 'discussion-thread',
-    main: 'https://sourceforge.net/p/{project}/discussion/{forum}/thread/{thread}/feed.atom',
-    format: 'atom',
-  },
-  {
-    key: 'discussion-forum',
-    main: 'https://sourceforge.net/p/{project}/discussion/{forum}/feed',
-    format: 'rss',
-    aliases: ['https://sourceforge.net/p/{project}/discussion/{forum}/feed.rss'],
-  },
-  {
-    key: 'discussion-forum',
-    main: 'https://sourceforge.net/p/{project}/discussion/{forum}/feed.atom',
-    format: 'atom',
-  },
-  // A tool mount names itself, as `wiki`, `blog` or a code repository, so these rows go after the
-  // mounts above. Tool pages link `feed.rss`, so that spelling is the one `resolve` builds.
-  {
-    key: 'tool',
-    main: 'https://sourceforge.net/p/{project}/{tool}/feed.rss',
-    format: 'rss',
-    aliases: ['https://sourceforge.net/p/{project}/{tool}/feed'],
-  },
-  {
-    key: 'tool',
-    main: 'https://sourceforge.net/p/{project}/{tool}/feed.atom',
-    format: 'atom',
-  },
-  {
-    key: 'tool-page',
-    main: 'https://sourceforge.net/p/{project}/{tool}/{page}/feed.rss',
-    format: 'rss',
-    aliases: ['https://sourceforge.net/p/{project}/{tool}/{page}/feed'],
-  },
-  {
-    key: 'tool-page',
-    main: 'https://sourceforge.net/p/{project}/{tool}/{page}/feed.atom',
-    format: 'atom',
-  },
-  {
-    key: 'user',
-    main: 'https://sourceforge.net/u/{user}/feed',
-    format: 'rss',
-    aliases: ['https://sourceforge.net/u/{user}/feed.rss'],
-  },
-  { key: 'user', main: 'https://sourceforge.net/u/{user}/feed.atom', format: 'atom' },
-  {
-    key: 'user-tool',
-    main: 'https://sourceforge.net/u/{user}/{tool}/feed',
-    format: 'rss',
-    aliases: ['https://sourceforge.net/u/{user}/{tool}/feed.rss'],
-  },
-  {
-    key: 'user-tool',
-    main: 'https://sourceforge.net/u/{user}/{tool}/feed.atom',
-    format: 'atom',
-  },
-])
+const feeds = withHintLabels(sourceforge.feeds)
 
 export const parseSourceforgeUrl = (url: string): SourceforgeUrl | undefined => {
   const parsedUrl = parseUrl(url)

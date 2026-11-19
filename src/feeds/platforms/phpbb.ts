@@ -1,5 +1,6 @@
+import { phpbb } from 'feedintel'
 import { getQueryParam, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   digitsRegex,
@@ -15,18 +16,7 @@ import { isForumotionHtml } from './forumotion.js'
 
 export type PhpbbPage = { boardUrl: string; forumId?: string; topicId?: string }
 
-// A board is known only by its markup and cookies, so its feeds are built under the board root and
-// claimed on no host. Each board-wide feed is an administrator toggle, so a board serves any subset
-// of them.
-const feeds = definePlatformFeeds('phpbb', [
-  { key: 'topic', main: '{root}/feed.php?t={topicId}' },
-  { key: 'forum', main: '{root}/feed.php?f={forumId}' },
-  { key: 'site', main: '{root}/feed.php' },
-  { key: 'news', main: '{root}/feed.php?mode=news' },
-  { key: 'new-topics', main: '{root}/feed.php?mode=topics' },
-  { key: 'active-topics', main: '{root}/feed.php?mode=topics_active' },
-  { key: 'forums', main: '{root}/feed.php?mode=forums' },
-])
+const feeds = withHintLabels(phpbb.feeds)
 
 // Forumotion's phpBB3 template prints the same body id and serves none of phpBB's feeds.
 export const isPhpbbHtml = (content: string): boolean => {

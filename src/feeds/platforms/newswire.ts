@@ -1,5 +1,6 @@
+import { newswire } from 'feedintel'
 import { getAnyOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -14,30 +15,14 @@ export type NewswireUrl =
 
 type NewswireContentType = (typeof contentTypes)[number]
 
-const domains = ['newswire.com']
+const domains = newswire.hosts.tenants
 
 const beatPathRegex = /^\/browse\/beat\/([a-z0-9-]+)\/?$/i
 const contentTypePathRegex = /^\/browse\/([^/]+)\/?$/i
 
 const contentTypes = ['news', 'pr', 'social', 'image', 'video', 'audio', 'event'] as const
 
-const feeds = definePlatformFeeds(
-  'newswire',
-  [
-    { key: 'beat', main: '{scheme}://{host}/browse/rss/beat/{beat}' },
-    { key: 'news', main: '{scheme}://{host}/browse/rss/news' },
-    { key: 'press-releases', main: '{scheme}://{host}/browse/rss/pr' },
-    { key: 'social', main: '{scheme}://{host}/browse/rss/social' },
-    { key: 'images', main: '{scheme}://{host}/browse/rss/image' },
-    { key: 'videos', main: '{scheme}://{host}/browse/rss/video' },
-    { key: 'audio', main: '{scheme}://{host}/browse/rss/audio' },
-    { key: 'events', main: '{scheme}://{host}/browse/rss/event' },
-    // The social posts from one network, which no newsroom page names.
-    { key: 'social-network', main: '{scheme}://{host}/browse/rss/social/{network}' },
-    { key: 'newsroom', main: '{scheme}://{host}/browse/rss' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(newswire.feeds)
 
 export const parseNewswireUrl = (url: string): NewswireUrl | undefined => {
   const pathname = parseUrl(url)?.pathname

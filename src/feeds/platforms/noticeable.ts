@@ -1,5 +1,6 @@
+import { noticeable } from 'feedintel'
 import { isHostOrSubdomainOf, isSubdomainOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
@@ -9,25 +10,12 @@ import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 export type NoticeableUrl = { kind: 'newspage' } | { kind: 'label'; label: string }
 
-const domains = ['noticeable.news']
+const domains = noticeable.hosts.tenants
 
 // A page combining labels, `/labels/{a},{b}`, has no feed of its own: `/{a},{b}.rss` answers 404.
 const labelPathRegex = /^\/labels\/([^/,]+)\/?$/i
 
-// A newspage serves its feeds on its own host, custom domains too. The `feed.*` rows read before
-// the label rows, so a label named feed reads as the newspage feed.
-const feeds = definePlatformFeeds(
-  'noticeable',
-  [
-    { key: 'posts', main: '{scheme}://{host}/feed.rss', format: 'rss' },
-    { key: 'posts', main: '{scheme}://{host}/feed.atom', format: 'atom' },
-    { key: 'posts', main: '{scheme}://{host}/feed.json', format: 'json' },
-    { key: 'label', main: '{scheme}://{host}/{label}.rss', format: 'rss' },
-    { key: 'label', main: '{scheme}://{host}/{label}.atom', format: 'atom' },
-    { key: 'label', main: '{scheme}://{host}/{label}.json', format: 'json' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(noticeable.feeds)
 
 // Every newspage template loads its styles from the Noticeable asset host, custom domains too.
 export const isNoticeableHtml = (content: string): boolean => {

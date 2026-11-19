@@ -1,5 +1,6 @@
+import { tischtennislive } from 'feedintel'
 import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
 
@@ -13,38 +14,9 @@ export type TischtennislivePage =
   | { kind: 'group'; group: string }
   | { kind: 'league'; league: string }
 
-const domains = ['tischtennislive.de']
+const domains = tischtennislive.hosts.tenants
 
-// Next=0 lists the matches of the last 10 days and Next=1 those of the next 10 days.
-const feeds = definePlatformFeeds(
-  'tischtennislive',
-  [
-    {
-      key: 'group-results',
-      main: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next=0',
-    },
-    {
-      key: 'group-fixtures',
-      main: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next=1',
-    },
-    {
-      key: 'league-results',
-      main: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Wett&ID={league}&Next=0',
-    },
-    {
-      key: 'league-fixtures',
-      main: '{scheme}://{host}/Export/Tischtennis/RSS.aspx?Typ=Wett&ID={league}&Next=1',
-    },
-    { key: 'news', main: '{scheme}://{host}/Export/RSS.aspx' },
-    { key: 'dates', main: '{scheme}://{host}/Export/RSS_Termine.aspx' },
-    { key: 'documents', main: '{scheme}://{host}/Export/RSS_Dokumente.aspx' },
-    {
-      key: 'tournaments',
-      main: '{scheme}://{host}/Export/Tischtennis/RSS_Turniere.aspx',
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(tischtennislive.feeds)
 
 export const parseTischtennisliveUrl = (url: string): TischtennisliveUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

@@ -1,5 +1,6 @@
+import { rubygems } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -8,23 +9,11 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type RubygemsUrl = { kind: 'gem'; gem: string } | { kind: 'home' }
 
-const hosts = ['rubygems.org', 'www.rubygems.org']
+const hosts = rubygems.hosts.exact
 
 const gemRegex = /^\/gems\/([\w.-]+)(?:\/|$)/i
 
-// The index and bundler hosts serve the same entries as rubygems.org, with links and ids on their
-// own host.
-const feeds = definePlatformFeeds('rubygems', [
-  { key: 'versions', main: 'https://rubygems.org/gems/{gem}/versions.atom' },
-  { key: 'versions', main: 'https://index.rubygems.org/gems/{gem}/versions.atom' },
-  { key: 'versions', main: 'https://bundler.rubygems.org/gems/{gem}/versions.atom' },
-  { key: 'latest-gems', main: 'https://rubygems.org/gems.atom' },
-  { key: 'latest-gems', main: 'https://index.rubygems.org/gems.atom' },
-  { key: 'latest-gems', main: 'https://bundler.rubygems.org/gems.atom' },
-  // The dashboard feed of a signed-in user answers only with its `api_key`, so it is claimed and
-  // never built.
-  { key: 'dashboard', main: 'https://rubygems.org/dashboard.atom?api_key={apiKey}' },
-])
+const feeds = withHintLabels(rubygems.feeds)
 
 export const parseRubygemsUrl = (url: string): RubygemsUrl | undefined => {
   const parsedUrl = parseUrl(url)

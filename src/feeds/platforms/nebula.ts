@@ -1,5 +1,6 @@
+import { nebula } from 'feedintel'
 import { getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -8,26 +9,13 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type NebulaUrl = { kind: 'channel'; slug: string } | { kind: 'explore'; category?: string }
 
-export const hosts = ['nebula.tv', 'www.nebula.tv']
+export const hosts = nebula.hosts.exact
 
 // /explore is the canonical landing page (Nebula 301s root and /videos to it).
 // Treated as the global feed surface, not a creator slug.
 const globalPaths = ['videos', 'explore']
 
-// Originals is also a category, so its row comes before the category row that would read it.
-const feeds = definePlatformFeeds('nebula', [
-  { key: 'videos', main: 'https://rss.nebula.app/video/channels/{slug}.rss' },
-  { key: 'videos-plus', main: 'https://rss.nebula.app/video/channels/{slug}.rss?plus=true' },
-  { key: 'originals', main: 'https://rss.nebula.app/video/categories/originals.rss' },
-  { key: 'category', main: 'https://rss.nebula.app/video/categories/{category}.rss' },
-  {
-    key: 'category-plus',
-    main: 'https://rss.nebula.app/video/categories/{category}.rss?plus=true',
-  },
-  { key: 'videos-all', main: 'https://rss.nebula.app/video.rss' },
-  { key: 'videos-all-plus', main: 'https://rss.nebula.app/video.rss?plus=true' },
-  { key: 'channels', main: 'https://rss.nebula.app/video/channels.rss' },
-])
+const feeds = withHintLabels(nebula.feeds)
 
 export const parseNebulaUrl = (url: string): NebulaUrl | undefined => {
   const parsedUrl = parseUrl(url)

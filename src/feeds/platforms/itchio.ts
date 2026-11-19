@@ -1,5 +1,6 @@
+import { itchio } from 'feedintel'
 import { getAnyOf, isAnyOf, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
@@ -20,7 +21,7 @@ export type ItchioUrl =
   | { kind: 'section'; section: string }
   | { kind: 'home' }
 
-const domains = ['itch.io']
+const domains = itchio.hosts.tenants
 const mainHosts = ['itch.io', 'www.itch.io']
 
 const byUserRegex = /^\/games\/by-([^/]+)/i
@@ -59,32 +60,7 @@ const sorts = [
   'in-development',
 ]
 
-// A URL takes the key of the first row it matches, so the /games/{sort}.xml, /games/{filters*}.xml
-// and /{section}.xml rows come after the rows whose feeds they also match. A sort keeps the key of
-// the listing it sorts, so a sorted tag or creator listing is that tag's or creator's feed, and a
-// listing with any other filters is a games listing.
-const feeds = definePlatformFeeds(
-  'itchio',
-  [
-    { key: 'devlog', main: '{scheme}://{host}/{game}/devlog.rss' },
-    { key: 'creator', main: 'https://itch.io/games/{sort}/by-{creator}.xml' },
-    { key: 'creator', main: 'https://itch.io/games/by-{creator}.xml' },
-    { key: 'tag', main: 'https://itch.io/games/{sort}/tag-{tag}.xml' },
-    { key: 'tag', main: 'https://itch.io/games/tag-{tag}.xml' },
-    { key: 'platform', main: 'https://itch.io/games/platform-{platform}.xml' },
-    { key: 'genre', main: 'https://itch.io/games/genre-{genre}.xml' },
-    { key: 'made-with', main: 'https://itch.io/games/made-with-{engine}.xml' },
-    { key: 'games', main: 'https://itch.io/games/{sort}.xml' },
-    { key: 'games', main: 'https://itch.io/games/{filters*}.xml' },
-    { key: 'games', main: 'https://itch.io/games.xml' },
-    { key: 'devlogs', main: 'https://itch.io/devlogs.xml' },
-    { key: 'featured', main: 'https://itch.io/feed/featured.xml' },
-    { key: 'new', main: 'https://itch.io/feed/new.xml' },
-    { key: 'sales', main: 'https://itch.io/feed/sales.xml' },
-    { key: 'section', main: 'https://itch.io/{section}.xml' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(itchio.feeds)
 
 export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
   if (!isHostOf(url, mainHosts) && !isSubdomainOf(url, domains)) {

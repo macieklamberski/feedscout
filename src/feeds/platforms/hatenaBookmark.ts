@@ -1,5 +1,6 @@
+import { hatenaBookmark } from 'feedintel'
 import { composeQuery, decodeSegment, getAnyOf, getQueryParam, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -14,7 +15,7 @@ export type HatenaBookmarkUrl =
   | { kind: 'user'; username: string; tag?: string }
   | { kind: 'home' }
 
-const hosts = ['b.hatena.ne.jp']
+const hosts = hatenaBookmark.hosts.exact
 
 const listRegex = /^\/(hotentry|entrylist)(?:\/([a-z]+))?\/?$/i
 const queryRegex = /^\/q(?:\/(.*))?$/i
@@ -44,30 +45,7 @@ const searchTypes = ['tag', 'text', 'title']
 // The filters the search page carries into its own feed link. It drops `page` and anything else.
 const searchFilters = ['target', 'sort', 'users', 'date_range', 'safe']
 
-// A search feed carries the filters its page carries, in the page's own query.
-// A site feed carries the site's whole path, and answers the same with or without a trailing slash.
-const feeds = definePlatformFeeds('hatena-bookmark', [
-  {
-    key: 'hot',
-    main: 'https://b.hatena.ne.jp/hotentry.rss',
-    aliases: ['https://b.hatena.ne.jp/hotentry/all.rss'],
-  },
-  { key: 'hot-category', main: 'https://b.hatena.ne.jp/hotentry/{category}.rss' },
-  {
-    key: 'new',
-    main: 'https://b.hatena.ne.jp/entrylist.rss',
-    aliases: ['https://b.hatena.ne.jp/entrylist/all.rss'],
-  },
-  { key: 'new-category', main: 'https://b.hatena.ne.jp/entrylist/{category}.rss' },
-  { key: 'search', main: 'https://b.hatena.ne.jp/q/{query}?{filters}&mode=rss' },
-  { key: 'bookmarks', main: 'https://b.hatena.ne.jp/{username}/bookmark.rss' },
-  {
-    key: 'user-tag',
-    main: 'https://b.hatena.ne.jp/{username}/bookmark.rss?tag={tag}',
-  },
-  { key: 'site', main: 'https://b.hatena.ne.jp/site/{site*}?sort={sort}&mode=rss' },
-  { key: 'site', main: 'https://b.hatena.ne.jp/site/{site*}?mode=rss' },
-])
+const feeds = withHintLabels(hatenaBookmark.feeds)
 
 const copySearchFilters = (
   from: URLSearchParams,

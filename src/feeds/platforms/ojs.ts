@@ -1,5 +1,6 @@
+import { ojs } from 'feedintel'
 import { getPathSegments, isAnyOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -12,28 +13,7 @@ export type OjsPage = { kind: 'journal'; journalUrl: string }
 // OJS loads its theme stylesheets through the component router under the journal's root.
 const componentRouterRegex = /^(https?:\/\/.+?)\/\$\$\$call\$\$\$\//i
 
-// OJS is self-hosted and known only by its page marker, so nothing in a feed URL names it and the
-// table only builds, under the journal root the page names.
-const feeds = definePlatformFeeds('ojs', [
-  { key: 'articles', main: '{root}/gateway/plugin/WebFeedGatewayPlugin/atom', format: 'atom' },
-  { key: 'articles', main: '{root}/gateway/plugin/WebFeedGatewayPlugin/rss', format: 'rdf' },
-  { key: 'articles', main: '{root}/gateway/plugin/WebFeedGatewayPlugin/rss2', format: 'rss' },
-  {
-    key: 'announcements',
-    main: '{root}/gateway/plugin/AnnouncementFeedGatewayPlugin/atom',
-    format: 'atom',
-  },
-  {
-    key: 'announcements',
-    main: '{root}/gateway/plugin/AnnouncementFeedGatewayPlugin/rss',
-    format: 'rdf',
-  },
-  {
-    key: 'announcements',
-    main: '{root}/gateway/plugin/AnnouncementFeedGatewayPlugin/rss2',
-    format: 'rss',
-  },
-])
+const feeds = withHintLabels(ojs.feeds)
 
 export const isOjsHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Open Journal Systems')

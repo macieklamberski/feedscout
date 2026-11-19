@@ -1,5 +1,6 @@
+import { tender } from 'feedintel'
 import { decodeSegment, isHostOrSubdomainOf, parseUrl, startsWithAnyOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
@@ -9,7 +10,7 @@ export type TenderPage =
   | { kind: 'site'; siteUrl: string }
   | { kind: 'discussion'; siteUrl: string; category: string; discussion: string }
 
-const domains = ['tenderapp.com']
+const domains = tender.hosts.tenants
 
 const settingsLineRegex = /\bTender = \{[^\n]*/
 const settingsRootRegex = /"root":"(?<root>\/[^"]*)"/
@@ -22,27 +23,7 @@ const trailingSlashRegex = /\/$/
 // made-up category would otherwise get the site's feed.
 const errorPageRegex = /<!-- This file lives in public\/404\.html -->/
 
-// A site's root comes from its settings script, which a feed URL does not carry, so the table
-// claims a feed on a Tender host under its origin or `/help` only. A custom domain carries no
-// marker in the URL alone, so its feeds are built here but not claimed.
-const feeds = definePlatformFeeds(
-  'tender',
-  [
-    { key: 'discussions', main: '{root}/discussions.atom' },
-    { key: 'discussions', main: '{root}/help/discussions.atom' },
-    { key: 'comments', main: '{root}/comments/recent.atom' },
-    { key: 'comments', main: '{root}/help/comments/recent.atom' },
-    // The page links its comments feed with the discussion repeated as `discussion_id`, and the
-    // feed answers without it too.
-    {
-      key: 'discussion',
-      main: '{root}/discussions/{category}/{discussion}.atom?discussion_id={discussionId}',
-      aliases: ['{root}/discussions/{category}/{discussion}.atom'],
-    },
-    { key: 'discussion', main: '{root}/help/discussions/{category}/{discussion}.atom' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(tender.feeds)
 
 const getSettingsRoot = (content: string | undefined): string | undefined => {
   const settingsLine = content?.match(settingsLineRegex)?.[0]

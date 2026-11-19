@@ -1,5 +1,6 @@
+import { discourse } from 'feedintel'
 import { getAnyOf, getQueryParam, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   digitsRegex,
@@ -34,28 +35,7 @@ const topRegex = /^\/top(?:\/([^/]+))?\/?$/i
 
 const validTopPeriods = ['daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'all']
 
-const domains = ['discourse.group', 'trydiscourse.com']
-
-// The feeds of a forum from its root, which a platform subdomain serves from and an install on its
-// own domain can put under a sub-path its markup names.
-const feeds = definePlatformFeeds(
-  'discourse',
-  [
-    { key: 'topic', main: '{root}/t/{slug}/{topicId}.rss' },
-    { key: 'activity', main: '{root}/u/{username}/activity.rss' },
-    { key: 'category', main: '{root}/c/{category*}.rss' },
-    {
-      key: 'tag',
-      main: '{root}/tag/{slug}/{id}.rss',
-      aliases: ['{root}/tag/{slug}.rss'],
-    },
-    { key: 'top', main: '{root}/top.rss?period={period}' },
-    { key: 'top', main: '{root}/top.rss' },
-    { key: 'latest', main: '{root}/latest.rss' },
-    { key: 'posts', main: '{root}/posts.rss' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(discourse.feeds)
 
 const getTopPeriod = (
   pathPeriod: string | undefined,

@@ -1,5 +1,6 @@
+import { myanimelist } from 'feedintel'
 import { decodeSegment, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -11,28 +12,14 @@ export type MyanimelistUrl =
   | { kind: 'news' }
   | { kind: 'featured' }
 
-export const hosts = ['myanimelist.net', 'www.myanimelist.net']
+export const hosts = myanimelist.hosts.exact
 
 const profileRegex = /^\/profile\/([^/]+)\/?$/i
 const userRegex = /^\/(?:profile|animelist|mangalist|history)\/([^/]+)/i
 const newsRegex = /^\/news(?:\/|$)/i
 const featuredRegex = /^\/featured(?:\/|$)/i
 
-const feeds = definePlatformFeeds('myanimelist', [
-  { key: 'news', main: 'https://myanimelist.net/rss/news.xml' },
-  { key: 'featured', main: 'https://myanimelist.net/rss/featured.xml' },
-  { key: 'anime', main: 'https://myanimelist.net/rss.php?type=rw&u={username}' },
-  { key: 'manga', main: 'https://myanimelist.net/rss.php?type=rm&u={username}' },
-  {
-    key: 'recently-watched',
-    main: 'https://myanimelist.net/rss.php?type=rwe&u={username}',
-  },
-  {
-    key: 'recently-read',
-    main: 'https://myanimelist.net/rss.php?type=rrm&u={username}',
-  },
-  { key: 'blog', main: 'https://myanimelist.net/rss.php?type=blog&u={username}' },
-])
+const feeds = withHintLabels(myanimelist.feeds)
 
 export const parseMyanimelistUrl = (url: string): MyanimelistUrl | undefined => {
   const parsedUrl = parseUrl(url)

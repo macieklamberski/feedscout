@@ -1,5 +1,6 @@
+import { blogHu } from 'feedintel'
 import { decodePercent, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -13,54 +14,15 @@ export type BlogHuUrl =
 
 export type BlogHuPost = { year: string; month: string; day: string; slug: string }
 
-const domains = ['blog.hu']
-const hosts = ['blog.hu', 'www.blog.hu']
+const domains = blogHu.hosts.tenants
+const hosts = blogHu.hosts.exact
 
 const userRegex = /^\/user\/(\d+)(?:\/|$)/i
 const postRegex = /^\/(?<year>\d{4})\/(?<month>\d{2})\/(?<day>\d{2})\/(?<slug>[^/]+)\/?$/
 const tagRegex = /^\/tags\/([^/]+)\/?$/i
 const postFeedSegmentRegex = /\/(?:rss2|atom)\/?$/i
 
-// Blogs serve `/rss`, `/comments/rss`, `/comments/comments/rss` and `/comments/comments/rss2` with
-// the items of the `rss2` feeds their pages link.
-const feeds = definePlatformFeeds(
-  'blog-hu',
-  [
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/rss2',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/rss', '{scheme}://{host}/xml/rss2'],
-    },
-    { key: 'posts', main: '{scheme}://{host}/atom', format: 'atom' },
-    {
-      key: 'comments',
-      main: '{scheme}://{host}/comments/rss2',
-      format: 'rss',
-      aliases: [
-        '{scheme}://{host}/comments/rss',
-        '{scheme}://{host}/comments/comments/rss',
-        '{scheme}://{host}/comments/comments/rss2',
-      ],
-    },
-    { key: 'comments', main: '{scheme}://{host}/comments/atom', format: 'atom' },
-    {
-      key: 'post-comments',
-      main: '{scheme}://{host}/{year}/{month}/{day}/{slug}/rss2',
-      format: 'rss',
-    },
-    {
-      key: 'post-comments',
-      main: '{scheme}://{host}/{year}/{month}/{day}/{slug}/atom',
-      format: 'atom',
-    },
-    { key: 'tag', main: '{scheme}://{host}/rss/tags/{tag}', format: 'rss' },
-    { key: 'tag', main: '{scheme}://{host}/atom/tags/{tag}', format: 'atom' },
-    // A user feed with a `token` query is the same feed signed for one reader.
-    { key: 'user', main: 'https://blog.hu/user/{userId}/rss' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(blogHu.feeds)
 
 export const parseBlogHuUrl = (url: string): BlogHuUrl | undefined => {
   const parsedUrl = parseUrl(url)

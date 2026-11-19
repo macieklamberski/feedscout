@@ -1,5 +1,6 @@
+import { tildes } from 'feedintel'
 import { getQueryParam, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -10,29 +11,11 @@ export type TildesUrl =
   | { kind: 'group'; group: string; tag?: string }
   | { kind: 'home'; tag?: string }
 
-const hosts = ['tildes.net', 'www.tildes.net']
+const hosts = tildes.hosts.exact
 
 const groupRegex = /^\/~([^/]+)/
 
-// Tildes' feed views honour the ?tag= query (forces order=NEW server-side).
-const feeds = definePlatformFeeds('tildes', [
-  {
-    key: 'group-tag',
-    main: 'https://tildes.net/~{group}/topics.rss?tag={tag}',
-    format: 'rss',
-  },
-  {
-    key: 'group-tag',
-    main: 'https://tildes.net/~{group}/topics.atom?tag={tag}',
-    format: 'atom',
-  },
-  { key: 'group', main: 'https://tildes.net/~{group}/topics.rss', format: 'rss' },
-  { key: 'group', main: 'https://tildes.net/~{group}/topics.atom', format: 'atom' },
-  { key: 'tag', main: 'https://tildes.net/topics.rss?tag={tag}', format: 'rss' },
-  { key: 'tag', main: 'https://tildes.net/topics.atom?tag={tag}', format: 'atom' },
-  { key: 'topics', main: 'https://tildes.net/topics.rss', format: 'rss' },
-  { key: 'topics', main: 'https://tildes.net/topics.atom', format: 'atom' },
-])
+const feeds = withHintLabels(tildes.feeds)
 
 export const parseTildesUrl = (url: string): TildesUrl | undefined => {
   const parsedUrl = parseUrl(url)
