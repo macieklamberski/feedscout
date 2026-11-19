@@ -357,6 +357,21 @@ describe('legistarHandler', () => {
       expect(legistarHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should ignore an alternate link to the same meeting on another host', () => {
+      const value =
+        'https://example.com/MeetingDetail.aspx?ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D'
+      const content =
+        '<link href="https://example.org/Feed.ashx?M=CalendarDetail&amp;ID=1234567&amp;GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D" rel="alternate" type="application/rss+xml" />'
+      const expected = [
+        {
+          uri: 'https://example.com/Feed.ashx?GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&ID=1234567&M=CalendarDetail',
+          hint: { key: 'legistar:meeting', label: 'Meeting' },
+        },
+      ]
+
+      expect(legistarHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should spell the meeting feed from the page URL for a page without an alternate link', () => {
       const value =
         'https://example.com/MeetingDetail.aspx?ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D'
