@@ -140,7 +140,7 @@ describe('pmwikiHandler', () => {
     it('should percent-encode a non-ASCII group', () => {
       const value = 'https://example.com/pmwiki.php?n=%C3%84rzte.Liste'
       const expected: DiscoverUriEntry = {
-        uri: 'https://example.com/pmwiki.php?n=%C3%84rzte.RecentChanges&action=rss',
+        uri: 'https://example.com/pmwiki.php?action=rss&n=%C3%84rzte.RecentChanges',
         hint: { key: 'pmwiki:group-changes', label: 'Group changes', format: 'rss' },
       }
 

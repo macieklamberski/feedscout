@@ -75,7 +75,7 @@ describe('mediawikiHandler', () => {
         <script>RLCONF={"wgCanonicalNamespace":"Help","wgNamespaceNumber":12,"wgPageName":"Help:Contents"};</script>
       `
       const expected: DiscoverUriEntry = {
-        uri: 'https://example.org/index.php?title=Help%3AContents&action=history&feed=atom',
+        uri: 'https://example.org/index.php?action=history&feed=atom&title=Help%3AContents',
         hint: { key: 'mediawiki:history', label: 'Page history', format: 'atom' },
       }
 
@@ -89,7 +89,7 @@ describe('mediawikiHandler', () => {
         <script>RLCONF={"wgPageName":"AC\\/DC_\\"Live\\""};</script>
       `
       const expected: DiscoverUriEntry = {
-        uri: 'https://example.org/w/index.php?title=AC%2FDC_%22Live%22&action=history&feed=atom',
+        uri: 'https://example.org/w/index.php?action=history&feed=atom&title=AC%2FDC_%22Live%22',
         hint: { key: 'mediawiki:history', label: 'Page history', format: 'atom' },
       }
 

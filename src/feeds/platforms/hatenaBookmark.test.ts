@@ -349,7 +349,7 @@ describe('hatenaBookmarkHandler', () => {
     it('should return a search feed for a query page', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: `${base}/q/c++%20web?target=title&mode=rss`,
+          uri: `${base}/q/c++%20web?mode=rss&target=title`,
           hint: { key: 'hatena-bookmark:search', label: 'Search' },
         },
         hotEntry,
@@ -432,7 +432,7 @@ describe('hatenaBookmarkHandler', () => {
       const value = `${base}/site/example.com/?sort=eid&page=2`
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: `${base}/site/example.com?sort=eid&mode=rss`,
+          uri: `${base}/site/example.com?mode=rss&sort=eid`,
           hint: { key: 'hatena-bookmark:site', label: 'Site' },
         },
         hotEntry,
