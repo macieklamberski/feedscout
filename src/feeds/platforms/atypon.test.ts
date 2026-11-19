@@ -61,11 +61,11 @@ describe('atyponHandler', () => {
       const value = 'https://www.tandfonline.com/toc/tprs20/current'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://www.tandfonline.com/action/showFeed?type=etoc&feed=rss&jc=tprs20',
+          uri: 'https://www.tandfonline.com/action/showFeed?feed=rss&jc=tprs20&type=etoc',
           hint: { key: 'atypon:journal', label: 'Journal', format: 'rdf' },
         },
         {
-          uri: 'https://www.tandfonline.com/action/showFeed?type=axatoc&feed=rss&jc=tprs20',
+          uri: 'https://www.tandfonline.com/action/showFeed?feed=rss&jc=tprs20&type=axatoc',
           hint: { key: 'atypon:ahead-of-print', label: 'Ahead of print', format: 'rdf' },
         },
       ]
@@ -77,11 +77,11 @@ describe('atyponHandler', () => {
       const value = 'https://onlinelibrary.wiley.com/journal/15406261'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://onlinelibrary.wiley.com/action/showFeed?type=etoc&feed=rss&jc=15406261',
+          uri: 'https://onlinelibrary.wiley.com/action/showFeed?feed=rss&jc=15406261&type=etoc',
           hint: { key: 'atypon:journal', label: 'Journal', format: 'rss' },
         },
         {
-          uri: 'https://onlinelibrary.wiley.com/action/showFeed?type=axatoc&feed=rss&jc=15406261',
+          uri: 'https://onlinelibrary.wiley.com/action/showFeed?feed=rss&jc=15406261&type=axatoc',
           hint: { key: 'atypon:ahead-of-print', label: 'Ahead of print', format: 'rdf' },
         },
         {
@@ -97,11 +97,11 @@ describe('atyponHandler', () => {
       const value = 'http://onlinelibrary.wiley.com/journal/15406261'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://onlinelibrary.wiley.com/action/showFeed?type=etoc&feed=rss&jc=15406261',
+          uri: 'https://onlinelibrary.wiley.com/action/showFeed?feed=rss&jc=15406261&type=etoc',
           hint: { key: 'atypon:journal', label: 'Journal', format: 'rss' },
         },
         {
-          uri: 'http://onlinelibrary.wiley.com/action/showFeed?type=axatoc&feed=rss&jc=15406261',
+          uri: 'http://onlinelibrary.wiley.com/action/showFeed?feed=rss&jc=15406261&type=axatoc',
           hint: { key: 'atypon:ahead-of-print', label: 'Ahead of print', format: 'rdf' },
         },
         {
@@ -117,11 +117,11 @@ describe('atyponHandler', () => {
       const value = 'http://www.tandfonline.com/toc/tprs20/current'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://www.tandfonline.com/action/showFeed?type=etoc&feed=rss&jc=tprs20',
+          uri: 'http://www.tandfonline.com/action/showFeed?feed=rss&jc=tprs20&type=etoc',
           hint: { key: 'atypon:journal', label: 'Journal', format: 'rdf' },
         },
         {
-          uri: 'http://www.tandfonline.com/action/showFeed?type=axatoc&feed=rss&jc=tprs20',
+          uri: 'http://www.tandfonline.com/action/showFeed?feed=rss&jc=tprs20&type=axatoc',
           hint: { key: 'atypon:ahead-of-print', label: 'Ahead of print', format: 'rdf' },
         },
       ]

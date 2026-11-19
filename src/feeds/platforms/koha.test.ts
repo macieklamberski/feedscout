@@ -239,7 +239,7 @@ describe('kohaHandler', () => {
         'https://library-search.nics.gov.uk/cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber=309'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://library-search.nics.gov.uk/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber=309',
+          uri: 'https://library-search.nics.gov.uk/cgi-bin/koha/opac-shelves.pl?op=view&rss=1&shelfnumber=309',
           hint: { key: 'koha:list', label: 'List' },
         },
         {
@@ -256,7 +256,7 @@ describe('kohaHandler', () => {
         'https://library.example.edu//cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber=309'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://library.example.edu//cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber=309',
+          uri: 'https://library.example.edu//cgi-bin/koha/opac-shelves.pl?op=view&rss=1&shelfnumber=309',
           hint: { key: 'koha:list', label: 'List' },
         },
         {

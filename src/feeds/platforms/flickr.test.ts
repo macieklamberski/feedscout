@@ -227,7 +227,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:tag', label: 'Tag', format: 'atom' },
         },
         {
-          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?tags=rock&format=rss_200',
+          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?format=rss_200&tags=rock',
           hint: { key: 'flickr:tag', label: 'Tag', format: 'rss' },
         },
         {
@@ -275,7 +275,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:tag', label: 'Tag', format: 'atom' },
         },
         {
-          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?tags=rock%26roll&format=rss_200',
+          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?format=rss_200&tags=rock%26roll',
           hint: { key: 'flickr:tag', label: 'Tag', format: 'rss' },
         },
         {
@@ -323,7 +323,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:tag', label: 'Tag', format: 'atom' },
         },
         {
-          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?tags=c%2B%2B&format=rss_200',
+          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?format=rss_200&tags=c%2B%2B',
           hint: { key: 'flickr:tag', label: 'Tag', format: 'rss' },
         },
         {
@@ -371,7 +371,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:tag', label: 'Tag', format: 'atom' },
         },
         {
-          uri: `${feedsBase}/photos_public.gne?tags=cats&format=rss_200`,
+          uri: `${feedsBase}/photos_public.gne?format=rss_200&tags=cats`,
           hint: { key: 'flickr:tag', label: 'Tag', format: 'rss' },
         },
         {
@@ -419,7 +419,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:photos', label: 'Photostream', format: 'atom' },
         },
         {
-          uri: `${feedsBase}/photos_public.gne?id=87654321@N07&format=rss_200`,
+          uri: `${feedsBase}/photos_public.gne?format=rss_200&id=87654321@N07`,
           hint: { key: 'flickr:photos', label: 'Photostream', format: 'rss' },
         },
         {
@@ -467,7 +467,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:faves', label: 'Favorites', format: 'atom' },
         },
         {
-          uri: `${feedsBase}/photos_faves.gne?id=87654321@N07&format=rss_200`,
+          uri: `${feedsBase}/photos_faves.gne?format=rss_200&id=87654321@N07`,
           hint: { key: 'flickr:faves', label: 'Favorites', format: 'rss' },
         },
         {
@@ -515,7 +515,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:photoset', label: 'Album', format: 'atom' },
         },
         {
-          uri: `${feedsBase}/photoset.gne?nsid=87654321@N07&set=72177720336891667&format=rss_200`,
+          uri: `${feedsBase}/photoset.gne?format=rss_200&nsid=87654321@N07&set=72177720336891667`,
           hint: { key: 'flickr:photoset', label: 'Album', format: 'rss' },
         },
         {
@@ -523,7 +523,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:photos', label: 'Photostream', format: 'atom' },
         },
         {
-          uri: `${feedsBase}/photos_public.gne?id=87654321@N07&format=rss_200`,
+          uri: `${feedsBase}/photos_public.gne?format=rss_200&id=87654321@N07`,
           hint: { key: 'flickr:photos', label: 'Photostream', format: 'rss' },
         },
         {
@@ -571,7 +571,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:photos-tag', label: 'Tagged photostream', format: 'atom' },
         },
         {
-          uri: `${feedsBase}/photos_public.gne?id=87654321@N07&tags=c%2B%2B&format=rss_200`,
+          uri: `${feedsBase}/photos_public.gne?format=rss_200&id=87654321@N07&tags=c%2B%2B`,
           hint: { key: 'flickr:photos-tag', label: 'Tagged photostream', format: 'rss' },
         },
         {
@@ -579,7 +579,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:photos', label: 'Photostream', format: 'atom' },
         },
         {
-          uri: `${feedsBase}/photos_public.gne?id=87654321@N07&format=rss_200`,
+          uri: `${feedsBase}/photos_public.gne?format=rss_200&id=87654321@N07`,
           hint: { key: 'flickr:photos', label: 'Photostream', format: 'rss' },
         },
         {
@@ -635,7 +635,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:group-pool', label: 'Group pool', format: 'atom' },
         },
         {
-          uri: `${feedsBase}/groups_pool.gne?id=42097308@N00&format=rss_200`,
+          uri: `${feedsBase}/groups_pool.gne?format=rss_200&id=42097308@N00`,
           hint: { key: 'flickr:group-pool', label: 'Group pool', format: 'rss' },
         },
         {
@@ -643,7 +643,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:group-photos', label: 'Group photos', format: 'atom' },
         },
         {
-          uri: `${feedsBase}/photos_public.gne?g=42097308@N00&format=rss_200`,
+          uri: `${feedsBase}/photos_public.gne?format=rss_200&g=42097308@N00`,
           hint: { key: 'flickr:group-photos', label: 'Group photos', format: 'rss' },
         },
         {
@@ -651,7 +651,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:group-discuss', label: 'Group discussions', format: 'atom' },
         },
         {
-          uri: `${feedsBase}/groups_discuss.gne?id=42097308@N00&format=rss_200`,
+          uri: `${feedsBase}/groups_discuss.gne?format=rss_200&id=42097308@N00`,
           hint: { key: 'flickr:group-discuss', label: 'Group discussions', format: 'rss' },
         },
         {
@@ -659,7 +659,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:group-geo', label: 'Group pool with location', format: 'atom' },
         },
         {
-          uri: `${feedsBase}/geo/?g=42097308@N00&format=rss_200`,
+          uri: `${feedsBase}/geo/?format=rss_200&g=42097308@N00`,
           hint: { key: 'flickr:group-geo', label: 'Group pool with location', format: 'rss' },
         },
         {
@@ -707,7 +707,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:group-pool', label: 'Group pool', format: 'atom' },
         },
         {
-          uri: `${feedsBase}/groups_pool.gne?id=42097308@N00&format=rss_200`,
+          uri: `${feedsBase}/groups_pool.gne?format=rss_200&id=42097308@N00`,
           hint: { key: 'flickr:group-pool', label: 'Group pool', format: 'rss' },
         },
         {
@@ -715,7 +715,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:group-photos', label: 'Group photos', format: 'atom' },
         },
         {
-          uri: `${feedsBase}/photos_public.gne?g=42097308@N00&format=rss_200`,
+          uri: `${feedsBase}/photos_public.gne?format=rss_200&g=42097308@N00`,
           hint: { key: 'flickr:group-photos', label: 'Group photos', format: 'rss' },
         },
         {
@@ -723,7 +723,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:group-geo', label: 'Group pool with location', format: 'atom' },
         },
         {
-          uri: `${feedsBase}/geo/?g=42097308@N00&format=rss_200`,
+          uri: `${feedsBase}/geo/?format=rss_200&g=42097308@N00`,
           hint: { key: 'flickr:group-geo', label: 'Group pool with location', format: 'rss' },
         },
         {
@@ -771,7 +771,7 @@ describe('flickrHandler', () => {
           hint: { key: 'flickr:group-discuss', label: 'Group discussions', format: 'atom' },
         },
         {
-          uri: `${feedsBase}/groups_discuss.gne?id=42097308@N00&format=rss_200`,
+          uri: `${feedsBase}/groups_discuss.gne?format=rss_200&id=42097308@N00`,
           hint: { key: 'flickr:group-discuss', label: 'Group discussions', format: 'rss' },
         },
         {
@@ -871,6 +871,18 @@ describe('flickrHandler', () => {
         key: 'flickr:photos',
         label: 'Photostream',
         format: 'atom',
+      }
+
+      expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the RSS photostream hint for a feed under another RSS format name', () => {
+      const value =
+        'https://www.flickr.com/services/feeds/photos_public.gne?id=87654321@N07&format=rss2'
+      const expected: DiscoverUriHint = {
+        key: 'flickr:photos',
+        label: 'Photostream',
+        format: 'rss',
       }
 
       expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
@@ -1137,16 +1149,11 @@ describe('flickrHandler', () => {
       expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the hint without a format for a format value Flickr does not know', () => {
+    it('should return undefined for a format value Flickr does not know', () => {
       const value =
         'https://api.flickr.com/services/feeds/photos_public.gne?id=12345@N00&format=feed-rss_200'
-      const expected: DiscoverUriHint = {
-        key: 'flickr:photos',
-        label: 'Photostream',
-        format: 'atom',
-      }
 
-      expect(flickrHandler.getFeedHint?.(value)).toEqual(expected)
+      expect(flickrHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return the photostream location hint for a user location feed', () => {
@@ -1246,7 +1253,7 @@ describe('flickrHandler', () => {
         { key: 'flickr:recent-geo', label: 'Uploads from everyone with location', format: 'atom' },
       ],
       [
-        'https://www.flickr.com/services/feeds/groups_pool.gne?id=42097308@N00&format=rss_200',
+        'https://www.flickr.com/services/feeds/groups_pool.gne?format=rss_200&id=42097308@N00',
         { key: 'flickr:group-pool', label: 'Group pool', format: 'rss' },
       ],
       [

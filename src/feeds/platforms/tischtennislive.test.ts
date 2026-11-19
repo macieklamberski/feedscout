@@ -210,11 +210,11 @@ describe('tischtennisliveHandler', () => {
         'https://musterkreis.tischtennislive.de/?L1=Ergebnisse&L2=TTStaffeln&L3=SpielUebersicht&Gruppe=1234'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID=1234&Next=0',
+          uri: 'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?ID=1234&Next=0&Typ=Gruppe',
           hint: { key: 'tischtennislive:group-results', label: 'Group results' },
         },
         {
-          uri: 'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID=1234&Next=1',
+          uri: 'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?ID=1234&Next=1&Typ=Gruppe',
           hint: { key: 'tischtennislive:group-fixtures', label: 'Group fixtures' },
         },
         {
@@ -242,11 +242,11 @@ describe('tischtennisliveHandler', () => {
       const value = 'https://musterkreis.tischtennislive.de/?L1=Ergebnisse&L2=TTStaffeln&L2P=56789'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?Typ=Wett&ID=56789&Next=0',
+          uri: 'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?ID=56789&Next=0&Typ=Wett',
           hint: { key: 'tischtennislive:league-results', label: 'League results' },
         },
         {
-          uri: 'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?Typ=Wett&ID=56789&Next=1',
+          uri: 'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?ID=56789&Next=1&Typ=Wett',
           hint: { key: 'tischtennislive:league-fixtures', label: 'League fixtures' },
         },
         {
@@ -298,11 +298,11 @@ describe('tischtennisliveHandler', () => {
       const value = 'http://musterkreis.tischtennislive.de/?L1=Ergebnisse&L2=TTStaffeln&L2P=56789'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?Typ=Wett&ID=56789&Next=0',
+          uri: 'http://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?ID=56789&Next=0&Typ=Wett',
           hint: { key: 'tischtennislive:league-results', label: 'League results' },
         },
         {
-          uri: 'http://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?Typ=Wett&ID=56789&Next=1',
+          uri: 'http://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?ID=56789&Next=1&Typ=Wett',
           hint: { key: 'tischtennislive:league-fixtures', label: 'League fixtures' },
         },
         {
@@ -498,7 +498,7 @@ describe('tischtennisliveHandler', () => {
     }
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
-        'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID=1234&Next=0',
+        'https://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?ID=1234&Next=0&Typ=Gruppe',
         groupResultsHint,
       ],
       [
@@ -510,7 +510,7 @@ describe('tischtennisliveHandler', () => {
         leagueResultsHint,
       ],
       [
-        'http://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?Typ=Wett&ID=56789&Next=1',
+        'http://musterkreis.tischtennislive.de/Export/Tischtennis/RSS.aspx?ID=56789&Next=1&Typ=Wett',
         leagueFixturesHint,
       ],
       ['http://musterkreis.tischtennislive.de/Export/RSS.aspx', newsHint],

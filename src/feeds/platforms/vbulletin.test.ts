@@ -197,7 +197,7 @@ describe('vbulletinHandler', () => {
 
       expect(vbulletinHandler.resolve(value, '<html></html>')).toEqual([
         {
-          uri: 'https://rangeroverclub.com/external.php?type=RSS2&forumids=28',
+          uri: 'https://rangeroverclub.com/external.php?forumids=28&type=RSS2',
           hint: { key: 'vbulletin:forum', label: 'Forum' },
         },
         {
@@ -212,7 +212,7 @@ describe('vbulletinHandler', () => {
 
       expect(vbulletinHandler.resolve(value, '<html></html>')).toEqual([
         {
-          uri: 'https://example.com/external.php?type=RSS2&forumids=28',
+          uri: 'https://example.com/external.php?forumids=28&type=RSS2',
           hint: { key: 'vbulletin:forum', label: 'Forum' },
         },
         {
@@ -238,7 +238,7 @@ describe('vbulletinHandler', () => {
 
       expect(vbulletinHandler.resolve(value, '<html></html>')).toEqual([
         {
-          uri: 'https://www.vbforums.com/external.php?type=RSS2&forumids=1',
+          uri: 'https://www.vbforums.com/external.php?forumids=1&type=RSS2',
           hint: { key: 'vbulletin:forum', label: 'Forum' },
         },
         {
@@ -301,7 +301,7 @@ describe('vbulletinHandler', () => {
 
       expect(vbulletinHandler.resolve(value, content)).toEqual([
         {
-          uri: 'https://megomuseum.com/community/external?type=rss2&nodeid=19',
+          uri: 'https://megomuseum.com/community/external?nodeid=19&type=rss2',
           hint: { key: 'vbulletin:forum', label: 'Forum' },
         },
         {
@@ -325,7 +325,7 @@ describe('vbulletinHandler', () => {
 
       expect(vbulletinHandler.resolve(value, content)).toEqual([
         {
-          uri: 'https://www.miva.com/forums/external?type=rss2&nodeid=57',
+          uri: 'https://www.miva.com/forums/external?nodeid=57&type=rss2',
           hint: { key: 'vbulletin:forum', label: 'Forum' },
         },
         {
@@ -363,7 +363,7 @@ describe('vbulletinHandler', () => {
 
       expect(vbulletinHandler.resolve(value, '<html></html>')).toEqual([
         {
-          uri: 'https://tennisforum.gr/external.php?type=RSS2&forumids=22',
+          uri: 'https://tennisforum.gr/external.php?forumids=22&type=RSS2',
           hint: { key: 'vbulletin:forum', label: 'Forum' },
         },
         {

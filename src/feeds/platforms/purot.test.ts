@@ -188,7 +188,7 @@ describe('purotHandler', () => {
       const value = 'https://example.purot.net/examplewiki'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.purot.net/changes/examplewiki?mode=rss&messages=0',
+          uri: 'https://example.purot.net/changes/examplewiki?messages=0&mode=rss',
           hint: { key: 'purot:page-changes', label: 'Page changes' },
         },
         {
@@ -204,7 +204,7 @@ describe('purotHandler', () => {
           hint: { key: 'purot:recent-changes', label: 'Recent changes' },
         },
         {
-          uri: 'https://example.purot.net/changes/all?mode=rss&messages=0',
+          uri: 'https://example.purot.net/changes/all?messages=0&mode=rss',
           hint: { key: 'purot:recent-page-changes', label: 'Recent page changes' },
         },
         {
@@ -224,7 +224,7 @@ describe('purotHandler', () => {
           hint: { key: 'purot:recent-changes', label: 'Recent changes' },
         },
         {
-          uri: 'https://example.purot.net/changes/all?mode=rss&messages=0',
+          uri: 'https://example.purot.net/changes/all?messages=0&mode=rss',
           hint: { key: 'purot:recent-page-changes', label: 'Recent page changes' },
         },
         {
@@ -244,7 +244,7 @@ describe('purotHandler', () => {
           hint: { key: 'purot:recent-changes', label: 'Recent changes' },
         },
         {
-          uri: 'http://example.purot.net/changes/all?mode=rss&messages=0',
+          uri: 'http://example.purot.net/changes/all?messages=0&mode=rss',
           hint: { key: 'purot:recent-page-changes', label: 'Recent page changes' },
         },
         {
@@ -396,7 +396,7 @@ describe('purotHandler', () => {
     const values: Array<[string, DiscoverUriEntry['hint']]> = [
       ['https://example.purot.net/changes/all?mode=rss', recentChanges],
       ['http://example.purot.net/changes/all?mode=rss', recentChanges],
-      ['https://example.purot.net/changes/examplewiki?mode=rss&messages=0', pageChanges],
+      ['https://example.purot.net/changes/examplewiki?messages=0&mode=rss', pageChanges],
       ['https://example.purot.net/changes/examplewiki?messages=0&mode=rss', pageChanges],
       ['https://example.purot.net/changes/examplewiki?mode=rss&pages=0', pageDiscussions],
       ['https://example.purot.net/changes/examplewiki?mode=rss', pageActivity],

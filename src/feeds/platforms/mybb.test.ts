@@ -26,7 +26,7 @@ const forumFeeds: Array<DiscoverUriEntry> = [
     hint: { key: 'mybb:forum', label: 'Forum', format: 'rss' },
   },
   {
-    uri: 'https://example.com/community/syndication.php?type=atom1.0&fid=12',
+    uri: 'https://example.com/community/syndication.php?fid=12&type=atom1.0',
     hint: { key: 'mybb:forum', label: 'Forum', format: 'atom' },
   },
 ]
