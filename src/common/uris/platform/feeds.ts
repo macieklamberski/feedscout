@@ -96,6 +96,8 @@ type UnlabelledEntry = {
 }
 
 type UnlabelledFeedTable<Key extends string> = {
+  platform: string
+  rows: Array<{ key: string }>
   getFeedUrl: PlatformFeedTable<Key>['getFeedUrl']
   getFeedEntry: (
     key: Key,
@@ -132,9 +134,16 @@ const withEntryLabel = (entry: UnlabelledEntry | undefined): DiscoverUriEntry | 
   return { uri: entry.uri, hint: composeHint(entry.hint.key, entry.hint.format) }
 }
 
+// The hint key of every feed of every table defined, so a test can ask each for its label.
+export const hintKeys = new Set<string>()
+
 export const withHintLabels = <Key extends string>(
   table: UnlabelledFeedTable<Key>,
 ): PlatformFeedTable<Key> => {
+  for (const row of table.rows) {
+    hintKeys.add(`${table.platform}:${row.key}`)
+  }
+
   return {
     getFeedUrl: table.getFeedUrl,
     getFeedEntry: (key, params, format) => {
