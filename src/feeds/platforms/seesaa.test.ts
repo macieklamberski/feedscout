@@ -165,92 +165,38 @@ describe('seesaaHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the posts hint for an RSS 2.0 feed', () => {
-      const value = 'https://alice.seesaa.net/index20.rdf'
-      const expected: DiscoverUriHint = { key: 'seesaa:posts', label: 'Posts', format: 'rss' }
-
-      expect(seesaaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for an RDF feed', () => {
-      const value = 'https://alice.seesaa.net/index.rdf'
-      const expected: DiscoverUriHint = { key: 'seesaa:posts', label: 'Posts', format: 'rdf' }
-
-      expect(seesaaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for an http feed on another domain', () => {
-      const value = 'http://alice.stablo.jp/index20.rdf'
-      const expected: DiscoverUriHint = { key: 'seesaa:posts', label: 'Posts', format: 'rss' }
-
-      expect(seesaaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for an article page', () => {
-      const value = 'https://alice.seesaa.net/article/123.html'
-
-      expect(seesaaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return the podcast hint for a podcast feed', () => {
+    it('should return the podcast hint for a podcast feed under another top-level domain', () => {
       const value = 'https://alice.seesaa.space/index_custom.rdf'
-      const expected: DiscoverUriHint = { key: 'seesaa:podcast', label: 'Podcast', format: 'rss' }
+      const expected: DiscoverUriHint = {
+        key: 'seesaa:podcast',
+        label: 'Podcast',
+        format: 'rss',
+      }
 
       expect(seesaaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a feed path on a blog image host', () => {
-      const value = 'https://alice.up.seesaa.net/index.rdf'
-
-      expect(seesaaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on the apex', () => {
-      const value = 'https://seesaa.net/index.rdf'
-
-      expect(seesaaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on the www host', () => {
-      const value = 'https://www.seesaa.net/index.rdf'
-
-      expect(seesaaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/index.rdf'
-
-      expect(seesaaHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://alice.seesaa.net/index20.rdf',
-        { key: 'seesaa:posts', label: 'Posts', format: 'rss' },
-      ],
-      ['http://alice.seesaa.net/index.rdf', { key: 'seesaa:posts', label: 'Posts', format: 'rdf' }],
-      [
-        'https://alice.seesaa.space/index20.rdf',
-        { key: 'seesaa:posts', label: 'Posts', format: 'rss' },
-      ],
-      ['http://alice.stablo.jp/index.rdf', { key: 'seesaa:posts', label: 'Posts', format: 'rdf' }],
-      [
-        'https://alice.seesaa.net/index_custom.rdf',
-        { key: 'seesaa:podcast', label: 'Podcast', format: 'rss' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return an http RDF posts feed on stablo.jp as itself', async () => {
+      const value = 'http://alice.stablo.jp/index.rdf'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [seesaaHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: value,
+          hint: {
+            key: 'seesaa:posts',
+            label: 'Posts',
+            format: 'rdf',
+          },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

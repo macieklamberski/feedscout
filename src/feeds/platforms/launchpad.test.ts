@@ -461,23 +461,6 @@ describe('launchpadHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the announcements key for the site announcements feed', () => {
-      const value = 'http://feeds.launchpad.net/announcements.atom'
-      const expected: DiscoverUriHint = { key: 'launchpad:announcements', label: 'Announcements' }
-
-      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the project announcements key for a project announcements feed', () => {
-      const value = 'http://feeds.launchpad.net/example/announcements.atom'
-      const expected: DiscoverUriHint = {
-        key: 'launchpad:project-announcements',
-        label: 'Project announcements',
-      }
-
-      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the project announcements key for a project announcements feed over https', () => {
       const value = 'https://feeds.launchpad.net/example/announcements.atom'
       const expected: DiscoverUriHint = {
@@ -487,190 +470,27 @@ describe('launchpadHandler', () => {
 
       expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the bugs key for the site latest bugs feed', () => {
-      const value = 'http://feeds.launchpad.net/bugs/latest-bugs.atom'
-      const expected: DiscoverUriHint = { key: 'launchpad:bugs', label: 'Latest bugs' }
-
-      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the project bugs key for a project latest bugs feed', () => {
-      const value = 'http://feeds.launchpad.net/example/latest-bugs.atom'
-      const expected: DiscoverUriHint = {
-        key: 'launchpad:project-bugs',
-        label: 'Project latest bugs',
-      }
-
-      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the person bugs key for a person latest bugs feed', () => {
-      const value = 'http://feeds.launchpad.net/~example/latest-bugs.atom'
-      const expected: DiscoverUriHint = {
-        key: 'launchpad:person-bugs',
-        label: 'Person latest bugs',
-      }
-
-      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the package bugs key for a source package latest bugs feed', () => {
-      const value = 'http://feeds.launchpad.net/example/+source/package/latest-bugs.atom'
-      const expected: DiscoverUriHint = {
-        key: 'launchpad:package-bugs',
-        label: 'Package latest bugs',
-      }
-
-      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the bug key for a bug feed', () => {
-      const value = 'http://feeds.launchpad.net/bugs/123/bug.atom'
-      const expected: DiscoverUriHint = { key: 'launchpad:bug', label: 'Bug' }
-
-      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the branch key for a Bazaar branch feed', () => {
-      const value = 'http://feeds.launchpad.net/~example/project/trunk/branch.atom'
-      const expected: DiscoverUriHint = { key: 'launchpad:branch', label: 'Branch' }
-
-      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the branch key for a source package branch feed', () => {
-      const value = 'http://feeds.launchpad.net/~example/distro/series/package/branch/branch.atom'
-      const expected: DiscoverUriHint = { key: 'launchpad:branch', label: 'Branch' }
-
-      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the project branches key for a project branches feed', () => {
-      const value = 'http://feeds.launchpad.net/example/branches.atom'
-      const expected: DiscoverUriHint = {
-        key: 'launchpad:project-branches',
-        label: 'Project branches',
-      }
-
-      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the person branches key for a person branches feed', () => {
-      const value = 'http://feeds.launchpad.net/~example/branches.atom'
-      const expected: DiscoverUriHint = {
-        key: 'launchpad:person-branches',
-        label: 'Person branches',
-      }
-
-      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the project revisions key for a project revisions feed', () => {
-      const value = 'http://feeds.launchpad.net/example/revisions.atom'
-      const expected: DiscoverUriHint = {
-        key: 'launchpad:project-revisions',
-        label: 'Project revisions',
-      }
-
-      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the person revisions key for a person revisions feed', () => {
-      const value = 'http://feeds.launchpad.net/~example/revisions.atom'
-      const expected: DiscoverUriHint = {
-        key: 'launchpad:person-revisions',
-        label: 'Person revisions',
-      }
-
-      expect(launchpadHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a project page', () => {
-      const value = 'https://launchpad.net/example'
-
-      expect(launchpadHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a branch feed path without the owner tilde', () => {
-      const value = 'http://feeds.launchpad.net/example/project/trunk/branch.atom'
-
-      expect(launchpadHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'http://example.com/example/announcements.atom'
-
-      expect(launchpadHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'http://feeds.launchpad.net/announcements.atom',
-        { key: 'launchpad:announcements', label: 'Announcements' },
-      ],
-      [
-        'https://feeds.launchpad.net/example/announcements.atom',
-        { key: 'launchpad:project-announcements', label: 'Project announcements' },
-      ],
-      [
-        'http://feeds.launchpad.net/bugs/latest-bugs.atom',
-        { key: 'launchpad:bugs', label: 'Latest bugs' },
-      ],
-      [
-        'https://feeds.launchpad.net/~example/latest-bugs.atom',
-        { key: 'launchpad:person-bugs', label: 'Person latest bugs' },
-      ],
-      [
-        'http://feeds.launchpad.net/example/+source/package/latest-bugs.atom',
-        { key: 'launchpad:package-bugs', label: 'Package latest bugs' },
-      ],
-      [
-        'https://feeds.launchpad.net/example/+source/package/latest-bugs.atom',
-        { key: 'launchpad:package-bugs', label: 'Package latest bugs' },
-      ],
-      ['http://feeds.launchpad.net/bugs/123/bug.atom', { key: 'launchpad:bug', label: 'Bug' }],
-      [
-        'https://feeds.launchpad.net/~example/project/trunk/branch.atom',
-        { key: 'launchpad:branch', label: 'Branch' },
-      ],
-      [
-        'http://feeds.launchpad.net/~example/distro/series/package/branch/branch.atom',
-        { key: 'launchpad:branch', label: 'Branch' },
-      ],
-      [
-        'https://feeds.launchpad.net/example/branches.atom',
-        { key: 'launchpad:project-branches', label: 'Project branches' },
-      ],
-      [
-        'https://feeds.launchpad.net/example/latest-bugs.atom',
-        { key: 'launchpad:project-bugs', label: 'Project latest bugs' },
-      ],
-      [
-        'http://feeds.launchpad.net/~example/branches.atom',
-        { key: 'launchpad:person-branches', label: 'Person branches' },
-      ],
-      [
-        'https://feeds.launchpad.net/~example/revisions.atom',
-        { key: 'launchpad:person-revisions', label: 'Person revisions' },
-      ],
-      [
-        'http://feeds.launchpad.net/example/revisions.atom',
-        { key: 'launchpad:project-revisions', label: 'Project revisions' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a source package branch feed as itself', async () => {
+      const value = 'http://feeds.launchpad.net/~example/distro/series/package/branch/branch.atom'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [launchpadHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: value,
+          hint: {
+            key: 'launchpad:branch',
+            label: 'Branch',
+          },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

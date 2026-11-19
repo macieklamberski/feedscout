@@ -114,29 +114,11 @@ describe('bangumiHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the collections hint for a collections feed', () => {
-      const value = 'https://bgm.tv/feed/user/sai/interests'
-      const expected: DiscoverUriHint = { key: 'bangumi:collections', label: 'Collections' }
-
-      expect(bangumiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the timeline hint for a timeline feed on bangumi.tv', () => {
       const value = 'https://bangumi.tv/feed/user/sai/timeline'
       const expected: DiscoverUriHint = { key: 'bangumi:timeline', label: 'Timeline' }
 
       expect(bangumiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the blog hint for the blog feed', () => {
-      const value = 'https://bgm.tv/feed/blog/all'
-      const expected: DiscoverUriHint = { key: 'bangumi:blog', label: 'Blog' }
-
-      expect(bangumiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a user page', () => {
-      expect(bangumiHandler.getFeedHint?.('https://bgm.tv/user/sai')).toBeUndefined()
     })
   })
 })

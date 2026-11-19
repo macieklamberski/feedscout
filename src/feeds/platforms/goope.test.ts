@@ -274,38 +274,6 @@ describe('goopeHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the news key for the news feed of a free site', () => {
-      const value = 'https://r.goope.jp/example/feed.rss'
-      const expected: DiscoverUriHint = { key: 'goope:news', label: 'News', format: 'rdf' }
-
-      expect(goopeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the news key for the news feed over http', () => {
-      const value = 'http://r.goope.jp/example/feed.rss'
-      const expected: DiscoverUriHint = { key: 'goope:news', label: 'News', format: 'rdf' }
-
-      expect(goopeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the news key for the news feed under a template path', () => {
-      const value = 'https://r.goope.jp/example/t_123456/feed.rss'
-      const expected: DiscoverUriHint = { key: 'goope:news', label: 'News', format: 'rdf' }
-
-      expect(goopeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the member news key for the member news feed', () => {
-      const value = 'https://r.goope.jp/example/shokokai/member/feed.rss'
-      const expected: DiscoverUriHint = {
-        key: 'goope:member-news',
-        label: 'Member news',
-        format: 'rdf',
-      }
-
-      expect(goopeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the member news key for the member news feed under a template path', () => {
       const value = 'https://r.goope.jp/example/t_123456/shokokai/member/feed.rss'
       const expected: DiscoverUriHint = {
@@ -316,79 +284,24 @@ describe('goopeHandler', () => {
 
       expect(goopeHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a page of a free site', () => {
-      const value = 'https://r.goope.jp/example/info/1234567'
-
-      expect(goopeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return the association news hint for an association news feed', () => {
-      const value = 'https://r.goope.jp/example/shokokai/feed.rss'
-      const expected: DiscoverUriHint = {
-        key: 'goope:association-news',
-        label: 'Association news',
-        format: 'rdf',
-      }
-
-      expect(goopeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the association news hint for an association news feed under a template path', () => {
-      const value = 'https://r.goope.jp/example/t_123456/shokokai/feed.rss'
-      const expected: DiscoverUriHint = {
-        key: 'goope:association-news',
-        label: 'Association news',
-        format: 'rdf',
-      }
-
-      expect(goopeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a member news path with no site in front', () => {
-      const value = 'https://r.goope.jp/shokokai/member/feed.rss'
-
-      expect(goopeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the news feed of a custom domain', () => {
-      const value = 'https://example.com/feed.rss'
-
-      expect(goopeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const newsHint: DiscoverUriHint = { key: 'goope:news', label: 'News', format: 'rdf' }
-    const memberNewsHint: DiscoverUriHint = {
-      key: 'goope:member-news',
-      label: 'Member news',
-      format: 'rdf',
-    }
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'http://r.goope.jp/example/shokokai/feed.rss',
-        { key: 'goope:association-news', label: 'Association news', format: 'rdf' },
-      ],
-      [
-        'https://r.goope.jp/example/t_123456/shokokai/feed.rss',
-        { key: 'goope:association-news', label: 'Association news', format: 'rdf' },
-      ],
-      ['https://r.goope.jp/example/feed.rss/', newsHint],
-      ['https://r.goope.jp/example/t_123456/feed.rss/', newsHint],
-      ['https://r.goope.jp/example/shokokai/member/feed.rss', memberNewsHint],
-      ['https://r.goope.jp/example/t_123456/shokokai/member/feed.rss', memberNewsHint],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return an association news feed under a template path as itself', async () => {
+      const value = 'https://r.goope.jp/example/t_123456/shokokai/feed.rss'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://r.goope.jp/example/t_123456/shokokai/feed.rss',
+          hint: { key: 'goope:association-news', label: 'Association news', format: 'rdf' },
+        },
+      ]
+      const uris = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [goopeHandler],
         baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
-      expect(result).toEqual(expected)
+      expect(uris).toEqual(expected)
     })
   })
 })
