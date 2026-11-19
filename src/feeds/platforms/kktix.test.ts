@@ -115,6 +115,12 @@ describe('kktixHandler', () => {
       expect(kktixHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return undefined for the events feed with a locale value that is no locale', () => {
+      const value = 'https://example.kktix.cc/events.atom?locale=1'
+
+      expect(kktixHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for an organizer page', () => {
       const value = 'https://example.kktix.cc/events'
 

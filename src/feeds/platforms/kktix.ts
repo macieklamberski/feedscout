@@ -1,3 +1,4 @@
+import { isLocale } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -18,10 +19,10 @@ const feeds = definePlatformFeeds(
     {
       key: 'events',
       main: '{scheme}://{host}/events.atom?locale=zh-TW',
-      aliases: ['{scheme}://{host}/events.atom'],
+      aliases: ['{scheme}://{host}/events.atom', '{scheme}://{host}/events.atom?locale={locale}'],
     },
   ],
-  { hosts: { tenants: domains } },
+  { hosts: { tenants: domains }, checks: { locale: isLocale } },
 )
 
 export const parseKktixUrl = (url: string): KktixUrl | undefined => {
