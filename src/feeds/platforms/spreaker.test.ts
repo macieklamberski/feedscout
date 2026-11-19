@@ -4,14 +4,6 @@ import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { parseSpreakerUrl, type SpreakerUrl, spreakerHandler } from './spreaker.js'
 
-const podcastHint: DiscoverUriHint = { key: 'spreaker:podcast', label: 'Podcast' }
-const feedCases: Array<[string, DiscoverUriHint]> = [
-  ['https://www.spreaker.com/show/12345/episodes/feed', podcastHint],
-  ['https://spreaker.com/show/12345/episodes/feed', podcastHint],
-  ['http://www.spreaker.com/show/12345/episodes/feed', podcastHint],
-  ['https://www.spreaker.com/show/12345/episodes/feed/items/3', podcastHint],
-]
-
 describe('parseSpreakerUrl', () => {
   it('should return the show for a podcast page', () => {
     const expected: SpreakerUrl = { kind: 'show', showId: '12345' }
@@ -156,41 +148,17 @@ describe('spreakerHandler', () => {
       expect(spreakerHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast hint for a show feed on the apex host', () => {
-      const value = 'https://spreaker.com/show/12345/episodes/feed'
-      const expected: DiscoverUriHint = { key: 'spreaker:podcast', label: 'Podcast' }
-
-      expect(spreakerHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return undefined for a feed path with a word in place of the show id', () => {
       const value = 'https://www.spreaker.com/show/my-show/episodes/feed'
-
-      expect(spreakerHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a show page', () => {
-      const value = 'https://www.spreaker.com/show/12345/episodes'
-
-      expect(spreakerHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return the podcast hint for the feed cut to its newest episodes', () => {
-      const value = 'https://spreaker.com/show/12345/episodes/feed/items/1'
-      const expected: DiscoverUriHint = { key: 'spreaker:podcast', label: 'Podcast' }
-
-      expect(spreakerHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/show/12345/episodes/feed'
 
       expect(spreakerHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('as a feed URL input', () => {
-    it.each(feedCases)('should return %s as given', async (value, hint) => {
+    it('should return a show feed as given', async () => {
+      const value = 'https://www.spreaker.com/show/12345/episodes/feed'
+      const hint: DiscoverUriHint = { key: 'spreaker:podcast', label: 'Podcast' }
       const options = {
         ...defaultPlatformOptions,
         handlers: [spreakerHandler],

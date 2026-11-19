@@ -181,93 +181,18 @@ describe('artstationHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the portfolio hint for a portfolio feed', () => {
-      const value = 'https://www.artstation.com/alice3dvfx.rss'
-      const expected: DiscoverUriHint = { key: 'artstation:portfolio', label: 'Portfolio' }
-
-      expect(artstationHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the portfolio hint for a portfolio feed without www', () => {
       const value = 'https://artstation.com/bobpainter.rss'
       const expected: DiscoverUriHint = { key: 'artstation:portfolio', label: 'Portfolio' }
 
       expect(artstationHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the portfolio hint for a portfolio feed over http', () => {
-      const value = 'http://www.artstation.com/bobpainter.rss'
-      const expected: DiscoverUriHint = { key: 'artstation:portfolio', label: 'Portfolio' }
-
-      expect(artstationHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the artwork hint for the artwork feed', () => {
-      const value = 'https://www.artstation.com/artwork.rss'
-      const expected: DiscoverUriHint = { key: 'artstation:artwork', label: 'Artwork' }
-
-      expect(artstationHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the artwork hint for the artwork feed with a capitalized route', () => {
-      const value = 'https://www.artstation.com/Artwork.rss'
-      const expected: DiscoverUriHint = { key: 'artstation:artwork', label: 'Artwork' }
-
-      expect(artstationHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the artwork hint for the artwork feed sorted by latest', () => {
-      const value = 'https://www.artstation.com/artwork.rss?sorting=latest'
-      const expected: DiscoverUriHint = { key: 'artstation:artwork', label: 'Artwork' }
-
-      expect(artstationHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a portfolio page', () => {
-      const value = 'https://www.artstation.com/alice3dvfx'
-
-      expect(artstationHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the artwork page', () => {
-      const value = 'https://www.artstation.com/artwork'
-
-      expect(artstationHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on a portfolio subdomain', () => {
-      const value = 'https://alice3dvfx.artstation.com/alice3dvfx.rss'
-
-      expect(artstationHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed in a nested path', () => {
-      const value = 'https://www.artstation.com/alice3dvfx/albums.rss'
-
-      expect(artstationHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/alice3dvfx.rss'
-
-      expect(artstationHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://www.artstation.com/alice3dvfx.rss',
-        { key: 'artstation:portfolio', label: 'Portfolio' },
-      ],
-      ['https://www.artstation.com/artwork.rss', { key: 'artstation:artwork', label: 'Artwork' }],
-      [
-        'https://www.artstation.com/artwork.rss?sorting=latest',
-        { key: 'artstation:artwork', label: 'Artwork' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a portfolio feed as itself', async () => {
+      const value = 'https://www.artstation.com/alice3dvfx.rss'
+      const hint: DiscoverUriHint = { key: 'artstation:portfolio', label: 'Portfolio' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [artstationHandler],

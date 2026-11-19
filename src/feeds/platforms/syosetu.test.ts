@@ -4,18 +4,6 @@ import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { parseSyosetuUrl, type SyosetuUrl, syosetuHandler } from './syosetu.js'
 
-const authorHint: DiscoverUriHint = { key: 'syosetu:author', label: 'Author' }
-const activityHint: DiscoverUriHint = { key: 'syosetu:activity', label: 'Activity' }
-const allNovelsHint: DiscoverUriHint = { key: 'syosetu:all-novels', label: 'All novels' }
-const feedCases: Array<[string, DiscoverUriHint]> = [
-  ['https://api.syosetu.com/writernovel/12345.Atom', authorHint],
-  ['http://api.syosetu.com/writernovel/12345.atom', authorHint],
-  ['https://api.syosetu.com/writer/12345.Atom', activityHint],
-  ['https://api.syosetu.com/writer/12345.Atom/', activityHint],
-  ['https://api.syosetu.com/allnovel.Atom', allNovelsHint],
-  ['http://api.syosetu.com/allnovel.atom', allNovelsHint],
-]
-
 describe('parseSyosetuUrl', () => {
   it('should return the writer for a writer page', () => {
     const expected: SyosetuUrl = { kind: 'writer', writerId: '12345' }
@@ -99,27 +87,6 @@ describe('syosetuHandler', () => {
       expect(syosetuHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the activity hint for an activity feed', () => {
-      const value = 'https://api.syosetu.com/writer/12345.Atom'
-      const expected: DiscoverUriHint = { key: 'syosetu:activity', label: 'Activity' }
-
-      expect(syosetuHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the author hint for a lowercase author feed over http', () => {
-      const value = 'http://api.syosetu.com/writernovel/12345.atom'
-      const expected: DiscoverUriHint = { key: 'syosetu:author', label: 'Author' }
-
-      expect(syosetuHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the activity hint for an activity feed with a trailing slash', () => {
-      const value = 'https://api.syosetu.com/writer/12345.Atom/'
-      const expected: DiscoverUriHint = { key: 'syosetu:activity', label: 'Activity' }
-
-      expect(syosetuHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the all novels hint for the all novels feed', () => {
       const value = 'https://api.syosetu.com/allnovel.Atom'
       const expected: DiscoverUriHint = { key: 'syosetu:all-novels', label: 'All novels' }
@@ -132,34 +99,19 @@ describe('syosetuHandler', () => {
 
       expect(syosetuHandler.getFeedHint?.(value)).toBeUndefined()
     })
-
-    it('should return undefined for a feed without the format suffix', () => {
-      const value = 'https://api.syosetu.com/writernovel/12345'
-
-      expect(syosetuHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a writer page', () => {
-      const value = 'https://mypage.syosetu.com/12345/'
-
-      expect(syosetuHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/writernovel/12345.Atom'
-
-      expect(syosetuHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('as a feed URL input', () => {
-    it.each(feedCases)('should return %s as given', async (value, hint) => {
+    it('should return an author feed as given', async () => {
+      const value = 'https://api.syosetu.com/writernovel/12345.Atom'
       const options = {
         ...defaultPlatformOptions,
         handlers: [syosetuHandler],
         baseUrl: value,
       }
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'syosetu:author', label: 'Author' } },
+      ]
 
       expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })

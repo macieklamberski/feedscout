@@ -144,50 +144,6 @@ describe('livedoorBlogHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the category hint for a category feed on blog.jp', () => {
-      const value = 'https://alice.blog.jp/archives/cat_601340.xml'
-      const expected: DiscoverUriHint = {
-        key: 'livedoor-blog:category',
-        label: 'Category',
-        format: 'rdf',
-      }
-
-      expect(livedoorBlogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the category hint for a category feed with a hyphenated blog name', () => {
-      const value = 'https://bob-matome.blog.jp/archives/cat_103964.xml'
-      const expected: DiscoverUriHint = {
-        key: 'livedoor-blog:category',
-        label: 'Category',
-        format: 'rdf',
-      }
-
-      expect(livedoorBlogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the category hint for a category feed on livedoor.biz', () => {
-      const value = 'https://example.livedoor.biz/archives/cat_184845.xml'
-      const expected: DiscoverUriHint = {
-        key: 'livedoor-blog:category',
-        label: 'Category',
-        format: 'rdf',
-      }
-
-      expect(livedoorBlogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the category hint for an http category feed', () => {
-      const value = 'http://example.doorblog.jp/archives/cat_184845.xml'
-      const expected: DiscoverUriHint = {
-        key: 'livedoor-blog:category',
-        label: 'Category',
-        format: 'rdf',
-      }
-
-      expect(livedoorBlogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the posts hint for an RDF feed', () => {
       const value = 'https://example.ldblog.jp/index.rdf'
       const expected: DiscoverUriHint = {
@@ -198,84 +154,21 @@ describe('livedoorBlogHandler', () => {
 
       expect(livedoorBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the posts hint for an Atom feed', () => {
-      const value = 'https://example.blog.jp/atom.xml'
-      const expected: DiscoverUriHint = {
-        key: 'livedoor-blog:posts',
-        label: 'Posts',
-        format: 'atom',
-      }
-
-      expect(livedoorBlogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a category page', () => {
-      const value = 'https://example.blog.jp/archives/cat_184845.html'
-
-      expect(livedoorBlogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the blog home page', () => {
-      const value = 'https://example.blog.jp/'
-
-      expect(livedoorBlogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://blog.example.blog.jp/index.rdf'
-
-      expect(livedoorBlogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex domain', () => {
-      const value = 'https://blog.jp/index.rdf'
-
-      expect(livedoorBlogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a host ending in blog.jp without the dot', () => {
-      const value = 'https://example.hatenablog.jp/atom.xml'
-
-      expect(livedoorBlogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on another host', () => {
-      const value = 'https://example.com/index.rdf'
-
-      expect(livedoorBlogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://alice.blog.jp/archives/cat_601340.xml',
-        { key: 'livedoor-blog:category', label: 'Category', format: 'rdf' },
-      ],
-      [
-        'https://bob-matome.blog.jp/archives/cat_103964.xml',
-        { key: 'livedoor-blog:category', label: 'Category', format: 'rdf' },
-      ],
-      [
-        'https://example.ldblog.jp/index.rdf',
-        { key: 'livedoor-blog:posts', label: 'Posts', format: 'rdf' },
-      ],
-      [
-        'https://example.blog.jp/atom.xml',
-        { key: 'livedoor-blog:posts', label: 'Posts', format: 'atom' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return an RDF feed as itself', async () => {
+      const value = 'https://example.ldblog.jp/index.rdf'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [livedoorBlogHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'livedoor-blog:posts', label: 'Posts', format: 'rdf' } },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

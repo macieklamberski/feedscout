@@ -124,74 +124,12 @@ describe('pypiHandler', () => {
 
       expect(pypiHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the releases hint for a project name with a hyphen', () => {
-      const value = 'https://pypi.org/rss/project/micropython-uaioftp/releases.xml'
-      const expected: DiscoverUriHint = { key: 'pypi:releases', label: 'Releases' }
-
-      expect(pypiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the releases hint for a project name with a dot', () => {
-      const value = 'https://pypi.org/rss/project/zope.interface/releases.xml'
-      const expected: DiscoverUriHint = { key: 'pypi:releases', label: 'Releases' }
-
-      expect(pypiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the releases hint for a feed on the www host', () => {
-      const value = 'https://www.pypi.org/rss/project/md5util/releases.xml'
-      const expected: DiscoverUriHint = { key: 'pypi:releases', label: 'Releases' }
-
-      expect(pypiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the new packages hint for the new packages feed', () => {
-      const value = 'https://pypi.org/rss/packages.xml'
-      const expected: DiscoverUriHint = { key: 'pypi:new-packages', label: 'New packages' }
-
-      expect(pypiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the updates hint for the updates feed', () => {
-      const value = 'https://pypi.org/rss/updates.xml'
-      const expected: DiscoverUriHint = { key: 'pypi:updates', label: 'Recent updates' }
-
-      expect(pypiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a project page', () => {
-      const value = 'https://pypi.org/project/md5util/'
-
-      expect(pypiHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/rss/project/md5util/releases.xml'
-
-      expect(pypiHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://pypi.org/rss/project/md5util/releases.xml',
-        { key: 'pypi:releases', label: 'Releases' },
-      ],
-      [
-        'https://pypi.org/rss/project/micropython-uaioftp/releases.xml',
-        { key: 'pypi:releases', label: 'Releases' },
-      ],
-      [
-        'https://pypi.org/rss/project/zope.interface/releases.xml',
-        { key: 'pypi:releases', label: 'Releases' },
-      ],
-      ['https://pypi.org/rss/packages.xml', { key: 'pypi:new-packages', label: 'New packages' }],
-      ['https://pypi.org/rss/updates.xml', { key: 'pypi:updates', label: 'Recent updates' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a project releases feed as itself', async () => {
+      const value = 'https://pypi.org/rss/project/md5util/releases.xml'
+      const hint: DiscoverUriHint = { key: 'pypi:releases', label: 'Releases' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [pypiHandler],

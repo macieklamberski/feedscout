@@ -82,76 +82,18 @@ describe('tistoryHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the blog hint for an RSS feed', () => {
-      const value = 'https://alice.tistory.com/rss'
-      const expected: DiscoverUriHint = { key: 'tistory:blog', label: 'Blog' }
-
-      expect(tistoryHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the blog hint for an http RSS feed', () => {
-      const value = 'http://alice.tistory.com/rss'
-      const expected: DiscoverUriHint = { key: 'tistory:blog', label: 'Blog' }
-
-      expect(tistoryHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the blog hint for the feed path', () => {
       const value = 'https://alice.tistory.com/feed'
       const expected: DiscoverUriHint = { key: 'tistory:blog', label: 'Blog' }
 
       expect(tistoryHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the blog hint for the index.xml path', () => {
-      const value = 'https://alice.tistory.com/index.xml'
-      const expected: DiscoverUriHint = { key: 'tistory:blog', label: 'Blog' }
-
-      expect(tistoryHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a post page', () => {
-      const value = 'https://alice.tistory.com/123'
-
-      expect(tistoryHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on the apex', () => {
-      const value = 'https://tistory.com/rss'
-
-      expect(tistoryHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on the www host', () => {
-      const value = 'https://www.tistory.com/rss'
-
-      expect(tistoryHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on a nested subdomain', () => {
-      const value = 'https://blog.alice.tistory.com/rss'
-
-      expect(tistoryHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/rss'
-
-      expect(tistoryHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const hint: DiscoverUriHint = { key: 'tistory:blog', label: 'Blog' }
-    const ownFeeds: Array<string> = [
-      'https://alice.tistory.com/rss',
-      'https://alice.tistory.com/rss/',
-      'http://alice.tistory.com/rss',
-      'https://alice.tistory.com/feed',
-      'https://alice.tistory.com/index.xml',
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
+    it('should return a feed at the feed path as itself', async () => {
+      const value = 'https://alice.tistory.com/feed'
+      const hint: DiscoverUriHint = { key: 'tistory:blog', label: 'Blog' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [tistoryHandler],

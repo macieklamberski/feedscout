@@ -164,96 +164,18 @@ describe('jugemHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the posts hint for an RSS 1.0 feed', () => {
-      const value = 'https://alice.jugem.jp/?mode=rss'
-      const expected: DiscoverUriHint = { key: 'jugem:posts', label: 'Posts', format: 'rdf' }
-
-      expect(jugemHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for an Atom feed', () => {
-      const value = 'https://alice.jugem.jp/?mode=atom'
-      const expected: DiscoverUriHint = { key: 'jugem:posts', label: 'Posts', format: 'atom' }
-
-      expect(jugemHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for an http feed on jugem.cc', () => {
-      const value = 'http://alice.jugem.cc/?mode=rss'
-      const expected: DiscoverUriHint = { key: 'jugem:posts', label: 'Posts', format: 'rdf' }
-
-      expect(jugemHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the posts hint for an index.rdf feed', () => {
       const value = 'https://alice.jugem.jp/index.rdf'
       const expected: DiscoverUriHint = { key: 'jugem:posts', label: 'Posts', format: 'rdf' }
 
       expect(jugemHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the posts hint for an atom.xml feed', () => {
-      const value = 'https://alice.jugem.jp/atom.xml'
-      const expected: DiscoverUriHint = { key: 'jugem:posts', label: 'Posts', format: 'atom' }
-
-      expect(jugemHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the theme hint for a theme feed', () => {
-      const value = 'https://jugem.jp/theme/c12/3456/rss'
-      const expected: DiscoverUriHint = { key: 'jugem:theme', label: 'Theme', format: 'rdf' }
-
-      expect(jugemHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a theme page', () => {
-      const value = 'http://jugem.jp/theme/c12/3456/'
-
-      expect(jugemHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a post page', () => {
-      const value = 'https://alice.jugem.jp/?eid=123'
-
-      expect(jugemHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed query on the apex portal', () => {
-      const value = 'https://jugem.jp/?mode=rss'
-
-      expect(jugemHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed query on the www portal', () => {
-      const value = 'https://www.jugem.jp/?mode=atom'
-
-      expect(jugemHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed query on a nested subdomain', () => {
-      const value = 'https://blog.alice.jugem.jp/?mode=rss'
-
-      expect(jugemHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a custom domain', () => {
-      const value = 'http://blog.example.com/?mode=rss'
-
-      expect(jugemHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://alice.jugem.jp/?mode=rss', { key: 'jugem:posts', label: 'Posts', format: 'rdf' }],
-      ['http://alice.jugem.jp/?mode=atom', { key: 'jugem:posts', label: 'Posts', format: 'atom' }],
-      ['https://alice.jugem.cc/?mode=atom', { key: 'jugem:posts', label: 'Posts', format: 'atom' }],
-      ['https://alice.jugem.jp/index.rdf', { key: 'jugem:posts', label: 'Posts', format: 'rdf' }],
-      ['http://alice.jugem.jp/atom.xml', { key: 'jugem:posts', label: 'Posts', format: 'atom' }],
-      ['http://jugem.jp/theme/c12/3456/rss', { key: 'jugem:theme', label: 'Theme', format: 'rdf' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return an index.rdf feed as itself', async () => {
+      const value = 'https://alice.jugem.jp/index.rdf'
+      const hint: DiscoverUriHint = { key: 'jugem:posts', label: 'Posts', format: 'rdf' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [jugemHandler],

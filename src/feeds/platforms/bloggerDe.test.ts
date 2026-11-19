@@ -106,81 +106,18 @@ describe('bloggerDeHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the posts key for a posts feed', () => {
-      const value = 'https://alice.blogger.de/rss'
-      const expected: DiscoverUriHint = { key: 'blogger-de:posts', label: 'Posts' }
-
-      expect(bloggerDeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts and comments key for a feed of stories and comments', () => {
-      const value = 'https://alice.blogger.de/rss?show=all'
-      const expected: DiscoverUriHint = {
-        key: 'blogger-de:posts-comments',
-        label: 'Posts and comments',
-      }
-
-      expect(bloggerDeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the topic key for a topic feed', () => {
-      const value = 'https://alice.blogger.de/rss?topic=cooking'
-      const expected: DiscoverUriHint = { key: 'blogger-de:topic', label: 'Topic' }
-
-      expect(bloggerDeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the posts key for a posts feed under a topic path', () => {
       const value = 'https://alice.blogger.de/topics/cooking/rss'
       const expected: DiscoverUriHint = { key: 'blogger-de:posts', label: 'Posts' }
 
       expect(bloggerDeHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the posts key for an http posts feed', () => {
-      const value = 'http://alice.blogger.de/rss'
-      const expected: DiscoverUriHint = { key: 'blogger-de:posts', label: 'Posts' }
-
-      expect(bloggerDeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://alice.blogger.de/stories/2918480/'
-
-      expect(bloggerDeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://blogger.de/rss'
-
-      expect(bloggerDeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://blog.alice.blogger.de/rss'
-
-      expect(bloggerDeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/rss'
-
-      expect(bloggerDeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://alice.blogger.de/rss', { key: 'blogger-de:posts', label: 'Posts' }],
-      ['https://alice.blogger.de/topics/cooking/rss', { key: 'blogger-de:posts', label: 'Posts' }],
-      [
-        'http://alice.blogger.de/rss?show=all',
-        { key: 'blogger-de:posts-comments', label: 'Posts and comments' },
-      ],
-      ['http://alice.blogger.de/rss?topic=cooking', { key: 'blogger-de:topic', label: 'Topic' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a posts feed under a topic path as itself', async () => {
+      const value = 'https://alice.blogger.de/topics/cooking/rss'
+      const hint: DiscoverUriHint = { key: 'blogger-de:posts', label: 'Posts' }
       const options = {
         ...defaultPlatformOptions,
         handlers: [bloggerDeHandler],

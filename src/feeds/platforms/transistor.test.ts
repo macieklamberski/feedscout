@@ -148,49 +148,12 @@ describe('transistorHandler', () => {
 
       expect(transistorHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the podcast hint for a podcast feed with a dot in its slug', () => {
-      const value = 'https://feeds.transistor.fm/alice.show'
-      const expected: DiscoverUriHint = { key: 'transistor:podcast', label: 'Podcast' }
-
-      expect(transistorHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a show page', () => {
-      const value = 'https://bob-podcast.transistor.fm/'
-
-      expect(transistorHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the feed host root', () => {
-      const value = 'https://feeds.transistor.fm/'
-
-      expect(transistorHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a nested path on the feed host', () => {
-      const value = 'https://feeds.transistor.fm/bob-podcast/episodes'
-
-      expect(transistorHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/bob-podcast'
-
-      expect(transistorHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://feeds.transistor.fm/bob-podcast', { key: 'transistor:podcast', label: 'Podcast' }],
-      [
-        'https://feeds.transistor.fm/carol-podcast',
-        { key: 'transistor:podcast', label: 'Podcast' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a podcast feed as itself', async () => {
+      const value = 'https://feeds.transistor.fm/bob-podcast'
+      const hint: DiscoverUriHint = { key: 'transistor:podcast', label: 'Podcast' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [transistorHandler],

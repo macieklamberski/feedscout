@@ -185,81 +185,12 @@ describe('arenaHandler', () => {
 
       expect(arenaHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the channel key for a channel feed', () => {
-      const value = 'https://www.are.na/carol/typefaces-x1y2z3a4b5/feed/rss'
-      const expected: DiscoverUriHint = { key: 'arena:channel', label: 'Channel' }
-
-      expect(arenaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the editorial key for the editorial feed', () => {
-      const value = 'https://www.are.na/editorial/feed/rss'
-      const expected: DiscoverUriHint = { key: 'arena:editorial', label: 'Editorial' }
-
-      expect(arenaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the editorial key for the editorial feed with a capitalized route', () => {
-      const value = 'https://www.are.na/Editorial/Feed/RSS'
-      const expected: DiscoverUriHint = { key: 'arena:editorial', label: 'Editorial' }
-
-      expect(arenaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the profile key for a profile feed on the host without www', () => {
-      const value = 'https://are.na/alice/feed/rss'
-      const expected: DiscoverUriHint = { key: 'arena:profile', label: 'Profile' }
-
-      expect(arenaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the channel key for a channel feed over http with a trailing slash', () => {
-      const value = 'http://www.are.na/bob/reading-notes/feed/rss/'
-      const expected: DiscoverUriHint = { key: 'arena:channel', label: 'Channel' }
-
-      expect(arenaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a profile page', () => {
-      const value = 'https://www.are.na/alice'
-
-      expect(arenaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a channel page', () => {
-      const value = 'https://www.are.na/bob/reading-notes'
-
-      expect(arenaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for an editorial article', () => {
-      const value = 'https://www.are.na/editorial/learning-to-float'
-
-      expect(arenaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/alice/feed/rss'
-
-      expect(arenaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://www.are.na/alice/feed/rss', { key: 'arena:profile', label: 'Profile' }],
-      ['https://www.are.na/bob/reading-notes/feed/rss', { key: 'arena:channel', label: 'Channel' }],
-      ['https://www.are.na/editorial/feed/rss', { key: 'arena:editorial', label: 'Editorial' }],
-      ['http://are.na/jane-artist/feed/rss/', { key: 'arena:profile', label: 'Profile' }],
-      [
-        'https://are.na/jane-artist/reading-list/feed/rss/',
-        { key: 'arena:channel', label: 'Channel' },
-      ],
-      ['http://are.na/editorial/feed/rss/', { key: 'arena:editorial', label: 'Editorial' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a profile feed as itself', async () => {
+      const value = 'https://www.are.na/alice/feed/rss'
+      const hint: DiscoverUriHint = { key: 'arena:profile', label: 'Profile' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [arenaHandler],

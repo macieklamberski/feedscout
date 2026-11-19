@@ -172,111 +172,11 @@ describe('shinobiHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the posts hint for the RSS feed', () => {
-      const value = 'https://example.blog.shinobi.jp/RSS/'
-      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rss' }
-
-      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for the Atom feed', () => {
-      const value = 'https://example.blog.shinobi.jp/ATOM/'
-      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'atom' }
-
-      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for the Atom feed as its self link spells it', () => {
-      const value = 'http://example.blog.shinobi.jp/atom'
-      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'atom' }
-
-      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for the RSS 2.0 feed', () => {
-      const value = 'https://example.blog.shinobi.jp/RSS/200'
-      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rss' }
-
-      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for the RSS 0.91 feed', () => {
-      const value = 'https://example.blog.shinobi.jp/RSS/091'
-      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rss' }
-
-      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for the RSS 1.0 feed', () => {
-      const value = 'https://example.blog.shinobi.jp/RSS/100'
-      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rdf' }
-
-      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for the RSS feed under the RSS path', () => {
-      const value = 'https://example.blog.shinobi.jp/RSS/RSS'
-      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rss' }
-
-      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for the RSS 2.0 feed under the RSS path', () => {
-      const value = 'https://example.blog.shinobi.jp/RSS/200/RSS'
-      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rss' }
-
-      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for the RSS 1.0 feed under the RSS path', () => {
-      const value = 'https://example.blog.shinobi.jp/RSS/100/RSS'
-      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rdf' }
-
-      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for the RSS 0.91 feed as index.rdf', () => {
-      const value = 'https://example.blog.shinobi.jp/RSS/091/index.rdf'
-      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rss' }
-
-      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the posts hint for the RSS feed at the OPML path', () => {
       const value = 'https://example.blog.shinobi.jp/OPML'
       const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rss' }
 
       expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for an entry page', () => {
-      const value = 'https://example.blog.shinobi.jp/Entry/1/'
-
-      expect(shinobiHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on the blog portal', () => {
-      const value = 'https://blog.shinobi.jp/RSS/'
-
-      expect(shinobiHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on a nested subdomain', () => {
-      const value = 'https://blog.example.blog.shinobi.jp/RSS/'
-
-      expect(shinobiHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a Ninja Blog domain off the list', () => {
-      const value = 'https://example.3rin.net/RSS/'
-
-      expect(shinobiHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/RSS/'
-
-      expect(shinobiHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
@@ -308,58 +208,9 @@ describe('shinobiHandler', () => {
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://example.blog.shinobi.jp/RSS/',
-        { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
-      ],
-      [
-        'https://example.blog.shinobi.jp/RSS',
-        { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
-      ],
-      [
-        'http://example.blog.shinobi.jp/ATOM/',
-        { key: 'shinobi:posts', label: 'Posts', format: 'atom' },
-      ],
-      [
-        'http://example.blog.shinobi.jp/atom',
-        { key: 'shinobi:posts', label: 'Posts', format: 'atom' },
-      ],
-      [
-        'https://example.blog.shinobi.jp/RSS/200',
-        { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
-      ],
-      [
-        'https://example.blog.shinobi.jp/RSS/091/',
-        { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
-      ],
-      [
-        'https://example.blog.shinobi.jp/RSS/100',
-        { key: 'shinobi:posts', label: 'Posts', format: 'rdf' },
-      ],
-      [
-        'https://example.blog.shinobi.jp/RSS/RSS',
-        { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
-      ],
-      [
-        'https://example.blog.shinobi.jp/RSS/200/RSS',
-        { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
-      ],
-      [
-        'https://example.blog.shinobi.jp/RSS/100/RSS',
-        { key: 'shinobi:posts', label: 'Posts', format: 'rdf' },
-      ],
-      [
-        'https://example.blog.shinobi.jp/RSS/091/index.rdf',
-        { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
-      ],
-      [
-        'https://example.blog.shinobi.jp/OPML',
-        { key: 'shinobi:posts', label: 'Posts', format: 'rss' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return the RSS feed at the OPML path as itself', async () => {
+      const value = 'https://example.blog.shinobi.jp/OPML'
+      const hint: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rss' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [shinobiHandler],

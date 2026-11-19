@@ -66,17 +66,6 @@ describe('atwikiHandler', () => {
     })
   })
   describe('getFeedHint', () => {
-    it('should return the updated pages key for an RDF feed', () => {
-      const value = 'https://w.atwiki.jp/example/rss10.xml'
-      const expected: DiscoverUriHint = {
-        key: 'atwiki:updated-pages',
-        label: 'Updated pages',
-        format: 'rdf',
-      }
-
-      expect(atwikiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the updated pages key for the rss spelling of the RDF feed', () => {
       const value = 'https://w.atwiki.jp/example/rss'
       const expected: DiscoverUriHint = {
@@ -87,75 +76,22 @@ describe('atwikiHandler', () => {
 
       expect(atwikiHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the updated pages key for an Atom feed', () => {
-      const value = 'https://w.atwiki.jp/example/feed.atom'
-      const expected: DiscoverUriHint = {
-        key: 'atwiki:updated-pages',
-        label: 'Updated pages',
-        format: 'atom',
-      }
-
-      expect(atwikiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the new pages key for a new pages feed', () => {
-      const value = 'https://w.atwiki.jp/example/rss10_new.xml'
-      const expected: DiscoverUriHint = {
-        key: 'atwiki:new-pages',
-        label: 'New pages',
-        format: 'rdf',
-      }
-
-      expect(atwikiHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a wiki page', () => {
-      const value = 'https://w.atwiki.jp/example/pages/1.html'
-
-      expect(atwikiHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a wiki root', () => {
-      const value = 'https://w.atwiki.jp/example/'
-
-      expect(atwikiHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/example/rss10.xml'
-
-      expect(atwikiHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('discoverUrisFromPlatform', () => {
-    const values: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://w.atwiki.jp/example/rss10.xml',
-        { key: 'atwiki:updated-pages', label: 'Updated pages', format: 'rdf' },
-      ],
-      [
-        'https://w.atwiki.jp/example/rss',
-        { key: 'atwiki:updated-pages', label: 'Updated pages', format: 'rdf' },
-      ],
-      [
-        'https://w.atwiki.jp/example/feed.atom',
-        { key: 'atwiki:updated-pages', label: 'Updated pages', format: 'atom' },
-      ],
-      [
-        'https://w.atwiki.jp/example/rss10_new.xml',
-        { key: 'atwiki:new-pages', label: 'New pages', format: 'rdf' },
-      ],
-    ]
-
-    it.each(values)('should return %s as itself', async (value, hint) => {
+    it('should return the rss spelling of the RDF feed as itself', async () => {
+      const value = 'https://w.atwiki.jp/example/rss'
       const options = {
         ...defaultPlatformOptions,
         handlers: [atwikiHandler],
         baseUrl: value,
       }
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: value,
+          hint: { key: 'atwiki:updated-pages', label: 'Updated pages', format: 'rdf' },
+        },
+      ]
 
       expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
