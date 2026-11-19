@@ -1,4 +1,4 @@
-import { defineFeedUrls } from 'feedintel'
+import { defineFeedUrls, type UrlLenient } from 'feedintel'
 import type { DiscoverUriEntry, DiscoverUriHint, UriEntry } from '../../types.js'
 import { composeHint } from '../../utils.js'
 
@@ -46,6 +46,10 @@ export type PlatformFeedTableOptions = {
   // A check per placeholder name, such as `{ locale: isLocale }`. A feed URL whose value fails its
   // check is not built, and `getFeedHint` claims no URL whose value fails it.
   checks?: Record<string, PlatformFeedCheck>
+  // The parameters a feed's main URL keeps. With a list, every other parameter is dropped.
+  keptParams?: Array<string>
+  // The other spellings the platform reads as the same URL, each mark resting on a fetch.
+  lenient?: UrlLenient
 }
 
 // A table's methods take only the keys of its feeds, so a key the table does not hold fails the

@@ -377,6 +377,14 @@ describe('legistarHandler', () => {
   })
 
   describe('getFeedHint', () => {
+    it('should return the legislation hint for a feed written with an ampersand entity', () => {
+      const value =
+        'https://alleghenycounty.legistar.com/Feed.ashx?M=LD&amp;ID=6069821&amp;GUID=4507F171-BA67-43E7-A535-95A46CA29A11'
+      const expected: DiscoverUriHint = { key: 'legistar:legislation', label: 'Legislation' }
+
+      expect(legistarHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the legislation hint for a legislation feed', () => {
       const value =
         'https://alleghenycounty.legistar.com/Feed.ashx?M=LD&ID=6069821&GUID=4507F171-BA67-43E7-A535-95A46CA29A11'
