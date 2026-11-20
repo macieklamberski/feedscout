@@ -3982,93 +3982,51 @@ type PlatformHandler = {
 
 ### Declaring Feeds
 
-`defineFeedUrls` from `feedintel` takes the platform's name and its feeds, one row per feed, with the feed's kind in `key` and its URL in `main`. `withHintLabels` wraps the table, so its hints and entries have the shape a handler returns. A hint is keyed `{platform}:{kind}`, so the `posts` row of `example` gives `example:posts`. `getFeedEntry` builds a feed with its hint, `getFeedHint` reads a URL back to its hint, with the row's `format`, `{host}` stands for any host in `hosts.exact` or under `hosts.tenants`, `{domain}` for one of `hosts.tenants`, and `{scheme}` for the page's scheme on a platform that runs on the site's own host.
+A handler declares its feeds in two places. `resolve` returns one [`DiscoverUriEntry`](/reference/types#discoverurientry) for each feed of the page, and `getFeedHint` reads a feed URL back to its hint.
 
-The table's keys are typed from its rows, so `getFeedUrl`, `getFeedEntry`, `getFeedSpellings` and the methods of `forUrl` take only those keys, and a key the table does not hold fails the typecheck. A key that reaches the table untyped still throws.
+An entry has a `uri` and an optional `hint`. The `uri` is the feed URL, or a list of URLs when one feed is served under several spellings, which discovery tries in order until one is a feed. The `hint` needs a `key` and a `label`, and takes a `format` when the platform serves a known one at that URL. A hint is keyed `{platform}:{kind}`, such as `example:posts`. The label is the text shown for that feed, written in the handler, since the labels feedscout ships cover only the built-in handlers. An entry without a hint is valid, and its result has none. The Platform method skips an `undefined` item `resolve` returns.
 
-`getFeedHint` reads a `{host}` row under `hosts.tenants` only on a tenant, one label in front of the domain, so `alice.example.com/feed` is claimed and `example.com/feed`, `www.example.com/feed` and `blog.alice.example.com/feed` are not. A platform's own host goes in `hosts.exact`. `resolve` still builds a `{host}` row on any host.
-
-An entry of `hosts.tenants` can be a pattern standing for a family of domains, anchored at both ends, such as `/^blogspot\.(?:com|com\.[a-z]{2}|[a-z]{2})$/` for `blogspot.com`, `blogspot.de` and `blogspot.com.br`. `{host}` and `{domain}` then stand for any domain the pattern matches, and `forUrl` fills `{domain}` with the one the page's host is under.
-
-A URL can open with `{root}`, which stands for the scheme, the host with its port and an optional base path, as `https://example.com/forum`, written as given. `getFeedHint` reads a `{root}` row as a `{host}` row, on the origin of a host in `hosts` or a tenant under `domains`, never under a base path, since a tenant serves from its origin. A table with neither builds the row without claiming it.
-
-A path value is written with `/`, `?`, `#`, `\` and whitespace escaped, a `%` that starts no escape as `%25`, and a non-ASCII character percent-encoded, so `{ username: '技術' }` builds `/%E6%8A%80%E8%A1%93/` and `100%off` builds `100%25off`. A valid escape is written as given, in its own case, so a value the page passed encoded is never encoded twice. `getFeedHint` reads a path decoded, so it claims either spelling.
-
-A path placeholder written `{name*}` stands for one or more segments, filled from the `name` value, so `https://{host}/{owner}/{repo}/commits/{branch}/{path*}.atom` with `{ path: 'src/lib/index.ts' }` builds the history of that file. Each segment is encoded on its own and the slashes are kept. An empty segment is dropped, so `docs//api` builds `docs/api`, and a value with no segment left, such as `''` or `/`, counts as no value. `getFeedHint` claims any path with one or more non-empty segments there.
-
-`getFeedHint` tries the rows with more query parameters first and, at the same count, in table order. A `{name*}` row overlaps every row with fewer segments in its place, so it goes after them: with `/t/{tag}/feed` listed before `/{path*}/feed`, `/t/news/feed` reads as the tag feed.
-
-A placeholder standing as a whole query parameter, as `{query}` in `{root}/index.php?{query}&format=feed&type=rss`, takes a query the page passes, for a platform whose feed keeps the page's own routing parameters. The query is written as given in the place of the placeholder, without its leading `?`, its empty parameters and any parameter the row sets itself, matched in any case. So `{ query: '?option=com_content&view=category&id=12&format=html' }` builds `index.php?option=com_content&view=category&id=12&format=feed&type=rss`. A non-ASCII character is percent-encoded, as in any query value. An empty string writes the row's own parameters alone, and `undefined` skips the row, as for any placeholder. `getFeedHint` matches the row on its own parameters only, and a passed query does not count toward the rows tried first.
-
-A row can list one parameter several times, as `?types=page&types=blogpost&types=comment`. It is built with every value in table order, and `getFeedHint` claims a URL that holds each of the values, in any order. A parameter the row lists once is read from its first value in the URL, as before.
-
-A query value is written with only the characters that would change the URL's structure escaped, so `?q=by:alice sort:time` builds `?q=by:alice%20sort:time`. On a row whose feed the pages link encoded as a form, set `queryEncoding: 'form'`: every query value of that row, the URL's own text included, is then encoded as `URLSearchParams` does, so `?title={title}` with `Talk:Main Page` builds `?title=Talk%3AMain+Page`. A flag and a passed query are written as before. The other rows of the table keep the default, so one table holds a form-encoded feed beside feeds that are not. `getFeedHint` reads a value decoded, so it claims either spelling.
-
-A feed the platform serves under several spellings, such as a legacy host, lists the other spellings in `aliases` on its row. `getFeedEntry` builds `main`, and `getFeedHint` reads an alias back to the same hint. An alias takes its row's `format` and `queryEncoding`. Two rows with one key are two feeds of that kind, each with its own aliases. The table cannot tell whether two spellings are one feed: that rests on a probe or a comment beside the alias. Keep a different feed under the same key on a row of its own.
+`getFeedHint` takes a URL and returns the hint of the feed it is, or `undefined` for a URL that is none of the handler's feeds. Check the host and the path, so the handler claims only the URLs it builds. The Platform method then returns such a URL as given with that hint, without running `match` and `resolve` on it, and the Guess method drops a guessed URL the handler claims, unless the handler returned it for the page. A handler without `getFeedHint` claims nothing: one of its feed URLs goes to `match` and `resolve` as any page does, and the Guess method keeps every URL it guesses.
 
 ```typescript
-const feeds = withHintLabels(
-  defineFeedUrls('example', [
-    {
-      key: 'posts',
-      main: 'https://feeds.example.com/{username}.rss',
-      aliases: ['https://example.com/{username}/rss'],
-    },
-  ]),
-)
-```
-
-A platform whose sites answer under different spellings of one feed, as one site serves `/feed/` and another only `?feed=rss`, needs every spelling tried in turn. `getFeedSpellings` takes the same arguments as `getFeedEntry` and returns one entry whose `uri` lists the URL `getFeedEntry` builds, then every alias of that feed the values fill, in order. Discovery tries them in order until one is a feed. The list stops at the next row of the key and format, so it never mixes two feeds. With one spelling filled, `uri` is a string, as from `getFeedEntry`.
-
-```typescript
-const feeds = withHintLabels(
-  defineFeedUrls('example', [
-    { key: 'posts', main: '{root}/feed/', aliases: ['{root}/?feed=rss'] },
-  ]),
-)
-
-// { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'], hint }
-feeds.getFeedSpellings('posts', { root: 'https://example.com' })
-```
-
-`getFeedHint` ignores a leading `www` on a fixed host, so `www.example.com/rss` reads as an `example.com/rss` row. A tenant host with `www` in front matches no row, and neither does `www` as a tenant. On a platform where `www` can be a tenant, set `isWwwTenant: true`: a row is then tried on the host as given first, so `www.example.com/rss` reads as the tenant `www` on a `{username}.example.com/rss` row, and the host without `www` only when no row matches. On a platform where `www.alice.example.com` serves the same feeds as `alice.example.com`, set `isWwwTenantPrefix: true`: the `www` in front of a tenant label is then dropped, so `www.alice.example.com/rss` reads as the tenant `alice`. `www.example.com/rss` still reads as no tenant unless `isWwwTenant` is set too.
-
-A placeholder that takes only values of one shape, such as a locale, gets a check in `checks`, keyed by the placeholder's name: `checks: { locale: isLocale }`. A row whose value fails its check is not built, so a key with several rows builds the next one, and `getFeedHint` claims no URL whose value fails it, so `example.com/abcd/blogs/news.atom` reads as no feed of a `{locale}/blogs/{handle}.atom` row. A check on `host` gets the host the URL names.
-
-`forUrl(url)` returns the same `getFeedUrl`, `getFeedEntry` and `getFeedSpellings` with `{scheme}`, `{host}` and `{root}` filled from the page URL, `{root}` with its origin, and `{domain}` with the entry of `hosts.tenants` its host is under, so a handler passes only the values the URL cannot give. A value the handler passes wins, so a handler that reads a base path from the page passes `root` with it. A value left `undefined` counts as no value: it never replaces a value from the page, and a key with several rows builds the first one whose placeholders all have a value, so `{ slug, id }` with no `id` builds the row without `{id}`. An empty value counts as no value too, in a host label, a path segment or a query value, so no row builds `/t//feed` or `?videoChannelId=`. A passed query is the exception: an empty one writes the row's own parameters alone. When no row of the key has a value for every placeholder, `getFeedUrl` and `getFeedEntry` return `undefined`, and the Platform method skips an `undefined` item `resolve` returns. It returns `undefined` for a URL that is not an http URL.
-
-```typescript
-import { defineFeedUrls } from 'feedintel'
-import { type PlatformHandler, withHintLabels } from 'feedscout/platform'
+import type { PlatformHandler } from 'feedscout/platform'
 
 const hosts = ['example.com', 'www.example.com']
 
-const feeds = withHintLabels(
-  defineFeedUrls(
-    'example',
-    [
-      { key: 'posts', main: 'https://{host}/{username}/feed.rss' },
-      { key: 'search', main: 'https://feeds.example.com/rss.xml?q={query}' },
-    ],
-    { hosts: { exact: hosts } },
-  ),
-)
+const feedPathRegex = /^\/[^/]+\/feed\.rss$/
 
 const exampleHandler: PlatformHandler = {
-  match: (url) => new URL(url).hostname === 'example.com',
-  resolve: (url) => {
-    const [username] = new URL(url).pathname.split('/').filter(Boolean)
-    const pageFeeds = feeds.forUrl(url)
+  match: (url) => hosts.includes(new URL(url).hostname),
 
-    if (!pageFeeds) {
+  resolve: (url) => {
+    const { origin, pathname } = new URL(url)
+    const [username] = pathname.split('/').filter(Boolean)
+
+    if (!username) {
       return []
     }
 
-    return [pageFeeds.getFeedEntry('posts', { username })]
+    return [
+      {
+        uri: `${origin}/${username}/feed.rss`,
+        hint: { key: 'example:posts', label: 'Posts', format: 'rss' },
+      },
+    ]
   },
-  getFeedHint: feeds.getFeedHint,
+
+  getFeedHint: (url) => {
+    const { hostname, pathname } = new URL(url)
+
+    if (hosts.includes(hostname) && feedPathRegex.test(pathname)) {
+      return { key: 'example:posts', label: 'Posts', format: 'rss' }
+    }
+  },
 }
 ```
+
+For `https://example.com/alice` the handler returns the `https://example.com/alice/feed.rss` entry with its hint. For `https://example.com/alice/feed.rss` the Platform method returns that URL with the same hint.
+
+A platform with many kinds of feed can describe them once as a table with `defineFeedUrls` from the `feedintel` package, which builds a feed URL from a row and reads a URL back to its row. The built-in handlers declare their feeds that way.
 
 ### Basic Example
 
