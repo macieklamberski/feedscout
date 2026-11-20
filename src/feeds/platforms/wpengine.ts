@@ -1,3 +1,4 @@
+import { wpengine } from 'feedintel'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 import {
@@ -13,7 +14,7 @@ import {
 
 export type WpengineUrl = WordpressUrl
 
-const domains = ['wpenginepowered.com', 'wpengine.com']
+const domains = wpengine.hosts.tenants
 
 export const parseWpengineUrl = (url: string): WpengineUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
