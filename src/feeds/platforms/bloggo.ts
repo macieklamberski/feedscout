@@ -1,5 +1,6 @@
+import { bloggo } from 'feedintel'
 import { getPathSegments, isAnyOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -8,18 +9,11 @@ import { getTenantSubdomain } from '../../common/utils.js'
 export type BloggoUrl = { kind: 'blog' } | { kind: 'post'; slug: string }
 export type BloggoPage = BloggoUrl
 
-const domains = ['bloggo.nu']
+const domains = bloggo.hosts.tenants
 
 const postBodyRegex = /<body[^<>]*\bpost-id-\d+/
 
-const feeds = definePlatformFeeds(
-  'bloggo',
-  [
-    { key: 'posts', main: '{scheme}://{host}/feed/' },
-    { key: 'post-comments', main: '{scheme}://{host}/{slug}/feed/' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(bloggo.feeds)
 
 // The about page belongs to the blog, not to a post.
 const blogPaths = ['about']

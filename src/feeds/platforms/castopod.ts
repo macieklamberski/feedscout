@@ -1,5 +1,6 @@
+import { castopod } from 'feedintel'
 import { decodeSegment, getOrigin, getPathSegments, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, isRootOfPage } from '../../common/utils.js'
 
@@ -10,11 +11,7 @@ export type CastopodPage = { rootUrl: string; handle: string }
 const colorsPathRegex = /\/themes\/colors$/i
 const handleRegex = /^@(\w+)$/
 
-// An install runs on its own domain, under the root its stylesheet names, and is known only by its
-// marker, so its feed is built here but not claimed.
-const feeds = definePlatformFeeds('castopod', [
-  { key: 'podcast', main: '{root}/@{handle}/feed.xml' },
-])
+const feeds = withHintLabels(castopod.feeds)
 
 // Core prints the theme colors stylesheet in every page head, at the install's root. Every page
 // under `/@{handle}` belongs to that podcast, and a remote actor's `@user@domain` has no feed here.

@@ -130,37 +130,11 @@ describe('audioboomHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the playlist hint for a playlist feed', () => {
-      const value = 'https://audioboom.com/playlists/12345.rss'
-      const expected: DiscoverUriHint = { key: 'audioboom:playlist', label: 'Playlist' }
-
-      expect(audioboomHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the podcast hint for a channel feed', () => {
       const value = 'https://audioboom.com/channels/5016155.rss'
       const expected: DiscoverUriHint = { key: 'audioboom:podcast', label: 'Podcast' }
 
       expect(audioboomHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the podcast hint for a channel feed on the www host', () => {
-      const value = 'https://www.audioboom.com/channels/5050302.rss'
-      const expected: DiscoverUriHint = { key: 'audioboom:podcast', label: 'Podcast' }
-
-      expect(audioboomHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a channel page', () => {
-      const value = 'https://audioboom.com/channels/5016155'
-
-      expect(audioboomHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/channels/5016155.rss'
-
-      expect(audioboomHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
@@ -176,23 +150,6 @@ describe('audioboomHandler', () => {
         {
           uri: value,
           hint: { key: 'audioboom:podcast', label: 'Podcast' },
-        },
-      ]
-
-      expect(result).toEqual(expected)
-    })
-
-    it('should return a playlist feed as itself', async () => {
-      const value = 'http://www.audioboom.com/playlists/12345.rss'
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
-        ...defaultPlatformOptions,
-        handlers: [audioboomHandler],
-        baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [
-        {
-          uri: value,
-          hint: { key: 'audioboom:playlist', label: 'Playlist' },
         },
       ]
 

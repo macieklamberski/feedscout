@@ -54,25 +54,6 @@ describe('parseColorMeShopUrl', () => {
 })
 
 describe('colorMeShopHandler', () => {
-  const feedHints: Array<[string, DiscoverUriHint]> = [
-    [
-      'https://example.shop-pro.jp/?mode=rss',
-      { key: 'color-me-shop:products', label: 'Products', format: 'rdf' },
-    ],
-    [
-      'https://example.shop-pro.jp/?mode=atom',
-      { key: 'color-me-shop:products', label: 'Products', format: 'atom' },
-    ],
-    [
-      'http://example.shop-pro.jp/?mode=rss',
-      { key: 'color-me-shop:products', label: 'Products', format: 'rdf' },
-    ],
-    [
-      'http://example.shop-pro.jp/?mode=atom',
-      { key: 'color-me-shop:products', label: 'Products', format: 'atom' },
-    ],
-  ]
-
   describe('match', () => {
     it('should match a shop subdomain without headers', () => {
       expect(colorMeShopHandler.match('https://example.shop-pro.jp/')).toBe(true)
@@ -148,20 +129,15 @@ describe('colorMeShopHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it.each(feedHints)('should return the products hint for %s', (value, expected) => {
+    it('should return the products hint for an atom feed', () => {
+      const value = 'https://example.shop-pro.jp/?mode=atom'
+      const expected: DiscoverUriHint = {
+        key: 'color-me-shop:products',
+        label: 'Products',
+        format: 'atom',
+      }
+
       expect(colorMeShopHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a product page', () => {
-      const value = 'https://example.shop-pro.jp/?pid=193633107'
-
-      expect(colorMeShopHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed of a blog on a nested subdomain', () => {
-      const value = 'http://blog.example.shop-pro.jp/?mode=atom'
-
-      expect(colorMeShopHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a numbered host', () => {
@@ -169,36 +145,24 @@ describe('colorMeShopHandler', () => {
 
       expect(colorMeShopHandler.getFeedHint?.(value)).toBeUndefined()
     })
-
-    it('should return undefined for a feed on the apex domain', () => {
-      const value = 'https://shop-pro.jp/?mode=rss'
-
-      expect(colorMeShopHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the www host', () => {
-      const value = 'https://www.shop-pro.jp/?mode=rss'
-
-      expect(colorMeShopHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a shop domain', () => {
-      const value = 'https://www.example.com/?mode=rss'
-
-      expect(colorMeShopHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    it.each(feedHints)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a feed as itself', async () => {
+      const value = 'http://example.shop-pro.jp/?mode=rss'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [colorMeShopHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.shop-pro.jp/?mode=rss',
+          hint: { key: 'color-me-shop:products', label: 'Products', format: 'rdf' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

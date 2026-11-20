@@ -1,5 +1,6 @@
+import { comicfury } from 'feedintel'
 import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { alphanumericOrHyphenRegex, getTenantSubdomain } from '../../common/utils.js'
 
@@ -9,25 +10,12 @@ import { alphanumericOrHyphenRegex, getTenantSubdomain } from '../../common/util
 
 export type ComicfuryUrl = { kind: 'comic' | 'profile' | 'reader'; comic: string }
 
-const domains = [
-  'thecomicseries.com',
-  'thecomicstrip.org',
-  'the-comic.org',
-  'webcomic.ws',
-  'cfw.me',
-]
-const hosts = ['comicfury.com', 'www.comicfury.com']
+const domains = comicfury.hosts.tenants
+const hosts = comicfury.hosts.exact
 
 const readerPathRegex = /^\/read\/([^/]+)/i
 
-const feeds = definePlatformFeeds(
-  'comicfury',
-  [
-    { key: 'comic', main: '{scheme}://{host}/rss' },
-    { key: 'reader', main: 'https://comicfury.com/read/{comic}/rss' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(comicfury.feeds)
 
 export const parseComicfuryUrl = (url: string): ComicfuryUrl | undefined => {
   const parsedUrl = parseUrl(url)

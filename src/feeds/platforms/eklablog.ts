@@ -1,5 +1,6 @@
+import { eklablog } from 'feedintel'
 import { isHostOf, isHostOrSubdomainOf, resolveUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
@@ -11,18 +12,10 @@ export type EklablogUrl = { kind: 'blog' } | { kind: 'customDomain' }
 
 // Eklablog serves blogs on 20 domains. Only its branded one is listed, and a blog on another one or
 // on a custom domain is known by its marker.
-const domains = ['eklablog.com']
+const domains = eklablog.hosts.tenants
 const connectHosts = ['connect.eklablog.com']
 
-// A blog off the domains is known only by its marker, so its feeds are built here but not claimed.
-const feeds = definePlatformFeeds(
-  'eklablog',
-  [
-    { key: 'posts', main: '{scheme}://{host}/rss' },
-    { key: 'comments', main: '{scheme}://{host}/rss/comments' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(eklablog.feeds)
 
 const isConnectScript = (src: string | undefined): boolean => {
   return isHostOf(resolveUrl(src ?? '') ?? '', connectHosts)

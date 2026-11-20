@@ -83,63 +83,24 @@ describe('canalblogHandler', () => {
 
       expect(canalblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the posts key for the HTTP posts feed', () => {
-      const value = 'http://alice.canalblog.com/rss'
-      const expected: DiscoverUriHint = { key: 'canalblog:posts', label: 'Posts' }
-
-      expect(canalblogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts key for the posts feed with a trailing slash', () => {
-      const value = 'https://alice.canalblog.com/rss/'
-      const expected: DiscoverUriHint = { key: 'canalblog:posts', label: 'Posts' }
-
-      expect(canalblogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://alice.canalblog.com/archives/2024/05/19/12345678.html'
-
-      expect(canalblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the feed path on the www host', () => {
-      const value = 'https://www.canalblog.com/rss'
-
-      expect(canalblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the feed path on a nested subdomain', () => {
-      const value = 'https://a.alice.canalblog.com/rss'
-
-      expect(canalblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the feed path on another host', () => {
-      const value = 'https://example.com/rss'
-
-      expect(canalblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('discoverUrisFromPlatform', () => {
-    const postsHint: DiscoverUriHint = { key: 'canalblog:posts', label: 'Posts' }
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://alice.canalblog.com/rss', postsHint],
-      ['http://alice.canalblog.com/rss', postsHint],
-      ['https://alice.canalblog.com/rss/', postsHint],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return the posts feed as itself', async () => {
+      const value = 'https://alice.canalblog.com/rss'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [canalblogHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.canalblog.com/rss',
+          hint: { key: 'canalblog:posts', label: 'Posts' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

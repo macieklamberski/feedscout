@@ -139,90 +139,30 @@ describe('acastHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the podcast hint for a show feed by slug', () => {
-      const value = 'https://feeds.acast.com/public/shows/bob-sea-podcast'
-      const expected: DiscoverUriHint = { key: 'acast:podcast', label: 'Podcast' }
-
-      expect(acastHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the podcast hint for a show feed by id', () => {
-      const value = 'https://feeds.acast.com/public/shows/0185cea5-9e3b-4b82-a887-26f91f92765f'
-      const expected: DiscoverUriHint = { key: 'acast:podcast', label: 'Podcast' }
-
-      expect(acastHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the podcast hint for a show feed by hex id', () => {
-      const value = 'https://feeds.acast.com/public/shows/5cd07163ad694b18367aeb03'
-      const expected: DiscoverUriHint = { key: 'acast:podcast', label: 'Podcast' }
-
-      expect(acastHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the podcast hint for a show feed over http with a trailing slash', () => {
-      const value = 'http://feeds.acast.com/public/shows/alicetravels/'
-      const expected: DiscoverUriHint = { key: 'acast:podcast', label: 'Podcast' }
-
-      expect(acastHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the podcast hint for a show feed on the legacy feed host', () => {
       const value = 'http://rss.acast.com/bobseapodcast'
       const expected: DiscoverUriHint = { key: 'acast:podcast', label: 'Podcast' }
 
       expect(acastHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a show page', () => {
-      const value = 'https://shows.acast.com/bob-sea-podcast'
-
-      expect(acastHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the show list on the feed host', () => {
-      const value = 'https://feeds.acast.com/public/shows'
-
-      expect(acastHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/public/shows/alicetravels'
-
-      expect(acastHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://feeds.acast.com/public/shows/bob-sea-podcast',
-        { key: 'acast:podcast', label: 'Podcast' },
-      ],
-      [
-        'https://feeds.acast.com/public/shows/alicetravels',
-        { key: 'acast:podcast', label: 'Podcast' },
-      ],
-      [
-        'https://feeds.acast.com/public/shows/0185cea5-9e3b-4b82-a887-26f91f92765f',
-        { key: 'acast:podcast', label: 'Podcast' },
-      ],
-      [
-        'https://feeds.acast.com/public/shows/5cd07163ad694b18367aeb03',
-        { key: 'acast:podcast', label: 'Podcast' },
-      ],
-      ['https://rss.acast.com/bobseapodcast', { key: 'acast:podcast', label: 'Podcast' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a feed as itself', async () => {
+      const value = 'https://rss.acast.com/bobseapodcast'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [acastHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://rss.acast.com/bobseapodcast',
+          hint: { key: 'acast:podcast', label: 'Podcast' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

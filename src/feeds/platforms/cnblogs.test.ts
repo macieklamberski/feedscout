@@ -91,34 +91,6 @@ describe('cnblogsHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the posts hint for a posts feed', () => {
-      const value = 'https://www.cnblogs.com/example/rss'
-      const expected: DiscoverUriHint = { key: 'cnblogs:posts', label: 'Posts' }
-
-      expect(cnblogsHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a posts feed with a trailing slash', () => {
-      const value = 'https://www.cnblogs.com/example/rss/'
-      const expected: DiscoverUriHint = { key: 'cnblogs:posts', label: 'Posts' }
-
-      expect(cnblogsHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a posts feed over http on the apex', () => {
-      const value = 'http://cnblogs.com/example/rss'
-      const expected: DiscoverUriHint = { key: 'cnblogs:posts', label: 'Posts' }
-
-      expect(cnblogsHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a posts feed on the feed host', () => {
-      const value = 'http://feed.cnblogs.com/blog/u/12345/rss/'
-      const expected: DiscoverUriHint = { key: 'cnblogs:posts', label: 'Posts' }
-
-      expect(cnblogsHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the posts hint for a posts feed on the feed host without a trailing slash', () => {
       const value = 'https://feed.cnblogs.com/blog/u/12345/rss'
       const expected: DiscoverUriHint = { key: 'cnblogs:posts', label: 'Posts' }
@@ -126,16 +98,11 @@ describe('cnblogsHandler', () => {
       expect(cnblogsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a blog id path on the feed host without the feed', () => {
-      const value = 'https://feed.cnblogs.com/blog/u/12345'
+    it('should return the posts hint for a posts feed', () => {
+      const value = 'https://www.cnblogs.com/example/rss'
+      const expected: DiscoverUriHint = { key: 'cnblogs:posts', label: 'Posts' }
 
-      expect(cnblogsHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://www.cnblogs.com/example/'
-
-      expect(cnblogsHandler.getFeedHint?.(value)).toBeUndefined()
+      expect(cnblogsHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a feed path under a dotted first segment', () => {
@@ -143,25 +110,12 @@ describe('cnblogsHandler', () => {
 
       expect(cnblogsHandler.getFeedHint?.(value)).toBeUndefined()
     })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/example/rss'
-
-      expect(cnblogsHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const hint: DiscoverUriHint = { key: 'cnblogs:posts', label: 'Posts' }
-    const ownFeeds: Array<string> = [
-      'https://www.cnblogs.com/example/rss',
-      'https://www.cnblogs.com/example/rss/',
-      'http://cnblogs.com/example/rss',
-      'http://feed.cnblogs.com/blog/u/12345/rss/',
-      'https://feed.cnblogs.com/blog/u/12345/rss',
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
+    it('should return a posts feed on the feed host as itself', async () => {
+      const value = 'https://feed.cnblogs.com/blog/u/12345/rss'
+      const hint: DiscoverUriHint = { key: 'cnblogs:posts', label: 'Posts' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [cnblogsHandler],

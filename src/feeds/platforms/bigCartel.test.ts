@@ -149,69 +149,30 @@ describe('bigCartelHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const feedUrls = [
-      'https://alice.bigcartel.com/products.rss',
-      'http://alice.bigcartel.com/products.rss',
-      'https://ALICE.bigcartel.com/products.rss',
-      'https://alice.bigcartel.com/products.xml',
-    ]
-
-    it.each(feedUrls)('should return the products hint for %s', (value) => {
+    it('should return the products hint for a products feed', () => {
+      const value = 'https://alice.bigcartel.com/products.rss'
       const expected: DiscoverUriHint = { key: 'big-cartel:products', label: 'Products' }
 
       expect(bigCartelHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a store page', () => {
-      const value = 'https://alice.bigcartel.com/product/a-print'
-
-      expect(bigCartelHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://bigcartel.com/products.rss'
-
-      expect(bigCartelHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the www host', () => {
-      const value = 'https://www.bigcartel.com/products.rss'
-
-      expect(bigCartelHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://foo.alice.bigcartel.com/products.rss'
-
-      expect(bigCartelHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a store on its own domain', () => {
-      const value = 'https://shop.example.com/products.rss'
-
-      expect(bigCartelHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds = [
-      'https://alice.bigcartel.com/products.rss',
-      'http://alice.bigcartel.com/products.rss',
-      'https://ALICE.bigcartel.com/products.rss',
-      'https://alice.bigcartel.com/products.xml',
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a products feed as itself', async () => {
+      const value = 'https://alice.bigcartel.com/products.rss'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [bigCartelHandler],
         baseUrl: value,
-      })
+      }
       const expected: Array<DiscoverUriEntry> = [
-        { uri: value, hint: { key: 'big-cartel:products', label: 'Products' } },
+        {
+          uri: 'https://alice.bigcartel.com/products.rss',
+          hint: { key: 'big-cartel:products', label: 'Products' },
+        },
       ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

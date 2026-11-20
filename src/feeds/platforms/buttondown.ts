@@ -1,21 +1,15 @@
+import { buttondown } from 'feedintel'
 import { getPathSegments, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
 
 export type ButtondownUrl = { kind: 'newsletter'; username: string }
 
-const hosts = ['buttondown.com', 'www.buttondown.com', 'buttondown.email', 'www.buttondown.email']
+const hosts = buttondown.hosts.exact
 
-// The legacy buttondown.email host redirects each feed to the same path on buttondown.com.
-const feeds = definePlatformFeeds('buttondown', [
-  {
-    key: 'newsletter',
-    main: 'https://buttondown.com/{username}/rss',
-    aliases: ['https://buttondown.email/{username}/rss'],
-  },
-])
+const feeds = withHintLabels(buttondown.feeds)
 
 export const parseButtondownUrl = (url: string): ButtondownUrl | undefined => {
   if (!isHostOf(url, hosts)) {

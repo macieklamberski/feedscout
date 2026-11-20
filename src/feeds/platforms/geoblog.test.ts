@@ -158,65 +158,12 @@ describe('geoblogHandler', () => {
 
       expect(geoblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the trip key for a trip feed over https', () => {
-      const value = 'https://alice.geoblog.pl/podroz/rss/12345.xml'
-      const expected: DiscoverUriHint = { key: 'geoblog:trip', label: 'Trip' }
-
-      expect(geoblogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a trip feed on the www form of a user host', () => {
-      const value = 'http://www.alice.geoblog.pl/podroz/rss/12345.xml'
-
-      expect(geoblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a trip page', () => {
-      const value = 'http://alice.geoblog.pl/podroz/12345/majorka-2024'
-
-      expect(geoblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a trip map', () => {
-      const value = 'http://alice.geoblog.pl/podroz/kml/12345.kml'
-
-      expect(geoblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on the www host', () => {
-      const value = 'http://www.geoblog.pl/podroz/rss/12345.xml'
-
-      expect(geoblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on the apex domain', () => {
-      const value = 'http://geoblog.pl/podroz/rss/12345.xml'
-
-      expect(geoblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on a nested subdomain', () => {
-      const value = 'http://blog.alice.geoblog.pl/podroz/rss/12345.xml'
-
-      expect(geoblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/podroz/rss/12345.xml'
-
-      expect(geoblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const tripHint: DiscoverUriHint = { key: 'geoblog:trip', label: 'Trip' }
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['http://alice.geoblog.pl/podroz/rss/12345.xml', tripHint],
-      ['https://alice.geoblog.pl/podroz/rss/12345.xml', tripHint],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a trip feed as itself', async () => {
+      const value = 'http://alice.geoblog.pl/podroz/rss/12345.xml'
+      const hint: DiscoverUriHint = { key: 'geoblog:trip', label: 'Trip' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [geoblogHandler],

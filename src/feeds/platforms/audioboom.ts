@@ -1,5 +1,6 @@
+import { audioboom } from 'feedintel'
 import { isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
@@ -8,7 +9,7 @@ export type AudioboomUrl =
   | { kind: 'channel'; channelId: string }
   | { kind: 'playlist'; playlistId: string }
 
-const hosts = ['audioboom.com', 'www.audioboom.com']
+const hosts = audioboom.hosts.exact
 
 const channelRegex = /^\/channels\/(?<segment>[^/]+)/i
 const playlistRegex = /^\/playlists\/(?<segment>[^/]+)/i
@@ -16,10 +17,7 @@ const playlistRegex = /^\/playlists\/(?<segment>[^/]+)/i
 // the same way.
 const idRegex = /^(?<id>\d+)(?:-|$)/
 
-const feeds = definePlatformFeeds('audioboom', [
-  { key: 'podcast', main: 'https://audioboom.com/channels/{channelId}.rss' },
-  { key: 'playlist', main: 'https://audioboom.com/playlists/{playlistId}.rss' },
-])
+const feeds = withHintLabels(audioboom.feeds)
 
 export const parseAudioboomUrl = (url: string): AudioboomUrl | undefined => {
   if (!isHostOf(url, hosts)) {

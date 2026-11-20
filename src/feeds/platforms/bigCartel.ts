@@ -1,5 +1,6 @@
+import { bigCartel } from 'feedintel'
 import { isAnyOf, isHostOrSubdomainOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
@@ -8,20 +9,12 @@ import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.j
 
 export type BigCartelUrl = { kind: 'store' }
 
-const domains = ['bigcartel.com']
+const domains = bigCartel.hosts.tenants
 
 const frameOptionsRegex = /https:\/\/my\.bigcartel\.com/i
 const themeStylesheetRegex = /^\/theme_stylesheets\/\d+\/\d+\/theme\.css$/i
 
-// A store on its own domain is known only by its markers, so its feed is built but not claimed.
-const feeds = definePlatformFeeds(
-  'big-cartel',
-  [
-    { key: 'products', main: '{scheme}://{host}/products.rss' },
-    { key: 'products', main: '{scheme}://{host}/products.xml' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(bigCartel.feeds)
 
 export const isBigCartelHtml = (content: string): boolean => {
   const stylesheet = findElement(content, (element) => {

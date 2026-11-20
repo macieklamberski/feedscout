@@ -1,5 +1,6 @@
+import { art19 } from 'feedintel'
 import { isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { uuidRegex } from '../../common/utils.js'
 
@@ -7,16 +8,11 @@ import { uuidRegex } from '../../common/utils.js'
 
 export type Art19Url = { kind: 'show'; slug: string }
 
-const hosts = ['art19.com', 'www.art19.com']
+const hosts = art19.hosts.exact
 
 const showPathRegex = /^\/shows\/([^/]+)/i
 
-// Stored feeds also name a show by its uuid, and the one segment placeholder claims both spellings.
-const feeds = definePlatformFeeds('art19', [
-  { key: 'show', main: 'https://rss.art19.com/{slug}' },
-  // A listener's private feed, such as an ad-free one, under a token no page gives.
-  { key: 'private', main: 'https://rss.art19.com/alternate_feeds/user/{slug}/{token}' },
-])
+const feeds = withHintLabels(art19.feeds)
 
 export const parseArt19Url = (url: string): Art19Url | undefined => {
   if (!isHostOf(url, hosts)) {

@@ -1,16 +1,15 @@
+import { heyWorld } from 'feedintel'
 import { getPathSegments, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
 
 export type HeyWorldUrl = { kind: 'blog'; username: string }
 
-const hosts = ['world.hey.com']
+const hosts = heyWorld.hosts.exact
 
-const feeds = definePlatformFeeds('hey-world', [
-  { key: 'blog', main: 'https://world.hey.com/{username}/feed.atom' },
-])
+const feeds = withHintLabels(heyWorld.feeds)
 
 export const parseHeyWorldUrl = (url: string): HeyWorldUrl | undefined => {
   if (!isHostOf(url, hosts)) {

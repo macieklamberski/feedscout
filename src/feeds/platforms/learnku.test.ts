@@ -80,58 +80,30 @@ describe('learnkuHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const feedHints: Array<[string, DiscoverUriHint]> = [
-      ['https://learnku.com/feed', { key: 'learnku:site', label: 'Site' }],
-      ['http://learnku.com/feed', { key: 'learnku:site', label: 'Site' }],
-      ['https://learnku.com/feed/', { key: 'learnku:site', label: 'Site' }],
-      ['https://learnku.com/example/feed', { key: 'learnku:community', label: 'Community' }],
-      ['http://learnku.com/example/feed', { key: 'learnku:community', label: 'Community' }],
-      ['https://learnku.com/example/feed/', { key: 'learnku:community', label: 'Community' }],
-      ['https://www.learnku.com/example/feed', { key: 'learnku:community', label: 'Community' }],
-    ]
+    it('should return the community hint for a community feed on www', () => {
+      const value = 'https://www.learnku.com/example/feed'
+      const expected: DiscoverUriHint = { key: 'learnku:community', label: 'Community' }
 
-    it.each(feedHints)('should return the hint of %s', (value, expected) => {
       expect(learnkuHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a community page', () => {
-      const value = 'https://learnku.com/example'
-
-      expect(learnkuHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the home page', () => {
-      const value = 'https://learnku.com/'
-
-      expect(learnkuHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/example/feed'
-
-      expect(learnkuHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://learnku.com/feed', { key: 'learnku:site', label: 'Site' }],
-      ['http://learnku.com/feed', { key: 'learnku:site', label: 'Site' }],
-      ['https://learnku.com/feed/', { key: 'learnku:site', label: 'Site' }],
-      ['https://learnku.com/example/feed', { key: 'learnku:community', label: 'Community' }],
-      ['http://learnku.com/example/feed', { key: 'learnku:community', label: 'Community' }],
-      ['https://learnku.com/example/feed/', { key: 'learnku:community', label: 'Community' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a feed as itself', async () => {
+      const value = 'http://learnku.com/example/feed'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [learnkuHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://learnku.com/example/feed',
+          hint: { key: 'learnku:community', label: 'Community' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

@@ -1,27 +1,18 @@
+import { firstory } from 'feedintel'
 import { isHostOf, isSubdomainOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
 
-const hosts = ['open.firstory.me', 'open.firstory.fm']
-const domains = ['firstory.cc']
+const hosts = firstory.hosts.exact
+const domains = firstory.hosts.tenants
 
 // The feed is keyed by the show's cuid, and the vanity-slug form of it answers 403.
 // Show, episode and firstory.cc pages each link the show's feed.
 const feedUrlRegex = /feed\.firstory\.me\/rss\/user\/([a-z\d]+)/i
 
-const feeds = definePlatformFeeds('firstory', [
-  {
-    key: 'podcast',
-    main: 'https://feed.firstory.me/rss/user/{cuid}',
-    aliases: [
-      // Served spellings, which redirect to the one above. Claimed, never built.
-      'https://open.firstory.me/rss/user/{cuid}',
-      'https://open.firstory.fm/rss/user/{cuid}',
-    ],
-  },
-])
+const feeds = withHintLabels(firstory.feeds)
 
 export type FirstoryPage = { kind: 'show'; cuid: string }
 

@@ -1,5 +1,6 @@
+import { gnuboard } from 'feedintel'
 import { getQueryParam, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getCookieNames, hasMarker } from '../../common/utils.js'
 
@@ -13,10 +14,7 @@ const boardVariableRegex = /var g[45]_bo_table\s*=\s*"(\w+)"/
 const installUrlRegex = /var g5_url\s*=\s*"([^"]+)"/
 const trailingSlashRegex = /\/$/
 
-// A board is self-hosted on any domain, so the table only builds its feed.
-const feeds = definePlatformFeeds('gnuboard', [
-  { key: 'board', main: '{root}/bbs/rss.php?bo_table={board}' },
-])
+const feeds = withHintLabels(gnuboard.feeds)
 
 export type GnuboardPage = { kind: 'board'; root: string; board: string }
 

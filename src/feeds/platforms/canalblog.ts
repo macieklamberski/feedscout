@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { canalblog } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -6,11 +7,9 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type CanalblogUrl = { kind: 'blog' }
 
-const domains = ['canalblog.com']
+const domains = canalblog.hosts.tenants
 
-const feeds = definePlatformFeeds('canalblog', [{ key: 'posts', main: '{scheme}://{host}/rss' }], {
-  hosts: { tenants: domains },
-})
+const feeds = withHintLabels(canalblog.feeds)
 
 export const parseCanalblogUrl = (url: string): CanalblogUrl | undefined => {
   // A nested subdomain like a.b.canalblog.com fails TLS, since the certificate covers one label.

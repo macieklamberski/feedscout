@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { hubzilla } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -8,8 +9,7 @@ export type HubzillaUrl = { kind: 'channel'; channel: string }
 
 const channelPathRegex = /^\/(?:(?:channel|feed|profile)\/|@)([^/]+)/i
 
-// A hub is self-hosted on any domain, so the table only builds its feed.
-const feeds = definePlatformFeeds('hubzilla', [{ key: 'channel', main: '{root}/feed/{channel}' }])
+const feeds = withHintLabels(hubzilla.feeds)
 
 // A custom theme can drop the generator, while core prints `var zid` in every page head.
 export const isHubzillaHtml = (content: string): boolean => {

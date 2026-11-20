@@ -1,24 +1,16 @@
+import { cnblogs } from 'feedintel'
 import { getPathSegments, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
 
 export type CnblogsUrl = { kind: 'blog'; username: string }
 
-const hosts = ['cnblogs.com', 'www.cnblogs.com']
+const hosts = cnblogs.hosts.exact
 const feedHosts = ['feed.cnblogs.com']
 
-const feeds = definePlatformFeeds('cnblogs', [
-  {
-    key: 'posts',
-    main: 'https://www.cnblogs.com/{username}/rss',
-    aliases: [
-      // The posts feed answers 302 to this spelling, under the blog's numeric id.
-      'https://feed.cnblogs.com/blog/u/{blogId}/rss',
-    ],
-  },
-])
+const feeds = withHintLabels(cnblogs.feeds)
 
 export const parseCnblogsUrl = (url: string): CnblogsUrl | undefined => {
   if (!isHostOf(url, hosts)) {

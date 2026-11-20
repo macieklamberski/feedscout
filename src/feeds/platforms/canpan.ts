@@ -1,5 +1,6 @@
+import { canpan } from 'feedintel'
 import { getPathSegments, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -8,12 +9,9 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type CanpanUrl = { kind: 'blog'; blog: string }
 
-const hosts = ['blog.canpan.info']
+const hosts = canpan.hosts.exact
 
-const feeds = definePlatformFeeds('canpan', [
-  { key: 'posts', main: 'https://blog.canpan.info/{blog}/index2_0.xml', format: 'rss' },
-  { key: 'posts', main: 'https://blog.canpan.info/{blog}/index1_0.rdf', format: 'rdf' },
-])
+const feeds = withHintLabels(canpan.feeds)
 
 export const parseCanpanUrl = (url: string): CanpanUrl | undefined => {
   if (!isHostOf(url, hosts)) {

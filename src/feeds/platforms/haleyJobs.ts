@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { haleyJobs } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
 
@@ -7,9 +8,7 @@ import { findElement } from '../../common/utils.js'
 
 const boardRoutePrefix = '/index.smpl?arg=jb_'
 
-// A board runs on the employer's own domain, so the table only builds its feed. `ff=1` serves the
-// full job descriptions, which the bare feed cuts short.
-const feeds = definePlatformFeeds('haley-jobs', [{ key: 'jobs', main: '{root}/rss/rss.smpl?ff=1' }])
+const feeds = withHintLabels(haleyJobs.feeds)
 
 // Haley's resource centers and admin pages come from the same servers, so the job board is told
 // apart by its own `jb_` routes.

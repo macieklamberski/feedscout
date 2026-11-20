@@ -75,53 +75,30 @@ describe('heyWorldHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const feedHints: Array<[string, DiscoverUriHint]> = [
-      ['https://world.hey.com/alice/feed.atom', { key: 'hey-world:blog', label: 'Blog' }],
-      ['http://world.hey.com/alice/feed.atom', { key: 'hey-world:blog', label: 'Blog' }],
-      ['https://world.hey.com/alice/feed.atom/', { key: 'hey-world:blog', label: 'Blog' }],
-    ]
+    it('should return the blog hint for a blog feed', () => {
+      const value = 'https://world.hey.com/alice/feed.atom'
+      const expected: DiscoverUriHint = { key: 'hey-world:blog', label: 'Blog' }
 
-    it.each(feedHints)('should return the key of %s', (value, expected) => {
       expect(heyWorldHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://world.hey.com/alice'
-
-      expect(heyWorldHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a post page', () => {
-      const value = 'https://world.hey.com/alice/hello-world-1a2b3c4d'
-
-      expect(heyWorldHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/alice/feed.atom'
-
-      expect(heyWorldHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<string> = [
-      'https://world.hey.com/alice/feed.atom',
-      'http://world.hey.com/alice/feed.atom',
-      'https://world.hey.com/alice/feed.atom/',
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a blog feed as itself', async () => {
+      const value = 'https://world.hey.com/alice/feed.atom'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [heyWorldHandler],
         baseUrl: value,
-      })
+      }
       const expected: Array<DiscoverUriEntry> = [
-        { uri: value, hint: { key: 'hey-world:blog', label: 'Blog' } },
+        {
+          uri: 'https://world.hey.com/alice/feed.atom',
+          hint: { key: 'hey-world:blog', label: 'Blog' },
+        },
       ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

@@ -1,5 +1,6 @@
+import { bing } from 'feedintel'
 import { getQueryParam, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -9,20 +10,12 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 export type BingUrl = { kind: 'search'; query: string } | { kind: 'news'; query: string }
 
 // Unverified: cn.bing.com redirects to www.bing.com outside China, so its feed was never read.
-const hosts = ['bing.com', 'cn.bing.com', 'www.bing.com']
+const hosts = bing.hosts.exact
 
 const searchRegex = /^\/search\/?$/i
 const newsRegex = /^\/news\/search\/?$/i
 
-// Web and news search answer with RSS when `format=rss` is set.
-const feeds = definePlatformFeeds(
-  'bing',
-  [
-    { key: 'search', main: '{scheme}://{host}/search?q={query}&format=rss' },
-    { key: 'news', main: '{scheme}://{host}/news/search?q={query}&format=rss' },
-  ],
-  { hosts: { exact: hosts } },
-)
+const feeds = withHintLabels(bing.feeds)
 
 export const parseBingUrl = (url: string): BingUrl | undefined => {
   const parsedUrl = parseUrl(url)

@@ -1,5 +1,6 @@
+import { bloggang } from 'feedintel'
 import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain, wordOrHyphenRegex } from '../../common/utils.js'
 
@@ -10,16 +11,14 @@ export type BloggangUrl =
   | { kind: 'post'; username: string }
   | { kind: 'diary'; username: string }
 
-const domains = ['bloggang.com']
-const hosts = ['bloggang.com', 'www.bloggang.com']
+const domains = bloggang.hosts.tenants
+const hosts = bloggang.hosts.exact
 // The mobile site names a blog in the query, in a form no feed URL is built from.
 const mobileHosts = ['m.bloggang.com']
 
 const scriptRegex = /^\/(\w+)\.php$/i
 
-const feeds = definePlatformFeeds('bloggang', [{ key: 'posts', main: '{scheme}://{host}/rss' }], {
-  hosts: { tenants: domains },
-})
+const feeds = withHintLabels(bloggang.feeds)
 
 export const parseBloggangUrl = (url: string): BloggangUrl | undefined => {
   const subdomain = getTenantSubdomain(url, domains)

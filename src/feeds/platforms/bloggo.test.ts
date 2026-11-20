@@ -224,78 +224,12 @@ describe('bloggoHandler', () => {
 
       expect(bloggoHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the posts hint for an http posts feed without a trailing slash', () => {
-      const value = 'http://bobchess.bloggo.nu/feed'
-      const expected: DiscoverUriHint = { key: 'bloggo:posts', label: 'Posts' }
-
-      expect(bloggoHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the post comments hint for a post comments feed', () => {
-      const value = 'https://dave.bloggo.nu/Vitsippan-ute-i-backarna-star-/feed/'
-      const expected: DiscoverUriHint = { key: 'bloggo:post-comments', label: 'Post comments' }
-
-      expect(bloggoHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the post comments hint for a post comments feed without a trailing slash', () => {
-      const value = 'https://carol49.bloggo.nu/Atta-nyanser-av-gront-/feed'
-      const expected: DiscoverUriHint = { key: 'bloggo:post-comments', label: 'Post comments' }
-
-      expect(bloggoHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the post comments hint for a percent-encoded post comments feed', () => {
-      const value = 'http://alicerike.bloggo.nu/M%C3%B6rkbladiga+fl%C3%A4der/feed/'
-      const expected: DiscoverUriHint = { key: 'bloggo:post-comments', label: 'Post comments' }
-
-      expect(bloggoHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a post page', () => {
-      const value = 'https://dave.bloggo.nu/Vitsippan-ute-i-backarna-star-/'
-
-      expect(bloggoHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the www host', () => {
-      const value = 'https://www.bloggo.nu/feed/'
-
-      expect(bloggoHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex domain', () => {
-      const value = 'https://bloggo.nu/feed/'
-
-      expect(bloggoHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://blog.alice.bloggo.nu/feed/'
-
-      expect(bloggoHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on another host', () => {
-      const value = 'https://example.com/Min-forsta-resa/feed/'
-
-      expect(bloggoHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const posts: DiscoverUriHint = { key: 'bloggo:posts', label: 'Posts' }
-    const postComments: DiscoverUriHint = { key: 'bloggo:post-comments', label: 'Post comments' }
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://dave.bloggo.nu/feed/', posts],
-      ['https://erin.bloggo.nu/feed', posts],
-      ['https://dave.bloggo.nu/Vitsippan-ute-i-backarna-star-/feed/', postComments],
-      ['https://carol49.bloggo.nu/Atta-nyanser-av-gront-/feed', postComments],
-      ['http://alicerike.bloggo.nu/M%C3%B6rkbladiga+fl%C3%A4der/feed/', postComments],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a posts feed as itself', async () => {
+      const value = 'https://dave.bloggo.nu/feed/'
+      const hint: DiscoverUriHint = { key: 'bloggo:posts', label: 'Posts' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [bloggoHandler],

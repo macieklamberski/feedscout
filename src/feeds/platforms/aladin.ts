@@ -1,5 +1,6 @@
+import { aladin } from 'feedintel'
 import { escapeRegex, getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
@@ -11,15 +12,9 @@ export type AladinUrl =
   | { kind: 'blog'; username: string }
   | { kind: 'category'; username: string; categoryId: string }
 
-const hosts = ['blog.aladin.co.kr']
+const hosts = aladin.hosts.exact
 
-const feeds = definePlatformFeeds('aladin', [
-  {
-    key: 'category',
-    main: 'https://blog.aladin.co.kr/{username}/category/{categoryId}/rss',
-  },
-  { key: 'posts', main: 'https://blog.aladin.co.kr/{username}/rss' },
-])
+const feeds = withHintLabels(aladin.feeds)
 
 export const parseAladinUrl = (url: string): AladinUrl | undefined => {
   if (!isHostOf(url, hosts)) {

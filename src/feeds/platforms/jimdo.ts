@@ -1,22 +1,12 @@
+import { jimdo } from 'feedintel'
 import { getQueryParam } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const domains = ['jimdofree.com']
-
-// A site on its own domain is known only by its header, so its feeds are built here but not
-// claimed. A post's tag links the blog narrowed to that tag, `/?tag={tag}`.
-const feeds = definePlatformFeeds(
-  'jimdo',
-  [
-    { key: 'blog', main: '{scheme}://{host}/rss/blog' },
-    { key: 'blog-tag', main: '{scheme}://{host}/rss/blog/{tag}' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(jimdo.feeds)
 
 // Jimdo Creator answers every page with the site's id in this header, on its own hosts and on
 // custom domains alike.

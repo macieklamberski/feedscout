@@ -1,5 +1,6 @@
+import { behance } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -8,7 +9,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type BehanceUrl = { kind: 'profile'; username: string } | { kind: 'home' }
 
-const hosts = ['behance.net', 'www.behance.net']
+const hosts = behance.hosts.exact
 // Profile tabs of a user, which map back to the user.
 const profileTabs = [
   'analytics',
@@ -27,10 +28,7 @@ const sitePaths = ['search']
 const usernameRegex = /^[a-zA-Z0-9_-]+$/
 const homeRegex = /^\/(?:galleries\/?)?$/i
 
-const feeds = definePlatformFeeds('behance', [
-  { key: 'portfolio', main: 'https://www.behance.net/feeds/user?username={username}' },
-  { key: 'projects', main: 'https://www.behance.net/feeds/projects' },
-])
+const feeds = withHintLabels(behance.feeds)
 
 export const parseBehanceUrl = (url: string): BehanceUrl | undefined => {
   const parsedUrl = parseUrl(url)

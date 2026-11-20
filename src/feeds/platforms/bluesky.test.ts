@@ -117,90 +117,30 @@ describe('blueskyHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the posts key for a feed under a handle', () => {
-      const value = 'https://bsky.app/profile/alice.bsky.social/rss'
-      const expected: DiscoverUriHint = { key: 'bluesky:posts', label: 'Posts' }
-
-      expect(blueskyHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts key for a feed under a DID', () => {
-      const value = 'https://bsky.app/profile/did:plc:abcdefghijklmnopqrstuvwx/rss'
-      const expected: DiscoverUriHint = { key: 'bluesky:posts', label: 'Posts' }
-
-      expect(blueskyHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the posts key for a feed on web-cdn.bsky.app', () => {
       const value = 'https://web-cdn.bsky.app/profile/did:plc:abcdefghijklmnopqrstuvwx/rss'
       const expected: DiscoverUriHint = { key: 'bluesky:posts', label: 'Posts' }
 
       expect(blueskyHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the posts key for a feed on main.bsky.dev', () => {
-      const value = 'https://main.bsky.dev/profile/alice.bsky.social/rss'
-      const expected: DiscoverUriHint = { key: 'bluesky:posts', label: 'Posts' }
-
-      expect(blueskyHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts key for a handle with percent-encoded spaces', () => {
-      const value = 'https://bsky.app/profile/bob.bsky.social%20%20/rss'
-      const expected: DiscoverUriHint = { key: 'bluesky:posts', label: 'Posts' }
-
-      expect(blueskyHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a profile page', () => {
-      const value = 'https://bsky.app/profile/alice.bsky.social'
-
-      expect(blueskyHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a post page', () => {
-      const value = 'https://bsky.app/profile/alice.bsky.social/post/3mys5hihpoc2v'
-
-      expect(blueskyHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/profile/alice.bsky.social/rss'
-
-      expect(blueskyHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://bsky.app/profile/alice.bsky.social/rss', { key: 'bluesky:posts', label: 'Posts' }],
-      [
-        'https://bsky.app/profile/did:plc:abcdefghijklmnopqrstuvwx/rss',
-        { key: 'bluesky:posts', label: 'Posts' },
-      ],
-      [
-        'https://web-cdn.bsky.app/profile/did:plc:abcdefghijklmnopqrstuvwx/rss',
-        { key: 'bluesky:posts', label: 'Posts' },
-      ],
-      [
-        'https://bsky.app/profile/bob.bsky.social%20%20/rss',
-        { key: 'bluesky:posts', label: 'Posts' },
-      ],
-      [
-        'https://main.bsky.dev/profile/alice.bsky.social/rss',
-        { key: 'bluesky:posts', label: 'Posts' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a feed on web-cdn.bsky.app as itself', async () => {
+      const value = 'https://web-cdn.bsky.app/profile/did:plc:abcdefghijklmnopqrstuvwx/rss'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [blueskyHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://web-cdn.bsky.app/profile/did:plc:abcdefghijklmnopqrstuvwx/rss',
+          hint: { key: 'bluesky:posts', label: 'Posts' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

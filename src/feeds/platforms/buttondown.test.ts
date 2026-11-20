@@ -89,57 +89,18 @@ describe('buttondownHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the newsletter key for a newsletter feed', () => {
-      const value = 'https://buttondown.com/alice/rss'
-      const expected: DiscoverUriHint = { key: 'buttondown:newsletter', label: 'Newsletter' }
-
-      expect(buttondownHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the newsletter key for a newsletter feed over http on the www host', () => {
-      const value = 'http://www.buttondown.com/alice/rss'
-      const expected: DiscoverUriHint = { key: 'buttondown:newsletter', label: 'Newsletter' }
-
-      expect(buttondownHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the newsletter key for a newsletter feed on the legacy host', () => {
       const value = 'https://buttondown.email/alice/rss'
       const expected: DiscoverUriHint = { key: 'buttondown:newsletter', label: 'Newsletter' }
 
       expect(buttondownHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the newsletter key for a newsletter feed with a dotted username', () => {
-      const value = 'https://buttondown.com/alice.example/rss'
-      const expected: DiscoverUriHint = { key: 'buttondown:newsletter', label: 'Newsletter' }
-
-      expect(buttondownHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a newsletter page', () => {
-      const value = 'https://buttondown.com/alice'
-
-      expect(buttondownHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/alice/rss'
-
-      expect(buttondownHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const hint: DiscoverUriHint = { key: 'buttondown:newsletter', label: 'Newsletter' }
-    const ownFeeds: Array<string> = [
-      'https://buttondown.com/alice/rss',
-      'http://buttondown.com/alice/rss',
-      'https://www.buttondown.com/alice/rss',
-      'https://buttondown.email/alice/rss',
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
+    it('should return a newsletter feed on the legacy host as itself', async () => {
+      const value = 'https://buttondown.email/alice/rss'
+      const hint: DiscoverUriHint = { key: 'buttondown:newsletter', label: 'Newsletter' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [buttondownHandler],

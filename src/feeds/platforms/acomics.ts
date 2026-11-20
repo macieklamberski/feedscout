@@ -1,5 +1,6 @@
+import { acomics } from 'feedintel'
 import { getPathSegments, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -8,12 +9,9 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type AcomicsUrl = { kind: 'comic'; comic: string } | { kind: 'user'; username: string }
 
-const hosts = ['acomics.ru', 'www.acomics.ru']
+const hosts = acomics.hosts.exact
 
-const feeds = definePlatformFeeds('acomics', [
-  { key: 'issues', main: 'https://acomics.ru/~{comic}/rss' },
-  { key: 'subscriptions', main: 'https://acomics.ru/-{username}/rss' },
-])
+const feeds = withHintLabels(acomics.feeds)
 
 // A comic lives under /~{comic} and a user under /-{user}, and both keep their case in the feed
 // URL, since /~thesweetberries/rss answers 404 where /~TheSweetBerries/rss serves the comic.
