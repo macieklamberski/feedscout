@@ -1,5 +1,4 @@
 import { medium } from 'feedintel'
-import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -17,64 +16,36 @@ export type MediumUrl =
 const domains = medium.hosts.tenants
 export const hosts = medium.hosts.exact
 
-const userRegex = /^\/@([^/]+)/
-const tagRegex = /^\/tag\/([^/]+)/i
-const publicationTagRegex = /^\/([^/@][^/]+)\/tagged\/([^/]+)/i
-const publicationRegex = /^\/([^/@][^/]+)/
-const subdomainTagRegex = /^\/tagged\/([^/]+)/i
-
 const feeds = withHintLabels(medium.feeds)
 
 export const parseMediumUrl = (url: string): MediumUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = medium.pages.read(url)
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  const { pathname } = parsedUrl
+  const { username, tag, publication } = page.params
 
-  if (!isHostOf(parsedUrl, hosts)) {
-    const subdomain = getTenantSubdomain(parsedUrl, domains)
-
-    if (!subdomain) {
-      return
-    }
-
-    const tag = pathname.match(subdomainTagRegex)?.[1]
-
-    if (tag) {
-      return { kind: 'subdomain', subdomain, tag }
-    }
-
-    return { kind: 'subdomain', subdomain }
-  }
-
-  const username = pathname.match(userRegex)?.[1]
-
-  if (username) {
+  if (page.key === 'user') {
     return { kind: 'user', username }
   }
 
-  const tag = pathname.match(tagRegex)?.[1]
-
-  if (tag) {
+  if (page.key === 'tag') {
     return { kind: 'tag', tag }
   }
 
-  const publication = pathname.match(publicationRegex)?.[1]
+  if (page.key === 'publication') {
+    return { kind: 'publication', publication, tag }
+  }
 
-  if (!publication) {
+  const subdomain = getTenantSubdomain(url, domains)
+
+  if (!subdomain) {
     return
   }
 
-  const publicationTag = pathname.match(publicationTagRegex)?.[2]
-
-  if (publicationTag) {
-    return { kind: 'publication', publication, tag: publicationTag }
-  }
-
-  return { kind: 'publication', publication }
+  return { kind: 'subdomain', subdomain, tag }
 }
 
 export const mediumHandler: PlatformHandler = {

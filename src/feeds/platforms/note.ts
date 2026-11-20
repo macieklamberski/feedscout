@@ -1,5 +1,4 @@
 import { note } from 'feedintel'
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -14,50 +13,31 @@ export type NoteUrl =
   | { kind: 'user'; username: string }
   | { kind: 'home' }
 
-export const hosts = note.hosts.exact
-
-// A hashtag page redirects to `/tag/{tag}`, and the feed stays under `/hashtag`.
-const hashtagRegex = /^\/(?:hashtag|tag)\/([^/]+)/i
-const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/i
-const noteRegex = /^\/([^/]+)\/n\/[^/]+/i
-
 const feeds = withHintLabels(note.feeds)
 
 export const parseNoteUrl = (url: string): NoteUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = note.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const { pathname } = parsedUrl
-  const tag = pathname.match(hashtagRegex)?.[1]
+  const { tag, username, magazine } = page.params
 
-  if (tag) {
+  if (page.key === 'hashtag') {
     return { kind: 'hashtag', tag }
   }
 
-  const magazineMatch = pathname.match(magazineRegex)
-
-  if (magazineMatch?.[1] && magazineMatch[2]) {
-    return { kind: 'magazine', username: magazineMatch[1], magazine: magazineMatch[2] }
+  if (page.key === 'magazine') {
+    return { kind: 'magazine', username, magazine }
   }
 
-  const noteUsername = pathname.match(noteRegex)?.[1]
-
-  if (noteUsername) {
-    return { kind: 'note', username: noteUsername }
+  if (page.key === 'note') {
+    return { kind: 'note', username }
   }
 
-  const [username] = getPathSegments(parsedUrl)
-
-  if (!username) {
+  if (page.key === 'home') {
     return { kind: 'home' }
-  }
-
-  // note names carry no dots, so a dotted segment such as robots.txt is a file of the site.
-  if (username.includes('.')) {
-    return
   }
 
   return { kind: 'user', username }

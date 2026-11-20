@@ -1,5 +1,4 @@
 import { packagist } from 'feedintel'
-import { endsWithAnyOf, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -13,45 +12,29 @@ export type PackagistUrl =
   | { kind: 'extensions' }
   | { kind: 'home' }
 
-const hosts = packagist.hosts.exact
-
-const packageRegex = /^\/packages\/([^/]+)\/([^/]+)(?:\/|$)/i
-const vendorRegex = /^\/packages\/([^/]+)\/?$/i
-const extensionsRegex = /^\/extensions(?:\/|$)/i
-
 const feeds = withHintLabels(packagist.feeds)
 
 export const parsePackagistUrl = (url: string): PackagistUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = packagist.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const { pathname } = parsedUrl
+  const { vendor, name } = page.params
 
-  // The JSON API sits under the same paths, such as /packages/list.json.
-  if (endsWithAnyOf(pathname, '.json')) {
-    return
+  if (page.key === 'package') {
+    return { kind: 'package', vendor, name }
   }
 
-  const packageMatch = pathname.match(packageRegex)
-
-  if (packageMatch) {
-    return { kind: 'package', vendor: packageMatch[1], name: packageMatch[2] }
-  }
-
-  const vendor = pathname.match(vendorRegex)?.[1]
-
-  if (vendor) {
+  if (page.key === 'vendor') {
     return { kind: 'vendor', vendor }
   }
 
-  if (extensionsRegex.test(pathname)) {
+  if (page.key === 'extensions') {
     return { kind: 'extensions' }
   }
 
-  // Every other page, the home page included, advertises the two site-wide feeds.
   return { kind: 'home' }
 }
 

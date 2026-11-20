@@ -1,5 +1,4 @@
 import { microblog } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -16,32 +15,25 @@ export type MicroblogUrl =
 
 export const domains = microblog.hosts.tenants
 
-const categoryRegex = /^\/categories\/([^/]+)/i
-const archiveRegex = /^\/archive(?:\/|$)/i
-const photosRegex = /^\/photos(?:\/|$)/i
-
 const feeds = withHintLabels(microblog.feeds)
 
 export const parseMicroblogUrl = (url: string): MicroblogUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = microblog.pages.read(url)
   const username = getTenantSubdomain(url, domains)
 
-  if (!parsedUrl || !username) {
+  if (!page || !username) {
     return
   }
 
-  const { pathname } = parsedUrl
-  const category = pathname.match(categoryRegex)?.[1]
-
-  if (category) {
-    return { kind: 'category', username, category }
+  if (page.key === 'category') {
+    return { kind: 'category', username, category: page.params.category }
   }
 
-  if (archiveRegex.test(pathname)) {
+  if (page.key === 'archive') {
     return { kind: 'archive', username }
   }
 
-  if (photosRegex.test(pathname)) {
+  if (page.key === 'photos') {
     return { kind: 'photos', username }
   }
 

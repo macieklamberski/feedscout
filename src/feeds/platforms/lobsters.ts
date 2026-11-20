@@ -1,8 +1,6 @@
 import { lobsters } from 'feedintel'
-import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: domain, stories, tag, top.
@@ -17,57 +15,38 @@ export type LobstersUrl =
   | { kind: 'comments' }
   | { kind: 'home' }
 
-const hosts = lobsters.hosts.exact
-
-const tagRegex = /^\/t\/(?<tags>[^/]+)/i
-const domainRegex = /^\/domains\/([^/]+)/i
-const userRegex = /^\/~(?<username>[^/]+)/
-const topRegex = /^\/top(?:\/(?<period>\d+[dwmy]))?\/?$/i
-const newestRegex = /^\/newest\/?$/i
-const commentsRegex = /^\/comments\/?$/i
-const tagsValueRegex = /^[\w,-]+$/
-
 const feeds = withHintLabels(lobsters.feeds)
 
 export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = lobsters.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const { pathname } = parsedUrl
-  // A comma joins several tags: /t/{tag1},{tag2}.
-  const tags = pathname.match(tagRegex)?.groups?.tags
+  const { tags, domain, username, period } = page.params
 
-  if (tags && tagsValueRegex.test(tags)) {
+  if (page.key === 'tag') {
     return { kind: 'tag', tags }
   }
 
-  const domain = pathname.match(domainRegex)?.[1]
-
-  if (domain) {
+  if (page.key === 'domain') {
     return { kind: 'domain', domain }
   }
 
-  const username = pathname.match(userRegex)?.groups?.username
-
-  if (username && wordOrHyphenRegex.test(username)) {
+  if (page.key === 'user') {
     return { kind: 'user', username }
   }
 
-  const topMatch = pathname.match(topRegex)
-
-  // Top page, for a period or without one: /top/{period} or /top.
-  if (topMatch) {
-    return { kind: 'top', period: topMatch.groups?.period }
+  if (page.key === 'top') {
+    return { kind: 'top', period }
   }
 
-  if (newestRegex.test(pathname)) {
+  if (page.key === 'newest') {
     return { kind: 'newest' }
   }
 
-  if (commentsRegex.test(pathname)) {
+  if (page.key === 'comments') {
     return { kind: 'comments' }
   }
 

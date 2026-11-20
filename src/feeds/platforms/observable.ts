@@ -1,5 +1,4 @@
 import { observable } from 'feedintel'
-import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -12,47 +11,27 @@ export type ObservableUrl =
   | { kind: 'recent' }
   | { kind: 'trending' }
 
-export const hosts = observable.hosts.exact
-
-// The live form carries a `-` segment, `/@{owner}/-/collection/{slug}`.
-const collectionRegex = /^\/@([^/]+)\/(?:-\/)?collection\/([^/]+)/i
-const ownerRegex = /^\/@([^/]+)/
-const publicRegex = /^\/public\/?$/i
-const recentRegex = /^\/recent\/?$/i
-const trendingRegex = /^\/trending\/?$/i
-
 const feeds = withHintLabels(observable.feeds)
 
 export const parseObservableUrl = (url: string): ObservableUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = observable.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const { pathname } = parsedUrl
-  const isPublic = publicRegex.test(pathname)
-  const sort = getQueryParam(parsedUrl.searchParams, 'sort')
+  const { owner, collection } = page.params
 
-  // `/recent` redirects to `/public?sort=publish_time` and `/trending` to `/public`.
-  if (recentRegex.test(pathname) || (isPublic && isAnyOf(sort, 'publish_time'))) {
+  if (page.key === 'recent') {
     return { kind: 'recent' }
   }
 
-  if (trendingRegex.test(pathname) || isPublic) {
+  if (page.key === 'trending') {
     return { kind: 'trending' }
   }
 
-  const collectionMatch = pathname.match(collectionRegex)
-
-  if (collectionMatch?.[1] && collectionMatch[2]) {
-    return { kind: 'collection', owner: collectionMatch[1], collection: collectionMatch[2] }
-  }
-
-  const owner = pathname.match(ownerRegex)?.[1]
-
-  if (!owner) {
-    return
+  if (page.key === 'collection') {
+    return { kind: 'collection', owner, collection }
   }
 
   return { kind: 'user', owner }

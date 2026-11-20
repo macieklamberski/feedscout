@@ -1,5 +1,4 @@
 import { behance } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -9,55 +8,22 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type BehanceUrl = { kind: 'profile'; username: string } | { kind: 'home' }
 
-const hosts = behance.hosts.exact
-// Profile tabs of a user, which map back to the user.
-const profileTabs = [
-  'analytics',
-  'appreciated',
-  'followers',
-  'following',
-  'info',
-  'moodboards',
-  'projects',
-  'resume',
-  'services',
-]
-// Site routes whose tabs share the profile tab names, as /search/projects does.
-const sitePaths = ['search']
-
-const usernameRegex = /^[a-zA-Z0-9_-]+$/
-const homeRegex = /^\/(?:galleries\/?)?$/i
-
 const feeds = withHintLabels(behance.feeds)
 
 export const parseBehanceUrl = (url: string): BehanceUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = behance.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  // Homepage: featured projects. The page's own FeedBurner link serves the same items.
-  if (homeRegex.test(parsedUrl.pathname)) {
-    return { kind: 'home' }
+  if (page.key === 'profile') {
+    return { kind: 'profile', username: page.params.username }
   }
 
-  const [username, tab, ...rest] = getPathSegments(parsedUrl)
-
-  if (
-    !username ||
-    !usernameRegex.test(username) ||
-    isAnyOf(username, sitePaths) ||
-    rest.length > 0
-  ) {
-    return { kind: 'home' }
-  }
-
-  if (tab && !isAnyOf(tab, profileTabs)) {
-    return { kind: 'home' }
-  }
-
-  return { kind: 'profile', username }
+  // Every other page gets the featured projects, which the home page's own FeedBurner link serves
+  // too.
+  return { kind: 'home' }
 }
 
 export const behanceHandler: PlatformHandler = {

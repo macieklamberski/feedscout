@@ -1,8 +1,8 @@
 import { jugem } from 'feedintel'
-import { getPathSegments, isHostOf, isHostOrSubdomainOf } from 'trousse'
+import { isHostOf, isHostOrSubdomainOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex, findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -14,8 +14,6 @@ export type JugemUrl =
 const domains = jugem.hosts.tenants
 const assetHosts = ['imaging.jugem.jp']
 const cookieScriptPath = './template/js/cookie.js'
-const portalHosts = ['jugem.jp']
-const themeCategoryRegex = /^c\d+$/
 
 const feeds = withHintLabels(jugem.feeds)
 
@@ -50,21 +48,14 @@ export const parseJugemUrl = (url: string): JugemUrl | undefined => {
     return { kind: 'customDomain' }
   }
 
-  // A portal theme page, /theme/c{n}/{id}/, lists posts from many blogs under one theme.
-  if (isHostOf(url, portalHosts)) {
-    const [route, category, theme] = getPathSegments(url)
+  const page = jugem.pages.read(url)
 
-    if (
-      route !== 'theme' ||
-      !category ||
-      !theme ||
-      !themeCategoryRegex.test(category) ||
-      !digitsRegex.test(theme)
-    ) {
-      return
-    }
+  if (!page) {
+    return
+  }
 
-    return { kind: 'theme', category, theme }
+  if (page.key === 'theme') {
+    return { kind: 'theme', category: page.params.category, theme: page.params.theme }
   }
 
   const blog = getTenantSubdomain(url, domains)

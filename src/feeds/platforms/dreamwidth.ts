@@ -1,9 +1,8 @@
 import { dreamwidth } from 'feedintel'
-import { decodeSegment, isHostOf, parseUrl } from 'trousse'
+import { decodeSegment } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
-import { getJournalName, getJournalTag } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: posts, posts-tag.
@@ -12,36 +11,19 @@ import { getJournalName, getJournalTag } from './livejournal.js'
 export type DreamwidthUrl = { kind: 'journal'; username?: string; tag?: string }
 
 const domains = dreamwidth.hosts.tenants
-const wwwHosts = ['www.dreamwidth.org', 'dreamwidth.org']
-
-const usersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 
 const feeds = withHintLabels(dreamwidth.feeds)
 
 export const parseDreamwidthUrl = (url: string): DreamwidthUrl | undefined => {
-  const pathname = parseUrl(url)?.pathname
+  const page = dreamwidth.pages.read(url)
 
-  if (!pathname) {
+  if (!page) {
     return
   }
 
-  // Bare www.dreamwidth.org has no per-user context, so it names a journal only through a
-  // /users/ or /~ selector in the path.
-  if (isHostOf(url, wwwHosts)) {
-    const username = getJournalName(pathname, usersPathRegex)
+  const { username, tag } = page.params
 
-    if (!username) {
-      return
-    }
-
-    return { kind: 'journal', username, tag: getJournalTag(pathname, usersPathRegex) }
-  }
-
-  if (!getTenantSubdomain(url, domains)) {
-    return
-  }
-
-  return { kind: 'journal', tag: getJournalTag(pathname) }
+  return { kind: 'journal', username, tag }
 }
 
 export const dreamwidthHandler: PlatformHandler = {

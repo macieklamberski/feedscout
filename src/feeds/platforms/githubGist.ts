@@ -1,5 +1,4 @@
 import { githubGist } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -13,41 +12,28 @@ export type GithubGistUrl =
   | { kind: 'forks'; username: string }
   | { kind: 'discover' }
 
-const hosts = githubGist.hosts.exact
-
-const discoverRegex = /^\/discover(?:\.atom)?\/?$/i
-const feedSuffixRegex = /\.atom$/i
-
-const forksSections = ['forks', 'forked']
-
 const feeds = withHintLabels(githubGist.feeds)
 
 // A gist page, /{username}/{gist-id}, and the /public and /secret listings belong to the
 // user's gists.
 export const parseGithubGistUrl = (url: string): GithubGistUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = githubGist.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  // Discover page: /discover (global new gists feed).
-  if (discoverRegex.test(new URL(url).pathname)) {
+  const { username } = page.params
+
+  if (page.key === 'discover') {
     return { kind: 'discover' }
   }
 
-  const [name, section, ...rest] = getPathSegments(url)
-  // The favicon handler reads a user feed URL, /{username}.atom, as the user.
-  const username = section ? name : name?.replace(feedSuffixRegex, '')
-
-  // GitHub names carry no dots, so a dotted segment such as robots.txt is a file of the site.
-  if (!username || username.includes('.')) {
-    return
-  }
-
-  if (isAnyOf(section, 'starred') && rest.length === 0) {
+  if (page.key === 'starred') {
     return { kind: 'starred', username }
   }
 
-  if (isAnyOf(section, forksSections) && rest.length === 0) {
+  if (page.key === 'forks') {
     return { kind: 'forks', username }
   }
 

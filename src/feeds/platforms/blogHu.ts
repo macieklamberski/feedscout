@@ -1,5 +1,4 @@
 import { blogHu } from 'feedintel'
-import { decodePercent, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -15,55 +14,34 @@ export type BlogHuUrl =
 export type BlogHuPost = { year: string; month: string; day: string; slug: string }
 
 const domains = blogHu.hosts.tenants
-const hosts = blogHu.hosts.exact
-
-const userRegex = /^\/user\/(\d+)(?:\/|$)/i
-const postRegex = /^\/(?<year>\d{4})\/(?<month>\d{2})\/(?<day>\d{2})\/(?<slug>[^/]+)\/?$/
-const tagRegex = /^\/tags\/([^/]+)\/?$/i
 
 const feeds = withHintLabels(blogHu.feeds)
 
 export const parseBlogHuUrl = (url: string): BlogHuUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = blogHu.pages.read(url)
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  if (isHostOf(parsedUrl, hosts)) {
-    const userId = parsedUrl.pathname.match(userRegex)?.[1]
+  const { userId, year, month, day, slug, tag } = page.params
 
-    if (userId) {
-      return { kind: 'user', userId }
-    }
-
-    return
+  if (page.key === 'user') {
+    return { kind: 'user', userId }
   }
 
-  const blog = getTenantSubdomain(parsedUrl, domains)
+  const blog = getTenantSubdomain(url, domains)
 
   if (!blog) {
     return
   }
 
-  // A post page, /{year}/{month}/{day}/{slug}, links its comments feed. A tag page, /tags/{tag},
-  // has a feed of the posts with that tag.
-  const post = parsedUrl.pathname.match(postRegex)?.groups
-  const tag = parsedUrl.pathname.match(tagRegex)?.[1]
-
-  if (post?.year && post.month && post.day && post.slug) {
-    return {
-      kind: 'blog',
-      blog,
-      post: { year: post.year, month: post.month, day: post.day, slug: decodePercent(post.slug) },
-    }
+  // A post page links its comments feed. A tag page has a feed of the posts with that tag.
+  if (slug) {
+    return { kind: 'blog', blog, post: { year, month, day, slug } }
   }
 
-  if (tag) {
-    return { kind: 'blog', blog, tag: decodePercent(tag) }
-  }
-
-  return { kind: 'blog', blog }
+  return { kind: 'blog', blog, tag }
 }
 
 export const blogHuHandler: PlatformHandler = {

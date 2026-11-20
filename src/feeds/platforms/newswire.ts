@@ -1,5 +1,5 @@
 import { newswire } from 'feedintel'
-import { getAnyOf, parseUrl } from 'trousse'
+import { getAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -17,28 +17,23 @@ type NewswireContentType = (typeof contentTypes)[number]
 
 const domains = newswire.hosts.tenants
 
-const beatPathRegex = /^\/browse\/beat\/([a-z0-9-]+)\/?$/i
-const contentTypePathRegex = /^\/browse\/([^/]+)\/?$/i
-
 const contentTypes = ['news', 'pr', 'social', 'image', 'video', 'audio', 'event'] as const
 
 const feeds = withHintLabels(newswire.feeds)
 
 export const parseNewswireUrl = (url: string): NewswireUrl | undefined => {
-  const pathname = parseUrl(url)?.pathname
+  const page = newswire.pages.read(url)
   const newsroom = getTenantSubdomain(url, domains)
 
-  if (!pathname || !newsroom) {
+  if (!page || !newsroom) {
     return
   }
 
-  const beat = pathname.match(beatPathRegex)?.[1]
-
-  if (beat) {
-    return { kind: 'beat', newsroom, beat }
+  if (page.key === 'beat') {
+    return { kind: 'beat', newsroom, beat: page.params.beat }
   }
 
-  const contentType = getAnyOf(pathname.match(contentTypePathRegex)?.[1], contentTypes)
+  const contentType = getAnyOf(page.params.contentType, contentTypes)
 
   if (contentType) {
     return { kind: 'contentType', newsroom, contentType }

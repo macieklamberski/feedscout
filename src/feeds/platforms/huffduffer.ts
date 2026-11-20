@@ -1,8 +1,7 @@
 import { huffduffer } from 'feedintel'
-import { escapeRegex, getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { escapeRegex } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: huffduffs.
@@ -17,39 +16,39 @@ export type HuffdufferUrl =
   | { kind: 'popular' }
   | { kind: 'search'; query?: string }
 
-const hosts = huffduffer.hosts.exact
-
 const feeds = withHintLabels(huffduffer.feeds)
 
 export const parseHuffdufferUrl = (url: string): HuffdufferUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = huffduffer.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [username, section, subsection] = getPathSegments(url)
+  const { username, id, query } = page.params
 
-  if (!username) {
+  if (page.key === 'home') {
     return { kind: 'home' }
   }
 
-  if (isAnyOf(username, 'popular')) {
+  if (page.key === 'popular') {
     return { kind: 'popular' }
   }
 
-  if (isAnyOf(username, 'search')) {
-    return { kind: 'search', query: getQueryParam(parseUrl(url), 'q') }
+  if (page.key === 'search') {
+    return { kind: 'search', query }
   }
 
-  if (isAnyOf(section, 'collective')) {
+  if (page.key === 'collective') {
     return { kind: 'collective', username }
   }
 
-  if (section && digitsRegex.test(section) && isAnyOf(subsection, 'related')) {
-    return { kind: 'related', username, id: section }
+  if (page.key === 'related') {
+    return { kind: 'related', username, id }
   }
 
-  if (section && digitsRegex.test(section)) {
-    return { kind: 'huffduff', username, id: section }
+  if (page.key === 'huffduff') {
+    return { kind: 'huffduff', username, id }
   }
 
   return { kind: 'profile', username }

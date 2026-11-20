@@ -1,5 +1,5 @@
 import { bubblelife } from 'feedintel'
-import { includesAnyOf, isSubdomainOf } from 'trousse'
+import { includesAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
@@ -16,28 +16,22 @@ export type BubblelifePage = {
   alertId?: string
 }
 
-const domains = bubblelife.hosts.tenants
-
-const communityRegex =
-  /^\/community\/(?<community>[a-z0-9_]+)(?:\/library\/(?<libraryId>\d+))?(?:\/|$)/i
 const feedHrefRegex = /^\/rss\?c=(\d+)$/i
 const alertHrefRegex = /^\/rss\?c=(\d+),nofriends$/i
 
 const feeds = withHintLabels(bubblelife.feeds)
 
 export const parseBubblelifeUrl = (url: string): BubblelifeUrl | undefined => {
-  if (!isSubdomainOf(url, domains)) {
+  const page = bubblelife.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const { community, libraryId } = new URL(url).pathname.match(communityRegex)?.groups ?? {}
+  const { community, id } = page.params
 
-  if (!community) {
-    return
-  }
-
-  if (libraryId) {
-    return { kind: 'library', community, libraryId }
+  if (page.key === 'library') {
+    return { kind: 'library', community, libraryId: id }
   }
 
   return { kind: 'community', community }

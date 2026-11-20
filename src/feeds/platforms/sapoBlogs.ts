@@ -1,5 +1,4 @@
 import { sapoBlogs } from 'feedintel'
-import { decodeSegment, getQueryParam, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -16,40 +15,23 @@ export type SapoBlogsPage = SapoBlogsUrl
 
 const domains = sapoBlogs.hosts.tenants
 
-const postRegex = /^\/(?:[^/]+-(\d+)|(\d+)\.html)\/?$/i
-const tagRegex = /^\/tag\/(.+?)\/?$/i
-
 const feeds = withHintLabels(sapoBlogs.feeds)
 
 export const parseSapoBlogsUrl = (url: string): SapoBlogsUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = sapoBlogs.pages.read(url)
   const blog = getTenantSubdomain(url, domains)
 
-  if (!parsedUrl || !blog) {
+  if (!page || !blog) {
     return
   }
 
-  const { pathname } = parsedUrl
-
-  const postMatch = pathname.match(postRegex)
-  const postId = postMatch?.[1] ?? postMatch?.[2]
-
-  if (postId) {
-    return { kind: 'post', blog, postId }
+  if (page.key === 'post') {
+    return { kind: 'post', blog, postId: page.params.postId }
   }
 
-  // Tag paths spell a space as a plus.
-  const tag = decodeSegment(pathname.match(tagRegex)?.[1]?.replaceAll('+', ' '))
-
-  if (tag) {
-    return { kind: 'tag', blog, tag }
-  }
-
-  // The next pages of a tag listing name the tag in the query: /?skip=20&tag={tag}.
-  const queryTag = pathname === '/' ? getQueryParam(parsedUrl.searchParams, 'tag') : undefined
-
-  if (queryTag) {
-    return { kind: 'tag', blog, tag: queryTag }
+  if (page.key === 'tag') {
+    // Tag paths spell a space as a plus.
+    return { kind: 'tag', blog, tag: page.params.tag.replaceAll('+', ' ') }
   }
 
   return { kind: 'blog', blog }

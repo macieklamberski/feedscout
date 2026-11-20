@@ -45,7 +45,7 @@ describe('parseJinboUrl', () => {
     const expected: JinboUrl = {
       kind: 'tag',
       username: 'alice',
-      tag: '%EC%97%AC%ED%96%89%20%EC%9D%BC%EA%B8%B0',
+      tag: '여행 일기',
     }
 
     expect(parseJinboUrl('https://blog.jinbo.net/alice/tag/여행 일기')).toEqual(expected)
