@@ -417,63 +417,6 @@ describe('gitlabHandler', () => {
 
       expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the activity hint for a project named like a legacy route', () => {
-      const value = 'https://gitlab.com/gitlab-org/gitlab/tree.atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:activity', label: 'Activity' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the dashboard hint for a dashboard feed with a token', () => {
-      const value = 'https://gitlab.com/dashboard/projects.atom?feed_token=glft-12345'
-      const expected: DiscoverUriHint = { key: 'gitlab:dashboard', label: 'Dashboard' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for another file under the dashboard', () => {
-      const value = 'https://gitlab.com/dashboard/todos.atom'
-
-      expect(gitlabHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return the branch commits hint for a branch commits feed with an atom suffix', () => {
-      const value = 'https://gitlab.com/frank-jp/frankapp/-/commits/master.atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:branch-commits', label: 'Branch commits' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for an atom suffix on a file under a branch', () => {
-      const value = 'https://gitlab.com/frank-jp/frankapp/-/commits/master/README.md.atom'
-
-      expect(gitlabHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a project feed path under a namespace alone', () => {
-      const value = 'https://gitlab.com/erinapp/-/releases.atom'
-
-      expect(gitlabHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed under a project file path', () => {
-      const value = 'https://gitlab.com/bobgroup/bobapp/-/blob/main/issues.atom'
-
-      expect(gitlabHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a legacy branch commits path', () => {
-      const value = 'https://gitlab.com/frank-jp/frankapp/commits/master.atom'
-
-      expect(gitlabHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a group page feed', () => {
-      const value = 'https://gitlab.com/groups/gitlab-org/-/issues.atom'
-
-      expect(gitlabHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

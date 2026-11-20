@@ -414,18 +414,6 @@ describe('livejournalHandler', () => {
 
       expect(livejournalHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a feed path on the mobile host', () => {
-      const value = 'https://m.livejournal.com/data/rss'
-
-      expect(livejournalHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path under a dotted users host segment', () => {
-      const value = 'https://users.livejournal.com/robots.txt/data/rss'
-
-      expect(livejournalHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

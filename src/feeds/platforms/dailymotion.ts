@@ -1,6 +1,6 @@
 import { dailymotion } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
-import { withHintLabel, withHintLabels } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
 
@@ -110,5 +110,5 @@ export const dailymotionHandler: PlatformHandler = {
     ]
   },
 
-  getFeedHint: (url) => withHintLabel(dailymotion.feeds.getFeedHint(url)),
+  getFeedHint: feeds.getFeedHint,
 }

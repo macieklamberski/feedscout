@@ -146,13 +146,5 @@ export const livejournalHandler: PlatformHandler = {
     return getJournalEntries(page, root, parsed.tag)
   },
 
-  // The table reads any label or first segment as a journal, so the page parser refuses the mobile,
-  // syndication and image hosts and a dotted name first.
-  getFeedHint: (url) => {
-    if (!parseLivejournalUrl(url)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

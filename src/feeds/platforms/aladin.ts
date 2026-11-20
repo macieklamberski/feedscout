@@ -81,13 +81,5 @@ export const aladinHandler: PlatformHandler = {
     return [feeds.getFeedEntry('posts', { username: page.username })]
   },
 
-  // The table reads any first segment as a username, so the page parser first refuses a dotted
-  // one, a file of the site.
-  getFeedHint: (url) => {
-    if (!parseAladinUrl(url)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

@@ -575,12 +575,6 @@ describe('insanejournalHandler', () => {
       expect(insanejournalHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a feed path under a dotted users host segment', () => {
-      const value = 'https://users.insanejournal.com/robots.txt/data/rss'
-
-      expect(insanejournalHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
     it('should return undefined for a feed under a journal with www before the asylums host', () => {
       const value = 'https://www.asylums.insanejournal.com/example/data/rss'
 

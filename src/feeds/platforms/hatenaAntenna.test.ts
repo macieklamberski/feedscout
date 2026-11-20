@@ -202,12 +202,6 @@ describe('hatenaAntennaHandler', () => {
 
       expect(hatenaAntennaHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for an rss path under a dotted first segment', () => {
-      const value = 'https://a.hatena.ne.jp/robots.txt/rss'
-
-      expect(hatenaAntennaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

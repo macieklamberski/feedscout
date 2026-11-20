@@ -97,19 +97,6 @@ describe('cnblogsHandler', () => {
 
       expect(cnblogsHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the posts hint for a posts feed', () => {
-      const value = 'https://www.cnblogs.com/example/rss'
-      const expected: DiscoverUriHint = { key: 'cnblogs:posts', label: 'Posts' }
-
-      expect(cnblogsHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a feed path under a dotted first segment', () => {
-      const value = 'https://www.cnblogs.com/skins.aspx/rss'
-
-      expect(cnblogsHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

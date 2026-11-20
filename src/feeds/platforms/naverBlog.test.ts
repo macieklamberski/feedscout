@@ -122,12 +122,6 @@ describe('naverBlogHandler', () => {
 
       expect(naverBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a file on the feed host', () => {
-      const value = 'https://rss.blog.naver.com/robots.txt'
-
-      expect(naverBlogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

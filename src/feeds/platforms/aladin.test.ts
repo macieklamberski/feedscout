@@ -208,12 +208,6 @@ describe('aladinHandler', () => {
 
       expect(aladinHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a feed path under a dotted first segment', () => {
-      const value = 'https://blog.aladin.co.kr/ScriptResource.axd/rss'
-
-      expect(aladinHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

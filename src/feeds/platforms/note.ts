@@ -102,13 +102,5 @@ export const noteHandler: PlatformHandler = {
     return [feeds.getFeedEntry('featured')]
   },
 
-  // The table reads any first segment as a name, so a dotted one, a file of the site, is refused
-  // by the page parser first: note.com/robots.txt/rss answers 404.
-  getFeedHint: (url) => {
-    if (!parseNoteUrl(url)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

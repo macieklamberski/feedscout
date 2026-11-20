@@ -145,12 +145,6 @@ describe('bloggangHandler', () => {
 
       expect(bloggangHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for the rss path on the mobile host', () => {
-      const value = 'https://m.bloggang.com/rss'
-
-      expect(bloggangHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

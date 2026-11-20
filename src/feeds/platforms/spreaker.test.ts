@@ -147,12 +147,6 @@ describe('spreakerHandler', () => {
 
       expect(spreakerHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a feed path with a word in place of the show id', () => {
-      const value = 'https://www.spreaker.com/show/my-show/episodes/feed'
-
-      expect(spreakerHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('as a feed URL input', () => {

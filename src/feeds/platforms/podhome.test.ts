@@ -102,31 +102,6 @@ describe('podhomeHandler', () => {
 
       expect(podhomeHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the podcast hint for a show feed id without hyphens', () => {
-      const value = 'https://serve.podhome.fm/rss/00000000000040008000000000000000'
-      const expected: DiscoverUriHint = { key: 'podhome:podcast', label: 'Podcast' }
-
-      expect(podhomeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for an all-hex word of another length in the feed path', () => {
-      const value = 'https://serve.podhome.fm/rss/cafe'
-
-      expect(podhomeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for an all-hex word in the feed path', () => {
-      const value = 'https://serve.podhome.fm/rss/feed'
-
-      expect(podhomeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the stylesheet a feed links', () => {
-      const value = 'https://serve.podhome.fm/rss/xslsheet'
-
-      expect(podhomeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

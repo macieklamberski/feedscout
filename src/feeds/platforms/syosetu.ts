@@ -1,8 +1,8 @@
 import { syosetu } from 'feedintel'
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex, formatSuffixRegex } from '../../common/utils.js'
+import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: activity.
@@ -51,21 +51,5 @@ export const syosetuHandler: PlatformHandler = {
     ]
   },
 
-  // The page parser builds writer feeds only for a digits writer id, so a writer feed URL with
-  // another id gets no key.
-  getFeedHint: (url) => {
-    const hint = feeds.getFeedHint(url)
-
-    if (hint?.key === 'syosetu:all-novels') {
-      return hint
-    }
-
-    const writerId = getPathSegments(url).at(-1)?.replace(formatSuffixRegex, '')
-
-    if (!writerId || !digitsRegex.test(writerId)) {
-      return
-    }
-
-    return hint
-  },
+  getFeedHint: feeds.getFeedHint,
 }

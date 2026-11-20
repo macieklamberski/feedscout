@@ -1,8 +1,7 @@
 import { spreaker } from 'feedintel'
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -48,14 +47,5 @@ export const spreakerHandler: PlatformHandler = {
     return [feeds.getFeedEntry('podcast', { showId: parsed.showId })]
   },
 
-  // A show id is digits, and a word in its place answers 404.
-  getFeedHint: (url) => {
-    const [, showId] = getPathSegments(url)
-
-    if (!showId || !digitsRegex.test(showId)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

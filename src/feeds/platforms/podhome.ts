@@ -1,5 +1,5 @@
 import { podhome } from 'feedintel'
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElements } from '../../common/utils.js'
@@ -14,8 +14,6 @@ const hosts = podhome.hosts.exact
 const assetPath = 'cdn.podhome.fm/servesite'
 
 const feedPathRegex = /^\/rss\/([^/]+)$/i
-const feedIdRegex =
-  /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[0-9a-f]{32})$/i
 
 const feeds = withHintLabels(podhome.feeds)
 
@@ -66,15 +64,5 @@ export const podhomeHandler: PlatformHandler = {
     })
   },
 
-  getFeedHint: (url) => {
-    const [, feedId] = getPathSegments(url)
-
-    // A feed id is a GUID, with or without hyphens, so `xslsheet`, the stylesheet every feed links
-    // under /rss/, and an all-hex word such as `feed` are no feed.
-    if (!feedId || !feedIdRegex.test(feedId)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

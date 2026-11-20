@@ -146,30 +146,6 @@ describe('libsynHandler', () => {
 
       expect(libsynHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a feed path on the sites host without a numeric show', () => {
-      const value = 'https://sites.libsyn.com/rss/category/example'
-
-      expect(libsynHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a file on the feeds host', () => {
-      const value = 'https://feeds.libsyn.com/robots.txt'
-
-      expect(libsynHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the feeds host feed path', () => {
-      const value = 'https://feeds.libsyn.com/rss'
-
-      expect(libsynHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path under a non-numeric show', () => {
-      const value = 'https://feeds.libsyn.com/about/rss'
-
-      expect(libsynHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

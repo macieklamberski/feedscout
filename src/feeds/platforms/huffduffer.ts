@@ -196,14 +196,5 @@ export const huffdufferHandler: PlatformHandler = {
     ]
   },
 
-  // A user row also reads `/search/rss` without a query, which is no user's feed.
-  getFeedHint: (url) => {
-    const hint = feeds.getFeedHint(url)
-
-    if (hint?.key === 'huffduffer:huffduffs' && parseHuffdufferUrl(url)?.kind !== 'profile') {
-      return
-    }
-
-    return hint
-  },
+  getFeedHint: feeds.getFeedHint,
 }

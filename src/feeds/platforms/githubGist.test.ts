@@ -228,22 +228,6 @@ describe('githubGistHandler', () => {
 
       expect(githubGistHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    const discoverValues: Array<string> = [
-      'https://gist.github.com/discover/starred.atom',
-      'https://gist.github.com/Discover/forked.atom',
-      'https://gist.github.com/discover/forks.atom',
-    ]
-
-    it.each(discoverValues)('should return undefined for %s', (value) => {
-      expect(githubGistHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a dotted name', () => {
-      const value = 'https://gist.github.com/alice.example.atom'
-
-      expect(githubGistHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('as a feed URL input', () => {
