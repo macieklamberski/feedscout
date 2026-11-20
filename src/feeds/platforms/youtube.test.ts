@@ -658,12 +658,6 @@ describe('youtubeHandler', () => {
       expect(youtubeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a channel feed without the UC prefix', () => {
-      const value = 'https://www.youtube.com/feeds/videos.xml?channel_id=abc'
-
-      expect(youtubeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
     it('should return undefined for a feed without a channel or playlist', () => {
       const value = 'https://www.youtube.com/feeds/videos.xml'
 

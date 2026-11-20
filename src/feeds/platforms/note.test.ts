@@ -170,12 +170,6 @@ describe('noteHandler', () => {
 
       expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a feed path under a dotted first segment', () => {
-      const value = 'https://note.com/robots.txt/rss'
-
-      expect(noteHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

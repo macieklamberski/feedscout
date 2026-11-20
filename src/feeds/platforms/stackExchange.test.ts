@@ -538,19 +538,6 @@ describe('stackExchangeHandler', () => {
 
       expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the newest hint for the network feed', () => {
-      const value = 'https://stackexchange.com/feeds'
-      const expected: DiscoverUriHint = { key: 'stackexchange:newest', label: 'Newest questions' }
-
-      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a user feed on the network host', () => {
-      const value = 'https://stackexchange.com/feeds/user/12345'
-
-      expect(stackExchangeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 })
 

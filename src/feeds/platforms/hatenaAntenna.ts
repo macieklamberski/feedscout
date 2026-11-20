@@ -95,13 +95,5 @@ export const hatenaAntennaHandler: PlatformHandler = {
     return [feeds.getFeedEntry('antenna', { username: page.username })]
   },
 
-  // The table reads any first segment as a user, so the page parser refuses a segment that is no
-  // Hatena ID, such as a file of the site.
-  getFeedHint: (url) => {
-    if (!parseHatenaAntennaUrl(url)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

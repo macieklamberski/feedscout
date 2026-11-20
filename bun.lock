@@ -12,7 +12,7 @@
       "devDependencies": {
         "@types/bun": "^1.4.4",
         "@types/http-link-header": "^1.0.7",
-        "feedintel": "github:macieklamberski/feedintel#c07c826",
+        "feedintel": "github:macieklamberski/feedintel#ef9b503",
         "feedsmith": "^3.0.1",
         "kvalita": "^1.38.0",
         "ogier": "^1.8.1",
@@ -554,7 +554,7 @@
 
     "fdir": ["fdir@6.5.0", "", { "peerDependencies": { "picomatch": "^3 || ^4" }, "optionalPeers": ["picomatch"] }, "sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg=="],
 
-    "feedintel": ["feedintel@github:macieklamberski/feedintel#c07c826", { "hasInstallScript": true }, "macieklamberski-feedintel-c07c826", "sha512-NC4Z6w84/4UWDfd/Fy7R19FO6blc7w8EUZzk67qRWTdaOjyV5p6g2Z0O1gYvss3VV5LvYPbWtCVijx7iVXFVDg=="],
+    "feedintel": ["feedintel@github:macieklamberski/feedintel#ef9b503", { "hasInstallScript": true }, "macieklamberski-feedintel-ef9b503", "sha512-NkcQlGW1TkQjHDVQjcEWBe9RSnCqJN4x1OU5gBZheNAtZkA9vhANgG9NKQLXwW0zy5eHkjD6Snxyv9n8lOzsBw=="],
 
     "feedscout-check": ["feedscout-check@workspace:check"],
 

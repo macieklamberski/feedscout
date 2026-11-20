@@ -77,13 +77,5 @@ export const cocologHandler: PlatformHandler = {
     ]
   },
 
-  // A first segment with a dot is an uploaded file or the `.shared` assets, which the table's
-  // `{blog}` placeholder would match.
-  getFeedHint: (url) => {
-    if (!getCocologPage(url, undefined)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

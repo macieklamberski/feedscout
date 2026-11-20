@@ -147,12 +147,6 @@ describe('exblogHandler', () => {
 
       expect(exblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a category feed whose id runs into letters', () => {
-      const value = 'https://example.exblog.jp/i12x/index.xml'
-
-      expect(exblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

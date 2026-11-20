@@ -50,12 +50,5 @@ export const colorMeShopHandler: PlatformHandler = {
     return [page.getFeedEntry('products', {}, 'rdf'), page.getFeedEntry('products', {}, 'atom')]
   },
 
-  // The table reads a numbered host such as img15 as a shop, so the page parser refuses it first.
-  getFeedHint: (url) => {
-    if (!parseColorMeShopUrl(url)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

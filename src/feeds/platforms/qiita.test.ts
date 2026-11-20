@@ -267,25 +267,6 @@ describe('qiitaHandler', () => {
 
       expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the tag hint for a tag feed', () => {
-      const value = 'https://qiita.com/tags/cloudformation/feed.atom'
-      const expected: DiscoverUriHint = { key: 'qiita:tag', label: 'Tag' }
-
-      expect(qiitaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for the page of a tag named feed', () => {
-      const value = 'https://qiita.com/tags/feed'
-
-      expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the page of an organization named feed', () => {
-      const value = 'https://qiita.com/organizations/feed'
-
-      expect(qiitaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

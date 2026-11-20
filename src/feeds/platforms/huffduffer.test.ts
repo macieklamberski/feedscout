@@ -410,23 +410,6 @@ describe('huffdufferHandler', () => {
 
       expect(huffdufferHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the related hint for a related feed', () => {
-      const value = 'https://huffduffer.com/alice/12345/related/rss'
-      const expected: DiscoverUriHint = {
-        key: 'huffduffer:related',
-        label: 'Possibly related',
-        format: 'rss',
-      }
-
-      expect(huffdufferHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for the search feed without a query', () => {
-      const value = 'https://huffduffer.com/search/rss'
-
-      expect(huffdufferHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

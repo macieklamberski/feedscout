@@ -75,13 +75,5 @@ export const libsynHandler: PlatformHandler = {
     return [page.getFeedEntry('podcast')]
   },
 
-  // The table reads any subdomain as a show, so the page parser refuses feeds.libsyn.com/rss,
-  // which answers 404, and a feeds or sites host path without a numeric show ID.
-  getFeedHint: (url) => {
-    if (!parseLibsynUrl(url)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

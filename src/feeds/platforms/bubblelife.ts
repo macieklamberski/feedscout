@@ -1,6 +1,6 @@
 import { bubblelife } from 'feedintel'
 import { includesAnyOf, isSubdomainOf } from 'trousse'
-import { withHintLabel, withHintLabels } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
 
@@ -129,5 +129,5 @@ export const bubblelifeHandler: PlatformHandler = {
     return [pageFeeds.getFeedEntry('posts', params)]
   },
 
-  getFeedHint: (url) => withHintLabel(bubblelife.feeds.getFeedHint(url)),
+  getFeedHint: feeds.getFeedHint,
 }

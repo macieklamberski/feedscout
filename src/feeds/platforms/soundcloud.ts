@@ -1,6 +1,6 @@
 import { soundcloud } from 'feedintel'
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
-import { withHintLabel, withHintLabels } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
 
@@ -77,5 +77,5 @@ export const soundcloudHandler: PlatformHandler = {
     return [feeds.getFeedEntry('tracks', { userId: page.userId })]
   },
 
-  getFeedHint: (url) => withHintLabel(soundcloud.feeds.getFeedHint(url)),
+  getFeedHint: feeds.getFeedHint,
 }

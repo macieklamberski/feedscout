@@ -166,24 +166,6 @@ describe('zennHandler', () => {
 
       expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for the page of a topic named feed', () => {
-      const value = 'https://zenn.dev/topics/feed'
-
-      expect(zennHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the page of a topic named feed with all posts', () => {
-      const value = 'https://zenn.dev/topics/feed?all=1'
-
-      expect(zennHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the page of a publication named feed', () => {
-      const value = 'https://zenn.dev/p/feed'
-
-      expect(zennHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

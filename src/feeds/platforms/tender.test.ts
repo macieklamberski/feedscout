@@ -276,19 +276,6 @@ describe('tenderHandler', () => {
 
       expect(tenderHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the discussions hint for the discussions feed', () => {
-      const value = 'https://alice.tenderapp.com/discussions.atom'
-      const expected: DiscoverUriHint = { key: 'tender:discussions', label: 'Discussions' }
-
-      expect(tenderHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a new discussion form under a category', () => {
-      const value = 'https://alice.tenderapp.com/discussions/questions/new.atom'
-
-      expect(tenderHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

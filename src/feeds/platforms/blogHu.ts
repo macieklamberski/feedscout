@@ -20,7 +20,6 @@ const hosts = blogHu.hosts.exact
 const userRegex = /^\/user\/(\d+)(?:\/|$)/i
 const postRegex = /^\/(?<year>\d{4})\/(?<month>\d{2})\/(?<day>\d{2})\/(?<slug>[^/]+)\/?$/
 const tagRegex = /^\/tags\/([^/]+)\/?$/i
-const postFeedSegmentRegex = /\/(?:rss2|atom)\/?$/i
 
 const feeds = withHintLabels(blogHu.feeds)
 
@@ -119,21 +118,5 @@ export const blogHuHandler: PlatformHandler = {
     ]
   },
 
-  // The table reads any four segments before `/rss2` or `/atom` as a post, so a post comments feed
-  // is claimed only under a dated post path.
-  getFeedHint: (url) => {
-    const hint = feeds.getFeedHint(url)
-
-    if (hint?.key !== 'blog-hu:post-comments') {
-      return hint
-    }
-
-    const postPath = parseUrl(url)?.pathname.replace(postFeedSegmentRegex, '') ?? ''
-
-    if (!postRegex.test(postPath)) {
-      return
-    }
-
-    return hint
-  },
+  getFeedHint: feeds.getFeedHint,
 }

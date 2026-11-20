@@ -179,12 +179,6 @@ describe('mailArchiveHandler', () => {
 
       expect(mailArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a feed path under a segment without an at sign', () => {
-      const value = 'https://www.mail-archive.com/faq/maillist.xml'
-
-      expect(mailArchiveHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

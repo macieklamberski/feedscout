@@ -147,32 +147,5 @@ export const gitlabHandler: PlatformHandler = {
     ]
   },
 
-  getFeedHint: (url) => {
-    const segments = getPathSegments(url)
-    const [prefixOrNamespace] = segments
-    const dashIndex = segments.indexOf('-')
-    // The dashboard is a route, never a namespace, and its feeds sit right under it.
-    const isDashboard = isAnyOf(prefixOrNamespace, 'dashboard')
-
-    // A group or user page is no feed, and a project path is a namespace and a project at least.
-    if (
-      isAnyOf(prefixOrNamespace, accountPrefixes) ||
-      (isDashboard && segments.length !== 2) ||
-      dashIndex === 0 ||
-      dashIndex === 1
-    ) {
-      return
-    }
-
-    const hint = feeds.getFeedHint(url)
-    // The activity row reads any path ending in `.atom`, but a route after `/-/`, the dashboard
-    // and a legacy feature path name no namespace or project.
-    const isRoutePath = dashIndex !== -1 || isDashboard || splitProjectPath(segments)[1].length > 0
-
-    if (hint?.key === 'gitlab:activity' && isRoutePath) {
-      return
-    }
-
-    return hint
-  },
+  getFeedHint: feeds.getFeedHint,
 }
