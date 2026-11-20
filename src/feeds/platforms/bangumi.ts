@@ -1,5 +1,5 @@
 import { bangumi } from 'feedintel'
-import { isHostOf, parseUrl } from 'trousse'
+import { isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -12,26 +12,21 @@ export type BangumiUrl = { kind: 'user'; username: string } | { kind: 'home' }
 // chii.in serves the same site, but answers a plain fetch of its feeds with a Cloudflare challenge,
 // so its pages get the bgm.tv feeds.
 const challengedHosts = ['chii.in']
-const hosts = bangumi.hosts.exact
-
-const userRegex = /^\/user\/([^/]+)/i
 
 const feeds = withHintLabels(bangumi.feeds)
 
 export const parseBangumiUrl = (url: string): BangumiUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = bangumi.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const username = parsedUrl.pathname.match(userRegex)?.[1]
-
-  if (!username) {
-    return { kind: 'home' }
+  if (page.key === 'user') {
+    return { kind: 'user', username: page.params.username }
   }
 
-  return { kind: 'user', username }
+  return { kind: 'home' }
 }
 
 export const bangumiHandler: PlatformHandler = {

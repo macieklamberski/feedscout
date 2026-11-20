@@ -1,5 +1,4 @@
 import { neocities } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -10,7 +9,6 @@ import { getTenantSubdomain } from '../../common/utils.js'
 export type NeocitiesUrl = { kind: 'site'; username: string }
 
 const domains = neocities.hosts.tenants
-const hosts = neocities.hosts.exact
 
 const feeds = withHintLabels(neocities.feeds)
 
@@ -21,13 +19,13 @@ export const parseNeocitiesUrl = (url: string): NeocitiesUrl | undefined => {
     return { kind: 'site', username: subdomain }
   }
 
-  const [route, username] = getPathSegments(url)
+  const page = neocities.pages.read(url)
 
-  if (!isHostOf(url, hosts) || !isAnyOf(route, 'site') || !username) {
+  if (!page) {
     return
   }
 
-  return { kind: 'site', username }
+  return { kind: 'site', username: page.params.username }
 }
 
 export const neocitiesHandler: PlatformHandler = {

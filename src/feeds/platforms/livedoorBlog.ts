@@ -1,5 +1,4 @@
 import { livedoorBlog } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -12,22 +11,19 @@ export type LivedoorBlogUrl =
 
 const domains = livedoorBlog.hosts.tenants
 
-const categoryRegex = /^\/archives\/cat_(\d+)\.html$/i
-
 const feeds = withHintLabels(livedoorBlog.feeds)
 
 export const parseLivedoorBlogUrl = (url: string): LivedoorBlogUrl | undefined => {
+  const page = livedoorBlog.pages.read(url)
   // A nested subdomain answers with a self-signed certificate and is no blog.
   const blog = getTenantSubdomain(url, domains)
 
-  if (!blog) {
+  if (!page || !blog) {
     return
   }
 
-  const category = parseUrl(url)?.pathname.match(categoryRegex)?.[1]
-
-  if (category) {
-    return { kind: 'category', blog, category }
+  if (page.key === 'category') {
+    return { kind: 'category', blog, category: page.params.category }
   }
 
   return { kind: 'blog', blog }

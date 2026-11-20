@@ -1,5 +1,4 @@
 import { producthunt } from 'feedintel'
-import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -10,31 +9,22 @@ export type ProducthuntUrl =
   | { kind: 'topic'; topic: string }
   | { kind: 'home' }
 
-export const hosts = producthunt.hosts.exact
-
-const productRegex = /^\/products\/([^/]+)(?:\/|$)/i
-const topicRegex = /^\/topics\/([^/]+)\/?$/i
-
 const feeds = withHintLabels(producthunt.feeds)
 
 // Every page links the site-wide product feed, so any other page reads as the home page.
 export const parseProducthuntUrl = (url: string): ProducthuntUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = producthunt.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const slug = parsedUrl.pathname.match(productRegex)?.[1]
-
-  if (slug) {
-    return { kind: 'product', slug }
+  if (page.key === 'product') {
+    return { kind: 'product', slug: page.params.slug }
   }
 
-  const topic = parsedUrl.pathname.match(topicRegex)?.[1]
-
-  if (topic) {
-    return { kind: 'topic', topic }
+  if (page.key === 'topic') {
+    return { kind: 'topic', topic: page.params.topic }
   }
 
   return { kind: 'home' }

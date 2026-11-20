@@ -1,5 +1,4 @@
 import { rubygems } from 'feedintel'
-import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -9,26 +8,19 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type RubygemsUrl = { kind: 'gem'; gem: string } | { kind: 'home' }
 
-const hosts = rubygems.hosts.exact
-
-const gemRegex = /^\/gems\/([\w.-]+)(?:\/|$)/i
-
 const feeds = withHintLabels(rubygems.feeds)
 
 export const parseRubygemsUrl = (url: string): RubygemsUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = rubygems.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const gem = parsedUrl.pathname.match(gemRegex)?.[1]
-
-  if (gem) {
-    return { kind: 'gem', gem }
+  if (page.key === 'gem') {
+    return { kind: 'gem', gem: page.params.gem }
   }
 
-  // Every other page, the home page included, links the latest gems feed.
   return { kind: 'home' }
 }
 

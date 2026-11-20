@@ -1,5 +1,4 @@
 import { letterboxd } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -7,28 +6,20 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type LetterboxdUrl = { kind: 'member'; username: string } | { kind: 'journal' }
 
-const hosts = letterboxd.hosts.exact
-
 const feeds = withHintLabels(letterboxd.feeds)
 
 export const parseLetterboxdUrl = (url: string): LetterboxdUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = letterboxd.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [username] = getPathSegments(url)
-
-  // The editorial Letterboxd Journal.
-  if (isAnyOf(username, 'journal')) {
+  if (page.key === 'journal') {
     return { kind: 'journal' }
   }
 
-  // Letterboxd names carry no dots, so a dotted segment such as robots.txt is a file of the site.
-  if (!username || username.includes('.')) {
-    return
-  }
-
-  return { kind: 'member', username }
+  return { kind: 'member', username: page.params.username }
 }
 
 export const letterboxdHandler: PlatformHandler = {

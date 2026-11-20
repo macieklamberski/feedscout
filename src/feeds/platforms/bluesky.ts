@@ -1,5 +1,4 @@
 import { bluesky } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -7,22 +6,16 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type BlueskyUrl = { kind: 'profile'; handle: string }
 
-const hosts = bluesky.hosts.exact
-
 const feeds = withHintLabels(bluesky.feeds)
 
 export const parseBlueskyUrl = (url: string): BlueskyUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = bluesky.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [section, handle] = getPathSegments(url)
-
-  if (!isAnyOf(section, 'profile') || !handle) {
-    return
-  }
-
-  return { kind: 'profile', handle }
+  return { kind: 'profile', handle: page.params.handle }
 }
 
 export const blueskyHandler: PlatformHandler = {

@@ -1,5 +1,4 @@
 import { hackernews } from 'feedintel'
-import { isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -9,18 +8,16 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type HackernewsUrl = { kind: 'show' } | { kind: 'home' }
 
-const hosts = hackernews.hosts.exact
-
-const showRegex = /^\/show(?:new)?\/?$/i
-
 const feeds = withHintLabels(hackernews.feeds)
 
 export const parseHackernewsUrl = (url: string): HackernewsUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = hackernews.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  if (showRegex.test(new URL(url).pathname)) {
+  if (page.key === 'show') {
     return { kind: 'show' }
   }
 

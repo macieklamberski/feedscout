@@ -1,8 +1,6 @@
 import { pika } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: posts, tag.
@@ -10,23 +8,17 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type PikaUrl = { kind: 'tag'; tag: string } | { kind: 'blog' }
 
-const domains = pika.hosts.tenants
-
-const tagRegex = /^\/tag\/([^/]+)/i
-
 const feeds = withHintLabels(pika.feeds)
 
 export const parsePikaUrl = (url: string): PikaUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = pika.pages.read(url)
 
-  if (!parsedUrl || !getTenantSubdomain(parsedUrl, domains)) {
+  if (!page) {
     return
   }
 
-  const tag = parsedUrl.pathname.match(tagRegex)?.[1]
-
-  if (tag) {
-    return { kind: 'tag', tag }
+  if (page.key === 'tag') {
+    return { kind: 'tag', tag: page.params.tag }
   }
 
   return { kind: 'blog' }

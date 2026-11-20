@@ -1,5 +1,4 @@
 import { writeas } from 'feedintel'
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -9,34 +8,20 @@ export type WriteasUrl =
   | { kind: 'tag'; username: string; tag: string }
   | { kind: 'blog'; username: string }
 
-const hosts = writeas.hosts.exact
-
-const tagRegex = /^\/([^/]+)\/tag:([^/]+)/i
-
 const feeds = withHintLabels(writeas.feeds)
 
 export const parseWriteasUrl = (url: string): WriteasUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = writeas.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  // Tag page: /{user}/tag:{tag}
-  const tagMatch = parsedUrl.pathname.match(tagRegex)
-
-  if (tagMatch?.[1] && tagMatch[2]) {
-    return { kind: 'tag', username: tagMatch[1], tag: tagMatch[2] }
+  if (page.key === 'tag') {
+    return { kind: 'tag', username: page.params.username, tag: page.params.tag }
   }
 
-  const [username] = getPathSegments(parsedUrl)
-
-  // WriteFreely names carry no dots, so a dotted segment such as robots.txt is a file of the site.
-  if (!username || username.includes('.')) {
-    return
-  }
-
-  return { kind: 'blog', username }
+  return { kind: 'blog', username: page.params.username }
 }
 
 export const writeasHandler: PlatformHandler = {

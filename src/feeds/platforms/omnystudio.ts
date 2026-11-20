@@ -1,5 +1,4 @@
 import { omnystudio } from 'feedintel'
-import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -9,31 +8,20 @@ export type OmnystudioUrl =
   | { kind: 'show'; show: string }
   | { kind: 'playlist'; show: string; playlist: string }
 
-const hosts = omnystudio.hosts.exact
-
-const showPathRegex = /^\/shows\/([^/]+)(?:\/playlists\/([^/]+))?/i
-
 const feeds = withHintLabels(omnystudio.feeds)
 
 export const parseOmnystudioUrl = (url: string): OmnystudioUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = omnystudio.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const [, show, playlist] = parsedUrl.pathname.match(showPathRegex) ?? []
-
-  if (!show) {
-    return
+  if (page.key === 'playlist') {
+    return { kind: 'playlist', show: page.params.show, playlist: page.params.playlist }
   }
 
-  // The show's own playlist, whose feed is the show feed.
-  if (playlist && !isAnyOf(playlist, 'podcast')) {
-    return { kind: 'playlist', show, playlist }
-  }
-
-  return { kind: 'show', show }
+  return { kind: 'show', show: page.params.show }
 }
 
 export const omnystudioHandler: PlatformHandler = {
