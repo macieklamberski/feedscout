@@ -1,5 +1,6 @@
+import { exblog } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -9,20 +10,11 @@ export type ExblogUrl =
   | { kind: 'blog'; blog: string }
   | { kind: 'category'; blog: string; category: string }
 
-const domains = ['exblog.jp']
+const domains = exblog.hosts.tenants
 
 const categoryRegex = /^\/i(\d+)(?:\/|$)/i
 
-const feeds = definePlatformFeeds(
-  'exblog',
-  [
-    { key: 'category', main: '{scheme}://{host}/i{category}/index.xml', format: 'rss' },
-    { key: 'category', main: '{scheme}://{host}/i{category}/atom.xml', format: 'atom' },
-    { key: 'posts', main: '{scheme}://{host}/index.xml', format: 'rss' },
-    { key: 'posts', main: '{scheme}://{host}/atom.xml', format: 'atom' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(exblog.feeds)
 
 export const parseExblogUrl = (url: string): ExblogUrl | undefined => {
   const blog = getTenantSubdomain(url, domains)

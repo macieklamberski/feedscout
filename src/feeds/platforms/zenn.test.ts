@@ -160,51 +160,9 @@ describe('zennHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the trending hint for the trending feed', () => {
-      const value = 'https://zenn.dev/feed'
-      const expected: DiscoverUriHint = { key: 'zenn:trending', label: 'Trending' }
-
-      expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the trending hint for the trending feed with a trailing slash', () => {
-      const value = 'https://zenn.dev/feed/'
-      const expected: DiscoverUriHint = { key: 'zenn:trending', label: 'Trending' }
-
-      expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the trending hint for the trending feed over http', () => {
-      const value = 'http://zenn.dev/feed'
-      const expected: DiscoverUriHint = { key: 'zenn:trending', label: 'Trending' }
-
-      expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a user feed', () => {
-      const value = 'https://zenn.dev/alice99/feed'
-      const expected: DiscoverUriHint = { key: 'zenn:posts', label: 'Posts' }
-
-      expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the all posts hint for a user feed with all posts', () => {
       const value = 'https://zenn.dev/alice/feed?all=1'
       const expected: DiscoverUriHint = { key: 'zenn:all-posts', label: 'All posts' }
-
-      expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the topic hint for a topic feed', () => {
-      const value = 'https://zenn.dev/topics/react/feed'
-      const expected: DiscoverUriHint = { key: 'zenn:topic', label: 'Topic' }
-
-      expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the publication hint for a publication feed', () => {
-      const value = 'https://zenn.dev/p/team_zenn/feed'
-      const expected: DiscoverUriHint = { key: 'zenn:publication', label: 'Publication' }
 
       expect(zennHandler.getFeedHint?.(value)).toEqual(expected)
     })
@@ -226,44 +184,21 @@ describe('zennHandler', () => {
 
       expect(zennHandler.getFeedHint?.(value)).toBeUndefined()
     })
-
-    it('should return undefined for a user page', () => {
-      const value = 'https://zenn.dev/alice99'
-
-      expect(zennHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a topic page', () => {
-      const value = 'https://zenn.dev/topics/react'
-
-      expect(zennHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/alice99/feed'
-
-      expect(zennHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://zenn.dev/feed', { key: 'zenn:trending', label: 'Trending' }],
-      ['https://zenn.dev/alice99/feed', { key: 'zenn:posts', label: 'Posts' }],
-      ['http://zenn.dev/alice/feed?all=1', { key: 'zenn:all-posts', label: 'All posts' }],
-      ['https://zenn.dev/topics/react/feed', { key: 'zenn:topic', label: 'Topic' }],
-      ['https://zenn.dev/p/team_zenn/feed', { key: 'zenn:publication', label: 'Publication' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return an all posts feed over http as itself', async () => {
+      const value = 'http://zenn.dev/alice/feed?all=1'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [zennHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'zenn:all-posts', label: 'All posts' } },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

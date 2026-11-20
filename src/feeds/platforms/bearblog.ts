@@ -1,5 +1,6 @@
+import { bearblog } from 'feedintel'
 import { getQueryParam, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -9,57 +10,10 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type BearblogUrl = { kind: 'discover' } | { kind: 'blog'; blog: string; tag?: string }
 
-const domains = ['bearblog.dev']
+const domains = bearblog.hosts.tenants
 const apexHosts = ['bearblog.dev', 'www.bearblog.dev']
 
-const feeds = definePlatformFeeds(
-  'bearblog',
-  [
-    { key: 'discover', main: 'https://bearblog.dev/discover/feed/', format: 'atom' },
-    {
-      key: 'discover',
-      main: 'https://bearblog.dev/discover/feed/?type=rss',
-      format: 'rss',
-    },
-    {
-      key: 'tag',
-      main: '{scheme}://{host}/feed/?q={tag}',
-      format: 'atom',
-      aliases: [
-        // A tag feed answers under these paths of the posts feed too, which the page does not link.
-        '{scheme}://{host}/atom/?q={tag}',
-        '{scheme}://{host}/atom.xml?q={tag}',
-        '{scheme}://{host}/feed.xml?q={tag}',
-        '{scheme}://{host}/index.xml?q={tag}',
-      ],
-    },
-    {
-      key: 'tag',
-      main: '{scheme}://{host}/feed/?type=rss&q={tag}',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/rss/?q={tag}', '{scheme}://{host}/rss.xml?q={tag}'],
-    },
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/feed/',
-      format: 'atom',
-      aliases: [
-        // Every blog serves the same two feeds under these paths too, which the page does not link.
-        '{scheme}://{host}/atom/',
-        '{scheme}://{host}/atom.xml',
-        '{scheme}://{host}/feed.xml',
-        '{scheme}://{host}/index.xml',
-      ],
-    },
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/feed/?type=rss',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/rss/', '{scheme}://{host}/rss.xml'],
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(bearblog.feeds)
 
 export const parseBearblogUrl = (url: string): BearblogUrl | undefined => {
   // Apex bearblog.dev exposes the platform-wide trending discovery feed.

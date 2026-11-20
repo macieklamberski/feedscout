@@ -1,5 +1,6 @@
+import { mybb } from 'feedintel'
 import { endsWithAnyOf, getQueryParam, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   digitsRegex,
@@ -18,14 +19,7 @@ const threadPathRegex = /\/(?:showthread\.php|thread-\d+(?:-[a-z]+-\d+)?\.html)$
 const forumLinkRegex = /(?:^|\/)(?:forumdisplay\.php\?fid=|forum-)(\d+)(?:\.html)?$/i
 const rootPathRegex = /var rootpath = "([^"]+)"/
 
-// MyBB is self-hosted and known only by its page marker, so nothing in a feed URL names it and the
-// table only builds, under the board URL the page names.
-const feeds = definePlatformFeeds('mybb', [
-  { key: 'forum', main: '{root}/syndication.php?fid={forumId}', format: 'rss' },
-  { key: 'forum', main: '{root}/syndication.php?type=atom1.0&fid={forumId}', format: 'atom' },
-  { key: 'threads', main: '{root}/syndication.php', format: 'rss' },
-  { key: 'threads', main: '{root}/syndication.php?type=atom1.0', format: 'atom' },
-])
+const feeds = withHintLabels(mybb.feeds)
 
 // MyBB prepends the board's cookie prefix setting to the name.
 export const isMybbHeaders = (headers: Headers): boolean => {

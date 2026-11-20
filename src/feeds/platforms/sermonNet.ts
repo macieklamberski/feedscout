@@ -1,5 +1,6 @@
+import { sermonNet } from 'feedintel'
 import { getPathSegments } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -12,24 +13,13 @@ export type SermonNetPage =
   | { kind: 'church'; channels: Array<string> }
   | { kind: 'channel'; channel: string }
 
-const domains = ['sermon.net']
+const domains = sermonNet.hosts.tenants
 
 // The page links no feed. It embeds the channels and series of its media centre as JSON, and each
 // one the church owns serves a feed.
 const channelRegex = /"is_series":(?:false|true),"url":"([^"]+)"/g
 
-// A channel serves four feeds: its audio, all its media, its video, and its audio with its PDFs.
-const feeds = definePlatformFeeds(
-  'sermon-net',
-  [
-    { key: 'channel', main: '{scheme}://{host}/rss/{channel}/audio' },
-    { key: 'channel-media', main: '{scheme}://{host}/rss/{channel}' },
-    { key: 'channel-video', main: '{scheme}://{host}/rss/{channel}/video' },
-    { key: 'channel-audio-pdf', main: '{scheme}://{host}/rss/{channel}/audio_pdf' },
-    { key: 'church', main: '{scheme}://{host}/rss' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(sermonNet.feeds)
 
 export const parseSermonNetUrl = (url: string): SermonNetUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

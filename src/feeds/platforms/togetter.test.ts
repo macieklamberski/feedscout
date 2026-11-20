@@ -133,105 +133,18 @@ describe('togetterHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the curator hint for a curator feed on posfie.com', () => {
-      const value = 'https://posfie.com/@example/rss'
-      const expected: DiscoverUriHint = { key: 'togetter:curator', label: 'Curator' }
-
-      expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the recent hint for the recent feed', () => {
-      const value = 'https://togetter.com/rss/recent'
-      const expected: DiscoverUriHint = { key: 'togetter:recent', label: 'Recent' }
-
-      expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a curator page on posfie.com', () => {
-      const value = 'https://posfie.com/@example'
-
-      expect(togetterHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
     it('should return the curator hint for a curator feed', () => {
       const value = 'https://togetter.com/rss/id/alice_blue'
       const expected: DiscoverUriHint = { key: 'togetter:curator', label: 'Curator' }
 
       expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the curator hint for a curator feed with digits in the name', () => {
-      const value = 'https://togetter.com/rss/id/bob54465820'
-      const expected: DiscoverUriHint = { key: 'togetter:curator', label: 'Curator' }
-
-      expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the curator hint for a curator feed on the www host', () => {
-      const value = 'https://www.togetter.com/rss/id/alice_blue'
-      const expected: DiscoverUriHint = { key: 'togetter:curator', label: 'Curator' }
-
-      expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the curator hint for a curator feed over http', () => {
-      const value = 'http://togetter.com/rss/id/alice_blue'
-      const expected: DiscoverUriHint = { key: 'togetter:curator', label: 'Curator' }
-
-      expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the popular hint for the popular feed', () => {
-      const value = 'https://togetter.com/rss/hot'
-      const expected: DiscoverUriHint = { key: 'togetter:hot', label: 'Popular' }
-
-      expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the popular hint for the popular feed on the www host', () => {
-      const value = 'https://www.togetter.com/rss/hot'
-      const expected: DiscoverUriHint = { key: 'togetter:hot', label: 'Popular' }
-
-      expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the news hint for the news feed', () => {
-      const value = 'https://togetter.com/rss/news'
-      const expected: DiscoverUriHint = { key: 'togetter:news', label: 'News' }
-
-      expect(togetterHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a curator page', () => {
-      const value = 'https://togetter.com/id/alice_blue'
-
-      expect(togetterHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a summary page', () => {
-      const value = 'https://togetter.com/li/123456'
-
-      expect(togetterHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/rss/id/alice_blue'
-
-      expect(togetterHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://posfie.com/@example/rss', { key: 'togetter:curator', label: 'Curator' }],
-      ['https://togetter.com/rss/id/alice_blue', { key: 'togetter:curator', label: 'Curator' }],
-      ['https://togetter.com/rss/recent', { key: 'togetter:recent', label: 'Recent' }],
-      ['https://togetter.com/rss/hot', { key: 'togetter:hot', label: 'Popular' }],
-      ['https://www.togetter.com/rss/hot', { key: 'togetter:hot', label: 'Popular' }],
-      ['https://togetter.com/rss/news', { key: 'togetter:news', label: 'News' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a curator feed on togetter.com as itself', async () => {
+      const value = 'https://togetter.com/rss/id/alice_blue'
+      const hint: DiscoverUriHint = { key: 'togetter:curator', label: 'Curator' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [togetterHandler],

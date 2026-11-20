@@ -1,5 +1,6 @@
+import { fireside } from 'feedintel'
 import { decodePercent, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -7,28 +8,11 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type FiresideUrl = { kind: 'podcast'; slug: string; tag?: string }
 
-const domains = ['fireside.fm']
+const domains = fireside.hosts.tenants
 
 const tagPathRegex = /^\/tags\/([^/]+)\/?$/i
 
-const feeds = definePlatformFeeds(
-  'fireside',
-  [
-    {
-      key: 'podcast',
-      main: 'https://feeds.fireside.fm/{slug}/rss',
-      format: 'rss',
-      aliases: [
-        // `/rss` on a show's own host answers 301 to its feed on feeds.fireside.fm.
-        '{scheme}://{host}/rss',
-      ],
-    },
-    { key: 'podcast', main: '{scheme}://{host}/json', format: 'json' },
-    { key: 'tag', main: '{scheme}://{host}/tags/{tag}/rss' },
-    { key: 'blog', main: '{scheme}://{host}/articles/rss' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(fireside.feeds)
 
 export const parseFiresideUrl = (url: string): FiresideUrl | undefined => {
   const slug = getTenantSubdomain(url, domains)

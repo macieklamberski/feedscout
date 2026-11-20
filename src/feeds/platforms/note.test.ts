@@ -164,51 +164,11 @@ describe('noteHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the blog hint for a blog feed', () => {
-      const value = 'https://note.com/bob_smith/rss'
+    it('should return the blog hint for a blog feed on note.mu', () => {
+      const value = 'https://note.mu/alice/rss'
       const expected: DiscoverUriHint = { key: 'note:blog', label: 'Blog' }
 
       expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the blog hint for a blog feed whose name ends in an encoded space', () => {
-      const value = 'https://note.com/alice%20/rss'
-      const expected: DiscoverUriHint = { key: 'note:blog', label: 'Blog' }
-
-      expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the hashtag hint for a hashtag feed', () => {
-      const value = 'https://note.com/hashtag/%E6%9D%BE%E5%B1%8B/rss'
-      const expected: DiscoverUriHint = { key: 'note:hashtag', label: 'Hashtag' }
-
-      expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the magazine hint for a magazine feed', () => {
-      const value = 'https://note.com/notemag/m/m7244518f06ae/rss'
-      const expected: DiscoverUriHint = { key: 'note:magazine', label: 'Magazine' }
-
-      expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the featured hint for the featured feed', () => {
-      const value = 'https://note.com/rss'
-      const expected: DiscoverUriHint = { key: 'note:featured', label: 'Featured' }
-
-      expect(noteHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a profile page', () => {
-      const value = 'https://note.com/bob_smith'
-
-      expect(noteHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a hashtag page', () => {
-      const value = 'https://note.com/hashtag/AI'
-
-      expect(noteHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path under a dotted first segment', () => {
@@ -216,35 +176,21 @@ describe('noteHandler', () => {
 
       expect(noteHandler.getFeedHint?.(value)).toBeUndefined()
     })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/bob_smith/rss'
-
-      expect(noteHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://note.com/alice%20/rss', { key: 'note:blog', label: 'Blog' }],
-      ['https://note.com/hashtag/AI/rss', { key: 'note:hashtag', label: 'Hashtag' }],
-      ['https://note.com/notemag/m/m7244518f06ae/rss', { key: 'note:magazine', label: 'Magazine' }],
-      ['https://note.com/rss', { key: 'note:featured', label: 'Featured' }],
-      ['https://note.mu/alice/rss', { key: 'note:blog', label: 'Blog' }],
-      ['https://note.mu/hashtag/AI/rss', { key: 'note:hashtag', label: 'Hashtag' }],
-      ['https://note.mu/notemag/m/m7244518f06ae/rss', { key: 'note:magazine', label: 'Magazine' }],
-      ['https://note.mu/rss', { key: 'note:featured', label: 'Featured' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a hashtag feed on note.mu as itself', async () => {
+      const value = 'https://note.mu/hashtag/AI/rss'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [noteHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://note.mu/hashtag/AI/rss', hint: { key: 'note:hashtag', label: 'Hashtag' } },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

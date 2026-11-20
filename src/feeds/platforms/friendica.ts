@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { friendica } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -8,13 +9,7 @@ export type FriendicaUrl = { kind: 'profile'; username: string }
 
 const profileRegex = /^\/(?:profile\/|u\/|~)([^/]+)/i
 
-// A server is self-hosted on any domain, so the table only builds its feeds.
-const feeds = definePlatformFeeds('friendica', [
-  { key: 'posts', main: '{root}/feed/{username}' },
-  { key: 'comments', main: '{root}/feed/{username}/comments' },
-  { key: 'replies', main: '{root}/feed/{username}/replies' },
-  { key: 'activity', main: '{root}/feed/{username}/activity' },
-])
+const feeds = withHintLabels(friendica.feeds)
 
 export const isFriendicaHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Friendica')

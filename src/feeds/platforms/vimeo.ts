@@ -1,5 +1,6 @@
+import { vimeo } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
@@ -14,21 +15,11 @@ export type VimeoUrl =
   | { kind: 'likes'; username: string }
   | { kind: 'user'; username: string }
 
-const hosts = ['vimeo.com', 'www.vimeo.com']
+const hosts = vimeo.hosts.exact
 
 const albumSegments = ['album', 'showcase']
 
-const feeds = definePlatformFeeds('vimeo', [
-  { key: 'channel', main: 'https://vimeo.com/channels/{channel}/videos/rss' },
-  { key: 'group', main: 'https://vimeo.com/groups/{group}/videos/rss' },
-  { key: 'album', main: 'https://vimeo.com/album/{albumId}/rss' },
-  { key: 'likes', main: 'https://vimeo.com/{username}/likes/rss' },
-  {
-    key: 'videos',
-    main: 'https://vimeo.com/{username}/videos/rss',
-    aliases: ['https://vimeo.com/{username}/videos/all/rss'],
-  },
-])
+const feeds = withHintLabels(vimeo.feeds)
 
 export const parseVimeoUrl = (url: string): VimeoUrl | undefined => {
   if (!isHostOf(url, hosts)) {

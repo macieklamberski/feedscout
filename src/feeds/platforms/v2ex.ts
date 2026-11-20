@@ -1,5 +1,6 @@
+import { v2ex } from 'feedintel'
 import { getQueryParam, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
@@ -10,17 +11,12 @@ export type V2exUrl =
   | { kind: 'tab'; tab: string }
   | { kind: 'home' }
 
-const hosts = ['www.v2ex.com', 'v2ex.com']
+const hosts = v2ex.hosts.exact
 
 const nodeRegex = /^\/go\/([^/]+)/i
 const memberRegex = /^\/member\/([^/]+)/i
 
-const feeds = definePlatformFeeds('v2ex', [
-  { key: 'node', main: 'https://www.v2ex.com/feed/{node}.xml' },
-  { key: 'member', main: 'https://www.v2ex.com/feed/member/{username}.xml' },
-  { key: 'tab', main: 'https://www.v2ex.com/feed/tab/{tab}.xml' },
-  { key: 'index', main: 'https://www.v2ex.com/index.xml' },
-])
+const feeds = withHintLabels(v2ex.feeds)
 
 export const parseV2exUrl = (url: string): V2exUrl | undefined => {
   const parsedUrl = parseUrl(url)

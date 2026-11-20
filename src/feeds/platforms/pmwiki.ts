@@ -1,5 +1,6 @@
+import { pmwiki } from 'feedintel'
 import { getPathSegments, getQueryParam, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
@@ -14,22 +15,7 @@ export type PmwikiUrl =
 const groupRegex = /^\p{Lu}[\p{L}\d_]*(?:-[\p{L}\d_]+)*$/u
 const pageNameSeparatorRegex = /[./]/
 
-// A wiki is known only by its markup, so its feeds are built on the script URL and claimed on no
-// host. The query form answers under clean URLs, path info and the bare script alike.
-const feeds = definePlatformFeeds('pmwiki', [
-  { key: 'group-changes', main: '{root}?n={group}.RecentChanges&action=rss', format: 'rss' },
-  {
-    key: 'group-changes',
-    main: '{root}?n={group}.RecentChanges&action=atom',
-    format: 'atom',
-  },
-  { key: 'site-changes', main: '{root}?n=Site.AllRecentChanges&action=rss', format: 'rss' },
-  {
-    key: 'site-changes',
-    main: '{root}?n=Site.AllRecentChanges&action=atom',
-    format: 'atom',
-  },
-])
+const feeds = withHintLabels(pmwiki.feeds)
 
 // Every skin template carries the directive comment, and PmWiki prints it into the page.
 export const isPmwikiHtml = (content: string): boolean => {

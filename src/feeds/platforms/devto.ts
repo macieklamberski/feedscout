@@ -1,5 +1,6 @@
+import { devto } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -12,21 +13,14 @@ export type DevtoUrl =
   | { kind: 'latest' }
   | { kind: 'home' }
 
-const hosts = ['dev.to', 'www.dev.to']
+const hosts = devto.hosts.exact
 
 // An article lives under its author's name, a user or an organization: /{name}/{slug}.
 const ownerRegex = /^\/([a-zA-Z0-9_-]+)(?:\/|$)/i
 const tagRegex = /^\/t\/([^/]+)/i
 const latestRegex = /^\/latest\/?$/i
 
-// `/feed/latest` reads before `/feed/{owner}`, so a user named latest reads as the latest feed.
-// `/rss` serves the same channel as `/feed`, which the page links, so its row only claims.
-const feeds = definePlatformFeeds('devto', [
-  { key: 'community', main: 'https://dev.to/feed', aliases: ['https://dev.to/rss'] },
-  { key: 'latest', main: 'https://dev.to/feed/latest' },
-  { key: 'tag', main: 'https://dev.to/feed/tag/{tag}' },
-  { key: 'posts', main: 'https://dev.to/feed/{owner}' },
-])
+const feeds = withHintLabels(devto.feeds)
 
 export const parseDevtoUrl = (url: string): DevtoUrl | undefined => {
   const parsedUrl = parseUrl(url)

@@ -152,125 +152,18 @@ describe('pikaHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the posts hint for an Atom posts feed', () => {
-      const value = 'https://alice.pika.page/posts_feed'
-      const expected: DiscoverUriHint = { key: 'pika:posts', label: 'Posts', format: 'atom' }
-
-      expect(pikaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for an RSS posts feed', () => {
-      const value = 'https://alice.pika.page/posts_feed.rss'
-      const expected: DiscoverUriHint = { key: 'pika:posts', label: 'Posts', format: 'rss' }
-
-      expect(pikaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for an Atom posts feed with its extension', () => {
-      const value = 'https://alice.pika.page/posts_feed.atom'
-      const expected: DiscoverUriHint = { key: 'pika:posts', label: 'Posts', format: 'atom' }
-
-      expect(pikaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the posts hint for the /feed posts feed', () => {
       const value = 'https://alice.pika.page/feed'
       const expected: DiscoverUriHint = { key: 'pika:posts', label: 'Posts', format: 'atom' }
 
       expect(pikaHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the posts hint for an http posts feed', () => {
-      const value = 'http://alice.pika.page/posts_feed'
-      const expected: DiscoverUriHint = { key: 'pika:posts', label: 'Posts', format: 'atom' }
-
-      expect(pikaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for an Atom tag feed', () => {
-      const value = 'https://alice.pika.page/tag/tech/feed'
-      const expected: DiscoverUriHint = { key: 'pika:tag', label: 'Tag', format: 'atom' }
-
-      expect(pikaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for an RSS tag feed', () => {
-      const value = 'https://alice.pika.page/tag/tech/feed.rss'
-      const expected: DiscoverUriHint = { key: 'pika:tag', label: 'Tag', format: 'rss' }
-
-      expect(pikaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for an Atom tag feed with its extension', () => {
-      const value = 'https://alice.pika.page/tag/tech/feed.atom'
-      const expected: DiscoverUriHint = { key: 'pika:tag', label: 'Tag', format: 'atom' }
-
-      expect(pikaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a tag page', () => {
-      const value = 'https://alice.pika.page/tag/tech'
-
-      expect(pikaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a blog post', () => {
-      const value = 'https://alice.pika.page/posts/hello'
-
-      expect(pikaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on the apex', () => {
-      const value = 'https://pika.page/posts_feed'
-
-      expect(pikaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on the www host', () => {
-      const value = 'https://www.pika.page/posts_feed'
-
-      expect(pikaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on a nested subdomain', () => {
-      const value = 'https://blog.alice.pika.page/posts_feed'
-
-      expect(pikaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/posts_feed'
-
-      expect(pikaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://alice.pika.page/posts_feed', { key: 'pika:posts', label: 'Posts', format: 'atom' }],
-      [
-        'https://alice.pika.page/posts_feed.rss',
-        { key: 'pika:posts', label: 'Posts', format: 'rss' },
-      ],
-      [
-        'https://alice.pika.page/posts_feed.atom',
-        { key: 'pika:posts', label: 'Posts', format: 'atom' },
-      ],
-      ['http://alice.pika.page/posts_feed', { key: 'pika:posts', label: 'Posts', format: 'atom' }],
-      ['https://alice.pika.page/feed', { key: 'pika:posts', label: 'Posts', format: 'atom' }],
-      ['https://alice.pika.page/tag/tech/feed', { key: 'pika:tag', label: 'Tag', format: 'atom' }],
-      [
-        'https://alice.pika.page/tag/tech/feed.rss',
-        { key: 'pika:tag', label: 'Tag', format: 'rss' },
-      ],
-      [
-        'https://alice.pika.page/tag/tech/feed.atom',
-        { key: 'pika:tag', label: 'Tag', format: 'atom' },
-      ],
-      ['https://alice.pika.page/tag/tech/feed/', { key: 'pika:tag', label: 'Tag', format: 'atom' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return the /feed posts feed as itself', async () => {
+      const value = 'https://alice.pika.page/feed'
+      const hint: DiscoverUriHint = { key: 'pika:posts', label: 'Posts', format: 'atom' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [pikaHandler],

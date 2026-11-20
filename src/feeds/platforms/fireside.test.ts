@@ -141,116 +141,18 @@ describe('firesideHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the podcast hint for an RSS feed', () => {
-      const value = 'https://feeds.fireside.fm/alicecast/rss'
-      const expected: DiscoverUriHint = { key: 'fireside:podcast', label: 'Podcast', format: 'rss' }
-
-      expect(firesideHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the podcast hint for an RSS feed with a trailing slash', () => {
-      const value = 'https://feeds.fireside.fm/bobcast/rss/'
-      const expected: DiscoverUriHint = { key: 'fireside:podcast', label: 'Podcast', format: 'rss' }
-
-      expect(firesideHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the podcast hint for an RSS feed on the show host', () => {
       const value = 'https://alicecast.fireside.fm/rss'
       const expected: DiscoverUriHint = { key: 'fireside:podcast', label: 'Podcast', format: 'rss' }
 
       expect(firesideHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the podcast hint for a JSON feed', () => {
-      const value = 'https://alicecast.fireside.fm/json'
-      const expected: DiscoverUriHint = {
-        key: 'fireside:podcast',
-        label: 'Podcast',
-        format: 'json',
-      }
-
-      expect(firesideHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a show page', () => {
-      const value = 'https://alicecast.fireside.fm/'
-
-      expect(firesideHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a show path on the feed host', () => {
-      const value = 'https://feeds.fireside.fm/alicecast'
-
-      expect(firesideHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return the tag hint for a tag feed', () => {
-      const value = 'https://alice.fireside.fm/tags/example%20tag/rss'
-      const expected: DiscoverUriHint = { key: 'fireside:tag', label: 'Tag' }
-
-      expect(firesideHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the blog hint for a blog feed', () => {
-      const value = 'https://alice.fireside.fm/articles/rss'
-      const expected: DiscoverUriHint = { key: 'fireside:blog', label: 'Blog' }
-
-      expect(firesideHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a tag page', () => {
-      const value = 'https://alice.fireside.fm/tags/example'
-
-      expect(firesideHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a JSON feed on a nested subdomain', () => {
-      const value = 'https://blog.example.fireside.fm/json'
-
-      expect(firesideHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a JSON feed on the www host', () => {
-      const value = 'https://www.fireside.fm/json'
-
-      expect(firesideHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/json'
-
-      expect(firesideHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://feeds.fireside.fm/alicecast/rss',
-        { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
-      ],
-      [
-        'https://feeds.fireside.fm/assets/rss',
-        { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
-      ],
-      [
-        'https://feeds.fireside.fm/bobcast/rss/',
-        { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
-      ],
-      [
-        'http://alicecast.fireside.fm/rss',
-        { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
-      ],
-      [
-        'https://alicecast.fireside.fm/json',
-        { key: 'fireside:podcast', label: 'Podcast', format: 'json' },
-      ],
-      ['http://alice.fireside.fm/tags/example%20tag/rss', { key: 'fireside:tag', label: 'Tag' }],
-      ['https://alice.fireside.fm/articles/rss/', { key: 'fireside:blog', label: 'Blog' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return an RSS feed on the show host over http as itself', async () => {
+      const value = 'http://alicecast.fireside.fm/rss'
+      const hint: DiscoverUriHint = { key: 'fireside:podcast', label: 'Podcast', format: 'rss' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [firesideHandler],

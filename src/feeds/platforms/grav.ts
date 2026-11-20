@@ -1,5 +1,6 @@
+import { grav } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -14,14 +15,7 @@ const paginationRegex = /\/page:\d+$/i
 const gravAssetRegex = /\/user\/(?:themes|plugins)\//i
 const gravCookieRegex = /^grav-site-[0-9a-f]+$/
 
-// A site is self-hosted on any domain, so the table only builds its feeds. The site root has no
-// path to suffix, so its feed is `/.rss`.
-const feeds = definePlatformFeeds('grav', [
-  { key: 'page', main: '{root}/{path*}.rss', format: 'rss' },
-  { key: 'page', main: '{root}/.rss', format: 'rss' },
-  { key: 'page', main: '{root}/{path*}.atom', format: 'atom' },
-  { key: 'page', main: '{root}/.atom', format: 'atom' },
-])
+const feeds = withHintLabels(grav.feeds)
 
 // `GravCMS` in full, since the value is compared as a prefix and `Grav` matches `Gravity Forms`.
 export const isGravHtml = (content: string): boolean => {

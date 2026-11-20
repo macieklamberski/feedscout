@@ -1,5 +1,6 @@
+import { dspace } from 'feedintel'
 import { endsWithAnyOf, isAnyOf, isHttpUrl, isString, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -76,33 +77,7 @@ const legacyKeys: Record<LegacyKind, string> = {
   legacyHome: 'dspace:site',
 }
 
-// A repository runs on its own domain and is known only by its marker, so its search feeds are
-// built here, under the REST API root, but not claimed. DSpace 6 and older feeds are the links the
-// page prints.
-const feeds = definePlatformFeeds('dspace', [
-  {
-    key: 'collection',
-    main: '{root}/opensearch/search?format=atom&scope={uuid}&query=*',
-    format: 'atom',
-  },
-  {
-    key: 'collection',
-    main: '{root}/opensearch/search?format=rss&scope={uuid}&query=*',
-    format: 'rss',
-  },
-  {
-    key: 'community',
-    main: '{root}/opensearch/search?format=atom&scope={uuid}&query=*',
-    format: 'atom',
-  },
-  {
-    key: 'community',
-    main: '{root}/opensearch/search?format=rss&scope={uuid}&query=*',
-    format: 'rss',
-  },
-  { key: 'site', main: '{root}/opensearch/search?format=atom&query=*', format: 'atom' },
-  { key: 'site', main: '{root}/opensearch/search?format=rss&query=*', format: 'rss' },
-])
+const feeds = withHintLabels(dspace.feeds)
 
 // The Angular UI of DSpace 7 and later renders every page inside this root element.
 export const isDspaceHtml = (content: string): boolean => {

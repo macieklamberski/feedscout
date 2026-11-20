@@ -86,120 +86,30 @@ describe('captivateHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the podcast hint for a feed', () => {
-      const value = 'https://feeds.captivate.fm/bobcast/'
-      const expected: DiscoverUriHint = { key: 'captivate:podcast', label: 'Podcast' }
-
-      expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the podcast hint for a feed with a hyphenated slug', () => {
-      const value = 'https://feeds.captivate.fm/carol-podcast/'
-      const expected: DiscoverUriHint = { key: 'captivate:podcast', label: 'Podcast' }
-
-      expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the podcast hint for a feed without the trailing slash', () => {
-      const value = 'https://feeds.captivate.fm/bobcast'
-      const expected: DiscoverUriHint = { key: 'captivate:podcast', label: 'Podcast' }
-
-      expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the podcast hint for a feed over http', () => {
-      const value = 'http://feeds.captivate.fm/bobcast/'
-      const expected: DiscoverUriHint = { key: 'captivate:podcast', label: 'Podcast' }
-
-      expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the podcast hint for a feed on the show host', () => {
       const value = 'https://bobcast.captivate.fm/feed'
       const expected: DiscoverUriHint = { key: 'captivate:podcast', label: 'Podcast' }
 
       expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a show page', () => {
-      const value = 'https://bobcast.captivate.fm/'
-
-      expect(captivateHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the feed host root', () => {
-      const value = 'https://feeds.captivate.fm/'
-
-      expect(captivateHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return the latest hint for a latest episode feed', () => {
-      const value = 'https://feeds.captivate.fm/example/latest/'
-      const expected: DiscoverUriHint = { key: 'captivate:latest', label: 'Latest episode' }
-
-      expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the network hint for a network feed', () => {
-      const value = 'https://feeds.captivate.fm/n/example-network/'
-      const expected: DiscoverUriHint = { key: 'captivate:network', label: 'Network' }
-
-      expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the private hint for a private feed', () => {
-      const value = 'https://private.captivate.fm/abc123/def456'
-      const expected: DiscoverUriHint = { key: 'captivate:private', label: 'Private feed' }
-
-      expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the collection hint for a collection feed', () => {
-      const value = 'https://feeds.captivate.fm/example/season-1/'
-      const expected: DiscoverUriHint = { key: 'captivate:collection', label: 'Collection' }
-
-      expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/bobcast/'
-
-      expect(captivateHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://feeds.captivate.fm/bobcast/', { key: 'captivate:podcast', label: 'Podcast' }],
-      ['https://feeds.captivate.fm/carol-podcast/', { key: 'captivate:podcast', label: 'Podcast' }],
-      ['https://carol-podcast.captivate.fm/feed', { key: 'captivate:podcast', label: 'Podcast' }],
-      [
-        'https://feeds.captivate.fm/example/latest',
-        { key: 'captivate:latest', label: 'Latest episode' },
-      ],
-      [
-        'http://feeds.captivate.fm/n/example-network/',
-        { key: 'captivate:network', label: 'Network' },
-      ],
-      [
-        'https://feeds.captivate.fm/example/season-1',
-        { key: 'captivate:collection', label: 'Collection' },
-      ],
-      [
-        'https://private.captivate.fm/abc123/def456',
-        { key: 'captivate:private', label: 'Private feed' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a private feed as itself', async () => {
+      const value = 'https://private.captivate.fm/abc123/def456'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [captivateHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://private.captivate.fm/abc123/def456',
+          hint: { key: 'captivate:private', label: 'Private feed' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

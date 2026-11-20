@@ -1,5 +1,6 @@
+import { isProgrammer } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -11,33 +12,14 @@ export type IsProgrammerUrl =
   | { kind: 'blog'; blog: string }
   | { kind: 'post'; blog: string; postId: string }
 
-const domains = ['is-programmer.com']
+const domains = isProgrammer.hosts.tenants
 
 const postRegex = /^\/posts\/(\d+)(?:\.html)?(?:\/|$)/i
 
 // An unregistered name answers the sign-up page, served from the platform's own index account.
 const signUpPageRegex = /\/user_files\/index\/config\/favicon\.ico"/i
 
-const feeds = definePlatformFeeds(
-  'is-programmer',
-  [
-    { key: 'post-comments', main: '{scheme}://{host}/posts/{postId}.rss' },
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/feed',
-      aliases: [
-        '{scheme}://{host}/posts.rss',
-        '{scheme}://{host}/feed.rss',
-        '{scheme}://{host}/rss',
-        '{scheme}://{host}/?format=rss',
-      ],
-    },
-    { key: 'comments', main: '{scheme}://{host}/comments.rss' },
-    { key: 'messages', main: '{scheme}://{host}/messages.rss' },
-    { key: 'site', main: '{scheme}://{host}/site.rss' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(isProgrammer.feeds)
 
 export const parseIsProgrammerUrl = (url: string): IsProgrammerUrl | undefined => {
   const parsedUrl = parseUrl(url)

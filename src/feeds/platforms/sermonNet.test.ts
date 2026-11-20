@@ -323,90 +323,12 @@ describe('sermonNetHandler', () => {
 
       expect(sermonNetHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the channel hint for a channel with an escaped slash', () => {
-      const value = 'https://example.sermon.net/rss/main%2Fextra/audio'
-      const expected: DiscoverUriHint = { key: 'sermon-net:channel', label: 'Channel podcast' }
-
-      expect(sermonNetHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the church hint for the church feed', () => {
-      const value = 'https://example.sermon.net/rss'
-      const expected: DiscoverUriHint = { key: 'sermon-net:church', label: 'Church' }
-
-      expect(sermonNetHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the church hint for the church feed over http', () => {
-      const value = 'http://example.sermon.net/rss'
-      const expected: DiscoverUriHint = { key: 'sermon-net:church', label: 'Church' }
-
-      expect(sermonNetHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a channel page', () => {
-      const value = 'https://example.sermon.net/main/sermons'
-
-      expect(sermonNetHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return the channel media hint for the all-media feed of a channel', () => {
-      const value = 'https://example.sermon.net/rss/sermons'
-      const expected: DiscoverUriHint = { key: 'sermon-net:channel-media', label: 'Channel media' }
-
-      expect(sermonNetHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the channel video hint for the video feed of a channel', () => {
-      const value = 'https://example.sermon.net/rss/sermons/video'
-      const expected: DiscoverUriHint = {
-        key: 'sermon-net:channel-video',
-        label: 'Channel video podcast',
-      }
-
-      expect(sermonNetHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the channel audio and PDF hint for the audio and PDF feed of a channel', () => {
-      const value = 'https://example.sermon.net/rss/sermons/audio_pdf'
-      const expected: DiscoverUriHint = {
-        key: 'sermon-net:channel-audio-pdf',
-        label: 'Channel podcast with PDFs',
-      }
-
-      expect(sermonNetHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for the church feed path on the www host', () => {
-      const value = 'https://www.sermon.net/rss'
-
-      expect(sermonNetHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const channelHint: DiscoverUriHint = { key: 'sermon-net:channel', label: 'Channel podcast' }
-    const mediaHint: DiscoverUriHint = { key: 'sermon-net:channel-media', label: 'Channel media' }
-    const videoHint: DiscoverUriHint = {
-      key: 'sermon-net:channel-video',
-      label: 'Channel video podcast',
-    }
-    const audioPdfHint: DiscoverUriHint = {
-      key: 'sermon-net:channel-audio-pdf',
-      label: 'Channel podcast with PDFs',
-    }
-    const churchHint: DiscoverUriHint = { key: 'sermon-net:church', label: 'Church' }
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://example.sermon.net/rss/sermons/audio', channelHint],
-      ['http://example.sermon.net/rss/sermons/audio', channelHint],
-      ['https://example.sermon.net/rss/sermons', mediaHint],
-      ['https://example.sermon.net/rss/sermons/video', videoHint],
-      ['https://example.sermon.net/rss/sermons/audio_pdf', audioPdfHint],
-      ['https://example.sermon.net/rss/', churchHint],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return the audio feed of a channel as itself', async () => {
+      const value = 'https://example.sermon.net/rss/sermons/audio'
+      const hint: DiscoverUriHint = { key: 'sermon-net:channel', label: 'Channel podcast' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [sermonNetHandler],

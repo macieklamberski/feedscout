@@ -1,5 +1,6 @@
+import { tumblr } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 
@@ -9,27 +10,12 @@ import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 
 export type TumblrUrl = { kind: 'blog'; blog: string } | { kind: 'tag'; blog: string; tag: string }
 
-const hosts = ['tumblr.com', 'www.tumblr.com']
-export const domains = ['tumblr.com']
+const hosts = tumblr.hosts.exact
+export const domains = tumblr.hosts.tenants
 
 const tagRegex = /^\/tagged\/([^/]+)/i
 
-// `?format=rss` holds the posts as the theme renders them, `/podcast` the audio posts. Both
-// answer a plain request with a browser check. `/podcast/rss` is a spelling of the podcast.
-const feeds = definePlatformFeeds(
-  'tumblr',
-  [
-    { key: 'tag', main: '{scheme}://{host}/tagged/{tag}/rss' },
-    { key: 'posts', main: '{scheme}://{host}/rss' },
-    { key: 'theme-posts', main: '{scheme}://{host}/?format=rss' },
-    {
-      key: 'podcast',
-      main: '{scheme}://{host}/podcast',
-      aliases: ['{scheme}://{host}/podcast/rss'],
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(tumblr.feeds)
 
 export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
   // www.tumblr.com/{blog} and the legacy www.tumblr.com/blog/view/{blog} show a blog, and

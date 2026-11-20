@@ -1,5 +1,6 @@
+import { peertube } from 'feedintel'
 import { decodeSegment, getQueryParam, includesAnyOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
 
@@ -14,17 +15,7 @@ const accountPathRegex = /^\/(?:a|accounts)\/([^/]+)/i
 
 const podcastFeedPath = '/feeds/podcast/videos.xml'
 
-// An instance is known only by its headers, so its feeds are built on the page's origin and
-// claimed on no host.
-const feeds = definePlatformFeeds('peertube', [
-  { key: 'channel', main: '{root}/feeds/videos.xml?videoChannelName={name}' },
-  {
-    key: 'channel-podcast',
-    main: '{root}/feeds/podcast/videos.xml?videoChannelId={channelId}',
-  },
-  { key: 'account', main: '{root}/feeds/videos.xml?accountName={name}' },
-  { key: 'instance', main: '{root}/feeds/videos.xml' },
-])
+const feeds = withHintLabels(peertube.feeds)
 
 export const isPeertubeHeaders = (headers: Headers): boolean => {
   return includesAnyOf(headers.get('x-powered-by'), 'peertube')

@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { smf } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
 
@@ -11,14 +12,7 @@ export type SmfPage = { scriptUrl: string; boardId?: string }
 const scriptUrlRegex = /var smf_scripturl = "([^"]+)"/
 const boardIdRegex = /[?;&]board=(\d+)/i
 
-// A forum of any domain is known only by its marker, so its feeds are built here but not claimed.
-// The feed arguments are joined by semicolons into the one `action` value.
-const feeds = definePlatformFeeds('smf', [
-  { key: 'board', main: '{root}?action=.xml;type=rss2;board={board}', format: 'rss' },
-  { key: 'board', main: '{root}?action=.xml;type=atom;board={board}', format: 'atom' },
-  { key: 'posts', main: '{root}?action=.xml;type=rss2', format: 'rss' },
-  { key: 'posts', main: '{root}?action=.xml;type=atom', format: 'atom' },
-])
+const feeds = withHintLabels(smf.feeds)
 
 // Core prints both script variables in every page head whatever the theme, from SMF 1.1 to 2.1.
 export const isSmfHtml = (content: string): boolean => {
