@@ -6,7 +6,6 @@ import {
   digitsRegex,
   findElement,
   getCookieNames,
-  getScriptDirectory,
   hasElementWithId,
   hasMarker,
 } from '../../common/utils.js'
@@ -50,13 +49,13 @@ const getNumericParam = (
 }
 
 const getPhpbbPage = (url: string, content: string | undefined): PhpbbPage | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = phpbb.pages.read(url, { isAnyHost: true })
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  const { origin, pathname, searchParams } = parsedUrl
+  const { root, forumId, topicId } = page.params
   // A post link, `viewtopic.php?p={id}`, names no topic, and the page's canonical link does.
   const canonicalLink = findElement(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'canonical'
@@ -64,10 +63,9 @@ const getPhpbbPage = (url: string, content: string | undefined): PhpbbPage | und
   const canonicalUrl = parseUrl(canonicalLink?.attribs.href, url)
 
   return {
-    // A board is routinely mounted under a sub-path such as `/community`.
-    boardUrl: `${origin}${getScriptDirectory(pathname)}`,
-    forumId: getNumericParam(searchParams, 'f'),
-    topicId: getNumericParam(searchParams, 't') ?? getNumericParam(canonicalUrl?.searchParams, 't'),
+    boardUrl: root,
+    forumId,
+    topicId: topicId ?? getNumericParam(canonicalUrl?.searchParams, 't'),
   }
 }
 

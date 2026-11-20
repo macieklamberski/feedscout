@@ -1,5 +1,4 @@
 import { arena } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -12,40 +11,22 @@ export type ArenaUrl =
   | { kind: 'channel'; username: string; channel: string }
   | { kind: 'editorial' }
 
-const hosts = arena.hosts.exact
-
-// Views of a profile. The profile feed sits at /{username}/feed/rss, so `feed` names no channel.
-const profilePaths = [
-  'all',
-  'blocks',
-  'channels',
-  'feed',
-  'followers',
-  'following',
-  'groups',
-  'index',
-  'table',
-]
-
 const feeds = withHintLabels(arena.feeds)
 
 export const parseArenaUrl = (url: string): ArenaUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = arena.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [username, channel] = getPathSegments(url)
+  const { username, channel } = page.params
 
-  // Article pages under /editorial have no feed of their own.
-  if (isAnyOf(username, 'editorial')) {
+  if (page.key === 'editorial') {
     return { kind: 'editorial' }
   }
 
-  if (!username) {
-    return
-  }
-
-  if (channel && !isAnyOf(channel, profilePaths)) {
+  if (page.key === 'channel') {
     return { kind: 'channel', username, channel }
   }
 
