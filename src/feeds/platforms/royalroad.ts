@@ -1,5 +1,4 @@
 import { royalroad } from 'feedintel'
-import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -7,27 +6,16 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type RoyalroadUrl = { kind: 'fiction'; fictionId: string }
 
-const hosts = royalroad.hosts.exact
-
-// A chapter URL sits under its fiction, so it carries the fiction id too.
-const fictionIdRegex = /^\/fiction\/(\d+)(?:\/|$)/i
-
 const feeds = withHintLabels(royalroad.feeds)
 
 export const parseRoyalroadUrl = (url: string): RoyalroadUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = royalroad.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const fictionId = parsedUrl.pathname.match(fictionIdRegex)?.[1]
-
-  if (!fictionId) {
-    return
-  }
-
-  return { kind: 'fiction', fictionId }
+  return { kind: 'fiction', fictionId: page.params.fictionId }
 }
 
 export const royalroadHandler: PlatformHandler = {

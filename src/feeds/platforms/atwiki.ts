@@ -1,5 +1,4 @@
 import { atwiki } from 'feedintel'
-import { getPathSegments, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -7,23 +6,16 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type AtwikiUrl = { kind: 'wiki'; wiki: string }
 
-// Legacy wwwNN.atwiki.jp hosts redirect every wiki path to w.atwiki.jp.
-const hosts = atwiki.hosts.exact
-
 const feeds = withHintLabels(atwiki.feeds)
 
 export const parseAtwikiUrl = (url: string): AtwikiUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = atwiki.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [wiki] = getPathSegments(url)
-
-  if (!wiki) {
-    return
-  }
-
-  return { kind: 'wiki', wiki }
+  return { kind: 'wiki', wiki: page.params.wiki }
 }
 
 export const atwikiHandler: PlatformHandler = {

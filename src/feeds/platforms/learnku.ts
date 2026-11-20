@@ -1,5 +1,4 @@
 import { learnku } from 'feedintel'
-import { getPathSegments, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -9,22 +8,20 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type LearnkuUrl = { kind: 'community'; community: string } | { kind: 'home' }
 
-const hosts = learnku.hosts.exact
-
 const feeds = withHintLabels(learnku.feeds)
 
 export const parseLearnkuUrl = (url: string): LearnkuUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = learnku.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [community] = getPathSegments(url)
-
-  if (!community) {
+  if (page.key === 'home') {
     return { kind: 'home' }
   }
 
-  return { kind: 'community', community }
+  return { kind: 'community', community: page.params.community }
 }
 
 export const learnkuHandler: PlatformHandler = {

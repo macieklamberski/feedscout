@@ -1,5 +1,4 @@
 import { acast } from 'feedintel'
-import { getPathSegments, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -8,31 +7,16 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type AcastUrl = { kind: 'show'; slug: string }
 
-// shows.acast.com is the canonical web host. play.acast.com is a legacy host that
-// 302-redirects to shows.acast.com (slug at path index 1, after /s/). embed.acast.com
-// and the older player.acast.com, which 302-redirects to it, put the slug at path index 0.
-const hosts = acast.hosts.exact
-const legacyHosts = ['play.acast.com']
-
 const feeds = withHintLabels(acast.feeds)
 
 export const parseAcastUrl = (url: string): AcastUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = acast.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  // play.acast.com keeps the slug after /s/: play.acast.com/s/{slug}.
-  const slugIndex = isHostOf(url, legacyHosts) ? 1 : 0
-  const allSegments = getPathSegments(url)
-  // The current embed code writes `embed.acast.com/$/{slug}/{episode}`.
-  const segments = allSegments[0] === '$' ? allSegments.slice(1) : allSegments
-  const [slug] = segments.slice(slugIndex)
-
-  if (!slug) {
-    return
-  }
-
-  return { kind: 'show', slug }
+  return { kind: 'show', slug: page.params.slug }
 }
 
 export const acastHandler: PlatformHandler = {

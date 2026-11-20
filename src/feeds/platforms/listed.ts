@@ -1,5 +1,4 @@
 import { listed } from 'feedintel'
-import { isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -7,24 +6,16 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type ListedUrl = { kind: 'blog'; username: string }
 
-const hosts = listed.hosts.exact
-
-const userRegex = /^\/@([^/]+)/
-
 const feeds = withHintLabels(listed.feeds)
 
 export const parseListedUrl = (url: string): ListedUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = listed.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const username = new URL(url).pathname.match(userRegex)?.[1]
-
-  if (!username) {
-    return
-  }
-
-  return { kind: 'blog', username }
+  return { kind: 'blog', username: page.params.username }
 }
 
 export const listedHandler: PlatformHandler = {

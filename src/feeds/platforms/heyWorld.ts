@@ -1,5 +1,4 @@
 import { heyWorld } from 'feedintel'
-import { getPathSegments, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -7,22 +6,16 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type HeyWorldUrl = { kind: 'blog'; username: string }
 
-const hosts = heyWorld.hosts.exact
-
 const feeds = withHintLabels(heyWorld.feeds)
 
 export const parseHeyWorldUrl = (url: string): HeyWorldUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = heyWorld.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [username] = getPathSegments(url)
-
-  if (!username) {
-    return
-  }
-
-  return { kind: 'blog', username }
+  return { kind: 'blog', username: page.params.username }
 }
 
 export const heyWorldHandler: PlatformHandler = {

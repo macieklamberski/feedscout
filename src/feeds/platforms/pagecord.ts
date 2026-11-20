@@ -1,29 +1,22 @@
 import { pagecord } from 'feedintel'
-import { getQueryParam, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type PagecordUrl = { kind: 'blog' } | { kind: 'tag'; tag: string }
 
-const domains = pagecord.hosts.tenants
-
 const feeds = withHintLabels(pagecord.feeds)
 
 export const parsePagecordUrl = (url: string): PagecordUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = pagecord.pages.read(url)
 
-  if (!parsedUrl || !getTenantSubdomain(parsedUrl, domains)) {
+  if (!page) {
     return
   }
 
-  // A page filtered by `?tag=` links the feed under the same filter.
-  const tag = getQueryParam(parsedUrl.searchParams, 'tag')
-
-  if (tag) {
-    return { kind: 'tag', tag }
+  if (page.key === 'tag') {
+    return { kind: 'tag', tag: page.params.tag }
   }
 
   return { kind: 'blog' }
