@@ -3982,7 +3982,7 @@ type PlatformHandler = {
 
 ### Declaring Feeds
 
-`definePlatformFeeds` takes the platform's name and its feeds, one row per feed, with the feed's kind in `key` and its URL in `main`. A hint is keyed `{platform}:{kind}`, so the `posts` row of `example` gives `example:posts`. `getFeedEntry` builds a feed with its hint, `getFeedHint` reads a URL back to its hint, with the row's `format`, `{host}` stands for any host in `hosts.exact` or under `hosts.tenants`, `{domain}` for one of `hosts.tenants`, and `{scheme}` for the page's scheme on a platform that runs on the site's own host.
+`defineFeedUrls` from `feedintel` takes the platform's name and its feeds, one row per feed, with the feed's kind in `key` and its URL in `main`. `withHintLabels` wraps the table, so its hints and entries have the shape a handler returns. A hint is keyed `{platform}:{kind}`, so the `posts` row of `example` gives `example:posts`. `getFeedEntry` builds a feed with its hint, `getFeedHint` reads a URL back to its hint, with the row's `format`, `{host}` stands for any host in `hosts.exact` or under `hosts.tenants`, `{domain}` for one of `hosts.tenants`, and `{scheme}` for the page's scheme on a platform that runs on the site's own host.
 
 The table's keys are typed from its rows, so `getFeedUrl`, `getFeedEntry`, `getFeedSpellings` and the methods of `forUrl` take only those keys, and a key the table does not hold fails the typecheck. A key that reaches the table untyped still throws.
 
@@ -4007,21 +4007,25 @@ A query value is written with only the characters that would change the URL's st
 A feed the platform serves under several spellings, such as a legacy host, lists the other spellings in `aliases` on its row. `getFeedEntry` builds `main`, and `getFeedHint` reads an alias back to the same hint. An alias takes its row's `format` and `queryEncoding`. Two rows with one key are two feeds of that kind, each with its own aliases. The table cannot tell whether two spellings are one feed: that rests on a probe or a comment beside the alias. Keep a different feed under the same key on a row of its own.
 
 ```typescript
-const feeds = definePlatformFeeds('example', [
-  {
-    key: 'posts',
-    main: 'https://feeds.example.com/{username}.rss',
-    aliases: ['https://example.com/{username}/rss'],
-  },
-])
+const feeds = withHintLabels(
+  defineFeedUrls('example', [
+    {
+      key: 'posts',
+      main: 'https://feeds.example.com/{username}.rss',
+      aliases: ['https://example.com/{username}/rss'],
+    },
+  ]),
+)
 ```
 
 A platform whose sites answer under different spellings of one feed, as one site serves `/feed/` and another only `?feed=rss`, needs every spelling tried in turn. `getFeedSpellings` takes the same arguments as `getFeedEntry` and returns one entry whose `uri` lists the URL `getFeedEntry` builds, then every alias of that feed the values fill, in order. Discovery tries them in order until one is a feed. The list stops at the next row of the key and format, so it never mixes two feeds. With one spelling filled, `uri` is a string, as from `getFeedEntry`.
 
 ```typescript
-const feeds = definePlatformFeeds('example', [
-  { key: 'posts', main: '{root}/feed/', aliases: ['{root}/?feed=rss'] },
-])
+const feeds = withHintLabels(
+  defineFeedUrls('example', [
+    { key: 'posts', main: '{root}/feed/', aliases: ['{root}/?feed=rss'] },
+  ]),
+)
 
 // { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'], hint }
 feeds.getFeedSpellings('posts', { root: 'https://example.com' })
@@ -4034,17 +4038,20 @@ A placeholder that takes only values of one shape, such as a locale, gets a chec
 `forUrl(url)` returns the same `getFeedUrl`, `getFeedEntry` and `getFeedSpellings` with `{scheme}`, `{host}` and `{root}` filled from the page URL, `{root}` with its origin, and `{domain}` with the entry of `hosts.tenants` its host is under, so a handler passes only the values the URL cannot give. A value the handler passes wins, so a handler that reads a base path from the page passes `root` with it. A value left `undefined` counts as no value: it never replaces a value from the page, and a key with several rows builds the first one whose placeholders all have a value, so `{ slug, id }` with no `id` builds the row without `{id}`. An empty value counts as no value too, in a host label, a path segment or a query value, so no row builds `/t//feed` or `?videoChannelId=`. A passed query is the exception: an empty one writes the row's own parameters alone. When no row of the key has a value for every placeholder, `getFeedUrl` and `getFeedEntry` return `undefined`, and the Platform method skips an `undefined` item `resolve` returns. It returns `undefined` for a URL that is not an http URL.
 
 ```typescript
-import { definePlatformFeeds, type PlatformHandler } from 'feedscout/platform'
+import { defineFeedUrls } from 'feedintel'
+import { type PlatformHandler, withHintLabels } from 'feedscout/platform'
 
 const hosts = ['example.com', 'www.example.com']
 
-const feeds = definePlatformFeeds(
-  'example',
-  [
-    { key: 'posts', main: 'https://{host}/{username}/feed.rss' },
-    { key: 'search', main: 'https://feeds.example.com/rss.xml?q={query}' },
-  ],
-  { hosts: { exact: hosts } },
+const feeds = withHintLabels(
+  defineFeedUrls(
+    'example',
+    [
+      { key: 'posts', main: 'https://{host}/{username}/feed.rss' },
+      { key: 'search', main: 'https://feeds.example.com/rss.xml?q={query}' },
+    ],
+    { hosts: { exact: hosts } },
+  ),
 )
 
 const exampleHandler: PlatformHandler = {
