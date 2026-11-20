@@ -81,7 +81,7 @@
   "devDependencies": {
     "@types/bun": "^1.4.4",
     "@types/http-link-header": "^1.0.7",
-    "feedintel": "github:macieklamberski/feedintel#4ddd4bc",
+    "feedintel": "github:macieklamberski/feedintel#c99b0bf",
     "feedsmith": "^3.0.1",
     "kvalita": "^1.38.0",
     "ogier": "^1.8.1",

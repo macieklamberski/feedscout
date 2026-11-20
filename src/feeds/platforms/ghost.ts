@@ -1,5 +1,5 @@
-import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { ghost } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -10,31 +10,12 @@ export type GhostUrl =
   | { kind: 'author'; author: string }
   | { kind: 'blog' }
 
-const domains = ['ghost.io']
+const domains = ghost.hosts.tenants
 
 const tagRegex = /^\/tag\/([^/]+)/i
 const authorRegex = /^\/author\/([^/]+)/i
-// A private site serves its feed under a 30-character hex token in place of a collection name.
-const privateFeedRegex = /^\/[\da-f]{30}\/rss\/?$/i
 
-const feeds = definePlatformFeeds(
-  'ghost',
-  [
-    { key: 'tag', main: '{scheme}://{host}/tag/{tag}/rss/' },
-    { key: 'author', main: '{scheme}://{host}/author/{author}/rss/' },
-    { key: 'blog', main: '{scheme}://{host}/rss/' },
-    // A collection a site's routes define, as `/archive/`, which a page path cannot tell apart from
-    // a post, so `resolve` never builds it.
-    { key: 'collection', main: '{scheme}://{host}/{collection}/rss/' },
-  ],
-  { hosts: { tenants: domains } },
-)
-// No page gives the token, so this row only claims the feed.
-const privateFeeds = definePlatformFeeds(
-  'ghost',
-  [{ key: 'private', main: '{scheme}://{host}/{token}/rss/' }],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(ghost.feeds)
 
 export const parseGhostUrl = (url: string): GhostUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -81,9 +62,5 @@ export const ghostHandler: PlatformHandler = {
     return [page.getFeedEntry('blog')]
   },
 
-  getFeedHint: (url) => {
-    const pathname = parseUrl(url)?.pathname ?? ''
-
-    return privateFeedRegex.test(pathname) ? privateFeeds.getFeedHint(url) : feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
