@@ -1,5 +1,6 @@
+import { pukiwiki } from 'feedintel'
 import { endsWithAnyOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
@@ -13,12 +14,7 @@ const stylesheetRegex = /(?:^|\/)pukiwiki\.css(?:\.php)?(?:[?#]|$)/i
 const sessionCookieRegex = /^QHMSSID\d*$/
 const skinRootRegex = /^(.*?\/)skin\//i
 
-// A wiki of any domain is known only by its marker, so its feed is built here but not claimed. A
-// wiki served from its directory names no script in its URLs.
-const feeds = definePlatformFeeds('pukiwiki', [
-  { key: 'recent-changes', main: '{root}/{script}?cmd=rss' },
-  { key: 'recent-changes', main: '{root}/?cmd=rss' },
-])
+const feeds = withHintLabels(pukiwiki.feeds)
 
 export const isPukiwikiHtml = (content: string): boolean => {
   const stylesheet = findElement(content, (element) => {

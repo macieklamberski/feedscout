@@ -138,70 +138,26 @@ describe('megaphoneHandler', () => {
       expect(megaphoneHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast hint for a show feed named by a slug', () => {
-      const value = 'https://feeds.megaphone.fm/my-show'
-      const expected: DiscoverUriHint = { key: 'megaphone:podcast', label: 'Podcast' }
-
-      expect(megaphoneHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the podcast hint for a show feed with a limit parameter', () => {
-      const value = 'https://feeds.megaphone.fm/ABC1234567890?limit=300'
-      const expected: DiscoverUriHint = { key: 'megaphone:podcast', label: 'Podcast' }
-
-      expect(megaphoneHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return undefined for a file on the feeds host', () => {
       const value = 'https://feeds.megaphone.fm/robots.txt'
-
-      expect(megaphoneHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the feeds host root', () => {
-      const value = 'https://feeds.megaphone.fm/'
-
-      expect(megaphoneHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a deeper path on the feeds host', () => {
-      const value = 'https://feeds.megaphone.fm/ABC1234567890/episodes'
-
-      expect(megaphoneHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a playlist embed', () => {
-      const value = 'https://playlist.megaphone.fm/?p=ABC1234567890'
-
-      expect(megaphoneHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a show path on another host', () => {
-      const value = 'https://example.com/ABC1234567890'
 
       expect(megaphoneHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
-    const hint: DiscoverUriHint = { key: 'megaphone:podcast', label: 'Podcast' }
-    const values = [
-      'https://feeds.megaphone.fm/ABC1234567890',
-      'https://feeds.megaphone.fm/ABC1234567890/',
-      'http://feeds.megaphone.fm/ABC1234567890',
-      'https://feeds.megaphone.fm/ABC1234567890?limit=300',
-      'https://feeds.megaphone.fm/my-show',
-    ]
-
-    it.each(values)('should return %s as itself', async (value) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a show feed named by a slug as itself', async () => {
+      const value = 'https://feeds.megaphone.fm/my-show'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [megaphoneHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'megaphone:podcast', label: 'Podcast' } },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

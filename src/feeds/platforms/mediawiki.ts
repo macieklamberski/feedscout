@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { mediawiki } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getScriptDirectory, hasMarker } from '../../common/utils.js'
 
@@ -12,23 +13,7 @@ const rsdHrefRegex = /\/api\.php\?action=rsd$/i
 const pageNameRegex = /"wgPageName":("(?:[^"\\]|\\.)*")/
 const namespaceNumberRegex = /"wgNamespaceNumber":(-?\d+)/
 
-// A wiki runs on its own domain, under its script path, and is known only by its marker, so its
-// feeds are built here but not claimed. Its pages link a title encoded as a form, as
-// `title=Talk%3AMain+Page`.
-const feeds = definePlatformFeeds('mediawiki', [
-  {
-    key: 'history',
-    main: '{root}/index.php?title={title}&action=history&feed=atom',
-    format: 'atom',
-    queryEncoding: 'form',
-  },
-  {
-    key: 'recent-changes',
-    main: '{root}/index.php?title=Special:RecentChanges&feed=atom',
-    format: 'atom',
-    queryEncoding: 'form',
-  },
-])
+const feeds = withHintLabels(mediawiki.feeds)
 
 // Core prints the RSD link to `api.php` in every page head, whatever the skin.
 const getRsdHref = (content: string | undefined): string | undefined => {

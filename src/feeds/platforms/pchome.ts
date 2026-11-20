@@ -1,5 +1,6 @@
+import { pchome } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, wordRegex } from '../../common/utils.js'
 
@@ -9,12 +10,9 @@ export type PchomeUrl =
   | { kind: 'paper'; username: string }
   | { kind: 'category'; username: string; category: string }
 
-const hosts = ['mypaper.pchome.com.tw', 'mypaper.m.pchome.com.tw']
+const hosts = pchome.hosts.exact
 
-const feeds = definePlatformFeeds('pchome', [
-  { key: 'category', main: 'https://mypaper.pchome.com.tw/{username}/rss?cid={category}' },
-  { key: 'posts', main: 'https://mypaper.pchome.com.tw/{username}/rss' },
-])
+const feeds = withHintLabels(pchome.feeds)
 
 export const parsePchomeUrl = (url: string): PchomeUrl | undefined => {
   if (!isHostOf(url, hosts)) {

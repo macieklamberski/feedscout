@@ -1,5 +1,6 @@
+import { prlog } from 'feedintel'
 import { getPathSegments, isHostOf, isSameText, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
 
@@ -8,11 +9,9 @@ import { findElement } from '../../common/utils.js'
 export type PrlogUrl = { kind: 'pressroom'; pressroomId: string }
 export type PrlogPage = PrlogUrl
 
-const hosts = ['pressroom.prlog.org']
+const hosts = prlog.hosts.exact
 
-const feeds = definePlatformFeeds('prlog', [
-  { key: 'press-releases', main: 'https://pressroom.prlog.org/{pressroomId}/latest.xml' },
-])
+const feeds = withHintLabels(prlog.feeds)
 
 export const parsePrlogUrl = (url: string): PrlogUrl | undefined => {
   const parsedUrl = parseUrl(url)

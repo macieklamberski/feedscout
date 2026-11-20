@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { postachio } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -6,19 +7,9 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type PostachioUrl = { kind: 'site'; subdomain: string }
 
-const domains = ['postach.io']
+const domains = postachio.hosts.tenants
 
-const feeds = definePlatformFeeds(
-  'postachio',
-  [
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/feed.xml',
-      aliases: ['{scheme}://{host}/feed'],
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(postachio.feeds)
 
 export const parsePostachioUrl = (url: string): PostachioUrl | undefined => {
   const subdomain = getTenantSubdomain(url, domains)

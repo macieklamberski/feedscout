@@ -1,5 +1,6 @@
+import { postype } from 'feedintel'
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -11,21 +12,10 @@ export type PostypeUrl =
   | { kind: 'post'; channel: string }
   | { kind: 'subdomain'; channel: string }
 
-const domains = ['postype.com']
-export const hosts = ['postype.com', 'www.postype.com']
+const domains = postype.hosts.tenants
+export const hosts = postype.hosts.exact
 
-// A subdomain feed redirects to the channel feed on www.postype.com, and http to https.
-const feeds = definePlatformFeeds(
-  'postype',
-  [
-    {
-      key: 'posts',
-      main: 'https://www.postype.com/@{channel}/rss',
-      aliases: ['{scheme}://{host}/rss'],
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(postype.feeds)
 
 export const parsePostypeUrl = (url: string): PostypeUrl | undefined => {
   const parsedUrl = parseUrl(url)

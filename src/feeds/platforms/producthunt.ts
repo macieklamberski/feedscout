@@ -1,5 +1,6 @@
+import { producthunt } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
@@ -9,16 +10,12 @@ export type ProducthuntUrl =
   | { kind: 'topic'; topic: string }
   | { kind: 'home' }
 
-export const hosts = ['producthunt.com', 'www.producthunt.com']
+export const hosts = producthunt.hosts.exact
 
 const productRegex = /^\/products\/([^/]+)(?:\/|$)/i
 const topicRegex = /^\/topics\/([^/]+)\/?$/i
 
-// The feed narrows to one topic under `category`, which takes the slug of a /topics/ page.
-const feeds = definePlatformFeeds('producthunt', [
-  { key: 'products', main: 'https://www.producthunt.com/feed' },
-  { key: 'category', main: 'https://www.producthunt.com/feed?category={category}' },
-])
+const feeds = withHintLabels(producthunt.feeds)
 
 // Every page links the site-wide product feed, so any other page reads as the home page.
 export const parseProducthuntUrl = (url: string): ProducthuntUrl | undefined => {

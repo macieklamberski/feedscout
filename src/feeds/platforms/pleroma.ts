@@ -1,5 +1,6 @@
+import { pleroma } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getScriptText, hasMarker } from '../../common/utils.js'
 
@@ -15,12 +16,7 @@ const profileRegex = /^\/users\/([^/]+)/i
 // The frontend serves the same profile at /{name} and /@{name}.
 const profileAliasRegex = /^\/@?([^/]+)\/?$/
 
-// An instance is known only by its markup, so its feeds are built on the page's origin and claimed
-// on no host.
-const feeds = definePlatformFeeds('pleroma', [
-  { key: 'posts', main: '{root}/users/{username}/feed.atom', format: 'atom' },
-  { key: 'posts', main: '{root}/users/{username}/feed.rss', format: 'rss' },
-])
+const feeds = withHintLabels(pleroma.feeds)
 
 // The frontend preloads its config from the API, and older releases inline that response in the
 // `initial-results` script, keyed by its path.

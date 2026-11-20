@@ -1,5 +1,6 @@
+import { plurk } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -7,17 +8,9 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type PlurkUrl = { kind: 'post'; postId: string } | { kind: 'user'; username: string }
 
-const hosts = ['plurk.com', 'www.plurk.com']
+const hosts = plurk.hosts.exact
 
-const feeds = definePlatformFeeds('plurk', [
-  { key: 'responses', main: 'https://www.plurk.com/p/{postId}.xml' },
-  // A user page links this spelling, and the feed names the `/user/` one as its self link.
-  {
-    key: 'plurks',
-    main: 'https://www.plurk.com/{username}.xml',
-    aliases: ['https://www.plurk.com/user/{username}.xml'],
-  },
-])
+const feeds = withHintLabels(plurk.feeds)
 
 export const parsePlurkUrl = (url: string): PlurkUrl | undefined => {
   if (!isHostOf(url, hosts)) {

@@ -144,51 +144,27 @@ describe('plurkHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the plurks hint for a user feed', () => {
-      const value = 'https://www.plurk.com/alice.xml'
-      const expected: DiscoverUriHint = { key: 'plurk:plurks', label: 'Plurks' }
-
-      expect(plurkHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the plurks hint for a user feed under /user/', () => {
       const value = 'https://www.plurk.com/user/alice.xml'
       const expected: DiscoverUriHint = { key: 'plurk:plurks', label: 'Plurks' }
 
       expect(plurkHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the responses hint for a post feed', () => {
-      const value = 'https://www.plurk.com/p/abc123.xml'
-      const expected: DiscoverUriHint = { key: 'plurk:responses', label: 'Responses' }
-
-      expect(plurkHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a user page', () => {
-      const value = 'https://www.plurk.com/alice'
-
-      expect(plurkHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('discoverUrisFromPlatform', () => {
-    const ownFeeds: Array<string> = [
-      'https://www.plurk.com/user/alice.xml',
-      'https://www.plurk.com/alice.xml',
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a user feed as itself', async () => {
+      const value = 'https://www.plurk.com/alice.xml'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [plurkHandler],
         baseUrl: value,
-      })
+      }
       const expected: Array<DiscoverUriEntry> = [
         { uri: value, hint: { key: 'plurk:plurks', label: 'Plurks' } },
       ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

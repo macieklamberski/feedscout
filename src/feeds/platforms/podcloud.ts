@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { podcloud } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -6,13 +7,9 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type PodcloudUrl = { kind: 'show' }
 
-const domains = ['lepodcast.fr']
+const domains = podcloud.hosts.tenants
 
-const feeds = definePlatformFeeds(
-  'podcloud',
-  [{ key: 'podcast', main: '{scheme}://{host}/rss', aliases: ['{scheme}://{host}/feed'] }],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(podcloud.feeds)
 
 export const parsePodcloudUrl = (url: string): PodcloudUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

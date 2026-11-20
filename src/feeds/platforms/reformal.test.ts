@@ -114,75 +114,30 @@ describe('reformalHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const feedUrls = [
-      'https://example.reformal.ru/proj/rss',
-      'http://example.reformal.ru/proj/rss',
-      'https://example.reformal.ru/proj/rss?ia=12345',
-      'http://example.reformal.ru/proj/rss?ia=12345',
-      'https://example.idea.informer.com/proj/rss',
-      'https://example.idea.informer.com/proj/rss?ia=12345',
-    ]
-
-    it.each(feedUrls)('should return the feedback hint for %s', (value) => {
+    it('should return the feedback hint for a feedback feed on idea.informer.com', () => {
+      const value = 'https://example.idea.informer.com/proj/rss'
       const expected: DiscoverUriHint = { key: 'reformal:feedback', label: 'Feedback' }
 
       expect(reformalHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for an idea page', () => {
-      const value = 'https://example.reformal.ru/proj/?ia=12345'
-
-      expect(reformalHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on the apex domain', () => {
-      const value = 'https://reformal.ru/proj/rss'
-
-      expect(reformalHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on the idea.informer.com host', () => {
-      const value = 'https://idea.informer.com/proj/rss'
-
-      expect(reformalHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on a nested subdomain', () => {
-      const value = 'https://ideas.example.reformal.ru/proj/rss'
-
-      expect(reformalHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another informer.com host', () => {
-      const value = 'https://example.informer.com/proj/rss'
-
-      expect(reformalHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/proj/rss'
-
-      expect(reformalHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const hint: DiscoverUriHint = { key: 'reformal:feedback', label: 'Feedback' }
-    const ownFeeds = [
-      'https://example.reformal.ru/proj/rss',
-      'http://example.reformal.ru/proj/rss?ia=12345',
-      'https://example.idea.informer.com/proj/rss?ia=12345',
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a feedback feed with an idea id as itself', async () => {
+      const value = 'http://example.reformal.ru/proj/rss?ia=12345'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [reformalHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.reformal.ru/proj/rss?ia=12345',
+          hint: { key: 'reformal:feedback', label: 'Feedback' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

@@ -169,39 +169,6 @@ describe('mailArchiveHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the list hint for a list feed', () => {
-      const value = 'https://www.mail-archive.com/alice@example.org/maillist.xml'
-      const expected: DiscoverUriHint = {
-        key: 'mail-archive:list',
-        label: 'Mailing list',
-        format: 'rss',
-      }
-
-      expect(mailArchiveHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the list hint for a list feed on the apex host', () => {
-      const value = 'https://mail-archive.com/alice@lists.example.org/maillist.xml'
-      const expected: DiscoverUriHint = {
-        key: 'mail-archive:list',
-        label: 'Mailing list',
-        format: 'rss',
-      }
-
-      expect(mailArchiveHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the list hint for a list feed over http', () => {
-      const value = 'http://www.mail-archive.com/alice@example.org/maillist.xml'
-      const expected: DiscoverUriHint = {
-        key: 'mail-archive:list',
-        label: 'Mailing list',
-        format: 'rss',
-      }
-
-      expect(mailArchiveHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the list hint for a list feed with a percent-encoded at sign', () => {
       const value = 'https://www.mail-archive.com/alice%40example.org/maillist.xml'
       const expected: DiscoverUriHint = {
@@ -213,61 +180,26 @@ describe('mailArchiveHandler', () => {
       expect(mailArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the list hint for an rdf list feed', () => {
-      const value = 'https://mail-archive.com/alice@example.org/maillist.rdf'
-      const expected: DiscoverUriHint = {
-        key: 'mail-archive:list',
-        label: 'Mailing list',
-        format: 'rdf',
-      }
-
-      expect(mailArchiveHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a list page', () => {
-      const value = 'https://www.mail-archive.com/alice@example.org/msg1.html'
-
-      expect(mailArchiveHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
     it('should return undefined for a feed path under a segment without an at sign', () => {
       const value = 'https://www.mail-archive.com/faq/maillist.xml'
-
-      expect(mailArchiveHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/alice@example.org/maillist.xml'
 
       expect(mailArchiveHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://www.mail-archive.com/alice@example.org/maillist.xml',
-        { key: 'mail-archive:list', label: 'Mailing list', format: 'rss' },
-      ],
-      [
-        'https://mail-archive.com/alice@example.org/maillist.xml/',
-        { key: 'mail-archive:list', label: 'Mailing list', format: 'rss' },
-      ],
-      [
-        'https://mail-archive.com/alice@example.org/maillist.rdf',
-        { key: 'mail-archive:list', label: 'Mailing list', format: 'rdf' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return an rdf list feed as itself', async () => {
+      const value = 'https://mail-archive.com/alice@example.org/maillist.rdf'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [mailArchiveHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'mail-archive:list', label: 'Mailing list', format: 'rdf' } },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

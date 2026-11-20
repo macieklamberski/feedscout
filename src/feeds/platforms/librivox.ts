@@ -1,5 +1,6 @@
+import { librivox } from 'feedintel'
 import { getPathSegments, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
@@ -7,18 +8,13 @@ import { digitsRegex } from '../../common/utils.js'
 // Generic finds: audiobook.
 // Handler needed for: latest.
 
-const hosts = ['librivox.org']
+const hosts = librivox.hosts.exact
 
 const audiobookRegex = /^\/[^/]+\/?$/
 // An audiobook page links its feed by numeric id, which the slug does not carry.
 const feedIdRegex = /href="(?:https?|itpc):\/\/librivox\.org\/rss\/(\d+)"/i
 
-const feeds = definePlatformFeeds('librivox', [
-  // The site's new releases. It needs no value from the page, so `resolve` builds it on every
-  // LibriVox page. It goes before the audiobook row, whose placeholder its path also fills.
-  { key: 'latest', main: 'https://librivox.org/rss/latest_releases' },
-  { key: 'audiobook', main: 'https://librivox.org/rss/{audiobookId}' },
-])
+const feeds = withHintLabels(librivox.feeds)
 
 export type LibrivoxPage = { audiobookId: string }
 

@@ -1,5 +1,6 @@
+import { powerpress } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
@@ -11,8 +12,7 @@ const playerFunction = 'powerpress_pinw'
 const pinwUrlRegex = /powerpress_pinw\('(?<homeUrl>[^'?]*)\?powerpress_pinw=/
 const trailingSlashRegex = /\/$/
 
-// A site of any domain is known only by its marker, so its feed is built here but not claimed.
-const feeds = definePlatformFeeds('powerpress', [{ key: 'podcast', main: '{root}/feed/podcast/' }])
+const feeds = withHintLabels(powerpress.feeds)
 
 export const isPowerpressHtml = (content: string): boolean => {
   return content.includes(playerFunction)

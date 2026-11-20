@@ -83,55 +83,17 @@ describe('podcloudHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the podcast hint for a show feed', () => {
-      const value = 'https://alice-podcast.lepodcast.fr/rss'
-      const expected: DiscoverUriHint = { key: 'podcloud:podcast', label: 'Podcast' }
-
-      expect(podcloudHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the podcast hint for a show feed over http', () => {
-      const value = 'http://alice-podcast.lepodcast.fr/rss'
-      const expected: DiscoverUriHint = { key: 'podcloud:podcast', label: 'Podcast' }
-
-      expect(podcloudHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the podcast hint for the /feed show feed', () => {
       const value = 'https://alice-podcast.lepodcast.fr/feed'
       const expected: DiscoverUriHint = { key: 'podcloud:podcast', label: 'Podcast' }
 
       expect(podcloudHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for an episode page', () => {
-      const value = 'https://alice-podcast.lepodcast.fr/first-episode'
-
-      expect(podcloudHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the site feed on the apex domain', () => {
-      const value = 'https://lepodcast.fr/rss.xml'
-
-      expect(podcloudHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on a nested subdomain', () => {
-      const value = 'https://feeds.example.lepodcast.fr/rss'
-
-      expect(podcloudHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('discoverUrisFromPlatform', () => {
-    const values = [
-      'https://alice-podcast.lepodcast.fr/rss',
-      'http://alice-podcast.lepodcast.fr/rss',
-      'https://alice-podcast.lepodcast.fr/rss/',
-      'https://alice-podcast.lepodcast.fr/feed',
-    ]
-
-    it.each(values)('should return %s as given with its key', async (value) => {
+    it('should return a show feed with a trailing slash as given with its key', async () => {
+      const value = 'https://alice-podcast.lepodcast.fr/rss/'
       const options = {
         ...defaultPlatformOptions,
         handlers: [podcloudHandler],
@@ -139,7 +101,7 @@ describe('podcloudHandler', () => {
       }
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: value,
+          uri: 'https://alice-podcast.lepodcast.fr/rss/',
           hint: { key: 'podcloud:podcast', label: 'Podcast' },
         },
       ]

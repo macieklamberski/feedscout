@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { reformal } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -6,15 +7,9 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type ReformalUrl = { kind: 'project' }
 
-const domains = ['reformal.ru', 'idea.informer.com']
+const domains = reformal.hosts.tenants
 
-// A project serves the same feed with an `ia` idea id in the query, which the table reads as an
-// extra parameter.
-const feeds = definePlatformFeeds(
-  'reformal',
-  [{ key: 'feedback', main: '{scheme}://{host}/proj/rss' }],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(reformal.feeds)
 
 export const parseReformalUrl = (url: string): ReformalUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

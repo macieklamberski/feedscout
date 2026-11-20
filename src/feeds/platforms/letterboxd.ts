@@ -1,21 +1,15 @@
+import { letterboxd } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
 
 export type LetterboxdUrl = { kind: 'member'; username: string } | { kind: 'journal' }
 
-const hosts = ['letterboxd.com', 'www.letterboxd.com']
+const hosts = letterboxd.hosts.exact
 
-const feeds = definePlatformFeeds('letterboxd', [
-  { key: 'journal', main: 'https://letterboxd.com/journal/rss/' },
-  {
-    key: 'diary',
-    main: 'https://letterboxd.com/{username}/rss/',
-    aliases: ['https://embed.letterboxd.com/{username}/rss/'],
-  },
-])
+const feeds = withHintLabels(letterboxd.feeds)
 
 export const parseLetterboxdUrl = (url: string): LetterboxdUrl | undefined => {
   if (!isHostOf(url, hosts)) {

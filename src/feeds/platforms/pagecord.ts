@@ -1,5 +1,6 @@
+import { pagecord } from 'feedintel'
 import { getQueryParam, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -7,24 +8,9 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type PagecordUrl = { kind: 'blog' } | { kind: 'tag'; tag: string }
 
-const domains = ['pagecord.com']
+const domains = pagecord.hosts.tenants
 
-const feeds = definePlatformFeeds(
-  'pagecord',
-  [
-    {
-      key: 'blog',
-      main: '{scheme}://{host}/feed.xml',
-      aliases: ['{scheme}://{host}/feed', '{scheme}://{host}/feed.rss'],
-    },
-    {
-      key: 'tag',
-      main: '{scheme}://{host}/feed.xml?tag={tag}',
-      aliases: ['{scheme}://{host}/feed?tag={tag}', '{scheme}://{host}/feed.rss?tag={tag}'],
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(pagecord.feeds)
 
 export const parsePagecordUrl = (url: string): PagecordUrl | undefined => {
   const parsedUrl = parseUrl(url)

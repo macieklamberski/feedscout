@@ -1,5 +1,6 @@
+import { redcircle } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent, uuidRegex } from '../../common/utils.js'
 
@@ -7,13 +8,11 @@ import { getMetaContent, uuidRegex } from '../../common/utils.js'
 
 export type RedcirclePage = { showUuid: string }
 
-const hosts = ['redcircle.com', 'www.redcircle.com']
+const hosts = redcircle.hosts.exact
 
 const showRegex = /^\/shows\/([^/]+)(?:\/|$)/i
 
-const feeds = definePlatformFeeds('redcircle', [
-  { key: 'show', main: 'https://feeds.redcircle.com/{showUuid}' },
-])
+const feeds = withHintLabels(redcircle.feeds)
 
 const getUuidFromPath = (pathname: string): string | undefined => {
   const segment = showRegex.exec(pathname)?.[1]

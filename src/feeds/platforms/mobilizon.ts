@@ -1,5 +1,6 @@
+import { mobilizon } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
@@ -11,12 +12,7 @@ export type MobilizonUrl = { kind: 'group'; group: string } | { kind: 'instance'
 
 const groupPathRegex = /^\/@([^/]+)/
 
-// Mobilizon is self-hosted and known only by its page marker, so nothing in a feed URL names it
-// and the table only builds.
-const feeds = definePlatformFeeds('mobilizon', [
-  { key: 'group', main: '{root}/@{group}/feed/atom' },
-  { key: 'instance', main: '{root}/feed/instance/atom' },
-])
+const feeds = withHintLabels(mobilizon.feeds)
 
 // The page is a JavaScript shell, and this notice is the only text the server renders on every page.
 export const isMobilizonHtml = (content: string): boolean => {

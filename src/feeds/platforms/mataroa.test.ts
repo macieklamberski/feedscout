@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriHint } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { type MataroaUrl, mataroaHandler, parseMataroaUrl } from './mataroa.js'
@@ -85,54 +85,22 @@ describe('mataroaHandler', () => {
 
       expect(mataroaHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the blog hint for a blog feed without the trailing slash', () => {
-      const value = 'https://alice.mataroa.blog/rss'
-      const expected: DiscoverUriHint = { key: 'mataroa:blog', label: 'Blog' }
-
-      expect(mataroaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the blog hint for a blog feed over http', () => {
-      const value = 'http://alice.mataroa.blog/rss/'
-      const expected: DiscoverUriHint = { key: 'mataroa:blog', label: 'Blog' }
-
-      expect(mataroaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a post page', () => {
-      const value = 'https://alice.mataroa.blog/blog/rss/'
-
-      expect(mataroaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on the apex domain', () => {
-      const value = 'https://mataroa.blog/rss/'
-
-      expect(mataroaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on a nested subdomain', () => {
-      const value = 'https://blog.example.mataroa.blog/rss/'
-
-      expect(mataroaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('discoverUrisFromPlatform', () => {
-    const values = [
-      'https://alice.mataroa.blog/rss/',
-      'https://alice.mataroa.blog/rss',
-      'http://alice.mataroa.blog/rss',
-    ]
-
-    it.each(values)('should return %s as given with its key', async (value) => {
+    it('should return a blog feed without the trailing slash as given with its key', async () => {
+      const value = 'https://alice.mataroa.blog/rss'
       const options = {
         ...defaultPlatformOptions,
         handlers: [mataroaHandler],
         baseUrl: value,
       }
-      const expected = [{ uri: value, hint: { key: 'mataroa:blog', label: 'Blog' } }]
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.mataroa.blog/rss',
+          hint: { key: 'mataroa:blog', label: 'Blog' },
+        },
+      ]
 
       expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })

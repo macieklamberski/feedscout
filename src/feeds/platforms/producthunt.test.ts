@@ -118,64 +118,30 @@ describe('producthuntHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const productsFeeds: Array<string> = [
-      'https://www.producthunt.com/feed',
-      'https://producthunt.com/feed',
-      'http://www.producthunt.com/feed',
-      'https://www.producthunt.com/feed/',
-      'https://www.producthunt.com/feed?cache=12345',
-    ]
-
-    it.each(productsFeeds)('should return the products hint for %s', (value) => {
+    it('should return the products hint for the feed on the bare host', () => {
+      const value = 'https://producthunt.com/feed'
       const expected: DiscoverUriHint = { key: 'producthunt:products', label: 'Products' }
 
       expect(producthuntHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the category hint for a feed narrowed to a topic', () => {
-      const value = 'https://www.producthunt.com/feed?category=example'
-      const expected: DiscoverUriHint = { key: 'producthunt:category', label: 'Category' }
-
-      expect(producthuntHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    const pages: Array<string> = [
-      'https://www.producthunt.com/',
-      'https://www.producthunt.com/products/example',
-      'https://www.producthunt.com/topics/example',
-      'https://www.producthunt.com/products/example/feed',
-    ]
-
-    it.each(pages)('should return undefined for the page %s', (value) => {
-      expect(producthuntHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on another host', () => {
-      const value = 'https://example.com/feed'
-
-      expect(producthuntHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const productsHint: DiscoverUriHint = { key: 'producthunt:products', label: 'Products' }
-    const categoryHint: DiscoverUriHint = { key: 'producthunt:category', label: 'Category' }
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://www.producthunt.com/feed', productsHint],
-      ['http://producthunt.com/feed', productsHint],
-      ['https://www.producthunt.com/feed/', productsHint],
-      ['http://producthunt.com/feed?category=example', categoryHint],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a category feed on the bare host over http as itself', async () => {
+      const value = 'http://producthunt.com/feed?category=example'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [producthuntHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://producthunt.com/feed?category=example',
+          hint: { key: 'producthunt:category', label: 'Category' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

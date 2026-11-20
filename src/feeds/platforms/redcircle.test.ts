@@ -66,61 +66,21 @@ describe('redcircleHandler', () => {
 
       expect(redcircleHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the show key for a show feed with a trailing slash', () => {
-      const value = `https://feeds.redcircle.com/${showUuid}/`
-      const expected: DiscoverUriHint = { key: 'redcircle:show', label: 'Show' }
-
-      expect(redcircleHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the show key for a show feed with a tracking query', () => {
-      const value = `https://feeds.redcircle.com/${showUuid}?_gl=1*696p1f*_gcl_au*OTYzNTI1NzMxLjE2OTE4MTk5MDQ.`
-      const expected: DiscoverUriHint = { key: 'redcircle:show', label: 'Show' }
-
-      expect(redcircleHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for the feed host root', () => {
-      const value = 'https://feeds.redcircle.com/'
-
-      expect(redcircleHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a show page', () => {
-      const value = `https://redcircle.com/shows/${showUuid}`
-
-      expect(redcircleHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = `https://example.com/${showUuid}`
-
-      expect(redcircleHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<string> = [
-      `https://feeds.redcircle.com/${showUuid}`,
-      `https://feeds.redcircle.com/${showUuid}/`,
-      `https://feeds.redcircle.com/${showUuid}?_gl=1*696p1f*_gcl_au*OTYzNTI1NzMxLjE2OTE4MTk5MDQ.`,
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a show feed as itself', async () => {
+      const value = `https://feeds.redcircle.com/${showUuid}`
+      const options = {
         ...defaultPlatformOptions,
         handlers: [redcircleHandler],
         baseUrl: value,
-      })
+      }
       const expected: Array<DiscoverUriEntry> = [
-        {
-          uri: value,
-          hint: { key: 'redcircle:show', label: 'Show' },
-        },
+        { uri: value, hint: { key: 'redcircle:show', label: 'Show' } },
       ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

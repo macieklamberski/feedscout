@@ -1,22 +1,15 @@
+import { rakutenBlog } from 'feedintel'
 import { getPathSegments, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
 
 export type RakutenBlogUrl = { kind: 'blog'; username: string }
 
-const hosts = ['plaza.rakuten.co.jp']
+const hosts = rakutenBlog.hosts.exact
 
-// A blog page links its feed under `/rss/`, and the feed host serves the same feed at the blog's
-// root too, so the table reads both paths.
-const feeds = definePlatformFeeds('rakuten-blog', [
-  {
-    key: 'posts',
-    main: 'https://api.plaza.rakuten.ne.jp/{username}/rss/',
-    aliases: ['https://api.plaza.rakuten.ne.jp/{username}/'],
-  },
-])
+const feeds = withHintLabels(rakutenBlog.feeds)
 
 export const parseRakutenBlogUrl = (url: string): RakutenBlogUrl | undefined => {
   if (!isHostOf(url, hosts)) {
