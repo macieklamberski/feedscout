@@ -174,12 +174,6 @@ describe('fc2Handler', () => {
 
       expect(fc2Handler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a feed query on a dotted subdomain of a blog host', () => {
-      const value = 'https://www.example.blog.fc2.com/?xml'
-
-      expect(fc2Handler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

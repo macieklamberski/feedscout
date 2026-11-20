@@ -157,12 +157,6 @@ describe('comicfuryHandler', () => {
 
       expect(comicfuryHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a reader feed naming an invalid comic', () => {
-      const value = 'https://comicfury.com/read/example.com/rss'
-
-      expect(comicfuryHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

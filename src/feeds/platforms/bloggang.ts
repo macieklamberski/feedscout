@@ -70,12 +70,5 @@ export const bloggangHandler: PlatformHandler = {
     return [page.getFeedEntry('posts', { host: `${parsed.username}.bloggang.com` })]
   },
 
-  // m.bloggang.com/rss redirects to www.bloggang.com/rss/, so only a blog host serves a feed.
-  getFeedHint: (url) => {
-    if (!parseBloggangUrl(url)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

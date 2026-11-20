@@ -1,6 +1,6 @@
 import { pinterest } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf, isRegion, parseUrl } from 'trousse'
-import { withHintLabel, withHintLabels } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -72,5 +72,5 @@ export const pinterestHandler: PlatformHandler = {
     return [feeds.getFeedEntry('pins', { username: parsed.username })]
   },
 
-  getFeedHint: (url) => withHintLabel(pinterest.feeds.getFeedHint(url)),
+  getFeedHint: feeds.getFeedHint,
 }

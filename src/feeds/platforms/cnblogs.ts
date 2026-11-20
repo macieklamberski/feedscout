@@ -8,7 +8,6 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 export type CnblogsUrl = { kind: 'blog'; username: string }
 
 const hosts = cnblogs.hosts.exact
-const feedHosts = ['feed.cnblogs.com']
 
 const feeds = withHintLabels(cnblogs.feeds)
 
@@ -42,18 +41,5 @@ export const cnblogsHandler: PlatformHandler = {
     return [feeds.getFeedEntry('posts', { username: parsed.username })]
   },
 
-  // The table reads any first segment as a name, so the page parser refuses a dotted one first:
-  // www.cnblogs.com/skins.aspx/rss answers 404.
-  getFeedHint: (url) => {
-    // The feed host serves feeds only, so its URLs skip the page parser.
-    if (isHostOf(url, feedHosts)) {
-      return feeds.getFeedHint(url)
-    }
-
-    if (!parseCnblogsUrl(url)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

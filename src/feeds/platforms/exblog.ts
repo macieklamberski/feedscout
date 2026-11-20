@@ -60,14 +60,5 @@ export const exblogHandler: PlatformHandler = {
     return [page.getFeedEntry('posts', {}, 'rss'), page.getFeedEntry('posts', {}, 'atom')]
   },
 
-  getFeedHint: (url) => {
-    const hint = feeds.getFeedHint(url)
-
-    // The table reads any segment after `i`, while a category id is digits only.
-    if (hint?.key === 'exblog:category' && parseExblogUrl(url)?.kind !== 'category') {
-      return
-    }
-
-    return hint
-  },
+  getFeedHint: feeds.getFeedHint,
 }

@@ -1,8 +1,7 @@
 import { librivox } from 'feedintel'
-import { getPathSegments, isHostOf } from 'trousse'
+import { isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: audiobook.
@@ -50,15 +49,5 @@ export const librivoxHandler: PlatformHandler = {
     ]
   },
 
-  getFeedHint: (url) => {
-    const hint = feeds.getFeedHint(url)
-    const [, audiobookId] = getPathSegments(url)
-
-    // An audiobook id is digits, so a file such as rss/robots.txt is not one.
-    if (!hint || (hint.key === 'librivox:audiobook' && !digitsRegex.test(audiobookId))) {
-      return
-    }
-
-    return hint
-  },
+  getFeedHint: feeds.getFeedHint,
 }

@@ -253,19 +253,11 @@ export const youtubeHandler: PlatformHandler = {
     }
 
     const channelId = getQueryParam(parsedUrl, 'channel_id')
-
-    if (channelId) {
-      if (channelIdFormatRegex.test(channelId)) {
-        return composeHint('youtube:all')
-      }
-
-      return
-    }
-
     const playlistId = getQueryParam(parsedUrl, 'playlist_id')
 
-    // The legacy user feed names neither a channel ID nor a playlist.
-    if (!playlistId) {
+    // The table reads every playlist feed under one key, so only a feed that names a playlist and
+    // no channel is keyed by the list it names.
+    if (channelId || !playlistId) {
       return hint
     }
 

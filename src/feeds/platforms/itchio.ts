@@ -1,8 +1,8 @@
 import { itchio } from 'feedintel'
-import { getAnyOf, isAnyOf, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
+import { getAnyOf, isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: devlog.
@@ -34,12 +34,9 @@ const sortRegex = /^\/games\/([^/]+)/i
 const combinedListingRegex = /^\/games\/([^/]+(?:\/[^/]+)+)/i
 // A listing of one sort and one tag or creator, such as newest/tag-horror.
 const sortedListingRegex = /^(?<sort>[^/]+)\/(?<filter>tag|by)-(?<value>[^/]+)$/i
-// The first filter of a feed under the sorted tag and creator rows.
-const listingSortRegex = /^\/games\/([^/]+)\/[^/]/i
 const firstSegmentRegex = /^\/([^/]+)/
 const gamesRegex = /^\/games\/?$/i
 const devlogsRegex = /^\/devlogs\/?$/i
-const sectionFeedRegex = /^\/([^/]+)\.xml\/?$/i
 
 const sections = [
   'tools',
@@ -294,29 +291,5 @@ export const itchioHandler: PlatformHandler = {
     ]
   },
 
-  // itch.io serves its sitemap at /sitemap.xml, so a single-segment feed is a section feed only
-  // for a section the platform lists. A sorted tag or creator row takes any first filter, and one
-  // that is no sort makes the feed a games listing.
-  getFeedHint: (url) => {
-    const parsedUrl = parseUrl(url)
-    const hint = feeds.getFeedHint(url)
-
-    if (!parsedUrl || !hint) {
-      return
-    }
-
-    const section = parsedUrl.pathname.match(sectionFeedRegex)?.[1]
-
-    if (hint.key === 'itchio:section' && !isAnyOf(section, sections)) {
-      return
-    }
-
-    const sort = parsedUrl.pathname.match(listingSortRegex)?.[1]
-
-    if (isAnyOf(hint.key, ['itchio:tag', 'itchio:creator']) && sort && !getAnyOf(sort, sorts)) {
-      return composeHint('itchio:games')
-    }
-
-    return hint
-  },
+  getFeedHint: feeds.getFeedHint,
 }

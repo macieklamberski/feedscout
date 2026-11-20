@@ -1,5 +1,5 @@
 import { spotifyForCreators } from 'feedintel'
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -15,7 +15,6 @@ const showRegex = /^\/pod\/(?:show|profile)\/[^/]+(?:\/|$)/i
 // Only 2 of the 4 shows measured also show a visible `/s/` link, which generic discovery reads,
 // so the block above holds for those shows alone.
 const feedUrlRegex = /anchor\.fm\/(?:s\/)?([\da-f]+)\/podcast\/rss/i
-const stationIdRegex = /^[\da-f]/i
 
 const feeds = withHintLabels(spotifyForCreators.feeds)
 
@@ -58,14 +57,5 @@ export const spotifyForCreatorsHandler: PlatformHandler = {
     return [feeds.getFeedEntry('podcast', { stationId: page.stationId })]
   },
 
-  // A station id starts with hex, and a word in its place answers 404.
-  getFeedHint: (url) => {
-    const [, stationId] = getPathSegments(url)
-
-    if (!stationId || !stationIdRegex.test(stationId)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

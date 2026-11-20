@@ -160,20 +160,6 @@ describe('ivooxHandler', () => {
 
       expect(ivooxHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the group hint for a group feed', () => {
-      const value = 'https://www.ivoox.com/en/feed_fl_12345_1.xml'
-      const expected: DiscoverUriHint = { key: 'ivoox:group', label: 'Group' }
-
-      expect(ivooxHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the playlist hint for a playlist feed', () => {
-      const value = 'https://www.ivoox.com/en/itunes-feed_fp_12345-_24062013_1.xml'
-      const expected: DiscoverUriHint = { key: 'ivoox:playlist', label: 'Playlist' }
-
-      expect(ivooxHandler.getFeedHint?.(value)).toEqual(expected)
-    })
   })
 
   describe('own feeds through the Platform method', () => {

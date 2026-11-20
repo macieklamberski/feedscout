@@ -138,12 +138,6 @@ describe('spotifyForCreatorsHandler', () => {
 
       expect(spotifyForCreatorsHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a station id that does not start with hex', () => {
-      const value = 'https://anchor.fm/s/z5f7f0e18/podcast/rss'
-
-      expect(spotifyForCreatorsHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

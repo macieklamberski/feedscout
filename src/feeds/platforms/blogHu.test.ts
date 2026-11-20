@@ -226,23 +226,6 @@ describe('blogHuHandler', () => {
 
       expect(blogHuHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the post comments hint for a feed under a dated post', () => {
-      const value = 'https://example.blog.hu/2013/06/30/example_post/atom'
-      const expected: DiscoverUriHint = {
-        key: 'blog-hu:post-comments',
-        label: 'Post comments',
-        format: 'atom',
-      }
-
-      expect(blogHuHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a feed under four segments that are not a dated post', () => {
-      const value = 'https://example.blog.hu/comments/comments/comments/comments/rss2'
-
-      expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

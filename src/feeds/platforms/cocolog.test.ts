@@ -174,12 +174,6 @@ describe('cocologHandler', () => {
 
       expect(cocologHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a feed path under a dotted first segment', () => {
-      const value = 'https://example.cocolog-nifty.com/.shared/atom.xml'
-
-      expect(cocologHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

@@ -1,5 +1,5 @@
 import { megaphone } from 'feedintel'
-import { getPathSegments, getQueryParam, isHostOf } from 'trousse'
+import { getQueryParam, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
@@ -85,15 +85,5 @@ export const megaphoneHandler: PlatformHandler = {
     return [feeds.getFeedEntry('podcast', { showId: page.showId })]
   },
 
-  // The feeds host also serves files such as robots.txt, so a show id is word characters and
-  // hyphens, as the pages give it.
-  getFeedHint: (url) => {
-    const [showId] = getPathSegments(url)
-
-    if (!showId || !wordOrHyphenRegex.test(showId)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

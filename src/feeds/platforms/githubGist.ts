@@ -91,16 +91,5 @@ export const githubGistHandler: PlatformHandler = {
     ]
   },
 
-  getFeedHint: (url) => {
-    const [name, section] = getPathSegments(url)
-    const username = section ? name : name?.replace(feedSuffixRegex, '')
-
-    // GitHub names carry no dots, and /discover is the site's page, so /discover/starred.atom
-    // names no user.
-    if (!username || username.includes('.') || (section && isAnyOf(username, 'discover'))) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

@@ -92,12 +92,5 @@ export const fc2Handler: PlatformHandler = {
     ]
   },
 
-  // The table strips a `www` label above a blog, so the page parser refuses that host first.
-  getFeedHint: (url) => {
-    if (!parseFc2Url(url)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

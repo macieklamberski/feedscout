@@ -17,7 +17,6 @@ const settingsRootRegex = /"root":"(?<root>\/[^"]*)"/
 const sessionCookieRegex = /^_tender\d*_session$/
 const helpRootRegex = /^\/help(?:\/|$)/i
 const discussionPathRegex = /^\/discussions\/(?<category>[^/]+)\/(?<discussion>\d+[^/]*)\/?$/i
-const discussionFeedPathRegex = /\/\d+[^/]*\.atom\/?$/i
 const trailingSlashRegex = /\/$/
 // A missing page answers 404 with the stock Rails error page inside the site layout, and a
 // made-up category would otherwise get the site's feed.
@@ -127,15 +126,5 @@ export const tenderHandler: PlatformHandler = {
     ]
   },
 
-  // A discussion's id leads its path segment, and `new.atom` under a category is the form for a
-  // new discussion.
-  getFeedHint: (url) => {
-    const hint = feeds.getFeedHint(url)
-
-    if (hint?.key === 'tender:discussion' && !discussionFeedPathRegex.test(new URL(url).pathname)) {
-      return
-    }
-
-    return hint
-  },
+  getFeedHint: feeds.getFeedHint,
 }

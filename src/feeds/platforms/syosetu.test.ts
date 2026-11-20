@@ -86,19 +86,6 @@ describe('syosetuHandler', () => {
 
       expect(syosetuHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the all novels hint for the all novels feed', () => {
-      const value = 'https://api.syosetu.com/allnovel.Atom'
-      const expected: DiscoverUriHint = { key: 'syosetu:all-novels', label: 'All novels' }
-
-      expect(syosetuHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a word in place of the writer id', () => {
-      const value = 'https://api.syosetu.com/writernovel/alice.Atom'
-
-      expect(syosetuHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('as a feed URL input', () => {

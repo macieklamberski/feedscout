@@ -137,12 +137,6 @@ describe('megaphoneHandler', () => {
 
       expect(megaphoneHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a file on the feeds host', () => {
-      const value = 'https://feeds.megaphone.fm/robots.txt'
-
-      expect(megaphoneHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

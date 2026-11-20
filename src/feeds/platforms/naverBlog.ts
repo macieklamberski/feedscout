@@ -12,9 +12,6 @@ export const hosts = naverBlog.hosts.exact
 
 const feeds = withHintLabels(naverBlog.feeds)
 
-// A blog id carries no dot, so a file on the feed host such as `/robots.txt` is no blog's feed.
-const feedHostFileRegex = /^\/[^/]*\.(?!xml\/?$)[^/]*\/?$/i
-
 export const parseNaverBlogUrl = (url: string): NaverBlogUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -65,13 +62,5 @@ export const naverBlogHandler: PlatformHandler = {
     ]
   },
 
-  getFeedHint: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl || feedHostFileRegex.test(parsedUrl.pathname)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

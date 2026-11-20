@@ -89,16 +89,5 @@ export const zennHandler: PlatformHandler = {
     return [feeds.getFeedEntry('trending')]
   },
 
-  // The user rows read any first segment as a name, so zenn.dev/topics/feed, the page of a topic
-  // named feed, is refused when the page parser reads it as a topic or publication.
-  getFeedHint: (url) => {
-    const hint = feeds.getFeedHint(url)
-    const isUserFeed = hint?.key === 'zenn:posts' || hint?.key === 'zenn:all-posts'
-
-    if (isUserFeed && parseZennUrl(url)?.kind !== 'post') {
-      return
-    }
-
-    return hint
-  },
+  getFeedHint: feeds.getFeedHint,
 }

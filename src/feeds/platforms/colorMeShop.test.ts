@@ -139,12 +139,6 @@ describe('colorMeShopHandler', () => {
 
       expect(colorMeShopHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a feed on a numbered host', () => {
-      const value = 'https://img15.shop-pro.jp/?mode=rss'
-
-      expect(colorMeShopHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

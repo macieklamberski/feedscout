@@ -861,66 +861,6 @@ describe('itchioHandler', () => {
 
       expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the devlog hint for a game devlog feed', () => {
-      const value = 'https://alice.itch.io/x-moon/devlog.rss'
-      const expected: DiscoverUriHint = { key: 'itchio:devlog', label: 'Devlog' }
-
-      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for a sorted tag listing feed with a sort word', () => {
-      const value = 'https://itch.io/games/newest/tag-horror.xml'
-      const expected: DiscoverUriHint = { key: 'itchio:tag', label: 'Tag' }
-
-      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the games hint for a tag listing feed with another filter', () => {
-      const value = 'https://itch.io/games/genre-puzzle/tag-pixel-art.xml'
-      const expected: DiscoverUriHint = { key: 'itchio:games', label: 'Games' }
-
-      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the games hint for a creator listing feed with another filter', () => {
-      const value = 'https://itch.io/games/tag-horror/by-alice.xml'
-      const expected: DiscoverUriHint = { key: 'itchio:games', label: 'Games' }
-
-      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the section hint for a section feed', () => {
-      const value = 'https://itch.io/tools.xml'
-      const expected: DiscoverUriHint = { key: 'itchio:section', label: 'Section' }
-
-      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the section hint for a section feed with a trailing slash', () => {
-      const value = 'https://itch.io/tools.xml/'
-      const expected: DiscoverUriHint = { key: 'itchio:section', label: 'Section' }
-
-      expect(itchioHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for the sitemap', () => {
-      const value = 'https://itch.io/sitemap.xml'
-
-      expect(itchioHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a listing page', () => {
-      const value = 'https://itch.io/games/newest/tag-horror'
-
-      expect(itchioHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for an invalid URL', () => {
-      const value = 'not-a-url'
-
-      expect(itchioHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {

@@ -355,13 +355,6 @@ describe('bubblelifeHandler', () => {
 
       expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the topic hint for a topic feed', () => {
-      const value = 'https://example.bubblelife.com/rss?c=12345&t=67890'
-      const expected: DiscoverUriHint = { key: 'bubblelife:topic', label: 'Topic' }
-
-      expect(bubblelifeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
   })
 
   describe('own feeds through the Platform method', () => {

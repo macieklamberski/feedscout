@@ -1,5 +1,5 @@
 import { stackExchange } from 'feedintel'
-import { getAnyOf, getQueryParam, isAnyOf, isHostOf, isHostOrSubdomainOf, parseUrl } from 'trousse'
+import { getAnyOf, getQueryParam, isHostOf, isHostOrSubdomainOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
@@ -124,16 +124,5 @@ export const stackExchangeHandler: PlatformHandler = {
     return [page.getFeedEntry('newest')]
   },
 
-  getFeedHint: (url) => {
-    const hint = feeds.getFeedHint(url)
-
-    if (
-      isHostOf(url, networkHosts) &&
-      !isAnyOf(hint?.key, ['stackexchange:newest', 'stackexchange:tagset'])
-    ) {
-      return
-    }
-
-    return hint
-  },
+  getFeedHint: feeds.getFeedHint,
 }

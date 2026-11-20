@@ -1,6 +1,6 @@
 import { ivoox } from 'feedintel'
 import { isHostOf } from 'trousse'
-import { withHintLabel, withHintLabels } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Not discoverable without handler.
@@ -70,5 +70,5 @@ export const ivooxHandler: PlatformHandler = {
     return [feeds.getFeedEntry('podcast', { podcastId: page.podcastId })]
   },
 
-  getFeedHint: (url) => withHintLabel(ivoox.feeds.getFeedHint(url)),
+  getFeedHint: feeds.getFeedHint,
 }

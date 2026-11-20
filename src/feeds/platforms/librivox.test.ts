@@ -74,37 +74,6 @@ describe('librivoxHandler', () => {
 
       expect(librivoxHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the new releases hint for the new releases feed', () => {
-      const value = 'https://librivox.org/rss/latest_releases'
-      const expected: DiscoverUriHint = { key: 'librivox:latest', label: 'New releases' }
-
-      expect(librivoxHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for another named path under rss', () => {
-      const value = 'https://librivox.org/rss/example'
-
-      expect(librivoxHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a file under rss', () => {
-      const value = 'https://librivox.org/rss/robots.txt'
-
-      expect(librivoxHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for an audiobook page', () => {
-      const value = 'https://librivox.org/example-by-alice/'
-
-      expect(librivoxHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for an invalid URL', () => {
-      const value = 'not a url'
-
-      expect(librivoxHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
