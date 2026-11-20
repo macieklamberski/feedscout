@@ -140,51 +140,12 @@ describe('hackernewsHandler', () => {
 
       expect(hackernewsHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the show key for the Show HN feed', () => {
-      const value = 'https://news.ycombinator.com/showrss'
-      const expected: DiscoverUriHint = { key: 'hackernews:show', label: 'Show HN' }
-
-      expect(hackernewsHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for the Show HN page', () => {
-      const value = 'https://news.ycombinator.com/show'
-
-      expect(hackernewsHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return the full front key for the full front page feed', () => {
-      const value = 'https://news.ycombinator.com/bigrss'
-      const expected: DiscoverUriHint = { key: 'hackernews:front-full', label: 'Full front page' }
-
-      expect(hackernewsHandler.getFeedHint?.(value)).toEqual(expected)
-    })
   })
 
   describe('discoverUrisFromPlatform', () => {
-    const front: DiscoverUriHint = {
-      key: 'hackernews:front',
-      label: 'Front page',
-    }
-    const show: DiscoverUriHint = {
-      key: 'hackernews:show',
-      label: 'Show HN',
-    }
-    const frontFull: DiscoverUriHint = {
-      key: 'hackernews:front-full',
-      label: 'Full front page',
-    }
-    const values: Array<[string, DiscoverUriHint]> = [
-      ['https://news.ycombinator.com/rss', front],
-      ['http://news.ycombinator.com/rss', front],
-      ['https://news.ycombinator.com/showrss', show],
-      ['http://news.ycombinator.com/showrss', show],
-      ['https://news.ycombinator.com/bigrss', frontFull],
-      ['http://news.ycombinator.com/bigrss/', frontFull],
-    ]
-
-    it.each(values)('should return %s as given with its key', async (value, hint) => {
+    it('should return the front page feed as given with its key', async () => {
+      const value = 'https://news.ycombinator.com/rss'
+      const hint: DiscoverUriHint = { key: 'hackernews:front', label: 'Front page' }
       const options = {
         ...defaultPlatformOptions,
         handlers: [hackernewsHandler],

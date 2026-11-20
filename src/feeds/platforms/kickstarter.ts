@@ -1,5 +1,6 @@
+import { kickstarter } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -11,17 +12,9 @@ export type KickstarterUrl =
   | { kind: 'page'; name: string }
   | { kind: 'home' }
 
-const hosts = ['kickstarter.com', 'www.kickstarter.com']
+const hosts = kickstarter.hosts.exact
 
-const feeds = definePlatformFeeds('kickstarter', [
-  {
-    key: 'updates',
-    main: 'https://www.kickstarter.com/projects/{creator}/{project}/posts.atom',
-  },
-  { key: 'projects', main: 'https://www.kickstarter.com/projects/feed.atom' },
-  // A curated page of projects, such as `/pages/tees`.
-  { key: 'page', main: 'https://www.kickstarter.com/pages/{name}.atom' },
-])
+const feeds = withHintLabels(kickstarter.feeds)
 
 export const parseKickstarterUrl = (url: string): KickstarterUrl | undefined => {
   if (!isHostOf(url, hosts)) {

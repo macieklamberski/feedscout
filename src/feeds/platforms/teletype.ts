@@ -1,5 +1,6 @@
+import { teletype } from 'feedintel'
 import { decodeSegment, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -7,14 +8,11 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type TeletypeUrl = { kind: 'blog'; username: string }
 
-const hosts = ['teletype.in']
+const hosts = teletype.hosts.exact
 
 const blogRegex = /^\/@([^/]+)/
 
-const feeds = definePlatformFeeds('teletype', [
-  { key: 'posts', main: 'https://teletype.in/rss/{username}', format: 'rss' },
-  { key: 'posts', main: 'https://teletype.in/atom/{username}', format: 'atom' },
-])
+const feeds = withHintLabels(teletype.feeds)
 
 export const parseTeletypeUrl = (url: string): TeletypeUrl | undefined => {
   const parsedUrl = parseUrl(url)

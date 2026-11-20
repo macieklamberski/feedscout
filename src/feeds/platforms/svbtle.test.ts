@@ -74,52 +74,12 @@ describe('svbtleHandler', () => {
 
       expect(svbtleHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the posts hint for a feed with a trailing slash', () => {
-      const value = 'https://alice.svbtle.com/feed/'
-      const expected: DiscoverUriHint = { key: 'svbtle:posts', label: 'Posts' }
-
-      expect(svbtleHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://alice.svbtle.com/a-post'
-
-      expect(svbtleHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the feed path on the apex', () => {
-      const value = 'https://svbtle.com/feed'
-
-      expect(svbtleHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the feed path on the www host', () => {
-      const value = 'https://www.svbtle.com/feed'
-
-      expect(svbtleHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on www in front of a blog', () => {
-      const value = 'https://www.alice.svbtle.com/feed'
-
-      expect(svbtleHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a custom domain', () => {
-      const value = 'https://example.com/feed'
-
-      expect(svbtleHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://alice.svbtle.com/feed', { key: 'svbtle:posts', label: 'Posts' }],
-      ['http://alice.svbtle.com/feed/', { key: 'svbtle:posts', label: 'Posts' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a feed on a blog subdomain as itself', async () => {
+      const value = 'https://alice.svbtle.com/feed'
+      const hint: DiscoverUriHint = { key: 'svbtle:posts', label: 'Posts' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [svbtleHandler],

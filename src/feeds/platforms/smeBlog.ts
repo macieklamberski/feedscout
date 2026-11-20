@@ -1,17 +1,15 @@
+import { smeBlog } from 'feedintel'
 import { getPathSegments, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
 
 export type SmeBlogUrl = { kind: 'blog'; username: string } | { kind: 'home' }
 
-const hosts = ['blog.sme.sk']
+const hosts = smeBlog.hosts.exact
 
-const feeds = definePlatformFeeds('sme-blog', [
-  { key: 'site', main: 'https://blog.sme.sk/rss' },
-  { key: 'posts', main: 'https://blog.sme.sk/{username}/rss' },
-])
+const feeds = withHintLabels(smeBlog.feeds)
 
 export const parseSmeBlogUrl = (url: string): SmeBlogUrl | undefined => {
   if (!isHostOf(url, hosts)) {

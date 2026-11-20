@@ -1,5 +1,6 @@
+import { naverBlog } from 'feedintel'
 import { getPathSegments, getQueryParam, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -7,40 +8,9 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type NaverBlogUrl = { kind: 'blog'; blogId: string } | { kind: 'post'; blogId: string }
 
-export const hosts = ['blog.naver.com', 'm.blog.naver.com']
+export const hosts = naverBlog.hosts.exact
 
-// The feed host serves feeds only, so it stays out of `hosts` and its pages are not read as blogs.
-// The bare path and the old `blogRss.nhn` script serve the same items as `.xml`, and each serves
-// RSS 1.0 under `rss=1.0` and Atom under `atom=0.3`. The `.xml` path is the one blog pages link.
-const feeds = definePlatformFeeds('naver-blog', [
-  {
-    key: 'blog',
-    main: 'https://rss.blog.naver.com/{blogId}.xml',
-    format: 'rss',
-    aliases: [
-      'https://rss.blog.naver.com/{blogId}',
-      'https://rss.blog.naver.com/rss/blogRss.nhn?blogId={blogId}',
-    ],
-  },
-  {
-    key: 'blog',
-    main: 'https://rss.blog.naver.com/{blogId}.xml?rss=1.0',
-    format: 'rdf',
-    aliases: [
-      'https://rss.blog.naver.com/{blogId}?rss=1.0',
-      'https://rss.blog.naver.com/rss/blogRss.nhn?blogId={blogId}&rss=1.0',
-    ],
-  },
-  {
-    key: 'blog',
-    main: 'https://rss.blog.naver.com/{blogId}.xml?atom=0.3',
-    format: 'atom',
-    aliases: [
-      'https://rss.blog.naver.com/{blogId}?atom=0.3',
-      'https://rss.blog.naver.com/rss/blogRss.nhn?atom=0.3&blogId={blogId}',
-    ],
-  },
-])
+const feeds = withHintLabels(naverBlog.feeds)
 
 // A blog id carries no dot, so a file on the feed host such as `/robots.txt` is no blog's feed.
 const feedHostFileRegex = /^\/[^/]*\.(?!xml\/?$)[^/]*\/?$/i

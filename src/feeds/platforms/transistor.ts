@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { transistor } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -7,14 +8,12 @@ import { getTenantSubdomain } from '../../common/utils.js'
 export type TransistorUrl = { kind: 'show'; slug: string }
 export type TransistorPage = TransistorUrl
 
-const domains = ['transistor.fm']
+const domains = transistor.hosts.tenants
 
 // The show page links its feed, and the feed slug is not always the subdomain.
 const feedSlugRegex = /https:\/\/feeds\.transistor\.fm\/([^/"'?#\s<>&\\]+)/i
 
-const feeds = definePlatformFeeds('transistor', [
-  { key: 'podcast', main: 'https://feeds.transistor.fm/{slug}' },
-])
+const feeds = withHintLabels(transistor.feeds)
 
 export const parseTransistorUrl = (url: string): TransistorUrl | undefined => {
   const slug = getTenantSubdomain(url, domains)

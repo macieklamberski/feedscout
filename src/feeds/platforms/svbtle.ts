@@ -1,5 +1,6 @@
+import { svbtle } from 'feedintel'
 import { isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -7,13 +8,7 @@ import { hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // `www.svbtle.com/feed` answers 200 with an HTML page, and `svbtle.com/{user}/feed` does not exist.
 const platformHosts = ['svbtle.com', 'www.svbtle.com']
-const domains = ['svbtle.com']
-
-// A blog on a custom domain is known only by its marker, so its feed is built here but claimed
-// only on Svbtle's own domain.
-const feeds = definePlatformFeeds('svbtle', [{ key: 'posts', main: '{scheme}://{host}/feed' }], {
-  hosts: { tenants: domains },
-})
+const feeds = withHintLabels(svbtle.feeds)
 
 export const isSvbtleHtml = (content: string): boolean => {
   return (

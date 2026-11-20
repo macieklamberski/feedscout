@@ -1,5 +1,6 @@
+import { hackernews } from 'feedintel'
 import { isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -8,16 +9,11 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type HackernewsUrl = { kind: 'show' } | { kind: 'home' }
 
-const hosts = ['news.ycombinator.com']
+const hosts = hackernews.hosts.exact
 
 const showRegex = /^\/show(?:new)?\/?$/i
 
-const feeds = definePlatformFeeds('hackernews', [
-  { key: 'front', main: 'https://news.ycombinator.com/rss' },
-  { key: 'show', main: 'https://news.ycombinator.com/showrss' },
-  // The front page ranking at 300 stories, against 30 in `/rss`.
-  { key: 'front-full', main: 'https://news.ycombinator.com/bigrss' },
-])
+const feeds = withHintLabels(hackernews.feeds)
 
 export const parseHackernewsUrl = (url: string): HackernewsUrl | undefined => {
   if (!isHostOf(url, hosts)) {

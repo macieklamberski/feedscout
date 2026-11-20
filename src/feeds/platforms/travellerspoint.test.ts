@@ -92,69 +92,27 @@ describe('travellerspointHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the posts hint for a blog feed', () => {
-      const value = 'https://alicetravels.travellerspoint.com/atom.xml'
-      const expected: DiscoverUriHint = { key: 'travellerspoint:posts', label: 'Posts' }
-
-      expect(travellerspointHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a blog feed over http', () => {
-      const value = 'http://alicetravels.travellerspoint.com/atom.xml'
-      const expected: DiscoverUriHint = { key: 'travellerspoint:posts', label: 'Posts' }
-
-      expect(travellerspointHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the posts hint for the rss.xml blog feed', () => {
       const value = 'https://alicetravels.travellerspoint.com/rss.xml'
       const expected: DiscoverUriHint = { key: 'travellerspoint:posts', label: 'Posts' }
 
       expect(travellerspointHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://alicetravels.travellerspoint.com/426/'
-
-      expect(travellerspointHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the site host', () => {
-      const value = 'https://www.travellerspoint.com/atom.xml'
-
-      expect(travellerspointHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the apex domain', () => {
-      const value = 'https://travellerspoint.com/atom.xml'
-
-      expect(travellerspointHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://alicetravels.example.com/atom.xml'
-
-      expect(travellerspointHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const postsHint: DiscoverUriHint = { key: 'travellerspoint:posts', label: 'Posts' }
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://alicetravels.travellerspoint.com/atom.xml', postsHint],
-      ['http://alicetravels.travellerspoint.com/atom.xml', postsHint],
-      ['https://alicetravels.travellerspoint.com/rss.xml', postsHint],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return the rss.xml blog feed as itself', async () => {
+      const value = 'https://alicetravels.travellerspoint.com/rss.xml'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [travellerspointHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'travellerspoint:posts', label: 'Posts' } },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

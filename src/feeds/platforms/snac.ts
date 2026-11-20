@@ -1,5 +1,6 @@
+import { snac } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -10,9 +11,7 @@ export type SnacUrl = { kind: 'user'; path: string }
 const trailingSlashRegex = /\/$/
 const postOrHistoryRegex = /\/[ph]\/[^/]+$/i
 
-// An instance of any domain is known only by its marker, so its feed is built here but not
-// claimed. The root holds the sub-path the instance is mounted under.
-const feeds = definePlatformFeeds('snac', [{ key: 'posts', main: '{root}/{user}.rss' }])
+const feeds = withHintLabels(snac.feeds)
 
 // `snac/` with the slash, since the value is compared as a prefix and `snac` matches `snacks`.
 export const isSnacHtml = (content: string): boolean => {

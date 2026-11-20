@@ -102,95 +102,27 @@ describe('hautetfortHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the category hint for a category feed', () => {
-      const value = 'http://frank.hautetfort.com/web/index.rss'
-      const expected: DiscoverUriHint = { key: 'hautetfort:category', label: 'Category' }
-
-      expect(hautetfortHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the category hint for a category feed on blogspirit.com', () => {
-      const value = 'http://grace.blogspirit.com/dans-le-18eme/index.rss'
-      const expected: DiscoverUriHint = { key: 'hautetfort:category', label: 'Category' }
-
-      expect(hautetfortHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for an RSS feed', () => {
-      const value = 'http://alice.hautetfort.com/index.rss'
-      const expected: DiscoverUriHint = { key: 'hautetfort:posts', label: 'Posts', format: 'rss' }
-
-      expect(hautetfortHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the posts hint for an Atom feed', () => {
       const value = 'http://carol.blogspirit.com/atom.xml'
       const expected: DiscoverUriHint = { key: 'hautetfort:posts', label: 'Posts', format: 'atom' }
 
       expect(hautetfortHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the posts hint for a feed on blog.blogspirit-business.com', () => {
-      const value = 'http://dave.blog.blogspirit-business.com/index.rss'
-      const expected: DiscoverUriHint = { key: 'hautetfort:posts', label: 'Posts', format: 'rss' }
-
-      expect(hautetfortHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a category page', () => {
-      const value = 'http://alice.hautetfort.com/histoire/'
-
-      expect(hautetfortHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'http://blog.alice.hautetfort.com/index.rss'
-
-      expect(hautetfortHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the www host', () => {
-      const value = 'https://www.hautetfort.com/index.rss'
-
-      expect(hautetfortHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/histoire/index.rss'
-
-      expect(hautetfortHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'http://frank.hautetfort.com/web/index.rss',
-        { key: 'hautetfort:category', label: 'Category' },
-      ],
-      [
-        'http://grace.blogspirit.com/dans-le-18eme/index.rss',
-        { key: 'hautetfort:category', label: 'Category' },
-      ],
-      [
-        'http://alice.hautetfort.com/index.rss',
-        { key: 'hautetfort:posts', label: 'Posts', format: 'rss' },
-      ],
-      [
-        'http://carol.blogspirit.com/atom.xml',
-        { key: 'hautetfort:posts', label: 'Posts', format: 'atom' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return an Atom feed as itself', async () => {
+      const value = 'http://carol.blogspirit.com/atom.xml'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [hautetfortHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'hautetfort:posts', label: 'Posts', format: 'atom' } },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

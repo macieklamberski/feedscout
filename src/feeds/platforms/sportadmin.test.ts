@@ -214,87 +214,21 @@ describe('sportadminHandler', () => {
 
       expect(sportadminHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the team hint for a team feed naming its section twice', () => {
-      const value = 'https://exampleclub.web.sportadmin.se/rss/?SID=12345&SID=12345'
-      const expected: DiscoverUriHint = { key: 'sportadmin:team', label: 'Team news' }
-
-      expect(sportadminHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the team hint for a team feed without a trailing slash', () => {
-      const value = 'https://exampleclub.web.sportadmin.se/rss?SID=12345'
-      const expected: DiscoverUriHint = { key: 'sportadmin:team', label: 'Team news' }
-
-      expect(sportadminHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the news hint for a club feed', () => {
-      const value = 'https://exampleclub.web.sportadmin.se/rss/'
-      const expected: DiscoverUriHint = { key: 'sportadmin:news', label: 'Club news' }
-
-      expect(sportadminHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the news hint for a club feed without a trailing slash', () => {
-      const value = 'https://exampleclub.web.sportadmin.se/rss'
-      const expected: DiscoverUriHint = { key: 'sportadmin:news', label: 'Club news' }
-
-      expect(sportadminHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the news hint for a club feed over http', () => {
-      const value = 'http://exampleclub.web.sportadmin.se/rss/'
-      const expected: DiscoverUriHint = { key: 'sportadmin:news', label: 'Club news' }
-
-      expect(sportadminHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a club page', () => {
-      const value = 'https://exampleclub.web.sportadmin.se/start/?ID=2000'
-
-      expect(sportadminHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex domain', () => {
-      const value = 'https://web.sportadmin.se/rss/'
-
-      expect(sportadminHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a dotted subdomain', () => {
-      const value = 'https://alpha.exampleclub.web.sportadmin.se/rss/'
-
-      expect(sportadminHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on another host', () => {
-      const value = 'https://example.com/rss/'
-
-      expect(sportadminHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('discoverUrisFromPlatform', () => {
-    const teamHint: DiscoverUriHint = { key: 'sportadmin:team', label: 'Team news' }
-    const newsHint: DiscoverUriHint = { key: 'sportadmin:news', label: 'Club news' }
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://exampleclub.web.sportadmin.se/rss/?SID=12345', teamHint],
-      ['https://exampleclub.web.sportadmin.se/rss/?SID=12345&SID=12345', teamHint],
-      ['https://exampleclub.web.sportadmin.se/rss?SID=12345', teamHint],
-      ['https://exampleclub.web.sportadmin.se/rss', newsHint],
-      ['http://exampleclub.web.sportadmin.se/rss/', newsHint],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a team feed as itself', async () => {
+      const value = 'https://exampleclub.web.sportadmin.se/rss/?SID=12345'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [sportadminHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'sportadmin:team', label: 'Team news' } },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

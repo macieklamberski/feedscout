@@ -1,5 +1,6 @@
+import { talentsoft } from 'feedintel'
 import { getQueryParam, isAnyOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasClass, hasMarker } from '../../common/utils.js'
 
@@ -12,27 +13,9 @@ export type TalentsoftPage =
   | { kind: 'site'; origin: string; lcid?: string }
 
 const cookiesScriptPath = '/client/dist/talentsoft-cookies.iife.js'
-const domains = ['profils.org', 'talent-soft.com']
-
 const offerFeedPath = '/handlers/offerRss.ashx'
 
-// A career site on a custom domain is known only by its marker, so its feeds are built here but
-// claimed only on Talentsoft's own domains. The site's own feed list spells the language as `LCID`,
-// and the feed answers without it. The feed list page's own link serves the same offers.
-const feeds = definePlatformFeeds(
-  'talentsoft',
-  [
-    {
-      key: 'offers',
-      main: '{scheme}://{host}/handlers/offerRss.ashx?LCID={lcid}',
-      aliases: [
-        '{scheme}://{host}/handlers/offerRss.ashx',
-        '{scheme}://{host}/offre-de-emploi/flux-rss.ashx',
-      ],
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(talentsoft.feeds)
 
 // Every career site loads the cookie banner script from this path, on every page and theme.
 export const isTalentsoftHtml = (content: string): boolean => {

@@ -1,5 +1,6 @@
+import { syosetu } from 'feedintel'
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, formatSuffixRegex } from '../../common/utils.js'
 
@@ -9,15 +10,11 @@ import { digitsRegex, formatSuffixRegex } from '../../common/utils.js'
 
 export type SyosetuUrl = { kind: 'writer'; writerId: string }
 
-const hosts = ['mypage.syosetu.com']
+const hosts = syosetu.hosts.exact
 
 const writerRegex = /^\/(?<writerId>[^/]+)/
 
-const feeds = definePlatformFeeds('syosetu', [
-  { key: 'author', main: 'https://api.syosetu.com/writernovel/{writerId}.Atom' },
-  { key: 'activity', main: 'https://api.syosetu.com/writer/{writerId}.Atom' },
-  { key: 'all-novels', main: 'https://api.syosetu.com/allnovel.Atom' },
-])
+const feeds = withHintLabels(syosetu.feeds)
 
 export const parseSyosetuUrl = (url: string): SyosetuUrl | undefined => {
   const parsedUrl = parseUrl(url)

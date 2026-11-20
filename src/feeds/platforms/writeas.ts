@@ -1,5 +1,6 @@
+import { writeas } from 'feedintel'
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
@@ -8,14 +9,11 @@ export type WriteasUrl =
   | { kind: 'tag'; username: string; tag: string }
   | { kind: 'blog'; username: string }
 
-const hosts = ['write.as', 'www.write.as']
+const hosts = writeas.hosts.exact
 
 const tagRegex = /^\/([^/]+)\/tag:([^/]+)/i
 
-const feeds = definePlatformFeeds('writeas', [
-  { key: 'tag', main: 'https://write.as/{username}/tag:{tag}/feed/' },
-  { key: 'blog', main: 'https://write.as/{username}/feed/' },
-])
+const feeds = withHintLabels(writeas.feeds)
 
 export const parseWriteasUrl = (url: string): WriteasUrl | undefined => {
   const parsedUrl = parseUrl(url)

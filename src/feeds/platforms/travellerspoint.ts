@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { travellerspoint } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -6,19 +7,9 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type TravellerspointUrl = { kind: 'blog'; blog: string }
 
-const domains = ['travellerspoint.com']
+const domains = travellerspoint.hosts.tenants
 
-const feeds = definePlatformFeeds(
-  'travellerspoint',
-  [
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/atom.xml',
-      aliases: ['{scheme}://{host}/rss.xml'],
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(travellerspoint.feeds)
 
 export const parseTravellerspointUrl = (url: string): TravellerspointUrl | undefined => {
   const blog = getTenantSubdomain(url, domains)

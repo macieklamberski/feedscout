@@ -1,5 +1,6 @@
+import { flipboard } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
@@ -9,16 +10,12 @@ export type FlipboardUrl =
   | { kind: 'magazine'; username: string; magazine: string }
   | { kind: 'topic'; topic: string }
 
-export const hosts = ['flipboard.com', 'www.flipboard.com']
+export const hosts = flipboard.hosts.exact
 
 // Flipboard redirects these profile tabs to the profile itself.
 const profileSubpaths = ['followers', 'following', 'magazines']
 
-const feeds = definePlatformFeeds('flipboard', [
-  { key: 'profile', main: 'https://flipboard.com/@{username}.rss' },
-  { key: 'magazine', main: 'https://flipboard.com/@{username}/{magazine}.rss' },
-  { key: 'topic', main: 'https://flipboard.com/topic/{topic}.rss' },
-])
+const feeds = withHintLabels(flipboard.feeds)
 
 export const parseFlipboardUrl = (url: string): FlipboardUrl | undefined => {
   if (!isHostOf(url, hosts)) {

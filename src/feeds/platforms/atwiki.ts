@@ -1,5 +1,6 @@
+import { atwiki } from 'feedintel'
 import { getPathSegments, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
@@ -7,19 +8,9 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 export type AtwikiUrl = { kind: 'wiki'; wiki: string }
 
 // Legacy wwwNN.atwiki.jp hosts redirect every wiki path to w.atwiki.jp.
-const hosts = ['w.atwiki.jp']
+const hosts = atwiki.hosts.exact
 
-// The wiki also serves its rss10.xml at /rss, a spelling feeds are stored under but never built.
-const feeds = definePlatformFeeds('atwiki', [
-  {
-    key: 'updated-pages',
-    main: 'https://w.atwiki.jp/{wiki}/rss10.xml',
-    format: 'rdf',
-    aliases: ['https://w.atwiki.jp/{wiki}/rss'],
-  },
-  { key: 'updated-pages', main: 'https://w.atwiki.jp/{wiki}/feed.atom', format: 'atom' },
-  { key: 'new-pages', main: 'https://w.atwiki.jp/{wiki}/rss10_new.xml', format: 'rdf' },
-])
+const feeds = withHintLabels(atwiki.feeds)
 
 export const parseAtwikiUrl = (url: string): AtwikiUrl | undefined => {
   if (!isHostOf(url, hosts)) {

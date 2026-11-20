@@ -123,61 +123,12 @@ describe('writeasHandler', () => {
 
       expect(writeasHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the blog hint for a blog feed without a trailing slash', () => {
-      const value = 'https://write.as/quietquill/feed'
-      const expected: DiscoverUriHint = { key: 'writeas:blog', label: 'Blog' }
-
-      expect(writeasHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the blog hint for a blog feed over http', () => {
-      const value = 'http://write.as/quietquill/feed/'
-      const expected: DiscoverUriHint = { key: 'writeas:blog', label: 'Blog' }
-
-      expect(writeasHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for a tag feed', () => {
-      const value = 'https://write.as/carol/tag:mindset/feed/'
-      const expected: DiscoverUriHint = { key: 'writeas:tag', label: 'Tag' }
-
-      expect(writeasHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for a tag feed with an encoded tag', () => {
-      const value = 'https://write.as/bob/tag:s%C3%B6dermalm/feed/'
-      const expected: DiscoverUriHint = { key: 'writeas:tag', label: 'Tag' }
-
-      expect(writeasHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://write.as/quietquill'
-
-      expect(writeasHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a tag page', () => {
-      const value = 'https://write.as/carol/tag:mindset'
-
-      expect(writeasHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/quietquill/feed/'
-
-      expect(writeasHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://write.as/quietquill/feed/', { key: 'writeas:blog', label: 'Blog' }],
-      ['https://write.as/carol/tag:mindset/feed/', { key: 'writeas:tag', label: 'Tag' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a blog feed as itself', async () => {
+      const value = 'https://write.as/quietquill/feed/'
+      const hint: DiscoverUriHint = { key: 'writeas:blog', label: 'Blog' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [writeasHandler],

@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { edlio } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
 
@@ -6,27 +7,13 @@ import { findElement, hasMarker } from '../../common/utils.js'
 // Generic finds: news-category.
 // Handler needed for: assignments, news.
 
-const domains = ['edlio.com']
 const listPackPath = '/apps/js/common/list-pack.js'
 
 const newsFeedHrefRegex = /^\/apps\/news\/rss\?categoryid=(\d+)$/i
 const classPathRegex = /^\/apps\/classes\/(\d+)(?:\/|$)/i
 const classFeedHrefRegex = /^\/apps\/classes\/assignment_rss\.jsp\?classREC_ID=(\d+)$/i
 
-// A school on its own domain is known only by its marker, so its feeds are built here but claimed
-// only on an edlio.com school.
-const feeds = definePlatformFeeds(
-  'edlio',
-  [
-    { key: 'news', main: '{scheme}://{host}/apps/news/rss' },
-    { key: 'news-category', main: '{scheme}://{host}/apps/news/rss?categoryid={categoryId}' },
-    {
-      key: 'assignments',
-      main: '{scheme}://{host}/apps/classes/assignment_rss.jsp?classREC_ID={classId}',
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(edlio.feeds)
 
 export type EdlioPage = { kind: 'site'; categoryId?: string } | { kind: 'class'; classId: string }
 

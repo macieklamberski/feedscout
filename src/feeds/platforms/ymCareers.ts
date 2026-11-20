@@ -1,5 +1,6 @@
+import { ymCareers } from 'feedintel'
 import { isAnyOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
@@ -15,12 +16,7 @@ const browsePathRegex = /^\/jobs((?:\/[a-z_]+\/[^/]+)+?)(?:\/page\d+)?\/?$/i
 
 const excludedParams = ['display', 'page']
 
-// A board runs on its own domain and is known only by its headers, so its feeds are built here but
-// not claimed. The feed is the list's own path with `display=rss` in front of the page's query.
-const feeds = definePlatformFeeds('ym-careers', [
-  { key: 'search', main: '{root}?display=rss&{query}' },
-  { key: 'browse', main: '{root}?display=rss&{query}' },
-])
+const feeds = withHintLabels(ymCareers.feeds)
 
 // Every board answers with the header, its bot check page included.
 export const isYmCareersHeaders = (headers: Headers): boolean => {

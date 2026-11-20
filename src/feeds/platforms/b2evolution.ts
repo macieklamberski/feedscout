@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { b2evolution } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -21,22 +22,7 @@ const notFoundClassRegex = /\b(?:disp_404|error_404)\b/
 // A feed link up to its skin, as `/index.php?blog=2&`, is the blog's root and the query naming it.
 const feedPrefixRegex = /^([^?]*)\?(.*)$/
 
-// An install runs on its own domain and is known only by its marker, so its feeds are built here
-// but not claimed. A feed is the blog's feed link with another skin.
-const feeds = definePlatformFeeds('b2evolution', [
-  { key: 'posts', main: '{root}?{query}&tempskin=_rss2', format: 'rss' },
-  { key: 'posts', main: '{root}?{query}&tempskin=_atom', format: 'atom' },
-  {
-    key: 'comments',
-    main: '{root}?{query}&tempskin=_rss2&disp=comments',
-    format: 'rss',
-  },
-  {
-    key: 'comments',
-    main: '{root}?{query}&tempskin=_atom&disp=comments',
-    format: 'atom',
-  },
-])
+const feeds = withHintLabels(b2evolution.feeds)
 
 export type B2evolutionPage =
   | { kind: 'blog'; feedRoot: string; feedQuery: string }

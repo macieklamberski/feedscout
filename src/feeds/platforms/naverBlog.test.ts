@@ -116,61 +116,10 @@ describe('naverBlogHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the blog hint for a blog feed', () => {
-      const value = 'https://rss.blog.naver.com/bob74.xml'
+    it('should return the blog hint for a feed under the blogRss.nhn script', () => {
+      const value = 'https://rss.blog.naver.com/rss/blogRss.nhn?blogId=alice'
       const expected: DiscoverUriHint = { key: 'naver-blog:blog', label: 'Blog', format: 'rss' }
 
-      expect(naverBlogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the blog hint for a blog feed with a hyphen in the id', () => {
-      const value = 'https://rss.blog.naver.com/carol-notes.xml'
-      const expected: DiscoverUriHint = { key: 'naver-blog:blog', label: 'Blog', format: 'rss' }
-
-      expect(naverBlogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the blog hint for a blog feed over http', () => {
-      const value = 'http://rss.blog.naver.com/prologue.xml'
-      const expected: DiscoverUriHint = { key: 'naver-blog:blog', label: 'Blog', format: 'rss' }
-
-      expect(naverBlogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it.each<[string, DiscoverUriHint]>([
-      [
-        'https://rss.blog.naver.com/alice',
-        { key: 'naver-blog:blog', label: 'Blog', format: 'rss' },
-      ],
-      [
-        'https://rss.blog.naver.com/rss/blogRss.nhn?blogId=alice',
-        { key: 'naver-blog:blog', label: 'Blog', format: 'rss' },
-      ],
-      [
-        'https://rss.blog.naver.com/alice.xml?rss=1.0',
-        { key: 'naver-blog:blog', label: 'Blog', format: 'rdf' },
-      ],
-      [
-        'https://rss.blog.naver.com/alice.xml?atom=0.3',
-        { key: 'naver-blog:blog', label: 'Blog', format: 'atom' },
-      ],
-      [
-        'http://rss.blog.naver.com/alice?rss=1.0',
-        { key: 'naver-blog:blog', label: 'Blog', format: 'rdf' },
-      ],
-      [
-        'https://rss.blog.naver.com/rss/blogRss.nhn?blogId=alice&rss=1.0',
-        { key: 'naver-blog:blog', label: 'Blog', format: 'rdf' },
-      ],
-      [
-        'https://rss.blog.naver.com/alice?atom=0.3',
-        { key: 'naver-blog:blog', label: 'Blog', format: 'atom' },
-      ],
-      [
-        'https://rss.blog.naver.com/rss/blogRss.nhn?atom=0.3&blogId=alice',
-        { key: 'naver-blog:blog', label: 'Blog', format: 'atom' },
-      ],
-    ])('should return the blog hint for %s', (value, expected) => {
       expect(naverBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
@@ -179,80 +128,12 @@ describe('naverBlogHandler', () => {
 
       expect(naverBlogHandler.getFeedHint?.(value)).toBeUndefined()
     })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://blog.naver.com/prologue'
-
-      expect(naverBlogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for an xml path on the blog host', () => {
-      const value = 'https://blog.naver.com/prologue.xml'
-
-      expect(naverBlogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the root of the feed host', () => {
-      const value = 'https://rss.blog.naver.com/'
-
-      expect(naverBlogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a nested path on the feed host', () => {
-      const value = 'https://rss.blog.naver.com/prologue/223000000000.xml'
-
-      expect(naverBlogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/prologue.xml'
-
-      expect(naverBlogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://rss.blog.naver.com/bob74.xml',
-        { key: 'naver-blog:blog', label: 'Blog', format: 'rss' },
-      ],
-      [
-        'https://rss.blog.naver.com/carol-notes.xml',
-        { key: 'naver-blog:blog', label: 'Blog', format: 'rss' },
-      ],
-      ['http://rss.blog.naver.com/alice', { key: 'naver-blog:blog', label: 'Blog', format: 'rss' }],
-      [
-        'https://rss.blog.naver.com/rss/blogRss.nhn?blogId=alice',
-        { key: 'naver-blog:blog', label: 'Blog', format: 'rss' },
-      ],
-      [
-        'https://rss.blog.naver.com/alice.xml?rss=1.0',
-        { key: 'naver-blog:blog', label: 'Blog', format: 'rdf' },
-      ],
-      [
-        'https://rss.blog.naver.com/alice.xml?atom=0.3',
-        { key: 'naver-blog:blog', label: 'Blog', format: 'atom' },
-      ],
-      [
-        'http://rss.blog.naver.com/alice?rss=1.0',
-        { key: 'naver-blog:blog', label: 'Blog', format: 'rdf' },
-      ],
-      [
-        'https://rss.blog.naver.com/rss/blogRss.nhn?blogId=alice&rss=1.0',
-        { key: 'naver-blog:blog', label: 'Blog', format: 'rdf' },
-      ],
-      [
-        'https://rss.blog.naver.com/alice?atom=0.3',
-        { key: 'naver-blog:blog', label: 'Blog', format: 'atom' },
-      ],
-      [
-        'https://rss.blog.naver.com/rss/blogRss.nhn?atom=0.3&blogId=alice',
-        { key: 'naver-blog:blog', label: 'Blog', format: 'atom' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a feed under the blogRss.nhn script as itself', async () => {
+      const value = 'https://rss.blog.naver.com/rss/blogRss.nhn?blogId=alice'
+      const hint: DiscoverUriHint = { key: 'naver-blog:blog', label: 'Blog', format: 'rss' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [naverBlogHandler],

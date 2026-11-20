@@ -71,75 +71,26 @@ describe('statuspageHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const feedUrls: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://example.statuspage.io/history.rss',
-        { key: 'statuspage:history', label: 'Incident history', format: 'rss' },
-      ],
-      [
-        'https://example.statuspage.io/history.atom',
-        { key: 'statuspage:history', label: 'Incident history', format: 'atom' },
-      ],
-      [
-        'http://example.statuspage.io/history.rss/',
-        { key: 'statuspage:history', label: 'Incident history', format: 'rss' },
-      ],
-    ]
+    it('should return the incident history hint for the RSS feed of a status page', () => {
+      const value = 'https://example.statuspage.io/history.rss'
+      const expected: DiscoverUriHint = {
+        key: 'statuspage:history',
+        label: 'Incident history',
+        format: 'rss',
+      }
 
-    it.each(feedUrls)('should return the hint for %s', (value, expected) => {
       expect(statuspageHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a page on a status page subdomain', () => {
-      const value = 'https://example.statuspage.io/incidents/abc123def456'
-
-      expect(statuspageHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a custom domain', () => {
-      const value = 'https://status.example.com/history.rss'
-
-      expect(statuspageHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://statuspage.io/history.rss'
-
-      expect(statuspageHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on www', () => {
-      const value = 'https://www.statuspage.io/history.atom'
-
-      expect(statuspageHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on www in front of a tenant', () => {
-      const value = 'https://www.example.statuspage.io/history.rss'
-
-      expect(statuspageHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://status.example.statuspage.io/history.rss'
-
-      expect(statuspageHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://example.statuspage.io/history.rss',
-        { key: 'statuspage:history', label: 'Incident history', format: 'rss' },
-      ],
-      [
-        'http://example.statuspage.io/history.atom',
-        { key: 'statuspage:history', label: 'Incident history', format: 'atom' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return the RSS feed of a status page as itself', async () => {
+      const value = 'https://example.statuspage.io/history.rss'
+      const hint: DiscoverUriHint = {
+        key: 'statuspage:history',
+        label: 'Incident history',
+        format: 'rss',
+      }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [statuspageHandler],

@@ -1,5 +1,6 @@
+import { ameblo } from 'feedintel'
 import { getPathSegments, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -7,38 +8,13 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type AmebloUrl = { kind: 'blog'; username: string }
 
-const hosts = ['ameblo.jp', 'www.ameblo.jp']
+const hosts = ameblo.hosts.exact
 
 // Ameba's fixed embed routes name the blog after the route, before the catch-all username.
 const reblogCardRegex = /^\/s\/embed\/reblog-card\/([^/]+)\/entry-[^/]+\.html$/i
 const imagePageRegex = /^\/p\/embed\/([^/]+)\/image-[^/]+\.html$/i
 
-// A blog page links its feed on rssblog.ameba.jp, and ameblo.jp serves the same feeds under the
-// same paths.
-const feeds = definePlatformFeeds(
-  'ameblo',
-  [
-    {
-      key: 'posts',
-      main: 'https://rssblog.ameba.jp/{username}/rss20.xml',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/{username}/rss20.xml'],
-    },
-    {
-      key: 'posts',
-      main: 'https://rssblog.ameba.jp/{username}/atom.xml',
-      format: 'atom',
-      aliases: ['{scheme}://{host}/{username}/atom.xml'],
-    },
-    {
-      key: 'posts',
-      main: 'https://rssblog.ameba.jp/{username}/rss.html',
-      format: 'rdf',
-      aliases: ['{scheme}://{host}/{username}/rss.html'],
-    },
-  ],
-  { hosts: { exact: hosts } },
-)
+const feeds = withHintLabels(ameblo.feeds)
 
 export const parseAmebloUrl = (url: string): AmebloUrl | undefined => {
   if (!isHostOf(url, hosts)) {

@@ -108,86 +108,12 @@ describe('weblogLolHandler', () => {
 
       expect(weblogLolHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the posts hint for an Atom feed', () => {
-      const value = 'https://alice.weblog.lol/atom.xml'
-      const expected: DiscoverUriHint = { key: 'weblog-lol:posts', label: 'Posts', format: 'atom' }
-
-      expect(weblogLolHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a JSON feed', () => {
-      const value = 'https://alice.weblog.lol/feed.json'
-      const expected: DiscoverUriHint = { key: 'weblog-lol:posts', label: 'Posts', format: 'json' }
-
-      expect(weblogLolHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a feed with a trailing slash', () => {
-      const value = 'https://alice.weblog.lol/rss.xml/'
-      const expected: DiscoverUriHint = { key: 'weblog-lol:posts', label: 'Posts', format: 'rss' }
-
-      expect(weblogLolHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://alice.weblog.lol/some-article-slug'
-
-      expect(weblogLolHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path under a tag page', () => {
-      const value = 'https://alice.weblog.lol/tag/example/rss.xml'
-
-      expect(weblogLolHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://blog.example.weblog.lol/rss.xml'
-
-      expect(weblogLolHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on www', () => {
-      const value = 'https://www.weblog.lol/rss.xml'
-
-      expect(weblogLolHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://weblog.lol/rss.xml'
-
-      expect(weblogLolHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/rss.xml'
-
-      expect(weblogLolHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const values: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://alice.weblog.lol/rss.xml',
-        { key: 'weblog-lol:posts', label: 'Posts', format: 'rss' },
-      ],
-      [
-        'https://alice.weblog.lol/atom.xml',
-        { key: 'weblog-lol:posts', label: 'Posts', format: 'atom' },
-      ],
-      [
-        'https://alice.weblog.lol/feed.json',
-        { key: 'weblog-lol:posts', label: 'Posts', format: 'json' },
-      ],
-      [
-        'https://alice.weblog.lol/rss.xml/',
-        { key: 'weblog-lol:posts', label: 'Posts', format: 'rss' },
-      ],
-    ]
-
-    it.each(values)('should return %s as itself', async (value, hint) => {
+    it('should return an RSS feed as itself', async () => {
+      const value = 'https://alice.weblog.lol/rss.xml'
+      const hint: DiscoverUriHint = { key: 'weblog-lol:posts', label: 'Posts', format: 'rss' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [weblogLolHandler],

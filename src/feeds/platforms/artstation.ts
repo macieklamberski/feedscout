@@ -1,5 +1,6 @@
+import { artstation } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf, isHostOrSubdomainOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -8,15 +9,10 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type ArtstationUrl = { kind: 'profile'; username: string } | { kind: 'artwork' }
 
-const domains = ['artstation.com']
-const hosts = ['artstation.com', 'www.artstation.com']
+const domains = artstation.hosts.tenants
+const hosts = artstation.hosts.exact
 
-// `/artwork.rss` reads before `/{username}.rss`, so the site feed never reads as a user's.
-const feeds = definePlatformFeeds('artstation', [
-  { key: 'artwork', main: 'https://www.artstation.com/artwork.rss?sorting={sorting}' },
-  { key: 'artwork', main: 'https://www.artstation.com/artwork.rss' },
-  { key: 'portfolio', main: 'https://www.artstation.com/{username}.rss' },
-])
+const feeds = withHintLabels(artstation.feeds)
 
 export const parseArtstationUrl = (url: string): ArtstationUrl | undefined => {
   if (!isHostOrSubdomainOf(url, domains)) {

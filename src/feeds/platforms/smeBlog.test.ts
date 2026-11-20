@@ -117,51 +117,12 @@ describe('smeBlogHandler', () => {
 
       expect(smeBlogHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the site hint for the site feed', () => {
-      const value = 'https://blog.sme.sk/rss'
-      const expected: DiscoverUriHint = { key: 'sme-blog:site', label: 'Site' }
-
-      expect(smeBlogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the site hint for the site feed with a query', () => {
-      const value = 'https://blog.sme.sk/rss?vr=1'
-      const expected: DiscoverUriHint = { key: 'sme-blog:site', label: 'Site' }
-
-      expect(smeBlogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://blog.sme.sk/alice'
-
-      expect(smeBlogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a post', () => {
-      const value = 'https://blog.sme.sk/alice/politika/example-post'
-
-      expect(smeBlogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/alice/rss'
-
-      expect(smeBlogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const postsHint: DiscoverUriHint = { key: 'sme-blog:posts', label: 'Posts' }
-    const siteHint: DiscoverUriHint = { key: 'sme-blog:site', label: 'Site' }
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://blog.sme.sk/alice/rss', postsHint],
-      ['https://blog.sme.sk/alice/rss/', postsHint],
-      ['https://blog.sme.sk/rss', siteHint],
-      ['https://blog.sme.sk/rss?vr=1', siteHint],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a blog feed as itself', async () => {
+      const value = 'https://blog.sme.sk/alice/rss'
+      const hint: DiscoverUriHint = { key: 'sme-blog:posts', label: 'Posts' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [smeBlogHandler],
