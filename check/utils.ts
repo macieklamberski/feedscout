@@ -13,7 +13,7 @@ const browserUserAgent =
 
 const retryDelaysMs = [1_000, 3_000, 7_000]
 const fallbackStatuses = [403, 408, 413, 429, 500, 502, 503, 504]
-// Some hosts answer a client that does not look like a browser with 404, such as Haley job boards.
+// Some hosts answer a client that does not look like a browser with 404.
 // A retry does not change that, so a 404 goes to the browser without one.
 const browserFallbackStatuses = [...fallbackStatuses, 404]
 

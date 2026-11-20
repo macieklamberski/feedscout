@@ -2814,14 +2814,6 @@ Discovers the feeds of a ComicFury webcomic.
 
 <sup>†</sup> *Found only by the Platform method.*
 
-### Haley Marketing job boards
-
-Discovers the jobs feed of a job board Haley Marketing hosts for a staffing firm. Detected by the `x-sasnode` response header naming a `haleymarketing.com` node together with a link to the board's `/index.smpl?arg=jb_` routes, so any domain is covered.
-
-| URL Pattern | Feeds Generated |
-|-------------|-----------------|
-| Any board page | Jobs |
-
 ### Jimdo
 
 Discovers the blog feed of a Jimdo site. Detected by the `x-jimdo-wid` response header, so `*.jimdofree.com` sites and custom domains are both covered.
@@ -2979,15 +2971,6 @@ Discovers the posts feed of an Overblog blog.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{blog}.over-blog.{tld}`, `{blog}.over.blog`, `{blog}.overblog.{tld}` | Posts |
-
-### ExportersIndia
-
-Discovers the products or services feed of an ExportersIndia business site, built by Weblink.In on the business's own domain. Detected by the template stylesheet on `catalog.wlimg.com` together with the page's link to `/products.rss` or `/services.rss`, so any domain is covered.
-
-| URL Pattern | Feeds Generated |
-|-------------|-----------------|
-| Any page of a products site | Products (RSS) |
-| Any page of a services site | Services (RSS) |
 
 ### Wild Apricot
 
@@ -3212,31 +3195,6 @@ Discovers the product feeds of a Big Cartel store. A store on its own domain is 
 > [!NOTE]
 > Most store themes link only `/products.xml`, a Google Merchant feed whose items carry no title or link, so it parses with no items. The handler emits `/products.rss`, which carries both.
 
-### TourTravelWorld
-
-Discovers the tour packages feed of a TourTravelWorld travel site, built by Weblink.In on the agency's own domain. Detected by the template stylesheet on `catalog.wlimg.com` together with the page's link to `/tour-packages.rss`, so any domain is covered.
-
-| URL Pattern | Feeds Generated |
-|-------------|-----------------|
-| Any page | Tour packages (RSS) |
-
-### RealEstateIndia
-
-Discovers the property listings feed of a RealEstateIndia agency site, built by Weblink.In on the agency's own domain. Detected by the template stylesheet on `catalog.wlimg.com` together with the page's link to `/property.rss`, so any domain is covered.
-
-| URL Pattern | Feeds Generated |
-|-------------|-----------------|
-| Any page | Properties (RSS) |
-
-### PlacementIndia
-
-Discovers the vacancies feed of a PlacementIndia jobs site, built by Weblink.In on the consultancy's own domain, and on a job page the feed of that one opening. Detected by the template stylesheet on `catalog.wlimg.com` together with the page's link to `/vacancy.rss`, so any domain is covered.
-
-| URL Pattern | Feeds Generated |
-|-------------|-----------------|
-| Any page | Vacancies (RSS) |
-| Job page | Job opening (RSS) |
-
 ### GCS-web
 
 Discovers the news release, SEC filing and event feeds of a company investor relations site on GCS-web. A site on the company's own domain is detected by the `/sites/g/files/knoqqb{id}/` path of its assets.
@@ -3262,16 +3220,6 @@ Discovers the feeds of a Typecho blog. Detected by a theme or plugin asset under
 > [!NOTE]
 > A site without URL rewriting serves its feeds under `/index.php/feed/`, so each feed is tried in that form after `/feed/`. The page feed holds the posts of a category, tag, author, date or search page, or the comments of a post or page.
 
-### YM Careers
-
-Discovers the job feeds of a YM Careers board that an association runs on its own domain. Detected by the `x-nas-sid` response header every board sends, its bot check page included.
-
-| URL Pattern | Feeds Generated |
-|-------------|-----------------|
-| `{board}/jobs?{search}` | Search at `/jobs?display=rss&{search}` |
-| `{board}/jobs/{filter}/{value}/…` | Filtered jobs at `/jobs/{filter}/{value}/…?display=rss` |
-| Any other page | All jobs at `/jobs?display=rss` |
-
 ### Edlio
 
 Discovers the news and class assignment feeds of an Edlio school website. Detected by the `/apps/js/common/list-pack.js` script every page loads, so any domain is covered.
@@ -3283,17 +3231,6 @@ Discovers the news and class assignment feeds of an Edlio school website. Detect
 | `{host}/`, any other page | News<sup>†</sup> (RSS) |
 
 > Every page above also gets the news feed after its own.
-
-<sup>†</sup> *Found only by the Platform method.*
-
-### Talentsoft
-
-Discovers the job offer feeds of a Talentsoft career site, hosted on `talent-soft.com` or `profils.org` or on the employer's own domain. Detected by the `/client/dist/talentsoft-cookies.iife.js` script every page loads, so any domain is covered.
-
-| URL Pattern | Feeds Generated |
-|-------------|-----------------|
-| `{host}/offre-de-emploi/liste-offres.aspx?{search}`, `{host}/job/list-of-jobs.aspx?{search}` | Search feed the page links at `/handlers/offerRss.ashx?{criteria}` · all offers<sup>†</sup> (RSS) |
-| `{host}/`, any other page | All offers<sup>†</sup> at `/handlers/offerRss.ashx?LCID={lcid}`, in the language the page url or its all offers link names (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -3668,7 +3605,6 @@ import {
   eklablogHandler,
   estrankyHandler,
   exblogHandler,
-  exportersIndiaHandler,
   fc2Handler,
   firesideHandler,
   firstoryHandler,
@@ -3693,7 +3629,6 @@ import {
   greasyForkHandler,
   habrHandler,
   hackernewsHandler,
-  haleyJobsHandler,
   hashnodeHandler,
   hatenaAntennaHandler,
   hatenaBookmarkHandler,
@@ -3780,7 +3715,6 @@ import {
   pinboardHandler,
   pinterestHandler,
   pixelfedHandler,
-  placementIndiaHandler,
   pleromaHandler,
   ploneHandler,
   plurkHandler,
@@ -3807,7 +3741,6 @@ import {
   pypiHandler,
   qiitaHandler,
   rakutenBlogHandler,
-  realEstateIndiaHandler,
   redcircleHandler,
   redditHandler,
   redmineHandler,
@@ -3844,7 +3777,6 @@ import {
   svbtleHandler,
   sverigesRadioHandler,
   syosetuHandler,
-  talentsoftHandler,
   teletypeHandler,
   tenderHandler,
   textpatternHandler,
@@ -3852,7 +3784,6 @@ import {
   tischtennisliveHandler,
   tistoryHandler,
   togetterHandler,
-  tourTravelWorldHandler,
   transistorHandler,
   travellerspointHandler,
   tumblrHandler,
@@ -3878,7 +3809,6 @@ import {
   xenforoHandler,
   ximalayaHandler,
   yeswikiHandler,
-  ymCareersHandler,
   youtubeHandler,
   zenfolioHandler,
   zennHandler,

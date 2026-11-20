@@ -68,7 +68,6 @@ import { edlioHandler } from './platforms/edlio.js'
 import { eklablogHandler } from './platforms/eklablog.js'
 import { estrankyHandler } from './platforms/estranky.js'
 import { exblogHandler } from './platforms/exblog.js'
-import { exportersIndiaHandler } from './platforms/exportersIndia.js'
 import { fc2Handler } from './platforms/fc2.js'
 import { firesideHandler } from './platforms/fireside.js'
 import { firstoryHandler } from './platforms/firstory.js'
@@ -93,7 +92,6 @@ import { gravHandler } from './platforms/grav.js'
 import { greasyForkHandler } from './platforms/greasyFork.js'
 import { habrHandler } from './platforms/habr.js'
 import { hackernewsHandler } from './platforms/hackernews.js'
-import { haleyJobsHandler } from './platforms/haleyJobs.js'
 import { hashnodeHandler } from './platforms/hashnode.js'
 import { hatenaAntennaHandler } from './platforms/hatenaAntenna.js'
 import { hatenaBookmarkHandler } from './platforms/hatenaBookmark.js'
@@ -180,7 +178,6 @@ import { pikaHandler } from './platforms/pika.js'
 import { pinboardHandler } from './platforms/pinboard.js'
 import { pinterestHandler } from './platforms/pinterest.js'
 import { pixelfedHandler } from './platforms/pixelfed.js'
-import { placementIndiaHandler } from './platforms/placementIndia.js'
 import { pleromaHandler } from './platforms/pleroma.js'
 import { ploneHandler } from './platforms/plone.js'
 import { plurkHandler } from './platforms/plurk.js'
@@ -207,7 +204,6 @@ import { purotHandler } from './platforms/purot.js'
 import { pypiHandler } from './platforms/pypi.js'
 import { qiitaHandler } from './platforms/qiita.js'
 import { rakutenBlogHandler } from './platforms/rakutenBlog.js'
-import { realEstateIndiaHandler } from './platforms/realEstateIndia.js'
 import { redcircleHandler } from './platforms/redcircle.js'
 import { redditHandler } from './platforms/reddit.js'
 import { redmineHandler } from './platforms/redmine.js'
@@ -244,7 +240,6 @@ import { substackHandler } from './platforms/substack.js'
 import { svbtleHandler } from './platforms/svbtle.js'
 import { sverigesRadioHandler } from './platforms/sverigesRadio.js'
 import { syosetuHandler } from './platforms/syosetu.js'
-import { talentsoftHandler } from './platforms/talentsoft.js'
 import { teletypeHandler } from './platforms/teletype.js'
 import { tenderHandler } from './platforms/tender.js'
 import { textpatternHandler } from './platforms/textpattern.js'
@@ -252,7 +247,6 @@ import { tildesHandler } from './platforms/tildes.js'
 import { tischtennisliveHandler } from './platforms/tischtennislive.js'
 import { tistoryHandler } from './platforms/tistory.js'
 import { togetterHandler } from './platforms/togetter.js'
-import { tourTravelWorldHandler } from './platforms/tourTravelWorld.js'
 import { transistorHandler } from './platforms/transistor.js'
 import { travellerspointHandler } from './platforms/travellerspoint.js'
 import { tumblrHandler } from './platforms/tumblr.js'
@@ -278,7 +272,6 @@ import { writefreelyHandler } from './platforms/writefreely.js'
 import { xenforoHandler } from './platforms/xenforo.js'
 import { ximalayaHandler } from './platforms/ximalaya.js'
 import { yeswikiHandler } from './platforms/yeswiki.js'
-import { ymCareersHandler } from './platforms/ymCareers.js'
 import { youtubeHandler } from './platforms/youtube.js'
 import { zenfolioHandler } from './platforms/zenfolio.js'
 import { zennHandler } from './platforms/zenn.js'
@@ -457,7 +450,6 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     eklablogHandler,
     estrankyHandler,
     exblogHandler,
-    exportersIndiaHandler,
     fc2Handler,
     firesideHandler,
     firstoryHandler,
@@ -482,7 +474,6 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     greasyForkHandler,
     habrHandler,
     hackernewsHandler,
-    haleyJobsHandler,
     hashnodeHandler,
     hatenaAntennaHandler,
     hatenaBookmarkHandler,
@@ -569,7 +560,6 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     pinboardHandler,
     pinterestHandler,
     pixelfedHandler,
-    placementIndiaHandler,
     pleromaHandler,
     ploneHandler,
     plurkHandler,
@@ -596,7 +586,6 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     pypiHandler,
     qiitaHandler,
     rakutenBlogHandler,
-    realEstateIndiaHandler,
     redcircleHandler,
     redditHandler,
     redmineHandler,
@@ -633,7 +622,6 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     svbtleHandler,
     sverigesRadioHandler,
     syosetuHandler,
-    talentsoftHandler,
     teletypeHandler,
     tenderHandler,
     textpatternHandler,
@@ -641,7 +629,6 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     tischtennisliveHandler,
     tistoryHandler,
     togetterHandler,
-    tourTravelWorldHandler,
     transistorHandler,
     travellerspointHandler,
     tumblrHandler,
@@ -667,7 +654,6 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     xenforoHandler,
     ximalayaHandler,
     yeswikiHandler,
-    ymCareersHandler,
     youtubeHandler,
     zenfolioHandler,
     zennHandler,
