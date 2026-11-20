@@ -1,5 +1,4 @@
 import { hautetfort } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -14,34 +13,18 @@ export type HautetfortUrl =
 // name reads as one label.
 const domains = hautetfort.hosts.tenants
 
-const categoryRegex = /^\/([^/.]+)\/?$/
-const archivesCategoryRegex = /^\/archives\/category\/([^/]+)(?:\/|$)/i
-
 const feeds = withHintLabels(hautetfort.feeds)
 
 export const parseHautetfortUrl = (url: string): HautetfortUrl | undefined => {
-  const pathname = parseUrl(url)?.pathname
-
-  if (!pathname) {
-    return
-  }
-
+  const page = hautetfort.pages.read(url)
   const blog = getTenantSubdomain(url, domains)
 
-  if (!blog) {
+  if (!page || !blog) {
     return
   }
 
-  const archivesCategory = pathname.match(archivesCategoryRegex)?.[1]
-
-  if (archivesCategory) {
-    return { kind: 'category', blog, category: archivesCategory }
-  }
-
-  const category = pathname.match(categoryRegex)?.[1]
-
-  if (category) {
-    return { kind: 'category', blog, category }
+  if (page.key === 'category') {
+    return { kind: 'category', blog, category: page.params.category }
   }
 
   return { kind: 'blog', blog }

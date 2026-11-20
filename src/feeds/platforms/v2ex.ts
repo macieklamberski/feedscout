@@ -1,5 +1,4 @@
 import { v2ex } from 'feedintel'
-import { getQueryParam, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -11,37 +10,25 @@ export type V2exUrl =
   | { kind: 'tab'; tab: string }
   | { kind: 'home' }
 
-const hosts = v2ex.hosts.exact
-
-const nodeRegex = /^\/go\/([^/]+)/i
-const memberRegex = /^\/member\/([^/]+)/i
-
 const feeds = withHintLabels(v2ex.feeds)
 
 export const parseV2exUrl = (url: string): V2exUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = v2ex.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const { pathname, searchParams } = parsedUrl
-  const node = pathname.match(nodeRegex)?.[1]
-
-  if (node) {
-    return { kind: 'node', node }
+  if (page.key === 'node') {
+    return { kind: 'node', node: page.params.node }
   }
 
-  const username = pathname.match(memberRegex)?.[1]
-
-  if (username) {
-    return { kind: 'member', username }
+  if (page.key === 'member') {
+    return { kind: 'member', username: page.params.username }
   }
 
-  const tab = getQueryParam(searchParams, 'tab')
-
-  if (tab) {
-    return { kind: 'tab', tab }
+  if (page.key === 'tab') {
+    return { kind: 'tab', tab: page.params.tab }
   }
 
   return { kind: 'home' }

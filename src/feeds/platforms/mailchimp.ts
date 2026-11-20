@@ -1,5 +1,4 @@
 import { mailchimp } from 'feedintel'
-import { getQueryParam, isSubdomainOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -10,29 +9,22 @@ export type MailchimpUrl =
   | { kind: 'campaign'; userId: string }
 export type MailchimpPage = { kind: 'archive' | 'campaign'; userId: string; listId: string }
 
-const domains = mailchimp.hosts.tenants
-
-const archivePathRegex = /^\/home\/?$/i
 // A campaign page links its archive and feed, whose id is the list the campaign went to.
 const listLinkRegex = /campaign-archive\.com\/(?:home\/|feed)\?u=\w+&(?:amp;)?id=(?<listId>\w+)/i
 
 const feeds = withHintLabels(mailchimp.feeds)
 
 export const parseMailchimpUrl = (url: string): MailchimpUrl | undefined => {
-  if (!isSubdomainOf(url, domains)) {
+  const page = mailchimp.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const { pathname, searchParams } = new URL(url)
-  const userId = getQueryParam(searchParams, 'u')
-  const id = getQueryParam(searchParams, 'id')
+  const { userId, listId } = page.params
 
-  if (!userId || !id) {
-    return
-  }
-
-  if (archivePathRegex.test(pathname)) {
-    return { kind: 'archive', userId, listId: id }
+  if (page.key === 'archive') {
+    return { kind: 'archive', userId, listId }
   }
 
   // Outside the archive page the id names one campaign, which has no feed.

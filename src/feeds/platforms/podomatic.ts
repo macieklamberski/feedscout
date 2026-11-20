@@ -1,5 +1,4 @@
 import { podomatic } from 'feedintel'
-import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
@@ -9,36 +8,23 @@ import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 export type PodomaticUrl = { kind: 'podcast'; show: string }
 
 const domains = podomatic.hosts.tenants
-const hosts = podomatic.hosts.exact
-
-const directoryPathRegex = /^\/podcasts\/([^/]+)/i
 
 const feeds = withHintLabels(podomatic.feeds)
 
 export const parsePodomaticUrl = (url: string): PodomaticUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const subdomain = getTenantSubdomain(url, domains)
 
-  if (!parsedUrl) {
+  if (subdomain) {
+    return { kind: 'podcast', show: subdomain }
+  }
+
+  const page = podomatic.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  if (isHostOf(parsedUrl, hosts)) {
-    const show = parsedUrl.pathname.match(directoryPathRegex)?.[1]
-
-    if (!show) {
-      return
-    }
-
-    return { kind: 'podcast', show }
-  }
-
-  const show = getTenantSubdomain(parsedUrl, domains)
-
-  if (!show) {
-    return
-  }
-
-  return { kind: 'podcast', show }
+  return { kind: 'podcast', show: page.params.show }
 }
 
 export const podomaticHandler: PlatformHandler = {

@@ -1,8 +1,7 @@
 import { aladin } from 'feedintel'
-import { escapeRegex, getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { escapeRegex } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: posts.
@@ -12,27 +11,20 @@ export type AladinUrl =
   | { kind: 'blog'; username: string }
   | { kind: 'category'; username: string; categoryId: string }
 
-const hosts = aladin.hosts.exact
-
 const feeds = withHintLabels(aladin.feeds)
 
 export const parseAladinUrl = (url: string): AladinUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = aladin.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [username, section, value] = getPathSegments(url)
-
-  // A dotted segment such as ScriptResource.axd is a file of the site.
-  if (!username || username.includes('.')) {
-    return
+  if (page.key === 'category') {
+    return { kind: 'category', username: page.params.username, categoryId: page.params.categoryId }
   }
 
-  if (isAnyOf(section, 'category') && value && digitsRegex.test(value)) {
-    return { kind: 'category', username, categoryId: value }
-  }
-
-  return { kind: 'blog', username }
+  return { kind: 'blog', username: page.params.username }
 }
 
 export type AladinPage = AladinUrl

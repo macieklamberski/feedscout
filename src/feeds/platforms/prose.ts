@@ -1,5 +1,5 @@
 import { prose } from 'feedintel'
-import { getQueryParam, getSubdomain, isHostOf, parseUrl } from 'trousse'
+import { getSubdomain } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -11,33 +11,30 @@ export type ProseUrl =
   | { kind: 'blog'; username: string }
 
 const domains = prose.hosts.tenants
-const apexHosts = ['prose.sh']
 
 const feeds = withHintLabels(prose.feeds)
 
 export const parseProseUrl = (url: string): ProseUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = prose.pages.read(url)
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
   // Apex prose.sh is the platform-wide discovery firehose, not a per-blog feed.
-  if (isHostOf(parsedUrl, apexHosts)) {
+  if (page.key === 'home') {
     return { kind: 'home' }
   }
 
   // `www` is a Prose user like any other, so `www.prose.sh` is a blog.
-  const username = getSubdomain(parsedUrl, domains)
+  const username = getSubdomain(url, domains)
 
-  if (!username || username.includes('.')) {
+  if (!username) {
     return
   }
 
-  const tag = getQueryParam(parsedUrl.searchParams, 'tag')
-
-  if (tag) {
-    return { kind: 'tag', username, tag }
+  if (page.key === 'tag') {
+    return { kind: 'tag', username, tag: page.params.tag }
   }
 
   return { kind: 'blog', username }

@@ -1,5 +1,4 @@
 import { tildes } from 'feedintel'
-import { getQueryParam, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -11,24 +10,18 @@ export type TildesUrl =
   | { kind: 'group'; group: string; tag?: string }
   | { kind: 'home'; tag?: string }
 
-const hosts = tildes.hosts.exact
-
-const groupRegex = /^\/~([^/]+)/
-
 const feeds = withHintLabels(tildes.feeds)
 
 export const parseTildesUrl = (url: string): TildesUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = tildes.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const { pathname, searchParams } = parsedUrl
-  const tag = getQueryParam(searchParams, 'tag')
-  const group = pathname.match(groupRegex)?.[1]
+  const { group, tag } = page.params
 
-  if (group) {
+  if (page.key === 'group') {
     return { kind: 'group', group, tag }
   }
 

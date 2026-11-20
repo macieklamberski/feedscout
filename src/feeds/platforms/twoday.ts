@@ -1,5 +1,4 @@
 import { twoday } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -14,27 +13,18 @@ export type TwodayUrl =
 
 const domains = twoday.hosts.tenants
 
-const topicRegex = /^\/topics\/([^/]+)(?:\/|$)/i
-
 const feeds = withHintLabels(twoday.feeds)
 
 export const parseTwodayUrl = (url: string): TwodayUrl | undefined => {
-  const pathname = parseUrl(url)?.pathname
-
-  if (!pathname) {
-    return
-  }
-
+  const page = twoday.pages.read(url)
   const blog = getTenantSubdomain(url, domains)
 
-  if (!blog) {
+  if (!page || !blog) {
     return
   }
 
-  const topic = pathname.match(topicRegex)?.[1]
-
-  if (topic) {
-    return { kind: 'topic', blog, topic }
+  if (page.key === 'topic') {
+    return { kind: 'topic', blog, topic: page.params.topic }
   }
 
   return { kind: 'blog', blog }

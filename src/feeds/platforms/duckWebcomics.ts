@@ -1,31 +1,25 @@
 import { duckWebcomics } from 'feedintel'
-import { getPathSegments, isHostOf, isSameText } from 'trousse'
+import { isSameText } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, wordRegex } from '../../common/utils.js'
+import { findElement } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type DuckWebcomicsUrl = { kind: 'comic'; comic: string }
-
-const hosts = duckWebcomics.hosts.exact
 
 const feedPathRegex = /^\/(\w+)\/rss\/$/i
 
 const feeds = withHintLabels(duckWebcomics.feeds)
 
 export const parseDuckWebcomicsUrl = (url: string): DuckWebcomicsUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = duckWebcomics.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [comic] = getPathSegments(url)
-
-  if (!comic || !wordRegex.test(comic)) {
-    return
-  }
-
-  return { kind: 'comic', comic }
+  return { kind: 'comic', comic: page.params.comic }
 }
 
 // The site answers a comic in any case, and its pages link the feed in the comic's own spelling.

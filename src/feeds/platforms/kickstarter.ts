@@ -1,5 +1,4 @@
 import { kickstarter } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -12,25 +11,21 @@ export type KickstarterUrl =
   | { kind: 'page'; name: string }
   | { kind: 'home' }
 
-const hosts = kickstarter.hosts.exact
-
 const feeds = withHintLabels(kickstarter.feeds)
 
 export const parseKickstarterUrl = (url: string): KickstarterUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = kickstarter.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [route, creator, project] = getPathSegments(url)
-
-  // Project page: kickstarter.com/projects/{creator}/{project}
-  if (isAnyOf(route, 'projects') && creator && project) {
-    return { kind: 'project', creator, project }
+  if (page.key === 'project') {
+    return { kind: 'project', creator: page.params.creator, project: page.params.project }
   }
 
-  // Curated page: kickstarter.com/pages/{name}
-  if (isAnyOf(route, 'pages') && creator) {
-    return { kind: 'page', name: creator }
+  if (page.key === 'page') {
+    return { kind: 'page', name: page.params.name }
   }
 
   return { kind: 'home' }

@@ -1,5 +1,4 @@
 import { isProgrammer } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -14,31 +13,22 @@ export type IsProgrammerUrl =
 
 const domains = isProgrammer.hosts.tenants
 
-const postRegex = /^\/posts\/(\d+)(?:\.html)?(?:\/|$)/i
-
 // An unregistered name answers the sign-up page, served from the platform's own index account.
 const signUpPageRegex = /\/user_files\/index\/config\/favicon\.ico"/i
 
 const feeds = withHintLabels(isProgrammer.feeds)
 
 export const parseIsProgrammerUrl = (url: string): IsProgrammerUrl | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl) {
-    return
-  }
-
+  const page = isProgrammer.pages.read(url)
   // A deeper host such as www.{blog}.is-programmer.com answers the sign-up page.
-  const blog = getTenantSubdomain(parsedUrl, domains)
+  const blog = getTenantSubdomain(url, domains)
 
-  if (!blog) {
+  if (!page || !blog) {
     return
   }
 
-  const postId = parsedUrl.pathname.match(postRegex)?.[1]
-
-  if (postId) {
-    return { kind: 'post', blog, postId }
+  if (page.key === 'post') {
+    return { kind: 'post', blog, postId: page.params.postId }
   }
 
   return { kind: 'blog', blog }

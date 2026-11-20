@@ -1,5 +1,5 @@
 import { sourcehut } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { isAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -11,39 +11,26 @@ export type SourcehutUrl =
   | { kind: 'repo'; owner: string; repo: string }
   | { kind: 'project'; owner: string; project: string }
 
-export const hosts = sourcehut.hosts.exact
-const projectHosts = ['sr.ht']
-const userHosts = [...projectHosts, 'todo.sr.ht', ...hosts]
-
 const feeds = withHintLabels(sourcehut.feeds)
 
 export const parseSourcehutUrl = (url: string): SourcehutUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = sourcehut.pages.read(url)
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  const [ownerHandle, repo] = getPathSegments(parsedUrl)
+  const { owner, repo, project } = page.params
 
-  // length: keeps a bare ~ with no owner after it out
-  if (!ownerHandle?.startsWith('~') || ownerHandle.length < 2) {
-    return
-  }
-
-  const owner = ownerHandle.slice(1)
-
-  if (repo && isHostOf(parsedUrl, hosts)) {
+  if (page.key === 'repo') {
     return { kind: 'repo', owner, repo }
   }
 
-  if (repo && isHostOf(parsedUrl, projectHosts)) {
-    return { kind: 'project', owner, project: repo }
+  if (page.key === 'project') {
+    return { kind: 'project', owner, project }
   }
 
-  if (!repo && isHostOf(parsedUrl, userHosts)) {
-    return { kind: 'user', owner }
-  }
+  return { kind: 'user', owner }
 }
 
 export const sourcehutHandler: PlatformHandler = {

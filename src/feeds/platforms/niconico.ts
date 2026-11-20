@@ -1,8 +1,6 @@
 import { niconico } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Handler needed for: blog, live, videos.
@@ -12,30 +10,24 @@ export type NiconicoUrl =
   | { kind: 'live'; channel: string }
   | { kind: 'blomaga'; channel: string }
 
-export const hosts = niconico.hosts.exact
-
 const feeds = withHintLabels(niconico.feeds)
 
 export const parseNiconicoUrl = (url: string): NiconicoUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = niconico.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [channel, section] = getPathSegments(url)
-
-  if (!channel || !wordOrHyphenRegex.test(channel)) {
-    return
+  if (page.key === 'live') {
+    return { kind: 'live', channel: page.params.channel }
   }
 
-  if (isAnyOf(section, 'live')) {
-    return { kind: 'live', channel }
+  if (page.key === 'blomaga') {
+    return { kind: 'blomaga', channel: page.params.channel }
   }
 
-  if (isAnyOf(section, 'blomaga')) {
-    return { kind: 'blomaga', channel }
-  }
-
-  return { kind: 'channel', channel }
+  return { kind: 'channel', channel: page.params.channel }
 }
 
 export const niconicoHandler: PlatformHandler = {

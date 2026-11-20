@@ -1,8 +1,7 @@
 import { geoblog } from 'feedintel'
-import { getPathSegments, isAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
+import { findElement } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Handler needed for: trip.
@@ -11,30 +10,22 @@ export type GeoblogUrl = { kind: 'trip' } | { kind: 'entry' }
 
 export type GeoblogPage = GeoblogUrl & { tripId: string }
 
-const domains = geoblog.hosts.tenants
-
 const tripPathRegex = /^\/podroz\/(\d+)(?:\/|$)/i
 
 const feeds = withHintLabels(geoblog.feeds)
 
 export const parseGeoblogUrl = (url: string): GeoblogUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  const page = geoblog.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [section, id] = getPathSegments(url)
-
-  if (!id || !digitsRegex.test(id)) {
-    return
-  }
-
-  if (isAnyOf(section, 'podroz')) {
+  if (page.key === 'trip') {
     return { kind: 'trip' }
   }
 
-  if (isAnyOf(section, 'wpis')) {
-    return { kind: 'entry' }
-  }
+  return { kind: 'entry' }
 }
 
 // A trip feed answers on any user's host, under that user's name, so the trip comes from the page.

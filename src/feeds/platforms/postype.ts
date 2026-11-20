@@ -1,5 +1,4 @@
 import { postype } from 'feedintel'
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -13,33 +12,21 @@ export type PostypeUrl =
   | { kind: 'subdomain'; channel: string }
 
 const domains = postype.hosts.tenants
-export const hosts = postype.hosts.exact
 
 const feeds = withHintLabels(postype.feeds)
 
 export const parsePostypeUrl = (url: string): PostypeUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = postype.pages.read(url)
 
-  if (!parsedUrl) {
-    return
+  if (page?.key === 'post') {
+    return { kind: 'post', channel: page.params.channel }
   }
 
-  if (isHostOf(parsedUrl, hosts)) {
-    const [channelHandle, postSlug] = getPathSegments(parsedUrl)
-
-    // length: keeps a bare @ with no channel after it out
-    if (!channelHandle?.startsWith('@') || channelHandle.length < 2) {
-      return
-    }
-
-    if (postSlug) {
-      return { kind: 'post', channel: channelHandle.slice(1) }
-    }
-
-    return { kind: 'channel', channel: channelHandle.slice(1) }
+  if (page) {
+    return { kind: 'channel', channel: page.params.channel }
   }
 
-  const subdomain = getTenantSubdomain(parsedUrl, domains)
+  const subdomain = getTenantSubdomain(url, domains)
 
   if (!subdomain) {
     return

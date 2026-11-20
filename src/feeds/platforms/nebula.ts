@@ -1,5 +1,4 @@
 import { nebula } from 'feedintel'
-import { getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -9,29 +8,20 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type NebulaUrl = { kind: 'channel'; slug: string } | { kind: 'explore'; category?: string }
 
-export const hosts = nebula.hosts.exact
-
-// /explore is the canonical landing page (Nebula 301s root and /videos to it).
-// Treated as the global feed surface, not a creator slug.
-const globalPaths = ['videos', 'explore']
-
 const feeds = withHintLabels(nebula.feeds)
 
 export const parseNebulaUrl = (url: string): NebulaUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = nebula.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const [slug] = getPathSegments(parsedUrl)
-
-  // The root, /videos and /explore[/{tab}], optionally filtered by category.
-  if (!slug || isAnyOf(slug, globalPaths)) {
-    return { kind: 'explore', category: getQueryParam(parsedUrl.searchParams, 'category') }
+  if (page.key === 'explore') {
+    return { kind: 'explore', category: page.params.category }
   }
 
-  return { kind: 'channel', slug }
+  return { kind: 'channel', slug: page.params.slug }
 }
 
 export const nebulaHandler: PlatformHandler = {

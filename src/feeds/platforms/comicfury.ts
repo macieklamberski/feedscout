@@ -1,5 +1,4 @@
 import { comicfury } from 'feedintel'
-import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { alphanumericOrHyphenRegex, getTenantSubdomain } from '../../common/utils.js'
@@ -11,46 +10,27 @@ import { alphanumericOrHyphenRegex, getTenantSubdomain } from '../../common/util
 export type ComicfuryUrl = { kind: 'comic' | 'profile' | 'reader'; comic: string }
 
 const domains = comicfury.hosts.tenants
-const hosts = comicfury.hosts.exact
-
-const readerPathRegex = /^\/read\/([^/]+)/i
 
 const feeds = withHintLabels(comicfury.feeds)
 
 export const parseComicfuryUrl = (url: string): ComicfuryUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = comicfury.pages.read(url)
 
-  if (!parsedUrl) {
-    return
+  if (page?.key === 'profile') {
+    return { kind: 'profile', comic: page.params.comic }
   }
 
-  if (!isHostOf(parsedUrl, hosts)) {
-    const comic = getTenantSubdomain(parsedUrl, domains)
-
-    if (!comic || !alphanumericOrHyphenRegex.test(comic)) {
-      return
-    }
-
-    return { kind: 'comic', comic }
+  if (page) {
+    return { kind: 'reader', comic: page.params.comic }
   }
 
-  if (isAnyOf(parsedUrl.pathname, '/comicprofile.php')) {
-    const comic = getQueryParam(parsedUrl.searchParams, 'url')
-
-    if (!comic || !alphanumericOrHyphenRegex.test(comic)) {
-      return
-    }
-
-    return { kind: 'profile', comic }
-  }
-
-  const comic = parsedUrl.pathname.match(readerPathRegex)?.[1]
+  const comic = getTenantSubdomain(url, domains)
 
   if (!comic || !alphanumericOrHyphenRegex.test(comic)) {
     return
   }
 
-  return { kind: 'reader', comic }
+  return { kind: 'comic', comic }
 }
 
 export const comicfuryHandler: PlatformHandler = {

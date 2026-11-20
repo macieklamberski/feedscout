@@ -1,5 +1,4 @@
 import { ivoox } from 'feedintel'
-import { isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -9,30 +8,23 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 export type IvooxUrl = { kind: 'podcast'; podcastId: string } | { kind: 'episode' }
 export type IvooxPage = { kind: 'podcast' | 'episode'; podcastId: string }
 
-const hosts = ivoox.hosts.exact
-
-const podcastRegex = /_sq_f(\d+)_\d+\.html$/i
-const episodeRegex = /_rf_\d+_\d+\.html$/i
 // An episode page names its show in the JSON-LD `partOfSeries`, among links to other shows.
 const partOfSeriesRegex = /"partOfSeries":\{[^{}]*_sq_f(\d+)_/
 
 const feeds = withHintLabels(ivoox.feeds)
 
 export const parseIvooxUrl = (url: string): IvooxUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = ivoox.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const { pathname } = new URL(url)
-  const podcastId = pathname.match(podcastRegex)?.[1]
-
-  if (podcastId) {
-    return { kind: 'podcast', podcastId }
+  if (page.key === 'podcast') {
+    return { kind: 'podcast', podcastId: page.params.podcastId }
   }
 
-  if (episodeRegex.test(pathname)) {
-    return { kind: 'episode' }
-  }
+  return { kind: 'episode' }
 }
 
 export const getIvooxPage = (url: string, content: string | undefined): IvooxPage | undefined => {

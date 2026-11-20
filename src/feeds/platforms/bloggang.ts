@@ -1,8 +1,8 @@
 import { bloggang } from 'feedintel'
-import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain, wordOrHyphenRegex } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -12,11 +12,8 @@ export type BloggangUrl =
   | { kind: 'diary'; username: string }
 
 const domains = bloggang.hosts.tenants
-const hosts = bloggang.hosts.exact
 // The mobile site names a blog in the query, in a form no feed URL is built from.
 const mobileHosts = ['m.bloggang.com']
-
-const scriptRegex = /^\/(\w+)\.php$/i
 
 const feeds = withHintLabels(bloggang.feeds)
 
@@ -28,29 +25,21 @@ export const parseBloggangUrl = (url: string): BloggangUrl | undefined => {
     return { kind: 'blog', username: subdomain }
   }
 
-  if (!isHostOf(url, hosts)) {
+  const page = bloggang.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const parsed = parseUrl(url)
-  const script = parsed?.pathname.match(scriptRegex)?.[1]
-  const username = parsed ? getQueryParam(parsed.searchParams, 'id') : undefined
-
-  if (!username || !wordOrHyphenRegex.test(username)) {
-    return
+  if (page.key === 'post') {
+    return { kind: 'post', username: page.params.username }
   }
 
-  if (isAnyOf(script, 'mainblog')) {
-    return { kind: 'blog', username }
+  if (page.key === 'diary') {
+    return { kind: 'diary', username: page.params.username }
   }
 
-  if (isAnyOf(script, 'viewblog')) {
-    return { kind: 'post', username }
-  }
-
-  if (isAnyOf(script, 'viewdiary')) {
-    return { kind: 'diary', username }
-  }
+  return { kind: 'blog', username: page.params.username }
 }
 
 export const bloggangHandler: PlatformHandler = {

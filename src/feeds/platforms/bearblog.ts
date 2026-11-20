@@ -1,5 +1,4 @@
 import { bearblog } from 'feedintel'
-import { getQueryParam, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -11,13 +10,17 @@ import { getTenantSubdomain } from '../../common/utils.js'
 export type BearblogUrl = { kind: 'discover' } | { kind: 'blog'; blog: string; tag?: string }
 
 const domains = bearblog.hosts.tenants
-const apexHosts = ['bearblog.dev', 'www.bearblog.dev']
 
 const feeds = withHintLabels(bearblog.feeds)
 
 export const parseBearblogUrl = (url: string): BearblogUrl | undefined => {
-  // Apex bearblog.dev exposes the platform-wide trending discovery feed.
-  if (isHostOf(url, apexHosts)) {
+  const page = bearblog.pages.read(url)
+
+  if (!page) {
+    return
+  }
+
+  if (page.key === 'discover') {
     return { kind: 'discover' }
   }
 
@@ -27,10 +30,7 @@ export const parseBearblogUrl = (url: string): BearblogUrl | undefined => {
     return
   }
 
-  // Tag filter via ?q= query param.
-  const tag = getQueryParam(new URL(url).searchParams, 'q')
-
-  return { kind: 'blog', blog, tag }
+  return { kind: 'blog', blog, tag: page.params.tag }
 }
 
 export const bearblogHandler: PlatformHandler = {

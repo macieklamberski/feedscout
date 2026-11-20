@@ -1,5 +1,4 @@
 import { togetter } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -8,28 +7,20 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type TogetterUrl = { kind: 'user'; username: string } | { kind: 'recent' } | { kind: 'home' }
 
-export const hosts = togetter.hosts.exact
-
-const userPathRegex = /^\/id\/([^/]+)/i
-
 const feeds = withHintLabels(togetter.feeds)
 
 export const parseTogetterUrl = (url: string): TogetterUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = togetter.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const username = parsedUrl.pathname.match(userPathRegex)?.[1]
-
-  if (username) {
-    return { kind: 'user', username }
+  if (page.key === 'user') {
+    return { kind: 'user', username: page.params.username }
   }
 
-  const [route] = getPathSegments(parsedUrl)
-
-  if (isAnyOf(route, 'recent')) {
+  if (page.key === 'recent') {
     return { kind: 'recent' }
   }
 

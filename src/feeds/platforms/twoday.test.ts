@@ -19,7 +19,7 @@ describe('parseTwodayUrl', () => {
     ],
     [
       'https://alice.twoday.net/topics/kreative+einsatzm%C3%B6glichkeiten',
-      { kind: 'topic', blog: 'alice', topic: 'kreative+einsatzm%C3%B6glichkeiten' },
+      { kind: 'topic', blog: 'alice', topic: 'kreative+einsatzmöglichkeiten' },
     ],
     [
       'https://alice.twoday.net/topics/.Der+Rest/?start=10',

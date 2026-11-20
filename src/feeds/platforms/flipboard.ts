@@ -1,5 +1,4 @@
 import { flipboard } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -10,46 +9,27 @@ export type FlipboardUrl =
   | { kind: 'magazine'; username: string; magazine: string }
   | { kind: 'topic'; topic: string }
 
-export const hosts = flipboard.hosts.exact
-
-// Flipboard redirects these profile tabs to the profile itself.
-const profileSubpaths = ['followers', 'following', 'magazines']
-
 const feeds = withHintLabels(flipboard.feeds)
 
 export const parseFlipboardUrl = (url: string): FlipboardUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = flipboard.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [routeOrHandle, topicOrMagazine, article] = getPathSegments(url)
+  const { username, magazine, topic } = page.params
 
-  // A third segment is an article flipped into a magazine, which has no feed.
-  if (!routeOrHandle || article) {
-    return
+  if (page.key === 'topic') {
+    return { kind: 'topic', topic }
   }
 
-  if (isAnyOf(routeOrHandle, 'topic')) {
-    if (!topicOrMagazine) {
-      return
-    }
-
-    return { kind: 'topic', topic: topicOrMagazine }
-  }
-
-  // Only a leading @ marks a user, so site routes like /explore never read as one.
-  if (!routeOrHandle.startsWith('@') || routeOrHandle.length === 1) {
-    return
-  }
-
-  const username = routeOrHandle.slice(1)
-
-  if (!topicOrMagazine || isAnyOf(topicOrMagazine, profileSubpaths)) {
+  if (page.key === 'profile') {
     return { kind: 'profile', username }
   }
 
   // Storyboards share the magazine URL shape and its .rss feed.
-  return { kind: 'magazine', username, magazine: topicOrMagazine }
+  return { kind: 'magazine', username, magazine }
 }
 
 export const flipboardHandler: PlatformHandler = {
