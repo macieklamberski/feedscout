@@ -145,7 +145,7 @@ describe('mediumHandler', () => {
     it('should return RSS feed URL for user profile', () => {
       const value = 'https://medium.com/@bob'
       const expected = [
-        { uri: 'https://medium.com/feed/@bob', hint: { key: 'medium:posts', label: 'Posts' } },
+        { uri: 'https://medium.com/@bob/feed', hint: { key: 'medium:posts', label: 'Posts' } },
       ]
 
       expect(mediumHandler.resolve(value)).toEqual(expected)
