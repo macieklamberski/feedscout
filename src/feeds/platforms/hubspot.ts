@@ -1,5 +1,6 @@
+import { hubspot } from 'feedintel'
 import { getAnyOf, getPathSegments, isString, parseUrl, resolveUrl, stripWww } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -19,24 +20,7 @@ const listingRoutes = ['author', 'tag', 'topic']
 
 const blogContentTypes = ['BLOG', 'BLOG_LISTING_PAGE', 'BLOG_POST', 'BLOG_AUTHOR', 'TAG']
 
-// HubSpot's site hosts: hs-sites.com, a region suffix such as hs-sites-eu1.com, and hs-sitesqa.com.
-const hubspotDomainRegex = /^hs-sites(?:-[a-z]{2}\d|qa)?\.com$/
-const domains = [hubspotDomainRegex]
-
-// A blog on a custom domain is known only by its marker, so its feeds are built under the blog root
-// the page links, and claimed only for a blog at the root of HubSpot's own hosts. A podcast's feed
-// is only claimed.
-const feeds = definePlatformFeeds(
-  'hubspot',
-  [
-    { key: 'author', main: '{root}/author/{name}/rss.xml' },
-    { key: 'tag', main: '{root}/tag/{name}/rss.xml' },
-    { key: 'tag', main: '{root}/topic/{topic}/rss.xml' },
-    { key: 'blog', main: '{root}/rss.xml' },
-    { key: 'podcast', main: '{root}/podcasts/{id}/rss.xml' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(hubspot.feeds)
 
 // Every blog page links its blog's feed, `{blog}/rss.xml`, which names the blog's root. A blog can
 // sit at the host root or several segments deep.

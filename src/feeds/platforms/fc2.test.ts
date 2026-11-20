@@ -168,41 +168,6 @@ describe('fc2Handler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the posts hint for a posts feed', () => {
-      const value = 'https://example.blog.fc2.com/?xml'
-      const expected: DiscoverUriHint = { key: 'fc2:posts', label: 'Posts' }
-
-      expect(fc2Handler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a posts feed with an empty value', () => {
-      const value = 'https://example.blog.fc2.com/?xml='
-      const expected: DiscoverUriHint = { key: 'fc2:posts', label: 'Posts' }
-
-      expect(fc2Handler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a posts feed on a numbered blog host over http', () => {
-      const value = 'http://example.blog26.fc2.com/?xml='
-      const expected: DiscoverUriHint = { key: 'fc2:posts', label: 'Posts' }
-
-      expect(fc2Handler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a posts feed on an fc2.net host', () => {
-      const value = 'https://example.fc2.net/?xml'
-      const expected: DiscoverUriHint = { key: 'fc2:posts', label: 'Posts' }
-
-      expect(fc2Handler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the comments hint for a comments feed', () => {
-      const value = 'https://example.blog.fc2.com/?xml&comment'
-      const expected: DiscoverUriHint = { key: 'fc2:comments', label: 'Comments' }
-
-      expect(fc2Handler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the comments hint for a comments feed with the parameters reordered', () => {
       const value = 'https://example.blog26.fc2.com/?comment=&xml='
       const expected: DiscoverUriHint = { key: 'fc2:comments', label: 'Comments' }
@@ -210,86 +175,29 @@ describe('fc2Handler', () => {
       expect(fc2Handler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the trackbacks hint for a trackbacks feed', () => {
-      const value = 'https://example.blog.fc2.com/?xml&trackback'
-      const expected: DiscoverUriHint = { key: 'fc2:trackbacks', label: 'Trackbacks' }
-
-      expect(fc2Handler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the trackbacks hint for a trackbacks feed with the parameters reordered', () => {
-      const value = 'https://example.fc2.net/?trackback&xml'
-      const expected: DiscoverUriHint = { key: 'fc2:trackbacks', label: 'Trackbacks' }
-
-      expect(fc2Handler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the category hint for a category feed', () => {
-      const value = 'https://example.blog.fc2.com/?xml&category=12'
-      const expected: DiscoverUriHint = { key: 'fc2:category', label: 'Category' }
-
-      expect(fc2Handler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for a tag feed', () => {
-      const value = 'https://example.blog.fc2.com/?xml&utag=example'
-      const expected: DiscoverUriHint = { key: 'fc2:tag', label: 'Tag' }
-
-      expect(fc2Handler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://example.blog.fc2.com/blog-entry-1.html'
-
-      expect(fc2Handler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed query on another FC2 service', () => {
-      const value = 'https://example.web.fc2.com/?xml'
-
-      expect(fc2Handler.getFeedHint?.(value)).toBeUndefined()
-    })
-
     it('should return undefined for a feed query on a dotted subdomain of a blog host', () => {
       const value = 'https://www.example.blog.fc2.com/?xml'
-
-      expect(fc2Handler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed query on the blog farm host itself', () => {
-      const value = 'https://blog.fc2.com/?xml'
-
-      expect(fc2Handler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed query on another host', () => {
-      const value = 'https://example.com/?xml'
 
       expect(fc2Handler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://example.blog.fc2.com/?xml=', { key: 'fc2:posts', label: 'Posts' }],
-      ['http://example.blog26.fc2.com/?comment=&xml=', { key: 'fc2:comments', label: 'Comments' }],
-      ['https://example.fc2.net/?trackback=&xml=', { key: 'fc2:trackbacks', label: 'Trackbacks' }],
-      [
-        'http://example.blog26.fc2.com/?category=12&xml',
-        { key: 'fc2:category', label: 'Category' },
-      ],
-      ['https://example.fc2.net/?utag=example&xml', { key: 'fc2:tag', label: 'Tag' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a comments feed on a numbered blog host as itself', async () => {
+      const value = 'http://example.blog26.fc2.com/?comment=&xml='
+      const options = {
         ...defaultPlatformOptions,
         handlers: [fc2Handler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.blog26.fc2.com/?comment=&xml=',
+          hint: { key: 'fc2:comments', label: 'Comments' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

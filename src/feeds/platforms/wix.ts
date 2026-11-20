@@ -1,5 +1,6 @@
+import { wix } from 'feedintel'
 import { getPathSegments, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -7,29 +8,10 @@ import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 export type WixUrl = { kind: 'freeSite'; site: string } | { kind: 'site' }
 
-// Wix Studio serves its free sites the same way, under a path on `{account}.wixstudio.com`.
-const domains = ['wixsite.com', 'wixstudio.com']
+const domains = wix.hosts.tenants
 const assetHosts = ['static.parastorage.com']
 
-// Wix answers a free site's feed under any one segment after the site path, such as a language.
-const freeSiteFeeds = definePlatformFeeds(
-  'wix',
-  [
-    {
-      key: 'blog',
-      main: '{scheme}://{host}/{site}/blog-feed.xml',
-      aliases: ['{scheme}://{host}/{site}/{section}/blog-feed.xml'],
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
-
-// A site on its own domain is known only by its markers, so its feed is built but not claimed.
-const siteFeeds = definePlatformFeeds(
-  'wix',
-  [{ key: 'blog', main: '{scheme}://{host}/blog-feed.xml' }],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(wix.feeds)
 
 export const isWixHtml = (content: string): boolean => {
   if (hasMetaContent(content, 'generator', 'Wix.com')) {
@@ -76,7 +58,7 @@ export const wixHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseWixUrl(url)
-    const page = parsed?.kind === 'freeSite' ? freeSiteFeeds.forUrl(url) : siteFeeds.forUrl(url)
+    const page = feeds.forUrl(url)
 
     if (!parsed || !page) {
       return []
@@ -89,5 +71,5 @@ export const wixHandler: PlatformHandler = {
     return [page.getFeedEntry('blog')]
   },
 
-  getFeedHint: freeSiteFeeds.getFeedHint,
+  getFeedHint: feeds.getFeedHint,
 }

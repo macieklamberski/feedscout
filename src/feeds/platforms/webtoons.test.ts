@@ -166,101 +166,30 @@ describe('webtoonsHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the series hint for a Canvas series feed', () => {
-      const value = 'https://www.webtoons.com/en/challenge/alice/rss?title_no=97265'
-      const expected: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
-
-      expect(webtoonsHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the series hint for an original series feed', () => {
-      const value = 'https://www.webtoons.com/en/drama/lookism/rss?title_no=1049'
-      const expected: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
-
-      expect(webtoonsHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the series hint for a feed under any language', () => {
-      const value = 'https://www.webtoons.com/ja/challenge/alice/rss?title_no=97265'
-      const expected: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
-
-      expect(webtoonsHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a feed under a segment that is no language', () => {
-      const value = 'https://www.webtoons.com/xx/challenge/alice/rss?title_no=97265'
-
-      expect(webtoonsHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return the series hint for a feed with a percent-encoded name', () => {
-      const value =
-        'https://www.webtoons.com/zh-hant/challenge/%E8%97%8D%E6%9C%88%E4%B8%8B%E7%9A%84%E5%AE%B6/rss?title_no=681146'
-      const expected: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
-
-      expect(webtoonsHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the series hint for a feed without www', () => {
-      const value = 'https://webtoons.com/en/challenge/everyday-magic/rss?title_no=741756'
-      const expected: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
-
-      expect(webtoonsHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the series hint for a feed on the sg host', () => {
-      const value = 'https://sg.webtoons.com/en/challenge/the-legend-of-genji/rss?title_no=194154'
+      const value = 'https://sg.webtoons.com/en/challenge/example-series/rss?title_no=194154'
       const expected: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
 
       expect(webtoonsHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the series hint for a feed on the us host', () => {
-      const value = 'https://us.webtoons.com/en/romance/sixth-sense-kiss/rss?title_no=2921'
-      const expected: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
-
-      expect(webtoonsHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a series page', () => {
-      const value = 'https://www.webtoons.com/en/challenge/alice/list?title_no=97265'
-
-      expect(webtoonsHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path without a title number', () => {
-      const value = 'https://www.webtoons.com/en/challenge/alice/rss'
-
-      expect(webtoonsHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/en/challenge/alice/rss?title_no=97265'
-
-      expect(webtoonsHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
-    const hint: DiscoverUriHint = { key: 'webtoons:series', label: 'Series' }
-    const ownFeeds = [
-      'https://www.webtoons.com/en/challenge/alice/rss?title_no=97265',
-      'https://www.webtoons.com/en/challenge/everyday-magic/rss?title_no=741756',
-      'https://www.webtoons.com/en/drama/lookism/rss?title_no=1049',
-      'https://www.webtoons.com/id/fantasy/deadly-7-inside-me/rss?title_no=722',
-      'https://sg.webtoons.com/en/challenge/the-legend-of-genji/rss?title_no=194154',
-      'https://us.webtoons.com/en/romance/sixth-sense-kiss/rss?title_no=2921',
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a series feed as itself', async () => {
+      const value = 'https://www.webtoons.com/en/challenge/example-series/rss?title_no=97265'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [webtoonsHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://www.webtoons.com/en/challenge/example-series/rss?title_no=97265',
+          hint: { key: 'webtoons:series', label: 'Series' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

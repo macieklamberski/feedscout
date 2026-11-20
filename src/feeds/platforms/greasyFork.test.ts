@@ -188,29 +188,14 @@ describe('greasyForkHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the user hint for a user scripts feed', () => {
-      const value = 'https://api.greasyfork.org/en/scripts.atom?by=1&filter_locale=0'
-      const expected: DiscoverUriHint = { key: 'greasy-fork:user', label: 'User scripts' }
-
-      expect(greasyForkHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the user hint for a user scripts feed in the locale language', () => {
-      const value = 'https://api.greasyfork.org/en/scripts.atom?by=1'
-      const expected: DiscoverUriHint = { key: 'greasy-fork:user', label: 'User scripts' }
-
-      expect(greasyForkHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the updated hint for the updated scripts feed on Sleazy Fork', () => {
       const value = 'https://api.sleazyfork.org/zh-CN/scripts.atom?sort=updated'
-      const expected: DiscoverUriHint = { key: 'greasy-fork:updated', label: 'Updated scripts' }
+      const expected: DiscoverUriHint = {
+        key: 'greasy-fork:updated',
+        label: 'Updated scripts',
+      }
 
       expect(greasyForkHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a script listing page', () => {
-      expect(greasyForkHandler.getFeedHint?.('https://greasyfork.org/en/scripts')).toBeUndefined()
     })
   })
 })

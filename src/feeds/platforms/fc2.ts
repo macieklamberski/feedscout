@@ -1,5 +1,6 @@
+import { fc2 } from 'feedintel'
 import { getQueryParam, getSubdomain, isAnyOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -11,26 +12,13 @@ export type Fc2Url =
   | { kind: 'tag'; tag: string }
 
 // A blog is one label under fc2.net.
-const domains = ['fc2.net']
+const domains = fc2.hosts.tenants
 
 const numberedSubdomainRegex = /^(?<blog>[^.]+)\.blog\d*$/i
-// A blog on fc2.com is one label under blog.fc2.com or a numbered blog{n}.fc2.com.
-const blogDomainRegex = /^blog\d*\.fc2\.com$/i
 // A category page and its later pages, /blog-category-{n}.html and /blog-category-{n}-{page}.html.
 const categoryPathRegex = /^\/blog-category-(\d+)(?:-\d+)?\.html$/i
 
-const feeds = definePlatformFeeds(
-  'fc2',
-  [
-    { key: 'posts', main: '{scheme}://{host}/?xml' },
-    { key: 'comments', main: '{scheme}://{host}/?xml&comment' },
-    { key: 'trackbacks', main: '{scheme}://{host}/?xml&trackback' },
-    // The posts narrowed to one category or one tag. Their pages link only the posts feed.
-    { key: 'category', main: '{scheme}://{host}/?xml&category={category}' },
-    { key: 'tag', main: '{scheme}://{host}/?xml&utag={tag}' },
-  ],
-  { hosts: { tenants: [...domains, blogDomainRegex] } },
-)
+const feeds = withHintLabels(fc2.feeds)
 
 const isFc2Blog = (url: URL): boolean => {
   if (getTenantSubdomain(url, domains)) {

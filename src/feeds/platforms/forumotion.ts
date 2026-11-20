@@ -1,12 +1,8 @@
+import { forumotion } from 'feedintel'
 import { isHostOrSubdomainOf, isPlainObject, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  getBrandDomainRegex,
-  getJsonLd,
-  getTenantSubdomain,
-  hasMarker,
-} from '../../common/utils.js'
+import { getJsonLd, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: latest-topics.
@@ -20,97 +16,9 @@ export type ForumotionPage =
 const forumPathRegex = /^\/f(\d+)(?:p\d+)?-/i
 const topicPathRegex = /^\/t\d+(?:p\d+)?-/i
 
-// The brands Forumotion lists on forumotion.com/languages, each under any of its domains. Other
-// domains Forumotion serves forums on, such as 1fr1.net or forumpro.fr, are left to the marker.
-const brands = [
-  '666forum',
-  'actieforum',
-  'ahlamontada',
-  'albanianforum',
-  'azerbaijaniforum',
-  'bosnianforum',
-  'bulgarianforum',
-  'danskforum',
-  'editboard',
-  'foroactivo',
-  'forocatalan',
-  'forum2x2',
-  'forumactif',
-  'forumattivo',
-  'forumcroatian',
-  'forumczech',
-  'forumeiros',
-  'forumfa',
-  'forumgratuit',
-  'forumgreek',
-  'forumhebrew',
-  'forumieren',
-  'forumjap',
-  'forumkorean',
-  'forumlt',
-  'forummo',
-  'forumms',
-  'forumotion',
-  'forumpolish',
-  'forumsc',
-  'forumta',
-  'forumtl',
-  'forumur',
-  'forumvi',
-  'georgianforum',
-  'hungarianforum',
-  'icelandforum',
-  'indonesianforum',
-  'latvianforum',
-  'longluntan',
-  'macedonianforum',
-  'norwegianforum',
-  'palstani',
-  'serbianforum',
-  'slovakforum',
-  'slovenianforum',
-  'swedishforum',
-  'thai-forum',
-  'ukraine7',
-  'yetkinforum',
-]
+const domains = forumotion.hosts.tenants
 
-// The `forum` brand is too generic to match under any domain, so it keeps its one domain.
-const domains = ['forum.co.ee', ...brands.map(getBrandDomainRegex)]
-
-// A forum on its own domain is known only by its marker, so its feeds are built here but not
-// claimed.
-const feeds = definePlatformFeeds(
-  'forumotion',
-  [
-    // Forumotion serves each feed at `/rss` too, which only claims.
-    {
-      key: 'forum',
-      main: '{scheme}://{host}/feed/?f={forumId}',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/rss?f={forumId}'],
-    },
-    {
-      key: 'forum',
-      main: '{scheme}://{host}/feed/?f={forumId}&type=atom',
-      format: 'atom',
-      aliases: ['{scheme}://{host}/rss?f={forumId}&type=atom'],
-    },
-    {
-      key: 'latest-topics',
-      main: '{scheme}://{host}/feed/',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/rss'],
-    },
-    {
-      key: 'latest-topics',
-      main: '{scheme}://{host}/feed/?type=atom',
-      format: 'atom',
-      aliases: ['{scheme}://{host}/rss?type=atom'],
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(forumotion.feeds)
 
 // Core prints the `_userdata` script in every page head, on every template and domain.
 export const isForumotionHtml = (content: string): boolean => {

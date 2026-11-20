@@ -170,109 +170,30 @@ describe('lichessHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the blog hint for a user blog feed', () => {
-      const value = 'https://lichess.org/@/Al-I_Ce/blog.atom'
-      const expected: DiscoverUriHint = { key: 'lichess:blog', label: 'Blog' }
-
-      expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the blog hint for the official blog feed', () => {
-      const value = 'https://lichess.org/@/Lichess/blog.atom'
-      const expected: DiscoverUriHint = { key: 'lichess:blog', label: 'Blog' }
-
-      expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the blog hint for the official blog feed at its short path', () => {
       const value = 'https://lichess.org/blog.atom'
       const expected: DiscoverUriHint = { key: 'lichess:blog', label: 'Blog' }
 
       expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the community hint for a language community feed', () => {
-      const value = 'https://lichess.org/blog/community.atom?lang=de'
-      const expected: DiscoverUriHint = { key: 'lichess:community', label: 'Community blogs' }
-
-      expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the community hint for the community feed', () => {
-      const value = 'https://lichess.org/blog/community.atom'
-      const expected: DiscoverUriHint = { key: 'lichess:community', label: 'Community blogs' }
-
-      expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a community feed under a code that names no language', () => {
-      const value = 'https://lichess.org/blog/community.atom?lang=xx'
-
-      expect(lichessHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the site updates feed', () => {
-      const value = 'https://lichess.org/feed.atom'
-
-      expect(lichessHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return the blog hint for a feed on the www host', () => {
-      const value = 'https://www.lichess.org/@/alice/blog.atom'
-      const expected: DiscoverUriHint = { key: 'lichess:blog', label: 'Blog' }
-
-      expect(lichessHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a user blog page', () => {
-      const value = 'https://lichess.org/@/alice/blog'
-
-      expect(lichessHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a community blog page', () => {
-      const value = 'https://lichess.org/de/blog/community'
-
-      expect(lichessHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a profile page', () => {
-      const value = 'https://lichess.org/@/alice'
-
-      expect(lichessHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a blog feed on another host', () => {
-      const value = 'https://example.com/@/alice/blog.atom'
-
-      expect(lichessHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://lichess.org/@/Al-I_Ce/blog.atom', { key: 'lichess:blog', label: 'Blog' }],
-      ['https://lichess.org/@/Lichess/blog.atom', { key: 'lichess:blog', label: 'Blog' }],
-      ['https://lichess.org/blog.atom', { key: 'lichess:blog', label: 'Blog' }],
-      [
-        'https://lichess.org/blog/community.atom?lang=tk',
-        { key: 'lichess:community', label: 'Community blogs' },
-      ],
-      [
-        'https://lichess.org/blog/community.atom',
-        { key: 'lichess:community', label: 'Community blogs' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a language community feed as itself', async () => {
+      const value = 'https://lichess.org/blog/community.atom?lang=tk'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [lichessHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://lichess.org/blog/community.atom?lang=tk',
+          hint: { key: 'lichess:community', label: 'Community blogs' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

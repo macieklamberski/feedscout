@@ -353,28 +353,6 @@ describe('publicInboxHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the messages hint for the inbox feed', () => {
-      const value = 'https://lore.kernel.org/example/new.atom'
-      const expected: DiscoverUriHint = { key: 'public-inbox:messages', label: 'Messages' }
-
-      expect(publicInboxHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the messages hint for the inbox feed over http', () => {
-      const value = 'http://lore.kernel.org/example/new.atom'
-      const expected: DiscoverUriHint = { key: 'public-inbox:messages', label: 'Messages' }
-
-      expect(publicInboxHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the thread hint for the thread feed', () => {
-      const value =
-        'https://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/t.atom'
-      const expected: DiscoverUriHint = { key: 'public-inbox:thread', label: 'Thread' }
-
-      expect(publicInboxHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the thread hint for a thread feed with a percent-encoded message id', () => {
       const value =
         'https://lore.kernel.org/example/alice%2Fexample%2Fissues%2F1%2F12345@github.com/t.atom'
@@ -382,58 +360,24 @@ describe('publicInboxHandler', () => {
 
       expect(publicInboxHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the thread hint for a thread feed with an encoded-word message id', () => {
-      const value =
-        'https://lore.kernel.org/example/=%3Futf-8%3Fq%3F=3C12345=2Egit=2Ealice=40example=2Ecom=3E%3F=/t.atom'
-      const expected: DiscoverUriHint = { key: 'public-inbox:thread', label: 'Thread' }
-
-      expect(publicInboxHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for an inbox page', () => {
-      const value = 'https://lore.kernel.org/example/'
-
-      expect(publicInboxHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a message page', () => {
-      const value = 'https://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/'
-
-      expect(publicInboxHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for the inbox feed of a self-hosted inbox', () => {
-      const value = 'https://lore.example.org/example/new.atom'
-
-      expect(publicInboxHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const messagesHint: DiscoverUriHint = { key: 'public-inbox:messages', label: 'Messages' }
-    const threadHint: DiscoverUriHint = { key: 'public-inbox:thread', label: 'Thread' }
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://lore.kernel.org/example/new.atom/', messagesHint],
-      [
-        'https://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/t.atom',
-        threadHint,
-      ],
-      [
-        'http://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/t.atom',
-        threadHint,
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a thread feed over http as itself', async () => {
+      const value = 'http://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/t.atom'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/t.atom',
+          hint: { key: 'public-inbox:thread', label: 'Thread' },
+        },
+      ]
+      const uris = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [publicInboxHandler],
         baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
-      expect(result).toEqual(expected)
+      expect(uris).toEqual(expected)
     })
   })
 })

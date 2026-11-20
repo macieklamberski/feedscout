@@ -1,5 +1,6 @@
+import { habr } from 'feedintel'
 import { isHostOf, isLocale, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
@@ -15,7 +16,7 @@ export type HabrUrl =
   | { kind: 'flow'; language: string; flow: string }
   | { kind: 'home'; language: string }
 
-const hosts = ['habr.com', 'www.habr.com']
+const hosts = habr.hosts.exact
 
 const languagePrefixRegex = /^\/([^/]+)(.*)$/
 const hubRegex = /^\/hubs?\/([^/]+)/i
@@ -25,64 +26,7 @@ const articleRegex =
   /^(?:\/compan(?:y|ies)\/(?<company>[^/]+))?\/(?:articles|blog|news|posts?)\/(?<post>[^/]+)/i
 const flowRegex = /^\/flows\/([^/]+)/i
 
-// The first row of a key is the feed `resolve` emits, the one Habr's pages link or, for a user, the
-// one that link redirects to. Habr serves the same items under the hub and user spellings below
-// it, which readers store. A top listing is the same feed sorted, and a tag without its language
-// prefix is the same tag. A subscription feed carries the reader's private token, so the table
-// only claims it.
-const feeds = definePlatformFeeds(
-  'habr',
-  [
-    { key: 'articles', main: 'https://habr.com/{language}/rss/articles/' },
-    { key: 'articles', main: 'https://habr.com/{language}/rss/articles/top/' },
-    { key: 'articles', main: 'https://habr.com/{language}/rss/articles/top/{period}/' },
-    { key: 'news', main: 'https://habr.com/{language}/rss/news/' },
-    { key: 'news', main: 'https://habr.com/{language}/rss/news/top/{period}/' },
-    { key: 'hub-posts', main: 'https://habr.com/{language}/rss/hubs/{hub}/posts/' },
-    { key: 'flow', main: 'https://habr.com/{language}/rss/flows/{flow}/articles/' },
-    { key: 'tag', main: 'https://habr.com/{language}/rss/tag/{tag}/' },
-    { key: 'tag', main: 'https://habr.com/rss/tag/{tag}/' },
-    {
-      key: 'search',
-      main: 'https://habr.com/{language}/rss/search/?q={query}&target_type=posts',
-    },
-    {
-      key: 'comments',
-      main: 'https://habr.com/{language}/rss/publications/{post}/',
-      aliases: [
-        // An article page links this spelling, which redirects to the publications one with a 301.
-        'https://habr.com/{language}/rss/post/{post}/',
-      ],
-    },
-    { key: 'subscriptions', main: 'https://habr.com/{language}/rss/feed/{token}/' },
-    {
-      key: 'hub',
-      main: 'https://habr.com/{language}/rss/hubs/{hub}/articles/',
-      aliases: [
-        'https://habr.com/{language}/rss/hubs/{hub}/articles/all/',
-        'https://habr.com/{language}/rss/hub/{hub}/',
-      ],
-    },
-    {
-      key: 'user',
-      main: 'https://habr.com/{language}/rss/users/{username}/publications/articles/',
-      aliases: [
-        'https://habr.com/{language}/rss/users/{username}/articles/',
-        'https://habr.com/{language}/rss/users/{username}/posts/',
-        'https://habr.com/{language}/rss/users/{username}/publications/posts/',
-      ],
-    },
-    {
-      key: 'company',
-      main: 'https://habr.com/{language}/rss/companies/{company}/articles/',
-      aliases: [
-        'https://habr.com/{language}/rss/companies/{company}/articles/all/',
-        'https://habr.com/{language}/rss/company/{company}/blog/',
-      ],
-    },
-  ],
-  { checks: { language: isLocale } },
-)
+const feeds = withHintLabels(habr.feeds)
 
 export const parseHabrUrl = (url: string): HabrUrl | undefined => {
   const parsedUrl = parseUrl(url)

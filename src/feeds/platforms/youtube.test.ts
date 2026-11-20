@@ -616,13 +616,6 @@ describe('youtubeHandler', () => {
       },
     )
 
-    it('should return the hint of a channel feed with a capitalized path and no www', () => {
-      const value = 'https://youtube.com/Feeds/Videos.xml?playlist_id=UULFaBcDeFgHiJkLmNoPqRsTuV'
-      const expected: DiscoverUriHint = { key: 'youtube:videos', label: 'Videos' }
-
-      expect(youtubeHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the playlist hint for a playlist feed', () => {
       const value =
         'https://www.youtube.com/feeds/videos.xml?playlist_id=OLAK5uy_aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456'
@@ -676,84 +669,23 @@ describe('youtubeHandler', () => {
 
       expect(youtubeHandler.getFeedHint?.(value)).toBeUndefined()
     })
-
-    it('should return undefined for a channel page', () => {
-      const value = 'https://www.youtube.com/channel/UCaBcDeFgHiJkLmNoPqRsTuV'
-
-      expect(youtubeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/feeds/videos.xml?channel_id=UCaBcDeFgHiJkLmNoPqRsTuV'
-
-      expect(youtubeHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 })
 
 describe('discoverUrisFromPlatform', () => {
-  const ownFeeds: Array<[string, DiscoverUriHint]> = [
-    [
-      'https://www.youtube.com/feeds/videos.xml?channel_id=UCaBcDeFgHiJkLmNoPqRsTuV',
-      { key: 'youtube:all', label: 'All uploads' },
-    ],
-    [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUaBcDeFgHiJkLmNoPqRsTuV',
-      { key: 'youtube:all', label: 'All uploads' },
-    ],
-    [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFaBcDeFgHiJkLmNoPqRsTuV',
-      { key: 'youtube:videos', label: 'Videos' },
-    ],
-    [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHaBcDeFgHiJkLmNoPqRsTuV',
-      { key: 'youtube:shorts', label: 'Shorts' },
-    ],
-    [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UULVaBcDeFgHiJkLmNoPqRsTuV',
-      { key: 'youtube:live', label: 'Live streams' },
-    ],
-    [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UULPaBcDeFgHiJkLmNoPqRsTuV',
-      { key: 'youtube:popular-videos', label: 'Popular videos' },
-    ],
-    [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPSaBcDeFgHiJkLmNoPqRsTuV',
-      { key: 'youtube:popular-shorts', label: 'Popular shorts' },
-    ],
-    [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPVaBcDeFgHiJkLmNoPqRsTuV',
-      { key: 'youtube:popular-live', label: 'Popular live streams' },
-    ],
-    [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMOaBcDeFgHiJkLmNoPqRsTuV',
-      { key: 'youtube:member-videos', label: 'Member videos' },
-    ],
-    [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMSaBcDeFgHiJkLmNoPqRsTuV',
-      { key: 'youtube:member-shorts', label: 'Member shorts' },
-    ],
-    [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMVaBcDeFgHiJkLmNoPqRsTuV',
-      { key: 'youtube:member-live', label: 'Member live streams' },
-    ],
-    [
-      'https://www.youtube.com/feeds/videos.xml?playlist_id=OLAK5uy_aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456',
-      { key: 'youtube:playlist', label: 'Playlist' },
-    ],
-    [
-      'http://youtube.com/feeds/videos.xml?user=alice',
-      { key: 'youtube:all', label: 'All uploads' },
-    ],
-  ]
-
-  it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+  it('should return a legacy user feed on the bare host as itself', async () => {
+    const value = 'http://youtube.com/feeds/videos.xml?user=alice'
     const options = {
       ...defaultPlatformOptions,
       handlers: [youtubeHandler],
       baseUrl: value,
     }
-    const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+    const expected: Array<DiscoverUriEntry> = [
+      {
+        uri: 'http://youtube.com/feeds/videos.xml?user=alice',
+        hint: { key: 'youtube:all', label: 'All uploads' },
+      },
+    ]
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })

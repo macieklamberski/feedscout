@@ -1,5 +1,6 @@
+import { launchpad } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
@@ -27,49 +28,11 @@ export type LaunchpadUrl =
   | { kind: 'person'; application: LaunchpadApplication; username: string }
   | { kind: 'project'; application: LaunchpadApplication; project: string }
 
-const mainHosts = ['launchpad.net']
 const bugsHosts = ['bugs.launchpad.net']
 const codeHosts = ['code.launchpad.net']
-const hosts = [...mainHosts, ...bugsHosts, ...codeHosts]
+const hosts = launchpad.hosts.exact
 
-// Launchpad advertises its feeds over http, and the http URLs redirect to https.
-const feeds = definePlatformFeeds('launchpad', [
-  {
-    key: 'project-announcements',
-    main: 'http://feeds.launchpad.net/{project}/announcements.atom',
-  },
-  { key: 'announcements', main: 'http://feeds.launchpad.net/announcements.atom' },
-  {
-    key: 'package-bugs',
-    main: 'http://feeds.launchpad.net/{distribution}/+source/{sourcePackage}/latest-bugs.atom',
-  },
-  // The site-wide bugs feed sits where a project named `bugs` would, so it comes first.
-  { key: 'bugs', main: 'http://feeds.launchpad.net/bugs/latest-bugs.atom' },
-  { key: 'person-bugs', main: 'http://feeds.launchpad.net/~{username}/latest-bugs.atom' },
-  { key: 'project-bugs', main: 'http://feeds.launchpad.net/{project}/latest-bugs.atom' },
-  { key: 'bug', main: 'http://feeds.launchpad.net/bugs/{bugId}/bug.atom' },
-  {
-    key: 'branch',
-    main: 'http://feeds.launchpad.net/~{owner}/{distribution}/{series}/{sourcePackage}/{branch}/branch.atom',
-  },
-  {
-    key: 'branch',
-    main: 'http://feeds.launchpad.net/~{owner}/{project}/{branch}/branch.atom',
-  },
-  {
-    key: 'person-branches',
-    main: 'http://feeds.launchpad.net/~{username}/branches.atom',
-  },
-  { key: 'project-branches', main: 'http://feeds.launchpad.net/{project}/branches.atom' },
-  {
-    key: 'person-revisions',
-    main: 'http://feeds.launchpad.net/~{username}/revisions.atom',
-  },
-  {
-    key: 'project-revisions',
-    main: 'http://feeds.launchpad.net/{project}/revisions.atom',
-  },
-])
+const feeds = withHintLabels(launchpad.feeds)
 
 const getApplication = (parsedUrl: URL): LaunchpadApplication => {
   if (isHostOf(parsedUrl, bugsHosts)) {

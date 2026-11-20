@@ -1,5 +1,6 @@
+import { bangumi } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -11,19 +12,11 @@ export type BangumiUrl = { kind: 'user'; username: string } | { kind: 'home' }
 // chii.in serves the same site, but answers a plain fetch of its feeds with a Cloudflare challenge,
 // so its pages get the bgm.tv feeds.
 const challengedHosts = ['chii.in']
-const hosts = ['bgm.tv', 'bangumi.tv', ...challengedHosts]
+const hosts = bangumi.hosts.exact
 
 const userRegex = /^\/user\/([^/]+)/i
 
-const feeds = definePlatformFeeds(
-  'bangumi',
-  [
-    { key: 'collections', main: '{scheme}://{host}/feed/user/{username}/interests' },
-    { key: 'timeline', main: '{scheme}://{host}/feed/user/{username}/timeline' },
-    { key: 'blog', main: '{scheme}://{host}/feed/blog/all' },
-  ],
-  { hosts: { exact: hosts } },
-)
+const feeds = withHintLabels(bangumi.feeds)
 
 export const parseBangumiUrl = (url: string): BangumiUrl | undefined => {
   const parsedUrl = parseUrl(url)

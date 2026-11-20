@@ -1,5 +1,6 @@
+import { shopify } from 'feedintel'
 import { getPathSegments, includesAnyOf, isAnyOf, isLocale } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { formatSuffixRegex, hasMarker } from '../../common/utils.js'
 
@@ -7,33 +8,7 @@ import { formatSuffixRegex, hasMarker } from '../../common/utils.js'
 
 export type ShopifyUrl = { kind: 'blog'; handle: string; tag?: string }
 
-const domains = ['myshopify.com']
-
-// A store on its own domain is known only by its header, so its feeds are built here but not
-// claimed. A collection and a collection narrowed to product tags are linked from pages `resolve`
-// does not read, so the table only claims them.
-const feeds = definePlatformFeeds(
-  'shopify',
-  [
-    { key: 'blog', main: '{scheme}://{host}/blogs/{handle}.atom' },
-    { key: 'blog-tag', main: '{scheme}://{host}/blogs/{handle}/tagged/{tag}.atom' },
-    { key: 'collection', main: '{scheme}://{host}/collections/{handle}.atom' },
-    { key: 'collection-tag', main: '{scheme}://{host}/collections/{handle}/{tags}.atom' },
-    // Below the feeds without a locale, so `/collections/collections/{tags}.atom` reads as a
-    // collection named collections, not as the locale `collections`.
-    { key: 'blog', main: '{scheme}://{host}/{locale}/blogs/{handle}.atom' },
-    {
-      key: 'blog-tag',
-      main: '{scheme}://{host}/{locale}/blogs/{handle}/tagged/{tag}.atom',
-    },
-    { key: 'collection', main: '{scheme}://{host}/{locale}/collections/{handle}.atom' },
-    {
-      key: 'collection-tag',
-      main: '{scheme}://{host}/{locale}/collections/{handle}/{tags}.atom',
-    },
-  ],
-  { hosts: { tenants: domains }, checks: { locale: isLocale } },
-)
+const feeds = withHintLabels(shopify.feeds)
 
 export const isShopifyHeaders = (headers: Headers): boolean => {
   return includesAnyOf(headers.get('powered-by'), 'shopify')

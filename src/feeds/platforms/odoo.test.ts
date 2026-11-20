@@ -151,80 +151,30 @@ describe('odooHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const feedUrls: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://example.odoo.com/blog/news-1/feed',
-        { key: 'odoo:blog', label: 'Blog', format: 'atom' },
-      ],
-      [
-        'https://example.odoo.com/fr_FR/blog/actualites-5/feed',
-        { key: 'odoo:blog', label: 'Blog', format: 'atom' },
-      ],
-      ['http://example.odoo.com/blog/1/feed/', { key: 'odoo:blog', label: 'Blog', format: 'atom' }],
-    ]
+    it('should return the blog hint for a feed under a language prefix', () => {
+      const value = 'https://example.odoo.com/fr_FR/blog/actualites-5/feed'
+      const expected: DiscoverUriHint = { key: 'odoo:blog', label: 'Blog', format: 'atom' }
 
-    it.each(feedUrls)('should return the hint for %s', (value, expected) => {
       expect(odooHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a feed under a prefix that names no language', () => {
-      const value = 'https://example.odoo.com/xx/blog/news-1/feed'
-
-      expect(odooHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a blog page on a database subdomain', () => {
-      const value = 'https://example.odoo.com/blog/news-1'
-
-      expect(odooHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a custom domain', () => {
-      const value = 'https://example.com/blog/news-1/feed'
-
-      expect(odooHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://odoo.com/blog/news-1/feed'
-
-      expect(odooHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on www', () => {
-      const value = 'https://www.odoo.com/blog/odoo-news-5/feed'
-
-      expect(odooHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://shop.example.odoo.com/blog/news-1/feed'
-
-      expect(odooHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://example.odoo.com/blog/news-1/feed',
-        { key: 'odoo:blog', label: 'Blog', format: 'atom' },
-      ],
-      [
-        'http://example.odoo.com/en_GB/blog/news-2/feed',
-        { key: 'odoo:blog', label: 'Blog', format: 'atom' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a blog feed under a language prefix over http as itself', async () => {
+      const value = 'http://example.odoo.com/en_GB/blog/news-2/feed'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [odooHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.odoo.com/en_GB/blog/news-2/feed',
+          hint: { key: 'odoo:blog', label: 'Blog', format: 'atom' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

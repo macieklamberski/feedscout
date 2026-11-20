@@ -1,5 +1,6 @@
+import { lichess } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf, isLocale } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
@@ -9,24 +10,12 @@ export type LichessUrl =
   | { kind: 'community'; language?: string }
   | { kind: 'officialBlog' }
 
-const hosts = ['lichess.org']
+const hosts = lichess.hosts.exact
 
 const userBlogRegex = /^\/@\/([\w-]+)\/blog(?:\/|$)/i
 const communityRegex = /^(?:\/([^/]+))?\/blog\/community\/?$/i
 
-const feeds = definePlatformFeeds(
-  'lichess',
-  [
-    {
-      key: 'blog',
-      main: 'https://lichess.org/@/{username}/blog.atom',
-      aliases: ['https://lichess.org/blog.atom'],
-    },
-    { key: 'community', main: 'https://lichess.org/blog/community.atom?lang={language}' },
-    { key: 'community', main: 'https://lichess.org/blog/community.atom' },
-  ],
-  { checks: { language: isLocale } },
-)
+const feeds = withHintLabels(lichess.feeds)
 
 export const parseLichessUrl = (url: string): LichessUrl | undefined => {
   if (!isHostOf(url, hosts)) {

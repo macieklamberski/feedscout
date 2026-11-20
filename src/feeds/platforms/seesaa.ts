@@ -1,7 +1,8 @@
+import { seesaa } from 'feedintel'
 import { getRegistrableDomain } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getBrandDomainRegex, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: posts.
@@ -9,19 +10,9 @@ import { getBrandDomainRegex, getTenantSubdomain } from '../../common/utils.js'
 
 export type SeesaaUrl = { kind: 'blog' }
 
-const domains = [getBrandDomainRegex('seesaa'), 'iiblog.jp', 'sokuho.org', 'stablo.jp', 'xblog.jp']
+const domains = seesaa.hosts.tenants
 
-const feeds = definePlatformFeeds(
-  'seesaa',
-  [
-    { key: 'posts', main: '{scheme}://{host}/index20.rdf', format: 'rss' },
-    { key: 'posts', main: '{scheme}://{host}/index.rdf', format: 'rdf' },
-    // The podcast feed, RSS 2.0 despite its `.rdf` name. A blog that never set one up mostly
-    // answers 404, which discovery drops.
-    { key: 'podcast', main: '{scheme}://{host}/index_custom.rdf', format: 'rss' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(seesaa.feeds)
 
 export const parseSeesaaUrl = (url: string): SeesaaUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

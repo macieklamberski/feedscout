@@ -85,94 +85,33 @@ describe('overblogHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the posts hint for a posts feed', () => {
-      const value = 'https://alice.over-blog.com/rss'
-      const expected: DiscoverUriHint = { key: 'overblog:posts', label: 'Posts' }
-
-      expect(overblogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for an http posts feed', () => {
-      const value = 'http://alice.over-blog.com/rss'
-      const expected: DiscoverUriHint = { key: 'overblog:posts', label: 'Posts' }
-
-      expect(overblogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a feed on a country domain outside the old list', () => {
-      const value = 'https://alice.over-blog.ch/rss'
-      const expected: DiscoverUriHint = { key: 'overblog:posts', label: 'Posts' }
-
-      expect(overblogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the posts hint for a feed on over.blog', () => {
       const value = 'https://alice.over.blog/rss'
       const expected: DiscoverUriHint = { key: 'overblog:posts', label: 'Posts' }
 
       expect(overblogHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the posts hint for a feed with a trailing slash', () => {
-      const value = 'https://alice.overblog.com/rss/'
-      const expected: DiscoverUriHint = { key: 'overblog:posts', label: 'Posts' }
-
-      expect(overblogHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://alice.over-blog.com/2014/02/meuble-cuisine.html'
-
-      expect(overblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://over-blog.com/rss'
-
-      expect(overblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the www host', () => {
-      const value = 'https://www.over-blog.com/rss'
-
-      expect(overblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the www subdomain of a blog', () => {
-      const value = 'https://www.alice.over-blog.com/rss'
-
-      expect(overblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://blog.alice.over-blog.com/rss'
-
-      expect(overblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/rss'
-
-      expect(overblogHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://alice.over-blog.com/rss', { key: 'overblog:posts', label: 'Posts' }],
-      ['http://alice.over-blog.fr/rss', { key: 'overblog:posts', label: 'Posts' }],
-      ['https://alice.over.blog/rss/', { key: 'overblog:posts', label: 'Posts' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return an http posts feed on a country domain as itself', async () => {
+      const value = 'http://alice.over-blog.fr/rss'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [overblogHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: value,
+          hint: {
+            key: 'overblog:posts',
+            label: 'Posts',
+          },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

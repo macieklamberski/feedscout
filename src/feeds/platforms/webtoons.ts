@@ -1,5 +1,6 @@
+import { webtoons } from 'feedintel'
 import { getQueryParam, isAnyOf, isHostOf, isLocale, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
@@ -14,26 +15,13 @@ export type WebtoonsUrl = {
   titleNo: string
 }
 
-const hosts = ['webtoons.com', 'www.webtoons.com', 'm.webtoons.com']
+const hosts = webtoons.hosts.exact
 
 const seriesRegex = /^\/([^/]+)\/([^/]+)\/([^/]+)\/(?:list|[^/]+\/viewer)\/?$/i
 
 const canvasGenres = ['canvas', 'challenge']
 
-const feeds = definePlatformFeeds(
-  'webtoons',
-  [
-    {
-      key: 'series',
-      main: 'https://www.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
-      aliases: [
-        'https://sg.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
-        'https://us.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
-      ],
-    },
-  ],
-  { checks: { language: isLocale } },
-)
+const feeds = withHintLabels(webtoons.feeds)
 
 export const parseWebtoonsUrl = (url: string): WebtoonsUrl | undefined => {
   const parsedUrl = parseUrl(url)

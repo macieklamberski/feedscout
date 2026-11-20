@@ -1,5 +1,6 @@
-import { getSubdomain, isAnyOf, isHostOf, isLocale, isSubdomainOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { estranky } from 'feedintel'
+import { getSubdomain, isAnyOf, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
 
@@ -11,68 +12,13 @@ export type EstrankyUrl = { kind: 'site' }
 
 export type EstrankyPage = { origin: string; sliceOrigin: string }
 
-const domains = ['estranky.cz', 'estranky.sk']
+const domains = estranky.hosts.tenants
 
 const estrankyAssetRegex = /^(?:https?:)?\/\/s3[a-z]\.(?:estranky\.(?:cz|sk)|eoldal\.hu)\//i
 
 const assetTags = ['link', 'script']
 
-// A site keeps the scheme it picked. A site in another language serves its feeds under the language
-// segment too, as `/rss/en/slices/l/homepage/data.xml`. A section feed and the Web Slices of one
-// article, section or photo folder carry its id, which no page URL names, so they are only claimed.
-const feeds = definePlatformFeeds(
-  'estranky',
-  [
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/rss/articles/data.xml',
-      aliases: [
-        // Any file name under `/rss/articles/` serves the posts feed.
-        '{scheme}://{host}/rss/articles/photos.xml',
-        '{scheme}://{host}/rss/articles/comments.xml',
-      ],
-    },
-    { key: 'posts', main: '{scheme}://{host}/rss/{language}/articles/data.xml' },
-    { key: 'photos', main: '{scheme}://{host}/rss/photos/data.xml' },
-    { key: 'photos', main: '{scheme}://{host}/rss/{language}/photos/data.xml' },
-    { key: 'comments', main: '{scheme}://{host}/rss/comments/data.xml' },
-    { key: 'comments', main: '{scheme}://{host}/rss/{language}/comments/data.xml' },
-    { key: 'homepage-slice', main: '{scheme}://{host}/rss/slices/l/homepage/data.xml' },
-    {
-      key: 'homepage-slice',
-      main: '{scheme}://{host}/rss/{language}/slices/l/homepage/data.xml',
-    },
-    { key: 'photos-slice', main: '{scheme}://{host}/rss/slices/l/photos/data.xml' },
-    {
-      key: 'photos-slice',
-      main: '{scheme}://{host}/rss/{language}/slices/l/photos/data.xml',
-    },
-    { key: 'section', main: '{scheme}://{host}/rss/section/{section}/data.xml' },
-    {
-      key: 'section',
-      main: '{scheme}://{host}/rss/{language}/section/{section}/data.xml',
-    },
-    { key: 'article-slice', main: '{scheme}://{host}/rss/slices/a/{article}/data.xml' },
-    {
-      key: 'article-slice',
-      main: '{scheme}://{host}/rss/{language}/slices/a/{article}/data.xml',
-    },
-    { key: 'section-slice', main: '{scheme}://{host}/rss/slices/s/{section}/data.xml' },
-    {
-      key: 'section-slice',
-      main: '{scheme}://{host}/rss/{language}/slices/s/{section}/data.xml',
-    },
-    {
-      key: 'photo-folder-slice',
-      main: '{scheme}://{host}/rss/slices/d/{folder}/data.xml',
-    },
-    {
-      key: 'photo-folder-slice',
-      main: '{scheme}://{host}/rss/{language}/slices/d/{folder}/data.xml',
-    },
-  ],
-  { hosts: { tenants: domains }, isWwwTenantPrefix: true, checks: { language: isLocale } },
-)
+const feeds = withHintLabels(estranky.feeds)
 
 // Every template loads its stylesheet and `ui.js` from the asset hosts, on a custom domain too.
 export const isEstrankyHtml = (content: string): boolean => {

@@ -1,6 +1,7 @@
+import { redmine } from 'feedintel'
 import { encodePathSegment, isAnyOf, isPresent, parseUrl, resolveUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
+import { type PlatformFeedParams, withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -52,41 +53,7 @@ const issueListParams = [
   'key',
 ]
 
-// Planio hosts an install on a site subdomain of either domain. An install on its own domain is
-// known only by its marker, so its feeds are built here but not claimed.
-const domains = ['plan.io', 'planio.com']
-
-const feeds = definePlatformFeeds(
-  'redmine',
-  [
-    { key: 'project-news', main: '{root}/projects/{project}/news.atom' },
-    { key: 'news', main: '{root}/news.atom' },
-    {
-      key: 'project-user-activity',
-      main: '{root}/projects/{project}/activity.atom?user_id={userId}',
-    },
-    { key: 'project-activity', main: '{root}/projects/{project}/activity.atom' },
-    { key: 'user-activity', main: '{root}/activity.atom?user_id={userId}' },
-    { key: 'activity', main: '{root}/activity.atom' },
-    { key: 'projects', main: '{root}/projects.atom' },
-    { key: 'project-issues', main: '{root}/projects/{project}/issues.atom' },
-    { key: 'issues', main: '{root}/issues.atom' },
-    { key: 'issue', main: '{root}/issues/{issueId}.atom' },
-    { key: 'board', main: '{root}/projects/{project}/boards/{boardId}.atom' },
-    {
-      key: 'revisions',
-      main: '{root}/projects/{project}/repository/{repository}/revisions.atom',
-    },
-    // A repository's changes, also as of a revision with `?rev=`, and a project's forums are linked
-    // from pages the handler does not read, so these rows only claim.
-    {
-      key: 'changes',
-      main: '{root}/projects/{project}/repository/{repository}/changes.atom',
-    },
-    { key: 'boards', main: '{root}/projects/{project}/boards.atom' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(redmine.feeds)
 
 // The core layout prints the footer link, and Bitnami stacks swap it for their own, which
 // still keep the description meta.

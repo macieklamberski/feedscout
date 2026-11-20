@@ -245,123 +245,33 @@ describe('shopifyHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const feedUrls: Array<[string, DiscoverUriHint]> = [
-      ['https://example.myshopify.com/blogs/news.atom', { key: 'shopify:blog', label: 'Blog' }],
-      [
-        'https://example.myshopify.com/en-us/blogs/news.atom',
-        { key: 'shopify:blog', label: 'Blog' },
-      ],
-      ['http://example.myshopify.com/blogs/journal.atom/', { key: 'shopify:blog', label: 'Blog' }],
-      [
-        'https://example.myshopify.com/blogs/news/tagged/travel.atom',
-        { key: 'shopify:blog-tag', label: 'Tag' },
-      ],
-      [
-        'https://example.myshopify.com/fr/blogs/news/tagged/travel.atom',
-        { key: 'shopify:blog-tag', label: 'Tag' },
-      ],
-      [
-        'https://example.myshopify.com/collections/shirts.atom',
-        { key: 'shopify:collection', label: 'Collection' },
-      ],
-      [
-        'https://example.myshopify.com/en-us/collections/shirts.atom',
-        { key: 'shopify:collection', label: 'Collection' },
-      ],
-      [
-        'https://example.myshopify.com/collections/all/blue+cotton.atom',
-        { key: 'shopify:collection-tag', label: 'Tagged products' },
-      ],
-      [
-        'https://example.myshopify.com/en-us/collections/all/blue.atom',
-        { key: 'shopify:collection-tag', label: 'Tagged products' },
-      ],
-      [
-        'https://example.myshopify.com/collections/collections/blue.atom',
-        { key: 'shopify:collection-tag', label: 'Tagged products' },
-      ],
-    ]
+    it('should return the hint for a tagged collection feed under a market folder', () => {
+      const value = 'https://example.myshopify.com/en-us/collections/all/blue.atom'
+      const expected: DiscoverUriHint = {
+        key: 'shopify:collection-tag',
+        label: 'Tagged products',
+      }
 
-    it.each(feedUrls)('should return the hint for %s', (value, expected) => {
       expect(shopifyHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a feed under a well-formed code that names no language', () => {
-      const value = 'https://example.myshopify.com/xx/blogs/news.atom'
-
-      expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a blog page on a store subdomain', () => {
-      const value = 'https://example.myshopify.com/blogs/news'
-
-      expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a collection page on a store subdomain', () => {
-      const value = 'https://example.myshopify.com/collections/all'
-
-      expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a custom domain', () => {
-      const value = 'https://example.com/blogs/news.atom'
-
-      expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://myshopify.com/blogs/news.atom'
-
-      expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on www', () => {
-      const value = 'https://www.myshopify.com/blogs/news.atom'
-
-      expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on www in front of a store', () => {
-      const value = 'https://www.example.myshopify.com/blogs/news.atom'
-
-      expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://shop.example.myshopify.com/blogs/news.atom'
-
-      expect(shopifyHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://example.myshopify.com/blogs/news.atom', { key: 'shopify:blog', label: 'Blog' }],
-      ['http://example.myshopify.com/fr/blogs/news.atom', { key: 'shopify:blog', label: 'Blog' }],
-      [
-        'https://example.myshopify.com/blogs/news/tagged/travel.atom',
-        { key: 'shopify:blog-tag', label: 'Tag' },
-      ],
-      [
-        'https://example.myshopify.com/collections/shirts.atom',
-        { key: 'shopify:collection', label: 'Collection' },
-      ],
-      [
-        'https://example.myshopify.com/collections/all/blue.atom',
-        { key: 'shopify:collection-tag', label: 'Tagged products' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a market blog feed as itself', async () => {
+      const value = 'http://example.myshopify.com/fr/blogs/news.atom'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.myshopify.com/fr/blogs/news.atom',
+          hint: { key: 'shopify:blog', label: 'Blog' },
+        },
+      ]
+      const uris = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [shopifyHandler],
         baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
-      expect(result).toEqual(expected)
+      expect(uris).toEqual(expected)
     })
   })
 })

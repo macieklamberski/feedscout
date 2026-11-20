@@ -1,26 +1,16 @@
+import { dasauge } from 'feedintel'
 import { isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getBrandDomainRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: jobs, workspaces.
 
 export type DasaugeUrl = { kind: 'home' }
 
-const hosts = [getBrandDomainRegex('dasauge')]
+const hosts = dasauge.hosts.exact
 
-// The 2026-10-26 relaunch removed the profile feed: `/-{username}?rss` serves the profile page.
-// Its row stays so a stored profile feed is still claimed.
-const feeds = definePlatformFeeds(
-  'dasauge',
-  [
-    { key: 'jobs', main: '{scheme}://{host}/jobs/feed', format: 'atom' },
-    { key: 'workspaces', main: '{scheme}://{host}/workspaces/feed', format: 'atom' },
-    { key: 'profile', main: '{scheme}://{host}/-{username}/?rss' },
-  ],
-  { hosts: { exact: hosts } },
-)
+const feeds = withHintLabels(dasauge.feeds)
 
 export const parseDasaugeUrl = (url: string): DasaugeUrl | undefined => {
   if (!isHostOf(url, hosts)) {

@@ -1,6 +1,7 @@
+import { youtube } from 'feedintel'
 import { getQueryParam, isAnyOf, isHostOf, isPresent, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, formatSuffixRegex } from '../../common/utils.js'
 
@@ -22,16 +23,8 @@ export type YoutubePage =
     }
   | { kind: 'playlist'; playlistId: string }
 
-export const hosts = [
-  'youtube.com',
-  'www.youtube.com',
-  'm.youtube.com',
-  'music.youtube.com',
-  'youtu.be',
-  'www.youtu.be',
-]
+export const hosts = youtube.hosts.exact
 const shortLinkHosts = ['youtu.be', 'www.youtu.be']
-const feedUrl = 'https://www.youtube.com/feeds/videos.xml'
 
 // A channel page also embeds the IDs of the channels it features, and a bare "channelId" matches
 // one of those before the page's own, which sits under "externalId". A video page has no
@@ -72,21 +65,8 @@ const uploadsPlaylistKeys: Record<string, string> = {
   UUMS: 'member-shorts',
   UUMV: 'member-live',
 }
-// YouTube also supports a legacy ?user=username feed parameter, but it only works with old-style
-// usernames (not modern @handles) and returns the same Atom content as ?channel_id=. YouTube's own
-// autodiscovery always uses channel_id, so we treat it as the canonical format and build the legacy
-// one only for an embed that names a username and no channel ID.
-const feeds = definePlatformFeeds('youtube', [
-  {
-    key: 'all',
-    main: `${feedUrl}?channel_id={channelId}`,
-    aliases: [`${feedUrl}?user={user}`],
-  },
-  { key: 'playlist', main: `${feedUrl}?playlist_id={playlistId}` },
-  ...Object.values(uploadsPlaylistKeys).map((key) => {
-    return { key, main: `${feedUrl}?playlist_id={playlistId}` }
-  }),
-])
+
+const feeds = withHintLabels(youtube.feeds)
 
 const extractChannelIdFromContent = (content: string): string | undefined => {
   for (const regex of channelIdRegexes) {
