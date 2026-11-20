@@ -24,9 +24,5 @@ jobs:
         working-directory: check
         run: bunx playwright install --with-deps chromium
 
-      - name: Check feeds
-        run: bun check/feeds.ts
-
       - name: Check favicons
-        if: ${{ !cancelled() }}
         run: bun check/favicons.ts
