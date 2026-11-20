@@ -1,16 +1,12 @@
-import { realEstateIndia } from 'feedintel'
 import { isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, findElements, hasMarker } from '../../common/utils.js'
+import { composeHint, findElement, findElements, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type RealEstateIndiaPage = { root: string }
+export type RealEstateIndiaPage = { feedUrl: string }
 
 const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//i
-
-const feeds = withHintLabels(realEstateIndia.feeds)
 
 // Every Weblink.In catalog site loads its template stylesheet from the shared asset host.
 export const isRealEstateIndiaHtml = (content: string): boolean => {
@@ -42,7 +38,7 @@ const getRealEstateIndiaPage = (
     const target = parseUrl(anchor.attribs.href, url)
 
     if (target && isHostOf(target, hostname) && isAnyOf(target.pathname, '/property.rss')) {
-      return { root: target.origin }
+      return { feedUrl: target.href }
     }
   }
 }
@@ -63,6 +59,6 @@ export const realEstateIndiaHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('properties', { root: page.root })]
+    return [{ uri: page.feedUrl, hint: composeHint('real-estate-india:properties') }]
   },
 }

@@ -1,21 +1,14 @@
-import { placementIndia } from 'feedintel'
-import { isAnyOf, isHostOf, isPresent, parseUrl } from 'trousse'
-import { withHintLabels } from '../../common/uris/platform/feeds.js'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
+import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, findElements, hasMarker } from '../../common/utils.js'
+import { composeHint, findElement, findElements, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type PlacementIndiaPage = {
-  vacancyRoot: string
-  jobOpeningRoot?: string
-  jobOpeningId?: string
-}
+export type PlacementIndiaPage = { feedUrl: string; jobOpeningFeedUrl?: string }
 
 const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//i
-const jobOpeningFeedPathRegex = /^\/vacancy_(\d+)\.rss$/i
-
-const feeds = withHintLabels(placementIndia.feeds)
+const jobOpeningFeedPathRegex = /^\/vacancy_\d+\.rss$/i
 
 // Every Weblink.In catalog site loads its template stylesheet from the shared asset host.
 export const isPlacementIndiaHtml = (content: string): boolean => {
@@ -42,9 +35,8 @@ const getPlacementIndiaPage = (
 
   const { hostname } = new URL(url)
   const anchors = findElements(content, (element) => element.name === 'a')
-  let vacancyRoot: string | undefined
-  let jobOpeningRoot: string | undefined
-  let jobOpeningId: string | undefined
+  let feedUrl: string | undefined
+  let jobOpeningFeedUrl: string | undefined
 
   for (const anchor of anchors) {
     const target = parseUrl(anchor.attribs.href, url)
@@ -53,25 +45,22 @@ const getPlacementIndiaPage = (
       continue
     }
 
-    if (isAnyOf(target.pathname, '/vacancy.rss') && vacancyRoot === undefined) {
-      vacancyRoot = target.origin
+    if (isAnyOf(target.pathname, '/vacancy.rss') && feedUrl === undefined) {
+      feedUrl = target.href
     }
 
     // A `/vacancy_{id}.rss` with an id no opening has answers a blank HTML page, so the id comes
     // only from the job page's own link.
-    const linkedJobOpeningId = jobOpeningFeedPathRegex.exec(target.pathname)?.[1]
-
-    if (linkedJobOpeningId && jobOpeningId === undefined) {
-      jobOpeningRoot = target.origin
-      jobOpeningId = linkedJobOpeningId
+    if (jobOpeningFeedPathRegex.test(target.pathname) && jobOpeningFeedUrl === undefined) {
+      jobOpeningFeedUrl = target.href
     }
   }
 
-  if (!vacancyRoot) {
+  if (!feedUrl) {
     return
   }
 
-  return { vacancyRoot, jobOpeningRoot, jobOpeningId }
+  return { feedUrl, jobOpeningFeedUrl }
 }
 
 export const placementIndiaHandler: PlatformHandler = {
@@ -90,9 +79,17 @@ export const placementIndiaHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      feeds.getFeedEntry('job-opening', { root: page.jobOpeningRoot, id: page.jobOpeningId }),
-      feeds.getFeedEntry('vacancy', { root: page.vacancyRoot }),
-    ].filter(isPresent)
+    const uris: Array<DiscoverUriEntry> = []
+
+    if (page.jobOpeningFeedUrl) {
+      uris.push({
+        uri: page.jobOpeningFeedUrl,
+        hint: composeHint('placement-india:job-opening'),
+      })
+    }
+
+    uris.push({ uri: page.feedUrl, hint: composeHint('placement-india:vacancy') })
+
+    return uris
   },
 }

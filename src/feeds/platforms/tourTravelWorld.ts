@@ -1,16 +1,12 @@
-import { tourTravelWorld } from 'feedintel'
 import { isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, findElements, hasMarker } from '../../common/utils.js'
+import { composeHint, findElement, findElements, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type TourTravelWorldPage = { root: string }
+export type TourTravelWorldPage = { feedUrl: string }
 
 const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//i
-
-const feeds = withHintLabels(tourTravelWorld.feeds)
 
 // Every Weblink.In catalog site loads its template stylesheet from the shared asset host.
 export const isTourTravelWorldHtml = (content: string): boolean => {
@@ -42,7 +38,7 @@ const getTourTravelWorldPage = (
     const target = parseUrl(anchor.attribs.href, url)
 
     if (target && isHostOf(target, hostname) && isAnyOf(target.pathname, '/tour-packages.rss')) {
-      return { root: target.origin }
+      return { feedUrl: target.href }
     }
   }
 }
@@ -63,6 +59,6 @@ export const tourTravelWorldHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('tour-packages', { root: page.root })]
+    return [{ uri: page.feedUrl, hint: composeHint('tour-travel-world:tour-packages') }]
   },
 }
