@@ -1,5 +1,6 @@
+import { lobsters } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
 
@@ -16,7 +17,7 @@ export type LobstersUrl =
   | { kind: 'comments' }
   | { kind: 'home' }
 
-const hosts = ['lobste.rs']
+const hosts = lobsters.hosts.exact
 
 const tagRegex = /^\/t\/(?<tags>[^/]+)/i
 const domainRegex = /^\/domains\/([^/]+)/i
@@ -26,27 +27,7 @@ const newestRegex = /^\/newest\/?$/i
 const commentsRegex = /^\/comments\/?$/i
 const tagsValueRegex = /^[\w,-]+$/
 
-// A top page links its feed as /top/{period}.rss, which /top/{period}/rss redirects to. /top/rss
-// and /top.rss redirect to the one-week feed, so their rows only claim.
-const feeds = definePlatformFeeds('lobsters', [
-  { key: 'tag', main: 'https://lobste.rs/t/{tags}.rss' },
-  { key: 'domain', main: 'https://lobste.rs/domains/{domain}.rss' },
-  { key: 'user-stories', main: 'https://lobste.rs/~{username}/stories.rss' },
-  { key: 'stories', main: 'https://lobste.rs/rss' },
-  // A reader's private feed, filtered by their settings, is claimed and never built.
-  { key: 'private', main: 'https://lobste.rs/rss?token={token}' },
-  {
-    key: 'top',
-    main: 'https://lobste.rs/top/{period}.rss',
-    aliases: [
-      'https://lobste.rs/top/{period}/rss',
-      'https://lobste.rs/top/rss',
-      'https://lobste.rs/top.rss',
-    ],
-  },
-  { key: 'newest', main: 'https://lobste.rs/newest.rss' },
-  { key: 'comments', main: 'https://lobste.rs/comments.rss' },
-])
+const feeds = withHintLabels(lobsters.feeds)
 
 export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {
   const parsedUrl = parseUrl(url)

@@ -1,5 +1,6 @@
+import { huffduffer } from 'feedintel'
 import { escapeRegex, getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
@@ -16,62 +17,9 @@ export type HuffdufferUrl =
   | { kind: 'popular' }
   | { kind: 'search'; query?: string }
 
-const hosts = ['huffduffer.com', 'www.huffduffer.com']
+const hosts = huffduffer.hosts.exact
 
-// `/new/{format}` and `/popular/{format}` read before `/{username}/{format}`, so the site-wide
-// feeds keep their own keys.
-const feeds = definePlatformFeeds('huffduffer', [
-  { key: 'new', main: 'https://huffduffer.com/new/rss', format: 'rss' },
-  { key: 'new', main: 'https://huffduffer.com/new/atom', format: 'atom' },
-  { key: 'new', main: 'https://huffduffer.com/new/json', format: 'json' },
-  { key: 'popular', main: 'https://huffduffer.com/popular/rss', format: 'rss' },
-  { key: 'popular', main: 'https://huffduffer.com/popular/atom', format: 'atom' },
-  { key: 'popular', main: 'https://huffduffer.com/popular/json', format: 'json' },
-  { key: 'search', main: 'https://huffduffer.com/search/rss?q={query}', format: 'rss' },
-  {
-    key: 'search',
-    main: 'https://huffduffer.com/search/atom?q={query}',
-    format: 'atom',
-  },
-  {
-    key: 'search',
-    main: 'https://huffduffer.com/search/json?q={query}',
-    format: 'json',
-  },
-  { key: 'huffduffs', main: 'https://huffduffer.com/{username}/rss', format: 'rss' },
-  { key: 'huffduffs', main: 'https://huffduffer.com/{username}/atom', format: 'atom' },
-  { key: 'huffduffs', main: 'https://huffduffer.com/{username}/json', format: 'json' },
-  {
-    key: 'related',
-    main: 'https://huffduffer.com/{username}/{id}/related/rss',
-    format: 'rss',
-  },
-  {
-    key: 'related',
-    main: 'https://huffduffer.com/{username}/{id}/related/atom',
-    format: 'atom',
-  },
-  {
-    key: 'related',
-    main: 'https://huffduffer.com/{username}/{id}/related/json',
-    format: 'json',
-  },
-  {
-    key: 'collective',
-    main: 'https://huffduffer.com/{username}/collective/rss',
-    format: 'rss',
-  },
-  {
-    key: 'collective',
-    main: 'https://huffduffer.com/{username}/collective/atom',
-    format: 'atom',
-  },
-  {
-    key: 'collective',
-    main: 'https://huffduffer.com/{username}/collective/json',
-    format: 'json',
-  },
-])
+const feeds = withHintLabels(huffduffer.feeds)
 
 export const parseHuffdufferUrl = (url: string): HuffdufferUrl | undefined => {
   if (!isHostOf(url, hosts)) {

@@ -1,5 +1,6 @@
+import { gitlab } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
@@ -11,46 +12,12 @@ export type GitlabUrl =
   | { kind: 'namespace'; namespace: string }
   | { kind: 'project'; namespace: string; projectPath: string; branch?: string }
 
-export const hosts = ['gitlab.com', 'www.gitlab.com']
+export const hosts = gitlab.hosts.exact
 
 // GitLab names may contain dots, so only the feed suffix is cut off.
 const feedSuffixRegex = /\.atom$/i
 
-// The feeds of every GitLab install. The table claims a feed only on gitlab.com: a self-hosted
-// instance is known by its page markup, which a feed URL does not carry. A project path has any
-// depth and ends at a `/-/` separator, not always the first: in
-// `/{ns}/{project}/-/{x}/-/releases.atom` the project is `{ns}/{project}/-/{x}`.
-const feeds = definePlatformFeeds(
-  'gitlab',
-  [
-    {
-      key: 'branch-commits',
-      main: '{root}/{project*}/-/commits/{branch}?format=atom',
-      aliases: [
-        // `/-/commits/{branch}.atom` serves the bytes `?format=atom` does. Under a file path GitLab
-        // reads the suffix as part of the file and redirects to the tree.
-        '{root}/{project*}/-/commits/{branch}.atom',
-      ],
-    },
-    // The commits of one file or folder under a branch, another feed under the same key.
-    {
-      key: 'branch-commits',
-      main: '{root}/{project*}/-/commits/{branch}/{path*}?format=atom',
-    },
-    { key: 'releases', main: '{root}/{project*}/-/releases.atom' },
-    { key: 'tags', main: '{root}/{project*}/-/tags?format=atom' },
-    { key: 'issues', main: '{root}/{project*}/-/issues.atom' },
-    { key: 'merge-requests', main: '{root}/{project*}/-/merge_requests.atom' },
-    // The signed-in user's dashboard feeds answer only with their `feed_token`, so they are
-    // claimed and never built.
-    { key: 'dashboard', main: '{root}/dashboard/projects.atom' },
-    { key: 'dashboard-issues', main: '{root}/dashboard/issues.atom' },
-    { key: 'dashboard-merge-requests', main: '{root}/dashboard/merge_requests.atom' },
-    // A namespace or a project of any depth, after the rows its paths overlap.
-    { key: 'activity', main: '{root}/{path*}.atom' },
-  ],
-  { hosts: { exact: hosts } },
-)
+const feeds = withHintLabels(gitlab.feeds)
 
 // Every GitLab page prints its frontend config through the gon gem and loads its bundles from
 // /assets/webpack/. The og:site_name is operator-set text, which any page can carry.

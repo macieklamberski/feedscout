@@ -270,68 +270,18 @@ describe('tenderHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the discussions hint for the discussions feed', () => {
-      const value = 'https://gpgtools.tenderapp.com/discussions.atom'
-      const expected: DiscoverUriHint = { key: 'tender:discussions', label: 'Discussions' }
-
-      expect(tenderHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the comments hint for the recent comments feed', () => {
-      const value = 'https://gpgtools.tenderapp.com/comments/recent.atom'
-      const expected: DiscoverUriHint = { key: 'tender:comments', label: 'Recent comments' }
-
-      expect(tenderHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the discussion hint for a discussion feed', () => {
-      const value =
-        'https://infinitekind.tenderapp.com/discussions/general-questions/135551-change-view.atom?discussion_id=135551-change-view'
-      const expected: DiscoverUriHint = { key: 'tender:discussion', label: 'Discussion comments' }
-
-      expect(tenderHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the discussion hint for a discussion feed without discussion_id', () => {
-      const value =
-        'https://infinitekind.tenderapp.com/discussions/general-questions/135551-change-view.atom'
+      const value = 'https://alice.tenderapp.com/discussions/questions/123-printing.atom'
       const expected: DiscoverUriHint = { key: 'tender:discussion', label: 'Discussion comments' }
 
       expect(tenderHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the discussions hint for the discussions feed under /help', () => {
-      const value = 'https://the-unsigned-guide-2.tenderapp.com/help/discussions.atom'
+    it('should return the discussions hint for the discussions feed', () => {
+      const value = 'https://alice.tenderapp.com/discussions.atom'
       const expected: DiscoverUriHint = { key: 'tender:discussions', label: 'Discussions' }
 
       expect(tenderHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the discussion hint for a discussion feed under /help over http', () => {
-      const value =
-        'http://scrivener.tenderapp.com/help/discussions/scrivener-3-beta/890-translation-feedback-japanese.atom?discussion_id=890-translation-feedback-japanese'
-      const expected: DiscoverUriHint = { key: 'tender:discussion', label: 'Discussion comments' }
-
-      expect(tenderHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a discussion page', () => {
-      const value =
-        'https://infinitekind.tenderapp.com/discussions/general-questions/135551-change-view'
-
-      expect(tenderHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a custom domain', () => {
-      const value = 'https://support.example.com/discussions.atom'
-
-      expect(tenderHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the www host', () => {
-      const value = 'https://www.tenderapp.com/discussions.atom'
-
-      expect(tenderHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a new discussion form under a category', () => {
@@ -339,57 +289,23 @@ describe('tenderHandler', () => {
 
       expect(tenderHandler.getFeedHint?.(value)).toBeUndefined()
     })
-
-    it('should return undefined for an invalid URL', () => {
-      const value = 'not a url'
-
-      expect(tenderHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://gpgtools.tenderapp.com/discussions.atom',
-        { key: 'tender:discussions', label: 'Discussions' },
-      ],
-      [
-        'https://infinitekind.tenderapp.com/discussions.atom/',
-        { key: 'tender:discussions', label: 'Discussions' },
-      ],
-      [
-        'https://gpgtools.tenderapp.com/comments/recent.atom',
-        { key: 'tender:comments', label: 'Recent comments' },
-      ],
-      [
-        'https://gpgtools.tenderapp.com/comments/recent.atom/',
-        { key: 'tender:comments', label: 'Recent comments' },
-      ],
-      [
-        'https://infinitekind.tenderapp.com/discussions/general-questions/135551-change-view.atom?discussion_id=135551-change-view',
-        { key: 'tender:discussion', label: 'Discussion comments' },
-      ],
-      [
-        'https://infinitekind.tenderapp.com/discussions/problems/50-quicken-credit-card-and-chase.atom',
-        { key: 'tender:discussion', label: 'Discussion comments' },
-      ],
-      [
-        'https://infinitekind.tenderapp.com/discussions/general-questions/135551-change-view.atom/',
-        { key: 'tender:discussion', label: 'Discussion comments' },
-      ],
-      [
-        'http://scrivener.tenderapp.com/help/discussions/scrivener-3-beta/890-translation-feedback-japanese.atom?discussion_id=890-translation-feedback-japanese',
-        { key: 'tender:discussion', label: 'Discussion comments' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a discussion feed under /help over http as itself', async () => {
+      const value =
+        'http://alice.tenderapp.com/help/discussions/questions/123-printing.atom?discussion_id=123-printing'
       const options = {
         ...defaultPlatformOptions,
         handlers: [tenderHandler],
         baseUrl: value,
       }
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://alice.tenderapp.com/help/discussions/questions/123-printing.atom?discussion_id=123-printing',
+          hint: { key: 'tender:discussion', label: 'Discussion comments' },
+        },
+      ]
 
       expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })

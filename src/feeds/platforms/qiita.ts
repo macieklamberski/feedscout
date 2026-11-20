@@ -1,5 +1,6 @@
+import { qiita } from 'feedintel'
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -13,38 +14,14 @@ export type QiitaUrl =
   | { kind: 'officialColumns' }
   | { kind: 'user'; username: string }
 
-const hosts = ['qiita.com', 'www.qiita.com']
+const hosts = qiita.hosts.exact
 
 const tagRegex = /^\/tags\/([^/]+)/i
 const organizationRegex = /^\/organizations\/([^/]+)/i
 const popularItemsRegex = /^\/popular-items(\/|$)/i
 const officialColumnsRegex = /^\/official-columns(\/|$)/i
 
-// Qiita serves the user, tag and popular feeds at `/feed.atom` too. The literal rows read before
-// `/{username}/feed`, so a user named popular-items or official-columns reads as the site feed.
-const feeds = definePlatformFeeds('qiita', [
-  { key: 'zine', main: 'https://qiita.com/official-columns/feed/', format: 'rss' },
-  { key: 'zine', main: 'https://qiita.com/official-columns/feed/atom/', format: 'atom' },
-  {
-    key: 'popular',
-    main: 'https://qiita.com/popular-items/feed',
-    aliases: ['https://qiita.com/popular-items/feed.atom'],
-  },
-  {
-    key: 'organization',
-    main: 'https://qiita.com/organizations/{organization}/activities.atom',
-  },
-  {
-    key: 'tag',
-    main: 'https://qiita.com/tags/{tag}/feed',
-    aliases: ['https://qiita.com/tags/{tag}/feed.atom'],
-  },
-  {
-    key: 'posts',
-    main: 'https://qiita.com/{username}/feed',
-    aliases: ['https://qiita.com/{username}/feed.atom'],
-  },
-])
+const feeds = withHintLabels(qiita.feeds)
 
 export const parseQiitaUrl = (url: string): QiitaUrl | undefined => {
   const parsedUrl = parseUrl(url)

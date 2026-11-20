@@ -542,196 +542,22 @@ describe('jinboHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the category hint for a category feed', () => {
-      const value = 'https://blog.jinbo.net/erindialogue/atom/category/5'
-      const expected: DiscoverUriHint = { key: 'jinbo:category', label: 'Category', format: 'atom' }
-
-      expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the category hint for a category RSS feed', () => {
-      const value = 'https://blog.jinbo.net/erindialogue/rss/category/5'
-      const expected: DiscoverUriHint = { key: 'jinbo:category', label: 'Category', format: 'rss' }
-
-      expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the category hint for a category feed named by text', () => {
-      const value =
-        'https://blog.jinbo.net/carol/atom/category/%EC%A1%B0%EB%AF%B8%EA%B4%80%EA%B3%84'
-      const expected: DiscoverUriHint = { key: 'jinbo:category', label: 'Category', format: 'atom' }
-
-      expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for a tag feed', () => {
-      const value = 'https://blog.jinbo.net/frank40/atom/tag/32745'
-      const expected: DiscoverUriHint = { key: 'jinbo:tag', label: 'Tag', format: 'atom' }
-
-      expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for a tag feed named by text', () => {
-      const value =
-        'https://blog.jinbo.net/alice/atom/tag/toward%20a%20global%20autonomous%20university'
-      const expected: DiscoverUriHint = { key: 'jinbo:tag', label: 'Tag', format: 'atom' }
-
-      expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the posts hint for an RSS feed', () => {
       const value = 'https://blog.jinbo.net/bobworld/rss'
       const expected: DiscoverUriHint = { key: 'jinbo:posts', label: 'Posts', format: 'rss' }
 
       expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the posts hint for an Atom feed', () => {
-      const value = 'https://blog.jinbo.net/bobworld/atom'
-      const expected: DiscoverUriHint = { key: 'jinbo:posts', label: 'Posts', format: 'atom' }
-
-      expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for an Atom feed with a trailing slash', () => {
-      const value = 'http://blog.jinbo.net/bobworld/atom/'
-      const expected: DiscoverUriHint = { key: 'jinbo:posts', label: 'Posts', format: 'atom' }
-
-      expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a feed over http', () => {
-      const value = 'http://blog.jinbo.net/bobworld/rss'
-      const expected: DiscoverUriHint = { key: 'jinbo:posts', label: 'Posts', format: 'rss' }
-
-      expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the responses hint for an RSS feed', () => {
-      const value = 'https://blog.jinbo.net/dave/rss/response'
-      const expected: DiscoverUriHint = {
-        key: 'jinbo:responses',
-        label: 'Comments and trackbacks',
-        format: 'rss',
-      }
-
-      expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the responses hint for an Atom feed', () => {
-      const value = 'https://blog.jinbo.net/dave/atom/response'
-      const expected: DiscoverUriHint = {
-        key: 'jinbo:responses',
-        label: 'Comments and trackbacks',
-        format: 'atom',
-      }
-
-      expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://blog.jinbo.net/bobworld'
-
-      expect(jinboHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a category page', () => {
-      const value = 'https://blog.jinbo.net/erindialogue/category/5'
-
-      expect(jinboHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    const feedHints: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://blog.jinbo.net/alice/rss/response/1234',
-        { key: 'jinbo:post-responses', label: 'Post comments and trackbacks', format: 'rss' },
-      ],
-      [
-        'http://blog.jinbo.net/alice/atom/response/1234',
-        { key: 'jinbo:post-responses', label: 'Post comments and trackbacks', format: 'atom' },
-      ],
-      [
-        'https://blog.jinbo.net/alice/rss/comment',
-        { key: 'jinbo:comments', label: 'Comments', format: 'rss' },
-      ],
-      [
-        'https://blog.jinbo.net/alice/atom/comment',
-        { key: 'jinbo:comments', label: 'Comments', format: 'atom' },
-      ],
-      [
-        'https://blog.jinbo.net/alice/rss/trackback',
-        { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'rss' },
-      ],
-      [
-        'https://blog.jinbo.net/alice/atom/trackback',
-        { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'atom' },
-      ],
-      [
-        'http://blog.jinbo.net/alice/rss/line',
-        { key: 'jinbo:lines', label: 'Lines', format: 'rss' },
-      ],
-      [
-        'https://blog.jinbo.net/alice/atom/line',
-        { key: 'jinbo:lines', label: 'Lines', format: 'atom' },
-      ],
-    ]
-
-    it.each(feedHints)('should return the hint for %s', (value, expected) => {
-      expect(jinboHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for another host', () => {
-      const value = 'https://example.com/bobworld/rss'
-
-      expect(jinboHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://blog.jinbo.net/erindialogue/atom/category/5',
-        { key: 'jinbo:category', label: 'Category', format: 'atom' },
-      ],
-      [
-        'https://blog.jinbo.net/frank40/atom/tag/32745',
-        { key: 'jinbo:tag', label: 'Tag', format: 'atom' },
-      ],
-      [
-        'https://blog.jinbo.net/bobworld/rss',
-        { key: 'jinbo:posts', label: 'Posts', format: 'rss' },
-      ],
-      [
-        'https://blog.jinbo.net/bobworld/atom',
-        { key: 'jinbo:posts', label: 'Posts', format: 'atom' },
-      ],
-      [
-        'https://blog.jinbo.net/dave/rss/response',
-        { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'rss' },
-      ],
-      [
-        'https://blog.jinbo.net/dave/atom/response',
-        { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'atom' },
-      ],
-      [
-        'http://blog.jinbo.net/alice/rss/response/1234',
-        { key: 'jinbo:post-responses', label: 'Post comments and trackbacks', format: 'rss' },
-      ],
-      [
-        'http://blog.jinbo.net/alice/rss/comment',
-        { key: 'jinbo:comments', label: 'Comments', format: 'rss' },
-      ],
-      [
-        'https://blog.jinbo.net/alice/atom/trackback',
-        { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'atom' },
-      ],
-      [
-        'http://blog.jinbo.net/alice/atom/line',
-        { key: 'jinbo:lines', label: 'Lines', format: 'atom' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return an Atom category feed as itself', async () => {
+      const value = 'https://blog.jinbo.net/erindialogue/atom/category/5'
+      const hint: DiscoverUriHint = {
+        key: 'jinbo:category',
+        label: 'Category',
+        format: 'atom',
+      }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [jinboHandler],

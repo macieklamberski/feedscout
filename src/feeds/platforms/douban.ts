@@ -1,5 +1,6 @@
+import { douban } from 'feedintel'
 import { isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
 
@@ -14,39 +15,12 @@ export type DoubanUrl =
 
 // The sections that serve profile and subject pages. Other subdomains are service hosts, such
 // as accounts and api.
-const hosts = [
-  'douban.com',
-  'www.douban.com',
-  'book.douban.com',
-  'm.douban.com',
-  'movie.douban.com',
-  'music.douban.com',
-]
+const hosts = douban.hosts.exact
 
 const userRegex = /^\/people\/([^/]+)/i
 const subjectRegex = /^\/subject\/(?<subjectId>[^/]+)/i
 
-const feeds = definePlatformFeeds('douban', [
-  { key: 'interests', main: 'https://www.douban.com/feed/people/{username}/interests' },
-  { key: 'reviews', main: 'https://www.douban.com/feed/people/{username}/reviews' },
-  { key: 'notes', main: 'https://www.douban.com/feed/people/{username}/notes' },
-  {
-    key: 'subject-reviews',
-    main: 'https://www.douban.com/feed/subject/{subjectId}/reviews',
-    aliases: [
-      // A subject page links the feed on its section's host, which answers 301 to www.douban.com.
-      'https://book.douban.com/feed/subject/{subjectId}/reviews',
-      'https://movie.douban.com/feed/subject/{subjectId}/reviews',
-      'https://music.douban.com/feed/subject/{subjectId}/reviews',
-    ],
-  },
-  { key: 'book-reviews', main: 'https://www.douban.com/feed/review/book' },
-  { key: 'movie-reviews', main: 'https://www.douban.com/feed/review/movie' },
-  { key: 'music-reviews', main: 'https://www.douban.com/feed/review/music' },
-  { key: 'drama-reviews', main: 'https://www.douban.com/feed/review/drama' },
-  { key: 'new-movie-reviews', main: 'https://www.douban.com/feed/review/movie_new' },
-  { key: 'popular-reviews', main: 'https://www.douban.com/feed/review/best' },
-])
+const feeds = withHintLabels(douban.feeds)
 
 export const parseDoubanUrl = (url: string): DoubanUrl | undefined => {
   if (!isHostOf(url, hosts)) {

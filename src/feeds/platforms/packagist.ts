@@ -1,5 +1,6 @@
+import { packagist } from 'feedintel'
 import { endsWithAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -12,74 +13,13 @@ export type PackagistUrl =
   | { kind: 'extensions' }
   | { kind: 'home' }
 
-const hosts = ['packagist.org']
+const hosts = packagist.hosts.exact
 
 const packageRegex = /^\/packages\/([^/]+)\/([^/]+)(?:\/|$)/i
 const vendorRegex = /^\/packages\/([^/]+)\/?$/i
 const extensionsRegex = /^\/extensions(?:\/|$)/i
 
-const feeds = definePlatformFeeds('packagist', [
-  {
-    key: 'releases',
-    main: 'https://packagist.org/feeds/package.{vendor}/{name}.rss',
-    format: 'rss',
-  },
-  {
-    key: 'releases',
-    main: 'https://packagist.org/feeds/package.{vendor}/{name}.atom',
-    format: 'atom',
-  },
-  {
-    key: 'vendor',
-    main: 'https://packagist.org/feeds/vendor.{vendor}.rss',
-    format: 'rss',
-  },
-  {
-    key: 'vendor',
-    main: 'https://packagist.org/feeds/vendor.{vendor}.atom',
-    format: 'atom',
-  },
-  {
-    key: 'new-packages',
-    main: 'https://packagist.org/feeds/packages.rss',
-    format: 'rss',
-  },
-  {
-    key: 'new-packages',
-    main: 'https://packagist.org/feeds/packages.atom',
-    format: 'atom',
-  },
-  {
-    key: 'new-releases',
-    main: 'https://packagist.org/feeds/releases.rss',
-    format: 'rss',
-  },
-  {
-    key: 'new-releases',
-    main: 'https://packagist.org/feeds/releases.atom',
-    format: 'atom',
-  },
-  {
-    key: 'new-extensions',
-    main: 'https://packagist.org/feeds/extensions.rss',
-    format: 'rss',
-  },
-  {
-    key: 'new-extensions',
-    main: 'https://packagist.org/feeds/extensions.atom',
-    format: 'atom',
-  },
-  {
-    key: 'extension-releases',
-    main: 'https://packagist.org/feeds/extension-releases.rss',
-    format: 'rss',
-  },
-  {
-    key: 'extension-releases',
-    main: 'https://packagist.org/feeds/extension-releases.atom',
-    format: 'atom',
-  },
-])
+const feeds = withHintLabels(packagist.feeds)
 
 export const parsePackagistUrl = (url: string): PackagistUrl | undefined => {
   const parsedUrl = parseUrl(url)

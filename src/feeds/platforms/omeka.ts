@@ -1,5 +1,6 @@
+import { omeka } from 'feedintel'
 import { decodePercent, isAnyOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -35,53 +36,7 @@ const excludedQueryParams = ['page', 'submit_search', 'output']
 // A sorted feed stays the items feed, so these do not make a browse query a filter either.
 const sortQueryParams = ['sort_dir', 'sort_field']
 
-const domains = ['omeka.net']
-
-// A site on a custom domain is known only by its marker, so its feeds are built in resolve, under
-// the install root the page gives, and claimed only on Omeka's own domain. A browse query other
-// than the dropped parameters makes a feed the filtered items one. The short `/items` route and an
-// item shown inside an exhibit serve the same feeds, so they are claimed under the same keys.
-const feeds = definePlatformFeeds(
-  'omeka',
-  [
-    {
-      key: 'items',
-      main: '{root}/items/browse?output=rss2',
-      format: 'rss',
-      aliases: [
-        '{root}/items?output=rss2',
-        // A site whose homepage is the items browse serves the items feed at its root too.
-        '{root}/?output=rss2',
-      ],
-    },
-    {
-      key: 'items',
-      main: '{root}/items/browse?output=atom',
-      format: 'atom',
-      aliases: ['{root}/items?output=atom', '{root}/?output=atom'],
-    },
-    // The browse serves the items feed page by page.
-    { key: 'items', main: '{root}/items/browse/{page}?output=rss2', format: 'rss' },
-    { key: 'items', main: '{root}/items/browse/{page}?output=atom', format: 'atom' },
-    {
-      key: 'filtered-items',
-      main: '{root}/items/browse/tag/{tag}?output=rss2',
-      format: 'rss',
-    },
-    {
-      key: 'filtered-items',
-      main: '{root}/items/browse/tag/{tag}?output=atom',
-      format: 'atom',
-    },
-    {
-      key: 'item',
-      main: '{root}/items/show/{id}?output=atom',
-      format: 'atom',
-      aliases: ['{root}/exhibits/show/{exhibit}/item/{id}?output=atom'],
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(omeka.feeds)
 
 const getBrowseQuery = (searchParams: URLSearchParams): string => {
   const queryParams = new URLSearchParams()

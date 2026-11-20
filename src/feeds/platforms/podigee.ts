@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { podigee } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -6,26 +7,9 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type PodigeeUrl = { kind: 'podcast' }
 
-const domains = ['podigee.io']
+const domains = podigee.hosts.tenants
 
-// The aac, opus and vorbis feeds list the mp3 feed's episodes with other enclosures, so each
-// encoding is a feed of its own. A show's further feeds live under /feeds/{feed} and can list
-// fewer episodes than the main one. No page links either, and a show without an encoding
-// answers 302 to /feed/mp3, so they are claimed and never built.
-const feeds = definePlatformFeeds(
-  'podigee',
-  [
-    { key: 'podcast', main: '{scheme}://{host}/feed/mp3' },
-    { key: 'podcast-encoding', main: '{scheme}://{host}/feed/aac' },
-    { key: 'podcast-encoding', main: '{scheme}://{host}/feed/opus' },
-    { key: 'podcast-encoding', main: '{scheme}://{host}/feed/vorbis' },
-    { key: 'feed', main: '{scheme}://{host}/feeds/{feed}/mp3' },
-    { key: 'feed-encoding', main: '{scheme}://{host}/feeds/{feed}/aac' },
-    { key: 'feed-encoding', main: '{scheme}://{host}/feeds/{feed}/opus' },
-    { key: 'feed-encoding', main: '{scheme}://{host}/feeds/{feed}/vorbis' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(podigee.feeds)
 
 export const parsePodigeeUrl = (url: string): PodigeeUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

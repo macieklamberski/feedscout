@@ -1,5 +1,6 @@
+import { gitea } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -12,7 +13,7 @@ export type GiteaUrl =
 
 export type GiteaPage = GiteaUrl & { root: string }
 
-const hosts = ['codeberg.org', 'www.codeberg.org', 'gitea.com', 'www.gitea.com']
+const hosts = gitea.hosts.exact
 
 const giteaCookieRegex = /(?:^|[;,\s])[\w-]*gitea=/
 // suffixes: Gitea's own user routes, such as /{user}.rss, so no username ends with one
@@ -24,41 +25,7 @@ const escapedSlashRegex = /\\\//g
 
 const branchViews = ['src', 'commits']
 
-// Every feed comes as Atom and RSS, emitted as two entries, so validation keeps the one a host
-// serves. The table claims a feed only on Codeberg and gitea.com: a self-hosted instance is known
-// by its session cookie, which a feed URL does not carry. A slashed branch, such as v11.0/forgejo,
-// reads as the file history, so the one-segment rows come first, and a repo's activity comes
-// before its owner's, so a page with a repo builds the repo's.
-const feeds = definePlatformFeeds(
-  'gitea',
-  [
-    { key: 'activity', main: '{root}/{owner}/{repo}.atom', format: 'atom' },
-    { key: 'activity', main: '{root}/{owner}/{repo}.rss', format: 'rss' },
-    { key: 'activity', main: '{root}/{owner}.atom', format: 'atom' },
-    { key: 'activity', main: '{root}/{owner}.rss', format: 'rss' },
-    { key: 'releases', main: '{root}/{owner}/{repo}/releases.atom', format: 'atom' },
-    { key: 'releases', main: '{root}/{owner}/{repo}/releases.rss', format: 'rss' },
-    { key: 'tags', main: '{root}/{owner}/{repo}/tags.atom', format: 'atom' },
-    { key: 'tags', main: '{root}/{owner}/{repo}/tags.rss', format: 'rss' },
-    {
-      key: 'branch-commits',
-      main: '{root}/{owner}/{repo}/atom/branch/{branch}',
-      format: 'atom',
-    },
-    {
-      key: 'branch-commits',
-      main: '{root}/{owner}/{repo}/rss/branch/{branch}',
-      format: 'rss',
-    },
-    {
-      key: 'file-history',
-      main: '{root}/{owner}/{repo}/atom/branch/{path*}',
-      format: 'atom',
-    },
-    { key: 'file-history', main: '{root}/{owner}/{repo}/rss/branch/{path*}', format: 'rss' },
-  ],
-  { hosts: { exact: hosts } },
-)
+const feeds = withHintLabels(gitea.feeds)
 
 export const isGiteaHeaders = (headers: Headers): boolean => {
   return giteaCookieRegex.test(headers.get('set-cookie') ?? '')

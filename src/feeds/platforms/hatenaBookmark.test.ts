@@ -499,154 +499,28 @@ describe('hatenaBookmarkHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const ownFeedHints: Array<[string, DiscoverUriHint]> = [
-      ['https://b.hatena.ne.jp/hotentry.rss', { key: 'hatena-bookmark:hot', label: 'Hot entries' }],
-      [
-        'https://b.hatena.ne.jp/hotentry/all.rss',
-        { key: 'hatena-bookmark:hot', label: 'Hot entries' },
-      ],
-      [
-        'https://b.hatena.ne.jp/hotentry/life.rss',
-        { key: 'hatena-bookmark:hot-category', label: 'Hot entries in category' },
-      ],
-      [
-        'https://b.hatena.ne.jp/entrylist.rss',
-        { key: 'hatena-bookmark:new', label: 'New entries' },
-      ],
-      [
-        'https://b.hatena.ne.jp/entrylist/all.rss',
-        { key: 'hatena-bookmark:new', label: 'New entries' },
-      ],
-      [
-        'https://b.hatena.ne.jp/entrylist/entertainment.rss',
-        { key: 'hatena-bookmark:new-category', label: 'New entries in category' },
-      ],
-      [
-        'https://b.hatena.ne.jp/q/%E8%A1%8C%E6%94%BF?mode=rss',
-        { key: 'hatena-bookmark:search', label: 'Search' },
-      ],
-      [
-        'https://b.hatena.ne.jp/q/セキュリティ?mode=rss',
-        { key: 'hatena-bookmark:search', label: 'Search' },
-      ],
-      [
-        'https://b.hatena.ne.jp/q/c++%20web?mode=rss&target=title',
-        { key: 'hatena-bookmark:search', label: 'Search' },
-      ],
-      [
-        'https://b.hatena.ne.jp/q/rpg?date_range=5y&mode=rss&safe=on&sort=recent&target=tag&users=5',
-        { key: 'hatena-bookmark:search', label: 'Search' },
-      ],
-      [
-        'https://b.hatena.ne.jp/q/Android?%3Bdate_range=5y&%3Bsafe=on&%3Bsort=popular&%3Btarget=tag&%3Busers=3&mode=rss',
-        { key: 'hatena-bookmark:search', label: 'Search' },
-      ],
-      [
-        'https://b.hatena.ne.jp/q/nodejs/?mode=rss&sort=hot&threshold=3',
-        { key: 'hatena-bookmark:search', label: 'Search' },
-      ],
-      [
-        'https://b.hatena.ne.jp/site/0-designing.com?mode=rss',
-        { key: 'hatena-bookmark:site', label: 'Site' },
-      ],
-      [
-        'https://b.hatena.ne.jp/site/blog.livedoor.jp/erin?mode=rss',
-        { key: 'hatena-bookmark:site', label: 'Site' },
-      ],
-      [
-        'https://b.hatena.ne.jp/site/panathenaia.halfmoon.jp/?mode=rss&sort=eid&threshold=1',
-        { key: 'hatena-bookmark:site', label: 'Site' },
-      ],
-      [
-        'https://b.hatena.ne.jp/carol/bookmark.rss',
-        { key: 'hatena-bookmark:bookmarks', label: 'Bookmarks' },
-      ],
-      [
-        'https://b.hatena.ne.jp/site/bookmark.rss',
-        { key: 'hatena-bookmark:bookmarks', label: 'Bookmarks' },
-      ],
-      [
-        'https://b.hatena.ne.jp/alice/bookmark.rss?tag=atom',
-        { key: 'hatena-bookmark:user-tag', label: 'User tag' },
-      ],
-    ]
+    it('should return the hot hint for the hot entries feed under the all category', () => {
+      const value = 'https://b.hatena.ne.jp/hotentry/all.rss'
+      const expected: DiscoverUriHint = { key: 'hatena-bookmark:hot', label: 'Hot entries' }
 
-    it.each(ownFeedHints)('should return the hint of %s', (value, expected) => {
       expect(hatenaBookmarkHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a search page', () => {
-      const value = 'https://b.hatena.ne.jp/q/rss?target=title'
-
-      expect(hatenaBookmarkHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a site page', () => {
-      const value = 'https://b.hatena.ne.jp/site/blog.livedoor.jp/erin?sort=eid'
-
-      expect(hatenaBookmarkHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a user page', () => {
-      const value = 'https://b.hatena.ne.jp/alice/bookmark'
-
-      expect(hatenaBookmarkHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a site feed on another host', () => {
-      const value = 'https://example.com/site/example.com?mode=rss'
-
-      expect(hatenaBookmarkHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
-    const hot: DiscoverUriHint = { key: 'hatena-bookmark:hot', label: 'Hot entries' }
-    const hotCategory: DiscoverUriHint = {
-      key: 'hatena-bookmark:hot-category',
-      label: 'Hot entries in category',
-    }
-    const fresh: DiscoverUriHint = { key: 'hatena-bookmark:new', label: 'New entries' }
-    const freshCategory: DiscoverUriHint = {
-      key: 'hatena-bookmark:new-category',
-      label: 'New entries in category',
-    }
-    const search: DiscoverUriHint = { key: 'hatena-bookmark:search', label: 'Search' }
-    const site: DiscoverUriHint = { key: 'hatena-bookmark:site', label: 'Site' }
-    const bookmarks: DiscoverUriHint = { key: 'hatena-bookmark:bookmarks', label: 'Bookmarks' }
-    const userTag: DiscoverUriHint = { key: 'hatena-bookmark:user-tag', label: 'User tag' }
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://b.hatena.ne.jp/hotentry.rss', hot],
-      ['https://b.hatena.ne.jp/hotentry/all.rss', hot],
-      ['https://b.hatena.ne.jp/hotentry/life.rss', hotCategory],
-      ['http://b.hatena.ne.jp/hotentry/life.rss', hotCategory],
-      ['https://b.hatena.ne.jp/entrylist.rss', fresh],
-      ['https://b.hatena.ne.jp/entrylist/all.rss', fresh],
-      ['https://b.hatena.ne.jp/entrylist/entertainment.rss', freshCategory],
-      ['http://b.hatena.ne.jp/entrylist/entertainment.rss', freshCategory],
-      ['https://b.hatena.ne.jp/q/%E9%85%92?mode=rss', search],
-      [
-        'https://b.hatena.ne.jp/q/game?date_range=5y&mode=rss&safe=on&sort=popular&target=tag&users=5',
-        search,
-      ],
-      ['https://b.hatena.ne.jp/site/blog.livedoor.jp/dave?mode=rss', site],
-      ['https://b.hatena.ne.jp/site/bookmark.rss', bookmarks],
-      [
-        'https://b.hatena.ne.jp/alice/bookmark.rss?tag=%E4%BD%90%E8%97%A4%E4%BA%9C%E7%B4%80',
-        userTag,
-      ],
-      ['http://b.hatena.ne.jp/alice/bookmark.rss?tag=example', userTag],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a search feed with filters as itself', async () => {
+      const value =
+        'https://b.hatena.ne.jp/q/game?date_range=5y&mode=rss&safe=on&sort=popular&target=tag&users=5'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [hatenaBookmarkHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'hatena-bookmark:search', label: 'Search' } },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

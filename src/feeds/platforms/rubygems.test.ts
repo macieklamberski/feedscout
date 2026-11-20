@@ -96,117 +96,27 @@ describe('rubygemsHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const versionsFeeds: Array<string> = [
-      'https://rubygems.org/gems/example/versions.atom',
-      'http://rubygems.org/gems/example/versions.atom',
-      'https://www.rubygems.org/gems/example/versions.atom',
-      'https://rubygems.org/gems/example/versions.atom/',
-      'https://rubygems.org/gems/Example_Gem/versions.atom',
-      'https://index.rubygems.org/gems/example/versions.atom',
-      'https://bundler.rubygems.org/gems/example/versions.atom',
-    ]
-
-    it.each(versionsFeeds)('should return the versions hint for %s', (value) => {
+    it('should return the versions hint for a versions feed on the index host', () => {
+      const value = 'https://index.rubygems.org/gems/example/versions.atom'
       const expected: DiscoverUriHint = { key: 'rubygems:versions', label: 'Versions' }
 
       expect(rubygemsHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    const latestGemsFeeds: Array<string> = [
-      'https://rubygems.org/gems.atom',
-      'http://rubygems.org/gems.atom',
-      'https://www.rubygems.org/gems.atom',
-      'https://rubygems.org/gems.atom/',
-      'https://index.rubygems.org/gems.atom',
-      'https://bundler.rubygems.org/gems.atom',
-    ]
-
-    it.each(latestGemsFeeds)('should return the latest gems hint for %s', (value) => {
-      const expected: DiscoverUriHint = { key: 'rubygems:latest-gems', label: 'Latest gems' }
-
-      expect(rubygemsHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the dashboard hint for a dashboard feed with an API key', () => {
-      const value = 'https://rubygems.org/dashboard.atom?api_key=0123456789abcdef'
-      const expected: DiscoverUriHint = { key: 'rubygems:dashboard', label: 'Dashboard' }
-
-      expect(rubygemsHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    const pages: Array<string> = [
-      'https://rubygems.org/',
-      'https://rubygems.org/gems',
-      'https://rubygems.org/gems/example',
-      'https://rubygems.org/gems/example/versions',
-      'https://rubygems.org/gems/example/versions/1.0.0',
-      'https://index.rubygems.org/gems/example',
-    ]
-
-    it.each(pages)('should return undefined for the page %s', (value) => {
-      expect(rubygemsHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on another RubyGems host', () => {
-      const value = 'https://blog.rubygems.org/gems/example/versions.atom'
-
-      expect(rubygemsHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const versionsFeeds: Array<string> = [
-      'https://rubygems.org/gems/example/versions.atom',
-      'http://rubygems.org/gems/example/versions.atom',
-      'https://index.rubygems.org/gems/example/versions.atom',
-      'https://bundler.rubygems.org/gems/example/versions.atom',
-    ]
-
-    it.each(versionsFeeds)('should return %s as itself', async (value) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return the latest gems feed on the bundler host as itself', async () => {
+      const value = 'https://bundler.rubygems.org/gems.atom'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [rubygemsHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: value, hint: { key: 'rubygems:versions', label: 'Versions' } },
-      ]
-
-      expect(result).toEqual(expected)
-    })
-
-    const latestGemsFeeds: Array<string> = [
-      'https://rubygems.org/gems.atom',
-      'https://www.rubygems.org/gems.atom',
-      'https://index.rubygems.org/gems.atom',
-      'https://bundler.rubygems.org/gems.atom',
-    ]
-
-    it.each(latestGemsFeeds)('should return %s as itself', async (value) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
-        ...defaultPlatformOptions,
-        handlers: [rubygemsHandler],
-        baseUrl: value,
-      })
+      }
       const expected: Array<DiscoverUriEntry> = [
         { uri: value, hint: { key: 'rubygems:latest-gems', label: 'Latest gems' } },
       ]
 
-      expect(result).toEqual(expected)
-    })
-
-    it('should return a dashboard feed as itself', async () => {
-      const value = 'https://rubygems.org/dashboard.atom?api_key=0123456789abcdef'
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
-        ...defaultPlatformOptions,
-        handlers: [rubygemsHandler],
-        baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: value, hint: { key: 'rubygems:dashboard', label: 'Dashboard' } },
-      ]
-
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

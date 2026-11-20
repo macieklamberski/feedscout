@@ -1,3 +1,4 @@
+import { squarespace } from 'feedintel'
 import {
   decodeSegment,
   getPathSegments,
@@ -6,7 +7,7 @@ import {
   isAnyOf,
   parseUrl,
 } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 
@@ -17,98 +18,7 @@ export type SquarespaceUrl =
   | { kind: 'category'; collection: string; category: string }
   | { kind: 'tag'; collection: string; tag: string }
 
-const domains = ['squarespace.com']
-
-// A site on its own domain is known only by its marker, so only a feed on a squarespace.com site
-// is claimed. A Squarespace 5 site serves the `.xml` feeds, redirects them from https to http with
-// a jsessionid, and answers `?format=rss` with a page.
-const feeds = definePlatformFeeds(
-  'squarespace',
-  [
-    {
-      key: 'collection',
-      main: '{scheme}://{host}/{collection}?format=rss',
-      format: 'rss',
-      aliases: [
-        // One fixed value every site answers with the same feed as `format=rss`. Any other value
-        // after `sqsp_rss_` answers the page.
-        '{scheme}://{host}/{collection}?format=sqsp_rss_wceoq1kgqnmf2cn9czutlluofr44tazt',
-        '{scheme}://{host}/{collection}/rss.xml',
-        '{scheme}://{host}/{collection}/rss.xml;jsessionid={session}',
-      ],
-    },
-    {
-      key: 'collection',
-      main: '{scheme}://{host}/?format=rss',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/?format=sqsp_rss_wceoq1kgqnmf2cn9czutlluofr44tazt'],
-    },
-    {
-      key: 'collection',
-      main: '{scheme}://{host}/{parent}/{collection}?format=rss',
-      format: 'rss',
-    },
-    {
-      key: 'collection',
-      main: '{scheme}://{host}/{collection}/atom.xml',
-      format: 'atom',
-      aliases: ['{scheme}://{host}/{collection}/atom.xml;jsessionid={session}'],
-    },
-    {
-      key: 'collection',
-      main: '{scheme}://{host}/{collection}/rdf.xml',
-      format: 'rdf',
-      aliases: ['{scheme}://{host}/{collection}/rdf.xml;jsessionid={session}'],
-    },
-    {
-      key: 'category',
-      main: '{scheme}://{host}/{collection}?category={category}&format=rss',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/{collection}/category/{category}?format=rss'],
-    },
-    {
-      key: 'category',
-      main: '{scheme}://{host}/?category={category}&format=rss',
-      format: 'rss',
-    },
-    {
-      key: 'category',
-      main: '{scheme}://{host}/{collection}/rss.xml?categoryId={categoryId}',
-      format: 'rss',
-      aliases: [
-        '{scheme}://{host}/{collection}/rss.xml;jsessionid={session}?categoryId={categoryId}',
-      ],
-    },
-    {
-      key: 'category',
-      main: '{scheme}://{host}/{collection}/atom.xml?categoryId={categoryId}',
-      format: 'atom',
-      aliases: [
-        '{scheme}://{host}/{collection}/atom.xml;jsessionid={session}?categoryId={categoryId}',
-      ],
-    },
-    {
-      key: 'category',
-      main: '{scheme}://{host}/{collection}/rdf.xml?categoryId={categoryId}',
-      format: 'rdf',
-      aliases: [
-        '{scheme}://{host}/{collection}/rdf.xml;jsessionid={session}?categoryId={categoryId}',
-      ],
-    },
-    {
-      key: 'tag',
-      main: '{scheme}://{host}/{collection}?tag={tag}&format=rss',
-      aliases: ['{scheme}://{host}/{collection}/tag/{tag}?format=rss'],
-    },
-    { key: 'tag', main: '{scheme}://{host}/?tag={tag}&format=rss' },
-    {
-      key: 'comments',
-      main: '{scheme}://{host}/{collection}/rss-comments.xml',
-      aliases: ['{scheme}://{host}/{collection}/rss-comments.xml;jsessionid={session}'],
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(squarespace.feeds)
 
 export const isSquarespaceHeaders = (headers: Headers): boolean => {
   return includesAnyOf(headers.get('server'), 'squarespace')

@@ -1,5 +1,6 @@
+import { libsyn } from 'feedintel'
 import { getPathSegments, isHostOf } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, getTenantSubdomain } from '../../common/utils.js'
 
@@ -10,34 +11,12 @@ export type LibsynUrl =
   | { kind: 'site'; showId: string }
   | { kind: 'podcast'; slug: string }
 
-const domains = ['libsyn.com']
+const domains = libsyn.hosts.tenants
 const feedHosts = ['feeds.libsyn.com']
 // The sites host serves every show's site by its show id, as sites.libsyn.com/{showId}.
 const siteHosts = ['sites.libsyn.com']
 
-const feeds = definePlatformFeeds(
-  'libsyn',
-  [
-    {
-      key: 'podcast',
-      main: 'https://feeds.libsyn.com/{showId}/rss',
-      aliases: ['https://feeds.libsyn.com/{showId}', '{scheme}://{host}/rss'],
-    },
-    // Where feeds.libsyn.com/{showId}/rss redirects. The destination id is not in the show id.
-    {
-      key: 'podcast',
-      main: 'https://rss.libsyn.com/shows/{showId}/destinations/{destinationId}.xml',
-    },
-    // The sites host's feed, which on show 45546 redirects to an empty category feed, and the feed
-    // cut to its last episodes, as `last100`.
-    { key: 'podcast', main: 'https://sites.libsyn.com/{showId}/rss' },
-    { key: 'podcast', main: 'https://feeds.libsyn.com/{showId}/last{count}' },
-    { key: 'podcast', main: '{scheme}://{host}/rss/last{count}' },
-    { key: 'category', main: '{scheme}://{host}/rss/category/{category}' },
-    { key: 'category', main: 'https://sites.libsyn.com/{showId}/rss/category/{category}' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(libsyn.feeds)
 
 export const parseLibsynUrl = (url: string): LibsynUrl | undefined => {
   const slug = getTenantSubdomain(url, domains)

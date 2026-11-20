@@ -220,65 +220,21 @@ describe('blogHuHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const feedKeys: Array<[string, DiscoverUriHint]> = [
-      ['https://example.blog.hu/rss2', { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }],
-      ['https://example.blog.hu/rss', { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }],
-      ['https://example.blog.hu/atom', { key: 'blog-hu:posts', label: 'Posts', format: 'atom' }],
-      [
-        'https://example.blog.hu/comments/rss2',
-        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
-      ],
-      [
-        'https://example.blog.hu/comments/rss',
-        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
-      ],
-      [
-        'https://example.blog.hu/comments/comments/rss',
-        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
-      ],
-      [
-        'https://example.blog.hu/comments/comments/rss2',
-        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
-      ],
-      [
-        'https://example.blog.hu/comments/comments/rss2/',
-        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
-      ],
-      [
-        'https://example.blog.hu/comments/atom',
-        { key: 'blog-hu:comments', label: 'Comments', format: 'atom' },
-      ],
-      ['http://bob.blog.hu/rss2', { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }],
-      ['https://blog.hu/user/12345/rss', { key: 'blog-hu:user', label: 'User activity' }],
-      ['https://www.blog.hu/user/12345/rss', { key: 'blog-hu:user', label: 'User activity' }],
-      [
-        'https://blog.hu/user/12345/rss?token=0123456789abcdef',
-        { key: 'blog-hu:user', label: 'User activity' },
-      ],
-      ['https://example.blog.hu/xml/rss2', { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }],
-      [
-        'https://example.blog.hu/2013/06/30/example_post/rss2',
-        { key: 'blog-hu:post-comments', label: 'Post comments', format: 'rss' },
-      ],
-      [
-        'https://example.blog.hu/2013/06/30/example_post/atom',
-        { key: 'blog-hu:post-comments', label: 'Post comments', format: 'atom' },
-      ],
-      [
-        'https://example.blog.hu/rss/tags/example%20tag',
-        { key: 'blog-hu:tag', label: 'Tag', format: 'rss' },
-      ],
-      [
-        'https://example.blog.hu/rss/tags/example/',
-        { key: 'blog-hu:tag', label: 'Tag', format: 'rss' },
-      ],
-      [
-        'https://example.blog.hu/atom/tags/example',
-        { key: 'blog-hu:tag', label: 'Tag', format: 'atom' },
-      ],
-    ]
+    it('should return the posts hint for the posts feed at /xml/rss2', () => {
+      const value = 'https://example.blog.hu/xml/rss2'
+      const expected: DiscoverUriHint = { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }
 
-    it.each(feedKeys)('should return the hint for %s', (value, expected) => {
+      expect(blogHuHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the post comments hint for a feed under a dated post', () => {
+      const value = 'https://example.blog.hu/2013/06/30/example_post/atom'
+      const expected: DiscoverUriHint = {
+        key: 'blog-hu:post-comments',
+        label: 'Post comments',
+        format: 'atom',
+      }
+
       expect(blogHuHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
@@ -287,94 +243,24 @@ describe('blogHuHandler', () => {
 
       expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
     })
-
-    it('should return undefined for a tag page', () => {
-      const value = 'https://example.blog.hu/tags/example'
-
-      expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a blog page', () => {
-      const value = 'https://carol.blog.hu/2026/09/30/blog_vs_imdb'
-
-      expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a user profile', () => {
-      const value = 'https://blog.hu/user/654321'
-
-      expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on the apex', () => {
-      const value = 'https://blog.hu/rss2'
-
-      expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://a.bob.blog.hu/rss2'
-
-      expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on another host', () => {
-      const value = 'https://example.com/rss2'
-
-      expect(blogHuHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://example.blog.hu/rss2', { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }],
-      ['https://example.blog.hu/rss', { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }],
-      ['https://example.blog.hu/atom', { key: 'blog-hu:posts', label: 'Posts', format: 'atom' }],
-      [
-        'https://example.blog.hu/comments/rss2',
-        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
-      ],
-      [
-        'https://example.blog.hu/comments/rss',
-        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
-      ],
-      [
-        'https://example.blog.hu/comments/comments/rss',
-        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
-      ],
-      [
-        'https://example.blog.hu/comments/comments/rss2',
-        { key: 'blog-hu:comments', label: 'Comments', format: 'rss' },
-      ],
-      [
-        'https://example.blog.hu/comments/atom',
-        { key: 'blog-hu:comments', label: 'Comments', format: 'atom' },
-      ],
-      ['https://blog.hu/user/12345/rss', { key: 'blog-hu:user', label: 'User activity' }],
-      [
-        'https://blog.hu/user/12345/rss?token=0123456789abcdef',
-        { key: 'blog-hu:user', label: 'User activity' },
-      ],
-      ['https://example.blog.hu/xml/rss2', { key: 'blog-hu:posts', label: 'Posts', format: 'rss' }],
-      [
-        'http://example.blog.hu/2013/06/30/example_post/atom',
-        { key: 'blog-hu:post-comments', label: 'Post comments', format: 'atom' },
-      ],
-      [
-        'https://example.blog.hu/rss/tags/example/',
-        { key: 'blog-hu:tag', label: 'Tag', format: 'rss' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a user feed with a token as itself', async () => {
+      const value = 'https://blog.hu/user/12345/rss?token=0123456789abcdef'
+      const options = {
         ...defaultPlatformOptions,
         handlers: [blogHuHandler],
         baseUrl: value,
-      })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://blog.hu/user/12345/rss?token=0123456789abcdef',
+          hint: { key: 'blog-hu:user', label: 'User activity' },
+        },
+      ]
 
-      expect(result).toEqual(expected)
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

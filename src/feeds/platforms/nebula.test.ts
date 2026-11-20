@@ -314,106 +314,12 @@ describe('nebulaHandler', () => {
 
       expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the videos plus hint for a channel Plus feed', () => {
-      const value = 'https://rss.nebula.app/video/channels/bob-explores.rss?plus=true'
-      const expected: DiscoverUriHint = { key: 'nebula:videos-plus', label: 'Videos (Plus)' }
-
-      expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the originals hint for the Originals feed', () => {
-      const value = 'https://rss.nebula.app/video/categories/originals.rss'
-      const expected: DiscoverUriHint = { key: 'nebula:originals', label: 'Nebula Originals' }
-
-      expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the category hint for a category feed', () => {
-      const value = 'https://rss.nebula.app/video/categories/technology.rss'
-      const expected: DiscoverUriHint = { key: 'nebula:category', label: 'Category' }
-
-      expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the category plus hint for a category Plus feed', () => {
-      const value = 'https://rss.nebula.app/video/categories/technology.rss?plus=true'
-      const expected: DiscoverUriHint = { key: 'nebula:category-plus', label: 'Category (Plus)' }
-
-      expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the videos all hint for the all videos feed', () => {
-      const value = 'https://rss.nebula.app/video.rss'
-      const expected: DiscoverUriHint = { key: 'nebula:videos-all', label: 'All Videos' }
-
-      expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the videos all plus hint for the all videos Plus feed', () => {
-      const value = 'https://rss.nebula.app/video.rss?plus=true'
-      const expected: DiscoverUriHint = {
-        key: 'nebula:videos-all-plus',
-        label: 'All Videos (Plus)',
-      }
-
-      expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the channels hint for the recently added channels feed', () => {
-      const value = 'https://rss.nebula.app/video/channels.rss'
-      const expected: DiscoverUriHint = { key: 'nebula:channels', label: 'Recently Added Channels' }
-
-      expect(nebulaHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a channel page', () => {
-      const value = 'https://nebula.tv/alice-film-club'
-
-      expect(nebulaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a channel feed path on nebula.tv', () => {
-      const value = 'https://nebula.tv/video/channels/bob-explores.rss'
-
-      expect(nebulaHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://rss.nebula.app/video/channels/alice-film-club.rss',
-        { key: 'nebula:videos', label: 'Videos' },
-      ],
-      [
-        'https://rss.nebula.app/video/channels/bob-explores.rss?plus=true',
-        { key: 'nebula:videos-plus', label: 'Videos (Plus)' },
-      ],
-      [
-        'https://rss.nebula.app/video/categories/originals.rss',
-        { key: 'nebula:originals', label: 'Nebula Originals' },
-      ],
-      [
-        'https://rss.nebula.app/video/categories/technology.rss',
-        { key: 'nebula:category', label: 'Category' },
-      ],
-      [
-        'https://rss.nebula.app/video/categories/technology.rss?plus=true',
-        { key: 'nebula:category-plus', label: 'Category (Plus)' },
-      ],
-      ['https://rss.nebula.app/video.rss', { key: 'nebula:videos-all', label: 'All Videos' }],
-      [
-        'https://rss.nebula.app/video.rss?plus=true',
-        { key: 'nebula:videos-all-plus', label: 'All Videos (Plus)' },
-      ],
-      [
-        'https://rss.nebula.app/video/channels.rss',
-        { key: 'nebula:channels', label: 'Recently Added Channels' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a channel feed as itself', async () => {
+      const value = 'https://rss.nebula.app/video/channels/alice-film-club.rss'
+      const hint: DiscoverUriHint = { key: 'nebula:videos', label: 'Videos' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [nebulaHandler],

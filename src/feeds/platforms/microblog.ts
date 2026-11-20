@@ -1,5 +1,6 @@
+import { microblog } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -13,42 +14,13 @@ export type MicroblogUrl =
   | { kind: 'photos'; username: string }
   | { kind: 'blog'; username: string }
 
-export const domains = ['micro.blog']
+export const domains = microblog.hosts.tenants
 
 const categoryRegex = /^\/categories\/([^/]+)/i
 const archiveRegex = /^\/archive(?:\/|$)/i
 const photosRegex = /^\/photos(?:\/|$)/i
 
-const feeds = definePlatformFeeds(
-  'microblog',
-  [
-    {
-      key: 'category',
-      main: '{scheme}://{host}/categories/{category}/feed.xml',
-      format: 'rss',
-    },
-    {
-      key: 'category',
-      main: '{scheme}://{host}/categories/{category}/feed.json',
-      format: 'json',
-    },
-    { key: 'archive', main: '{scheme}://{host}/archive/index.json' },
-    { key: 'photos', main: '{scheme}://{host}/photos/index.json' },
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/feed.xml',
-      format: 'rss',
-      aliases: [
-        // replies.xml redirects to feed.xml, so a stored one is the posts feed.
-        '{scheme}://{host}/replies.xml',
-      ],
-    },
-    { key: 'posts', main: '{scheme}://{host}/feed.json', format: 'json' },
-    { key: 'podcast', main: '{scheme}://{host}/podcast.xml', format: 'rss' },
-    { key: 'podcast', main: '{scheme}://{host}/podcast.json', format: 'json' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(microblog.feeds)
 
 export const parseMicroblogUrl = (url: string): MicroblogUrl | undefined => {
   const parsedUrl = parseUrl(url)

@@ -1,5 +1,6 @@
+import { zenfolio } from 'feedintel'
 import { isHostOrSubdomainOf, isSubdomainOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
@@ -8,23 +9,11 @@ import { findElement, getCookieNames, getTenantSubdomain, hasMarker } from '../.
 
 export type ZenfolioUrl = { kind: 'site' }
 
-const domains = ['zenfolio.com']
+const domains = zenfolio.hosts.tenants
 
 const zenfolioAssetRegex = /^(?:https?:)?\/\/cdn\.zenfolio\.com\/zf\//i
 
-// A custom domain is known only by its markers, so its feeds are built here but not claimed.
-const feeds = definePlatformFeeds(
-  'zenfolio',
-  [
-    { key: 'recent', main: '{scheme}://{host}/recent.rss', format: 'rss' },
-    { key: 'recent', main: '{scheme}://{host}/recent.atom', format: 'atom' },
-    { key: 'featured', main: '{scheme}://{host}/featured.rss', format: 'rss' },
-    { key: 'featured', main: '{scheme}://{host}/featured.atom', format: 'atom' },
-    { key: 'blog', main: '{scheme}://{host}/blog.rss', format: 'rss' },
-    { key: 'blog', main: '{scheme}://{host}/blog.atom', format: 'atom' },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(zenfolio.feeds)
 
 export const isZenfolioHtml = (content: string): boolean => {
   const stylesheet = findElement(content, (element) => {

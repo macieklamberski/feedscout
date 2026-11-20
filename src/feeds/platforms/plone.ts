@@ -1,5 +1,6 @@
+import { plone } from 'feedintel'
 import { anyWordMatchesAnyOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { type Element, findElement, hasMarker } from '../../common/utils.js'
 
@@ -26,17 +27,7 @@ const itemPortalTypes = [
   'portaltype-news-item',
 ]
 
-// A site is known only by its markup, so its feeds are built under the portal or folder URL the
-// page prints and claimed on no host. The search feed carries the search page's query as it is.
-const feeds = definePlatformFeeds('plone', [
-  { key: 'search', main: '{root}/search_rss?{query}' },
-  { key: 'site', main: '{root}/RSS', format: 'rdf' },
-  { key: 'site', main: '{root}/rss.xml', format: 'rss' },
-  { key: 'site', main: '{root}/atom.xml', format: 'atom' },
-  { key: 'folder', main: '{root}/RSS', format: 'rdf' },
-  { key: 'folder', main: '{root}/rss.xml', format: 'rss' },
-  { key: 'folder', main: '{root}/atom.xml', format: 'atom' },
-])
+const feeds = withHintLabels(plone.feeds)
 
 const findBody = (content: string | undefined) => {
   return findElement(content, (element) => {

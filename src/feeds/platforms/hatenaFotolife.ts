@@ -1,5 +1,6 @@
+import { hatenaFotolife } from 'feedintel'
 import { decodeSegment, getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { letterThenWordOrHyphenRegex } from '../../common/utils.js'
 
@@ -19,7 +20,7 @@ export type HatenaFotolifeUrl =
   | { kind: 'focalLength'; focalLength: string }
   | { kind: 'color'; color: string }
 
-const hosts = ['f.hatena.ne.jp']
+const hosts = hatenaFotolife.hosts.exact
 
 // A photo id is the 14-digit time it was uploaded.
 // length: keeps a photo id out of the folder slot
@@ -28,29 +29,7 @@ const photoIdRegex = /^\d{14}$/
 // The marks encodeURIComponent leaves as they are.
 const unreservedMarkRegex = /[-.!~*'()]/g
 
-const feeds = definePlatformFeeds(
-  'hatena-fotolife',
-  [
-    { key: 'photos', main: 'https://f.hatena.ne.jp/{username}/rss' },
-    { key: 'model', main: 'https://f.hatena.ne.jp/{username}/rss?model={model}' },
-    { key: 'folder', main: 'https://f.hatena.ne.jp/{username}/{folder}/rss' },
-    { key: 'tag', main: 'https://f.hatena.ne.jp/{username}/t/{tag}?mode=rss' },
-    { key: 'stars', main: 'https://f.hatena.ne.jp/{username}/favorite?mode=rss' },
-    {
-      key: 'star-friends',
-      main: 'https://f.hatena.ne.jp/{username}/starfriends?mode=rss',
-    },
-    // Site-wide listings: the newest photos, and photos by camera model, focal length or color.
-    { key: 'recent', main: 'https://f.hatena.ne.jp/userlist?mode=rss' },
-    { key: 'site-model', main: 'https://f.hatena.ne.jp/model/{model}?mode=rss' },
-    {
-      key: 'focal-length',
-      main: 'https://f.hatena.ne.jp/focallength/{focalLength}?mode=rss',
-    },
-    { key: 'color', main: 'https://f.hatena.ne.jp/fotocolor/{color}?mode=rss' },
-  ],
-  { hosts: { exact: hosts } },
-)
+const feeds = withHintLabels(hatenaFotolife.feeds)
 
 // The page links its feeds with every byte outside [A-Za-z0-9_] percent-encoded, `-` and `.`
 // included, so the same spelling dedupes against the page's own link.

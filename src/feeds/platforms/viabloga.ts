@@ -1,4 +1,5 @@
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { viabloga } from 'feedintel'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
@@ -8,35 +9,12 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type ViablogaUrl = { kind: 'blog' } | { kind: 'category'; category: string }
 
-const domains = ['viabloga.com']
+const domains = viabloga.hosts.tenants
 
 // A category page is `/{category}.shtml`, and its feed `/{category}.xml`.
 const categoryRegex = /^\/([^/.]+)\.shtml$/i
 
-const feeds = definePlatformFeeds(
-  'viabloga',
-  [
-    { key: 'posts', main: '{scheme}://{host}/index.xml', format: 'rss' },
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/atom.xml',
-      format: 'atom',
-      aliases: ['{scheme}://{host}/atom'],
-    },
-    { key: 'posts', main: '{scheme}://{host}/index.rdf', format: 'rdf' },
-    { key: 'comments', main: '{scheme}://{host}/comments.xml', format: 'rss' },
-    { key: 'wiki', main: '{scheme}://{host}/wiki.rdf', format: 'rdf' },
-    // A category serves the same items with full text at `{category}_full.xml`. These rows go
-    // after the named files above.
-    {
-      key: 'category',
-      main: '{scheme}://{host}/{category}.xml',
-      format: 'rss',
-      aliases: ['{scheme}://{host}/{category}_full.xml'],
-    },
-  ],
-  { hosts: { tenants: domains } },
-)
+const feeds = withHintLabels(viabloga.feeds)
 
 export const parseViablogaUrl = (url: string): ViablogaUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

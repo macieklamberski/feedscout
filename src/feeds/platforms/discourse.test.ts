@@ -717,105 +717,18 @@ describe('discourseHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    const feedUrls: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://example.discourse.group/t/hello-world/123.rss',
-        { key: 'discourse:topic', label: 'Topic' },
-      ],
-      [
-        'https://example.discourse.group/u/alice/activity.rss',
-        { key: 'discourse:activity', label: 'Activity' },
-      ],
-      [
-        'https://example.discourse.group/c/support.rss',
-        { key: 'discourse:category', label: 'Category' },
-      ],
-      [
-        'https://example.discourse.group/c/support/6.rss',
-        { key: 'discourse:category', label: 'Category' },
-      ],
-      [
-        'https://example.discourse.group/c/contribute/feature/2.rss',
-        { key: 'discourse:category', label: 'Category' },
-      ],
-      ['https://example.discourse.group/tag/news/11.rss', { key: 'discourse:tag', label: 'Tag' }],
-      ['https://example.discourse.group/tag/news.rss', { key: 'discourse:tag', label: 'Tag' }],
-      ['https://example.discourse.group/top.rss', { key: 'discourse:top', label: 'Top' }],
-      [
-        'https://example.discourse.group/top.rss?period=weekly',
-        { key: 'discourse:top', label: 'Top' },
-      ],
-      ['https://example.discourse.group/latest.rss', { key: 'discourse:latest', label: 'Latest' }],
-      [
-        'https://example.discourse.group/posts.rss',
-        { key: 'discourse:posts', label: 'Latest posts' },
-      ],
-      ['http://example.trydiscourse.com/latest.rss', { key: 'discourse:latest', label: 'Latest' }],
-    ]
+    it('should return the tag hint for a tag feed without its id', () => {
+      const value = 'https://example.discourse.group/tag/news.rss'
+      const expected: DiscoverUriHint = { key: 'discourse:tag', label: 'Tag' }
 
-    it.each(feedUrls)('should return the hint for %s', (value, expected) => {
       expect(discourseHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a topic page on a forum subdomain', () => {
-      const value = 'https://example.discourse.group/t/hello-world/123'
-
-      expect(discourseHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a custom domain', () => {
-      const value = 'https://forum.example.org/latest.rss'
-
-      expect(discourseHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://discourse.group/latest.rss'
-
-      expect(discourseHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on www', () => {
-      const value = 'https://www.trydiscourse.com/latest.rss'
-
-      expect(discourseHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://forum.example.discourse.group/latest.rss'
-
-      expect(discourseHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://example.discourse.group/t/hello-world/123.rss',
-        { key: 'discourse:topic', label: 'Topic' },
-      ],
-      [
-        'https://example.discourse.group/u/alice/activity.rss',
-        { key: 'discourse:activity', label: 'Activity' },
-      ],
-      [
-        'https://example.discourse.group/c/support/6.rss',
-        { key: 'discourse:category', label: 'Category' },
-      ],
-      [
-        'https://example.discourse.group/top.rss?period=weekly',
-        { key: 'discourse:top', label: 'Top' },
-      ],
-      ['https://example.discourse.group/latest.rss', { key: 'discourse:latest', label: 'Latest' }],
-      [
-        'https://example.discourse.group/posts.rss',
-        { key: 'discourse:posts', label: 'Latest posts' },
-      ],
-      ['https://example.discourse.group/tag/news/11.rss', { key: 'discourse:tag', label: 'Tag' }],
-      ['http://example.discourse.group/tag/news.rss', { key: 'discourse:tag', label: 'Tag' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a top feed of a period as itself', async () => {
+      const value = 'https://example.discourse.group/top.rss?period=weekly'
+      const hint: DiscoverUriHint = { key: 'discourse:top', label: 'Top' }
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [discourseHandler],

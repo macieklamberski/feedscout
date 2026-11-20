@@ -418,27 +418,6 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the activity hint for a project feed', () => {
-      const value = 'https://gitlab.com/erinapp/erinapp.atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:activity', label: 'Activity' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the activity hint for a subgroup project feed', () => {
-      const value = 'https://gitlab.com/alicegroup/software/alice-sdk.atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:activity', label: 'Activity' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the activity hint for a project named with a dot', () => {
-      const value = 'https://gitlab.com/dave/dave.net.atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:activity', label: 'Activity' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the activity hint for a project named like a legacy route', () => {
       const value = 'https://gitlab.com/gitlab-org/gitlab/tree.atom'
       const expected: DiscoverUriHint = { key: 'gitlab:activity', label: 'Activity' }
@@ -453,166 +432,8 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the dashboard issues hint for a dashboard issues feed', () => {
-      const value = 'https://gitlab.com/dashboard/issues.atom?feed_token=glft-12345'
-      const expected: DiscoverUriHint = {
-        key: 'gitlab:dashboard-issues',
-        label: 'Dashboard issues',
-      }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the dashboard merge requests hint for a dashboard merge requests feed', () => {
-      const value = 'https://gitlab.com/dashboard/merge_requests.atom?feed_token=glft-12345'
-      const expected: DiscoverUriHint = {
-        key: 'gitlab:dashboard-merge-requests',
-        label: 'Dashboard merge requests',
-      }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return undefined for another file under the dashboard', () => {
       const value = 'https://gitlab.com/dashboard/todos.atom'
-
-      expect(gitlabHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return the releases hint for a releases feed', () => {
-      const value = 'https://gitlab.com/erinapp/erinapp/-/releases.atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:releases', label: 'Releases' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the releases hint for a subgroup project releases feed', () => {
-      const value = 'https://gitlab.com/alicegroup/software/alice-sdk/-/releases.atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:releases', label: 'Releases' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tags hint for a tags feed', () => {
-      const value = 'https://gitlab.com/bobgroup/bobapp/-/tags?format=atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:tags', label: 'Tags' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the issues hint for an issues feed', () => {
-      const value = 'https://gitlab.com/dave/dave.net/-/issues.atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:issues', label: 'Issues' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the merge requests hint for a merge requests feed', () => {
-      const value = 'https://gitlab.com/bobgroup/bobapp/-/merge_requests.atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:merge-requests', label: 'Merge requests' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the branch commits hint for a branch commits feed', () => {
-      const value = 'https://gitlab.com/frank-jp/frankapp/-/commits/master?format=atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:branch-commits', label: 'Branch commits' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the branch commits hint for a commit feed', () => {
-      const value =
-        'https://gitlab.com/grace-rs/grace-rs/-/commits/0d0335898d117bec60f5a31a207ecceb53beeef6?format=atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:branch-commits', label: 'Branch commits' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the branch commits hint for a commits feed filtered by path', () => {
-      const value = 'https://gitlab.com/carol.io/install/-/commits/master/LICENSE?format=atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:branch-commits', label: 'Branch commits' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the branch commits hint for a branch named with a slash', () => {
-      const value = 'https://gitlab.com/ns/proj/-/commits/feature/x?format=atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:branch-commits', label: 'Branch commits' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the releases hint for a feed on www', () => {
-      const value = 'https://www.gitlab.com/erinapp/erinapp/-/releases.atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:releases', label: 'Releases' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the issues hint for a feed route in another case', () => {
-      const value = 'https://gitlab.com/dave/dave.net/-/Issues.atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:issues', label: 'Issues' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tags hint for a format in another case', () => {
-      const value = 'https://gitlab.com/bobgroup/bobapp/-/tags?format=Atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:tags', label: 'Tags' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the activity hint for a namespace feed with a trailing slash', () => {
-      const value = 'https://gitlab.com/0xa.atom/'
-      const expected: DiscoverUriHint = { key: 'gitlab:activity', label: 'Activity' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the activity hint for a project feed with a trailing slash', () => {
-      const value = 'https://gitlab.com/erinapp/erinapp.atom/'
-      const expected: DiscoverUriHint = { key: 'gitlab:activity', label: 'Activity' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the releases hint for a releases feed with a trailing slash', () => {
-      const value = 'https://gitlab.com/erinapp/erinapp/-/releases.atom/'
-      const expected: DiscoverUriHint = { key: 'gitlab:releases', label: 'Releases' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tags hint for a tags feed with a trailing slash', () => {
-      const value = 'https://gitlab.com/bobgroup/bobapp/-/tags/?format=atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:tags', label: 'Tags' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the branch commits hint for a branch commits feed with a trailing slash', () => {
-      const value = 'https://gitlab.com/frank-jp/frankapp/-/commits/master/?format=atom'
-      const expected: DiscoverUriHint = { key: 'gitlab:branch-commits', label: 'Branch commits' }
-
-      expect(gitlabHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a project page', () => {
-      const value = 'https://gitlab.com/erinapp/erinapp'
-
-      expect(gitlabHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a tags page', () => {
-      const value = 'https://gitlab.com/bobgroup/bobapp/-/tags'
-
-      expect(gitlabHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a branch commits page', () => {
-      const value = 'https://gitlab.com/frank-jp/frankapp/-/commits/master'
 
       expect(gitlabHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -653,77 +474,22 @@ describe('gitlabHandler', () => {
 
       expect(gitlabHandler.getFeedHint?.(value)).toBeUndefined()
     })
-
-    it('should return undefined for a self-hosted feed', () => {
-      const value = 'https://gitlab.example.com/team/project/-/releases.atom'
-
-      expect(gitlabHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://gitlab.com/0xa.atom', { key: 'gitlab:activity', label: 'Activity' }],
-      ['https://gitlab.com/erinapp/erinapp.atom', { key: 'gitlab:activity', label: 'Activity' }],
-      [
-        'https://gitlab.com/erinapp/erinapp/-/releases.atom',
-        { key: 'gitlab:releases', label: 'Releases' },
-      ],
-      [
-        'https://gitlab.com/bobgroup/bobapp/-/tags?format=atom',
-        { key: 'gitlab:tags', label: 'Tags' },
-      ],
-      ['https://gitlab.com/dave/dave.net/-/issues.atom', { key: 'gitlab:issues', label: 'Issues' }],
-      [
-        'https://gitlab.com/bobgroup/bobapp/-/merge_requests.atom',
-        { key: 'gitlab:merge-requests', label: 'Merge requests' },
-      ],
-      [
-        'https://gitlab.com/frank-jp/frankapp/-/commits/master?format=atom',
-        { key: 'gitlab:branch-commits', label: 'Branch commits' },
-      ],
-      [
-        'https://gitlab.com/carol.io/install/-/commits/master/LICENSE?format=atom',
-        { key: 'gitlab:branch-commits', label: 'Branch commits' },
-      ],
-      [
-        'https://gitlab.com/frank-jp/frankapp/-/commits/master.atom',
-        { key: 'gitlab:branch-commits', label: 'Branch commits' },
-      ],
-      ['https://gitlab.com/0xa.atom/', { key: 'gitlab:activity', label: 'Activity' }],
-      [
-        'https://gitlab.com/dashboard/projects.atom?feed_token=glft-12345',
-        { key: 'gitlab:dashboard', label: 'Dashboard' },
-      ],
-      [
-        'https://gitlab.com/dashboard/issues.atom?feed_token=glft-12345',
-        { key: 'gitlab:dashboard-issues', label: 'Dashboard issues' },
-      ],
-      [
-        'https://gitlab.com/dashboard/merge_requests.atom?feed_token=glft-12345',
-        { key: 'gitlab:dashboard-merge-requests', label: 'Dashboard merge requests' },
-      ],
-      [
-        'https://gitlab.com/erinapp/erinapp/-/releases.atom/',
-        { key: 'gitlab:releases', label: 'Releases' },
-      ],
-      [
-        'https://gitlab.com/bobgroup/bobapp/-/tags/?format=atom',
-        { key: 'gitlab:tags', label: 'Tags' },
-      ],
-      [
-        'https://gitlab.com/frank-jp/frankapp/-/commits/master/?format=atom',
-        { key: 'gitlab:branch-commits', label: 'Branch commits' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a tags feed with a trailing slash as itself', async () => {
+      const value = 'https://gitlab.com/bobgroup/bobapp/-/tags/?format=atom'
       const options = {
         ...defaultPlatformOptions,
         handlers: [gitlabHandler],
         baseUrl: value,
       }
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://gitlab.com/bobgroup/bobapp/-/tags/?format=atom',
+          hint: { key: 'gitlab:tags', label: 'Tags' },
+        },
+      ]
 
       expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })

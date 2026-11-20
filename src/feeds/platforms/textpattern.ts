@@ -1,5 +1,6 @@
+import { textpattern } from 'feedintel'
 import { decodeSegment, getQueryParam, isAnyOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -16,16 +17,7 @@ const trailingSlashRegex = /\/$/
 // The routes Textpattern puts in front of a value in place of a section.
 const reservedRoutes = ['author', 'category', 'file_download']
 
-// A site on any host is known only by its generator tag, which a feed URL does not carry, so the
-// feeds are built under the site root and never claimed.
-const feeds = definePlatformFeeds('textpattern', [
-  { key: 'section', main: '{root}/rss?section={section}', format: 'rss' },
-  { key: 'section', main: '{root}/atom?section={section}', format: 'atom' },
-  { key: 'category', main: '{root}/rss?category={category}', format: 'rss' },
-  { key: 'category', main: '{root}/atom?category={category}', format: 'atom' },
-  { key: 'posts', main: '{root}/rss', format: 'rss' },
-  { key: 'posts', main: '{root}/atom', format: 'atom' },
-])
+const feeds = withHintLabels(textpattern.feeds)
 
 export const isTextpatternHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Textpattern')

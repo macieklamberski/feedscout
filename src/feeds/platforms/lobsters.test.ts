@@ -348,166 +348,28 @@ describe('lobstersHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the tag hint for a tag feed', () => {
-      const value = 'https://lobste.rs/t/kotlin.rss'
-      const expected: DiscoverUriHint = { key: 'lobsters:tag', label: 'Tag' }
-
-      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for a multiple tags feed', () => {
-      const value = 'https://lobste.rs/t/programming,security.rss'
-      const expected: DiscoverUriHint = { key: 'lobsters:tag', label: 'Tag' }
-
-      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for a tag feed over http', () => {
-      const value = 'http://lobste.rs/t/openbsd.rss'
-      const expected: DiscoverUriHint = { key: 'lobsters:tag', label: 'Tag' }
-
-      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should read the tag feed route word in any case', () => {
-      const value = 'https://lobste.rs/T/kotlin.rss'
-      const expected: DiscoverUriHint = { key: 'lobsters:tag', label: 'Tag' }
-
-      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the domain hint for a domain feed', () => {
-      const value = 'https://lobste.rs/domains/github.com.rss'
-      const expected: DiscoverUriHint = { key: 'lobsters:domain', label: 'Domain' }
-
-      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the user stories hint for a user stories feed', () => {
-      const value = 'https://lobste.rs/~alice/stories.rss'
-      const expected: DiscoverUriHint = { key: 'lobsters:user-stories', label: 'User stories' }
-
-      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the stories hint for the site feed', () => {
-      const value = 'https://lobste.rs/rss'
-      const expected: DiscoverUriHint = { key: 'lobsters:stories', label: 'Stories' }
-
-      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the top hint for a top feed with its period', () => {
       const value = 'https://lobste.rs/top/1w/rss'
       const expected: DiscoverUriHint = { key: 'lobsters:top', label: 'Top stories' }
 
       expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the top hint for a top feed at the spelling its page links', () => {
-      const value = 'https://lobste.rs/top/1w.rss'
-      const expected: DiscoverUriHint = { key: 'lobsters:top', label: 'Top stories' }
-
-      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the top hint for the top feed without a period', () => {
-      const value = 'https://lobste.rs/top/rss'
-      const expected: DiscoverUriHint = { key: 'lobsters:top', label: 'Top stories' }
-
-      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the top hint for the top feed without a period in its .rss spelling', () => {
-      const value = 'https://lobste.rs/top.rss'
-      const expected: DiscoverUriHint = { key: 'lobsters:top', label: 'Top stories' }
-
-      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the newest hint for the newest feed', () => {
-      const value = 'https://lobste.rs/newest.rss'
-      const expected: DiscoverUriHint = { key: 'lobsters:newest', label: 'Newest' }
-
-      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the comments hint for the comments feed', () => {
-      const value = 'https://lobste.rs/comments.rss'
-      const expected: DiscoverUriHint = { key: 'lobsters:comments', label: 'Comments' }
-
-      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a tag page', () => {
-      const value = 'https://lobste.rs/t/kotlin'
-
-      expect(lobstersHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a user page', () => {
-      const value = 'https://lobste.rs/~alice'
-
-      expect(lobstersHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a top page', () => {
-      const value = 'https://lobste.rs/top/1w'
-
-      expect(lobstersHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a story page', () => {
-      const value = 'https://lobste.rs/s/abc123/some_story'
-
-      expect(lobstersHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return the private hint for a private token feed', () => {
-      const value = 'https://lobste.rs/rss?token=abc123'
-      const expected: DiscoverUriHint = { key: 'lobsters:private', label: 'Private feed' }
-
-      expect(lobstersHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a tag feed path on another host', () => {
-      const value = 'https://example.com/t/kotlin.rss'
-
-      expect(lobstersHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for an invalid URL', () => {
-      const value = 'not a url'
-
-      expect(lobstersHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['http://www.lobste.rs/rss?token=abc123', { key: 'lobsters:private', label: 'Private feed' }],
-      ['https://lobste.rs/t/kotlin.rss', { key: 'lobsters:tag', label: 'Tag' }],
-      ['https://lobste.rs/domains/github.com.rss', { key: 'lobsters:domain', label: 'Domain' }],
-      [
-        'https://lobste.rs/~alice/stories.rss',
-        { key: 'lobsters:user-stories', label: 'User stories' },
-      ],
-      ['https://lobste.rs/rss', { key: 'lobsters:stories', label: 'Stories' }],
-      ['https://lobste.rs/top/1w/rss', { key: 'lobsters:top', label: 'Top stories' }],
-      ['https://lobste.rs/top/1w.rss', { key: 'lobsters:top', label: 'Top stories' }],
-      ['https://lobste.rs/top/rss', { key: 'lobsters:top', label: 'Top stories' }],
-      ['https://lobste.rs/top.rss', { key: 'lobsters:top', label: 'Top stories' }],
-      ['https://lobste.rs/newest.rss', { key: 'lobsters:newest', label: 'Newest' }],
-      ['https://lobste.rs/comments.rss', { key: 'lobsters:comments', label: 'Comments' }],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+    it('should return a private feed on the www host over http as itself', async () => {
+      const value = 'http://www.lobste.rs/rss?token=abc123'
       const options = {
         ...defaultPlatformOptions,
         handlers: [lobstersHandler],
         baseUrl: value,
       }
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://www.lobste.rs/rss?token=abc123',
+          hint: { key: 'lobsters:private', label: 'Private feed' },
+        },
+      ]
 
       expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })

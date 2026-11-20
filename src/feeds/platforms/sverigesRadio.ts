@@ -1,5 +1,6 @@
+import { sverigesRadio } from 'feedintel'
 import { getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { alphanumericOrHyphenRegex, digitsRegex } from '../../common/utils.js'
 
@@ -10,24 +11,9 @@ export type SverigesRadioUrl =
   | { kind: 'legacyProgram'; programId: string }
   | { kind: 'program'; slug: string }
 
-const hosts = ['sverigesradio.se', 'www.sverigesradio.se']
+const hosts = sverigesRadio.hosts.exact
 
-// A podcast feed on /api/rss/pod/{id}, with or without /itunes, mostly answers a 301 to the program
-// feed on public-api.sr.se, and a few serve a podcast of their own. resolve builds neither.
-const feeds = definePlatformFeeds('sveriges-radio', [
-  { key: 'program', main: 'https://api.sr.se/api/rss/program/{programId}' },
-  // A format id filters the program's articles to one format, and no page links it.
-  {
-    key: 'program-format',
-    main: 'https://api.sr.se/api/rss/program/{programId}?format={format}',
-  },
-  { key: 'program', main: 'https://public-api.sr.se/rss/{slug}' },
-  { key: 'program', main: 'https://api.sr.se/api/rss/pod/{podId}' },
-  { key: 'program', main: 'https://api.sr.se/api/rss/pod/itunes/{podId}' },
-  // A group of programs, and a region's traffic reports, which no page the handler reads names.
-  { key: 'group', main: 'https://api.sr.se/api/rss/group/{groupId}' },
-  { key: 'traffic', main: 'https://api.sr.se/api/rss/traffic/{areaId}' },
-])
+const feeds = withHintLabels(sverigesRadio.feeds)
 
 export const parseSverigesRadioUrl = (url: string): SverigesRadioUrl | undefined => {
   const parsedUrl = parseUrl(url)
