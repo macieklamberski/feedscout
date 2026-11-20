@@ -20,7 +20,6 @@ import { dspaceHandler } from './dspace.js'
 import { edlioHandler } from './edlio.js'
 import { eklablogHandler } from './eklablog.js'
 import { estrankyHandler } from './estranky.js'
-import { exportersIndiaHandler } from './exportersIndia.js'
 import { fluxbbHandler } from './fluxbb.js'
 import { forumotionHandler } from './forumotion.js'
 import { friendicaHandler } from './friendica.js'
@@ -32,7 +31,6 @@ import { gitlabHandler } from './gitlab.js'
 import { gnuboardHandler } from './gnuboard.js'
 import { goopeHandler } from './goope.js'
 import { gravHandler } from './grav.js'
-import { haleyJobsHandler } from './haleyJobs.js'
 import { homelandHandler } from './homeland.js'
 import { hubspotHandler } from './hubspot.js'
 import { hubzillaHandler } from './hubzilla.js'
@@ -65,7 +63,6 @@ import { opusHandler } from './opus.js'
 import { peertubeHandler } from './peertube.js'
 import { phpbbHandler } from './phpbb.js'
 import { pixelfedHandler } from './pixelfed.js'
-import { placementIndiaHandler } from './placementIndia.js'
 import { pleromaHandler } from './pleroma.js'
 import { ploneHandler } from './plone.js'
 import { pmwikiHandler } from './pmwiki.js'
@@ -76,7 +73,6 @@ import { proboardsHandler } from './proboards.js'
 import { publicInboxHandler } from './publicInbox.js'
 import { publiiHandler } from './publii.js'
 import { pukiwikiHandler } from './pukiwiki.js'
-import { realEstateIndiaHandler } from './realEstateIndia.js'
 import { redmineHandler } from './redmine.js'
 import { shaarliHandler } from './shaarli.js'
 import { shinobiHandler } from './shinobi.js'
@@ -90,10 +86,8 @@ import { sportsregionsHandler } from './sportsregions.js'
 import { squarespaceHandler } from './squarespace.js'
 import { statuspageHandler } from './statuspage.js'
 import { svbtleHandler } from './svbtle.js'
-import { talentsoftHandler } from './talentsoft.js'
 import { tenderHandler } from './tender.js'
 import { textpatternHandler } from './textpattern.js'
-import { tourTravelWorldHandler } from './tourTravelWorld.js'
 import { typechoHandler } from './typecho.js'
 import { ucozHandler } from './ucoz.js'
 import { vbulletinHandler } from './vbulletin.js'
@@ -104,7 +98,6 @@ import { wixHandler } from './wix.js'
 import { writefreelyHandler } from './writefreely.js'
 import { xenforoHandler } from './xenforo.js'
 import { yeswikiHandler } from './yeswiki.js'
-import { ymCareersHandler } from './ymCareers.js'
 import { zenfolioHandler } from './zenfolio.js'
 
 // Every path shape is tried against every content-matched handler, because a
@@ -221,11 +214,6 @@ const cases: Array<Case> = [
     '<script src="//connect.eklablog.com/ping/123456/isConnected" async></script>',
   ],
   ['estranky', estrankyHandler, '<script src="https://s3c.estranky.cz/js/ui.js"></script>'],
-  [
-    'exportersIndia',
-    exportersIndiaHandler,
-    '<link rel="stylesheet" href="https://catalog.wlimg.com/templates-images/12569/12570/catalog.css"><a href="/products.rss">RSS</a>',
-  ],
   ['fluxbb', fluxbbHandler, '<div id="brdmenu"></div><div id="brdfooter"></div>'],
   [
     'forumotion',
@@ -254,12 +242,6 @@ const cases: Array<Case> = [
   ],
   ['goope', goopeHandler, '<img src="//r.goope.jp/qr/example">'],
   ['grav', gravHandler, '', new Headers({ 'set-cookie': 'grav-site-9a6a5fc=abc; path=/' })],
-  [
-    'haleyJobs',
-    haleyJobsHandler,
-    '<a href="/index.smpl?arg=jb_search">Search Jobs</a>',
-    new Headers({ 'x-sasnode': 'v166-alma.haleymarketing.com' }),
-  ],
   ['homeland', homelandHandler, '', new Headers({ 'set-cookie': '_homeland_session=abc; path=/' })],
   ['hubspot', hubspotHandler, '', new Headers({ 'x-hs-hub-id': '53' })],
   ['hubzilla', hubzillaHandler, "<script>var zid = '';</script>"],
@@ -341,11 +323,6 @@ const cases: Array<Case> = [
   ['phpbb', phpbbHandler, '<body id="phpbb">'],
   ['pixelfed', pixelfedHandler, '<meta name="generator" content="pixelfed">'],
   [
-    'placementIndia',
-    placementIndiaHandler,
-    '<link rel="stylesheet" href="https://catalog.wlimg.com/templates-images/12569/12574/catalog.css"><a href="/vacancy.rss">RSS</a>',
-  ],
-  [
     'pleroma',
     pleromaHandler,
     '<script id="initial-results" type="application/json">{"/api/pleroma/frontend_configurations":{}}</script>',
@@ -379,11 +356,6 @@ const cases: Array<Case> = [
   ],
   ['publii', publiiHandler, '<img src="https://example.org/media/website/logo.png">'],
   ['pukiwiki', pukiwikiHandler, '<link rel="stylesheet" href="skin/pukiwiki.css">'],
-  [
-    'realEstateIndia',
-    realEstateIndiaHandler,
-    '<link rel="stylesheet" href="https://catalog.wlimg.com/templates-images/12585/12592/catalog.css"><a href="/property.rss">RSS</a>',
-  ],
   ['redmine', redmineHandler, 'Powered by <a href="https://www.redmine.org/">Redmine</a>'],
   ['shaarli', shaarliHandler, '<div id="shaarli-menu"></div>'],
   ['shinobi', shinobiHandler, '<img src="/admin/img/blogheader_logo.png">'],
@@ -409,18 +381,8 @@ const cases: Array<Case> = [
   ['squarespace', squarespaceHandler, '', new Headers({ server: 'Squarespace' })],
   ['statuspage', statuspageHandler, '', new Headers({ 'x-statuspage-version': '5a16926c' })],
   ['svbtle', svbtleHandler, '<link href="https://lightning.svbtle.com/cargo/blog.css">'],
-  [
-    'talentsoft',
-    talentsoftHandler,
-    '<script src="/client/dist/talentsoft-cookies.iife.js"></script>',
-  ],
   ['tender', tenderHandler, '', new Headers({ 'set-cookie': '_tender19_session=abc; path=/' })],
   ['textpattern', textpatternHandler, '<meta name="generator" content="Textpattern CMS">'],
-  [
-    'tourTravelWorld',
-    tourTravelWorldHandler,
-    '<link rel="stylesheet" href="https://catalog.wlimg.com/templates-images/12569/12570/catalog.css"><a href="/tour-packages.rss">RSS</a>',
-  ],
   ['typecho', typechoHandler, '<link rel="stylesheet" href="/usr/themes/default/style.css">'],
   ['ucoz', ucozHandler, '', new Headers({ 'set-cookie': '0exampleuCoz=; path=/' })],
   ['vbulletin', vbulletinHandler, '<script src="/clientscript/vbulletin-core.js"></script>'],
@@ -445,7 +407,6 @@ const cases: Array<Case> = [
     '',
     new Headers({ 'set-cookie': 'YesWiki-main=0dc6fc2d07d67f79dbe824fa9153cfc3; path=/' }),
   ],
-  ['ymCareers', ymCareersHandler, '', new Headers({ 'x-nas-sid': '410b6c5a' })],
   ['zenfolio', zenfolioHandler, '<link href="https://cdn.zenfolio.com/zf/css/layout.css">'],
 ]
 
