@@ -1,12 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import { isLocale } from 'trousse'
+import { defineFeedUrls } from 'feedintel'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../types.js'
-import {
-  definePlatformFeeds,
-  hintKeys,
-  type PlatformFeedTableOptions,
-  withHintLabel,
-} from './feeds.js'
+import { hintKeys, withHintLabel, withHintLabels } from './feeds.js'
 
 describe('withHintLabel', () => {
   it('should add the label to a hint', () => {
@@ -34,26 +29,20 @@ describe('hintKeys', () => {
     ]
     const expected = ['plurk:plurks', 'plurk:responses']
 
-    definePlatformFeeds('plurk', value)
+    withHintLabels(defineFeedUrls('plurk', value))
 
     expect([...hintKeys]).toEqual(expect.arrayContaining(expected))
   })
 })
 
-describe('definePlatformFeeds', () => {
-  it('should throw for a template without an http scheme', () => {
-    const value = [{ key: 'posts', main: 'example.com/feed' }]
-    const expected = 'Not a feed URL template: example.com/feed'
-    const throwing = () => definePlatformFeeds('example', value)
-
-    expect(throwing).toThrow(expected)
-  })
-
+describe('withHintLabels', () => {
   describe('getFeedHint', () => {
-    const hintFeeds = definePlatformFeeds('youtube', [
-      { key: 'shorts', main: 'https://example.com/{shop}/products.rdf', format: 'rdf' },
-      { key: 'videos', main: 'https://example.com/{username}/videos.xml' },
-    ])
+    const hintFeeds = withHintLabels(
+      defineFeedUrls('youtube', [
+        { key: 'shorts', main: 'https://example.com/{shop}/products.rdf', format: 'rdf' },
+        { key: 'videos', main: 'https://example.com/{username}/videos.xml' },
+      ]),
+    )
 
     it('should return the labelled hint of a feed whose row names a format', () => {
       const value = 'https://example.com/alice/products.rdf'
@@ -84,10 +73,12 @@ describe('definePlatformFeeds', () => {
   })
 
   describe('getFeedEntry', () => {
-    const entryFeeds = definePlatformFeeds('plurk', [
-      { key: 'plurks', main: 'https://www.example.com/{username}.xml' },
-      { key: 'plurks', main: 'https://www.example.com/{username}.atom', format: 'atom' },
-    ])
+    const entryFeeds = withHintLabels(
+      defineFeedUrls('plurk', [
+        { key: 'plurks', main: 'https://www.example.com/{username}.xml' },
+        { key: 'plurks', main: 'https://www.example.com/{username}.atom', format: 'atom' },
+      ]),
+    )
 
     it('should return the feed with its labelled hint', () => {
       const value = { username: 'alice' }
@@ -124,10 +115,12 @@ describe('definePlatformFeeds', () => {
   })
 
   describe('getFeedSpellings', () => {
-    const spellingFeeds = definePlatformFeeds('wordpress', [
-      { key: 'posts', main: '{root}/feed/', aliases: ['{root}/?feed=rss2'] },
-      { key: 'posts', main: '{root}/feed/atom/', format: 'atom', aliases: ['{root}/?feed=atom'] },
-    ])
+    const spellingFeeds = withHintLabels(
+      defineFeedUrls('wordpress', [
+        { key: 'posts', main: '{root}/feed/', aliases: ['{root}/?feed=rss2'] },
+        { key: 'posts', main: '{root}/feed/atom/', format: 'atom', aliases: ['{root}/?feed=atom'] },
+      ]),
+    )
 
     it('should return every spelling of the feed with its labelled hint', () => {
       const value = { root: 'https://example.com' }
@@ -164,10 +157,12 @@ describe('definePlatformFeeds', () => {
   })
 
   describe('forUrl', () => {
-    const pageFeeds = definePlatformFeeds('typecho', [
-      { key: 'posts', main: '{root}/feed/', aliases: ['{root}/index.php/feed/'] },
-      { key: 'posts', main: '{root}/feed/atom/', format: 'atom' },
-    ])
+    const pageFeeds = withHintLabels(
+      defineFeedUrls('typecho', [
+        { key: 'posts', main: '{root}/feed/', aliases: ['{root}/index.php/feed/'] },
+        { key: 'posts', main: '{root}/feed/atom/', format: 'atom' },
+      ]),
+    )
 
     it('should return the feed of a page with its labelled hint', () => {
       const value = 'https://example.com/archives/13/'
@@ -202,70 +197,6 @@ describe('definePlatformFeeds', () => {
       const value = 'not a url'
 
       expect(pageFeeds.forUrl(value)).toBeUndefined()
-    })
-  })
-
-  describe('options', () => {
-    const expectedFull: DiscoverUriHint = {
-      key: 'wordpress:posts',
-      label: 'Posts',
-    }
-
-    it('should name a feed on a host of the hosts option', () => {
-      const value = 'https://example.com/feed'
-      const options: PlatformFeedTableOptions = { hosts: { exact: ['example.com'] } }
-      const rows = [{ key: 'posts', main: 'https://{host}/feed' }]
-      const feeds = definePlatformFeeds('wordpress', rows, options)
-
-      expect(feeds.getFeedHint(value)).toEqual(expectedFull)
-    })
-
-    it('should build no feed URL for a value a check of the checks option refuses', () => {
-      const value = { locale: 'abcd' }
-      const options: PlatformFeedTableOptions = { checks: { locale: isLocale } }
-      const rows = [{ key: 'posts', main: 'https://example.com/{locale}/feed' }]
-      const feeds = definePlatformFeeds('wordpress', rows, options)
-
-      expect(feeds.getFeedUrl('posts', value)).toBeUndefined()
-    })
-
-    it('should name a feed under another value of a parameter of the keptParams option', () => {
-      const value = 'https://example.com/feed?alt=json'
-      const options: PlatformFeedTableOptions = { keptParams: ['alt'] }
-      const rows = [
-        { key: 'posts', main: 'https://example.com/feed' },
-        { key: 'posts', main: 'https://example.com/feed?alt=rss' },
-      ]
-      const feeds = definePlatformFeeds('wordpress', rows, options)
-
-      expect(feeds.getFeedHint(value)).toEqual(expectedFull)
-    })
-
-    it('should name a feed with &amp; between query pairs under a mark of the lenient option', () => {
-      const value = 'https://example.com/feed.ashx?id=7&amp;guid=a1b2'
-      const options: PlatformFeedTableOptions = { lenient: { ampersandEntity: true } }
-      const rows = [{ key: 'posts', main: 'https://example.com/feed.ashx?id={id}&guid={guid}' }]
-      const feeds = definePlatformFeeds('wordpress', rows, options)
-
-      expect(feeds.getFeedHint(value)).toEqual(expectedFull)
-    })
-
-    it('should name a feed on a tenant named www with isWwwTenant', () => {
-      const value = 'https://www.example.org/feed'
-      const options: PlatformFeedTableOptions = { isWwwTenant: true }
-      const rows = [{ key: 'posts', main: 'https://{username}.example.org/feed' }]
-      const feeds = definePlatformFeeds('wordpress', rows, options)
-
-      expect(feeds.getFeedHint(value)).toEqual(expectedFull)
-    })
-
-    it('should name a feed on a tenant host with www with isWwwTenantPrefix', () => {
-      const value = 'https://www.alice.example.org/feed'
-      const options: PlatformFeedTableOptions = { isWwwTenantPrefix: true }
-      const rows = [{ key: 'posts', main: 'https://{username}.example.org/feed' }]
-      const feeds = definePlatformFeeds('wordpress', rows, options)
-
-      expect(feeds.getFeedHint(value)).toEqual(expectedFull)
     })
   })
 })

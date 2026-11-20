@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { defineFeedUrls } from 'feedintel'
 import type {
   DiscoverEnrichFn,
   DiscoverErrorContext,
@@ -7,7 +8,7 @@ import type {
   DiscoverUriEntry,
   FetchFn,
 } from '../../types.js'
-import { definePlatformFeeds } from './feeds.js'
+import { withHintLabels } from './feeds.js'
 import { discoverUrisFromPlatform } from './index.js'
 import type { PlatformHandler } from './types.js'
 
@@ -24,10 +25,12 @@ const samePageUrls = [
   'https://example.com/p%61ge?a=1&b=2',
 ]
 
-const claimedFeeds = definePlatformFeeds('youtube', [
-  { key: 'shorts', main: 'https://example.com/{shop}/products.rdf', format: 'rdf' },
-  { key: 'videos', main: 'https://example.com/{username}/videos.xml' },
-])
+const claimedFeeds = withHintLabels(
+  defineFeedUrls('youtube', [
+    { key: 'shorts', main: 'https://example.com/{shop}/products.rdf', format: 'rdf' },
+    { key: 'videos', main: 'https://example.com/{username}/videos.xml' },
+  ]),
+)
 
 const claimedFeedCases: Array<[string, DiscoverUriEntry]> = [
   [

@@ -1,12 +1,5 @@
-export type {
-  PlatformFeed,
-  PlatformFeedCheck,
-  PlatformFeedParams,
-  PlatformFeedTable,
-  PlatformFeedTableOptions,
-  PlatformHosts,
-} from '../common/uris/platform/feeds.js'
-export { definePlatformFeeds } from '../common/uris/platform/feeds.js'
+export type { PlatformFeedParams, PlatformFeedTable } from '../common/uris/platform/feeds.js'
+export { withHintLabels } from '../common/uris/platform/feeds.js'
 export { discoverUrisFromPlatform } from '../common/uris/platform/index.js'
 export type { PlatformHandler, PlatformMethodOptions } from '../common/uris/platform/types.js'
 export { defaultPlatformOptions } from '../feeds/defaults.js'
