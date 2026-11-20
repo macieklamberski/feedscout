@@ -1,5 +1,5 @@
 import { laget } from 'feedintel'
-import { getPathSegments, isHostOf, isHostOrSubdomainOf } from 'trousse'
+import { isHostOrSubdomainOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -9,7 +9,6 @@ import { findElement, hasMarker } from '../../common/utils.js'
 
 export type LagetUrl = { kind: 'team'; team: string }
 
-const hosts = laget.hosts.exact
 const domains = laget.hosts.tenants
 
 // A bare `laget.se` also matches other domains, such as `snickeribolaget.se`.
@@ -31,17 +30,13 @@ export const isLagetHtml = (content: string): boolean => {
 }
 
 export const parseLagetUrl = (url: string): LagetUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = laget.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [team] = getPathSegments(url)
-
-  if (!team || team.includes('.')) {
-    return
-  }
-
-  return { kind: 'team', team }
+  return { kind: 'team', team: page.params.team }
 }
 
 export const lagetHandler: PlatformHandler = {

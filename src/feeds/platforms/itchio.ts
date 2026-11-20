@@ -1,5 +1,4 @@
 import { itchio } from 'feedintel'
-import { getAnyOf, isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -22,132 +21,65 @@ export type ItchioUrl =
   | { kind: 'home' }
 
 const domains = itchio.hosts.tenants
-const mainHosts = ['itch.io', 'www.itch.io']
-
-const byUserRegex = /^\/games\/by-([^/]+)/i
-const tagRegex = /^\/games\/tag-([^/]+)/i
-const platformRegex = /^\/games\/platform-([^/]+)/i
-const genreRegex = /^\/games\/genre-([^/]+)/i
-const madeWithRegex = /^\/games\/made-with-([^/]+)/i
-const sortRegex = /^\/games\/([^/]+)/i
-// A listing with two or more filters, such as /games/newest/tag-horror, has its feed at its path.
-const combinedListingRegex = /^\/games\/([^/]+(?:\/[^/]+)+)/i
-// A listing of one sort and one tag or creator, such as newest/tag-horror.
-const sortedListingRegex = /^(?<sort>[^/]+)\/(?<filter>tag|by)-(?<value>[^/]+)$/i
-const firstSegmentRegex = /^\/([^/]+)/
-const gamesRegex = /^\/games\/?$/i
-const devlogsRegex = /^\/devlogs\/?$/i
-
-const sections = [
-  'tools',
-  'game-assets',
-  'soundtracks',
-  'physical-games',
-  'books',
-  'comics',
-  'misc',
-]
-const sorts = [
-  'newest',
-  'top-rated',
-  'top-sellers',
-  'on-sale',
-  'free',
-  'released',
-  'in-development',
-]
 
 const feeds = withHintLabels(itchio.feeds)
 
 export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
-  if (!isHostOf(url, mainHosts) && !isSubdomainOf(url, domains)) {
+  const page = itchio.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const { pathname } = new URL(url)
+  const { game, tag, platform, genre, engine, filters } = page.params
+  // A sort and a section are read in any case, and their feeds are named in lower case.
+  const sort = page.params.sort?.toLowerCase()
+  const section = page.params.section?.toLowerCase()
 
-  // Subdomain: creator pages ({creator}.itch.io).
-  if (!isHostOf(url, mainHosts)) {
-    const creator = getTenantSubdomain(url, domains)
+  if (page.key === 'game' || page.key === 'creator') {
+    // A creator's own host names the creator, as a listing path does on the main host.
+    const creator = page.params.creator ?? getTenantSubdomain(url, domains)
 
     if (!creator) {
       return
     }
 
-    const game = pathname.match(firstSegmentRegex)?.[1]
-
-    if (game) {
+    if (page.key === 'game') {
       return { kind: 'game', creator, game }
     }
 
-    return { kind: 'creator', creator }
+    return { kind: 'creator', creator, sort }
   }
 
-  const filters = pathname.match(combinedListingRegex)?.[1]
+  if (page.key === 'tag') {
+    return { kind: 'tag', tag, sort }
+  }
 
-  if (filters) {
-    const sorted = sortedListingRegex.exec(filters)?.groups
-    const sort = getAnyOf(sorted?.sort, sorts)
-
-    if (sorted && sort && isAnyOf(sorted.filter, 'tag')) {
-      return { kind: 'tag', tag: sorted.value, sort }
-    }
-
-    if (sorted && sort) {
-      return { kind: 'creator', creator: sorted.value, sort }
-    }
-
+  if (page.key === 'listing') {
     return { kind: 'listing', filters }
   }
 
-  const creator = pathname.match(byUserRegex)?.[1]
-
-  if (creator) {
-    return { kind: 'creator', creator }
-  }
-
-  const tag = pathname.match(tagRegex)?.[1]
-
-  if (tag) {
-    return { kind: 'tag', tag }
-  }
-
-  const platform = pathname.match(platformRegex)?.[1]
-
-  if (platform) {
+  if (page.key === 'platform') {
     return { kind: 'platform', platform }
   }
 
-  const genre = pathname.match(genreRegex)?.[1]
-
-  if (genre) {
+  if (page.key === 'genre') {
     return { kind: 'genre', genre }
   }
 
-  const engine = pathname.match(madeWithRegex)?.[1]
-
-  if (engine) {
+  if (page.key === 'madeWith') {
     return { kind: 'madeWith', engine }
   }
 
-  const sort = getAnyOf(pathname.match(sortRegex)?.[1], sorts)
-
-  if (sort) {
+  if (page.key === 'games') {
     return { kind: 'games', sort }
   }
 
-  if (gamesRegex.test(pathname)) {
-    return { kind: 'games' }
-  }
-
-  if (devlogsRegex.test(pathname)) {
+  if (page.key === 'devlogs') {
     return { kind: 'devlogs' }
   }
 
-  // /{section} (tools, game-assets, soundtracks, physical-games, books, comics, misc)
-  const section = getAnyOf(pathname.match(firstSegmentRegex)?.[1], sections)
-
-  if (section) {
+  if (page.key === 'section') {
     return { kind: 'section', section }
   }
 

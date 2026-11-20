@@ -1,5 +1,4 @@
 import { ausha } from 'feedintel'
-import { getPathSegments, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -9,21 +8,15 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 export type AushaUrl = { kind: 'show' }
 export type AushaPage = { kind: 'show'; feedId: string }
 
-const hosts = ausha.hosts.exact
-
 // The feed id is opaque: show and episode pages carry it only in the markup.
 const feedIdRegex = /feed\.ausha\.co\/(\w+)/i
 
 const feeds = withHintLabels(ausha.feeds)
 
 export const parseAushaUrl = (url: string): AushaUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
-    return
-  }
+  const page = ausha.pages.read(url)
 
-  const [slug] = getPathSegments(url)
-
-  if (!slug) {
+  if (!page) {
     return
   }
 
