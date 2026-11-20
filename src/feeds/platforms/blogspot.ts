@@ -30,7 +30,7 @@ const labelRegex = /^\/search\/label\/([^/]+)/i
 const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
 const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/i
 const widgetsScriptRegex = /^(?:https?:)?\/\/www\.blogger\.com\/static\/v1\/widgets\//i
-const blogIdPathRegex = /^\/feeds\/[^/]+\//
+const blogIdPathRegex = /^\/feeds\/[^/]+\//i
 
 const feeds = withHintLabels(blogspot.feeds)
 
