@@ -1,6 +1,7 @@
+import { insanejournal } from 'feedintel'
 import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
+import { type PlatformFeedParams, withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 import { getJournalName, getJournalTag } from './livejournal.js'
@@ -13,7 +14,7 @@ export type InsanejournalUrl =
   | { kind: 'asylum'; asylum: string; tag?: string }
   | { kind: 'syndicated'; feed: string; tag?: string }
 
-const domains = ['insanejournal.com']
+const domains = insanejournal.hosts.tenants
 const wwwHosts = ['www.insanejournal.com', 'insanejournal.com']
 const asylumHosts = ['asylums.insanejournal.com']
 const feedHosts = ['feeds.insanejournal.com']
@@ -21,50 +22,13 @@ const feedHosts = ['feeds.insanejournal.com']
 // subdomain redirects here.
 const userHosts = ['users.insanejournal.com']
 // The hosts that name a journal by the first path segment, so a feed there sits under that name.
-const pathHosts = [...asylumHosts, ...feedHosts, ...userHosts]
+const pathHosts = insanejournal.hosts.exact
 
 const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/i
 const firstSegmentRegex = /^\/([^/]+)/
 
-const journalFeeds = definePlatformFeeds(
-  'insanejournal',
-  [
-    { key: 'posts-tag', main: '{scheme}://{host}/data/rss?tag={tag}', format: 'rss' },
-    {
-      key: 'posts-tag',
-      main: '{scheme}://{host}/data/atom?tag={tag}',
-      format: 'atom',
-    },
-    { key: 'posts', main: '{scheme}://{host}/data/rss', format: 'rss' },
-    { key: 'posts', main: '{scheme}://{host}/data/atom', format: 'atom' },
-    { key: 'userpics', main: '{scheme}://{host}/data/userpics', format: 'atom' },
-  ],
-  { hosts: { tenants: domains } },
-)
-const pathFeeds = definePlatformFeeds(
-  'insanejournal',
-  [
-    {
-      key: 'posts-tag',
-      main: '{scheme}://{host}/{journal}/data/rss?tag={tag}',
-      format: 'rss',
-    },
-    {
-      key: 'posts-tag',
-      main: '{scheme}://{host}/{journal}/data/atom?tag={tag}',
-      format: 'atom',
-    },
-    { key: 'posts', main: '{scheme}://{host}/{journal}/data/rss', format: 'rss' },
-    { key: 'posts', main: '{scheme}://{host}/{journal}/data/atom', format: 'atom' },
-    {
-      key: 'userpics',
-      main: '{scheme}://{host}/{journal}/data/userpics',
-      format: 'atom',
-    },
-  ],
-  { hosts: { exact: pathHosts } },
-)
+const feeds = withHintLabels(insanejournal.feeds)
 
 export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
@@ -128,7 +92,7 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
 
 // The InsaneJournal engine serves every journal the same feeds, plus a tag's feeds on a tag page.
 const getFeeds = (
-  table: Pick<typeof journalFeeds, 'getFeedEntry'>,
+  table: Pick<typeof feeds, 'getFeedEntry'>,
   params: PlatformFeedParams,
   tag: string | undefined,
 ): Array<DiscoverUriEntry | undefined> => {
@@ -166,14 +130,14 @@ export const insanejournalHandler: PlatformHandler = {
     // An asylum named on www lives on the asylums host.
     if (parsed.kind === 'asylum') {
       return getFeeds(
-        pathFeeds,
+        feeds,
         { scheme: 'https', host: asylumHosts[0], journal: parsed.asylum },
         parsed.tag,
       )
     }
 
     if (parsed.kind === 'syndicated') {
-      const pageFeeds = pathFeeds.forUrl(url)
+      const pageFeeds = feeds.forUrl(url)
 
       if (!pageFeeds) {
         return []
@@ -184,7 +148,7 @@ export const insanejournalHandler: PlatformHandler = {
 
     // A journal the users host serves by path keeps its feeds there.
     if (parsed.username && isHostOf(url, userHosts)) {
-      const pageFeeds = pathFeeds.forUrl(url)
+      const pageFeeds = feeds.forUrl(url)
 
       if (!pageFeeds) {
         return []
@@ -199,7 +163,7 @@ export const insanejournalHandler: PlatformHandler = {
       return []
     }
 
-    const journalPageFeeds = journalFeeds.forUrl(journalUrl)
+    const journalPageFeeds = feeds.forUrl(journalUrl)
 
     if (!journalPageFeeds) {
       return []
@@ -217,14 +181,20 @@ export const insanejournalHandler: PlatformHandler = {
       return
     }
 
-    if (isHostOf(url, pathHosts)) {
-      if (!getJournalName(pathname, firstSegmentRegex)) {
-        return
-      }
+    const isPathHost = isHostOf(url, pathHosts)
 
-      return pathFeeds.getFeedHint(url)
+    if (isPathHost && !getJournalName(pathname, firstSegmentRegex)) {
+      return
     }
 
-    return journalFeeds.getFeedHint(url)
+    // The table reads a root `/data/rss` on any subdomain, a path host included, and a feed under
+    // a journal's path on `www` in front of a path host.
+    const isPathFeed = insanejournal.feeds.read(url)?.params.journal !== undefined
+
+    if (isPathFeed !== isPathHost) {
+      return
+    }
+
+    return feeds.getFeedHint(url)
   },
 }

@@ -1,5 +1,6 @@
+import { discuz, discuzLegacy } from 'feedintel'
 import { getQueryParam, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   digitsRegex,
@@ -22,17 +23,8 @@ const archiverPathRegex = /\/archiver\/.*$/i
 const boardPathRegex = /\/forum-(\d+)-/i
 const legacyGeneratorRegex = /^Discuz! (?:Archiver )?\d/i
 
-// A board runs on its own domain and is known only by its marker, so its feeds are built here but
-// not claimed. Discuz! 7 and older serve the same feeds from `rss.php`.
-const feeds = definePlatformFeeds('discuz', [
-  { key: 'board', main: '{root}/forum.php?mod=rss&fid={boardId}&auth=0' },
-  { key: 'site', main: '{root}/forum.php?mod=rss' },
-])
-
-const legacyFeeds = definePlatformFeeds('discuz', [
-  { key: 'board', main: '{root}/rss.php?fid={boardId}&auth=0' },
-  { key: 'site', main: '{root}/rss.php?auth=0' },
-])
+const feeds = withHintLabels(discuz.feeds)
+const legacyFeeds = withHintLabels(discuzLegacy.feeds)
 
 export const isDiscuzHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Discuz!')

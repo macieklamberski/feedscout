@@ -1,10 +1,7 @@
+import { livejournal } from 'feedintel'
 import { decodeSegment, isHostOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import {
-  definePlatformFeeds,
-  type PlatformFeed,
-  type PlatformFeedTable,
-} from '../../common/uris/platform/feeds.js'
+import { type PlatformFeedTable, withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 
@@ -15,9 +12,9 @@ export type LivejournalUrl = { kind: 'journal'; username?: string; tag?: string 
 
 type JournalFeedKey = 'posts' | 'posts-tag' | 'userpics'
 
-const domains = ['livejournal.com']
+const domains = livejournal.hosts.tenants
 const wwwHosts = ['www.livejournal.com']
-const legacyUserHosts = ['users.livejournal.com', 'community.livejournal.com']
+const legacyUserHosts = livejournal.hosts.exact
 // The mobile site and the syndication host name a journal in the path, in a form no feed URL
 // is built from.
 const pathHosts = ['m.livejournal.com', 'syndicated.livejournal.com']
@@ -26,47 +23,7 @@ const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 const legacyUserPathRegex = /^\/([^/]+)/
 const journalTagRegex = /^\/tag\/([^/]+)/i
 
-// The feeds of a journal on the LiveJournal engine, from its root: its own subdomain, as
-// `https://alice.livejournal.com`, or the path the users host serves it under, as
-// `https://users.livejournal.com/-alice-`. A tag's feeds keep their own rows, so the posts row,
-// which ignores extra query parameters, does not read one as posts.
-const journalFeeds: Array<PlatformFeed<JournalFeedKey>> = [
-  { key: 'posts-tag', main: '{root}/data/rss?tag={tag}', format: 'rss' },
-  { key: 'posts-tag', main: '{root}/data/atom?tag={tag}', format: 'atom' },
-  { key: 'posts', main: '{root}/data/rss', format: 'rss' },
-  { key: 'posts', main: '{root}/data/atom', format: 'atom' },
-  { key: 'userpics', main: '{root}/data/userpics', format: 'atom' },
-]
-
-const feeds = definePlatformFeeds('livejournal', journalFeeds, {
-  hosts: { tenants: domains },
-})
-
-// A `{root}` row claims a feed on a journal's subdomain, so the feeds the users or community host
-// serves under a journal's path are claimed by their own rows.
-const pathFeeds = definePlatformFeeds(
-  'livejournal',
-  [
-    {
-      key: 'posts-tag',
-      main: '{scheme}://{host}/{journal}/data/rss?tag={tag}',
-      format: 'rss',
-    },
-    {
-      key: 'posts-tag',
-      main: '{scheme}://{host}/{journal}/data/atom?tag={tag}',
-      format: 'atom',
-    },
-    { key: 'posts', main: '{scheme}://{host}/{journal}/data/rss', format: 'rss' },
-    { key: 'posts', main: '{scheme}://{host}/{journal}/data/atom', format: 'atom' },
-    {
-      key: 'userpics',
-      main: '{scheme}://{host}/{journal}/data/userpics',
-      format: 'atom',
-    },
-  ],
-  { hosts: { exact: legacyUserHosts } },
-)
+const feeds = withHintLabels(livejournal.feeds)
 
 // The feeds of a journal from its root, plus a tag's feeds on a tag page.
 const getJournalEntries = (
@@ -196,6 +153,6 @@ export const livejournalHandler: PlatformHandler = {
       return
     }
 
-    return feeds.getFeedHint(url) ?? pathFeeds.getFeedHint(url)
+    return feeds.getFeedHint(url)
   },
 }

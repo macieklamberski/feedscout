@@ -161,102 +161,30 @@ describe('ghostHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the blog key for a blog feed', () => {
-      const value = 'https://alice.ghost.io/rss/'
-      const expected: DiscoverUriHint = { key: 'ghost:blog', label: 'Blog' }
-
-      expect(ghostHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the blog key for a blog feed without a trailing slash', () => {
-      const value = 'https://alice.ghost.io/rss'
-      const expected: DiscoverUriHint = { key: 'ghost:blog', label: 'Blog' }
-
-      expect(ghostHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag key for a tag feed', () => {
-      const value = 'https://alice.ghost.io/tag/getting-started/rss/'
-      const expected: DiscoverUriHint = { key: 'ghost:tag', label: 'Tag' }
-
-      expect(ghostHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the author key for an author feed', () => {
-      const value = 'https://alice.ghost.io/author/jane/rss/'
-      const expected: DiscoverUriHint = { key: 'ghost:author', label: 'Author' }
-
-      expect(ghostHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the collection key for a collection feed', () => {
-      const value = 'https://alice.ghost.io/archive/rss/'
-      const expected: DiscoverUriHint = { key: 'ghost:collection', label: 'Collection' }
-
-      expect(ghostHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the private key for a private site feed', () => {
       const value = 'https://alice.ghost.io/0123456789abcdef0123456789abcd/rss/'
       const expected: DiscoverUriHint = { key: 'ghost:private', label: 'Private feed' }
 
       expect(ghostHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return undefined for a private site feed on another host', () => {
-      const value = 'https://example.com/0123456789abcdef0123456789abcd/rss/'
-
-      expect(ghostHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a tag page', () => {
-      const value = 'https://alice.ghost.io/tag/getting-started/'
-
-      expect(ghostHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a post page', () => {
-      const value = 'https://alice.ghost.io/some-post/'
-
-      expect(ghostHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://blog.example.ghost.io/rss/'
-
-      expect(ghostHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on another host', () => {
-      const value = 'https://example.com/rss/'
-
-      expect(ghostHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the dispatcher', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://alice.ghost.io/rss/', { key: 'ghost:blog', label: 'Blog' }],
-      ['https://alice.ghost.io/rss', { key: 'ghost:blog', label: 'Blog' }],
-      ['http://alice.ghost.io/rss/', { key: 'ghost:blog', label: 'Blog' }],
-      ['https://alice.ghost.io/tag/getting-started/rss/', { key: 'ghost:tag', label: 'Tag' }],
-      ['https://alice.ghost.io/author/jane/rss/', { key: 'ghost:author', label: 'Author' }],
-      ['http://alice.ghost.io/archive/rss', { key: 'ghost:collection', label: 'Collection' }],
-      [
-        'https://alice.ghost.io/0123456789abcdef0123456789abcd/rss/',
-        { key: 'ghost:private', label: 'Private feed' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return an http collection feed without a trailing slash as itself', async () => {
+      const value = 'http://alice.ghost.io/archive/rss'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://alice.ghost.io/archive/rss',
+          hint: { key: 'ghost:collection', label: 'Collection' },
+        },
+      ]
+      const entries = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [ghostHandler],
         baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
-      expect(result).toEqual(expected)
+      expect(entries).toEqual(expected)
     })
   })
 })

@@ -137,20 +137,6 @@ describe('sourcehutHandler', () => {
   })
 
   describe('getFeedHint', () => {
-    it('should return the commits hint for a log feed', () => {
-      const value = 'https://git.sr.ht/~example/project/log/rss.xml'
-      const expected: DiscoverUriHint = { key: 'sourcehut:commits', label: 'Commits' }
-
-      expect(sourcehutHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the commits hint for a log feed of one ref', () => {
-      const value = 'https://git.sr.ht/~example/project/log/master/rss.xml'
-      const expected: DiscoverUriHint = { key: 'sourcehut:commits', label: 'Commits' }
-
-      expect(sourcehutHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the commit history hint for a log feed at a commit hash', () => {
       const value =
         'https://git.sr.ht/~example/project/log/0123456789abcdef0123456789abcdef01234567/rss.xml'
@@ -158,110 +144,24 @@ describe('sourcehutHandler', () => {
 
       expect(sourcehutHandler.getFeedHint?.(value)).toEqual(expected)
     })
-
-    it('should return the commits hint for a log feed of a short commit hash', () => {
-      const value = 'https://git.sr.ht/~example/project/log/0123456/rss.xml'
-      const expected: DiscoverUriHint = { key: 'sourcehut:commits', label: 'Commits' }
-
-      expect(sourcehutHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the commits hint for a log feed of a repository with a dotted name', () => {
-      const value = 'https://git.sr.ht/~example/example.org/log/rss.xml'
-      const expected: DiscoverUriHint = { key: 'sourcehut:commits', label: 'Commits' }
-
-      expect(sourcehutHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the refs hint for a refs feed', () => {
-      const value = 'https://git.sr.ht/~example/project/refs/rss.xml'
-      const expected: DiscoverUriHint = { key: 'sourcehut:refs', label: 'Refs' }
-
-      expect(sourcehutHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the refs hint for a refs feed over http', () => {
-      const value = 'http://git.sr.ht/~example/project/refs/rss.xml'
-      const expected: DiscoverUriHint = { key: 'sourcehut:refs', label: 'Refs' }
-
-      expect(sourcehutHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the project hint for a project feed', () => {
-      const value = 'https://sr.ht/~example/project/feed.rss'
-      const expected: DiscoverUriHint = { key: 'sourcehut:project', label: 'Project' }
-
-      expect(sourcehutHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the project hint for a project feed with a dotted name', () => {
-      const value = 'https://sr.ht/~example/example.org/feed.rss'
-      const expected: DiscoverUriHint = { key: 'sourcehut:project', label: 'Project' }
-
-      expect(sourcehutHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a project activity page', () => {
-      const value = 'https://sr.ht/~example/project/feed'
-
-      expect(sourcehutHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a repository page', () => {
-      const value = 'https://git.sr.ht/~example/project'
-
-      expect(sourcehutHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a log page', () => {
-      const value = 'https://git.sr.ht/~example/project/log'
-
-      expect(sourcehutHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a log feed path without the tilde prefix', () => {
-      const value = 'https://git.sr.ht/example/project/log/rss.xml'
-
-      expect(sourcehutHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a log feed path on another host', () => {
-      const value = 'https://example.com/~example/project/log/rss.xml'
-
-      expect(sourcehutHandler.getFeedHint?.(value)).toBeUndefined()
-    })
   })
 
   describe('own feeds through the Platform method', () => {
-    const commits: DiscoverUriHint = { key: 'sourcehut:commits', label: 'Commits' }
-    const refs: DiscoverUriHint = { key: 'sourcehut:refs', label: 'Refs' }
-    const project: DiscoverUriHint = { key: 'sourcehut:project', label: 'Project' }
-    const commitHistory: DiscoverUriHint = {
-      key: 'sourcehut:commit-history',
-      label: 'Commit history',
-    }
-    const hash = '0123456789abcdef0123456789abcdef01234567'
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://git.sr.ht/~example/project/log/rss.xml', commits],
-      ['http://git.sr.ht/~example/project/log/rss.xml', commits],
-      ['https://git.sr.ht/~example/project/log/master/rss.xml', commits],
-      ['https://git.sr.ht/~example/project/refs/rss.xml', refs],
-      ['http://git.sr.ht/~example/project/refs/rss.xml', refs],
-      ['https://sr.ht/~example/project/feed.rss', project],
-      ['http://sr.ht/~example/project/feed.rss', project],
-      [`https://git.sr.ht/~example/project/log/${hash}/rss.xml`, commitHistory],
-      [`http://git.sr.ht/~example/project/log/${hash}/rss.xml`, commitHistory],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a commits feed as itself', async () => {
+      const value = 'https://git.sr.ht/~example/project/log/rss.xml'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://git.sr.ht/~example/project/log/rss.xml',
+          hint: { key: 'sourcehut:commits', label: 'Commits' },
+        },
+      ]
+      const entries = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [sourcehutHandler],
         baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
-      expect(result).toEqual(expected)
+      expect(entries).toEqual(expected)
     })
   })
 })

@@ -1,5 +1,6 @@
+import { sourcehut } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Not discoverable without handler.
@@ -10,23 +11,11 @@ export type SourcehutUrl =
   | { kind: 'repo'; owner: string; repo: string }
   | { kind: 'project'; owner: string; project: string }
 
-export const hosts = ['git.sr.ht']
+export const hosts = sourcehut.hosts.exact
 const projectHosts = ['sr.ht']
 const userHosts = [...projectHosts, 'todo.sr.ht', ...hosts]
 
-const feeds = definePlatformFeeds('sourcehut', [
-  { key: 'commits', main: 'https://git.sr.ht/~{owner}/{repo}/log/rss.xml' },
-  { key: 'commits', main: 'https://git.sr.ht/~{owner}/{repo}/log/{ref}/rss.xml' },
-  { key: 'refs', main: 'https://git.sr.ht/~{owner}/{repo}/refs/rss.xml' },
-  { key: 'project', main: 'https://sr.ht/~{owner}/{project}/feed.rss' },
-])
-
-// A log at a full commit hash is the history up to that commit, which never changes, not the log
-// of a branch. No page links it, so `resolve` never builds it.
-const commitHistoryFeeds = definePlatformFeeds('sourcehut', [
-  { key: 'commit-history', main: 'https://git.sr.ht/~{owner}/{repo}/log/{hash}/rss.xml' },
-])
-const commitHashRegex = /^[0-9a-f]{40}$/i
+const feeds = withHintLabels(sourcehut.feeds)
 
 export const parseSourcehutUrl = (url: string): SourcehutUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -80,17 +69,5 @@ export const sourcehutHandler: PlatformHandler = {
     return [feeds.getFeedEntry('commits', params), feeds.getFeedEntry('refs', params)]
   },
 
-  getFeedHint: (url) => {
-    const [, , , ref] = getPathSegments(url)
-
-    if (commitHashRegex.test(ref ?? '')) {
-      const hint = commitHistoryFeeds.getFeedHint(url)
-
-      if (hint) {
-        return hint
-      }
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

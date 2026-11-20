@@ -1,5 +1,6 @@
+import { vbulletin, vbulletinLegacy } from 'feedintel'
 import { endsWithAnyOf, getOrigin, getQueryParam, parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   digitsRegex,
@@ -22,17 +23,8 @@ const rollupPathRegex = /\/js\/[^/]*$/i
 const channelIdRegex = /(?:"channelid":\s*"|data-channelid=['"])(\d+)/
 const friendlyForumIdRegex = /^\?(\d+)(?:-|&|$)/
 
-// vBulletin 3 and 4 serve `external.php` and vBulletin 5 and later `external`, each with its own
-// spelling of the type. A forum on any host is known only by its scripts or cookies, which a feed
-// URL does not carry, so the feeds are built under the forum root and never claimed.
-const vbulletin4Feeds = definePlatformFeeds('vbulletin', [
-  { key: 'forum', main: '{root}/external.php?type=RSS2&forumids={forumId}' },
-  { key: 'site', main: '{root}/external.php?type=RSS2' },
-])
-const vbulletin5Feeds = definePlatformFeeds('vbulletin', [
-  { key: 'forum', main: '{root}/external?type=rss2&nodeid={forumId}' },
-  { key: 'site', main: '{root}/external?type=rss2' },
-])
+const vbulletinFeeds = withHintLabels(vbulletin.feeds)
+const vbulletinLegacyFeeds = withHintLabels(vbulletinLegacy.feeds)
 
 // vBulletin 4 prints `clientscript/vbulletin-core.js` as an absolute URL under the forum root.
 // vBulletin 5 and 6 print `js/header-rollup-{version}.js` or `js/header-rollup.js?c={hash}`
@@ -156,7 +148,7 @@ export const vbulletinHandler: PlatformHandler = {
       return []
     }
 
-    const feeds = page.version === 5 ? vbulletin5Feeds : vbulletin4Feeds
+    const feeds = page.version === 5 ? vbulletinFeeds : vbulletinLegacyFeeds
 
     if (page.forumId) {
       return [

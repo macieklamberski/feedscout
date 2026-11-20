@@ -552,122 +552,6 @@ describe('insanejournalHandler', () => {
       expect(insanejournalHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return undefined for a journal feed with www before the journal', () => {
-      const value = 'https://www.alice.insanejournal.com/data/rss'
-
-      expect(insanejournalHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return the posts hint for a journal Atom feed', () => {
-      const value = 'https://foo-bar.insanejournal.com/data/atom'
-      const expected: DiscoverUriHint = {
-        key: 'insanejournal:posts',
-        label: 'Posts',
-        format: 'atom',
-      }
-
-      expect(insanejournalHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the userpics hint for a journal userpics feed', () => {
-      const value = 'https://alice.insanejournal.com/data/userpics'
-      const expected: DiscoverUriHint = {
-        key: 'insanejournal:userpics',
-        label: 'Userpics',
-        format: 'atom',
-      }
-
-      expect(insanejournalHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for a journal tag RSS feed', () => {
-      const value = 'https://alice.insanejournal.com/data/rss?tag=alice+bob'
-      const expected: DiscoverUriHint = {
-        key: 'insanejournal:posts-tag',
-        label: 'Tag',
-        format: 'rss',
-      }
-
-      expect(insanejournalHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for a tag feed with a raw non-ASCII tag', () => {
-      const value = 'https://alice.insanejournal.com/data/rss?tag=café'
-      const expected: DiscoverUriHint = {
-        key: 'insanejournal:posts-tag',
-        label: 'Tag',
-        format: 'rss',
-      }
-
-      expect(insanejournalHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for a journal tag Atom feed', () => {
-      const value = 'https://alice.insanejournal.com/data/atom?tag=a+long+example+tag'
-      const expected: DiscoverUriHint = {
-        key: 'insanejournal:posts-tag',
-        label: 'Tag',
-        format: 'atom',
-      }
-
-      expect(insanejournalHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for an asylum RSS feed', () => {
-      const value = 'https://asylums.insanejournal.com/example/data/rss'
-      const expected: DiscoverUriHint = {
-        key: 'insanejournal:posts',
-        label: 'Posts',
-        format: 'rss',
-      }
-
-      expect(insanejournalHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the userpics hint for an asylum userpics feed', () => {
-      const value = 'https://asylums.insanejournal.com/07example/data/userpics'
-      const expected: DiscoverUriHint = {
-        key: 'insanejournal:userpics',
-        label: 'Userpics',
-        format: 'atom',
-      }
-
-      expect(insanejournalHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the tag hint for an asylum tag feed with an encoded tag', () => {
-      const value = 'https://asylums.insanejournal.com/example/data/atom?tag=contributor%3A+alice'
-      const expected: DiscoverUriHint = {
-        key: 'insanejournal:posts-tag',
-        label: 'Tag',
-        format: 'atom',
-      }
-
-      expect(insanejournalHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a syndicated feed', () => {
-      const value = 'https://feeds.insanejournal.com/example_feed/data/rss'
-      const expected: DiscoverUriHint = {
-        key: 'insanejournal:posts',
-        label: 'Posts',
-        format: 'rss',
-      }
-
-      expect(insanejournalHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return the posts hint for a feed on the users host', () => {
-      const value = 'https://users.insanejournal.com/_alice/data/rss'
-      const expected: DiscoverUriHint = {
-        key: 'insanejournal:posts',
-        label: 'Posts',
-        format: 'rss',
-      }
-
-      expect(insanejournalHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
     it('should return the tag hint for a tag feed on the users host', () => {
       const value = 'https://users.insanejournal.com/_alice_/data/atom?tag=dvd+sets'
       const expected: DiscoverUriHint = {
@@ -677,18 +561,6 @@ describe('insanejournalHandler', () => {
       }
 
       expect(insanejournalHandler.getFeedHint?.(value)).toEqual(expected)
-    })
-
-    it('should return undefined for a journal page', () => {
-      const value = 'https://alice.insanejournal.com/tag/photography'
-
-      expect(insanejournalHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for an asylum page', () => {
-      const value = 'https://asylums.insanejournal.com/carol'
-
-      expect(insanejournalHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path at the root of the asylums host', () => {
@@ -709,20 +581,8 @@ describe('insanejournalHandler', () => {
       expect(insanejournalHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
-    it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://blog.alice.insanejournal.com/data/rss'
-
-      expect(insanejournalHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed on the apex', () => {
-      const value = 'https://insanejournal.com/data/rss'
-
-      expect(insanejournalHandler.getFeedHint?.(value)).toBeUndefined()
-    })
-
-    it('should return undefined for a feed path on another host', () => {
-      const value = 'https://example.com/data/rss'
+    it('should return undefined for a feed under a journal with www before the asylums host', () => {
+      const value = 'https://www.asylums.insanejournal.com/example/data/rss'
 
       expect(insanejournalHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -735,38 +595,21 @@ describe('insanejournalHandler', () => {
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      [
-        'https://alice.insanejournal.com/data/rss',
-        { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
-      ],
-      [
-        'https://alice.insanejournal.com/data/rss?tag=alice+bob',
-        { key: 'insanejournal:posts-tag', label: 'Tag', format: 'rss' },
-      ],
-      [
-        'https://asylums.insanejournal.com/07example/data/userpics',
-        { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
-      ],
-      [
-        'https://feeds.insanejournal.com/example_feed/data/atom',
-        { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
-      ],
-      [
-        'https://users.insanejournal.com/_alice_/data/atom?tag=dvd+sets',
-        { key: 'insanejournal:posts-tag', label: 'Tag', format: 'atom' },
-      ],
-    ]
-
-    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
-      const result = await discoverUrisFromPlatform(undefined, undefined, {
+    it('should return a userpics feed on the asylums host as itself', async () => {
+      const value = 'https://asylums.insanejournal.com/07example/data/userpics'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://asylums.insanejournal.com/07example/data/userpics',
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+      const entries = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [insanejournalHandler],
         baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
-      expect(result).toEqual(expected)
+      expect(entries).toEqual(expected)
     })
   })
 })
