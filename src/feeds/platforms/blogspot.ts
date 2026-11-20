@@ -1,5 +1,7 @@
+import { blogger, blogspot } from 'feedintel'
 import { parseUrl } from 'trousse'
-import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
+import type { DiscoverUriHint } from '../../common/types.js'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   findElement,
@@ -21,138 +23,30 @@ export type BlogspotPage =
 // blogspot.com and Blogger's country domains like .co.uk, .com.br and .de, which still serve
 // feeds. getTenantSubdomain then refuses www and nested subdomains.
 const domains = [getBrandDomainRegex('blogspot')]
+// The domains the feeds table reads a blog's name on.
+const namedDomains = blogspot.hosts.tenants
 
 const labelRegex = /^\/search\/label\/([^/]+)/i
 const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
 const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/i
 const widgetsScriptRegex = /^(?:https?:)?\/\/www\.blogger\.com\/static\/v1\/widgets\//i
+const blogIdPathRegex = /^\/feeds\/[^/]+\//
 
-// A custom domain is known only by its markup, so its feeds are built here but not claimed.
-// Blogger serves the posts feed at /feeds/posts/full and /atom.xml too, and the comments feed at
-// /feeds/comments/full. Every feed but the multi-label ones is served on www.blogger.com too,
-// under the blog's id.
-const feeds = definePlatformFeeds(
-  'blogspot',
-  [
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/feeds/posts/default',
-      format: 'atom',
-      aliases: [
-        'https://www.blogger.com/feeds/{blogId}/posts/default',
-        '{scheme}://{host}/feeds/posts/full',
-        '{scheme}://{host}/atom.xml',
-      ],
-    },
-    {
-      key: 'posts',
-      main: '{scheme}://{host}/feeds/posts/default?alt=rss',
-      format: 'rss',
-      aliases: [
-        'https://www.blogger.com/feeds/{blogId}/posts/default?alt=rss',
-        '{scheme}://{host}/feeds/posts/full?alt=rss',
-      ],
-    },
-    {
-      key: 'posts-summary',
-      main: '{scheme}://{host}/feeds/posts/summary',
-      format: 'atom',
-      aliases: ['https://www.blogger.com/feeds/{blogId}/posts/summary'],
-    },
-    {
-      key: 'posts-summary',
-      main: '{scheme}://{host}/feeds/posts/summary?alt=rss',
-      format: 'rss',
-      aliases: ['https://www.blogger.com/feeds/{blogId}/posts/summary?alt=rss'],
-    },
-    {
-      key: 'comments',
-      main: '{scheme}://{host}/feeds/comments/default',
-      format: 'atom',
-      aliases: [
-        'https://www.blogger.com/feeds/{blogId}/comments/default',
-        '{scheme}://{host}/feeds/comments/full',
-      ],
-    },
-    {
-      key: 'comments',
-      main: '{scheme}://{host}/feeds/comments/default?alt=rss',
-      format: 'rss',
-      aliases: ['https://www.blogger.com/feeds/{blogId}/comments/default?alt=rss'],
-    },
-    {
-      key: 'comments-summary',
-      main: '{scheme}://{host}/feeds/comments/summary',
-      format: 'atom',
-      aliases: ['https://www.blogger.com/feeds/{blogId}/comments/summary'],
-    },
-    {
-      key: 'comments-summary',
-      main: '{scheme}://{host}/feeds/comments/summary?alt=rss',
-      format: 'rss',
-      aliases: ['https://www.blogger.com/feeds/{blogId}/comments/summary?alt=rss'],
-    },
-    {
-      key: 'label',
-      main: '{scheme}://{host}/feeds/posts/default/-/{label}',
-      format: 'atom',
-      aliases: ['https://www.blogger.com/feeds/{blogId}/posts/default/-/{label}'],
-    },
-    {
-      key: 'label',
-      main: '{scheme}://{host}/feeds/posts/default/-/{label}?alt=rss',
-      format: 'rss',
-      aliases: ['https://www.blogger.com/feeds/{blogId}/posts/default/-/{label}?alt=rss'],
-    },
-    {
-      key: 'label-summary',
-      main: '{scheme}://{host}/feeds/posts/summary/-/{label}',
-      format: 'atom',
-      aliases: ['https://www.blogger.com/feeds/{blogId}/posts/summary/-/{label}'],
-    },
-    {
-      key: 'label-summary',
-      main: '{scheme}://{host}/feeds/posts/summary/-/{label}?alt=rss',
-      format: 'rss',
-      aliases: ['https://www.blogger.com/feeds/{blogId}/posts/summary/-/{label}?alt=rss'],
-    },
-    // Several labels, as `/-/{a}/{b}`, give the posts carrying all of them. These rows go after the
-    // single-label ones, which `resolve` builds, since a label can hold a slash.
-    {
-      key: 'label',
-      main: '{scheme}://{host}/feeds/posts/default/-/{labels*}',
-      format: 'atom',
-    },
-    {
-      key: 'label',
-      main: '{scheme}://{host}/feeds/posts/default/-/{labels*}?alt=rss',
-      format: 'rss',
-    },
-    {
-      key: 'label-summary',
-      main: '{scheme}://{host}/feeds/posts/summary/-/{labels*}',
-      format: 'atom',
-    },
-    {
-      key: 'label-summary',
-      main: '{scheme}://{host}/feeds/posts/summary/-/{labels*}?alt=rss',
-      format: 'rss',
-    },
-    {
-      key: 'post-comments',
-      main: '{scheme}://{host}/feeds/{postId}/comments/default',
-      format: 'atom',
-      aliases: ['https://www.blogger.com/feeds/{blogId}/{postId}/comments/default'],
-    },
-    {
-      key: 'post-comments',
-      main: '{scheme}://{host}/feeds/{postId}/comments/default?alt=rss',
-      format: 'rss',
-      aliases: ['https://www.blogger.com/feeds/{blogId}/{postId}/comments/default?alt=rss'],
-    },
-  ],
-  { hosts: { tenants: domains }, isWwwTenantPrefix: true },
-)
+const feeds = withHintLabels(blogspot.feeds)
+
+// Blogger serves a blog's feeds under its id on www.blogger.com too, where the path after the id
+// names the feed as it does on the blog's own host.
+const getBloggerFeedHint = (url: string): DiscoverUriHint | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !blogger.feeds.read(url)) {
+    return
+  }
+
+  const path = parsedUrl.pathname.replace(blogIdPathRegex, '/feeds/')
+
+  return feeds.getFeedHint(`https://blog.blogspot.com${path}${parsedUrl.search}`)
+}
 
 // Blogger loads its widget script from this path on blogspot.com and custom domains alike,
 // whatever the theme. A tag, not the text: READMEs and archived copies quote the url too.
@@ -223,49 +117,56 @@ export const blogspotHandler: PlatformHandler = {
       return []
     }
 
+    // A blog's name builds its feeds on blogspot.com. Without one, as on a blog's own domain,
+    // they are built on the page's host.
+    const blog = getTenantSubdomain(url, namedDomains)
+    const params = { blog }
+
     if (page.kind === 'label') {
       return [
-        pageFeeds.getFeedEntry('label', { label: page.label }, 'atom'),
-        pageFeeds.getFeedEntry('label', { label: page.label }, 'rss'),
-        pageFeeds.getFeedEntry('label-summary', { label: page.label }, 'atom'),
-        pageFeeds.getFeedEntry('label-summary', { label: page.label }, 'rss'),
-        pageFeeds.getFeedEntry('posts', {}, 'atom'),
-        pageFeeds.getFeedEntry('posts', {}, 'rss'),
-        pageFeeds.getFeedEntry('posts-summary', {}, 'atom'),
-        pageFeeds.getFeedEntry('posts-summary', {}, 'rss'),
-        pageFeeds.getFeedEntry('comments', {}, 'atom'),
-        pageFeeds.getFeedEntry('comments', {}, 'rss'),
-        pageFeeds.getFeedEntry('comments-summary', {}, 'atom'),
-        pageFeeds.getFeedEntry('comments-summary', {}, 'rss'),
+        pageFeeds.getFeedEntry('label', { blog, labels: page.label }, 'atom'),
+        pageFeeds.getFeedEntry('label', { blog, labels: page.label }, 'rss'),
+        pageFeeds.getFeedEntry('label-summary', { blog, labels: page.label }, 'atom'),
+        pageFeeds.getFeedEntry('label-summary', { blog, labels: page.label }, 'rss'),
+        pageFeeds.getFeedEntry('posts', params, 'atom'),
+        pageFeeds.getFeedEntry('posts', params, 'rss'),
+        pageFeeds.getFeedEntry('posts-summary', params, 'atom'),
+        pageFeeds.getFeedEntry('posts-summary', params, 'rss'),
+        pageFeeds.getFeedEntry('comments', params, 'atom'),
+        pageFeeds.getFeedEntry('comments', params, 'rss'),
+        pageFeeds.getFeedEntry('comments-summary', params, 'atom'),
+        pageFeeds.getFeedEntry('comments-summary', params, 'rss'),
       ]
     }
 
     if (page.kind === 'post' && page.postId) {
       return [
-        pageFeeds.getFeedEntry('post-comments', { postId: page.postId }, 'atom'),
-        pageFeeds.getFeedEntry('post-comments', { postId: page.postId }, 'rss'),
-        pageFeeds.getFeedEntry('posts', {}, 'atom'),
-        pageFeeds.getFeedEntry('posts', {}, 'rss'),
-        pageFeeds.getFeedEntry('posts-summary', {}, 'atom'),
-        pageFeeds.getFeedEntry('posts-summary', {}, 'rss'),
-        pageFeeds.getFeedEntry('comments', {}, 'atom'),
-        pageFeeds.getFeedEntry('comments', {}, 'rss'),
-        pageFeeds.getFeedEntry('comments-summary', {}, 'atom'),
-        pageFeeds.getFeedEntry('comments-summary', {}, 'rss'),
+        pageFeeds.getFeedEntry('post-comments', { blog, postId: page.postId }, 'atom'),
+        pageFeeds.getFeedEntry('post-comments', { blog, postId: page.postId }, 'rss'),
+        pageFeeds.getFeedEntry('posts', params, 'atom'),
+        pageFeeds.getFeedEntry('posts', params, 'rss'),
+        pageFeeds.getFeedEntry('posts-summary', params, 'atom'),
+        pageFeeds.getFeedEntry('posts-summary', params, 'rss'),
+        pageFeeds.getFeedEntry('comments', params, 'atom'),
+        pageFeeds.getFeedEntry('comments', params, 'rss'),
+        pageFeeds.getFeedEntry('comments-summary', params, 'atom'),
+        pageFeeds.getFeedEntry('comments-summary', params, 'rss'),
       ]
     }
 
     return [
-      pageFeeds.getFeedEntry('posts', {}, 'atom'),
-      pageFeeds.getFeedEntry('posts', {}, 'rss'),
-      pageFeeds.getFeedEntry('posts-summary', {}, 'atom'),
-      pageFeeds.getFeedEntry('posts-summary', {}, 'rss'),
-      pageFeeds.getFeedEntry('comments', {}, 'atom'),
-      pageFeeds.getFeedEntry('comments', {}, 'rss'),
-      pageFeeds.getFeedEntry('comments-summary', {}, 'atom'),
-      pageFeeds.getFeedEntry('comments-summary', {}, 'rss'),
+      pageFeeds.getFeedEntry('posts', params, 'atom'),
+      pageFeeds.getFeedEntry('posts', params, 'rss'),
+      pageFeeds.getFeedEntry('posts-summary', params, 'atom'),
+      pageFeeds.getFeedEntry('posts-summary', params, 'rss'),
+      pageFeeds.getFeedEntry('comments', params, 'atom'),
+      pageFeeds.getFeedEntry('comments', params, 'rss'),
+      pageFeeds.getFeedEntry('comments-summary', params, 'atom'),
+      pageFeeds.getFeedEntry('comments-summary', params, 'rss'),
     ]
   },
 
-  getFeedHint: feeds.getFeedHint,
+  getFeedHint: (url) => {
+    return feeds.getFeedHint(url) ?? getBloggerFeedHint(url)
+  },
 }
