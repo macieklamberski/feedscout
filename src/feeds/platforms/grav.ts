@@ -9,9 +9,6 @@ import { findElement, getCookieNames, hasMarker, hasMetaContent } from '../../co
 
 export type GravUrl = { kind: 'home' } | { kind: 'page'; path: string }
 
-const trailingSlashRegex = /\/$/
-const htmlSuffixRegex = /\.html$/i
-const paginationRegex = /\/page:\d+$/i
 const gravAssetRegex = /\/user\/(?:themes|plugins)\//i
 const gravCookieRegex = /^grav-site-[0-9a-f]+$/
 
@@ -43,24 +40,17 @@ export const isGravHeaders = (headers: Headers): boolean => {
 }
 
 export const parseGravUrl = (url: string): GravUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = grav.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  // Grav serves `/blog.html` as the `/blog` page, whose feed is `/blog.rss`, and pages a listing
-  // with a `page:{n}` parameter.
-  const path = parsedUrl.pathname
-    .replace(trailingSlashRegex, '')
-    .replace(htmlSuffixRegex, '')
-    .replace(paginationRegex, '')
-
-  if (!path) {
+  if (page.key === 'home') {
     return { kind: 'home' }
   }
 
-  return { kind: 'page', path }
+  return { kind: 'page', path: `/${page.params.path}` }
 }
 
 export const gravHandler: PlatformHandler = {

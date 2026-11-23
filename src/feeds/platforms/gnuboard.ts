@@ -1,5 +1,5 @@
 import { gnuboard } from 'feedintel'
-import { getQueryParam, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getCookieNames, hasMarker } from '../../common/utils.js'
@@ -9,14 +9,16 @@ import { getCookieNames, hasMarker } from '../../common/utils.js'
 // Gnuboard names each cookie with the md5 of its name, and this is `ck_visit_ip`.
 const visitCookieName = '2a0d2363701f23f8a75028924a3af643'
 
-const boardScriptRegex = /^(.*)\/bbs\/board\.php$/i
 const boardVariableRegex = /var g[45]_bo_table\s*=\s*"(\w+)"/
 const installUrlRegex = /var g5_url\s*=\s*"([^"]+)"/
-const trailingSlashRegex = /\/$/
 
 const feeds = withHintLabels(gnuboard.feeds)
 
 export type GnuboardPage = { kind: 'board'; root: string; board: string }
+
+const getRootPath = (root: string): string => {
+  return root.slice(new URL(root).origin.length)
+}
 
 // The visit counter sets the cookie on the first request of a visitor, whatever the skin.
 export const isGnuboardHeaders = (headers: Headers): boolean => {
@@ -30,21 +32,19 @@ export const getGnuboardPage = (
   url: string,
   content: string | undefined,
 ): GnuboardPage | undefined => {
-  const parsedUrl = parseUrl(url)
   const board = content?.match(boardVariableRegex)?.[1]
+  const page = gnuboard.pages.read(url, { isAnyHost: true })
 
-  if (!parsedUrl || !board) {
+  if (!page || !board) {
     return
   }
 
-  const scriptRoot = parsedUrl.pathname.match(boardScriptRegex)?.[1]
-
-  if (scriptRoot !== undefined) {
-    if (getQueryParam(parsedUrl.searchParams, 'bo_table') !== board) {
+  if (page.key !== 'page') {
+    if (page.params.board !== board) {
       return
     }
 
-    return { kind: 'board', root: scriptRoot, board }
+    return { kind: 'board', root: getRootPath(page.params.root), board }
   }
 
   const installUrl = content?.match(installUrlRegex)?.[1]
@@ -53,13 +53,13 @@ export const getGnuboardPage = (
     return
   }
 
-  const installRoot = parseUrl(installUrl, url)?.pathname.replace(trailingSlashRegex, '')
+  const installed = gnuboard.pages.read(url, { root: parseUrl(installUrl, url)?.href ?? '' })
 
-  if (installRoot === undefined) {
+  if (!installed) {
     return
   }
 
-  return { kind: 'board', root: installRoot, board }
+  return { kind: 'board', root: getRootPath(installed.params.root), board }
 }
 
 export const gnuboardHandler: PlatformHandler = {

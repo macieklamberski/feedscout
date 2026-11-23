@@ -1,32 +1,15 @@
 import { legistar } from 'feedintel'
-import {
-  getQueryParam,
-  getQueryParamValues,
-  isAnyOf,
-  isSubdomainOf,
-  parseUrl,
-  resolveUrl,
-} from 'trousse'
+import { getQueryParamValues, parseUrl, resolveUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  digitsRegex,
-  findElements,
-  getCookieNames,
-  hasMarker,
-  hexOrHyphenRegex,
-} from '../../common/utils.js'
+import { composeHint, findElements, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type LegistarUrl =
   | { kind: 'legislation'; id: string; guid: string }
   | { kind: 'meeting'; id: string; guid: string }
-type LegistarRecord = { id: string; guid: string }
 export type LegistarPage = { kind: 'legislation' | 'meeting'; feedUrl: string }
-
-const domains = legistar.hosts.tenants
 
 // Legistar's load balancer sets this cookie on every page, on a client's custom domain too.
 const cookieName = 'BIGipServerinsite.legistar.com_443'
@@ -42,18 +25,6 @@ export const isLegistarHeaders = (headers: Headers): boolean => {
   return getCookieNames(headers).includes(cookieName)
 }
 
-// Feed.ashx answers 410 to an id without its own GUID, so a record is read only with both.
-const getRecord = (searchParams: URLSearchParams): LegistarRecord | undefined => {
-  const id = getQueryParam(searchParams, 'id')
-  const guid = getQueryParam(searchParams, 'guid')
-
-  if (!id || !guid || !digitsRegex.test(id) || !hexOrHyphenRegex.test(guid)) {
-    return
-  }
-
-  return { id, guid }
-}
-
 export const parseLegistarUrl = (url: string): LegistarUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -61,20 +32,16 @@ export const parseLegistarUrl = (url: string): LegistarUrl | undefined => {
     return
   }
 
-  const record = getRecord(parsedUrl.searchParams)
+  const page = legistar.pages.read(url, { root: parsedUrl.origin })
 
-  if (!record) {
+  if (!page) {
     return
   }
 
-  const { id, guid } = record
+  const { id, guid } = page.params
 
-  if (isAnyOf(parsedUrl.pathname, '/LegislationDetail.aspx')) {
+  if (page.key === 'legislation') {
     return { kind: 'legislation', id, guid }
-  }
-
-  if (!isAnyOf(parsedUrl.pathname, '/MeetingDetail.aspx')) {
-    return
   }
 
   return { kind: 'meeting', id, guid }
@@ -156,7 +123,7 @@ export const getLegistarPage = (
 export const legistarHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (
-      !isSubdomainOf(url, domains) &&
+      !legistar.pages.read(url) &&
       !hasMarker(content, headers, { html: isLegistarHtml, headers: isLegistarHeaders })
     ) {
       return false

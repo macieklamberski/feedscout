@@ -1,4 +1,5 @@
 import { friendica } from 'feedintel'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -6,8 +7,6 @@ import { hasMarker, hasMetaContent } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 export type FriendicaUrl = { kind: 'profile'; username: string }
-
-const profileRegex = /^\/(?:profile\/|u\/|~)([^/]+)/i
 
 const feeds = withHintLabels(friendica.feeds)
 
@@ -20,13 +19,13 @@ export const isFriendicaHeaders = (headers: Headers): boolean => {
 }
 
 export const parseFriendicaUrl = (url: string): FriendicaUrl | undefined => {
-  const username = new URL(url).pathname.match(profileRegex)?.[1]
+  const page = friendica.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
 
-  if (!username) {
+  if (!page) {
     return
   }
 
-  return { kind: 'profile', username }
+  return { kind: 'profile', username: page.params.username }
 }
 
 export const friendicaHandler: PlatformHandler = {

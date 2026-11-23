@@ -1,7 +1,6 @@
 import { isProgrammer } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: comments, messages, posts, site.
@@ -11,21 +10,20 @@ export type IsProgrammerUrl =
   | { kind: 'blog'; blog: string }
   | { kind: 'post'; blog: string; postId: string }
 
-const domains = isProgrammer.hosts.tenants
-
 // An unregistered name answers the sign-up page, served from the platform's own index account.
 const signUpPageRegex = /\/user_files\/index\/config\/favicon\.ico"/i
 
 const feeds = withHintLabels(isProgrammer.feeds)
 
 export const parseIsProgrammerUrl = (url: string): IsProgrammerUrl | undefined => {
-  const page = isProgrammer.pages.read(url)
   // A deeper host such as www.{blog}.is-programmer.com answers the sign-up page.
-  const blog = getTenantSubdomain(url, domains)
+  const page = isProgrammer.pages.read(url)
 
-  if (!page || !blog) {
+  if (!page) {
     return
   }
+
+  const { blog } = page.params
 
   if (page.key === 'post') {
     return { kind: 'post', blog, postId: page.params.postId }

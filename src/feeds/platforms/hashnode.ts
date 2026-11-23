@@ -1,18 +1,15 @@
 import { hashnode } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type HashnodeUrl = { kind: 'blog' }
 
-const domains = hashnode.hosts.tenants
-
 const feeds = withHintLabels(hashnode.feeds)
 
 export const parseHashnodeUrl = (url: string): HashnodeUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  if (!hashnode.pages.read(url)) {
     return
   }
 

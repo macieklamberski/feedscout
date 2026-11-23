@@ -1,19 +1,14 @@
 import { gancio } from 'feedintel'
-import { endsWithAnyOf, getAnyOf, getPathSegments, isAnyOf, parseUrl } from 'trousse'
+import { endsWithAnyOf, isAnyOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const customCssPathRegex = /\/custom_css$/i
-const trailingSlashesRegex = /(?<!\/)\/+$/
-
 export type GancioPage =
   | { kind: 'tag' | 'place' | 'collection'; rootUrl: string; value: string }
   | { kind: 'site'; rootUrl: string }
-
-const sections = ['tag', 'place', 'collection'] as const
 
 const feeds = withHintLabels(gancio.feeds)
 
@@ -23,7 +18,8 @@ const getGancioPage = (url: string, content: string | undefined): GancioPage | u
     return (
       element.name === 'link' &&
       isAnyOf(element.attribs.rel, 'stylesheet') &&
-      customCssPathRegex.test(element.attribs.href ?? '')
+      gancio.pages.read(parseUrl(element.attribs.href ?? '', url)?.href ?? '', { isAnyHost: true })
+        ?.key === 'stylesheet'
     )
   })
 
@@ -36,29 +32,27 @@ const getGancioPage = (url: string, content: string | undefined): GancioPage | u
     return
   }
 
-  const stylesheetUrl = parseUrl(link.attribs.href, url)
-  const { origin, pathname } = new URL(url)
-
-  if (!stylesheetUrl || stylesheetUrl.origin !== origin) {
-    return
-  }
-
-  const rootPath = stylesheetUrl.pathname
-    .replace(customCssPathRegex, '')
-    .replace(trailingSlashesRegex, '')
-
+  const stylesheetUrl = parseUrl(link.attribs.href, url)?.href ?? ''
+  const stylesheet = gancio.pages.read(stylesheetUrl, { isAnyHost: true })
   // The stylesheet counts only when its root holds the page.
-  if (!`${pathname}/`.startsWith(`${rootPath}/`)) {
+  const page = gancio.pages.read(url, { root: stylesheet?.params.root ?? '' })
+
+  if (!page) {
     return
   }
 
-  const rootUrl = `${origin}${rootPath}`
-  const [section, value] = getPathSegments(url).slice(getPathSegments(rootUrl).length)
-  const kind = getAnyOf(section, sections)
+  const { root: rootUrl, tag, place, collection } = page.params
 
-  // A place page is `/place/{id}/{name}`, and the feed takes the id.
-  if (value && kind) {
-    return { kind, rootUrl, value }
+  if (page.key === 'tag') {
+    return { kind: 'tag', rootUrl, value: tag }
+  }
+
+  if (page.key === 'place') {
+    return { kind: 'place', rootUrl, value: place }
+  }
+
+  if (page.key === 'collection') {
+    return { kind: 'collection', rootUrl, value: collection }
   }
 
   return { kind: 'site', rootUrl }

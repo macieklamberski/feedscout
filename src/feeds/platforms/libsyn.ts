@@ -1,7 +1,6 @@
 import { libsyn } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,8 +8,6 @@ export type LibsynUrl =
   | { kind: 'feed'; showId: string }
   | { kind: 'site'; showId: string }
   | { kind: 'podcast'; slug: string }
-
-const domains = libsyn.hosts.tenants
 
 const feeds = withHintLabels(libsyn.feeds)
 
@@ -29,13 +26,7 @@ export const parseLibsynUrl = (url: string): LibsynUrl | undefined => {
     return { kind: 'site', showId: page.params.showId }
   }
 
-  const slug = getTenantSubdomain(url, domains)
-
-  if (!slug) {
-    return
-  }
-
-  return { kind: 'podcast', slug }
+  return { kind: 'podcast', slug: page.params.slug }
 }
 
 export const libsynHandler: PlatformHandler = {

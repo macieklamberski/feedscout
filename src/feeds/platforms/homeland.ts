@@ -1,5 +1,4 @@
 import { homeland } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -9,8 +8,6 @@ import { getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js
 // Handler needed for: node.
 
 export type HomelandUrl = { kind: 'node'; node: string } | { kind: 'topics' }
-
-const nodePathRegex = /\/topics\/node(\d+)(?:\/|$)/i
 
 const feeds = withHintLabels(homeland.feeds)
 
@@ -23,16 +20,14 @@ export const isHomelandHeaders = (headers: Headers): boolean => {
 }
 
 export const parseHomelandUrl = (url: string): HomelandUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = homeland.pages.read(url, { isAnyHost: true })
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  const node = parsedUrl.pathname.match(nodePathRegex)?.[1]
-
-  if (node) {
-    return { kind: 'node', node }
+  if (page.key === 'node') {
+    return { kind: 'node', node: page.params.node }
   }
 
   return { kind: 'topics' }

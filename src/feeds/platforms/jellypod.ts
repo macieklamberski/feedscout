@@ -1,18 +1,15 @@
 import { jellypod } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type JellypodUrl = { kind: 'show' }
 
-const domains = jellypod.hosts.tenants
-
 const feeds = withHintLabels(jellypod.feeds)
 
 export const parseJellypodUrl = (url: string): JellypodUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  if (!jellypod.pages.read(url)) {
     return
   }
 

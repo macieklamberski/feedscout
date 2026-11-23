@@ -1,7 +1,6 @@
 import { itchio } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: devlog.
@@ -20,8 +19,6 @@ export type ItchioUrl =
   | { kind: 'section'; section: string }
   | { kind: 'home' }
 
-const domains = itchio.hosts.tenants
-
 const feeds = withHintLabels(itchio.feeds)
 
 export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
@@ -31,23 +28,16 @@ export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
     return
   }
 
-  const { game, tag, platform, genre, engine, filters } = page.params
+  const { creator, game, tag, platform, genre, engine, filters } = page.params
   // A sort and a section are read in any case, and their feeds are named in lower case.
   const sort = page.params.sort?.toLowerCase()
   const section = page.params.section?.toLowerCase()
 
-  if (page.key === 'game' || page.key === 'creator') {
-    // A creator's own host names the creator, as a listing path does on the main host.
-    const creator = page.params.creator ?? getTenantSubdomain(url, domains)
+  if (page.key === 'game') {
+    return { kind: 'game', creator, game }
+  }
 
-    if (!creator) {
-      return
-    }
-
-    if (page.key === 'game') {
-      return { kind: 'game', creator, game }
-    }
-
+  if (page.key === 'creator') {
     return { kind: 'creator', creator, sort }
   }
 
