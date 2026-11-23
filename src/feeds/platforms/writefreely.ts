@@ -18,10 +18,6 @@ export type WritefreelyPage = { blogPath: string; tag?: string }
 
 const feeds = withHintLabels(writefreely.feeds)
 
-const readPage = (url: string | undefined, root: string) => {
-  return writefreely.pages.read(url ?? '', { root })
-}
-
 // A single-user instance serves its one blog at the root, and the blog title links to it.
 const getBlogPath = (
   content: string | undefined,
@@ -35,7 +31,7 @@ const getBlogPath = (
   }
 
   const href = findDescendant(title, (element) => element.name === 'a')?.attribs.href
-  const link = readPage(parseUrl(href, url)?.href, root)
+  const link = writefreely.pages.read(parseUrl(href, url)?.href ?? '', { root })
 
   if (link?.key === 'home') {
     return '/'
@@ -69,7 +65,7 @@ const getWritefreelyPage = (
     return
   }
 
-  const page = readPage(url, parsedUrl.origin)
+  const page = writefreely.pages.read(url, { root: parsedUrl.origin })
   const blogPath = getBlogPath(content, url, parsedUrl.origin)
 
   // The root of a single-user instance is its blog, and a multi-user root redirects to /signup or
