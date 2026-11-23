@@ -23,21 +23,19 @@ export const parseMediumUrl = (url: string): MediumUrl | undefined => {
     return
   }
 
-  const { username, tag, publication, subdomain } = page.params
-
   if (page.key === 'user') {
-    return { kind: 'user', username }
+    return { kind: 'user', username: page.params.username }
   }
 
   if (page.key === 'tag') {
-    return { kind: 'tag', tag }
+    return { kind: 'tag', tag: page.params.tag }
   }
 
   if (page.key === 'publication') {
-    return { kind: 'publication', publication, tag }
+    return { kind: 'publication', publication: page.params.publication, tag: page.params.tag }
   }
 
-  return { kind: 'subdomain', subdomain, tag }
+  return { kind: 'subdomain', subdomain: page.params.subdomain, tag: page.params.tag }
 }
 
 export const mediumHandler: PlatformHandler = {

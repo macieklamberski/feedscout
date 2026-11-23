@@ -20,8 +20,6 @@ export const parseObservableUrl = (url: string): ObservableUrl | undefined => {
     return
   }
 
-  const { owner, collection } = page.params
-
   if (page.key === 'recent') {
     return { kind: 'recent' }
   }
@@ -31,10 +29,10 @@ export const parseObservableUrl = (url: string): ObservableUrl | undefined => {
   }
 
   if (page.key === 'collection') {
-    return { kind: 'collection', owner, collection }
+    return { kind: 'collection', owner: page.params.owner, collection: page.params.collection }
   }
 
-  return { kind: 'user', owner }
+  return { kind: 'user', owner: page.params.owner }
 }
 
 export const observableHandler: PlatformHandler = {

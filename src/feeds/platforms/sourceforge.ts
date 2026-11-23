@@ -28,26 +28,27 @@ export const parseSourceforgeUrl = (url: string): SourceforgeUrl | undefined => 
     return
   }
 
-  const { project, forum, thread, tool, path } = page.params
+  const { project } = page.params
 
+  // The folder feed takes the path as one query value.
   if (page.key === 'files') {
-    return { kind: 'project', project, path: `/${path}` }
+    return { kind: 'project', project, path: `/${page.params.path.join('/')}` }
   }
 
   if (page.key === 'thread') {
-    return { kind: 'project', project, forum, thread }
+    return { kind: 'project', project, forum: page.params.forum, thread: page.params.thread }
   }
 
   if (page.key === 'forum') {
-    return { kind: 'project', project, forum }
+    return { kind: 'project', project, forum: page.params.forum }
   }
 
   if (page.key === 'tool-page') {
-    return { kind: 'project', project, tool, page: page.params.page }
+    return { kind: 'project', project, tool: page.params.tool, page: page.params.page }
   }
 
   if (page.key === 'tool') {
-    return { kind: 'project', project, tool }
+    return { kind: 'project', project, tool: page.params.tool }
   }
 
   return { kind: 'project', project }

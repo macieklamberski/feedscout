@@ -20,17 +20,15 @@ export const parseArenaUrl = (url: string): ArenaUrl | undefined => {
     return
   }
 
-  const { username, channel } = page.params
-
   if (page.key === 'editorial') {
     return { kind: 'editorial' }
   }
 
   if (page.key === 'channel') {
-    return { kind: 'channel', username, channel }
+    return { kind: 'channel', username: page.params.username, channel: page.params.channel }
   }
 
-  return { kind: 'profile', username }
+  return { kind: 'profile', username: page.params.username }
 }
 
 export const arenaHandler: PlatformHandler = {

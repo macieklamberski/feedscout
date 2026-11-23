@@ -20,10 +20,10 @@ export const parseNewswireUrl = (url: string): NewswireUrl | undefined => {
     return
   }
 
-  const { newsroom, beat } = page.params
+  const { newsroom } = page.params
 
   if (page.key === 'beat') {
-    return { kind: 'beat', newsroom, beat }
+    return { kind: 'beat', newsroom, beat: page.params.beat }
   }
 
   if (page.key === 'newsroom') {

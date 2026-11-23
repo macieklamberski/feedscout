@@ -24,22 +24,20 @@ export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {
     return
   }
 
-  const { tags, domain, username, period } = page.params
-
   if (page.key === 'tag') {
-    return { kind: 'tag', tags }
+    return { kind: 'tag', tags: page.params.tags }
   }
 
   if (page.key === 'domain') {
-    return { kind: 'domain', domain }
+    return { kind: 'domain', domain: page.params.domain }
   }
 
   if (page.key === 'user') {
-    return { kind: 'user', username }
+    return { kind: 'user', username: page.params.username }
   }
 
   if (page.key === 'top') {
-    return { kind: 'top', period }
+    return { kind: 'top', period: page.params.period }
   }
 
   if (page.key === 'newest') {

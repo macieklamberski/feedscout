@@ -18,14 +18,12 @@ export const parseGhostUrl = (url: string): GhostUrl | undefined => {
     return
   }
 
-  const { tag, author } = page.params
-
   if (page.key === 'tag') {
-    return { kind: 'tag', tag }
+    return { kind: 'tag', tag: page.params.tag }
   }
 
   if (page.key === 'author') {
-    return { kind: 'author', author }
+    return { kind: 'author', author: page.params.author }
   }
 
   return { kind: 'blog' }

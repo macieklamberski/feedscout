@@ -22,14 +22,12 @@ export const parseZennUrl = (url: string): ZennUrl | undefined => {
     return
   }
 
-  const { topic, publication, username } = page.params
-
   if (page.key === 'topic') {
-    return { kind: 'topic', topic }
+    return { kind: 'topic', topic: page.params.topic }
   }
 
   if (page.key === 'publication') {
-    return { kind: 'publication', publication }
+    return { kind: 'publication', publication: page.params.publication }
   }
 
   if (page.key === 'home') {
@@ -37,10 +35,10 @@ export const parseZennUrl = (url: string): ZennUrl | undefined => {
   }
 
   if (page.key === 'post') {
-    return { kind: 'post', username }
+    return { kind: 'post', username: page.params.username }
   }
 
-  return { kind: 'user', username }
+  return { kind: 'user', username: page.params.username }
 }
 
 export const zennHandler: PlatformHandler = {

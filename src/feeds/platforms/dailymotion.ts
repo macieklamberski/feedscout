@@ -21,25 +21,23 @@ export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => 
     return
   }
 
-  const { id, query, channel, username } = page.params
-
   if (page.key === 'trending') {
     return { kind: 'trending' }
   }
 
   if (page.key === 'playlist') {
-    return { kind: 'playlist', playlistId: id }
+    return { kind: 'playlist', playlistId: page.params.id }
   }
 
   if (page.key === 'search') {
-    return { kind: 'search', query }
+    return { kind: 'search', query: page.params.query }
   }
 
   if (page.key === 'channel') {
-    return { kind: 'channel', channel }
+    return { kind: 'channel', channel: page.params.channel }
   }
 
-  return { kind: 'user', username }
+  return { kind: 'user', username: page.params.username }
 }
 
 export const dailymotionHandler: PlatformHandler = {

@@ -21,22 +21,20 @@ export const parseSteamUrl = (url: string): SteamUrl | undefined => {
     return
   }
 
-  const { appId, group, clanId, collection } = page.params
-
   if (page.key === 'storeApp' || page.key === 'app') {
-    return { kind: 'app', appId }
+    return { kind: 'app', appId: page.params.appId }
   }
 
   if (page.key === 'group') {
-    return { kind: 'group', group }
+    return { kind: 'group', group: page.params.group }
   }
 
   if (page.key === 'groupNews') {
-    return { kind: 'groupNews', clanId }
+    return { kind: 'groupNews', clanId: page.params.clanId }
   }
 
   if (page.key === 'collection') {
-    return { kind: 'collection', collection }
+    return { kind: 'collection', collection: page.params.collection }
   }
 
   // The store front and its news hub get the store-wide listings.

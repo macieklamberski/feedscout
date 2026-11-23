@@ -28,7 +28,13 @@ const getLinkedCategoryId = (url: string, href: string | undefined): string | un
     return
   }
 
-  return bigcommerce.feeds.read(feedUrl.href, { isAnyHost: true })?.params.categoryId
+  const feed = bigcommerce.feeds.read(feedUrl.href, { isAnyHost: true })
+
+  if (feed?.key !== 'category-new-products' && feed?.key !== 'category-popular-products') {
+    return
+  }
+
+  return feed.params.categoryId
 }
 
 const getCategoryId = (url: string, content: string | undefined): string | undefined => {

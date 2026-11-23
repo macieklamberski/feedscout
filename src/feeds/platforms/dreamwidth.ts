@@ -1,5 +1,4 @@
 import { dreamwidth } from 'feedintel'
-import { decodeSegment } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
@@ -58,7 +57,7 @@ export const dreamwidthHandler: PlatformHandler = {
     const host = parsed.username ? `${journal}.dreamwidth.org` : undefined
 
     if (parsed.tag) {
-      const tag = decodeSegment(parsed.tag) ?? parsed.tag
+      const { tag } = parsed
 
       return [
         page.getFeedEntry('posts-tag', { host, tag }, 'rss'),

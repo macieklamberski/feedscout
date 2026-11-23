@@ -30,14 +30,12 @@ export const parseNodebbUrl = (url: string): NodebbUrl | undefined => {
     return
   }
 
-  const { topicId, categoryId } = page.params
-
   if (page.key === 'topic') {
-    return { kind: 'topic', topicId, categoryId }
+    return { kind: 'topic', topicId: page.params.topicId, categoryId: page.params.categoryId }
   }
 
   if (page.key === 'category') {
-    return { kind: 'category', categoryId }
+    return { kind: 'category', categoryId: page.params.categoryId }
   }
 
   return { kind: 'forum' }

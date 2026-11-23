@@ -1,5 +1,5 @@
 import { peertube } from 'feedintel'
-import { decodeSegment, includesAnyOf, parseUrl } from 'trousse'
+import { includesAnyOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -43,14 +43,12 @@ export const parsePeertubeUrl = (url: string): PeertubeUrl | undefined => {
     return
   }
 
-  const { name } = page.params
-
   if (page.key === 'channel') {
-    return { kind: 'channel', name }
+    return { kind: 'channel', name: page.params.name }
   }
 
   if (page.key === 'account') {
-    return { kind: 'account', name }
+    return { kind: 'account', name: page.params.name }
   }
 
   return { kind: 'instance' }
@@ -74,10 +72,7 @@ export const peertubeHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'channel') {
-      const params = {
-        name: decodeSegment(parsed.name) ?? parsed.name,
-        channelId: getPodcastChannelId(url, content),
-      }
+      const params = { name: parsed.name, channelId: getPodcastChannelId(url, content) }
 
       if (!params.channelId) {
         return [pageFeeds.getFeedEntry('channel', params), pageFeeds.getFeedEntry('instance')]
@@ -92,9 +87,7 @@ export const peertubeHandler: PlatformHandler = {
 
     if (parsed.kind === 'account') {
       return [
-        pageFeeds.getFeedEntry('account', {
-          name: decodeSegment(parsed.name) ?? parsed.name,
-        }),
+        pageFeeds.getFeedEntry('account', { name: parsed.name }),
         pageFeeds.getFeedEntry('instance'),
       ]
     }

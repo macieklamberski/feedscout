@@ -19,10 +19,10 @@ export const parsePinterestUrl = (url: string): PinterestUrl | undefined => {
     return
   }
 
-  const { username, board } = page.params
+  const { username } = page.params
 
   if (page.key === 'board') {
-    return { kind: 'board', username, board }
+    return { kind: 'board', username, board: page.params.board }
   }
 
   if (page.key === 'tab') {

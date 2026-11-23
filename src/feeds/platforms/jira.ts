@@ -41,18 +41,19 @@ const getJiraPage = (url: string, content: string | undefined): JiraPage | undef
   const base = jira.pages.read(url, { root: `${parsedUrl.origin}${contextPath}` })
   const path = jira.pages.read(url, { isAnyHost: true })
 
-  if (!base) {
+  // Under a root only the rows that open with it read the URL, which the cloud row does not.
+  if (!base || base.key === 'cloud') {
     return
   }
 
-  const { key, number } = path?.params ?? {}
-  const pathKey = path?.key === 'issue' || path?.key === 'project' ? key : undefined
+  const cloud = jira.pages.read(url)
+  const pathKey = path?.key === 'issue' || path?.key === 'project' ? path.params.key : undefined
 
   return {
     baseUrl: base.params.root,
-    tenant: jira.pages.read(url)?.params.tenant,
+    tenant: cloud?.key === 'cloud' ? cloud.params.tenant : undefined,
     projectKey: pathKey ?? getMetaContent(content ?? '', 'ajs-project-key'),
-    issueKey: path?.key === 'issue' ? `${key}-${number}` : undefined,
+    issueKey: path?.key === 'issue' ? `${path.params.key}-${path.params.number}` : undefined,
   }
 }
 

@@ -25,13 +25,11 @@ export const parseBubblelifeUrl = (url: string): BubblelifeUrl | undefined => {
     return
   }
 
-  const { community, id } = page.params
-
   if (page.key === 'community') {
-    return { kind: 'community', community }
+    return { kind: 'community', community: page.params.community }
   }
 
-  return { kind: 'library', community, libraryId: id }
+  return { kind: 'library', community: page.params.community, libraryId: page.params.id }
 }
 
 type FeedLink = ReturnType<typeof bubblelife.feeds.read>
@@ -112,13 +110,13 @@ export const getBubblelifePage = (
 
     return page?.key !== 'community' && isSameText(page?.params.community, parsed.community)
   })
-  const libraryId = readPageLink(url, libraryLink?.attribs.href)?.params.id
+  const libraryPage = readPageLink(url, libraryLink?.attribs.href)
 
-  if (!libraryId) {
+  if (!libraryPage || libraryPage.key === 'community') {
     return
   }
 
-  return { kind: 'community', feedId: libraryId }
+  return { kind: 'community', feedId: libraryPage.params.id }
 }
 
 export const bubblelifeHandler: PlatformHandler = {

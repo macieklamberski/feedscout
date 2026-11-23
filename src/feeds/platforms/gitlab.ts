@@ -31,27 +31,30 @@ export const parseGitlabUrl = (url: string): GitlabUrl | undefined => {
     return
   }
 
-  const { group, user, namespace, project: projectPath, branch } = page.params
+  if (page.key === 'platform') {
+    return
+  }
 
   if (page.key === 'group') {
-    return { kind: 'namespace', namespace: group }
+    return { kind: 'namespace', namespace: page.params.group.join('/') }
   }
 
   if (page.key === 'user') {
-    return { kind: 'namespace', namespace: user }
+    return { kind: 'namespace', namespace: page.params.user }
   }
 
   if (page.key === 'namespace') {
-    return { kind: 'namespace', namespace }
+    return { kind: 'namespace', namespace: page.params.namespace }
   }
 
-  const [projectNamespace] = projectPath.split('/')
+  const { project } = page.params
+  const projectPath = project.join('/')
 
   if (page.key === 'branch') {
-    return { kind: 'project', namespace: projectNamespace, projectPath, branch }
+    return { kind: 'project', namespace: project[0], projectPath, branch: page.params.branch }
   }
 
-  return { kind: 'project', namespace: projectNamespace, projectPath }
+  return { kind: 'project', namespace: project[0], projectPath }
 }
 
 export const gitlabHandler: PlatformHandler = {

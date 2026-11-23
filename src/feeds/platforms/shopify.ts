@@ -22,10 +22,10 @@ export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {
     return
   }
 
-  const { handle, tag } = page.params
+  const { handle } = page.params
 
   if (page.key === 'blog-tag') {
-    return { kind: 'blog', handle, tag }
+    return { kind: 'blog', handle, tag: page.params.tag }
   }
 
   return { kind: 'blog', handle }

@@ -1,9 +1,11 @@
+import type { UrlHosts } from 'feedintel'
 import { DomUtils, parseDocument } from 'htmlparser2'
 import {
   anyWordMatchesAnyOf,
   escapeRegex,
   getSubdomain,
   isAnyOf,
+  isFunction,
   isHostname,
   isInteger,
   isSameText,
@@ -249,13 +251,47 @@ export const findUrls = (text: string): Array<string> => {
 const scriptSegmentRegex = /\/[^/]*\.(?:php(?:\/.*)?|html?)$/i
 const trailingSlashRegex = /\/$/
 
+// The labels in front of the tenant domain a host is under, as `blog.alice` for
+// `blog.alice.example.com`. A host check stands for the domains it accepts, so each parent domain
+// of the host is tried.
+export const getTenantLabels = (
+  url: string | URL,
+  domains: NonNullable<UrlHosts['tenants']>,
+): string | undefined => {
+  const hostname = parseUrl(url)?.hostname
+
+  if (!hostname) {
+    return
+  }
+
+  for (const domain of domains) {
+    if (!isFunction(domain)) {
+      const subdomain = getSubdomain(url, domain)
+
+      if (subdomain) {
+        return subdomain
+      }
+
+      continue
+    }
+
+    const labels = hostname.split('.')
+
+    for (let index = 1; index < labels.length; index++) {
+      if (domain(labels.slice(index).join('.'))) {
+        return labels.slice(0, index).join('.')
+      }
+    }
+  }
+}
+
 // The subdomain a platform gives one of its users: a single label other than `www`, which is the
 // platform's own site everywhere.
 export const getTenantSubdomain = (
   url: string | URL,
-  domains: Array<string | RegExp>,
+  domains: NonNullable<UrlHosts['tenants']>,
 ): string | undefined => {
-  const subdomain = getSubdomain(url, domains)
+  const subdomain = getTenantLabels(url, domains)
 
   if (!subdomain || subdomain.includes('.')) {
     return

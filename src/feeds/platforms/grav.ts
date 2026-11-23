@@ -50,7 +50,7 @@ export const parseGravUrl = (url: string): GravUrl | undefined => {
     return { kind: 'home' }
   }
 
-  return { kind: 'page', path: `/${page.params.path}` }
+  return { kind: 'page', path: `/${page.params.path.join('/')}` }
 }
 
 export const gravHandler: PlatformHandler = {

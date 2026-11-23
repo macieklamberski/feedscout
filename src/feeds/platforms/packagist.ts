@@ -21,14 +21,12 @@ export const parsePackagistUrl = (url: string): PackagistUrl | undefined => {
     return
   }
 
-  const { vendor, name } = page.params
-
   if (page.key === 'package') {
-    return { kind: 'package', vendor, name }
+    return { kind: 'package', vendor: page.params.vendor, name: page.params.name }
   }
 
   if (page.key === 'vendor') {
-    return { kind: 'vendor', vendor }
+    return { kind: 'vendor', vendor: page.params.vendor }
   }
 
   if (page.key === 'extensions') {

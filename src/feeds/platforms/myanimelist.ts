@@ -1,5 +1,4 @@
 import { myanimelist } from 'feedintel'
-import { decodeSegment } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -21,14 +20,12 @@ export const parseMyanimelistUrl = (url: string): MyanimelistUrl | undefined => 
     return
   }
 
-  const { username } = page.params
-
   if (page.key === 'profile') {
-    return { kind: 'profile', username }
+    return { kind: 'profile', username: page.params.username }
   }
 
   if (page.key === 'user') {
-    return { kind: 'user', username }
+    return { kind: 'user', username: page.params.username }
   }
 
   if (page.key === 'featured') {
@@ -60,7 +57,7 @@ export const myanimelistHandler: PlatformHandler = {
       return [feeds.getFeedEntry('featured'), feeds.getFeedEntry('news')]
     }
 
-    const username = decodeSegment(parsed.username) ?? parsed.username
+    const { username } = parsed
 
     return [
       feeds.getFeedEntry('anime', { username }),

@@ -42,11 +42,11 @@ export const parseMastodonUrl = (url: string): MastodonUrl | undefined => {
     return
   }
 
-  const { username, tag } = page.params
-
   if (page.key === 'tag') {
-    return { kind: 'tag', tag }
+    return { kind: 'tag', tag: page.params.tag }
   }
+
+  const { username } = page.params
 
   if (page.key === 'replies') {
     return { kind: 'replies', username }
@@ -57,7 +57,7 @@ export const parseMastodonUrl = (url: string): MastodonUrl | undefined => {
   }
 
   if (page.key === 'tagged') {
-    return { kind: 'tagged', username, tag }
+    return { kind: 'tagged', username, tag: page.params.tag }
   }
 
   return { kind: 'profile', username }

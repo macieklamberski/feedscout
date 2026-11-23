@@ -17,13 +17,11 @@ export const parseLivedoorBlogUrl = (url: string): LivedoorBlogUrl | undefined =
     return
   }
 
-  const { blog, category } = page.params
-
   if (page.key === 'category') {
-    return { kind: 'category', blog, category }
+    return { kind: 'category', blog: page.params.blog, category: page.params.category }
   }
 
-  return { kind: 'blog', blog }
+  return { kind: 'blog', blog: page.params.blog }
 }
 
 export const livedoorBlogHandler: PlatformHandler = {

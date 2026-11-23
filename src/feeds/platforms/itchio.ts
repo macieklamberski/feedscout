@@ -28,41 +28,37 @@ export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
     return
   }
 
-  const { creator, game, tag, platform, genre, engine, filters } = page.params
-  // A sort and a section are read in any case, and their feeds are named in lower case.
-  const sort = page.params.sort?.toLowerCase()
-  const section = page.params.section?.toLowerCase()
-
   if (page.key === 'game') {
-    return { kind: 'game', creator, game }
+    return { kind: 'game', creator: page.params.creator, game: page.params.game }
   }
 
+  // A sort and a section are read in any case, and their feeds are named in lower case.
   if (page.key === 'creator') {
-    return { kind: 'creator', creator, sort }
+    return { kind: 'creator', creator: page.params.creator, sort: page.params.sort?.toLowerCase() }
   }
 
   if (page.key === 'tag') {
-    return { kind: 'tag', tag, sort }
+    return { kind: 'tag', tag: page.params.tag, sort: page.params.sort?.toLowerCase() }
   }
 
   if (page.key === 'listing') {
-    return { kind: 'listing', filters }
+    return { kind: 'listing', filters: page.params.filters.join('/') }
   }
 
   if (page.key === 'platform') {
-    return { kind: 'platform', platform }
+    return { kind: 'platform', platform: page.params.platform }
   }
 
   if (page.key === 'genre') {
-    return { kind: 'genre', genre }
+    return { kind: 'genre', genre: page.params.genre }
   }
 
   if (page.key === 'madeWith') {
-    return { kind: 'madeWith', engine }
+    return { kind: 'madeWith', engine: page.params.engine }
   }
 
   if (page.key === 'games') {
-    return { kind: 'games', sort }
+    return { kind: 'games', sort: page.params.sort?.toLowerCase() }
   }
 
   if (page.key === 'devlogs') {
@@ -70,7 +66,7 @@ export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
   }
 
   if (page.key === 'section') {
-    return { kind: 'section', section }
+    return { kind: 'section', section: page.params.section.toLowerCase() }
   }
 
   return { kind: 'home' }

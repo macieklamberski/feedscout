@@ -21,10 +21,10 @@ export const parseMicroblogUrl = (url: string): MicroblogUrl | undefined => {
     return
   }
 
-  const { username, category } = page.params
+  const { username } = page.params
 
   if (page.key === 'category') {
-    return { kind: 'category', username, category }
+    return { kind: 'category', username, category: page.params.category }
   }
 
   if (page.key === 'archive') {

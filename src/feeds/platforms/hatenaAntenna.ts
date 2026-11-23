@@ -32,13 +32,11 @@ export const parseHatenaAntennaUrl = (url: string): HatenaAntennaUrl | undefined
     return
   }
 
-  const { username, groupId } = page.params
-
   if (page.key === 'group') {
-    return { kind: 'group', username, groupId }
+    return { kind: 'group', username: page.params.username, groupId: page.params.groupId }
   }
 
-  return { kind: 'antenna', username }
+  return { kind: 'antenna', username: page.params.username }
 }
 
 export const getHatenaAntennaPage = (

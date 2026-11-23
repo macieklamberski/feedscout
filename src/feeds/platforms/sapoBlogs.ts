@@ -30,8 +30,16 @@ export const parseSapoBlogsUrl = (url: string): SapoBlogsUrl | undefined => {
   }
 
   if (page.key === 'tag') {
-    // Tag paths spell a space as a plus.
-    return { kind: 'tag', blog, tag: page.params.tag.replaceAll('+', ' ') }
+    const { tag } = page.params
+
+    // Tag paths spell a space as a plus, and a tag can hold a slash.
+    if (Array.isArray(tag)) {
+      return { kind: 'tag', blog, tag: tag.join('/').replaceAll('+', ' ') }
+    }
+
+    if (tag) {
+      return { kind: 'tag', blog, tag }
+    }
   }
 
   return { kind: 'blog', blog }

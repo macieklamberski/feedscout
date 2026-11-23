@@ -41,18 +41,18 @@ const getGancioPage = (url: string, content: string | undefined): GancioPage | u
     return
   }
 
-  const { root: rootUrl, tag, place, collection } = page.params
+  const rootUrl = page.params.root
 
   if (page.key === 'tag') {
-    return { kind: 'tag', rootUrl, value: tag }
+    return { kind: 'tag', rootUrl, value: page.params.tag }
   }
 
   if (page.key === 'place') {
-    return { kind: 'place', rootUrl, value: place }
+    return { kind: 'place', rootUrl, value: page.params.place }
   }
 
   if (page.key === 'collection') {
-    return { kind: 'collection', rootUrl, value: collection }
+    return { kind: 'collection', rootUrl, value: page.params.collection }
   }
 
   return { kind: 'site', rootUrl }

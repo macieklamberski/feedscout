@@ -101,7 +101,8 @@ export const blogspotHandler: PlatformHandler = {
 
     // A blog's name builds its feeds on blogspot.com. Without one, as on a blog's own domain,
     // they are built on the page's host.
-    const blog = blogspot.pages.read(url)?.params.blog
+    const blogPage = blogspot.pages.read(url)
+    const blog = blogPage?.key === 'blog' ? blogPage.params.blog : undefined
     const params = { blog }
 
     if (page.kind === 'label') {

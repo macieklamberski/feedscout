@@ -26,8 +26,6 @@ export const parseHuffdufferUrl = (url: string): HuffdufferUrl | undefined => {
     return
   }
 
-  const { username, id, query } = page.params
-
   if (page.key === 'home') {
     return { kind: 'home' }
   }
@@ -37,19 +35,21 @@ export const parseHuffdufferUrl = (url: string): HuffdufferUrl | undefined => {
   }
 
   if (page.key === 'search') {
-    return { kind: 'search', query }
+    return { kind: 'search', query: page.params.query }
   }
+
+  const { username } = page.params
 
   if (page.key === 'collective') {
     return { kind: 'collective', username }
   }
 
   if (page.key === 'related') {
-    return { kind: 'related', username, id }
+    return { kind: 'related', username, id: page.params.id }
   }
 
   if (page.key === 'huffduff') {
-    return { kind: 'huffduff', username, id }
+    return { kind: 'huffduff', username, id: page.params.id }
   }
 
   return { kind: 'profile', username }
@@ -70,13 +70,17 @@ export const getHuffdufferPage = (
   // Usernames match in any case, and the page links its feeds with the account's own spelling:
   // `/bluetyson` links `/BlueTyson/rss`.
   const getLinkedUsername = (href: string | undefined): string | undefined => {
-    const linked = huffduffer.pages.read(href ?? '')?.params.username
+    const linked = huffduffer.pages.read(href ?? '')
 
-    if (!linked || !isAnyOf(linked, parsed.username)) {
+    if (!linked || linked.key === 'home' || linked.key === 'popular' || linked.key === 'search') {
       return
     }
 
-    return linked
+    if (!isAnyOf(linked.params.username, parsed.username)) {
+      return
+    }
+
+    return linked.params.username
   }
   const link = findElement(content, (element) => {
     return getLinkedUsername(element.attribs.href) !== undefined

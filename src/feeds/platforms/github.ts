@@ -27,26 +27,30 @@ export const parseGithubUrl = (url: string): GithubUrl | undefined => {
     return
   }
 
-  const { owner, repo, org, category, branch, path } = page.params
-
   if (page.key === 'user') {
-    return { kind: 'user', owner }
+    return { kind: 'user', owner: page.params.owner }
   }
 
   if (page.key === 'discussions') {
-    return { kind: 'discussions', org, discussionCategory: category }
+    return { kind: 'discussions', org: page.params.org, discussionCategory: page.params.category }
   }
+
+  const { owner, repo } = page.params
 
   if (page.key === 'repo-wiki') {
     return { kind: 'repo', owner, repo, section: 'wiki' }
   }
 
   if (page.key === 'repo-discussions') {
-    return { kind: 'repo', owner, repo, section: 'discussions', discussionCategory: category }
+    const discussionCategory = page.params.category
+
+    return { kind: 'repo', owner, repo, section: 'discussions', discussionCategory }
   }
 
-  if (path) {
-    return { kind: 'repo', owner, repo, file: { branch, path } }
+  const { branch, path } = page.params
+
+  if (branch && path) {
+    return { kind: 'repo', owner, repo, file: { branch, path: path.join('/') } }
   }
 
   return { kind: 'repo', owner, repo, branch }

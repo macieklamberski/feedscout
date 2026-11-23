@@ -18,18 +18,16 @@ export const parseFlipboardUrl = (url: string): FlipboardUrl | undefined => {
     return
   }
 
-  const { username, magazine, topic } = page.params
-
   if (page.key === 'topic') {
-    return { kind: 'topic', topic }
+    return { kind: 'topic', topic: page.params.topic }
   }
 
   if (page.key === 'profile') {
-    return { kind: 'profile', username }
+    return { kind: 'profile', username: page.params.username }
   }
 
   // Storyboards share the magazine URL shape and its .rss feed.
-  return { kind: 'magazine', username, magazine }
+  return { kind: 'magazine', username: page.params.username, magazine: page.params.magazine }
 }
 
 export const flipboardHandler: PlatformHandler = {

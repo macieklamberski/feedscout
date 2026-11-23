@@ -21,14 +21,14 @@ export const parseCppblogUrl = (url: string): CppblogUrl | undefined => {
     return
   }
 
-  const { username, categoryId, favoriteId } = page.params
+  const { username } = page.params
 
   if (page.key === 'category') {
-    return { kind: 'category', username, categoryId }
+    return { kind: 'category', username, categoryId: page.params.categoryId }
   }
 
   if (page.key === 'favorite') {
-    return { kind: 'favorite', username, favoriteId }
+    return { kind: 'favorite', username, favoriteId: page.params.favoriteId }
   }
 
   return { kind: 'blog', username }

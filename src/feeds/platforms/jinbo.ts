@@ -22,19 +22,19 @@ export const parseJinboUrl = (url: string): JinboUrl | undefined => {
     return
   }
 
-  const { username, categoryId, tag, postId } = page.params
+  const { username } = page.params
 
   if (page.key === 'category') {
-    return { kind: 'category', username, categoryId }
+    return { kind: 'category', username, categoryId: page.params.categoryId }
   }
 
   if (page.key === 'tag') {
-    return { kind: 'tag', username, tag }
+    return { kind: 'tag', username, tag: page.params.tag }
   }
 
   // A post page links the comments and trackbacks of that post.
   if (page.key === 'post') {
-    return { kind: 'post', username, postId }
+    return { kind: 'post', username, postId: page.params.postId }
   }
 
   return { kind: 'blog', username }

@@ -19,10 +19,10 @@ export const parseTildesUrl = (url: string): TildesUrl | undefined => {
     return
   }
 
-  const { group, tag } = page.params
+  const { tag } = page.params
 
   if (page.key === 'group') {
-    return { kind: 'group', group, tag }
+    return { kind: 'group', group: page.params.group, tag }
   }
 
   return { kind: 'home', tag }

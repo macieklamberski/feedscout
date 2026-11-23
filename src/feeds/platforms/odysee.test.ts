@@ -53,7 +53,7 @@ describe('parseOdyseeUrl', () => {
 
   it('should read a broken percent escape in a channel name as the text written', () => {
     const value = 'https://odysee.com/@%E0%A4%A'
-    const expected: OdyseeUrl = { kind: 'channel', name: '%25E0%25A4%25A' }
+    const expected: OdyseeUrl = { kind: 'channel', name: '%E0%A4%A' }
 
     expect(parseOdyseeUrl(value)).toEqual(expected)
   })

@@ -38,18 +38,21 @@ const getPhpbbPage = (url: string, content: string | undefined): PhpbbPage | und
     return
   }
 
-  const { root, forumId, topicId } = page.params
+  const { root } = page.params
+  const forumId = page.key === 'board' ? undefined : page.params.forumId
+  const topicId = page.key === 'topic' ? page.params.topicId : undefined
   // A post link, `viewtopic.php?p={id}`, names no topic, and the page's canonical link does.
   const canonicalLink = findElement(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'canonical'
   })
   const canonicalUrl = parseUrl(canonicalLink?.attribs.href, url)?.href ?? ''
   const canonicalPage = phpbb.pages.read(canonicalUrl, { isAnyHost: true })
+  const canonicalTopicId = canonicalPage?.key === 'topic' ? canonicalPage.params.topicId : undefined
 
   return {
     boardUrl: root,
     forumId,
-    topicId: topicId ?? canonicalPage?.params.topicId,
+    topicId: topicId ?? canonicalTopicId,
   }
 }
 

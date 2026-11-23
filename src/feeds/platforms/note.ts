@@ -22,25 +22,23 @@ export const parseNoteUrl = (url: string): NoteUrl | undefined => {
     return
   }
 
-  const { tag, username, magazine } = page.params
-
   if (page.key === 'hashtag') {
-    return { kind: 'hashtag', tag }
+    return { kind: 'hashtag', tag: page.params.tag }
   }
 
   if (page.key === 'magazine') {
-    return { kind: 'magazine', username, magazine }
+    return { kind: 'magazine', username: page.params.username, magazine: page.params.magazine }
   }
 
   if (page.key === 'note') {
-    return { kind: 'note', username }
+    return { kind: 'note', username: page.params.username }
   }
 
   if (page.key === 'home') {
     return { kind: 'home' }
   }
 
-  return { kind: 'user', username }
+  return { kind: 'user', username: page.params.username }
 }
 
 export const noteHandler: PlatformHandler = {

@@ -19,10 +19,10 @@ export const parseTwodayUrl = (url: string): TwodayUrl | undefined => {
     return
   }
 
-  const { blog, topic } = page.params
+  const { blog } = page.params
 
   if (page.key === 'topic') {
-    return { kind: 'topic', blog, topic }
+    return { kind: 'topic', blog, topic: page.params.topic }
   }
 
   return { kind: 'blog', blog }

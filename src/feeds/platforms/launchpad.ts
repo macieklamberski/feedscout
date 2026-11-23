@@ -35,36 +35,43 @@ export const parseLaunchpadUrl = (url: string): LaunchpadUrl | undefined => {
     return
   }
 
-  const { bugId, owner, project, branch, distribution, series, sourcePackage, username } =
-    page.params
-
   switch (page.key) {
     case 'home':
       return { kind: 'home', application: 'main' }
     case 'bugsHome':
       return { kind: 'home', application: 'bugs' }
     case 'bug':
-      return { kind: 'bug', bugId }
-    case 'branch':
+      return { kind: 'bug', bugId: page.params.bugId }
+    case 'branch': {
+      const { owner, project, branch, distribution, series, sourcePackage } = page.params
+
       if (project) {
         return { kind: 'branch', owner, project, branch }
       }
 
+      if (!distribution || !series || !sourcePackage) {
+        return
+      }
+
       return { kind: 'branch', owner, distribution, series, sourcePackage, branch }
-    case 'sourcePackage':
+    }
+    case 'sourcePackage': {
+      const { distribution, sourcePackage } = page.params
+
       return { kind: 'sourcePackage', distribution, sourcePackage }
+    }
     case 'person':
-      return { kind: 'person', application: 'main', username }
+      return { kind: 'person', application: 'main', username: page.params.username }
     case 'bugsPerson':
-      return { kind: 'person', application: 'bugs', username }
+      return { kind: 'person', application: 'bugs', username: page.params.username }
     case 'codePerson':
-      return { kind: 'person', application: 'code', username }
+      return { kind: 'person', application: 'code', username: page.params.username }
     case 'project':
-      return { kind: 'project', application: 'main', project }
+      return { kind: 'project', application: 'main', project: page.params.project }
     case 'bugsProject':
-      return { kind: 'project', application: 'bugs', project }
+      return { kind: 'project', application: 'bugs', project: page.params.project }
     case 'codeProject':
-      return { kind: 'project', application: 'code', project }
+      return { kind: 'project', application: 'code', project: page.params.project }
   }
 }
 

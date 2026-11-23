@@ -23,11 +23,11 @@ export const parseGithubGistUrl = (url: string): GithubGistUrl | undefined => {
     return
   }
 
-  const { username } = page.params
-
   if (page.key === 'discover') {
     return { kind: 'discover' }
   }
+
+  const { username } = page.params
 
   if (page.key === 'starred') {
     return { kind: 'starred', username }

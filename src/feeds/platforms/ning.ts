@@ -28,18 +28,16 @@ export const parseNingUrl = (url: string): NingUrl | undefined => {
     return
   }
 
-  const { topic, group } = page.params
-
-  if (page.key === 'topic' && group) {
-    return { kind: 'topic', topic, group }
+  if (page.key === 'topic' && page.params.group) {
+    return { kind: 'topic', topic: page.params.topic, group: page.params.group }
   }
 
   if (page.key === 'topic') {
-    return { kind: 'topic', topic }
+    return { kind: 'topic', topic: page.params.topic }
   }
 
   if (page.key === 'group') {
-    return { kind: 'group', group }
+    return { kind: 'group', group: page.params.group }
   }
 
   return { kind: 'home' }

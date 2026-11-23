@@ -41,7 +41,7 @@ describe('parseVelogUrl', () => {
 
   it('should read a broken percent escape in a username as the text written', () => {
     const value = 'https://velog.io/@%E0%A4%A'
-    const expected: VelogUrl = { kind: 'user', username: '%25E0%25A4%25A' }
+    const expected: VelogUrl = { kind: 'user', username: '%E0%A4%A' }
 
     expect(parseVelogUrl(value)).toEqual(expected)
   })

@@ -32,14 +32,16 @@ const readGiteaUrl = (url: string, root: string): GiteaPage | undefined => {
     return
   }
 
-  const { owner, repo, branchPath } = page.params
+  const { owner } = page.params
 
   if (page.key === 'user') {
     return { kind: 'user', owner, root: page.params.root }
   }
 
+  const { repo, branchPath } = page.params
+
   if (branchPath) {
-    return { kind: 'repo', owner, repo, branchPath, root: page.params.root }
+    return { kind: 'repo', owner, repo, branchPath: branchPath.join('/'), root: page.params.root }
   }
 
   return { kind: 'repo', owner, repo, root: page.params.root }

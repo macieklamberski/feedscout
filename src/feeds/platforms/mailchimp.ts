@@ -19,14 +19,12 @@ export const parseMailchimpUrl = (url: string): MailchimpUrl | undefined => {
     return
   }
 
-  const { userId, listId } = page.params
-
   if (page.key === 'archive') {
-    return { kind: 'archive', userId, listId }
+    return { kind: 'archive', userId: page.params.userId, listId: page.params.listId }
   }
 
   // Outside the archive page the id names one campaign, which has no feed.
-  return { kind: 'campaign', userId }
+  return { kind: 'campaign', userId: page.params.userId }
 }
 
 // A campaign page links its archive and feed, whose id is the list the campaign went to.

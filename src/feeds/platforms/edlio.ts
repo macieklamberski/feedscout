@@ -43,7 +43,8 @@ const getEdlioPage = (url: string, content: string | undefined): EdlioPage => {
   const classLink = findElement(content, (element) => {
     return element.name === 'a' && readLinkedFeed(url, element.attribs.href)?.key === 'assignments'
   })
-  const classId = readLinkedFeed(url, classLink?.attribs.href)?.params.classId
+  const classFeed = readLinkedFeed(url, classLink?.attribs.href)
+  const classId = classFeed?.key === 'assignments' ? classFeed.params.classId : undefined
 
   if (classId && classPage?.params.classId === classId) {
     return { kind: 'class', classId }
@@ -54,9 +55,13 @@ const getEdlioPage = (url: string, content: string | undefined): EdlioPage => {
       element.name === 'link' && readLinkedFeed(url, element.attribs.href)?.key === 'news-category'
     )
   })
-  const categoryId = readLinkedFeed(url, newsLink?.attribs.href)?.params.categoryId
+  const newsFeed = readLinkedFeed(url, newsLink?.attribs.href)
 
-  return { kind: 'site', categoryId }
+  if (newsFeed?.key !== 'news-category') {
+    return { kind: 'site' }
+  }
+
+  return { kind: 'site', categoryId: newsFeed.params.categoryId }
 }
 
 export const edlioHandler: PlatformHandler = {

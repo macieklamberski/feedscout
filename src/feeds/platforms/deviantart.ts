@@ -22,29 +22,27 @@ export const parseDeviantartUrl = (url: string): DeviantartUrl | undefined => {
     return
   }
 
-  const { tag, username, folderId } = page.params
-
   if (page.key === 'dailyDeviations') {
     return { kind: 'dailyDeviations' }
   }
 
   if (page.key === 'tag') {
-    return { kind: 'tag', tag }
+    return { kind: 'tag', tag: page.params.tag }
   }
 
   if (page.key === 'favourites') {
-    return { kind: 'favourites', username }
+    return { kind: 'favourites', username: page.params.username }
   }
 
   if (page.key === 'folder') {
-    return { kind: 'folder', username, folderId }
+    return { kind: 'folder', username: page.params.username, folderId: page.params.folderId }
   }
 
   if (page.key === 'journal') {
-    return { kind: 'journal', username }
+    return { kind: 'journal', username: page.params.username }
   }
 
-  return { kind: 'profile', username }
+  return { kind: 'profile', username: page.params.username }
 }
 
 export const deviantartHandler: PlatformHandler = {

@@ -1,7 +1,7 @@
 import { ucoz } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getCookieNames, hasMarker } from '../../common/utils.js'
+import { getCookieNames, getTenantLabels, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: forum, forum-section, publ.
@@ -27,7 +27,14 @@ export const isUcozHeaders = (headers: Headers): boolean => {
 }
 
 export const parseUcozUrl = (url: string): UcozUrl | undefined => {
-  if (!URL.canParse(url) || ucoz.pages.read(url)?.key === 'platform') {
+  if (!URL.canParse(url)) {
+    return
+  }
+
+  const hostPage = ucoz.pages.read(url)
+
+  // A host nested deeper under the platform's own domains is no site of it.
+  if (hostPage?.key === 'platform' || (!hostPage && getTenantLabels(url, ucoz.hosts.tenants))) {
     return
   }
 

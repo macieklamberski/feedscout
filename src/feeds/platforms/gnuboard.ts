@@ -40,7 +40,7 @@ export const getGnuboardPage = (
   }
 
   if (page.key !== 'page') {
-    if (page.params.board !== board) {
+    if (page.key !== 'board' || page.params.board !== board) {
       return
     }
 

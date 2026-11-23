@@ -21,14 +21,14 @@ export const parseBlogHuUrl = (url: string): BlogHuUrl | undefined => {
     return
   }
 
-  const { userId, blog, year, month, day, slug, tag } = page.params
-
   if (page.key === 'user') {
-    return { kind: 'user', userId }
+    return { kind: 'user', userId: page.params.userId }
   }
 
+  const { blog, year, month, day, slug, tag } = page.params
+
   // A post page links its comments feed. A tag page has a feed of the posts with that tag.
-  if (slug) {
+  if (year && month && day && slug) {
     return { kind: 'blog', blog, post: { year, month, day, slug } }
   }
 

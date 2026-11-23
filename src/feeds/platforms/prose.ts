@@ -23,10 +23,10 @@ export const parseProseUrl = (url: string): ProseUrl | undefined => {
     return { kind: 'home' }
   }
 
-  const { username, tag } = page.params
+  const { username } = page.params
 
   if (page.key === 'tag') {
-    return { kind: 'tag', username, tag }
+    return { kind: 'tag', username, tag: page.params.tag }
   }
 
   return { kind: 'blog', username }

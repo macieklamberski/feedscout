@@ -20,14 +20,14 @@ export const parseSourcehutUrl = (url: string): SourcehutUrl | undefined => {
     return
   }
 
-  const { owner, repo, project } = page.params
+  const { owner } = page.params
 
   if (page.key === 'repo') {
-    return { kind: 'repo', owner, repo }
+    return { kind: 'repo', owner, repo: page.params.repo }
   }
 
   if (page.key === 'project') {
-    return { kind: 'project', owner, project }
+    return { kind: 'project', owner, project: page.params.project }
   }
 
   return { kind: 'user', owner }

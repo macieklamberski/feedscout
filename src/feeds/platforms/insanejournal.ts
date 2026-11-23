@@ -1,5 +1,4 @@
 import { insanejournal } from 'feedintel'
-import { decodeSegment } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { type PlatformFeedParams, withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
@@ -21,21 +20,21 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
     return
   }
 
-  const { journal, tag } = page.params
-
-  if (page.key === 'asylum') {
-    return { kind: 'asylum', asylum: journal, tag }
-  }
-
-  if (page.key === 'syndicated') {
-    return { kind: 'syndicated', feed: journal, tag }
-  }
+  const { tag } = page.params
 
   if (page.key === 'journal') {
     return { kind: 'journal', tag }
   }
 
-  return { kind: 'journal', username: journal, tag }
+  if (page.key === 'asylum') {
+    return { kind: 'asylum', asylum: page.params.journal, tag }
+  }
+
+  if (page.key === 'syndicated') {
+    return { kind: 'syndicated', feed: page.params.journal, tag }
+  }
+
+  return { kind: 'journal', username: page.params.journal, tag }
 }
 
 // The InsaneJournal engine serves every journal the same feeds, plus a tag's feeds on a tag page.
@@ -52,7 +51,7 @@ const getFeeds = (
     ]
   }
 
-  const tagParams = { ...params, tag: decodeSegment(tag) ?? tag }
+  const tagParams = { ...params, tag }
 
   return [
     table.getFeedEntry('posts-tag', tagParams, 'rss'),
