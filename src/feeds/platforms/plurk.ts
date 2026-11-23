@@ -1,5 +1,4 @@
 import { plurk } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -8,36 +7,20 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type PlurkUrl = { kind: 'post'; postId: string } | { kind: 'user'; username: string }
 
-const hosts = plurk.hosts.exact
-
 const feeds = withHintLabels(plurk.feeds)
 
 export const parsePlurkUrl = (url: string): PlurkUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = plurk.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const segments = getPathSegments(url)
-  const [mobileOrRoute] = segments
-  const isMobile = isAnyOf(mobileOrRoute, 'm')
-  const [route, value] = isMobile ? segments.slice(1) : segments
-
-  if (isAnyOf(route, 'p')) {
-    if (!value) {
-      return
-    }
-
-    return { kind: 'post', postId: value }
+  if (page.key === 'post') {
+    return { kind: 'post', postId: page.params.postId }
   }
 
-  const username = isAnyOf(route, 'u') ? value : route
-
-  // Plurk names carry no dots, so a dotted segment such as robots.txt is a file of the site.
-  if (!username || username.includes('.')) {
-    return
-  }
-
-  return { kind: 'user', username }
+  return { kind: 'user', username: page.params.username }
 }
 
 export const plurkHandler: PlatformHandler = {

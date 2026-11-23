@@ -1,57 +1,27 @@
 import { artstation } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf, isHostOrSubdomainOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Handler needed for: artwork, portfolio.
 
 export type ArtstationUrl = { kind: 'profile'; username: string } | { kind: 'artwork' }
 
-const domains = artstation.hosts.tenants
-const hosts = artstation.hosts.exact
-
 const feeds = withHintLabels(artstation.feeds)
 
+// A single artwork names its artist only in the page.
 export const parseArtstationUrl = (url: string): ArtstationUrl | undefined => {
-  if (!isHostOrSubdomainOf(url, domains)) {
+  const page = artstation.pages.read(url)
+
+  if (!page || page.key === 'project') {
     return
   }
 
-  const subdomain = getTenantSubdomain(url, domains)
-
-  // Subdomain form: {user}.artstation.com
-  if (!isHostOf(url, hosts)) {
-    if (!subdomain) {
-      return
-    }
-
-    return { kind: 'profile', username: subdomain }
+  if (page.key === 'profile') {
+    return { kind: 'profile', username: page.params.username }
   }
 
-  const [routeOrUsername, artworkId] = getPathSegments(url)
-
-  if (!routeOrUsername) {
-    return { kind: 'artwork' }
-  }
-
-  // Global artwork page: /artwork. A single artwork at /artwork/{id} names its artist only in the
-  // page.
-  if (isAnyOf(routeOrUsername, 'artwork')) {
-    if (artworkId) {
-      return
-    }
-
-    return { kind: 'artwork' }
-  }
-
-  // ArtStation names carry no dots, so a dotted segment such as robots.txt is a file of the site.
-  if (routeOrUsername.includes('.')) {
-    return
-  }
-
-  return { kind: 'profile', username: routeOrUsername }
+  return { kind: 'artwork' }
 }
 
 export const artstationHandler: PlatformHandler = {

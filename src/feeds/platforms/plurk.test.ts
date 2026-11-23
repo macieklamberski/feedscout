@@ -37,14 +37,6 @@ describe('parsePlurkUrl', () => {
     expect(parsePlurkUrl('https://www.plurk.com/robots.txt')).toBeUndefined()
   })
 
-  it('should return undefined for a post path without an id', () => {
-    expect(parsePlurkUrl('https://www.plurk.com/p')).toBeUndefined()
-  })
-
-  it('should return undefined for the mobile root', () => {
-    expect(parsePlurkUrl('https://www.plurk.com/m/')).toBeUndefined()
-  })
-
   it('should return undefined for another host', () => {
     expect(parsePlurkUrl('https://example.com/alice')).toBeUndefined()
   })

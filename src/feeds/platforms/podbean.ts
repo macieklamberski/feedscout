@@ -1,8 +1,6 @@
 import { podbean } from 'feedintel'
-import { isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: podcast.
@@ -10,20 +8,16 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type PodbeanUrl = { kind: 'podcast'; show: string }
 
-const domains = podbean.hosts.tenants
-// The feed host serves every show by path, so it names no show.
-const feedHosts = ['feed.podbean.com']
-
 const feeds = withHintLabels(podbean.feeds)
 
 export const parsePodbeanUrl = (url: string): PodbeanUrl | undefined => {
-  const show = getTenantSubdomain(url, domains)
+  const page = podbean.pages.read(url)
 
-  if (!show || isHostOf(url, feedHosts)) {
+  if (page?.key !== 'podcast') {
     return
   }
 
-  return { kind: 'podcast', show }
+  return { kind: 'podcast', show: page.params.show }
 }
 
 export const podbeanHandler: PlatformHandler = {
