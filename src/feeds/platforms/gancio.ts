@@ -25,12 +25,13 @@ const getGancioPage = (url: string, content: string | undefined): GancioPage | u
 
   // The layout also loads the events web component, which a theme cannot drop.
   const script = findElement(content, (element) => {
+    if (element.name !== 'script') {
+      return false
+    }
+
     const scriptUrl = parseUrl(element.attribs.src ?? '', url)?.href ?? ''
 
-    return (
-      element.name === 'script' &&
-      gancio.pages.read(scriptUrl, { isAnyHost: true })?.key === 'script'
-    )
+    return gancio.pages.read(scriptUrl, { isAnyHost: true })?.key === 'script'
   })
 
   if (!link?.attribs.href || !script) {
