@@ -1,24 +1,15 @@
 import { neocities } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: updates.
 
 export type NeocitiesUrl = { kind: 'site'; username: string }
 
-const domains = neocities.hosts.tenants
-
 const feeds = withHintLabels(neocities.feeds)
 
 export const parseNeocitiesUrl = (url: string): NeocitiesUrl | undefined => {
-  const subdomain = getTenantSubdomain(url, domains)
-
-  if (subdomain) {
-    return { kind: 'site', username: subdomain }
-  }
-
   const page = neocities.pages.read(url)
 
   if (!page) {
