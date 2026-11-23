@@ -1,5 +1,5 @@
 import { wix } from 'feedintel'
-import { getPathSegments, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -8,7 +8,6 @@ import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 export type WixUrl = { kind: 'freeSite'; site: string } | { kind: 'site' }
 
-const domains = wix.hosts.tenants
 const assetHosts = ['static.parastorage.com']
 
 const feeds = withHintLabels(wix.feeds)
@@ -29,22 +28,18 @@ export const isWixHeaders = (headers: Headers): boolean => {
   return headers.has('x-wix-request-id')
 }
 
-// A free site lives under a path on `{account}.wixsite.com` or `{account}.wixstudio.com`, whose
-// root answers 404.
 export const parseWixUrl = (url: string): WixUrl | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl) {
+  if (!parseUrl(url)) {
     return
   }
 
-  const [site] = getPathSegments(parsedUrl)
+  const page = wix.pages.read(url)
 
-  if (isSubdomainOf(parsedUrl, domains) && site) {
-    return { kind: 'freeSite', site }
+  if (!page) {
+    return { kind: 'site' }
   }
 
-  return { kind: 'site' }
+  return { kind: 'freeSite', site: page.params.site }
 }
 
 export const wixHandler: PlatformHandler = {

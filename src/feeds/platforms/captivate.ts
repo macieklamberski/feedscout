@@ -1,7 +1,6 @@
 import { captivate } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: podcast.
@@ -9,18 +8,16 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type CaptivateUrl = { kind: 'show'; slug: string }
 
-const domains = captivate.hosts.tenants
-
 const feeds = withHintLabels(captivate.feeds)
 
 export const parseCaptivateUrl = (url: string): CaptivateUrl | undefined => {
-  const slug = getTenantSubdomain(url, domains)
+  const page = captivate.pages.read(url)
 
-  if (!slug) {
+  if (!page) {
     return
   }
 
-  return { kind: 'show', slug }
+  return { kind: 'show', slug: page.params.slug }
 }
 
 export const captivateHandler: PlatformHandler = {
