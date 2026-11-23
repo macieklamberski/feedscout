@@ -1,5 +1,5 @@
 import { eklablog } from 'feedintel'
-import { isHostOf, resolveUrl } from 'trousse'
+import { resolveUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -10,12 +10,10 @@ import { findElement, hasMarker } from '../../common/utils.js'
 
 export type EklablogUrl = { kind: 'blog' } | { kind: 'customDomain' }
 
-const connectHosts = ['connect.eklablog.com']
-
 const feeds = withHintLabels(eklablog.feeds)
 
 const isConnectScript = (src: string | undefined): boolean => {
-  return isHostOf(resolveUrl(src ?? '') ?? '', connectHosts)
+  return eklablog.pages.read(resolveUrl(src ?? '') ?? '')?.key === 'connect'
 }
 
 // Every blog page loads the login ping script from connect.eklablog.com, on a custom domain too.
@@ -36,7 +34,7 @@ export const parseEklablogUrl = (url: string): EklablogUrl | undefined => {
     return { kind: 'customDomain' }
   }
 
-  if (page.key === 'platform') {
+  if (page.key !== 'blog') {
     return
   }
 

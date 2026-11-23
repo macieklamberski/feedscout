@@ -1,4 +1,5 @@
-import { isHostOf, parseJson } from 'trousse'
+import { applePodcasts } from 'feedintel'
+import { parseJson } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -8,9 +9,6 @@ import { composeHint } from '../../common/utils.js'
 export type ApplePodcastsUrl = { kind: 'podcast' }
 export type ApplePodcastsPage = { kind: 'podcast'; feedUrl: string }
 
-const hosts = ['podcasts.apple.com']
-
-const podcastRegex = /^(?:\/[^/]+)?\/podcast\/(?:[^/]+\/)?id\d+(?:\/|$)/i
 const feedUrlRegex = /"feedUrl"\s*:\s*"([^"]+)"/
 
 // The value is a JSON string, which may write `/` as `\/` and `&` as `\u0026`.
@@ -24,9 +22,8 @@ const extractFeedUrlFromContent = (content: string): string | undefined => {
   return parseJson<string>(`"${value}"`) ?? value
 }
 
-// Podcast pages: /{locale}/podcast/{name}/id{number}, locale and name optional.
 export const parseApplePodcastsUrl = (url: string): ApplePodcastsUrl | undefined => {
-  if (!isHostOf(url, hosts) || !podcastRegex.test(new URL(url).pathname)) {
+  if (!applePodcasts.pages.read(url)) {
     return
   }
 

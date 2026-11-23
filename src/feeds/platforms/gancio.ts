@@ -1,5 +1,5 @@
 import { gancio } from 'feedintel'
-import { endsWithAnyOf, isAnyOf, parseUrl } from 'trousse'
+import { isAnyOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
@@ -25,7 +25,12 @@ const getGancioPage = (url: string, content: string | undefined): GancioPage | u
 
   // The layout also loads the events web component, which a theme cannot drop.
   const script = findElement(content, (element) => {
-    return element.name === 'script' && endsWithAnyOf(element.attribs.src, '/gancio-events.es.js')
+    const scriptUrl = parseUrl(element.attribs.src ?? '', url)?.href ?? ''
+
+    return (
+      element.name === 'script' &&
+      gancio.pages.read(scriptUrl, { isAnyHost: true })?.key === 'script'
+    )
   })
 
   if (!link?.attribs.href || !script) {

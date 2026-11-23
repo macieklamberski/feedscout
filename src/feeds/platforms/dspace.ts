@@ -1,5 +1,6 @@
 import { dspace } from 'feedintel'
-import { endsWithAnyOf, isAnyOf, isHttpUrl, isString, parseUrl } from 'trousse'
+import { endsWithAnyOf, isHttpUrl, isString, parseUrl } from 'trousse'
+import type { DiscoverUriHint } from '../../common/types.js'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -16,17 +17,15 @@ import {
 // Generic finds: collection, community.
 // Handler needed for: site.
 
-type LegacyFormat = 'atom' | 'rdf' | 'rss'
-
 type LegacyKind = 'legacyCollection' | 'legacyCommunity' | 'legacyHome'
 
 type TransferState = {
   APP_CONFIG_STATE?: { rest?: { baseUrl?: unknown } }
 }
 
-type LegacyFeed = { uri: string; format: LegacyFormat }
+type LegacyFeed = { uri: string; format: DiscoverUriHint['format'] }
 
-type LegacyLink = LegacyFeed & { scope: string; title?: string }
+type LegacyLink = LegacyFeed & { isSite: boolean; title?: string }
 
 export type DspacePage =
   | { kind: 'collection'; restUrl: string; uuid: string }
@@ -35,8 +34,6 @@ export type DspacePage =
   | { kind: LegacyKind; feeds: Array<LegacyFeed> }
 
 const transferStateEntityRegex = /&([aglqs]);/g
-const legacyFeedPathRegex =
-  /\/feed\/(?<format>rss_1\.0|rss_2\.0|atom_1\.0)\/(?<scope>site|[^/]+\/[^/]+)$/i
 const generatorRegex = /^DSpace\b/
 
 // Angular before 16 escapes the transfer state with these entities, and later versions print JSON.
@@ -46,12 +43,6 @@ const transferStateEntities: Record<string, string> = {
   l: '<',
   q: '"',
   s: "'",
-}
-
-const legacyFormats: Record<string, LegacyFormat> = {
-  'atom_1.0': 'atom',
-  'rss_1.0': 'rdf',
-  'rss_2.0': 'rss',
 }
 
 // The JSPUI titles a scoped link with the kind in fixed English, and the XMLUI names the page's
@@ -115,16 +106,16 @@ const getLegacyLinks = (url: string, content: string): Array<LegacyLink> => {
 
   for (const link of links) {
     const feedUrl = parseUrl(link.attribs.href, url)
-    const { format, scope } = feedUrl?.pathname.match(legacyFeedPathRegex)?.groups ?? {}
+    const feed = feedUrl ? dspace.feeds.read(feedUrl.href, { isAnyHost: true }) : undefined
 
-    if (!feedUrl || !format || !scope) {
+    if (!feedUrl || feed?.row.variant !== 'legacy') {
       continue
     }
 
     legacyLinks.push({
       uri: feedUrl.href,
-      format: legacyFormats[format.toLowerCase()],
-      scope,
+      format: feed.row.format,
+      isSite: feed.key === 'site',
       title: link.attribs.title,
     })
   }
@@ -137,7 +128,7 @@ const getLegacyPage = (content: string, links: Array<LegacyLink>): DspacePage | 
   const [link] = links
   const feeds = links.map(({ uri, format }) => ({ uri, format }))
 
-  if (isAnyOf(link.scope, 'site')) {
+  if (link.isSite) {
     return { kind: 'legacyHome', feeds }
   }
 
