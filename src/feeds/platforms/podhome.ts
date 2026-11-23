@@ -1,5 +1,5 @@
 import { podhome } from 'feedintel'
-import { isHostOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElements } from '../../common/utils.js'
@@ -10,10 +10,7 @@ import { findElements } from '../../common/utils.js'
 // the show feed at serve.podhome.fm/rss/{id}, an id the page URL does not carry.
 export type PodhomePage = { feedIds: Array<string> }
 
-const hosts = podhome.hosts.exact
 const assetPath = 'cdn.podhome.fm/servesite'
-
-const feedPathRegex = /^\/rss\/([^/]+)$/i
 
 const feeds = withHintLabels(podhome.feeds)
 
@@ -33,7 +30,7 @@ const getPodhomePage = (url: string, content: string | undefined): PodhomePage |
 
   for (const link of links) {
     const feedUrl = parseUrl(link.attribs.href, url)
-    const feedId = feedUrl && isHostOf(feedUrl, hosts) && feedPathRegex.exec(feedUrl.pathname)?.[1]
+    const feedId = feedUrl && podhome.feeds.read(feedUrl.href)?.params.feedId
 
     if (feedId) {
       feedIds.push(feedId)
