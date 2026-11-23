@@ -1,47 +1,49 @@
 import { castopod } from 'feedintel'
-import { decodeSegment, getOrigin, getPathSegments, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, isRootOfPage } from '../../common/utils.js'
+import { findElement } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type CastopodPage = { rootUrl: string; handle: string }
 
-const colorsPathRegex = /\/themes\/colors$/i
-const handleRegex = /^@(\w+)$/
-
 const feeds = withHintLabels(castopod.feeds)
 
-// Core prints the theme colors stylesheet in every page head, at the install's root. Every page
-// under `/@{handle}` belongs to that podcast, and a remote actor's `@user@domain` has no feed here.
+// The install's root, read from the theme colors stylesheet a page links.
+const getColorsRoot = (url: string, href: string | undefined): string | undefined => {
+  const linkUrl = parseUrl(href, url)
+
+  if (!linkUrl) {
+    return
+  }
+
+  const link = castopod.pages.read(linkUrl.href, { isAnyHost: true })
+
+  if (link?.key !== 'colors') {
+    return
+  }
+
+  return link.params.root
+}
+
 const getCastopodPage = (url: string, content: string | undefined): CastopodPage | undefined => {
   const link = findElement(content, (element) => {
-    return element.name === 'link' && colorsPathRegex.test(element.attribs.href ?? '')
+    return element.name === 'link' && getColorsRoot(url, element.attribs.href) !== undefined
   })
+  const root = getColorsRoot(url, link?.attribs.href)
 
-  const linkUrl = link?.attribs.href ? parseUrl(link.attribs.href, url) : undefined
-  const linkOrigin = getOrigin(linkUrl)
-
-  if (!linkUrl || !linkOrigin) {
+  if (!root) {
     return
   }
 
-  const rootPath = linkUrl.pathname.replace(colorsPathRegex, '')
+  const page = castopod.pages.read(url, { root })
 
-  if (!isRootOfPage(`${linkOrigin}${rootPath}`, url)) {
+  if (page?.key !== 'podcast') {
     return
   }
 
-  const rootUrl = `${new URL(url).origin}${rootPath}`
-  const [handleSegment] = getPathSegments(url).slice(getPathSegments(rootUrl).length)
-  const handle = decodeSegment(handleSegment)?.match(handleRegex)?.[1]
-
-  if (!handle) {
-    return
-  }
-
-  return { rootUrl, handle }
+  return { rootUrl: page.params.root, handle: page.params.handle }
 }
 
 export const castopodHandler: PlatformHandler = {

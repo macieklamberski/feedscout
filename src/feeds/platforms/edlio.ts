@@ -10,7 +10,6 @@ import { findElement, hasMarker } from '../../common/utils.js'
 const listPackPath = '/apps/js/common/list-pack.js'
 
 const newsFeedHrefRegex = /^\/apps\/news\/rss\?categoryid=(\d+)$/i
-const classPathRegex = /^\/apps\/classes\/(\d+)(?:\/|$)/i
 const classFeedHrefRegex = /^\/apps\/classes\/assignment_rss\.jsp\?classREC_ID=(\d+)$/i
 
 const feeds = withHintLabels(edlio.feeds)
@@ -30,13 +29,13 @@ export const isEdlioHtml = (content: string): boolean => {
 // A class page links its assignment feed by an anchor only, and the id is taken from the page url
 // only when the page links that class's feed.
 const getEdlioPage = (url: string, content: string | undefined): EdlioPage => {
-  const { pathname } = new URL(url)
+  const classPage = edlio.pages.read(url, { isAnyHost: true })
   const classLink = findElement(content, (element) => {
     return element.name === 'a' && classFeedHrefRegex.test(element.attribs.href ?? '')
   })
   const classId = classLink?.attribs.href?.match(classFeedHrefRegex)?.[1]
 
-  if (classId && pathname.match(classPathRegex)?.[1] === classId) {
+  if (classId && classPage?.params.classId === classId) {
     return { kind: 'class', classId }
   }
 

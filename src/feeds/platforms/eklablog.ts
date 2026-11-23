@@ -1,8 +1,8 @@
 import { eklablog } from 'feedintel'
-import { isHostOf, isHostOrSubdomainOf, resolveUrl } from 'trousse'
+import { isHostOf, resolveUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: posts.
@@ -10,9 +10,6 @@ import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.j
 
 export type EklablogUrl = { kind: 'blog' } | { kind: 'customDomain' }
 
-// Eklablog serves blogs on 20 domains. Only its branded one is listed, and a blog on another one or
-// on a custom domain is known by its marker.
-const domains = eklablog.hosts.tenants
 const connectHosts = ['connect.eklablog.com']
 
 const feeds = withHintLabels(eklablog.feeds)
@@ -30,14 +27,16 @@ export const isEklablogHtml = (content: string): boolean => {
   return script !== undefined
 }
 
+// Eklablog serves blogs on 20 domains. Only its branded one is listed, and a blog on another one or
+// on a custom domain is known by its marker.
 export const parseEklablogUrl = (url: string): EklablogUrl | undefined => {
-  if (!isHostOrSubdomainOf(url, domains)) {
+  const page = eklablog.pages.read(url)
+
+  if (!page) {
     return { kind: 'customDomain' }
   }
 
-  const subdomain = getTenantSubdomain(url, domains)
-
-  if (!subdomain) {
+  if (page.key === 'platform') {
     return
   }
 

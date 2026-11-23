@@ -1,25 +1,21 @@
 import { fireside } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type FiresideUrl = { kind: 'podcast'; slug: string; tag?: string }
 
-const domains = fireside.hosts.tenants
-
 const feeds = withHintLabels(fireside.feeds)
 
 export const parseFiresideUrl = (url: string): FiresideUrl | undefined => {
   const page = fireside.pages.read(url)
-  const slug = getTenantSubdomain(url, domains)
 
-  if (!page || !slug) {
+  if (!page) {
     return
   }
 
-  return { kind: 'podcast', slug, tag: page.params.tag }
+  return { kind: 'podcast', slug: page.params.slug, tag: page.params.tag }
 }
 
 export const firesideHandler: PlatformHandler = {

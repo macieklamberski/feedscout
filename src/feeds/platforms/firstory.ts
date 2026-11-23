@@ -1,12 +1,8 @@
 import { firstory } from 'feedintel'
-import { isHostOf, isSubdomainOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Discoverable without handler.
-
-const hosts = firstory.hosts.exact
-const domains = firstory.hosts.tenants
 
 // The feed is keyed by the show's cuid, and the vanity-slug form of it answers 403.
 // Show, episode and firstory.cc pages each link the show's feed.
@@ -20,7 +16,7 @@ export const getFirstoryPage = (
   url: string,
   content: string | undefined,
 ): FirstoryPage | undefined => {
-  if (!isHostOf(url, hosts) && !isSubdomainOf(url, domains)) {
+  if (!firstory.pages.read(url)) {
     return
   }
 

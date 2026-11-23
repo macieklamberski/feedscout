@@ -1,14 +1,11 @@
 import { castos } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type CastosUrl = { kind: 'show'; slug: string }
 export type CastosPage = { kind: 'show'; slug: string; feedId?: string }
-
-const domains = castos.hosts.tenants
 
 // The feed id is opaque, so it is read from the feed link every show page carries.
 const feedIdRegex = /https:\/\/feeds\.castos\.com\/([a-z0-9]+)/i
@@ -16,13 +13,13 @@ const feedIdRegex = /https:\/\/feeds\.castos\.com\/([a-z0-9]+)/i
 const feeds = withHintLabels(castos.feeds)
 
 export const parseCastosUrl = (url: string): CastosUrl | undefined => {
-  const slug = getTenantSubdomain(url, domains)
+  const page = castos.pages.read(url)
 
-  if (!slug) {
+  if (!page) {
     return
   }
 
-  return { kind: 'show', slug }
+  return { kind: 'show', slug: page.params.slug }
 }
 
 export const getCastosPage = (url: string, content: string | undefined): CastosPage | undefined => {

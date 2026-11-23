@@ -1,7 +1,6 @@
 import { comicfury } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { alphanumericOrHyphenRegex, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: reader.
@@ -9,28 +8,24 @@ import { alphanumericOrHyphenRegex, getTenantSubdomain } from '../../common/util
 
 export type ComicfuryUrl = { kind: 'comic' | 'profile' | 'reader'; comic: string }
 
-const domains = comicfury.hosts.tenants
-
 const feeds = withHintLabels(comicfury.feeds)
 
 export const parseComicfuryUrl = (url: string): ComicfuryUrl | undefined => {
   const page = comicfury.pages.read(url)
 
-  if (page?.key === 'profile') {
-    return { kind: 'profile', comic: page.params.comic }
-  }
-
-  if (page) {
-    return { kind: 'reader', comic: page.params.comic }
-  }
-
-  const comic = getTenantSubdomain(url, domains)
-
-  if (!comic || !alphanumericOrHyphenRegex.test(comic)) {
+  if (!page) {
     return
   }
 
-  return { kind: 'comic', comic }
+  if (page.key === 'profile') {
+    return { kind: 'profile', comic: page.params.comic }
+  }
+
+  if (page.key === 'reader') {
+    return { kind: 'reader', comic: page.params.comic }
+  }
+
+  return { kind: 'comic', comic: page.params.comic }
 }
 
 export const comicfuryHandler: PlatformHandler = {
