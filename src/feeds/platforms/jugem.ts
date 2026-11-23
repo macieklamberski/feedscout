@@ -1,5 +1,4 @@
 import { jugem } from 'feedintel'
-import { isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -11,7 +10,6 @@ export type JugemUrl =
   | { kind: 'theme'; category: string; theme: string }
   | { kind: 'customDomain' }
 
-const assetHosts = ['imaging.jugem.jp']
 const cookieScriptPath = './template/js/cookie.js'
 
 const feeds = withHintLabels(jugem.feeds)
@@ -21,7 +19,7 @@ const isJugemAsset = (assetUrl: string | undefined): boolean => {
     return false
   }
 
-  return assetUrl === cookieScriptPath || isHostOf(assetUrl, assetHosts)
+  return assetUrl === cookieScriptPath || jugem.pages.read(assetUrl)?.key === 'asset'
 }
 
 // Every blog template loads its favicon or scripts from imaging.jugem.jp, or the cookie script by

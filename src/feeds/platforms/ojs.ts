@@ -1,5 +1,4 @@
 import { ojs } from 'feedintel'
-import { getPathSegments, isAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -9,9 +8,6 @@ import { findElement, getCookieNames, hasMarker, hasMetaContent } from '../../co
 // Handler needed for: announcements.
 
 export type OjsPage = { kind: 'journal'; journalUrl: string }
-
-// OJS loads its theme stylesheets through the component router under the journal's root.
-const componentRouterRegex = /^(https?:\/\/.+?)\/\$\$\$call\$\$\$\//i
 
 const feeds = withHintLabels(ojs.feeds)
 
@@ -24,17 +20,21 @@ export const isOjsHeaders = (headers: Headers): boolean => {
 }
 
 export const getOjsPage = (content: string | undefined): OjsPage | undefined => {
+  const getComponentRoot = (href: string | undefined): string | undefined => {
+    const page = ojs.pages.read(href ?? '', { isAnyHost: true })
+
+    if (page?.key !== 'component') {
+      return
+    }
+
+    return page.params.root
+  }
   const stylesheet = findElement(content, (element) => {
-    return element.name === 'link' && componentRouterRegex.test(element.attribs.href ?? '')
+    return element.name === 'link' && getComponentRoot(element.attribs.href) !== undefined
   })
-  const rootUrl = stylesheet?.attribs.href?.match(componentRouterRegex)?.[1]
+  const rootUrl = getComponentRoot(stylesheet?.attribs.href)
 
   if (!rootUrl) {
-    return
-  }
-
-  // The site-wide pages of a multi-journal install sit under the reserved `index` path.
-  if (isAnyOf(getPathSegments(rootUrl).at(-1), 'index')) {
     return
   }
 

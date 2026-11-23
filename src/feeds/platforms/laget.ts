@@ -1,4 +1,5 @@
 import { laget } from 'feedintel'
+import { addMissingScheme } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -8,9 +9,6 @@ import { findElement, hasMarker } from '../../common/utils.js'
 
 export type LagetUrl = { kind: 'team'; team: string }
 
-// A bare `laget.se` also matches other domains, such as `snickeribolaget.se`.
-const lagetAssetRegex = /^(?:https?:)?\/\/[a-z]-content\.laget\.se\//i
-
 const assetTags = ['link', 'script']
 
 const feeds = withHintLabels(laget.feeds)
@@ -18,9 +16,14 @@ const feeds = withHintLabels(laget.feeds)
 // Both club templates load their stylesheets and scripts from the asset host, on an own domain too.
 export const isLagetHtml = (content: string): boolean => {
   const asset = findElement(content, (element) => {
-    const source = element.attribs.href ?? element.attribs.src ?? ''
+    if (!assetTags.includes(element.name)) {
+      return false
+    }
 
-    return assetTags.includes(element.name) && lagetAssetRegex.test(source)
+    // An asset link may leave out the scheme, as `//g-content.laget.se/`.
+    const source = addMissingScheme(element.attribs.href ?? element.attribs.src ?? '')
+
+    return laget.pages.read(source)?.key === 'asset'
   })
 
   return asset !== undefined

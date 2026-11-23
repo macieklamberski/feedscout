@@ -11,10 +11,8 @@ export type PlonePage =
   | { kind: 'site'; portalUrl: string }
   | { kind: 'folder'; folderUrl: string }
 
-const searchPathRegex = /^(.*)\/(?:@@)?search\/?$/i
 const portalTypeRegex = /^portaltype-/
 const errorTemplateRegex = /^template-(?:default_)?error_message/
-const searchLinkRegex = /\/@@search$/i
 const trailingSlashRegex = /\/$/
 
 // Content types that hold no items, so Plone serves no syndication feed for them.
@@ -54,13 +52,13 @@ const getPortalUrl = (
   const searchLink = findElement(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'search'
   })
-  const searchHref = searchLink?.attribs.href ?? ''
+  const searchPage = plone.pages.read(searchLink?.attribs.href ?? '', { isAnyHost: true })
 
-  if (!searchLinkRegex.test(searchHref)) {
+  if (searchPage?.key !== 'search') {
     return
   }
 
-  return searchHref.replace(searchLinkRegex, '')
+  return searchPage.params.root
 }
 
 // Plone 5 and later print the context URL on the body, Plone 4 as `<base>`. The search page links
@@ -88,21 +86,21 @@ export const getPlonePage = (url: string, content: string | undefined): PlonePag
     return
   }
 
-  const [, searchRoot] = parsedUrl.pathname.match(searchPathRegex) ?? []
+  const searchPage = plone.pages.read(url, { isAnyHost: true })
 
-  if (searchRoot !== undefined) {
+  if (searchPage?.key === 'search') {
     return {
       kind: 'search',
-      portalUrl: portalUrl ?? `${parsedUrl.origin}${searchRoot}`,
+      portalUrl: portalUrl ?? searchPage.params.root,
       query: parsedUrl.search.slice(1),
     }
   }
 
   const siteUrl = portalUrl ?? parsedUrl.origin
-  const pageUrl = `${parsedUrl.origin}${parsedUrl.pathname}`.replace(trailingSlashRegex, '')
+  const isSitePage = plone.pages.read(url, { root: siteUrl })?.key === 'site'
 
   // The site root links the site feeds even when a document is its default page.
-  if (pageUrl === siteUrl || contextUrl === siteUrl) {
+  if (isSitePage || contextUrl === siteUrl) {
     return { kind: 'site', portalUrl: siteUrl }
   }
 
