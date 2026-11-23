@@ -1,40 +1,22 @@
 import { odysee } from 'feedintel'
-import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { hexRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: videos.
 
 export type OdyseeUrl = { kind: 'channel'; name: string; claimId?: string }
 
-export const hosts = odysee.hosts.exact
-
-const channelRegex = /^\/@(?<name>[^/:]+)(?::(?<claimId>[^/]+))?/
-
 const feeds = withHintLabels(odysee.feeds)
 
 export const parseOdyseeUrl = (url: string): OdyseeUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = odysee.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  // Odysee's share code percent-encodes the path, `@` and `:` included.
-  const pathname = decodeSegment(parsedUrl.pathname)
-  const groups = pathname?.match(channelRegex)?.groups
-
-  if (!groups?.name) {
-    return
-  }
-
-  const { name, claimId } = groups
-
-  if (claimId !== undefined && !hexRegex.test(claimId)) {
-    return
-  }
+  const { name, claimId } = page.params
 
   return { kind: 'channel', name, claimId }
 }
