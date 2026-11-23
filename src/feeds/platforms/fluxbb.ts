@@ -1,8 +1,8 @@
 import { fluxbb } from 'feedintel'
-import { endsWithAnyOf, getQueryParam, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getScriptDirectory, hasElementWithId, hasMarker } from '../../common/utils.js'
+import { hasElementWithId, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: forum, topic.
@@ -28,22 +28,21 @@ export const isFluxbbHtml = (content: string): boolean => {
 }
 
 export const parseFluxbbUrl = (url: string): FluxbbUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const origin = parseUrl(url)?.origin
+  const page = fluxbb.pages.read(url, { isAnyHost: true })
 
-  if (!parsedUrl) {
+  if (!origin || !page) {
     return
   }
 
-  const { pathname, searchParams } = parsedUrl
-  const boardPath = getScriptDirectory(pathname)
-  const id = getQueryParam(searchParams, 'id')
+  const boardPath = page.params.root.slice(origin.length)
 
-  if (id && endsWithAnyOf(pathname, '/viewforum.php')) {
-    return { kind: 'forum', boardPath, forumId: id }
+  if (page.key === 'forum') {
+    return { kind: 'forum', boardPath, forumId: page.params.forumId }
   }
 
-  if (id && endsWithAnyOf(pathname, '/viewtopic.php')) {
-    return { kind: 'topic', boardPath, topicId: id }
+  if (page.key === 'topic') {
+    return { kind: 'topic', boardPath, topicId: page.params.topicId }
   }
 
   return { kind: 'board', boardPath }

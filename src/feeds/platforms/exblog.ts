@@ -1,7 +1,6 @@
 import { exblog } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,23 +8,20 @@ export type ExblogUrl =
   | { kind: 'blog'; blog: string }
   | { kind: 'category'; blog: string; category: string }
 
-const domains = exblog.hosts.tenants
-
 const feeds = withHintLabels(exblog.feeds)
 
 export const parseExblogUrl = (url: string): ExblogUrl | undefined => {
   const page = exblog.pages.read(url)
-  const blog = getTenantSubdomain(url, domains)
 
-  if (!page || !blog) {
+  if (!page) {
     return
   }
 
   if (page.key === 'category') {
-    return { kind: 'category', blog, category: page.params.category }
+    return { kind: 'category', blog: page.params.blog, category: page.params.category }
   }
 
-  return { kind: 'blog', blog }
+  return { kind: 'blog', blog: page.params.blog }
 }
 
 export const exblogHandler: PlatformHandler = {

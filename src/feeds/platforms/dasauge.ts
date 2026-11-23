@@ -1,5 +1,4 @@
 import { dasauge } from 'feedintel'
-import { isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -8,12 +7,10 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type DasaugeUrl = { kind: 'home' }
 
-const hosts = dasauge.hosts.exact
-
 const feeds = withHintLabels(dasauge.feeds)
 
 export const parseDasaugeUrl = (url: string): DasaugeUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  if (dasauge.pages.read(url)?.key !== 'home') {
     return
   }
 

@@ -12,8 +12,6 @@ export type CppblogUrl =
   | { kind: 'category'; username: string; categoryId: string }
   | { kind: 'favorite'; username: string; favoriteId: string }
 
-const feedLinkRegex = /^https?:\/\/(?:www\.)?cppblog\.com\/([^/]+)\/rss\.aspx$/i
-
 const feeds = withHintLabels(cppblog.feeds)
 
 export const parseCppblogUrl = (url: string): CppblogUrl | undefined => {
@@ -42,7 +40,13 @@ const getFeedUsername = (content: string | undefined): string | undefined => {
     return element.name === 'link' && element.attribs.id === 'RSSLink'
   })
 
-  return link?.attribs.href?.match(feedLinkRegex)?.[1]
+  const feed = cppblog.feeds.read(link?.attribs.href ?? '')
+
+  if (feed?.key !== 'posts') {
+    return
+  }
+
+  return feed.params.username
 }
 
 const getCppblogPage = (url: string, content: string | undefined): CppblogUrl | undefined => {

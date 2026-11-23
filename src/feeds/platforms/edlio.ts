@@ -1,4 +1,5 @@
 import { edlio } from 'feedintel'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -9,13 +10,21 @@ import { findElement, hasMarker } from '../../common/utils.js'
 
 const listPackPath = '/apps/js/common/list-pack.js'
 
-const newsFeedHrefRegex = /^\/apps\/news\/rss\?categoryid=(\d+)$/i
-const classPathRegex = /^\/apps\/classes\/(\d+)(?:\/|$)/i
-const classFeedHrefRegex = /^\/apps\/classes\/assignment_rss\.jsp\?classREC_ID=(\d+)$/i
-
 const feeds = withHintLabels(edlio.feeds)
 
 export type EdlioPage = { kind: 'site'; categoryId?: string } | { kind: 'class'; classId: string }
+
+// A school's pages link its feeds by path on its own domain.
+const readLinkedFeed = (url: string, href: string | undefined) => {
+  const root = parseUrl(url)?.origin
+  const feedUrl = parseUrl(href, url)
+
+  if (!root || !feedUrl) {
+    return
+  }
+
+  return edlio.feeds.read(feedUrl.href, { root })
+}
 
 export const isEdlioHtml = (content: string): boolean => {
   const script = findElement(content, (element) => {
@@ -30,20 +39,22 @@ export const isEdlioHtml = (content: string): boolean => {
 // A class page links its assignment feed by an anchor only, and the id is taken from the page url
 // only when the page links that class's feed.
 const getEdlioPage = (url: string, content: string | undefined): EdlioPage => {
-  const { pathname } = new URL(url)
+  const classPage = edlio.pages.read(url, { isAnyHost: true })
   const classLink = findElement(content, (element) => {
-    return element.name === 'a' && classFeedHrefRegex.test(element.attribs.href ?? '')
+    return element.name === 'a' && readLinkedFeed(url, element.attribs.href)?.key === 'assignments'
   })
-  const classId = classLink?.attribs.href?.match(classFeedHrefRegex)?.[1]
+  const classId = readLinkedFeed(url, classLink?.attribs.href)?.params.classId
 
-  if (classId && pathname.match(classPathRegex)?.[1] === classId) {
+  if (classId && classPage?.params.classId === classId) {
     return { kind: 'class', classId }
   }
 
   const newsLink = findElement(content, (element) => {
-    return element.name === 'link' && newsFeedHrefRegex.test(element.attribs.href ?? '')
+    return (
+      element.name === 'link' && readLinkedFeed(url, element.attribs.href)?.key === 'news-category'
+    )
   })
-  const categoryId = newsLink?.attribs.href?.match(newsFeedHrefRegex)?.[1]
+  const categoryId = readLinkedFeed(url, newsLink?.attribs.href)?.params.categoryId
 
   return { kind: 'site', categoryId }
 }

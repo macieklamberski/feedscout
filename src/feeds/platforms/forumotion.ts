@@ -1,8 +1,8 @@
 import { forumotion } from 'feedintel'
-import { isHostOrSubdomainOf, isPlainObject, parseUrl } from 'trousse'
+import { isPlainObject, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getJsonLd, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { getJsonLd, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: latest-topics.
@@ -13,11 +13,6 @@ export type ForumotionPage =
   | { kind: 'topic'; forumId: string }
   | { kind: 'home' }
 
-const forumPathRegex = /^\/f(\d+)(?:p\d+)?-/i
-const topicPathRegex = /^\/t\d+(?:p\d+)?-/i
-
-const domains = forumotion.hosts.tenants
-
 const feeds = withHintLabels(forumotion.feeds)
 
 // Core prints the `_userdata` script in every page head, on every template and domain.
@@ -25,8 +20,11 @@ export const isForumotionHtml = (content: string): boolean => {
   return content.includes('_userdata["session_logged_in"]')
 }
 
-const getBreadcrumbPaths = (url: string, content: string): Array<string> => {
-  const paths: Array<string> = []
+type BreadcrumbPage = NonNullable<ReturnType<typeof forumotion.pages.read>>
+
+// A breadcrumb names each page under the site's root, on the forum's host.
+const getBreadcrumbPages = (url: string, content: string): Array<BreadcrumbPage | undefined> => {
+  const pages: Array<BreadcrumbPage | undefined> = []
 
   for (const data of getJsonLd(content)) {
     if (!isPlainObject(data) || data['@type'] !== 'BreadcrumbList') {
@@ -38,15 +36,15 @@ const getBreadcrumbPaths = (url: string, content: string): Array<string> => {
     }
 
     for (const element of data.itemListElement) {
-      const pathname = parseUrl(element?.item?.['@id'], url)?.pathname
+      const itemUrl = parseUrl(element?.item?.['@id'], url)
 
-      if (pathname) {
-        paths.push(pathname)
+      if (itemUrl) {
+        pages.push(forumotion.pages.read(itemUrl.href, { root: itemUrl.origin }))
       }
     }
   }
 
-  return paths
+  return pages
 }
 
 // Forumotion answers a forum id that does not exist with the site-wide feed, and its page with
@@ -56,18 +54,16 @@ export const getForumotionPage = (url: string, content: string | undefined): For
     return { kind: 'home' }
   }
 
-  const paths = getBreadcrumbPaths(url, content)
-  const lastPath = paths.at(-1) ?? ''
-  const forumId = lastPath.match(forumPathRegex)?.[1]
+  const pages = getBreadcrumbPages(url, content)
+  const lastPage = pages.at(-1)
+  const parentPage = pages.at(-2)
 
-  if (forumId) {
-    return { kind: 'forum', forumId }
+  if (lastPage?.key === 'forum') {
+    return { kind: 'forum', forumId: lastPage.params.forumId }
   }
 
-  const topicForumId = paths.at(-2)?.match(forumPathRegex)?.[1]
-
-  if (topicPathRegex.test(lastPath) && topicForumId) {
-    return { kind: 'topic', forumId: topicForumId }
+  if (lastPage?.key === 'topic' && parentPage?.key === 'forum') {
+    return { kind: 'topic', forumId: parentPage.params.forumId }
   }
 
   return { kind: 'home' }
@@ -75,8 +71,10 @@ export const getForumotionPage = (url: string, content: string | undefined): For
 
 export const forumotionHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (isHostOrSubdomainOf(url, domains)) {
-      return getTenantSubdomain(url, domains) !== undefined
+    const page = forumotion.pages.read(url)
+
+    if (page) {
+      return page.key !== 'platform'
     }
 
     return hasMarker(content, headers, { html: isForumotionHtml })

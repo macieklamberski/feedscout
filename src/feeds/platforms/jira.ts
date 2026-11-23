@@ -1,36 +1,19 @@
 import { jira } from 'feedintel'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  getMetaContent,
-  getTenantSubdomain,
-  hasMarker,
-  hasMetaContent,
-} from '../../common/utils.js'
+import { getMetaContent, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: issue, project, site.
 
-const domains = jira.hosts.tenants
-
-// Data Center installs sit under a context path such as `/jira`, so none of
-// these can anchor at the start of the pathname.
-const issueRegex = /\/browse\/([A-Za-z][A-Za-z0-9_]+)-\d+/i
-const issueKeyRegex = /\/browse\/([A-Za-z][A-Za-z0-9_]+-\d+)/i
-const projectRegex = /\/projects\/([A-Za-z][A-Za-z0-9_]+)(?:\/(?!repos\b)|$)/i
-const jiraPathRegex = /\/(?:jira|secure|issues)(?:\/|$)/i
-const trailingSlashRegex = /\/$/
-const confluencePathRegex = /^\/wiki(?:\/|$)/i
-
 const feeds = withHintLabels(jira.feeds)
 
-const isCloudHost = (url: string): boolean => {
-  return getTenantSubdomain(url, domains) !== undefined
+const isConfluencePage = (url: string): boolean => {
+  return jira.pages.read(url, { root: parseUrl(url)?.origin ?? '' })?.key === 'confluence'
 }
 
-const isJiraPath = (pathname: string): boolean => {
-  return issueRegex.test(pathname) || projectRegex.test(pathname) || jiraPathRegex.test(pathname)
-}
+const jiraPathKeys = ['issue', 'project', 'app']
 
 // Atlassian's other products print the same `ajs-*` metas, so the application name decides.
 export const isJiraHtml = (content: string): boolean => {
@@ -48,32 +31,38 @@ export type JiraPage = {
 }
 
 const getJiraPage = (url: string, content: string | undefined): JiraPage | undefined => {
-  const { origin, pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
 
-  if (confluencePathRegex.test(pathname)) {
+  if (!parsedUrl || isConfluencePage(url)) {
     return
   }
 
   const contextPath = getMetaContent(content ?? '', 'ajs-context-path') ?? ''
-  const pathKey = pathname.match(issueRegex)?.[1] ?? pathname.match(projectRegex)?.[1]
+  const base = jira.pages.read(url, { root: `${parsedUrl.origin}${contextPath}` })
+  const path = jira.pages.read(url, { isAnyHost: true })
+
+  if (!base) {
+    return
+  }
+
+  const { key, number } = path?.params ?? {}
+  const pathKey = path?.key === 'issue' || path?.key === 'project' ? key : undefined
 
   return {
-    baseUrl: `${origin}${contextPath}`.replace(trailingSlashRegex, ''),
-    tenant: getTenantSubdomain(url, domains),
+    baseUrl: base.params.root,
+    tenant: jira.pages.read(url)?.params.tenant,
     projectKey: pathKey ?? getMetaContent(content ?? '', 'ajs-project-key'),
-    issueKey: pathname.match(issueKeyRegex)?.[1],
+    issueKey: path?.key === 'issue' ? `${key}-${number}` : undefined,
   }
 }
 
 export const jiraHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const { pathname } = new URL(url)
-
-    if (confluencePathRegex.test(pathname)) {
+    if (isConfluencePage(url)) {
       return false
     }
 
-    if (isCloudHost(url)) {
+    if (jira.pages.read(url)) {
       return true
     }
 
@@ -81,7 +70,7 @@ export const jiraHandler: PlatformHandler = {
       return false
     }
 
-    return isJiraPath(pathname)
+    return jiraPathKeys.includes(jira.pages.read(url, { isAnyHost: true })?.key ?? '')
   },
 
   resolve: (url, content) => {

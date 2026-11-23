@@ -6,6 +6,7 @@ import {
   findDescendant,
   findElement,
   findElements,
+  findUrls,
   getBrandDomainRegex,
   getCookieNames,
   getHostOrigin,
@@ -669,6 +670,66 @@ describe('getCookieNames', () => {
 
   it('should return an empty array without Set-Cookie', () => {
     expect(getCookieNames(new Headers())).toEqual([])
+  })
+})
+
+describe('findUrls', () => {
+  it('should return every URL in markup in the order written', () => {
+    const value = '<a href="https://example.com/feed">Feed</a><link href="http://example.org/rss">'
+    const expected = ['https://example.com/feed', 'http://example.org/rss']
+
+    expect(findUrls(value)).toEqual(expected)
+  })
+
+  it('should return a URL written in inline JSON', () => {
+    const value = '{"key":"rss","url":"https://example.com/feed/abc123","position":0}'
+    const expected = ['https://example.com/feed/abc123']
+
+    expect(findUrls(value)).toEqual(expected)
+  })
+
+  it('should end a URL at whitespace', () => {
+    const value = 'Subscribe at https://example.com/feed today'
+    const expected = ['https://example.com/feed']
+
+    expect(findUrls(value)).toEqual(expected)
+  })
+
+  it('should keep the query of a URL', () => {
+    const value = "<a href='https://example.com/feed?format=rss&amp;page=2'>"
+    const expected = ['https://example.com/feed?format=rss&amp;page=2']
+
+    expect(findUrls(value)).toEqual(expected)
+  })
+
+  it('should not return a URL without a scheme', () => {
+    const value = '<a href="//example.com/feed">Feed</a>'
+
+    expect(findUrls(value)).toEqual([])
+  })
+
+  it('should return an empty array for text without a URL', () => {
+    const value = '<html><body>No feed here</body></html>'
+
+    expect(findUrls(value)).toEqual([])
+  })
+
+  it('should scan a long run of slashes within a second', () => {
+    const value = `https:${'/'.repeat(200_000)}`
+    const start = performance.now()
+
+    findUrls(value)
+
+    expect(performance.now() - start).toBeLessThan(1000)
+  })
+
+  it('should scan a long run of schemes within a second', () => {
+    const value = 'http:'.repeat(50_000)
+    const start = performance.now()
+
+    findUrls(value)
+
+    expect(performance.now() - start).toBeLessThan(1000)
   })
 })
 

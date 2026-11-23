@@ -1,13 +1,10 @@
 import { atypon } from 'feedintel'
-import { isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Unmeasured, bot wall.
 
 export type AtyponUrl = { kind: 'journal'; code: string; isWiley: boolean }
-
-const mostCitedHosts = ['onlinelibrary.wiley.com']
 
 const feeds = withHintLabels(atypon.feeds)
 
@@ -18,7 +15,7 @@ export const parseAtyponUrl = (url: string): AtyponUrl | undefined => {
     return
   }
 
-  return { kind: 'journal', code: page.params.code, isWiley: isHostOf(url, mostCitedHosts) }
+  return { kind: 'journal', code: page.params.code, isWiley: page.key === 'wiley-journal' }
 }
 
 export const atyponHandler: PlatformHandler = {

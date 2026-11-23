@@ -1,5 +1,4 @@
 import { chambermaster } from 'feedintel'
-import { getPathSegments, isAnyOf, isSubdomainOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
@@ -11,9 +10,15 @@ export type ChambermasterUrl = {
   kind: 'events' | 'directory' | 'jobs' | 'hotDeals' | 'marketSpace' | 'news' | 'memberToMember'
 }
 
-// A chamber's feeds on its chambermaster.com or memberzone.com subdomain redirect to the sign-in
-// page over http and https alike, so the table only claims them there.
-const domains = chambermaster.hosts.tenants
+const kinds: Array<ChambermasterUrl['kind']> = [
+  'events',
+  'directory',
+  'jobs',
+  'hotDeals',
+  'marketSpace',
+  'news',
+  'memberToMember',
+]
 
 const feeds = withHintLabels(chambermaster.feeds)
 
@@ -23,46 +28,19 @@ export const isChambermasterHeaders = (headers: Headers): boolean => {
 }
 
 export const parseChambermasterUrl = (url: string): ChambermasterUrl | undefined => {
-  const [section] = getPathSegments(url)
+  const page = chambermaster.pages.read(url, { isAnyHost: true })
+  const kind = kinds.find((kind) => kind === page?.key)
 
-  if (isAnyOf(section, 'events')) {
-    return { kind: 'events' }
+  if (!kind) {
+    return
   }
 
-  if (isAnyOf(section, 'list')) {
-    return { kind: 'directory' }
-  }
-
-  if (isAnyOf(section, 'jobs')) {
-    return { kind: 'jobs' }
-  }
-
-  if (isAnyOf(section, 'hotdeals')) {
-    return { kind: 'hotDeals' }
-  }
-
-  // The market items feed links its items under /marketplace, which renders the same listing.
-  if (isAnyOf(section, ['marketspace', 'marketplace'])) {
-    return { kind: 'marketSpace' }
-  }
-
-  if (isAnyOf(section, 'news')) {
-    return { kind: 'news' }
-  }
-
-  if (isAnyOf(section, 'membertomember')) {
-    return { kind: 'memberToMember' }
-  }
+  return { kind }
 }
 
 export const chambermasterHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (!hasMarker(content, headers, { headers: isChambermasterHeaders })) {
-      return false
-    }
-
-    // A platform subdomain gets no feeds, so its page goes on to the other methods.
-    if (isSubdomainOf(url, domains)) {
       return false
     }
 

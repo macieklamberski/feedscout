@@ -1,24 +1,21 @@
 import { blogia } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Unmeasured, bot wall.
 
 export type BlogiaUrl = { kind: 'blog'; blog: string }
 
-const domains = blogia.hosts.tenants
-
 const feeds = withHintLabels(blogia.feeds)
 
 export const parseBlogiaUrl = (url: string): BlogiaUrl | undefined => {
-  const blog = getTenantSubdomain(url, domains)
+  const page = blogia.pages.read(url)
 
-  if (!blog) {
+  if (!page) {
     return
   }
 
-  return { kind: 'blog', blog }
+  return { kind: 'blog', blog: page.params.blog }
 }
 
 export const blogiaHandler: PlatformHandler = {

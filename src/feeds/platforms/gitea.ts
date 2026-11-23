@@ -1,5 +1,5 @@
 import { gitea } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -13,17 +13,11 @@ export type GiteaUrl =
 
 export type GiteaPage = GiteaUrl & { root: string }
 
-const hosts = gitea.hosts.exact
-
 const giteaCookieRegex = /(?:^|[;,\s])[\w-]*gitea=/
-// suffixes: Gitea's own user routes, such as /{user}.rss, so no username ends with one
-const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png|rss)$/i
 // Gitea prints the window config as JSON, `"appSubUrl":"/gitea"`, and Forgejo as a script
 // object with escaped slashes, `appSubUrl: '\/gitea'`.
 const subUrlRegex = /appSubUrl["']?\s*:\s*["']([^"']*)["']/
 const escapedSlashRegex = /\\\//g
-
-const branchViews = ['src', 'commits']
 
 const feeds = withHintLabels(gitea.feeds)
 
@@ -31,25 +25,36 @@ export const isGiteaHeaders = (headers: Headers): boolean => {
   return giteaCookieRegex.test(headers.get('set-cookie') ?? '')
 }
 
-export const parseGiteaUrl = (url: string): GiteaUrl | undefined => {
-  const [first, repo, section, refType, ...refPath] = getPathSegments(url)
-  const owner = repo ? first : first?.replace(userRouteSuffixRegex, '')
+const readGiteaUrl = (url: string, root: string): GiteaPage | undefined => {
+  const page = gitea.pages.read(url, { root })
 
-  if (!owner) {
+  if (!page) {
     return
   }
 
-  // A branch name can contain a slash, as in v11.0/forgejo, and only Gitea knows where it ends,
-  // so splitting the branch from the file path here breaks the feed URL.
-  if (repo && isAnyOf(section, branchViews) && isAnyOf(refType, 'branch') && refPath.length > 0) {
-    return { kind: 'repo', owner, repo, branchPath: refPath.join('/') }
+  const { owner, repo, branchPath } = page.params
+
+  if (page.key === 'user') {
+    return { kind: 'user', owner, root: page.params.root }
   }
 
-  if (repo) {
-    return { kind: 'repo', owner, repo }
+  if (branchPath) {
+    return { kind: 'repo', owner, repo, branchPath, root: page.params.root }
   }
 
-  return { kind: 'user', owner }
+  return { kind: 'repo', owner, repo, root: page.params.root }
+}
+
+export const parseGiteaUrl = (url: string): GiteaUrl | undefined => {
+  const page = readGiteaUrl(url, parseUrl(url)?.origin ?? '')
+
+  if (!page) {
+    return
+  }
+
+  const { root, ...parsed } = page
+
+  return parsed
 }
 
 // An install under a sub-path names it in the window config, and the owner is the segment after it.
@@ -62,17 +67,7 @@ export const getGiteaPage = (url: string, content: string | undefined): GiteaPag
 
   const subPath = content?.match(subUrlRegex)?.[1]?.replace(escapedSlashRegex, '/') ?? ''
 
-  if (!parsedUrl.pathname.startsWith(`${subPath}/`)) {
-    return
-  }
-
-  const parsed = parseGiteaUrl(`${parsedUrl.origin}${parsedUrl.pathname.slice(subPath.length)}`)
-
-  if (!parsed) {
-    return
-  }
-
-  return { ...parsed, root: `${parsedUrl.origin}${subPath}` }
+  return readGiteaUrl(url, `${parsedUrl.origin}${subPath}`)
 }
 
 export const giteaHandler: PlatformHandler = {
@@ -81,7 +76,7 @@ export const giteaHandler: PlatformHandler = {
       return false
     }
 
-    if (isHostOf(url, hosts)) {
+    if (gitea.pages.read(url)) {
       return true
     }
 

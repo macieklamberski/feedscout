@@ -1,7 +1,8 @@
 import { aladin } from 'feedintel'
-import { escapeRegex } from 'trousse'
+import { isSameText } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { findUrls } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: posts.
@@ -29,6 +30,18 @@ export const parseAladinUrl = (url: string): AladinUrl | undefined => {
 
 export type AladinPage = AladinUrl
 
+// Usernames match in any case, and the page's alternate link spells the blog's own:
+// `/CHANGBI/category/49178853` links `/changbi/rss`.
+const getLinkedUsername = (content: string, username: string): string | undefined => {
+  for (const url of findUrls(content)) {
+    const feed = aladin.feeds.read(url)
+
+    if (feed?.key === 'posts' && isSameText(feed.params.username, username)) {
+      return feed.params.username
+    }
+  }
+}
+
 export const getAladinPage = (url: string, content: string | undefined): AladinPage | undefined => {
   const parsed = parseAladinUrl(url)
 
@@ -36,13 +49,7 @@ export const getAladinPage = (url: string, content: string | undefined): AladinP
     return
   }
 
-  // Usernames match in any case, and the page's alternate link spells the blog's own:
-  // `/CHANGBI/category/49178853` links `/changbi/rss`.
-  const usernameRegex = new RegExp(
-    `blog\\.aladin\\.co\\.kr/(${escapeRegex(parsed.username)})/rss`,
-    'i',
-  )
-  const username = content?.match(usernameRegex)?.[1] ?? parsed.username
+  const username = getLinkedUsername(content ?? '', parsed.username) ?? parsed.username
 
   return { ...parsed, username }
 }

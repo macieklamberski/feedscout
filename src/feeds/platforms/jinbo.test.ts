@@ -490,49 +490,49 @@ describe('jinboHandler', () => {
       expect(jinboHandler.resolve(value, content)).toEqual(expected)
     })
 
-    it('should escape a number sign in the user the feed link names', () => {
+    it('should read a number sign in the feed link as the start of a fragment', () => {
       const value = 'https://blog.jinbo.net/alice'
       const content =
         '<link rel="alternate" type="application/rss+xml" href="https://blog.jinbo.net/alice#b/rss" />'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://blog.jinbo.net/alice%23b/rss',
+          uri: 'https://blog.jinbo.net/alice/rss',
           hint: { key: 'jinbo:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://blog.jinbo.net/alice%23b/atom',
+          uri: 'https://blog.jinbo.net/alice/atom',
           hint: { key: 'jinbo:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://blog.jinbo.net/alice%23b/rss/response',
+          uri: 'https://blog.jinbo.net/alice/rss/response',
           hint: { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'rss' },
         },
         {
-          uri: 'https://blog.jinbo.net/alice%23b/atom/response',
+          uri: 'https://blog.jinbo.net/alice/atom/response',
           hint: { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'atom' },
         },
         {
-          uri: 'https://blog.jinbo.net/alice%23b/rss/comment',
+          uri: 'https://blog.jinbo.net/alice/rss/comment',
           hint: { key: 'jinbo:comments', label: 'Comments', format: 'rss' },
         },
         {
-          uri: 'https://blog.jinbo.net/alice%23b/atom/comment',
+          uri: 'https://blog.jinbo.net/alice/atom/comment',
           hint: { key: 'jinbo:comments', label: 'Comments', format: 'atom' },
         },
         {
-          uri: 'https://blog.jinbo.net/alice%23b/rss/trackback',
+          uri: 'https://blog.jinbo.net/alice/rss/trackback',
           hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'rss' },
         },
         {
-          uri: 'https://blog.jinbo.net/alice%23b/atom/trackback',
+          uri: 'https://blog.jinbo.net/alice/atom/trackback',
           hint: { key: 'jinbo:trackbacks', label: 'Trackbacks', format: 'atom' },
         },
         {
-          uri: 'https://blog.jinbo.net/alice%23b/rss/line',
+          uri: 'https://blog.jinbo.net/alice/rss/line',
           hint: { key: 'jinbo:lines', label: 'Lines', format: 'rss' },
         },
         {
-          uri: 'https://blog.jinbo.net/alice%23b/atom/line',
+          uri: 'https://blog.jinbo.net/alice/atom/line',
           hint: { key: 'jinbo:lines', label: 'Lines', format: 'atom' },
         },
       ]

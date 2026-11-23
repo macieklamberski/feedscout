@@ -1,4 +1,5 @@
 import { hubzilla } from 'feedintel'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -6,8 +7,6 @@ import { hasMarker, hasMetaContent } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 export type HubzillaUrl = { kind: 'channel'; channel: string }
-
-const channelPathRegex = /^\/(?:(?:channel|feed|profile)\/|@)([^/]+)/i
 
 const feeds = withHintLabels(hubzilla.feeds)
 
@@ -17,13 +16,13 @@ export const isHubzillaHtml = (content: string): boolean => {
 }
 
 export const parseHubzillaUrl = (url: string): HubzillaUrl | undefined => {
-  const channel = new URL(url).pathname.match(channelPathRegex)?.[1]
+  const page = hubzilla.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
 
-  if (!channel) {
+  if (!page) {
     return
   }
 
-  return { kind: 'channel', channel }
+  return { kind: 'channel', channel: page.params.channel }
 }
 
 export const hubzillaHandler: PlatformHandler = {

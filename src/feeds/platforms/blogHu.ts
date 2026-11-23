@@ -1,7 +1,6 @@
 import { blogHu } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: comments, post-comments, posts.
@@ -13,8 +12,6 @@ export type BlogHuUrl =
 
 export type BlogHuPost = { year: string; month: string; day: string; slug: string }
 
-const domains = blogHu.hosts.tenants
-
 const feeds = withHintLabels(blogHu.feeds)
 
 export const parseBlogHuUrl = (url: string): BlogHuUrl | undefined => {
@@ -24,16 +21,10 @@ export const parseBlogHuUrl = (url: string): BlogHuUrl | undefined => {
     return
   }
 
-  const { userId, year, month, day, slug, tag } = page.params
+  const { userId, blog, year, month, day, slug, tag } = page.params
 
   if (page.key === 'user') {
     return { kind: 'user', userId }
-  }
-
-  const blog = getTenantSubdomain(url, domains)
-
-  if (!blog) {
-    return
   }
 
   // A post page links its comments feed. A tag page has a feed of the posts with that tag.

@@ -3,12 +3,7 @@ import { parseUrl } from 'trousse'
 import type { DiscoverUriHint } from '../../common/types.js'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  findElement,
-  getBrandDomainRegex,
-  getTenantSubdomain,
-  hasMarker,
-} from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: comments, post-comments, posts.
@@ -20,14 +15,6 @@ export type BlogspotPage =
   | { kind: 'post'; postId?: string }
   | { kind: 'blog' }
 
-// blogspot.com and Blogger's country domains like .co.uk, .com.br and .de, which still serve
-// feeds. getTenantSubdomain then refuses www and nested subdomains.
-const domains = [getBrandDomainRegex('blogspot')]
-// The domains the feeds table reads a blog's name on.
-const namedDomains = blogspot.hosts.tenants
-
-const labelRegex = /^\/search\/label\/([^/]+)/i
-const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
 const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/i
 const widgetsScriptRegex = /^(?:https?:)?\/\/www\.blogger\.com\/static\/v1\/widgets\//i
 const blogIdPathRegex = /^\/feeds\/[^/]+\//i
@@ -59,22 +46,17 @@ export const isBlogspotHtml = (content: string): boolean => {
 }
 
 export const parseBlogspotUrl = (url: string): BlogspotUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = blogspot.pages.read(url, { isAnyHost: true })
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  const { pathname } = parsedUrl
-  // Label page: /search/label/{label}
-  const label = pathname.match(labelRegex)?.[1]
-
-  if (label) {
-    return { kind: 'label', label }
+  if (page.key === 'label') {
+    return { kind: 'label', label: page.params.label }
   }
 
-  // Post page: /{year}/{month}/{slug}.html
-  if (postRegex.test(pathname)) {
+  if (page.key === 'post') {
     return { kind: 'post' }
   }
 
@@ -102,7 +84,7 @@ export const getBlogspotPage = (
 
 export const blogspotHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (getTenantSubdomain(url, domains)) {
+    if (blogspot.pages.read(url)) {
       return true
     }
 
@@ -119,7 +101,7 @@ export const blogspotHandler: PlatformHandler = {
 
     // A blog's name builds its feeds on blogspot.com. Without one, as on a blog's own domain,
     // they are built on the page's host.
-    const blog = getTenantSubdomain(url, namedDomains)
+    const blog = blogspot.pages.read(url)?.params.blog
     const params = { blog }
 
     if (page.kind === 'label') {

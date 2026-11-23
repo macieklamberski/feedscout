@@ -2,31 +2,39 @@ import { cocolog } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getTenantSubdomain } from '../../common/utils.js'
+import { findElement } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type CocologPage = { blog: string }
 
-const domains = cocolog.hosts.tenants
-
-// A first segment with a dot is an uploaded file or the `.shared` assets, never a blog.
-const blogRegex = /^\/([^/.]+)(?:\/|$)/
-const feedPathRegex = /^\/([^/.]+)\/(?:atom\.xml|index\.rdf|rss\.xml)$/i
-
 const feeds = withHintLabels(cocolog.feeds)
 
-const getCocologPage = (url: string, content: string | undefined): CocologPage | undefined => {
-  // A nested label such as app.f.cocolog-nifty.com is a service host, never a blog.
-  if (!getTenantSubdomain(url, domains)) {
+const getLinkedBlog = (url: string, href: string | undefined, host: string): string | undefined => {
+  const feedUrl = parseUrl(href, url)
+
+  if (!feedUrl) {
     return
   }
 
-  const { hostname, pathname } = new URL(url)
-  const blog = pathname.match(blogRegex)?.[1]
+  const feed = cocolog.feeds.read(feedUrl.href)
 
-  if (blog) {
-    return { blog }
+  if (feed?.key !== 'posts' || !isHostOf(feedUrl, host)) {
+    return
+  }
+
+  return feed.params.blog
+}
+
+const getCocologPage = (url: string, content: string | undefined): CocologPage | undefined => {
+  const page = cocolog.pages.read(url)
+
+  if (!page) {
+    return
+  }
+
+  if (page.key === 'blog') {
+    return { blog: page.params.blog }
   }
 
   // One account hosts several blogs, each under its own path, and the home page names only one
@@ -36,15 +44,9 @@ const getCocologPage = (url: string, content: string | undefined): CocologPage |
       return false
     }
 
-    const feedUrl = parseUrl(element.attribs.href, url)
-
-    if (!feedUrl) {
-      return false
-    }
-
-    return isHostOf(feedUrl, hostname) && feedPathRegex.test(feedUrl.pathname)
+    return getLinkedBlog(url, element.attribs.href, page.params.host) !== undefined
   })
-  const linkedBlog = parseUrl(link?.attribs.href, url)?.pathname.match(feedPathRegex)?.[1]
+  const linkedBlog = getLinkedBlog(url, link?.attribs.href, page.params.host)
 
   if (!linkedBlog) {
     return

@@ -1,12 +1,10 @@
 import { diaspora } from 'feedintel'
-import { isAnyOf, startsWithAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { formatSuffixRegex, hasMarker } from '../../common/utils.js'
+import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const profileRegex = /^\/(?<route>u|public|people)\/(?<segment>[^/]+)/i
 const diasporaIdRegex = /"diaspora_id":"([^"@]+)@/
 
 const feeds = withHintLabels(diaspora.feeds)
@@ -18,30 +16,22 @@ export const isDiasporaHtml = (content: string): boolean => {
 export type DiasporaPage = { username: string }
 
 const getDiasporaPage = (url: string, content: string | undefined): DiasporaPage | undefined => {
-  const { pathname } = new URL(url)
-  const { route, segment } = pathname.match(profileRegex)?.groups ?? {}
+  const page = diaspora.pages.read(url, { isAnyHost: true })
 
-  if (!segment) {
-    return
-  }
-
-  // `/public/alice.atom` is the feed, while `/u/` reads the whole segment, which may hold a dot.
-  const pathUsername = isAnyOf(route, 'u') ? segment : segment.replace(formatSuffixRegex, '')
-
-  if (!pathUsername) {
+  if (!page) {
     return
   }
 
   // A `/people/{guid}` page is keyed by guid, and the feed by username. The page carries the
   // username in its diaspora ID.
-  if (!startsWithAnyOf(pathname, '/people/')) {
-    return { username: pathUsername }
+  if (page.key !== 'people') {
+    return { username: page.params.username }
   }
 
   const linkedUsername = content?.match(diasporaIdRegex)?.[1]
 
   if (!linkedUsername) {
-    return { username: pathUsername }
+    return { username: page.params.username }
   }
 
   // The id is page text, which can hold a `/`, so the table encodes it as one segment.
@@ -54,7 +44,7 @@ export const diasporaHandler: PlatformHandler = {
       return false
     }
 
-    return profileRegex.test(new URL(url).pathname)
+    return diaspora.pages.read(url, { isAnyHost: true }) !== undefined
   },
 
   resolve: (url, content) => {

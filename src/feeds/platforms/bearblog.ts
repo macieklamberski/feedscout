@@ -1,15 +1,12 @@
 import { bearblog } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: posts.
 // Handler needed for: discover.
 
 export type BearblogUrl = { kind: 'discover' } | { kind: 'blog'; blog: string; tag?: string }
-
-const domains = bearblog.hosts.tenants
 
 const feeds = withHintLabels(bearblog.feeds)
 
@@ -24,13 +21,7 @@ export const parseBearblogUrl = (url: string): BearblogUrl | undefined => {
     return { kind: 'discover' }
   }
 
-  const blog = getTenantSubdomain(url, domains)
-
-  if (!blog) {
-    return
-  }
-
-  return { kind: 'blog', blog, tag: page.params.tag }
+  return { kind: 'blog', blog: page.params.blog, tag: page.params.tag }
 }
 
 export const bearblogHandler: PlatformHandler = {

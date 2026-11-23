@@ -10,7 +10,6 @@ import {
   getScriptText,
   hasElementWithId,
   hasMarker,
-  hexOrHyphenRegex,
 } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -35,7 +34,6 @@ export type DspacePage =
   | { kind: 'home'; restUrl: string }
   | { kind: LegacyKind; feeds: Array<LegacyFeed> }
 
-const scopePathRegex = /\/(?<route>collections|communities)\/(?<uuid>[^/]+)(?:\/|$)/i
 const transferStateEntityRegex = /&([aglqs]);/g
 const legacyFeedPathRegex =
   /\/feed\/(?<format>rss_1\.0|rss_2\.0|atom_1\.0)\/(?<scope>site|[^/]+\/[^/]+)$/i
@@ -199,17 +197,17 @@ export const getDspacePage = (url: string, content: string | undefined): DspaceP
   }
 
   const restUrl = getRestUrl(parsedUrl.origin, content)
-  const { route, uuid } = parsedUrl.pathname.match(scopePathRegex)?.groups ?? {}
+  const page = dspace.pages.read(url, { isAnyHost: true })
 
-  if (!route || !uuid || !hexOrHyphenRegex.test(uuid) || isNotFoundHtml(content)) {
+  if (!page || page.key === 'home' || isNotFoundHtml(content)) {
     return { kind: 'home', restUrl }
   }
 
-  if (isAnyOf(route, 'collections')) {
-    return { kind: 'collection', restUrl, uuid }
+  if (page.key === 'collection') {
+    return { kind: 'collection', restUrl, uuid: page.params.uuid }
   }
 
-  return { kind: 'community', restUrl, uuid }
+  return { kind: 'community', restUrl, uuid: page.params.uuid }
 }
 
 export const dspaceHandler: PlatformHandler = {
