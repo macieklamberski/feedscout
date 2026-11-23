@@ -27,7 +27,7 @@ export const parseGithubUrl = (url: string): GithubUrl | undefined => {
     return
   }
 
-  const { owner, repo, org, section, category, branch, path } = page.params
+  const { owner, repo, org, category, branch, path } = page.params
 
   if (page.key === 'user') {
     return { kind: 'user', owner }
@@ -37,18 +37,19 @@ export const parseGithubUrl = (url: string): GithubUrl | undefined => {
     return { kind: 'discussions', org, discussionCategory: category }
   }
 
+  if (page.key === 'repo-wiki') {
+    return { kind: 'repo', owner, repo, section: 'wiki' }
+  }
+
+  if (page.key === 'repo-discussions') {
+    return { kind: 'repo', owner, repo, section: 'discussions', discussionCategory: category }
+  }
+
   if (path) {
     return { kind: 'repo', owner, repo, file: { branch, path } }
   }
 
-  return {
-    kind: 'repo',
-    owner,
-    repo,
-    section: section?.toLowerCase(),
-    discussionCategory: category,
-    branch,
-  }
+  return { kind: 'repo', owner, repo, branch }
 }
 
 export const githubHandler: PlatformHandler = {

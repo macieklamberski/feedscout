@@ -28,8 +28,8 @@ describe('parseMailArchiveUrl', () => {
     )
   })
 
-  it('should keep a percent-encoded list address as written', () => {
-    const expected: MailArchiveUrl = { kind: 'list', list: 'dnsop%40ietf.org' }
+  it('should read a percent-encoded at sign in the list address as an at sign', () => {
+    const expected: MailArchiveUrl = { kind: 'list', list: 'dnsop@ietf.org' }
 
     expect(parseMailArchiveUrl('https://www.mail-archive.com/dnsop%40ietf.org/')).toEqual(expected)
   })
@@ -119,15 +119,15 @@ describe('mailArchiveHandler', () => {
       expect(mailArchiveHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should keep a percent-encoded at sign in the list address', () => {
+    it('should build the feed of a percent-encoded list address with an at sign', () => {
       const value = 'https://www.mail-archive.com/dev%40example.org/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://www.mail-archive.com/dev%40example.org/maillist.xml',
+          uri: 'https://www.mail-archive.com/dev@example.org/maillist.xml',
           hint: { key: 'mail-archive:list', label: 'Mailing list', format: 'rss' },
         },
         {
-          uri: 'https://www.mail-archive.com/dev%40example.org/maillist.rdf',
+          uri: 'https://www.mail-archive.com/dev@example.org/maillist.rdf',
           hint: { key: 'mail-archive:list', label: 'Mailing list', format: 'rdf' },
         },
       ]
