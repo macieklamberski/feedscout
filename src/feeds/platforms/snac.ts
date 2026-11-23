@@ -1,5 +1,5 @@
 import { snac } from 'feedintel'
-import { parseUrl } from 'trousse'
+import { encodePathSegment } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -7,9 +7,6 @@ import { hasMarker, hasMetaContent } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 export type SnacUrl = { kind: 'user'; path: string }
-
-const trailingSlashRegex = /\/$/
-const postOrHistoryRegex = /\/[ph]\/[^/]+$/i
 
 const feeds = withHintLabels(snac.feeds)
 
@@ -24,15 +21,15 @@ export const isSnacHeaders = (headers: Headers): boolean => {
 
 // An instance is routinely mounted under a sub-path, so the feed is built from the page path.
 export const parseSnacUrl = (url: string): SnacUrl | undefined => {
-  const pathname = parseUrl(url)?.pathname ?? ''
-  // A post lives at `/{user}/p/{id}` and a month of history at `/{user}/h/{month}.html`.
-  const path = pathname.replace(trailingSlashRegex, '').replace(postOrHistoryRegex, '')
+  const page = snac.pages.read(url, { isAnyHost: true })
 
-  if (path.split('/').filter(Boolean).length === 0) {
+  if (!page) {
     return
   }
 
-  return { kind: 'user', path }
+  const { root, user } = page.params
+
+  return { kind: 'user', path: new URL(`${root}/${encodePathSegment(user)}`).pathname }
 }
 
 export const snacHandler: PlatformHandler = {
@@ -45,15 +42,13 @@ export const snacHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsed = parseSnacUrl(url)
+    const page = snac.pages.read(url, { isAnyHost: true })
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
-    const userUrl = `${new URL(url).origin}${parsed.path}`
-    const root = new URL('./', userUrl).href
-    const user = userUrl.slice(root.length)
+    const { root, user } = page.params
 
     return [feeds.getFeedEntry('posts', { root, user })]
   },

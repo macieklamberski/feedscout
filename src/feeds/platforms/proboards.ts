@@ -1,14 +1,11 @@
 import { proboards } from 'feedintel'
-import { isHostOrSubdomainOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type ProboardsUrl = { kind: 'forum' } | { kind: 'customDomain' }
-
-const domains = proboards.hosts.tenants
 
 const feeds = withHintLabels(proboards.feeds)
 
@@ -19,11 +16,13 @@ export const isProboardsHtml = (content: string): boolean => {
 }
 
 export const parseProboardsUrl = (url: string): ProboardsUrl | undefined => {
-  if (!isHostOrSubdomainOf(url, domains)) {
+  const page = proboards.pages.read(url)
+
+  if (!page) {
     return { kind: 'customDomain' }
   }
 
-  if (!getTenantSubdomain(url, domains)) {
+  if (page.key === 'platform') {
     return
   }
 

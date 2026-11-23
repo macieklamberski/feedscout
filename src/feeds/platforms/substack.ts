@@ -1,8 +1,8 @@
 import { substack } from 'feedintel'
-import { escapeRegex, isHostOf, isPresent, parseUrl } from 'trousse'
+import { escapeRegex, isPresent } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getHostOrigin, getTenantSubdomain, wordOrHyphenRegex } from '../../common/utils.js'
+import { getHostOrigin } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Handler needed for: newsletter.
@@ -10,13 +10,6 @@ import { getHostOrigin, getTenantSubdomain, wordOrHyphenRegex } from '../../comm
 export type SubstackUrl = { kind: 'newsletter' } | { kind: 'profile'; username: string }
 export type SubstackPage = { kind: 'newsletter' | 'profile'; origin: string }
 
-const domains = substack.hosts.tenants
-// The app host names a publication in the path and the API host serves podcast feeds, so neither
-// is a publication itself.
-const appHosts = ['open.substack.com', 'api.substack.com']
-
-const profileRegex = /^\/@(?<username>[^/]+)/
-const sectionPathRegex = /^\/s\/(?<slug>[^/]+)/i
 // A section page embeds the record of every section of the publication, each naming its id before
 // its slug with no brace between them.
 const braceRegex = /[{}]/
@@ -61,7 +54,8 @@ const getPodcastSections = (content: string, publication: string): Array<string>
 }
 
 const getSectionId = (content: string | undefined, url: string): string | undefined => {
-  const slug = parseUrl(url)?.pathname.match(sectionPathRegex)?.groups?.slug
+  const page = substack.pages.read(url)
+  const slug = page?.key === 'section' ? page.params.slug : undefined
 
   if (!content || !slug) {
     return
@@ -98,27 +92,17 @@ const getPublicationOrigin = (content: string | undefined): string | undefined =
 }
 
 export const parseSubstackUrl = (url: string): SubstackUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = substack.pages.read(url)
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  if (getTenantSubdomain(parsedUrl, domains) && !isHostOf(parsedUrl, appHosts)) {
-    return { kind: 'newsletter' }
+  if (page.key === 'profile') {
+    return { kind: 'profile', username: page.params.username }
   }
 
-  if (!isHostOf(parsedUrl, domains)) {
-    return
-  }
-
-  const username = parsedUrl.pathname.match(profileRegex)?.groups?.username
-
-  if (!username || !wordOrHyphenRegex.test(username)) {
-    return
-  }
-
-  return { kind: 'profile', username }
+  return { kind: 'newsletter' }
 }
 
 export const getSubstackPage = (
@@ -193,16 +177,5 @@ export const substackHandler: PlatformHandler = {
     ].filter(isPresent)
   },
 
-  // The table reads any single-label host under substack.com, so the page parser refuses a
-  // newsletter feed on the app hosts, whose /feed answers 404. Podcast feeds are served from the
-  // API host.
-  getFeedHint: (url) => {
-    const hint = feeds.getFeedHint(url)
-
-    if (hint?.key.startsWith('substack:newsletter') && !parseSubstackUrl(url)) {
-      return
-    }
-
-    return hint
-  },
+  getFeedHint: feeds.getFeedHint,
 }

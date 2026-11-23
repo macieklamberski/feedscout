@@ -1,5 +1,4 @@
 import { prose } from 'feedintel'
-import { getSubdomain } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -9,8 +8,6 @@ export type ProseUrl =
   | { kind: 'home' }
   | { kind: 'tag'; username: string; tag: string }
   | { kind: 'blog'; username: string }
-
-const domains = prose.hosts.tenants
 
 const feeds = withHintLabels(prose.feeds)
 
@@ -26,15 +23,10 @@ export const parseProseUrl = (url: string): ProseUrl | undefined => {
     return { kind: 'home' }
   }
 
-  // `www` is a Prose user like any other, so `www.prose.sh` is a blog.
-  const username = getSubdomain(url, domains)
-
-  if (!username) {
-    return
-  }
+  const { username, tag } = page.params
 
   if (page.key === 'tag') {
-    return { kind: 'tag', username, tag: page.params.tag }
+    return { kind: 'tag', username, tag }
   }
 
   return { kind: 'blog', username }

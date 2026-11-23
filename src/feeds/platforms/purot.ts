@@ -1,8 +1,8 @@
 import { purot } from 'feedintel'
-import { encodePathSegment } from 'trousse'
+import { encodePathSegment, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getTenantSubdomain } from '../../common/utils.js'
+import { findElement } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: page-activity, page-changes, page-discussions, recent-changes.
@@ -14,22 +14,29 @@ export type PurotPage =
   | { kind: 'wiki'; wiki: string }
   | { kind: 'page'; wiki: string; page: string }
 
-const domains = purot.hosts.tenants
-
-// A profile id holds a slash, so a profile page never matches. A profile page links its user's
-// feeds even when it answers "User not found", and a real profile redirects to the home page.
-const pageChangesRegex = /^\/changes\/([^/?]+)\?mode=rss&messages=0$/i
-
 const feeds = withHintLabels(purot.feeds)
 
-export const parsePurotUrl = (url: string): PurotUrl | undefined => {
-  const wiki = getTenantSubdomain(url, domains)
+// A profile feed link names its user under `profile/`, read by no page row. A profile page links
+// its user's feeds even when it answers "User not found", and a real profile redirects home.
+const getLinkedPage = (href: string | undefined, url: string): string | undefined => {
+  const linkUrl = parseUrl(href, url)
+  const link = linkUrl ? purot.feeds.read(linkUrl.href) : undefined
 
-  if (!wiki) {
+  if (!linkUrl || !isHostOf(linkUrl, new URL(url).hostname) || link?.key !== 'page-changes') {
     return
   }
 
-  return { kind: 'wiki', wiki }
+  return link.params.page
+}
+
+export const parsePurotUrl = (url: string): PurotUrl | undefined => {
+  const page = purot.pages.read(url)
+
+  if (!page) {
+    return
+  }
+
+  return { kind: 'wiki', wiki: page.params.wiki }
 }
 
 // A made-up page id answers the whole wiki's changes, so the page comes from its own feed link,
@@ -42,9 +49,9 @@ export const getPurotPage = (url: string, content: string | undefined): PurotPag
   }
 
   const link = findElement(content, (element) => {
-    return element.name === 'link' && pageChangesRegex.test(element.attribs.href ?? '')
+    return element.name === 'link' && getLinkedPage(element.attribs.href, url) !== undefined
   })
-  const page = link?.attribs.href?.match(pageChangesRegex)?.[1]
+  const page = getLinkedPage(link?.attribs.href, url)
 
   if (!page) {
     return parsed

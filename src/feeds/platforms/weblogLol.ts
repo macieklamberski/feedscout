@@ -1,18 +1,15 @@
 import { weblogLol } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type WeblogLolUrl = { kind: 'blog' }
 
-const domains = weblogLol.hosts.tenants
-
 const feeds = withHintLabels(weblogLol.feeds)
 
 export const parseWeblogLolUrl = (url: string): WeblogLolUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  if (!weblogLol.pages.read(url)) {
     return
   }
 

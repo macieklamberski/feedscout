@@ -1,5 +1,5 @@
 import { pukiwiki } from 'feedintel'
-import { endsWithAnyOf } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
@@ -12,7 +12,6 @@ export type PukiwikiPage = { kind: 'wiki'; scriptUrl: string }
 const stylesheetRegex = /(?:^|\/)pukiwiki\.css(?:\.php)?(?:[?#]|$)/i
 // Quick Homepage Maker, a PukiWiki fork, numbers its session cookie per install.
 const sessionCookieRegex = /^QHMSSID\d*$/
-const skinRootRegex = /^(.*?\/)skin\//i
 
 const feeds = withHintLabels(pukiwiki.feeds)
 
@@ -37,16 +36,17 @@ export const getPukiwikiPage = (url: string, content: string | undefined): Pukiw
   const stylesheet = findElement(content, (element) => {
     return element.name === 'link' && stylesheetRegex.test(element.attribs.href ?? '')
   })
-  const stylesheetUrl = stylesheet?.attribs.href ? new URL(stylesheet.attribs.href, url) : undefined
+  const stylesheetUrl = parseUrl(stylesheet?.attribs.href, url)
+  const skin = stylesheetUrl
+    ? pukiwiki.pages.read(stylesheetUrl.href, { isAnyHost: true })
+    : undefined
+  const isScript = pukiwiki.pages.read(url, { isAnyHost: true })?.key === 'script'
 
-  const root =
-    stylesheetUrl?.origin === origin ? stylesheetUrl.pathname.match(skinRootRegex)?.[1] : undefined
-
-  if (endsWithAnyOf(pathname, '.php') || !root || !pathname.startsWith(root)) {
+  if (isScript || skin?.key !== 'skin' || !pukiwiki.pages.read(url, { root: skin.params.root })) {
     return { kind: 'wiki', scriptUrl: `${origin}${pathname}` }
   }
 
-  return { kind: 'wiki', scriptUrl: `${origin}${root}` }
+  return { kind: 'wiki', scriptUrl: `${skin.params.root}/` }
 }
 
 export const pukiwikiHandler: PlatformHandler = {

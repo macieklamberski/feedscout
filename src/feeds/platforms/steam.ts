@@ -1,5 +1,4 @@
 import { steam } from 'feedintel'
-import { isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -13,8 +12,6 @@ export type SteamUrl =
   | { kind: 'collection'; collection: string }
   | { kind: 'news' }
 
-const storeHosts = ['store.steampowered.com']
-
 const feeds = withHintLabels(steam.feeds)
 
 export const parseSteamUrl = (url: string): SteamUrl | undefined => {
@@ -26,7 +23,7 @@ export const parseSteamUrl = (url: string): SteamUrl | undefined => {
 
   const { appId, group, clanId, collection } = page.params
 
-  if (page.key === 'app') {
+  if (page.key === 'storeApp' || page.key === 'app') {
     return { kind: 'app', appId }
   }
 
@@ -64,7 +61,7 @@ export const steamHandler: PlatformHandler = {
       return [
         feeds.getFeedEntry('news', { appId: parsed.appId }),
         feeds.getFeedEntry('community-news', { game: parsed.appId }),
-        ...(isHostOf(url, storeHosts)
+        ...(steam.pages.read(url)?.key === 'storeApp'
           ? [
               feeds.getFeedEntry('daily-deals'),
               feeds.getFeedEntry('new-releases'),

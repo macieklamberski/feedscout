@@ -1,4 +1,5 @@
 import { smf } from 'feedintel'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -10,7 +11,6 @@ import { findElement, hasMarker } from '../../common/utils.js'
 export type SmfPage = { scriptUrl: string; boardId?: string }
 
 const scriptUrlRegex = /var smf_scripturl = "([^"]+)"/
-const boardIdRegex = /[?;&]board=(\d+)/i
 
 const feeds = withHintLabels(smf.feeds)
 
@@ -19,19 +19,17 @@ export const isSmfHtml = (content: string): boolean => {
   return scriptUrlRegex.test(content) && content.includes('var smf_theme_url = "')
 }
 
+const readBoardId = (url: string | undefined, root: string): string | undefined => {
+  return smf.pages.read(url ?? '', { root })?.params.board
+}
+
 // A board page and a topic page both link their board as `rel="index"`.
-const getBoardId = (url: string, content: string): string | undefined => {
-  const urlBoardId = boardIdRegex.exec(url)?.[1]
-
-  if (urlBoardId) {
-    return urlBoardId
-  }
-
+const getBoardId = (url: string, content: string, root: string): string | undefined => {
   const indexLink = findElement(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'index'
   })
 
-  return indexLink?.attribs.href?.match(boardIdRegex)?.[1]
+  return readBoardId(url, root) ?? readBoardId(parseUrl(indexLink?.attribs.href, url)?.href, root)
 }
 
 const getSmfPage = (url: string, content: string | undefined): SmfPage | undefined => {
@@ -43,8 +41,9 @@ const getSmfPage = (url: string, content: string | undefined): SmfPage | undefin
 
   // A guest without cookies gets the script URL with a `PHPSESSID` query appended.
   const { origin, pathname } = new URL(scriptUrl, url)
+  const root = `${origin}${pathname}`
 
-  return { scriptUrl: `${origin}${pathname}`, boardId: getBoardId(url, content) }
+  return { scriptUrl: root, boardId: getBoardId(url, content, root) }
 }
 
 export const smfHandler: PlatformHandler = {
