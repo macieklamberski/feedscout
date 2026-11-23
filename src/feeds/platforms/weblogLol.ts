@@ -28,13 +28,10 @@ export const weblogLolHandler: PlatformHandler = {
       return []
     }
 
-    // The http spellings redirect to the blog's https home page, not to the feed.
-    const params = { scheme: 'https' }
-
     return [
-      page.getFeedEntry('posts', params, 'rss'),
-      page.getFeedEntry('posts', params, 'atom'),
-      page.getFeedEntry('posts', params, 'json'),
+      page.getFeedEntry('posts', {}, 'rss'),
+      page.getFeedEntry('posts', {}, 'atom'),
+      page.getFeedEntry('posts', {}, 'json'),
     ]
   },
 

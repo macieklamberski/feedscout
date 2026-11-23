@@ -79,16 +79,25 @@ const getSectionId = (content: string | undefined, url: string): string | undefi
   }
 }
 
-const getPublicationOrigin = (content: string | undefined): string | undefined => {
+const getPublicationOrigin = (
+  content: string | undefined,
+  username: string,
+): string | undefined => {
   const { subdomain, customDomain } = content?.match(publicationRegex)?.groups ?? {}
+  const customOrigin = customDomain ? getHostOrigin(customDomain) : undefined
 
-  if (!subdomain) {
+  if (customOrigin) {
+    return customOrigin
+  }
+
+  const params = { scheme: 'https', username: subdomain ?? username }
+  const feedUrl = feeds.getFeedUrl('newsletter', params)
+
+  if (!feedUrl) {
     return
   }
 
-  const customOrigin = customDomain ? getHostOrigin(customDomain) : undefined
-
-  return customOrigin ?? `https://${subdomain}.substack.com`
+  return new URL(feedUrl).origin
 }
 
 export const parseSubstackUrl = (url: string): SubstackUrl | undefined => {
@@ -119,7 +128,11 @@ export const getSubstackPage = (
     return { kind: 'newsletter', origin: new URL(url).origin }
   }
 
-  const origin = getPublicationOrigin(content) ?? `https://${parsed.username}.substack.com`
+  const origin = getPublicationOrigin(content, parsed.username)
+
+  if (!origin) {
+    return
+  }
 
   return { kind: 'profile', origin }
 }

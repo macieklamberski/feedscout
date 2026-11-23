@@ -11,16 +11,19 @@ export type PlatformFeedTable<Key extends string = string> = {
     key: Key,
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
+    variant?: string,
   ) => string | undefined
   getFeedEntry: (
     key: Key,
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
+    variant?: string,
   ) => DiscoverUriEntry | undefined
   getFeedSpellings: (
     key: Key,
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
+    variant?: string,
   ) => DiscoverUriEntry | undefined
   getFeedHint: (url: string) => DiscoverUriHint | undefined
   forUrl: (
@@ -45,11 +48,13 @@ type UnlabelledFeedTable<Key extends string> = {
     key: Key,
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
+    variant?: string,
   ) => UnlabelledEntry | undefined
   getFeedSpellings: (
     key: Key,
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
+    variant?: string,
   ) => UnlabelledEntry | undefined
   getFeedHint: (url: string) => UnlabelledHint | undefined
   forUrl: (
@@ -88,11 +93,11 @@ export const withHintLabels = <Key extends string>(
 
   return {
     getFeedUrl: table.getFeedUrl,
-    getFeedEntry: (key, params, format) => {
-      return withEntryLabel(table.getFeedEntry(key, params, format))
+    getFeedEntry: (key, params, format, variant) => {
+      return withEntryLabel(table.getFeedEntry(key, params, format, variant))
     },
-    getFeedSpellings: (key, params, format) => {
-      return withEntryLabel(table.getFeedSpellings(key, params, format))
+    getFeedSpellings: (key, params, format, variant) => {
+      return withEntryLabel(table.getFeedSpellings(key, params, format, variant))
     },
     getFeedHint: (url) => withHintLabel(table.getFeedHint(url)),
     forUrl: (url) => {
@@ -104,11 +109,11 @@ export const withHintLabels = <Key extends string>(
 
       return {
         getFeedUrl: pageTable.getFeedUrl,
-        getFeedEntry: (key, params, format) => {
-          return withEntryLabel(pageTable.getFeedEntry(key, params, format))
+        getFeedEntry: (key, params, format, variant) => {
+          return withEntryLabel(pageTable.getFeedEntry(key, params, format, variant))
         },
-        getFeedSpellings: (key, params, format) => {
-          return withEntryLabel(pageTable.getFeedSpellings(key, params, format))
+        getFeedSpellings: (key, params, format, variant) => {
+          return withEntryLabel(pageTable.getFeedSpellings(key, params, format, variant))
         },
       }
     },

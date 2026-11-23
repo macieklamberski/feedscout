@@ -1,5 +1,4 @@
 import { webtoons } from 'feedintel'
-import { isAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -13,8 +12,6 @@ export type WebtoonsUrl = {
   name: string
   titleNo: string
 }
-
-const canvasGenres = ['canvas', 'challenge']
 
 const feeds = withHintLabels(webtoons.feeds)
 
@@ -36,17 +33,16 @@ export const webtoonsHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsed = parseWebtoonsUrl(url)
+    const page = webtoons.pages.read(url)
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
-    // Canvas series serve their feed under /challenge/, and an original's feed answers
-    // 500 unless its genre and name match the series.
-    const genre = isAnyOf(parsed.genre, canvasGenres) ? 'challenge' : parsed.genre
+    const { language, genre, name, titleNo } = page.params
+    const variant = page.key === 'canvas' ? 'canvas' : undefined
 
-    return [feeds.getFeedEntry('series', { ...parsed, genre })]
+    return [feeds.getFeedEntry('series', { language, genre, name, titleNo }, undefined, variant)]
   },
 
   getFeedHint: feeds.getFeedHint,

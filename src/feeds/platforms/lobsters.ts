@@ -92,10 +92,11 @@ export const lobstersHandler: PlatformHandler = {
       ]
     }
 
-    // The top page without a period redirects to the one-week page.
     if (parsed.kind === 'top') {
+      const variant = parsed.period ? undefined : 'default-period'
+
       return [
-        feeds.getFeedEntry('top', { period: parsed.period ?? '1w' }),
+        feeds.getFeedEntry('top', { period: parsed.period }, undefined, variant),
         feeds.getFeedEntry('stories'),
         feeds.getFeedEntry('newest'),
         feeds.getFeedEntry('comments'),

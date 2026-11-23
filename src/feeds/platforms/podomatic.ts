@@ -1,7 +1,7 @@
 import { podomatic } from 'feedintel'
+import { isPresent, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getHostOrigin } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -26,19 +26,16 @@ export const podomaticHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePodomaticUrl(url)
-    const page = feeds.forUrl(url)
+    const parsedUrl = parseUrl(url)
 
-    if (!parsed || !page) {
+    if (!parsed || !parsedUrl) {
       return []
     }
 
-    const host = `${parsed.show.toLowerCase()}.podomatic.com`
+    // The show is a host label, which a URL writes in lowercase.
+    const params = { scheme: parsedUrl.protocol.slice(0, -1), show: parsed.show.toLowerCase() }
 
-    if (!getHostOrigin(host)) {
-      return []
-    }
-
-    return [page.getFeedEntry('show', { host })]
+    return [feeds.getFeedEntry('show', params)].filter(isPresent)
   },
 
   getFeedHint: feeds.getFeedHint,
