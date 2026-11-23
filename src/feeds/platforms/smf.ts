@@ -20,7 +20,13 @@ export const isSmfHtml = (content: string): boolean => {
 }
 
 const readBoardId = (url: string | undefined, root: string): string | undefined => {
-  return smf.pages.read(url ?? '', { root })?.params.board
+  const page = smf.pages.read(url ?? '', { root })
+
+  if (page?.key !== 'board') {
+    return
+  }
+
+  return page.params.board
 }
 
 // A board page and a topic page both link their board as `rel="index"`.
@@ -33,15 +39,14 @@ const getBoardId = (url: string, content: string, root: string): string | undefi
 }
 
 const getSmfPage = (url: string, content: string | undefined): SmfPage | undefined => {
-  const scriptUrl = content?.match(scriptUrlRegex)?.[1]
+  const scriptUrl = parseUrl(content?.match(scriptUrlRegex)?.[1], url)
+  const script = scriptUrl ? smf.pages.read(scriptUrl.href, { isAnyHost: true }) : undefined
 
-  if (!content || !scriptUrl) {
+  if (!content || !script) {
     return
   }
 
-  // A guest without cookies gets the script URL with a `PHPSESSID` query appended.
-  const { origin, pathname } = new URL(scriptUrl, url)
-  const root = `${origin}${pathname}`
+  const { root } = script.params
 
   return { scriptUrl: root, boardId: getBoardId(url, content, root) }
 }

@@ -1,13 +1,11 @@
 import { publii } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { hasMarker, hasMetaContent, isRootOfPage } from '../../common/utils.js'
+import { hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-// Publii links its media by absolute URL under the site root, as in
-// `https://example.com/blog/media/posts/12/cover.jpg`.
-const mediaUrlRegex = /["'](?<siteUrl>https?:\/\/[^"'\s]+?)\/media\/(?:website\/|posts\/\d+\/)/i
+const quotedUrlRegex = /["'](?<url>https?:\/\/[^"'\s]+)/gi
 
 const feeds = withHintLabels(publii.feeds)
 
@@ -15,8 +13,19 @@ const hasGenerator = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Publii')
 }
 
+// Publii links its media by absolute URL under the site root.
+const getMediaRoot = (content: string | undefined): string | undefined => {
+  for (const match of content?.matchAll(quotedUrlRegex) ?? []) {
+    const media = publii.pages.read(match.groups?.url ?? '', { isAnyHost: true })
+
+    if (media?.key === 'media') {
+      return media.params.root
+    }
+  }
+}
+
 export const isPubliiHtml = (content: string): boolean => {
-  return hasGenerator(content) || mediaUrlRegex.test(content)
+  return hasGenerator(content) || getMediaRoot(content) !== undefined
 }
 
 export type PubliiPage = { kind: 'site'; siteUrl: string }
@@ -24,9 +33,9 @@ export type PubliiPage = { kind: 'site'; siteUrl: string }
 // A media link names the site root only when the page sits under it. One on another host is a CDN
 // or an image of another site.
 const getMediaSiteUrl = (url: string, content: string | undefined): string | undefined => {
-  const siteUrl = content?.match(mediaUrlRegex)?.groups?.siteUrl
+  const siteUrl = getMediaRoot(content)
 
-  if (!siteUrl || !isRootOfPage(siteUrl, url)) {
+  if (!siteUrl || !publii.pages.read(url, { root: siteUrl })) {
     return
   }
 

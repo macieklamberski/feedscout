@@ -1,22 +1,21 @@
 import { sakuraBlog } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type SakuraBlogUrl = { kind: 'blog'; hostname: string }
 
-const domains = sakuraBlog.hosts.tenants
-
 const feeds = withHintLabels(sakuraBlog.feeds)
 
 export const parseSakuraBlogUrl = (url: string): SakuraBlogUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  const page = sakuraBlog.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  return { kind: 'blog', hostname: new URL(url).hostname }
+  return { kind: 'blog', hostname: page.params.host }
 }
 
 export const sakuraBlogHandler: PlatformHandler = {

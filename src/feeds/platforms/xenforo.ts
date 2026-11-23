@@ -1,5 +1,5 @@
 import { xenforo } from 'feedintel'
-import { getAnyOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -13,12 +13,6 @@ export type XenforoPage =
   | { kind: 'forum'; basePath: string; route: string; forumPath: string }
   | { kind: 'board'; basePath: string }
 
-// The board feed sits under the same route prefix as the forums. A page outside a
-// forum does not carry the prefix, and a board that renamed its route can answer on both.
-const routePrefixes = ['forums', 'f']
-
-// XF2 serves a forum at `/f/{slug.id}` or, on the default route, `/forums/{slug.id}`.
-const forumPathRegex = /\/(?<route>f|forums)\/(?<forumPath>[^/]+\.\d+)(?:\/|$)/i
 // XF2 prints the path the board is mounted under in its script config.
 const basePathRegex = /\bbasePath:\s*'(?<basePath>(?:\/[^'/]+)*)\/?'/
 
@@ -39,7 +33,7 @@ const getConfigBasePath = (url: string, content: string | undefined): string => 
   const basePath = content?.match(basePathRegex)?.groups?.basePath
 
   // The path counts only when it holds the page.
-  if (!basePath || !`${new URL(url).pathname}/`.startsWith(`${basePath}/`)) {
+  if (!basePath || !xenforo.pages.read(url, { root: `${new URL(url).origin}${basePath}` })) {
     return ''
   }
 
@@ -53,15 +47,14 @@ export const parseXenforoUrl = (url: string): XenforoUrl | undefined => {
     return
   }
 
-  const forumMatch = parsedUrl.pathname.match(forumPathRegex)
-  const route = getAnyOf(forumMatch?.groups?.route, routePrefixes)
-  const forumPath = forumMatch?.groups?.forumPath
-
   // A board is routinely mounted under a sub-path such as `/community`, in front of the route.
-  if (forumMatch && route && forumPath) {
-    const basePath = parsedUrl.pathname.slice(0, forumMatch.index)
+  const page = xenforo.pages.read(url, { isAnyHost: true })
+  const route = page?.row.variant
 
-    return { kind: 'forum', basePath, route, forumPath }
+  if (page?.key === 'forum' && route) {
+    const basePath = page.params.root.slice(parsedUrl.origin.length)
+
+    return { kind: 'forum', basePath, route, forumPath: page.params.forumPath }
   }
 
   return { kind: 'board' }

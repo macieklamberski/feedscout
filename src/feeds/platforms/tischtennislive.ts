@@ -24,11 +24,11 @@ export const parseTischtennisliveUrl = (url: string): TischtennisliveUrl | undef
   return { kind: 'association' }
 }
 
-const getLinkedPage = (href: string | undefined, url: string) => {
+const getLinkedPage = (href: string | undefined, url: string, host: string) => {
   const linkUrl = parseUrl(href, url)
   const page = linkUrl ? tischtennislive.pages.read(linkUrl.href) : undefined
 
-  if (!linkUrl || !isHostOf(linkUrl, new URL(url).hostname) || page?.key === 'association') {
+  if (!linkUrl || !isHostOf(linkUrl, host) || !page || page.key === 'association') {
     return
   }
 
@@ -41,16 +41,17 @@ export const getTischtennislivePage = (
   url: string,
   content: string | undefined,
 ): TischtennislivePage | undefined => {
-  const parsed = parseTischtennisliveUrl(url)
+  const page = tischtennislive.pages.read(url)
 
-  if (!parsed) {
+  if (!page) {
     return
   }
 
+  const { host } = page.params
   const link = findElement(content, (element) => {
-    return element.name === 'a' && getLinkedPage(element.attribs.href, url) !== undefined
+    return element.name === 'a' && getLinkedPage(element.attribs.href, url, host) !== undefined
   })
-  const linkedPage = getLinkedPage(link?.attribs.href, url)
+  const linkedPage = getLinkedPage(link?.attribs.href, url, host)
 
   if (linkedPage?.key === 'group') {
     return { kind: 'group', group: linkedPage.params.group }
@@ -60,7 +61,7 @@ export const getTischtennislivePage = (
     return { kind: 'league', league: linkedPage.params.league }
   }
 
-  return parsed
+  return { kind: 'association' }
 }
 
 export const tischtennisliveHandler: PlatformHandler = {

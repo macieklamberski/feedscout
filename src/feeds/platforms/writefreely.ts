@@ -1,5 +1,5 @@
 import { writefreely } from 'feedintel'
-import { getPathSegments, startsWithAnyOf } from 'trousse'
+import { parseUrl, startsWithAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -16,30 +16,18 @@ import {
 
 export type WritefreelyPage = { blogPath: string; tag?: string }
 
-const tagPathRegex = /\/tag:([^/]+)/i
-const rootRouteRegex = /^\/(?:(?:tag|lang):|page\/\d+(?:\/|$)|archive\/?$)/i
-const blogPathRegex = /^\/(?:[^/]+\/)?$/
-
 const feeds = withHintLabels(writefreely.feeds)
 
-const getUrlBlogPath = (url: string): string | undefined => {
-  const { pathname } = new URL(url)
-  const [blogOrRoute] = getPathSegments(url)
-
-  if (!blogOrRoute) {
-    return
-  }
-
-  // A single-user instance serves its tag, language, page and archive routes at the root.
-  if (rootRouteRegex.test(pathname)) {
-    return '/'
-  }
-
-  return `/${blogOrRoute}/`
+const readPage = (url: string | undefined, root: string) => {
+  return writefreely.pages.read(url ?? '', { root })
 }
 
 // A single-user instance serves its one blog at the root, and the blog title links to it.
-const getBlogPath = (content: string | undefined): string | undefined => {
+const getBlogPath = (
+  content: string | undefined,
+  url: string,
+  root: string,
+): string | undefined => {
   const title = findElement(content, (element) => element.attribs.id === 'blog-title')
 
   if (!title) {
@@ -47,12 +35,15 @@ const getBlogPath = (content: string | undefined): string | undefined => {
   }
 
   const href = findDescendant(title, (element) => element.name === 'a')?.attribs.href
+  const link = readPage(parseUrl(href, url)?.href, root)
 
-  if (!href || !blogPathRegex.test(href)) {
-    return
+  if (link?.key === 'home') {
+    return '/'
   }
 
-  return href
+  if (link?.key === 'blog' && link.params.blog) {
+    return `/${link.params.blog}/`
+  }
 }
 
 const isWriteStylesheet = (element: Element): boolean => {
@@ -72,12 +63,18 @@ const getWritefreelyPage = (
   url: string,
   content: string | undefined,
 ): WritefreelyPage | undefined => {
-  const urlBlogPath = getUrlBlogPath(url)
-  const blogPath = getBlogPath(content)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const page = readPage(url, parsedUrl.origin)
+  const blogPath = getBlogPath(content, url, parsedUrl.origin)
 
   // The root of a single-user instance is its blog, and a multi-user root redirects to /signup or
   // /read, so only a blog title linking the root names a blog there.
-  if (!urlBlogPath) {
+  if (!page || page.key === 'home') {
     if (blogPath !== '/') {
       return
     }
@@ -85,9 +82,11 @@ const getWritefreelyPage = (
     return { blogPath }
   }
 
+  const urlBlogPath = page.params.blog ? `/${page.params.blog}/` : '/'
+
   return {
     blogPath: blogPath ?? urlBlogPath,
-    tag: new URL(url).pathname.match(tagPathRegex)?.[1],
+    tag: page.key === 'tag' ? page.params.tag : undefined,
   }
 }
 
