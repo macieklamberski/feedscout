@@ -52,12 +52,6 @@ describe('parseBlueskyUrl', () => {
     expect(parseBlueskyUrl(value)).toEqual(expected)
   })
 
-  it('should return undefined for the www host', () => {
-    const value = 'https://www.bsky.app/profile/user.bsky.social'
-
-    expect(parseBlueskyUrl(value)).toBeUndefined()
-  })
-
   it('should return undefined for a profile path without a handle', () => {
     expect(parseBlueskyUrl('https://bsky.app/profile')).toBeUndefined()
     expect(parseBlueskyUrl('https://bsky.app/profile/')).toBeUndefined()

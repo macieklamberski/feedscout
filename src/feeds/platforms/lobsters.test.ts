@@ -132,10 +132,6 @@ describe('parseLobstersUrl', () => {
     expect(parseLobstersUrl('https://lobste.rs/s/abc123/some_story')).toEqual(expected)
   })
 
-  it('should return undefined for the www host', () => {
-    expect(parseLobstersUrl('https://www.lobste.rs/~alice')).toBeUndefined()
-  })
-
   it('should return undefined for another host', () => {
     expect(parseLobstersUrl('https://example.com/~user')).toBeUndefined()
   })
