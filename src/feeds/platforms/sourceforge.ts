@@ -1,5 +1,5 @@
 import { sourceforge } from 'feedintel'
-import { decodePercent, getPathSegments, isAnyOf, isHostOf, isPresent, parseUrl } from 'trousse'
+import { isPresent } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -19,45 +19,38 @@ export type SourceforgeUrl = {
   path?: string
 }
 
-const hosts = sourceforge.hosts.exact
-const projectPrefixes = ['projects', 'p']
-
 const feeds = withHintLabels(sourceforge.feeds)
 
 export const parseSourceforgeUrl = (url: string): SourceforgeUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = sourceforge.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const segments = getPathSegments(parsedUrl)
-  const [prefix, project, tool, page, threadWord, thread] = segments
+  const { project, forum, thread, tool, path } = page.params
 
-  if (!project || !isAnyOf(prefix, projectPrefixes)) {
-    return
+  if (page.key === 'files') {
+    return { kind: 'project', project, path: `/${path}` }
   }
 
-  // A files page links the feed of its folder, as `rss?path=/Win64` on `files/Win64/`.
-  if (isAnyOf(prefix, 'projects') && isAnyOf(tool, 'files') && page) {
-    return { kind: 'project', project, path: `/${segments.slice(3).map(decodePercent).join('/')}` }
+  if (page.key === 'thread') {
+    return { kind: 'project', project, forum, thread }
   }
 
-  if (!isAnyOf(prefix, 'p') || !tool) {
-    return { kind: 'project', project }
+  if (page.key === 'forum') {
+    return { kind: 'project', project, forum }
   }
 
-  if (isAnyOf(tool, 'discussion') && page) {
-    if (isAnyOf(threadWord, 'thread') && thread) {
-      return { kind: 'project', project, forum: page, thread }
-    }
-
-    return { kind: 'project', project, forum: page }
+  if (page.key === 'tool-page') {
+    return { kind: 'project', project, tool, page: page.params.page }
   }
 
-  // A page feed sits one segment below its tool, as a wiki page or a ticket. A deeper path, as a
-  // code tree, links the tool feed only.
-  return { kind: 'project', project, tool, page: segments.length === 4 ? page : undefined }
+  if (page.key === 'tool') {
+    return { kind: 'project', project, tool }
+  }
+
+  return { kind: 'project', project }
 }
 
 // A tool with rows of its own, as `bugs` or `news`, is read by them, and its feeds are among the

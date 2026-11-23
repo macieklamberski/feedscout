@@ -1,15 +1,12 @@
 import { zenfolio } from 'feedintel'
-import { isHostOrSubdomainOf, isSubdomainOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Handler needed for: blog, featured, recent.
 
 export type ZenfolioUrl = { kind: 'site' }
-
-const domains = zenfolio.hosts.tenants
 
 const zenfolioAssetRegex = /^(?:https?:)?\/\/cdn\.zenfolio\.com\/zf\//i
 
@@ -30,13 +27,7 @@ export const isZenfolioHeaders = (headers: Headers): boolean => {
 // The apex and the service subdomains of zenfolio.com run Zenfolio itself, not a photographer's
 // site. Every other host belongs to one photographer, so every page leads to the site's feeds.
 export const parseZenfolioUrl = (url: string): ZenfolioUrl | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl) {
-    return
-  }
-
-  if (isHostOrSubdomainOf(parsedUrl, domains) && !getTenantSubdomain(parsedUrl, domains)) {
+  if (!URL.canParse(url) || zenfolio.pages.read(url)?.key === 'platform') {
     return
   }
 
@@ -50,7 +41,7 @@ export const zenfolioHandler: PlatformHandler = {
       headers: isZenfolioHeaders,
     })
 
-    if (!isSubdomainOf(url, domains) && !hasZenfolioMarker) {
+    if (!zenfolio.pages.read(url) && !hasZenfolioMarker) {
       return false
     }
 

@@ -1,7 +1,6 @@
 import { twoday } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: posts, topic.
@@ -11,20 +10,19 @@ export type TwodayUrl =
   | { kind: 'blog'; blog: string }
   | { kind: 'topic'; blog: string; topic: string }
 
-const domains = twoday.hosts.tenants
-
 const feeds = withHintLabels(twoday.feeds)
 
 export const parseTwodayUrl = (url: string): TwodayUrl | undefined => {
   const page = twoday.pages.read(url)
-  const blog = getTenantSubdomain(url, domains)
 
-  if (!page || !blog) {
+  if (!page) {
     return
   }
 
+  const { blog, topic } = page.params
+
   if (page.key === 'topic') {
-    return { kind: 'topic', blog, topic: page.params.topic }
+    return { kind: 'topic', blog, topic }
   }
 
   return { kind: 'blog', blog }

@@ -1,29 +1,24 @@
 import { ucoz } from 'feedintel'
-import { getAnyOf, getPathSegments, isHostOrSubdomainOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: forum, forum-section, publ.
 // Handler needed for: news.
 
-type UcozModule = (typeof modules)[number]
+type UcozPageKey = NonNullable<ReturnType<typeof ucoz.pages.read>>['key']
+
+type UcozModule = Exclude<UcozPageKey, 'site' | 'platform' | 'forum-section' | 'home'>
 
 export type UcozUrl =
   | { kind: 'home' }
   | { kind: 'module'; module: UcozModule }
   | { kind: 'forumSection'; sectionId: string }
 
-const domains = ucoz.hosts.tenants
-
 // uCoz names its cookie `{cluster}{site}uCoz` after the site's system subdomain, custom domains
 // too, where the cluster is a digit or, on narod.ru, a letter.
 const cookieNameRegex = /^[\da-z][\w-]*uCoz$/
-// A forum page is `/forum/{section}-{topic}-{page}`, and section 0 is the forum index.
-const forumSectionRegex = /^([1-9]\d*)(?:-|$)/
-
-const modules = ['blog', 'board', 'dir', 'forum', 'load', 'news', 'photo', 'publ', 'stuff'] as const
 
 const feeds = withHintLabels(ucoz.feeds)
 
@@ -32,38 +27,27 @@ export const isUcozHeaders = (headers: Headers): boolean => {
 }
 
 export const parseUcozUrl = (url: string): UcozUrl | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl) {
+  if (!URL.canParse(url) || ucoz.pages.read(url)?.key === 'platform') {
     return
   }
 
-  if (isHostOrSubdomainOf(parsedUrl, domains) && !getTenantSubdomain(parsedUrl, domains)) {
-    return
+  const page = ucoz.pages.read(url, { root: new URL(url).origin })
+
+  if (!page || page.key === 'home' || page.key === 'site' || page.key === 'platform') {
+    return { kind: 'home' }
   }
 
-  const [segment, subsegment] = getPathSegments(parsedUrl)
-  const module = getAnyOf(segment, modules)
-
-  if (module === 'forum') {
-    const sectionId = subsegment?.match(forumSectionRegex)?.[1]
-
-    if (sectionId) {
-      return { kind: 'forumSection', sectionId }
-    }
+  if (page.key === 'forum-section') {
+    return { kind: 'forumSection', sectionId: page.params.sectionId }
   }
 
-  if (module) {
-    return { kind: 'module', module }
-  }
-
-  return { kind: 'home' }
+  return { kind: 'module', module: page.key }
 }
 
 export const ucozHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (
-      !getTenantSubdomain(url, domains) &&
+      ucoz.pages.read(url)?.key !== 'site' &&
       !hasMarker(content, headers, { headers: isUcozHeaders })
     ) {
       return false
