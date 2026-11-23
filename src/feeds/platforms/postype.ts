@@ -1,7 +1,6 @@
 import { postype } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -11,28 +10,26 @@ export type PostypeUrl =
   | { kind: 'post'; channel: string }
   | { kind: 'subdomain'; channel: string }
 
-const domains = postype.hosts.tenants
-
 const feeds = withHintLabels(postype.feeds)
 
 export const parsePostypeUrl = (url: string): PostypeUrl | undefined => {
   const page = postype.pages.read(url)
 
-  if (page?.key === 'post') {
-    return { kind: 'post', channel: page.params.channel }
-  }
-
-  if (page) {
-    return { kind: 'channel', channel: page.params.channel }
-  }
-
-  const subdomain = getTenantSubdomain(url, domains)
-
-  if (!subdomain) {
+  if (!page) {
     return
   }
 
-  return { kind: 'subdomain', channel: subdomain }
+  const { channel } = page.params
+
+  if (page.key === 'post') {
+    return { kind: 'post', channel }
+  }
+
+  if (page.key === 'subdomain') {
+    return { kind: 'subdomain', channel }
+  }
+
+  return { kind: 'channel', channel }
 }
 
 export const postypeHandler: PlatformHandler = {

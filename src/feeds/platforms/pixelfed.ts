@@ -8,8 +8,6 @@ import { hasAnyMeta, hasMarker } from '../../common/utils.js'
 
 export type PixelfedUrl = { kind: 'user'; username: string }
 
-const profileRegex = /^\/(?:users\/)?([^/]+)\/?$/i
-
 const metaMarkers: Array<[string, string]> = [
   ['generator', 'pixelfed'],
   ['application-name', 'Pixelfed'],
@@ -22,19 +20,13 @@ export const isPixelfedHtml = (content: string): boolean => {
 }
 
 export const parsePixelfedUrl = (url: string): PixelfedUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = pixelfed.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  const username = parsedUrl.pathname.match(profileRegex)?.[1]
-
-  if (!username) {
-    return
-  }
-
-  return { kind: 'user', username }
+  return { kind: 'user', username: page.params.username }
 }
 
 export const pixelfedHandler: PlatformHandler = {

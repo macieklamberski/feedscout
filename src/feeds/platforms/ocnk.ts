@@ -1,14 +1,11 @@
 import { ocnk } from 'feedintel'
-import { isHostOrSubdomainOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type OcnkUrl = { kind: 'shop'; shop: string } | { kind: 'customDomain' }
-
-const domains = ocnk.hosts.tenants
 
 const cartScriptRegex =
   /^(?:https?:\/\/[^/]+)?\/res\/[^/]+\/js\/(?:ocnk|pack\/ocnk-min)\.js(?:\?|$)/i
@@ -26,17 +23,17 @@ export const isOcnkHtml = (content: string): boolean => {
 }
 
 export const parseOcnkUrl = (url: string): OcnkUrl | undefined => {
-  if (!isHostOrSubdomainOf(url, domains)) {
+  const page = ocnk.pages.read(url)
+
+  if (!page) {
     return { kind: 'customDomain' }
   }
 
-  const shop = getTenantSubdomain(url, domains)
-
-  if (!shop) {
+  if (page.key === 'platform') {
     return
   }
 
-  return { kind: 'shop', shop }
+  return { kind: 'shop', shop: page.params.shop }
 }
 
 export const ocnkHandler: PlatformHandler = {

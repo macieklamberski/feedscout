@@ -1,7 +1,6 @@
 import { microblog } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: category, posts.
@@ -13,20 +12,19 @@ export type MicroblogUrl =
   | { kind: 'photos'; username: string }
   | { kind: 'blog'; username: string }
 
-export const domains = microblog.hosts.tenants
-
 const feeds = withHintLabels(microblog.feeds)
 
 export const parseMicroblogUrl = (url: string): MicroblogUrl | undefined => {
   const page = microblog.pages.read(url)
-  const username = getTenantSubdomain(url, domains)
 
-  if (!page || !username) {
+  if (!page) {
     return
   }
 
+  const { username, category } = page.params
+
   if (page.key === 'category') {
-    return { kind: 'category', username, category: page.params.category }
+    return { kind: 'category', username, category }
   }
 
   if (page.key === 'archive') {

@@ -1,24 +1,21 @@
 import { postachio } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type PostachioUrl = { kind: 'site'; subdomain: string }
 
-const domains = postachio.hosts.tenants
-
 const feeds = withHintLabels(postachio.feeds)
 
 export const parsePostachioUrl = (url: string): PostachioUrl | undefined => {
-  const subdomain = getTenantSubdomain(url, domains)
+  const page = postachio.pages.read(url)
 
-  if (!subdomain) {
+  if (!page) {
     return
   }
 
-  return { kind: 'site', subdomain }
+  return { kind: 'site', subdomain: page.params.subdomain }
 }
 
 export const postachioHandler: PlatformHandler = {

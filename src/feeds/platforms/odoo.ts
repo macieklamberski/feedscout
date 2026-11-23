@@ -1,5 +1,5 @@
 import { odoo } from 'feedintel'
-import { isLocale, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getCookieNames, hasMarker } from '../../common/utils.js'
@@ -7,9 +7,6 @@ import { getCookieNames, hasMarker } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 export type OdooUrl = { kind: 'blog'; blog: string }
-
-// The blog segment is `{slug}-{id}`, after an optional language prefix such as `/fr` or `/en_GB`.
-const blogRegex = /^(?:\/([^/]+))?\/blog\/([^/]+-\d+)(?:\/|$)/i
 
 const feeds = withHintLabels(odoo.feeds)
 
@@ -21,19 +18,13 @@ export const isOdooHeaders = (headers: Headers): boolean => {
 }
 
 export const parseOdooUrl = (url: string): OdooUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = odoo.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  const [, language, blog] = parsedUrl.pathname.match(blogRegex) ?? []
-
-  if (!blog || (language && !isLocale(language, { underscore: true }))) {
-    return
-  }
-
-  return { kind: 'blog', blog }
+  return { kind: 'blog', blog: page.params.blog }
 }
 
 export const odooHandler: PlatformHandler = {
