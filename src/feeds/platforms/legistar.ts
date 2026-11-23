@@ -1,5 +1,5 @@
 import { legistar } from 'feedintel'
-import { getQueryParamValues, parseUrl, resolveUrl } from 'trousse'
+import { isSameText, parseUrl, resolveUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElements, getCookieNames, hasMarker } from '../../common/utils.js'
@@ -48,39 +48,38 @@ export const parseLegistarUrl = (url: string): LegistarUrl | undefined => {
 }
 
 // The page link writes the feed's parameters in its own order, beside others such as `Title`.
-const isSameFeed = (feed: URL, linked: URL): boolean => {
-  if (linked.origin !== feed.origin || linked.pathname !== feed.pathname) {
-    return false
-  }
+const isSameFeed = (parsed: LegistarUrl, href: string, root: string): boolean => {
+  const feed = legistar.feeds.read(href, { root })
 
-  for (const [name, value] of feed.searchParams) {
-    const values = getQueryParamValues(linked.searchParams, name)
-
-    if (values.length !== 1 || values[0] !== value) {
-      return false
-    }
-  }
-
-  return true
+  return (
+    feed?.key === parsed.kind &&
+    feed.params.id === parsed.id &&
+    isSameText(feed.params.guid, parsed.guid)
+  )
 }
 
 // A meeting page's alternate link appends a `Title` the page URL does not carry, so the feed is
 // spelled as the page links it when the page names the same feed, and from the page URL otherwise.
-const getFeedUrl = (url: string, content: string | undefined, feedUrl: string): string => {
-  if (!content) {
+const getFeedUrl = (
+  url: string,
+  content: string | undefined,
+  parsed: LegistarUrl,
+  feedUrl: string,
+): string => {
+  const root = parseUrl(url)?.origin
+
+  if (!content || !root) {
     return feedUrl
   }
 
-  const feed = parseUrl(feedUrl.toLowerCase())
   const links = findElements(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'alternate'
   })
 
   for (const link of links) {
     const href = resolveUrl(link.attribs.href ?? '', url)
-    const linked = parseUrl(href?.toLowerCase())
 
-    if (href && feed && linked && isSameFeed(feed, linked)) {
+    if (href && isSameFeed(parsed, href, root)) {
       return href
     }
   }
@@ -108,7 +107,7 @@ export const getLegistarPage = (
       return
     }
 
-    return { kind: 'legislation', feedUrl: getFeedUrl(url, content, feedUrl) }
+    return { kind: 'legislation', feedUrl: getFeedUrl(url, content, parsed, feedUrl) }
   }
 
   const feedUrl = pageFeeds.getFeedUrl('meeting', { id, guid })
@@ -117,7 +116,7 @@ export const getLegistarPage = (
     return
   }
 
-  return { kind: 'meeting', feedUrl: getFeedUrl(url, content, feedUrl) }
+  return { kind: 'meeting', feedUrl: getFeedUrl(url, content, parsed, feedUrl) }
 }
 
 export const legistarHandler: PlatformHandler = {

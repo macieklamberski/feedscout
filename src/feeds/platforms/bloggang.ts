@@ -42,8 +42,7 @@ export const bloggangHandler: PlatformHandler = {
       return []
     }
 
-    // A page on www names the blog in its query, so the feed host is built from the username.
-    return [page.getFeedEntry('posts', { host: `${parsed.username}.bloggang.com` })]
+    return [page.getFeedEntry('posts', { username: parsed.username })]
   },
 
   getFeedHint: feeds.getFeedHint,

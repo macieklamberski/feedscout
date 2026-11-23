@@ -3,7 +3,6 @@ import { decodeSegment } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { type PlatformFeedParams, withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getHostOrigin } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Handler needed for: posts, userpics.
@@ -12,8 +11,6 @@ export type InsanejournalUrl =
   | { kind: 'journal'; username?: string; tag?: string }
   | { kind: 'asylum'; asylum: string; tag?: string }
   | { kind: 'syndicated'; feed: string; tag?: string }
-
-const asylumHosts = ['asylums.insanejournal.com']
 
 const feeds = withHintLabels(insanejournal.feeds)
 
@@ -78,13 +75,8 @@ export const insanejournalHandler: PlatformHandler = {
       return []
     }
 
-    // An asylum named on www lives on the asylums host.
     if (parsed.kind === 'asylum') {
-      return getFeeds(
-        feeds,
-        { scheme: 'https', host: asylumHosts[0], journal: parsed.asylum },
-        parsed.tag,
-      )
+      return getFeeds(feeds, { asylum: parsed.asylum }, parsed.tag)
     }
 
     if (parsed.kind === 'syndicated') {
@@ -108,13 +100,11 @@ export const insanejournalHandler: PlatformHandler = {
       return getFeeds(pageFeeds, { journal: parsed.username }, parsed.tag)
     }
 
-    const journalUrl = parsed.username ? getHostOrigin(`${parsed.username}.insanejournal.com`) : url
-
-    if (!journalUrl) {
-      return []
+    if (parsed.username) {
+      return getFeeds(feeds, { journal: parsed.username }, parsed.tag)
     }
 
-    const journalPageFeeds = feeds.forUrl(journalUrl)
+    const journalPageFeeds = feeds.forUrl(url)
 
     if (!journalPageFeeds) {
       return []

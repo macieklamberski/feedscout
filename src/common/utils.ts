@@ -237,6 +237,14 @@ export const getCookieNames = (headers: Headers): Array<string> => {
   return Array.from(cookies.matchAll(cookieNameRegex), (match) => match[1])
 }
 
+// A URL in raw text ends at whitespace, a quote, an angle bracket or the backslash of an escape.
+const textUrlRegex = /https?:\/\/[^\s"'<>\\]+/gi
+
+// Every http and https URL written in a text, as a page's markup or its inline JSON.
+export const findUrls = (text: string): Array<string> => {
+  return Array.from(text.matchAll(textUrlRegex), (match) => match[0])
+}
+
 // A script takes path info, as in `/app.php/help/faq`, and a rewritten page is an HTML file.
 const scriptSegmentRegex = /\/[^/]*\.(?:php(?:\/.*)?|html?)$/i
 const trailingSlashRegex = /\/$/

@@ -1,16 +1,26 @@
 import { castos } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { findUrls } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type CastosUrl = { kind: 'show'; slug: string }
 export type CastosPage = { kind: 'show'; slug: string; feedId?: string }
 
-// The feed id is opaque, so it is read from the feed link every show page carries.
-const feedIdRegex = /https:\/\/feeds\.castos\.com\/([a-z0-9]+)/i
-
 const feeds = withHintLabels(castos.feeds)
+
+// The feed id is opaque, so it is read from the feed link every show page carries. The show
+// site's /feed alias reads no id.
+const getLinkedFeedId = (content: string): string | undefined => {
+  for (const url of findUrls(content)) {
+    const feedId = castos.feeds.read(url)?.params.feedId
+
+    if (feedId) {
+      return feedId
+    }
+  }
+}
 
 export const parseCastosUrl = (url: string): CastosUrl | undefined => {
   const page = castos.pages.read(url)
@@ -29,7 +39,7 @@ export const getCastosPage = (url: string, content: string | undefined): CastosP
     return
   }
 
-  return { ...parsed, feedId: content?.match(feedIdRegex)?.[1] }
+  return { ...parsed, feedId: getLinkedFeedId(content ?? '') }
 }
 
 export const castosHandler: PlatformHandler = {

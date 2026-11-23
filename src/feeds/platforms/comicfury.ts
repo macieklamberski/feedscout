@@ -46,10 +46,7 @@ export const comicfuryHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'profile') {
-      // Every comic answers on thecomicseries.com, whichever of the domains it picked.
-      const params = { host: `${parsed.comic}.thecomicseries.com` }
-
-      return [page.getFeedEntry('comic', params)]
+      return [page.getFeedEntry('comic', { comic: parsed.comic })]
     }
 
     return [page.getFeedEntry('reader', { comic: parsed.comic })]

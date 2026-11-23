@@ -13,9 +13,6 @@ export type JinboUrl =
   | { kind: 'tag'; username: string; tag: string }
   | { kind: 'post'; username: string; postId: string }
 
-// A category named by text answers an empty feed under another category's title.
-const feedLinkRegex = /^https:\/\/blog\.jinbo\.net\/([^/]+)\/rss$/i
-
 const feeds = withHintLabels(jinbo.feeds)
 
 export const parseJinboUrl = (url: string): JinboUrl | undefined => {
@@ -45,16 +42,26 @@ export const parseJinboUrl = (url: string): JinboUrl | undefined => {
 
 // The site answers a blog under any case of its name, and its pages link the feed in the
 // blog's own case.
+const getLinkedUsername = (href: string | undefined): string | undefined => {
+  const feed = jinbo.feeds.read(href ?? '')
+
+  if (feed?.key !== 'posts') {
+    return
+  }
+
+  return feed.params.username
+}
+
 const getFeedUsername = (content: string | undefined): string | undefined => {
   const link = findElement(content, (element) => {
     return (
       element.name === 'link' &&
       element.attribs.rel === 'alternate' &&
-      feedLinkRegex.test(element.attribs.href ?? '')
+      getLinkedUsername(element.attribs.href) !== undefined
     )
   })
 
-  return link?.attribs.href?.match(feedLinkRegex)?.[1]
+  return getLinkedUsername(link?.attribs.href)
 }
 
 const getJinboPage = (url: string, content: string | undefined): JinboUrl | undefined => {

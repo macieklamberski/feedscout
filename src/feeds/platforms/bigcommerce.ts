@@ -1,4 +1,5 @@
 import { bigcommerce } from 'feedintel'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
@@ -6,8 +7,6 @@ import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic finds: blog, category-new-products, category-popular-products, new-products, popular-products, search.
 // Handler needed for: featured-products.
-
-const categoryFeedRegex = /^[^?#]*\/rss\.php\?(?:[^#]*&)?categoryid=(?<categoryId>[1-9]\d*)/i
 
 export type BigcommercePage =
   | { kind: 'category'; categoryId: string }
@@ -22,12 +21,22 @@ export const isBigcommerceHeaders = (headers: Headers): boolean => {
 
 // A category url carries only its slug, and rss.php answers a made-up category id with an
 // empty feed, so the id comes from the feed link the category page prints.
-const getCategoryId = (content: string | undefined): string | undefined => {
+const getLinkedCategoryId = (url: string, href: string | undefined): string | undefined => {
+  const feedUrl = parseUrl(href, url)
+
+  if (!feedUrl) {
+    return
+  }
+
+  return bigcommerce.feeds.read(feedUrl.href, { isAnyHost: true })?.params.categoryId
+}
+
+const getCategoryId = (url: string, content: string | undefined): string | undefined => {
   const link = findElement(content, (element) => {
-    return element.name === 'link' && categoryFeedRegex.test(element.attribs.href ?? '')
+    return element.name === 'link' && getLinkedCategoryId(url, element.attribs.href) !== undefined
   })
 
-  return link?.attribs.href?.match(categoryFeedRegex)?.groups?.categoryId
+  return getLinkedCategoryId(url, link?.attribs.href)
 }
 
 const getBigcommercePage = (url: string, content: string | undefined): BigcommercePage => {
@@ -37,7 +46,7 @@ const getBigcommercePage = (url: string, content: string | undefined): Bigcommer
     return { kind: 'search', query: page.params.query }
   }
 
-  const categoryId = getCategoryId(content)
+  const categoryId = getCategoryId(url, content)
 
   if (categoryId) {
     return { kind: 'category', categoryId }
