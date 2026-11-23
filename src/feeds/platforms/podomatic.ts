@@ -32,8 +32,7 @@ export const podomaticHandler: PlatformHandler = {
       return []
     }
 
-    // The show is a host label, which a URL writes in lowercase.
-    const params = { scheme: parsedUrl.protocol.slice(0, -1), show: parsed.show.toLowerCase() }
+    const params = { scheme: parsedUrl.protocol.slice(0, -1), show: parsed.show }
 
     return [feeds.getFeedEntry('show', params)].filter(isPresent)
   },

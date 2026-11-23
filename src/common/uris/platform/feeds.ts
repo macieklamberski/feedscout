@@ -1,8 +1,9 @@
 import type { DiscoverUriEntry, DiscoverUriHint, UriEntry } from '../../types.js'
 import { composeHint } from '../../utils.js'
 
-// A value left undefined is no value, so the row it would fill is skipped.
-export type PlatformFeedParams = Record<string, string | undefined>
+// A value left undefined is no value, so the row it would fill is skipped. A `{name*}` value is a
+// list of path segments.
+export type PlatformFeedParams = Record<string, string | Array<string> | undefined>
 
 // A table's methods take only the keys of its feeds, so a key the table does not hold fails the
 // typecheck.
