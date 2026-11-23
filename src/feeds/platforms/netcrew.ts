@@ -10,7 +10,6 @@ import { findElement, hasMarker } from '../../common/utils.js'
 
 export type NetcrewUrl = { kind: 'home' }
 
-const homePathRegex = /^\/(?:index\.html)?$/i
 const searchScriptRegex = /^\/ssi\/js\/search-trend\.js(?:\?|$)/i
 const styleImportRegex = /@import\s+url\(["']?\/ssi\/css\//i
 
@@ -41,9 +40,7 @@ export const isNetcrewHtml = (content: string): boolean => {
 // Section feeds are named by internal ids the page url does not carry, so only the home page is
 // parsed. A section page links its own feed.
 export const parseNetcrewUrl = (url: string): NetcrewUrl | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl || !homePathRegex.test(parsedUrl.pathname)) {
+  if (!netcrew.pages.read(url, { root: parseUrl(url)?.origin ?? '' })) {
     return
   }
 

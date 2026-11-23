@@ -1,6 +1,7 @@
 import { mailchimp } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { findElement } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,9 +9,6 @@ export type MailchimpUrl =
   | { kind: 'archive'; userId: string; listId: string }
   | { kind: 'campaign'; userId: string }
 export type MailchimpPage = { kind: 'archive' | 'campaign'; userId: string; listId: string }
-
-// A campaign page links its archive and feed, whose id is the list the campaign went to.
-const listLinkRegex = /campaign-archive\.com\/(?:home\/|feed)\?u=\w+&(?:amp;)?id=(?<listId>\w+)/i
 
 const feeds = withHintLabels(mailchimp.feeds)
 
@@ -31,6 +29,21 @@ export const parseMailchimpUrl = (url: string): MailchimpUrl | undefined => {
   return { kind: 'campaign', userId }
 }
 
+// A campaign page links its archive and feed, whose id is the list the campaign went to.
+const getLinkedListId = (href: string | undefined): string | undefined => {
+  if (!href) {
+    return
+  }
+
+  const page = mailchimp.pages.read(href)
+
+  if (page?.key === 'archive') {
+    return page.params.listId
+  }
+
+  return mailchimp.feeds.read(href)?.params.listId
+}
+
 export const getMailchimpPage = (
   url: string,
   content: string | undefined,
@@ -45,7 +58,10 @@ export const getMailchimpPage = (
     return parsed
   }
 
-  const listId = content?.match(listLinkRegex)?.groups?.listId
+  const link = findElement(content, (element) => {
+    return getLinkedListId(element.attribs.href) !== undefined
+  })
+  const listId = getLinkedListId(link?.attribs.href)
 
   if (!listId) {
     return

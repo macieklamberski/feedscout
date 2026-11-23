@@ -1,5 +1,5 @@
 import { mastodon } from 'feedintel'
-import { getPathSegments, includesAnyOf, isAnyOf, parseUrl } from 'trousse'
+import { includesAnyOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasClass, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -14,10 +14,6 @@ export type MastodonUrl =
   | { kind: 'media'; username: string }
   | { kind: 'tagged'; username: string; tag: string }
   | { kind: 'tag'; tag: string }
-
-// suffixes: Mastodon's own profile formats, .rss, a legacy .atom and the ActivityPub .json. A
-// remote handle, @user@host.tld, holds dots, so only these suffixes are stripped.
-const feedExtensionRegex = /\.(rss|atom|json)$/i
 
 const feeds = withHintLabels(mastodon.feeds)
 
@@ -40,47 +36,27 @@ export const isMastodonHeaders = (headers: Headers): boolean => {
 }
 
 export const parseMastodonUrl = (url: string): MastodonUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = mastodon.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  // Mastodon serves a page's feed at the page path plus .rss, as in /@user.rss.
-  const segments = getPathSegments(parsedUrl)
-  const [routeOrHandle, nameOrRoute, tag] = segments.map((segment) =>
-    segment.replace(feedExtensionRegex, ''),
-  )
+  const { username, tag } = page.params
 
-  if (isAnyOf(routeOrHandle, 'tags') && nameOrRoute) {
-    return { kind: 'tag', tag: nameOrRoute }
+  if (page.key === 'tag') {
+    return { kind: 'tag', tag }
   }
 
-  // Mastodon serves the profile at /users/{user} too, without redirecting, unless HTML is
-  // asked for.
-  if (isAnyOf(routeOrHandle, 'users') && nameOrRoute) {
-    return { kind: 'profile', username: nameOrRoute }
-  }
-
-  if (!routeOrHandle?.startsWith('@')) {
-    return
-  }
-
-  const username = routeOrHandle.slice(1)
-
-  if (!username) {
-    return
-  }
-
-  if (isAnyOf(nameOrRoute, 'with_replies')) {
+  if (page.key === 'replies') {
     return { kind: 'replies', username }
   }
 
-  if (isAnyOf(nameOrRoute, 'media')) {
+  if (page.key === 'media') {
     return { kind: 'media', username }
   }
 
-  if (isAnyOf(nameOrRoute, 'tagged') && tag) {
+  if (page.key === 'tagged') {
     return { kind: 'tagged', username, tag }
   }
 

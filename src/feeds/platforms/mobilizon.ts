@@ -10,8 +10,6 @@ import { hasMarker } from '../../common/utils.js'
 
 export type MobilizonUrl = { kind: 'group'; group: string } | { kind: 'instance' }
 
-const groupPathRegex = /^\/@([^/]+)/
-
 const feeds = withHintLabels(mobilizon.feeds)
 
 // The page is a JavaScript shell, and this notice is the only text the server renders on every page.
@@ -20,16 +18,14 @@ export const isMobilizonHtml = (content: string): boolean => {
 }
 
 export const parseMobilizonUrl = (url: string): MobilizonUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = mobilizon.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  const group = parsedUrl.pathname.match(groupPathRegex)?.[1]
-
-  if (group) {
-    return { kind: 'group', group }
+  if (page.key === 'group') {
+    return { kind: 'group', group: page.params.group }
   }
 
   return { kind: 'instance' }

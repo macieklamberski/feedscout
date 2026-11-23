@@ -1,23 +1,15 @@
 import { podomatic } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
+import { getHostOrigin } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type PodomaticUrl = { kind: 'podcast'; show: string }
 
-const domains = podomatic.hosts.tenants
-
 const feeds = withHintLabels(podomatic.feeds)
 
 export const parsePodomaticUrl = (url: string): PodomaticUrl | undefined => {
-  const subdomain = getTenantSubdomain(url, domains)
-
-  if (subdomain) {
-    return { kind: 'podcast', show: subdomain }
-  }
-
   const page = podomatic.pages.read(url)
 
   if (!page) {

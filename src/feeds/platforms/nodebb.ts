@@ -1,8 +1,8 @@
 import { nodebb } from 'feedintel'
-import { includesAnyOf, parseUrl } from 'trousse'
+import { includesAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getNumericId, hasMarker } from '../../common/utils.js'
+import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: category, topic.
@@ -14,8 +14,6 @@ export type NodebbUrl =
   | { kind: 'forum' }
 export type NodebbPage = NodebbUrl & { siteUrl: string }
 
-const categoryRegex = /\/category\/(?<id>[^/]+)/i
-const topicRegex = /\/topic\/(?<id>[^/]+)/i
 // The page config prints the install's sub-path, such as `/forum`, and an empty one at the root.
 const relativePathRegex = /"relative_path":"(?<relativePath>\/[^"]*)"/
 
@@ -26,21 +24,19 @@ export const isNodebbHeaders = (headers: Headers): boolean => {
 }
 
 export const parseNodebbUrl = (url: string): NodebbUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = nodebb.pages.read(url, { isAnyHost: true })
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  const { pathname } = parsedUrl
-  const categoryId = getNumericId(pathname, categoryRegex)
-  const topicId = getNumericId(pathname, topicRegex)
+  const { topicId, categoryId } = page.params
 
-  if (topicId) {
+  if (page.key === 'topic') {
     return { kind: 'topic', topicId, categoryId }
   }
 
-  if (categoryId) {
+  if (page.key === 'category') {
     return { kind: 'category', categoryId }
   }
 

@@ -1,7 +1,6 @@
 import { medium } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: publication.
@@ -13,7 +12,6 @@ export type MediumUrl =
   | { kind: 'publication'; publication: string; tag?: string }
   | { kind: 'subdomain'; subdomain: string; tag?: string }
 
-const domains = medium.hosts.tenants
 export const hosts = medium.hosts.exact
 
 const feeds = withHintLabels(medium.feeds)
@@ -25,7 +23,7 @@ export const parseMediumUrl = (url: string): MediumUrl | undefined => {
     return
   }
 
-  const { username, tag, publication } = page.params
+  const { username, tag, publication, subdomain } = page.params
 
   if (page.key === 'user') {
     return { kind: 'user', username }
@@ -37,12 +35,6 @@ export const parseMediumUrl = (url: string): MediumUrl | undefined => {
 
   if (page.key === 'publication') {
     return { kind: 'publication', publication, tag }
-  }
-
-  const subdomain = getTenantSubdomain(url, domains)
-
-  if (!subdomain) {
-    return
   }
 
   return { kind: 'subdomain', subdomain, tag }

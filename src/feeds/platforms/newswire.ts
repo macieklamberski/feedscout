@@ -1,8 +1,6 @@
 import { newswire } from 'feedintel'
-import { getAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: newsroom.
@@ -11,35 +9,29 @@ import { getTenantSubdomain } from '../../common/utils.js'
 export type NewswireUrl =
   | { kind: 'newsroom'; newsroom: string }
   | { kind: 'beat'; newsroom: string; beat: string }
-  | { kind: 'contentType'; newsroom: string; contentType: NewswireContentType }
-
-type NewswireContentType = (typeof contentTypes)[number]
-
-const domains = newswire.hosts.tenants
-
-const contentTypes = ['news', 'pr', 'social', 'image', 'video', 'audio', 'event'] as const
+  | { kind: 'contentType'; newsroom: string; contentType: string }
 
 const feeds = withHintLabels(newswire.feeds)
 
 export const parseNewswireUrl = (url: string): NewswireUrl | undefined => {
   const page = newswire.pages.read(url)
-  const newsroom = getTenantSubdomain(url, domains)
 
-  if (!page || !newsroom) {
+  if (!page) {
     return
   }
 
+  const { newsroom, beat } = page.params
+
   if (page.key === 'beat') {
-    return { kind: 'beat', newsroom, beat: page.params.beat }
+    return { kind: 'beat', newsroom, beat }
   }
 
-  const contentType = getAnyOf(page.params.contentType, contentTypes)
-
-  if (contentType) {
-    return { kind: 'contentType', newsroom, contentType }
+  if (page.key === 'newsroom') {
+    return { kind: 'newsroom', newsroom }
   }
 
-  return { kind: 'newsroom', newsroom }
+  // Every other page lists one content type, the key of its row.
+  return { kind: 'contentType', newsroom, contentType: page.key }
 }
 
 export const newswireHandler: PlatformHandler = {

@@ -1,22 +1,13 @@
 import { mybb } from 'feedintel'
-import { endsWithAnyOf, getQueryParam, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  digitsRegex,
-  findElement,
-  getCookieNames,
-  hasClass,
-  hasMarker,
-} from '../../common/utils.js'
+import { findElement, getCookieNames, hasClass, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type MybbPage = { boardUrl: string; forumId?: string }
 
-const forumPathRegex = /\/forum-(\d+)(?:-page-\d+)?\.html$/i
-const threadPathRegex = /\/(?:showthread\.php|thread-\d+(?:-[a-z]+-\d+)?\.html)$/i
-const forumLinkRegex = /(?:^|\/)(?:forumdisplay\.php\?fid=|forum-)(\d+)(?:\.html)?$/i
 const rootPathRegex = /var rootpath = "([^"]+)"/
 
 const feeds = withHintLabels(mybb.feeds)
@@ -32,22 +23,8 @@ export const isMybbHtml = (content: string): boolean => {
   return content.includes('var cookiePrefix =') && content.includes('var cookieDomain =')
 }
 
-// MyBB 1.8 prints the board URL as `rootpath`. Every MyBB script sits in the install
-// root, so on an older board the page's directory is the root.
-const getBoardUrl = (url: string, content: string | undefined): string => {
-  const rootPath = content?.match(rootPathRegex)?.[1]
-
-  if (rootPath) {
-    return rootPath
-  }
-
-  const { origin, pathname } = new URL(url)
-
-  return `${origin}${pathname.slice(0, pathname.lastIndexOf('/'))}`
-}
-
 // The core breadcrumb ends with the thread's forum, and its page list sits in a nested div.
-const getBreadcrumbForumId = (content: string | undefined): string | undefined => {
+const getBreadcrumbForumId = (url: string, content: string | undefined): string | undefined => {
   const navigation = findElement(content, (element) => {
     return element.name === 'div' && hasClass(element, 'navigation')
   })
@@ -58,37 +35,36 @@ const getBreadcrumbForumId = (content: string | undefined): string | undefined =
       continue
     }
 
-    forumId = child.attribs.href?.match(forumLinkRegex)?.[1] ?? forumId
+    const href = parseUrl(child.attribs.href, url)?.href ?? ''
+    const link = mybb.pages.read(href, { isAnyHost: true })
+
+    if (link?.key === 'forum') {
+      forumId = link.params.forumId
+    }
   }
 
   return forumId
 }
 
-const getForumId = (url: string, content: string | undefined): string | undefined => {
-  const { pathname, searchParams } = new URL(url)
-  const queryId = getQueryParam(searchParams, 'fid')
-
-  if (endsWithAnyOf(pathname, '/forumdisplay.php') && queryId && digitsRegex.test(queryId)) {
-    return queryId
-  }
-
-  const pathId = pathname.match(forumPathRegex)?.[1]
-
-  if (pathId) {
-    return pathId
-  }
-
-  if (threadPathRegex.test(pathname)) {
-    return getBreadcrumbForumId(content)
-  }
-}
-
+// MyBB 1.8 prints the board URL as `rootpath`. On an older board the page's directory is the root.
 const getMybbPage = (url: string, content: string | undefined): MybbPage | undefined => {
-  if (!parseUrl(url)) {
+  const page = mybb.pages.read(url, { isAnyHost: true })
+
+  if (!page) {
     return
   }
 
-  return { boardUrl: getBoardUrl(url, content), forumId: getForumId(url, content) }
+  const boardUrl = content?.match(rootPathRegex)?.[1] ?? page.params.root
+
+  if (page.key === 'forum') {
+    return { boardUrl, forumId: page.params.forumId }
+  }
+
+  if (page.key === 'thread') {
+    return { boardUrl, forumId: getBreadcrumbForumId(url, content) }
+  }
+
+  return { boardUrl }
 }
 
 export const mybbHandler: PlatformHandler = {

@@ -1,18 +1,15 @@
 import { mataroa } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type MataroaUrl = { kind: 'blog' }
 
-const domains = mataroa.hosts.tenants
-
 const feeds = withHintLabels(mataroa.feeds)
 
 export const parseMataroaUrl = (url: string): MataroaUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  if (!mataroa.pages.read(url)) {
     return
   }
 

@@ -12,10 +12,6 @@ export type PleromaUrl = { kind: 'profile'; username: string }
 
 const apiPath = '/api/pleroma/'
 
-const profileRegex = /^\/users\/([^/]+)/i
-// The frontend serves the same profile at /{name} and /@{name}.
-const profileAliasRegex = /^\/@?([^/]+)\/?$/
-
 const feeds = withHintLabels(pleroma.feeds)
 
 // The frontend preloads its config from the API, and older releases inline that response in the
@@ -33,14 +29,13 @@ export const isPleromaHtml = (content: string): boolean => {
 }
 
 export const parsePleromaUrl = (url: string): PleromaUrl | undefined => {
-  const pathname = parseUrl(url)?.pathname
-  const username = pathname?.match(profileRegex)?.[1] ?? pathname?.match(profileAliasRegex)?.[1]
+  const page = pleroma.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
 
-  if (!username) {
+  if (!page) {
     return
   }
 
-  return { kind: 'profile', username }
+  return { kind: 'profile', username: page.params.username }
 }
 
 export const pleromaHandler: PlatformHandler = {

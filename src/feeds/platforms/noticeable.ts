@@ -1,19 +1,14 @@
 import { noticeable } from 'feedintel'
-import { isHostOrSubdomainOf, isSubdomainOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: posts.
 // Handler needed for: label.
 
 export type NoticeableUrl = { kind: 'newspage' } | { kind: 'label'; label: string }
-
-const domains = noticeable.hosts.tenants
-
-// A page combining labels, `/labels/{a},{b}`, has no feed of its own: `/{a},{b}.rss` answers 404.
-const labelPathRegex = /^\/labels\/([^/,]+)\/?$/i
 
 const feeds = withHintLabels(noticeable.feeds)
 
@@ -23,20 +18,15 @@ export const isNoticeableHtml = (content: string): boolean => {
 }
 
 export const parseNoticeableUrl = (url: string): NoticeableUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page =
+    noticeable.pages.read(url) ?? noticeable.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
 
-  if (!parsedUrl) {
+  if (!page || page.key === 'platform') {
     return
   }
 
-  if (isHostOrSubdomainOf(parsedUrl, domains) && !getTenantSubdomain(parsedUrl, domains)) {
-    return
-  }
-
-  const label = parsedUrl.pathname.match(labelPathRegex)?.[1]
-
-  if (label) {
-    return { kind: 'label', label }
+  if (page.key === 'label') {
+    return { kind: 'label', label: page.params.label }
   }
 
   return { kind: 'newspage' }
@@ -44,7 +34,8 @@ export const parseNoticeableUrl = (url: string): NoticeableUrl | undefined => {
 
 export const noticeableHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (!isSubdomainOf(url, domains) && !hasMarker(content, headers, { html: isNoticeableHtml })) {
+    // A platform host skips the marker, which only a custom domain needs.
+    if (!noticeable.pages.read(url) && !hasMarker(content, headers, { html: isNoticeableHtml })) {
       return false
     }
 

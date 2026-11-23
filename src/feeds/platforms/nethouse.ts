@@ -1,12 +1,9 @@
 import { nethouse } from 'feedintel'
-import { isSubdomainOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
-
-const domains = nethouse.hosts.tenants
 
 const feeds = withHintLabels(nethouse.feeds)
 
@@ -16,8 +13,10 @@ export const isNethouseHeaders = (headers: Headers): boolean => {
 
 export const nethouseHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (isSubdomainOf(url, domains)) {
-      return getTenantSubdomain(url, domains) !== undefined
+    const page = nethouse.pages.read(url)
+
+    if (page) {
+      return page.key === 'site'
     }
 
     return hasMarker(content, headers, { headers: isNethouseHeaders })
