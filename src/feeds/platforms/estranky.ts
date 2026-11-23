@@ -1,5 +1,5 @@
 import { estranky } from 'feedintel'
-import { parseUrl, startsWithAnyOf } from 'trousse'
+import { isAnyOf, parseUrl, startsWithAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -36,7 +36,9 @@ export const isEstrankyHtml = (content: string): boolean => {
 
 // The apex and www run Estranky itself. Every other host is one site.
 export const parseEstrankyUrl = (url: string): EstrankyUrl | undefined => {
-  if (!parseUrl(url) || estranky.pages.read(url)?.key === 'platform') {
+  const key = estranky.pages.read(url)?.key
+
+  if (!parseUrl(url) || isAnyOf(key, ['platform', 'asset'])) {
     return
   }
 
