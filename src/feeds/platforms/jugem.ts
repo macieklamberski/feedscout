@@ -1,8 +1,8 @@
 import { jugem } from 'feedintel'
-import { isHostOf, isHostOrSubdomainOf } from 'trousse'
+import { isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -11,7 +11,6 @@ export type JugemUrl =
   | { kind: 'theme'; category: string; theme: string }
   | { kind: 'customDomain' }
 
-const domains = jugem.hosts.tenants
 const assetHosts = ['imaging.jugem.jp']
 const cookieScriptPath = './template/js/cookie.js'
 
@@ -44,27 +43,19 @@ export const isJugemHtml = (content: string): boolean => {
 }
 
 export const parseJugemUrl = (url: string): JugemUrl | undefined => {
-  if (!isHostOrSubdomainOf(url, domains)) {
-    return { kind: 'customDomain' }
-  }
-
   const page = jugem.pages.read(url)
 
   if (!page) {
-    return
+    return { kind: 'customDomain' }
   }
 
   if (page.key === 'theme') {
     return { kind: 'theme', category: page.params.category, theme: page.params.theme }
   }
 
-  const blog = getTenantSubdomain(url, domains)
-
-  if (!blog) {
-    return
+  if (page.key === 'blog') {
+    return { kind: 'blog', blog: page.params.blog }
   }
-
-  return { kind: 'blog', blog }
 }
 
 export const jugemHandler: PlatformHandler = {

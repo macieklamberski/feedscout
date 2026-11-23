@@ -1,7 +1,8 @@
 import { huffduffer } from 'feedintel'
-import { escapeRegex } from 'trousse'
+import { isAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { findElement } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: huffduffs.
@@ -68,8 +69,19 @@ export const getHuffdufferPage = (
 
   // Usernames match in any case, and the page links its feeds with the account's own spelling:
   // `/bluetyson` links `/BlueTyson/rss`.
-  const usernameRegex = new RegExp(`huffduffer\\.com/(${escapeRegex(parsed.username)})/`, 'i')
-  const username = content?.match(usernameRegex)?.[1] ?? parsed.username
+  const getLinkedUsername = (href: string | undefined): string | undefined => {
+    const linked = huffduffer.pages.read(href ?? '')?.params.username
+
+    if (!linked || !isAnyOf(linked, parsed.username)) {
+      return
+    }
+
+    return linked
+  }
+  const link = findElement(content, (element) => {
+    return getLinkedUsername(element.attribs.href) !== undefined
+  })
+  const username = getLinkedUsername(link?.attribs.href) ?? parsed.username
 
   return { ...parsed, username }
 }

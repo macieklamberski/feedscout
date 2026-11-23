@@ -1,15 +1,13 @@
 import { gcsWeb } from 'feedintel'
-import { isHostOrSubdomainOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { type Element, findElement, getTenantSubdomain, isRootOfPage } from '../../common/utils.js'
+import { type Element, findElement, isRootOfPage } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: events, news-releases, sec-filings.
 
 export type GcsWebUrl = { kind: 'site' }
-
-const domains = gcsWeb.hosts.tenants
 
 const filesPathRegex = /\/sites\/g\/files\/knoqqb\d+\//i
 
@@ -31,7 +29,7 @@ export const isGcsWebPage = (url: string, content: string | undefined): boolean 
 }
 
 export const parseGcsWebUrl = (url: string): GcsWebUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  if (gcsWeb.pages.read(url)?.key !== 'site') {
     return
   }
 
@@ -40,7 +38,7 @@ export const parseGcsWebUrl = (url: string): GcsWebUrl | undefined => {
 
 export const gcsWebHandler: PlatformHandler = {
   match: (url, content) => {
-    if (isHostOrSubdomainOf(url, domains)) {
+    if (gcsWeb.pages.read(url)) {
       return parseGcsWebUrl(url) !== undefined
     }
 

@@ -1,4 +1,5 @@
 import { geoblog } from 'feedintel'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
@@ -10,7 +11,7 @@ export type GeoblogUrl = { kind: 'trip' } | { kind: 'entry' }
 
 export type GeoblogPage = GeoblogUrl & { tripId: string }
 
-const tripPathRegex = /^\/podroz\/(\d+)(?:\/|$)/i
+const relativePathRegex = /^\/(?!\/)/
 
 const feeds = withHintLabels(geoblog.feeds)
 
@@ -28,6 +29,20 @@ export const parseGeoblogUrl = (url: string): GeoblogUrl | undefined => {
   return { kind: 'entry' }
 }
 
+const getTripId = (url: string, href: string | undefined): string | undefined => {
+  if (!href || !relativePathRegex.test(href)) {
+    return
+  }
+
+  const page = geoblog.pages.read(parseUrl(href, url)?.href ?? '')
+
+  if (page?.key !== 'trip') {
+    return
+  }
+
+  return page.params.tripId
+}
+
 // A trip feed answers on any user's host, under that user's name, so the trip comes from the page.
 // Trip and entry pages link their own trip by a relative path, in the breadcrumb, and the user's
 // other trips by absolute urls.
@@ -39,9 +54,9 @@ const getGeoblogPage = (url: string, content: string | undefined): GeoblogPage |
   }
 
   const anchor = findElement(content, (element) => {
-    return element.name === 'a' && tripPathRegex.test(element.attribs.href ?? '')
+    return element.name === 'a' && getTripId(url, element.attribs.href) !== undefined
   })
-  const tripId = tripPathRegex.exec(anchor?.attribs.href ?? '')?.[1]
+  const tripId = getTripId(url, anchor?.attribs.href)
 
   if (!tripId) {
     return
