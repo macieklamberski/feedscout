@@ -43,7 +43,7 @@ export const getWeeblyPage = (url: string, content: string | undefined): WeeblyP
     return parsed
   }
 
-  const host = weebly.pages.read(url)?.params.host ?? ''
+  const { hostname } = new URL(url)
 
   // A site can run a blog on any of its pages, and the home page links every page, so each page
   // it links is a blog candidate beside the default /blog. Validation drops the pages that are
@@ -52,7 +52,7 @@ export const getWeeblyPage = (url: string, content: string | undefined): WeeblyP
   const anchors = content ? findElements(content, (element) => element.name === 'a') : []
 
   for (const anchor of anchors) {
-    const page = getLinkedPage(anchor.attribs.href, url, host)
+    const page = getLinkedPage(anchor.attribs.href, url, hostname)
 
     if (page) {
       pages.add(page)
