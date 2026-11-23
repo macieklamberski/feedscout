@@ -1,14 +1,8 @@
 import { phpbb } from 'feedintel'
-import { getQueryParam, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  digitsRegex,
-  findElement,
-  getCookieNames,
-  hasElementWithId,
-  hasMarker,
-} from '../../common/utils.js'
+import { findElement, getCookieNames, hasElementWithId, hasMarker } from '../../common/utils.js'
 import { isForumotionHtml } from './forumotion.js'
 
 // Discoverability: Discoverable without handler.
@@ -37,17 +31,6 @@ export const isPhpbbHeaders = (headers: Headers): boolean => {
   })
 }
 
-const getNumericParam = (
-  searchParams: URLSearchParams | undefined,
-  name: string,
-): string | undefined => {
-  const value = getQueryParam(searchParams, name)
-
-  if (value && digitsRegex.test(value)) {
-    return value
-  }
-}
-
 const getPhpbbPage = (url: string, content: string | undefined): PhpbbPage | undefined => {
   const page = phpbb.pages.read(url, { isAnyHost: true })
 
@@ -60,12 +43,13 @@ const getPhpbbPage = (url: string, content: string | undefined): PhpbbPage | und
   const canonicalLink = findElement(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'canonical'
   })
-  const canonicalUrl = parseUrl(canonicalLink?.attribs.href, url)
+  const canonicalUrl = parseUrl(canonicalLink?.attribs.href, url)?.href ?? ''
+  const canonicalPage = phpbb.pages.read(canonicalUrl, { isAnyHost: true })
 
   return {
     boardUrl: root,
     forumId,
-    topicId: topicId ?? getNumericParam(canonicalUrl?.searchParams, 't'),
+    topicId: topicId ?? canonicalPage?.params.topicId,
   }
 }
 
