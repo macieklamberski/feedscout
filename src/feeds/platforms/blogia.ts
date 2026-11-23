@@ -3,7 +3,7 @@ import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 
-// Discoverability: Unmeasured, bot wall.
+// Discoverability: Discoverable without handler.
 
 export type BlogiaUrl = { kind: 'blog'; blog: string }
 
