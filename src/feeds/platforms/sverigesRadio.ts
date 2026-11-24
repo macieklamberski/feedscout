@@ -1,8 +1,6 @@
 import { sverigesRadio } from 'feedintel'
-import { getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { alphanumericOrHyphenRegex, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Handler needed for: program.
@@ -11,33 +9,20 @@ export type SverigesRadioUrl =
   | { kind: 'legacyProgram'; programId: string }
   | { kind: 'program'; slug: string }
 
-const hosts = sverigesRadio.hosts.exact
-
 const feeds = withHintLabels(sverigesRadio.feeds)
 
 export const parseSverigesRadioUrl = (url: string): SverigesRadioUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = sverigesRadio.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const programId = getQueryParam(parsedUrl.searchParams, 'programid')
-
-  // Legacy pages such as /sida/default.aspx?programid={id} name the program by its id alone.
-  if (programId && digitsRegex.test(programId)) {
-    return { kind: 'legacyProgram', programId }
+  if (page.key === 'legacy-program') {
+    return { kind: 'legacyProgram', programId: page.params.programId }
   }
 
-  const [routeOrSlug, podcastSlug] = getPathSegments(parsedUrl)
-  // Program pages redirect to /poddar/{program}.
-  const slug = isAnyOf(routeOrSlug, 'poddar') && podcastSlug ? podcastSlug : routeOrSlug
-
-  if (!slug || !alphanumericOrHyphenRegex.test(slug)) {
-    return
-  }
-
-  return { kind: 'program', slug }
+  return { kind: 'program', slug: page.params.slug }
 }
 
 export const sverigesRadioHandler: PlatformHandler = {

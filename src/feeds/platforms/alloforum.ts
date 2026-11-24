@@ -1,8 +1,6 @@
 import { alloforum } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: category, latest-topics, subcategory.
@@ -18,40 +16,27 @@ export type AlloforumUrl =
       subcategoryId: string
     }
 
-const domains = alloforum.hosts.tenants
-
-// The route letters are read in any case and the feed url is minted with them lowercase, because
-// the site answers 404 to an uppercase `C` or `S`.
-const categoryRegex = /^\/([^/]+)-c(\d+)-\d+\.html$/i
-const subcategoryRegex = /^\/([^/]+)-c(\d+)-([^/]+)-s(\d+)-\d+\.html$/i
-
 const feeds = withHintLabels(alloforum.feeds)
 
 export const parseAlloforumUrl = (url: string): AlloforumUrl | undefined => {
-  const pathname = parseUrl(url)?.pathname
-  // The certificate covers one label, so a dotted subdomain such as www.{forum} names no forum.
-  const forum = getTenantSubdomain(url, domains)
+  const page = alloforum.pages.read(url)
 
-  if (!pathname || !forum) {
+  if (!page) {
     return
   }
 
-  const subcategoryMatch = pathname.match(subcategoryRegex)
-
-  if (subcategoryMatch?.[1] && subcategoryMatch[2] && subcategoryMatch[3] && subcategoryMatch[4]) {
+  if (page.key === 'subcategory') {
     return {
       kind: 'subcategory',
-      slug: subcategoryMatch[1],
-      categoryId: subcategoryMatch[2],
-      subcategorySlug: subcategoryMatch[3],
-      subcategoryId: subcategoryMatch[4],
+      slug: page.params.slug,
+      categoryId: page.params.categoryId,
+      subcategorySlug: page.params.subcategorySlug,
+      subcategoryId: page.params.subcategoryId,
     }
   }
 
-  const categoryMatch = pathname.match(categoryRegex)
-
-  if (categoryMatch?.[1] && categoryMatch[2]) {
-    return { kind: 'category', slug: categoryMatch[1], categoryId: categoryMatch[2] }
+  if (page.key === 'category') {
+    return { kind: 'category', slug: page.params.slug, categoryId: page.params.categoryId }
   }
 
   return { kind: 'forum' }

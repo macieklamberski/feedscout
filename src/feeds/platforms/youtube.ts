@@ -1,9 +1,9 @@
-import { youtube } from 'feedintel'
-import { getQueryParam, isAnyOf, isHostOf, isPresent, parseUrl } from 'trousse'
+import { isYoutubeFeedPlaylistId, youtube } from 'feedintel'
+import { getQueryParam, isAnyOf, isPresent, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, formatSuffixRegex } from '../../common/utils.js'
+import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Handler needed for: all, live, member-live, member-videos, playlist, popular-live, popular-shorts, popular-videos, shorts, videos.
@@ -25,9 +25,6 @@ export type YoutubePage =
 
 type YoutubeFeedKey = Parameters<typeof youtube.feeds.getFeedEntry>[0]
 
-export const hosts = youtube.hosts.exact
-const shortLinkHosts = ['youtu.be', 'www.youtu.be']
-
 // A channel page also embeds the IDs of the channels it features, and a bare "channelId" matches
 // one of those before the page's own, which sits under "externalId". A video page has no
 // "externalId", and its uploader sits under "externalChannelId" and "channelId".
@@ -36,19 +33,8 @@ const channelIdRegexes = [
   /"externalChannelId":"(UC[a-zA-Z0-9_-]+)"/,
   /"channelId":"(UC[a-zA-Z0-9_-]+)"/,
 ]
-const channelPathRegexes = [/^\/@[^/]+/, /^\/user\/[^/]+/i, /^\/c\/[^/]+/i]
 
-const channelRegex = /^\/channel\/([^/]+)/i
-const shortsRegex = /^\/shorts\/[\w-]+/i
-const liveRegex = /^\/live\/[\w-]+/i
-const watchRegex = /^\/watch\/?$/i
-const liveStreamEmbedRegex = /^\/embed\/live_stream\/?$/i
 const channelPrefixRegex = /^UC/
-// Channel IDs are case-sensitive, so the ID is checked apart from the case-insensitive route.
-const channelIdFormatRegex = /^UC[\w-]+$/
-// Watch Later, Liked videos and the Music likes are private, and a mix is generated per viewer, so
-// none of them has a feed. RDCLAK lists are curated YouTube Music playlists, not mixes.
-const feedlessListRegex = /^(?:WL|LL|LM)$|^RD(?!CLAK)/
 // A channel ID is UC and 22 characters, so the fixed length tells UULF{id} apart from UU{id}
 // whose ID starts with LF.
 const uploadsPlaylistRegex = /^(UU(?:LF|SH|LV|LP|PS|PV|MO|MS|MV)?)[\w-]{22}$/
@@ -115,57 +101,41 @@ const getChannelUris = (channelId: string): Array<DiscoverUriEntry | undefined> 
 }
 
 export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
+  const page = youtube.pages.read(url)
   const parsedUrl = parseUrl(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page || !parsedUrl) {
     return
   }
 
-  const { pathname, searchParams } = parsedUrl
+  const { searchParams } = parsedUrl
   const listType = getQueryParam(searchParams, 'listType')
   const listId = getQueryParam(searchParams, 'list')
   // An embed's `listType=user_uploads` names a legacy username in `list`, and `listType=search` a
   // search query, so only a bare or `playlist` list is a playlist ID.
   const isPlaylistList = listType === undefined || isAnyOf(listType, 'playlist')
   const playlistId =
-    listId && isPlaylistList && !feedlessListRegex.test(listId) ? listId : undefined
+    listId && isPlaylistList && isYoutubeFeedPlaylistId(listId) ? listId : undefined
   const username = isAnyOf(listType, 'user_uploads') ? listId : undefined
-  const rawChannelId = pathname.match(channelRegex)?.[1]?.replace(formatSuffixRegex, '')
-  const channelId =
-    rawChannelId && channelIdFormatRegex.test(rawChannelId) ? rawChannelId : undefined
 
-  if (channelId) {
-    return { kind: 'channel', channelId, playlistId }
+  if (page.key === 'channel') {
+    return { kind: 'channel', channelId: page.params.channelId, playlistId }
   }
 
-  if (liveStreamEmbedRegex.test(pathname)) {
-    const embedChannelId = getQueryParam(searchParams, 'channel')
-
-    if (!embedChannelId || !channelIdFormatRegex.test(embedChannelId)) {
+  if (page.key === 'live-stream') {
+    if (!page.params.channelId) {
       return
     }
 
-    return { kind: 'player', channelId: embedChannelId }
+    return { kind: 'player', channelId: page.params.channelId }
   }
 
-  if (channelPathRegexes.some((regex) => regex.test(pathname))) {
+  if (page.key === 'handle') {
     return { kind: 'channel', playlistId }
   }
 
-  if (
-    (watchRegex.test(pathname) && getQueryParam(searchParams, 'v') !== undefined) ||
-    (isHostOf(parsedUrl, shortLinkHosts) && pathname.length > 1) ||
-    liveRegex.test(pathname)
-  ) {
-    return { kind: 'watch', playlistId }
-  }
-
-  if (shortsRegex.test(pathname)) {
-    return { kind: 'short', playlistId }
-  }
-
-  if (getQueryParam(searchParams, 'v') !== undefined) {
-    return { kind: 'player', playlistId }
+  if (page.key === 'watch' || page.key === 'short' || page.key === 'player') {
+    return { kind: page.key, playlistId }
   }
 
   if (playlistId) {
@@ -241,23 +211,5 @@ export const youtubeHandler: PlatformHandler = {
     ].filter(isPresent)
   },
 
-  getFeedHint: (url) => {
-    const parsedUrl = parseUrl(url)
-    const hint = feeds.getFeedHint(url)
-
-    if (!parsedUrl || !hint) {
-      return
-    }
-
-    const channelId = getQueryParam(parsedUrl, 'channel_id')
-    const playlistId = getQueryParam(parsedUrl, 'playlist_id')
-
-    // The table reads every playlist feed under one key, so only a feed that names a playlist and
-    // no channel is keyed by the list it names.
-    if (channelId || !playlistId) {
-      return hint
-    }
-
-    return composeHint(`youtube:${getPlaylistKey(playlistId)}`)
-  },
+  getFeedHint: feeds.getFeedHint,
 }

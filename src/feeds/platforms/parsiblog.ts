@@ -25,17 +25,14 @@ export const parsiblogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseParsiblogUrl(url)
-    const page = feeds.forUrl(url)
 
-    if (!parsed || !page) {
+    if (!parsed) {
       return []
     }
 
-    // Every page, on either domain, links its feeds on {blog}.ParsiBlog.com. Parsiblog serves no
-    // HTTPS, so an https page still gets http feeds.
-    const params = { scheme: 'http', host: `${parsed.blog}.parsiblog.com` }
+    const params = { blog: parsed.blog }
 
-    return [page.getFeedEntry('posts', params, 'rss'), page.getFeedEntry('posts', params, 'atom')]
+    return [feeds.getFeedEntry('posts', params, 'rss'), feeds.getFeedEntry('posts', params, 'atom')]
   },
 
   getFeedHint: feeds.getFeedHint,

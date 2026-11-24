@@ -1,19 +1,14 @@
 import { publicInbox } from 'feedintel'
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getSiteParams, hasMarker } from '../../common/utils.js'
+import { getSiteParams, getSiteUrl, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type PublicInboxPage =
   | { kind: 'inbox'; inboxUrl: string }
   | { kind: 'message'; inboxUrl: string; messageId: string }
-
-const hosts = publicInbox.hosts.exact
-
-// A file at the root, such as the list of inboxes, is no inbox.
-const fileRegex = /\.(?:html?|txt|json|xml|ico)$/i
 
 // The core navigation links help relative to the page, one `../` per level below the inbox root.
 const helpLinkRegex = /href="((?:\.\.\/)*)_\/text\/help\/?"/i
@@ -24,38 +19,36 @@ export const isPublicInboxHtml = (content: string): boolean => {
   return helpLinkRegex.test(content) && content.includes('_/text/color')
 }
 
+// The inbox of a page on any host sits as many levels above the page as its help link climbs.
+const readHostedPage = (url: string, content: string) => {
+  const segments = getPathSegments(url)
+  const upLevels = helpLinkRegex.exec(content)?.[1] ?? ''
+  const rootLength = segments.length - upLevels.length / 3
+
+  if (rootLength < 0) {
+    return
+  }
+
+  return publicInbox.pages.read(url, { base: segments.slice(0, rootLength) })
+}
+
 export const getPublicInboxPage = (url: string, content?: string): PublicInboxPage | undefined => {
   const parsedUrl = parseUrl(url)
+  const page =
+    content && isPublicInboxHtml(content)
+      ? readHostedPage(url, content)
+      : publicInbox.pages.read(url)
 
-  if (!parsedUrl) {
+  if (!parsedUrl || !page) {
     return
   }
 
-  const segments = getPathSegments(url)
-  let rootLength: number
+  const { inbox, base } = page.params
+  const scheme = parsedUrl.protocol.slice(0, -1)
+  const inboxUrl = `${getSiteUrl({ scheme, host: parsedUrl.host, base: inbox ? [inbox] : base })}/`
 
-  if (content && isPublicInboxHtml(content)) {
-    const upLevels = content.match(helpLinkRegex)?.[1] ?? ''
-    rootLength = segments.length - upLevels.length / 3
-  } else if (isHostOf(url, hosts) && segments.length > 0) {
-    rootLength = 1
-  } else {
-    return
-  }
-
-  const inboxSegments = segments.slice(0, rootLength)
-
-  if (rootLength < 0 || fileRegex.test(inboxSegments.at(-1) ?? '')) {
-    return
-  }
-
-  const inboxPath = inboxSegments.map((segment) => `${segment}/`).join('')
-  const inboxUrl = `${parsedUrl.origin}/${inboxPath}`
-  const [messageId] = segments.slice(rootLength)
-
-  // Every Message-ID carries an `@`, and no route segment of an inbox does.
-  if (messageId?.includes('@')) {
-    return { kind: 'message', inboxUrl, messageId }
+  if (page.key === 'message') {
+    return { kind: 'message', inboxUrl, messageId: page.params.messageId }
   }
 
   return { kind: 'inbox', inboxUrl }
@@ -63,7 +56,7 @@ export const getPublicInboxPage = (url: string, content?: string): PublicInboxPa
 
 export const publicInboxHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (!isHostOf(url, hosts) && !hasMarker(content, headers, { html: isPublicInboxHtml })) {
+    if (!publicInbox.pages.read(url) && !hasMarker(content, headers, { html: isPublicInboxHtml })) {
       return false
     }
 

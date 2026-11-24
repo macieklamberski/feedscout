@@ -1,8 +1,6 @@
 import { tumblr } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, wwwBlog (html).
@@ -10,47 +8,20 @@ import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 
 export type TumblrUrl = { kind: 'blog'; blog: string } | { kind: 'tag'; blog: string; tag: string }
 
-const hosts = tumblr.hosts.exact
-export const domains = tumblr.hosts.tenants
-
-const tagRegex = /^\/tagged\/([^/]+)/i
-
 const feeds = withHintLabels(tumblr.feeds)
 
 export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
-  // www.tumblr.com/{blog} and the legacy www.tumblr.com/blog/view/{blog} show a blog, and
-  // www.tumblr.com/{blog}/tagged/{tag} its tagged posts.
-  if (isHostOf(url, hosts)) {
-    const [routeOrBlog, viewOrTagged, blogOrTag] = getPathSegments(url)
-    const blog =
-      isAnyOf(routeOrBlog, 'blog') && isAnyOf(viewOrTagged, 'view') ? blogOrTag : routeOrBlog
+  const page = tumblr.pages.read(url)
 
-    // Tumblr names carry no dots, so a dotted segment such as robots.txt is a file of the site.
-    if (!blog || blog.includes('.')) {
-      return
-    }
-
-    if (isAnyOf(viewOrTagged, 'tagged') && blogOrTag) {
-      return { kind: 'tag', blog, tag: blogOrTag }
-    }
-
-    return { kind: 'blog', blog }
-  }
-
-  const blog = getTenantSubdomain(url, domains)
-
-  if (!blog) {
+  if (!page) {
     return
   }
 
-  // Tagged posts: /tagged/{tag}.
-  const tag = new URL(url).pathname.match(tagRegex)?.[1]
-
-  if (tag) {
-    return { kind: 'tag', blog, tag }
+  if (page.key === 'tag') {
+    return { kind: 'tag', blog: page.params.blog, tag: page.params.tag }
   }
 
-  return { kind: 'blog', blog }
+  return { kind: 'blog', blog: page.params.blog }
 }
 
 export const tumblrHandler: PlatformHandler = {
@@ -66,28 +37,23 @@ export const tumblrHandler: PlatformHandler = {
       return []
     }
 
-    const host = `${parsed.blog}.tumblr.com`
-
-    // A blog name read from a www.tumblr.com path has to be one host label.
-    if (!getHostOrigin(host)) {
-      return []
-    }
+    const blog = { blog: parsed.blog }
 
     // The blog's posts and podcast need no value from the page but its blog, so every page builds
     // them after its own feeds.
     if (parsed.kind === 'tag') {
       return [
-        page.getFeedEntry('tag', { host, tag: parsed.tag }),
-        page.getFeedEntry('posts', { host }),
-        page.getFeedEntry('theme-posts', { host }),
-        page.getFeedEntry('podcast', { host }),
+        page.getFeedEntry('tag', { ...blog, tag: parsed.tag }),
+        page.getFeedEntry('posts', blog),
+        page.getFeedEntry('theme-posts', blog),
+        page.getFeedEntry('podcast', blog),
       ]
     }
 
     return [
-      page.getFeedEntry('posts', { host }),
-      page.getFeedEntry('theme-posts', { host }),
-      page.getFeedEntry('podcast', { host }),
+      page.getFeedEntry('posts', blog),
+      page.getFeedEntry('theme-posts', blog),
+      page.getFeedEntry('podcast', blog),
     ]
   },
 
