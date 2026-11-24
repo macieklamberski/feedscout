@@ -88,7 +88,7 @@ describe('prlogHandler', () => {
       const value = 'https://pressroom.prlog.org/Example_Co/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://pressroom.prlog.org/Example_Co/latest.xml',
+          uri: 'https://pressroom.prlog.org/example_co/latest.xml',
           hint: { key: 'prlog:press-releases', label: 'Press releases' },
         },
       ]
@@ -100,7 +100,7 @@ describe('prlogHandler', () => {
       const value = 'http://pressroom.prlog.org/Example_Co/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://pressroom.prlog.org/Example_Co/latest.xml',
+          uri: 'https://pressroom.prlog.org/example_co/latest.xml',
           hint: { key: 'prlog:press-releases', label: 'Press releases' },
         },
       ]
