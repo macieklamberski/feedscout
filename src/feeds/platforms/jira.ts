@@ -10,7 +10,7 @@ import { getMetaContent, hasMarker, hasMetaContent } from '../../common/utils.js
 const feeds = withHintLabels(jira.feeds)
 
 const isConfluencePage = (url: string): boolean => {
-  return jira.pages.read(url, { root: parseUrl(url)?.origin ?? '' })?.key === 'confluence'
+  return jira.pages.read(url, { isAnyHost: true })?.key === 'confluence'
 }
 
 const jiraPathKeys = ['issue', 'project', 'app']

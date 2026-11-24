@@ -37,7 +37,7 @@ const getPodcastChannelId = (url: string, content: string | undefined): string |
 }
 
 export const parsePeertubeUrl = (url: string): PeertubeUrl | undefined => {
-  const page = peertube.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
+  const page = peertube.pages.read(url, { isAnyHost: true })
 
   if (!page) {
     return

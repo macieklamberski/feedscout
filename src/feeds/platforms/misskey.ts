@@ -1,5 +1,4 @@
 import { misskey } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasAnyMeta, hasElementWithId, hasMarker } from '../../common/utils.js'
@@ -21,7 +20,7 @@ export const isMisskeyHtml = (content: string): boolean => {
 }
 
 export const parseMisskeyUrl = (url: string): MisskeyUrl | undefined => {
-  const page = misskey.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
+  const page = misskey.pages.read(url, { isAnyHost: true })
 
   if (!page) {
     return

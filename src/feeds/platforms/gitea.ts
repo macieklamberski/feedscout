@@ -25,8 +25,9 @@ export const isGiteaHeaders = (headers: Headers): boolean => {
   return giteaCookieRegex.test(headers.get('set-cookie') ?? '')
 }
 
-const readGiteaUrl = (url: string, root: string): GiteaPage | undefined => {
-  const page = gitea.pages.read(url, { root })
+// A root left out is the origin of the URL.
+const readGiteaUrl = (url: string, root?: string): GiteaPage | undefined => {
+  const page = gitea.pages.read(url, { root, isAnyHost: true })
 
   if (!page) {
     return
@@ -48,7 +49,7 @@ const readGiteaUrl = (url: string, root: string): GiteaPage | undefined => {
 }
 
 export const parseGiteaUrl = (url: string): GiteaUrl | undefined => {
-  const page = readGiteaUrl(url, parseUrl(url)?.origin ?? '')
+  const page = readGiteaUrl(url)
 
   if (!page) {
     return

@@ -26,13 +26,7 @@ export const isLegistarHeaders = (headers: Headers): boolean => {
 }
 
 export const parseLegistarUrl = (url: string): LegistarUrl | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl) {
-    return
-  }
-
-  const page = legistar.pages.read(url, { root: parsedUrl.origin })
+  const page = legistar.pages.read(url, { isAnyHost: true })
 
   if (!page) {
     return

@@ -1,5 +1,4 @@
 import { friendica } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -19,7 +18,7 @@ export const isFriendicaHeaders = (headers: Headers): boolean => {
 }
 
 export const parseFriendicaUrl = (url: string): FriendicaUrl | undefined => {
-  const page = friendica.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
+  const page = friendica.pages.read(url, { isAnyHost: true })
 
   if (!page) {
     return
