@@ -1,5 +1,5 @@
 import { wix } from 'feedintel'
-import { isHostOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -7,8 +7,6 @@ import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 export type WixUrl = { kind: 'freeSite'; site: string } | { kind: 'site' }
-
-const assetHosts = ['static.parastorage.com']
 
 const feeds = withHintLabels(wix.feeds)
 
@@ -18,7 +16,7 @@ export const isWixHtml = (content: string): boolean => {
   }
 
   const script = findElement(content, (element) => {
-    return element.name === 'script' && isHostOf(element.attribs.src ?? '', assetHosts)
+    return element.name === 'script' && wix.pages.read(element.attribs.src ?? '')?.key === 'asset'
   })
 
   return script !== undefined
@@ -35,7 +33,7 @@ export const parseWixUrl = (url: string): WixUrl | undefined => {
 
   const page = wix.pages.read(url)
 
-  if (!page) {
+  if (page?.key !== 'freeSite') {
     return { kind: 'site' }
   }
 

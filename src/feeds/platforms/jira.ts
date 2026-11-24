@@ -27,7 +27,7 @@ export type JiraPage = {
   baseUrl: string
   tenant?: string
   projectKey?: string
-  issueKey?: string
+  issueNumber?: string
 }
 
 const getJiraPage = (url: string, content: string | undefined): JiraPage | undefined => {
@@ -53,7 +53,7 @@ const getJiraPage = (url: string, content: string | undefined): JiraPage | undef
     baseUrl: base.params.root,
     tenant: cloud?.key === 'cloud' ? cloud.params.tenant : undefined,
     projectKey: pathKey ?? getMetaContent(content ?? '', 'ajs-project-key'),
-    issueKey: path?.key === 'issue' ? `${path.params.key}-${path.params.number}` : undefined,
+    issueNumber: path?.key === 'issue' ? path.params.number : undefined,
   }
 }
 
@@ -82,12 +82,12 @@ export const jiraHandler: PlatformHandler = {
       return []
     }
 
-    const { baseUrl, tenant, projectKey, issueKey } = jiraPage
+    const { baseUrl, tenant, projectKey, issueNumber } = jiraPage
     // A cloud site serves from its origin.
     const root = tenant ? undefined : baseUrl
-    if (issueKey) {
+    if (issueNumber) {
       return [
-        page.getFeedEntry('issue', { root, issue: issueKey }, 'rss'),
+        page.getFeedEntry('issue', { root, key: projectKey, number: issueNumber }, 'rss'),
         page.getFeedEntry('project', { root, key: projectKey }),
         page.getFeedEntry('site', { root }),
       ]

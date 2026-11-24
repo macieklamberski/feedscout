@@ -1,5 +1,5 @@
 import { purot } from 'feedintel'
-import { encodePathSegment, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
@@ -59,7 +59,7 @@ export const getPurotPage = (url: string, content: string | undefined): PurotPag
     return parsed
   }
 
-  return { kind: 'page', wiki: parsed.wiki, page: encodePathSegment(page) }
+  return { kind: 'page', wiki: parsed.wiki, page }
 }
 
 export const purotHandler: PlatformHandler = {

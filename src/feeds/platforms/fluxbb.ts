@@ -1,5 +1,4 @@
 import { fluxbb } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasElementWithId, hasMarker } from '../../common/utils.js'
@@ -9,9 +8,9 @@ import { hasElementWithId, hasMarker } from '../../common/utils.js'
 // Handler needed for: posts.
 
 export type FluxbbUrl =
-  | { kind: 'forum'; boardPath: string; forumId: string }
-  | { kind: 'topic'; boardPath: string; topicId: string }
-  | { kind: 'board'; boardPath: string }
+  | { kind: 'forum'; root: string; forumId: string }
+  | { kind: 'topic'; root: string; topicId: string }
+  | { kind: 'board'; root: string }
 
 // Each id of a pair alone is a plausible id on an unrelated page.
 const templateIds = ['brdheader', 'brdmain']
@@ -28,24 +27,23 @@ export const isFluxbbHtml = (content: string): boolean => {
 }
 
 export const parseFluxbbUrl = (url: string): FluxbbUrl | undefined => {
-  const origin = parseUrl(url)?.origin
   const page = fluxbb.pages.read(url, { isAnyHost: true })
 
-  if (!origin || !page) {
+  if (!page) {
     return
   }
 
-  const boardPath = page.params.root.slice(origin.length)
+  const { root } = page.params
 
   if (page.key === 'forum') {
-    return { kind: 'forum', boardPath, forumId: page.params.forumId }
+    return { kind: 'forum', root, forumId: page.params.forumId }
   }
 
   if (page.key === 'topic') {
-    return { kind: 'topic', boardPath, topicId: page.params.topicId }
+    return { kind: 'topic', root, topicId: page.params.topicId }
   }
 
-  return { kind: 'board', boardPath }
+  return { kind: 'board', root }
 }
 
 export const fluxbbHandler: PlatformHandler = {
@@ -64,7 +62,7 @@ export const fluxbbHandler: PlatformHandler = {
       return []
     }
 
-    const root = `${new URL(url).origin}${parsed.boardPath}`
+    const { root } = parsed
 
     if (parsed.kind === 'forum') {
       return [

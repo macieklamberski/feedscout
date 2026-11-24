@@ -49,24 +49,21 @@ export const isProgrammerHandler: PlatformHandler = {
       return []
     }
 
-    // The host refuses connections on port 443, and every page links its feeds over http.
-    const params = { scheme: 'http' }
-
     if (parsed.kind === 'post') {
       return [
-        page.getFeedEntry('post-comments', { ...params, postId: parsed.postId }),
-        page.getFeedEntry('posts', params),
-        page.getFeedEntry('comments', params),
-        page.getFeedEntry('messages', params),
-        page.getFeedEntry('site', params),
+        page.getFeedEntry('post-comments', { postId: parsed.postId }),
+        page.getFeedEntry('posts'),
+        page.getFeedEntry('comments'),
+        page.getFeedEntry('messages'),
+        page.getFeedEntry('site'),
       ]
     }
 
     return [
-      page.getFeedEntry('posts', params),
-      page.getFeedEntry('comments', params),
-      page.getFeedEntry('messages', params),
-      page.getFeedEntry('site', params),
+      page.getFeedEntry('posts'),
+      page.getFeedEntry('comments'),
+      page.getFeedEntry('messages'),
+      page.getFeedEntry('site'),
     ]
   },
 

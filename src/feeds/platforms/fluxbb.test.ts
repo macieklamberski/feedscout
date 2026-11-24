@@ -6,26 +6,26 @@ const fluxbbHtml = '<div id="brdheader"></div><div id="brdmain"></div>'
 const partialHtml = '<div id="brdmain"></div>'
 
 describe('parseFluxbbUrl', () => {
-  it('should return the forum with its board path', () => {
-    const expected: FluxbbUrl = { kind: 'forum', boardPath: '/forums', forumId: '3' }
+  it('should return the forum with its root', () => {
+    const expected: FluxbbUrl = { kind: 'forum', root: 'https://example.com/forums', forumId: '3' }
 
     expect(parseFluxbbUrl('https://example.com/forums/viewforum.php?id=3')).toEqual(expected)
   })
 
-  it('should return the topic with its board path', () => {
-    const expected: FluxbbUrl = { kind: 'topic', boardPath: '', topicId: '42' }
+  it('should return the topic with its root', () => {
+    const expected: FluxbbUrl = { kind: 'topic', root: 'https://example.com', topicId: '42' }
 
     expect(parseFluxbbUrl('https://example.com/viewtopic.php?id=42')).toEqual(expected)
   })
 
   it('should return the board for a forum page without an id', () => {
-    const expected: FluxbbUrl = { kind: 'board', boardPath: '/forums' }
+    const expected: FluxbbUrl = { kind: 'board', root: 'https://example.com/forums' }
 
     expect(parseFluxbbUrl('https://example.com/forums/viewforum.php')).toEqual(expected)
   })
 
   it('should return the board for the index', () => {
-    const expected: FluxbbUrl = { kind: 'board', boardPath: '/forums' }
+    const expected: FluxbbUrl = { kind: 'board', root: 'https://example.com/forums' }
 
     expect(parseFluxbbUrl('https://example.com/forums/index.php')).toEqual(expected)
   })

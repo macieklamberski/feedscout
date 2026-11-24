@@ -1,8 +1,6 @@
 import { vimeo } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: channel, group, likes.
@@ -15,50 +13,32 @@ export type VimeoUrl =
   | { kind: 'likes'; username: string }
   | { kind: 'user'; username: string }
 
-const hosts = vimeo.hosts.exact
-
-const albumSegments = ['album', 'showcase']
-
 const feeds = withHintLabels(vimeo.feeds)
 
 export const parseVimeoUrl = (url: string): VimeoUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = vimeo.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [routeOrUsername, nameOrRoute] = getPathSegments(url)
-
-  // Channel page: vimeo.com/channels/{channel}
-  if (isAnyOf(routeOrUsername, 'channels') && nameOrRoute) {
-    return { kind: 'channel', channel: nameOrRoute }
+  if (page.key === 'channel') {
+    return { kind: 'channel', channel: page.params.channel }
   }
 
-  // Group page: vimeo.com/groups/{group}
-  if (isAnyOf(routeOrUsername, 'groups') && nameOrRoute) {
-    return { kind: 'group', group: nameOrRoute }
+  if (page.key === 'group') {
+    return { kind: 'group', group: page.params.group }
   }
 
-  // Album/showcase: vimeo.com/album/{id} or vimeo.com/showcase/{id}. Only /album/{id}/rss
-  // returns RSS; /showcase/{id}/rss returns 404. /album/{id} 301-redirects to
-  // /showcase/{id} in the browser, so users will most often paste the showcase URL.
-  if (isAnyOf(routeOrUsername, albumSegments) && nameOrRoute) {
-    if (!digitsRegex.test(nameOrRoute)) {
-      return
-    }
-
-    return { kind: 'album', albumId: nameOrRoute }
+  if (page.key === 'album') {
+    return { kind: 'album', albumId: page.params.albumId }
   }
 
-  // A numeric first segment is a video id.
-  if (!routeOrUsername || digitsRegex.test(routeOrUsername)) {
-    return
+  if (page.key === 'likes') {
+    return { kind: 'likes', username: page.params.username }
   }
 
-  if (isAnyOf(nameOrRoute, 'likes')) {
-    return { kind: 'likes', username: routeOrUsername }
-  }
-
-  return { kind: 'user', username: routeOrUsername }
+  return { kind: 'user', username: page.params.username }
 }
 
 export const vimeoHandler: PlatformHandler = {

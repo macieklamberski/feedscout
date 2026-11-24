@@ -39,18 +39,15 @@ export const hautetfortHandler: PlatformHandler = {
       return []
     }
 
-    // Blog subdomains serve no certificate for their own name, so the feeds stay on http.
-    const params = { scheme: 'http' }
-
     if (parsed.kind === 'category') {
       return [
-        page.getFeedEntry('category', { ...params, category: parsed.category }),
-        page.getFeedEntry('posts', params, 'atom'),
-        page.getFeedEntry('posts', params, 'rss'),
+        page.getFeedEntry('category', { category: parsed.category }),
+        page.getFeedEntry('posts', {}, 'atom'),
+        page.getFeedEntry('posts', {}, 'rss'),
       ]
     }
 
-    return [page.getFeedEntry('posts', params, 'atom'), page.getFeedEntry('posts', params, 'rss')]
+    return [page.getFeedEntry('posts', {}, 'atom'), page.getFeedEntry('posts', {}, 'rss')]
   },
 
   getFeedHint: feeds.getFeedHint,
