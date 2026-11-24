@@ -157,13 +157,13 @@ describe('getPublicInboxPage', () => {
     expect(getPublicInboxPage(value, messageHtml)).toEqual(expected)
   })
 
-  it('should keep a percent-encoded message id as it is', () => {
+  it('should decode a percent-encoded message id', () => {
     const value =
       'https://inbox.example.com/example-mode/alice%2Fsnakemake-mode%2Fissues%2F11%2F211507107@github.com/'
     const expected: PublicInboxPage = {
       kind: 'message',
       inboxUrl: 'https://inbox.example.com/example-mode/',
-      messageId: 'alice%2Fsnakemake-mode%2Fissues%2F11%2F211507107@github.com',
+      messageId: 'alice/snakemake-mode/issues/11/211507107@github.com',
     }
 
     expect(getPublicInboxPage(value, messageHtml)).toEqual(expected)
@@ -247,6 +247,23 @@ describe('publicInboxHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should keep the escapes of a percent-encoded message id in its thread feed', () => {
+      const value =
+        'https://inbox.example.com/example-mode/alice%2Fsnakemake-mode%2Fissues%2F11%2F211507107@github.com/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://inbox.example.com/example-mode/alice%2Fsnakemake-mode%2Fissues%2F11%2F211507107@github.com/t.atom',
+          hint: { key: 'public-inbox:thread', label: 'Thread' },
+        },
+        {
+          uri: 'https://inbox.example.com/example-mode/new.atom',
+          hint: { key: 'public-inbox:messages', label: 'Messages' },
+        },
+      ]
+
+      expect(publicInboxHandler.resolve(value, messageHtml)).toEqual(expected)
+    })
+
     it('should return the inbox feed for a list page', () => {
       const value = 'https://lore.barebox.org/barebox/'
       const expected: Array<DiscoverUriEntry> = [
