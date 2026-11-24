@@ -101,6 +101,12 @@ describe('shinobiHandler', () => {
 
       expect(shinobiHandler.match(value, bannerHtml)).toBe(false)
     })
+
+    it('should return false for a nested subdomain carrying the marker', () => {
+      const value = 'https://www.example.blog.shinobi.jp/'
+
+      expect(shinobiHandler.match(value, bannerHtml)).toBe(false)
+    })
   })
 
   describe('resolve', () => {

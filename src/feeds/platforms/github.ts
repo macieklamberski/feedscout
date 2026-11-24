@@ -1,5 +1,4 @@
 import { github } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -12,75 +11,49 @@ export type GithubUrl =
       kind: 'repo'
       owner: string
       repo: string
-      section?: 'wiki' | 'discussions'
+      section?: string
       discussionCategory?: string
       branch?: string
       file?: { branch: string; path: string }
     }
   | { kind: 'discussions'; org: string; discussionCategory?: string }
 
-const hosts = github.hosts.exact
-
-const wikiRegex = /^\/[^/]+\/[^/]+\/wiki(?:\/|$)/i
-const discussionsRegex = /^\/[^/]+\/[^/]+\/discussions(?:\/|$)/i
-const discussionCategoryRegex = /^\/[^/]+\/[^/]+\/discussions\/categories\/([^/]+)/i
-const branchRegex = /^\/[^/]+\/[^/]+\/(?:tree|commits)\/([^/]+)\/?$/i
-const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/([^/].*?)\/*$/i
-// suffixes: GitHub's own user routes, a name with .atom, .gpg, .keys or .png
-const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png)$/i
-
 const feeds = withHintLabels(github.feeds)
 
-const getRepoSection = (pathname: string): 'wiki' | 'discussions' | undefined => {
-  if (wikiRegex.test(pathname)) {
-    return 'wiki'
-  }
-
-  if (discussionsRegex.test(pathname)) {
-    return 'discussions'
-  }
-}
-
 export const parseGithubUrl = (url: string): GithubUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = github.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const { pathname } = new URL(url)
-  const [routeOrOwner, orgOrRepo, orgRoute] = getPathSegments(url)
-  const discussionCategory = pathname.match(discussionCategoryRegex)?.[1]
-
-  if (isAnyOf(routeOrOwner, 'orgs') && orgOrRepo && isAnyOf(orgRoute, 'discussions')) {
-    return { kind: 'discussions', org: orgOrRepo, discussionCategory }
+  if (page.key === 'user') {
+    return { kind: 'user', owner: page.params.owner }
   }
 
-  // An organization page sits under /orgs/, and its feed is the owner feed.
-  if (isAnyOf(routeOrOwner, 'orgs') && orgOrRepo) {
-    return { kind: 'user', owner: orgOrRepo }
+  if (page.key === 'discussions') {
+    return { kind: 'discussions', org: page.params.org, discussionCategory: page.params.category }
   }
 
-  const owner = orgOrRepo ? routeOrOwner : routeOrOwner?.replace(userRouteSuffixRegex, '')
+  const { owner, repo } = page.params
 
-  // GitHub names carry no dots, so a dotted segment such as robots.txt is a file of the site.
-  if (!owner || owner.includes('.')) {
-    return
+  if (page.key === 'repo-wiki') {
+    return { kind: 'repo', owner, repo, section: 'wiki' }
   }
 
-  if (orgOrRepo) {
-    const fileMatch = pathname.match(fileRegex)
+  if (page.key === 'repo-discussions') {
+    const discussionCategory = page.params.category
 
-    return {
-      kind: 'repo',
-      owner,
-      repo: orgOrRepo,
-      section: getRepoSection(pathname),
-      discussionCategory,
-      branch: pathname.match(branchRegex)?.[1],
-      file: fileMatch ? { branch: fileMatch[1], path: fileMatch[2] } : undefined,
-    }
+    return { kind: 'repo', owner, repo, section: 'discussions', discussionCategory }
   }
 
-  return { kind: 'user', owner }
+  const { branch, path } = page.params
+
+  if (branch && path) {
+    return { kind: 'repo', owner, repo, file: { branch, path: path.join('/') } }
+  }
+
+  return { kind: 'repo', owner, repo, branch }
 }
 
 export const githubHandler: PlatformHandler = {

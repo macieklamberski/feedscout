@@ -1,5 +1,4 @@
 import { devto } from 'feedintel'
-import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -13,45 +12,28 @@ export type DevtoUrl =
   | { kind: 'latest' }
   | { kind: 'home' }
 
-const hosts = devto.hosts.exact
-
-// An article lives under its author's name, a user or an organization: /{name}/{slug}.
-const ownerRegex = /^\/([a-zA-Z0-9_-]+)(?:\/|$)/i
-const tagRegex = /^\/t\/([^/]+)/i
-const latestRegex = /^\/latest\/?$/i
-
 const feeds = withHintLabels(devto.feeds)
 
 export const parseDevtoUrl = (url: string): DevtoUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = devto.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  // Homepage: global community feed.
-  if (parsedUrl.pathname === '/') {
-    return { kind: 'home' }
+  if (page.key === 'profile') {
+    return { kind: 'profile', owner: page.params.owner }
   }
 
-  // Latest sort: /latest.
-  if (latestRegex.test(parsedUrl.pathname)) {
+  if (page.key === 'tag') {
+    return { kind: 'tag', tag: page.params.tag }
+  }
+
+  if (page.key === 'latest') {
     return { kind: 'latest' }
   }
 
-  const tag = parsedUrl.pathname.match(tagRegex)?.[1]
-
-  if (tag) {
-    return { kind: 'tag', tag }
-  }
-
-  const owner = parsedUrl.pathname.match(ownerRegex)?.[1]
-
-  if (!owner) {
-    return
-  }
-
-  return { kind: 'profile', owner }
+  return { kind: 'home' }
 }
 
 export const devtoHandler: PlatformHandler = {

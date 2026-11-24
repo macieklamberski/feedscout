@@ -1,8 +1,8 @@
 import { tischtennislive } from 'feedintel'
-import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
+import { findElement } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: dates, documents, news, tournaments.
@@ -14,16 +14,25 @@ export type TischtennislivePage =
   | { kind: 'group'; group: string }
   | { kind: 'league'; league: string }
 
-const domains = tischtennislive.hosts.tenants
-
 const feeds = withHintLabels(tischtennislive.feeds)
 
 export const parseTischtennisliveUrl = (url: string): TischtennisliveUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  if (!tischtennislive.pages.read(url)) {
     return
   }
 
   return { kind: 'association' }
+}
+
+const getLinkedPage = (href: string | undefined, url: string, host: string) => {
+  const linkUrl = parseUrl(href, url)
+  const page = linkUrl ? tischtennislive.pages.read(linkUrl.href) : undefined
+
+  if (!linkUrl || !isHostOf(linkUrl, host) || !page || page.key === 'association') {
+    return
+  }
+
+  return page
 }
 
 // A results feed answers 200 to any id, and a made-up group id with another group's matches, so
@@ -32,44 +41,27 @@ export const getTischtennislivePage = (
   url: string,
   content: string | undefined,
 ): TischtennislivePage | undefined => {
-  const parsed = parseTischtennisliveUrl(url)
+  const page = tischtennislive.pages.read(url)
 
-  if (!parsed) {
+  if (!page) {
     return
   }
 
-  const { hostname } = new URL(url)
+  const { host } = page.params
   const link = findElement(content, (element) => {
-    if (element.name !== 'a') {
-      return false
-    }
-
-    const linkUrl = parseUrl(element.attribs.href, url)
-
-    if (!linkUrl) {
-      return false
-    }
-
-    return isHostOf(linkUrl, hostname) && isAnyOf(linkUrl.pathname, '/Export/Tischtennis/RSS.aspx')
+    return element.name === 'a' && getLinkedPage(element.attribs.href, url, host) !== undefined
   })
-  const feedUrl = parseUrl(link?.attribs.href, url)
-  const id = getQueryParam(feedUrl?.searchParams, 'id') ?? ''
+  const linkedPage = getLinkedPage(link?.attribs.href, url, host)
 
-  if (!digitsRegex.test(id)) {
-    return parsed
+  if (linkedPage?.key === 'group') {
+    return { kind: 'group', group: linkedPage.params.group }
   }
 
-  const type = getQueryParam(feedUrl?.searchParams, 'typ')
-
-  if (isAnyOf(type, 'Gruppe')) {
-    return { kind: 'group', group: id }
+  if (linkedPage?.key === 'league') {
+    return { kind: 'league', league: linkedPage.params.league }
   }
 
-  if (isAnyOf(type, 'Wett')) {
-    return { kind: 'league', league: id }
-  }
-
-  return parsed
+  return { kind: 'association' }
 }
 
 export const tischtennisliveHandler: PlatformHandler = {

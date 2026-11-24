@@ -1,42 +1,39 @@
 import { weebly } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElements, formatSuffixRegex, getTenantSubdomain } from '../../common/utils.js'
+import { findElements } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type WeeblyUrl = { kind: 'home' } | { kind: 'blog'; page?: string }
 export type WeeblyPage = { kind: 'home'; pages: Array<string> } | { kind: 'blog'; page?: string }
 
-const domains = weebly.hosts.tenants
-
-// A page link is one segment with an optional .html, as `/newsletter.html` or `/newsletter`. Any
-// other dot marks a file, such as `/favicon.ico`.
-const pageLinkRegex = /^\/([^/.]+)(?:\.html)?$/i
-
 const feeds = withHintLabels(weebly.feeds)
 
 export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  const page = weebly.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  // A blog sits under its page slug, such as /articles/feed, or under a numeric blog id, such as
-  // /1/feed. A page address ends in `.html`, which redirects to the bare slug the blog feed sits
-  // under.
-  const [pageSegment] = getPathSegments(url)
-  const routeOrPage = pageSegment?.replace(formatSuffixRegex, '')
-
-  if (!routeOrPage) {
+  if (page.key === 'home') {
     return { kind: 'home' }
   }
 
-  if (!isAnyOf(routeOrPage, 'blog')) {
-    return { kind: 'blog', page: routeOrPage }
+  return { kind: 'blog', page: page.params.page }
+}
+
+const getLinkedPage = (href: string | undefined, url: string, host: string): string | undefined => {
+  const linkUrl = parseUrl(href, url)
+  const link = linkUrl ? weebly.pages.read(linkUrl.href) : undefined
+
+  if (!linkUrl || !isHostOf(linkUrl, host) || link?.key !== 'page') {
+    return
   }
 
-  return { kind: 'blog' }
+  return link.params.page
 }
 
 export const getWeeblyPage = (url: string, content: string | undefined): WeeblyPage | undefined => {
@@ -46,24 +43,19 @@ export const getWeeblyPage = (url: string, content: string | undefined): WeeblyP
     return parsed
   }
 
+  const { hostname } = new URL(url)
+
   // A site can run a blog on any of its pages, and the home page links every page, so each page
   // it links is a blog candidate beside the default /blog. Validation drops the pages that are
   // not blogs.
   const pages = new Set(['blog'])
-  const { hostname } = new URL(url)
   const anchors = content ? findElements(content, (element) => element.name === 'a') : []
 
   for (const anchor of anchors) {
-    const target = parseUrl(anchor.attribs.href, url)
-
-    if (!target || !isHostOf(target, hostname)) {
-      continue
-    }
-
-    const page = target.pathname.match(pageLinkRegex)?.[1]
+    const page = getLinkedPage(anchor.attribs.href, url, hostname)
 
     if (page) {
-      pages.add(isAnyOf(page, 'blog') ? 'blog' : page)
+      pages.add(page)
     }
   }
 

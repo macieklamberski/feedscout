@@ -39,8 +39,11 @@ describe('parseVelogUrl', () => {
     expect(parseVelogUrl('https://velog.io/@%EA%B9%80')).toEqual(expected)
   })
 
-  it('should return undefined for a malformed encoded username', () => {
-    expect(parseVelogUrl('https://velog.io/@%E0%A4%A')).toBeUndefined()
+  it('should read a broken percent escape in a username as the text written', () => {
+    const value = 'https://velog.io/@%E0%A4%A'
+    const expected: VelogUrl = { kind: 'user', username: '%E0%A4%A' }
+
+    expect(parseVelogUrl(value)).toEqual(expected)
   })
 
   it('should read a tag page as the home page', () => {

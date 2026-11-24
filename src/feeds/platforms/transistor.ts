@@ -1,28 +1,23 @@
 import { transistor } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
+import { findElement } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type TransistorUrl = { kind: 'show'; slug: string }
 export type TransistorPage = TransistorUrl
 
-const domains = transistor.hosts.tenants
-
-// The show page links its feed, and the feed slug is not always the subdomain.
-const feedSlugRegex = /https:\/\/feeds\.transistor\.fm\/([^/"'?#\s<>&\\]+)/i
-
 const feeds = withHintLabels(transistor.feeds)
 
 export const parseTransistorUrl = (url: string): TransistorUrl | undefined => {
-  const slug = getTenantSubdomain(url, domains)
+  const page = transistor.pages.read(url)
 
-  if (!slug) {
+  if (!page) {
     return
   }
 
-  return { kind: 'show', slug }
+  return { kind: 'show', slug: page.params.slug }
 }
 
 export const getTransistorPage = (
@@ -35,7 +30,13 @@ export const getTransistorPage = (
     return
   }
 
-  return { kind: 'show', slug: content?.match(feedSlugRegex)?.[1] ?? parsed.slug }
+  // The show page links its feed, and the feed slug is not always the subdomain.
+  const link = findElement(content, (element) => {
+    return transistor.feeds.read(element.attribs.href ?? '') !== undefined
+  })
+  const linkedSlug = transistor.feeds.read(link?.attribs.href ?? '')?.params.slug
+
+  return { kind: 'show', slug: linkedSlug ?? parsed.slug }
 }
 
 export const transistorHandler: PlatformHandler = {

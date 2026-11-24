@@ -1,5 +1,4 @@
 import { smeBlog } from 'feedintel'
-import { getPathSegments, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -7,22 +6,20 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type SmeBlogUrl = { kind: 'blog'; username: string } | { kind: 'home' }
 
-const hosts = smeBlog.hosts.exact
-
 const feeds = withHintLabels(smeBlog.feeds)
 
 export const parseSmeBlogUrl = (url: string): SmeBlogUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = smeBlog.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [username] = getPathSegments(url)
-
-  if (!username) {
+  if (page.key === 'home') {
     return { kind: 'home' }
   }
 
-  return { kind: 'blog', username }
+  return { kind: 'blog', username: page.params.username }
 }
 
 export const smeBlogHandler: PlatformHandler = {

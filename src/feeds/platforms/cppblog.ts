@@ -1,5 +1,4 @@
 import { cppblog } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
@@ -13,32 +12,23 @@ export type CppblogUrl =
   | { kind: 'category'; username: string; categoryId: string }
   | { kind: 'favorite'; username: string; favoriteId: string }
 
-const hosts = cppblog.hosts.exact
-
-const listPageRegex = /^(\d+)\.html$/i
-const feedLinkRegex = /^https?:\/\/(?:www\.)?cppblog\.com\/([^/]+)\/rss\.aspx$/i
-
 const feeds = withHintLabels(cppblog.feeds)
 
 export const parseCppblogUrl = (url: string): CppblogUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = cppblog.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [username, section, page] = getPathSegments(url)
+  const { username } = page.params
 
-  if (!username || username.includes('.')) {
-    return
+  if (page.key === 'category') {
+    return { kind: 'category', username, categoryId: page.params.categoryId }
   }
 
-  const listId = page?.match(listPageRegex)?.[1]
-
-  if (listId && isAnyOf(section, 'category')) {
-    return { kind: 'category', username, categoryId: listId }
-  }
-
-  if (listId && isAnyOf(section, 'favorite')) {
-    return { kind: 'favorite', username, favoriteId: listId }
+  if (page.key === 'favorite') {
+    return { kind: 'favorite', username, favoriteId: page.params.favoriteId }
   }
 
   return { kind: 'blog', username }
@@ -50,7 +40,13 @@ const getFeedUsername = (content: string | undefined): string | undefined => {
     return element.name === 'link' && element.attribs.id === 'RSSLink'
   })
 
-  return link?.attribs.href?.match(feedLinkRegex)?.[1]
+  const feed = cppblog.feeds.read(link?.attribs.href ?? '')
+
+  if (feed?.key !== 'posts') {
+    return
+  }
+
+  return feed.params.username
 }
 
 const getCppblogPage = (url: string, content: string | undefined): CppblogUrl | undefined => {

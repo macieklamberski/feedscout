@@ -1,13 +1,5 @@
 import { goope } from 'feedintel'
-import {
-  getPathSegments,
-  isAnyOf,
-  isHostOf,
-  isHostOrSubdomainOf,
-  parseUrl,
-  resolveUrl,
-  startsWithAnyOf,
-} from 'trousse'
+import { parseUrl, resolveUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -21,26 +13,14 @@ export type GoopeUrl = {
   isAssociationPage: boolean
 }
 
-const hosts = goope.hosts.exact
-const domains = ['goope.jp']
-const assetHosts = ['cdn.goope.jp']
-
-const templateRegex = /^t_\d+$/i
-
 const feeds = withHintLabels(goope.feeds)
 
 const isQrCode = (src: string | undefined): boolean => {
-  const qrCodeUrl = parseUrl(resolveUrl(src ?? ''))
-
-  if (!qrCodeUrl) {
-    return false
-  }
-
-  return isHostOf(qrCodeUrl, hosts) && startsWithAnyOf(qrCodeUrl.pathname, '/qr/')
+  return goope.pages.read(resolveUrl(src ?? '') ?? '')?.key === 'qr'
 }
 
 const isGoopeAsset = (href: string | undefined): boolean => {
-  return isHostOf(resolveUrl(href ?? '') ?? '', assetHosts)
+  return goope.pages.read(resolveUrl(href ?? '') ?? '')?.key === 'asset'
 }
 
 // Every theme prints the site's QR code from r.goope.jp unless the owner hides it, and a favicon
@@ -68,35 +48,21 @@ export const parseGoopeUrl = (url: string): GoopeUrl | undefined => {
     return
   }
 
-  const segments = getPathSegments(parsedUrl)
-  let kind: GoopeUrl['kind'] = 'site'
-  let site: string | undefined
+  // The root of r.goope.jp redirects to goope.jp.
+  const page = goope.pages.read(url) ?? goope.pages.read(url, { root: parsedUrl.origin })
 
-  if (isHostOf(parsedUrl, hosts)) {
-    site = segments.shift()
-
-    // The root of r.goope.jp redirects to goope.jp.
-    if (!site) {
-      return
-    }
-
-    kind = 'freeSite'
-  } else if (isHostOrSubdomainOf(parsedUrl, domains)) {
+  if (!page || page.key === 'platform' || page.key === 'qr' || page.key === 'asset') {
     return
   }
 
-  // A `t_{id}` segment serves the site in another template.
-  const [templateOrSection] = segments
+  const { site } = page.params
 
-  if (templateRegex.test(templateOrSection ?? '')) {
-    segments.shift()
+  return {
+    kind: site ? 'freeSite' : 'site',
+    site,
+    isMemberPage: page.key === 'members',
+    isAssociationPage: page.key !== 'site',
   }
-
-  const [section, page] = segments
-  const isAssociationPage = isAnyOf(section, 'shokokai')
-  const isMemberPage = isAssociationPage && isAnyOf(page, 'member')
-
-  return { kind, site, isMemberPage, isAssociationPage }
 }
 
 export const goopeHandler: PlatformHandler = {

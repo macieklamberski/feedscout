@@ -1,5 +1,4 @@
 import { qiita } from 'feedintel'
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -14,51 +13,32 @@ export type QiitaUrl =
   | { kind: 'officialColumns' }
   | { kind: 'user'; username: string }
 
-const hosts = qiita.hosts.exact
-
-const tagRegex = /^\/tags\/([^/]+)/i
-const organizationRegex = /^\/organizations\/([^/]+)/i
-const popularItemsRegex = /^\/popular-items(\/|$)/i
-const officialColumnsRegex = /^\/official-columns(\/|$)/i
-
 const feeds = withHintLabels(qiita.feeds)
 
 export const parseQiitaUrl = (url: string): QiitaUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = qiita.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const { pathname } = parsedUrl
-  const tag = pathname.match(tagRegex)?.[1]
-
-  if (tag) {
-    return { kind: 'tag', tag }
+  if (page.key === 'tag') {
+    return { kind: 'tag', tag: page.params.tag }
   }
 
-  const organization = pathname.match(organizationRegex)?.[1]
-
-  if (organization) {
-    return { kind: 'organization', organization }
+  if (page.key === 'organization') {
+    return { kind: 'organization', organization: page.params.organization }
   }
 
-  if (popularItemsRegex.test(pathname)) {
+  if (page.key === 'popularItems') {
     return { kind: 'popularItems' }
   }
 
-  // Qiita Zine.
-  if (officialColumnsRegex.test(pathname)) {
+  if (page.key === 'officialColumns') {
     return { kind: 'officialColumns' }
   }
 
-  const [username] = getPathSegments(parsedUrl)
-
-  if (!username) {
-    return
-  }
-
-  return { kind: 'user', username }
+  return { kind: 'user', username: page.params.username }
 }
 
 export const qiitaHandler: PlatformHandler = {

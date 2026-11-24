@@ -1,7 +1,6 @@
 import { hatenablog } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -10,29 +9,21 @@ export type HatenablogUrl =
   | { kind: 'author'; author: string }
   | { kind: 'blog' }
 
-const domains = hatenablog.hosts.tenants
-
-const categoryRegex = /^\/archive\/category\/([^/]+)/i
-const authorRegex = /^\/archive\/author\/([^/]+)/i
-
 const feeds = withHintLabels(hatenablog.feeds)
 
 export const parseHatenablogUrl = (url: string): HatenablogUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  const page = hatenablog.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const { pathname } = new URL(url)
-  const category = pathname.match(categoryRegex)?.[1]
-
-  if (category) {
-    return { kind: 'category', category }
+  if (page.key === 'category') {
+    return { kind: 'category', category: page.params.category }
   }
 
-  const author = pathname.match(authorRegex)?.[1]
-
-  if (author) {
-    return { kind: 'author', author }
+  if (page.key === 'author') {
+    return { kind: 'author', author: page.params.author }
   }
 
   return { kind: 'blog' }

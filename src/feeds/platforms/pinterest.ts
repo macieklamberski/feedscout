@@ -1,8 +1,6 @@
 import { pinterest } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf, isRegion, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: pins.
@@ -12,43 +10,26 @@ export type PinterestUrl =
   | { kind: 'tab'; username: string }
   | { kind: 'board'; username: string; board: string }
 
-export const hosts = pinterest.hosts.exact
-const domains = pinterest.hosts.tenants
-
-// Profile tabs of a user, which name the user, not a board.
-const userSubpaths = ['pins', 'boards', '_saved', '_created', 'followers', 'following']
-
 const feeds = withHintLabels(pinterest.feeds)
 
-// A country site such as pinterest.co.uk redirects to its label on pinterest.com, uk.pinterest.com,
-// which serves the same profiles and boards.
-const isPinterestHost = (parsedUrl: URL): boolean => {
-  return isHostOf(parsedUrl, hosts) || isRegion(getTenantSubdomain(parsedUrl, domains) ?? '')
-}
-
 export const parsePinterestUrl = (url: string): PinterestUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = pinterest.pages.read(url)
 
-  if (!parsedUrl || !isPinterestHost(parsedUrl)) {
+  if (!page) {
     return
   }
 
-  const [username, board] = getPathSegments(parsedUrl)
+  const { username } = page.params
 
-  // Pinterest names carry no dots, so a dotted segment such as robots.txt is a file of the site.
-  if (!username || username.includes('.')) {
-    return
+  if (page.key === 'board') {
+    return { kind: 'board', username, board: page.params.board }
   }
 
-  if (!board) {
-    return { kind: 'user', username }
-  }
-
-  if (isAnyOf(board, userSubpaths)) {
+  if (page.key === 'tab') {
     return { kind: 'tab', username }
   }
 
-  return { kind: 'board', username, board }
+  return { kind: 'user', username }
 }
 
 export const pinterestHandler: PlatformHandler = {

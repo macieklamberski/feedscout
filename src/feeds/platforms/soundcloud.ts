@@ -1,8 +1,6 @@
 import { soundcloud } from 'feedintel'
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: tracks.
@@ -12,28 +10,19 @@ export type SoundcloudPage =
   | { kind: 'user'; userId: string }
   | { kind: 'playlist'; playlistId: string }
 
-export const hosts = soundcloud.hosts.exact
-
 const userIdRegex = /soundcloud:\/\/users:(\d+)/
 const playlistIdRegex = /soundcloud:\/\/playlists:(\d+)/
 
 const feeds = withHintLabels(soundcloud.feeds)
 
 export const parseSoundcloudUrl = (url: string): SoundcloudUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = soundcloud.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const [username] = getPathSegments(parsedUrl)
-
-  // A permalink holds only letters, digits, _ and -, so robots.txt is a file, not a user.
-  if (!username || !wordOrHyphenRegex.test(username)) {
-    return
-  }
-
-  return { kind: 'user', username }
+  return { kind: 'user', username: page.params.username }
 }
 
 // A profile or playlist path names it by slug, but the feed takes the numeric id the page carries.

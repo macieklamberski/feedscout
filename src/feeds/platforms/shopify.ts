@@ -1,8 +1,8 @@
 import { shopify } from 'feedintel'
-import { getPathSegments, includesAnyOf, isAnyOf, isLocale } from 'trousse'
+import { includesAnyOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { formatSuffixRegex, hasMarker } from '../../common/utils.js'
+import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -15,20 +15,17 @@ export const isShopifyHeaders = (headers: Headers): boolean => {
 }
 
 export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {
-  const segments = getPathSegments(url)
-  // A market's locale folder, as in `/en-us/blogs/news` or `/zh-hant-hk/blogs/news`.
-  const [localeOrRoute] = segments
-  const locale = localeOrRoute && isLocale(localeOrRoute) ? localeOrRoute : undefined
-  const [route, handleSegment, taggedWord, tag] = locale ? segments.slice(1) : segments
-  // A handle or a tag holds no dot, so a feed URL's `.atom` is a format, not part of either.
-  const handle = handleSegment?.replace(formatSuffixRegex, '')
+  const parsedUrl = parseUrl(url)
+  const page = parsedUrl ? shopify.pages.read(url, { root: parsedUrl.origin }) : undefined
 
-  if (!isAnyOf(route, 'blogs') || !handle) {
+  if (!page) {
     return
   }
 
-  if (isAnyOf(taggedWord, 'tagged') && tag) {
-    return { kind: 'blog', handle, tag: tag.replace(formatSuffixRegex, '') }
+  const { handle } = page.params
+
+  if (page.key === 'blog-tag') {
+    return { kind: 'blog', handle, tag: page.params.tag }
   }
 
   return { kind: 'blog', handle }

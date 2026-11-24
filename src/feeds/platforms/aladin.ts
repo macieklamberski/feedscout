@@ -1,8 +1,8 @@
 import { aladin } from 'feedintel'
-import { escapeRegex, getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { isSameText } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex } from '../../common/utils.js'
+import { findUrls } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: posts.
@@ -12,30 +12,35 @@ export type AladinUrl =
   | { kind: 'blog'; username: string }
   | { kind: 'category'; username: string; categoryId: string }
 
-const hosts = aladin.hosts.exact
-
 const feeds = withHintLabels(aladin.feeds)
 
 export const parseAladinUrl = (url: string): AladinUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = aladin.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [username, section, value] = getPathSegments(url)
-
-  // A dotted segment such as ScriptResource.axd is a file of the site.
-  if (!username || username.includes('.')) {
-    return
+  if (page.key === 'category') {
+    return { kind: 'category', username: page.params.username, categoryId: page.params.categoryId }
   }
 
-  if (isAnyOf(section, 'category') && value && digitsRegex.test(value)) {
-    return { kind: 'category', username, categoryId: value }
-  }
-
-  return { kind: 'blog', username }
+  return { kind: 'blog', username: page.params.username }
 }
 
 export type AladinPage = AladinUrl
+
+// Usernames match in any case, and the page's alternate link spells the blog's own:
+// `/CHANGBI/category/49178853` links `/changbi/rss`.
+const getLinkedUsername = (content: string, username: string): string | undefined => {
+  for (const url of findUrls(content)) {
+    const feed = aladin.feeds.read(url)
+
+    if (feed?.key === 'posts' && isSameText(feed.params.username, username)) {
+      return feed.params.username
+    }
+  }
+}
 
 export const getAladinPage = (url: string, content: string | undefined): AladinPage | undefined => {
   const parsed = parseAladinUrl(url)
@@ -44,13 +49,7 @@ export const getAladinPage = (url: string, content: string | undefined): AladinP
     return
   }
 
-  // Usernames match in any case, and the page's alternate link spells the blog's own:
-  // `/CHANGBI/category/49178853` links `/changbi/rss`.
-  const usernameRegex = new RegExp(
-    `blog\\.aladin\\.co\\.kr/(${escapeRegex(parsed.username)})/rss`,
-    'i',
-  )
-  const username = content?.match(usernameRegex)?.[1] ?? parsed.username
+  const username = getLinkedUsername(content ?? '', parsed.username) ?? parsed.username
 
   return { ...parsed, username }
 }

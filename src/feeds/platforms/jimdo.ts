@@ -1,5 +1,4 @@
 import { jimdo } from 'feedintel'
-import { getQueryParam } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
@@ -26,7 +25,7 @@ export const jimdoHandler: PlatformHandler = {
       return []
     }
 
-    const tag = getQueryParam(new URL(url), 'tag')
+    const tag = jimdo.pages.read(url, { isAnyHost: true })?.params.tag
 
     if (tag) {
       return [page.getFeedEntry('blog'), page.getFeedEntry('blog-tag', { tag })]

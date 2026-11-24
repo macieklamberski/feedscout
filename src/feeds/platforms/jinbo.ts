@@ -1,8 +1,7 @@
 import { jinbo } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex, findElement } from '../../common/utils.js'
+import { findElement } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: category, posts, responses, tag.
@@ -14,36 +13,28 @@ export type JinboUrl =
   | { kind: 'tag'; username: string; tag: string }
   | { kind: 'post'; username: string; postId: string }
 
-const hosts = jinbo.hosts.exact
-
-// A category named by text answers an empty feed under another category's title.
-const feedLinkRegex = /^https:\/\/blog\.jinbo\.net\/([^/]+)\/rss$/i
-
 const feeds = withHintLabels(jinbo.feeds)
 
 export const parseJinboUrl = (url: string): JinboUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = jinbo.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [username, section, value] = getPathSegments(url)
+  const { username } = page.params
 
-  // A segment like favicon.ico is a file at the root, not a blog.
-  if (!username || username.includes('.')) {
-    return
+  if (page.key === 'category') {
+    return { kind: 'category', username, categoryId: page.params.categoryId }
   }
 
-  if (isAnyOf(section, 'category') && value && digitsRegex.test(value)) {
-    return { kind: 'category', username, categoryId: value }
+  if (page.key === 'tag') {
+    return { kind: 'tag', username, tag: page.params.tag }
   }
 
-  if (isAnyOf(section, 'tag') && value) {
-    return { kind: 'tag', username, tag: value }
-  }
-
-  // A post page, /{username}/{postId}, links the comments and trackbacks of that post.
-  if (section && digitsRegex.test(section)) {
-    return { kind: 'post', username, postId: section }
+  // A post page links the comments and trackbacks of that post.
+  if (page.key === 'post') {
+    return { kind: 'post', username, postId: page.params.postId }
   }
 
   return { kind: 'blog', username }
@@ -51,16 +42,26 @@ export const parseJinboUrl = (url: string): JinboUrl | undefined => {
 
 // The site answers a blog under any case of its name, and its pages link the feed in the
 // blog's own case.
+const getLinkedUsername = (href: string | undefined): string | undefined => {
+  const feed = jinbo.feeds.read(href ?? '')
+
+  if (feed?.key !== 'posts') {
+    return
+  }
+
+  return feed.params.username
+}
+
 const getFeedUsername = (content: string | undefined): string | undefined => {
   const link = findElement(content, (element) => {
     return (
       element.name === 'link' &&
       element.attribs.rel === 'alternate' &&
-      feedLinkRegex.test(element.attribs.href ?? '')
+      getLinkedUsername(element.attribs.href) !== undefined
     )
   })
 
-  return link?.attribs.href?.match(feedLinkRegex)?.[1]
+  return getLinkedUsername(link?.attribs.href)
 }
 
 const getJinboPage = (url: string, content: string | undefined): JinboUrl | undefined => {

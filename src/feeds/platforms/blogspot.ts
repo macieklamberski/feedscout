@@ -3,12 +3,7 @@ import { parseUrl } from 'trousse'
 import type { DiscoverUriHint } from '../../common/types.js'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  findElement,
-  getBrandDomainRegex,
-  getTenantSubdomain,
-  hasMarker,
-} from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: comments, post-comments, posts.
@@ -20,15 +15,6 @@ export type BlogspotPage =
   | { kind: 'post'; postId?: string }
   | { kind: 'blog' }
 
-// blogspot.com and Blogger's country domains like .co.uk, .com.br and .de, which still serve
-// feeds. getTenantSubdomain then refuses www and nested subdomains.
-const domains = [getBrandDomainRegex('blogspot')]
-// The domains the feeds table reads a blog's name on.
-const namedDomains = blogspot.hosts.tenants
-
-const labelRegex = /^\/search\/label\/([^/]+)/i
-const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
-const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/i
 const widgetsScriptRegex = /^(?:https?:)?\/\/www\.blogger\.com\/static\/v1\/widgets\//i
 const blogIdPathRegex = /^\/feeds\/[^/]+\//i
 
@@ -58,23 +44,35 @@ export const isBlogspotHtml = (content: string): boolean => {
   return script !== undefined
 }
 
-export const parseBlogspotUrl = (url: string): BlogspotUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+// A post's comments feed, as a link in its page names it, on blogspot.com or a custom domain.
+const readPostId = (href: string | undefined, url: string): string | undefined => {
+  const feedUrl = href ? parseUrl(href, url) : undefined
 
-  if (!parsedUrl) {
+  if (!feedUrl) {
     return
   }
 
-  const { pathname } = parsedUrl
-  // Label page: /search/label/{label}
-  const label = pathname.match(labelRegex)?.[1]
+  const feed = blogspot.feeds.read(feedUrl.href, { isAnyHost: true })
 
-  if (label) {
-    return { kind: 'label', label }
+  if (feed?.key !== 'post-comments') {
+    return
   }
 
-  // Post page: /{year}/{month}/{slug}.html
-  if (postRegex.test(pathname)) {
+  return feed.params.postId
+}
+
+export const parseBlogspotUrl = (url: string): BlogspotUrl | undefined => {
+  const page = blogspot.pages.read(url, { isAnyHost: true })
+
+  if (!page) {
+    return
+  }
+
+  if (page.key === 'label') {
+    return { kind: 'label', label: page.params.label }
+  }
+
+  if (page.key === 'post') {
     return { kind: 'post' }
   }
 
@@ -93,16 +91,16 @@ export const getBlogspotPage = (
 
   // The post id is not in the URL, so it is read from the comments feed link in the page.
   const commentsFeedLink = findElement(content, (element) => {
-    return postCommentsFeedRegex.test(element.attribs.href ?? '')
+    return readPostId(element.attribs.href, url) !== undefined
   })
-  const postId = commentsFeedLink?.attribs.href?.match(postCommentsFeedRegex)?.[1]
+  const postId = readPostId(commentsFeedLink?.attribs.href, url)
 
   return { kind: 'post', postId }
 }
 
 export const blogspotHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (getTenantSubdomain(url, domains)) {
+    if (blogspot.pages.read(url)) {
       return true
     }
 
@@ -119,7 +117,8 @@ export const blogspotHandler: PlatformHandler = {
 
     // A blog's name builds its feeds on blogspot.com. Without one, as on a blog's own domain,
     // they are built on the page's host.
-    const blog = getTenantSubdomain(url, namedDomains)
+    const blogPage = blogspot.pages.read(url)
+    const blog = blogPage?.key === 'blog' ? blogPage.params.blog : undefined
     const params = { blog }
 
     if (page.kind === 'label') {

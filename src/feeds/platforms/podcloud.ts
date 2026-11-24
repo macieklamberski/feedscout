@@ -1,18 +1,15 @@
 import { podcloud } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type PodcloudUrl = { kind: 'show' }
 
-const domains = podcloud.hosts.tenants
-
 const feeds = withHintLabels(podcloud.feeds)
 
 export const parsePodcloudUrl = (url: string): PodcloudUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  if (!podcloud.pages.read(url)) {
     return
   }
 

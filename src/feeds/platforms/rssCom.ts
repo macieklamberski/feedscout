@@ -1,5 +1,4 @@
 import { rssCom } from 'feedintel'
-import { isHostOf, isLocale, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -7,27 +6,16 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type RssComUrl = { kind: 'podcast'; show: string }
 
-const hosts = rssCom.hosts.exact
-
-// An optional locale prefix, e.g. /es/podcasts/, /it/podcasts/.
-const podcastRegex = /^\/(?:([^/]+)\/)?podcasts\/([^/]+)/i
-
 const feeds = withHintLabels(rssCom.feeds)
 
 export const parseRssComUrl = (url: string): RssComUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = rssCom.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const [, locale, show] = parsedUrl.pathname.match(podcastRegex) ?? []
-
-  if (!show || (locale && !isLocale(locale))) {
-    return
-  }
-
-  return { kind: 'podcast', show }
+  return { kind: 'podcast', show: page.params.show }
 }
 
 export const rssComHandler: PlatformHandler = {

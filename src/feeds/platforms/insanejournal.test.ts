@@ -339,6 +339,26 @@ describe('insanejournalHandler', () => {
       expect(insanejournalHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep the http scheme when canonicalising www.insanejournal.com/users/{user} to subdomain', () => {
+      const value = 'http://www.insanejournal.com/users/bob'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://bob.insanejournal.com/data/rss',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'http://bob.insanejournal.com/data/atom',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'http://bob.insanejournal.com/data/userpics',
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should route www.insanejournal.com/asylum/{name} to asylums subdomain', () => {
       const value = 'https://www.insanejournal.com/asylum/carol'
       const expected: Array<DiscoverUriEntry> = [

@@ -86,6 +86,12 @@ describe('sportsregionsHandler', () => {
       expect(sportsregionsHandler.match(value, clubHtml)).toBe(false)
     })
 
+    it('should return false for a nested subdomain with the footer link', () => {
+      const value = 'https://a.b.sportsregions.fr/'
+
+      expect(sportsregionsHandler.match(value, clubHtml)).toBe(false)
+    })
+
     it('should return false for a custom domain without the footer link', () => {
       expect(sportsregionsHandler.match('https://example.com/', '<p>Club</p>')).toBe(false)
     })

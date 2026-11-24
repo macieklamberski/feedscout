@@ -9,11 +9,6 @@ import { hasAnyMeta, hasElementWithId, hasMarker } from '../../common/utils.js'
 
 export type MisskeyUrl = { kind: 'profile'; username: string }
 
-const profileRegex = /^\/@(?<segment>[^/]+)/
-// suffixes: Misskey's own profile feed formats. A remote handle, @user@host.tld, holds dots, so
-// only these suffixes are stripped.
-const feedSuffixRegex = /\.(?:atom|rss|json)$/i
-
 const feeds = withHintLabels(misskey.feeds)
 
 const metaMarkers: Array<[string, string]> = [
@@ -26,15 +21,13 @@ export const isMisskeyHtml = (content: string): boolean => {
 }
 
 export const parseMisskeyUrl = (url: string): MisskeyUrl | undefined => {
-  const segment = parseUrl(url)?.pathname.match(profileRegex)?.groups?.segment
-  // A feed URL, such as /@alice.atom, names its profile too.
-  const username = segment?.replace(feedSuffixRegex, '')
+  const page = misskey.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
 
-  if (!username) {
+  if (!page) {
     return
   }
 
-  return { kind: 'profile', username }
+  return { kind: 'profile', username: page.params.username }
 }
 
 export const misskeyHandler: PlatformHandler = {

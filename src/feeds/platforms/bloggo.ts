@@ -1,35 +1,25 @@
 import { bloggo } from 'feedintel'
-import { getPathSegments, isAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type BloggoUrl = { kind: 'blog' } | { kind: 'post'; slug: string }
 export type BloggoPage = BloggoUrl
 
-const domains = bloggo.hosts.tenants
-
 const postBodyRegex = /<body[^<>]*\bpost-id-\d+/
 
 const feeds = withHintLabels(bloggo.feeds)
 
-// The about page belongs to the blog, not to a post.
-const blogPaths = ['about']
-
 export const parseBloggoUrl = (url: string): BloggoUrl | undefined => {
-  const subdomain = getTenantSubdomain(url, domains)
+  const page = bloggo.pages.read(url)
 
-  if (!subdomain) {
+  if (!page) {
     return
   }
 
-  const segments = getPathSegments(url)
-  const [slug] = segments
-
-  if (segments.length === 1 && slug && !isAnyOf(slug, blogPaths)) {
-    return { kind: 'post', slug }
+  if (page.key === 'post') {
+    return { kind: 'post', slug: page.params.slug }
   }
 
   return { kind: 'blog' }

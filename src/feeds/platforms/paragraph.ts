@@ -1,5 +1,4 @@
 import { paragraph } from 'feedintel'
-import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -7,26 +6,16 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type ParagraphUrl = { kind: 'blog'; username: string }
 
-const hosts = paragraph.hosts.exact
-
-const userRegex = /^\/@([^/]+)/
-
 const feeds = withHintLabels(paragraph.feeds)
 
 export const parseParagraphUrl = (url: string): ParagraphUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = paragraph.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const username = parsedUrl.pathname.match(userRegex)?.[1]
-
-  if (!username) {
-    return
-  }
-
-  return { kind: 'blog', username }
+  return { kind: 'blog', username: page.params.username }
 }
 
 export const paragraphHandler: PlatformHandler = {

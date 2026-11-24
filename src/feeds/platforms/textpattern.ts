@@ -1,5 +1,5 @@
 import { textpattern } from 'feedintel'
-import { decodeSegment, getQueryParam, isAnyOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -11,77 +11,64 @@ export type TextpatternPage =
   | { kind: 'section'; siteUrl: string; section: string }
   | { kind: 'category'; siteUrl: string; category: string }
 
-const feedPathRegex = /\/(?:atom|rss)\/?$/i
-const trailingSlashRegex = /\/$/
-
-// The routes Textpattern puts in front of a value in place of a section.
-const reservedRoutes = ['author', 'category', 'file_download']
-
 const feeds = withHintLabels(textpattern.feeds)
 
 export const isTextpatternHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Textpattern')
 }
 
-// Textpattern serves its feeds at `{site}/rss` and `{site}/atom`, so the feed link a theme prints
-// names the site root. It counts only on the page's own host, under a root that holds the page.
-const getSiteUrl = (url: string, content: string | undefined): string | undefined => {
-  const parsedUrl = new URL(url)
+type TextpatternPageMatch = ReturnType<typeof textpattern.pages.read>
 
+const readFeedLink = (url: string, href: string | undefined): string | undefined => {
+  const feedUrl = parseUrl(href, url)?.href ?? ''
+
+  return textpattern.feeds.read(feedUrl, { isAnyHost: true })?.params.root
+}
+
+// Textpattern serves its feeds at `{site}/rss` and `{site}/atom`, so the feed link a theme prints
+// names the site root. It counts only under a root that holds the page, else the origin does.
+const readPage = (url: string, content: string | undefined): TextpatternPageMatch => {
   const feedLink = findElement(content, (element) => {
     if (element.name !== 'link' || element.attribs.rel !== 'alternate') {
       return false
     }
 
-    return feedPathRegex.test(parseUrl(element.attribs.href, url)?.pathname ?? '')
+    return readFeedLink(url, element.attribs.href) !== undefined
   })
+  const feedRoot = readFeedLink(url, feedLink?.attribs.href)
 
-  if (!feedLink) {
-    return
+  if (feedRoot) {
+    const page = textpattern.pages.read(url, { root: feedRoot })
+
+    if (page) {
+      return page
+    }
   }
 
-  const feedUrl = parseUrl(feedLink.attribs.href, url)
-
-  if (!feedUrl || feedUrl.origin !== parsedUrl.origin) {
-    return
-  }
-
-  const sitePath = feedUrl.pathname.replace(feedPathRegex, '')
-
-  if (!`${parsedUrl.pathname}/`.startsWith(`${sitePath}/`)) {
-    return
-  }
-
-  return `${parsedUrl.origin}${sitePath}`
+  return textpattern.pages.read(url, { root: parseUrl(url)?.origin })
 }
 
-// A clean URL names the section first and a category under `/category/`, and a messy one names
-// them in `?s=` and `?c=`.
-export const getTextpatternPage = (url: string, content: string | undefined): TextpatternPage => {
-  const parsedUrl = new URL(url)
-  const siteUrl = getSiteUrl(url, content) ?? parsedUrl.origin
-  const sitePath = new URL(siteUrl).pathname.replace(trailingSlashRegex, '')
-  const [route, value] = parsedUrl.pathname.slice(sitePath.length).split('/').filter(Boolean)
-  const queryCategory = getQueryParam(parsedUrl, 'c')
-  const querySection = getQueryParam(parsedUrl, 's')
+export const getTextpatternPage = (
+  url: string,
+  content: string | undefined,
+): TextpatternPage | undefined => {
+  const page = readPage(url, content)
 
-  if (queryCategory) {
-    return { kind: 'category', siteUrl, category: queryCategory }
+  if (!page) {
+    return
   }
 
-  if (querySection) {
-    return { kind: 'section', siteUrl, section: querySection }
+  const siteUrl = page.params.root
+
+  if (page.key === 'category') {
+    return { kind: 'category', siteUrl, category: page.params.category }
   }
 
-  if (isAnyOf(route, 'category') && value) {
-    return { kind: 'category', siteUrl, category: decodeSegment(value) ?? value }
+  if (page.key === 'section') {
+    return { kind: 'section', siteUrl, section: page.params.section }
   }
 
-  if (!route || isAnyOf(route, reservedRoutes) || route.includes('.')) {
-    return { kind: 'site', siteUrl }
-  }
-
-  return { kind: 'section', siteUrl, section: decodeSegment(route) ?? route }
+  return { kind: 'site', siteUrl }
 }
 
 export const textpatternHandler: PlatformHandler = {
@@ -91,6 +78,10 @@ export const textpatternHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getTextpatternPage(url, content)
+
+    if (!page) {
+      return []
+    }
 
     if (page.kind === 'section') {
       const params = { root: page.siteUrl, section: page.section }

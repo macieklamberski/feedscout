@@ -1,5 +1,5 @@
 import { laget } from 'feedintel'
-import { getPathSegments, isHostOf, isHostOrSubdomainOf } from 'trousse'
+import { addMissingScheme } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -9,12 +9,6 @@ import { findElement, hasMarker } from '../../common/utils.js'
 
 export type LagetUrl = { kind: 'team'; team: string }
 
-const hosts = laget.hosts.exact
-const domains = laget.hosts.tenants
-
-// A bare `laget.se` also matches other domains, such as `snickeribolaget.se`.
-const lagetAssetRegex = /^(?:https?:)?\/\/[a-z]-content\.laget\.se\//i
-
 const assetTags = ['link', 'script']
 
 const feeds = withHintLabels(laget.feeds)
@@ -22,31 +16,32 @@ const feeds = withHintLabels(laget.feeds)
 // Both club templates load their stylesheets and scripts from the asset host, on an own domain too.
 export const isLagetHtml = (content: string): boolean => {
   const asset = findElement(content, (element) => {
-    const source = element.attribs.href ?? element.attribs.src ?? ''
+    if (!assetTags.includes(element.name)) {
+      return false
+    }
 
-    return assetTags.includes(element.name) && lagetAssetRegex.test(source)
+    // An asset link may leave out the scheme, as `//g-content.laget.se/`.
+    const source = addMissingScheme(element.attribs.href ?? element.attribs.src ?? '')
+
+    return laget.pages.read(source)?.key === 'asset'
   })
 
   return asset !== undefined
 }
 
 export const parseLagetUrl = (url: string): LagetUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = laget.pages.read(url)
+
+  if (page?.key !== 'team') {
     return
   }
 
-  const [team] = getPathSegments(url)
-
-  if (!team || team.includes('.')) {
-    return
-  }
-
-  return { kind: 'team', team }
+  return { kind: 'team', team: page.params.team }
 }
 
 export const lagetHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (isHostOrSubdomainOf(url, domains)) {
+    if (laget.pages.read(url)) {
       return parseLagetUrl(url) !== undefined
     }
 
@@ -63,7 +58,7 @@ export const lagetHandler: PlatformHandler = {
 
     const page = feeds.forUrl(url)
 
-    if (isHostOrSubdomainOf(url, domains) || !page) {
+    if (laget.pages.read(url) || !page) {
       return []
     }
 

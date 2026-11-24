@@ -1,15 +1,8 @@
 import { phpbb } from 'feedintel'
-import { getQueryParam, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  digitsRegex,
-  findElement,
-  getCookieNames,
-  getScriptDirectory,
-  hasElementWithId,
-  hasMarker,
-} from '../../common/utils.js'
+import { findElement, getCookieNames, hasElementWithId, hasMarker } from '../../common/utils.js'
 import { isForumotionHtml } from './forumotion.js'
 
 // Discoverability: Discoverable without handler.
@@ -38,36 +31,28 @@ export const isPhpbbHeaders = (headers: Headers): boolean => {
   })
 }
 
-const getNumericParam = (
-  searchParams: URLSearchParams | undefined,
-  name: string,
-): string | undefined => {
-  const value = getQueryParam(searchParams, name)
-
-  if (value && digitsRegex.test(value)) {
-    return value
-  }
-}
-
 const getPhpbbPage = (url: string, content: string | undefined): PhpbbPage | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = phpbb.pages.read(url, { isAnyHost: true })
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  const { origin, pathname, searchParams } = parsedUrl
+  const { root } = page.params
+  const forumId = page.key === 'board' ? undefined : page.params.forumId
+  const topicId = page.key === 'topic' ? page.params.topicId : undefined
   // A post link, `viewtopic.php?p={id}`, names no topic, and the page's canonical link does.
   const canonicalLink = findElement(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'canonical'
   })
-  const canonicalUrl = parseUrl(canonicalLink?.attribs.href, url)
+  const canonicalUrl = parseUrl(canonicalLink?.attribs.href, url)?.href ?? ''
+  const canonicalPage = phpbb.pages.read(canonicalUrl, { isAnyHost: true })
+  const canonicalTopicId = canonicalPage?.key === 'topic' ? canonicalPage.params.topicId : undefined
 
   return {
-    // A board is routinely mounted under a sub-path such as `/community`.
-    boardUrl: `${origin}${getScriptDirectory(pathname)}`,
-    forumId: getNumericParam(searchParams, 'f'),
-    topicId: getNumericParam(searchParams, 't') ?? getNumericParam(canonicalUrl?.searchParams, 't'),
+    boardUrl: root,
+    forumId,
+    topicId: topicId ?? canonicalTopicId,
   }
 }
 

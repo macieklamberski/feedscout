@@ -1,7 +1,6 @@
 import { ghost } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -10,29 +9,21 @@ export type GhostUrl =
   | { kind: 'author'; author: string }
   | { kind: 'blog' }
 
-const domains = ghost.hosts.tenants
-
-const tagRegex = /^\/tag\/([^/]+)/i
-const authorRegex = /^\/author\/([^/]+)/i
-
 const feeds = withHintLabels(ghost.feeds)
 
 export const parseGhostUrl = (url: string): GhostUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  const page = ghost.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const { pathname } = new URL(url)
-  const tag = pathname.match(tagRegex)?.[1]
-
-  if (tag) {
-    return { kind: 'tag', tag }
+  if (page.key === 'tag') {
+    return { kind: 'tag', tag: page.params.tag }
   }
 
-  const author = pathname.match(authorRegex)?.[1]
-
-  if (author) {
-    return { kind: 'author', author }
+  if (page.key === 'author') {
+    return { kind: 'author', author: page.params.author }
   }
 
   return { kind: 'blog' }

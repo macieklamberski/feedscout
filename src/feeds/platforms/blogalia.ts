@@ -1,5 +1,4 @@
 import { blogalia } from 'feedintel'
-import { getSubdomain } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -9,16 +8,10 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type BlogaliaUrl = { kind: 'blog' }
 
-const domains = blogalia.hosts.tenants
-
 const feeds = withHintLabels(blogalia.feeds)
 
 export const parseBlogaliaUrl = (url: string): BlogaliaUrl | undefined => {
-  const blog = getSubdomain(url, domains)
-
-  // `www.blogalia.com` is Blogalia's own news blog and serves `rdf.xml`, which its page never
-  // links, so `getTenantSubdomain` would drop that feed by refusing `www`.
-  if (!blog || blog.includes('.')) {
+  if (!blogalia.pages.read(url)) {
     return
   }
 

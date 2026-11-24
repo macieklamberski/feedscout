@@ -1,8 +1,6 @@
 import { dailymotion } from 'feedintel'
-import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: channel, playlist, search, trending, videos.
@@ -14,59 +12,32 @@ export type DailymotionUrl =
   | { kind: 'search'; query: string }
   | { kind: 'trending' }
 
-const hosts = dailymotion.hosts.exact
-
-// The older /user/{name} address still serves the same page.
-// length: keeps a two-letter country home page out, as /fr serves the site-wide feed
-const userRegex = /^\/(?:user\/)?([a-zA-Z0-9_-]{3,})\/?$/i
-const playlistRegex = /^\/playlist\/(?<playlistId>[^/]+)/i
-const channelRegex = /^\/channel\/(?<channel>[^/]+)/i
-const searchRegex = /^\/search\/([^/]+)/i
-const trendingRegex = /^\/(?:trending\/?)?$/i
-
 const feeds = withHintLabels(dailymotion.feeds)
 
 export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = dailymotion.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const { pathname } = parsedUrl
-
-  // Homepage or /trending: global trending feed.
-  if (trendingRegex.test(pathname)) {
+  if (page.key === 'trending') {
     return { kind: 'trending' }
   }
 
-  // A share url appends a `_title-slug` to the id, and the feed answers with it as well.
-  const playlistId = pathname.match(playlistRegex)?.groups?.playlistId
-
-  if (playlistId && wordOrHyphenRegex.test(playlistId)) {
-    return { kind: 'playlist', playlistId }
+  if (page.key === 'playlist') {
+    return { kind: 'playlist', playlistId: page.params.id }
   }
 
-  const query = pathname.match(searchRegex)?.[1]
-
-  if (query) {
-    return { kind: 'search', query }
+  if (page.key === 'search') {
+    return { kind: 'search', query: page.params.query }
   }
 
-  const channel = pathname.match(channelRegex)?.groups?.channel
-
-  // A channel outside [\w-], such as news.tv, has no /rss/channel/ feed: it answers 404.
-  if (channel && wordOrHyphenRegex.test(channel)) {
-    return { kind: 'channel', channel }
+  if (page.key === 'channel') {
+    return { kind: 'channel', channel: page.params.channel }
   }
 
-  const username = pathname.match(userRegex)?.[1]
-
-  if (!username) {
-    return
-  }
-
-  return { kind: 'user', username }
+  return { kind: 'user', username: page.params.username }
 }
 
 export const dailymotionHandler: PlatformHandler = {

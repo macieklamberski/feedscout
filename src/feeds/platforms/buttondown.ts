@@ -1,5 +1,4 @@
 import { buttondown } from 'feedintel'
-import { getPathSegments, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -7,22 +6,16 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type ButtondownUrl = { kind: 'newsletter'; username: string }
 
-const hosts = buttondown.hosts.exact
-
 const feeds = withHintLabels(buttondown.feeds)
 
 export const parseButtondownUrl = (url: string): ButtondownUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = buttondown.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [username] = getPathSegments(url)
-
-  if (!username) {
-    return
-  }
-
-  return { kind: 'newsletter', username }
+  return { kind: 'newsletter', username: page.params.username }
 }
 
 export const buttondownHandler: PlatformHandler = {

@@ -1,5 +1,4 @@
 import { flickr } from 'feedintel'
-import { decodeSegment, getAnyOf, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -19,75 +18,65 @@ export type FlickrUrl =
   | { kind: 'group'; group: string; section?: string }
   | { kind: 'forum' }
 
-const hosts = flickr.hosts.exact
-
-const tagRegex = /^\/photos\/tags\/([^/]+)/i
-const groupRegex = /^\/groups\/([^/]+)(?:\/([^/]+))?/i
-const forumRegex = /^\/help\/forum(?:\/|$)/i
-const nsidRegex = /^\d+@N\d+$/
-
-const groupSections = ['pool', 'discuss']
-const albumSections = ['albums', 'sets']
-
 const feeds = withHintLabels(flickr.feeds)
 
-export const parseFlickrUrl = (url: string): FlickrUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+// The feeds take only the NSID and answer 404 for a path alias, so a feed builds for an NSID alone.
+const isFeedUserId = (userId: string): boolean => {
+  return feeds.getFeedUrl('photos', { id: userId }) !== undefined
+}
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+export const parseFlickrUrl = (url: string): FlickrUrl | undefined => {
+  const page = flickr.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const { pathname } = parsedUrl
-
-  // Help forum: /help/forum/{locale}.
-  if (forumRegex.test(pathname)) {
+  if (page.key === 'forum') {
     return { kind: 'forum' }
   }
 
-  const tag = pathname.match(tagRegex)?.[1]
-
-  if (tag) {
-    return { kind: 'tag', tag }
+  if (page.key === 'tag') {
+    return { kind: 'tag', tag: page.params.tags }
   }
 
-  const [prefix, userId, section, ...rest] = getPathSegments(parsedUrl)
-
-  // The user is an NSID such as 12345678@N00 or the path alias the account picked.
-  if (isAnyOf(prefix, 'photos') && userId && !isAnyOf(userId, 'tags')) {
-    if (!section) {
-      return { kind: 'photostream', userId }
-    }
-
-    if (isAnyOf(section, 'favorites')) {
-      return { kind: 'favorites', userId }
-    }
-
-    if (isAnyOf(section, 'albums') && rest.length === 0) {
-      return { kind: 'albums', userId }
-    }
-
-    // An album, as /albums/{set} and its legacy /sets/{set}.
-    if (isAnyOf(section, albumSections) && rest[0]) {
-      return { kind: 'album', userId, set: rest[0] }
-    }
-
-    if (isAnyOf(section, 'tags') && rest[0]) {
-      return { kind: 'userTag', userId, tag: rest[0] }
-    }
-
-    if (isAnyOf(section, 'galleries') && rest.length === 0) {
-      return { kind: 'galleries', userId }
-    }
-
-    return { kind: 'subpage', userId }
+  if (page.key === 'group') {
+    return { kind: 'group', group: page.params.id }
   }
 
-  const groupMatch = pathname.match(groupRegex)
-
-  if (groupMatch?.[1] && nsidRegex.test(groupMatch[1])) {
-    return { kind: 'group', group: groupMatch[1], section: getAnyOf(groupMatch[2], groupSections) }
+  if (page.key === 'group-pool') {
+    return { kind: 'group', group: page.params.id, section: 'pool' }
   }
+
+  if (page.key === 'group-discuss') {
+    return { kind: 'group', group: page.params.id, section: 'discuss' }
+  }
+
+  if (page.key === 'album') {
+    return { kind: 'album', userId: page.params.userId, set: page.params.set }
+  }
+
+  if (page.key === 'userTag') {
+    return { kind: 'userTag', userId: page.params.userId, tag: page.params.tags }
+  }
+
+  if (page.key === 'photostream') {
+    return { kind: 'photostream', userId: page.params.userId }
+  }
+
+  if (page.key === 'favorites') {
+    return { kind: 'favorites', userId: page.params.userId }
+  }
+
+  if (page.key === 'albums') {
+    return { kind: 'albums', userId: page.params.userId }
+  }
+
+  if (page.key === 'galleries') {
+    return { kind: 'galleries', userId: page.params.userId }
+  }
+
+  return { kind: 'subpage', userId: page.params.userId }
 }
 
 export const flickrHandler: PlatformHandler = {
@@ -98,9 +87,8 @@ export const flickrHandler: PlatformHandler = {
       return false
     }
 
-    // The feeds take only the NSID and answer 404 for a path alias.
     if ('userId' in parsed) {
-      return nsidRegex.test(parsed.userId)
+      return isFeedUserId(parsed.userId)
     }
 
     return true
@@ -128,11 +116,9 @@ export const flickrHandler: PlatformHandler = {
 
     // Tag page: /photos/tags/{tag}
     if (parsed.kind === 'tag') {
-      const tags = decodeSegment(parsed.tag) ?? parsed.tag
-
       return [
-        feeds.getFeedEntry('tag', { tags }, 'atom'),
-        feeds.getFeedEntry('tag', { tags }, 'rss'),
+        feeds.getFeedEntry('tag', { tags: parsed.tag }, 'atom'),
+        feeds.getFeedEntry('tag', { tags: parsed.tag }, 'rss'),
         feeds.getFeedEntry('forum', {}, 'atom'),
         feeds.getFeedEntry('forum', {}, 'rss'),
         feeds.getFeedEntry('recent', {}, 'atom'),
@@ -194,7 +180,7 @@ export const flickrHandler: PlatformHandler = {
       ]
     }
 
-    if (!nsidRegex.test(parsed.userId)) {
+    if (!isFeedUserId(parsed.userId)) {
       return []
     }
 
@@ -216,11 +202,9 @@ export const flickrHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'userTag') {
-      const tags = decodeSegment(parsed.tag) ?? parsed.tag
-
       return [
-        feeds.getFeedEntry('photos-tag', { ...params, tags }, 'atom'),
-        feeds.getFeedEntry('photos-tag', { ...params, tags }, 'rss'),
+        feeds.getFeedEntry('photos-tag', { ...params, tags: parsed.tag }, 'atom'),
+        feeds.getFeedEntry('photos-tag', { ...params, tags: parsed.tag }, 'rss'),
         feeds.getFeedEntry('photos', params, 'atom'),
         feeds.getFeedEntry('photos', params, 'rss'),
         feeds.getFeedEntry('forum', {}, 'atom'),

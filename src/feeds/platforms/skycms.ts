@@ -1,5 +1,4 @@
 import { skycms } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
@@ -9,7 +8,6 @@ import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 export type SkycmsUrl = { kind: 'page'; pageId: string; slug: string }
 
-const pageRegex = /^\/(\d+)\/([^/]+)\.html$/i
 const rssListRegex = /\/\d+\/lista-kanalow-rss\.html$/i
 const templateRegex = /\/(?:cms\/public|clients\/cms_[^/]+)\/image\/default\/bip(?:_v\d+)?\//i
 
@@ -41,19 +39,17 @@ export const hasSkycmsRssList = (content: string | undefined): boolean => {
 }
 
 export const parseSkycmsUrl = (url: string): SkycmsUrl | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl) {
+  if (!URL.canParse(url)) {
     return
   }
 
-  const match = parsedUrl.pathname.match(pageRegex)
+  const page = skycms.pages.read(url, { root: new URL(url).origin })
 
-  if (!match?.[1] || !match[2]) {
+  if (!page) {
     return
   }
 
-  return { kind: 'page', pageId: match[1], slug: match[2] }
+  return { kind: 'page', pageId: page.params.pageId, slug: page.params.slug }
 }
 
 export const skycmsHandler: PlatformHandler = {

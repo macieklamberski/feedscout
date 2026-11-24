@@ -1,5 +1,4 @@
 import { myanimelist } from 'feedintel'
-import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -12,46 +11,28 @@ export type MyanimelistUrl =
   | { kind: 'news' }
   | { kind: 'featured' }
 
-export const hosts = myanimelist.hosts.exact
-
-const profileRegex = /^\/profile\/([^/]+)\/?$/i
-const userRegex = /^\/(?:profile|animelist|mangalist|history)\/([^/]+)/i
-const newsRegex = /^\/news(?:\/|$)/i
-const featuredRegex = /^\/featured(?:\/|$)/i
-
 const feeds = withHintLabels(myanimelist.feeds)
 
 export const parseMyanimelistUrl = (url: string): MyanimelistUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = myanimelist.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const { pathname } = parsedUrl
-
-  if (newsRegex.test(pathname)) {
-    return { kind: 'news' }
+  if (page.key === 'profile') {
+    return { kind: 'profile', username: page.params.username }
   }
 
-  if (featuredRegex.test(pathname)) {
+  if (page.key === 'user') {
+    return { kind: 'user', username: page.params.username }
+  }
+
+  if (page.key === 'featured') {
     return { kind: 'featured' }
   }
 
-  // The profile page itself, while its tabs, lists and history are the user's other pages.
-  const profileUsername = pathname.match(profileRegex)?.[1]
-
-  if (profileUsername) {
-    return { kind: 'profile', username: profileUsername }
-  }
-
-  const username = pathname.match(userRegex)?.[1]
-
-  if (!username) {
-    return { kind: 'news' }
-  }
-
-  return { kind: 'user', username }
+  return { kind: 'news' }
 }
 
 export const myanimelistHandler: PlatformHandler = {
@@ -76,7 +57,7 @@ export const myanimelistHandler: PlatformHandler = {
       return [feeds.getFeedEntry('featured'), feeds.getFeedEntry('news')]
     }
 
-    const username = decodeSegment(parsed.username) ?? parsed.username
+    const { username } = parsed
 
     return [
       feeds.getFeedEntry('anime', { username }),

@@ -1,18 +1,15 @@
 import { reformal } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type ReformalUrl = { kind: 'project' }
 
-const domains = reformal.hosts.tenants
-
 const feeds = withHintLabels(reformal.feeds)
 
 export const parseReformalUrl = (url: string): ReformalUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  if (!reformal.pages.read(url)) {
     return
   }
 

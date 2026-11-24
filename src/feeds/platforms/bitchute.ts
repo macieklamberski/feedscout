@@ -1,5 +1,4 @@
 import { bitchute } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -8,22 +7,16 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type BitchuteUrl = { kind: 'channel'; channel: string }
 
-const hosts = bitchute.hosts.exact
-
 const feeds = withHintLabels(bitchute.feeds)
 
 export const parseBitchuteUrl = (url: string): BitchuteUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = bitchute.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [section, channel] = getPathSegments(url)
-
-  if (!isAnyOf(section, 'channel') || !channel) {
-    return
-  }
-
-  return { kind: 'channel', channel }
+  return { kind: 'channel', channel: page.params.channel }
 }
 
 export const bitchuteHandler: PlatformHandler = {

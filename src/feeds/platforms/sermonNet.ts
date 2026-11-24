@@ -1,8 +1,6 @@
 import { sermonNet } from 'feedintel'
-import { getPathSegments } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: church.
@@ -13,8 +11,6 @@ export type SermonNetPage =
   | { kind: 'church'; channels: Array<string> }
   | { kind: 'channel'; channel: string }
 
-const domains = sermonNet.hosts.tenants
-
 // The page links no feed. It embeds the channels and series of its media centre as JSON, and each
 // one the church owns serves a feed.
 const channelRegex = /"is_series":(?:false|true),"url":"([^"]+)"/g
@@ -22,15 +18,14 @@ const channelRegex = /"is_series":(?:false|true),"url":"([^"]+)"/g
 const feeds = withHintLabels(sermonNet.feeds)
 
 export const parseSermonNetUrl = (url: string): SermonNetUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  const page = sermonNet.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  // A channel page and its postings sit at `/{mediaCentre}/{channel}`.
-  const [, channel] = getPathSegments(url)
-
-  if (channel) {
-    return { kind: 'channel', channel }
+  if (page.key === 'channel') {
+    return { kind: 'channel', channel: page.params.channel }
   }
 
   return { kind: 'church' }

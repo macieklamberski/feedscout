@@ -1,8 +1,6 @@
 import { pchome } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex, wordRegex } from '../../common/utils.js'
 
 // Discoverability: Unmeasured, bot wall.
 
@@ -10,27 +8,20 @@ export type PchomeUrl =
   | { kind: 'paper'; username: string }
   | { kind: 'category'; username: string; category: string }
 
-const hosts = pchome.hosts.exact
-
 const feeds = withHintLabels(pchome.feeds)
 
 export const parsePchomeUrl = (url: string): PchomeUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = pchome.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [username, section, category] = getPathSegments(url)
-
-  // A segment like oops.htm or favicon.ico is a file at the root, not a paper.
-  if (!username || !wordRegex.test(username)) {
-    return
+  if (page.key === 'category') {
+    return { kind: 'category', username: page.params.username, category: page.params.category }
   }
 
-  if (isAnyOf(section, 'category') && category && digitsRegex.test(category)) {
-    return { kind: 'category', username, category }
-  }
-
-  return { kind: 'paper', username }
+  return { kind: 'paper', username: page.params.username }
 }
 
 export const pchomeHandler: PlatformHandler = {

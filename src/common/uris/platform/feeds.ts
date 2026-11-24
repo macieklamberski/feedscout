@@ -1,8 +1,9 @@
 import type { DiscoverUriEntry, DiscoverUriHint, UriEntry } from '../../types.js'
 import { composeHint } from '../../utils.js'
 
-// A value left undefined is no value, so the row it would fill is skipped.
-export type PlatformFeedParams = Record<string, string | undefined>
+// A value left undefined is no value, so the row it would fill is skipped. A `{name*}` value is a
+// list of path segments.
+export type PlatformFeedParams = Record<string, string | Array<string> | undefined>
 
 // A table's methods take only the keys of its feeds, so a key the table does not hold fails the
 // typecheck.
@@ -11,16 +12,19 @@ export type PlatformFeedTable<Key extends string = string> = {
     key: Key,
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
+    variant?: string,
   ) => string | undefined
   getFeedEntry: (
     key: Key,
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
+    variant?: string,
   ) => DiscoverUriEntry | undefined
   getFeedSpellings: (
     key: Key,
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
+    variant?: string,
   ) => DiscoverUriEntry | undefined
   getFeedHint: (url: string) => DiscoverUriHint | undefined
   forUrl: (
@@ -45,11 +49,13 @@ type UnlabelledFeedTable<Key extends string> = {
     key: Key,
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
+    variant?: string,
   ) => UnlabelledEntry | undefined
   getFeedSpellings: (
     key: Key,
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
+    variant?: string,
   ) => UnlabelledEntry | undefined
   getFeedHint: (url: string) => UnlabelledHint | undefined
   forUrl: (
@@ -88,11 +94,11 @@ export const withHintLabels = <Key extends string>(
 
   return {
     getFeedUrl: table.getFeedUrl,
-    getFeedEntry: (key, params, format) => {
-      return withEntryLabel(table.getFeedEntry(key, params, format))
+    getFeedEntry: (key, params, format, variant) => {
+      return withEntryLabel(table.getFeedEntry(key, params, format, variant))
     },
-    getFeedSpellings: (key, params, format) => {
-      return withEntryLabel(table.getFeedSpellings(key, params, format))
+    getFeedSpellings: (key, params, format, variant) => {
+      return withEntryLabel(table.getFeedSpellings(key, params, format, variant))
     },
     getFeedHint: (url) => withHintLabel(table.getFeedHint(url)),
     forUrl: (url) => {
@@ -104,11 +110,11 @@ export const withHintLabels = <Key extends string>(
 
       return {
         getFeedUrl: pageTable.getFeedUrl,
-        getFeedEntry: (key, params, format) => {
-          return withEntryLabel(pageTable.getFeedEntry(key, params, format))
+        getFeedEntry: (key, params, format, variant) => {
+          return withEntryLabel(pageTable.getFeedEntry(key, params, format, variant))
         },
-        getFeedSpellings: (key, params, format) => {
-          return withEntryLabel(pageTable.getFeedSpellings(key, params, format))
+        getFeedSpellings: (key, params, format, variant) => {
+          return withEntryLabel(pageTable.getFeedSpellings(key, params, format, variant))
         },
       }
     },

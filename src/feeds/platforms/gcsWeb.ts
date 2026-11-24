@@ -1,17 +1,13 @@
 import { gcsWeb } from 'feedintel'
-import { isHostOrSubdomainOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { type Element, findElement, getTenantSubdomain, isRootOfPage } from '../../common/utils.js'
+import { type Element, findElement } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: events, news-releases, sec-filings.
 
 export type GcsWebUrl = { kind: 'site' }
-
-const domains = gcsWeb.hosts.tenants
-
-const filesPathRegex = /\/sites\/g\/files\/knoqqb\d+\//i
 
 const feeds = withHintLabels(gcsWeb.feeds)
 
@@ -19,19 +15,25 @@ const getAssetUrl = (element: Element): string => {
   return element.attribs.href ?? element.attribs.src ?? ''
 }
 
+// A site loads its assets from its own bucket under its own origin.
 export const isGcsWebPage = (url: string, content: string | undefined): boolean => {
-  const asset = findElement(content, (element) => filesPathRegex.test(getAssetUrl(element)))
-  const assetUrl = asset ? parseUrl(getAssetUrl(asset), url) : undefined
+  const origin = parseUrl(url)?.origin
 
-  if (!assetUrl) {
+  if (!origin) {
     return false
   }
 
-  return isRootOfPage(assetUrl.origin, url)
+  const asset = findElement(content, (element) => {
+    const assetUrl = parseUrl(getAssetUrl(element), url)?.href ?? ''
+
+    return gcsWeb.pages.read(assetUrl, { root: origin })?.key === 'asset'
+  })
+
+  return asset !== undefined
 }
 
 export const parseGcsWebUrl = (url: string): GcsWebUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  if (gcsWeb.pages.read(url)?.key !== 'site') {
     return
   }
 
@@ -40,7 +42,7 @@ export const parseGcsWebUrl = (url: string): GcsWebUrl | undefined => {
 
 export const gcsWebHandler: PlatformHandler = {
   match: (url, content) => {
-    if (isHostOrSubdomainOf(url, domains)) {
+    if (gcsWeb.pages.read(url)) {
       return parseGcsWebUrl(url) !== undefined
     }
 

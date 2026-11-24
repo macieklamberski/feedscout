@@ -1,5 +1,4 @@
 import { acomics } from 'feedintel'
-import { getPathSegments, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -9,31 +8,22 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type AcomicsUrl = { kind: 'comic'; comic: string } | { kind: 'user'; username: string }
 
-const hosts = acomics.hosts.exact
-
 const feeds = withHintLabels(acomics.feeds)
 
 // A comic lives under /~{comic} and a user under /-{user}, and both keep their case in the feed
 // URL, since /~thesweetberries/rss answers 404 where /~TheSweetBerries/rss serves the comic.
 export const parseAcomicsUrl = (url: string): AcomicsUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = acomics.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [comicOrUser] = getPathSegments(url)
-
-  // length: keeps a bare ~ or - with no name after it out
-  if (!comicOrUser || comicOrUser.length < 2) {
-    return
+  if (page.key === 'comic') {
+    return { kind: 'comic', comic: page.params.comic }
   }
 
-  if (comicOrUser.startsWith('~')) {
-    return { kind: 'comic', comic: comicOrUser.slice(1) }
-  }
-
-  if (comicOrUser.startsWith('-')) {
-    return { kind: 'user', username: comicOrUser.slice(1) }
-  }
+  return { kind: 'user', username: page.params.username }
 }
 
 export const acomicsHandler: PlatformHandler = {

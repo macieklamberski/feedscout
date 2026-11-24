@@ -1,40 +1,46 @@
 import { duckWebcomics } from 'feedintel'
-import { getPathSegments, isHostOf, isSameText } from 'trousse'
+import { isSameText, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, wordRegex } from '../../common/utils.js'
+import { findElement } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type DuckWebcomicsUrl = { kind: 'comic'; comic: string }
 
-const hosts = duckWebcomics.hosts.exact
-
-const feedPathRegex = /^\/(\w+)\/rss\/$/i
-
 const feeds = withHintLabels(duckWebcomics.feeds)
 
 export const parseDuckWebcomicsUrl = (url: string): DuckWebcomicsUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = duckWebcomics.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [comic] = getPathSegments(url)
+  return { kind: 'comic', comic: page.params.comic }
+}
 
-  if (!comic || !wordRegex.test(comic)) {
+const getLinkedComic = (url: string, href: string | undefined): string | undefined => {
+  const feedUrl = parseUrl(href, url)
+
+  if (!feedUrl) {
     return
   }
 
-  return { kind: 'comic', comic }
+  return duckWebcomics.feeds.read(feedUrl.href)?.params.comic
 }
 
 // The site answers a comic in any case, and its pages link the feed in the comic's own spelling.
-const getFeedComic = (content: string | undefined, comic: string): string | undefined => {
+const getFeedComic = (
+  url: string,
+  content: string | undefined,
+  comic: string,
+): string | undefined => {
   const anchor = findElement(content, (element) => {
-    return isSameText(element.attribs.href?.match(feedPathRegex)?.[1], comic)
+    return isSameText(getLinkedComic(url, element.attribs.href), comic)
   })
 
-  return anchor?.attribs.href?.match(feedPathRegex)?.[1]
+  return getLinkedComic(url, anchor?.attribs.href)
 }
 
 const getDuckWebcomicsPage = (
@@ -47,7 +53,7 @@ const getDuckWebcomicsPage = (
     return
   }
 
-  return { ...parsed, comic: getFeedComic(content, parsed.comic) ?? parsed.comic }
+  return { ...parsed, comic: getFeedComic(url, content, parsed.comic) ?? parsed.comic }
 }
 
 export const duckWebcomicsHandler: PlatformHandler = {
