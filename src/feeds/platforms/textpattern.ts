@@ -45,7 +45,7 @@ const readPage = (url: string, content: string | undefined): TextpatternPageMatc
     }
   }
 
-  return textpattern.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
+  return textpattern.pages.read(url, { root: parseUrl(url)?.origin })
 }
 
 export const getTextpatternPage = (
