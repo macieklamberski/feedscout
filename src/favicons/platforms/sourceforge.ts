@@ -1,4 +1,3 @@
-import { sourceforge } from 'feedintel'
 import { decodePercent, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -14,7 +13,7 @@ export type SourceforgeUrl = {
   path?: string
 }
 
-const hosts = sourceforge.hosts.exact
+const hosts = ['sourceforge.net', 'www.sourceforge.net']
 const projectPrefixes = ['projects', 'p']
 
 export const parseSourceforgeUrl = (url: string): SourceforgeUrl | undefined => {

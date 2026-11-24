@@ -1,4 +1,3 @@
-import { hatenaBookmark } from 'feedintel'
 import { decodeSegment, getAnyOf, getQueryParam, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { isSuccessfulStatus } from '../../common/utils.js'
@@ -15,7 +14,7 @@ export type HatenaBookmarkUrl =
   | { kind: 'user'; username: string; tag?: string }
   | { kind: 'home' }
 
-const hosts = hatenaBookmark.hosts.exact
+const hosts = ['b.hatena.ne.jp']
 
 const listRegex = /^\/(hotentry|entrylist)(?:\/([a-z]+))?\/?$/i
 const queryRegex = /^\/q(?:\/(.*))?$/i

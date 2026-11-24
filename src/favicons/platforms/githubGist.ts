@@ -1,4 +1,3 @@
-import { githubGist } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -8,7 +7,7 @@ export type GithubGistUrl =
   | { kind: 'forks'; username: string }
   | { kind: 'discover' }
 
-const hosts = githubGist.hosts.exact
+const hosts = ['gist.github.com']
 
 const discoverRegex = /^\/discover(?:\.atom)?\/?$/i
 const feedSuffixRegex = /\.atom$/i

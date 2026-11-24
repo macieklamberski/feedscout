@@ -1,4 +1,3 @@
-import { goodreads } from 'feedintel'
 import { getPathSegments, getQueryParam, includesAnyOf, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getMetaContent, hasClass } from '../../common/utils.js'
@@ -11,7 +10,7 @@ export type GoodreadsUrl =
   | { kind: 'user'; userId: string }
   | { kind: 'reviews'; userId: string; shelf?: string }
 
-const hosts = goodreads.hosts.exact
+const hosts = ['goodreads.com', 'www.goodreads.com']
 
 // A user page is /user/show/{id}-{slug} and their review list /review/list/{id}-{slug}.
 export const parseGoodreadsUrl = (url: string): GoodreadsUrl | undefined => {

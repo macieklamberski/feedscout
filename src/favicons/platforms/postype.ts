@@ -1,4 +1,3 @@
-import { postype } from 'feedintel'
 import { getOrigin, getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent, getTenantSubdomain } from '../../common/utils.js'
@@ -13,8 +12,8 @@ export type PostypeUrl =
   | { kind: 'post'; channel: string }
   | { kind: 'subdomain'; channel: string }
 
-const domains = postype.hosts.tenants
-const hosts = postype.hosts.exact
+const domains = ['postype.com']
+const hosts = ['postype.com', 'www.postype.com']
 
 export const parsePostypeUrl = (url: string): PostypeUrl | undefined => {
   const parsedUrl = parseUrl(url)

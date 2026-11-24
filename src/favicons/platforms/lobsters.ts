@@ -1,4 +1,3 @@
-import { lobsters } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
@@ -12,7 +11,7 @@ export type LobstersUrl =
   | { kind: 'comments' }
   | { kind: 'home' }
 
-const hosts = lobsters.hosts.exact
+const hosts = ['lobste.rs']
 
 const tagRegex = /^\/t\/(?<tags>[^/]+)/i
 const domainRegex = /^\/domains\/([^/]+)/i

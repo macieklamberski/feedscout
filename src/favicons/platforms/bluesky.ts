@@ -1,4 +1,3 @@
-import { bluesky } from 'feedintel'
 import { composeQuery, getPathSegments, isAnyOf, isHostOf, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import type { FaviconEnricher } from '../types.js'
@@ -8,7 +7,7 @@ const platform = 'bluesky'
 
 export type BlueskyUrl = { kind: 'profile'; handle: string }
 
-const hosts = bluesky.hosts.exact
+const hosts = ['bsky.app', 'deer.social', 'main.bsky.dev']
 
 export const parseBlueskyUrl = (url: string): BlueskyUrl | undefined => {
   if (!isHostOf(url, hosts)) {

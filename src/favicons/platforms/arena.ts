@@ -1,4 +1,3 @@
-import { arena } from 'feedintel'
 import { getPathSegments, isAnyOf, isHostOf, isString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
@@ -12,7 +11,7 @@ export type ArenaUrl =
   | { kind: 'channel'; username: string; channel: string }
   | { kind: 'editorial' }
 
-const hosts = arena.hosts.exact
+const hosts = ['are.na', 'www.are.na']
 
 // Views of a profile. The profile feed sits at /{username}/feed/rss, so `feed` names no channel.
 const profilePaths = [

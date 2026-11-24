@@ -1,4 +1,3 @@
-import { togetter } from 'feedintel'
 import {
   getPathSegments,
   isAnyOf,
@@ -12,7 +11,7 @@ import { getJsonLd } from '../../common/utils.js'
 
 export type TogetterUrl = { kind: 'user'; username: string } | { kind: 'recent' } | { kind: 'home' }
 
-const hosts = togetter.hosts.exact
+const hosts = ['togetter.com', 'www.togetter.com']
 
 const userPathRegex = /^\/id\/([^/]+)/i
 

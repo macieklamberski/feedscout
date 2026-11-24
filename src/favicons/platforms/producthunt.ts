@@ -1,4 +1,3 @@
-import { producthunt } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
@@ -8,7 +7,7 @@ export type ProducthuntUrl =
   | { kind: 'topic'; topic: string }
   | { kind: 'home' }
 
-const hosts = producthunt.hosts.exact
+const hosts = ['producthunt.com', 'www.producthunt.com']
 
 const productRegex = /^\/products\/([^/]+)(?:\/|$)/i
 const topicRegex = /^\/topics\/([^/]+)\/?$/i

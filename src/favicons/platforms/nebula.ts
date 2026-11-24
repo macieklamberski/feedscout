@@ -1,4 +1,3 @@
-import { nebula } from 'feedintel'
 import {
   getPathSegments,
   getQueryParam,
@@ -15,7 +14,7 @@ const platform = 'nebula'
 
 export type NebulaUrl = { kind: 'channel'; slug: string } | { kind: 'explore'; category?: string }
 
-const hosts = nebula.hosts.exact
+const hosts = ['nebula.tv', 'www.nebula.tv']
 
 // /explore is the canonical landing page (Nebula 301s root and /videos to it).
 // Treated as the global feed surface, not a creator slug.
