@@ -1,8 +1,6 @@
 import { stackExchange } from 'feedintel'
-import { getAnyOf, getQueryParam, isHostOf, isHostOrSubdomainOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: question.
@@ -15,70 +13,32 @@ export type StackExchangeUrl =
   | { kind: 'collective'; collective: string }
   | { kind: 'home' }
 
-const domains = stackExchange.hosts.exact
-// The network host serves only the network-wide feed and tag sets, and its user ids are network
-// profile ids.
-const networkHosts = ['stackexchange.com', 'www.stackexchange.com']
-
-const tagRegex = /^\/questions\/tagged\/(?<tag>[^/]+)/i
-const questionRegex = /^\/questions\/(?<questionId>[^/]+)/i
-const userRegex = /^\/users\/(?<userId>[^/]+)/i
-const collectiveRegex = /^\/collectives\/([^/]+)/i
-
-// Sort values accepted by feeds.tag. Documented at api.stackexchange.com.
-const validSorts = ['newest', 'active', 'votes', 'creation', 'hot', 'week', 'month']
-
 const feeds = withHintLabels(stackExchange.feeds)
 
-const getSort = (searchParams: URLSearchParams): string | undefined => {
-  const sort = getQueryParam(searchParams, 'sort') ?? getQueryParam(searchParams, 'tab')
-
-  return getAnyOf(sort, validSorts)
-}
-
 export const parseStackExchangeUrl = (url: string): StackExchangeUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = stackExchange.pages.read(url)
 
-  if (!parsedUrl || !isHostOrSubdomainOf(parsedUrl, domains)) {
+  if (!page) {
     return
   }
 
-  const { pathname, searchParams } = parsedUrl
-
-  if (isHostOf(parsedUrl, networkHosts)) {
-    if (pathname === '/') {
-      return { kind: 'home' }
-    }
-
-    return
-  }
-  const tag = pathname.match(tagRegex)?.groups?.tag
-
-  if (tag) {
-    return { kind: 'tag', tag, sort: getSort(searchParams) }
+  if (page.key === 'tag') {
+    return { kind: 'tag', tag: page.params.tag, sort: page.params.sort }
   }
 
-  const questionId = pathname.match(questionRegex)?.groups?.questionId
-
-  if (questionId && digitsRegex.test(questionId)) {
-    return { kind: 'question', questionId }
+  if (page.key === 'question') {
+    return { kind: 'question', questionId: page.params.questionId }
   }
 
-  const userId = pathname.match(userRegex)?.groups?.userId
-
-  if (userId && digitsRegex.test(userId)) {
-    return { kind: 'user', userId }
+  if (page.key === 'user') {
+    return { kind: 'user', userId: page.params.userId }
   }
 
-  const collective = pathname.match(collectiveRegex)?.[1]
-
-  if (collective) {
-    return { kind: 'collective', collective }
+  if (page.key === 'collective') {
+    return { kind: 'collective', collective: page.params.collective }
   }
 
-  if (pathname === '/') {
-    return { kind: 'home' }
-  }
+  return { kind: 'home' }
 }
 
 export const stackExchangeHandler: PlatformHandler = {

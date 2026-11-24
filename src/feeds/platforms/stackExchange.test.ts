@@ -11,13 +11,13 @@ import {
 describe('parseStackExchangeUrl', () => {
   it('should return the tag with its sort for a tag page', () => {
     const value = 'https://stackoverflow.com/questions/tagged/javascript?tab=Newest'
-    const expected: StackExchangeUrl = { kind: 'tag', tag: 'javascript', sort: 'newest' }
+    const expected: StackExchangeUrl = { kind: 'tag', tag: 'javascript', sort: 'Newest' }
 
     expect(parseStackExchangeUrl(value)).toEqual(expected)
   })
 
-  it('should return a percent-encoded tag whole', () => {
-    const expected: StackExchangeUrl = { kind: 'tag', tag: 'c%23', sort: undefined }
+  it('should decode a percent-encoded tag', () => {
+    const expected: StackExchangeUrl = { kind: 'tag', tag: 'c#', sort: undefined }
 
     expect(parseStackExchangeUrl('https://stackoverflow.com/questions/tagged/c%23')).toEqual(
       expected,
@@ -430,11 +430,11 @@ describe('stackExchangeHandler', () => {
       },
     )
 
-    it('should pass through ?tab= on tag feed (lowercased) when value is allowed', () => {
+    it('should pass ?tab= on to the tag feed as its sort', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript?tab=Active'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=active',
+          uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=Active',
           hint: { key: 'stackexchange:tag', label: 'Tag' },
         },
         {
@@ -446,11 +446,27 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should spell a ?sort= value in another case as Stack Exchange does', () => {
+    it('should keep the escapes of a percent-encoded tag in its feed', () => {
+      const value = 'https://stackoverflow.com/questions/tagged/c%23'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://stackoverflow.com/feeds/tag/c%23',
+          hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the case of a ?sort= value', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript?sort=Newest'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=newest',
+          uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=Newest',
           hint: { key: 'stackexchange:tag', label: 'Tag' },
         },
         {
@@ -494,11 +510,11 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should drop disallowed ?tab= values silently', () => {
+    it('should pass any ?tab= word on to the tag feed', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript?tab=Frequent'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://stackoverflow.com/feeds/tag/javascript',
+          uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=Frequent',
           hint: { key: 'stackexchange:tag', label: 'Tag' },
         },
         {
@@ -510,11 +526,11 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should drop unknown sort values silently', () => {
+    it('should pass any ?sort= word on to the tag feed', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript?sort=garbage'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://stackoverflow.com/feeds/tag/javascript',
+          uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=garbage',
           hint: { key: 'stackexchange:tag', label: 'Tag' },
         },
         {
