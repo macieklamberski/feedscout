@@ -1,4 +1,4 @@
-import type { UrlHosts } from 'feedintel'
+import type { UrlHosts, UrlMatch, UrlTable } from 'feedintel'
 import { DomUtils, parseDocument } from 'htmlparser2'
 import {
   anyWordMatchesAnyOf,
@@ -7,6 +7,7 @@ import {
   isAnyOf,
   isFunction,
   isHostname,
+  isHostOf,
   isInteger,
   isSameText,
   isString,
@@ -339,6 +340,23 @@ export const getHostOrigin = (host: string): string | undefined => {
   }
 
   return parsedUrl.origin
+}
+
+// The page a link names, read through a platform's page table, when the link stays on the host of
+// the page that holds it.
+export const getLinkedPage = <Key extends string, Row>(
+  href: string | undefined,
+  url: string,
+  pages: Pick<UrlTable<Key, Row>, 'read'>,
+): UrlMatch<Key, Row> | undefined => {
+  const linkUrl = parseUrl(href, url)
+  const pageUrl = parseUrl(url)
+
+  if (!linkUrl || !pageUrl || !isHostOf(linkUrl, pageUrl.hostname)) {
+    return
+  }
+
+  return pages.read(linkUrl.href)
 }
 
 export const getScriptDirectory = (pathname: string): string => {

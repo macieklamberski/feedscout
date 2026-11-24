@@ -1,8 +1,7 @@
 import { tischtennislive } from 'feedintel'
-import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement } from '../../common/utils.js'
+import { findElement, getLinkedPage } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: dates, documents, news, tournaments.
@@ -24,11 +23,10 @@ export const parseTischtennisliveUrl = (url: string): TischtennisliveUrl | undef
   return { kind: 'association' }
 }
 
-const getLinkedPage = (href: string | undefined, url: string, host: string) => {
-  const linkUrl = parseUrl(href, url)
-  const page = linkUrl ? tischtennislive.pages.read(linkUrl.href) : undefined
+const getResultsPage = (href: string | undefined, url: string) => {
+  const page = getLinkedPage(href, url, tischtennislive.pages)
 
-  if (!linkUrl || !isHostOf(linkUrl, host) || !page || page.key === 'association') {
+  if (page?.key === 'association') {
     return
   }
 
@@ -47,11 +45,10 @@ export const getTischtennislivePage = (
     return
   }
 
-  const { host } = page.params
   const link = findElement(content, (element) => {
-    return element.name === 'a' && getLinkedPage(element.attribs.href, url, host) !== undefined
+    return element.name === 'a' && getResultsPage(element.attribs.href, url) !== undefined
   })
-  const linkedPage = getLinkedPage(link?.attribs.href, url, host)
+  const linkedPage = getResultsPage(link?.attribs.href, url)
 
   if (linkedPage?.key === 'group') {
     return { kind: 'group', group: linkedPage.params.group }
