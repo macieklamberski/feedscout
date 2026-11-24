@@ -1,4 +1,4 @@
-import { youtube } from 'feedintel'
+import { isYoutubeFeedPlaylistId, youtube } from 'feedintel'
 import { getQueryParam, isAnyOf, isPresent, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
@@ -35,9 +35,6 @@ const channelIdRegexes = [
 ]
 
 const channelPrefixRegex = /^UC/
-// Watch Later, Liked videos and the Music likes are private, and a mix is generated per viewer, so
-// none of them has a feed. RDCLAK lists are curated YouTube Music playlists, not mixes.
-const feedlessListRegex = /^(?:WL|LL|LM)$|^RD(?!CLAK)/
 // A channel ID is UC and 22 characters, so the fixed length tells UULF{id} apart from UU{id}
 // whose ID starts with LF.
 const uploadsPlaylistRegex = /^(UU(?:LF|SH|LV|LP|PS|PV|MO|MS|MV)?)[\w-]{22}$/
@@ -118,7 +115,7 @@ export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
   // search query, so only a bare or `playlist` list is a playlist ID.
   const isPlaylistList = listType === undefined || isAnyOf(listType, 'playlist')
   const playlistId =
-    listId && isPlaylistList && !feedlessListRegex.test(listId) ? listId : undefined
+    listId && isPlaylistList && isYoutubeFeedPlaylistId(listId) ? listId : undefined
   const username = isAnyOf(listType, 'user_uploads') ? listId : undefined
 
   if (page.key === 'channel') {
