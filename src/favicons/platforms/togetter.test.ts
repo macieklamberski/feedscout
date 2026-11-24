@@ -1,5 +1,51 @@
 import { describe, expect, it } from 'bun:test'
-import { togetterHandler } from './togetter.js'
+import { parseTogetterUrl, type TogetterUrl, togetterHandler } from './togetter.js'
+
+describe('parseTogetterUrl', () => {
+  it('should return the user for a user page', () => {
+    const expected: TogetterUrl = { kind: 'user', username: 'example' }
+
+    expect(parseTogetterUrl('https://togetter.com/id/example')).toEqual(expected)
+  })
+
+  it('should return the user for a user page with a capitalized id segment', () => {
+    const expected: TogetterUrl = { kind: 'user', username: 'example' }
+
+    expect(parseTogetterUrl('https://togetter.com/Id/example')).toEqual(expected)
+  })
+
+  it('should return the user for the www host', () => {
+    const expected: TogetterUrl = { kind: 'user', username: 'example' }
+
+    expect(parseTogetterUrl('https://www.togetter.com/id/example')).toEqual(expected)
+  })
+
+  it('should return the recent page for the recent listing', () => {
+    const expected: TogetterUrl = { kind: 'recent' }
+
+    expect(parseTogetterUrl('https://togetter.com/recent')).toEqual(expected)
+  })
+
+  it('should return the home page for a summary page', () => {
+    const expected: TogetterUrl = { kind: 'home' }
+
+    expect(parseTogetterUrl('https://togetter.com/li/123456')).toEqual(expected)
+  })
+
+  it('should return the home page for the root', () => {
+    const expected: TogetterUrl = { kind: 'home' }
+
+    expect(parseTogetterUrl('https://togetter.com/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseTogetterUrl('https://example.com/id/example')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseTogetterUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 const createProfilePage = (image: string): string => {
   const jsonLd = JSON.stringify([

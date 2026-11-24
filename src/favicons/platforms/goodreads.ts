@@ -1,11 +1,42 @@
-import { includesAnyOf } from 'trousse'
+import { getPathSegments, getQueryParam, includesAnyOf, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getMetaContent, hasClass } from '../../common/utils.js'
-import { parseGoodreadsUrl } from '../../feeds/platforms/goodreads.js'
 import type { FaviconEnricher } from '../types.js'
 import { getResponseText } from '../utils.js'
 
 const platform = 'goodreads'
+
+export type GoodreadsUrl =
+  | { kind: 'user'; userId: string }
+  | { kind: 'reviews'; userId: string; shelf?: string }
+
+const hosts = ['goodreads.com', 'www.goodreads.com']
+
+// A user page is /user/show/{id}-{slug} and their review list /review/list/{id}-{slug}.
+export const parseGoodreadsUrl = (url: string): GoodreadsUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const [section, action, segment] = getPathSegments(url)
+  const userId = Number.parseInt(segment ?? '', 10)
+
+  if (!userId) {
+    return
+  }
+
+  if (isAnyOf(section, 'user') && isAnyOf(action, 'show')) {
+    return { kind: 'user', userId: String(userId) }
+  }
+
+  if (isAnyOf(section, 'review') && isAnyOf(action, 'list')) {
+    const shelf = getQueryParam(parsedUrl.searchParams, 'shelf')
+
+    return { kind: 'reviews', userId: String(userId), shelf }
+  }
+}
 
 // Avatars carry a size token before the file name, e.g. `1506617226p5/1.jpg`: p8 is the largest.
 const sizeTokenRegex = /(\/\d+)p\d\//i

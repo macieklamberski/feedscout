@@ -1,7 +1,41 @@
-import { isNonEmptyString, isPlainObject } from 'trousse'
+import {
+  getPathSegments,
+  isAnyOf,
+  isHostOf,
+  isNonEmptyString,
+  isPlainObject,
+  parseUrl,
+} from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getJsonLd } from '../../common/utils.js'
-import { parseTogetterUrl } from '../../feeds/platforms/togetter.js'
+
+export type TogetterUrl = { kind: 'user'; username: string } | { kind: 'recent' } | { kind: 'home' }
+
+const hosts = ['togetter.com', 'www.togetter.com']
+
+const userPathRegex = /^\/id\/([^/]+)/i
+
+export const parseTogetterUrl = (url: string): TogetterUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const username = parsedUrl.pathname.match(userPathRegex)?.[1]
+
+  if (username) {
+    return { kind: 'user', username }
+  }
+
+  const [route] = getPathSegments(parsedUrl)
+
+  if (isAnyOf(route, 'recent')) {
+    return { kind: 'recent' }
+  }
+
+  return { kind: 'home' }
+}
 
 const twitterSizeRegex = /_normal(\.\w+)$/
 

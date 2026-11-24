@@ -1,10 +1,41 @@
-import { isNonEmptyString } from 'trousse'
+import {
+  getPathSegments,
+  getQueryParam,
+  isAnyOf,
+  isHostOf,
+  isNonEmptyString,
+  parseUrl,
+} from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { parseNebulaUrl } from '../../feeds/platforms/nebula.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
 const platform = 'nebula'
+
+export type NebulaUrl = { kind: 'channel'; slug: string } | { kind: 'explore'; category?: string }
+
+const hosts = ['nebula.tv', 'www.nebula.tv']
+
+// /explore is the canonical landing page (Nebula 301s root and /videos to it).
+// Treated as the global feed surface, not a creator slug.
+const globalPaths = ['videos', 'explore']
+
+export const parseNebulaUrl = (url: string): NebulaUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const [slug] = getPathSegments(parsedUrl)
+
+  // The root, /videos and /explore[/{tab}], optionally filtered by category.
+  if (!slug || isAnyOf(slug, globalPaths)) {
+    return { kind: 'explore', category: getQueryParam(parsedUrl.searchParams, 'category') }
+  }
+
+  return { kind: 'channel', slug }
+}
 
 const queryDataMarker = 'window.__QUERY_DATA__'
 

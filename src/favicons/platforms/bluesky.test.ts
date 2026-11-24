@@ -1,7 +1,89 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
-import { blueskyEnricher, blueskyHandler } from './bluesky.js'
+import { type BlueskyUrl, blueskyEnricher, blueskyHandler, parseBlueskyUrl } from './bluesky.js'
+
+describe('parseBlueskyUrl', () => {
+  it('should return the handle for a profile page', () => {
+    const expected: BlueskyUrl = { kind: 'profile', handle: 'user.bsky.social' }
+
+    expect(parseBlueskyUrl('https://bsky.app/profile/user.bsky.social')).toEqual(expected)
+  })
+
+  it('should return a custom domain handle', () => {
+    const expected: BlueskyUrl = { kind: 'profile', handle: 'example.com' }
+
+    expect(parseBlueskyUrl('https://bsky.app/profile/example.com')).toEqual(expected)
+  })
+
+  it('should return a DID handle', () => {
+    const expected: BlueskyUrl = { kind: 'profile', handle: 'did:plc:z72i7hdynmk6r22z27h6tvur' }
+
+    expect(parseBlueskyUrl('https://bsky.app/profile/did:plc:z72i7hdynmk6r22z27h6tvur')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return the handle for a post page', () => {
+    const expected: BlueskyUrl = { kind: 'profile', handle: 'user.bsky.social' }
+
+    expect(parseBlueskyUrl('https://bsky.app/profile/user.bsky.social/post/123')).toEqual(expected)
+  })
+
+  it('should return the handle for a profile subpage', () => {
+    const expected: BlueskyUrl = { kind: 'profile', handle: 'user.bsky.social' }
+
+    expect(parseBlueskyUrl('https://bsky.app/profile/user.bsky.social/followers')).toEqual(expected)
+  })
+
+  it('should return the handle for a profile on deer.social', () => {
+    const value = 'https://deer.social/profile/user.bsky.social'
+    const expected: BlueskyUrl = { kind: 'profile', handle: 'user.bsky.social' }
+
+    expect(parseBlueskyUrl(value)).toEqual(expected)
+  })
+
+  it('should return the handle for a profile on main.bsky.dev', () => {
+    const value = 'https://main.bsky.dev/profile/user.bsky.social'
+    const expected: BlueskyUrl = { kind: 'profile', handle: 'user.bsky.social' }
+
+    expect(parseBlueskyUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for the www host', () => {
+    const value = 'https://www.bsky.app/profile/user.bsky.social'
+
+    expect(parseBlueskyUrl(value)).toBeUndefined()
+  })
+
+  it('should return undefined for a profile path without a handle', () => {
+    expect(parseBlueskyUrl('https://bsky.app/profile')).toBeUndefined()
+    expect(parseBlueskyUrl('https://bsky.app/profile/')).toBeUndefined()
+  })
+
+  it('should return the profile for a capitalized profile prefix', () => {
+    const expected: BlueskyUrl = { kind: 'profile', handle: 'user.bsky.social' }
+
+    expect(parseBlueskyUrl('https://bsky.app/Profile/user.bsky.social')).toEqual(expected)
+  })
+
+  it('should return undefined for non-profile paths', () => {
+    expect(parseBlueskyUrl('https://bsky.app/about')).toBeUndefined()
+    expect(parseBlueskyUrl('https://bsky.app/settings')).toBeUndefined()
+  })
+
+  it('should return undefined for the homepage', () => {
+    expect(parseBlueskyUrl('https://bsky.app/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseBlueskyUrl('https://example.com/profile/user')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseBlueskyUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 const createContext = (responses: Record<string, string>): FaviconEnricherContext => {
   const fetchFn: FetchFn = async (url) => ({
