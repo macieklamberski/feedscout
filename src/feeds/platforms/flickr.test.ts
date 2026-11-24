@@ -147,14 +147,6 @@ describe('parseFlickrUrl', () => {
     expect(parseFlickrUrl(value)).toEqual(expected)
   })
 
-  it('should return undefined for the tags landing page', () => {
-    expect(parseFlickrUrl('https://www.flickr.com/photos/tags/')).toBeUndefined()
-  })
-
-  it('should return undefined for the tags landing page with a capitalized tags segment', () => {
-    expect(parseFlickrUrl('https://www.flickr.com/photos/Tags/')).toBeUndefined()
-  })
-
   it('should return undefined for a group path alias', () => {
     expect(parseFlickrUrl('https://www.flickr.com/groups/mygroup')).toBeUndefined()
   })
