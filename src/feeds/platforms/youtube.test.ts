@@ -42,21 +42,27 @@ describe('parseYoutubeUrl', () => {
   })
 
   it('should return the channel ID for a channel ID page', () => {
-    const expected: YoutubeUrl = { kind: 'channel', channelId: 'UC1234567890' }
+    const expected: YoutubeUrl = { kind: 'channel', channelId: 'UC1234567890123456789012' }
 
-    expect(parseYoutubeUrl('https://youtube.com/channel/UC1234567890')).toEqual(expected)
+    expect(parseYoutubeUrl('https://youtube.com/channel/UC1234567890123456789012')).toEqual(
+      expected,
+    )
   })
 
   it('should return the channel ID for a channel ID page with a capitalized channel segment', () => {
-    const expected: YoutubeUrl = { kind: 'channel', channelId: 'UC1234567890' }
+    const expected: YoutubeUrl = { kind: 'channel', channelId: 'UC1234567890123456789012' }
 
-    expect(parseYoutubeUrl('https://youtube.com/Channel/UC1234567890')).toEqual(expected)
+    expect(parseYoutubeUrl('https://youtube.com/Channel/UC1234567890123456789012')).toEqual(
+      expected,
+    )
   })
 
   it('should return the channel ID for a channel ID page on music.youtube.com', () => {
-    const expected: YoutubeUrl = { kind: 'channel', channelId: 'UC1234567890' }
+    const expected: YoutubeUrl = { kind: 'channel', channelId: 'UC1234567890123456789012' }
 
-    expect(parseYoutubeUrl('https://music.youtube.com/channel/UC1234567890')).toEqual(expected)
+    expect(parseYoutubeUrl('https://music.youtube.com/channel/UC1234567890123456789012')).toEqual(
+      expected,
+    )
   })
 
   it('should return the channel ID for a channel ID with a feed extension', () => {
@@ -173,8 +179,8 @@ describe('parseYoutubeUrl', () => {
   })
 
   it('should return the channel of a live stream embed', () => {
-    const value = 'https://www.youtube.com/embed/live_stream?channel=UC1234567890'
-    const expected: YoutubeUrl = { kind: 'player', channelId: 'UC1234567890' }
+    const value = 'https://www.youtube.com/embed/live_stream?channel=UC1234567890123456789012'
+    const expected: YoutubeUrl = { kind: 'player', channelId: 'UC1234567890123456789012' }
 
     expect(parseYoutubeUrl(value)).toEqual(expected)
   })
@@ -240,25 +246,25 @@ describe('parseYoutubeUrl', () => {
 })
 
 describe('getYoutubePage', () => {
-  const channelIdHtml = '{"channelId":"UC1234567890"}'
+  const channelIdHtml = '{"channelId":"UC1234567890123456789012"}'
 
   it('should return the channel ID a handle page carries', () => {
     const value = 'https://www.youtube.com/@example'
-    const expected: YoutubePage = { kind: 'channel', channelId: 'UC1234567890' }
+    const expected: YoutubePage = { kind: 'channel', channelId: 'UC1234567890123456789012' }
 
     expect(getYoutubePage(value, channelIdHtml)).toEqual(expected)
   })
 
   it('should return the uploader a video page carries', () => {
     const value = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-    const expected: YoutubePage = { kind: 'watch', channelId: 'UC1234567890' }
+    const expected: YoutubePage = { kind: 'watch', channelId: 'UC1234567890123456789012' }
 
     expect(getYoutubePage(value, channelIdHtml)).toEqual(expected)
   })
 
   it('should keep the channel ID of a channel URL over the content', () => {
-    const value = 'https://www.youtube.com/channel/UCabcdefghij'
-    const expected: YoutubePage = { kind: 'channel', channelId: 'UCabcdefghij' }
+    const value = 'https://www.youtube.com/channel/UCabcdefghijklmnopqrstuv'
+    const expected: YoutubePage = { kind: 'channel', channelId: 'UCabcdefghijklmnopqrstuv' }
 
     expect(getYoutubePage(value, channelIdHtml)).toEqual(expected)
   })
@@ -320,57 +326,57 @@ describe('youtubeHandler', () => {
     const expectedChannelFeeds = [
       {
         uri: [
-          'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
-          'https://www.youtube.com/feeds/videos.xml?playlist_id=UU1234567890',
+          'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890123456789012',
+          'https://www.youtube.com/feeds/videos.xml?playlist_id=UU1234567890123456789012',
         ],
         hint: { key: 'youtube:all', label: 'All uploads' },
       },
       {
-        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
+        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890123456789012',
         hint: { key: 'youtube:videos', label: 'Videos' },
       },
       {
-        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
+        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890123456789012',
         hint: { key: 'youtube:shorts', label: 'Shorts' },
       },
       {
-        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULV1234567890',
+        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULV1234567890123456789012',
         hint: { key: 'youtube:live', label: 'Live streams' },
       },
       {
-        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULP1234567890',
+        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULP1234567890123456789012',
         hint: { key: 'youtube:popular-videos', label: 'Popular videos' },
       },
       {
-        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPS1234567890',
+        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPS1234567890123456789012',
         hint: { key: 'youtube:popular-shorts', label: 'Popular shorts' },
       },
       {
-        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPV1234567890',
+        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPV1234567890123456789012',
         hint: { key: 'youtube:popular-live', label: 'Popular live streams' },
       },
       {
-        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMO1234567890',
+        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMO1234567890123456789012',
         hint: { key: 'youtube:member-videos', label: 'Member videos' },
       },
       {
-        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMS1234567890',
+        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMS1234567890123456789012',
         hint: { key: 'youtube:member-shorts', label: 'Member shorts' },
       },
       {
-        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMV1234567890',
+        uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMV1234567890123456789012',
         hint: { key: 'youtube:member-live', label: 'Member live streams' },
       },
     ]
 
     it('should return all feed variants for channel ID', () => {
-      const value = 'https://youtube.com/channel/UC1234567890'
+      const value = 'https://youtube.com/channel/UC1234567890123456789012'
 
       expect(youtubeHandler.resolve(value)).toEqual(expectedChannelFeeds)
     })
 
     it('should return all feed variants for a live stream embed', () => {
-      const value = 'https://www.youtube.com/embed/live_stream?channel=UC1234567890'
+      const value = 'https://www.youtube.com/embed/live_stream?channel=UC1234567890123456789012'
 
       expect(youtubeHandler.resolve(value)).toEqual(expectedChannelFeeds)
     })
@@ -502,19 +508,21 @@ describe('youtubeHandler', () => {
         },
       ]
 
-      expect(youtubeHandler.resolve(value, '{"channelId":"UC1234567890"}')).toEqual(expected)
+      expect(youtubeHandler.resolve(value, '{"channelId":"UC1234567890123456789012"}')).toEqual(
+        expected,
+      )
     })
 
     it('should extract channel ID from @handle page content', () => {
       const value = 'https://youtube.com/@carol'
-      const content = '{"channelId":"UC1234567890"}'
+      const content = '{"channelId":"UC1234567890123456789012"}'
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
     })
 
     it('should extract channel ID from externalId in consent page content', () => {
       const value = 'https://youtube.com/@testchannel'
-      const content = '{"externalId":"UC1234567890"}'
+      const content = '{"externalId":"UC1234567890123456789012"}'
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
     })
@@ -522,8 +530,8 @@ describe('youtubeHandler', () => {
     it('should prefer the channel own externalId over a featured channel ID on a channel page', () => {
       const value = 'https://youtube.com/@testchannel'
       const content = `
-        {"channelId":"UC0000000000"}
-        {"externalId":"UC1234567890"}
+        {"channelId":"UC0000000000000000000000"}
+        {"externalId":"UC1234567890123456789012"}
       `
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
@@ -531,7 +539,7 @@ describe('youtubeHandler', () => {
 
     it('should extract channel ID from externalChannelId on a video page', () => {
       const value = 'https://youtube.com/watch?v=dQw4w9WgXcQ'
-      const content = '{"externalChannelId":"UC1234567890"}'
+      const content = '{"externalChannelId":"UC1234567890123456789012"}'
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
     })
@@ -548,14 +556,14 @@ describe('youtubeHandler', () => {
 
     it('should extract channel ID from video page content', () => {
       const value = 'https://youtube.com/watch?v=abc123'
-      const content = '{"channelId":"UC1234567890"}'
+      const content = '{"channelId":"UC1234567890123456789012"}'
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
     })
 
     it('should extract channel ID from /shorts/{id} URL content', () => {
       const value = 'https://youtube.com/shorts/abc123'
-      const content = '{"channelId":"UC1234567890"}'
+      const content = '{"channelId":"UC1234567890123456789012"}'
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
     })
