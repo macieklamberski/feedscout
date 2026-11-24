@@ -1,5 +1,4 @@
 import { sportsregions } from 'feedintel'
-import { isHostOrSubdomainOf } from 'trousse'
 import { type PlatformFeedParams, withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
@@ -44,10 +43,6 @@ export const sportsregionsHandler: PlatformHandler = {
     // The portal prints the same footer.
     if (page) {
       return page.key !== 'portal'
-    }
-
-    if (isHostOrSubdomainOf(url, sportsregions.hosts.tenants)) {
-      return false
     }
 
     return hasMarker(content, headers, { html: isSportsregionsHtml })
