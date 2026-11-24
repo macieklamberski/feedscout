@@ -1,5 +1,5 @@
 import { estranky } from 'feedintel'
-import { parseUrl } from 'trousse'
+import { isAnyOf, parseUrl, startsWithAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -12,18 +12,23 @@ export type EstrankyUrl = { kind: 'site' }
 
 export type EstrankyPage = { origin: string; sliceOrigin: string }
 
-const estrankyAssetRegex = /^(?:https?:)?\/\/s3[a-z]\.(?:estranky\.(?:cz|sk)|eoldal\.hu)\//i
-
 const assetTags = ['link', 'script']
 
 const feeds = withHintLabels(estranky.feeds)
+
+// A source is absolute or protocol-relative. One with neither is a path, as in a saved copy.
+const isAssetUrl = (source: string): boolean => {
+  const assetUrl = startsWithAnyOf(source, '//') ? `https:${source}` : source
+
+  return estranky.pages.read(assetUrl)?.key === 'asset'
+}
 
 // Every template loads its stylesheet and `ui.js` from the asset hosts, on a custom domain too.
 export const isEstrankyHtml = (content: string): boolean => {
   const asset = findElement(content, (element) => {
     const source = element.attribs.href ?? element.attribs.src ?? ''
 
-    return assetTags.includes(element.name) && estrankyAssetRegex.test(source)
+    return assetTags.includes(element.name) && isAssetUrl(source)
   })
 
   return asset !== undefined
@@ -31,7 +36,9 @@ export const isEstrankyHtml = (content: string): boolean => {
 
 // The apex and www run Estranky itself. Every other host is one site.
 export const parseEstrankyUrl = (url: string): EstrankyUrl | undefined => {
-  if (!parseUrl(url) || estranky.pages.read(url)?.key === 'platform') {
+  const key = estranky.pages.read(url)?.key
+
+  if (!parseUrl(url) || isAnyOf(key, ['platform', 'asset'])) {
     return
   }
 

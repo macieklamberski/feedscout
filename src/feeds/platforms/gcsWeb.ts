@@ -2,14 +2,12 @@ import { gcsWeb } from 'feedintel'
 import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { type Element, findElement, isRootOfPage } from '../../common/utils.js'
+import { type Element, findElement } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: events, news-releases, sec-filings.
 
 export type GcsWebUrl = { kind: 'site' }
-
-const filesPathRegex = /\/sites\/g\/files\/knoqqb\d+\//i
 
 const feeds = withHintLabels(gcsWeb.feeds)
 
@@ -17,15 +15,21 @@ const getAssetUrl = (element: Element): string => {
   return element.attribs.href ?? element.attribs.src ?? ''
 }
 
+// A site loads its assets from its own bucket under its own origin.
 export const isGcsWebPage = (url: string, content: string | undefined): boolean => {
-  const asset = findElement(content, (element) => filesPathRegex.test(getAssetUrl(element)))
-  const assetUrl = asset ? parseUrl(getAssetUrl(asset), url) : undefined
+  const origin = parseUrl(url)?.origin
 
-  if (!assetUrl) {
+  if (!origin) {
     return false
   }
 
-  return isRootOfPage(assetUrl.origin, url)
+  const asset = findElement(content, (element) => {
+    const assetUrl = parseUrl(getAssetUrl(element), url)?.href ?? ''
+
+    return gcsWeb.pages.read(assetUrl, { root: origin })?.key === 'asset'
+  })
+
+  return asset !== undefined
 }
 
 export const parseGcsWebUrl = (url: string): GcsWebUrl | undefined => {

@@ -1,8 +1,6 @@
 import { habr } from 'feedintel'
-import { isHostOf, isLocale, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: articles, company, hub, news, user.
@@ -16,59 +14,36 @@ export type HabrUrl =
   | { kind: 'flow'; language: string; flow: string }
   | { kind: 'home'; language: string }
 
-const hosts = habr.hosts.exact
-
-const languagePrefixRegex = /^\/([^/]+)(.*)$/
-const hubRegex = /^\/hubs?\/([^/]+)/i
-const userRegex = /^\/users\/([^/]+)/i
-const companyRegex = /^\/compan(?:y|ies)\/([^/]+)/i
-const articleRegex =
-  /^(?:\/compan(?:y|ies)\/(?<company>[^/]+))?\/(?:articles|blog|news|posts?)\/(?<post>[^/]+)/i
-const flowRegex = /^\/flows\/([^/]+)/i
-
 const feeds = withHintLabels(habr.feeds)
 
 export const parseHabrUrl = (url: string): HabrUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = habr.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
   // A page without a language prefix is the Russian site.
-  const [, prefix = '', rest = ''] = parsedUrl.pathname.match(languagePrefixRegex) ?? []
-  const hasLanguage = isLocale(prefix)
-  const language = hasLanguage ? prefix : 'ru'
-  const pathname = hasLanguage ? rest : parsedUrl.pathname
-  const hub = pathname.match(hubRegex)?.[1]
+  const language = page.params.language ?? 'ru'
 
-  if (hub) {
-    return { kind: 'hub', language, hub }
+  if (page.key === 'hub') {
+    return { kind: 'hub', language, hub: page.params.hub }
   }
 
-  const username = pathname.match(userRegex)?.[1]
-
-  if (username) {
-    return { kind: 'user', language, username }
+  if (page.key === 'user') {
+    return { kind: 'user', language, username: page.params.username }
   }
 
-  // A company article sits under the company, so it is read before the company page.
-  const article = pathname.match(articleRegex)?.groups
-
-  if (article?.post && digitsRegex.test(article.post)) {
-    return { kind: 'article', language, post: article.post, company: article.company }
+  if (page.key === 'article') {
+    return { kind: 'article', language, post: page.params.post, company: page.params.company }
   }
 
-  const company = pathname.match(companyRegex)?.[1]
-
-  if (company) {
-    return { kind: 'company', language, company }
+  if (page.key === 'company') {
+    return { kind: 'company', language, company: page.params.company }
   }
 
-  const flow = pathname.match(flowRegex)?.[1]
-
-  if (flow) {
-    return { kind: 'flow', language, flow }
+  if (page.key === 'flow') {
+    return { kind: 'flow', language, flow: page.params.flow }
   }
 
   return { kind: 'home', language }
