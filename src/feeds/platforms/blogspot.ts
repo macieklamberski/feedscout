@@ -1,6 +1,5 @@
-import { blogger, blogspot } from 'feedintel'
+import { blogspot } from 'feedintel'
 import { parseUrl } from 'trousse'
-import type { DiscoverUriHint } from '../../common/types.js'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -16,23 +15,8 @@ export type BlogspotPage =
   | { kind: 'blog' }
 
 const widgetsScriptRegex = /^(?:https?:)?\/\/www\.blogger\.com\/static\/v1\/widgets\//i
-const blogIdPathRegex = /^\/feeds\/[^/]+\//i
 
 const feeds = withHintLabels(blogspot.feeds)
-
-// Blogger serves a blog's feeds under its id on www.blogger.com too, where the path after the id
-// names the feed as it does on the blog's own host.
-const getBloggerFeedHint = (url: string): DiscoverUriHint | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl || !blogger.feeds.read(url)) {
-    return
-  }
-
-  const path = parsedUrl.pathname.replace(blogIdPathRegex, '/feeds/')
-
-  return feeds.getFeedHint(`https://blog.blogspot.com${path}${parsedUrl.search}`)
-}
 
 // Blogger loads its widget script from this path on blogspot.com and custom domains alike,
 // whatever the theme. A tag, not the text: READMEs and archived copies quote the url too.
@@ -165,7 +149,5 @@ export const blogspotHandler: PlatformHandler = {
     ]
   },
 
-  getFeedHint: (url) => {
-    return feeds.getFeedHint(url) ?? getBloggerFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
