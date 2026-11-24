@@ -23,6 +23,8 @@ export type YoutubePage =
     }
   | { kind: 'playlist'; playlistId: string }
 
+type YoutubeFeedKey = Parameters<typeof youtube.feeds.getFeedEntry>[0]
+
 export const hosts = youtube.hosts.exact
 const shortLinkHosts = ['youtu.be', 'www.youtu.be']
 
@@ -54,7 +56,7 @@ const uploadsPlaylistRegex = /^(UU(?:LF|SH|LV|LP|PS|PV|MO|MS|MV)?)[\w-]{22}$/
 // The playlists YouTube derives from a channel, the UC of its ID replaced by the prefix. The bare
 // UU list is the channel's uploads, the second spelling of the channel feed.
 // See: https://stackoverflow.com/a/77816885.
-const uploadsPlaylistKeys: Record<string, Parameters<typeof youtube.feeds.getFeedEntry>[0]> = {
+const uploadsPlaylistKeys: Record<string, YoutubeFeedKey> = {
   UULF: 'videos',
   UUSH: 'shorts',
   UULV: 'live',
@@ -83,7 +85,7 @@ const toUploadsPlaylistId = (prefix: string, channelId: string): string => {
 }
 
 // An uploads list is one of the channel's feeds, whether a page or a feed URL names it.
-const getPlaylistKey = (playlistId: string | undefined): string => {
+const getPlaylistKey = (playlistId: string | undefined): YoutubeFeedKey => {
   const uploadsPrefix = playlistId?.match(uploadsPlaylistRegex)?.[1]
 
   if (uploadsPrefix === 'UU') {
@@ -102,7 +104,7 @@ const getChannelUris = (channelId: string): Array<DiscoverUriEntry | undefined> 
     {
       uri: [
         feeds.getFeedUrl('all', { channelId }),
-        feeds.getFeedUrl('playlist', { playlistId: toUploadsPlaylistId('UU', channelId) }),
+        feeds.getFeedUrl('all', { playlistId: toUploadsPlaylistId('UU', channelId) }),
       ].filter(isPresent),
       hint: composeHint('youtube:all'),
     },
@@ -204,14 +206,9 @@ export const getYoutubePage = (
   return { ...parsed, channelId }
 }
 
+// An uploads list is refused by the `playlist` row, so each list builds under its own key.
 const getPlaylistEntry = (playlistId: string | undefined): DiscoverUriEntry | undefined => {
-  const uri = feeds.getFeedUrl('playlist', { playlistId })
-
-  if (!uri) {
-    return
-  }
-
-  return { uri, hint: composeHint(`youtube:${getPlaylistKey(playlistId)}`) }
+  return feeds.getFeedEntry(getPlaylistKey(playlistId), { playlistId })
 }
 
 export const youtubeHandler: PlatformHandler = {
