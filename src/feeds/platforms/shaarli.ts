@@ -1,14 +1,7 @@
 import { shaarli } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  findElement,
-  getCookieNames,
-  getScriptDirectory,
-  hasElementWithId,
-  hasMarker,
-} from '../../common/utils.js'
+import { findElement, getCookieNames, hasElementWithId, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -24,24 +17,24 @@ export const isShaarliHeaders = (headers: Headers): boolean => {
   return getCookieNames(headers).includes('shaarli')
 }
 
-// Shaarli 0.12 and later print the mount path in `js_base_path`. Older installs
-// route every page through one `index.php`, so its directory is the mount path.
-const getBasePath = (pathname: string, content: string | undefined): string => {
-  const input = findElement(content, (element) => {
-    return element.name === 'input' && element.attribs.name === 'js_base_path'
-  })
-
-  return input?.attribs.value ?? getScriptDirectory(pathname)
-}
-
+// Shaarli 0.12 and later print the mount path in `js_base_path`.
 const getShaarliPage = (url: string, content: string | undefined): ShaarliPage | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = shaarli.pages.read(url, { isAnyHost: true })
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  return { baseUrl: `${parsedUrl.origin}${getBasePath(parsedUrl.pathname, content)}` }
+  const input = findElement(content, (element) => {
+    return element.name === 'input' && element.attribs.name === 'js_base_path'
+  })
+  const basePath = input?.attribs.value
+
+  if (basePath === undefined) {
+    return { baseUrl: page.params.root }
+  }
+
+  return { baseUrl: `${new URL(url).origin}${basePath}` }
 }
 
 export const shaarliHandler: PlatformHandler = {

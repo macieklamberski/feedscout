@@ -1,8 +1,7 @@
 import { hatenaAntenna } from 'feedintel'
-import { getPathSegments, getQueryParam, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findDescendant, findElement, letterThenWordOrHyphenRegex } from '../../common/utils.js'
+import { findDescendant, findElement } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -10,8 +9,6 @@ export type HatenaAntennaUrl =
   | { kind: 'antenna'; username: string }
   | { kind: 'group'; username: string; groupId: string }
 export type HatenaAntennaPage = HatenaAntennaUrl
-
-const hosts = hatenaAntenna.hosts.exact
 
 const feeds = withHintLabels(hatenaAntenna.feeds)
 
@@ -29,27 +26,17 @@ const hasSelectedGroup = (content: string): boolean => {
 }
 
 export const parseHatenaAntennaUrl = (url: string): HatenaAntennaUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = hatenaAntenna.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const [username] = getPathSegments(parsedUrl)
-
-  // A Hatena ID starts with a letter.
-  if (!username || !letterThenWordOrHyphenRegex.test(username)) {
-    return
+  if (page.key === 'group') {
+    return { kind: 'group', username: page.params.username, groupId: page.params.groupId }
   }
 
-  const groupId = getQueryParam(parsedUrl.searchParams, 'gid')
-
-  if (groupId) {
-    return { kind: 'group', username, groupId }
-  }
-
-  // The simple view, the feed, the OPML and paged views belong to the whole antenna.
-  return { kind: 'antenna', username }
+  return { kind: 'antenna', username: page.params.username }
 }
 
 export const getHatenaAntennaPage = (

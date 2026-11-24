@@ -1,5 +1,4 @@
 import { bing } from 'feedintel'
-import { getQueryParam, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -9,36 +8,20 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type BingUrl = { kind: 'search'; query: string } | { kind: 'news'; query: string }
 
-// Unverified: cn.bing.com redirects to www.bing.com outside China, so its feed was never read.
-const hosts = bing.hosts.exact
-
-const searchRegex = /^\/search\/?$/i
-const newsRegex = /^\/news\/search\/?$/i
-
 const feeds = withHintLabels(bing.feeds)
 
 export const parseBingUrl = (url: string): BingUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = bing.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const { pathname, searchParams } = parsedUrl
-  const query = getQueryParam(searchParams, 'q')
-
-  // Bing answers any query, an empty one too, with a feed. Without a query it holds no results.
-  if (!query) {
-    return
+  if (page.key === 'search') {
+    return { kind: 'search', query: page.params.query }
   }
 
-  if (searchRegex.test(pathname)) {
-    return { kind: 'search', query }
-  }
-
-  if (newsRegex.test(pathname)) {
-    return { kind: 'news', query }
-  }
+  return { kind: 'news', query: page.params.query }
 }
 
 export const bingHandler: PlatformHandler = {

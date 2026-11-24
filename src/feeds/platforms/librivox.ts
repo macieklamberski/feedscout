@@ -1,28 +1,34 @@
 import { librivox } from 'feedintel'
-import { isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { findElement } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: audiobook.
 // Handler needed for: latest.
 
-const hosts = librivox.hosts.exact
-
-const audiobookRegex = /^\/[^/]+\/?$/
-// An audiobook page links its feed by numeric id, which the slug does not carry.
-const feedIdRegex = /href="(?:https?|itpc):\/\/librivox\.org\/rss\/(\d+)"/i
-
 const feeds = withHintLabels(librivox.feeds)
 
 export type LibrivoxPage = { audiobookId: string }
 
-const getLibrivoxPage = (url: string, content: string | undefined): LibrivoxPage | undefined => {
-  if (!audiobookRegex.test(new URL(url).pathname)) {
+// An audiobook page links its feed by numeric id, which the slug does not carry.
+const getAudiobookId = (href: string | undefined): string | undefined => {
+  const feed = librivox.feeds.read(href ?? '')
+
+  if (feed?.key !== 'audiobook') {
     return
   }
 
-  const audiobookId = content?.match(feedIdRegex)?.[1]
+  return feed.params.audiobookId
+}
+
+const getLibrivoxPage = (url: string, content: string | undefined): LibrivoxPage | undefined => {
+  if (librivox.pages.read(url)?.key !== 'audiobook') {
+    return
+  }
+
+  const link = findElement(content, (element) => getAudiobookId(element.attribs.href) !== undefined)
+  const audiobookId = getAudiobookId(link?.attribs.href)
 
   if (!audiobookId) {
     return
@@ -33,7 +39,7 @@ const getLibrivoxPage = (url: string, content: string | undefined): LibrivoxPage
 
 export const librivoxHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return librivox.pages.read(url) !== undefined
   },
 
   resolve: (url, content) => {

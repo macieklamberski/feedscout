@@ -1,16 +1,11 @@
 import { colorMeShop } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type ColorMeShopUrl = { kind: 'shop' }
-
-const domains = colorMeShop.hosts.tenants
-
-// Numbered image and access-log hosts, such as img15 and acclog001.
-const numberedHostRegex = /^(acclog|img)\d+$/
 
 const feeds = withHintLabels(colorMeShop.feeds)
 
@@ -21,10 +16,7 @@ export const isColorMeShopHeaders = (headers: Headers): boolean => {
 }
 
 export const parseColorMeShopUrl = (url: string): ColorMeShopUrl | undefined => {
-  // A nested subdomain like blog.{shop}.shop-pro.jp is a JUGEM blog, not a shop.
-  const shop = getTenantSubdomain(url, domains)
-
-  if (!shop || numberedHostRegex.test(shop)) {
+  if (!colorMeShop.pages.read(url)) {
     return
   }
 

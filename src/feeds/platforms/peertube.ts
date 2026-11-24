@@ -1,5 +1,5 @@
 import { peertube } from 'feedintel'
-import { decodeSegment, getQueryParam, includesAnyOf, parseUrl } from 'trousse'
+import { includesAnyOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -10,11 +10,6 @@ import { findElement, hasMarker } from '../../common/utils.js'
 
 export type PeertubeUrl = { kind: 'channel' | 'account'; name: string } | { kind: 'instance' }
 
-const channelPathRegex = /^\/(?:c|video-channels)\/([^/]+)/i
-const accountPathRegex = /^\/(?:a|accounts)\/([^/]+)/i
-
-const podcastFeedPath = '/feeds/podcast/videos.xml'
-
 const feeds = withHintLabels(peertube.feeds)
 
 export const isPeertubeHeaders = (headers: Headers): boolean => {
@@ -24,46 +19,36 @@ export const isPeertubeHeaders = (headers: Headers): boolean => {
 // The podcast feed takes only the numeric channel id, which the channel page carries in its link
 // to that feed. An instance too old to serve the feed links none.
 const getPodcastChannelId = (url: string, content: string | undefined): string | undefined => {
-  const { origin } = new URL(url)
-  const link = findElement(content, (element) => {
-    if (element.name !== 'link') {
-      return false
+  const root = parseUrl(url)?.origin ?? ''
+  const getLinkedChannelId = (href: string | undefined): string | undefined => {
+    const feed = peertube.feeds.read(parseUrl(href, url)?.href ?? '', { root })
+
+    if (feed?.key !== 'channel-podcast') {
+      return
     }
 
-    const feedUrl = parseUrl(element.attribs.href, url)
-
-    return (
-      feedUrl?.origin === origin &&
-      feedUrl.pathname === podcastFeedPath &&
-      getQueryParam(feedUrl.searchParams, 'videoChannelId') !== undefined
-    )
+    return feed.params.channelId
+  }
+  const link = findElement(content, (element) => {
+    return element.name === 'link' && getLinkedChannelId(element.attribs.href) !== undefined
   })
 
-  if (!link) {
-    return
-  }
-
-  return getQueryParam(parseUrl(link.attribs.href, url)?.searchParams, 'videoChannelId')
+  return getLinkedChannelId(link?.attribs.href)
 }
 
 export const parsePeertubeUrl = (url: string): PeertubeUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = peertube.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  const { pathname } = parsedUrl
-  const channel = pathname.match(channelPathRegex)?.[1]
-
-  if (channel) {
-    return { kind: 'channel', name: channel }
+  if (page.key === 'channel') {
+    return { kind: 'channel', name: page.params.name }
   }
 
-  const account = pathname.match(accountPathRegex)?.[1]
-
-  if (account) {
-    return { kind: 'account', name: account }
+  if (page.key === 'account') {
+    return { kind: 'account', name: page.params.name }
   }
 
   return { kind: 'instance' }
@@ -87,10 +72,7 @@ export const peertubeHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'channel') {
-      const params = {
-        name: decodeSegment(parsed.name) ?? parsed.name,
-        channelId: getPodcastChannelId(url, content),
-      }
+      const params = { name: parsed.name, channelId: getPodcastChannelId(url, content) }
 
       if (!params.channelId) {
         return [pageFeeds.getFeedEntry('channel', params), pageFeeds.getFeedEntry('instance')]
@@ -105,9 +87,7 @@ export const peertubeHandler: PlatformHandler = {
 
     if (parsed.kind === 'account') {
       return [
-        pageFeeds.getFeedEntry('account', {
-          name: decodeSegment(parsed.name) ?? parsed.name,
-        }),
+        pageFeeds.getFeedEntry('account', { name: parsed.name }),
         pageFeeds.getFeedEntry('instance'),
       ]
     }

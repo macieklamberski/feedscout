@@ -1,8 +1,6 @@
 import { comicfury } from 'feedintel'
-import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { alphanumericOrHyphenRegex, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: reader.
@@ -10,47 +8,24 @@ import { alphanumericOrHyphenRegex, getTenantSubdomain } from '../../common/util
 
 export type ComicfuryUrl = { kind: 'comic' | 'profile' | 'reader'; comic: string }
 
-const domains = comicfury.hosts.tenants
-const hosts = comicfury.hosts.exact
-
-const readerPathRegex = /^\/read\/([^/]+)/i
-
 const feeds = withHintLabels(comicfury.feeds)
 
 export const parseComicfuryUrl = (url: string): ComicfuryUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = comicfury.pages.read(url)
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  if (!isHostOf(parsedUrl, hosts)) {
-    const comic = getTenantSubdomain(parsedUrl, domains)
-
-    if (!comic || !alphanumericOrHyphenRegex.test(comic)) {
-      return
-    }
-
-    return { kind: 'comic', comic }
+  if (page.key === 'profile') {
+    return { kind: 'profile', comic: page.params.comic }
   }
 
-  if (isAnyOf(parsedUrl.pathname, '/comicprofile.php')) {
-    const comic = getQueryParam(parsedUrl.searchParams, 'url')
-
-    if (!comic || !alphanumericOrHyphenRegex.test(comic)) {
-      return
-    }
-
-    return { kind: 'profile', comic }
+  if (page.key === 'reader') {
+    return { kind: 'reader', comic: page.params.comic }
   }
 
-  const comic = parsedUrl.pathname.match(readerPathRegex)?.[1]
-
-  if (!comic || !alphanumericOrHyphenRegex.test(comic)) {
-    return
-  }
-
-  return { kind: 'reader', comic }
+  return { kind: 'comic', comic: page.params.comic }
 }
 
 export const comicfuryHandler: PlatformHandler = {
@@ -71,10 +46,7 @@ export const comicfuryHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'profile') {
-      // Every comic answers on thecomicseries.com, whichever of the domains it picked.
-      const params = { host: `${parsed.comic}.thecomicseries.com` }
-
-      return [page.getFeedEntry('comic', params)]
+      return [page.getFeedEntry('comic', { comic: parsed.comic })]
     }
 
     return [page.getFeedEntry('reader', { comic: parsed.comic })]

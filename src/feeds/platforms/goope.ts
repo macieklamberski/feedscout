@@ -1,13 +1,5 @@
 import { goope } from 'feedintel'
-import {
-  getPathSegments,
-  isAnyOf,
-  isHostOf,
-  isHostOrSubdomainOf,
-  parseUrl,
-  resolveUrl,
-  startsWithAnyOf,
-} from 'trousse'
+import { isHostOf, parseUrl, resolveUrl, startsWithAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -22,10 +14,7 @@ export type GoopeUrl = {
 }
 
 const hosts = goope.hosts.exact
-const domains = ['goope.jp']
 const assetHosts = ['cdn.goope.jp']
-
-const templateRegex = /^t_\d+$/i
 
 const feeds = withHintLabels(goope.feeds)
 
@@ -68,35 +57,21 @@ export const parseGoopeUrl = (url: string): GoopeUrl | undefined => {
     return
   }
 
-  const segments = getPathSegments(parsedUrl)
-  let kind: GoopeUrl['kind'] = 'site'
-  let site: string | undefined
+  // The root of r.goope.jp redirects to goope.jp.
+  const page = goope.pages.read(url) ?? goope.pages.read(url, { root: parsedUrl.origin })
 
-  if (isHostOf(parsedUrl, hosts)) {
-    site = segments.shift()
-
-    // The root of r.goope.jp redirects to goope.jp.
-    if (!site) {
-      return
-    }
-
-    kind = 'freeSite'
-  } else if (isHostOrSubdomainOf(parsedUrl, domains)) {
+  if (!page || page.key === 'platform') {
     return
   }
 
-  // A `t_{id}` segment serves the site in another template.
-  const [templateOrSection] = segments
+  const { site } = page.params
 
-  if (templateRegex.test(templateOrSection ?? '')) {
-    segments.shift()
+  return {
+    kind: site ? 'freeSite' : 'site',
+    site,
+    isMemberPage: page.key === 'members',
+    isAssociationPage: page.key !== 'site',
   }
-
-  const [section, page] = segments
-  const isAssociationPage = isAnyOf(section, 'shokokai')
-  const isMemberPage = isAssociationPage && isAnyOf(page, 'member')
-
-  return { kind, site, isMemberPage, isAssociationPage }
 }
 
 export const goopeHandler: PlatformHandler = {

@@ -1,5 +1,4 @@
 import { laget } from 'feedintel'
-import { getPathSegments, isHostOf, isHostOrSubdomainOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -8,9 +7,6 @@ import { findElement, hasMarker } from '../../common/utils.js'
 // Handler needed for: news.
 
 export type LagetUrl = { kind: 'team'; team: string }
-
-const hosts = laget.hosts.exact
-const domains = laget.hosts.tenants
 
 // A bare `laget.se` also matches other domains, such as `snickeribolaget.se`.
 const lagetAssetRegex = /^(?:https?:)?\/\/[a-z]-content\.laget\.se\//i
@@ -31,22 +27,18 @@ export const isLagetHtml = (content: string): boolean => {
 }
 
 export const parseLagetUrl = (url: string): LagetUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = laget.pages.read(url)
+
+  if (page?.key !== 'team') {
     return
   }
 
-  const [team] = getPathSegments(url)
-
-  if (!team || team.includes('.')) {
-    return
-  }
-
-  return { kind: 'team', team }
+  return { kind: 'team', team: page.params.team }
 }
 
 export const lagetHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (isHostOrSubdomainOf(url, domains)) {
+    if (laget.pages.read(url)) {
       return parseLagetUrl(url) !== undefined
     }
 
@@ -63,7 +55,7 @@ export const lagetHandler: PlatformHandler = {
 
     const page = feeds.forUrl(url)
 
-    if (isHostOrSubdomainOf(url, domains) || !page) {
+    if (laget.pages.read(url) || !page) {
       return []
     }
 

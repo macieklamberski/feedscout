@@ -54,7 +54,7 @@ const uploadsPlaylistRegex = /^(UU(?:LF|SH|LV|LP|PS|PV|MO|MS|MV)?)[\w-]{22}$/
 // The playlists YouTube derives from a channel, the UC of its ID replaced by the prefix. The bare
 // UU list is the channel's uploads, the second spelling of the channel feed.
 // See: https://stackoverflow.com/a/77816885.
-const uploadsPlaylistKeys: Record<string, string> = {
+const uploadsPlaylistKeys: Record<string, Parameters<typeof youtube.feeds.getFeedEntry>[0]> = {
   UULF: 'videos',
   UUSH: 'shorts',
   UULV: 'live',

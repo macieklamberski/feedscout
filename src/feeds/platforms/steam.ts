@@ -1,5 +1,4 @@
 import { steam } from 'feedintel'
-import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -13,59 +12,33 @@ export type SteamUrl =
   | { kind: 'collection'; collection: string }
   | { kind: 'news' }
 
-const storeHosts = ['store.steampowered.com']
-const communityHosts = ['steamcommunity.com']
-const hosts = [...storeHosts, ...communityHosts]
-
-// An age-gated store page redirects to /agecheck/app/{id}.
-const appRegex = /^\/(?:agecheck\/|news(?:hub)?\/)?app\/(\d+)(?:\/|$)/i
-const groupRegex = /^\/groups\/([^/]+)/i
-const groupNewsRegex = /^\/news\/group\/(\d+)(?:\/|$)/i
-const collectionRegex = /^\/news\/collection\/([^/]+)/i
-// The store front links to `/newshub/`, which redirects to `/news/`.
-const newsRegex = /^\/news(?:hub)?(?:\/|$)/i
-
 const feeds = withHintLabels(steam.feeds)
 
 export const parseSteamUrl = (url: string): SteamUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = steam.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const appId = parsedUrl.pathname.match(appRegex)?.[1]
-
-  if (appId) {
-    return { kind: 'app', appId }
+  if (page.key === 'storeApp' || page.key === 'app') {
+    return { kind: 'app', appId: page.params.appId }
   }
 
-  const group = parsedUrl.pathname.match(groupRegex)?.[1]
-
-  if (group && isHostOf(parsedUrl, communityHosts)) {
-    return { kind: 'group', group }
+  if (page.key === 'group') {
+    return { kind: 'group', group: page.params.group }
   }
 
-  const { pathname } = parsedUrl
+  if (page.key === 'groupNews') {
+    return { kind: 'groupNews', clanId: page.params.clanId }
+  }
 
-  if (isHostOf(parsedUrl, storeHosts)) {
-    const clanId = pathname.match(groupNewsRegex)?.[1]
-
-    if (clanId) {
-      return { kind: 'groupNews', clanId }
-    }
-
-    const collection = pathname.match(collectionRegex)?.[1]
-
-    if (collection) {
-      return { kind: 'collection', collection }
-    }
+  if (page.key === 'collection') {
+    return { kind: 'collection', collection: page.params.collection }
   }
 
   // The store front and its news hub get the store-wide listings.
-  if (isHostOf(parsedUrl, storeHosts) && (pathname === '/' || newsRegex.test(pathname))) {
-    return { kind: 'news' }
-  }
+  return { kind: 'news' }
 }
 
 export const steamHandler: PlatformHandler = {
@@ -86,7 +59,7 @@ export const steamHandler: PlatformHandler = {
       return [
         feeds.getFeedEntry('news', { appId: parsed.appId }),
         feeds.getFeedEntry('community-news', { game: parsed.appId }),
-        ...(isHostOf(url, storeHosts)
+        ...(steam.pages.read(url)?.key === 'storeApp'
           ? [
               feeds.getFeedEntry('daily-deals'),
               feeds.getFeedEntry('new-releases'),

@@ -1,15 +1,13 @@
 import { bigCartel } from 'feedintel'
-import { isAnyOf, isHostOrSubdomainOf } from 'trousse'
+import { isAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Handler needed for: products.
 
 export type BigCartelUrl = { kind: 'store' }
-
-const domains = bigCartel.hosts.tenants
 
 const frameOptionsRegex = /https:\/\/my\.bigcartel\.com/i
 const themeStylesheetRegex = /^\/theme_stylesheets\/\d+\/\d+\/theme\.css$/i
@@ -33,7 +31,7 @@ export const isBigCartelHeaders = (headers: Headers): boolean => {
 }
 
 export const parseBigCartelUrl = (url: string): BigCartelUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  if (bigCartel.pages.read(url)?.key !== 'store') {
     return
   }
 
@@ -42,7 +40,7 @@ export const parseBigCartelUrl = (url: string): BigCartelUrl | undefined => {
 
 export const bigCartelHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (isHostOrSubdomainOf(url, domains)) {
+    if (bigCartel.pages.read(url)) {
       return parseBigCartelUrl(url) !== undefined
     }
 

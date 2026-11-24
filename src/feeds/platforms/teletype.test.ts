@@ -26,8 +26,11 @@ describe('parseTeletypeUrl', () => {
     )
   })
 
-  it('should return undefined for a malformed encoded username', () => {
-    expect(parseTeletypeUrl('https://teletype.in/@%E0%A4%A')).toBeUndefined()
+  it('should read a broken percent escape in a username as the text written', () => {
+    const value = 'https://teletype.in/@%E0%A4%A'
+    const expected: TeletypeUrl = { kind: 'blog', username: '%E0%A4%A' }
+
+    expect(parseTeletypeUrl(value)).toEqual(expected)
   })
 
   it('should return undefined for paths without @ prefix', () => {

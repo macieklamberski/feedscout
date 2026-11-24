@@ -1,7 +1,7 @@
 import { ausha } from 'feedintel'
-import { getPathSegments, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { findUrls } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Handler needed for: podcast.
@@ -9,21 +9,23 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 export type AushaUrl = { kind: 'show' }
 export type AushaPage = { kind: 'show'; feedId: string }
 
-const hosts = ausha.hosts.exact
-
-// The feed id is opaque: show and episode pages carry it only in the markup.
-const feedIdRegex = /feed\.ausha\.co\/(\w+)/i
-
 const feeds = withHintLabels(ausha.feeds)
 
-export const parseAushaUrl = (url: string): AushaUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
-    return
+// The feed id is opaque: show and episode pages carry it only in the markup.
+const getLinkedFeedId = (content: string): string | undefined => {
+  for (const url of findUrls(content)) {
+    const feed = ausha.feeds.read(url)
+
+    if (feed?.key === 'podcast') {
+      return feed.params.feedId
+    }
   }
+}
 
-  const [slug] = getPathSegments(url)
+export const parseAushaUrl = (url: string): AushaUrl | undefined => {
+  const page = ausha.pages.read(url)
 
-  if (!slug) {
+  if (!page) {
     return
   }
 
@@ -32,7 +34,7 @@ export const parseAushaUrl = (url: string): AushaUrl | undefined => {
 
 export const getAushaPage = (url: string, content: string | undefined): AushaPage | undefined => {
   const parsed = parseAushaUrl(url)
-  const feedId = content?.match(feedIdRegex)?.[1]
+  const feedId = getLinkedFeedId(content ?? '')
 
   if (!parsed || !feedId) {
     return

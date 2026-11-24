@@ -1,5 +1,4 @@
 import { deviantart } from 'feedintel'
-import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -14,57 +13,36 @@ export type DeviantartUrl =
   | { kind: 'profile'; username: string }
   | { kind: 'dailyDeviations' }
 
-const hosts = deviantart.hosts.exact
-
-const tagRegex = /^\/tag\/([^/]+)/i
-const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/|$)/i
-const favouritesRegex = /^\/[^/]+\/favourites\/?$/i
-const folderRegex = /^\/[^/]+\/gallery\/(\d+)(?:\/|$)/i
-const journalRegex = /^\/[^/]+\/journal(?:\/|$)/i
-const dailyDeviationsRegex = /^\/daily-deviations\/?$/i
-
 const feeds = withHintLabels(deviantart.feeds)
 
 export const parseDeviantartUrl = (url: string): DeviantartUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = deviantart.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const { pathname } = parsedUrl
-
-  if (dailyDeviationsRegex.test(pathname)) {
+  if (page.key === 'dailyDeviations') {
     return { kind: 'dailyDeviations' }
   }
 
-  const tag = pathname.match(tagRegex)?.[1]
-
-  if (tag) {
-    return { kind: 'tag', tag: decodeSegment(tag) ?? tag }
+  if (page.key === 'tag') {
+    return { kind: 'tag', tag: page.params.tag }
   }
 
-  const username = pathname.match(userRegex)?.[1]
-
-  if (!username) {
-    return
+  if (page.key === 'favourites') {
+    return { kind: 'favourites', username: page.params.username }
   }
 
-  if (favouritesRegex.test(pathname)) {
-    return { kind: 'favourites', username }
+  if (page.key === 'folder') {
+    return { kind: 'folder', username: page.params.username, folderId: page.params.folderId }
   }
 
-  const folderId = pathname.match(folderRegex)?.[1]
-
-  if (folderId) {
-    return { kind: 'folder', username, folderId }
+  if (page.key === 'journal') {
+    return { kind: 'journal', username: page.params.username }
   }
 
-  if (journalRegex.test(pathname)) {
-    return { kind: 'journal', username }
-  }
-
-  return { kind: 'profile', username }
+  return { kind: 'profile', username: page.params.username }
 }
 
 export const deviantartHandler: PlatformHandler = {

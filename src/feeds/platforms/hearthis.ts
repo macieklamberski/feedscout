@@ -1,5 +1,4 @@
 import { hearthis } from 'feedintel'
-import { getPathSegments, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -7,22 +6,16 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type HearthisUrl = { kind: 'profile'; username: string }
 
-const hosts = hearthis.hosts.exact
-
 const feeds = withHintLabels(hearthis.feeds)
 
 export const parseHearthisUrl = (url: string): HearthisUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = hearthis.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [username] = getPathSegments(url)
-
-  if (!username) {
-    return
-  }
-
-  return { kind: 'profile', username }
+  return { kind: 'profile', username: page.params.username }
 }
 
 export const hearthisHandler: PlatformHandler = {

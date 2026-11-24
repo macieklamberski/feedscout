@@ -13,10 +13,6 @@ export type NingUrl =
   | { kind: 'group'; group: string }
   | { kind: 'home' }
 
-const topicRegex = /^\/forum\/topics\/([^/]+)\/?$/i
-const groupTopicRegex = /^\/group\/(?<group>[^/]+)\/forum\/topics\/(?<topic>[^/]+)\/?$/i
-const groupRegex = /^\/group\/([^/]+)/i
-
 const feeds = withHintLabels(ning.feeds)
 
 // Ning 3 networks send the same `ning_session` cookie and `x-xn-trace-token` header but serve
@@ -26,29 +22,22 @@ export const isNingHtml = (content: string): boolean => {
 }
 
 export const parseNingUrl = (url: string): NingUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = ning.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
 
-  if (!parsedUrl) {
+  if (!page) {
     return
   }
 
-  const { pathname } = parsedUrl
-  const topic = pathname.match(topicRegex)?.[1]
-
-  if (topic) {
-    return { kind: 'topic', topic }
+  if (page.key === 'topic' && page.params.group) {
+    return { kind: 'topic', topic: page.params.topic, group: page.params.group }
   }
 
-  const groupTopic = pathname.match(groupTopicRegex)?.groups
-
-  if (groupTopic?.group && groupTopic.topic) {
-    return { kind: 'topic', topic: groupTopic.topic, group: groupTopic.group }
+  if (page.key === 'topic') {
+    return { kind: 'topic', topic: page.params.topic }
   }
 
-  const group = pathname.match(groupRegex)?.[1]
-
-  if (group) {
-    return { kind: 'group', group }
+  if (page.key === 'group') {
+    return { kind: 'group', group: page.params.group }
   }
 
   return { kind: 'home' }

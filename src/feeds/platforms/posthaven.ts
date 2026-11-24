@@ -1,8 +1,6 @@
 import { posthaven } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: posts.
@@ -10,23 +8,17 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type PosthavenUrl = { kind: 'tag'; tag: string } | { kind: 'blog' }
 
-const domains = posthaven.hosts.tenants
-
-const tagRegex = /^\/tag\/([^/]+)/i
-
 const feeds = withHintLabels(posthaven.feeds)
 
 export const parsePosthavenUrl = (url: string): PosthavenUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = posthaven.pages.read(url)
 
-  if (!parsedUrl || !getTenantSubdomain(parsedUrl, domains)) {
+  if (!page) {
     return
   }
 
-  const tag = parsedUrl.pathname.match(tagRegex)?.[1]
-
-  if (tag) {
-    return { kind: 'tag', tag }
+  if (page.key === 'tag') {
+    return { kind: 'tag', tag: page.params.tag }
   }
 
   return { kind: 'blog' }

@@ -1,9 +1,11 @@
+import type { UrlHosts } from 'feedintel'
 import { DomUtils, parseDocument } from 'htmlparser2'
 import {
   anyWordMatchesAnyOf,
   escapeRegex,
   getSubdomain,
   isAnyOf,
+  isFunction,
   isHostname,
   isInteger,
   isSameText,
@@ -237,17 +239,59 @@ export const getCookieNames = (headers: Headers): Array<string> => {
   return Array.from(cookies.matchAll(cookieNameRegex), (match) => match[1])
 }
 
+// A URL in raw text ends at whitespace, a quote, an angle bracket or the backslash of an escape.
+const textUrlRegex = /https?:\/\/[^\s"'<>\\]+/gi
+
+// Every http and https URL written in a text, as a page's markup or its inline JSON.
+export const findUrls = (text: string): Array<string> => {
+  return Array.from(text.matchAll(textUrlRegex), (match) => match[0])
+}
+
 // A script takes path info, as in `/app.php/help/faq`, and a rewritten page is an HTML file.
 const scriptSegmentRegex = /\/[^/]*\.(?:php(?:\/.*)?|html?)$/i
 const trailingSlashRegex = /\/$/
+
+// The labels in front of the tenant domain a host is under, as `blog.alice` for
+// `blog.alice.example.com`. A host check stands for the domains it accepts, so each parent domain
+// of the host is tried.
+export const getTenantLabels = (
+  url: string | URL,
+  domains: NonNullable<UrlHosts['tenants']>,
+): string | undefined => {
+  const hostname = parseUrl(url)?.hostname
+
+  if (!hostname) {
+    return
+  }
+
+  for (const domain of domains) {
+    if (!isFunction(domain)) {
+      const subdomain = getSubdomain(url, domain)
+
+      if (subdomain) {
+        return subdomain
+      }
+
+      continue
+    }
+
+    const labels = hostname.split('.')
+
+    for (let index = 1; index < labels.length; index++) {
+      if (domain(labels.slice(index).join('.'))) {
+        return labels.slice(0, index).join('.')
+      }
+    }
+  }
+}
 
 // The subdomain a platform gives one of its users: a single label other than `www`, which is the
 // platform's own site everywhere.
 export const getTenantSubdomain = (
   url: string | URL,
-  domains: Array<string | RegExp>,
+  domains: NonNullable<UrlHosts['tenants']>,
 ): string | undefined => {
-  const subdomain = getSubdomain(url, domains)
+  const subdomain = getTenantLabels(url, domains)
 
   if (!subdomain || subdomain.includes('.')) {
     return

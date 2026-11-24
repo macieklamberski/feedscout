@@ -1,24 +1,21 @@
 import { travellerspoint } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type TravellerspointUrl = { kind: 'blog'; blog: string }
 
-const domains = travellerspoint.hosts.tenants
-
 const feeds = withHintLabels(travellerspoint.feeds)
 
 export const parseTravellerspointUrl = (url: string): TravellerspointUrl | undefined => {
-  const blog = getTenantSubdomain(url, domains)
+  const page = travellerspoint.pages.read(url)
 
-  if (!blog) {
+  if (!page) {
     return
   }
 
-  return { kind: 'blog', blog }
+  return { kind: 'blog', blog: page.params.blog }
 }
 
 export const travellerspointHandler: PlatformHandler = {

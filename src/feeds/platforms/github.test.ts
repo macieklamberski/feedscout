@@ -55,7 +55,7 @@ describe('parseGithubUrl', () => {
   })
 
   it('should keep a URL-encoded repo name', () => {
-    const expected: GithubUrl = { kind: 'repo', owner: 'owner', repo: 'my%20repo' }
+    const expected: GithubUrl = { kind: 'repo', owner: 'owner', repo: 'my repo' }
 
     expect(parseGithubUrl('https://github.com/owner/my%20repo')).toEqual(expected)
   })

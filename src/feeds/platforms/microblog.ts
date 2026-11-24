@@ -1,8 +1,6 @@
 import { microblog } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: category, posts.
@@ -14,34 +12,26 @@ export type MicroblogUrl =
   | { kind: 'photos'; username: string }
   | { kind: 'blog'; username: string }
 
-export const domains = microblog.hosts.tenants
-
-const categoryRegex = /^\/categories\/([^/]+)/i
-const archiveRegex = /^\/archive(?:\/|$)/i
-const photosRegex = /^\/photos(?:\/|$)/i
-
 const feeds = withHintLabels(microblog.feeds)
 
 export const parseMicroblogUrl = (url: string): MicroblogUrl | undefined => {
-  const parsedUrl = parseUrl(url)
-  const username = getTenantSubdomain(url, domains)
+  const page = microblog.pages.read(url)
 
-  if (!parsedUrl || !username) {
+  if (!page) {
     return
   }
 
-  const { pathname } = parsedUrl
-  const category = pathname.match(categoryRegex)?.[1]
+  const { username } = page.params
 
-  if (category) {
-    return { kind: 'category', username, category }
+  if (page.key === 'category') {
+    return { kind: 'category', username, category: page.params.category }
   }
 
-  if (archiveRegex.test(pathname)) {
+  if (page.key === 'archive') {
     return { kind: 'archive', username }
   }
 
-  if (photosRegex.test(pathname)) {
+  if (page.key === 'photos') {
     return { kind: 'photos', username }
   }
 

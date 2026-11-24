@@ -1,8 +1,7 @@
 import { webtoons } from 'feedintel'
-import { getQueryParam, isAnyOf, isHostOf, isLocale, parseUrl } from 'trousse'
+import { isAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Handler needed for: series.
@@ -15,34 +14,18 @@ export type WebtoonsUrl = {
   titleNo: string
 }
 
-const hosts = webtoons.hosts.exact
-
-const seriesRegex = /^\/([^/]+)\/([^/]+)\/([^/]+)\/(?:list|[^/]+\/viewer)\/?$/i
-
 const canvasGenres = ['canvas', 'challenge']
 
 const feeds = withHintLabels(webtoons.feeds)
 
 export const parseWebtoonsUrl = (url: string): WebtoonsUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = webtoons.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const [, language, genre, name] = parsedUrl.pathname.match(seriesRegex) ?? []
-  const titleNo = getQueryParam(parsedUrl.searchParams, 'title_no')
-
-  if (
-    !language ||
-    !isLocale(language) ||
-    !genre ||
-    !name ||
-    !titleNo ||
-    !digitsRegex.test(titleNo)
-  ) {
-    return
-  }
+  const { language, genre, name, titleNo } = page.params
 
   return { kind: 'series', language, genre, name, titleNo }
 }

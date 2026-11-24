@@ -1,5 +1,4 @@
 import { pypi } from 'feedintel'
-import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -7,24 +6,17 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type PypiUrl = { kind: 'project'; project: string } | { kind: 'home' }
 
-const hosts = pypi.hosts.exact
-
-const projectRegex = /^\/project\/([\w.-]+)(?:\/|$)/i
-
 const feeds = withHintLabels(pypi.feeds)
 
 export const parsePypiUrl = (url: string): PypiUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = pypi.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const { pathname } = parsedUrl
-  const project = pathname.match(projectRegex)?.[1]
-
-  if (project) {
-    return { kind: 'project', project }
+  if (page.key === 'project') {
+    return { kind: 'project', project: page.params.project }
   }
 
   return { kind: 'home' }

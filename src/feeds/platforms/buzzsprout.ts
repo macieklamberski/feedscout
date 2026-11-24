@@ -1,29 +1,21 @@
 import { buzzsprout } from 'feedintel'
-import { getPathSegments, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type BuzzsproutUrl = { kind: 'podcast'; podcastId: string }
 
-const hosts = buzzsprout.hosts.exact
-
 const feeds = withHintLabels(buzzsprout.feeds)
 
 export const parseBuzzsproutUrl = (url: string): BuzzsproutUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = buzzsprout.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [podcastId] = getPathSegments(url)
-
-  if (!podcastId || !digitsRegex.test(podcastId)) {
-    return
-  }
-
-  return { kind: 'podcast', podcastId }
+  return { kind: 'podcast', podcastId: page.params.podcastId }
 }
 
 export const buzzsproutHandler: PlatformHandler = {

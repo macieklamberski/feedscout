@@ -1,5 +1,5 @@
 import { gitlab } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
@@ -11,11 +11,6 @@ import { hasMarker } from '../../common/utils.js'
 export type GitlabUrl =
   | { kind: 'namespace'; namespace: string }
   | { kind: 'project'; namespace: string; projectPath: string; branch?: string }
-
-export const hosts = gitlab.hosts.exact
-
-// GitLab names may contain dots, so only the feed suffix is cut off.
-const feedSuffixRegex = /\.atom$/i
 
 const feeds = withHintLabels(gitlab.feeds)
 
@@ -29,68 +24,37 @@ export const isGitlabHeaders = (headers: Headers): boolean => {
   return headers.has('x-gitlab-meta')
 }
 
-// Legacy project URLs put the feature straight after the project path, with no
-// `-` separator. A project can itself be named `tree`, so never cut at the
-// second segment.
-const legacyFeaturePaths = ['tree', 'commits']
-
-const accountPrefixes = ['groups', 'users']
-
-const splitProjectPath = (pathSegments: Array<string>): [Array<string>, Array<string>] => {
-  const dashIndex = pathSegments.indexOf('-')
-
-  if (dashIndex !== -1) {
-    return [pathSegments.slice(0, dashIndex), pathSegments.slice(dashIndex + 1)]
-  }
-
-  const featureIndex = pathSegments.findIndex((segment, index) => {
-    return index > 1 && isAnyOf(segment, legacyFeaturePaths)
-  })
-
-  if (featureIndex === -1) {
-    return [pathSegments, []]
-  }
-
-  return [pathSegments.slice(0, featureIndex), pathSegments.slice(featureIndex)]
-}
-
 export const parseGitlabUrl = (url: string): GitlabUrl | undefined => {
-  const segments = getPathSegments(url)
-  const [prefixOrNamespace, account] = segments
+  const page = gitlab.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
 
-  // A group or user page and its tabs sit under /groups/ or /users/, before the account name.
-  if (isAnyOf(prefixOrNamespace, accountPrefixes) && account) {
-    // A subgroup is named by every segment before the `/-/` separator.
-    if (isAnyOf(prefixOrNamespace, 'groups')) {
-      const dashIndex = segments.indexOf('-')
-      const groupSegments = segments.slice(1, dashIndex === -1 ? undefined : dashIndex)
-
-      return { kind: 'namespace', namespace: groupSegments.join('/') }
-    }
-
-    return { kind: 'namespace', namespace: account }
-  }
-
-  const [projectSegments, featureSegments] = splitProjectPath(segments)
-  const [first, ...rest] = projectSegments
-  const namespace = first?.replace(feedSuffixRegex, '')
-
-  if (!namespace) {
+  if (!page) {
     return
   }
 
-  if (rest.length === 0) {
-    return { kind: 'namespace', namespace }
+  if (page.key === 'platform') {
+    return
   }
 
-  const projectPath = [namespace, ...rest].join('/')
-
-  // Branch commits or tree page: .../-/(commits|tree)/{branch}.
-  if (isAnyOf(featureSegments[0], legacyFeaturePaths) && featureSegments[1]) {
-    return { kind: 'project', namespace, projectPath, branch: featureSegments[1] }
+  if (page.key === 'group') {
+    return { kind: 'namespace', namespace: page.params.group.join('/') }
   }
 
-  return { kind: 'project', namespace, projectPath }
+  if (page.key === 'user') {
+    return { kind: 'namespace', namespace: page.params.user }
+  }
+
+  if (page.key === 'namespace') {
+    return { kind: 'namespace', namespace: page.params.namespace }
+  }
+
+  const { project } = page.params
+  const projectPath = project.join('/')
+
+  if (page.key === 'branch') {
+    return { kind: 'project', namespace: project[0], projectPath, branch: page.params.branch }
+  }
+
+  return { kind: 'project', namespace: project[0], projectPath }
 }
 
 export const gitlabHandler: PlatformHandler = {
@@ -99,13 +63,10 @@ export const gitlabHandler: PlatformHandler = {
       return false
     }
 
-    if (isHostOf(url, hosts)) {
-      return true
-    }
+    const page = gitlab.pages.read(url)
 
-    // GitLab's own subdomains, such as about.gitlab.com, are its marketing and docs sites.
-    if (isSubdomainOf(url, hosts)) {
-      return false
+    if (page) {
+      return page.key !== 'platform'
     }
 
     return hasMarker(content, headers, { html: isGitlabHtml, headers: isGitlabHeaders })

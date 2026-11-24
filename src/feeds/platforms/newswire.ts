@@ -1,8 +1,6 @@
 import { newswire } from 'feedintel'
-import { getAnyOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: newsroom.
@@ -11,40 +9,29 @@ import { getTenantSubdomain } from '../../common/utils.js'
 export type NewswireUrl =
   | { kind: 'newsroom'; newsroom: string }
   | { kind: 'beat'; newsroom: string; beat: string }
-  | { kind: 'contentType'; newsroom: string; contentType: NewswireContentType }
-
-type NewswireContentType = (typeof contentTypes)[number]
-
-const domains = newswire.hosts.tenants
-
-const beatPathRegex = /^\/browse\/beat\/([a-z0-9-]+)\/?$/i
-const contentTypePathRegex = /^\/browse\/([^/]+)\/?$/i
-
-const contentTypes = ['news', 'pr', 'social', 'image', 'video', 'audio', 'event'] as const
+  | { kind: 'contentType'; newsroom: string; contentType: string }
 
 const feeds = withHintLabels(newswire.feeds)
 
 export const parseNewswireUrl = (url: string): NewswireUrl | undefined => {
-  const pathname = parseUrl(url)?.pathname
-  const newsroom = getTenantSubdomain(url, domains)
+  const page = newswire.pages.read(url)
 
-  if (!pathname || !newsroom) {
+  if (!page) {
     return
   }
 
-  const beat = pathname.match(beatPathRegex)?.[1]
+  const { newsroom } = page.params
 
-  if (beat) {
-    return { kind: 'beat', newsroom, beat }
+  if (page.key === 'beat') {
+    return { kind: 'beat', newsroom, beat: page.params.beat }
   }
 
-  const contentType = getAnyOf(pathname.match(contentTypePathRegex)?.[1], contentTypes)
-
-  if (contentType) {
-    return { kind: 'contentType', newsroom, contentType }
+  if (page.key === 'newsroom') {
+    return { kind: 'newsroom', newsroom }
   }
 
-  return { kind: 'newsroom', newsroom }
+  // Every other page lists one content type, the key of its row.
+  return { kind: 'contentType', newsroom, contentType: page.key }
 }
 
 export const newswireHandler: PlatformHandler = {

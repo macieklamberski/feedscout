@@ -1,34 +1,21 @@
 import { fireside } from 'feedintel'
-import { decodePercent, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type FiresideUrl = { kind: 'podcast'; slug: string; tag?: string }
 
-const domains = fireside.hosts.tenants
-
-const tagPathRegex = /^\/tags\/([^/]+)\/?$/i
-
 const feeds = withHintLabels(fireside.feeds)
 
 export const parseFiresideUrl = (url: string): FiresideUrl | undefined => {
-  const slug = getTenantSubdomain(url, domains)
+  const page = fireside.pages.read(url)
 
-  if (!slug) {
+  if (!page) {
     return
   }
 
-  // A tag page, /tags/{tag}, has a feed of the episodes with that tag.
-  const tag = parseUrl(url)?.pathname.match(tagPathRegex)?.[1]
-
-  if (tag) {
-    return { kind: 'podcast', slug, tag: decodePercent(tag) }
-  }
-
-  return { kind: 'podcast', slug }
+  return { kind: 'podcast', slug: page.params.slug, tag: page.params.tag }
 }
 
 export const firesideHandler: PlatformHandler = {

@@ -1,8 +1,6 @@
 import { itchio } from 'feedintel'
-import { getAnyOf, isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: devlog.
@@ -21,134 +19,54 @@ export type ItchioUrl =
   | { kind: 'section'; section: string }
   | { kind: 'home' }
 
-const domains = itchio.hosts.tenants
-const mainHosts = ['itch.io', 'www.itch.io']
-
-const byUserRegex = /^\/games\/by-([^/]+)/i
-const tagRegex = /^\/games\/tag-([^/]+)/i
-const platformRegex = /^\/games\/platform-([^/]+)/i
-const genreRegex = /^\/games\/genre-([^/]+)/i
-const madeWithRegex = /^\/games\/made-with-([^/]+)/i
-const sortRegex = /^\/games\/([^/]+)/i
-// A listing with two or more filters, such as /games/newest/tag-horror, has its feed at its path.
-const combinedListingRegex = /^\/games\/([^/]+(?:\/[^/]+)+)/i
-// A listing of one sort and one tag or creator, such as newest/tag-horror.
-const sortedListingRegex = /^(?<sort>[^/]+)\/(?<filter>tag|by)-(?<value>[^/]+)$/i
-const firstSegmentRegex = /^\/([^/]+)/
-const gamesRegex = /^\/games\/?$/i
-const devlogsRegex = /^\/devlogs\/?$/i
-
-const sections = [
-  'tools',
-  'game-assets',
-  'soundtracks',
-  'physical-games',
-  'books',
-  'comics',
-  'misc',
-]
-const sorts = [
-  'newest',
-  'top-rated',
-  'top-sellers',
-  'on-sale',
-  'free',
-  'released',
-  'in-development',
-]
-
 const feeds = withHintLabels(itchio.feeds)
 
 export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
-  if (!isHostOf(url, mainHosts) && !isSubdomainOf(url, domains)) {
+  const page = itchio.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const { pathname } = new URL(url)
-
-  // Subdomain: creator pages ({creator}.itch.io).
-  if (!isHostOf(url, mainHosts)) {
-    const creator = getTenantSubdomain(url, domains)
-
-    if (!creator) {
-      return
-    }
-
-    const game = pathname.match(firstSegmentRegex)?.[1]
-
-    if (game) {
-      return { kind: 'game', creator, game }
-    }
-
-    return { kind: 'creator', creator }
+  if (page.key === 'game') {
+    return { kind: 'game', creator: page.params.creator, game: page.params.game }
   }
 
-  const filters = pathname.match(combinedListingRegex)?.[1]
-
-  if (filters) {
-    const sorted = sortedListingRegex.exec(filters)?.groups
-    const sort = getAnyOf(sorted?.sort, sorts)
-
-    if (sorted && sort && isAnyOf(sorted.filter, 'tag')) {
-      return { kind: 'tag', tag: sorted.value, sort }
-    }
-
-    if (sorted && sort) {
-      return { kind: 'creator', creator: sorted.value, sort }
-    }
-
-    return { kind: 'listing', filters }
+  // A sort and a section are read in any case, and their feeds are named in lower case.
+  if (page.key === 'creator') {
+    return { kind: 'creator', creator: page.params.creator, sort: page.params.sort?.toLowerCase() }
   }
 
-  const creator = pathname.match(byUserRegex)?.[1]
-
-  if (creator) {
-    return { kind: 'creator', creator }
+  if (page.key === 'tag') {
+    return { kind: 'tag', tag: page.params.tag, sort: page.params.sort?.toLowerCase() }
   }
 
-  const tag = pathname.match(tagRegex)?.[1]
-
-  if (tag) {
-    return { kind: 'tag', tag }
+  if (page.key === 'listing') {
+    return { kind: 'listing', filters: page.params.filters.join('/') }
   }
 
-  const platform = pathname.match(platformRegex)?.[1]
-
-  if (platform) {
-    return { kind: 'platform', platform }
+  if (page.key === 'platform') {
+    return { kind: 'platform', platform: page.params.platform }
   }
 
-  const genre = pathname.match(genreRegex)?.[1]
-
-  if (genre) {
-    return { kind: 'genre', genre }
+  if (page.key === 'genre') {
+    return { kind: 'genre', genre: page.params.genre }
   }
 
-  const engine = pathname.match(madeWithRegex)?.[1]
-
-  if (engine) {
-    return { kind: 'madeWith', engine }
+  if (page.key === 'madeWith') {
+    return { kind: 'madeWith', engine: page.params.engine }
   }
 
-  const sort = getAnyOf(pathname.match(sortRegex)?.[1], sorts)
-
-  if (sort) {
-    return { kind: 'games', sort }
+  if (page.key === 'games') {
+    return { kind: 'games', sort: page.params.sort?.toLowerCase() }
   }
 
-  if (gamesRegex.test(pathname)) {
-    return { kind: 'games' }
-  }
-
-  if (devlogsRegex.test(pathname)) {
+  if (page.key === 'devlogs') {
     return { kind: 'devlogs' }
   }
 
-  // /{section} (tools, game-assets, soundtracks, physical-games, books, comics, misc)
-  const section = getAnyOf(pathname.match(firstSegmentRegex)?.[1], sections)
-
-  if (section) {
-    return { kind: 'section', section }
+  if (page.key === 'section') {
+    return { kind: 'section', section: page.params.section.toLowerCase() }
   }
 
   return { kind: 'home' }

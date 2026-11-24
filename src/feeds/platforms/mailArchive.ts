@@ -1,5 +1,4 @@
 import { mailArchive } from 'feedintel'
-import { decodeSegment, getPathSegments, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -8,24 +7,16 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type MailArchiveUrl = { kind: 'list'; list: string }
 
-const hosts = mailArchive.hosts.exact
-
 const feeds = withHintLabels(mailArchive.feeds)
 
 export const parseMailArchiveUrl = (url: string): MailArchiveUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = mailArchive.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [list] = getPathSegments(url)
-
-  // A list is archived under its posting address, so the site's own pages carry no `@`. The address
-  // stays as written, so a feed stored as `%40` keeps that spelling.
-  if (!list || !decodeSegment(list)?.includes('@')) {
-    return
-  }
-
-  return { kind: 'list', list }
+  return { kind: 'list', list: page.params.list }
 }
 
 export const mailArchiveHandler: PlatformHandler = {

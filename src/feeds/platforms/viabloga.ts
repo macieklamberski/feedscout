@@ -1,7 +1,6 @@
 import { viabloga } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: posts.
@@ -9,22 +8,17 @@ import { getTenantSubdomain } from '../../common/utils.js'
 
 export type ViablogaUrl = { kind: 'blog' } | { kind: 'category'; category: string }
 
-const domains = viabloga.hosts.tenants
-
-// A category page is `/{category}.shtml`, and its feed `/{category}.xml`.
-const categoryRegex = /^\/([^/.]+)\.shtml$/i
-
 const feeds = withHintLabels(viabloga.feeds)
 
 export const parseViablogaUrl = (url: string): ViablogaUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  const page = viabloga.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const category = categoryRegex.exec(new URL(url).pathname)?.[1]
-
-  if (category) {
-    return { kind: 'category', category }
+  if (page.key === 'category') {
+    return { kind: 'category', category: page.params.category }
   }
 
   return { kind: 'blog' }

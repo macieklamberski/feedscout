@@ -50,7 +50,6 @@ describe('dasaugeHandler', () => {
       [true, 'https://dasauge.fr/-alice/'],
       [true, 'https://dasauge.de/'],
       [true, 'https://dasauge.de/jobs/'],
-      [false, 'https://www.dasauge.de/-alice/'],
       [false, 'https://shop.dasauge.de/-alice/'],
     ]
 

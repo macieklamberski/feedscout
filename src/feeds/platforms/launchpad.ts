@@ -1,8 +1,6 @@
 import { launchpad } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: branch, bug, package-bugs, person-bugs, project-announcements, project-branches, project-bugs, project-revisions.
@@ -28,93 +26,52 @@ export type LaunchpadUrl =
   | { kind: 'person'; application: LaunchpadApplication; username: string }
   | { kind: 'project'; application: LaunchpadApplication; project: string }
 
-const bugsHosts = ['bugs.launchpad.net']
-const codeHosts = ['code.launchpad.net']
-const hosts = launchpad.hosts.exact
-
 const feeds = withHintLabels(launchpad.feeds)
 
-const getApplication = (parsedUrl: URL): LaunchpadApplication => {
-  if (isHostOf(parsedUrl, bugsHosts)) {
-    return 'bugs'
-  }
-
-  if (isHostOf(parsedUrl, codeHosts)) {
-    return 'code'
-  }
-
-  return 'main'
-}
-
 export const parseLaunchpadUrl = (url: string): LaunchpadUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = launchpad.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const segments = getPathSegments(parsedUrl)
-  const [pillarOrPerson, route, sourcePackage] = segments
-  const application = getApplication(parsedUrl)
-  const isCodeHost = application === 'code'
+  switch (page.key) {
+    case 'home':
+      return { kind: 'home', application: 'main' }
+    case 'bugsHome':
+      return { kind: 'home', application: 'bugs' }
+    case 'bug':
+      return { kind: 'bug', bugId: page.params.bugId }
+    case 'branch': {
+      const { owner, project, branch, distribution, series, sourcePackage } = page.params
 
-  if (!pillarOrPerson && application !== 'code') {
-    return { kind: 'home', application }
-  }
+      if (project) {
+        return { kind: 'branch', owner, project, branch }
+      }
 
-  // Code has no site-wide feed.
-  if (!pillarOrPerson) {
-    return
-  }
-
-  if (!isCodeHost) {
-    const bugIndex = segments.findIndex((segment, index) => {
-      return isAnyOf(segment, '+bug') || (index === 0 && isAnyOf(segment, 'bugs'))
-    })
-    const [, bugId] = segments.slice(bugIndex)
-
-    if (bugIndex !== -1 && bugId && digitsRegex.test(bugId)) {
-      return { kind: 'bug', bugId }
-    }
-  }
-
-  if (pillarOrPerson.startsWith('~')) {
-    if (pillarOrPerson.length > 1 && segments.length === 1) {
-      return { kind: 'person', application, username: pillarOrPerson.slice(1) }
-    }
-
-    if (!isCodeHost || segments.some((segment) => segment.startsWith('+'))) {
-      return
-    }
-
-    // Bazaar branches live at ~owner/project/branch or ~owner/distro/series/package/branch.
-    const owner = pillarOrPerson.slice(1)
-
-    if (segments.length === 3) {
-      const [, project, branch] = segments
-
-      return { kind: 'branch', owner, project, branch }
-    }
-
-    if (segments.length === 5) {
-      const [, distribution, series, sourcePackage, branch] = segments
+      if (!distribution || !series || !sourcePackage) {
+        return
+      }
 
       return { kind: 'branch', owner, distribution, series, sourcePackage, branch }
     }
+    case 'sourcePackage': {
+      const { distribution, sourcePackage } = page.params
 
-    return
-  }
-
-  if (pillarOrPerson.startsWith('+')) {
-    return
-  }
-
-  if (segments.length === 1) {
-    return { kind: 'project', application, project: pillarOrPerson }
-  }
-
-  if (!isCodeHost && sourcePackage && segments.length === 3 && isAnyOf(route, '+source')) {
-    return { kind: 'sourcePackage', distribution: pillarOrPerson, sourcePackage }
+      return { kind: 'sourcePackage', distribution, sourcePackage }
+    }
+    case 'person':
+      return { kind: 'person', application: 'main', username: page.params.username }
+    case 'bugsPerson':
+      return { kind: 'person', application: 'bugs', username: page.params.username }
+    case 'codePerson':
+      return { kind: 'person', application: 'code', username: page.params.username }
+    case 'project':
+      return { kind: 'project', application: 'main', project: page.params.project }
+    case 'bugsProject':
+      return { kind: 'project', application: 'bugs', project: page.params.project }
+    case 'codeProject':
+      return { kind: 'project', application: 'code', project: page.params.project }
   }
 }
 

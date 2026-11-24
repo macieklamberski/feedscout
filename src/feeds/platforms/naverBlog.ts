@@ -1,5 +1,4 @@
 import { naverBlog } from 'feedintel'
-import { getPathSegments, getQueryParam, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -8,39 +7,20 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type NaverBlogUrl = { kind: 'blog'; blogId: string } | { kind: 'post'; blogId: string }
 
-export const hosts = naverBlog.hosts.exact
-
 const feeds = withHintLabels(naverBlog.feeds)
 
 export const parseNaverBlogUrl = (url: string): NaverBlogUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = naverBlog.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const [blogIdOrScript, logNo] = getPathSegments(parsedUrl)
-
-  if (!blogIdOrScript) {
-    return
+  if (page.key === 'post') {
+    return { kind: 'post', blogId: page.params.blogId }
   }
 
-  // A dotted segment is a script such as /PostView.naver, which names the blog in its `blogId`
-  // query, and /BlogList.naver names none.
-  const blogId = blogIdOrScript.includes('.')
-    ? getQueryParam(parsedUrl.searchParams, 'blogId')
-    : blogIdOrScript
-
-  if (!blogId) {
-    return
-  }
-
-  // A script page such as /PostView.naver shows a post, as does /{blogId}/{logNo}.
-  if (logNo || blogIdOrScript.includes('.')) {
-    return { kind: 'post', blogId }
-  }
-
-  return { kind: 'blog', blogId }
+  return { kind: 'blog', blogId: page.params.blogId }
 }
 
 export const naverBlogHandler: PlatformHandler = {

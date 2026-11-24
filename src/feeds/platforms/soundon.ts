@@ -1,38 +1,22 @@
 import { soundon } from 'feedintel'
-import { getQueryParam, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { hexOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: podcast.
 
 export type SoundonUrl = { kind: 'podcast'; podcastId: string }
 
-const hosts = soundon.hosts.exact
-
-const podcastRegex = /^\/p\/([^/]+)(?:\/|$)/i
-const embedRegex = /^\/embed\/?$/i
-
 const feeds = withHintLabels(soundon.feeds)
 
 export const parseSoundonUrl = (url: string): SoundonUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = soundon.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const { pathname, searchParams } = parsedUrl
-  const podcastId = embedRegex.test(pathname)
-    ? getQueryParam(searchParams, 'podcast')
-    : pathname.match(podcastRegex)?.[1]
-
-  if (!podcastId || !hexOrHyphenRegex.test(podcastId)) {
-    return
-  }
-
-  return { kind: 'podcast', podcastId }
+  return { kind: 'podcast', podcastId: page.params.podcastId }
 }
 
 export const soundonHandler: PlatformHandler = {

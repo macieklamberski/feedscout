@@ -1,5 +1,4 @@
 import { canpan } from 'feedintel'
-import { getPathSegments, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -9,22 +8,16 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type CanpanUrl = { kind: 'blog'; blog: string }
 
-const hosts = canpan.hosts.exact
-
 const feeds = withHintLabels(canpan.feeds)
 
 export const parseCanpanUrl = (url: string): CanpanUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = canpan.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const [blog] = getPathSegments(url)
-
-  if (!blog) {
-    return
-  }
-
-  return { kind: 'blog', blog }
+  return { kind: 'blog', blog: page.params.blog }
 }
 
 export const canpanHandler: PlatformHandler = {

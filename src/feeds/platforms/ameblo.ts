@@ -1,5 +1,4 @@
 import { ameblo } from 'feedintel'
-import { getPathSegments, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -8,33 +7,16 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type AmebloUrl = { kind: 'blog'; username: string }
 
-const hosts = ameblo.hosts.exact
-
-// Ameba's fixed embed routes name the blog after the route, before the catch-all username.
-const reblogCardRegex = /^\/s\/embed\/reblog-card\/([^/]+)\/entry-[^/]+\.html$/i
-const imagePageRegex = /^\/p\/embed\/([^/]+)\/image-[^/]+\.html$/i
-
 const feeds = withHintLabels(ameblo.feeds)
 
 export const parseAmebloUrl = (url: string): AmebloUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = ameblo.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const { pathname } = new URL(url)
-  const embedUsername = pathname.match(reblogCardRegex)?.[1] ?? pathname.match(imagePageRegex)?.[1]
-
-  if (embedUsername) {
-    return { kind: 'blog', username: embedUsername }
-  }
-
-  const [username] = getPathSegments(url)
-
-  if (!username) {
-    return
-  }
-
-  return { kind: 'blog', username }
+  return { kind: 'blog', username: page.params.username }
 }
 
 export const amebloHandler: PlatformHandler = {

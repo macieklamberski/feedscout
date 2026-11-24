@@ -1,5 +1,4 @@
 import { zenn } from 'feedintel'
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -14,44 +13,32 @@ export type ZennUrl =
   | { kind: 'publication'; publication: string }
   | { kind: 'home' }
 
-export const hosts = zenn.hosts.exact
-
-const topicRegex = /^\/topics\/([^/]+)/i
-const publicationRegex = /^\/p\/([^/]+)/i
-
 const feeds = withHintLabels(zenn.feeds)
 
 export const parseZennUrl = (url: string): ZennUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = zenn.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const { pathname } = parsedUrl
-  const topic = pathname.match(topicRegex)?.[1]
-
-  if (topic) {
-    return { kind: 'topic', topic }
+  if (page.key === 'topic') {
+    return { kind: 'topic', topic: page.params.topic }
   }
 
-  const publication = pathname.match(publicationRegex)?.[1]
-
-  if (publication) {
-    return { kind: 'publication', publication }
+  if (page.key === 'publication') {
+    return { kind: 'publication', publication: page.params.publication }
   }
 
-  const [username, section] = getPathSegments(parsedUrl)
-
-  if (!username) {
+  if (page.key === 'home') {
     return { kind: 'home' }
   }
 
-  if (section) {
-    return { kind: 'post', username }
+  if (page.key === 'post') {
+    return { kind: 'post', username: page.params.username }
   }
 
-  return { kind: 'user', username }
+  return { kind: 'user', username: page.params.username }
 }
 
 export const zennHandler: PlatformHandler = {

@@ -1,8 +1,6 @@
 import { douban } from 'feedintel'
-import { isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: interests, subject-reviews.
@@ -13,38 +11,24 @@ export type DoubanUrl =
   | { kind: 'subject'; subjectId: string }
   | { kind: 'home' }
 
-// The sections that serve profile and subject pages. Other subdomains are service hosts, such
-// as accounts and api.
-const hosts = douban.hosts.exact
-
-const userRegex = /^\/people\/([^/]+)/i
-const subjectRegex = /^\/subject\/(?<subjectId>[^/]+)/i
-
 const feeds = withHintLabels(douban.feeds)
 
 export const parseDoubanUrl = (url: string): DoubanUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = douban.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const { pathname } = new URL(url)
-  // User page: /people/{user}/
-  const username = pathname.match(userRegex)?.[1]
-
-  if (username) {
-    return { kind: 'user', username }
+  if (page.key === 'user') {
+    return { kind: 'user', username: page.params.username }
   }
 
-  // Subject page: /subject/{id}/
-  const subjectId = pathname.match(subjectRegex)?.groups?.subjectId
-
-  if (subjectId && digitsRegex.test(subjectId)) {
-    return { kind: 'subject', subjectId }
+  if (page.key === 'subject') {
+    return { kind: 'subject', subjectId: page.params.subjectId }
   }
 
-  if (pathname === '/') {
-    return { kind: 'home' }
-  }
+  return { kind: 'home' }
 }
 
 export const doubanHandler: PlatformHandler = {

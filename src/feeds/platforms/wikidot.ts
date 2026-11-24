@@ -12,16 +12,12 @@ export type WikidotUrl =
   | { kind: 'category'; categoryId: string }
   | { kind: 'site' }
 
-const threadPathRegex = /^\/forum\/t-(\d+)(?:\/|$)/i
-const categoryPathRegex = /^\/forum\/c-(\d+)(?:\/|$)/i
-
 const feeds = withHintLabels(wikidot.feeds)
 
 export const isWikidotHtml = (content: string): boolean => {
   return content.includes('WIKIDOT.page.listeners.editClick()')
 }
 
-// A thread page names its thread and a forum category page its category, after any title slug.
 export const parseWikidotUrl = (url: string): WikidotUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -29,16 +25,14 @@ export const parseWikidotUrl = (url: string): WikidotUrl | undefined => {
     return
   }
 
-  const threadId = parsedUrl.pathname.match(threadPathRegex)?.[1]
+  const page = wikidot.pages.read(url, { root: parsedUrl.origin })
 
-  if (threadId) {
-    return { kind: 'thread', threadId }
+  if (page?.key === 'thread') {
+    return { kind: 'thread', threadId: page.params.threadId }
   }
 
-  const categoryId = parsedUrl.pathname.match(categoryPathRegex)?.[1]
-
-  if (categoryId) {
-    return { kind: 'category', categoryId }
+  if (page?.key === 'category') {
+    return { kind: 'category', categoryId: page.params.categoryId }
   }
 
   return { kind: 'site' }

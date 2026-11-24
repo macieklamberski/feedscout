@@ -1,5 +1,5 @@
 import { prlog } from 'feedintel'
-import { getPathSegments, isHostOf, isSameText, parseUrl } from 'trousse'
+import { isSameText } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
@@ -9,24 +9,16 @@ import { findElement } from '../../common/utils.js'
 export type PrlogUrl = { kind: 'pressroom'; pressroomId: string }
 export type PrlogPage = PrlogUrl
 
-const hosts = prlog.hosts.exact
-
 const feeds = withHintLabels(prlog.feeds)
 
 export const parsePrlogUrl = (url: string): PrlogUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = prlog.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const [pressroomId] = getPathSegments(parsedUrl)
-
-  if (!pressroomId) {
-    return
-  }
-
-  return { kind: 'pressroom', pressroomId }
+  return { kind: 'pressroom', pressroomId: page.params.pressroomId }
 }
 
 // The pressroom id answers in any case, and the page's feed alternate spells it as registered,

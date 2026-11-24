@@ -1,5 +1,4 @@
 import { velog } from 'feedintel'
-import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -8,32 +7,20 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type VelogUrl = { kind: 'user'; username: string } | { kind: 'home' }
 
-export const hosts = velog.hosts.exact
-
-const userRegex = /^\/@([^/]+)/
-
 const feeds = withHintLabels(velog.feeds)
 
 export const parseVelogUrl = (url: string): VelogUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = velog.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const match = parsedUrl.pathname.match(userRegex)
-
-  if (!match?.[1]) {
-    return { kind: 'home' }
+  if (page.key === 'user') {
+    return { kind: 'user', username: page.params.username }
   }
 
-  const username = decodeSegment(match[1])
-
-  if (!username) {
-    return
-  }
-
-  return { kind: 'user', username }
+  return { kind: 'home' }
 }
 
 export const velogHandler: PlatformHandler = {

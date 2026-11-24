@@ -23,8 +23,14 @@ export const isDrupalHeaders = (headers: Headers): boolean => {
 export type DrupalPage = { kind: 'site'; baseUrl: string }
 
 // Drupal 8 and later print the install's base path in the settings JSON of every page.
-export const getDrupalPage = (url: string, content: string | undefined): DrupalPage => {
-  const { origin } = new URL(url)
+export const getDrupalPage = (url: string, content: string | undefined): DrupalPage | undefined => {
+  const page = drupal.pages.read(url, { isAnyHost: true })
+
+  if (!page) {
+    return
+  }
+
+  const { root } = page.params
   const script = findElement(content, (element) => {
     return (
       element.name === 'script' &&
@@ -38,12 +44,12 @@ export const getDrupalPage = (url: string, content: string | undefined): DrupalP
       const basePath = settings.path?.baseUrl
 
       if (isString(basePath) && basePath.startsWith('/') && basePath.endsWith('/')) {
-        return { kind: 'site', baseUrl: `${origin}${basePath}` }
+        return { kind: 'site', baseUrl: `${root}${basePath}` }
       }
     } catch {}
   }
 
-  return { kind: 'site', baseUrl: `${origin}/` }
+  return { kind: 'site', baseUrl: `${root}/` }
 }
 
 export const drupalHandler: PlatformHandler = {
@@ -58,6 +64,10 @@ export const drupalHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getDrupalPage(url, content)
+
+    if (!page) {
+      return []
+    }
 
     return [feeds.getFeedEntry('site', { root: page.baseUrl })]
   },

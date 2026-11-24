@@ -1,8 +1,8 @@
 import { instatus } from 'feedintel'
-import { isHostOrSubdomainOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: history.
@@ -11,7 +11,6 @@ import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 export type InstatusUrl = { kind: 'status' }
 
 const pageMarkers = ['custom-html-above-header', 'custom-html-below-footer']
-const domains = instatus.hosts.tenants
 
 const feeds = withHintLabels(instatus.feeds)
 
@@ -33,8 +32,10 @@ export const parseInstatusUrl = (url: string): InstatusUrl | undefined => {
 
 export const instatusHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (isHostOrSubdomainOf(url, domains)) {
-      return getTenantSubdomain(url, domains) !== undefined
+    const page = instatus.pages.read(url)
+
+    if (page) {
+      return page.key === 'status'
     }
 
     if (!hasMarker(content, headers, { html: isInstatusHtml, headers: isInstatusHeaders })) {

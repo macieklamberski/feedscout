@@ -1,16 +1,9 @@
 import { internetArchive } from 'feedintel'
-import { getQueryParam, isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: collection, forum, search.
-
-const hosts = internetArchive.hosts.exact
-
-const detailsRegex = /^\/details\/([^/@][^/]*)\/?$/i
-const accountRegex = /^\/details\/@([^/]+)/i
-const searchRegex = /^\/search\/?$/i
 
 const feeds = withHintLabels(internetArchive.feeds)
 
@@ -23,40 +16,29 @@ const getInternetArchivePage = (
   url: string,
   content: string | undefined,
 ): InternetArchivePage | undefined => {
-  const { pathname, searchParams } = new URL(url)
+  const page = internetArchive.pages.read(url)
 
-  // Collections, accounts and search serve one app shell loading `/offshoot_assets/`, while
-  // items serve full HTML without it. Accounts are `/details/@{user}`.
-  if (content?.includes('/offshoot_assets/')) {
-    const collection = pathname.match(detailsRegex)?.[1]
-
-    if (collection) {
-      return { kind: 'collection', collection }
-    }
-
-    const user = pathname.match(accountRegex)?.[1]
-
-    if (user) {
-      return { kind: 'account', user }
-    }
+  if (page?.key === 'search') {
+    return { kind: 'search', query: page.params.query }
   }
 
-  const query = getQueryParam(searchParams, 'query')
-
-  // A `sin` search runs over full text, captions or captures, which the feed's query does not.
-  if (!searchRegex.test(pathname) || !query || getQueryParam(searchParams, 'sin')) {
+  // Collections, accounts and search serve one app shell loading `/offshoot_assets/`, while
+  // items serve full HTML without it.
+  if (!content?.includes('/offshoot_assets/')) {
     return
   }
 
-  return { kind: 'search', query }
+  if (page?.key === 'collection') {
+    return { kind: 'collection', collection: page.params.collection }
+  }
+
+  if (page?.key === 'account') {
+    return { kind: 'account', user: page.params.user }
+  }
 }
 
 export const internetArchiveHandler: PlatformHandler = {
   match: (url, content) => {
-    if (!isHostOf(url, hosts)) {
-      return false
-    }
-
     return getInternetArchivePage(url, content) !== undefined
   },
 

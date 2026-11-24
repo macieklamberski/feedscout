@@ -1,28 +1,35 @@
 import { castos } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
+import { findUrls } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type CastosUrl = { kind: 'show'; slug: string }
 export type CastosPage = { kind: 'show'; slug: string; feedId?: string }
 
-const domains = castos.hosts.tenants
-
-// The feed id is opaque, so it is read from the feed link every show page carries.
-const feedIdRegex = /https:\/\/feeds\.castos\.com\/([a-z0-9]+)/i
-
 const feeds = withHintLabels(castos.feeds)
 
-export const parseCastosUrl = (url: string): CastosUrl | undefined => {
-  const slug = getTenantSubdomain(url, domains)
+// The feed id is opaque, so it is read from the feed link every show page carries. The show
+// site's /feed alias reads no id.
+const getLinkedFeedId = (content: string): string | undefined => {
+  for (const url of findUrls(content)) {
+    const feedId = castos.feeds.read(url)?.params.feedId
 
-  if (!slug) {
+    if (feedId) {
+      return feedId
+    }
+  }
+}
+
+export const parseCastosUrl = (url: string): CastosUrl | undefined => {
+  const page = castos.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  return { kind: 'show', slug }
+  return { kind: 'show', slug: page.params.slug }
 }
 
 export const getCastosPage = (url: string, content: string | undefined): CastosPage | undefined => {
@@ -32,7 +39,7 @@ export const getCastosPage = (url: string, content: string | undefined): CastosP
     return
   }
 
-  return { ...parsed, feedId: content?.match(feedIdRegex)?.[1] }
+  return { ...parsed, feedId: getLinkedFeedId(content ?? '') }
 }
 
 export const castosHandler: PlatformHandler = {

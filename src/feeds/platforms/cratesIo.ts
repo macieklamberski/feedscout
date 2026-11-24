@@ -1,5 +1,4 @@
 import { cratesIo } from 'feedintel'
-import { isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -8,27 +7,20 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 export type CratesIoUrl = { kind: 'crate'; crate: string } | { kind: 'home' }
 
-const hosts = cratesIo.hosts.exact
-
-const crateRegex = /^\/crates\/([\w-]+)(?:\/|$)/i
-
 const feeds = withHintLabels(cratesIo.feeds)
 
 export const parseCratesIoUrl = (url: string): CratesIoUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const page = cratesIo.pages.read(url)
+
+  if (!page) {
     return
   }
 
-  const { pathname } = new URL(url)
-  const crate = pathname.match(crateRegex)?.[1]
-
-  if (crate) {
-    return { kind: 'crate', crate }
+  if (page.key === 'crate') {
+    return { kind: 'crate', crate: page.params.crate }
   }
 
-  if (pathname === '/') {
-    return { kind: 'home' }
-  }
+  return { kind: 'home' }
 }
 
 export const cratesIoHandler: PlatformHandler = {
