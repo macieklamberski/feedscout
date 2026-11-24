@@ -1,5 +1,5 @@
 import { shinobi } from 'feedintel'
-import { isAnyOf } from 'trousse'
+import { isAnyOf, isHostOrSubdomainOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -35,17 +35,25 @@ export const shinobiHandler: PlatformHandler = {
   match: (url, content, headers) => {
     const page = shinobi.pages.read(url)
 
-    if (!page) {
-      return hasMarker(content, headers, { html: isShinobiHtml })
+    if (page) {
+      return page.key === 'blog'
     }
 
-    return page.key === 'blog'
+    if (isHostOrSubdomainOf(url, shinobi.hosts.tenants)) {
+      return false
+    }
+
+    return hasMarker(content, headers, { html: isShinobiHtml })
   },
 
   resolve: (url) => {
     const page = feeds.forUrl(url)
 
-    if (!page || shinobi.pages.read(url)?.key === 'portal') {
+    if (!page) {
+      return []
+    }
+
+    if (isHostOrSubdomainOf(url, shinobi.hosts.tenants) && !parseShinobiUrl(url)) {
       return []
     }
 
