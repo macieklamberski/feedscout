@@ -1,0 +1,526 @@
+import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
+import type { HatenaBookmarkUrl } from './hatenaBookmark.js'
+import { hatenaBookmarkHandler, parseHatenaBookmarkUrl } from './hatenaBookmark.js'
+
+const base = 'https://b.hatena.ne.jp'
+
+describe('parseHatenaBookmarkUrl', () => {
+  const home: HatenaBookmarkUrl = { kind: 'home' }
+
+  it('should return a search for a query page', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'search', query: 'rss', params: {} }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/q/rss')).toEqual(expected)
+  })
+
+  it('should return a search for a query page with a capitalized q segment', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'search', query: 'rss', params: {} }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/Q/rss')).toEqual(expected)
+  })
+
+  it('should return the decoded query for an encoded query page', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'search', query: 'c++ web', params: {} }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/q/c%2B%2B%20web')).toEqual(expected)
+  })
+
+  it('should keep a slash in the query', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'search', query: 'rss/atom', params: {} }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/q/rss/atom')).toEqual(expected)
+  })
+
+  it('should keep the search filters of a query page', () => {
+    const expected: HatenaBookmarkUrl = {
+      kind: 'search',
+      query: 'rss',
+      params: { target: 'title', sort: 'recent', users: '10', date_range: '1w', safe: 'on' },
+    }
+    const url =
+      'https://b.hatena.ne.jp/q/rss?target=title&sort=recent&users=10&date_range=1w&safe=on'
+
+    expect(parseHatenaBookmarkUrl(url)).toEqual(expected)
+  })
+
+  it('should drop the page and unknown parameters of a query page', () => {
+    const value = 'https://b.hatena.ne.jp/q/rss?target=text&page=2&ref=top'
+    const expected: HatenaBookmarkUrl = { kind: 'search', query: 'rss', params: { target: 'text' } }
+
+    expect(parseHatenaBookmarkUrl(value)).toEqual(expected)
+  })
+
+  it('should return the home page for a query page without a query', () => {
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/q/')).toEqual(home)
+  })
+
+  it('should return a search without a target for an old tag search', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'search', query: 'rss', params: {} }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/search/tag?q=rss')).toEqual(expected)
+  })
+
+  it('should return a search with a target for an old text search', () => {
+    const expected: HatenaBookmarkUrl = {
+      kind: 'search',
+      query: 'feed',
+      params: { target: 'text' },
+    }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/search/text?q=feed')).toEqual(expected)
+  })
+
+  it('should return the lowercase target for a capitalized old search type', () => {
+    const expected: HatenaBookmarkUrl = {
+      kind: 'search',
+      query: 'rss',
+      params: { target: 'title' },
+    }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/Search/Title?q=rss')).toEqual(expected)
+  })
+
+  it('should keep the search filters of an old search', () => {
+    const expected: HatenaBookmarkUrl = {
+      kind: 'search',
+      query: 'feed',
+      params: { target: 'text', users: '3' },
+    }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/search/text?q=feed&users=3')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return the home page for an old search without a query', () => {
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/search/tag')).toEqual(home)
+  })
+
+  it('should return a site without its trailing slash for a domain page', () => {
+    const expected: HatenaBookmarkUrl = {
+      kind: 'site',
+      site: 'example.com',
+    }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/site/example.com/')).toEqual(expected)
+  })
+
+  it('should keep only the sort order of a site page', () => {
+    const value = 'https://b.hatena.ne.jp/site/example.com/?page=2&sort=eid'
+    const expected: HatenaBookmarkUrl = {
+      kind: 'site',
+      site: 'example.com',
+      sort: 'eid',
+    }
+
+    expect(parseHatenaBookmarkUrl(value)).toEqual(expected)
+  })
+
+  it('should return a site for a domain page with a capitalized site segment', () => {
+    const expected: HatenaBookmarkUrl = {
+      kind: 'site',
+      site: 'example.com',
+    }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/Site/example.com/')).toEqual(expected)
+  })
+
+  it('should return the user for a user page', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'alice' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/alice/')).toEqual(expected)
+  })
+
+  it('should return the user for a user page without a trailing slash', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'alice' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/alice')).toEqual(expected)
+  })
+
+  it('should return the user for a user subpage', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'alice' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/alice/bookmark')).toEqual(expected)
+  })
+
+  it('should return a user ID with hyphens and underscores', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'bob-dev_jp' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/bob-dev_jp/')).toEqual(expected)
+  })
+
+  it('should keep the user ID case', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'ALice' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/ALice')).toEqual(expected)
+  })
+
+  it('should return the user and tag for a user page filtered by tag', () => {
+    const value = 'https://b.hatena.ne.jp/alice/bookmark?tag=javascript'
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'alice', tag: 'javascript' }
+
+    expect(parseHatenaBookmarkUrl(value)).toEqual(expected)
+  })
+
+  it('should return the user for a user feed URL', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'alice' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/alice.rss')).toEqual(expected)
+  })
+
+  it('should return the user for a user feed URL with a capitalized rss extension', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'alice' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/alice.RSS')).toEqual(expected)
+  })
+
+  it('should return the hot entries of a category', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'hotentry', category: 'it' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/hotentry/it')).toEqual(expected)
+  })
+
+  it('should return the hot entries without an unknown category', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'hotentry', category: undefined }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/Hotentry/nope')).toEqual(expected)
+  })
+
+  it('should return the hot entries without a category for the all category', () => {
+    const value = 'https://b.hatena.ne.jp/hotentry/all'
+    const expected: HatenaBookmarkUrl = { kind: 'hotentry', category: undefined }
+
+    expect(parseHatenaBookmarkUrl(value)).toEqual(expected)
+  })
+
+  it('should return the new entries', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'entrylist', category: undefined }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/entrylist')).toEqual(expected)
+  })
+
+  it('should return the home page for files at the root', () => {
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/favicon.ico')).toEqual(home)
+  })
+
+  it('should return the user for a two-letter path', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'ab' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/ab')).toEqual(expected)
+  })
+
+  it('should return the user for a path longer than 32 characters', () => {
+    const value = 'https://b.hatena.ne.jp/abcdefghijklmnopqrstuvwxyzabcdefghijklmn/'
+    const expected: HatenaBookmarkUrl = {
+      kind: 'user',
+      username: 'abcdefghijklmnopqrstuvwxyzabcdefghijklmn',
+    }
+
+    expect(parseHatenaBookmarkUrl(value)).toEqual(expected)
+  })
+
+  it('should return the home page for a path starting with a non-letter', () => {
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/-/my/config')).toEqual(home)
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/1abc')).toEqual(home)
+  })
+
+  it('should return the user for a path ending with a hyphen', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'abc-' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/abc-')).toEqual(expected)
+  })
+
+  it('should return the home page for the homepage', () => {
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/')).toEqual(home)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseHatenaBookmarkUrl('https://hatena.ne.jp/alice')).toBeUndefined()
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp.example.com/alice')).toBeUndefined()
+    expect(parseHatenaBookmarkUrl('https://example.com/alice')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseHatenaBookmarkUrl('not-a-url')).toBeUndefined()
+  })
+})
+
+describe('hatenaBookmarkHandler', () => {
+  describe('match', () => {
+    it('should match a Hatena Bookmark URL', () => {
+      expect(hatenaBookmarkHandler.match('https://b.hatena.ne.jp')).toBe(true)
+    })
+
+    it('should not match other hosts', () => {
+      expect(hatenaBookmarkHandler.match('https://example.com')).toBe(false)
+    })
+  })
+
+  describe('resolve', () => {
+    it('should return empty array for a URL outside Hatena Bookmark', () => {
+      expect(hatenaBookmarkHandler.resolve('https://example.com/')).toEqual([])
+    })
+
+    const hotEntry: DiscoverUriEntry = {
+      uri: `${base}/hotentry.rss`,
+      hint: { key: 'hatena-bookmark:hot', label: 'Hot entries' },
+    }
+    const newEntry: DiscoverUriEntry = {
+      uri: `${base}/entrylist.rss`,
+      hint: { key: 'hatena-bookmark:new', label: 'New entries' },
+    }
+    const hotEntries: Array<DiscoverUriEntry> = [hotEntry, newEntry]
+
+    it('should return hot entries for the homepage', () => {
+      expect(hatenaBookmarkHandler.resolve(base)).toEqual(hotEntries)
+    })
+
+    it('should return hot entries for the hotentry page', () => {
+      expect(hatenaBookmarkHandler.resolve(`${base}/hotentry`)).toEqual(hotEntries)
+    })
+
+    it('should return hot entries in category for a category page', () => {
+      const value = `${base}/hotentry/it`
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${base}/hotentry/it.rss`,
+          hint: { key: 'hatena-bookmark:hot-category', label: 'Hot entries in category' },
+        },
+        hotEntry,
+        newEntry,
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return lowercase hot entries in category for a capitalized category page', () => {
+      const value = `${base}/Hotentry/IT`
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${base}/hotentry/it.rss`,
+          hint: { key: 'hatena-bookmark:hot-category', label: 'Hot entries in category' },
+        },
+        hotEntry,
+        newEntry,
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return hot entries for the all category page', () => {
+      const value = `${base}/hotentry/all`
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(hotEntries)
+    })
+
+    it('should return hot entries for an unknown category page', () => {
+      expect(hatenaBookmarkHandler.resolve(`${base}/hotentry/Foo`)).toEqual(hotEntries)
+    })
+
+    it('should return new entries for the entrylist page', () => {
+      const expected: Array<DiscoverUriEntry> = [newEntry, hotEntry]
+
+      expect(hatenaBookmarkHandler.resolve(`${base}/entrylist`)).toEqual(expected)
+    })
+
+    it('should return new entries in category for a category page', () => {
+      const value = `${base}/entrylist/game`
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${base}/entrylist/game.rss`,
+          hint: { key: 'hatena-bookmark:new-category', label: 'New entries in category' },
+        },
+        hotEntry,
+        newEntry,
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return new entries for the all category page', () => {
+      const value = `${base}/entrylist/all`
+      const expected: Array<DiscoverUriEntry> = [newEntry, hotEntry]
+
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return a search feed for a query page', () => {
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${base}/q/c++%20web?mode=rss&target=title`,
+          hint: { key: 'hatena-bookmark:search', label: 'Search' },
+        },
+        hotEntry,
+        newEntry,
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(`${base}/q/c%2B%2B%20web?target=title`)).toEqual(
+        expected,
+      )
+    })
+
+    it('should write a colon in the query as is', () => {
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${base}/q/Re:Zero?mode=rss`,
+          hint: { key: 'hatena-bookmark:search', label: 'Search' },
+        },
+        hotEntry,
+        newEntry,
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(`${base}/q/Re%3AZero`)).toEqual(expected)
+    })
+
+    it('should write an at sign in the query as is', () => {
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${base}/q/@nifty?mode=rss`,
+          hint: { key: 'hatena-bookmark:search', label: 'Search' },
+        },
+        hotEntry,
+        newEntry,
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(`${base}/q/%40nifty`)).toEqual(expected)
+    })
+
+    it('should percent-encode a non-ASCII query', () => {
+      const value = `${base}/q/%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3`
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${base}/q/%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3?mode=rss`,
+          hint: { key: 'hatena-bookmark:search', label: 'Search' },
+        },
+        hotEntry,
+        newEntry,
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return a site feed for a domain page', () => {
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${base}/site/example.com?mode=rss`,
+          hint: { key: 'hatena-bookmark:site', label: 'Site' },
+        },
+        hotEntry,
+        newEntry,
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(`${base}/site/example.com`)).toEqual(expected)
+    })
+
+    it('should return a site feed without the trailing slash of a site page', () => {
+      const value = `${base}/site/example.com/news/`
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${base}/site/example.com/news?mode=rss`,
+          hint: { key: 'hatena-bookmark:site', label: 'Site' },
+        },
+        hotEntry,
+        newEntry,
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return a site feed with the sort order of a site page', () => {
+      const value = `${base}/site/example.com/?sort=eid&page=2`
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${base}/site/example.com?mode=rss&sort=eid`,
+          hint: { key: 'hatena-bookmark:site', label: 'Site' },
+        },
+        hotEntry,
+        newEntry,
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
+    })
+
+    const userBookmarks: Array<DiscoverUriEntry> = [
+      {
+        uri: `${base}/mizdra/bookmark.rss`,
+        hint: { key: 'hatena-bookmark:bookmarks', label: 'Bookmarks' },
+      },
+      hotEntry,
+      newEntry,
+    ]
+
+    it('should return bookmarks for a user page', () => {
+      expect(hatenaBookmarkHandler.resolve(`${base}/mizdra/`)).toEqual(userBookmarks)
+    })
+
+    it('should return the tag feed for a user page filtered by tag', () => {
+      const value = `${base}/alice/bookmark?tag=javascript`
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${base}/alice/bookmark.rss?tag=javascript`,
+          hint: { key: 'hatena-bookmark:user-tag', label: 'User tag' },
+        },
+        hotEntry,
+        newEntry,
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return an https feed for an http page', () => {
+      const value = 'http://b.hatena.ne.jp/hotentry/it'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${base}/hotentry/it.rss`,
+          hint: { key: 'hatena-bookmark:hot-category', label: 'Hot entries in category' },
+        },
+        hotEntry,
+        newEntry,
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return an https site feed for an http site page', () => {
+      const value = 'http://b.hatena.ne.jp/site/example.com'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${base}/site/example.com?mode=rss`,
+          hint: { key: 'hatena-bookmark:site', label: 'Site' },
+        },
+        hotEntry,
+        newEntry,
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the hot hint for the hot entries feed under the all category', () => {
+      const value = 'https://b.hatena.ne.jp/hotentry/all.rss'
+      const expected: DiscoverUriHint = { key: 'hatena-bookmark:hot', label: 'Hot entries' }
+
+      expect(hatenaBookmarkHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    it('should return a search feed with filters as itself', async () => {
+      const value =
+        'https://b.hatena.ne.jp/q/game?date_range=5y&mode=rss&safe=on&sort=popular&target=tag&users=5'
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [hatenaBookmarkHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'hatena-bookmark:search', label: 'Search' } },
+      ]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+    })
+  })
+})

@@ -1,0 +1,220 @@
+import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
+import {
+  isZenfolioHeaders,
+  isZenfolioHtml,
+  parseZenfolioUrl,
+  type ZenfolioUrl,
+  zenfolioHandler,
+} from './zenfolio.js'
+
+const zenfolioHtml = `
+  <link
+    rel="stylesheet"
+    href="https://cdn.zenfolio.com/zf/css/en-US/chrome/macosx/JRSZJJXEH7NK/layout.css"
+    type="text/css"
+  />
+`
+const zenfolioHeaders = new Headers({
+  'set-cookie': 'zf_5y_visitor=K4ZaOLejE8yhYAsp4EZvFKxELKggAQ-x1LQX2QsES5yX; path=/',
+})
+
+describe('isZenfolioHtml', () => {
+  it('should return true for a stylesheet on the Zenfolio asset path', () => {
+    expect(isZenfolioHtml(zenfolioHtml)).toBe(true)
+  })
+
+  it('should return true for a protocol-relative stylesheet', () => {
+    const value = '<link rel="stylesheet" href="//cdn.zenfolio.com/zf/css/layout.css">'
+
+    expect(isZenfolioHtml(value)).toBe(true)
+  })
+
+  it('should return false for the asset path in text', () => {
+    expect(isZenfolioHtml('<p>https://cdn.zenfolio.com/zf/css/layout.css</p>')).toBe(false)
+  })
+
+  it('should return false for the asset path in an anchor', () => {
+    const value = '<a href="https://cdn.zenfolio.com/zf/css/layout.css">Gallery</a>'
+
+    expect(isZenfolioHtml(value)).toBe(false)
+  })
+
+  it('should return false for the asset path inside another URL', () => {
+    const value =
+      '<link rel="stylesheet" href="https://cdn.example.com/?u=//cdn.zenfolio.com/zf/x.css">'
+
+    expect(isZenfolioHtml(value)).toBe(false)
+  })
+
+  it('should return false for another stylesheet', () => {
+    const value = '<link rel="stylesheet" href="https://cdn.example.com/zf/css/layout.css">'
+
+    expect(isZenfolioHtml(value)).toBe(false)
+  })
+})
+
+describe('isZenfolioHeaders', () => {
+  it('should return true for the visitor cookie', () => {
+    expect(isZenfolioHeaders(zenfolioHeaders)).toBe(true)
+  })
+
+  it('should return false for another cookie', () => {
+    const value = new Headers({ 'set-cookie': 'zf_visitor=abc; path=/' })
+
+    expect(isZenfolioHeaders(value)).toBe(false)
+  })
+})
+
+describe('parseZenfolioUrl', () => {
+  it('should return the site for a zenfolio.com subdomain', () => {
+    const expected: ZenfolioUrl = { kind: 'site' }
+
+    expect(parseZenfolioUrl('https://bobphotography.zenfolio.com/')).toEqual(expected)
+  })
+
+  it('should return the site for a custom domain page', () => {
+    const expected: ZenfolioUrl = { kind: 'site' }
+
+    expect(parseZenfolioUrl('https://www.alicephoto.example/p411800779')).toEqual(expected)
+  })
+
+  it('should return undefined for the zenfolio.com apex', () => {
+    expect(parseZenfolioUrl('https://zenfolio.com/blog/')).toBeUndefined()
+  })
+
+  it('should return undefined for the www host', () => {
+    expect(parseZenfolioUrl('https://www.zenfolio.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseZenfolioUrl('https://photos.example.zenfolio.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for an unparsable URL', () => {
+    expect(parseZenfolioUrl('not-a-url')).toBeUndefined()
+  })
+})
+
+describe('zenfolioHandler', () => {
+  describe('match', () => {
+    it('should match a zenfolio.com subdomain without content', () => {
+      expect(zenfolioHandler.match('https://bobphotography.zenfolio.com/')).toBe(true)
+    })
+
+    it('should match a custom domain by its stylesheet', () => {
+      expect(zenfolioHandler.match('https://www.alicephoto.example/', zenfolioHtml)).toBe(true)
+    })
+
+    it('should match a custom domain by its visitor cookie', () => {
+      const value = 'https://www.alicephoto.example/'
+
+      expect(zenfolioHandler.match(value, '<html></html>', zenfolioHeaders)).toBe(true)
+    })
+
+    it('should not match a custom domain without a marker', () => {
+      expect(zenfolioHandler.match('https://www.alicephoto.example/', '<html></html>')).toBe(false)
+    })
+  })
+
+  describe('resolve', () => {
+    it('should return the site feeds from the origin', () => {
+      const value = 'https://www.alicephoto.example/p411800779'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://www.alicephoto.example/recent.rss',
+          hint: { key: 'zenfolio:recent', label: 'Recent galleries', format: 'rss' },
+        },
+        {
+          uri: 'https://www.alicephoto.example/recent.atom',
+          hint: { key: 'zenfolio:recent', label: 'Recent galleries', format: 'atom' },
+        },
+        {
+          uri: 'https://www.alicephoto.example/featured.rss',
+          hint: { key: 'zenfolio:featured', label: 'Featured galleries', format: 'rss' },
+        },
+        {
+          uri: 'https://www.alicephoto.example/featured.atom',
+          hint: { key: 'zenfolio:featured', label: 'Featured galleries', format: 'atom' },
+        },
+        {
+          uri: 'https://www.alicephoto.example/blog.rss',
+          hint: { key: 'zenfolio:blog', label: 'Blog', format: 'rss' },
+        },
+        {
+          uri: 'https://www.alicephoto.example/blog.atom',
+          hint: { key: 'zenfolio:blog', label: 'Blog', format: 'atom' },
+        },
+      ]
+
+      expect(zenfolioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the scheme of an http page', () => {
+      const value = 'http://bobphotography.zenfolio.com/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://bobphotography.zenfolio.com/recent.rss',
+          hint: { key: 'zenfolio:recent', label: 'Recent galleries', format: 'rss' },
+        },
+        {
+          uri: 'http://bobphotography.zenfolio.com/recent.atom',
+          hint: { key: 'zenfolio:recent', label: 'Recent galleries', format: 'atom' },
+        },
+        {
+          uri: 'http://bobphotography.zenfolio.com/featured.rss',
+          hint: { key: 'zenfolio:featured', label: 'Featured galleries', format: 'rss' },
+        },
+        {
+          uri: 'http://bobphotography.zenfolio.com/featured.atom',
+          hint: { key: 'zenfolio:featured', label: 'Featured galleries', format: 'atom' },
+        },
+        {
+          uri: 'http://bobphotography.zenfolio.com/blog.rss',
+          hint: { key: 'zenfolio:blog', label: 'Blog', format: 'rss' },
+        },
+        {
+          uri: 'http://bobphotography.zenfolio.com/blog.atom',
+          hint: { key: 'zenfolio:blog', label: 'Blog', format: 'atom' },
+        },
+      ]
+
+      expect(zenfolioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return empty array for a URL that does not parse', () => {
+      expect(zenfolioHandler.resolve('not-a-url')).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the recent hint for a recent feed over http', () => {
+      const value = 'http://bobphotography.zenfolio.com/recent.rss'
+      const expected: DiscoverUriHint = {
+        key: 'zenfolio:recent',
+        label: 'Recent galleries',
+        format: 'rss',
+      }
+
+      expect(zenfolioHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    it('should return the Atom blog feed as itself', async () => {
+      const value = 'https://bobphotography.zenfolio.com/blog.atom'
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [zenfolioHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'zenfolio:blog', label: 'Blog', format: 'atom' } },
+      ]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+    })
+  })
+})

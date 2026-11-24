@@ -1,0 +1,113 @@
+import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
+import { parseRoyalroadUrl, type RoyalroadUrl, royalroadHandler } from './royalroad.js'
+
+describe('parseRoyalroadUrl', () => {
+  it('should return the fiction for a chapter page', () => {
+    const value =
+      'https://www.royalroad.com/fiction/21220/mother-of-learning/chapter/301778/1-good-morning-brother'
+    const expected: RoyalroadUrl = { kind: 'fiction', fictionId: '21220' }
+
+    expect(parseRoyalroadUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for a profile page', () => {
+    expect(parseRoyalroadUrl('https://www.royalroad.com/profile/123456')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseRoyalroadUrl('https://example.com/fiction/21220')).toBeUndefined()
+  })
+})
+
+describe('royalroadHandler', () => {
+  describe('match', () => {
+    it('should match a fiction page', () => {
+      const value = 'https://www.royalroad.com/fiction/21220/mother-of-learning'
+
+      expect(royalroadHandler.match(value)).toBe(true)
+    })
+
+    it('should match a chapter page', () => {
+      const value =
+        'https://www.royalroad.com/fiction/21220/mother-of-learning/chapter/301778/1-good-morning-brother'
+
+      expect(royalroadHandler.match(value)).toBe(true)
+    })
+
+    it('should match a fiction page without the slug', () => {
+      expect(royalroadHandler.match('https://www.royalroad.com/fiction/21220')).toBe(true)
+    })
+
+    it('should match the bare host', () => {
+      expect(royalroadHandler.match('https://royalroad.com/fiction/21220')).toBe(true)
+    })
+
+    it('should match route words in any case', () => {
+      expect(royalroadHandler.match('https://www.royalroad.com/Fiction/21220')).toBe(true)
+    })
+
+    it('should not match a profile page', () => {
+      expect(royalroadHandler.match('https://www.royalroad.com/profile/123456')).toBe(false)
+    })
+
+    it('should not match a fiction list', () => {
+      const value = 'https://www.royalroad.com/fictions/latest-updates'
+
+      expect(royalroadHandler.match(value)).toBe(false)
+    })
+
+    it('should not match another host', () => {
+      expect(royalroadHandler.match('https://example.com/fiction/21220')).toBe(false)
+    })
+  })
+
+  describe('resolve', () => {
+    it('should return the fiction feed for a chapter page', () => {
+      const value =
+        'https://www.royalroad.com/fiction/21220/mother-of-learning/chapter/301778/1-good-morning-brother'
+      const expected = [
+        {
+          uri: 'https://www.royalroad.com/syndication/21220',
+          hint: { key: 'royalroad:fiction', label: 'Fiction' },
+        },
+      ]
+
+      expect(royalroadHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return an empty array without a fiction id', () => {
+      expect(royalroadHandler.resolve('https://www.royalroad.com/profile/123456')).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the fiction hint for a fiction feed under the fiction path', () => {
+      const value = 'https://www.royalroad.com/fiction/syndication/12345'
+      const expected: DiscoverUriHint = { key: 'royalroad:fiction', label: 'Fiction' }
+
+      expect(royalroadHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+  })
+
+  describe('as a feed URL input', () => {
+    it('should return a fiction feed on the bare host as given', async () => {
+      const value = 'http://royalroad.com/syndication/12345/'
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [royalroadHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://royalroad.com/syndication/12345/',
+          hint: { key: 'royalroad:fiction', label: 'Fiction' },
+        },
+      ]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+    })
+  })
+})

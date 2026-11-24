@@ -1,0 +1,119 @@
+import { sapoBlogs } from 'feedintel'
+import { decodeSegment, getQueryParam, parseUrl } from 'trousse'
+import { withHintLabels } from '../../common/uris/platform/feeds.js'
+import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { getTenantSubdomain } from '../../common/utils.js'
+
+// Discoverability: Partially discoverable without handler.
+// Generic finds: posts.
+// Handler needed for: comments, post-comments, tag.
+
+export type SapoBlogsUrl =
+  | { kind: 'blog'; blog: string }
+  | { kind: 'post'; blog: string; postId: string }
+  | { kind: 'tag'; blog: string; tag: string }
+export type SapoBlogsPage = SapoBlogsUrl
+
+const domains = sapoBlogs.hosts.tenants
+
+const postRegex = /^\/(?:[^/]+-(\d+)|(\d+)\.html)\/?$/i
+const tagRegex = /^\/tag\/(.+?)\/?$/i
+
+const feeds = withHintLabels(sapoBlogs.feeds)
+
+export const parseSapoBlogsUrl = (url: string): SapoBlogsUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+  const blog = getTenantSubdomain(url, domains)
+
+  if (!parsedUrl || !blog) {
+    return
+  }
+
+  const { pathname } = parsedUrl
+
+  const postMatch = pathname.match(postRegex)
+  const postId = postMatch?.[1] ?? postMatch?.[2]
+
+  if (postId) {
+    return { kind: 'post', blog, postId }
+  }
+
+  // Tag paths spell a space as a plus.
+  const tag = decodeSegment(pathname.match(tagRegex)?.[1]?.replaceAll('+', ' '))
+
+  if (tag) {
+    return { kind: 'tag', blog, tag }
+  }
+
+  // The next pages of a tag listing name the tag in the query: /?skip=20&tag={tag}.
+  const queryTag = pathname === '/' ? getQueryParam(parsedUrl.searchParams, 'tag') : undefined
+
+  if (queryTag) {
+    return { kind: 'tag', blog, tag: queryTag }
+  }
+
+  return { kind: 'blog', blog }
+}
+
+export const getSapoBlogsPage = (
+  url: string,
+  content: string | undefined,
+): SapoBlogsPage | undefined => {
+  const parsed = parseSapoBlogsUrl(url)
+
+  if (parsed?.kind !== 'post') {
+    return parsed
+  }
+
+  const postLinkRegex = new RegExp(`ditemid=${parsed.postId}(?!\\d)`)
+
+  // The endpoint answers an empty channel for a made-up post id, so only a linked post counts.
+  if (!postLinkRegex.test(content ?? '')) {
+    return { kind: 'blog', blog: parsed.blog }
+  }
+
+  return parsed
+}
+
+export const sapoBlogsHandler: PlatformHandler = {
+  match: (url) => {
+    return parseSapoBlogsUrl(url) !== undefined
+  },
+
+  resolve: (url, content) => {
+    const page = getSapoBlogsPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
+
+    if (!page || !pageFeeds) {
+      return []
+    }
+
+    const { blog } = page
+
+    if (page.kind === 'post') {
+      return [
+        pageFeeds.getFeedEntry('post-comments', { blog, postId: page.postId }),
+        pageFeeds.getFeedEntry('posts', {}, 'rss'),
+        pageFeeds.getFeedEntry('posts', {}, 'atom'),
+        pageFeeds.getFeedEntry('comments', { blog }),
+      ]
+    }
+
+    if (page.kind === 'tag') {
+      return [
+        pageFeeds.getFeedEntry('tag', { tag: page.tag }),
+        pageFeeds.getFeedEntry('posts', {}, 'rss'),
+        pageFeeds.getFeedEntry('posts', {}, 'atom'),
+        pageFeeds.getFeedEntry('comments', { blog }),
+      ]
+    }
+
+    return [
+      pageFeeds.getFeedEntry('posts', {}, 'rss'),
+      pageFeeds.getFeedEntry('posts', {}, 'atom'),
+      pageFeeds.getFeedEntry('comments', { blog }),
+    ]
+  },
+
+  getFeedHint: feeds.getFeedHint,
+}
