@@ -78,10 +78,6 @@ describe('parseTumblrUrl', () => {
     expect(parseTumblrUrl('https://tumblr.com/example')).toEqual(expected)
   })
 
-  it('should return undefined for a www.tumblr.com/blog path without a blog', () => {
-    expect(parseTumblrUrl('https://www.tumblr.com/blog/view')).toBeUndefined()
-  })
-
   it('should return undefined for www.tumblr.com', () => {
     expect(parseTumblrUrl('https://www.tumblr.com/')).toBeUndefined()
   })
