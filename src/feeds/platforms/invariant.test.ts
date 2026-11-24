@@ -1,104 +1,57 @@
 import { describe, expect, it } from 'bun:test'
-import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { defaultPlatformOptions } from '../defaults.js'
-import { b2evolutionHandler } from './b2evolution.js'
 import { bigCartelHandler } from './bigCartel.js'
 import { bigcommerceHandler } from './bigcommerce.js'
 import { blogspotHandler } from './blogspot.js'
-import { bookwyrmHandler } from './bookwyrm.js'
 import { castopodHandler } from './castopod.js'
 import { chambermasterHandler } from './chambermaster.js'
 import { civicplusHandler } from './civicplus.js'
 import { colorMeShopHandler } from './colorMeShop.js'
-import { diasporaHandler } from './diaspora.js'
-import { discourseHandler } from './discourse.js'
-import { discuzHandler } from './discuz.js'
-import { dokuwikiHandler } from './dokuwiki.js'
 import { drupalHandler } from './drupal.js'
-import { dspaceHandler } from './dspace.js'
-import { edlioHandler } from './edlio.js'
 import { eklablogHandler } from './eklablog.js'
 import { estrankyHandler } from './estranky.js'
 import { fluxbbHandler } from './fluxbb.js'
 import { forumotionHandler } from './forumotion.js'
 import { friendicaHandler } from './friendica.js'
-import { funkwhaleHandler } from './funkwhale.js'
-import { gancioHandler } from './gancio.js'
 import { gcsWebHandler } from './gcsWeb.js'
 import { giteaHandler } from './gitea.js'
 import { gitlabHandler } from './gitlab.js'
-import { gnuboardHandler } from './gnuboard.js'
 import { goopeHandler } from './goope.js'
-import { gravHandler } from './grav.js'
-import { homelandHandler } from './homeland.js'
-import { hubspotHandler } from './hubspot.js'
-import { hubzillaHandler } from './hubzilla.js'
 import { instatusHandler } from './instatus.js'
 import { jimdoHandler } from './jimdo.js'
 import { jiraHandler } from './jira.js'
-import { joomlaHandler } from './joomla.js'
-import { jugemHandler } from './jugem.js'
-import { kohaHandler } from './koha.js'
 import { lagetHandler } from './laget.js'
 import { legistarHandler } from './legistar.js'
-import { lemmyHandler } from './lemmy.js'
 import { mastodonHandler } from './mastodon.js'
-import { mediawikiHandler } from './mediawiki.js'
 import { misskeyHandler } from './misskey.js'
-import { mobilizonHandler } from './mobilizon.js'
 import { mybbHandler } from './mybb.js'
-import { netcrewHandler } from './netcrew.js'
 import { nethouseHandler } from './nethouse.js'
 import { ningHandler } from './ning.js'
-import { nodebbHandler } from './nodebb.js'
 import { noticeableHandler } from './noticeable.js'
 import { ocnkHandler } from './ocnk.js'
 import { odooHandler } from './odoo.js'
 import { ojsHandler } from './ojs.js'
-import { omekaHandler } from './omeka.js'
-import { opencartJournalHandler } from './opencartJournal.js'
-import { openstatusHandler } from './openstatus.js'
-import { opusHandler } from './opus.js'
 import { peertubeHandler } from './peertube.js'
 import { phpbbHandler } from './phpbb.js'
-import { pixelfedHandler } from './pixelfed.js'
-import { pleromaHandler } from './pleroma.js'
-import { ploneHandler } from './plone.js'
-import { pmwikiHandler } from './pmwiki.js'
-import { podhomeHandler } from './podhome.js'
 import { podloveHandler } from './podlove.js'
 import { powerpressHandler } from './powerpress.js'
 import { proboardsHandler } from './proboards.js'
 import { publicInboxHandler } from './publicInbox.js'
-import { publiiHandler } from './publii.js'
-import { pukiwikiHandler } from './pukiwiki.js'
-import { redmineHandler } from './redmine.js'
 import { shaarliHandler } from './shaarli.js'
 import { shinobiHandler } from './shinobi.js'
 import { shopifyHandler } from './shopify.js'
-import { shopserveHandler } from './shopserve.js'
 import { skycmsHandler } from './skycms.js'
 import { smfHandler } from './smf.js'
-import { snacHandler } from './snac.js'
-import { spipHandler } from './spip.js'
 import { sportsregionsHandler } from './sportsregions.js'
-import { squarespaceHandler } from './squarespace.js'
 import { statuspageHandler } from './statuspage.js'
 import { svbtleHandler } from './svbtle.js'
-import { tenderHandler } from './tender.js'
 import { textpatternHandler } from './textpattern.js'
-import { typechoHandler } from './typecho.js'
 import { ucozHandler } from './ucoz.js'
-import { vbulletinHandler } from './vbulletin.js'
 import { webnodeHandler } from './webnode.js'
 import { wikidotHandler } from './wikidot.js'
 import { wildApricotHandler } from './wildApricot.js'
 import { wixHandler } from './wix.js'
-import { writefreelyHandler } from './writefreely.js'
-import { xenforoHandler } from './xenforo.js'
-import { yeswikiHandler } from './yeswiki.js'
-import { zenfolioHandler } from './zenfolio.js'
 
 // Every path shape is tried against every content-matched handler, because a
 // handler that matches a path it cannot resolve has a `match` that drifted from
@@ -166,11 +119,6 @@ type Case = [string, PlatformHandler, string, Headers?]
 
 const cases: Array<Case> = [
   [
-    'b2evolution',
-    b2evolutionHandler,
-    '<link rel="alternate" href="/?tempskin=_rss2"><script src="/rsc/js/ajax.js"></script>',
-  ],
-  [
     'bigCartel',
     bigCartelHandler,
     '',
@@ -182,7 +130,6 @@ const cases: Array<Case> = [
     blogspotHandler,
     '<script src="https://www.blogger.com/static/v1/widgets/851759228-widgets.js"></script>',
   ],
-  ['bookwyrm', bookwyrmHandler, '<meta name="generator" content="BookWyrm 0.7.5">'],
   ['castopod', castopodHandler, '<link href="/themes/colors">'],
   ['chambermaster', chambermasterHandler, '', new Headers({ 'x-source': 'cmdotnetJYPM06' })],
   [
@@ -196,18 +143,7 @@ const cases: Array<Case> = [
     '',
     new Headers({ 'set-cookie': 'colorme_PHPSESSID=abc; Path=/' }),
   ],
-  ['diaspora', diasporaHandler, '<script>Diaspora.Page = "Home";</script>'],
-  ['discourse', discourseHandler, '<meta id="data-discourse-setup" data-base-url="/">'],
-  ['discuz', discuzHandler, '<meta name="generator" content="Discuz! X3.5">'],
-  ['dokuwiki', dokuwikiHandler, '', new Headers({ 'set-cookie': 'DokuWiki=abc; path=/' })],
   ['drupal', drupalHandler, '<meta name="generator" content="Drupal 10 (https://www.drupal.org)">'],
-  [
-    'dspace',
-    dspaceHandler,
-    '<link rel="alternate" href="/feed/rss_2.0/site">',
-    new Headers({ 'x-cocoon-version': '2.2.0' }),
-  ],
-  ['edlio', edlioHandler, '<script src="/apps/js/common/list-pack.js"></script>'],
   [
     'eklablog',
     eklablogHandler,
@@ -221,12 +157,6 @@ const cases: Array<Case> = [
     '<div id="phpbb"></div><script>_userdata["session_logged_in"] = 0;</script>',
   ],
   ['friendica', friendicaHandler, '<meta name="generator" content="Friendica 2026.05">'],
-  ['funkwhale', funkwhaleHandler, '<div id="fake-app"></div>'],
-  [
-    'gancio',
-    gancioHandler,
-    '<link rel="stylesheet" href="/custom_css"><script src="/gancio-events.es.js"></script>',
-  ],
   ['gcsWeb', gcsWebHandler, '<link href="/sites/g/files/knoqqb12345/files/css/css_abc.css">'],
   ['gitea', giteaHandler, '', new Headers({ 'set-cookie': 'i_like_gitea=abc; Path=/' })],
   [
@@ -234,17 +164,7 @@ const cases: Array<Case> = [
     gitlabHandler,
     '<script>window.gon={};</script><script src="/assets/webpack/main.chunk.js"></script>',
   ],
-  [
-    'gnuboard',
-    gnuboardHandler,
-    '<script>var g5_url = "https://example.org"; var g5_bo_table = "free";</script>',
-    new Headers({ 'set-cookie': '2a0d2363701f23f8a75028924a3af643=abc; path=/' }),
-  ],
   ['goope', goopeHandler, '<img src="//r.goope.jp/qr/example">'],
-  ['grav', gravHandler, '', new Headers({ 'set-cookie': 'grav-site-9a6a5fc=abc; path=/' })],
-  ['homeland', homelandHandler, '', new Headers({ 'set-cookie': '_homeland_session=abc; path=/' })],
-  ['hubspot', hubspotHandler, '', new Headers({ 'x-hs-hub-id': '53' })],
-  ['hubzilla', hubzillaHandler, "<script>var zid = '';</script>"],
   [
     'instatus',
     instatusHandler,
@@ -257,15 +177,11 @@ const cases: Array<Case> = [
     jiraHandler,
     '<meta name="ajs-base-url" content="https://example.org"><meta name="application-name" content="JIRA">',
   ],
-  ['joomla', joomlaHandler, '<script class="joomla-script-options new">{}</script>'],
-  ['jugem', jugemHandler, '<script src="./template/js/cookie.js"></script>'],
-  ['koha', kohaHandler, '<link rel="stylesheet" href="/opac-tmpl/bootstrap/css/opac.css">'],
   [
     'laget',
     lagetHandler,
     '<link rel="stylesheet" href="https://g-content.laget.se/Public/Css/site-277b6ed876.css">',
   ],
-  ['lemmy', lemmyHandler, '<div class="lemmy-site" id="app"></div>'],
   [
     'legistar',
     legistarHandler,
@@ -275,26 +191,14 @@ const cases: Array<Case> = [
     }),
   ],
   ['mastodon', mastodonHandler, '<div class="app-holder" id="mastodon"></div>'],
-  ['mediawiki', mediawikiHandler, '<link rel="EditURI" href="/w/api.php?action=rsd">'],
   ['misskey', misskeyHandler, '<script type="application/json" id="misskey_meta">{}</script>'],
-  [
-    'mobilizon',
-    mobilizonHandler,
-    "<noscript>Mobilizon doesn't work properly without JavaScript</noscript>",
-  ],
   ['mybb', mybbHandler, '', new Headers({ 'set-cookie': 'mybb[lastvisit]=1790000000; path=/' })],
-  [
-    'netcrew',
-    netcrewHandler,
-    '<script src="/ssi/js/search-trend.js"></script><link href="/ssi/css/top.css">',
-  ],
   ['nethouse', nethouseHandler, '', new Headers({ 'x-generator': 'nethouse' })],
   [
     'ning',
     ningHandler,
     '<link href="https://static.ning.com/socialnetworkmain/widgets/index/css/common.min.css">',
   ],
-  ['nodebb', nodebbHandler, '', new Headers({ 'x-powered-by': 'NodeBB' })],
   [
     'noticeable',
     noticeableHandler,
@@ -315,29 +219,8 @@ const cases: Array<Case> = [
     ojsHandler,
     '<meta name="generator" content="Open Journal Systems 3.3.0.20"><link rel="stylesheet" href="https://example.org/index.php/journal/$$$call$$$/page/page/css?name=stylesheet">',
   ],
-  ['omeka', omekaHandler, '<link href="/plugins/ExhibitBuilder/views/public/css/exhibits.css">'],
-  ['opencartJournal', opencartJournalHandler, '<html data-jv="3.0.44">'],
-  ['openstatus', openstatusHandler, '<link href="/api/status/summary.json">'],
-  ['opus', opusHandler, '<script src="/layouts/opus4/js/frontdoorutil.js"></script>'],
   ['peertube', peertubeHandler, '', new Headers({ 'x-powered-by': 'PeerTube' })],
   ['phpbb', phpbbHandler, '<body id="phpbb">'],
-  ['pixelfed', pixelfedHandler, '<meta name="generator" content="pixelfed">'],
-  [
-    'pleroma',
-    pleromaHandler,
-    '<script id="initial-results" type="application/json">{"/api/pleroma/frontend_configurations":{}}</script>',
-  ],
-  [
-    'plone',
-    ploneHandler,
-    '<body class="portaltype-folder" data-base-url="https://example.org/news">',
-  ],
-  ['pmwiki', pmwikiHandler, '<!--HTMLHeader-->'],
-  [
-    'podhome',
-    podhomeHandler,
-    '<link href="https://cdn.podhome.fm/servesite3.min.css"><link rel="alternate" href="https://serve.podhome.fm/rss/6d610788">',
-  ],
   [
     'podlove',
     podloveHandler,
@@ -354,13 +237,9 @@ const cases: Array<Case> = [
     publicInboxHandler,
     '<a href="_/text/help/">help</a><a href="_/text/color/">color</a>',
   ],
-  ['publii', publiiHandler, '<img src="https://example.org/media/website/logo.png">'],
-  ['pukiwiki', pukiwikiHandler, '<link rel="stylesheet" href="skin/pukiwiki.css">'],
-  ['redmine', redmineHandler, 'Powered by <a href="https://www.redmine.org/">Redmine</a>'],
   ['shaarli', shaarliHandler, '<div id="shaarli-menu"></div>'],
   ['shinobi', shinobiHandler, '<img src="/admin/img/blogheader_logo.png">'],
   ['shopify', shopifyHandler, '', new Headers({ 'powered-by': 'Shopify' })],
-  ['shopserve', shopserveHandler, '<a href="/hpgen/HPB/rss.xml">'],
   [
     'skycms',
     skycmsHandler,
@@ -371,21 +250,15 @@ const cases: Array<Case> = [
     smfHandler,
     '<script>var smf_scripturl = "https://example.org/index.php";var smf_theme_url = "";</script>',
   ],
-  ['snac', snacHandler, '', new Headers({ 'x-creator': 'snac/2.95' })],
-  ['spip', spipHandler, '', new Headers({ 'composed-by': 'SPIP 4.4.25 @ www.spip.net' })],
   [
     'sportsregions',
     sportsregionsHandler,
     '<a href="https://www.sportsregions.fr/signaler-un-contenu-inapproprie">Signaler</a>',
   ],
-  ['squarespace', squarespaceHandler, '', new Headers({ server: 'Squarespace' })],
   ['statuspage', statuspageHandler, '', new Headers({ 'x-statuspage-version': '5a16926c' })],
   ['svbtle', svbtleHandler, '<link href="https://lightning.svbtle.com/cargo/blog.css">'],
-  ['tender', tenderHandler, '', new Headers({ 'set-cookie': '_tender19_session=abc; path=/' })],
   ['textpattern', textpatternHandler, '<meta name="generator" content="Textpattern CMS">'],
-  ['typecho', typechoHandler, '<link rel="stylesheet" href="/usr/themes/default/style.css">'],
   ['ucoz', ucozHandler, '', new Headers({ 'set-cookie': '0exampleuCoz=; path=/' })],
-  ['vbulletin', vbulletinHandler, '<script src="/clientscript/vbulletin-core.js"></script>'],
   [
     'webnode',
     webnodeHandler,
@@ -399,15 +272,6 @@ const cases: Array<Case> = [
     new Headers({ 'x-lb-server': 'ip-10-11-40-107.wa.local' }),
   ],
   ['wix', wixHandler, '', new Headers({ 'x-wix-request-id': '1790000000.1' })],
-  ['writefreely', writefreelyHandler, '<link rel="stylesheet" href="/css/write.css">'],
-  ['xenforo', xenforoHandler, '<html id="XF">'],
-  [
-    'yeswiki',
-    yeswikiHandler,
-    '',
-    new Headers({ 'set-cookie': 'YesWiki-main=0dc6fc2d07d67f79dbe824fa9153cfc3; path=/' }),
-  ],
-  ['zenfolio', zenfolioHandler, '<link href="https://cdn.zenfolio.com/zf/css/layout.css">'],
 ]
 
 // A tuple row without headers would get the done callback in their place under it.each, so the
@@ -483,17 +347,5 @@ describe('platform handler invariant', () => {
     }
 
     expect(violations).toEqual([])
-  })
-
-  it('should leave a page on a known host to its handler when it links a marker', async () => {
-    const value = '<a href="https://github.com/bookwyrm-social/bookwyrm">BookWyrm</a>'
-    const options = {
-      ...defaultPlatformOptions,
-      baseUrl: 'https://www.reddit.com/user/alice',
-    }
-    const entries = await discoverUrisFromPlatform(value, undefined, options)
-    const keys = entries.map((entry) => entry.hint?.key)
-
-    expect(keys).toEqual(['reddit:user'])
   })
 })

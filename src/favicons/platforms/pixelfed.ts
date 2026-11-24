@@ -1,11 +1,39 @@
-import { composeQuery, isNonEmptyString } from 'trousse'
+import { composeQuery, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getMetaContent, hasMarker } from '../../common/utils.js'
-import { isPixelfedHtml, parsePixelfedUrl } from '../../feeds/platforms/pixelfed.js'
+import { getMetaContent, hasAnyMeta, hasMarker } from '../../common/utils.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
 const platform = 'pixelfed'
+
+export type PixelfedUrl = { kind: 'user'; username: string }
+
+const profileRegex = /^\/(?:users\/)?([^/]+)\/?$/i
+
+const metaMarkers: Array<[string, string]> = [
+  ['generator', 'pixelfed'],
+  ['application-name', 'Pixelfed'],
+]
+
+export const isPixelfedHtml = (content: string): boolean => {
+  return hasAnyMeta(content, metaMarkers)
+}
+
+export const parsePixelfedUrl = (url: string): PixelfedUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const username = parsedUrl.pathname.match(profileRegex)?.[1]
+
+  if (!username) {
+    return
+  }
+
+  return { kind: 'user', username }
+}
 
 // An account without an uploaded avatar carries /storage/avatars/default.jpg or default.png.
 const defaultAvatarRegex = /\/avatars\/default\.[a-z]+(?:\?|$)/i

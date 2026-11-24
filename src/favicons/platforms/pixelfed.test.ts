@@ -1,7 +1,89 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
-import { pixelfedEnricher, pixelfedHandler } from './pixelfed.js'
+import {
+  isPixelfedHtml,
+  type PixelfedUrl,
+  parsePixelfedUrl,
+  pixelfedEnricher,
+  pixelfedHandler,
+} from './pixelfed.js'
+
+const otherHtml = '<html><head><meta name="generator" content="WordPress"></head></html>'
+
+describe('parsePixelfedUrl', () => {
+  it('should return the username for a profile page', () => {
+    const expected: PixelfedUrl = { kind: 'user', username: 'alice' }
+
+    expect(parsePixelfedUrl('https://example.com/alice')).toEqual(expected)
+  })
+
+  it('should return the username for a trailing slash', () => {
+    const expected: PixelfedUrl = { kind: 'user', username: 'alice' }
+
+    expect(parsePixelfedUrl('https://example.com/alice/')).toEqual(expected)
+  })
+
+  it('should return the username for a /users/{user} URL', () => {
+    const expected: PixelfedUrl = { kind: 'user', username: 'alice' }
+
+    expect(parsePixelfedUrl('https://example.com/users/alice')).toEqual(expected)
+  })
+
+  it('should return the username for a /users/{user} URL with a capitalized users segment', () => {
+    const expected: PixelfedUrl = { kind: 'user', username: 'alice' }
+
+    expect(parsePixelfedUrl('https://example.com/Users/alice')).toEqual(expected)
+  })
+
+  it('should return undefined for non-profile paths', () => {
+    expect(parsePixelfedUrl('https://example.com/p/12345')).toBeUndefined()
+    expect(parsePixelfedUrl('https://example.com/p/alice/123')).toBeUndefined()
+  })
+
+  it('should return the username with a dash', () => {
+    const expected: PixelfedUrl = { kind: 'user', username: 'alice-x' }
+
+    expect(parsePixelfedUrl('https://example.com/alice-x')).toEqual(expected)
+  })
+
+  it('should return the username with a dot', () => {
+    const expected: PixelfedUrl = { kind: 'user', username: 'bob.photo' }
+
+    expect(parsePixelfedUrl('https://example.com/bob.photo')).toEqual(expected)
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parsePixelfedUrl('https://example.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parsePixelfedUrl('not-a-url')).toBeUndefined()
+  })
+})
+
+describe('isPixelfedHtml', () => {
+  it('should return true for Pixelfed generator meta tag', () => {
+    expect(isPixelfedHtml(pixelfedHtml)).toBe(true)
+  })
+
+  it('should be case-insensitive', () => {
+    expect(isPixelfedHtml('<meta name="generator" content="Pixelfed">')).toBe(true)
+    expect(isPixelfedHtml('<meta name="generator" content="PIXELFED">')).toBe(true)
+  })
+
+  it('should return true for Pixelfed application-name meta tag without generator', () => {
+    expect(isPixelfedHtml('<meta name="application-name" content="Pixelfed">')).toBe(true)
+  })
+
+  it('should return false for non-Pixelfed generator', () => {
+    expect(isPixelfedHtml(otherHtml)).toBe(false)
+  })
+
+  it('should return false for empty content', () => {
+    expect(isPixelfedHtml('')).toBe(false)
+  })
+})
 
 const createContext = (responses: Record<string, string>): FaviconEnricherContext => {
   const fetchFn: FetchFn = async (url) => ({

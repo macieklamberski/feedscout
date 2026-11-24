@@ -1,5 +1,54 @@
 import { describe, expect, it } from 'bun:test'
-import { producthuntHandler } from './producthunt.js'
+import { type ProducthuntUrl, parseProducthuntUrl, producthuntHandler } from './producthunt.js'
+
+describe('parseProducthuntUrl', () => {
+  const productPages: Array<string> = [
+    'https://www.producthunt.com/products/notion', // a product page
+    'https://www.producthunt.com/Products/notion', // a capitalized products segment
+    'https://producthunt.com/products/notion', // the host without www
+    'https://www.producthunt.com/products/notion/reviews', // a product subpage
+  ]
+
+  it.each(productPages)('should return the product for %s', (value) => {
+    const expected: ProducthuntUrl = { kind: 'product', slug: 'notion' }
+
+    expect(parseProducthuntUrl(value)).toEqual(expected)
+  })
+
+  const topicPages: Array<string> = [
+    'https://www.producthunt.com/topics/productivity', // a topic page
+    'https://www.producthunt.com/topics/productivity/', // a trailing slash
+    'https://www.producthunt.com/Topics/productivity', // a capitalized topics segment
+  ]
+
+  it.each(topicPages)('should return the topic for %s', (value) => {
+    const expected: ProducthuntUrl = { kind: 'topic', topic: 'productivity' }
+
+    expect(parseProducthuntUrl(value)).toEqual(expected)
+  })
+
+  const homePages: Array<string> = [
+    'https://www.producthunt.com/', // the home page
+    'https://www.producthunt.com/topics', // the topics index
+    'https://www.producthunt.com/topics/productivity/launches', // a topic subpage
+    'https://www.producthunt.com/categories/tech', // a category page
+    'https://www.producthunt.com/@alice', // a user page
+  ]
+
+  it.each(homePages)('should return the home page for %s', (value) => {
+    const expected: ProducthuntUrl = { kind: 'home' }
+
+    expect(parseProducthuntUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseProducthuntUrl('https://example.com/products/notion')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseProducthuntUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 const productJson =
   '{"__typename":"Product","id":"106091","slug":"notion","name":"Notion","canEdit":false,"websiteUrl":"https://www.example.com","tagline":"The all-in-one workspace","logoUuid":"ff3e2acf-884a-4f4c-a383-6edfe3de0d88.png","isNoLongerOnline":false}'

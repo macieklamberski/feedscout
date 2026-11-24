@@ -1,7 +1,57 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
-import { postypeEnricher, postypeHandler } from './postype.js'
+import { type PostypeUrl, parsePostypeUrl, postypeEnricher, postypeHandler } from './postype.js'
+
+describe('parsePostypeUrl', () => {
+  it('should return the channel for a channel page', () => {
+    const expected: PostypeUrl = { kind: 'channel', channel: 'example' }
+
+    expect(parsePostypeUrl('https://www.postype.com/@example')).toEqual(expected)
+  })
+
+  it('should return the channel for the bare host', () => {
+    const expected: PostypeUrl = { kind: 'channel', channel: 'example' }
+
+    expect(parsePostypeUrl('https://postype.com/@example')).toEqual(expected)
+  })
+
+  it('should return the post for a post page', () => {
+    const expected: PostypeUrl = { kind: 'post', channel: 'example' }
+
+    expect(parsePostypeUrl('https://www.postype.com/@example/post/23216701')).toEqual(expected)
+  })
+
+  it('should return the channel for a channel subdomain', () => {
+    const expected: PostypeUrl = { kind: 'subdomain', channel: 'example' }
+
+    expect(parsePostypeUrl('https://example.postype.com/')).toEqual(expected)
+  })
+
+  it('should return undefined for a bare at sign', () => {
+    expect(parsePostypeUrl('https://www.postype.com/@')).toBeUndefined()
+  })
+
+  it('should return undefined for a page outside a channel', () => {
+    expect(parsePostypeUrl('https://www.postype.com/explore')).toBeUndefined()
+  })
+
+  it('should return undefined for the main host root', () => {
+    expect(parsePostypeUrl('https://www.postype.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for a nested subdomain', () => {
+    expect(parsePostypeUrl('https://a.b.postype.com')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parsePostypeUrl('https://example.com/@example')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parsePostypeUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 const avatarUrl =
   'https://d3mcojo3jv0dbr.cloudfront.net/2026/02/16/10/42/1a2ffc17168638878779956409.jpg?w=200&h=200'

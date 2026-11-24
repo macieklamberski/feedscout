@@ -1,14 +1,51 @@
-import { endsWithAnyOf, isNonEmptyString, parseUrl } from 'trousse'
-import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, hasClass } from '../../common/utils.js'
 import {
-  bookwyrmHandler as bookwyrmFeedHandler,
-  parseBookwyrmUrl,
-} from '../../feeds/platforms/bookwyrm.js'
+  endsWithAnyOf,
+  getAnyOf,
+  getPathSegments,
+  isAnyOf,
+  isNonEmptyString,
+  parseUrl,
+} from 'trousse'
+import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { findElement, hasClass, hasMarker, hasMetaContent } from '../../common/utils.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
 const platform = 'bookwyrm'
+
+export type BookwyrmUrl =
+  | { kind: 'profile'; username: string }
+  | { kind: 'shelf'; username: string; section: string; shelf: string }
+  | { kind: 'subpage'; username: string }
+
+// The trailing boundary keeps sibling repositories such as `bookwyrm-docs` out.
+const sourceLinkRegex = /github\.com\/bookwyrm-social\/bookwyrm(?![\w-])/i
+
+const shelfSections = ['shelf', 'books']
+
+export const isBookwyrmHtml = (content: string): boolean => {
+  return sourceLinkRegex.test(content) || hasMetaContent(content, 'generator', 'BookWyrm')
+}
+
+export const parseBookwyrmUrl = (url: string): BookwyrmUrl | undefined => {
+  const [prefix, username, section, shelf] = getPathSegments(url)
+
+  if (!isAnyOf(prefix, 'user') || !username) {
+    return
+  }
+
+  if (!section) {
+    return { kind: 'profile', username }
+  }
+
+  const shelfSection = getAnyOf(section, shelfSections)
+
+  if (shelfSection && shelf) {
+    return { kind: 'shelf', username, section: shelfSection, shelf }
+  }
+
+  return { kind: 'subpage', username }
+}
 
 // Served in place of an avatar to users who never uploaded one.
 const defaultAvatarPath = '/images/default_avi.jpg'
@@ -22,7 +59,13 @@ const findAvatarSrc = (content: string | undefined): string | undefined => {
 }
 
 export const bookwyrmHandler: PlatformHandler = {
-  match: bookwyrmFeedHandler.match,
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { html: isBookwyrmHtml })) {
+      return false
+    }
+
+    return parseBookwyrmUrl(url) !== undefined
+  },
 
   resolve: (url, content) => {
     const parsed = parseBookwyrmUrl(url)

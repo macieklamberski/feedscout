@@ -1,11 +1,66 @@
-import { composeQuery, isNonEmptyString } from 'trousse'
+import {
+  composeQuery,
+  getPathSegments,
+  getQueryParam,
+  includesAnyOf,
+  isAnyOf,
+  isNonEmptyString,
+  parseUrl,
+} from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getMetaContent } from '../../common/utils.js'
-import { lemmyHandler as lemmyFeedHandler, parseLemmyUrl } from '../../feeds/platforms/lemmy.js'
+import {
+  findElement,
+  getMetaContent,
+  hasClass,
+  hasMarker,
+  hasMetaContent,
+} from '../../common/utils.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
 const platform = 'lemmy'
+
+type LemmyQuery = { sort?: string; limit?: string }
+
+export type LemmyUrl =
+  | ({ kind: 'community'; community: string } & LemmyQuery)
+  | ({ kind: 'user'; username: string } & LemmyQuery)
+  | ({ kind: 'home' } & LemmyQuery)
+
+export const parseLemmyUrl = (url: string): LemmyUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const [section, name] = getPathSegments(parsedUrl)
+  const { searchParams } = parsedUrl
+  const sort = getQueryParam(searchParams, 'sort')
+  const limit = getQueryParam(searchParams, 'limit')
+
+  if (name && isAnyOf(section, 'c')) {
+    return { kind: 'community', community: name, sort, limit }
+  }
+
+  if (name && isAnyOf(section, 'u')) {
+    return { kind: 'user', username: name, sort, limit }
+  }
+
+  return { kind: 'home', sort, limit }
+}
+
+// Current Lemmy serves no generator meta.
+export const isLemmyHtml = (content: string): boolean => {
+  return (
+    findElement(content, (element) => hasClass(element, 'lemmy-site')) !== undefined ||
+    hasMetaContent(content, 'generator', 'Lemmy')
+  )
+}
+
+export const isLemmyHeaders = (headers: Headers): boolean => {
+  return includesAnyOf(headers.get('x-powered-by'), 'lemmy')
+}
 
 const getProfileId = (url: string): string | undefined => {
   const parsed = parseLemmyUrl(url)
@@ -21,7 +76,10 @@ const getProfileId = (url: string): string | undefined => {
 
 export const lemmyHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    return !!getProfileId(url) && lemmyFeedHandler.match(url, content, headers)
+    return (
+      !!getProfileId(url) &&
+      hasMarker(content, headers, { html: isLemmyHtml, headers: isLemmyHeaders })
+    )
   },
 
   resolve: (url, content) => {

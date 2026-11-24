@@ -4,7 +4,6 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import { type PlatformFeedParams, withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
-import { getJournalName, getJournalTag } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
 // Handler needed for: posts, userpics.
@@ -27,8 +26,29 @@ const pathHosts = insanejournal.hosts.exact
 const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/i
 const firstSegmentRegex = /^\/([^/]+)/
+const journalTagRegex = /^\/tag\/([^/]+)/i
 
 const feeds = withHintLabels(insanejournal.feeds)
+
+// Journal names on the LiveJournal engine carry no dots, so a dotted segment such as robots.txt is
+// a file of the site.
+const getJournalName = (pathname: string, regex: RegExp): string | undefined => {
+  const name = pathname.match(regex)?.[1]
+
+  if (!name || name.includes('.')) {
+    return
+  }
+
+  return name
+}
+
+// A tag page names its tag after the journal: `/tag/film` on a journal's own host, and
+// `/users/alice/tag/film` where the path names the journal.
+const getJournalTag = (pathname: string, journalRegex?: RegExp): string | undefined => {
+  const journalPath = journalRegex?.exec(pathname)?.[0] ?? ''
+
+  return pathname.slice(journalPath.length).match(journalTagRegex)?.[1]
+}
 
 export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined => {
   const pathname = parseUrl(url)?.pathname

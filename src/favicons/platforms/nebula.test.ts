@@ -1,7 +1,64 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
-import { nebulaEnricher, nebulaHandler } from './nebula.js'
+import { type NebulaUrl, nebulaEnricher, nebulaHandler, parseNebulaUrl } from './nebula.js'
+
+describe('parseNebulaUrl', () => {
+  it('should return the slug for a channel page', () => {
+    const expected: NebulaUrl = { kind: 'channel', slug: 'alicescience' }
+
+    expect(parseNebulaUrl('https://nebula.tv/alicescience')).toEqual(expected)
+  })
+
+  it('should return the slug for a channel subpage', () => {
+    const value = 'https://nebula.tv/alicescience/videos/some-video'
+    const expected: NebulaUrl = { kind: 'channel', slug: 'alicescience' }
+
+    expect(parseNebulaUrl(value)).toEqual(expected)
+  })
+
+  it('should return the slug for the www host', () => {
+    const value = 'https://www.nebula.tv/alicescience'
+    const expected: NebulaUrl = { kind: 'channel', slug: 'alicescience' }
+
+    expect(parseNebulaUrl(value)).toEqual(expected)
+  })
+
+  it('should return explore for the home page', () => {
+    const expected: NebulaUrl = { kind: 'explore' }
+
+    expect(parseNebulaUrl('https://nebula.tv/')).toEqual(expected)
+  })
+
+  it('should return explore for videos pages', () => {
+    const expected: NebulaUrl = { kind: 'explore' }
+
+    expect(parseNebulaUrl('https://nebula.tv/videos')).toEqual(expected)
+    expect(parseNebulaUrl('https://nebula.tv/videos/alicescience-why-ships-float')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return explore with the category of an explore page', () => {
+    const expected: NebulaUrl = { kind: 'explore', category: 'Science' }
+
+    expect(parseNebulaUrl('https://nebula.tv/explore?category=Science')).toEqual(expected)
+  })
+
+  it('should return explore for explore pages in any case', () => {
+    const expected: NebulaUrl = { kind: 'explore' }
+
+    expect(parseNebulaUrl('https://nebula.tv/Explore')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseNebulaUrl('https://example.com/alicescience')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseNebulaUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 const createContext = (responses: Record<string, string>): FaviconEnricherContext => {
   const fetchFn: FetchFn = async (url) => ({
