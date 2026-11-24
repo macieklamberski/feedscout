@@ -2010,6 +2010,7 @@ Discovers the blog and events feeds of a Wild Apricot site. Detected by the `x-l
 |-------------|-----------------|
 | `{host}/{blog-page}` | Blog (RSS) |
 | `{host}/{blog-page}/{post-id}` | Blog (RSS), from the post's back link |
+| `{host}/{post-id}`, a post on a home-page blog | Blog (RSS), at `{host}/RSS` |
 | `{host}/{events-page}` | Events (RSS), in the list and calendar views |
 
 > [!NOTE]
@@ -2354,7 +2355,7 @@ Discovers the feeds of a user blog on Aladin, `blog.aladin.co.kr/{user}`. A cate
 
 ### Bangumi
 
-Discovers the collections and timeline feeds of a Bangumi user on `bgm.tv` or `bangumi.tv`, plus the site blog feed. A `chii.in` page gets the `bgm.tv` feeds, since `chii.in` answers a plain fetch of its feeds with a Cloudflare challenge.
+Discovers the collections and timeline feeds of a Bangumi user, plus the site blog feed. A page on `bangumi.tv`, `chii.in` or `www.bgm.tv` gets the `bgm.tv` feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|

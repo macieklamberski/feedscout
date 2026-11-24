@@ -153,6 +153,21 @@ describe('wildApricotHandler', () => {
       expect(wildApricotHandler.resolve(value, postHtml)).toEqual(blogFeeds)
     })
 
+    it('should return the root feed on a post page whose blog is the home page', () => {
+      const value = 'https://example.com/12345678'
+      const content = `
+        <a
+          id="FunctionalBlock1_ctl00_blogPostView_title_backLink"
+          href="https://example.com/"
+        >Back to list</a>
+      `
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://example.com/RSS', hint: { key: 'wild-apricot:site', label: 'Blog' } },
+      ]
+
+      expect(wildApricotHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return the events feed on an events page', () => {
       const value = 'https://example.com/events'
 

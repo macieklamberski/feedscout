@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { definePageUrls } from 'feedintel'
 import type { DiscoverUriHint, FetchFn } from './types.js'
 import {
   composeHint,
@@ -11,6 +12,7 @@ import {
   getCookieNames,
   getHostOrigin,
   getJsonLd,
+  getLinkedPage,
   getMetaContent,
   getNumericId,
   getScriptDirectory,
@@ -903,6 +905,49 @@ describe('getHostOrigin', () => {
     const value = 'social.example.com.'
 
     expect(getHostOrigin(value)).toBeUndefined()
+  })
+})
+
+describe('getLinkedPage', () => {
+  const pages = definePageUrls([{ key: 'post', main: '{scheme}://{host}/posts/{slug}' }], {
+    hosts: { tenants: ['example.com'] },
+  })
+  const pageUrl = 'https://alice.example.com/'
+
+  it('should return the page a relative link names', () => {
+    const value = '/posts/first'
+    const expected = {
+      key: 'post',
+      params: { scheme: 'https', host: 'alice.example.com', slug: 'first' },
+    }
+
+    expect(getLinkedPage(value, pageUrl, pages)).toMatchObject(expected)
+  })
+
+  it('should return the page an absolute link on the same host names', () => {
+    const value = 'https://alice.example.com/posts/first'
+    const expected = {
+      key: 'post',
+      params: { scheme: 'https', host: 'alice.example.com', slug: 'first' },
+    }
+
+    expect(getLinkedPage(value, pageUrl, pages)).toMatchObject(expected)
+  })
+
+  it('should return undefined for a link to another tenant of the platform', () => {
+    const value = 'https://bob.example.com/posts/first'
+
+    expect(getLinkedPage(value, pageUrl, pages)).toBeUndefined()
+  })
+
+  it('should return undefined for a link the table does not read', () => {
+    const value = '/about'
+
+    expect(getLinkedPage(value, pageUrl, pages)).toBeUndefined()
+  })
+
+  it('should return undefined without a link', () => {
+    expect(getLinkedPage(undefined, pageUrl, pages)).toBeUndefined()
   })
 })
 

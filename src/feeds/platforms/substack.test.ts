@@ -2,13 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
-import {
-  getSubstackPage,
-  parseSubstackUrl,
-  type SubstackPage,
-  type SubstackUrl,
-  substackHandler,
-} from './substack.js'
+import { parseSubstackUrl, type SubstackUrl, substackHandler } from './substack.js'
 
 const podcastHint: DiscoverUriHint = { key: 'substack:podcast', label: 'Podcast' }
 
@@ -49,48 +43,6 @@ describe('parseSubstackUrl', () => {
 
   it('should return undefined for another host', () => {
     expect(parseSubstackUrl('https://example.com/@example')).toBeUndefined()
-  })
-})
-
-describe('getSubstackPage', () => {
-  it('should return the origin of a newsletter page', () => {
-    const value = 'https://alicewrites.substack.com/p/first-post'
-    const expected: SubstackPage = {
-      kind: 'newsletter',
-      origin: 'https://alicewrites.substack.com',
-    }
-
-    expect(getSubstackPage(value, undefined)).toEqual(expected)
-  })
-
-  it('should return the custom domain of the primary publication of a profile', () => {
-    const content =
-      '{\\"primaryPublication\\":{\\"id\\":4330724,\\"subdomain\\":\\"alicewrites\\",\\"custom_domain\\":\\"newsletter.example.com\\"}}'
-    const expected: SubstackPage = { kind: 'profile', origin: 'https://newsletter.example.com' }
-
-    expect(getSubstackPage('https://substack.com/@alice', content)).toEqual(expected)
-  })
-
-  it('should return the subdomain of the primary publication of a profile', () => {
-    const content =
-      '{"primaryPublication":{"id":4330724,"subdomain":"alicewrites","custom_domain":null}}'
-    const expected: SubstackPage = { kind: 'profile', origin: 'https://alicewrites.substack.com' }
-
-    expect(getSubstackPage('https://substack.com/@alice', content)).toEqual(expected)
-  })
-
-  it('should return the handle subdomain of a profile without content', () => {
-    const expected: SubstackPage = { kind: 'profile', origin: 'https://alice.substack.com' }
-
-    expect(getSubstackPage('https://substack.com/@alice', undefined)).toEqual(expected)
-  })
-
-  it('should return undefined for the app host', () => {
-    expect(getSubstackPage('https://open.substack.com/pub/alice', undefined)).toBeUndefined()
-  })
-
-  it('should return undefined for another host', () => {
-    expect(getSubstackPage('https://example.com/@alice', undefined)).toBeUndefined()
   })
 })
 

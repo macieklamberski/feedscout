@@ -1,8 +1,7 @@
 import { weebly } from 'feedintel'
-import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElements } from '../../common/utils.js'
+import { findElements, getLinkedPage } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -25,25 +24,12 @@ export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
   return { kind: 'blog', page: page.params.page }
 }
 
-const getLinkedPage = (href: string | undefined, url: string, host: string): string | undefined => {
-  const linkUrl = parseUrl(href, url)
-  const link = linkUrl ? weebly.pages.read(linkUrl.href) : undefined
-
-  if (!linkUrl || !isHostOf(linkUrl, host) || link?.key !== 'page') {
-    return
-  }
-
-  return link.params.page
-}
-
 export const getWeeblyPage = (url: string, content: string | undefined): WeeblyPage | undefined => {
   const parsed = parseWeeblyUrl(url)
 
   if (parsed?.kind !== 'home') {
     return parsed
   }
-
-  const { hostname } = new URL(url)
 
   // A site can run a blog on any of its pages, and the home page links every page, so each page
   // it links is a blog candidate beside the default /blog. Validation drops the pages that are
@@ -52,10 +38,10 @@ export const getWeeblyPage = (url: string, content: string | undefined): WeeblyP
   const anchors = content ? findElements(content, (element) => element.name === 'a') : []
 
   for (const anchor of anchors) {
-    const page = getLinkedPage(anchor.attribs.href, url, hostname)
+    const page = getLinkedPage(anchor.attribs.href, url, weebly.pages)
 
-    if (page) {
-      pages.add(page)
+    if (page?.key === 'page') {
+      pages.add(page.params.page)
     }
   }
 
