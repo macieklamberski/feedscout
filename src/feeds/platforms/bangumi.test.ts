@@ -104,7 +104,7 @@ describe('bangumiHandler', () => {
     it('should return the blog feed for any other page', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://bangumi.tv/feed/blog/all',
+          uri: 'https://bgm.tv/feed/blog/all',
           hint: { key: 'bangumi:blog', label: 'Blog' },
         },
       ]

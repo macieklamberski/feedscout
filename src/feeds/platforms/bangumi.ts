@@ -1,5 +1,4 @@
 import { bangumi } from 'feedintel'
-import { isHostOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -8,10 +7,6 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 // Handler needed for: timeline.
 
 export type BangumiUrl = { kind: 'user'; username: string } | { kind: 'home' }
-
-// chii.in serves the same site, but answers a plain fetch of its feeds with a Cloudflare challenge,
-// so its pages get the bgm.tv feeds.
-const challengedHosts = ['chii.in']
 
 const feeds = withHintLabels(bangumi.feeds)
 
@@ -36,7 +31,7 @@ export const bangumiHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseBangumiUrl(url)
-    const pageFeeds = feeds.forUrl(isHostOf(url, challengedHosts) ? 'https://bgm.tv/' : url)
+    const pageFeeds = feeds.forUrl(url)
 
     if (!parsed || !pageFeeds) {
       return []
