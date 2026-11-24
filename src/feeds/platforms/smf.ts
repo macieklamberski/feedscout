@@ -2,7 +2,13 @@ import { smf } from 'feedintel'
 import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, hasMarker } from '../../common/utils.js'
+import {
+  findElement,
+  getSiteParams,
+  getSiteUrl,
+  hasMarker,
+  isRootOfPage,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: board.
@@ -19,8 +25,12 @@ export const isSmfHtml = (content: string): boolean => {
   return scriptUrlRegex.test(content) && content.includes('var smf_theme_url = "')
 }
 
-const readBoardId = (url: string | undefined, root: string): string | undefined => {
-  const page = smf.pages.read(url ?? '', { root })
+const readBoardId = (url: string | undefined, scriptUrl: string): string | undefined => {
+  if (!url || !isRootOfPage(scriptUrl, url)) {
+    return
+  }
+
+  const page = smf.pages.read(url, { base: getSiteParams(scriptUrl)?.base })
 
   if (page?.key !== 'board') {
     return
@@ -30,12 +40,14 @@ const readBoardId = (url: string | undefined, root: string): string | undefined 
 }
 
 // A board page and a topic page both link their board as `rel="index"`.
-const getBoardId = (url: string, content: string, root: string): string | undefined => {
+const getBoardId = (url: string, content: string, scriptUrl: string): string | undefined => {
   const indexLink = findElement(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'index'
   })
 
-  return readBoardId(url, root) ?? readBoardId(parseUrl(indexLink?.attribs.href, url)?.href, root)
+  const indexUrl = parseUrl(indexLink?.attribs.href, url)?.href
+
+  return readBoardId(url, scriptUrl) ?? readBoardId(indexUrl, scriptUrl)
 }
 
 const getSmfPage = (url: string, content: string | undefined): SmfPage | undefined => {
@@ -46,7 +58,7 @@ const getSmfPage = (url: string, content: string | undefined): SmfPage | undefin
     return
   }
 
-  const { root } = script.params
+  const root = getSiteUrl(script.params)
 
   return { scriptUrl: root, boardId: getBoardId(url, content, root) }
 }
@@ -64,22 +76,22 @@ export const smfHandler: PlatformHandler = {
       return []
     }
 
-    const root = page.scriptUrl
+    const site = getSiteParams(page.scriptUrl)
 
     if (page.boardId) {
-      const params = { root, board: page.boardId }
+      const params = { ...site, board: page.boardId }
 
       return [
         pageFeeds.getFeedEntry('board', params, 'rss'),
         pageFeeds.getFeedEntry('board', params, 'atom'),
-        pageFeeds.getFeedEntry('posts', { root }, 'rss'),
-        pageFeeds.getFeedEntry('posts', { root }, 'atom'),
+        pageFeeds.getFeedEntry('posts', site, 'rss'),
+        pageFeeds.getFeedEntry('posts', site, 'atom'),
       ]
     }
 
     return [
-      pageFeeds.getFeedEntry('posts', { root }, 'rss'),
-      pageFeeds.getFeedEntry('posts', { root }, 'atom'),
+      pageFeeds.getFeedEntry('posts', site, 'rss'),
+      pageFeeds.getFeedEntry('posts', site, 'atom'),
     ]
   },
 }

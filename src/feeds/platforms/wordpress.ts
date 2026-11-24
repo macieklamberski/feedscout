@@ -70,6 +70,8 @@ const hintPrefix = 'wordpress:'
 
 const feeds = withHintLabels(wordpress.feeds)
 
+type PageFeeds = NonNullable<ReturnType<typeof feeds.forUrl>>
+
 // The page a WordPress URL shows, read from the path, so a WP Engine site reads the same. Only
 // hypotheses.org's post-id paths need the host.
 export const parseWordpressPage = (url: string): WordpressUrl => {
@@ -166,43 +168,53 @@ export const getWordpressFeedHint = (url: string): DiscoverUriHint | undefined =
   return composeHint('wordpress:posts', format)
 }
 
+// The spellings of a site on its own domain, which a page of a tenant gets too.
+const siteVariant = 'site'
+
 // The site-wide feeds, which every page gets after its own.
-const getSiteFeeds = (root: string): Array<DiscoverUriEntry | undefined> => {
+const getSiteFeeds = (pageFeeds: PageFeeds): Array<DiscoverUriEntry | undefined> => {
   return [
-    feeds.getFeedSpellings('posts', { root }, 'rss'),
-    feeds.getFeedSpellings('posts', { root }, 'atom'),
-    feeds.getFeedSpellings('posts', { root }, 'rdf'),
-    feeds.getFeedSpellings('comments', { root }, 'rss'),
-    feeds.getFeedSpellings('comments', { root }, 'atom'),
+    pageFeeds.getFeedSpellings('posts', {}, 'rss', siteVariant),
+    pageFeeds.getFeedSpellings('posts', {}, 'atom', siteVariant),
+    pageFeeds.getFeedSpellings('posts', {}, 'rdf', siteVariant),
+    pageFeeds.getFeedSpellings('comments', {}, 'rss', siteVariant),
+    pageFeeds.getFeedSpellings('comments', {}, 'atom', siteVariant),
   ]
 }
 
 export const composeWordpressFeeds = (
-  origin: string,
+  url: string,
   parsed: WordpressUrl,
 ): Array<DiscoverUriEntry | undefined> => {
+  const pageFeeds = feeds.forUrl(url)
+
+  if (!pageFeeds) {
+    return []
+  }
+
   if (parsed.kind === 'archive') {
-    const params = { root: origin, path: parsed.path }
+    const key = parsed.hintKey.slice(hintPrefix.length)
+    const params = { path: parsed.path }
 
     return [
-      feeds.getFeedSpellings(parsed.hintKey.slice(hintPrefix.length), params, 'rss'),
-      feeds.getFeedSpellings(parsed.hintKey.slice(hintPrefix.length), params, 'atom'),
-      feeds.getFeedSpellings(parsed.hintKey.slice(hintPrefix.length), params, 'rdf'),
-      ...getSiteFeeds(origin),
+      pageFeeds.getFeedSpellings(key, params, 'rss', siteVariant),
+      pageFeeds.getFeedSpellings(key, params, 'atom', siteVariant),
+      pageFeeds.getFeedSpellings(key, params, 'rdf', siteVariant),
+      ...getSiteFeeds(pageFeeds),
     ]
   }
 
   if (parsed.kind === 'post') {
-    const params = { root: origin, path: parsed.path }
+    const params = { path: parsed.path }
 
     return [
-      feeds.getFeedSpellings('post-comments', params, 'rss'),
-      feeds.getFeedSpellings('post-comments', params, 'atom'),
-      ...getSiteFeeds(origin),
+      pageFeeds.getFeedSpellings('post-comments', params, 'rss', siteVariant),
+      pageFeeds.getFeedSpellings('post-comments', params, 'atom', siteVariant),
+      ...getSiteFeeds(pageFeeds),
     ]
   }
 
-  return getSiteFeeds(origin)
+  return getSiteFeeds(pageFeeds)
 }
 
 export const wordpressHandler: PlatformHandler = {
@@ -229,7 +241,7 @@ export const wordpressHandler: PlatformHandler = {
       return []
     }
 
-    return composeWordpressFeeds(new URL(url).origin, parsed)
+    return composeWordpressFeeds(url, parsed)
   },
 
   getFeedHint: (url) => {

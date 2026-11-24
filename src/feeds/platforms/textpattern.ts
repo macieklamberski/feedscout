@@ -2,7 +2,14 @@ import { textpattern } from 'feedintel'
 import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
+import {
+  findElement,
+  getSiteParams,
+  getSiteUrl,
+  hasMarker,
+  hasMetaContent,
+  isRootOfPage,
+} from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -21,8 +28,13 @@ type TextpatternPageMatch = ReturnType<typeof textpattern.pages.read>
 
 const readFeedLink = (url: string, href: string | undefined): string | undefined => {
   const feedUrl = parseUrl(href, url)?.href ?? ''
+  const feed = textpattern.feeds.read(feedUrl, { isAnyHost: true })
 
-  return textpattern.feeds.read(feedUrl, { isAnyHost: true })?.params.root
+  if (!feed) {
+    return
+  }
+
+  return getSiteUrl(feed.params)
 }
 
 // Textpattern serves its feeds at `{site}/rss` and `{site}/atom`, so the feed link a theme prints
@@ -37,15 +49,15 @@ const readPage = (url: string, content: string | undefined): TextpatternPageMatc
   })
   const feedRoot = readFeedLink(url, feedLink?.attribs.href)
 
-  if (feedRoot) {
-    const page = textpattern.pages.read(url, { root: feedRoot })
+  if (feedRoot && isRootOfPage(feedRoot, url)) {
+    const page = textpattern.pages.read(url, { base: getSiteParams(feedRoot)?.base })
 
     if (page) {
       return page
     }
   }
 
-  return textpattern.pages.read(url, { root: parseUrl(url)?.origin })
+  return textpattern.pages.read(url, { base: [] })
 }
 
 export const getTextpatternPage = (
@@ -58,7 +70,7 @@ export const getTextpatternPage = (
     return
   }
 
-  const siteUrl = page.params.root
+  const siteUrl = getSiteUrl(page.params)
 
   if (page.key === 'category') {
     return { kind: 'category', siteUrl, category: page.params.category }
@@ -84,7 +96,7 @@ export const textpatternHandler: PlatformHandler = {
     }
 
     if (page.kind === 'section') {
-      const params = { root: page.siteUrl, section: page.section }
+      const params = { ...getSiteParams(page.siteUrl), section: page.section }
 
       return [
         feeds.getFeedEntry('section', params, 'rss'),
@@ -95,7 +107,7 @@ export const textpatternHandler: PlatformHandler = {
     }
 
     if (page.kind === 'category') {
-      const params = { root: page.siteUrl, category: page.category }
+      const params = { ...getSiteParams(page.siteUrl), category: page.category }
 
       return [
         feeds.getFeedEntry('category', params, 'rss'),
@@ -106,8 +118,8 @@ export const textpatternHandler: PlatformHandler = {
     }
 
     return [
-      feeds.getFeedEntry('posts', { root: page.siteUrl }, 'rss'),
-      feeds.getFeedEntry('posts', { root: page.siteUrl }, 'atom'),
+      feeds.getFeedEntry('posts', getSiteParams(page.siteUrl), 'rss'),
+      feeds.getFeedEntry('posts', getSiteParams(page.siteUrl), 'atom'),
     ]
   },
 }

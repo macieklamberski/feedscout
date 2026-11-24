@@ -2,7 +2,14 @@ import { phpbb } from 'feedintel'
 import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getCookieNames, hasElementWithId, hasMarker } from '../../common/utils.js'
+import {
+  findElement,
+  getCookieNames,
+  getSiteParams,
+  getSiteUrl,
+  hasElementWithId,
+  hasMarker,
+} from '../../common/utils.js'
 import { isForumotionHtml } from './forumotion.js'
 
 // Discoverability: Discoverable without handler.
@@ -38,7 +45,7 @@ const getPhpbbPage = (url: string, content: string | undefined): PhpbbPage | und
     return
   }
 
-  const { root } = page.params
+  const root = getSiteUrl(page.params)
   const forumId = page.key === 'board' ? undefined : page.params.forumId
   const topicId = page.key === 'topic' ? page.params.topicId : undefined
   // A post link, `viewtopic.php?p={id}`, names no topic, and the page's canonical link does.
@@ -69,48 +76,49 @@ export const phpbbHandler: PlatformHandler = {
       return []
     }
 
-    const { boardUrl: root, forumId, topicId } = page
+    const { boardUrl, forumId, topicId } = page
+    const site = getSiteParams(boardUrl)
 
     if (topicId && forumId) {
       return [
-        pageFeeds.getFeedEntry('topic', { root, topicId }),
-        pageFeeds.getFeedEntry('forum', { root, forumId }),
-        pageFeeds.getFeedEntry('site', { root }),
-        pageFeeds.getFeedEntry('news', { root }),
-        pageFeeds.getFeedEntry('new-topics', { root }),
-        pageFeeds.getFeedEntry('active-topics', { root }),
-        pageFeeds.getFeedEntry('forums', { root }),
+        pageFeeds.getFeedEntry('topic', { ...site, topicId }),
+        pageFeeds.getFeedEntry('forum', { ...site, forumId }),
+        pageFeeds.getFeedEntry('site', site),
+        pageFeeds.getFeedEntry('news', site),
+        pageFeeds.getFeedEntry('new-topics', site),
+        pageFeeds.getFeedEntry('active-topics', site),
+        pageFeeds.getFeedEntry('forums', site),
       ]
     }
 
     if (topicId) {
       return [
-        pageFeeds.getFeedEntry('topic', { root, topicId }),
-        pageFeeds.getFeedEntry('site', { root }),
-        pageFeeds.getFeedEntry('news', { root }),
-        pageFeeds.getFeedEntry('new-topics', { root }),
-        pageFeeds.getFeedEntry('active-topics', { root }),
-        pageFeeds.getFeedEntry('forums', { root }),
+        pageFeeds.getFeedEntry('topic', { ...site, topicId }),
+        pageFeeds.getFeedEntry('site', site),
+        pageFeeds.getFeedEntry('news', site),
+        pageFeeds.getFeedEntry('new-topics', site),
+        pageFeeds.getFeedEntry('active-topics', site),
+        pageFeeds.getFeedEntry('forums', site),
       ]
     }
 
     if (forumId) {
       return [
-        pageFeeds.getFeedEntry('forum', { root, forumId }),
-        pageFeeds.getFeedEntry('site', { root }),
-        pageFeeds.getFeedEntry('news', { root }),
-        pageFeeds.getFeedEntry('new-topics', { root }),
-        pageFeeds.getFeedEntry('active-topics', { root }),
-        pageFeeds.getFeedEntry('forums', { root }),
+        pageFeeds.getFeedEntry('forum', { ...site, forumId }),
+        pageFeeds.getFeedEntry('site', site),
+        pageFeeds.getFeedEntry('news', site),
+        pageFeeds.getFeedEntry('new-topics', site),
+        pageFeeds.getFeedEntry('active-topics', site),
+        pageFeeds.getFeedEntry('forums', site),
       ]
     }
 
     return [
-      pageFeeds.getFeedEntry('site', { root }),
-      pageFeeds.getFeedEntry('news', { root }),
-      pageFeeds.getFeedEntry('new-topics', { root }),
-      pageFeeds.getFeedEntry('active-topics', { root }),
-      pageFeeds.getFeedEntry('forums', { root }),
+      pageFeeds.getFeedEntry('site', site),
+      pageFeeds.getFeedEntry('news', site),
+      pageFeeds.getFeedEntry('new-topics', site),
+      pageFeeds.getFeedEntry('active-topics', site),
+      pageFeeds.getFeedEntry('forums', site),
     ]
   },
 }

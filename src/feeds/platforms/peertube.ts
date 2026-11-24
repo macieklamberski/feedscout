@@ -2,7 +2,7 @@ import { peertube } from 'feedintel'
 import { includesAnyOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker, isRootOfPage } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: channel, channel-podcast, instance.
@@ -19,9 +19,15 @@ export const isPeertubeHeaders = (headers: Headers): boolean => {
 // The podcast feed takes only the numeric channel id, which the channel page carries in its link
 // to that feed. An instance too old to serve the feed links none.
 const getPodcastChannelId = (url: string, content: string | undefined): string | undefined => {
-  const root = parseUrl(url)?.origin ?? ''
+  const origin = parseUrl(url)?.origin ?? ''
   const getLinkedChannelId = (href: string | undefined): string | undefined => {
-    const feed = peertube.feeds.read(parseUrl(href, url)?.href ?? '', { root })
+    const feedUrl = parseUrl(href, url)?.href ?? ''
+
+    if (!isRootOfPage(origin, feedUrl)) {
+      return
+    }
+
+    const feed = peertube.feeds.read(feedUrl, { isAnyHost: true })
 
     if (feed?.key !== 'channel-podcast') {
       return
@@ -37,7 +43,7 @@ const getPodcastChannelId = (url: string, content: string | undefined): string |
 }
 
 export const parsePeertubeUrl = (url: string): PeertubeUrl | undefined => {
-  const page = peertube.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
+  const page = peertube.pages.read(url, { isAnyHost: true })
 
   if (!page) {
     return

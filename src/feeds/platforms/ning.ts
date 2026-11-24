@@ -1,5 +1,5 @@
 import { ning } from 'feedintel'
-import { isPresent, parseUrl } from 'trousse'
+import { isPresent } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
@@ -22,7 +22,7 @@ export const isNingHtml = (content: string): boolean => {
 }
 
 export const parseNingUrl = (url: string): NingUrl | undefined => {
-  const page = ning.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
+  const page = ning.pages.read(url, { isAnyHost: true })
 
   if (!page) {
     return

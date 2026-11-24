@@ -25,7 +25,7 @@ export const parseWikidotUrl = (url: string): WikidotUrl | undefined => {
     return
   }
 
-  const page = wikidot.pages.read(url, { root: parsedUrl.origin })
+  const page = wikidot.pages.read(url, { isAnyHost: true })
 
   if (page?.key === 'thread') {
     return { kind: 'thread', threadId: page.params.threadId }

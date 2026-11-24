@@ -39,11 +39,7 @@ export const hasSkycmsRssList = (content: string | undefined): boolean => {
 }
 
 export const parseSkycmsUrl = (url: string): SkycmsUrl | undefined => {
-  if (!URL.canParse(url)) {
-    return
-  }
-
-  const page = skycms.pages.read(url, { root: new URL(url).origin })
+  const page = skycms.pages.read(url, { isAnyHost: true })
 
   if (!page) {
     return

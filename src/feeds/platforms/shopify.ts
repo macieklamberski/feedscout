@@ -1,5 +1,5 @@
 import { shopify } from 'feedintel'
-import { includesAnyOf, parseUrl } from 'trousse'
+import { includesAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
@@ -15,8 +15,7 @@ export const isShopifyHeaders = (headers: Headers): boolean => {
 }
 
 export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {
-  const parsedUrl = parseUrl(url)
-  const page = parsedUrl ? shopify.pages.read(url, { root: parsedUrl.origin }) : undefined
+  const page = shopify.pages.read(url, { isAnyHost: true })
 
   if (!page) {
     return

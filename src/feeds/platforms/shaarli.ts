@@ -1,7 +1,14 @@
 import { shaarli } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getCookieNames, hasElementWithId, hasMarker } from '../../common/utils.js'
+import {
+  findElement,
+  getCookieNames,
+  getSiteParams,
+  getSiteUrl,
+  hasElementWithId,
+  hasMarker,
+} from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -31,7 +38,7 @@ const getShaarliPage = (url: string, content: string | undefined): ShaarliPage |
   const basePath = input?.attribs.value
 
   if (basePath === undefined) {
-    return { baseUrl: page.params.root }
+    return { baseUrl: getSiteUrl(page.params) }
   }
 
   return { baseUrl: `${new URL(url).origin}${basePath}` }
@@ -52,8 +59,8 @@ export const shaarliHandler: PlatformHandler = {
     const { baseUrl } = page
 
     return [
-      feeds.getFeedSpellings('posts', { root: baseUrl }, 'rss'),
-      feeds.getFeedEntry('posts', { root: baseUrl }, 'atom'),
+      feeds.getFeedSpellings('posts', getSiteParams(baseUrl), 'rss'),
+      feeds.getFeedEntry('posts', getSiteParams(baseUrl), 'atom'),
     ]
   },
 }

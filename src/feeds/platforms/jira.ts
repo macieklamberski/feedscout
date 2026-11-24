@@ -1,8 +1,13 @@
 import { jira } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getMetaContent, hasMarker, hasMetaContent } from '../../common/utils.js'
+import {
+  getMetaContent,
+  getSiteParams,
+  getSiteUrl,
+  hasMarker,
+  hasMetaContent,
+} from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: issue, project, site.
@@ -10,7 +15,7 @@ import { getMetaContent, hasMarker, hasMetaContent } from '../../common/utils.js
 const feeds = withHintLabels(jira.feeds)
 
 const isConfluencePage = (url: string): boolean => {
-  return jira.pages.read(url, { root: parseUrl(url)?.origin ?? '' })?.key === 'confluence'
+  return jira.pages.read(url, { base: [] })?.key === 'confluence'
 }
 
 const jiraPathKeys = ['issue', 'project', 'app']
@@ -31,17 +36,15 @@ export type JiraPage = {
 }
 
 const getJiraPage = (url: string, content: string | undefined): JiraPage | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl || isConfluencePage(url)) {
+  if (isConfluencePage(url)) {
     return
   }
 
   const contextPath = getMetaContent(content ?? '', 'ajs-context-path') ?? ''
-  const base = jira.pages.read(url, { root: `${parsedUrl.origin}${contextPath}` })
+  const base = jira.pages.read(url, { base: contextPath })
   const path = jira.pages.read(url, { isAnyHost: true })
 
-  // Under a root only the rows that open with it read the URL, which the cloud row does not.
+  // In a folder only the `{host}` rows read the URL, which the cloud row is not.
   if (!base || base.key === 'cloud') {
     return
   }
@@ -50,7 +53,7 @@ const getJiraPage = (url: string, content: string | undefined): JiraPage | undef
   const pathKey = path?.key === 'issue' || path?.key === 'project' ? path.params.key : undefined
 
   return {
-    baseUrl: base.params.root,
+    baseUrl: getSiteUrl(base.params),
     tenant: cloud?.key === 'cloud' ? cloud.params.tenant : undefined,
     projectKey: pathKey ?? getMetaContent(content ?? '', 'ajs-project-key'),
     issueNumber: path?.key === 'issue' ? path.params.number : undefined,
@@ -84,23 +87,24 @@ export const jiraHandler: PlatformHandler = {
 
     const { baseUrl, tenant, projectKey, issueNumber } = jiraPage
     // A cloud site serves from its origin.
-    const root = tenant ? undefined : baseUrl
+    const site = tenant ? undefined : getSiteParams(baseUrl)
+
     if (issueNumber) {
       return [
-        page.getFeedEntry('issue', { root, key: projectKey, number: issueNumber }, 'rss'),
-        page.getFeedEntry('project', { root, key: projectKey }),
-        page.getFeedEntry('site', { root }),
+        page.getFeedEntry('issue', { ...site, key: projectKey, number: issueNumber }, 'rss'),
+        page.getFeedEntry('project', { ...site, key: projectKey }),
+        page.getFeedEntry('site', site),
       ]
     }
 
     if (projectKey) {
       return [
-        page.getFeedEntry('project', { root, key: projectKey }),
-        page.getFeedEntry('site', { root }),
+        page.getFeedEntry('project', { ...site, key: projectKey }),
+        page.getFeedEntry('site', site),
       ]
     }
 
-    return [page.getFeedEntry('site', { root })]
+    return [page.getFeedEntry('site', site)]
   },
 
   getFeedHint: feeds.getFeedHint,

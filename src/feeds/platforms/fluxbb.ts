@@ -1,7 +1,7 @@
 import { fluxbb } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { hasElementWithId, hasMarker } from '../../common/utils.js'
+import { getSiteParams, getSiteUrl, hasElementWithId, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: forum, topic.
@@ -33,7 +33,7 @@ export const parseFluxbbUrl = (url: string): FluxbbUrl | undefined => {
     return
   }
 
-  const { root } = page.params
+  const root = getSiteUrl(page.params)
 
   if (page.key === 'forum') {
     return { kind: 'forum', root, forumId: page.params.forumId }
@@ -62,27 +62,24 @@ export const fluxbbHandler: PlatformHandler = {
       return []
     }
 
-    const { root } = parsed
+    const site = getSiteParams(parsed.root)
 
     if (parsed.kind === 'forum') {
       return [
-        feeds.getFeedEntry('forum', { root, forumId: parsed.forumId }),
-        feeds.getFeedEntry('posts', { root }, 'rss'),
-        feeds.getFeedEntry('posts', { root }, 'atom'),
+        feeds.getFeedEntry('forum', { ...site, forumId: parsed.forumId }),
+        feeds.getFeedEntry('posts', site, 'rss'),
+        feeds.getFeedEntry('posts', site, 'atom'),
       ]
     }
 
     if (parsed.kind === 'topic') {
       return [
-        feeds.getFeedEntry('topic', { root, topicId: parsed.topicId }),
-        feeds.getFeedEntry('posts', { root }, 'rss'),
-        feeds.getFeedEntry('posts', { root }, 'atom'),
+        feeds.getFeedEntry('topic', { ...site, topicId: parsed.topicId }),
+        feeds.getFeedEntry('posts', site, 'rss'),
+        feeds.getFeedEntry('posts', site, 'atom'),
       ]
     }
 
-    return [
-      feeds.getFeedEntry('posts', { root }, 'rss'),
-      feeds.getFeedEntry('posts', { root }, 'atom'),
-    ]
+    return [feeds.getFeedEntry('posts', site, 'rss'), feeds.getFeedEntry('posts', site, 'atom')]
   },
 }

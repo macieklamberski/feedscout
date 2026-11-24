@@ -53,6 +53,13 @@ describe('parseSportsregionsUrl', () => {
     expect(parseSportsregionsUrl(value)).toEqual(expected)
   })
 
+  it('should return the club for the filtered events page of a club subdomain', () => {
+    const value = 'https://example-club.sportsregions.fr/evenements?type_id=1'
+    const expected: SportsregionsUrl = { kind: 'club' }
+
+    expect(parseSportsregionsUrl(value)).toEqual(expected)
+  })
+
   it('should return undefined for the www host', () => {
     expect(parseSportsregionsUrl('https://www.sportsregions.fr/')).toBeUndefined()
   })
@@ -74,6 +81,12 @@ describe('sportsregionsHandler', () => {
   describe('match', () => {
     it('should return true for a club subdomain without content', () => {
       expect(sportsregionsHandler.match('https://example-club.sportsregions.fr/')).toBe(true)
+    })
+
+    it('should return true for the filtered events page of a club subdomain', () => {
+      const value = 'https://example-club.sportsregions.fr/evenements?type_id=1'
+
+      expect(sportsregionsHandler.match(value)).toBe(true)
     })
 
     it('should return true for a custom domain with the footer link', () => {

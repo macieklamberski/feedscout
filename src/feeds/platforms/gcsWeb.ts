@@ -2,7 +2,7 @@ import { gcsWeb } from 'feedintel'
 import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { type Element, findElement } from '../../common/utils.js'
+import { type Element, findElement, isRootOfPage } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: events, news-releases, sec-filings.
@@ -26,7 +26,11 @@ export const isGcsWebPage = (url: string, content: string | undefined): boolean 
   const asset = findElement(content, (element) => {
     const assetUrl = parseUrl(getAssetUrl(element), url)?.href ?? ''
 
-    return gcsWeb.pages.read(assetUrl, { root: origin })?.key === 'asset'
+    if (!isRootOfPage(origin, assetUrl)) {
+      return false
+    }
+
+    return gcsWeb.pages.read(assetUrl, { isAnyHost: true })?.key === 'asset'
   })
 
   return asset !== undefined

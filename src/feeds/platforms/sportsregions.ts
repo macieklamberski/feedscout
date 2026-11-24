@@ -1,5 +1,5 @@
 import { sportsregions } from 'feedintel'
-import { isHostOrSubdomainOf, parseUrl } from 'trousse'
+import { isHostOrSubdomainOf } from 'trousse'
 import { type PlatformFeedParams, withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
@@ -17,7 +17,7 @@ export const isSportsregionsHtml = (content: string): boolean => {
 
 // The events page filtered by event type or group links the events feed with the same filter.
 const getEventFilters = (url: string): PlatformFeedParams | undefined => {
-  const page = sportsregions.pages.read(url, { root: parseUrl(url)?.origin })
+  const page = sportsregions.pages.read(url, { isAnyHost: true })
 
   if (page?.key !== 'filtered-events') {
     return
@@ -26,8 +26,11 @@ const getEventFilters = (url: string): PlatformFeedParams | undefined => {
   return { typeId: page.params.typeId, groupId: page.params.groupId }
 }
 
+// A club's events page reads as the filtered events, and is the club's page too.
 export const parseSportsregionsUrl = (url: string): SportsregionsUrl | undefined => {
-  if (sportsregions.pages.read(url)?.key !== 'club') {
+  const page = sportsregions.pages.read(url)
+
+  if (!page || page.key === 'portal') {
     return
   }
 
@@ -40,7 +43,7 @@ export const sportsregionsHandler: PlatformHandler = {
 
     // The portal prints the same footer.
     if (page) {
-      return page.key === 'club'
+      return page.key !== 'portal'
     }
 
     if (isHostOrSubdomainOf(url, sportsregions.hosts.tenants)) {

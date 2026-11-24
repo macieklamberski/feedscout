@@ -1,5 +1,5 @@
 import { goope } from 'feedintel'
-import { parseUrl, resolveUrl } from 'trousse'
+import { resolveUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -42,14 +42,8 @@ export const isGoopeHtml = (content: string): boolean => {
 }
 
 export const parseGoopeUrl = (url: string): GoopeUrl | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl) {
-    return
-  }
-
   // The root of r.goope.jp redirects to goope.jp.
-  const page = goope.pages.read(url) ?? goope.pages.read(url, { root: parsedUrl.origin })
+  const page = goope.pages.read(url) ?? goope.pages.read(url, { isAnyHost: true })
 
   if (!page || page.key === 'platform' || page.key === 'qr' || page.key === 'asset') {
     return

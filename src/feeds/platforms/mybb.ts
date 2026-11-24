@@ -2,7 +2,14 @@ import { mybb } from 'feedintel'
 import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getCookieNames, hasClass, hasMarker } from '../../common/utils.js'
+import {
+  findElement,
+  getCookieNames,
+  getSiteParams,
+  getSiteUrl,
+  hasClass,
+  hasMarker,
+} from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -54,7 +61,7 @@ const getMybbPage = (url: string, content: string | undefined): MybbPage | undef
     return
   }
 
-  const boardUrl = content?.match(rootPathRegex)?.[1] ?? page.params.root
+  const boardUrl = content?.match(rootPathRegex)?.[1] ?? getSiteUrl(page.params)
 
   if (page.key === 'forum') {
     return { boardUrl, forumId: page.params.forumId }
@@ -80,20 +87,20 @@ export const mybbHandler: PlatformHandler = {
       return []
     }
 
-    const root = page.boardUrl
+    const site = getSiteParams(page.boardUrl)
 
     if (page.forumId) {
       return [
-        pageFeeds.getFeedEntry('forum', { root, forumId: page.forumId }, 'rss'),
-        pageFeeds.getFeedEntry('forum', { root, forumId: page.forumId }, 'atom'),
-        pageFeeds.getFeedEntry('threads', { root }, 'rss'),
-        pageFeeds.getFeedEntry('threads', { root }, 'atom'),
+        pageFeeds.getFeedEntry('forum', { ...site, forumId: page.forumId }, 'rss'),
+        pageFeeds.getFeedEntry('forum', { ...site, forumId: page.forumId }, 'atom'),
+        pageFeeds.getFeedEntry('threads', site, 'rss'),
+        pageFeeds.getFeedEntry('threads', site, 'atom'),
       ]
     }
 
     return [
-      pageFeeds.getFeedEntry('threads', { root }, 'rss'),
-      pageFeeds.getFeedEntry('threads', { root }, 'atom'),
+      pageFeeds.getFeedEntry('threads', site, 'rss'),
+      pageFeeds.getFeedEntry('threads', site, 'atom'),
     ]
   },
 }

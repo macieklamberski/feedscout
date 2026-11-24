@@ -117,13 +117,25 @@ describe('withHintLabels', () => {
   describe('getFeedSpellings', () => {
     const spellingFeeds = withHintLabels(
       defineFeedUrls('wordpress', [
-        { key: 'posts', main: '{root}/feed/', aliases: ['{root}/?feed=rss2'] },
-        { key: 'posts', main: '{root}/feed/atom/', format: 'atom', aliases: ['{root}/?feed=atom'] },
+        {
+          key: 'posts',
+          main: '{scheme}://{host}{/base*}/feed/',
+          aliases: ['{scheme}://{host}{/base*}/?feed=rss2'],
+        },
+        {
+          key: 'posts',
+          main: '{scheme}://{host}{/base*}/feed/atom/',
+          format: 'atom',
+          aliases: ['{scheme}://{host}{/base*}/?feed=atom'],
+        },
       ]),
     )
 
     it('should return every spelling of the feed with its labelled hint', () => {
-      const value = { root: 'https://example.com' }
+      const value = {
+        scheme: 'https',
+        host: 'example.com',
+      }
       const expected: DiscoverUriEntry = {
         uri: ['https://example.com/feed/', 'https://example.com/?feed=rss2'],
         hint: {
@@ -136,7 +148,10 @@ describe('withHintLabels', () => {
     })
 
     it('should return the spellings of the format with the format in its labelled hint', () => {
-      const value = { root: 'https://example.com' }
+      const value = {
+        scheme: 'https',
+        host: 'example.com',
+      }
       const expected: DiscoverUriEntry = {
         uri: ['https://example.com/feed/atom/', 'https://example.com/?feed=atom'],
         hint: {
@@ -159,8 +174,12 @@ describe('withHintLabels', () => {
   describe('forUrl', () => {
     const pageFeeds = withHintLabels(
       defineFeedUrls('typecho', [
-        { key: 'posts', main: '{root}/feed/', aliases: ['{root}/index.php/feed/'] },
-        { key: 'posts', main: '{root}/feed/atom/', format: 'atom' },
+        {
+          key: 'posts',
+          main: '{scheme}://{host}{/base*}/feed/',
+          aliases: ['{scheme}://{host}{/base*}/index.php/feed/'],
+        },
+        { key: 'posts', main: '{scheme}://{host}{/base*}/feed/atom/', format: 'atom' },
       ]),
     )
 
