@@ -1,5 +1,4 @@
 import { gitlab } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
@@ -25,7 +24,7 @@ export const isGitlabHeaders = (headers: Headers): boolean => {
 }
 
 export const parseGitlabUrl = (url: string): GitlabUrl | undefined => {
-  const page = gitlab.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
+  const page = gitlab.pages.read(url, { isAnyHost: true })
 
   if (!page) {
     return

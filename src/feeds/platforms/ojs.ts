@@ -1,7 +1,14 @@
 import { ojs } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
+import {
+  findElement,
+  getCookieNames,
+  getSiteParams,
+  getSiteUrl,
+  hasMarker,
+  hasMetaContent,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: articles.
@@ -27,7 +34,7 @@ export const getOjsPage = (content: string | undefined): OjsPage | undefined => 
       return
     }
 
-    return page.params.root
+    return getSiteUrl(page.params)
   }
   const stylesheet = findElement(content, (element) => {
     return element.name === 'link' && getComponentRoot(element.attribs.href) !== undefined
@@ -59,7 +66,7 @@ export const ojsHandler: PlatformHandler = {
       return []
     }
 
-    const params = { root: page.journalUrl }
+    const params = getSiteParams(page.journalUrl)
 
     return [
       feeds.getFeedEntry('articles', params, 'atom'),

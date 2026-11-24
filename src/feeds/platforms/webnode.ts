@@ -1,5 +1,4 @@
 import { webnode } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -27,8 +26,7 @@ export const isWebnodeHtml = (content: string): boolean => {
 // A section feed is named after its articles block, which takes the page's slug. A repeated name
 // gets a number suffix the URL does not show, and that page gets the unnumbered feed.
 export const parseWebnodeUrl = (url: string): WebnodeUrl => {
-  const parsedUrl = parseUrl(url)
-  const page = parsedUrl ? webnode.pages.read(url, { root: parsedUrl.origin }) : undefined
+  const page = webnode.pages.read(url, { isAnyHost: true })
 
   if (page?.key !== 'section') {
     return { kind: 'site' }

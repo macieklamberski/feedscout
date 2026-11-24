@@ -1,5 +1,5 @@
 import { mastodon } from 'feedintel'
-import { includesAnyOf, parseUrl } from 'trousse'
+import { includesAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasClass, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -36,7 +36,7 @@ export const isMastodonHeaders = (headers: Headers): boolean => {
 }
 
 export const parseMastodonUrl = (url: string): MastodonUrl | undefined => {
-  const page = mastodon.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
+  const page = mastodon.pages.read(url, { isAnyHost: true })
 
   if (!page) {
     return

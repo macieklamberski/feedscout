@@ -1,5 +1,4 @@
 import { odoo } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getCookieNames, hasMarker } from '../../common/utils.js'
@@ -18,7 +17,7 @@ export const isOdooHeaders = (headers: Headers): boolean => {
 }
 
 export const parseOdooUrl = (url: string): OdooUrl | undefined => {
-  const page = odoo.pages.read(url, { root: parseUrl(url)?.origin ?? '' })
+  const page = odoo.pages.read(url, { isAnyHost: true })
 
   if (!page) {
     return

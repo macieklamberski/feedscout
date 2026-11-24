@@ -1,7 +1,7 @@
 import { powerpress } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { hasMarker, isRootOfPage } from '../../common/utils.js'
+import { getSiteParams, getSiteUrl, hasMarker, isRootOfPage } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -24,11 +24,11 @@ const getPinwHomeUrl = (url: string, content: string | undefined): string | unde
   const pinwUrl = content?.match(pinwCallRegex)?.groups?.pinwUrl ?? ''
   const player = powerpress.pages.read(pinwUrl, { isAnyHost: true })
 
-  if (player?.key !== 'player' || !isRootOfPage(player.params.root, url)) {
+  if (player?.key !== 'player' || !isRootOfPage(getSiteUrl(player.params), url)) {
     return
   }
 
-  return player.params.root
+  return getSiteUrl(player.params)
 }
 
 export const getPowerpressPage = (url: string, content: string | undefined): PowerpressPage => {
@@ -48,6 +48,6 @@ export const powerpressHandler: PlatformHandler = {
       return []
     }
 
-    return [pageFeeds.getFeedEntry('podcast', { root: page.homeUrl })]
+    return [pageFeeds.getFeedEntry('podcast', getSiteParams(page.homeUrl))]
   },
 }

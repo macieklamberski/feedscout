@@ -39,7 +39,7 @@ const getBreadcrumbPages = (url: string, content: string): Array<BreadcrumbPage 
       const itemUrl = parseUrl(element?.item?.['@id'], url)
 
       if (itemUrl) {
-        pages.push(forumotion.pages.read(itemUrl.href, { root: itemUrl.origin }))
+        pages.push(forumotion.pages.read(itemUrl.href, { isAnyHost: true }))
       }
     }
   }

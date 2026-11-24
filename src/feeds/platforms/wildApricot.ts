@@ -39,9 +39,9 @@ const getModuleUrl = (href: string, url: string): string => {
 
 // A module's path is its URL's segments, the empty ones the table drops.
 const getModuleParams = (moduleUrl: string) => {
-  const { origin, pathname } = new URL(moduleUrl)
+  const { protocol, host, pathname } = new URL(moduleUrl)
 
-  return { root: origin, path: pathname.split('/') }
+  return { scheme: protocol.slice(0, -1), host, path: pathname.split('/') }
 }
 
 // A post page links its feed as `/page-{id}/RSS`, which answers 404, and names its blog in the
@@ -96,7 +96,7 @@ export const wildApricotHandler: PlatformHandler = {
 
       // A blog on the home page has no path, and its feed answers at the root.
       if (!params.path.some(Boolean)) {
-        return [feeds.getFeedEntry('site', { root: params.root })].filter(isPresent)
+        return [feeds.getFeedEntry('site', params)].filter(isPresent)
       }
 
       return [feeds.getFeedEntry('blog', params)].filter(isPresent)

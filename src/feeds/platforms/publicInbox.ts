@@ -2,7 +2,7 @@ import { publicInbox } from 'feedintel'
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { hasMarker } from '../../common/utils.js'
+import { getSiteParams, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -78,18 +78,15 @@ export const publicInboxHandler: PlatformHandler = {
       return []
     }
 
-    const root = page.inboxUrl
+    const site = getSiteParams(page.inboxUrl)
 
     if (page.kind === 'message') {
-      const params = { root, messageId: page.messageId }
+      const params = { ...site, messageId: page.messageId }
 
-      return [
-        pageFeeds.getFeedEntry('thread', params),
-        pageFeeds.getFeedEntry('messages', { root }),
-      ]
+      return [pageFeeds.getFeedEntry('thread', params), pageFeeds.getFeedEntry('messages', site)]
     }
 
-    return [pageFeeds.getFeedEntry('messages', { root })]
+    return [pageFeeds.getFeedEntry('messages', site)]
   },
 
   getFeedHint: feeds.getFeedHint,

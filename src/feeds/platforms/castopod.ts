@@ -2,7 +2,7 @@ import { castopod } from 'feedintel'
 import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement } from '../../common/utils.js'
+import { findElement, getSiteParams, getSiteUrl, isRootOfPage } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -24,7 +24,7 @@ const getColorsRoot = (url: string, href: string | undefined): string | undefine
     return
   }
 
-  return link.params.root
+  return getSiteUrl(link.params)
 }
 
 const getCastopodPage = (url: string, content: string | undefined): CastopodPage | undefined => {
@@ -33,17 +33,17 @@ const getCastopodPage = (url: string, content: string | undefined): CastopodPage
   })
   const root = getColorsRoot(url, link?.attribs.href)
 
-  if (!root) {
+  if (!root || !isRootOfPage(root, url)) {
     return
   }
 
-  const page = castopod.pages.read(url, { root })
+  const page = castopod.pages.read(url, { base: getSiteParams(root)?.base })
 
   if (page?.key !== 'podcast') {
     return
   }
 
-  return { rootUrl: page.params.root, handle: page.params.handle }
+  return { rootUrl: getSiteUrl(page.params), handle: page.params.handle }
 }
 
 export const castopodHandler: PlatformHandler = {
@@ -58,6 +58,6 @@ export const castopodHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('podcast', { root: page.rootUrl, handle: page.handle })]
+    return [feeds.getFeedEntry('podcast', { ...getSiteParams(page.rootUrl), handle: page.handle })]
   },
 }

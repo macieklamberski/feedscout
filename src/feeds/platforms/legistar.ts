@@ -2,7 +2,13 @@ import { legistar } from 'feedintel'
 import { isSameText, parseUrl, resolveUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElements, getCookieNames, hasMarker } from '../../common/utils.js'
+import {
+  composeHint,
+  findElements,
+  getCookieNames,
+  hasMarker,
+  isRootOfPage,
+} from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -26,13 +32,7 @@ export const isLegistarHeaders = (headers: Headers): boolean => {
 }
 
 export const parseLegistarUrl = (url: string): LegistarUrl | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl) {
-    return
-  }
-
-  const page = legistar.pages.read(url, { root: parsedUrl.origin })
+  const page = legistar.pages.read(url, { isAnyHost: true })
 
   if (!page) {
     return
@@ -48,8 +48,12 @@ export const parseLegistarUrl = (url: string): LegistarUrl | undefined => {
 }
 
 // The page link writes the feed's parameters in its own order, beside others such as `Title`.
-const isSameFeed = (parsed: LegistarUrl, href: string, root: string): boolean => {
-  const feed = legistar.feeds.read(href, { root })
+const isSameFeed = (parsed: LegistarUrl, href: string, origin: string): boolean => {
+  if (!isRootOfPage(origin, href)) {
+    return false
+  }
+
+  const feed = legistar.feeds.read(href, { isAnyHost: true })
 
   return (
     feed?.key === parsed.kind &&
@@ -66,9 +70,9 @@ const getFeedUrl = (
   parsed: LegistarUrl,
   feedUrl: string,
 ): string => {
-  const root = parseUrl(url)?.origin
+  const origin = parseUrl(url)?.origin
 
-  if (!content || !root) {
+  if (!content || !origin) {
     return feedUrl
   }
 
@@ -79,7 +83,7 @@ const getFeedUrl = (
   for (const link of links) {
     const href = resolveUrl(link.attribs.href ?? '', url)
 
-    if (href && isSameFeed(parsed, href, root)) {
+    if (href && isSameFeed(parsed, href, origin)) {
       return href
     }
   }

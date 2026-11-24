@@ -3,7 +3,13 @@ import { DomUtils } from 'htmlparser2'
 import { includesAnyOf, isString } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
+import {
+  findElement,
+  getSiteParams,
+  getSiteUrl,
+  hasMarker,
+  hasMetaContent,
+} from '../../common/utils.js'
 import { isGcsWebPage } from './gcsWeb.js'
 
 // Discoverability: Discoverable without handler.
@@ -30,7 +36,7 @@ export const getDrupalPage = (url: string, content: string | undefined): DrupalP
     return
   }
 
-  const { root } = page.params
+  const root = getSiteUrl(page.params)
   const script = findElement(content, (element) => {
     return (
       element.name === 'script' &&
@@ -69,6 +75,6 @@ export const drupalHandler: PlatformHandler = {
       return []
     }
 
-    return [feeds.getFeedEntry('site', { root: page.baseUrl })]
+    return [feeds.getFeedEntry('site', getSiteParams(page.baseUrl))]
   },
 }

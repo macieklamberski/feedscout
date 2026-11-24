@@ -2,6 +2,7 @@ import type { UrlHosts, UrlMatch, UrlTable } from 'feedintel'
 import { DomUtils, parseDocument } from 'htmlparser2'
 import {
   anyWordMatchesAnyOf,
+  encodePathSegment,
   escapeRegex,
   getSubdomain,
   isAnyOf,
@@ -322,6 +323,35 @@ export const isRootOfPage = (rootUrl: string, url: string): boolean => {
   const rootPath = parsedRootUrl.pathname.replace(trailingSlashRegex, '')
 
   return `${parsedUrl.pathname}/`.startsWith(`${rootPath}/`)
+}
+
+// A site as a feedintel table reads and builds it: the scheme, the host and the folder.
+export type SiteParams = {
+  scheme: string
+  host: string
+  base?: Array<string>
+}
+
+// The site a URL names, with every segment of its path as the folder.
+export const getSiteParams = (siteUrl: string): SiteParams | undefined => {
+  const parsedUrl = parseUrl(siteUrl)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  return {
+    scheme: parsedUrl.protocol.slice(0, -1),
+    host: parsedUrl.host,
+    base: parsedUrl.pathname.split('/').filter((segment) => segment),
+  }
+}
+
+// The URL of a site feedintel read, without a trailing slash.
+export const getSiteUrl = ({ scheme, host, base = [] }: SiteParams): string => {
+  const path = base.map((segment) => `/${encodePathSegment(segment)}`).join('')
+
+  return `${scheme}://${host}${path}`
 }
 
 // A value written into a host passes only when the parsed URL keeps it as the whole host, so

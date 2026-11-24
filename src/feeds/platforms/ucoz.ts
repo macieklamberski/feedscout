@@ -38,7 +38,7 @@ export const parseUcozUrl = (url: string): UcozUrl | undefined => {
     return
   }
 
-  const page = ucoz.pages.read(url, { root: new URL(url).origin })
+  const page = ucoz.pages.read(url, { isAnyHost: true })
 
   if (!page || page.key === 'home' || page.key === 'site' || page.key === 'platform') {
     return { kind: 'home' }

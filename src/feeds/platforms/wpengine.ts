@@ -36,7 +36,7 @@ export const wpengineHandler: PlatformHandler = {
       return []
     }
 
-    return composeWordpressFeeds(new URL(url).origin, parsed)
+    return composeWordpressFeeds(url, parsed)
   },
 
   getFeedHint: (url) => {
