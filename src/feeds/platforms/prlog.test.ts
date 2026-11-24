@@ -2,13 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
-import {
-  getPrlogPage,
-  type PrlogPage,
-  type PrlogUrl,
-  parsePrlogUrl,
-  prlogHandler,
-} from './prlog.js'
+import { type PrlogUrl, parsePrlogUrl, prlogHandler } from './prlog.js'
 
 describe('parsePrlogUrl', () => {
   it('should return the pressroom for a pressroom page', () => {
@@ -39,36 +33,6 @@ describe('parsePrlogUrl', () => {
 
   it('should return undefined for an invalid URL', () => {
     expect(parsePrlogUrl('not-a-url')).toBeUndefined()
-  })
-})
-
-describe('getPrlogPage', () => {
-  const value = 'https://pressroom.prlog.org/example_co/'
-
-  it('should spell the pressroom id as the page alternate spells it', () => {
-    const content =
-      '<link rel="alternate" href="https://pressroom.prlog.org/Example_Co/latest.xml" type="application/rss+xml" />'
-    const expected: PrlogPage = { kind: 'pressroom', pressroomId: 'Example_Co' }
-
-    expect(getPrlogPage(value, content)).toEqual(expected)
-  })
-
-  it('should keep the URL spelling when the alternate names another pressroom', () => {
-    const content =
-      '<link rel="alternate" href="https://pressroom.prlog.org/Other_Co/latest.xml" type="application/rss+xml" />'
-    const expected: PrlogPage = { kind: 'pressroom', pressroomId: 'example_co' }
-
-    expect(getPrlogPage(value, content)).toEqual(expected)
-  })
-
-  it('should keep the URL spelling without content', () => {
-    const expected: PrlogPage = { kind: 'pressroom', pressroomId: 'example_co' }
-
-    expect(getPrlogPage(value, undefined)).toEqual(expected)
-  })
-
-  it('should return undefined for a URL outside a pressroom', () => {
-    expect(getPrlogPage('https://pressroom.prlog.org/', undefined)).toBeUndefined()
   })
 })
 
