@@ -15,7 +15,6 @@ export type BlogspotPage =
   | { kind: 'post'; postId?: string }
   | { kind: 'blog' }
 
-const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/i
 const widgetsScriptRegex = /^(?:https?:)?\/\/www\.blogger\.com\/static\/v1\/widgets\//i
 const blogIdPathRegex = /^\/feeds\/[^/]+\//i
 
@@ -43,6 +42,23 @@ export const isBlogspotHtml = (content: string): boolean => {
   })
 
   return script !== undefined
+}
+
+// A post's comments feed, as a link in its page names it, on blogspot.com or a custom domain.
+const readPostId = (href: string | undefined, url: string): string | undefined => {
+  const feedUrl = href ? parseUrl(href, url) : undefined
+
+  if (!feedUrl) {
+    return
+  }
+
+  const feed = blogspot.feeds.read(feedUrl.href, { isAnyHost: true })
+
+  if (feed?.key !== 'post-comments') {
+    return
+  }
+
+  return feed.params.postId
 }
 
 export const parseBlogspotUrl = (url: string): BlogspotUrl | undefined => {
@@ -75,9 +91,9 @@ export const getBlogspotPage = (
 
   // The post id is not in the URL, so it is read from the comments feed link in the page.
   const commentsFeedLink = findElement(content, (element) => {
-    return postCommentsFeedRegex.test(element.attribs.href ?? '')
+    return readPostId(element.attribs.href, url) !== undefined
   })
-  const postId = commentsFeedLink?.attribs.href?.match(postCommentsFeedRegex)?.[1]
+  const postId = readPostId(commentsFeedLink?.attribs.href, url)
 
   return { kind: 'post', postId }
 }

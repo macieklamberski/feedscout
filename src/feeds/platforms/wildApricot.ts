@@ -1,4 +1,5 @@
 import { wildApricot } from 'feedintel'
+import { isPresent } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasClass, hasMarker } from '../../common/utils.js'
@@ -34,6 +35,13 @@ const getModuleUrl = (href: string, url: string): string => {
   const { origin, pathname } = new URL(href, url)
 
   return `${origin}${pathname.replace(trailingSlashRegex, '')}`
+}
+
+// A module's path is its URL's segments, the empty ones the table drops.
+const getModuleParams = (moduleUrl: string) => {
+  const { origin, pathname } = new URL(moduleUrl)
+
+  return { root: origin, path: pathname.split('/') }
 }
 
 // A post page links its feed as `/page-{id}/RSS`, which answers 404, and names its blog in the
@@ -84,14 +92,14 @@ export const wildApricotHandler: PlatformHandler = {
     }
 
     if (page.kind === 'post') {
-      return [{ uri: `${page.blogUrl}/RSS`, hint: composeHint('wild-apricot:blog') }]
+      return [feeds.getFeedEntry('blog', getModuleParams(page.blogUrl))].filter(isPresent)
     }
 
     if (page.kind === 'blog') {
       return [{ uri: page.feedUrl, hint: composeHint('wild-apricot:blog') }]
     }
 
-    return [{ uri: `${page.eventsUrl}/RSS`, hint: composeHint('wild-apricot:events') }]
+    return [feeds.getFeedEntry('events', getModuleParams(page.eventsUrl))].filter(isPresent)
   },
 
   getFeedHint: feeds.getFeedHint,
