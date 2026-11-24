@@ -32,13 +32,10 @@ export const seesaaHandler: PlatformHandler = {
       return []
     }
 
-    // The domains redirect http to https. The table writes stablo.jp's feeds over http itself.
-    const params = { scheme: 'https' }
-
     return [
-      page.getFeedEntry('posts', params, 'rss'),
-      page.getFeedEntry('posts', params, 'rdf'),
-      page.getFeedEntry('podcast', params, 'rss'),
+      page.getFeedEntry('posts', {}, 'rss'),
+      page.getFeedEntry('posts', {}, 'rdf'),
+      page.getFeedEntry('podcast', {}, 'rss'),
     ]
   },
 
