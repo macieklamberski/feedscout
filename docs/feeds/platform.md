@@ -2010,6 +2010,7 @@ Discovers the blog and events feeds of a Wild Apricot site. Detected by the `x-l
 |-------------|-----------------|
 | `{host}/{blog-page}` | Blog (RSS) |
 | `{host}/{blog-page}/{post-id}` | Blog (RSS), from the post's back link |
+| `{host}/{post-id}`, a post on a home-page blog | Blog (RSS), at `{host}/RSS` |
 | `{host}/{events-page}` | Events (RSS), in the list and calendar views |
 
 > [!NOTE]

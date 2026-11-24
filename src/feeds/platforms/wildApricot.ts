@@ -92,7 +92,14 @@ export const wildApricotHandler: PlatformHandler = {
     }
 
     if (page.kind === 'post') {
-      return [feeds.getFeedEntry('blog', getModuleParams(page.blogUrl))].filter(isPresent)
+      const params = getModuleParams(page.blogUrl)
+
+      // A blog on the home page has no path, and its feed answers at the root.
+      if (!params.path.some(Boolean)) {
+        return [feeds.getFeedEntry('site', { root: params.root })].filter(isPresent)
+      }
+
+      return [feeds.getFeedEntry('blog', params)].filter(isPresent)
     }
 
     if (page.kind === 'blog') {
