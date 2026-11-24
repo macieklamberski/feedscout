@@ -99,8 +99,11 @@ export const insanejournalHandler: PlatformHandler = {
       return getFeeds(pageFeeds, { journal: parsed.username }, parsed.tag)
     }
 
+    // A journal named on www keeps the page's scheme on its own subdomain.
     if (parsed.username) {
-      return getFeeds(feeds, { journal: parsed.username }, parsed.tag)
+      const scheme = new URL(url).protocol.slice(0, -1)
+
+      return getFeeds(feeds, { scheme, journal: parsed.username }, parsed.tag)
     }
 
     const journalPageFeeds = feeds.forUrl(url)
