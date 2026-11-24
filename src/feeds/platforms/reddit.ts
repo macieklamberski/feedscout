@@ -1,5 +1,4 @@
 import { reddit } from 'feedintel'
-import { getAnyOf, getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -25,125 +24,85 @@ export type RedditUrl =
 
 export const hosts = reddit.hosts.exact
 
-const subredditsRegex = /^\/(?:subreddits|reddits)(?:\/([^/.]+))?(?:[/.]|$)/i
-// Stops at a dot, so a feed URL like /r/{sub}.rss, /user/{user}/submitted.rss or
-// /user/{user}/m/{multi}.rss yields the name, the section and the multireddit.
-const nameRegex = /^[^.]+/
-
-const subredditsSorts = ['new', 'popular']
-const sortOptions = ['hot', 'new', 'rising', 'controversial', 'top', 'best']
-const timeOptions = ['hour', 'day', 'week', 'month', 'year', 'all']
-const timeFilteredSorts = ['top', 'controversial']
-const userPrefixes = ['u', 'user']
-
 const feeds = withHintLabels(reddit.feeds)
 
-const getTimeframe = (sort: string, searchParams: URLSearchParams): string | undefined => {
-  if (!timeFilteredSorts.includes(sort)) {
-    return
-  }
-
-  return getAnyOf(getQueryParam(searchParams, 't'), timeOptions)
-}
-
-// Combined subreddits work transparently: /r/{sub1}+{sub2} is captured as one name.
+// Combined subreddits work transparently: /r/{sub1}+{sub2} is captured as one name. A sort and a
+// timeframe are read in any case and built in lowercase.
 export const parseRedditUrl = (url: string): RedditUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = reddit.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const { pathname, searchParams } = parsedUrl
-  const pathSegments = getPathSegments(parsedUrl)
-
-  if (pathSegments.length === 0) {
+  if (page.key === 'home') {
     return { kind: 'home' }
   }
 
-  // Sitewide sort: /hot, /new, /rising, /controversial, /top, /best.
-  const siteSort = pathSegments.length === 1 ? getAnyOf(pathSegments[0], sortOptions) : undefined
+  if (page.key === 'site-sort') {
+    const { sort, timeframe } = page.params
 
-  if (siteSort) {
-    return { kind: 'siteSort', sort: siteSort, timeframe: getTimeframe(siteSort, searchParams) }
+    return { kind: 'siteSort', sort: sort.toLowerCase(), timeframe: timeframe?.toLowerCase() }
   }
 
-  const query = getQueryParam(searchParams, 'q')
-
-  if (isAnyOf(pathSegments[0], 'search') && query) {
-    return { kind: 'siteSearch', query }
+  if (page.key === 'site-search') {
+    return { kind: 'siteSearch', query: page.params.query }
   }
 
-  // Subreddit list: /subreddits[/new|/popular].
-  const subredditsMatch = pathname.match(subredditsRegex)
-
-  if (subredditsMatch) {
-    return { kind: 'subreddits', sort: getAnyOf(subredditsMatch[1], subredditsSorts) }
+  if (page.key === 'subreddits') {
+    return { kind: 'subreddits', sort: page.params.sort?.toLowerCase() }
   }
 
-  const [prefix, rawName, rawSection, item] = pathSegments
-
-  if (isAnyOf(prefix, 'domain') && rawName) {
-    return { kind: 'domain', domain: rawName }
+  if (page.key === 'domain') {
+    return { kind: 'domain', domain: page.params.domain }
   }
 
-  const name = rawName?.match(nameRegex)?.[0]
-  const section = rawSection?.match(nameRegex)?.[0]
-
-  if (!name) {
-    return
+  if (page.key === 'search') {
+    return { kind: 'search', subreddit: page.params.subreddit, query: page.params.query }
   }
 
-  if (isAnyOf(prefix, 'r')) {
-    if (isAnyOf(section, 'search')) {
-      return { kind: 'search', subreddit: name, query }
+  if (page.key === 'wiki') {
+    return { kind: 'wiki', subreddit: page.params.subreddit }
+  }
+
+  if (page.key === 'post') {
+    return { kind: 'post', subreddit: page.params.subreddit, postId: page.params.postId }
+  }
+
+  if (page.key === 'subreddit') {
+    const { subreddit, sort, timeframe } = page.params
+
+    if (!sort) {
+      return { kind: 'subreddit', subreddit }
     }
 
-    if (isAnyOf(section, 'wiki')) {
-      return { kind: 'wiki', subreddit: name }
+    return {
+      kind: 'subreddit',
+      subreddit,
+      sort: sort.toLowerCase(),
+      timeframe: timeframe?.toLowerCase(),
     }
-
-    if (isAnyOf(section, 'comments') && item) {
-      return { kind: 'post', subreddit: name, postId: item }
-    }
-
-    const sort = getAnyOf(section, sortOptions)
-
-    if (sort) {
-      return {
-        kind: 'subreddit',
-        subreddit: name,
-        sort,
-        timeframe: getTimeframe(sort, searchParams),
-      }
-    }
-
-    return { kind: 'subreddit', subreddit: name }
   }
 
-  if (!isAnyOf(prefix, userPrefixes)) {
-    return
+  if (page.key === 'multireddit') {
+    const { username, multireddit } = page.params
+
+    return { kind: 'multireddit', username, multireddit }
   }
 
-  const multireddit = item?.match(nameRegex)?.[0]
-
-  if (isAnyOf(section, 'm') && multireddit) {
-    return { kind: 'multireddit', username: name, multireddit }
+  if (page.key === 'submitted') {
+    return { kind: 'submitted', username: page.params.username }
   }
 
-  if (isAnyOf(section, 'submitted')) {
-    return { kind: 'submitted', username: name }
+  if (page.key === 'user-post') {
+    return { kind: 'userPost', username: page.params.username, postId: page.params.postId }
   }
 
-  if (isAnyOf(section, 'comments') && item) {
-    return { kind: 'userPost', username: name, postId: item }
+  if (page.key === 'comments') {
+    return { kind: 'comments', username: page.params.username }
   }
 
-  if (isAnyOf(section, 'comments')) {
-    return { kind: 'comments', username: name }
-  }
-
-  return { kind: 'user', username: name }
+  return { kind: 'user', username: page.params.username }
 }
 
 export const redditHandler: PlatformHandler = {

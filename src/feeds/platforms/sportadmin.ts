@@ -1,8 +1,8 @@
 import { sportadmin } from 'feedintel'
-import { getQueryParam, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
+import { findElement } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: news.
@@ -10,53 +10,60 @@ import { digitsRegex, findElement, getTenantSubdomain } from '../../common/utils
 
 export type SportadminPage = { kind: 'club' } | { kind: 'team'; sectionId: string }
 
-const domains = sportadmin.hosts.tenants
-
-// The link to the other layout, "Gå till Webbversion" or its app counterpart.
-const layoutLinkRegex = /^\.\.\/\?SID=(\d+)&platform=(?:app|web)$/i
 // The next game widget, which the classic template prints on the club home page alone.
 const nextGameRegex = /wNextGame\.asp\?SID=(\d+)/i
 
 const feeds = withHintLabels(sportadmin.feeds)
 
-const findLayoutSectionId = (content: string | undefined): string | undefined => {
+const getLayoutSectionId = (href: string | undefined, url: string): string | undefined => {
+  const page = sportadmin.pages.read(parseUrl(href, url)?.href ?? '')
+
+  if (page?.key !== 'layout') {
+    return
+  }
+
+  return page.params.sectionId
+}
+
+// The link to the other layout, "Gå till Webbversion" or its app counterpart.
+const findLayoutSectionId = (url: string, content: string | undefined): string | undefined => {
   const link = findElement(content, (element) => {
-    return element.name === 'a' && layoutLinkRegex.test(element.attribs.href ?? '')
+    return element.name === 'a' && getLayoutSectionId(element.attribs.href, url) !== undefined
   })
 
-  return link?.attribs.href?.match(layoutLinkRegex)?.[1]
+  return getLayoutSectionId(link?.attribs.href, url)
 }
 
 // The new template answers an unknown section with the club home page, whose canonical is the
 // root, and its feed then serves the club news items.
 const getUrlSectionId = (url: string, content: string | undefined): string | undefined => {
-  const sectionId = getQueryParam(new URL(url).searchParams, 'sid')
+  const page = sportadmin.pages.read(url)
   const canonical = findElement(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'canonical'
   })?.attribs.href
 
-  if (!sectionId || !digitsRegex.test(sectionId) || !canonical) {
+  if ((page?.key !== 'section' && page?.key !== 'layout') || !canonical) {
     return
   }
 
-  if (parseUrl(canonical, url)?.pathname === '/') {
+  if (sportadmin.pages.read(parseUrl(canonical, url)?.href ?? '')?.key === 'home') {
     return
   }
 
-  return sectionId
+  return page.params.sectionId
 }
 
 export const getSportadminPage = (
   url: string,
   content: string | undefined,
 ): SportadminPage | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  if (!sportadmin.pages.read(url)) {
     return
   }
 
   // On the classic template a team url redirects to `/start/?ID={page}`, so the layout link names
   // the team. The new template prints no layout link and keeps `/?SID={id}` in the url.
-  const sectionId = findLayoutSectionId(content) ?? getUrlSectionId(url, content)
+  const sectionId = findLayoutSectionId(url, content) ?? getUrlSectionId(url, content)
 
   // On the club home page the layout link names the root section, whose feed serves the club
   // news items.

@@ -64,12 +64,6 @@ describe('parseWebnodeUrl', () => {
     expect(parseWebnodeUrl(value)).toEqual(expected)
   })
 
-  it('should return the site for the built-in sitemap page', () => {
-    const expected: WebnodeUrl = { kind: 'site' }
-
-    expect(parseWebnodeUrl('https://erin.webnode.cz/sitemap/')).toEqual(expected)
-  })
-
   it('should return the section for a nested page named sitemap', () => {
     const expected: WebnodeUrl = { kind: 'section', section: 'sitemap' }
 

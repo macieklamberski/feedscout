@@ -1,5 +1,5 @@
 import { purot } from 'feedintel'
-import { encodePathSegment, isHostOf, parseUrl } from 'trousse'
+import { encodePathSegment, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
@@ -18,11 +18,11 @@ const feeds = withHintLabels(purot.feeds)
 
 // A profile feed link names its user under `profile/`, read by no page row. A profile page links
 // its user's feeds even when it answers "User not found", and a real profile redirects home.
-const getLinkedPage = (href: string | undefined, url: string): string | undefined => {
-  const linkUrl = parseUrl(href, url)
-  const link = linkUrl ? purot.feeds.read(linkUrl.href) : undefined
+const getLinkedPage = (href: string | undefined, url: string, wiki: string): string | undefined => {
+  const linkUrl = parseUrl(href, url)?.href ?? ''
+  const link = purot.feeds.read(linkUrl)
 
-  if (!linkUrl || !isHostOf(linkUrl, new URL(url).hostname) || link?.key !== 'page-changes') {
+  if (link?.key !== 'page-changes' || purot.pages.read(linkUrl)?.params.wiki !== wiki) {
     return
   }
 
@@ -49,9 +49,11 @@ export const getPurotPage = (url: string, content: string | undefined): PurotPag
   }
 
   const link = findElement(content, (element) => {
-    return element.name === 'link' && getLinkedPage(element.attribs.href, url) !== undefined
+    return (
+      element.name === 'link' && getLinkedPage(element.attribs.href, url, parsed.wiki) !== undefined
+    )
   })
-  const page = getLinkedPage(link?.attribs.href, url)
+  const page = getLinkedPage(link?.attribs.href, url, parsed.wiki)
 
   if (!page) {
     return parsed
