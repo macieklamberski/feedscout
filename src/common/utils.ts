@@ -258,7 +258,7 @@ const trailingSlashRegex = /\/$/
 // of the host is tried.
 export const getTenantLabels = (
   url: string | URL,
-  domains: NonNullable<UrlHosts['tenants']>,
+  domains: NonNullable<UrlHosts['tenant']>,
 ): string | undefined => {
   const hostname = parseUrl(url)?.hostname
 
@@ -291,7 +291,7 @@ export const getTenantLabels = (
 // platform's own site everywhere.
 export const getTenantSubdomain = (
   url: string | URL,
-  domains: NonNullable<UrlHosts['tenants']>,
+  domains: NonNullable<UrlHosts['tenant']>,
 ): string | undefined => {
   const subdomain = getTenantLabels(url, domains)
 
