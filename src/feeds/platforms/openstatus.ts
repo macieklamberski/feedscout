@@ -23,9 +23,13 @@ export const isOpenstatusPage = (url: string, content: string | undefined): bool
 
   const root = parseUrl(url)?.origin ?? ''
   const summaryLink = findElement(content, (element) => {
+    if (element.name !== 'link') {
+      return false
+    }
+
     const href = parseUrl(element.attribs.href, url)?.href ?? ''
 
-    return element.name === 'link' && openstatus.pages.read(href, { root })?.key === 'summary'
+    return openstatus.pages.read(href, { root })?.key === 'summary'
   })
 
   return summaryLink !== undefined
