@@ -26,16 +26,14 @@ export const seesaaHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const blog = seesaa.pages.read(url)
     const page = feeds.forUrl(url)
 
-    if (!blog || !page) {
+    if (!parseSeesaaUrl(url) || !page) {
       return []
     }
 
-    // The certificate the blogs share leaves out stablo.jp, so its blogs serve feeds over http.
-    // The other domains redirect http to https.
-    const params = { scheme: blog.params.domain === 'stablo.jp' ? 'http' : 'https' }
+    // The domains redirect http to https. The table writes stablo.jp's feeds over http itself.
+    const params = { scheme: 'https' }
 
     return [
       page.getFeedEntry('posts', params, 'rss'),
