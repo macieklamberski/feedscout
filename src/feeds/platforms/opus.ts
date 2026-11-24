@@ -1,0 +1,141 @@
+import { decodeSegment, isAnyOf, parseUrl, resolveUrl, startsWithAnyOf } from 'trousse'
+import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import {
+  composeHint,
+  digitsRegex,
+  findElements,
+  hasMarker,
+  isRootOfPage,
+} from '../../common/utils.js'
+
+// Discoverability: Discoverable without handler.
+
+export type OpusPage = { kind: 'collection' | 'search'; feedUrl: string }
+
+// Every OPUS 4 layout ships the core `frontdoorutil.js` under the install root, as in
+// `/opus4/layouts/opus4-zwi2/js/frontdoorutil.js`, whatever the layout is named.
+const assetRootRegex = /["']([^"'\s]*?)\/layouts\/[^/"'\s]+\/js\/frontdoorutil\.js/i
+const searchPathRegex = /^\/solrsearch\/index\/search\/(.+)$/i
+const trailingSlashRegex = /\/$/
+const urlencodeExtrasRegex = /[!'()*~]/g
+const encodedSpaceRegex = /%20/g
+
+// OPUS drops these from the search parameters when it prints the page's feed link.
+const excludedParams = ['rows', 'start', 'sortfield', 'sortorder', 'browsing']
+
+// OPUS spells its link parameters with PHP's `urlencode`, so `*:*` becomes `%2A%3A%2A`.
+const encodeParam = (value: string): string => {
+  return encodeURIComponent(value)
+    .replace(urlencodeExtrasRegex, (character) => {
+      return `%${character.charCodeAt(0).toString(16).toUpperCase()}`
+    })
+    .replace(encodedSpaceRegex, '+')
+}
+
+// The platform method collapses `//` in the page url, which drops an empty facet and shifts the
+// parameters after it, so the page's own feed link wins over the url built from the page url.
+const getLinkedFeedUrl = (
+  url: string,
+  content: string | undefined,
+  rootUrl: string,
+): string | undefined => {
+  const { host, pathname } = new URL(rootUrl)
+  const feedPath = `${pathname.replace(trailingSlashRegex, '')}/rss/index/index/`
+  const links = findElements(content ?? '', (element) => {
+    return element.name === 'link' && element.attribs.rel === 'alternate'
+  })
+
+  for (const link of links) {
+    const feedUrl = resolveUrl(link.attribs.href ?? '', url)
+
+    if (!feedUrl) {
+      continue
+    }
+
+    const { host: feedHost, pathname: feedPathname } = new URL(feedUrl)
+
+    if (feedHost === host && startsWithAnyOf(feedPathname, feedPath)) {
+      return feedUrl
+    }
+  }
+}
+
+export const isOpusHtml = (content: string): boolean => {
+  return assetRootRegex.test(content)
+}
+
+export const getOpusPage = (url: string, content: string | undefined): OpusPage | undefined => {
+  const assetRoot = content?.match(assetRootRegex)?.[1]
+  const assetRootUrl = assetRoot === undefined ? undefined : parseUrl(`${assetRoot}/`, url)
+
+  if (!assetRootUrl || !isRootOfPage(assetRootUrl.href, url)) {
+    return
+  }
+
+  const { origin, pathname } = new URL(url)
+  const rootPath = assetRootUrl.pathname.replace(trailingSlashRegex, '')
+  const searchPath = pathname.slice(rootPath.length).match(searchPathRegex)?.[1]
+
+  if (!searchPath) {
+    return
+  }
+
+  // Zend trims the path and reads its segments in pairs, so an empty facet keeps its place.
+  const segments = searchPath.replace(trailingSlashRegex, '').split('/')
+  const values: Record<string, string> = {}
+  const params: Array<string> = []
+
+  for (let index = 0; index < segments.length; index += 2) {
+    const [keySegment, valueSegment] = segments.slice(index, index + 2)
+    const key = decodeSegment(keySegment)
+    // Zend reads a `+` in a path parameter as a space.
+    const value = decodeSegment(valueSegment?.replaceAll('+', ' ') ?? '')
+
+    if (key === undefined || value === undefined) {
+      return
+    }
+
+    if (isAnyOf(key, excludedParams)) {
+      continue
+    }
+
+    values[key.toLowerCase()] = value
+    params.push(`${encodeParam(key)}/${encodeParam(value)}`)
+  }
+
+  const rootUrl = `${origin}${rootPath}`
+  const feedUrl =
+    getLinkedFeedUrl(url, content, rootUrl) ?? `${rootUrl}/rss/index/index/${params.join('/')}`
+
+  if (isAnyOf(values.searchtype, 'collection') && digitsRegex.test(values.id ?? '')) {
+    return { kind: 'collection', feedUrl }
+  }
+
+  if (isAnyOf(values.searchtype, 'simple') && values.query) {
+    return { kind: 'search', feedUrl }
+  }
+}
+
+export const opusHandler: PlatformHandler = {
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { html: isOpusHtml })) {
+      return false
+    }
+
+    return getOpusPage(url, content) !== undefined
+  },
+
+  resolve: (url, content) => {
+    const page = getOpusPage(url, content)
+
+    if (!page) {
+      return []
+    }
+
+    if (page.kind === 'collection') {
+      return [{ uri: page.feedUrl, hint: composeHint('opus:collection', 'rss') }]
+    }
+
+    return [{ uri: page.feedUrl, hint: composeHint('opus:search', 'rss') }]
+  },
+}

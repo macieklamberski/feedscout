@@ -1,40 +1,7 @@
-import { producthunt } from 'feedintel'
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
-
-export type ProducthuntUrl =
-  | { kind: 'product'; slug: string }
-  | { kind: 'topic'; topic: string }
-  | { kind: 'home' }
-
-const hosts = producthunt.hosts.exact
-
-const productRegex = /^\/products\/([^/]+)(?:\/|$)/i
-const topicRegex = /^\/topics\/([^/]+)\/?$/i
-
-// Every page links the site-wide product feed, so any other page reads as the home page.
-export const parseProducthuntUrl = (url: string): ProducthuntUrl | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
-    return
-  }
-
-  const slug = parsedUrl.pathname.match(productRegex)?.[1]
-
-  if (slug) {
-    return { kind: 'product', slug }
-  }
-
-  const topic = parsedUrl.pathname.match(topicRegex)?.[1]
-
-  if (topic) {
-    return { kind: 'topic', topic }
-  }
-
-  return { kind: 'home' }
-}
+import { type ProducthuntUrl, parseProducthuntUrl } from '../../feeds/platforms/producthunt.js'
 
 // The topics index and a missing topic carry the generic ph-static.imgix.net share image.
 const topicImageHosts = ['ph-files.imgix.net']

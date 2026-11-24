@@ -1,0 +1,142 @@
+import { describe, expect, it } from 'bun:test'
+import {
+  type FunkwhaleUrl,
+  funkwhaleHandler,
+  isFunkwhaleHtml,
+  parseFunkwhaleUrl,
+} from './funkwhale.js'
+
+const funkwhaleHtml = '<meta name="generator" content="Funkwhale" />'
+const otherHtml = '<meta name="generator" content="Castopod 1.0">'
+
+describe('parseFunkwhaleUrl', () => {
+  it('should return the channel for a channel page', () => {
+    const expected: FunkwhaleUrl = { kind: 'channel', channel: 'news' }
+
+    expect(parseFunkwhaleUrl('https://example.org/channels/news')).toEqual(expected)
+  })
+
+  it('should return a remote channel as written', () => {
+    const expected: FunkwhaleUrl = { kind: 'channel', channel: 'news@other.example' }
+
+    expect(parseFunkwhaleUrl('https://example.org/channels/news@other.example')).toEqual(expected)
+  })
+
+  it('should return undefined for a page the parser does not name', () => {
+    expect(parseFunkwhaleUrl('https://example.org/library')).toBeUndefined()
+  })
+})
+
+describe('isFunkwhaleHtml', () => {
+  it('should return true for the Funkwhale generator meta tag', () => {
+    expect(isFunkwhaleHtml(funkwhaleHtml)).toBe(true)
+  })
+
+  it('should return true for the app shell a custom page keeps', () => {
+    expect(isFunkwhaleHtml('<div id="fake-app"></div>')).toBe(true)
+  })
+
+  it('should return true for a single-quoted app shell id', () => {
+    expect(isFunkwhaleHtml("<div id='fake-app'></div>")).toBe(true)
+  })
+
+  it('should return false for another platform', () => {
+    expect(isFunkwhaleHtml(otherHtml)).toBe(false)
+  })
+
+  it('should return false for empty content', () => {
+    expect(isFunkwhaleHtml('')).toBe(false)
+  })
+})
+
+describe('funkwhaleHandler', () => {
+  describe('match', () => {
+    it('should match a channel page', () => {
+      expect(funkwhaleHandler.match('https://example.org/channels/alice', funkwhaleHtml)).toBe(true)
+    })
+
+    it('should match a channel page with a capitalized channels segment', () => {
+      expect(funkwhaleHandler.match('https://example.org/Channels/alice', funkwhaleHtml)).toBe(true)
+    })
+
+    it('should not match a page outside a channel', () => {
+      expect(funkwhaleHandler.match('https://example.org/library', funkwhaleHtml)).toBe(false)
+    })
+
+    it('should not match without content', () => {
+      expect(funkwhaleHandler.match('https://example.org/channels/alice')).toBe(false)
+    })
+  })
+
+  describe('resolve', () => {
+    it('should return the feed of a remote channel written with a leading @', () => {
+      const value = 'https://example.org/channels/@alice@remote.example'
+      const expected = [
+        {
+          uri: 'https://remote.example/api/v1/channels/alice/rss',
+          hint: { key: 'funkwhale:channel', label: 'Channel' },
+        },
+      ]
+
+      expect(funkwhaleHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the channel feed on the v1 path', () => {
+      const value = 'https://example.org/channels/alice'
+      const expected = [
+        {
+          uri: 'https://example.org/api/v1/channels/alice/rss',
+          hint: { key: 'funkwhale:channel', label: 'Channel' },
+        },
+      ]
+
+      expect(funkwhaleHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the feed of a remote channel on its own instance', () => {
+      const value = 'https://example.org/channels/alice@remote.example'
+      const expected = [
+        {
+          uri: 'https://remote.example/api/v1/channels/alice/rss',
+          hint: { key: 'funkwhale:channel', label: 'Channel' },
+        },
+      ]
+
+      expect(funkwhaleHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return an empty array for a remote domain that is not one host', () => {
+      const value = 'https://example.org/channels/alice@remote.example%2Fx'
+
+      expect(funkwhaleHandler.resolve(value)).toEqual([])
+    })
+
+    it('should encode a stray percent sign in a channel name', () => {
+      const value = 'https://example.org/channels/100%'
+      const expected = [
+        {
+          uri: 'https://example.org/api/v1/channels/100%25/rss',
+          hint: { key: 'funkwhale:channel', label: 'Channel' },
+        },
+      ]
+
+      expect(funkwhaleHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return an empty array outside a channel', () => {
+      expect(funkwhaleHandler.resolve('https://example.org/library')).toEqual([])
+    })
+
+    it('should escape a slash in the name of a remote channel', () => {
+      const value = 'https://example.org/channels/news%2Fdaily@example.com'
+      const expected = [
+        {
+          uri: 'https://example.com/api/v1/channels/news%2Fdaily/rss',
+          hint: { key: 'funkwhale:channel', label: 'Channel' },
+        },
+      ]
+
+      expect(funkwhaleHandler.resolve(value)).toEqual(expected)
+    })
+  })
+})

@@ -1,28 +1,10 @@
-import { bluesky } from 'feedintel'
-import { composeQuery, getPathSegments, isAnyOf, isHostOf, isNonEmptyString } from 'trousse'
+import { composeQuery, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { parseBlueskyUrl } from '../../feeds/platforms/bluesky.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
 const platform = 'bluesky'
-
-export type BlueskyUrl = { kind: 'profile'; handle: string }
-
-const hosts = bluesky.hosts.exact
-
-export const parseBlueskyUrl = (url: string): BlueskyUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
-    return
-  }
-
-  const [section, handle] = getPathSegments(url)
-
-  if (!isAnyOf(section, 'profile') || !handle) {
-    return
-  }
-
-  return { kind: 'profile', handle }
-}
 
 export const blueskyHandler: PlatformHandler = {
   match: (url) => {

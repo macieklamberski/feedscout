@@ -1,0 +1,194 @@
+import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
+import { cocologHandler } from './cocolog.js'
+
+const homeContent = `
+  <link
+    rel="EditURI"
+    type="application/rsd+xml"
+    href="https://app.cocolog-nifty.com/t/rsd/47230"
+  />
+  <link
+    rel="alternate"
+    media="handheld"
+    href="http://app.m-cocolog.jp/t/typecast/47230/46630"
+  />
+  <link
+    rel="alternate"
+    type="application/atom+xml"
+    title="Atom"
+    href="http://example.cocolog-nifty.com/index/atom.xml"
+  />
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    title="RSS"
+    href="http://example.cocolog-nifty.com/index/index.rdf"
+  />
+`
+
+describe('cocologHandler', () => {
+  describe('match', () => {
+    const values: Array<[boolean, string]> = [
+      [true, 'https://example.cocolog-nifty.com/blog/'],
+      [true, 'https://example.cocolog-nifty.com/blog/2024/01/post-1a2b.html'],
+      [true, 'http://example.air-nifty.com/consulting/cat12345/index.html'],
+      [true, 'http://example.way-nifty.com/diary/'],
+      [false, 'https://example.cocolog-nifty.com/'],
+      [false, 'https://example.cocolog-nifty.com/.shared/js/ax.js'],
+      [false, 'https://example.cocolog-nifty.com/about.html'],
+      [false, 'https://www.cocolog-nifty.com/blog/'],
+      [false, 'https://app.f.cocolog-nifty.com/t/rsd/335263'],
+      [false, 'https://cocolog-nifty.com/blog/'],
+      [false, 'https://example.com/blog/'],
+    ]
+
+    it.each(values)('should return %s for %s', (expected, url) => {
+      expect(cocologHandler.match(url)).toBe(expected)
+    })
+
+    it('should return true for the home page linking its blog feeds', () => {
+      expect(cocologHandler.match('https://example.cocolog-nifty.com/', homeContent)).toBe(true)
+    })
+
+    it('should return false for the home page linking feeds on another host', () => {
+      const value = `
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          href="http://other.cocolog-nifty.com/blog/index.rdf"
+        />
+      `
+
+      expect(cocologHandler.match('https://example.cocolog-nifty.com/', value)).toBe(false)
+    })
+
+    it('should return false for the home page linking a feed without an href', () => {
+      const value = `
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+        />
+      `
+
+      expect(cocologHandler.match('https://example.cocolog-nifty.com/', value)).toBe(false)
+    })
+  })
+
+  describe('resolve', () => {
+    it('should return the posts feeds of the blog in the URL', () => {
+      const value = 'https://example.cocolog-nifty.com/consulting/2024/01/post-1a2b.html'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.cocolog-nifty.com/consulting/atom.xml',
+          hint: { key: 'cocolog:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://example.cocolog-nifty.com/consulting/index.rdf',
+          hint: { key: 'cocolog:posts', label: 'Posts', format: 'rdf' },
+        },
+        {
+          uri: 'https://example.cocolog-nifty.com/consulting/rss.xml',
+          hint: { key: 'cocolog:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.cocolog-nifty.com/consulting/comment-index.rdf',
+          hint: { key: 'cocolog:comments', label: 'Comments', format: 'rdf' },
+        },
+        {
+          uri: 'https://example.cocolog-nifty.com/consulting/comments.xml',
+          hint: { key: 'cocolog:comments', label: 'Comments', format: 'rss' },
+        },
+      ]
+
+      expect(cocologHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the http scheme of the page', () => {
+      const value = 'http://example.cocolog-nifty.com/consulting/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.cocolog-nifty.com/consulting/atom.xml',
+          hint: { key: 'cocolog:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'http://example.cocolog-nifty.com/consulting/index.rdf',
+          hint: { key: 'cocolog:posts', label: 'Posts', format: 'rdf' },
+        },
+        {
+          uri: 'http://example.cocolog-nifty.com/consulting/rss.xml',
+          hint: { key: 'cocolog:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'http://example.cocolog-nifty.com/consulting/comment-index.rdf',
+          hint: { key: 'cocolog:comments', label: 'Comments', format: 'rdf' },
+        },
+        {
+          uri: 'http://example.cocolog-nifty.com/consulting/comments.xml',
+          hint: { key: 'cocolog:comments', label: 'Comments', format: 'rss' },
+        },
+      ]
+
+      expect(cocologHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the posts feeds of the blog the home page links', () => {
+      const value = 'https://example.cocolog-nifty.com/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.cocolog-nifty.com/index/atom.xml',
+          hint: { key: 'cocolog:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://example.cocolog-nifty.com/index/index.rdf',
+          hint: { key: 'cocolog:posts', label: 'Posts', format: 'rdf' },
+        },
+        {
+          uri: 'https://example.cocolog-nifty.com/index/rss.xml',
+          hint: { key: 'cocolog:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.cocolog-nifty.com/index/comment-index.rdf',
+          hint: { key: 'cocolog:comments', label: 'Comments', format: 'rdf' },
+        },
+        {
+          uri: 'https://example.cocolog-nifty.com/index/comments.xml',
+          hint: { key: 'cocolog:comments', label: 'Comments', format: 'rss' },
+        },
+      ]
+
+      expect(cocologHandler.resolve(value, homeContent)).toEqual(expected)
+    })
+
+    it('should return empty array for the home page without feed links', () => {
+      expect(cocologHandler.resolve('https://example.cocolog-nifty.com/')).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the posts hint for an http feed on another domain', () => {
+      const value = 'http://alice.moe-nifty.com/diary/index.rdf'
+      const expected: DiscoverUriHint = { key: 'cocolog:posts', label: 'Posts', format: 'rdf' }
+
+      expect(cocologHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    it('should return an RSS feed on another domain as itself', async () => {
+      const value = 'https://alice.moe-nifty.com/diary/rss.xml'
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [cocologHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'cocolog:posts', label: 'Posts', format: 'rss' } },
+      ]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+    })
+  })
+})

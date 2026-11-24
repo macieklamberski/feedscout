@@ -1,0 +1,433 @@
+import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
+import {
+  getHuffdufferPage,
+  type HuffdufferPage,
+  type HuffdufferUrl,
+  huffdufferHandler,
+  parseHuffdufferUrl,
+} from './huffduffer.js'
+
+describe('parseHuffdufferUrl', () => {
+  it('should return the profile for a user page', () => {
+    const expected: HuffdufferUrl = { kind: 'profile', username: 'alice' }
+
+    expect(parseHuffdufferUrl('https://huffduffer.com/alice')).toEqual(expected)
+  })
+
+  it('should return the profile on the www host', () => {
+    const expected: HuffdufferUrl = { kind: 'profile', username: 'alice' }
+
+    expect(parseHuffdufferUrl('https://www.huffduffer.com/alice')).toEqual(expected)
+  })
+
+  it('should return the profile for the user feed', () => {
+    const expected: HuffdufferUrl = { kind: 'profile', username: 'alice' }
+
+    expect(parseHuffdufferUrl('https://huffduffer.com/alice/rss')).toEqual(expected)
+  })
+
+  it('should return the huffduff for an episode page', () => {
+    const expected: HuffdufferUrl = { kind: 'huffduff', username: 'alice', id: '12345' }
+
+    expect(parseHuffdufferUrl('https://huffduffer.com/alice/12345')).toEqual(expected)
+  })
+
+  it('should return the related for a related page', () => {
+    const expected: HuffdufferUrl = { kind: 'related', username: 'alice', id: '12345' }
+
+    expect(parseHuffdufferUrl('https://huffduffer.com/alice/12345/related')).toEqual(expected)
+  })
+
+  it('should return the profile for a section other than an episode id', () => {
+    const expected: HuffdufferUrl = { kind: 'profile', username: 'alice' }
+
+    expect(parseHuffdufferUrl('https://huffduffer.com/alice/12345abc')).toEqual(expected)
+  })
+
+  it('should return the collective for a collective page', () => {
+    const expected: HuffdufferUrl = { kind: 'collective', username: 'alice' }
+
+    expect(parseHuffdufferUrl('https://huffduffer.com/alice/collective')).toEqual(expected)
+  })
+
+  it('should return the popular page', () => {
+    const expected: HuffdufferUrl = { kind: 'popular' }
+
+    expect(parseHuffdufferUrl('https://huffduffer.com/popular')).toEqual(expected)
+  })
+
+  it('should return the search with its query', () => {
+    const expected: HuffdufferUrl = { kind: 'search', query: 'example query' }
+
+    expect(parseHuffdufferUrl('https://huffduffer.com/search?q=example+query')).toEqual(expected)
+  })
+
+  it('should return the home page for the root', () => {
+    const expected: HuffdufferUrl = { kind: 'home' }
+
+    expect(parseHuffdufferUrl('https://huffduffer.com/')).toEqual(expected)
+  })
+
+  it('should return undefined for a dotted subdomain', () => {
+    expect(parseHuffdufferUrl('https://www.alice.huffduffer.com/alice')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseHuffdufferUrl('https://example.com/alice')).toBeUndefined()
+  })
+})
+
+describe('getHuffdufferPage', () => {
+  it('should return the username as the feed link spells it', () => {
+    const value = 'https://huffduffer.com/alice/123456'
+    const content = '<a href="https://huffduffer.com/Alice/rss">RSS</a>'
+    const expected: HuffdufferPage = { kind: 'huffduff', username: 'Alice', id: '123456' }
+
+    expect(getHuffdufferPage(value, content)).toEqual(expected)
+  })
+
+  it('should return the username from the url without content', () => {
+    const expected: HuffdufferPage = { kind: 'profile', username: 'alice' }
+
+    expect(getHuffdufferPage('https://huffduffer.com/alice', undefined)).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(getHuffdufferPage('https://example.com/alice', undefined)).toBeUndefined()
+  })
+
+  it('should ignore the feed link of another account', () => {
+    const value = 'https://huffduffer.com/alice'
+    const content = '<a href="https://huffduffer.com/Bob/rss">Bob</a>'
+    const expected: HuffdufferPage = { kind: 'profile', username: 'alice' }
+
+    expect(getHuffdufferPage(value, content)).toEqual(expected)
+  })
+
+  it('should ignore the feed link of an account whose username starts with the page username', () => {
+    const value = 'https://huffduffer.com/alice'
+    const content = '<a href="https://huffduffer.com/AliceBooks/rss">Alice Books</a>'
+    const expected: HuffdufferPage = { kind: 'profile', username: 'alice' }
+
+    expect(getHuffdufferPage(value, content)).toEqual(expected)
+  })
+})
+
+describe('huffdufferHandler', () => {
+  describe('match', () => {
+    const values: Array<[boolean, string]> = [
+      [true, 'https://huffduffer.com/alice'],
+      [false, 'https://example.com/'],
+    ]
+
+    it.each(values)('should return %s for %s', (expected, url) => {
+      expect(huffdufferHandler.match(url)).toBe(expected)
+    })
+  })
+
+  describe('resolve', () => {
+    const newFeeds: Array<DiscoverUriEntry> = [
+      {
+        uri: 'https://huffduffer.com/new/rss',
+        hint: { key: 'huffduffer:new', label: 'New huffduffs', format: 'rss' },
+      },
+      {
+        uri: 'https://huffduffer.com/new/atom',
+        hint: { key: 'huffduffer:new', label: 'New huffduffs', format: 'atom' },
+      },
+      {
+        uri: 'https://huffduffer.com/new/json',
+        hint: { key: 'huffduffer:new', label: 'New huffduffs', format: 'json' },
+      },
+    ]
+    const popularFeeds: Array<DiscoverUriEntry> = [
+      {
+        uri: 'https://huffduffer.com/popular/rss',
+        hint: { key: 'huffduffer:popular', label: 'Popular', format: 'rss' },
+      },
+      {
+        uri: 'https://huffduffer.com/popular/atom',
+        hint: { key: 'huffduffer:popular', label: 'Popular', format: 'atom' },
+      },
+      {
+        uri: 'https://huffduffer.com/popular/json',
+        hint: { key: 'huffduffer:popular', label: 'Popular', format: 'json' },
+      },
+    ]
+
+    it('should return empty array for a URL outside Huffduffer', () => {
+      expect(huffdufferHandler.resolve('https://example.com/alice')).toEqual([])
+    })
+
+    it('should return the site-wide new and popular feeds for the home page', () => {
+      const value = 'https://huffduffer.com/'
+      const expected: Array<DiscoverUriEntry> = [...newFeeds, ...popularFeeds]
+
+      expect(huffdufferHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the popular feeds for the popular page', () => {
+      const value = 'https://huffduffer.com/popular'
+      const expected: Array<DiscoverUriEntry> = [...popularFeeds, ...newFeeds]
+
+      expect(huffdufferHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the search feeds for a search page', () => {
+      const value = 'https://huffduffer.com/search?q=example+query'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://huffduffer.com/search/rss?q=example%20query',
+          hint: { key: 'huffduffer:search', label: 'Search', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/search/atom?q=example%20query',
+          hint: { key: 'huffduffer:search', label: 'Search', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/search/json?q=example%20query',
+          hint: { key: 'huffduffer:search', label: 'Search', format: 'json' },
+        },
+        ...newFeeds,
+        ...popularFeeds,
+      ]
+
+      expect(huffdufferHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the site-wide feeds for a search page without a query', () => {
+      const expected: Array<DiscoverUriEntry> = [...newFeeds, ...popularFeeds]
+
+      expect(huffdufferHandler.resolve('https://huffduffer.com/search')).toEqual(expected)
+    })
+
+    it('should return the collective feeds for a collective page', () => {
+      const value = 'https://huffduffer.com/alice/collective'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://huffduffer.com/alice/collective/rss',
+          hint: { key: 'huffduffer:collective', label: 'Collective', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/collective/atom',
+          hint: { key: 'huffduffer:collective', label: 'Collective', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/collective/json',
+          hint: { key: 'huffduffer:collective', label: 'Collective', format: 'json' },
+        },
+        ...newFeeds,
+        ...popularFeeds,
+      ]
+
+      expect(huffdufferHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the huffduffs feeds for a profile', () => {
+      const value = 'https://huffduffer.com/alice'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://huffduffer.com/alice/rss',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/atom',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/json',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'json' },
+        },
+        ...newFeeds,
+        ...popularFeeds,
+      ]
+
+      expect(huffdufferHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the related and huffduffs feeds for an episode', () => {
+      const value = 'https://huffduffer.com/alice/12345'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://huffduffer.com/alice/12345/related/rss',
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/12345/related/atom',
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/12345/related/json',
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'json' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/rss',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/atom',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/json',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'json' },
+        },
+        ...newFeeds,
+        ...popularFeeds,
+      ]
+
+      expect(huffdufferHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the related feeds for a related page', () => {
+      const value = 'https://huffduffer.com/alice/12345/related'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://huffduffer.com/alice/12345/related/rss',
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/12345/related/atom',
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/12345/related/json',
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'json' },
+        },
+        ...newFeeds,
+        ...popularFeeds,
+      ]
+
+      expect(huffdufferHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the huffduffs feeds on the apex host over https for a www page over http', () => {
+      const value = 'http://www.huffduffer.com/alice'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://huffduffer.com/alice/rss',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/atom',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/alice/json',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'json' },
+        },
+        ...newFeeds,
+        ...popularFeeds,
+      ]
+
+      expect(huffdufferHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should spell the username as the profile page links it', () => {
+      const value = 'https://huffduffer.com/alicesmith'
+      const content = `
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="RSS"
+          href="https://huffduffer.com/AliceSmith/rss"
+        >
+      `
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://huffduffer.com/AliceSmith/rss',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/AliceSmith/atom',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/AliceSmith/json',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'json' },
+        },
+        ...newFeeds,
+        ...popularFeeds,
+      ]
+
+      expect(huffdufferHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should spell the username as the episode page links it', () => {
+      const value = 'https://huffduffer.com/AliceSmith/12345'
+      const content = `
+        <link
+          rel="alternate"
+          type="application/xml+rdf"
+          title="RDF"
+          href="https://huffduffer.com/alicesmith/12345/rdf"
+        >
+      `
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://huffduffer.com/alicesmith/12345/related/rss',
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/alicesmith/12345/related/atom',
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/alicesmith/12345/related/json',
+          hint: { key: 'huffduffer:related', label: 'Possibly related', format: 'json' },
+        },
+        {
+          uri: 'https://huffduffer.com/alicesmith/rss',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/alicesmith/atom',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/alicesmith/json',
+          hint: { key: 'huffduffer:huffduffs', label: 'Huffduffs', format: 'json' },
+        },
+        ...newFeeds,
+        ...popularFeeds,
+      ]
+
+      expect(huffdufferHandler.resolve(value, content)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the huffduffs hint for a user feed on the www host over http', () => {
+      const value = 'http://www.huffduffer.com/alice/rss'
+      const expected: DiscoverUriHint = {
+        key: 'huffduffer:huffduffs',
+        label: 'Huffduffs',
+        format: 'rss',
+      }
+
+      expect(huffdufferHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    it('should return a popular feed on the www host over http as itself', async () => {
+      const value = 'http://www.huffduffer.com/popular/atom'
+      const hint: DiscoverUriHint = {
+        key: 'huffduffer:popular',
+        label: 'Popular',
+        format: 'atom',
+      }
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [huffdufferHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
+    })
+  })
+})
