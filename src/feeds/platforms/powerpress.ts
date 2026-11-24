@@ -1,16 +1,14 @@
 import { powerpress } from 'feedintel'
-import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { hasMarker } from '../../common/utils.js'
+import { hasMarker, isRootOfPage } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 const playerFunction = 'powerpress_pinw'
 
-// Each episode's play-in-new-window link opens `{home}/?powerpress_pinw={id}-podcast`.
-const pinwUrlRegex = /powerpress_pinw\('(?<homeUrl>[^'?]*)\?powerpress_pinw=/
-const trailingSlashRegex = /\/$/
+// Each episode's player call names its play-in-new-window URL as the first argument.
+const pinwCallRegex = /powerpress_pinw\('(?<pinwUrl>[^']*)'/
 
 const feeds = withHintLabels(powerpress.feeds)
 
@@ -23,19 +21,14 @@ export type PowerpressPage = { kind: 'site'; homeUrl: string }
 // A play-in-new-window link names the site root only on the page's own host, under a root that
 // holds the page.
 const getPinwHomeUrl = (url: string, content: string | undefined): string | undefined => {
-  const homeUrl = content?.match(pinwUrlRegex)?.groups?.homeUrl?.replace(trailingSlashRegex, '')
-  const parsedHomeUrl = parseUrl(homeUrl)
-  const parsedUrl = parseUrl(url)
+  const pinwUrl = content?.match(pinwCallRegex)?.groups?.pinwUrl ?? ''
+  const player = powerpress.pages.read(pinwUrl, { isAnyHost: true })
 
-  if (!homeUrl || !parsedHomeUrl || !parsedUrl || parsedHomeUrl.origin !== parsedUrl.origin) {
+  if (player?.key !== 'player' || !isRootOfPage(player.params.root, url)) {
     return
   }
 
-  if (!`${parsedUrl.pathname}/`.startsWith(`${parsedHomeUrl.pathname}/`)) {
-    return
-  }
-
-  return homeUrl
+  return player.params.root
 }
 
 export const getPowerpressPage = (url: string, content: string | undefined): PowerpressPage => {
