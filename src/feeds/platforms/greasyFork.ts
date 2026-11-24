@@ -1,8 +1,8 @@
 import { greasyFork } from 'feedintel'
-import { getPathSegments, isHostOf, isLocale, parseUrl } from 'trousse'
+import { resolveUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findDescendant, findElement, getNumericId, hasClass } from '../../common/utils.js'
+import { findDescendant, findElement, hasClass } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: new, updated, user.
@@ -15,39 +15,23 @@ export type GreasyForkPage =
   | { kind: 'user'; locale: string; userId: string }
   | { kind: 'home'; locale: string }
 
-const hosts = greasyFork.hosts.exact
-
-const userRegex = /^\/users\/([^/]+)/i
-const scriptRegex = /^\/scripts\/\d/i
-// A user segment is `{id}-{name}`, and the name is optional.
-const userIdRegex = /^(?<id>[^-]+)/
-const authorHrefRegex = /\/users\/(?<id>[^/-]+)/i
-
 const feeds = withHintLabels(greasyFork.feeds)
 
 export const parseGreasyForkUrl = (url: string): GreasyForkUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const page = greasyFork.pages.read(url)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+  if (!page) {
     return
   }
 
-  const [localeOrRoute] = getPathSegments(parsedUrl)
-  const hasLocale = localeOrRoute !== undefined && isLocale(localeOrRoute)
   // A page without a locale redirects to one by the browser language.
-  const locale = hasLocale ? localeOrRoute : 'en'
-  const path = hasLocale ? parsedUrl.pathname.slice(localeOrRoute.length + 1) : parsedUrl.pathname
-  const userId = getNumericId(path.match(userRegex)?.[1], userIdRegex)
+  const locale = page.params.locale ?? 'en'
 
-  if (userId) {
-    return { kind: 'user', locale, userId }
+  if (page.key === 'user') {
+    return { kind: 'user', locale, userId: page.params.userId }
   }
 
-  if (scriptRegex.test(path)) {
-    return { kind: 'script', locale }
-  }
-
-  return { kind: 'home', locale }
+  return { kind: page.key, locale }
 }
 
 // The script page names its author only in its content, and the feedback, code and version
@@ -66,13 +50,13 @@ export const getGreasyForkPage = (
     return element.name === 'dd' && hasClass(element, 'script-show-author')
   })
   const authorLink = author && findDescendant(author, (element) => element.name === 'a')
-  const userId = getNumericId(authorLink?.attribs.href, authorHrefRegex)
+  const authorPage = greasyFork.pages.read(resolveUrl(authorLink?.attribs.href ?? '', url) ?? '')
 
-  if (!userId) {
+  if (authorPage?.key !== 'user') {
     return
   }
 
-  return { kind: 'user', locale: parsed.locale, userId }
+  return { kind: 'user', locale: parsed.locale, userId: authorPage.params.userId }
 }
 
 export const greasyForkHandler: PlatformHandler = {
