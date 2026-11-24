@@ -1,14 +1,13 @@
 import { substack } from 'feedintel'
 import { escapeRegex, isPresent } from 'trousse'
+import type { DiscoverUriEntry } from '../../common/types.js'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getHostOrigin } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Handler needed for: newsletter.
 
 export type SubstackUrl = { kind: 'newsletter' } | { kind: 'profile'; username: string }
-export type SubstackPage = { kind: 'newsletter' | 'profile'; origin: string }
 
 // A section page embeds the record of every section of the publication, each naming its id before
 // its slug with no brace between them.
@@ -79,25 +78,43 @@ const getSectionId = (content: string | undefined, url: string): string | undefi
   }
 }
 
-const getPublicationOrigin = (
+// A custom domain the table refuses as a host, as one with a path, leaves the subdomain feed.
+const getProfileFeedEntry = (
   content: string | undefined,
   username: string,
-): string | undefined => {
+): DiscoverUriEntry | undefined => {
   const { subdomain, customDomain } = content?.match(publicationRegex)?.groups ?? {}
-  const customOrigin = customDomain ? getHostOrigin(customDomain) : undefined
 
-  if (customOrigin) {
-    return customOrigin
+  return (
+    feeds.getFeedEntry('newsletter', { scheme: 'https', host: customDomain }) ??
+    feeds.getFeedEntry('newsletter', { scheme: 'https', username: subdomain ?? username })
+  )
+}
+
+const getPodcastEntries = (content: string | undefined): Array<DiscoverUriEntry | undefined> => {
+  const record = content?.match(pubRecordRegex)?.groups?.record
+  const publication = record?.match(pubIdRegex)?.groups?.publication
+
+  if (!content || !record || !publication) {
+    return []
   }
 
-  const params = { scheme: 'https', username: subdomain ?? username }
-  const feedUrl = feeds.getFeedUrl('newsletter', params)
+  const hasPodcast = podcastEnabledRegex.test(record) && !podcastFeedUrlRegex.test(record)
+  // A podcast feed answers on the publication host too, but names the API host as its self link.
+  const params = { publication }
 
-  if (!feedUrl) {
-    return
+  if (hasPodcast) {
+    return [
+      feeds.getFeedEntry('podcast', params),
+      ...getPodcastSections(content, publication).map((section) => {
+        return feeds.getFeedEntry('podcast-section', { ...params, section })
+      }),
+    ]
   }
 
-  return new URL(feedUrl).origin
+  return getPodcastSections(content, publication).map((section) => {
+    return feeds.getFeedEntry('podcast-section', { ...params, section })
+  })
 }
 
 export const parseSubstackUrl = (url: string): SubstackUrl | undefined => {
@@ -114,79 +131,30 @@ export const parseSubstackUrl = (url: string): SubstackUrl | undefined => {
   return { kind: 'newsletter' }
 }
 
-export const getSubstackPage = (
-  url: string,
-  content: string | undefined,
-): SubstackPage | undefined => {
-  const parsed = parseSubstackUrl(url)
-
-  if (!parsed) {
-    return
-  }
-
-  if (parsed.kind === 'newsletter') {
-    return { kind: 'newsletter', origin: new URL(url).origin }
-  }
-
-  const origin = getPublicationOrigin(content, parsed.username)
-
-  if (!origin) {
-    return
-  }
-
-  return { kind: 'profile', origin }
-}
-
 export const substackHandler: PlatformHandler = {
   match: (url) => {
     return parseSubstackUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const page = getSubstackPage(url, content)
+    const parsed = parseSubstackUrl(url)
 
-    if (!page) {
+    if (parsed?.kind === 'profile') {
+      return [getProfileFeedEntry(content, parsed.username), ...getPodcastEntries(content)].filter(
+        isPresent,
+      )
+    }
+
+    const pageFeeds = feeds.forUrl(url)
+
+    if (!parsed || !pageFeeds) {
       return []
-    }
-
-    const pageFeeds = feeds.forUrl(page.origin)
-
-    if (!pageFeeds) {
-      return []
-    }
-
-    const section = page.kind === 'newsletter' ? getSectionId(content, url) : undefined
-    const record = content?.match(pubRecordRegex)?.groups?.record
-    const publication = record?.match(pubIdRegex)?.groups?.publication
-
-    if (!record || !publication) {
-      return [
-        pageFeeds.getFeedEntry('newsletter'),
-        pageFeeds.getFeedEntry('newsletter-section', { section }),
-      ].filter(isPresent)
-    }
-
-    const hasPodcast = podcastEnabledRegex.test(record) && !podcastFeedUrlRegex.test(record)
-    // A podcast feed answers on the publication host too, but names the API host as its self link.
-    const params = { publication }
-
-    if (hasPodcast) {
-      return [
-        pageFeeds.getFeedEntry('newsletter'),
-        pageFeeds.getFeedEntry('newsletter-section', { section }),
-        pageFeeds.getFeedEntry('podcast', params),
-        ...getPodcastSections(content, publication).map((section) => {
-          return pageFeeds.getFeedEntry('podcast-section', { ...params, section })
-        }),
-      ].filter(isPresent)
     }
 
     return [
       pageFeeds.getFeedEntry('newsletter'),
-      pageFeeds.getFeedEntry('newsletter-section', { section }),
-      ...getPodcastSections(content, publication).map((section) => {
-        return pageFeeds.getFeedEntry('podcast-section', { ...params, section })
-      }),
+      pageFeeds.getFeedEntry('newsletter-section', { section: getSectionId(content, url) }),
+      ...getPodcastEntries(content),
     ].filter(isPresent)
   },
 
