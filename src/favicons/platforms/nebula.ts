@@ -1,4 +1,4 @@
-import { isNonEmptyString } from 'trousse'
+import { isNonEmptyString, parseJson } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { parseNebulaUrl } from '../../feeds/platforms/nebula.js'
 import type { FaviconEnricher } from '../types.js'
@@ -38,10 +38,11 @@ const getPageAvatar = (content: string | undefined): string | undefined => {
     .trim()
     .replace(trailingSemicolonRegex, '')
 
+  // biome-ignore lint/suspicious/noExplicitAny: Query JSON from the page.
+  const queryData = parseJson<any>(json)
+
   // A broken page payload must not hide the content API, which the ref falls back to.
   try {
-    const queryData = JSON.parse(json)
-
     for (const query of queryData?.queries ?? []) {
       if (query?.queryKey?.[0] !== 'content') {
         continue

@@ -1,5 +1,5 @@
 import { yeswiki } from 'feedintel'
-import { parseJson } from 'trousse'
+import { coerceArray, parseJson } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -55,7 +55,7 @@ const readFormIds = (element: Element): Array<string> => {
     return []
   }
 
-  return [params.idtypeannonce ?? []].flat().map(String)
+  return coerceArray(params.idtypeannonce).map(String)
 }
 
 // A made-up form id still answers with a placeholder feed, so ids come only from what the page

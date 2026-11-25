@@ -1,13 +1,17 @@
-import { isNonEmptyString, parseUrl } from 'trousse'
+import { isNonEmptyString, parseJson, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { parseAmebloUrl } from '../../feeds/platforms/ameblo.js'
 
 const initDataPrefix = 'window.INIT_DATA='
 
+type AmebloInitData = {
+  bloggerState?: { bloggerMap?: Record<string, { profile?: { image_filepath?: unknown } }> }
+}
+
 const getProfileImage = (initData: string, username: string): unknown => {
-  try {
-    return JSON.parse(initData)?.bloggerState?.bloggerMap?.[username]?.profile?.image_filepath
-  } catch {}
+  const blogger = parseJson<AmebloInitData>(initData)?.bloggerState?.bloggerMap?.[username]
+
+  return blogger?.profile?.image_filepath
 }
 
 export const amebloHandler: PlatformHandler = {

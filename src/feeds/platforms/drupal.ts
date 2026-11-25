@@ -1,6 +1,6 @@
 import { drupal } from 'feedintel'
 import { DomUtils } from 'htmlparser2'
-import { includesAnyOf, isString } from 'trousse'
+import { includesAnyOf, isString, parseJson } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -33,14 +33,12 @@ export const getDrupalPage = (url: string, content: string | undefined): DrupalP
   })
 
   if (script) {
-    try {
-      const settings: DrupalSettings = JSON.parse(DomUtils.textContent(script))
-      const basePath = settings.path?.baseUrl
+    const settings = parseJson<DrupalSettings>(DomUtils.textContent(script))
+    const basePath = settings?.path?.baseUrl
 
-      if (isString(basePath) && basePath.startsWith('/') && basePath.endsWith('/')) {
-        return { kind: 'site', baseUrl: `${origin}${basePath}` }
-      }
-    } catch {}
+    if (isString(basePath) && basePath.startsWith('/') && basePath.endsWith('/')) {
+      return { kind: 'site', baseUrl: `${origin}${basePath}` }
+    }
   }
 
   return { kind: 'site', baseUrl: `${origin}/` }

@@ -1,8 +1,6 @@
 import { Parser } from 'htmlparser2'
-import { getPathSegments, getRegistrableDomain, isString, parseUrl } from 'trousse'
+import { getPathSegments, getRegistrableDomain, isIpAddress, isString, parseUrl } from 'trousse'
 import type { UriEntry } from '../../types.js'
-
-const ipAddressRegex = /^\d+\.\d+\.\d+\.\d+$/
 
 const resolveUri = (uri: string, base: string, origin: string, pathname: string): string => {
   if (uri.startsWith('/')) {
@@ -154,11 +152,8 @@ export const getSubdomainVariants = (baseUrl: string, prefixes: Array<string>): 
   const url = new URL(baseUrl)
   const hostname = url.hostname
 
-  // Check if hostname is an IP address (simple check for digits and dots)
-  const isIpAddress = ipAddressRegex.test(hostname)
-
   // Handle edge cases: localhost, IPs
-  if (hostname === 'localhost' || isIpAddress) {
+  if (hostname === 'localhost' || isIpAddress(hostname)) {
     return []
   }
 
