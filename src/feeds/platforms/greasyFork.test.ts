@@ -41,8 +41,8 @@ describe('parseGreasyForkUrl', () => {
     )
   })
 
-  it('should return the user in English for a user page without a locale', () => {
-    const expected: GreasyForkUrl = { kind: 'user', locale: 'en', userId: '1' }
+  it('should return the user without a locale for a user page without one', () => {
+    const expected: GreasyForkUrl = { kind: 'user', userId: '1' }
 
     expect(parseGreasyForkUrl('https://greasyfork.org/users/1-jasonbarnabe')).toEqual(expected)
   })
@@ -81,7 +81,7 @@ describe('parseGreasyForkUrl', () => {
   })
 
   it('should return the home page for the root', () => {
-    const expected: GreasyForkUrl = { kind: 'home', locale: 'en' }
+    const expected: GreasyForkUrl = { kind: 'home' }
 
     expect(parseGreasyForkUrl('https://greasyfork.org/')).toEqual(expected)
   })
@@ -138,6 +138,18 @@ describe('greasyForkHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://api.greasyfork.org/zh-CN/scripts.atom?by=1076667&filter_locale=0',
+          hint: { key: 'greasy-fork:user', label: 'User scripts' },
+        },
+      ]
+
+      expect(greasyForkHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the user scripts feed under en for a user page without a locale', () => {
+      const value = 'https://greasyfork.org/users/1076667-schimon'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://api.greasyfork.org/en/scripts.atom?by=1076667&filter_locale=0',
           hint: { key: 'greasy-fork:user', label: 'User scripts' },
         },
       ]
