@@ -1454,7 +1454,7 @@ Discovers the posts, comments and tag feeds of a blog on `*.blogs.sapo.pt`. Comm
 | `{blog}.blogs.sapo.pt/{slug}-{id}` | Post comments<sup>†</sup>*, plus the blog feeds |
 | `{blog}.blogs.sapo.pt/{id}.html` | Post comments<sup>†</sup>*, plus the blog feeds |
 | `{blog}.blogs.sapo.pt/tag/{tag}` | Tag<sup>†</sup>, plus the blog feeds |
-| `{blog}.blogs.sapo.pt/?tag={tag}` | Tag, plus the blog feeds |
+| `{blog}.blogs.sapo.pt/?tag={tag}` | Tag<sup>†</sup>, plus the blog feeds |
 
 \* *Requires HTML content to confirm the page links the post.*
 
@@ -3141,7 +3141,9 @@ Discovers the RSS feeds for blogs hosted on Blogia.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{blog}.blogia.com` | Posts (RSS) · comments (RSS) |
+| `{blog}.blogia.com` | Posts (RSS) · comments<sup>?</sup> (RSS) |
+
+<sup>?</sup> *Not measured, the feed failed to load during the run.*
 
 ### Parsiblog
 
