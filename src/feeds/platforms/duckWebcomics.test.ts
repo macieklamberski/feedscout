@@ -62,11 +62,11 @@ describe('duckWebcomicsHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return the comic feed on the page origin', () => {
+    it('should return the comic feed on the page origin with the comic in lowercase', () => {
       const value = 'https://theduckwebcomics.com/Alice_Tales/1234567/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://theduckwebcomics.com/Alice_Tales/rss/',
+          uri: 'https://theduckwebcomics.com/alice_tales/rss/',
           hint: { key: 'duck-webcomics:comic', label: 'Comic' },
         },
       ]
@@ -78,38 +78,12 @@ describe('duckWebcomicsHandler', () => {
       const value = 'http://www.theduckwebcomics.com/Alice_Tales/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://www.theduckwebcomics.com/Alice_Tales/rss/',
+          uri: 'http://www.theduckwebcomics.com/alice_tales/rss/',
           hint: { key: 'duck-webcomics:comic', label: 'Comic' },
         },
       ]
 
       expect(duckWebcomicsHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should spell the comic as the page links its feed', () => {
-      const value = 'https://www.theduckwebcomics.com/alice_tales/'
-      const content = '<a href="/Other_Comic/rss/">rss</a><a href="/Alice_Tales/rss/">rss</a>'
-      const expected: Array<DiscoverUriEntry> = [
-        {
-          uri: 'https://www.theduckwebcomics.com/Alice_Tales/rss/',
-          hint: { key: 'duck-webcomics:comic', label: 'Comic' },
-        },
-      ]
-
-      expect(duckWebcomicsHandler.resolve(value, content)).toEqual(expected)
-    })
-
-    it('should spell the comic as a feed link with an uppercase route word does', () => {
-      const value = 'https://www.theduckwebcomics.com/alice_tales/'
-      const content = '<a href="/Alice_Tales/RSS/">rss</a>'
-      const expected: Array<DiscoverUriEntry> = [
-        {
-          uri: 'https://www.theduckwebcomics.com/Alice_Tales/rss/',
-          hint: { key: 'duck-webcomics:comic', label: 'Comic' },
-        },
-      ]
-
-      expect(duckWebcomicsHandler.resolve(value, content)).toEqual(expected)
     })
 
     it('should return empty array when the URL names no comic', () => {

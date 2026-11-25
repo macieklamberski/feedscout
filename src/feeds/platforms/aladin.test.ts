@@ -2,13 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
-import {
-  type AladinPage,
-  type AladinUrl,
-  aladinHandler,
-  getAladinPage,
-  parseAladinUrl,
-} from './aladin.js'
+import { type AladinUrl, aladinHandler, parseAladinUrl } from './aladin.js'
 
 describe('parseAladinUrl', () => {
   it('should return the blog for a blog home', () => {
@@ -82,49 +76,6 @@ describe('parseAladinUrl', () => {
   })
 })
 
-describe('getAladinPage', () => {
-  it('should return the username as the feed link spells it', () => {
-    const value = 'https://blog.aladin.co.kr/ALICE/category/49178853'
-    const content = `
-      <link
-        rel="alternate"
-        type="application/rss+xml"
-        href="https://blog.aladin.co.kr/alice/rss"
-      >
-    `
-    const expected: AladinPage = { kind: 'category', username: 'alice', categoryId: '49178853' }
-
-    expect(getAladinPage(value, content)).toEqual(expected)
-  })
-
-  it('should return the username from the url without content', () => {
-    const value = 'https://blog.aladin.co.kr/ALICE'
-    const expected: AladinPage = { kind: 'blog', username: 'ALICE' }
-
-    expect(getAladinPage(value, undefined)).toEqual(expected)
-  })
-
-  it('should return undefined for another host', () => {
-    expect(getAladinPage('https://example.com/alice', undefined)).toBeUndefined()
-  })
-
-  it('should ignore the feed link of another blog', () => {
-    const value = 'https://blog.aladin.co.kr/ALICE'
-    const content = '<a href="https://blog.aladin.co.kr/bob/rss">Bob</a>'
-    const expected: AladinPage = { kind: 'blog', username: 'ALICE' }
-
-    expect(getAladinPage(value, content)).toEqual(expected)
-  })
-
-  it('should ignore the feed link of a blog whose username starts with the page username', () => {
-    const value = 'https://blog.aladin.co.kr/ALICE'
-    const content = '<a href="https://blog.aladin.co.kr/alicebooks/rss">Alice Books</a>'
-    const expected: AladinPage = { kind: 'blog', username: 'ALICE' }
-
-    expect(getAladinPage(value, content)).toEqual(expected)
-  })
-})
-
 describe('aladinHandler', () => {
   describe('match', () => {
     it('should match a blog page', () => {
@@ -169,10 +120,8 @@ describe('aladinHandler', () => {
       expect(aladinHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should spell the user as the page alternate link does', () => {
+    it('should write the username of the page in lowercase', () => {
       const value = 'https://blog.aladin.co.kr/ALICE/category/12345678'
-      const content =
-        '<link rel="alternate" type="application/rss+xml" href="https://blog.aladin.co.kr/alice/rss">'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://blog.aladin.co.kr/alice/category/12345678/rss',
@@ -184,20 +133,7 @@ describe('aladinHandler', () => {
         },
       ]
 
-      expect(aladinHandler.resolve(value, content)).toEqual(expected)
-    })
-
-    it('should keep the url spelling when the page links no blog feed', () => {
-      const value = 'https://blog.aladin.co.kr/ALICE'
-      const content = '<link rel="alternate" href="https://blog.aladin.co.kr/bob/rss">'
-      const expected: Array<DiscoverUriEntry> = [
-        {
-          uri: 'https://blog.aladin.co.kr/ALICE/rss',
-          hint: { key: 'aladin:posts', label: 'Posts' },
-        },
-      ]
-
-      expect(aladinHandler.resolve(value, content)).toEqual(expected)
+      expect(aladinHandler.resolve(value)).toEqual(expected)
     })
   })
 

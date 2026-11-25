@@ -118,7 +118,7 @@ describe('getLegistarPage', () => {
     const expected: LegistarPage = {
       kind: 'meeting',
       feedUrl:
-        'https://example.com/Feed.ashx?GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&ID=1234567&M=CalendarDetail',
+        'https://example.com/Feed.ashx?GUID=0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d&ID=1234567&M=CalendarDetail',
     }
 
     expect(getLegistarPage(value, undefined)).toEqual(expected)
@@ -130,7 +130,7 @@ describe('getLegistarPage', () => {
     const expected: LegistarPage = {
       kind: 'legislation',
       feedUrl:
-        'https://example.com/Feed.ashx?GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217&ID=1065902&M=LD',
+        'https://example.com/Feed.ashx?GUID=efe087c2-c62a-40f9-b1f9-6e2975e86217&ID=1065902&M=LD',
     }
 
     expect(getLegistarPage(legislationUrl, undefined)).toEqual(expected)
@@ -218,7 +218,7 @@ describe('legistarHandler', () => {
         'https://madison.legistar.com/LegislationDetail.aspx?ID=1065902&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://madison.legistar.com/Feed.ashx?GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217&ID=1065902&M=LD',
+          uri: 'https://madison.legistar.com/Feed.ashx?GUID=efe087c2-c62a-40f9-b1f9-6e2975e86217&ID=1065902&M=LD',
           hint: { key: 'legistar:legislation', label: 'Legislation' },
         },
       ]
@@ -231,7 +231,7 @@ describe('legistarHandler', () => {
         'https://a2gov.legistar.com/MeetingDetail.aspx?ID=1373416&GUID=351F7891-35DC-4AE5-BCED-DA4B7A00E804'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://a2gov.legistar.com/Feed.ashx?GUID=351F7891-35DC-4AE5-BCED-DA4B7A00E804&ID=1373416&M=CalendarDetail',
+          uri: 'https://a2gov.legistar.com/Feed.ashx?GUID=351f7891-35dc-4ae5-bced-da4b7a00e804&ID=1373416&M=CalendarDetail',
           hint: { key: 'legistar:meeting', label: 'Meeting' },
         },
       ]
@@ -244,7 +244,7 @@ describe('legistarHandler', () => {
         'https://example.com/LegislationDetail.aspx?ID=1065902&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/Feed.ashx?GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217&ID=1065902&M=LD',
+          uri: 'https://example.com/Feed.ashx?GUID=efe087c2-c62a-40f9-b1f9-6e2975e86217&ID=1065902&M=LD',
           hint: { key: 'legistar:legislation', label: 'Legislation' },
         },
       ]
@@ -319,7 +319,7 @@ describe('legistarHandler', () => {
         '<link href="Feed.ashx?M=CalendarDetail&amp;ID=1234567&amp;GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4E&amp;Title=Example+County+-+Meeting+of+Planning+Commission+on+7%2f9%2f2024+at+4%3a00+PM" rel="alternate" type="application/rss+xml" />'
       const expected = [
         {
-          uri: 'https://example.com/Feed.ashx?GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&ID=1234567&M=CalendarDetail',
+          uri: 'https://example.com/Feed.ashx?GUID=0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d&ID=1234567&M=CalendarDetail',
           hint: { key: 'legistar:meeting', label: 'Meeting' },
         },
       ]
@@ -334,7 +334,7 @@ describe('legistarHandler', () => {
         '<link href="Feed.ashx?M=CalendarDetail&amp;ID=1234567&amp;GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4DFF&amp;Title=Example+County+-+Meeting+of+Planning+Commission+on+7%2f9%2f2024+at+4%3a00+PM" rel="alternate" type="application/rss+xml" />'
       const expected = [
         {
-          uri: 'https://example.com/Feed.ashx?GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&ID=1234567&M=CalendarDetail',
+          uri: 'https://example.com/Feed.ashx?GUID=0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d&ID=1234567&M=CalendarDetail',
           hint: { key: 'legistar:meeting', label: 'Meeting' },
         },
       ]
@@ -349,7 +349,7 @@ describe('legistarHandler', () => {
         '<link href="Feed.ashx?M=CalendarDetail&amp;ID=12345678&amp;GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&amp;Title=Example+County+-+Meeting+of+Planning+Commission+on+7%2f9%2f2024+at+4%3a00+PM" rel="alternate" type="application/rss+xml" />'
       const expected = [
         {
-          uri: 'https://example.com/Feed.ashx?GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&ID=1234567&M=CalendarDetail',
+          uri: 'https://example.com/Feed.ashx?GUID=0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d&ID=1234567&M=CalendarDetail',
           hint: { key: 'legistar:meeting', label: 'Meeting' },
         },
       ]
@@ -364,7 +364,7 @@ describe('legistarHandler', () => {
         '<link href="https://example.org/Feed.ashx?M=CalendarDetail&amp;ID=1234567&amp;GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D" rel="alternate" type="application/rss+xml" />'
       const expected = [
         {
-          uri: 'https://example.com/Feed.ashx?GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&ID=1234567&M=CalendarDetail',
+          uri: 'https://example.com/Feed.ashx?GUID=0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d&ID=1234567&M=CalendarDetail',
           hint: { key: 'legistar:meeting', label: 'Meeting' },
         },
       ]
@@ -378,7 +378,7 @@ describe('legistarHandler', () => {
       const content = '<html><head><title>Meeting</title></head><body></body></html>'
       const expected = [
         {
-          uri: 'https://example.com/Feed.ashx?GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&ID=1234567&M=CalendarDetail',
+          uri: 'https://example.com/Feed.ashx?GUID=0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d&ID=1234567&M=CalendarDetail',
           hint: { key: 'legistar:meeting', label: 'Meeting' },
         },
       ]
