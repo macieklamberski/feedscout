@@ -30,12 +30,7 @@ export const sakuraBlogHandler: PlatformHandler = {
       return []
     }
 
-    // Blogs on the classic engine answer over http only, as their alternate links spell it: https
-    // fails the TLS handshake with a certificate that names blog.sakura.ne.jp.
-    return [
-      page.getFeedSpellings('posts', { scheme: 'http' }, 'rss'),
-      page.getFeedEntry('posts', { scheme: 'http' }, 'rdf'),
-    ]
+    return [page.getFeedSpellings('posts', {}, 'rss'), page.getFeedEntry('posts', {}, 'rdf')]
   },
 
   getFeedHint: feeds.getFeedHint,

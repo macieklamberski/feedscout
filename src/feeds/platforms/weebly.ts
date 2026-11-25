@@ -32,20 +32,20 @@ export const getWeeblyPage = (url: string, content: string | undefined): WeeblyP
   }
 
   // A site can run a blog on any of its pages, and the home page links every page, so each page
-  // it links is a blog candidate beside the default /blog. Validation drops the pages that are
-  // not blogs.
-  const pages = new Set(['blog'])
+  // it links is a blog candidate beside the default blog. Validation drops the pages that are not
+  // blogs.
+  const pages: Array<string> = []
   const anchors = content ? findElements(content, (element) => element.name === 'a') : []
 
   for (const anchor of anchors) {
     const page = getLinkedPage(anchor.attribs.href, url, weebly.pages)
 
-    if (page?.key === 'page') {
-      pages.add(page.params.page)
+    if (page?.key === 'page' && !pages.includes(page.params.page)) {
+      pages.push(page.params.page)
     }
   }
 
-  return { kind: 'home', pages: [...pages] }
+  return { kind: 'home', pages }
 }
 
 export const weeblyHandler: PlatformHandler = {
@@ -61,9 +61,14 @@ export const weeblyHandler: PlatformHandler = {
       return []
     }
 
-    const slugs = page.kind === 'home' ? page.pages : [page.page ?? 'blog']
+    if (page.kind === 'blog') {
+      return [pageFeeds.getFeedEntry('blog', { page: page.page })]
+    }
 
-    return slugs.map((slug) => pageFeeds.getFeedEntry('blog', { page: slug }))
+    return [
+      pageFeeds.getFeedEntry('blog'),
+      ...page.pages.map((slug) => pageFeeds.getFeedEntry('blog', { page: slug })),
+    ]
   },
 
   getFeedHint: feeds.getFeedHint,
