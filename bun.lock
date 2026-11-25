@@ -8,6 +8,7 @@
         "entities": "^9.0.0",
         "htmlparser2": "^12.0.0",
         "http-link-header": "^1.1.4",
+        "urlmason": "1.0.0",
       },
       "devDependencies": {
         "@types/bun": "^1.4.4",
@@ -1059,6 +1060,8 @@
     "universalify": ["universalify@2.0.1", "", {}, "sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw=="],
 
     "url-join": ["url-join@5.2.0", "", {}, "sha512-/tMVQdp/2eE90fGb6npbd2nLHH8jamzLLeZhLEKTz4Rc38wO5AeEuIhoWroWWfQJS50ZzL4Xod9JER/pJWTTEQ=="],
+
+    "urlmason": ["urlmason@1.0.0", "", {}, "sha512-CfggJOfwhx1OQVFxge9ZCgVHUMMmawhAO5DWBSq296jbSo8YT3BJp4NBB+hvjH4MMaNysWNehrcJFRs4qO7bJQ=="],
 
     "util-deprecate": ["util-deprecate@1.0.2", "", {}, "sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw=="],
 

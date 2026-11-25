@@ -1,4 +1,3 @@
-import type { UrlHosts, UrlMatch, UrlTable } from 'feedintel'
 import { DomUtils, parseDocument } from 'htmlparser2'
 import {
   anyWordMatchesAnyOf,
@@ -16,6 +15,7 @@ import {
   startsWithAnyOf,
   stripWww,
 } from 'trousse'
+import type { UrlHosts, UrlMatch, UrlTable } from 'urlmason'
 import locales from '../locales.json' with { type: 'json' }
 import type { DiscoverUriHint, FetchFn } from './types.js'
 
