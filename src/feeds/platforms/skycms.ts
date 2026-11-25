@@ -1,15 +1,12 @@
 import { skycms } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
+import { findElement, getCookieNames, getMarkerLinkUrl, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: page.
 
 export type SkycmsUrl = { kind: 'page'; pageId: string; slug: string }
-
-const rssListRegex = /\/\d+\/lista-kanalow-rss\.html$/i
-const templateRegex = /\/(?:cms\/public|clients\/cms_[^/]+)\/image\/default\/bip(?:_v\d+)?\//i
 
 const feeds = withHintLabels(skycms.feeds)
 
@@ -18,11 +15,14 @@ export const isSkycmsHeaders = (headers: Headers): boolean => {
   return getCookieNames(headers).includes('skycms_PageCounter')
 }
 
-// The bulletin template loads its icons from `/cms/public/image/default/bip_v{n}/`, or from
-// `/clients/cms_{client}/image/default/bip/` when branded, so the marker holds without headers.
+// The bulletin template's icons hold the marker without headers.
 export const isSkycmsHtml = (content: string): boolean => {
   const link = findElement(content, (element) => {
-    return element.name === 'link' && templateRegex.test(element.attribs.href ?? '')
+    const linkUrl = getMarkerLinkUrl(element.attribs.href)
+
+    return (
+      element.name === 'link' && skycms.pages.read(linkUrl, { isAnyHost: true })?.key === 'template'
+    )
   })
 
   return link !== undefined
@@ -32,7 +32,11 @@ export const isSkycmsHtml = (content: string): boolean => {
 // the list of those feeds. A SkyCMS municipal site answers `/rss/{id}/{slug}.html` with 404.
 export const hasSkycmsRssList = (content: string | undefined): boolean => {
   const link = findElement(content, (element) => {
-    return element.name === 'a' && rssListRegex.test(element.attribs.href ?? '')
+    const linkUrl = getMarkerLinkUrl(element.attribs.href)
+
+    return (
+      element.name === 'a' && skycms.pages.read(linkUrl, { isAnyHost: true })?.key === 'rss-list'
+    )
   })
 
   return link !== undefined
@@ -41,7 +45,7 @@ export const hasSkycmsRssList = (content: string | undefined): boolean => {
 export const parseSkycmsUrl = (url: string): SkycmsUrl | undefined => {
   const page = skycms.pages.read(url, { isAnyHost: true })
 
-  if (!page) {
+  if (page?.key !== 'page') {
     return
   }
 

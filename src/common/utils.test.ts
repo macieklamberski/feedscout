@@ -13,8 +13,10 @@ import {
   getHostOrigin,
   getJsonLd,
   getLinkedPage,
+  getMarkerLinkUrl,
   getMetaContent,
   getNumericId,
+  getRootLinkUrl,
   getScriptDirectory,
   getScriptText,
   getTenantSubdomain,
@@ -672,6 +674,53 @@ describe('getCookieNames', () => {
 
   it('should return an empty array without Set-Cookie', () => {
     expect(getCookieNames(new Headers())).toEqual([])
+  })
+})
+
+describe('getMarkerLinkUrl', () => {
+  it('should resolve a link from the page root on a host no page has', () => {
+    const value = '/res/layout001/js/ocnk.js'
+    const expected = 'https://feedscout.invalid/res/layout001/js/ocnk.js'
+
+    expect(getMarkerLinkUrl(value)).toBe(expected)
+  })
+
+  it('should give a protocol-relative link the https scheme', () => {
+    const value = '//www.example.com/static/widgets.js'
+    const expected = 'https://www.example.com/static/widgets.js'
+
+    expect(getMarkerLinkUrl(value)).toBe(expected)
+  })
+
+  it('should keep an absolute link as it is', () => {
+    const value = 'http://cdn.example.com/res/layout001/js/ocnk.js'
+
+    expect(getMarkerLinkUrl(value)).toBe(value)
+  })
+
+  it('should return an empty string without a link', () => {
+    expect(getMarkerLinkUrl(undefined)).toBe('')
+  })
+})
+
+describe('getRootLinkUrl', () => {
+  it('should resolve a link from the page root on a host no page has', () => {
+    const value = '/theme_stylesheets/1234/5678/theme.css'
+    const expected = 'https://feedscout.invalid/theme_stylesheets/1234/5678/theme.css'
+
+    expect(getRootLinkUrl(value)).toBe(expected)
+  })
+
+  it('should return an empty string for an absolute link', () => {
+    const value = 'https://cdn.example.com/theme_stylesheets/1234/5678/theme.css'
+
+    expect(getRootLinkUrl(value)).toBe('')
+  })
+
+  it('should return an empty string for a protocol-relative link', () => {
+    const value = '//cdn.example.com/theme_stylesheets/1234/5678/theme.css'
+
+    expect(getRootLinkUrl(value)).toBe('')
   })
 })
 

@@ -1,22 +1,21 @@
 import { ocnk } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, hasMarker } from '../../common/utils.js'
+import { findElement, getMarkerLinkUrl, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type OcnkUrl = { kind: 'shop'; shop: string } | { kind: 'customDomain' }
 
-const cartScriptRegex =
-  /^(?:https?:\/\/[^/]+)?\/res\/[^/]+\/js\/(?:ocnk|pack\/ocnk-min)\.js(?:\?|$)/i
-
 const feeds = withHintLabels(ocnk.feeds)
 
-// Every shop template loads the cart script from its `/res/{template}/js/` folder, on a custom
-// domain too: `ocnk.js` in the PC templates, `pack/ocnk-min.js` in the responsive ones.
 export const isOcnkHtml = (content: string): boolean => {
   const script = findElement(content, (element) => {
-    return element.name === 'script' && cartScriptRegex.test(element.attribs.src ?? '')
+    const scriptUrl = getMarkerLinkUrl(element.attribs.src)
+
+    return (
+      element.name === 'script' && ocnk.pages.read(scriptUrl, { isAnyHost: true })?.key === 'asset'
+    )
   })
 
   return script !== undefined
@@ -29,7 +28,7 @@ export const parseOcnkUrl = (url: string): OcnkUrl | undefined => {
     return { kind: 'customDomain' }
   }
 
-  if (page.key === 'platform') {
+  if (page.key !== 'shop') {
     return
   }
 
