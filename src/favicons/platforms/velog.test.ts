@@ -18,8 +18,7 @@ const createResponse = (thumbnail: unknown): string => {
   return JSON.stringify({ data: { user: { profile: { thumbnail } } } })
 }
 
-const apiUrl =
-  'https://v2.velog.io/graphql?query=%7Buser%28username%3A%22alice%22%29%7Bprofile%7Bthumbnail%7D%7D%7D'
+const apiUrl = 'https://v2.velog.io/graphql?query={user(username:"alice"){profile{thumbnail}}}'
 
 const ref: DiscoverRef = {
   platform: 'velog',
@@ -226,7 +225,7 @@ describe('velogEnricher', () => {
   it('should reject when the response is not 2xx', () => {
     const throwing = () => velogEnricher(ref, createContext({}))
     const expected =
-      'Unexpected status 404 from https://v2.velog.io/graphql?query=%7Buser%28username%3A%22alice%22%29%7Bprofile%7Bthumbnail%7D%7D%7D'
+      'Unexpected status 404 from https://v2.velog.io/graphql?query={user(username:"alice"){profile{thumbnail}}}'
 
     expect(throwing()).rejects.toThrow(expected)
   })

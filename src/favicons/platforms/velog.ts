@@ -1,4 +1,5 @@
 import {
+  composeQuery,
   endsWithAnyOf,
   isAnyOf,
   isHostOf,
@@ -78,10 +79,10 @@ export const velogEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  const query = new URLSearchParams({
+  const query = composeQuery({
     query: `{user(username:${JSON.stringify(ref.id)}){profile{thumbnail}}}`,
   })
-  const response = await context.fetchFn(`https://v2.velog.io/graphql?${query}`)
+  const response = await context.fetchFn(`https://v2.velog.io/graphql${query}`)
   const data = parseResponseJson(response)
   const avatar = getSquareAvatar(data?.data?.user?.profile?.thumbnail)
 

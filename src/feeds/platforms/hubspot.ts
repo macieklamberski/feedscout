@@ -1,5 +1,13 @@
 import { hubspot } from 'feedintel'
-import { getAnyOf, getPathSegments, isString, parseUrl, resolveUrl, stripWww } from 'trousse'
+import {
+  getAnyOf,
+  getPathSegments,
+  isString,
+  parseJson,
+  parseUrl,
+  resolveUrl,
+  stripWww,
+} from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -12,6 +20,8 @@ export type HubspotUrl =
   | { kind: 'author'; blog: string; name: string }
   | { kind: 'tag'; blog: string; route: string; name: string }
   | { kind: 'blog'; blog: string }
+
+type HubspotMeta = { contentType?: unknown }
 
 const listingPathRegex = /^\/(?<route>[^/]+)\/(?<name>[^/]+)/
 const feedPathRegex = /\/rss\.xml$/i
@@ -44,15 +54,13 @@ const getBlogPath = (url: string, content: string | undefined): string | undefin
 
 // HubSpot names the page type in `x-hs-cfworker-meta`, and only blog pages have a feed.
 const getContentType = (headers: Headers | undefined): string | undefined => {
-  try {
-    const { contentType } = JSON.parse(headers?.get('x-hs-cfworker-meta') ?? '{}')
+  const contentType = parseJson<HubspotMeta>(headers?.get('x-hs-cfworker-meta'))?.contentType
 
-    if (!isString(contentType)) {
-      return
-    }
+  if (!isString(contentType)) {
+    return
+  }
 
-    return contentType
-  } catch {}
+  return contentType
 }
 
 export const getHubspotPage = (

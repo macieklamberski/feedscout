@@ -1,4 +1,4 @@
-import { includesAnyOf, isNonEmptyString, isSameText } from 'trousse'
+import { includesAnyOf, isNonEmptyString, isSameText, parseJson } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getScriptText } from '../../common/utils.js'
 import { parsePinterestUrl } from '../../feeds/platforms/pinterest.js'
@@ -7,6 +7,10 @@ import { getResponseText } from '../utils.js'
 
 const platform = 'pinterest'
 
+type PinterestProps = {
+  initialReduxState?: { users?: Record<string, { username?: string; image_xlarge_url?: string }> }
+}
+
 const findProfileImage = (content: string, username: string): string | undefined => {
   const json = getScriptText(content, '__PWS_INITIAL_PROPS__')
 
@@ -14,13 +18,7 @@ const findProfileImage = (content: string, username: string): string | undefined
     return
   }
 
-  let users: Record<string, { username?: string; image_xlarge_url?: string }> = {}
-
-  try {
-    users = JSON.parse(json)?.initialReduxState?.users ?? {}
-  } catch {
-    return
-  }
+  const users = parseJson<PinterestProps>(json)?.initialReduxState?.users ?? {}
 
   for (const user of Object.values(users)) {
     if (!isSameText(user?.username, username)) {
