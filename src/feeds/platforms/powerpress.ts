@@ -1,7 +1,7 @@
 import { powerpress } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getSiteParams, getSiteUrl, hasMarker, isRootOfPage } from '../../common/utils.js'
+import { getSiteUrl, hasMarker, isRootOfPage } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -16,23 +16,19 @@ export const isPowerpressHtml = (content: string): boolean => {
   return content.includes(playerFunction)
 }
 
-export type PowerpressPage = { kind: 'site'; homeUrl: string }
+export type PowerpressPage = { kind: 'site'; base?: Array<string> }
 
-// A play-in-new-window link names the site root only on the page's own host, under a root that
-// holds the page.
-const getPinwHomeUrl = (url: string, content: string | undefined): string | undefined => {
+// A play-in-new-window link names the site's folder only on the page's own host, under a root that
+// holds the page. A page with no such link is read at the root of its host.
+export const getPowerpressPage = (url: string, content: string | undefined): PowerpressPage => {
   const pinwUrl = content?.match(pinwCallRegex)?.groups?.pinwUrl ?? ''
   const player = powerpress.pages.read(pinwUrl, { isAnyHost: true })
 
   if (player?.key !== 'player' || !isRootOfPage(getSiteUrl(player.params), url)) {
-    return
+    return { kind: 'site' }
   }
 
-  return getSiteUrl(player.params)
-}
-
-export const getPowerpressPage = (url: string, content: string | undefined): PowerpressPage => {
-  return { kind: 'site', homeUrl: getPinwHomeUrl(url, content) ?? new URL(url).origin }
+  return { kind: 'site', base: player.params.base }
 }
 
 export const powerpressHandler: PlatformHandler = {
@@ -48,6 +44,6 @@ export const powerpressHandler: PlatformHandler = {
       return []
     }
 
-    return [pageFeeds.getFeedEntry('podcast', getSiteParams(page.homeUrl))]
+    return [pageFeeds.getFeedEntry('podcast', { base: page.base })]
   },
 }

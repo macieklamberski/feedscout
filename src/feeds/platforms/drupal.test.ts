@@ -45,13 +45,26 @@ describe('getDrupalPage', () => {
         data-drupal-selector="drupal-settings-json"
       >{"path":{"baseUrl":"\\/site\\/","pathPrefix":"","currentPath":"node\\/1"}}</script>
     `
-    const expected: DrupalPage = { kind: 'site', baseUrl: 'https://example.com/site/' }
+    const expected: DrupalPage = { kind: 'site', base: ['site'] }
+
+    expect(getDrupalPage(value, content)).toEqual(expected)
+  })
+
+  it('should return the origin for a page outside the base path', () => {
+    const value = 'https://example.com/other/node/1'
+    const content = `
+      <script
+        type="application/json"
+        data-drupal-selector="drupal-settings-json"
+      >{"path":{"baseUrl":"\\/site\\/","pathPrefix":"","currentPath":"node\\/1"}}</script>
+    `
+    const expected: DrupalPage = { kind: 'site' }
 
     expect(getDrupalPage(value, content)).toEqual(expected)
   })
 
   it('should return the origin without content', () => {
-    const expected: DrupalPage = { kind: 'site', baseUrl: 'https://example.com/' }
+    const expected: DrupalPage = { kind: 'site' }
 
     expect(getDrupalPage('https://example.com/site/node/1', undefined)).toEqual(expected)
   })
@@ -64,7 +77,7 @@ describe('getDrupalPage', () => {
         data-drupal-selector="drupal-settings-json"
       >{"path":</script>
     `
-    const expected: DrupalPage = { kind: 'site', baseUrl: 'https://example.com/' }
+    const expected: DrupalPage = { kind: 'site' }
 
     expect(getDrupalPage(value, content)).toEqual(expected)
   })
@@ -77,12 +90,12 @@ describe('getDrupalPage', () => {
         data-drupal-selector="drupal-settings-json"
       >{"path":{"baseUrl":"https:\\/\\/example.org\\/"}}</script>
     `
-    const expected: DrupalPage = { kind: 'site', baseUrl: 'https://example.com/' }
+    const expected: DrupalPage = { kind: 'site' }
 
     expect(getDrupalPage(value, content)).toEqual(expected)
   })
 
-  it('should return the origin for a base path without a trailing slash', () => {
+  it('should return the base path the settings print without a trailing slash', () => {
     const value = 'https://example.com/site/node/1'
     const content = `
       <script
@@ -90,7 +103,7 @@ describe('getDrupalPage', () => {
         data-drupal-selector="drupal-settings-json"
       >{"path":{"baseUrl":"\\/site"}}</script>
     `
-    const expected: DrupalPage = { kind: 'site', baseUrl: 'https://example.com/' }
+    const expected: DrupalPage = { kind: 'site', base: ['site'] }
 
     expect(getDrupalPage(value, content)).toEqual(expected)
   })

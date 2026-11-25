@@ -1,14 +1,17 @@
 import { publicInbox } from 'feedintel'
-import { getPathSegments, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getSiteParams, getSiteUrl, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type PublicInboxPage =
-  | { kind: 'inbox'; inboxUrl: string }
-  | { kind: 'message'; inboxUrl: string; messageId: string }
+  | { kind: 'inbox'; params: PublicInboxParams }
+  | { kind: 'message'; params: PublicInboxParams; messageId: string }
+
+// The inbox an inbox's feeds are built from: its name on lore.kernel.org, its folder elsewhere.
+type PublicInboxParams = { inbox?: string; base?: Array<string> }
 
 // The core navigation links help relative to the page, one `../` per level below the inbox root.
 const helpLinkRegex = /href="((?:\.\.\/)*)_\/text\/help\/?"/i
@@ -19,39 +22,44 @@ export const isPublicInboxHtml = (content: string): boolean => {
   return helpLinkRegex.test(content) && content.includes('_/text/color')
 }
 
-// The inbox of a page on any host sits as many levels above the page as its help link climbs.
+// The inbox of a page on any host is the folder of the help page it links.
 const readHostedPage = (url: string, content: string) => {
-  const segments = getPathSegments(url)
-  const upLevels = helpLinkRegex.exec(content)?.[1] ?? ''
-  const rootLength = segments.length - upLevels.length / 3
+  const helpLink = findElement(content, (element) => {
+    const helpUrl = parseUrl(element.attribs.href, url)?.href ?? ''
 
-  if (rootLength < 0) {
+    return (
+      element.name === 'a' && publicInbox.pages.read(helpUrl, { isAnyHost: true })?.key === 'help'
+    )
+  })
+  const helpUrl = parseUrl(helpLink?.attribs.href, url)?.href ?? ''
+  const help = publicInbox.pages.read(helpUrl, { isAnyHost: true })
+
+  if (help?.key !== 'help') {
     return
   }
 
-  return publicInbox.pages.read(url, { base: segments.slice(0, rootLength) })
+  return publicInbox.pages.read(url, { base: help.params.base ?? [] })
 }
 
 export const getPublicInboxPage = (url: string, content?: string): PublicInboxPage | undefined => {
-  const parsedUrl = parseUrl(url)
   const page =
     content && isPublicInboxHtml(content)
       ? readHostedPage(url, content)
       : publicInbox.pages.read(url)
 
-  if (!parsedUrl || !page) {
+  if (!page) {
     return
   }
 
-  const { inbox, base } = page.params
-  const scheme = parsedUrl.protocol.slice(0, -1)
-  const inboxUrl = `${getSiteUrl({ scheme, host: parsedUrl.host, base: inbox ? [inbox] : base })}/`
+  // Only a lore.kernel.org row names the inbox, and a help page is read in its inbox's folder.
+  const inbox = 'inbox' in page.params ? page.params.inbox : undefined
+  const params = { inbox, base: page.params.base }
 
   if (page.key === 'message') {
-    return { kind: 'message', inboxUrl, messageId: page.params.messageId }
+    return { kind: 'message', params, messageId: page.params.messageId }
   }
 
-  return { kind: 'inbox', inboxUrl }
+  return { kind: 'inbox', params }
 }
 
 export const publicInboxHandler: PlatformHandler = {
@@ -71,15 +79,16 @@ export const publicInboxHandler: PlatformHandler = {
       return []
     }
 
-    const site = getSiteParams(page.inboxUrl)
-
     if (page.kind === 'message') {
-      const params = { ...site, messageId: page.messageId }
+      const params = { ...page.params, messageId: page.messageId }
 
-      return [pageFeeds.getFeedEntry('thread', params), pageFeeds.getFeedEntry('messages', site)]
+      return [
+        pageFeeds.getFeedEntry('thread', params),
+        pageFeeds.getFeedEntry('messages', page.params),
+      ]
     }
 
-    return [pageFeeds.getFeedEntry('messages', site)]
+    return [pageFeeds.getFeedEntry('messages', page.params)]
   },
 
   getFeedHint: feeds.getFeedHint,

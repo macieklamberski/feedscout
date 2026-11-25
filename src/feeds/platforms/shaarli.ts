@@ -1,18 +1,11 @@
 import { shaarli } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  findElement,
-  getCookieNames,
-  getSiteParams,
-  getSiteUrl,
-  hasElementWithId,
-  hasMarker,
-} from '../../common/utils.js'
+import { findElement, getCookieNames, hasElementWithId, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type ShaarliPage = { baseUrl: string }
+export type ShaarliPage = { base?: string | Array<string> }
 
 const feeds = withHintLabels(shaarli.feeds)
 
@@ -26,22 +19,22 @@ export const isShaarliHeaders = (headers: Headers): boolean => {
 
 // Shaarli 0.12 and later print the mount path in `js_base_path`.
 const getShaarliPage = (url: string, content: string | undefined): ShaarliPage | undefined => {
+  const input = findElement(content, (element) => {
+    return element.name === 'input' && element.attribs.name === 'js_base_path'
+  })
+  const basePath = input?.attribs.value
+
+  if (basePath !== undefined) {
+    return { base: basePath }
+  }
+
   const page = shaarli.pages.read(url, { isAnyHost: true })
 
   if (!page) {
     return
   }
 
-  const input = findElement(content, (element) => {
-    return element.name === 'input' && element.attribs.name === 'js_base_path'
-  })
-  const basePath = input?.attribs.value
-
-  if (basePath === undefined) {
-    return { baseUrl: getSiteUrl(page.params) }
-  }
-
-  return { baseUrl: `${new URL(url).origin}${basePath}` }
+  return { base: page.params.base }
 }
 
 export const shaarliHandler: PlatformHandler = {
@@ -51,16 +44,17 @@ export const shaarliHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getShaarliPage(url, content)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const { baseUrl } = page
+    const params = { base: page.base }
 
     return [
-      feeds.getFeedSpellings('posts', getSiteParams(baseUrl), 'rss'),
-      feeds.getFeedEntry('posts', getSiteParams(baseUrl), 'atom'),
+      pageFeeds.getFeedSpellings('posts', params, 'rss'),
+      pageFeeds.getFeedEntry('posts', params, 'atom'),
     ]
   },
 }

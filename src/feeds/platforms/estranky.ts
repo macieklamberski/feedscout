@@ -10,8 +10,6 @@ import { findElement, hasMarker } from '../../common/utils.js'
 
 export type EstrankyUrl = { kind: 'site' }
 
-export type EstrankyPage = { origin: string; sliceOrigin: string }
-
 const assetTags = ['link', 'script']
 
 const feeds = withHintLabels(estranky.feeds)
@@ -47,9 +45,8 @@ export const parseEstrankyUrl = (url: string): EstrankyUrl | undefined => {
 
 // A slice template on a custom domain links the home page slice on the Estranky subdomain.
 // An eOldal slice template links its `eoldal.hu` subdomain, which no longer resolves, so its
-// slices stay on the page's origin.
-const getEstrankyPage = (url: string, content: string | undefined): EstrankyPage => {
-  const { origin } = new URL(url)
+// slices stay on the page's host.
+const getSliceUrl = (url: string, content: string | undefined): string => {
   const anchor = findElement(content, (element) => {
     const href = element.attribs.href ?? ''
 
@@ -60,11 +57,7 @@ const getEstrankyPage = (url: string, content: string | undefined): EstrankyPage
     )
   })
 
-  if (!anchor?.attribs.href) {
-    return { origin, sliceOrigin: origin }
-  }
-
-  return { origin, sliceOrigin: new URL(anchor.attribs.href).origin }
+  return anchor?.attribs.href ?? url
 }
 
 export const estrankyHandler: PlatformHandler = {
@@ -79,9 +72,8 @@ export const estrankyHandler: PlatformHandler = {
   // A site serves the article feeds, the Web Slice feeds or both, by its template, and answers
   // 404 on a set it lacks. Its `photos.xml` and `comments.xml` links serve the posts feed.
   resolve: (url, content) => {
-    const { origin, sliceOrigin } = getEstrankyPage(url, content)
-    const siteFeeds = feeds.forUrl(origin)
-    const sliceFeeds = feeds.forUrl(sliceOrigin)
+    const siteFeeds = feeds.forUrl(url)
+    const sliceFeeds = feeds.forUrl(getSliceUrl(url, content))
 
     if (!siteFeeds || !sliceFeeds) {
       return []
