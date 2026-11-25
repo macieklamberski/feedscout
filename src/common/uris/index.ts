@@ -18,7 +18,7 @@ import type { PlatformHandler } from './platform/types.js'
 // alternatives keeps the ones that pass and is dropped when none do.
 const excludeGuesses = (
   guesses: Array<UriEntry>,
-  handlers: Array<PlatformHandler>,
+  handlers: ReadonlyArray<PlatformHandler>,
   platformUris: Array<string>,
 ): Array<UriEntry> => {
   const isKept = (uri: string) => {

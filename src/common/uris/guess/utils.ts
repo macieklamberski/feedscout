@@ -18,7 +18,7 @@ const resolveUri = (uri: string, base: string, origin: string, pathname: string)
 
 export const generateUrlCombinations = (
   baseUrls: Array<string>,
-  uris: Array<UriEntry>,
+  uris: ReadonlyArray<UriEntry>,
 ): Array<UriEntry> => {
   return baseUrls.flatMap((base) => {
     const parsed = new URL(base)
@@ -49,7 +49,7 @@ const resolvePathUri = (uri: string, base: string): string => {
 // (?feed=rss → /blog/?feed=rss) and array alternatives stay paired, same as at origin level.
 export const generatePathUrlCombinations = (
   pathBases: Array<string>,
-  uris: Array<UriEntry>,
+  uris: ReadonlyArray<UriEntry>,
 ): Array<UriEntry> => {
   return pathBases.flatMap((base) => {
     const normalizedBase = base.endsWith('/') ? base : `${base}/`
@@ -96,7 +96,7 @@ export const getAncestorPathBases = (baseUrl: string, maxDepth: number): Array<s
 export const extractSectionBaseUrls = (
   content: string,
   baseUrl: string,
-  sectionNames: Array<string>,
+  sectionNames: ReadonlyArray<string>,
 ): Array<string> => {
   const base = parseUrl(baseUrl)
 

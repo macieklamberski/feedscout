@@ -52,7 +52,7 @@ import { youtubeHandler } from './platforms/youtube.js'
 import { zennHandler } from './platforms/zenn.js'
 import type { FaviconEnricher } from './types.js'
 
-export const defaultIconRels = [
+export const defaultIconRels: ReadonlyArray<string> = [
   'icon',
   'shortcut',
   'alternate icon',
@@ -60,7 +60,7 @@ export const defaultIconRels = [
   'apple-touch-icon-precomposed',
 ]
 
-export const defaultGuessPaths = [
+export const defaultGuessPaths: ReadonlyArray<string> = [
   '/favicon.ico',
   '/apple-touch-icon.png',
   '/apple-touch-icon-precomposed.png',
@@ -68,7 +68,7 @@ export const defaultGuessPaths = [
   '/favicon.svg',
 ]
 
-export const linkSelectors: Array<LinkSelector> = defaultIconRels.map((rel) => ({ rel }))
+export const linkSelectors: ReadonlyArray<LinkSelector> = defaultIconRels.map((rel) => ({ rel }))
 
 // Podcast artwork in `itunes:image` must be square, which RSS `<image>` is not:
 // that one is a logo up to 144 by 400 pixels.
@@ -156,7 +156,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   ],
 }
 
-export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
+export const defaultFaviconEnrichers: ReadonlyArray<FaviconEnricher> = [
   arenaEnricher,
   blueskyEnricher,
   bookwyrmEnricher,

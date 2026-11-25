@@ -30,7 +30,7 @@ export type DiscoverUrisResult = {
 
 export type LinkSelector = {
   rel: string
-  types?: Array<string>
+  types?: ReadonlyArray<string>
 }
 
 export type DiscoverResolveUrlFn = (url: string, baseUrl: string | undefined) => string | undefined

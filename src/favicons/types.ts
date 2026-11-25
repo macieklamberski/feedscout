@@ -16,7 +16,7 @@ export type FaviconEnricher = (
 ) => MaybePromise<Array<string> | undefined>
 
 export type CreateEnrichFaviconFnOptions = {
-  enrichers?: Array<FaviconEnricher>
+  enrichers?: ReadonlyArray<FaviconEnricher>
   fetchFn: FetchFn
 }
 

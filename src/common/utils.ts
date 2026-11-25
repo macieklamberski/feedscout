@@ -13,7 +13,7 @@ import {
   stripWww,
 } from 'trousse'
 import locales from '../locales.json' with { type: 'json' }
-import type { DiscoverUriHint, FetchFn } from './types.js'
+import type { DiscoverUriHint, FetchFn, LinkSelector } from './types.js'
 
 export type Element = NonNullable<ReturnType<typeof DomUtils.findOne>>
 
@@ -102,7 +102,7 @@ export const normalizeMimeType = (type: string): string => {
 
 export const isOfAllowedMimeType = (
   type: string | undefined,
-  allowedTypes: Array<string>,
+  allowedTypes: ReadonlyArray<string>,
 ): boolean => {
   if (allowedTypes.length === 0) {
     return true
@@ -330,7 +330,7 @@ export const getMetaContent = (content: string, name: string): string | undefine
 export const matchesAnyOfLinkSelectors = (
   rel: string,
   type: string | undefined,
-  selectors: Array<{ rel: string; types?: Array<string> }>,
+  selectors: ReadonlyArray<LinkSelector>,
 ): boolean => {
   return selectors.some((selector) => {
     if (!anyWordMatchesAnyOf(rel, [selector.rel])) {

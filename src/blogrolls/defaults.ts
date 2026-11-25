@@ -3,25 +3,34 @@ import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 
-export const urisMinimal = ['/.well-known/recommendations.opml', '/blogroll.opml', '/opml.xml']
+export const urisMinimal: ReadonlyArray<string> = [
+  '/.well-known/recommendations.opml',
+  '/blogroll.opml',
+  '/opml.xml',
+]
 
-export const urisBalanced = [
+export const urisBalanced: ReadonlyArray<string> = [
   ...urisMinimal,
   '/blogroll.xml',
   '/subscriptions.opml',
   '/recommendations.opml',
 ]
 
-export const urisComprehensive = [
+export const urisComprehensive: ReadonlyArray<string> = [
   ...urisBalanced,
   '/links.opml',
   '/feeds.opml',
   '/subscriptions.xml',
 ]
 
-export const anchorLabels = ['blogroll', 'opml', 'subscriptions', 'reading list']
+export const anchorLabels: ReadonlyArray<string> = [
+  'blogroll',
+  'opml',
+  'subscriptions',
+  'reading list',
+]
 
-export const linkSelectors: Array<LinkSelector> = [
+export const linkSelectors: ReadonlyArray<LinkSelector> = [
   { rel: 'blogroll' },
   { rel: 'outline', types: ['text/x-opml', 'application/opml+xml', 'application/xml', 'text/xml'] },
   { rel: 'alternate', types: ['text/x-opml', 'application/opml+xml'] },

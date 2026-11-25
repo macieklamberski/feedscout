@@ -277,18 +277,31 @@ import { zenfolioHandler } from './platforms/zenfolio.js'
 import { zennHandler } from './platforms/zenn.js'
 
 // text/plain names no feed format, so a link of that type is no feed hint.
-export const mimeTypes = [...feedMimeTypes, ...genericFeedMimeTypes]
+export const mimeTypes: ReadonlyArray<string> = [...feedMimeTypes, ...genericFeedMimeTypes]
   .map((type) => type.mime)
   .filter((mime) => mime !== 'text/plain')
 
 // Covers modern static generators and simple WordPress setups.
-export const urisMinimal = ['/feed', '/rss', '/atom.xml', '/feed.xml', '/rss.xml', '/index.xml']
+export const urisMinimal: ReadonlyArray<string> = [
+  '/feed',
+  '/rss',
+  '/atom.xml',
+  '/feed.xml',
+  '/rss.xml',
+  '/index.xml',
+]
 
 // Includes JSON Feed and common variations.
-export const urisBalanced = [...urisMinimal, '/feed/', '/index.atom', '/index.rss', '/feed.json']
+export const urisBalanced: ReadonlyArray<string> = [
+  ...urisMinimal,
+  '/feed/',
+  '/index.atom',
+  '/index.rss',
+  '/feed.json',
+]
 
 // Includes WordPress query parameters, Blogger patterns, and additional variations.
-export const urisComprehensive: Array<UriEntry> = [
+export const urisComprehensive: ReadonlyArray<UriEntry> = [
   ...urisBalanced,
   '/atom',
   '/rss/',
@@ -327,26 +340,37 @@ export const urisComprehensive: Array<UriEntry> = [
 const wrappedFeedUrlRegex = /[?&][^=&?]*=(https?:|https?%3a|aHR0c)/i
 
 // URIs to ignore when discovering feeds from anchor elements.
-export const ignoredUris: Array<Pattern> = ['wp-json/oembed/', 'wp-json/wp/', wrappedFeedUrlRegex]
+export const ignoredUris: ReadonlyArray<Pattern> = [
+  'wp-json/oembed/',
+  'wp-json/wp/',
+  wrappedFeedUrlRegex,
+]
 
 // Text labels used to identify feed links in anchor elements. "subscribe" is deliberately
 // excluded: on its own it overwhelmingly marks podcast-app, YouTube, and newsletter buttons
 // rather than feeds, and real feed links are still caught by their href or an rss/feed/atom label.
-export const anchorLabels = ['rss', 'feed', 'atom', 'syndicate', 'syndication', 'json feed']
+export const anchorLabels: ReadonlyArray<string> = [
+  'rss',
+  'feed',
+  'atom',
+  'syndicate',
+  'syndication',
+  'json feed',
+]
 
-export const linkSelectors: Array<LinkSelector> = [
+export const linkSelectors: ReadonlyArray<LinkSelector> = [
   { rel: 'alternate', types: mimeTypes },
   { rel: 'feed' },
 ]
 
 // Path segments that indicate feed URLs when found in an anchor href's pathname.
-export const anchorPathSegments = [/\/rss\//, /\/atom\//, /\/feed\//]
+export const anchorPathSegments: ReadonlyArray<RegExp> = [/\/rss\//, /\/atom\//, /\/feed\//]
 
 // Descendant attributes scanned for feed labels on icon-only anchors that carry no text or label
 // of their own. Framer names its feed-icon layer with data-framer-name (e.g. "RSS Icon"), which is
 // the common case this covers. "class" is intentionally excluded: anchorLabels match as substrings,
 // so labels collide with ordinary class names ("feed" in "feedback", "atom" in "atomic").
-export const anchorAttributes = ['aria-label', 'title', 'data-framer-name']
+export const anchorAttributes: ReadonlyArray<string> = ['aria-label', 'title', 'data-framer-name']
 
 // Default options for HTML method.
 export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
@@ -364,7 +388,7 @@ export const defaultHeadersOptions: Omit<HeadersMethodOptions, 'baseUrl'> = {
 }
 
 // Path segments of same-origin links that mark a content section likely to host its own feed.
-export const sectionNames = [
+export const sectionNames: ReadonlyArray<string> = [
   'blog',
   'news',
   'posts',

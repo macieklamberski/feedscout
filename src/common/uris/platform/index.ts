@@ -46,7 +46,10 @@ const matchesUrlAlone = (handler: PlatformHandler, url: string): boolean => {
 
 // A handler that takes the URL alone owns its host, so it goes ahead of the ones that need a
 // marker. A page that links or quotes another platform's marker stays with its own handler.
-const orderHandlers = (handlers: Array<PlatformHandler>, url: string): Array<PlatformHandler> => {
+const orderHandlers = (
+  handlers: ReadonlyArray<PlatformHandler>,
+  url: string,
+): Array<PlatformHandler> => {
   const urlHandlers = handlers.filter((handler) => matchesUrlAlone(handler, url))
   const markerHandlers = handlers.filter((handler) => !urlHandlers.includes(handler))
 
@@ -55,7 +58,7 @@ const orderHandlers = (handlers: Array<PlatformHandler>, url: string): Array<Pla
 
 // The hint of the handler feed the URL is, read as the URL arrived.
 export const getFeedHint = (
-  handlers: Array<PlatformHandler>,
+  handlers: ReadonlyArray<PlatformHandler>,
   url: string,
 ): DiscoverUriHint | undefined => {
   for (const handler of handlers) {
