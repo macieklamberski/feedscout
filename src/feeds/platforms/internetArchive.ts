@@ -16,10 +16,10 @@ const getInternetArchivePage = (
   url: string,
   content: string | undefined,
 ): InternetArchivePage | undefined => {
-  const page = internetArchive.pages.read(url)
+  const page = internetArchive.pages.readUrl(url)
 
   if (page?.key === 'search') {
-    return { kind: 'search', query: page.params.query }
+    return { kind: 'search', query: page.values.query }
   }
 
   // Collections, accounts and search serve one app shell loading `/offshoot_assets/`, while
@@ -29,11 +29,11 @@ const getInternetArchivePage = (
   }
 
   if (page?.key === 'collection') {
-    return { kind: 'collection', collection: page.params.collection }
+    return { kind: 'collection', collection: page.values.collection }
   }
 
   if (page?.key === 'account') {
-    return { kind: 'account', user: page.params.user }
+    return { kind: 'account', user: page.values.user }
   }
 }
 

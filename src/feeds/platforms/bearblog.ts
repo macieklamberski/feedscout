@@ -11,7 +11,7 @@ export type BearblogUrl = { kind: 'discover' } | { kind: 'blog'; blog: string; t
 const feeds = withHintLabels(bearblog.feeds)
 
 export const parseBearblogUrl = (url: string): BearblogUrl | undefined => {
-  const page = bearblog.pages.read(url)
+  const page = bearblog.pages.readUrl(url)
 
   if (!page) {
     return
@@ -21,7 +21,7 @@ export const parseBearblogUrl = (url: string): BearblogUrl | undefined => {
     return { kind: 'discover' }
   }
 
-  return { kind: 'blog', blog: page.params.blog, tag: page.params.tag }
+  return { kind: 'blog', blog: page.values.blog, tag: page.values.tag }
 }
 
 export const bearblogHandler: PlatformHandler = {
@@ -31,7 +31,7 @@ export const bearblogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseBearblogUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

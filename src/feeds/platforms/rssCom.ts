@@ -9,13 +9,13 @@ export type RssComUrl = { kind: 'podcast'; show: string }
 const feeds = withHintLabels(rssCom.feeds)
 
 export const parseRssComUrl = (url: string): RssComUrl | undefined => {
-  const page = rssCom.pages.read(url)
+  const page = rssCom.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'podcast', show: page.params.show }
+  return { kind: 'podcast', show: page.values.show }
 }
 
 export const rssComHandler: PlatformHandler = {

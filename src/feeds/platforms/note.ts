@@ -16,29 +16,29 @@ export type NoteUrl =
 const feeds = withHintLabels(note.feeds)
 
 export const parseNoteUrl = (url: string): NoteUrl | undefined => {
-  const page = note.pages.read(url)
+  const page = note.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'hashtag') {
-    return { kind: 'hashtag', tag: page.params.tag }
+    return { kind: 'hashtag', tag: page.values.tag }
   }
 
   if (page.key === 'magazine') {
-    return { kind: 'magazine', username: page.params.username, magazine: page.params.magazine }
+    return { kind: 'magazine', username: page.values.username, magazine: page.values.magazine }
   }
 
   if (page.key === 'note') {
-    return { kind: 'note', username: page.params.username }
+    return { kind: 'note', username: page.values.username }
   }
 
   if (page.key === 'home') {
     return { kind: 'home' }
   }
 
-  return { kind: 'user', username: page.params.username }
+  return { kind: 'user', username: page.values.username }
 }
 
 export const noteHandler: PlatformHandler = {

@@ -22,7 +22,7 @@ export const statuspageHandler: PlatformHandler = {
 
   // Every page of a status page, an incident included, advertises the page's incident history.
   resolve: (url) => {
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!page) {
       return []

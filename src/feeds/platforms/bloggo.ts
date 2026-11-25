@@ -12,14 +12,14 @@ const postBodyRegex = /<body[^<>]*\bpost-id-\d+/
 const feeds = withHintLabels(bloggo.feeds)
 
 export const parseBloggoUrl = (url: string): BloggoUrl | undefined => {
-  const page = bloggo.pages.read(url)
+  const page = bloggo.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'post') {
-    return { kind: 'post', slug: page.params.slug }
+    return { kind: 'post', slug: page.values.slug }
   }
 
   return { kind: 'blog' }
@@ -48,7 +48,7 @@ export const bloggoHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getBloggoPage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []

@@ -22,43 +22,43 @@ export type ItchioUrl =
 const feeds = withHintLabels(itchio.feeds)
 
 export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
-  const page = itchio.pages.read(url)
+  const page = itchio.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'game') {
-    return { kind: 'game', creator: page.params.creator, game: page.params.game }
+    return { kind: 'game', creator: page.values.creator, game: page.values.game }
   }
 
   // A sort and a section are read in any case, and their feeds are named in lower case.
   if (page.key === 'creator') {
-    return { kind: 'creator', creator: page.params.creator, sort: page.params.sort?.toLowerCase() }
+    return { kind: 'creator', creator: page.values.creator, sort: page.values.sort?.toLowerCase() }
   }
 
   if (page.key === 'tag') {
-    return { kind: 'tag', tag: page.params.tag, sort: page.params.sort?.toLowerCase() }
+    return { kind: 'tag', tag: page.values.tag, sort: page.values.sort?.toLowerCase() }
   }
 
   if (page.key === 'listing') {
-    return { kind: 'listing', filters: page.params.filters.join('/') }
+    return { kind: 'listing', filters: page.values.filters.join('/') }
   }
 
   if (page.key === 'platform') {
-    return { kind: 'platform', platform: page.params.platform }
+    return { kind: 'platform', platform: page.values.platform }
   }
 
   if (page.key === 'genre') {
-    return { kind: 'genre', genre: page.params.genre }
+    return { kind: 'genre', genre: page.values.genre }
   }
 
   if (page.key === 'madeWith') {
-    return { kind: 'madeWith', engine: page.params.engine }
+    return { kind: 'madeWith', engine: page.values.engine }
   }
 
   if (page.key === 'games') {
-    return { kind: 'games', sort: page.params.sort?.toLowerCase() }
+    return { kind: 'games', sort: page.values.sort?.toLowerCase() }
   }
 
   if (page.key === 'devlogs') {
@@ -66,7 +66,7 @@ export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
   }
 
   if (page.key === 'section') {
-    return { kind: 'section', section: page.params.section.toLowerCase() }
+    return { kind: 'section', section: page.values.section.toLowerCase() }
   }
 
   return { kind: 'home' }
@@ -87,7 +87,7 @@ export const itchioHandler: PlatformHandler = {
     // The curated feeds and the devlogs need no value from the page, so every page builds them
     // after its own feeds.
     if (parsed.kind === 'game') {
-      const pageFeeds = feeds.forUrl(url)
+      const pageFeeds = feeds.forSite(url)
 
       if (!pageFeeds) {
         return []

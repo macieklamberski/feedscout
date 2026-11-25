@@ -16,7 +16,8 @@ const feeds = withHintLabels(webnode.feeds)
 export const isWebnodeHtml = (content: string): boolean => {
   const script = findElement(content, (element) => {
     return (
-      element.name === 'script' && webnode.pages.read(element.attribs.src ?? '')?.key === 'client'
+      element.name === 'script' &&
+      webnode.pages.readUrl(element.attribs.src ?? '')?.key === 'client'
     )
   })
 
@@ -26,13 +27,13 @@ export const isWebnodeHtml = (content: string): boolean => {
 // A section feed is named after its articles block, which takes the page's slug. A repeated name
 // gets a number suffix the URL does not show, and that page gets the unnumbered feed.
 export const parseWebnodeUrl = (url: string): WebnodeUrl => {
-  const page = webnode.pages.read(url, { isAnyHost: true })
+  const page = webnode.pages.readUrl(url, { isAnyHost: true })
 
   if (page?.key !== 'section') {
     return { kind: 'site' }
   }
 
-  return { kind: 'section', section: page.params.section }
+  return { kind: 'section', section: page.values.section }
 }
 
 export const webnodeHandler: PlatformHandler = {
@@ -42,7 +43,7 @@ export const webnodeHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseWebnodeUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!page) {
       return []

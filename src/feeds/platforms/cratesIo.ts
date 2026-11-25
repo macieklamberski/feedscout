@@ -10,14 +10,14 @@ export type CratesIoUrl = { kind: 'crate'; crate: string } | { kind: 'home' }
 const feeds = withHintLabels(cratesIo.feeds)
 
 export const parseCratesIoUrl = (url: string): CratesIoUrl | undefined => {
-  const page = cratesIo.pages.read(url)
+  const page = cratesIo.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'crate') {
-    return { kind: 'crate', crate: page.params.crate }
+    return { kind: 'crate', crate: page.values.crate }
   }
 
   return { kind: 'home' }

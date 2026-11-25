@@ -17,14 +17,14 @@ export const isNoticeableHtml = (content: string): boolean => {
 }
 
 export const parseNoticeableUrl = (url: string): NoticeableUrl | undefined => {
-  const page = noticeable.pages.read(url) ?? noticeable.pages.read(url, { isAnyHost: true })
+  const page = noticeable.pages.readUrl(url) ?? noticeable.pages.readUrl(url, { isAnyHost: true })
 
   if (!page || page.key === 'platform') {
     return
   }
 
   if (page.key === 'label') {
-    return { kind: 'label', label: page.params.label }
+    return { kind: 'label', label: page.values.label }
   }
 
   return { kind: 'newspage' }
@@ -33,7 +33,10 @@ export const parseNoticeableUrl = (url: string): NoticeableUrl | undefined => {
 export const noticeableHandler: PlatformHandler = {
   match: (url, content, headers) => {
     // A platform host skips the marker, which only a custom domain needs.
-    if (!noticeable.pages.read(url) && !hasMarker(content, headers, { html: isNoticeableHtml })) {
+    if (
+      !noticeable.pages.readUrl(url) &&
+      !hasMarker(content, headers, { html: isNoticeableHtml })
+    ) {
       return false
     }
 
@@ -42,7 +45,7 @@ export const noticeableHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseNoticeableUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

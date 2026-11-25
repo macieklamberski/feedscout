@@ -11,13 +11,13 @@ export type OpeneditionUrl = { kind: 'journal'; journal: string }
 const feeds = withHintLabels(openedition.feeds)
 
 export const parseOpeneditionUrl = (url: string): OpeneditionUrl | undefined => {
-  const page = openedition.pages.read(url)
+  const page = openedition.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'journal', journal: page.params.journal }
+  return { kind: 'journal', journal: page.values.journal }
 }
 
 export const openeditionHandler: PlatformHandler = {

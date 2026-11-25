@@ -756,29 +756,29 @@ describe('wordpressHandler', () => {
       expect(wordpressHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should handle URL-encoded category names', () => {
+    it('should write the decoded plus signs of a URL-encoded category name', () => {
       const value = 'https://example.wordpress.com/category/c%2B%2B/'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: [
-            'https://example.wordpress.com/category/c%2B%2B/feed/',
-            'https://example.wordpress.com/category/c%2B%2B/?feed=rss',
-            'https://example.wordpress.com/category/c%2B%2B/feed/rss2/',
-            'https://example.wordpress.com/category/c%2B%2B/?feed=rss2',
+            'https://example.wordpress.com/category/c++/feed/',
+            'https://example.wordpress.com/category/c++/?feed=rss',
+            'https://example.wordpress.com/category/c++/feed/rss2/',
+            'https://example.wordpress.com/category/c++/?feed=rss2',
           ],
           hint: { key: 'wordpress:category', label: 'Category', format: 'rss' },
         },
         {
           uri: [
-            'https://example.wordpress.com/category/c%2B%2B/feed/atom/',
-            'https://example.wordpress.com/category/c%2B%2B/?feed=atom',
+            'https://example.wordpress.com/category/c++/feed/atom/',
+            'https://example.wordpress.com/category/c++/?feed=atom',
           ],
           hint: { key: 'wordpress:category', label: 'Category', format: 'atom' },
         },
         {
           uri: [
-            'https://example.wordpress.com/category/c%2B%2B/feed/rdf/',
-            'https://example.wordpress.com/category/c%2B%2B/?feed=rdf',
+            'https://example.wordpress.com/category/c++/feed/rdf/',
+            'https://example.wordpress.com/category/c++/?feed=rdf',
           ],
           hint: { key: 'wordpress:category', label: 'Category', format: 'rdf' },
         },

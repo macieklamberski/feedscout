@@ -20,23 +20,23 @@ const feeds = withHintLabels(purot.feeds)
 // its user's feeds even when it answers "User not found", and a real profile redirects home.
 const getLinkedPage = (href: string | undefined, url: string, wiki: string): string | undefined => {
   const linkUrl = parseUrl(href, url)?.href ?? ''
-  const link = purot.feeds.read(linkUrl)
+  const link = purot.feeds.readUrl(linkUrl)
 
-  if (link?.key !== 'page-changes' || purot.pages.read(linkUrl)?.params.wiki !== wiki) {
+  if (link?.key !== 'page-changes' || purot.pages.readUrl(linkUrl)?.values.wiki !== wiki) {
     return
   }
 
-  return link.params.page
+  return link.values.page
 }
 
 export const parsePurotUrl = (url: string): PurotUrl | undefined => {
-  const page = purot.pages.read(url)
+  const page = purot.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'wiki', wiki: page.params.wiki }
+  return { kind: 'wiki', wiki: page.values.wiki }
 }
 
 // A made-up page id answers the whole wiki's changes, so the page comes from its own feed link,
@@ -69,7 +69,7 @@ export const purotHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getPurotPage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []

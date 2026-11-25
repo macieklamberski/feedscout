@@ -22,13 +22,13 @@ export type PowerpressPage = { kind: 'site'; base?: Array<string> }
 // holds the page. A page with no such link is read at the root of its host.
 export const getPowerpressPage = (url: string, content: string | undefined): PowerpressPage => {
   const pinwUrl = content?.match(pinwCallRegex)?.groups?.pinwUrl ?? ''
-  const player = powerpress.pages.read(pinwUrl, { isAnyHost: true })
+  const player = powerpress.pages.readUrl(pinwUrl, { isAnyHost: true })
 
-  if (player?.key !== 'player' || !isRootOfPage(getSiteUrl(player.params), url)) {
+  if (player?.key !== 'player' || !isRootOfPage(getSiteUrl(player.values), url)) {
     return { kind: 'site' }
   }
 
-  return { kind: 'site', base: player.params.base }
+  return { kind: 'site', base: player.values.base }
 }
 
 export const powerpressHandler: PlatformHandler = {
@@ -38,7 +38,7 @@ export const powerpressHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getPowerpressPage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!pageFeeds) {
       return []

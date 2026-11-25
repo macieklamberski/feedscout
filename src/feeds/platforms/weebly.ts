@@ -11,7 +11,7 @@ export type WeeblyPage = { kind: 'home'; pages: Array<string> } | { kind: 'blog'
 const feeds = withHintLabels(weebly.feeds)
 
 export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
-  const page = weebly.pages.read(url)
+  const page = weebly.pages.readUrl(url)
 
   if (!page) {
     return
@@ -21,7 +21,7 @@ export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
     return { kind: 'home' }
   }
 
-  return { kind: 'blog', page: page.params.page }
+  return { kind: 'blog', page: page.values.page }
 }
 
 export const getWeeblyPage = (url: string, content: string | undefined): WeeblyPage | undefined => {
@@ -40,8 +40,8 @@ export const getWeeblyPage = (url: string, content: string | undefined): WeeblyP
   for (const anchor of anchors) {
     const page = getLinkedPage(anchor.attribs.href, url, weebly.pages)
 
-    if (page?.key === 'page' && !pages.includes(page.params.page)) {
-      pages.push(page.params.page)
+    if (page?.key === 'page' && !pages.includes(page.values.page)) {
+      pages.push(page.values.page)
     }
   }
 
@@ -55,7 +55,7 @@ export const weeblyHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getWeeblyPage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []

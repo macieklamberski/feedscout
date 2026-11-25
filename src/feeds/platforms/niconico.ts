@@ -13,21 +13,21 @@ export type NiconicoUrl =
 const feeds = withHintLabels(niconico.feeds)
 
 export const parseNiconicoUrl = (url: string): NiconicoUrl | undefined => {
-  const page = niconico.pages.read(url)
+  const page = niconico.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'live') {
-    return { kind: 'live', channel: page.params.channel }
+    return { kind: 'live', channel: page.values.channel }
   }
 
   if (page.key === 'blomaga') {
-    return { kind: 'blomaga', channel: page.params.channel }
+    return { kind: 'blomaga', channel: page.values.channel }
   }
 
-  return { kind: 'channel', channel: page.params.channel }
+  return { kind: 'channel', channel: page.values.channel }
 }
 
 export const niconicoHandler: PlatformHandler = {

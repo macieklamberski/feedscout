@@ -12,21 +12,21 @@ export type MegaphonePage = { kind: 'playlist' | 'episode'; showId: string }
 const feeds = withHintLabels(megaphone.feeds)
 
 export const parseMegaphoneUrl = (url: string): MegaphoneUrl | undefined => {
-  const page = megaphone.pages.read(url)
+  const page = megaphone.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'playlist') {
-    return { kind: 'playlist', showId: page.params.showId }
+    return { kind: 'playlist', showId: page.values.showId }
   }
 
   return { kind: 'episode' }
 }
 
 const getLinkedShowId = (href: string | undefined): string | undefined => {
-  return megaphone.feeds.read(href ?? '')?.params.showId
+  return megaphone.feeds.readUrl(href ?? '')?.values.showId
 }
 
 export const getMegaphonePage = (

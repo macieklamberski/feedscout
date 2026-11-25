@@ -16,13 +16,13 @@ const nextGameRegex = /wNextGame\.asp\?SID=(\d+)/i
 const feeds = withHintLabels(sportadmin.feeds)
 
 const getLayoutSectionId = (href: string | undefined, url: string): string | undefined => {
-  const page = sportadmin.pages.read(parseUrl(href, url)?.href ?? '')
+  const page = sportadmin.pages.readUrl(parseUrl(href, url)?.href ?? '')
 
   if (page?.key !== 'layout') {
     return
   }
 
-  return page.params.sectionId
+  return page.values.sectionId
 }
 
 // The link to the other layout, "Gå till Webbversion" or its app counterpart.
@@ -37,7 +37,7 @@ const findLayoutSectionId = (url: string, content: string | undefined): string |
 // The new template answers an unknown section with the club home page, whose canonical is the
 // root, and its feed then serves the club news items.
 const getUrlSectionId = (url: string, content: string | undefined): string | undefined => {
-  const page = sportadmin.pages.read(url)
+  const page = sportadmin.pages.readUrl(url)
   const canonical = findElement(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'canonical'
   })?.attribs.href
@@ -46,18 +46,18 @@ const getUrlSectionId = (url: string, content: string | undefined): string | und
     return
   }
 
-  if (sportadmin.pages.read(parseUrl(canonical, url)?.href ?? '')?.key === 'home') {
+  if (sportadmin.pages.readUrl(parseUrl(canonical, url)?.href ?? '')?.key === 'home') {
     return
   }
 
-  return page.params.sectionId
+  return page.values.sectionId
 }
 
 export const getSportadminPage = (
   url: string,
   content: string | undefined,
 ): SportadminPage | undefined => {
-  if (!sportadmin.pages.read(url)) {
+  if (!sportadmin.pages.readUrl(url)) {
     return
   }
 
@@ -81,7 +81,7 @@ export const sportadminHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getSportadminPage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []

@@ -21,33 +21,33 @@ export type GithubUrl =
 const feeds = withHintLabels(github.feeds)
 
 export const parseGithubUrl = (url: string): GithubUrl | undefined => {
-  const page = github.pages.read(url)
+  const page = github.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'user') {
-    return { kind: 'user', owner: page.params.owner }
+    return { kind: 'user', owner: page.values.owner }
   }
 
   if (page.key === 'discussions') {
-    return { kind: 'discussions', org: page.params.org, discussionCategory: page.params.category }
+    return { kind: 'discussions', org: page.values.org, discussionCategory: page.values.category }
   }
 
-  const { owner, repo } = page.params
+  const { owner, repo } = page.values
 
   if (page.key === 'repo-wiki') {
     return { kind: 'repo', owner, repo, section: 'wiki' }
   }
 
   if (page.key === 'repo-discussions') {
-    const discussionCategory = page.params.category
+    const discussionCategory = page.values.category
 
     return { kind: 'repo', owner, repo, section: 'discussions', discussionCategory }
   }
 
-  const { branch, path } = page.params
+  const { branch, path } = page.values
 
   if (branch && path) {
     return { kind: 'repo', owner, repo, file: { branch, path: path.join('/') } }

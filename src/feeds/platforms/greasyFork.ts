@@ -18,16 +18,16 @@ export type GreasyForkPage =
 const feeds = withHintLabels(greasyFork.feeds)
 
 export const parseGreasyForkUrl = (url: string): GreasyForkUrl | undefined => {
-  const page = greasyFork.pages.read(url)
+  const page = greasyFork.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  const { locale } = page.params
+  const { locale } = page.values
 
   if (page.key === 'user') {
-    return { kind: 'user', locale, userId: page.params.userId }
+    return { kind: 'user', locale, userId: page.values.userId }
   }
 
   return { kind: page.key, locale }
@@ -49,13 +49,13 @@ export const getGreasyForkPage = (
     return element.name === 'dd' && hasClass(element, 'script-show-author')
   })
   const authorLink = author && findDescendant(author, (element) => element.name === 'a')
-  const authorPage = greasyFork.pages.read(resolveUrl(authorLink?.attribs.href ?? '', url) ?? '')
+  const authorPage = greasyFork.pages.readUrl(resolveUrl(authorLink?.attribs.href ?? '', url) ?? '')
 
   if (authorPage?.key !== 'user') {
     return
   }
 
-  return { kind: 'user', locale: parsed.locale, userId: authorPage.params.userId }
+  return { kind: 'user', locale: parsed.locale, userId: authorPage.values.userId }
 }
 
 export const greasyForkHandler: PlatformHandler = {
@@ -65,7 +65,7 @@ export const greasyForkHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getGreasyForkPage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []

@@ -33,7 +33,7 @@ export const isCivicplusHtml = (content: string): boolean => {
 
     return (
       element.name === 'script' &&
-      civicplus.pages.read(scriptUrl, { isAnyHost: true })?.key === 'asset'
+      civicplus.pages.readUrl(scriptUrl, { isAnyHost: true })?.key === 'asset'
     )
   })
 
@@ -61,7 +61,7 @@ export const civicplusHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getCivicplusPage(content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!pageFeeds) {
       return []

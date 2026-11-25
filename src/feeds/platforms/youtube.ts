@@ -101,7 +101,7 @@ const getChannelUris = (channelId: string): Array<DiscoverUriEntry | undefined> 
 }
 
 export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
-  const page = youtube.pages.read(url)
+  const page = youtube.pages.readUrl(url)
   const parsedUrl = parseUrl(url)
 
   if (!page || !parsedUrl) {
@@ -119,15 +119,15 @@ export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
   const username = isAnyOf(listType, 'user_uploads') ? listId : undefined
 
   if (page.key === 'channel') {
-    return { kind: 'channel', channelId: page.params.channelId, playlistId }
+    return { kind: 'channel', channelId: page.values.channelId, playlistId }
   }
 
   if (page.key === 'live-stream') {
-    if (!page.params.channelId) {
+    if (!page.values.channelId) {
       return
     }
 
-    return { kind: 'player', channelId: page.params.channelId }
+    return { kind: 'player', channelId: page.values.channelId }
   }
 
   if (page.key === 'handle') {

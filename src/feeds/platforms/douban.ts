@@ -14,18 +14,18 @@ export type DoubanUrl =
 const feeds = withHintLabels(douban.feeds)
 
 export const parseDoubanUrl = (url: string): DoubanUrl | undefined => {
-  const page = douban.pages.read(url)
+  const page = douban.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'user') {
-    return { kind: 'user', username: page.params.username }
+    return { kind: 'user', username: page.values.username }
   }
 
   if (page.key === 'subject') {
-    return { kind: 'subject', subjectId: page.params.subjectId }
+    return { kind: 'subject', subjectId: page.values.subjectId }
   }
 
   return { kind: 'home' }

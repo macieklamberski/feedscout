@@ -19,22 +19,22 @@ export type BubblelifePage = {
 const feeds = withHintLabels(bubblelife.feeds)
 
 export const parseBubblelifeUrl = (url: string): BubblelifeUrl | undefined => {
-  const page = bubblelife.pages.read(url)
+  const page = bubblelife.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'community') {
-    return { kind: 'community', community: page.params.community }
+    return { kind: 'community', community: page.values.community }
   }
 
-  return { kind: 'library', community: page.params.community, libraryId: page.params.id }
+  return { kind: 'library', community: page.values.community, libraryId: page.values.id }
 }
 
-type FeedLink = ReturnType<typeof bubblelife.feeds.read>
+type FeedLink = ReturnType<typeof bubblelife.feeds.readUrl>
 
-type PageLink = ReturnType<typeof bubblelife.pages.read>
+type PageLink = ReturnType<typeof bubblelife.pages.readUrl>
 
 const readFeedLink = (url: string, href: string | undefined): FeedLink => {
   const linkUrl = parseUrl(href, url)
@@ -43,7 +43,7 @@ const readFeedLink = (url: string, href: string | undefined): FeedLink => {
     return
   }
 
-  return bubblelife.feeds.read(linkUrl.href)
+  return bubblelife.feeds.readUrl(linkUrl.href)
 }
 
 const readPageLink = (url: string, href: string | undefined): PageLink => {
@@ -53,7 +53,7 @@ const readPageLink = (url: string, href: string | undefined): PageLink => {
     return
   }
 
-  return bubblelife.pages.read(linkUrl.href)
+  return bubblelife.pages.readUrl(linkUrl.href)
 }
 
 const findFeedLinkId = (url: string, content: string, key: string): string | undefined => {
@@ -61,7 +61,7 @@ const findFeedLinkId = (url: string, content: string, key: string): string | und
     return element.name === 'a' && readFeedLink(url, element.attribs.href)?.key === key
   })
 
-  return readFeedLink(url, link?.attribs.href)?.params.id
+  return readFeedLink(url, link?.attribs.href)?.values.id
 }
 
 export const getBubblelifePage = (
@@ -93,8 +93,8 @@ export const getBubblelifePage = (
 
       return (
         page?.key === 'library-rssinfo' &&
-        isSameText(page.params.community, community) &&
-        page.params.id === libraryId
+        isSameText(page.values.community, community) &&
+        page.values.id === libraryId
       )
     })
 
@@ -108,7 +108,7 @@ export const getBubblelifePage = (
   const libraryLink = findElement(content, (element) => {
     const page = readPageLink(url, element.attribs.href)
 
-    return page?.key !== 'community' && isSameText(page?.params.community, parsed.community)
+    return page?.key !== 'community' && isSameText(page?.values.community, parsed.community)
   })
   const libraryPage = readPageLink(url, libraryLink?.attribs.href)
 
@@ -116,7 +116,7 @@ export const getBubblelifePage = (
     return
   }
 
-  return { kind: 'community', feedId: libraryPage.params.id }
+  return { kind: 'community', feedId: libraryPage.values.id }
 }
 
 export const bubblelifeHandler: PlatformHandler = {
@@ -126,7 +126,7 @@ export const bubblelifeHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getBubblelifePage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []

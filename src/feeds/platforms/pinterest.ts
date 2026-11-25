@@ -13,16 +13,16 @@ export type PinterestUrl =
 const feeds = withHintLabels(pinterest.feeds)
 
 export const parsePinterestUrl = (url: string): PinterestUrl | undefined => {
-  const page = pinterest.pages.read(url)
+  const page = pinterest.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  const { username } = page.params
+  const { username } = page.values
 
   if (page.key === 'board') {
-    return { kind: 'board', username, board: page.params.board }
+    return { kind: 'board', username, board: page.values.board }
   }
 
   if (page.key === 'tab') {

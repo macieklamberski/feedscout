@@ -25,14 +25,14 @@ export const parseWikidotUrl = (url: string): WikidotUrl | undefined => {
     return
   }
 
-  const page = wikidot.pages.read(url, { isAnyHost: true })
+  const page = wikidot.pages.readUrl(url, { isAnyHost: true })
 
   if (page?.key === 'thread') {
-    return { kind: 'thread', threadId: page.params.threadId }
+    return { kind: 'thread', threadId: page.values.threadId }
   }
 
   if (page?.key === 'category') {
-    return { kind: 'category', categoryId: page.params.categoryId }
+    return { kind: 'category', categoryId: page.values.categoryId }
   }
 
   return { kind: 'site' }
@@ -45,7 +45,7 @@ export const wikidotHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseWikidotUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

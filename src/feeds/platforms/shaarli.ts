@@ -28,13 +28,13 @@ const getShaarliPage = (url: string, content: string | undefined): ShaarliPage |
     return { base: basePath }
   }
 
-  const page = shaarli.pages.read(url, { isAnyHost: true })
+  const page = shaarli.pages.readUrl(url, { isAnyHost: true })
 
   if (!page) {
     return
   }
 
-  return { base: page.params.base }
+  return { base: page.values.base }
 }
 
 export const shaarliHandler: PlatformHandler = {
@@ -44,7 +44,7 @@ export const shaarliHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getShaarliPage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []

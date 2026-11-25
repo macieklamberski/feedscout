@@ -53,8 +53,8 @@ const getPodcastSections = (content: string, publication: string): Array<string>
 }
 
 const getSectionId = (content: string | undefined, url: string): string | undefined => {
-  const page = substack.pages.read(url)
-  const slug = page?.key === 'section' ? page.params.slug : undefined
+  const page = substack.pages.readUrl(url)
+  const slug = page?.key === 'section' ? page.values.slug : undefined
 
   if (!content || !slug) {
     return
@@ -86,7 +86,7 @@ const getProfileFeedEntry = (
 ): DiscoverUriEntry | undefined => {
   const { subdomain, customDomain } = content?.match(publicationRegex)?.groups ?? {}
 
-  const pageFeeds = feeds.forUrl(url)
+  const pageFeeds = feeds.forSite(url)
 
   return pageFeeds?.getFeedEntry('newsletter', {
     host: customDomain,
@@ -121,14 +121,14 @@ const getPodcastEntries = (content: string | undefined): Array<DiscoverUriEntry 
 }
 
 export const parseSubstackUrl = (url: string): SubstackUrl | undefined => {
-  const page = substack.pages.read(url)
+  const page = substack.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'profile') {
-    return { kind: 'profile', username: page.params.username }
+    return { kind: 'profile', username: page.values.username }
   }
 
   return { kind: 'newsletter' }
@@ -149,7 +149,7 @@ export const substackHandler: PlatformHandler = {
       ].filter(isPresent)
     }
 
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!parsed || !pageFeeds) {
       return []

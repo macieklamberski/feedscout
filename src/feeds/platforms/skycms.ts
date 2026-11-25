@@ -21,7 +21,8 @@ export const isSkycmsHtml = (content: string): boolean => {
     const linkUrl = getMarkerLinkUrl(element.attribs.href)
 
     return (
-      element.name === 'link' && skycms.pages.read(linkUrl, { isAnyHost: true })?.key === 'template'
+      element.name === 'link' &&
+      skycms.pages.readUrl(linkUrl, { isAnyHost: true })?.key === 'template'
     )
   })
 
@@ -35,7 +36,7 @@ export const hasSkycmsRssList = (content: string | undefined): boolean => {
     const linkUrl = getMarkerLinkUrl(element.attribs.href)
 
     return (
-      element.name === 'a' && skycms.pages.read(linkUrl, { isAnyHost: true })?.key === 'rss-list'
+      element.name === 'a' && skycms.pages.readUrl(linkUrl, { isAnyHost: true })?.key === 'rss-list'
     )
   })
 
@@ -43,13 +44,13 @@ export const hasSkycmsRssList = (content: string | undefined): boolean => {
 }
 
 export const parseSkycmsUrl = (url: string): SkycmsUrl | undefined => {
-  const page = skycms.pages.read(url, { isAnyHost: true })
+  const page = skycms.pages.readUrl(url, { isAnyHost: true })
 
   if (page?.key !== 'page') {
     return
   }
 
-  return { kind: 'page', pageId: page.params.pageId, slug: page.params.slug }
+  return { kind: 'page', pageId: page.values.pageId, slug: page.values.slug }
 }
 
 export const skycmsHandler: PlatformHandler = {
@@ -67,7 +68,7 @@ export const skycmsHandler: PlatformHandler = {
 
   resolve: (url) => {
     const skycmsUrl = parseSkycmsUrl(url)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!skycmsUrl || !pageFeeds) {
       return []

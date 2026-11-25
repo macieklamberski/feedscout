@@ -28,7 +28,7 @@ export const isChambermasterHeaders = (headers: Headers): boolean => {
 }
 
 export const parseChambermasterUrl = (url: string): ChambermasterUrl | undefined => {
-  const page = chambermaster.pages.read(url, { isAnyHost: true })
+  const page = chambermaster.pages.readUrl(url, { isAnyHost: true })
   const kind = kinds.find((kind) => kind === page?.key)
 
   if (!kind) {
@@ -49,7 +49,7 @@ export const chambermasterHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseChambermasterUrl(url)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!parsed || !pageFeeds) {
       return []

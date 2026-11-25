@@ -12,21 +12,21 @@ export type LibsynUrl =
 const feeds = withHintLabels(libsyn.feeds)
 
 export const parseLibsynUrl = (url: string): LibsynUrl | undefined => {
-  const page = libsyn.pages.read(url)
+  const page = libsyn.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'feed') {
-    return { kind: 'feed', showId: page.params.showId }
+    return { kind: 'feed', showId: page.values.showId }
   }
 
   if (page.key === 'site') {
-    return { kind: 'site', showId: page.params.showId }
+    return { kind: 'site', showId: page.values.showId }
   }
 
-  return { kind: 'podcast', slug: page.params.slug }
+  return { kind: 'podcast', slug: page.values.slug }
 }
 
 export const libsynHandler: PlatformHandler = {
@@ -45,7 +45,7 @@ export const libsynHandler: PlatformHandler = {
       return [feeds.getFeedEntry('podcast', { showId: parsed.showId })]
     }
 
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!page) {
       return []

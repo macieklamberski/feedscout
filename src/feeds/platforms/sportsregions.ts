@@ -16,18 +16,18 @@ export const isSportsregionsHtml = (content: string): boolean => {
 
 // The events page filtered by event type or group links the events feed with the same filter.
 const getEventFilters = (url: string): PlatformFeedParams | undefined => {
-  const page = sportsregions.pages.read(url, { isAnyHost: true })
+  const page = sportsregions.pages.readUrl(url, { isAnyHost: true })
 
   if (page?.key !== 'filtered-events') {
     return
   }
 
-  return { typeId: page.params.typeId, groupId: page.params.groupId }
+  return { typeId: page.values.typeId, groupId: page.values.groupId }
 }
 
 // A club's events page reads as the filtered events, and is the club's page too.
 export const parseSportsregionsUrl = (url: string): SportsregionsUrl | undefined => {
-  const page = sportsregions.pages.read(url)
+  const page = sportsregions.pages.readUrl(url)
 
   if (!page || page.key === 'portal') {
     return
@@ -38,7 +38,7 @@ export const parseSportsregionsUrl = (url: string): SportsregionsUrl | undefined
 
 export const sportsregionsHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const page = sportsregions.pages.read(url)
+    const page = sportsregions.pages.readUrl(url)
 
     // The portal prints the same footer.
     if (page) {
@@ -49,7 +49,7 @@ export const sportsregionsHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!page) {
       return []

@@ -399,7 +399,7 @@ export const getHostOrigin = (host: string): string | undefined => {
 export const getLinkedPage = <Key extends string, Row>(
   href: string | undefined,
   url: string,
-  pages: Pick<UrlTable<Key, Row>, 'read'>,
+  pages: Pick<UrlTable<Key, Row>, 'readUrl'>,
 ): UrlMatch<Key, Row> | undefined => {
   const linkUrl = parseUrl(href, url)
   const pageUrl = parseUrl(url)
@@ -408,7 +408,7 @@ export const getLinkedPage = <Key extends string, Row>(
     return
   }
 
-  return pages.read(linkUrl.href)
+  return pages.readUrl(linkUrl.href)
 }
 
 export const getScriptDirectory = (pathname: string): string => {

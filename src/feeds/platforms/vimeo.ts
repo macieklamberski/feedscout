@@ -16,29 +16,29 @@ export type VimeoUrl =
 const feeds = withHintLabels(vimeo.feeds)
 
 export const parseVimeoUrl = (url: string): VimeoUrl | undefined => {
-  const page = vimeo.pages.read(url)
+  const page = vimeo.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'channel') {
-    return { kind: 'channel', channel: page.params.channel }
+    return { kind: 'channel', channel: page.values.channel }
   }
 
   if (page.key === 'group') {
-    return { kind: 'group', group: page.params.group }
+    return { kind: 'group', group: page.values.group }
   }
 
   if (page.key === 'album') {
-    return { kind: 'album', albumId: page.params.albumId }
+    return { kind: 'album', albumId: page.values.albumId }
   }
 
   if (page.key === 'likes') {
-    return { kind: 'likes', username: page.params.username }
+    return { kind: 'likes', username: page.values.username }
   }
 
-  return { kind: 'user', username: page.params.username }
+  return { kind: 'user', username: page.values.username }
 }
 
 export const vimeoHandler: PlatformHandler = {

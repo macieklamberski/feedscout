@@ -13,18 +13,18 @@ export type MailchimpPage = { kind: 'archive' | 'campaign'; userId: string; list
 const feeds = withHintLabels(mailchimp.feeds)
 
 export const parseMailchimpUrl = (url: string): MailchimpUrl | undefined => {
-  const page = mailchimp.pages.read(url)
+  const page = mailchimp.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'archive') {
-    return { kind: 'archive', userId: page.params.userId, listId: page.params.listId }
+    return { kind: 'archive', userId: page.values.userId, listId: page.values.listId }
   }
 
   // Outside the archive page the id names one campaign, which has no feed.
-  return { kind: 'campaign', userId: page.params.userId }
+  return { kind: 'campaign', userId: page.values.userId }
 }
 
 // A campaign page links its archive and feed, whose id is the list the campaign went to.
@@ -33,13 +33,13 @@ const getLinkedListId = (href: string | undefined): string | undefined => {
     return
   }
 
-  const page = mailchimp.pages.read(href)
+  const page = mailchimp.pages.readUrl(href)
 
   if (page?.key === 'archive') {
-    return page.params.listId
+    return page.values.listId
   }
 
-  return mailchimp.feeds.read(href)?.params.listId
+  return mailchimp.feeds.readUrl(href)?.values.listId
 }
 
 export const getMailchimpPage = (
@@ -75,7 +75,7 @@ export const mailchimpHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getMailchimpPage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []

@@ -11,13 +11,13 @@ export type TransistorPage = TransistorUrl
 const feeds = withHintLabels(transistor.feeds)
 
 export const parseTransistorUrl = (url: string): TransistorUrl | undefined => {
-  const page = transistor.pages.read(url)
+  const page = transistor.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'show', slug: page.params.slug }
+  return { kind: 'show', slug: page.values.slug }
 }
 
 export const getTransistorPage = (
@@ -32,9 +32,9 @@ export const getTransistorPage = (
 
   // The show page links its feed, and the feed slug is not always the subdomain.
   const link = findElement(content, (element) => {
-    return transistor.feeds.read(element.attribs.href ?? '') !== undefined
+    return transistor.feeds.readUrl(element.attribs.href ?? '') !== undefined
   })
-  const linkedSlug = transistor.feeds.read(link?.attribs.href ?? '')?.params.slug
+  const linkedSlug = transistor.feeds.readUrl(link?.attribs.href ?? '')?.values.slug
 
   return { kind: 'show', slug: linkedSlug ?? parsed.slug }
 }

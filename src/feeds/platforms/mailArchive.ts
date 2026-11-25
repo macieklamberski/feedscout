@@ -10,13 +10,13 @@ export type MailArchiveUrl = { kind: 'list'; list: string }
 const feeds = withHintLabels(mailArchive.feeds)
 
 export const parseMailArchiveUrl = (url: string): MailArchiveUrl | undefined => {
-  const page = mailArchive.pages.read(url)
+  const page = mailArchive.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'list', list: page.params.list }
+  return { kind: 'list', list: page.values.list }
 }
 
 export const mailArchiveHandler: PlatformHandler = {
@@ -26,7 +26,7 @@ export const mailArchiveHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseMailArchiveUrl(url)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!parsed || !pageFeeds) {
       return []

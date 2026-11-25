@@ -171,7 +171,7 @@ describe('withHintLabels', () => {
     })
   })
 
-  describe('forUrl', () => {
+  describe('forSite', () => {
     const pageFeeds = withHintLabels(
       defineFeedUrls('typecho', [
         {
@@ -193,7 +193,7 @@ describe('withHintLabels', () => {
           format: 'atom',
         },
       }
-      const page = pageFeeds.forUrl(value)
+      const page = pageFeeds.forSite(value)
 
       expect(page?.getFeedEntry('posts', {}, 'atom')).toEqual(expected)
     })
@@ -207,7 +207,7 @@ describe('withHintLabels', () => {
           label: 'Posts',
         },
       }
-      const page = pageFeeds.forUrl(value)
+      const page = pageFeeds.forSite(value)
 
       expect(page?.getFeedSpellings('posts')).toEqual(expected)
     })
@@ -215,7 +215,7 @@ describe('withHintLabels', () => {
     it('should return undefined for an unparsable URL', () => {
       const value = 'not a url'
 
-      expect(pageFeeds.forUrl(value)).toBeUndefined()
+      expect(pageFeeds.forSite(value)).toBeUndefined()
     })
   })
 })

@@ -10,13 +10,13 @@ export type TeletypeUrl = { kind: 'blog'; username: string }
 const feeds = withHintLabels(teletype.feeds)
 
 export const parseTeletypeUrl = (url: string): TeletypeUrl | undefined => {
-  const page = teletype.pages.read(url)
+  const page = teletype.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'blog', username: page.params.username }
+  return { kind: 'blog', username: page.values.username }
 }
 
 export const teletypeHandler: PlatformHandler = {

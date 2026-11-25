@@ -9,13 +9,13 @@ export type CnblogsUrl = { kind: 'blog'; username: string }
 const feeds = withHintLabels(cnblogs.feeds)
 
 export const parseCnblogsUrl = (url: string): CnblogsUrl | undefined => {
-  const page = cnblogs.pages.read(url)
+  const page = cnblogs.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'blog', username: page.params.username }
+  return { kind: 'blog', username: page.values.username }
 }
 
 export const cnblogsHandler: PlatformHandler = {

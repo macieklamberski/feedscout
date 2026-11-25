@@ -21,7 +21,7 @@ export type FlickrUrl =
 const feeds = withHintLabels(flickr.feeds)
 
 export const parseFlickrUrl = (url: string): FlickrUrl | undefined => {
-  const page = flickr.pages.read(url)
+  const page = flickr.pages.readUrl(url)
 
   if (!page) {
     return
@@ -32,46 +32,46 @@ export const parseFlickrUrl = (url: string): FlickrUrl | undefined => {
   }
 
   if (page.key === 'tag') {
-    return { kind: 'tag', tag: page.params.tags }
+    return { kind: 'tag', tag: page.values.tags }
   }
 
   if (page.key === 'group') {
-    return { kind: 'group', group: page.params.id }
+    return { kind: 'group', group: page.values.id }
   }
 
   if (page.key === 'group-pool') {
-    return { kind: 'group', group: page.params.id, section: 'pool' }
+    return { kind: 'group', group: page.values.id, section: 'pool' }
   }
 
   if (page.key === 'group-discuss') {
-    return { kind: 'group', group: page.params.id, section: 'discuss' }
+    return { kind: 'group', group: page.values.id, section: 'discuss' }
   }
 
   if (page.key === 'album') {
-    return { kind: 'album', userId: page.params.userId, set: page.params.set }
+    return { kind: 'album', userId: page.values.userId, set: page.values.set }
   }
 
   if (page.key === 'userTag') {
-    return { kind: 'userTag', userId: page.params.userId, tag: page.params.tags }
+    return { kind: 'userTag', userId: page.values.userId, tag: page.values.tags }
   }
 
   if (page.key === 'photostream') {
-    return { kind: 'photostream', userId: page.params.userId }
+    return { kind: 'photostream', userId: page.values.userId }
   }
 
   if (page.key === 'favorites') {
-    return { kind: 'favorites', userId: page.params.userId }
+    return { kind: 'favorites', userId: page.values.userId }
   }
 
   if (page.key === 'albums') {
-    return { kind: 'albums', userId: page.params.userId }
+    return { kind: 'albums', userId: page.values.userId }
   }
 
   if (page.key === 'galleries') {
-    return { kind: 'galleries', userId: page.params.userId }
+    return { kind: 'galleries', userId: page.values.userId }
   }
 
-  return { kind: 'subpage', userId: page.params.userId }
+  return { kind: 'subpage', userId: page.values.userId }
 }
 
 export const flickrHandler: PlatformHandler = {

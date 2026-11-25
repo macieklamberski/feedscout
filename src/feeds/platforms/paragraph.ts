@@ -9,13 +9,13 @@ export type ParagraphUrl = { kind: 'blog'; username: string }
 const feeds = withHintLabels(paragraph.feeds)
 
 export const parseParagraphUrl = (url: string): ParagraphUrl | undefined => {
-  const page = paragraph.pages.read(url)
+  const page = paragraph.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'blog', username: page.params.username }
+  return { kind: 'blog', username: page.values.username }
 }
 
 export const paragraphHandler: PlatformHandler = {

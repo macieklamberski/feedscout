@@ -32,13 +32,13 @@ export const isLegistarHeaders = (headers: Headers): boolean => {
 }
 
 export const parseLegistarUrl = (url: string): LegistarUrl | undefined => {
-  const page = legistar.pages.read(url, { isAnyHost: true })
+  const page = legistar.pages.readUrl(url, { isAnyHost: true })
 
   if (!page) {
     return
   }
 
-  const { id, guid } = page.params
+  const { id, guid } = page.values
 
   if (page.key === 'legislation') {
     return { kind: 'legislation', id, guid }
@@ -54,13 +54,13 @@ const isSameFeed = (feedUrl: string, href: string, origin: string): boolean => {
     return false
   }
 
-  const feed = legistar.feeds.read(href, { isAnyHost: true })
+  const feed = legistar.feeds.readUrl(href, { isAnyHost: true })
 
   if (!feed) {
     return false
   }
 
-  return legistar.feeds.getFeedUrl(feed.key, feed.params) === feedUrl
+  return legistar.feeds.getFeedUrl(feed.key, feed.values) === feedUrl
 }
 
 // A meeting page's alternate link appends a `Title` the page URL does not carry, so the feed is
@@ -92,7 +92,7 @@ export const getLegistarPage = (
   content: string | undefined,
 ): LegistarPage | undefined => {
   const parsed = parseLegistarUrl(url)
-  const pageFeeds = feeds.forUrl(url)
+  const pageFeeds = feeds.forSite(url)
 
   if (!parsed || !pageFeeds) {
     return
@@ -122,7 +122,7 @@ export const getLegistarPage = (
 export const legistarHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (
-      !legistar.pages.read(url) &&
+      !legistar.pages.readUrl(url) &&
       !hasMarker(content, headers, { html: isLegistarHtml, headers: isLegistarHeaders })
     ) {
       return false

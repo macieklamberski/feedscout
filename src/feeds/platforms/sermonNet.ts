@@ -18,14 +18,14 @@ const channelRegex = /"is_series":(?:false|true),"url":"([^"]+)"/g
 const feeds = withHintLabels(sermonNet.feeds)
 
 export const parseSermonNetUrl = (url: string): SermonNetUrl | undefined => {
-  const page = sermonNet.pages.read(url)
+  const page = sermonNet.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'channel') {
-    return { kind: 'channel', channel: page.params.channel }
+    return { kind: 'channel', channel: page.values.channel }
   }
 
   return { kind: 'church' }
@@ -70,7 +70,7 @@ export const sermonNetHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getSermonNetPage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []

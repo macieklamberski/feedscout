@@ -10,13 +10,13 @@ export type AmebloUrl = { kind: 'blog'; username: string }
 const feeds = withHintLabels(ameblo.feeds)
 
 export const parseAmebloUrl = (url: string): AmebloUrl | undefined => {
-  const page = ameblo.pages.read(url)
+  const page = ameblo.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'blog', username: page.params.username }
+  return { kind: 'blog', username: page.values.username }
 }
 
 export const amebloHandler: PlatformHandler = {

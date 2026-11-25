@@ -14,7 +14,7 @@ const feeds = withHintLabels(castos.feeds)
 // site's /feed alias reads no id.
 const getLinkedFeedId = (content: string): string | undefined => {
   for (const url of findUrls(content)) {
-    const feedId = castos.feeds.read(url)?.params.feedId
+    const feedId = castos.feeds.readUrl(url)?.values.feedId
 
     if (feedId) {
       return feedId
@@ -23,13 +23,13 @@ const getLinkedFeedId = (content: string): string | undefined => {
 }
 
 export const parseCastosUrl = (url: string): CastosUrl | undefined => {
-  const page = castos.pages.read(url)
+  const page = castos.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'show', slug: page.params.slug }
+  return { kind: 'show', slug: page.values.slug }
 }
 
 export const getCastosPage = (url: string, content: string | undefined): CastosPage | undefined => {
@@ -49,7 +49,7 @@ export const castosHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getCastosPage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []

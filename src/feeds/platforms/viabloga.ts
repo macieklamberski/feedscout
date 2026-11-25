@@ -11,14 +11,14 @@ export type ViablogaUrl = { kind: 'blog' } | { kind: 'category'; category: strin
 const feeds = withHintLabels(viabloga.feeds)
 
 export const parseViablogaUrl = (url: string): ViablogaUrl | undefined => {
-  const page = viabloga.pages.read(url)
+  const page = viabloga.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'category') {
-    return { kind: 'category', category: page.params.category }
+    return { kind: 'category', category: page.values.category }
   }
 
   return { kind: 'blog' }
@@ -31,7 +31,7 @@ export const viablogaHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseViablogaUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

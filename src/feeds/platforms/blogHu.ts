@@ -15,17 +15,17 @@ export type BlogHuPost = { year: string; month: string; day: string; slug: strin
 const feeds = withHintLabels(blogHu.feeds)
 
 export const parseBlogHuUrl = (url: string): BlogHuUrl | undefined => {
-  const page = blogHu.pages.read(url)
+  const page = blogHu.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'user') {
-    return { kind: 'user', userId: page.params.userId }
+    return { kind: 'user', userId: page.values.userId }
   }
 
-  const { blog, year, month, day, slug, tag } = page.params
+  const { blog, year, month, day, slug, tag } = page.values
 
   // A post page links its comments feed. A tag page has a feed of the posts with that tag.
   if (year && month && day && slug) {
@@ -51,7 +51,7 @@ export const blogHuHandler: PlatformHandler = {
       return [feeds.getFeedEntry('user', { userId: parsed.userId })]
     }
 
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!page) {
       return []

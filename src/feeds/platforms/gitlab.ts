@@ -24,7 +24,7 @@ export const isGitlabHeaders = (headers: Headers): boolean => {
 }
 
 export const parseGitlabUrl = (url: string): GitlabUrl | undefined => {
-  const page = gitlab.pages.read(url, { isAnyHost: true })
+  const page = gitlab.pages.readUrl(url, { isAnyHost: true })
 
   if (!page) {
     return
@@ -35,22 +35,22 @@ export const parseGitlabUrl = (url: string): GitlabUrl | undefined => {
   }
 
   if (page.key === 'group') {
-    return { kind: 'namespace', namespace: page.params.group.join('/') }
+    return { kind: 'namespace', namespace: page.values.group.join('/') }
   }
 
   if (page.key === 'user') {
-    return { kind: 'namespace', namespace: page.params.user }
+    return { kind: 'namespace', namespace: page.values.user }
   }
 
   if (page.key === 'namespace') {
-    return { kind: 'namespace', namespace: page.params.namespace }
+    return { kind: 'namespace', namespace: page.values.namespace }
   }
 
-  const { project } = page.params
+  const { project } = page.values
   const projectPath = project.join('/')
 
   if (page.key === 'branch') {
-    return { kind: 'project', namespace: project[0], projectPath, branch: page.params.branch }
+    return { kind: 'project', namespace: project[0], projectPath, branch: page.values.branch }
   }
 
   return { kind: 'project', namespace: project[0], projectPath }
@@ -62,7 +62,7 @@ export const gitlabHandler: PlatformHandler = {
       return false
     }
 
-    const page = gitlab.pages.read(url)
+    const page = gitlab.pages.readUrl(url)
 
     if (page) {
       return page.key !== 'platform'
@@ -73,7 +73,7 @@ export const gitlabHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseGitlabUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

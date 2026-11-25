@@ -10,13 +10,13 @@ export type XimalayaUrl = { kind: 'album'; albumId: string }
 const feeds = withHintLabels(ximalaya.feeds)
 
 export const parseXimalayaUrl = (url: string): XimalayaUrl | undefined => {
-  const page = ximalaya.pages.read(url)
+  const page = ximalaya.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'album', albumId: page.params.albumId }
+  return { kind: 'album', albumId: page.values.albumId }
 }
 
 export const ximalayaHandler: PlatformHandler = {

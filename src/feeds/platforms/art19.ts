@@ -9,13 +9,13 @@ export type Art19Url = { kind: 'show'; slug: string }
 const feeds = withHintLabels(art19.feeds)
 
 export const parseArt19Url = (url: string): Art19Url | undefined => {
-  const page = art19.pages.read(url)
+  const page = art19.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'show', slug: page.params.slug }
+  return { kind: 'show', slug: page.values.slug }
 }
 
 export const art19Handler: PlatformHandler = {

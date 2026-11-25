@@ -11,17 +11,17 @@ export type PchomeUrl =
 const feeds = withHintLabels(pchome.feeds)
 
 export const parsePchomeUrl = (url: string): PchomeUrl | undefined => {
-  const page = pchome.pages.read(url)
+  const page = pchome.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'category') {
-    return { kind: 'category', username: page.params.username, category: page.params.category }
+    return { kind: 'category', username: page.values.username, category: page.values.category }
   }
 
-  return { kind: 'paper', username: page.params.username }
+  return { kind: 'paper', username: page.values.username }
 }
 
 export const pchomeHandler: PlatformHandler = {

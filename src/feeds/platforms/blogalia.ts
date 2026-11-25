@@ -11,7 +11,7 @@ export type BlogaliaUrl = { kind: 'blog' }
 const feeds = withHintLabels(blogalia.feeds)
 
 export const parseBlogaliaUrl = (url: string): BlogaliaUrl | undefined => {
-  if (!blogalia.pages.read(url)) {
+  if (!blogalia.pages.readUrl(url)) {
     return
   }
 
@@ -25,7 +25,7 @@ export const blogaliaHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseBlogaliaUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

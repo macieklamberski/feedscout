@@ -11,14 +11,14 @@ export type BangumiUrl = { kind: 'user'; username: string } | { kind: 'home' }
 const feeds = withHintLabels(bangumi.feeds)
 
 export const parseBangumiUrl = (url: string): BangumiUrl | undefined => {
-  const page = bangumi.pages.read(url)
+  const page = bangumi.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'user') {
-    return { kind: 'user', username: page.params.username }
+    return { kind: 'user', username: page.values.username }
   }
 
   return { kind: 'home' }
@@ -31,7 +31,7 @@ export const bangumiHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseBangumiUrl(url)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!parsed || !pageFeeds) {
       return []

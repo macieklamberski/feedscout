@@ -9,13 +9,13 @@ export type BlogiaUrl = { kind: 'blog'; blog: string }
 const feeds = withHintLabels(blogia.feeds)
 
 export const parseBlogiaUrl = (url: string): BlogiaUrl | undefined => {
-  const page = blogia.pages.read(url)
+  const page = blogia.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'blog', blog: page.params.blog }
+  return { kind: 'blog', blog: page.values.blog }
 }
 
 export const blogiaHandler: PlatformHandler = {
@@ -25,7 +25,7 @@ export const blogiaHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseBlogiaUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

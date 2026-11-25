@@ -18,7 +18,7 @@ const feeds = withHintLabels(estranky.feeds)
 const isAssetUrl = (source: string): boolean => {
   const assetUrl = startsWithAnyOf(source, '//') ? `https:${source}` : source
 
-  return estranky.pages.read(assetUrl)?.key === 'asset'
+  return estranky.pages.readUrl(assetUrl)?.key === 'asset'
 }
 
 // Every template loads its stylesheet and `ui.js` from the asset hosts, on a custom domain too.
@@ -34,7 +34,7 @@ export const isEstrankyHtml = (content: string): boolean => {
 
 // The apex and www run Estranky itself. Every other host is one site.
 export const parseEstrankyUrl = (url: string): EstrankyUrl | undefined => {
-  const key = estranky.pages.read(url)?.key
+  const key = estranky.pages.readUrl(url)?.key
 
   if (!parseUrl(url) || isAnyOf(key, ['platform', 'asset'])) {
     return
@@ -53,7 +53,7 @@ const getSliceUrl = (url: string, content: string | undefined): string => {
     return (
       element.name === 'a' &&
       element.attribs.rel === 'feedurl' &&
-      estranky.pages.read(href)?.key === 'site'
+      estranky.pages.readUrl(href)?.key === 'site'
     )
   })
 
@@ -62,7 +62,7 @@ const getSliceUrl = (url: string, content: string | undefined): string => {
 
 export const estrankyHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (!estranky.pages.read(url) && !hasMarker(content, headers, { html: isEstrankyHtml })) {
+    if (!estranky.pages.readUrl(url) && !hasMarker(content, headers, { html: isEstrankyHtml })) {
       return false
     }
 
@@ -72,8 +72,8 @@ export const estrankyHandler: PlatformHandler = {
   // A site serves the article feeds, the Web Slice feeds or both, by its template, and answers
   // 404 on a set it lacks. Its `photos.xml` and `comments.xml` links serve the posts feed.
   resolve: (url, content) => {
-    const siteFeeds = feeds.forUrl(url)
-    const sliceFeeds = feeds.forUrl(getSliceUrl(url, content))
+    const siteFeeds = feeds.forSite(url)
+    const sliceFeeds = feeds.forSite(getSliceUrl(url, content))
 
     if (!siteFeeds || !sliceFeeds) {
       return []

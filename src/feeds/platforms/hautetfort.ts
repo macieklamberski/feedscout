@@ -11,16 +11,16 @@ export type HautetfortUrl =
 const feeds = withHintLabels(hautetfort.feeds)
 
 export const parseHautetfortUrl = (url: string): HautetfortUrl | undefined => {
-  const page = hautetfort.pages.read(url)
+  const page = hautetfort.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  const { blog } = page.params
+  const { blog } = page.values
 
   if (page.key === 'category') {
-    return { kind: 'category', blog, category: page.params.category }
+    return { kind: 'category', blog, category: page.values.category }
   }
 
   return { kind: 'blog', blog }
@@ -33,7 +33,7 @@ export const hautetfortHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseHautetfortUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

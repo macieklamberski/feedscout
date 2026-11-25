@@ -10,13 +10,13 @@ export type OdyseeUrl = { kind: 'channel'; name: string; claimId?: string }
 const feeds = withHintLabels(odysee.feeds)
 
 export const parseOdyseeUrl = (url: string): OdyseeUrl | undefined => {
-  const page = odysee.pages.read(url)
+  const page = odysee.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  const { name, claimId } = page.params
+  const { name, claimId } = page.values
 
   return { kind: 'channel', name, claimId }
 }

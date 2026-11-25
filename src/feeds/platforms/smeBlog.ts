@@ -9,7 +9,7 @@ export type SmeBlogUrl = { kind: 'blog'; username: string } | { kind: 'home' }
 const feeds = withHintLabels(smeBlog.feeds)
 
 export const parseSmeBlogUrl = (url: string): SmeBlogUrl | undefined => {
-  const page = smeBlog.pages.read(url)
+  const page = smeBlog.pages.readUrl(url)
 
   if (!page) {
     return
@@ -19,7 +19,7 @@ export const parseSmeBlogUrl = (url: string): SmeBlogUrl | undefined => {
     return { kind: 'home' }
   }
 
-  return { kind: 'blog', username: page.params.username }
+  return { kind: 'blog', username: page.values.username }
 }
 
 export const smeBlogHandler: PlatformHandler = {

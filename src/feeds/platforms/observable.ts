@@ -14,7 +14,7 @@ export type ObservableUrl =
 const feeds = withHintLabels(observable.feeds)
 
 export const parseObservableUrl = (url: string): ObservableUrl | undefined => {
-  const page = observable.pages.read(url)
+  const page = observable.pages.readUrl(url)
 
   if (!page) {
     return
@@ -29,10 +29,10 @@ export const parseObservableUrl = (url: string): ObservableUrl | undefined => {
   }
 
   if (page.key === 'collection') {
-    return { kind: 'collection', owner: page.params.owner, collection: page.params.collection }
+    return { kind: 'collection', owner: page.values.owner, collection: page.values.collection }
   }
 
-  return { kind: 'user', owner: page.params.owner }
+  return { kind: 'user', owner: page.values.owner }
 }
 
 export const observableHandler: PlatformHandler = {

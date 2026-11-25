@@ -29,7 +29,7 @@ export type LaunchpadUrl =
 const feeds = withHintLabels(launchpad.feeds)
 
 export const parseLaunchpadUrl = (url: string): LaunchpadUrl | undefined => {
-  const page = launchpad.pages.read(url)
+  const page = launchpad.pages.readUrl(url)
 
   if (!page) {
     return
@@ -41,9 +41,9 @@ export const parseLaunchpadUrl = (url: string): LaunchpadUrl | undefined => {
     case 'bugsHome':
       return { kind: 'home', application: 'bugs' }
     case 'bug':
-      return { kind: 'bug', bugId: page.params.bugId }
+      return { kind: 'bug', bugId: page.values.bugId }
     case 'branch': {
-      const { owner, project, branch, distribution, series, sourcePackage } = page.params
+      const { owner, project, branch, distribution, series, sourcePackage } = page.values
 
       if (project) {
         return { kind: 'branch', owner, project, branch }
@@ -56,22 +56,22 @@ export const parseLaunchpadUrl = (url: string): LaunchpadUrl | undefined => {
       return { kind: 'branch', owner, distribution, series, sourcePackage, branch }
     }
     case 'sourcePackage': {
-      const { distribution, sourcePackage } = page.params
+      const { distribution, sourcePackage } = page.values
 
       return { kind: 'sourcePackage', distribution, sourcePackage }
     }
     case 'person':
-      return { kind: 'person', application: 'main', username: page.params.username }
+      return { kind: 'person', application: 'main', username: page.values.username }
     case 'bugsPerson':
-      return { kind: 'person', application: 'bugs', username: page.params.username }
+      return { kind: 'person', application: 'bugs', username: page.values.username }
     case 'codePerson':
-      return { kind: 'person', application: 'code', username: page.params.username }
+      return { kind: 'person', application: 'code', username: page.values.username }
     case 'project':
-      return { kind: 'project', application: 'main', project: page.params.project }
+      return { kind: 'project', application: 'main', project: page.values.project }
     case 'bugsProject':
-      return { kind: 'project', application: 'bugs', project: page.params.project }
+      return { kind: 'project', application: 'bugs', project: page.values.project }
     case 'codeProject':
-      return { kind: 'project', application: 'code', project: page.params.project }
+      return { kind: 'project', application: 'code', project: page.values.project }
   }
 }
 

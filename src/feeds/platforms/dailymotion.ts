@@ -15,7 +15,7 @@ export type DailymotionUrl =
 const feeds = withHintLabels(dailymotion.feeds)
 
 export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => {
-  const page = dailymotion.pages.read(url)
+  const page = dailymotion.pages.readUrl(url)
 
   if (!page) {
     return
@@ -26,18 +26,18 @@ export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => 
   }
 
   if (page.key === 'playlist') {
-    return { kind: 'playlist', playlistId: page.params.id }
+    return { kind: 'playlist', playlistId: page.values.id }
   }
 
   if (page.key === 'search') {
-    return { kind: 'search', query: page.params.query }
+    return { kind: 'search', query: page.values.query }
   }
 
   if (page.key === 'channel') {
-    return { kind: 'channel', channel: page.params.channel }
+    return { kind: 'channel', channel: page.values.channel }
   }
 
-  return { kind: 'user', username: page.params.username }
+  return { kind: 'user', username: page.values.username }
 }
 
 export const dailymotionHandler: PlatformHandler = {

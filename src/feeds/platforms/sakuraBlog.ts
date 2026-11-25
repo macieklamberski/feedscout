@@ -9,13 +9,13 @@ export type SakuraBlogUrl = { kind: 'blog'; hostname: string }
 const feeds = withHintLabels(sakuraBlog.feeds)
 
 export const parseSakuraBlogUrl = (url: string): SakuraBlogUrl | undefined => {
-  const page = sakuraBlog.pages.read(url)
+  const page = sakuraBlog.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'blog', hostname: page.params.host }
+  return { kind: 'blog', hostname: page.values.host }
 }
 
 export const sakuraBlogHandler: PlatformHandler = {
@@ -24,7 +24,7 @@ export const sakuraBlogHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parseSakuraBlogUrl(url) || !page) {
       return []

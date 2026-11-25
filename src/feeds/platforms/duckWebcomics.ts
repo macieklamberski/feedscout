@@ -9,13 +9,13 @@ export type DuckWebcomicsUrl = { kind: 'comic'; comic: string }
 const feeds = withHintLabels(duckWebcomics.feeds)
 
 export const parseDuckWebcomicsUrl = (url: string): DuckWebcomicsUrl | undefined => {
-  const page = duckWebcomics.pages.read(url)
+  const page = duckWebcomics.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'comic', comic: page.params.comic }
+  return { kind: 'comic', comic: page.values.comic }
 }
 
 export const duckWebcomicsHandler: PlatformHandler = {
@@ -25,7 +25,7 @@ export const duckWebcomicsHandler: PlatformHandler = {
 
   resolve: (url) => {
     const page = parseDuckWebcomicsUrl(url)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []

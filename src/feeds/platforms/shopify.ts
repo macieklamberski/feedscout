@@ -15,16 +15,16 @@ export const isShopifyHeaders = (headers: Headers): boolean => {
 }
 
 export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {
-  const page = shopify.pages.read(url, { isAnyHost: true })
+  const page = shopify.pages.readUrl(url, { isAnyHost: true })
 
   if (!page) {
     return
   }
 
-  const { handle } = page.params
+  const { handle } = page.values
 
   if (page.key === 'blog-tag') {
-    return { kind: 'blog', handle, tag: page.params.tag }
+    return { kind: 'blog', handle, tag: page.values.tag }
   }
 
   return { kind: 'blog', handle }
@@ -41,7 +41,7 @@ export const shopifyHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseShopifyUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

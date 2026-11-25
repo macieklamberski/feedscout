@@ -17,30 +17,30 @@ export type HabrUrl =
 const feeds = withHintLabels(habr.feeds)
 
 export const parseHabrUrl = (url: string): HabrUrl | undefined => {
-  const page = habr.pages.read(url)
+  const page = habr.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'hub') {
-    return { kind: 'hub', hub: page.params.hub }
+    return { kind: 'hub', hub: page.values.hub }
   }
 
   if (page.key === 'user') {
-    return { kind: 'user', username: page.params.username }
+    return { kind: 'user', username: page.values.username }
   }
 
   if (page.key === 'article') {
-    return { kind: 'article', post: page.params.post, company: page.params.company }
+    return { kind: 'article', post: page.values.post, company: page.values.company }
   }
 
   if (page.key === 'company') {
-    return { kind: 'company', company: page.params.company }
+    return { kind: 'company', company: page.values.company }
   }
 
   if (page.key === 'flow') {
-    return { kind: 'flow', flow: page.params.flow }
+    return { kind: 'flow', flow: page.values.flow }
   }
 
   return { kind: 'home' }

@@ -39,22 +39,22 @@ export const isPhpbbHeaders = (headers: Headers): boolean => {
 }
 
 const getPhpbbPage = (url: string, content: string | undefined): PhpbbPage | undefined => {
-  const page = phpbb.pages.read(url, { isAnyHost: true })
+  const page = phpbb.pages.readUrl(url, { isAnyHost: true })
 
   if (!page) {
     return
   }
 
-  const root = getSiteUrl(page.params)
-  const forumId = page.key === 'board' ? undefined : page.params.forumId
-  const topicId = page.key === 'topic' ? page.params.topicId : undefined
+  const root = getSiteUrl(page.values)
+  const forumId = page.key === 'board' ? undefined : page.values.forumId
+  const topicId = page.key === 'topic' ? page.values.topicId : undefined
   // A post link, `viewtopic.php?p={id}`, names no topic, and the page's canonical link does.
   const canonicalLink = findElement(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'canonical'
   })
   const canonicalUrl = parseUrl(canonicalLink?.attribs.href, url)?.href ?? ''
-  const canonicalPage = phpbb.pages.read(canonicalUrl, { isAnyHost: true })
-  const canonicalTopicId = canonicalPage?.key === 'topic' ? canonicalPage.params.topicId : undefined
+  const canonicalPage = phpbb.pages.readUrl(canonicalUrl, { isAnyHost: true })
+  const canonicalTopicId = canonicalPage?.key === 'topic' ? canonicalPage.values.topicId : undefined
 
   return {
     boardUrl: root,
@@ -70,7 +70,7 @@ export const phpbbHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getPhpbbPage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []

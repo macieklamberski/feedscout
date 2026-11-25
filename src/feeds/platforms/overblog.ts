@@ -9,7 +9,7 @@ export type OverblogUrl = { kind: 'blog' }
 const feeds = withHintLabels(overblog.feeds)
 
 export const parseOverblogUrl = (url: string): OverblogUrl | undefined => {
-  if (!overblog.pages.read(url)) {
+  if (!overblog.pages.readUrl(url)) {
     return
   }
 
@@ -23,7 +23,7 @@ export const overblogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseOverblogUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

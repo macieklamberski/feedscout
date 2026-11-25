@@ -17,25 +17,25 @@ export const hosts = medium.hosts.exact
 const feeds = withHintLabels(medium.feeds)
 
 export const parseMediumUrl = (url: string): MediumUrl | undefined => {
-  const page = medium.pages.read(url)
+  const page = medium.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'user') {
-    return { kind: 'user', username: page.params.username }
+    return { kind: 'user', username: page.values.username }
   }
 
   if (page.key === 'tag') {
-    return { kind: 'tag', tag: page.params.tag }
+    return { kind: 'tag', tag: page.values.tag }
   }
 
   if (page.key === 'publication') {
-    return { kind: 'publication', publication: page.params.publication, tag: page.params.tag }
+    return { kind: 'publication', publication: page.values.publication, tag: page.values.tag }
   }
 
-  return { kind: 'subdomain', subdomain: page.params.subdomain, tag: page.params.tag }
+  return { kind: 'subdomain', subdomain: page.values.subdomain, tag: page.values.tag }
 }
 
 export const mediumHandler: PlatformHandler = {
@@ -68,7 +68,7 @@ export const mediumHandler: PlatformHandler = {
       return [feeds.getFeedEntry('publication', { publication: parsed.publication })]
     }
 
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!page) {
       return []

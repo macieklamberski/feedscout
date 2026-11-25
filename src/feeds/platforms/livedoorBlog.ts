@@ -11,17 +11,17 @@ export type LivedoorBlogUrl =
 const feeds = withHintLabels(livedoorBlog.feeds)
 
 export const parseLivedoorBlogUrl = (url: string): LivedoorBlogUrl | undefined => {
-  const page = livedoorBlog.pages.read(url)
+  const page = livedoorBlog.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'category') {
-    return { kind: 'category', blog: page.params.blog, category: page.params.category }
+    return { kind: 'category', blog: page.values.blog, category: page.values.category }
   }
 
-  return { kind: 'blog', blog: page.params.blog }
+  return { kind: 'blog', blog: page.values.blog }
 }
 
 export const livedoorBlogHandler: PlatformHandler = {
@@ -31,7 +31,7 @@ export const livedoorBlogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseLivedoorBlogUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

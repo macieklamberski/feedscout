@@ -17,13 +17,13 @@ export const isOdooHeaders = (headers: Headers): boolean => {
 }
 
 export const parseOdooUrl = (url: string): OdooUrl | undefined => {
-  const page = odoo.pages.read(url, { isAnyHost: true })
+  const page = odoo.pages.readUrl(url, { isAnyHost: true })
 
   if (!page) {
     return
   }
 
-  return { kind: 'blog', blog: page.params.blog }
+  return { kind: 'blog', blog: page.values.blog }
 }
 
 export const odooHandler: PlatformHandler = {
@@ -37,7 +37,7 @@ export const odooHandler: PlatformHandler = {
 
   resolve: (url) => {
     const odooUrl = parseOdooUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!odooUrl || !page) {
       return []

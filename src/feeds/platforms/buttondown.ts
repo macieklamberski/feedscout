@@ -9,13 +9,13 @@ export type ButtondownUrl = { kind: 'newsletter'; username: string }
 const feeds = withHintLabels(buttondown.feeds)
 
 export const parseButtondownUrl = (url: string): ButtondownUrl | undefined => {
-  const page = buttondown.pages.read(url)
+  const page = buttondown.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'newsletter', username: page.params.username }
+  return { kind: 'newsletter', username: page.values.username }
 }
 
 export const buttondownHandler: PlatformHandler = {

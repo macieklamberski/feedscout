@@ -18,13 +18,13 @@ const getColorsRoot = (url: string, href: string | undefined): string | undefine
     return
   }
 
-  const link = castopod.pages.read(linkUrl.href, { isAnyHost: true })
+  const link = castopod.pages.readUrl(linkUrl.href, { isAnyHost: true })
 
   if (link?.key !== 'colors') {
     return
   }
 
-  return getSiteUrl(link.params)
+  return getSiteUrl(link.values)
 }
 
 const getCastopodPage = (url: string, content: string | undefined): CastopodPage | undefined => {
@@ -37,13 +37,13 @@ const getCastopodPage = (url: string, content: string | undefined): CastopodPage
     return
   }
 
-  const page = castopod.pages.read(url, { base: getSiteParams(root)?.base })
+  const page = castopod.pages.readUrl(url, { base: getSiteParams(root)?.base })
 
   if (page?.key !== 'podcast') {
     return
   }
 
-  return { rootUrl: getSiteUrl(page.params), handle: page.params.handle }
+  return { rootUrl: getSiteUrl(page.values), handle: page.values.handle }
 }
 
 export const castopodHandler: PlatformHandler = {

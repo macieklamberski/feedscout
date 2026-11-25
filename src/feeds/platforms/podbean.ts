@@ -11,13 +11,13 @@ export type PodbeanUrl = { kind: 'podcast'; show: string }
 const feeds = withHintLabels(podbean.feeds)
 
 export const parsePodbeanUrl = (url: string): PodbeanUrl | undefined => {
-  const page = podbean.pages.read(url)
+  const page = podbean.pages.readUrl(url)
 
   if (page?.key !== 'podcast') {
     return
   }
 
-  return { kind: 'podcast', show: page.params.show }
+  return { kind: 'podcast', show: page.values.show }
 }
 
 export const podbeanHandler: PlatformHandler = {

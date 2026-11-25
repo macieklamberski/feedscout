@@ -28,13 +28,13 @@ export const isOjsHeaders = (headers: Headers): boolean => {
 
 export const getOjsPage = (content: string | undefined): OjsPage | undefined => {
   const getComponentRoot = (href: string | undefined): string | undefined => {
-    const page = ojs.pages.read(href ?? '', { isAnyHost: true })
+    const page = ojs.pages.readUrl(href ?? '', { isAnyHost: true })
 
     if (page?.key !== 'component') {
       return
     }
 
-    return getSiteUrl(page.params)
+    return getSiteUrl(page.values)
   }
   const stylesheet = findElement(content, (element) => {
     return element.name === 'link' && getComponentRoot(element.attribs.href) !== undefined

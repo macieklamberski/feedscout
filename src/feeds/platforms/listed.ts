@@ -9,13 +9,13 @@ export type ListedUrl = { kind: 'blog'; username: string }
 const feeds = withHintLabels(listed.feeds)
 
 export const parseListedUrl = (url: string): ListedUrl | undefined => {
-  const page = listed.pages.read(url)
+  const page = listed.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'blog', username: page.params.username }
+  return { kind: 'blog', username: page.values.username }
 }
 
 export const listedHandler: PlatformHandler = {

@@ -43,10 +43,10 @@ const getBreadcrumbForumId = (url: string, content: string | undefined): string 
     }
 
     const href = parseUrl(child.attribs.href, url)?.href ?? ''
-    const link = mybb.pages.read(href, { isAnyHost: true })
+    const link = mybb.pages.readUrl(href, { isAnyHost: true })
 
     if (link?.key === 'forum') {
-      forumId = link.params.forumId
+      forumId = link.values.forumId
     }
   }
 
@@ -55,16 +55,16 @@ const getBreadcrumbForumId = (url: string, content: string | undefined): string 
 
 // MyBB 1.8 prints the board URL as `rootpath`. On an older board the page's directory is the root.
 const getMybbPage = (url: string, content: string | undefined): MybbPage | undefined => {
-  const page = mybb.pages.read(url, { isAnyHost: true })
+  const page = mybb.pages.readUrl(url, { isAnyHost: true })
 
   if (!page) {
     return
   }
 
-  const boardUrl = content?.match(rootPathRegex)?.[1] ?? getSiteUrl(page.params)
+  const boardUrl = content?.match(rootPathRegex)?.[1] ?? getSiteUrl(page.values)
 
   if (page.key === 'forum') {
-    return { boardUrl, forumId: page.params.forumId }
+    return { boardUrl, forumId: page.values.forumId }
   }
 
   if (page.key === 'thread') {
@@ -81,7 +81,7 @@ export const mybbHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getMybbPage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []

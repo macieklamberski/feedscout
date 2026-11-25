@@ -23,7 +23,7 @@ const extractFeedUrlFromContent = (content: string): string | undefined => {
 }
 
 export const parseApplePodcastsUrl = (url: string): ApplePodcastsUrl | undefined => {
-  if (!applePodcasts.pages.read(url)) {
+  if (!applePodcasts.pages.readUrl(url)) {
     return
   }
 

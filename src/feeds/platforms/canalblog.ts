@@ -9,7 +9,7 @@ export type CanalblogUrl = { kind: 'blog' }
 const feeds = withHintLabels(canalblog.feeds)
 
 export const parseCanalblogUrl = (url: string): CanalblogUrl | undefined => {
-  if (!canalblog.pages.read(url)) {
+  if (!canalblog.pages.readUrl(url)) {
     return
   }
 
@@ -23,7 +23,7 @@ export const canalblogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseCanalblogUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

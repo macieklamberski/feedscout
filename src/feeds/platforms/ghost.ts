@@ -12,18 +12,18 @@ export type GhostUrl =
 const feeds = withHintLabels(ghost.feeds)
 
 export const parseGhostUrl = (url: string): GhostUrl | undefined => {
-  const page = ghost.pages.read(url)
+  const page = ghost.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'tag') {
-    return { kind: 'tag', tag: page.params.tag }
+    return { kind: 'tag', tag: page.values.tag }
   }
 
   if (page.key === 'author') {
-    return { kind: 'author', author: page.params.author }
+    return { kind: 'author', author: page.values.author }
   }
 
   return { kind: 'blog' }
@@ -36,7 +36,7 @@ export const ghostHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseGhostUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

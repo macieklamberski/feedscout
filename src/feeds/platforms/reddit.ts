@@ -29,7 +29,7 @@ const feeds = withHintLabels(reddit.feeds)
 // Combined subreddits work transparently: /r/{sub1}+{sub2} is captured as one name. A sort and a
 // timeframe are read in any case and built in lowercase.
 export const parseRedditUrl = (url: string): RedditUrl | undefined => {
-  const page = reddit.pages.read(url)
+  const page = reddit.pages.readUrl(url)
 
   if (!page) {
     return
@@ -40,37 +40,37 @@ export const parseRedditUrl = (url: string): RedditUrl | undefined => {
   }
 
   if (page.key === 'site-sort') {
-    const { sort, timeframe } = page.params
+    const { sort, timeframe } = page.values
 
     return { kind: 'siteSort', sort: sort.toLowerCase(), timeframe: timeframe?.toLowerCase() }
   }
 
   if (page.key === 'site-search') {
-    return { kind: 'siteSearch', query: page.params.query }
+    return { kind: 'siteSearch', query: page.values.query }
   }
 
   if (page.key === 'subreddits') {
-    return { kind: 'subreddits', sort: page.params.sort?.toLowerCase() }
+    return { kind: 'subreddits', sort: page.values.sort?.toLowerCase() }
   }
 
   if (page.key === 'domain') {
-    return { kind: 'domain', domain: page.params.domain }
+    return { kind: 'domain', domain: page.values.domain }
   }
 
   if (page.key === 'search') {
-    return { kind: 'search', subreddit: page.params.subreddit, query: page.params.query }
+    return { kind: 'search', subreddit: page.values.subreddit, query: page.values.query }
   }
 
   if (page.key === 'wiki') {
-    return { kind: 'wiki', subreddit: page.params.subreddit }
+    return { kind: 'wiki', subreddit: page.values.subreddit }
   }
 
   if (page.key === 'post') {
-    return { kind: 'post', subreddit: page.params.subreddit, postId: page.params.postId }
+    return { kind: 'post', subreddit: page.values.subreddit, postId: page.values.postId }
   }
 
   if (page.key === 'subreddit') {
-    const { subreddit, sort, timeframe } = page.params
+    const { subreddit, sort, timeframe } = page.values
 
     if (!sort) {
       return { kind: 'subreddit', subreddit }
@@ -85,24 +85,24 @@ export const parseRedditUrl = (url: string): RedditUrl | undefined => {
   }
 
   if (page.key === 'multireddit') {
-    const { username, multireddit } = page.params
+    const { username, multireddit } = page.values
 
     return { kind: 'multireddit', username, multireddit }
   }
 
   if (page.key === 'submitted') {
-    return { kind: 'submitted', username: page.params.username }
+    return { kind: 'submitted', username: page.values.username }
   }
 
   if (page.key === 'user-post') {
-    return { kind: 'userPost', username: page.params.username, postId: page.params.postId }
+    return { kind: 'userPost', username: page.values.username, postId: page.values.postId }
   }
 
   if (page.key === 'comments') {
-    return { kind: 'comments', username: page.params.username }
+    return { kind: 'comments', username: page.values.username }
   }
 
-  return { kind: 'user', username: page.params.username }
+  return { kind: 'user', username: page.values.username }
 }
 
 export const redditHandler: PlatformHandler = {

@@ -11,14 +11,14 @@ export type RubygemsUrl = { kind: 'gem'; gem: string } | { kind: 'home' }
 const feeds = withHintLabels(rubygems.feeds)
 
 export const parseRubygemsUrl = (url: string): RubygemsUrl | undefined => {
-  const page = rubygems.pages.read(url)
+  const page = rubygems.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'gem') {
-    return { kind: 'gem', gem: page.params.gem }
+    return { kind: 'gem', gem: page.values.gem }
   }
 
   return { kind: 'home' }

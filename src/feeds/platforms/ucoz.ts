@@ -7,7 +7,7 @@ import { getCookieNames, getTenantLabels, hasMarker } from '../../common/utils.j
 // Generic finds: forum, forum-section, publ.
 // Handler needed for: news.
 
-type UcozPageKey = NonNullable<ReturnType<typeof ucoz.pages.read>>['key']
+type UcozPageKey = NonNullable<ReturnType<typeof ucoz.pages.readUrl>>['key']
 
 type UcozModule = Exclude<UcozPageKey, 'site' | 'platform' | 'forum-section' | 'home'>
 
@@ -31,21 +31,21 @@ export const parseUcozUrl = (url: string): UcozUrl | undefined => {
     return
   }
 
-  const hostPage = ucoz.pages.read(url)
+  const hostPage = ucoz.pages.readUrl(url)
 
   // A host nested deeper under the platform's own domains is no site of it.
   if (hostPage?.key === 'platform' || (!hostPage && getTenantLabels(url, ucoz.hosts.tenant))) {
     return
   }
 
-  const page = ucoz.pages.read(url, { isAnyHost: true })
+  const page = ucoz.pages.readUrl(url, { isAnyHost: true })
 
   if (!page || page.key === 'home' || page.key === 'site' || page.key === 'platform') {
     return { kind: 'home' }
   }
 
   if (page.key === 'forum-section') {
-    return { kind: 'forumSection', sectionId: page.params.sectionId }
+    return { kind: 'forumSection', sectionId: page.values.sectionId }
   }
 
   return { kind: 'module', module: page.key }
@@ -54,7 +54,7 @@ export const parseUcozUrl = (url: string): UcozUrl | undefined => {
 export const ucozHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (
-      ucoz.pages.read(url)?.key !== 'site' &&
+      ucoz.pages.readUrl(url)?.key !== 'site' &&
       !hasMarker(content, headers, { headers: isUcozHeaders })
     ) {
       return false
@@ -70,7 +70,7 @@ export const ucozHandler: PlatformHandler = {
       return []
     }
 
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!pageFeeds) {
       return []

@@ -15,14 +15,14 @@ const jsonStringRegex = /"([^"]*)"/g
 const feeds = withHintLabels(ivoox.feeds)
 
 export const parseIvooxUrl = (url: string): IvooxUrl | undefined => {
-  const page = ivoox.pages.read(url)
+  const page = ivoox.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'podcast') {
-    return { kind: 'podcast', podcastId: page.params.podcastId }
+    return { kind: 'podcast', podcastId: page.values.podcastId }
   }
 
   return { kind: 'episode' }
@@ -42,10 +42,10 @@ export const getIvooxPage = (url: string, content: string | undefined): IvooxPag
   const series = partOfSeriesRegex.exec(content ?? '')?.groups?.series ?? ''
 
   for (const [, value] of series.matchAll(jsonStringRegex)) {
-    const page = ivoox.pages.read(value)
+    const page = ivoox.pages.readUrl(value)
 
     if (page?.key === 'podcast') {
-      return { kind: 'episode', podcastId: page.params.podcastId }
+      return { kind: 'episode', podcastId: page.values.podcastId }
     }
   }
 }

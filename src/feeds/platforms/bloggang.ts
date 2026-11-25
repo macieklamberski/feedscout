@@ -12,21 +12,21 @@ export type BloggangUrl =
 const feeds = withHintLabels(bloggang.feeds)
 
 export const parseBloggangUrl = (url: string): BloggangUrl | undefined => {
-  const page = bloggang.pages.read(url)
+  const page = bloggang.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'post') {
-    return { kind: 'post', username: page.params.username }
+    return { kind: 'post', username: page.values.username }
   }
 
   if (page.key === 'diary') {
-    return { kind: 'diary', username: page.params.username }
+    return { kind: 'diary', username: page.values.username }
   }
 
-  return { kind: 'blog', username: page.params.username }
+  return { kind: 'blog', username: page.values.username }
 }
 
 export const bloggangHandler: PlatformHandler = {
@@ -36,7 +36,7 @@ export const bloggangHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseBloggangUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

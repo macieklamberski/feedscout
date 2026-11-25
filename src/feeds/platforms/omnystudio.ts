@@ -11,17 +11,17 @@ export type OmnystudioUrl =
 const feeds = withHintLabels(omnystudio.feeds)
 
 export const parseOmnystudioUrl = (url: string): OmnystudioUrl | undefined => {
-  const page = omnystudio.pages.read(url)
+  const page = omnystudio.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'playlist') {
-    return { kind: 'playlist', show: page.params.show, playlist: page.params.playlist }
+    return { kind: 'playlist', show: page.values.show, playlist: page.values.playlist }
   }
 
-  return { kind: 'show', show: page.params.show }
+  return { kind: 'show', show: page.values.show }
 }
 
 export const omnystudioHandler: PlatformHandler = {
