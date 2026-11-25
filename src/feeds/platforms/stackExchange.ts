@@ -16,26 +16,26 @@ export type StackExchangeUrl =
 const feeds = withHintLabels(stackExchange.feeds)
 
 export const parseStackExchangeUrl = (url: string): StackExchangeUrl | undefined => {
-  const page = stackExchange.pages.read(url)
+  const page = stackExchange.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'tag') {
-    return { kind: 'tag', tag: page.params.tag, sort: page.params.sort }
+    return { kind: 'tag', tag: page.values.tag, sort: page.values.sort }
   }
 
   if (page.key === 'question') {
-    return { kind: 'question', questionId: page.params.questionId }
+    return { kind: 'question', questionId: page.values.questionId }
   }
 
   if (page.key === 'user') {
-    return { kind: 'user', userId: page.params.userId }
+    return { kind: 'user', userId: page.values.userId }
   }
 
   if (page.key === 'collective') {
-    return { kind: 'collective', collective: page.params.collective }
+    return { kind: 'collective', collective: page.values.collective }
   }
 
   return { kind: 'home' }
@@ -48,7 +48,7 @@ export const stackExchangeHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseStackExchangeUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

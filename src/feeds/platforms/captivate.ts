@@ -11,13 +11,13 @@ export type CaptivateUrl = { kind: 'show'; slug: string }
 const feeds = withHintLabels(captivate.feeds)
 
 export const parseCaptivateUrl = (url: string): CaptivateUrl | undefined => {
-  const page = captivate.pages.read(url)
+  const page = captivate.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'show', slug: page.params.slug }
+  return { kind: 'show', slug: page.values.slug }
 }
 
 export const captivateHandler: PlatformHandler = {

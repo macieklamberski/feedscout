@@ -16,7 +16,7 @@ export type TischtennislivePage =
 const feeds = withHintLabels(tischtennislive.feeds)
 
 export const parseTischtennisliveUrl = (url: string): TischtennisliveUrl | undefined => {
-  if (!tischtennislive.pages.read(url)) {
+  if (!tischtennislive.pages.readUrl(url)) {
     return
   }
 
@@ -39,7 +39,7 @@ export const getTischtennislivePage = (
   url: string,
   content: string | undefined,
 ): TischtennislivePage | undefined => {
-  const page = tischtennislive.pages.read(url)
+  const page = tischtennislive.pages.readUrl(url)
 
   if (!page) {
     return
@@ -51,11 +51,11 @@ export const getTischtennislivePage = (
   const linkedPage = getResultsPage(link?.attribs.href, url)
 
   if (linkedPage?.key === 'group') {
-    return { kind: 'group', group: linkedPage.params.group }
+    return { kind: 'group', group: linkedPage.values.group }
   }
 
   if (linkedPage?.key === 'league') {
-    return { kind: 'league', league: linkedPage.params.league }
+    return { kind: 'league', league: linkedPage.values.league }
   }
 
   return { kind: 'association' }
@@ -68,7 +68,7 @@ export const tischtennisliveHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getTischtennislivePage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []

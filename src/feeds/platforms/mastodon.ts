@@ -36,17 +36,17 @@ export const isMastodonHeaders = (headers: Headers): boolean => {
 }
 
 export const parseMastodonUrl = (url: string): MastodonUrl | undefined => {
-  const page = mastodon.pages.read(url, { isAnyHost: true })
+  const page = mastodon.pages.readUrl(url, { isAnyHost: true })
 
   if (!page) {
     return
   }
 
   if (page.key === 'tag') {
-    return { kind: 'tag', tag: page.params.tag }
+    return { kind: 'tag', tag: page.values.tag }
   }
 
-  const { username } = page.params
+  const { username } = page.values
 
   if (page.key === 'replies') {
     return { kind: 'replies', username }
@@ -57,7 +57,7 @@ export const parseMastodonUrl = (url: string): MastodonUrl | undefined => {
   }
 
   if (page.key === 'tagged') {
-    return { kind: 'tagged', username, tag: page.params.tag }
+    return { kind: 'tagged', username, tag: page.values.tag }
   }
 
   return { kind: 'profile', username }
@@ -74,7 +74,7 @@ export const mastodonHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseMastodonUrl(url)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!parsed || !pageFeeds) {
       return []

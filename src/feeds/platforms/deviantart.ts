@@ -16,7 +16,7 @@ export type DeviantartUrl =
 const feeds = withHintLabels(deviantart.feeds)
 
 export const parseDeviantartUrl = (url: string): DeviantartUrl | undefined => {
-  const page = deviantart.pages.read(url)
+  const page = deviantart.pages.readUrl(url)
 
   if (!page) {
     return
@@ -27,22 +27,22 @@ export const parseDeviantartUrl = (url: string): DeviantartUrl | undefined => {
   }
 
   if (page.key === 'tag') {
-    return { kind: 'tag', tag: page.params.tag }
+    return { kind: 'tag', tag: page.values.tag }
   }
 
   if (page.key === 'favourites') {
-    return { kind: 'favourites', username: page.params.username }
+    return { kind: 'favourites', username: page.values.username }
   }
 
   if (page.key === 'folder') {
-    return { kind: 'folder', username: page.params.username, folderId: page.params.folderId }
+    return { kind: 'folder', username: page.values.username, folderId: page.values.folderId }
   }
 
   if (page.key === 'journal') {
-    return { kind: 'journal', username: page.params.username }
+    return { kind: 'journal', username: page.values.username }
   }
 
-  return { kind: 'profile', username: page.params.username }
+  return { kind: 'profile', username: page.values.username }
 }
 
 export const deviantartHandler: PlatformHandler = {

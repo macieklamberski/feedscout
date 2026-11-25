@@ -16,18 +16,18 @@ export type QiitaUrl =
 const feeds = withHintLabels(qiita.feeds)
 
 export const parseQiitaUrl = (url: string): QiitaUrl | undefined => {
-  const page = qiita.pages.read(url)
+  const page = qiita.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'tag') {
-    return { kind: 'tag', tag: page.params.tag }
+    return { kind: 'tag', tag: page.values.tag }
   }
 
   if (page.key === 'organization') {
-    return { kind: 'organization', organization: page.params.organization }
+    return { kind: 'organization', organization: page.values.organization }
   }
 
   if (page.key === 'popularItems') {
@@ -38,7 +38,7 @@ export const parseQiitaUrl = (url: string): QiitaUrl | undefined => {
     return { kind: 'officialColumns' }
   }
 
-  return { kind: 'user', username: page.params.username }
+  return { kind: 'user', username: page.values.username }
 }
 
 export const qiitaHandler: PlatformHandler = {

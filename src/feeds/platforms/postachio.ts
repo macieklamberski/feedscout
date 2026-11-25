@@ -9,13 +9,13 @@ export type PostachioUrl = { kind: 'site'; subdomain: string }
 const feeds = withHintLabels(postachio.feeds)
 
 export const parsePostachioUrl = (url: string): PostachioUrl | undefined => {
-  const page = postachio.pages.read(url)
+  const page = postachio.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'site', subdomain: page.params.subdomain }
+  return { kind: 'site', subdomain: page.values.subdomain }
 }
 
 export const postachioHandler: PlatformHandler = {
@@ -25,7 +25,7 @@ export const postachioHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePostachioUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

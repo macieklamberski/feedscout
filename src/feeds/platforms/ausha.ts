@@ -14,16 +14,16 @@ const feeds = withHintLabels(ausha.feeds)
 // The feed id is opaque: show and episode pages carry it only in the markup.
 const getLinkedFeedId = (content: string): string | undefined => {
   for (const url of findUrls(content)) {
-    const feed = ausha.feeds.read(url)
+    const feed = ausha.feeds.readUrl(url)
 
     if (feed?.key === 'podcast') {
-      return feed.params.feedId
+      return feed.values.feedId
     }
   }
 }
 
 export const parseAushaUrl = (url: string): AushaUrl | undefined => {
-  const page = ausha.pages.read(url)
+  const page = ausha.pages.readUrl(url)
 
   if (!page) {
     return

@@ -10,13 +10,13 @@ export type BitchuteUrl = { kind: 'channel'; channel: string }
 const feeds = withHintLabels(bitchute.feeds)
 
 export const parseBitchuteUrl = (url: string): BitchuteUrl | undefined => {
-  const page = bitchute.pages.read(url)
+  const page = bitchute.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'channel', channel: page.params.channel }
+  return { kind: 'channel', channel: page.values.channel }
 }
 
 export const bitchuteHandler: PlatformHandler = {

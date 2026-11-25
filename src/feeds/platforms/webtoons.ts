@@ -9,11 +9,11 @@ const feeds = withHintLabels(webtoons.feeds)
 
 export const webtoonsHandler: PlatformHandler = {
   match: (url) => {
-    return webtoons.pages.read(url) !== undefined
+    return webtoons.pages.readUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const page = webtoons.pages.read(url)
+    const page = webtoons.pages.readUrl(url)
 
     if (!page) {
       return []
@@ -21,7 +21,7 @@ export const webtoonsHandler: PlatformHandler = {
 
     const variant = page.key === 'canvas' ? 'canvas' : undefined
 
-    return [feeds.getFeedEntry('series', page.params, undefined, variant)]
+    return [feeds.getFeedEntry('series', page.values, undefined, variant)]
   },
 
   getFeedHint: feeds.getFeedHint,

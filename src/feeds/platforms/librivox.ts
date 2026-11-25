@@ -13,17 +13,17 @@ export type LibrivoxPage = { audiobookId: string }
 
 // An audiobook page links its feed by numeric id, which the slug does not carry.
 const getAudiobookId = (href: string | undefined): string | undefined => {
-  const feed = librivox.feeds.read(href ?? '')
+  const feed = librivox.feeds.readUrl(href ?? '')
 
   if (feed?.key !== 'audiobook') {
     return
   }
 
-  return feed.params.audiobookId
+  return feed.values.audiobookId
 }
 
 const getLibrivoxPage = (url: string, content: string | undefined): LibrivoxPage | undefined => {
-  if (librivox.pages.read(url)?.key !== 'audiobook') {
+  if (librivox.pages.readUrl(url)?.key !== 'audiobook') {
     return
   }
 
@@ -39,7 +39,7 @@ const getLibrivoxPage = (url: string, content: string | undefined): LibrivoxPage
 
 export const librivoxHandler: PlatformHandler = {
   match: (url) => {
-    return librivox.pages.read(url) !== undefined
+    return librivox.pages.readUrl(url) !== undefined
   },
 
   resolve: (url, content) => {

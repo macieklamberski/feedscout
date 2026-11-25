@@ -23,25 +23,25 @@ export const isLagetHtml = (content: string): boolean => {
     // An asset link may leave out the scheme, as `//g-content.laget.se/`.
     const source = addMissingScheme(element.attribs.href ?? element.attribs.src ?? '')
 
-    return laget.pages.read(source)?.key === 'asset'
+    return laget.pages.readUrl(source)?.key === 'asset'
   })
 
   return asset !== undefined
 }
 
 export const parseLagetUrl = (url: string): LagetUrl | undefined => {
-  const page = laget.pages.read(url)
+  const page = laget.pages.readUrl(url)
 
   if (page?.key !== 'team') {
     return
   }
 
-  return { kind: 'team', team: page.params.team }
+  return { kind: 'team', team: page.values.team }
 }
 
 export const lagetHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (laget.pages.read(url)) {
+    if (laget.pages.readUrl(url)) {
       return parseLagetUrl(url) !== undefined
     }
 
@@ -56,9 +56,9 @@ export const lagetHandler: PlatformHandler = {
       return [feeds.getFeedEntry('news', { team: parsed.team })]
     }
 
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
-    if (laget.pages.read(url) || !page) {
+    if (laget.pages.readUrl(url) || !page) {
       return []
     }
 

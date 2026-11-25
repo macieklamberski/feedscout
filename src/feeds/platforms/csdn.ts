@@ -10,13 +10,13 @@ export type CsdnUrl = { kind: 'blog'; username: string }
 const feeds = withHintLabels(csdn.feeds)
 
 export const parseCsdnUrl = (url: string): CsdnUrl | undefined => {
-  const page = csdn.pages.read(url)
+  const page = csdn.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'blog', username: page.params.username }
+  return { kind: 'blog', username: page.values.username }
 }
 
 export const csdnHandler: PlatformHandler = {

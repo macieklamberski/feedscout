@@ -9,13 +9,13 @@ export type PromodjUrl = { kind: 'profile'; username: string }
 const feeds = withHintLabels(promodj.feeds)
 
 export const parsePromodjUrl = (url: string): PromodjUrl | undefined => {
-  const page = promodj.pages.read(url)
+  const page = promodj.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'profile', username: page.params.username }
+  return { kind: 'profile', username: page.values.username }
 }
 
 export const promodjHandler: PlatformHandler = {

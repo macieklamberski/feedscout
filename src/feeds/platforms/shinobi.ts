@@ -22,18 +22,18 @@ export const isShinobiHtml = (content: string): boolean => {
 }
 
 export const parseShinobiUrl = (url: string): ShinobiUrl | undefined => {
-  const page = shinobi.pages.read(url)
+  const page = shinobi.pages.readUrl(url)
 
   if (page?.key !== 'blog') {
     return
   }
 
-  return { kind: 'blog', blog: page.params.blog }
+  return { kind: 'blog', blog: page.values.blog }
 }
 
 export const shinobiHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const page = shinobi.pages.read(url)
+    const page = shinobi.pages.readUrl(url)
 
     if (page) {
       return page.key === 'blog'
@@ -43,9 +43,9 @@ export const shinobiHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
-    if (!page || shinobi.pages.read(url)?.key === 'portal') {
+    if (!page || shinobi.pages.readUrl(url)?.key === 'portal') {
       return []
     }
 

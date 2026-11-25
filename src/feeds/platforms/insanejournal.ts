@@ -14,27 +14,27 @@ export type InsanejournalUrl =
 const feeds = withHintLabels(insanejournal.feeds)
 
 export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined => {
-  const page = insanejournal.pages.read(url)
+  const page = insanejournal.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  const { tag } = page.params
+  const { tag } = page.values
 
   if (page.key === 'journal') {
     return { kind: 'journal', tag }
   }
 
   if (page.key === 'asylum') {
-    return { kind: 'asylum', asylum: page.params.journal, tag }
+    return { kind: 'asylum', asylum: page.values.journal, tag }
   }
 
   if (page.key === 'syndicated') {
-    return { kind: 'syndicated', feed: page.params.journal, tag }
+    return { kind: 'syndicated', feed: page.values.journal, tag }
   }
 
-  return { kind: 'journal', username: page.params.journal, tag }
+  return { kind: 'journal', username: page.values.journal, tag }
 }
 
 // The InsaneJournal engine serves every journal the same feeds, plus a tag's feeds on a tag page.
@@ -80,7 +80,7 @@ export const insanejournalHandler: PlatformHandler = {
 
     // A page fills the host and scheme its journal's feeds sit on: the path host it names the
     // journal on, or the journal's own subdomain.
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!pageFeeds) {
       return []

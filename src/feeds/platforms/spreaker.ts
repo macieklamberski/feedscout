@@ -9,13 +9,13 @@ export type SpreakerUrl = { kind: 'show'; showId: string }
 const feeds = withHintLabels(spreaker.feeds)
 
 export const parseSpreakerUrl = (url: string): SpreakerUrl | undefined => {
-  const page = spreaker.pages.read(url)
+  const page = spreaker.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'show', showId: page.params.showId }
+  return { kind: 'show', showId: page.values.showId }
 }
 
 export const spreakerHandler: PlatformHandler = {

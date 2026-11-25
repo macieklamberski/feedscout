@@ -14,20 +14,20 @@ export type SourcehutUrl =
 const feeds = withHintLabels(sourcehut.feeds)
 
 export const parseSourcehutUrl = (url: string): SourcehutUrl | undefined => {
-  const page = sourcehut.pages.read(url)
+  const page = sourcehut.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  const { owner } = page.params
+  const { owner } = page.values
 
   if (page.key === 'repo') {
-    return { kind: 'repo', owner, repo: page.params.repo }
+    return { kind: 'repo', owner, repo: page.values.repo }
   }
 
   if (page.key === 'project') {
-    return { kind: 'project', owner, project: page.params.project }
+    return { kind: 'project', owner, project: page.values.project }
   }
 
   return { kind: 'user', owner }

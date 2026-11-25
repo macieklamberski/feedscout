@@ -20,13 +20,13 @@ export const isMisskeyHtml = (content: string): boolean => {
 }
 
 export const parseMisskeyUrl = (url: string): MisskeyUrl | undefined => {
-  const page = misskey.pages.read(url, { isAnyHost: true })
+  const page = misskey.pages.readUrl(url, { isAnyHost: true })
 
   if (!page) {
     return
   }
 
-  return { kind: 'profile', username: page.params.username }
+  return { kind: 'profile', username: page.values.username }
 }
 
 export const misskeyHandler: PlatformHandler = {
@@ -40,7 +40,7 @@ export const misskeyHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseMisskeyUrl(url)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!parsed || !pageFeeds) {
       return []

@@ -13,7 +13,7 @@ export type EklablogUrl = { kind: 'blog' } | { kind: 'customDomain' }
 const feeds = withHintLabels(eklablog.feeds)
 
 const isConnectScript = (src: string | undefined): boolean => {
-  return eklablog.pages.read(resolveUrl(src ?? '') ?? '')?.key === 'connect'
+  return eklablog.pages.readUrl(resolveUrl(src ?? '') ?? '')?.key === 'connect'
 }
 
 // Every blog page loads the login ping script from connect.eklablog.com, on a custom domain too.
@@ -28,7 +28,7 @@ export const isEklablogHtml = (content: string): boolean => {
 // Eklablog serves blogs on 20 domains. Only its branded one is listed, and a blog on another one or
 // on a custom domain is known by its marker.
 export const parseEklablogUrl = (url: string): EklablogUrl | undefined => {
-  const page = eklablog.pages.read(url)
+  const page = eklablog.pages.readUrl(url)
 
   if (!page) {
     return { kind: 'customDomain' }
@@ -54,7 +54,7 @@ export const eklablogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseEklablogUrl(url)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!parsed || !pageFeeds) {
       return []

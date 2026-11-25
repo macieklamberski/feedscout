@@ -14,18 +14,18 @@ export type MyanimelistUrl =
 const feeds = withHintLabels(myanimelist.feeds)
 
 export const parseMyanimelistUrl = (url: string): MyanimelistUrl | undefined => {
-  const page = myanimelist.pages.read(url)
+  const page = myanimelist.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'profile') {
-    return { kind: 'profile', username: page.params.username }
+    return { kind: 'profile', username: page.values.username }
   }
 
   if (page.key === 'user') {
-    return { kind: 'user', username: page.params.username }
+    return { kind: 'user', username: page.values.username }
   }
 
   if (page.key === 'featured') {

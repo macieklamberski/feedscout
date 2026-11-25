@@ -28,35 +28,36 @@ const readHostedPage = (url: string, content: string) => {
     const helpUrl = parseUrl(element.attribs.href, url)?.href ?? ''
 
     return (
-      element.name === 'a' && publicInbox.pages.read(helpUrl, { isAnyHost: true })?.key === 'help'
+      element.name === 'a' &&
+      publicInbox.pages.readUrl(helpUrl, { isAnyHost: true })?.key === 'help'
     )
   })
   const helpUrl = parseUrl(helpLink?.attribs.href, url)?.href ?? ''
-  const help = publicInbox.pages.read(helpUrl, { isAnyHost: true })
+  const help = publicInbox.pages.readUrl(helpUrl, { isAnyHost: true })
 
   if (help?.key !== 'help') {
     return
   }
 
-  return publicInbox.pages.read(url, { base: help.params.base ?? [] })
+  return publicInbox.pages.readUrl(url, { base: help.values.base ?? [] })
 }
 
 export const getPublicInboxPage = (url: string, content?: string): PublicInboxPage | undefined => {
   const page =
     content && isPublicInboxHtml(content)
       ? readHostedPage(url, content)
-      : publicInbox.pages.read(url)
+      : publicInbox.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   // Only a lore.kernel.org row names the inbox, and a help page is read in its inbox's folder.
-  const inbox = 'inbox' in page.params ? page.params.inbox : undefined
-  const params = { inbox, base: page.params.base }
+  const inbox = 'inbox' in page.values ? page.values.inbox : undefined
+  const params = { inbox, base: page.values.base }
 
   if (page.key === 'message') {
-    return { kind: 'message', params, messageId: page.params.messageId }
+    return { kind: 'message', params, messageId: page.values.messageId }
   }
 
   return { kind: 'inbox', params }
@@ -64,7 +65,10 @@ export const getPublicInboxPage = (url: string, content?: string): PublicInboxPa
 
 export const publicInboxHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (!publicInbox.pages.read(url) && !hasMarker(content, headers, { html: isPublicInboxHtml })) {
+    if (
+      !publicInbox.pages.readUrl(url) &&
+      !hasMarker(content, headers, { html: isPublicInboxHtml })
+    ) {
       return false
     }
 
@@ -73,7 +77,7 @@ export const publicInboxHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getPublicInboxPage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []

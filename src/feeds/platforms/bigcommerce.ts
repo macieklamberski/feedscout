@@ -28,13 +28,13 @@ const getLinkedCategoryId = (url: string, href: string | undefined): string | un
     return
   }
 
-  const feed = bigcommerce.feeds.read(feedUrl.href, { isAnyHost: true })
+  const feed = bigcommerce.feeds.readUrl(feedUrl.href, { isAnyHost: true })
 
   if (feed?.key !== 'category-new-products' && feed?.key !== 'category-popular-products') {
     return
   }
 
-  return feed.params.categoryId
+  return feed.values.categoryId
 }
 
 const getCategoryId = (url: string, content: string | undefined): string | undefined => {
@@ -46,10 +46,10 @@ const getCategoryId = (url: string, content: string | undefined): string | undef
 }
 
 const getBigcommercePage = (url: string, content: string | undefined): BigcommercePage => {
-  const page = bigcommerce.pages.read(url, { isAnyHost: true })
+  const page = bigcommerce.pages.readUrl(url, { isAnyHost: true })
 
   if (page?.key === 'search') {
-    return { kind: 'search', query: page.params.query }
+    return { kind: 'search', query: page.values.query }
   }
 
   const categoryId = getCategoryId(url, content)
@@ -68,7 +68,7 @@ export const bigcommerceHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getBigcommercePage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!pageFeeds) {
       return []

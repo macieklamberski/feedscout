@@ -19,13 +19,13 @@ export const jimdoHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!page) {
       return []
     }
 
-    const tag = jimdo.pages.read(url, { isAnyHost: true })?.params.tag
+    const tag = jimdo.pages.readUrl(url, { isAnyHost: true })?.values.tag
 
     if (tag) {
       return [page.getFeedEntry('blog'), page.getFeedEntry('blog-tag', { tag })]

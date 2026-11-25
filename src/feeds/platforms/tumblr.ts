@@ -11,17 +11,17 @@ export type TumblrUrl = { kind: 'blog'; blog: string } | { kind: 'tag'; blog: st
 const feeds = withHintLabels(tumblr.feeds)
 
 export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
-  const page = tumblr.pages.read(url)
+  const page = tumblr.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'tag') {
-    return { kind: 'tag', blog: page.params.blog, tag: page.params.tag }
+    return { kind: 'tag', blog: page.values.blog, tag: page.values.tag }
   }
 
-  return { kind: 'blog', blog: page.params.blog }
+  return { kind: 'blog', blog: page.values.blog }
 }
 
 export const tumblrHandler: PlatformHandler = {
@@ -31,7 +31,7 @@ export const tumblrHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseTumblrUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

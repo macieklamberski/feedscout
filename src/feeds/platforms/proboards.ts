@@ -16,7 +16,7 @@ export const isProboardsHtml = (content: string): boolean => {
 }
 
 export const parseProboardsUrl = (url: string): ProboardsUrl | undefined => {
-  const page = proboards.pages.read(url)
+  const page = proboards.pages.readUrl(url)
 
   if (!page) {
     return { kind: 'customDomain' }
@@ -42,7 +42,7 @@ export const proboardsHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseProboardsUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

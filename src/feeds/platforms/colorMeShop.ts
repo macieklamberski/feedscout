@@ -16,7 +16,7 @@ export const isColorMeShopHeaders = (headers: Headers): boolean => {
 }
 
 export const parseColorMeShopUrl = (url: string): ColorMeShopUrl | undefined => {
-  if (!colorMeShop.pages.read(url)) {
+  if (!colorMeShop.pages.readUrl(url)) {
     return
   }
 
@@ -33,7 +33,7 @@ export const colorMeShopHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!page) {
       return []

@@ -9,7 +9,7 @@ export type LetterboxdUrl = { kind: 'member'; username: string } | { kind: 'jour
 const feeds = withHintLabels(letterboxd.feeds)
 
 export const parseLetterboxdUrl = (url: string): LetterboxdUrl | undefined => {
-  const page = letterboxd.pages.read(url)
+  const page = letterboxd.pages.readUrl(url)
 
   if (!page) {
     return
@@ -19,7 +19,7 @@ export const parseLetterboxdUrl = (url: string): LetterboxdUrl | undefined => {
     return { kind: 'journal' }
   }
 
-  return { kind: 'member', username: page.params.username }
+  return { kind: 'member', username: page.values.username }
 }
 
 export const letterboxdHandler: PlatformHandler = {

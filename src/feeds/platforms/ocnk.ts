@@ -14,7 +14,8 @@ export const isOcnkHtml = (content: string): boolean => {
     const scriptUrl = getMarkerLinkUrl(element.attribs.src)
 
     return (
-      element.name === 'script' && ocnk.pages.read(scriptUrl, { isAnyHost: true })?.key === 'asset'
+      element.name === 'script' &&
+      ocnk.pages.readUrl(scriptUrl, { isAnyHost: true })?.key === 'asset'
     )
   })
 
@@ -22,7 +23,7 @@ export const isOcnkHtml = (content: string): boolean => {
 }
 
 export const parseOcnkUrl = (url: string): OcnkUrl | undefined => {
-  const page = ocnk.pages.read(url)
+  const page = ocnk.pages.readUrl(url)
 
   if (!page) {
     return { kind: 'customDomain' }
@@ -32,7 +33,7 @@ export const parseOcnkUrl = (url: string): OcnkUrl | undefined => {
     return
   }
 
-  return { kind: 'shop', shop: page.params.shop }
+  return { kind: 'shop', shop: page.values.shop }
 }
 
 export const ocnkHandler: PlatformHandler = {
@@ -48,7 +49,7 @@ export const ocnkHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseOcnkUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

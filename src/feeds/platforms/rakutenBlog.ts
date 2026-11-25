@@ -9,13 +9,13 @@ export type RakutenBlogUrl = { kind: 'blog'; username: string }
 const feeds = withHintLabels(rakutenBlog.feeds)
 
 export const parseRakutenBlogUrl = (url: string): RakutenBlogUrl | undefined => {
-  const page = rakutenBlog.pages.read(url)
+  const page = rakutenBlog.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'blog', username: page.params.username }
+  return { kind: 'blog', username: page.values.username }
 }
 
 export const rakutenBlogHandler: PlatformHandler = {

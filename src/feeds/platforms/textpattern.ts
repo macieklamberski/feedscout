@@ -24,17 +24,17 @@ export const isTextpatternHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Textpattern')
 }
 
-type TextpatternPageMatch = ReturnType<typeof textpattern.pages.read>
+type TextpatternPageMatch = ReturnType<typeof textpattern.pages.readUrl>
 
 const readFeedLink = (url: string, href: string | undefined): string | undefined => {
   const feedUrl = parseUrl(href, url)?.href ?? ''
-  const feed = textpattern.feeds.read(feedUrl, { isAnyHost: true })
+  const feed = textpattern.feeds.readUrl(feedUrl, { isAnyHost: true })
 
   if (!feed) {
     return
   }
 
-  return getSiteUrl(feed.params)
+  return getSiteUrl(feed.values)
 }
 
 // Textpattern serves its feeds at `{site}/rss` and `{site}/atom`, so the feed link a theme prints
@@ -50,14 +50,14 @@ const readPage = (url: string, content: string | undefined): TextpatternPageMatc
   const feedRoot = readFeedLink(url, feedLink?.attribs.href)
 
   if (feedRoot && isRootOfPage(feedRoot, url)) {
-    const page = textpattern.pages.read(url, { base: getSiteParams(feedRoot)?.base })
+    const page = textpattern.pages.readUrl(url, { base: getSiteParams(feedRoot)?.base })
 
     if (page) {
       return page
     }
   }
 
-  return textpattern.pages.read(url, { base: [] })
+  return textpattern.pages.readUrl(url, { base: [] })
 }
 
 export const getTextpatternPage = (
@@ -70,14 +70,14 @@ export const getTextpatternPage = (
     return
   }
 
-  const siteUrl = getSiteUrl(page.params)
+  const siteUrl = getSiteUrl(page.values)
 
   if (page.key === 'category') {
-    return { kind: 'category', siteUrl, category: page.params.category }
+    return { kind: 'category', siteUrl, category: page.values.category }
   }
 
   if (page.key === 'section') {
-    return { kind: 'section', siteUrl, section: page.params.section }
+    return { kind: 'section', siteUrl, section: page.values.section }
   }
 
   return { kind: 'site', siteUrl }

@@ -11,17 +11,17 @@ export type BingUrl = { kind: 'search'; query: string } | { kind: 'news'; query:
 const feeds = withHintLabels(bing.feeds)
 
 export const parseBingUrl = (url: string): BingUrl | undefined => {
-  const page = bing.pages.read(url)
+  const page = bing.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'search') {
-    return { kind: 'search', query: page.params.query }
+    return { kind: 'search', query: page.values.query }
   }
 
-  return { kind: 'news', query: page.params.query }
+  return { kind: 'news', query: page.values.query }
 }
 
 export const bingHandler: PlatformHandler = {
@@ -31,7 +31,7 @@ export const bingHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseBingUrl(url)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!parsed || !pageFeeds) {
       return []

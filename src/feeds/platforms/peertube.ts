@@ -27,13 +27,13 @@ const getPodcastChannelId = (url: string, content: string | undefined): string |
       return
     }
 
-    const feed = peertube.feeds.read(feedUrl, { isAnyHost: true })
+    const feed = peertube.feeds.readUrl(feedUrl, { isAnyHost: true })
 
     if (feed?.key !== 'channel-podcast') {
       return
     }
 
-    return feed.params.channelId
+    return feed.values.channelId
   }
   const link = findElement(content, (element) => {
     return element.name === 'link' && getLinkedChannelId(element.attribs.href) !== undefined
@@ -43,18 +43,18 @@ const getPodcastChannelId = (url: string, content: string | undefined): string |
 }
 
 export const parsePeertubeUrl = (url: string): PeertubeUrl | undefined => {
-  const page = peertube.pages.read(url, { isAnyHost: true })
+  const page = peertube.pages.readUrl(url, { isAnyHost: true })
 
   if (!page) {
     return
   }
 
   if (page.key === 'channel') {
-    return { kind: 'channel', name: page.params.name }
+    return { kind: 'channel', name: page.values.name }
   }
 
   if (page.key === 'account') {
-    return { kind: 'account', name: page.params.name }
+    return { kind: 'account', name: page.values.name }
   }
 
   return { kind: 'instance' }
@@ -71,7 +71,7 @@ export const peertubeHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const parsed = parsePeertubeUrl(url)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!parsed || !pageFeeds) {
       return []

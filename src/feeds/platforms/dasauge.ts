@@ -10,7 +10,7 @@ export type DasaugeUrl = { kind: 'home' }
 const feeds = withHintLabels(dasauge.feeds)
 
 export const parseDasaugeUrl = (url: string): DasaugeUrl | undefined => {
-  if (dasauge.pages.read(url)?.key !== 'home') {
+  if (dasauge.pages.readUrl(url)?.key !== 'home') {
     return
   }
 
@@ -23,7 +23,7 @@ export const dasaugeHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parseDasaugeUrl(url) || !page) {
       return []

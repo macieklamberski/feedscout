@@ -12,18 +12,18 @@ export type Fc2Url =
 const feeds = withHintLabels(fc2.feeds)
 
 export const parseFc2Url = (url: string): Fc2Url | undefined => {
-  const page = fc2.pages.read(url)
+  const page = fc2.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'category') {
-    return { kind: 'category', category: page.params.category }
+    return { kind: 'category', category: page.values.category }
   }
 
   if (page.key === 'tag') {
-    return { kind: 'tag', tag: page.params.tag }
+    return { kind: 'tag', tag: page.values.tag }
   }
 
   return { kind: 'blog' }
@@ -36,7 +36,7 @@ export const fc2Handler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseFc2Url(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

@@ -26,17 +26,17 @@ const hasSelectedGroup = (content: string): boolean => {
 }
 
 export const parseHatenaAntennaUrl = (url: string): HatenaAntennaUrl | undefined => {
-  const page = hatenaAntenna.pages.read(url)
+  const page = hatenaAntenna.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'group') {
-    return { kind: 'group', username: page.params.username, groupId: page.params.groupId }
+    return { kind: 'group', username: page.values.username, groupId: page.values.groupId }
   }
 
-  return { kind: 'antenna', username: page.params.username }
+  return { kind: 'antenna', username: page.values.username }
 }
 
 export const getHatenaAntennaPage = (

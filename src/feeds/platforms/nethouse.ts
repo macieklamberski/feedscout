@@ -13,7 +13,7 @@ export const isNethouseHeaders = (headers: Headers): boolean => {
 
 export const nethouseHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const page = nethouse.pages.read(url)
+    const page = nethouse.pages.readUrl(url)
 
     if (page) {
       return page.key === 'site'
@@ -23,7 +23,7 @@ export const nethouseHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!page) {
       return []

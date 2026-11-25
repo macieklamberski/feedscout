@@ -30,14 +30,14 @@ export const isGcsWebPage = (url: string, content: string | undefined): boolean 
       return false
     }
 
-    return gcsWeb.pages.read(assetUrl, { isAnyHost: true })?.key === 'asset'
+    return gcsWeb.pages.readUrl(assetUrl, { isAnyHost: true })?.key === 'asset'
   })
 
   return asset !== undefined
 }
 
 export const parseGcsWebUrl = (url: string): GcsWebUrl | undefined => {
-  if (gcsWeb.pages.read(url)?.key !== 'site') {
+  if (gcsWeb.pages.readUrl(url)?.key !== 'site') {
     return
   }
 
@@ -46,7 +46,7 @@ export const parseGcsWebUrl = (url: string): GcsWebUrl | undefined => {
 
 export const gcsWebHandler: PlatformHandler = {
   match: (url, content) => {
-    if (gcsWeb.pages.read(url)) {
+    if (gcsWeb.pages.readUrl(url)) {
       return parseGcsWebUrl(url) !== undefined
     }
 
@@ -54,7 +54,7 @@ export const gcsWebHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!page) {
       return []

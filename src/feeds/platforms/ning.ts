@@ -22,22 +22,22 @@ export const isNingHtml = (content: string): boolean => {
 }
 
 export const parseNingUrl = (url: string): NingUrl | undefined => {
-  const page = ning.pages.read(url, { isAnyHost: true })
+  const page = ning.pages.readUrl(url, { isAnyHost: true })
 
   if (!page) {
     return
   }
 
-  if (page.key === 'topic' && page.params.group) {
-    return { kind: 'topic', topic: page.params.topic, group: page.params.group }
+  if (page.key === 'topic' && page.values.group) {
+    return { kind: 'topic', topic: page.values.topic, group: page.values.group }
   }
 
   if (page.key === 'topic') {
-    return { kind: 'topic', topic: page.params.topic }
+    return { kind: 'topic', topic: page.values.topic }
   }
 
   if (page.key === 'group') {
-    return { kind: 'group', group: page.params.group }
+    return { kind: 'group', group: page.values.group }
   }
 
   return { kind: 'home' }
@@ -54,7 +54,7 @@ export const ningHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseNingUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

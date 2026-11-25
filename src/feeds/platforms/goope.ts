@@ -16,11 +16,11 @@ export type GoopeUrl = {
 const feeds = withHintLabels(goope.feeds)
 
 const isQrCode = (src: string | undefined): boolean => {
-  return goope.pages.read(resolveUrl(src ?? '') ?? '')?.key === 'qr'
+  return goope.pages.readUrl(resolveUrl(src ?? '') ?? '')?.key === 'qr'
 }
 
 const isGoopeAsset = (href: string | undefined): boolean => {
-  return goope.pages.read(resolveUrl(href ?? '') ?? '')?.key === 'asset'
+  return goope.pages.readUrl(resolveUrl(href ?? '') ?? '')?.key === 'asset'
 }
 
 // Every theme prints the site's QR code from r.goope.jp unless the owner hides it, and a favicon
@@ -43,13 +43,13 @@ export const isGoopeHtml = (content: string): boolean => {
 
 export const parseGoopeUrl = (url: string): GoopeUrl | undefined => {
   // The root of r.goope.jp redirects to goope.jp.
-  const page = goope.pages.read(url) ?? goope.pages.read(url, { isAnyHost: true })
+  const page = goope.pages.readUrl(url) ?? goope.pages.readUrl(url, { isAnyHost: true })
 
   if (!page || page.key === 'platform' || page.key === 'qr' || page.key === 'asset') {
     return
   }
 
-  const { site } = page.params
+  const { site } = page.values
 
   return {
     kind: site ? 'freeSite' : 'site',
@@ -77,7 +77,7 @@ export const goopeHandler: PlatformHandler = {
       return []
     }
 
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!pageFeeds) {
       return []

@@ -11,13 +11,13 @@ export type CanpanUrl = { kind: 'blog'; blog: string }
 const feeds = withHintLabels(canpan.feeds)
 
 export const parseCanpanUrl = (url: string): CanpanUrl | undefined => {
-  const page = canpan.pages.read(url)
+  const page = canpan.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'blog', blog: page.params.blog }
+  return { kind: 'blog', blog: page.values.blog }
 }
 
 export const canpanHandler: PlatformHandler = {

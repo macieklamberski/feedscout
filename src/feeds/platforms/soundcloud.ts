@@ -16,13 +16,13 @@ const playlistIdRegex = /soundcloud:\/\/playlists:(\d+)/
 const feeds = withHintLabels(soundcloud.feeds)
 
 export const parseSoundcloudUrl = (url: string): SoundcloudUrl | undefined => {
-  const page = soundcloud.pages.read(url)
+  const page = soundcloud.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'user', username: page.params.username }
+  return { kind: 'user', username: page.values.username }
 }
 
 // A profile or playlist path names it by slug, but the feed takes the numeric id the page carries.

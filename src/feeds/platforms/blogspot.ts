@@ -21,7 +21,7 @@ export const isBlogspotHtml = (content: string): boolean => {
   const script = findElement(content, (element) => {
     const scriptUrl = getMarkerLinkUrl(element.attribs.src)
 
-    return element.name === 'script' && blogspot.pages.read(scriptUrl)?.key === 'asset'
+    return element.name === 'script' && blogspot.pages.readUrl(scriptUrl)?.key === 'asset'
   })
 
   return script !== undefined
@@ -35,24 +35,24 @@ const readPostId = (href: string | undefined, url: string): string | undefined =
     return
   }
 
-  const feed = blogspot.feeds.read(feedUrl.href, { isAnyHost: true })
+  const feed = blogspot.feeds.readUrl(feedUrl.href, { isAnyHost: true })
 
   if (feed?.key !== 'post-comments') {
     return
   }
 
-  return feed.params.postId
+  return feed.values.postId
 }
 
 export const parseBlogspotUrl = (url: string): BlogspotUrl | undefined => {
-  const page = blogspot.pages.read(url, { isAnyHost: true })
+  const page = blogspot.pages.readUrl(url, { isAnyHost: true })
 
   if (!page) {
     return
   }
 
   if (page.key === 'label') {
-    return { kind: 'label', label: page.params.label }
+    return { kind: 'label', label: page.values.label }
   }
 
   if (page.key === 'post') {
@@ -83,7 +83,7 @@ export const getBlogspotPage = (
 
 export const blogspotHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (blogspot.pages.read(url)) {
+    if (blogspot.pages.readUrl(url)) {
       return true
     }
 
@@ -92,7 +92,7 @@ export const blogspotHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getBlogspotPage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []
@@ -100,8 +100,8 @@ export const blogspotHandler: PlatformHandler = {
 
     // A blog's name builds its feeds on blogspot.com. Without one, as on a blog's own domain,
     // they are built on the page's host.
-    const blogPage = blogspot.pages.read(url)
-    const blog = blogPage?.key === 'blog' ? blogPage.params.blog : undefined
+    const blogPage = blogspot.pages.readUrl(url)
+    const blog = blogPage?.key === 'blog' ? blogPage.values.blog : undefined
     const params = { blog }
 
     if (page.kind === 'label') {

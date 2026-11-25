@@ -19,7 +19,7 @@ export type AlloforumUrl =
 const feeds = withHintLabels(alloforum.feeds)
 
 export const parseAlloforumUrl = (url: string): AlloforumUrl | undefined => {
-  const page = alloforum.pages.read(url)
+  const page = alloforum.pages.readUrl(url)
 
   if (!page) {
     return
@@ -28,15 +28,15 @@ export const parseAlloforumUrl = (url: string): AlloforumUrl | undefined => {
   if (page.key === 'subcategory') {
     return {
       kind: 'subcategory',
-      slug: page.params.slug,
-      categoryId: page.params.categoryId,
-      subcategorySlug: page.params.subcategorySlug,
-      subcategoryId: page.params.subcategoryId,
+      slug: page.values.slug,
+      categoryId: page.values.categoryId,
+      subcategorySlug: page.values.subcategorySlug,
+      subcategoryId: page.values.subcategoryId,
     }
   }
 
   if (page.key === 'category') {
-    return { kind: 'category', slug: page.params.slug, categoryId: page.params.categoryId }
+    return { kind: 'category', slug: page.values.slug, categoryId: page.values.categoryId }
   }
 
   return { kind: 'forum' }
@@ -49,7 +49,7 @@ export const alloforumHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseAlloforumUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

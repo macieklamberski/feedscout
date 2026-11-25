@@ -14,16 +14,16 @@ export type NewswireUrl =
 const feeds = withHintLabels(newswire.feeds)
 
 export const parseNewswireUrl = (url: string): NewswireUrl | undefined => {
-  const page = newswire.pages.read(url)
+  const page = newswire.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  const { newsroom } = page.params
+  const { newsroom } = page.values
 
   if (page.key === 'beat') {
-    return { kind: 'beat', newsroom, beat: page.params.beat }
+    return { kind: 'beat', newsroom, beat: page.values.beat }
   }
 
   if (page.key === 'newsroom') {
@@ -41,7 +41,7 @@ export const newswireHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseNewswireUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

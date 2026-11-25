@@ -9,13 +9,13 @@ export type ParsiblogUrl = { kind: 'blog'; blog: string }
 const feeds = withHintLabels(parsiblog.feeds)
 
 export const parseParsiblogUrl = (url: string): ParsiblogUrl | undefined => {
-  const page = parsiblog.pages.read(url)
+  const page = parsiblog.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'blog', blog: page.params.blog }
+  return { kind: 'blog', blog: page.values.blog }
 }
 
 export const parsiblogHandler: PlatformHandler = {

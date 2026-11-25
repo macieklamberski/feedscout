@@ -11,21 +11,21 @@ export type ComicfuryUrl = { kind: 'comic' | 'profile' | 'reader'; comic: string
 const feeds = withHintLabels(comicfury.feeds)
 
 export const parseComicfuryUrl = (url: string): ComicfuryUrl | undefined => {
-  const page = comicfury.pages.read(url)
+  const page = comicfury.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'profile') {
-    return { kind: 'profile', comic: page.params.comic }
+    return { kind: 'profile', comic: page.values.comic }
   }
 
   if (page.key === 'reader') {
-    return { kind: 'reader', comic: page.params.comic }
+    return { kind: 'reader', comic: page.values.comic }
   }
 
-  return { kind: 'comic', comic: page.params.comic }
+  return { kind: 'comic', comic: page.values.comic }
 }
 
 export const comicfuryHandler: PlatformHandler = {
@@ -35,7 +35,7 @@ export const comicfuryHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseComicfuryUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

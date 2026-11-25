@@ -12,17 +12,17 @@ export type SverigesRadioUrl =
 const feeds = withHintLabels(sverigesRadio.feeds)
 
 export const parseSverigesRadioUrl = (url: string): SverigesRadioUrl | undefined => {
-  const page = sverigesRadio.pages.read(url)
+  const page = sverigesRadio.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'legacy-program') {
-    return { kind: 'legacyProgram', programId: page.params.programId }
+    return { kind: 'legacyProgram', programId: page.values.programId }
   }
 
-  return { kind: 'program', slug: page.params.slug }
+  return { kind: 'program', slug: page.values.slug }
 }
 
 export const sverigesRadioHandler: PlatformHandler = {

@@ -18,13 +18,13 @@ export const isFriendicaHeaders = (headers: Headers): boolean => {
 }
 
 export const parseFriendicaUrl = (url: string): FriendicaUrl | undefined => {
-  const page = friendica.pages.read(url, { isAnyHost: true })
+  const page = friendica.pages.readUrl(url, { isAnyHost: true })
 
   if (!page) {
     return
   }
 
-  return { kind: 'profile', username: page.params.username }
+  return { kind: 'profile', username: page.values.username }
 }
 
 export const friendicaHandler: PlatformHandler = {
@@ -38,7 +38,7 @@ export const friendicaHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseFriendicaUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

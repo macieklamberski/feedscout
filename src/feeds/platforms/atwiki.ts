@@ -9,13 +9,13 @@ export type AtwikiUrl = { kind: 'wiki'; wiki: string }
 const feeds = withHintLabels(atwiki.feeds)
 
 export const parseAtwikiUrl = (url: string): AtwikiUrl | undefined => {
-  const page = atwiki.pages.read(url)
+  const page = atwiki.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'wiki', wiki: page.params.wiki }
+  return { kind: 'wiki', wiki: page.values.wiki }
 }
 
 export const atwikiHandler: PlatformHandler = {

@@ -9,7 +9,7 @@ export type PodigeeUrl = { kind: 'podcast' }
 const feeds = withHintLabels(podigee.feeds)
 
 export const parsePodigeeUrl = (url: string): PodigeeUrl | undefined => {
-  if (!podigee.pages.read(url)) {
+  if (!podigee.pages.readUrl(url)) {
     return
   }
 
@@ -23,7 +23,7 @@ export const podigeeHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePodigeeUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

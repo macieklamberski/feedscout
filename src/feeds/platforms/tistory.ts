@@ -9,7 +9,7 @@ export type TistoryUrl = { kind: 'blog' }
 const feeds = withHintLabels(tistory.feeds)
 
 export const parseTistoryUrl = (url: string): TistoryUrl | undefined => {
-  if (!tistory.pages.read(url)) {
+  if (!tistory.pages.readUrl(url)) {
     return
   }
 
@@ -22,7 +22,7 @@ export const tistoryHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parseTistoryUrl(url) || !page) {
       return []

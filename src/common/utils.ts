@@ -1,4 +1,3 @@
-import type { UrlHosts, UrlMatch, UrlTable } from 'feedintel'
 import { DomUtils, parseDocument } from 'htmlparser2'
 import {
   anyWordMatchesAnyOf,
@@ -16,6 +15,7 @@ import {
   startsWithAnyOf,
   stripWww,
 } from 'trousse'
+import type { UrlHosts, UrlMatch, UrlTable } from 'urlmason'
 import locales from '../locales.json' with { type: 'json' }
 import type { DiscoverUriHint, FetchFn } from './types.js'
 
@@ -399,7 +399,7 @@ export const getHostOrigin = (host: string): string | undefined => {
 export const getLinkedPage = <Key extends string, Row>(
   href: string | undefined,
   url: string,
-  pages: Pick<UrlTable<Key, Row>, 'read'>,
+  pages: Pick<UrlTable<Key, Row>, 'readUrl'>,
 ): UrlMatch<Key, Row> | undefined => {
   const linkUrl = parseUrl(href, url)
   const pageUrl = parseUrl(url)
@@ -408,7 +408,7 @@ export const getLinkedPage = <Key extends string, Row>(
     return
   }
 
-  return pages.read(linkUrl.href)
+  return pages.readUrl(linkUrl.href)
 }
 
 export const getScriptDirectory = (pathname: string): string => {

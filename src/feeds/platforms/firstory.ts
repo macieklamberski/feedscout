@@ -11,10 +11,10 @@ const feeds = withHintLabels(firstory.feeds)
 // Show, episode and firstory.cc pages each link the show's feed.
 const getLinkedCuid = (content: string): string | undefined => {
   for (const url of findUrls(content)) {
-    const feed = firstory.feeds.read(url)
+    const feed = firstory.feeds.readUrl(url)
 
     if (feed?.key === 'podcast') {
-      return feed.params.cuid
+      return feed.values.cuid
     }
   }
 }
@@ -25,7 +25,7 @@ export const getFirstoryPage = (
   url: string,
   content: string | undefined,
 ): FirstoryPage | undefined => {
-  if (!firstory.pages.read(url)) {
+  if (!firstory.pages.readUrl(url)) {
     return
   }
 

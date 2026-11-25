@@ -16,7 +16,9 @@ export const isWixHtml = (content: string): boolean => {
   }
 
   const script = findElement(content, (element) => {
-    return element.name === 'script' && wix.pages.read(element.attribs.src ?? '')?.key === 'asset'
+    return (
+      element.name === 'script' && wix.pages.readUrl(element.attribs.src ?? '')?.key === 'asset'
+    )
   })
 
   return script !== undefined
@@ -31,13 +33,13 @@ export const parseWixUrl = (url: string): WixUrl | undefined => {
     return
   }
 
-  const page = wix.pages.read(url)
+  const page = wix.pages.readUrl(url)
 
   if (page?.key !== 'freeSite') {
     return { kind: 'site' }
   }
 
-  return { kind: 'freeSite', site: page.params.site }
+  return { kind: 'freeSite', site: page.values.site }
 }
 
 export const wixHandler: PlatformHandler = {
@@ -51,7 +53,7 @@ export const wixHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseWixUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

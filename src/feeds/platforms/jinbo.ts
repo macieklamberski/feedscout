@@ -16,25 +16,25 @@ export type JinboUrl =
 const feeds = withHintLabels(jinbo.feeds)
 
 export const parseJinboUrl = (url: string): JinboUrl | undefined => {
-  const page = jinbo.pages.read(url)
+  const page = jinbo.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  const { username } = page.params
+  const { username } = page.values
 
   if (page.key === 'category') {
-    return { kind: 'category', username, categoryId: page.params.categoryId }
+    return { kind: 'category', username, categoryId: page.values.categoryId }
   }
 
   if (page.key === 'tag') {
-    return { kind: 'tag', username, tag: page.params.tag }
+    return { kind: 'tag', username, tag: page.values.tag }
   }
 
   // A post page links the comments and trackbacks of that post.
   if (page.key === 'post') {
-    return { kind: 'post', username, postId: page.params.postId }
+    return { kind: 'post', username, postId: page.values.postId }
   }
 
   return { kind: 'blog', username }
@@ -43,13 +43,13 @@ export const parseJinboUrl = (url: string): JinboUrl | undefined => {
 // The site answers a blog under any case of its name, and its pages link the feed in the
 // blog's own case.
 const getLinkedUsername = (href: string | undefined): string | undefined => {
-  const feed = jinbo.feeds.read(href ?? '')
+  const feed = jinbo.feeds.readUrl(href ?? '')
 
   if (feed?.key !== 'posts') {
     return
   }
 
-  return feed.params.username
+  return feed.values.username
 }
 
 const getFeedUsername = (content: string | undefined): string | undefined => {

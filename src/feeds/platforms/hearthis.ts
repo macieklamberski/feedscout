@@ -9,13 +9,13 @@ export type HearthisUrl = { kind: 'profile'; username: string }
 const feeds = withHintLabels(hearthis.feeds)
 
 export const parseHearthisUrl = (url: string): HearthisUrl | undefined => {
-  const page = hearthis.pages.read(url)
+  const page = hearthis.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'profile', username: page.params.username }
+  return { kind: 'profile', username: page.values.username }
 }
 
 export const hearthisHandler: PlatformHandler = {

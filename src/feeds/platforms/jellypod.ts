@@ -9,7 +9,7 @@ export type JellypodUrl = { kind: 'show' }
 const feeds = withHintLabels(jellypod.feeds)
 
 export const parseJellypodUrl = (url: string): JellypodUrl | undefined => {
-  if (!jellypod.pages.read(url)) {
+  if (!jellypod.pages.readUrl(url)) {
     return
   }
 
@@ -22,7 +22,7 @@ export const jellypodHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!page || !parseJellypodUrl(url)) {
       return []

@@ -13,17 +13,17 @@ const feeds = withHintLabels(spotifyForCreators.feeds)
 // A show without RSS answers 404 on `/s/`. Only 2 of the 4 shows measured also show a visible `/s/`
 // link, which generic discovery reads, so the alternate link names the station for the others.
 const getLinkedStationId = (href: string | undefined): string | undefined => {
-  const page = spotifyForCreators.pages.read(href ?? '')
+  const page = spotifyForCreators.pages.readUrl(href ?? '')
 
   if (page?.key !== 'station') {
     return
   }
 
-  return page.params.stationId
+  return page.values.stationId
 }
 
 export const parseSpotifyForCreatorsUrl = (url: string): SpotifyForCreatorsUrl | undefined => {
-  if (spotifyForCreators.pages.read(url)?.key !== 'show') {
+  if (spotifyForCreators.pages.readUrl(url)?.key !== 'show') {
     return
   }
 

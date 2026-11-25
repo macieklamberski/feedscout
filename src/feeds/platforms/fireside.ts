@@ -9,13 +9,13 @@ export type FiresideUrl = { kind: 'podcast'; slug: string; tag?: string }
 const feeds = withHintLabels(fireside.feeds)
 
 export const parseFiresideUrl = (url: string): FiresideUrl | undefined => {
-  const page = fireside.pages.read(url)
+  const page = fireside.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'podcast', slug: page.params.slug, tag: page.params.tag }
+  return { kind: 'podcast', slug: page.values.slug, tag: page.values.tag }
 }
 
 export const firesideHandler: PlatformHandler = {
@@ -25,7 +25,7 @@ export const firesideHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseFiresideUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

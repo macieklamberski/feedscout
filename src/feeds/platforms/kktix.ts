@@ -11,13 +11,13 @@ const feeds = withHintLabels(kktix.feeds)
 
 export const parseKktixUrl = (url: string): KktixUrl | undefined => {
   // A nested subdomain like a.b.kktix.cc fails TLS, since the certificate covers one label.
-  const page = kktix.pages.read(url)
+  const page = kktix.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'organizer', organizer: page.params.organizer }
+  return { kind: 'organizer', organizer: page.values.organizer }
 }
 
 export const kktixHandler: PlatformHandler = {
@@ -26,7 +26,7 @@ export const kktixHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!page || !parseKktixUrl(url)) {
       return []

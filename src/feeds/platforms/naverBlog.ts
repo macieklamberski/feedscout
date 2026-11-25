@@ -10,17 +10,17 @@ export type NaverBlogUrl = { kind: 'blog'; blogId: string } | { kind: 'post'; bl
 const feeds = withHintLabels(naverBlog.feeds)
 
 export const parseNaverBlogUrl = (url: string): NaverBlogUrl | undefined => {
-  const page = naverBlog.pages.read(url)
+  const page = naverBlog.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'post') {
-    return { kind: 'post', blogId: page.params.blogId }
+    return { kind: 'post', blogId: page.values.blogId }
   }
 
-  return { kind: 'blog', blogId: page.params.blogId }
+  return { kind: 'blog', blogId: page.values.blogId }
 }
 
 export const naverBlogHandler: PlatformHandler = {

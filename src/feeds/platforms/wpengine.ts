@@ -10,7 +10,7 @@ import { composeWordpressFeeds, parseWordpressPage, type WordpressUrl } from './
 export type WpengineUrl = WordpressUrl
 
 export const parseWpengineUrl = (url: string): WpengineUrl | undefined => {
-  if (wpengine.pages.read(url) === undefined) {
+  if (wpengine.pages.readUrl(url) === undefined) {
     return
   }
 

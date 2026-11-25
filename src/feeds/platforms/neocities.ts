@@ -10,13 +10,13 @@ export type NeocitiesUrl = { kind: 'site'; username: string }
 const feeds = withHintLabels(neocities.feeds)
 
 export const parseNeocitiesUrl = (url: string): NeocitiesUrl | undefined => {
-  const page = neocities.pages.read(url)
+  const page = neocities.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'site', username: page.params.username }
+  return { kind: 'site', username: page.values.username }
 }
 
 export const neocitiesHandler: PlatformHandler = {

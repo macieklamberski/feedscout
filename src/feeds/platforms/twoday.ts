@@ -13,16 +13,16 @@ export type TwodayUrl =
 const feeds = withHintLabels(twoday.feeds)
 
 export const parseTwodayUrl = (url: string): TwodayUrl | undefined => {
-  const page = twoday.pages.read(url)
+  const page = twoday.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  const { blog } = page.params
+  const { blog } = page.values
 
   if (page.key === 'topic') {
-    return { kind: 'topic', blog, topic: page.params.topic }
+    return { kind: 'topic', blog, topic: page.values.topic }
   }
 
   return { kind: 'blog', blog }
@@ -35,7 +35,7 @@ export const twodayHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseTwodayUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

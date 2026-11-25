@@ -15,18 +15,18 @@ export type DevtoUrl =
 const feeds = withHintLabels(devto.feeds)
 
 export const parseDevtoUrl = (url: string): DevtoUrl | undefined => {
-  const page = devto.pages.read(url)
+  const page = devto.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'profile') {
-    return { kind: 'profile', owner: page.params.owner }
+    return { kind: 'profile', owner: page.values.owner }
   }
 
   if (page.key === 'tag') {
-    return { kind: 'tag', tag: page.params.tag }
+    return { kind: 'tag', tag: page.values.tag }
   }
 
   if (page.key === 'latest') {

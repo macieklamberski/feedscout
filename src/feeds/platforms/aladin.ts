@@ -13,17 +13,17 @@ export type AladinUrl =
 const feeds = withHintLabels(aladin.feeds)
 
 export const parseAladinUrl = (url: string): AladinUrl | undefined => {
-  const page = aladin.pages.read(url)
+  const page = aladin.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'category') {
-    return { kind: 'category', username: page.params.username, categoryId: page.params.categoryId }
+    return { kind: 'category', username: page.values.username, categoryId: page.values.categoryId }
   }
 
-  return { kind: 'blog', username: page.params.username }
+  return { kind: 'blog', username: page.values.username }
 }
 
 export const aladinHandler: PlatformHandler = {

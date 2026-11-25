@@ -20,7 +20,7 @@ export const isForumotionHtml = (content: string): boolean => {
   return content.includes('_userdata["session_logged_in"]')
 }
 
-type BreadcrumbPage = NonNullable<ReturnType<typeof forumotion.pages.read>>
+type BreadcrumbPage = NonNullable<ReturnType<typeof forumotion.pages.readUrl>>
 
 // A breadcrumb names each page under the site's root, on the forum's host.
 const getBreadcrumbPages = (url: string, content: string): Array<BreadcrumbPage | undefined> => {
@@ -39,7 +39,7 @@ const getBreadcrumbPages = (url: string, content: string): Array<BreadcrumbPage 
       const itemUrl = parseUrl(element?.item?.['@id'], url)
 
       if (itemUrl) {
-        pages.push(forumotion.pages.read(itemUrl.href, { isAnyHost: true }))
+        pages.push(forumotion.pages.readUrl(itemUrl.href, { isAnyHost: true }))
       }
     }
   }
@@ -59,11 +59,11 @@ export const getForumotionPage = (url: string, content: string | undefined): For
   const parentPage = pages.at(-2)
 
   if (lastPage?.key === 'forum') {
-    return { kind: 'forum', forumId: lastPage.params.forumId }
+    return { kind: 'forum', forumId: lastPage.values.forumId }
   }
 
   if (lastPage?.key === 'topic' && parentPage?.key === 'forum') {
-    return { kind: 'topic', forumId: parentPage.params.forumId }
+    return { kind: 'topic', forumId: parentPage.values.forumId }
   }
 
   return { kind: 'home' }
@@ -71,7 +71,7 @@ export const getForumotionPage = (url: string, content: string | undefined): For
 
 export const forumotionHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const page = forumotion.pages.read(url)
+    const page = forumotion.pages.readUrl(url)
 
     if (page) {
       return page.key !== 'platform'
@@ -82,7 +82,7 @@ export const forumotionHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getForumotionPage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!pageFeeds) {
       return []

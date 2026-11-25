@@ -9,7 +9,7 @@ export type PodcloudUrl = { kind: 'show' }
 const feeds = withHintLabels(podcloud.feeds)
 
 export const parsePodcloudUrl = (url: string): PodcloudUrl | undefined => {
-  if (!podcloud.pages.read(url)) {
+  if (!podcloud.pages.readUrl(url)) {
     return
   }
 
@@ -23,7 +23,7 @@ export const podcloudHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePodcloudUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

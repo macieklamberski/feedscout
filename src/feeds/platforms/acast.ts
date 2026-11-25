@@ -10,13 +10,13 @@ export type AcastUrl = { kind: 'show'; slug: string }
 const feeds = withHintLabels(acast.feeds)
 
 export const parseAcastUrl = (url: string): AcastUrl | undefined => {
-  const page = acast.pages.read(url)
+  const page = acast.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'show', slug: page.params.slug }
+  return { kind: 'show', slug: page.values.slug }
 }
 
 export const acastHandler: PlatformHandler = {

@@ -15,7 +15,7 @@ import {
 const feeds = withHintLabels(jira.feeds)
 
 const isConfluencePage = (url: string): boolean => {
-  return jira.pages.read(url, { base: [] })?.key === 'confluence'
+  return jira.pages.readUrl(url, { base: [] })?.key === 'confluence'
 }
 
 const jiraPathKeys = ['issue', 'project', 'app']
@@ -41,22 +41,22 @@ const getJiraPage = (url: string, content: string | undefined): JiraPage | undef
   }
 
   const contextPath = getMetaContent(content ?? '', 'ajs-context-path') ?? ''
-  const base = jira.pages.read(url, { base: contextPath })
-  const path = jira.pages.read(url, { isAnyHost: true })
+  const base = jira.pages.readUrl(url, { base: contextPath })
+  const path = jira.pages.readUrl(url, { isAnyHost: true })
 
   // In a folder only the `{host}` rows read the URL, which the cloud row is not.
   if (!base || base.key === 'cloud') {
     return
   }
 
-  const cloud = jira.pages.read(url)
-  const pathKey = path?.key === 'issue' || path?.key === 'project' ? path.params.key : undefined
+  const cloud = jira.pages.readUrl(url)
+  const pathKey = path?.key === 'issue' || path?.key === 'project' ? path.values.key : undefined
 
   return {
-    baseUrl: getSiteUrl(base.params),
-    tenant: cloud?.key === 'cloud' ? cloud.params.tenant : undefined,
+    baseUrl: getSiteUrl(base.values),
+    tenant: cloud?.key === 'cloud' ? cloud.values.tenant : undefined,
     projectKey: pathKey ?? getMetaContent(content ?? '', 'ajs-project-key'),
-    issueNumber: path?.key === 'issue' ? path.params.number : undefined,
+    issueNumber: path?.key === 'issue' ? path.values.number : undefined,
   }
 }
 
@@ -66,7 +66,7 @@ export const jiraHandler: PlatformHandler = {
       return false
     }
 
-    if (jira.pages.read(url)) {
+    if (jira.pages.readUrl(url)) {
       return true
     }
 
@@ -74,12 +74,12 @@ export const jiraHandler: PlatformHandler = {
       return false
     }
 
-    return jiraPathKeys.includes(jira.pages.read(url, { isAnyHost: true })?.key ?? '')
+    return jiraPathKeys.includes(jira.pages.readUrl(url, { isAnyHost: true })?.key ?? '')
   },
 
   resolve: (url, content) => {
     const jiraPage = getJiraPage(url, content)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!jiraPage || !page) {
       return []

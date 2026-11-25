@@ -10,13 +10,13 @@ export type SoundonUrl = { kind: 'podcast'; podcastId: string }
 const feeds = withHintLabels(soundon.feeds)
 
 export const parseSoundonUrl = (url: string): SoundonUrl | undefined => {
-  const page = soundon.pages.read(url)
+  const page = soundon.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'podcast', podcastId: page.params.podcastId }
+  return { kind: 'podcast', podcastId: page.values.podcastId }
 }
 
 export const soundonHandler: PlatformHandler = {

@@ -967,7 +967,7 @@ describe('getLinkedPage', () => {
     const value = '/posts/first'
     const expected = {
       key: 'post',
-      params: { scheme: 'https', host: 'alice.example.com', slug: 'first' },
+      values: { scheme: 'https', host: 'alice.example.com', slug: 'first' },
     }
 
     expect(getLinkedPage(value, pageUrl, pages)).toMatchObject(expected)
@@ -977,7 +977,7 @@ describe('getLinkedPage', () => {
     const value = 'https://alice.example.com/posts/first'
     const expected = {
       key: 'post',
-      params: { scheme: 'https', host: 'alice.example.com', slug: 'first' },
+      values: { scheme: 'https', host: 'alice.example.com', slug: 'first' },
     }
 
     expect(getLinkedPage(value, pageUrl, pages)).toMatchObject(expected)

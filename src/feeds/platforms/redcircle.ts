@@ -10,10 +10,10 @@ export type RedcirclePage = { showUuid: string }
 const feeds = withHintLabels(redcircle.feeds)
 
 const findShowUuid = (url: string, content: string | undefined): string | undefined => {
-  const page = redcircle.pages.read(url)
+  const page = redcircle.pages.readUrl(url)
 
   if (page?.key === 'show') {
-    return page.params.showUuid
+    return page.values.showUuid
   }
 
   if (!page || !content) {
@@ -21,13 +21,13 @@ const findShowUuid = (url: string, content: string | undefined): string | undefi
   }
 
   // A show or episode page under a slug names the show uuid in its `og:url`.
-  const ogPage = redcircle.pages.read(getMetaContent(content, 'og:url') ?? '')
+  const ogPage = redcircle.pages.readUrl(getMetaContent(content, 'og:url') ?? '')
 
   if (ogPage?.key !== 'show') {
     return
   }
 
-  return ogPage.params.showUuid
+  return ogPage.values.showUuid
 }
 
 const getRedcirclePage = (url: string, content: string | undefined): RedcirclePage | undefined => {

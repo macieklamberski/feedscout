@@ -30,13 +30,13 @@ const readBoardId = (url: string | undefined, scriptUrl: string): string | undef
     return
   }
 
-  const page = smf.pages.read(url, { base: getSiteParams(scriptUrl)?.base })
+  const page = smf.pages.readUrl(url, { base: getSiteParams(scriptUrl)?.base })
 
   if (page?.key !== 'board') {
     return
   }
 
-  return page.params.board
+  return page.values.board
 }
 
 // A board page and a topic page both link their board as `rel="index"`.
@@ -52,13 +52,13 @@ const getBoardId = (url: string, content: string, scriptUrl: string): string | u
 
 const getSmfPage = (url: string, content: string | undefined): SmfPage | undefined => {
   const scriptUrl = parseUrl(content?.match(scriptUrlRegex)?.[1], url)
-  const script = scriptUrl ? smf.pages.read(scriptUrl.href, { isAnyHost: true }) : undefined
+  const script = scriptUrl ? smf.pages.readUrl(scriptUrl.href, { isAnyHost: true }) : undefined
 
   if (!content || !script) {
     return
   }
 
-  const root = getSiteUrl(script.params)
+  const root = getSiteUrl(script.values)
 
   return { scriptUrl: root, boardId: getBoardId(url, content, root) }
 }
@@ -70,7 +70,7 @@ export const smfHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getSmfPage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []

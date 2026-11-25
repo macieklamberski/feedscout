@@ -11,7 +11,7 @@ export type SeesaaUrl = { kind: 'blog' }
 const feeds = withHintLabels(seesaa.feeds)
 
 export const parseSeesaaUrl = (url: string): SeesaaUrl | undefined => {
-  const page = seesaa.pages.read(url)
+  const page = seesaa.pages.readUrl(url)
 
   if (!page) {
     return
@@ -26,7 +26,7 @@ export const seesaaHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parseSeesaaUrl(url) || !page) {
       return []

@@ -9,13 +9,13 @@ export type AtyponUrl = { kind: 'journal'; code: string; isWiley: boolean }
 const feeds = withHintLabels(atypon.feeds)
 
 export const parseAtyponUrl = (url: string): AtyponUrl | undefined => {
-  const page = atypon.pages.read(url)
+  const page = atypon.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'journal', code: page.params.code, isWiley: page.key === 'wiley-journal' }
+  return { kind: 'journal', code: page.values.code, isWiley: page.key === 'wiley-journal' }
 }
 
 export const atyponHandler: PlatformHandler = {
@@ -25,7 +25,7 @@ export const atyponHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseAtyponUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

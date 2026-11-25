@@ -48,14 +48,15 @@ const getBasePath = (content: string | undefined): string | undefined => {
 // A page outside the base path its settings print is read at the root of its host.
 export const getDrupalPage = (url: string, content: string | undefined): DrupalPage | undefined => {
   const basePath = getBasePath(content)
-  const basePage = basePath === undefined ? undefined : drupal.pages.read(url, { base: basePath })
-  const page = basePage ?? drupal.pages.read(url, { isAnyHost: true })
+  const basePage =
+    basePath === undefined ? undefined : drupal.pages.readUrl(url, { base: basePath })
+  const page = basePage ?? drupal.pages.readUrl(url, { isAnyHost: true })
 
   if (!page) {
     return
   }
 
-  return { kind: 'site', base: page.params.base }
+  return { kind: 'site', base: page.values.base }
 }
 
 export const drupalHandler: PlatformHandler = {
@@ -70,7 +71,7 @@ export const drupalHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getDrupalPage(url, content)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!page || !pageFeeds) {
       return []

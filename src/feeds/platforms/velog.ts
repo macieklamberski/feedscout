@@ -10,14 +10,14 @@ export type VelogUrl = { kind: 'user'; username: string } | { kind: 'home' }
 const feeds = withHintLabels(velog.feeds)
 
 export const parseVelogUrl = (url: string): VelogUrl | undefined => {
-  const page = velog.pages.read(url)
+  const page = velog.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'user') {
-    return { kind: 'user', username: page.params.username }
+    return { kind: 'user', username: page.values.username }
   }
 
   return { kind: 'home' }

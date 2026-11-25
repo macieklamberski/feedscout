@@ -9,13 +9,13 @@ export type BuzzsproutUrl = { kind: 'podcast'; podcastId: string }
 const feeds = withHintLabels(buzzsprout.feeds)
 
 export const parseBuzzsproutUrl = (url: string): BuzzsproutUrl | undefined => {
-  const page = buzzsprout.pages.read(url)
+  const page = buzzsprout.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'podcast', podcastId: page.params.podcastId }
+  return { kind: 'podcast', podcastId: page.values.podcastId }
 }
 
 export const buzzsproutHandler: PlatformHandler = {

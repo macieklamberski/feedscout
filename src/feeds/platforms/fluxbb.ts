@@ -27,20 +27,20 @@ export const isFluxbbHtml = (content: string): boolean => {
 }
 
 export const parseFluxbbUrl = (url: string): FluxbbUrl | undefined => {
-  const page = fluxbb.pages.read(url, { isAnyHost: true })
+  const page = fluxbb.pages.readUrl(url, { isAnyHost: true })
 
   if (!page) {
     return
   }
 
-  const root = getSiteUrl(page.params)
+  const root = getSiteUrl(page.values)
 
   if (page.key === 'forum') {
-    return { kind: 'forum', root, forumId: page.params.forumId }
+    return { kind: 'forum', root, forumId: page.values.forumId }
   }
 
   if (page.key === 'topic') {
-    return { kind: 'topic', root, topicId: page.params.topicId }
+    return { kind: 'topic', root, topicId: page.values.topicId }
   }
 
   return { kind: 'board', root }

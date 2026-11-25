@@ -11,14 +11,14 @@ export type PosthavenUrl = { kind: 'tag'; tag: string } | { kind: 'blog' }
 const feeds = withHintLabels(posthaven.feeds)
 
 export const parsePosthavenUrl = (url: string): PosthavenUrl | undefined => {
-  const page = posthaven.pages.read(url)
+  const page = posthaven.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'tag') {
-    return { kind: 'tag', tag: page.params.tag }
+    return { kind: 'tag', tag: page.values.tag }
   }
 
   return { kind: 'blog' }
@@ -31,7 +31,7 @@ export const posthavenHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePosthavenUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

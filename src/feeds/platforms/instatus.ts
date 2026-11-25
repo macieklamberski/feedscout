@@ -32,7 +32,7 @@ export const parseInstatusUrl = (url: string): InstatusUrl | undefined => {
 
 export const instatusHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const page = instatus.pages.read(url)
+    const page = instatus.pages.readUrl(url)
 
     if (page) {
       return page.key === 'status'
@@ -47,7 +47,7 @@ export const instatusHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseInstatusUrl(url)
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!parsed || !pageFeeds) {
       return []

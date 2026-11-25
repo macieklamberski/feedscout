@@ -13,17 +13,17 @@ const feeds = withHintLabels(acomics.feeds)
 // A comic lives under /~{comic} and a user under /-{user}, and both keep their case in the feed
 // URL, since /~thesweetberries/rss answers 404 where /~TheSweetBerries/rss serves the comic.
 export const parseAcomicsUrl = (url: string): AcomicsUrl | undefined => {
-  const page = acomics.pages.read(url)
+  const page = acomics.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'comic') {
-    return { kind: 'comic', comic: page.params.comic }
+    return { kind: 'comic', comic: page.values.comic }
   }
 
-  return { kind: 'user', username: page.params.username }
+  return { kind: 'user', username: page.values.username }
 }
 
 export const acomicsHandler: PlatformHandler = {

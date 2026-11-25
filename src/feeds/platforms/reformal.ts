@@ -9,7 +9,7 @@ export type ReformalUrl = { kind: 'project' }
 const feeds = withHintLabels(reformal.feeds)
 
 export const parseReformalUrl = (url: string): ReformalUrl | undefined => {
-  if (!reformal.pages.read(url)) {
+  if (!reformal.pages.readUrl(url)) {
     return
   }
 
@@ -22,7 +22,7 @@ export const reformalHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
     if (!parseReformalUrl(url) || !pageFeeds) {
       return []

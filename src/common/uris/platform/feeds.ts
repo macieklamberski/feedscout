@@ -27,7 +27,7 @@ export type PlatformFeedTable<Key extends string = string> = {
     variant?: string,
   ) => DiscoverUriEntry | undefined
   getFeedHint: (url: string) => DiscoverUriHint | undefined
-  forUrl: (
+  forSite: (
     url: string,
   ) => Pick<PlatformFeedTable<Key>, 'getFeedUrl' | 'getFeedEntry' | 'getFeedSpellings'> | undefined
 }
@@ -58,7 +58,7 @@ type UnlabelledFeedTable<Key extends string> = {
     variant?: string,
   ) => UnlabelledEntry | undefined
   getFeedHint: (url: string) => UnlabelledHint | undefined
-  forUrl: (
+  forSite: (
     url: string,
   ) =>
     | Pick<UnlabelledFeedTable<Key>, 'getFeedUrl' | 'getFeedEntry' | 'getFeedSpellings'>
@@ -101,8 +101,8 @@ export const withHintLabels = <Key extends string>(
       return withEntryLabel(table.getFeedSpellings(key, params, format, variant))
     },
     getFeedHint: (url) => withHintLabel(table.getFeedHint(url)),
-    forUrl: (url) => {
-      const pageTable = table.forUrl(url)
+    forSite: (url) => {
+      const pageTable = table.forSite(url)
 
       if (!pageTable) {
         return

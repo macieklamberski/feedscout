@@ -16,7 +16,7 @@ export const isSvbtleHtml = (content: string): boolean => {
 
 export const svbtleHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (svbtle.pages.read(url)?.key === 'platform') {
+    if (svbtle.pages.readUrl(url)?.key === 'platform') {
       return false
     }
 
@@ -24,9 +24,9 @@ export const svbtleHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const pageFeeds = feeds.forUrl(url)
+    const pageFeeds = feeds.forSite(url)
 
-    if (!pageFeeds || svbtle.pages.read(url)?.key === 'platform') {
+    if (!pageFeeds || svbtle.pages.readUrl(url)?.key === 'platform') {
       return []
     }
 

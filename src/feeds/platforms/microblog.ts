@@ -15,16 +15,16 @@ export type MicroblogUrl =
 const feeds = withHintLabels(microblog.feeds)
 
 export const parseMicroblogUrl = (url: string): MicroblogUrl | undefined => {
-  const page = microblog.pages.read(url)
+  const page = microblog.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  const { username } = page.params
+  const { username } = page.values
 
   if (page.key === 'category') {
-    return { kind: 'category', username, category: page.params.category }
+    return { kind: 'category', username, category: page.values.category }
   }
 
   if (page.key === 'archive') {
@@ -45,7 +45,7 @@ export const microblogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseMicroblogUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

@@ -9,13 +9,13 @@ export type PrlogUrl = { kind: 'pressroom'; pressroomId: string }
 const feeds = withHintLabels(prlog.feeds)
 
 export const parsePrlogUrl = (url: string): PrlogUrl | undefined => {
-  const page = prlog.pages.read(url)
+  const page = prlog.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'pressroom', pressroomId: page.params.pressroomId }
+  return { kind: 'pressroom', pressroomId: page.values.pressroomId }
 }
 
 export const prlogHandler: PlatformHandler = {

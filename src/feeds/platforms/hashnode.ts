@@ -9,7 +9,7 @@ export type HashnodeUrl = { kind: 'blog' }
 const feeds = withHintLabels(hashnode.feeds)
 
 export const parseHashnodeUrl = (url: string): HashnodeUrl | undefined => {
-  if (!hashnode.pages.read(url)) {
+  if (!hashnode.pages.readUrl(url)) {
     return
   }
 
@@ -22,7 +22,7 @@ export const hashnodeHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parseHashnodeUrl(url) || !page) {
       return []

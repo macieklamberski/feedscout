@@ -12,18 +12,18 @@ export type HatenablogUrl =
 const feeds = withHintLabels(hatenablog.feeds)
 
 export const parseHatenablogUrl = (url: string): HatenablogUrl | undefined => {
-  const page = hatenablog.pages.read(url)
+  const page = hatenablog.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'category') {
-    return { kind: 'category', category: page.params.category }
+    return { kind: 'category', category: page.values.category }
   }
 
   if (page.key === 'author') {
-    return { kind: 'author', author: page.params.author }
+    return { kind: 'author', author: page.values.author }
   }
 
   return { kind: 'blog' }
@@ -36,7 +36,7 @@ export const hatenablogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseHatenablogUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

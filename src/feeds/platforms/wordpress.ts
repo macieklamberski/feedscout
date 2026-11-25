@@ -48,7 +48,7 @@ const hintPrefix = 'wordpress:'
 
 const feeds = withHintLabels(wordpress.feeds)
 
-type PageFeeds = NonNullable<ReturnType<typeof feeds.forUrl>>
+type PageFeeds = NonNullable<ReturnType<typeof feeds.forSite>>
 
 // The page a WordPress URL shows, read from the path, so a WP Engine site reads the same.
 export const parseWordpressPage = (url: string): WordpressUrl => {
@@ -56,7 +56,7 @@ export const parseWordpressPage = (url: string): WordpressUrl => {
   // A paginated listing, `/page/2/` or `/2024/05/page/2/`, is the listing itself.
   const pathname = fullPathname.replace(paginationRegex, '').replace(postEndpointRegex, '')
 
-  if (wordpress.pages.read(`${origin}${pathname}`)?.key === 'post') {
+  if (wordpress.pages.readUrl(`${origin}${pathname}`)?.key === 'post') {
     return { kind: 'post', path: pathname.replace(trailingSlashRegex, '') }
   }
 
@@ -87,7 +87,7 @@ export const parseWordpressPage = (url: string): WordpressUrl => {
 }
 
 export const parseWordpressUrl = (url: string): WordpressUrl | undefined => {
-  if (wordpress.pages.read(url) === undefined) {
+  if (wordpress.pages.readUrl(url) === undefined) {
     return
   }
 
@@ -112,7 +112,7 @@ export const composeWordpressFeeds = (
   url: string,
   parsed: WordpressUrl,
 ): Array<DiscoverUriEntry | undefined> => {
-  const pageFeeds = feeds.forUrl(url)
+  const pageFeeds = feeds.forSite(url)
 
   if (!pageFeeds) {
     return []
@@ -153,7 +153,7 @@ export const wordpressHandler: PlatformHandler = {
       return (
         element.name === 'link' &&
         element.attribs.rel === 'alternate' &&
-        wordpress.pages.read(element.attribs.href ?? '')?.key === 'platform-feed'
+        wordpress.pages.readUrl(element.attribs.href ?? '')?.key === 'platform-feed'
       )
     })
 

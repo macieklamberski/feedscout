@@ -17,16 +17,16 @@ const feeds = withHintLabels(isProgrammer.feeds)
 
 export const parseIsProgrammerUrl = (url: string): IsProgrammerUrl | undefined => {
   // A deeper host such as www.{blog}.is-programmer.com answers the sign-up page.
-  const page = isProgrammer.pages.read(url)
+  const page = isProgrammer.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  const { blog } = page.params
+  const { blog } = page.values
 
   if (page.key === 'post') {
-    return { kind: 'post', blog, postId: page.params.postId }
+    return { kind: 'post', blog, postId: page.values.postId }
   }
 
   return { kind: 'blog', blog }
@@ -43,7 +43,7 @@ export const isProgrammerHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseIsProgrammerUrl(url)
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parsed || !page) {
       return []

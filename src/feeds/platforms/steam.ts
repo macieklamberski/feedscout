@@ -15,26 +15,26 @@ export type SteamUrl =
 const feeds = withHintLabels(steam.feeds)
 
 export const parseSteamUrl = (url: string): SteamUrl | undefined => {
-  const page = steam.pages.read(url)
+  const page = steam.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'storeApp' || page.key === 'app') {
-    return { kind: 'app', appId: page.params.appId }
+    return { kind: 'app', appId: page.values.appId }
   }
 
   if (page.key === 'group') {
-    return { kind: 'group', group: page.params.group }
+    return { kind: 'group', group: page.values.group }
   }
 
   if (page.key === 'groupNews') {
-    return { kind: 'groupNews', clanId: page.params.clanId }
+    return { kind: 'groupNews', clanId: page.values.clanId }
   }
 
   if (page.key === 'collection') {
-    return { kind: 'collection', collection: page.params.collection }
+    return { kind: 'collection', collection: page.values.collection }
   }
 
   // The store front and its news hub get the store-wide listings.
@@ -59,7 +59,7 @@ export const steamHandler: PlatformHandler = {
       return [
         feeds.getFeedEntry('news', { appId: parsed.appId }),
         feeds.getFeedEntry('community-news', { game: parsed.appId }),
-        ...(steam.pages.read(url)?.key === 'storeApp'
+        ...(steam.pages.readUrl(url)?.key === 'storeApp'
           ? [
               feeds.getFeedEntry('daily-deals'),
               feeds.getFeedEntry('new-releases'),

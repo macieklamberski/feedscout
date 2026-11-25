@@ -11,14 +11,14 @@ export type BehanceUrl = { kind: 'profile'; username: string } | { kind: 'home' 
 const feeds = withHintLabels(behance.feeds)
 
 export const parseBehanceUrl = (url: string): BehanceUrl | undefined => {
-  const page = behance.pages.read(url)
+  const page = behance.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'profile') {
-    return { kind: 'profile', username: page.params.username }
+    return { kind: 'profile', username: page.values.username }
   }
 
   // Every other page gets the featured projects, which the home page's own FeedBurner link serves

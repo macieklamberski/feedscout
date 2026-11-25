@@ -15,20 +15,20 @@ export type CppblogUrl =
 const feeds = withHintLabels(cppblog.feeds)
 
 export const parseCppblogUrl = (url: string): CppblogUrl | undefined => {
-  const page = cppblog.pages.read(url)
+  const page = cppblog.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  const { username } = page.params
+  const { username } = page.values
 
   if (page.key === 'category') {
-    return { kind: 'category', username, categoryId: page.params.categoryId }
+    return { kind: 'category', username, categoryId: page.values.categoryId }
   }
 
   if (page.key === 'favorite') {
-    return { kind: 'favorite', username, favoriteId: page.params.favoriteId }
+    return { kind: 'favorite', username, favoriteId: page.values.favoriteId }
   }
 
   return { kind: 'blog', username }
@@ -40,13 +40,13 @@ const getFeedUsername = (content: string | undefined): string | undefined => {
     return element.name === 'link' && element.attribs.id === 'RSSLink'
   })
 
-  const feed = cppblog.feeds.read(link?.attribs.href ?? '')
+  const feed = cppblog.feeds.readUrl(link?.attribs.href ?? '')
 
   if (feed?.key !== 'posts') {
     return
   }
 
-  return feed.params.username
+  return feed.values.username
 }
 
 const getCppblogPage = (url: string, content: string | undefined): CppblogUrl | undefined => {

@@ -9,14 +9,14 @@ export type PypiUrl = { kind: 'project'; project: string } | { kind: 'home' }
 const feeds = withHintLabels(pypi.feeds)
 
 export const parsePypiUrl = (url: string): PypiUrl | undefined => {
-  const page = pypi.pages.read(url)
+  const page = pypi.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'project') {
-    return { kind: 'project', project: page.params.project }
+    return { kind: 'project', project: page.values.project }
   }
 
   return { kind: 'home' }

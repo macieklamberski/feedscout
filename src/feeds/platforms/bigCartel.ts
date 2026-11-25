@@ -20,7 +20,7 @@ export const isBigCartelHtml = (content: string): boolean => {
     return (
       element.name === 'link' &&
       isAnyOf(element.attribs.rel, 'stylesheet') &&
-      bigCartel.pages.read(stylesheetUrl, { isAnyHost: true })?.key === 'asset'
+      bigCartel.pages.readUrl(stylesheetUrl, { isAnyHost: true })?.key === 'asset'
     )
   })
 
@@ -32,7 +32,7 @@ export const isBigCartelHeaders = (headers: Headers): boolean => {
 }
 
 export const parseBigCartelUrl = (url: string): BigCartelUrl | undefined => {
-  if (bigCartel.pages.read(url)?.key !== 'store') {
+  if (bigCartel.pages.readUrl(url)?.key !== 'store') {
     return
   }
 
@@ -41,7 +41,7 @@ export const parseBigCartelUrl = (url: string): BigCartelUrl | undefined => {
 
 export const bigCartelHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (bigCartel.pages.read(url)) {
+    if (bigCartel.pages.readUrl(url)) {
       return parseBigCartelUrl(url) !== undefined
     }
 
@@ -49,7 +49,7 @@ export const bigCartelHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!page) {
       return []

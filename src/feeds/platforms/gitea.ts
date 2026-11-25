@@ -26,20 +26,20 @@ export const isGiteaHeaders = (headers: Headers): boolean => {
 }
 
 const readGiteaUrl = (url: string, base: string): GiteaPage | undefined => {
-  const page = gitea.pages.read(url, { base })
+  const page = gitea.pages.readUrl(url, { base })
 
   if (!page) {
     return
   }
 
-  const { owner } = page.params
-  const root = getSiteUrl(page.params)
+  const { owner } = page.values
+  const root = getSiteUrl(page.values)
 
   if (page.key === 'user') {
     return { kind: 'user', owner, root }
   }
 
-  const { repo, branchPath } = page.params
+  const { repo, branchPath } = page.values
 
   if (branchPath) {
     return { kind: 'repo', owner, repo, branchPath: branchPath.join('/'), root }
@@ -73,7 +73,7 @@ export const giteaHandler: PlatformHandler = {
       return false
     }
 
-    if (gitea.pages.read(url)) {
+    if (gitea.pages.readUrl(url)) {
       return true
     }
 

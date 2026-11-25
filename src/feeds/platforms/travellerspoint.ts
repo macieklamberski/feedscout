@@ -9,13 +9,13 @@ export type TravellerspointUrl = { kind: 'blog'; blog: string }
 const feeds = withHintLabels(travellerspoint.feeds)
 
 export const parseTravellerspointUrl = (url: string): TravellerspointUrl | undefined => {
-  const page = travellerspoint.pages.read(url)
+  const page = travellerspoint.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
-  return { kind: 'blog', blog: page.params.blog }
+  return { kind: 'blog', blog: page.values.blog }
 }
 
 export const travellerspointHandler: PlatformHandler = {
@@ -24,7 +24,7 @@ export const travellerspointHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const page = feeds.forUrl(url)
+    const page = feeds.forSite(url)
 
     if (!parseTravellerspointUrl(url) || !page) {
       return []

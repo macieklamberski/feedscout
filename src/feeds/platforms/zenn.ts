@@ -16,18 +16,18 @@ export type ZennUrl =
 const feeds = withHintLabels(zenn.feeds)
 
 export const parseZennUrl = (url: string): ZennUrl | undefined => {
-  const page = zenn.pages.read(url)
+  const page = zenn.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'topic') {
-    return { kind: 'topic', topic: page.params.topic }
+    return { kind: 'topic', topic: page.values.topic }
   }
 
   if (page.key === 'publication') {
-    return { kind: 'publication', publication: page.params.publication }
+    return { kind: 'publication', publication: page.values.publication }
   }
 
   if (page.key === 'home') {
@@ -35,10 +35,10 @@ export const parseZennUrl = (url: string): ZennUrl | undefined => {
   }
 
   if (page.key === 'post') {
-    return { kind: 'post', username: page.params.username }
+    return { kind: 'post', username: page.values.username }
   }
 
-  return { kind: 'user', username: page.params.username }
+  return { kind: 'user', username: page.values.username }
 }
 
 export const zennHandler: PlatformHandler = {

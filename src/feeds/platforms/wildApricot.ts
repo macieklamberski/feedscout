@@ -32,19 +32,19 @@ const getLinkHref = (content: string, isWantedId: (id: string) => boolean): stri
 }
 
 const readModule = (href: string, url: string): WildApricotModule | undefined => {
-  const page = wildApricot.pages.read(parseUrl(href, url)?.href ?? '', { isAnyHost: true })
+  const page = wildApricot.pages.readUrl(parseUrl(href, url)?.href ?? '', { isAnyHost: true })
 
   if (!page) {
     return
   }
 
-  const { scheme, host } = page.params
+  const { scheme, host } = page.values
 
   if (page.key === 'home') {
     return { scheme, host }
   }
 
-  return { scheme, host, path: page.params.path }
+  return { scheme, host, path: page.values.path }
 }
 
 // A post page links its feed as `/page-{id}/RSS`, which answers 404, and names its blog in the

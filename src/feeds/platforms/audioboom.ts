@@ -11,17 +11,17 @@ export type AudioboomUrl =
 const feeds = withHintLabels(audioboom.feeds)
 
 export const parseAudioboomUrl = (url: string): AudioboomUrl | undefined => {
-  const page = audioboom.pages.read(url)
+  const page = audioboom.pages.readUrl(url)
 
   if (!page) {
     return
   }
 
   if (page.key === 'playlist') {
-    return { kind: 'playlist', playlistId: page.params.playlistId }
+    return { kind: 'playlist', playlistId: page.values.playlistId }
   }
 
-  return { kind: 'channel', channelId: page.params.channelId }
+  return { kind: 'channel', channelId: page.values.channelId }
 }
 
 export const audioboomHandler: PlatformHandler = {
