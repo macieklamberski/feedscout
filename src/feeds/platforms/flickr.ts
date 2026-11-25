@@ -1,4 +1,4 @@
-import { flickr } from 'feedintel'
+import { flickr, isFlickrNsid } from 'feedintel'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -19,11 +19,6 @@ export type FlickrUrl =
   | { kind: 'forum' }
 
 const feeds = withHintLabels(flickr.feeds)
-
-// The feeds take only the NSID and answer 404 for a path alias, so a feed builds for an NSID alone.
-const isFeedUserId = (userId: string): boolean => {
-  return feeds.getFeedUrl('photos', { id: userId }) !== undefined
-}
 
 export const parseFlickrUrl = (url: string): FlickrUrl | undefined => {
   const page = flickr.pages.read(url)
@@ -88,7 +83,7 @@ export const flickrHandler: PlatformHandler = {
     }
 
     if ('userId' in parsed) {
-      return isFeedUserId(parsed.userId)
+      return isFlickrNsid(parsed.userId)
     }
 
     return true
@@ -180,7 +175,8 @@ export const flickrHandler: PlatformHandler = {
       ]
     }
 
-    if (!isFeedUserId(parsed.userId)) {
+    // The feeds take only the NSID and answer 404 for a path alias.
+    if (!isFlickrNsid(parsed.userId)) {
       return []
     }
 

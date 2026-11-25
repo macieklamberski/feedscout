@@ -34,7 +34,7 @@ export const parseUcozUrl = (url: string): UcozUrl | undefined => {
   const hostPage = ucoz.pages.read(url)
 
   // A host nested deeper under the platform's own domains is no site of it.
-  if (hostPage?.key === 'platform' || (!hostPage && getTenantLabels(url, ucoz.hosts.tenants))) {
+  if (hostPage?.key === 'platform' || (!hostPage && getTenantLabels(url, ucoz.hosts.tenant))) {
     return
   }
 

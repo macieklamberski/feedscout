@@ -910,7 +910,7 @@ describe('getHostOrigin', () => {
 
 describe('getLinkedPage', () => {
   const pages = definePageUrls([{ key: 'post', main: '{scheme}://{host}/posts/{slug}' }], {
-    hosts: { tenants: ['example.com'] },
+    hosts: { tenant: ['example.com'] },
   })
   const pageUrl = 'https://alice.example.com/'
 
