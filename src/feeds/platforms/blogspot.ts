@@ -2,7 +2,7 @@ import { blogspot } from 'feedintel'
 import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, hasMarker } from '../../common/utils.js'
+import { findElement, getMarkerLinkUrl, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic finds: comments, post-comments, posts.
@@ -14,15 +14,14 @@ export type BlogspotPage =
   | { kind: 'post'; postId?: string }
   | { kind: 'blog' }
 
-const widgetsScriptRegex = /^(?:https?:)?\/\/www\.blogger\.com\/static\/v1\/widgets\//i
-
 const feeds = withHintLabels(blogspot.feeds)
 
-// Blogger loads its widget script from this path on blogspot.com and custom domains alike,
-// whatever the theme. A tag, not the text: READMEs and archived copies quote the url too.
+// A tag, not the text: READMEs and archived copies quote the widget script's url too.
 export const isBlogspotHtml = (content: string): boolean => {
   const script = findElement(content, (element) => {
-    return element.name === 'script' && widgetsScriptRegex.test(element.attribs.src ?? '')
+    const scriptUrl = getMarkerLinkUrl(element.attribs.src)
+
+    return element.name === 'script' && blogspot.pages.read(scriptUrl)?.key === 'asset'
   })
 
   return script !== undefined

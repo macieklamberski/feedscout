@@ -64,17 +64,7 @@ describe('getPublicInboxPage', () => {
     const value = 'https://lore.barebox.org/barebox/'
     const expected: PublicInboxPage = {
       kind: 'inbox',
-      inboxUrl: 'https://lore.barebox.org/barebox/',
-    }
-
-    expect(getPublicInboxPage(value, inboxHtml)).toEqual(expected)
-  })
-
-  it('should return the inbox of a list page without a trailing slash', () => {
-    const value = 'https://lore.barebox.org/barebox'
-    const expected: PublicInboxPage = {
-      kind: 'inbox',
-      inboxUrl: 'https://lore.barebox.org/barebox/',
+      params: { base: ['barebox'] },
     }
 
     expect(getPublicInboxPage(value, inboxHtml)).toEqual(expected)
@@ -84,7 +74,7 @@ describe('getPublicInboxPage', () => {
     const value = 'https://lore.barebox.org/barebox/?q=ubootvarfs'
     const expected: PublicInboxPage = {
       kind: 'inbox',
-      inboxUrl: 'https://lore.barebox.org/barebox/',
+      params: { base: ['barebox'] },
     }
 
     expect(getPublicInboxPage(value, inboxHtml)).toEqual(expected)
@@ -94,7 +84,7 @@ describe('getPublicInboxPage', () => {
     const value = 'https://list.orgmode.org/'
     const expected: PublicInboxPage = {
       kind: 'inbox',
-      inboxUrl: 'https://list.orgmode.org/',
+      params: {},
     }
 
     expect(getPublicInboxPage(value, inboxHtml)).toEqual(expected)
@@ -104,7 +94,7 @@ describe('getPublicInboxPage', () => {
     const value = 'https://mirror.b10c.me/lists/bitcoindev/'
     const expected: PublicInboxPage = {
       kind: 'inbox',
-      inboxUrl: 'https://mirror.b10c.me/lists/bitcoindev/',
+      params: { base: ['lists', 'bitcoindev'] },
     }
 
     expect(getPublicInboxPage(value, inboxHtml)).toEqual(expected)
@@ -115,7 +105,7 @@ describe('getPublicInboxPage', () => {
       'https://public-inbox.gentoo.org/gentoo-dev/20261003070146.686610-1-alice@gentoo.org/'
     const expected: PublicInboxPage = {
       kind: 'message',
-      inboxUrl: 'https://public-inbox.gentoo.org/gentoo-dev/',
+      params: { base: ['gentoo-dev'] },
       messageId: '20261003070146.686610-1-alice@gentoo.org',
     }
 
@@ -127,7 +117,7 @@ describe('getPublicInboxPage', () => {
       'https://public-inbox.gentoo.org/gentoo-dev/20261003070146.686610-1-alice@gentoo.org/T/'
     const expected: PublicInboxPage = {
       kind: 'message',
-      inboxUrl: 'https://public-inbox.gentoo.org/gentoo-dev/',
+      params: { base: ['gentoo-dev'] },
       messageId: '20261003070146.686610-1-alice@gentoo.org',
     }
 
@@ -139,7 +129,7 @@ describe('getPublicInboxPage', () => {
       'https://lore.altlinux.org/sisyphus-incominger/girar.task.435315.1.1@gyle.mskdc.altlinux.org/'
     const expected: PublicInboxPage = {
       kind: 'message',
-      inboxUrl: 'https://lore.altlinux.org/sisyphus-incominger/',
+      params: { base: ['sisyphus-incominger'] },
       messageId: 'girar.task.435315.1.1@gyle.mskdc.altlinux.org',
     }
 
@@ -150,7 +140,7 @@ describe('getPublicInboxPage', () => {
     const value = 'https://list.orgmode.org/87bj9ct0ci.fsf@icloud.com/'
     const expected: PublicInboxPage = {
       kind: 'message',
-      inboxUrl: 'https://list.orgmode.org/',
+      params: {},
       messageId: '87bj9ct0ci.fsf@icloud.com',
     }
 
@@ -162,7 +152,7 @@ describe('getPublicInboxPage', () => {
       'https://inbox.example.com/example-mode/alice%2Fsnakemake-mode%2Fissues%2F11%2F211507107@github.com/'
     const expected: PublicInboxPage = {
       kind: 'message',
-      inboxUrl: 'https://inbox.example.com/example-mode/',
+      params: { base: ['example-mode'] },
       messageId: 'alice/snakemake-mode/issues/11/211507107@github.com',
     }
 
@@ -173,7 +163,7 @@ describe('getPublicInboxPage', () => {
     const value = 'https://lore.kernel.org/linux-pci/'
     const expected: PublicInboxPage = {
       kind: 'inbox',
-      inboxUrl: 'https://lore.kernel.org/linux-pci/',
+      params: { inbox: 'linux-pci' },
     }
 
     expect(getPublicInboxPage(value, anubisHtml)).toEqual(expected)
@@ -183,7 +173,7 @@ describe('getPublicInboxPage', () => {
     const value = 'https://lore.kernel.org/all/20200511194017.313c2881@xps13/T/'
     const expected: PublicInboxPage = {
       kind: 'message',
-      inboxUrl: 'https://lore.kernel.org/all/',
+      params: { inbox: 'all' },
       messageId: '20200511194017.313c2881@xps13',
     }
 
@@ -194,7 +184,7 @@ describe('getPublicInboxPage', () => {
     const value = 'https://lore.kernel.org/linux-pci/'
     const expected: PublicInboxPage = {
       kind: 'inbox',
-      inboxUrl: 'https://lore.kernel.org/linux-pci/',
+      params: { inbox: 'linux-pci' },
     }
 
     expect(getPublicInboxPage(value)).toEqual(expected)
@@ -204,7 +194,7 @@ describe('getPublicInboxPage', () => {
     const value = 'https://lore.kernel.org/linux-pci/_/text/help/'
     const expected: PublicInboxPage = {
       kind: 'inbox',
-      inboxUrl: 'https://lore.kernel.org/linux-pci/',
+      params: { inbox: 'linux-pci' },
     }
 
     expect(getPublicInboxPage(value)).toEqual(expected)
@@ -212,10 +202,6 @@ describe('getPublicInboxPage', () => {
 
   it('should return undefined for the lore.kernel.org inbox listing', () => {
     expect(getPublicInboxPage('https://lore.kernel.org/', anubisHtml)).toBeUndefined()
-  })
-
-  it('should return undefined for a page with more levels than its URL', () => {
-    expect(getPublicInboxPage('https://list.orgmode.org/', threadHtml)).toBeUndefined()
   })
 
   it('should return undefined for other hosts without the links', () => {
@@ -320,15 +306,15 @@ describe('publicInboxHandler', () => {
       expect(publicInboxHandler.resolve(value, messageHtml)).toEqual(expected)
     })
 
-    it('should return the feeds under the page scheme for a lore.kernel.org page over http', () => {
+    it('should return the feeds over https for a lore.kernel.org page over http', () => {
       const value = 'http://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/t.atom',
+          uri: 'https://lore.kernel.org/example/20260101000000.12345-1-alice@example.com/t.atom',
           hint: { key: 'public-inbox:thread', label: 'Thread' },
         },
         {
-          uri: 'http://lore.kernel.org/example/new.atom',
+          uri: 'https://lore.kernel.org/example/new.atom',
           hint: { key: 'public-inbox:messages', label: 'Messages' },
         },
       ]

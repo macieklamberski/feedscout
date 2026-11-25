@@ -1,8 +1,7 @@
 import { civicplus } from 'feedintel'
-import { startsWithAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
+import { findElement, getCookieNames, getRootLinkUrl, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: agenda-center, alert-center, blog, calendar, jobs, media-center, news-flash, pages, photo-gallery, real-estate.
@@ -30,8 +29,11 @@ export type CivicplusPage = { kind: 'module'; key: CivicplusFeedKey }
 
 export const isCivicplusHtml = (content: string): boolean => {
   const script = findElement(content, (element) => {
+    const scriptUrl = getRootLinkUrl(element.attribs.src)
+
     return (
-      element.name === 'script' && startsWithAnyOf(element.attribs.src, '/Areas/Layout/Assets/')
+      element.name === 'script' &&
+      civicplus.pages.read(scriptUrl, { isAnyHost: true })?.key === 'asset'
     )
   })
 

@@ -1,17 +1,17 @@
 import { wildApricot } from 'feedintel'
-import { isPresent } from 'trousse'
+import { isPresent, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasClass, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+// A module's host and path, which a blog on the home page leaves out.
+export type WildApricotModule = { scheme: string; host: string; path?: Array<string> }
 export type WildApricotPage =
   | { kind: 'blog'; feedUrl: string }
-  | { kind: 'post'; blogUrl: string }
-  | { kind: 'events'; eventsUrl: string }
-
-const trailingSlashRegex = /\/$/
+  | { kind: 'post'; blog: WildApricotModule }
+  | { kind: 'events'; events: WildApricotModule }
 
 const eventsModeLinkClasses = ['calendarModeLink', 'listModeLink']
 
@@ -31,17 +31,20 @@ const getLinkHref = (content: string, isWantedId: (id: string) => boolean): stri
   return link?.attribs.href
 }
 
-const getModuleUrl = (href: string, url: string): string => {
-  const { origin, pathname } = new URL(href, url)
+const readModule = (href: string, url: string): WildApricotModule | undefined => {
+  const page = wildApricot.pages.read(parseUrl(href, url)?.href ?? '', { isAnyHost: true })
 
-  return `${origin}${pathname.replace(trailingSlashRegex, '')}`
-}
+  if (!page) {
+    return
+  }
 
-// A module's path is its URL's segments, the empty ones the table drops.
-const getModuleParams = (moduleUrl: string) => {
-  const { protocol, host, pathname } = new URL(moduleUrl)
+  const { scheme, host } = page.params
 
-  return { scheme: protocol.slice(0, -1), host, path: pathname.split('/') }
+  if (page.key === 'home') {
+    return { scheme, host }
+  }
+
+  return { scheme, host, path: page.params.path }
 }
 
 // A post page links its feed as `/page-{id}/RSS`, which answers 404, and names its blog in the
@@ -55,9 +58,10 @@ export const getWildApricotPage = (
   }
 
   const blogUrl = getLinkHref(content, (id) => id.endsWith('_blogPostView_title_backLink'))
+  const blog = blogUrl ? readModule(blogUrl, url) : undefined
 
-  if (blogUrl) {
-    return { kind: 'post', blogUrl: getModuleUrl(blogUrl, url) }
+  if (blog) {
+    return { kind: 'post', blog }
   }
 
   const feedUrl = getLinkHref(content, (id) => id.endsWith('_blogPostList_rssLink'))
@@ -70,8 +74,10 @@ export const getWildApricotPage = (
     return element.name === 'a' && eventsModeLinkClasses.some((name) => hasClass(element, name))
   })
 
-  if (eventsLink?.attribs.href) {
-    return { kind: 'events', eventsUrl: getModuleUrl(eventsLink.attribs.href, url) }
+  const events = eventsLink?.attribs.href ? readModule(eventsLink.attribs.href, url) : undefined
+
+  if (events) {
+    return { kind: 'events', events }
   }
 }
 
@@ -91,22 +97,20 @@ export const wildApricotHandler: PlatformHandler = {
       return []
     }
 
+    if (page.kind === 'post' && page.blog.path) {
+      return [feeds.getFeedEntry('blog', page.blog)].filter(isPresent)
+    }
+
+    // A blog on the home page serves its feed at the root.
     if (page.kind === 'post') {
-      const params = getModuleParams(page.blogUrl)
-
-      // A blog on the home page has no path, and its feed answers at the root.
-      if (!params.path.some(Boolean)) {
-        return [feeds.getFeedEntry('site', params)].filter(isPresent)
-      }
-
-      return [feeds.getFeedEntry('blog', params)].filter(isPresent)
+      return [feeds.getFeedEntry('site', page.blog)].filter(isPresent)
     }
 
     if (page.kind === 'blog') {
       return [{ uri: page.feedUrl, hint: composeHint('wild-apricot:blog') }]
     }
 
-    return [feeds.getFeedEntry('events', getModuleParams(page.eventsUrl))].filter(isPresent)
+    return [feeds.getFeedEntry('events', page.events)].filter(isPresent)
   },
 
   getFeedHint: feeds.getFeedHint,

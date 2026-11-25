@@ -80,15 +80,18 @@ const getSectionId = (content: string | undefined, url: string): string | undefi
 
 // A custom domain the table refuses as a host, as one with a path, leaves the subdomain feed.
 const getProfileFeedEntry = (
+  url: string,
   content: string | undefined,
   username: string,
 ): DiscoverUriEntry | undefined => {
   const { subdomain, customDomain } = content?.match(publicationRegex)?.groups ?? {}
 
-  return (
-    feeds.getFeedEntry('newsletter', { scheme: 'https', host: customDomain }) ??
-    feeds.getFeedEntry('newsletter', { scheme: 'https', username: subdomain ?? username })
-  )
+  const pageFeeds = feeds.forUrl(url)
+
+  return pageFeeds?.getFeedEntry('newsletter', {
+    host: customDomain,
+    username: subdomain ?? username,
+  })
 }
 
 const getPodcastEntries = (content: string | undefined): Array<DiscoverUriEntry | undefined> => {
@@ -140,9 +143,10 @@ export const substackHandler: PlatformHandler = {
     const parsed = parseSubstackUrl(url)
 
     if (parsed?.kind === 'profile') {
-      return [getProfileFeedEntry(content, parsed.username), ...getPodcastEntries(content)].filter(
-        isPresent,
-      )
+      return [
+        getProfileFeedEntry(url, content, parsed.username),
+        ...getPodcastEntries(content),
+      ].filter(isPresent)
     }
 
     const pageFeeds = feeds.forUrl(url)

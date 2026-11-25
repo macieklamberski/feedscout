@@ -60,7 +60,7 @@ describe('kktixHandler', () => {
       const value = 'https://example.kktix.cc/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.kktix.cc/events.atom?locale=zh-TW',
+          uri: 'https://example.kktix.cc/events.atom',
           hint: { key: 'kktix:events', label: 'Events' },
         },
       ]
@@ -72,7 +72,7 @@ describe('kktixHandler', () => {
       const value = 'https://example.kktix.cc/events/a1b2c3d4'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.kktix.cc/events.atom?locale=zh-TW',
+          uri: 'https://example.kktix.cc/events.atom',
           hint: { key: 'kktix:events', label: 'Events' },
         },
       ]
@@ -84,7 +84,7 @@ describe('kktixHandler', () => {
       const value = 'http://example.kktix.cc/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://example.kktix.cc/events.atom?locale=zh-TW',
+          uri: 'http://example.kktix.cc/events.atom',
           hint: { key: 'kktix:events', label: 'Events' },
         },
       ]

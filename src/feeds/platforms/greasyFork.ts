@@ -8,12 +8,12 @@ import { findDescendant, findElement, hasClass } from '../../common/utils.js'
 // Handler needed for: new, updated, user.
 
 export type GreasyForkUrl =
-  | { kind: 'user'; locale: string; userId: string }
-  | { kind: 'script'; locale: string }
-  | { kind: 'home'; locale: string }
+  | { kind: 'user'; locale?: string; userId: string }
+  | { kind: 'script'; locale?: string }
+  | { kind: 'home'; locale?: string }
 export type GreasyForkPage =
-  | { kind: 'user'; locale: string; userId: string }
-  | { kind: 'home'; locale: string }
+  | { kind: 'user'; locale?: string; userId: string }
+  | { kind: 'home'; locale?: string }
 
 const feeds = withHintLabels(greasyFork.feeds)
 
@@ -24,8 +24,7 @@ export const parseGreasyForkUrl = (url: string): GreasyForkUrl | undefined => {
     return
   }
 
-  // A page without a locale redirects to one by the browser language.
-  const locale = page.params.locale ?? 'en'
+  const { locale } = page.params
 
   if (page.key === 'user') {
     return { kind: 'user', locale, userId: page.params.userId }

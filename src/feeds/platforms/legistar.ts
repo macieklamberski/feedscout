@@ -1,5 +1,5 @@
 import { legistar } from 'feedintel'
-import { isSameText, parseUrl, resolveUrl } from 'trousse'
+import { parseUrl, resolveUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -47,29 +47,25 @@ export const parseLegistarUrl = (url: string): LegistarUrl | undefined => {
   return { kind: 'meeting', id, guid }
 }
 
-// The page link writes the feed's parameters in its own order, beside others such as `Title`.
-const isSameFeed = (parsed: LegistarUrl, href: string, origin: string): boolean => {
+// The page link writes the feed's parameters in its own order, beside others such as `Title`, so
+// the link names the page's feed when its values build the same URL.
+const isSameFeed = (feedUrl: string, href: string, origin: string): boolean => {
   if (!isRootOfPage(origin, href)) {
     return false
   }
 
   const feed = legistar.feeds.read(href, { isAnyHost: true })
 
-  return (
-    feed?.key === parsed.kind &&
-    feed.params.id === parsed.id &&
-    isSameText(feed.params.guid, parsed.guid)
-  )
+  if (!feed) {
+    return false
+  }
+
+  return legistar.feeds.getFeedUrl(feed.key, feed.params) === feedUrl
 }
 
 // A meeting page's alternate link appends a `Title` the page URL does not carry, so the feed is
 // spelled as the page links it when the page names the same feed, and from the page URL otherwise.
-const getFeedUrl = (
-  url: string,
-  content: string | undefined,
-  parsed: LegistarUrl,
-  feedUrl: string,
-): string => {
+const getFeedUrl = (url: string, content: string | undefined, feedUrl: string): string => {
   const origin = parseUrl(url)?.origin
 
   if (!content || !origin) {
@@ -83,7 +79,7 @@ const getFeedUrl = (
   for (const link of links) {
     const href = resolveUrl(link.attribs.href ?? '', url)
 
-    if (href && isSameFeed(parsed, href, origin)) {
+    if (href && isSameFeed(feedUrl, href, origin)) {
       return href
     }
   }
@@ -111,7 +107,7 @@ export const getLegistarPage = (
       return
     }
 
-    return { kind: 'legislation', feedUrl: getFeedUrl(url, content, parsed, feedUrl) }
+    return { kind: 'legislation', feedUrl: getFeedUrl(url, content, feedUrl) }
   }
 
   const feedUrl = pageFeeds.getFeedUrl('meeting', { id, guid })
@@ -120,7 +116,7 @@ export const getLegistarPage = (
     return
   }
 
-  return { kind: 'meeting', feedUrl: getFeedUrl(url, content, parsed, feedUrl) }
+  return { kind: 'meeting', feedUrl: getFeedUrl(url, content, feedUrl) }
 }
 
 export const legistarHandler: PlatformHandler = {

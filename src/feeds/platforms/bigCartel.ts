@@ -2,7 +2,7 @@ import { bigCartel } from 'feedintel'
 import { isAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, hasMarker } from '../../common/utils.js'
+import { findElement, getRootLinkUrl, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Handler needed for: products.
@@ -10,16 +10,17 @@ import { findElement, hasMarker } from '../../common/utils.js'
 export type BigCartelUrl = { kind: 'store' }
 
 const frameOptionsRegex = /https:\/\/my\.bigcartel\.com/i
-const themeStylesheetRegex = /^\/theme_stylesheets\/\d+\/\d+\/theme\.css$/i
 
 const feeds = withHintLabels(bigCartel.feeds)
 
 export const isBigCartelHtml = (content: string): boolean => {
   const stylesheet = findElement(content, (element) => {
+    const stylesheetUrl = getRootLinkUrl(element.attribs.href)
+
     return (
       element.name === 'link' &&
       isAnyOf(element.attribs.rel, 'stylesheet') &&
-      themeStylesheetRegex.test(element.attribs.href ?? '')
+      bigCartel.pages.read(stylesheetUrl, { isAnyHost: true })?.key === 'asset'
     )
   })
 

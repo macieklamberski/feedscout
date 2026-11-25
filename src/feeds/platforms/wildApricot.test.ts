@@ -81,7 +81,10 @@ describe('getWildApricotPage', () => {
   })
 
   it('should return the blog of a post page', () => {
-    const expected: WildApricotPage = { kind: 'post', blogUrl: 'https://example.com/news' }
+    const expected: WildApricotPage = {
+      kind: 'post',
+      blog: { scheme: 'https', host: 'example.com', path: ['news'] },
+    }
 
     expect(getWildApricotPage('https://example.com/news/12345678', postHtml)).toEqual(expected)
   })
@@ -93,19 +96,28 @@ describe('getWildApricotPage', () => {
         href="/news/"
       >Back to list</a>
     `
-    const expected: WildApricotPage = { kind: 'post', blogUrl: 'https://example.com/news' }
+    const expected: WildApricotPage = {
+      kind: 'post',
+      blog: { scheme: 'https', host: 'example.com', path: ['news'] },
+    }
 
     expect(getWildApricotPage('https://example.com/news/12345678', value)).toEqual(expected)
   })
 
   it('should return the events page in the list view', () => {
-    const expected: WildApricotPage = { kind: 'events', eventsUrl: 'https://example.com/Events' }
+    const expected: WildApricotPage = {
+      kind: 'events',
+      events: { scheme: 'https', host: 'example.com', path: ['Events'] },
+    }
 
     expect(getWildApricotPage('https://example.com/events', eventsListHtml)).toEqual(expected)
   })
 
   it('should return the events page in the calendar view', () => {
-    const expected: WildApricotPage = { kind: 'events', eventsUrl: 'https://example.com/Events' }
+    const expected: WildApricotPage = {
+      kind: 'events',
+      events: { scheme: 'https', host: 'example.com', path: ['Events'] },
+    }
 
     expect(getWildApricotPage('https://example.com/Events/', eventsCalendarHtml)).toEqual(expected)
   })

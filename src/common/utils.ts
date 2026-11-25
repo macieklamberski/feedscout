@@ -249,6 +249,28 @@ export const findUrls = (text: string): Array<string> => {
   return Array.from(text.matchAll(textUrlRegex), (match) => match[0])
 }
 
+// A marker reads only the page's content, so a link from the page's root, as `/app.js`, is
+// resolved against a host no page has, which an any-host read of a table leaves aside.
+const markerLinkBase = 'https://feedscout.invalid'
+
+// The URL of a script or stylesheet link a marker reads, absolute, protocol-relative or from the
+// page's root.
+export const getMarkerLinkUrl = (href: string | undefined): string => {
+  return parseUrl(href, markerLinkBase)?.href ?? ''
+}
+
+// The URL of a link a marker reads only from the page's root, as `/theme.css`. A link with a host
+// of its own gives nothing.
+export const getRootLinkUrl = (href: string | undefined): string => {
+  const linkUrl = parseUrl(href, markerLinkBase)
+
+  if (linkUrl?.origin !== markerLinkBase) {
+    return ''
+  }
+
+  return linkUrl.href
+}
+
 // A script takes path info, as in `/app.php/help/faq`, and a rewritten page is an HTML file.
 const scriptSegmentRegex = /\/[^/]*\.(?:php(?:\/.*)?|html?)$/i
 const trailingSlashRegex = /\/$/
