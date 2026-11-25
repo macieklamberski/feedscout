@@ -78,41 +78,23 @@ export const insanejournalHandler: PlatformHandler = {
       return getFeeds(feeds, { asylum: parsed.asylum }, parsed.tag)
     }
 
-    if (parsed.kind === 'syndicated') {
-      const pageFeeds = feeds.forUrl(url)
+    // A page fills the host and scheme its journal's feeds sit on: the path host it names the
+    // journal on, or the journal's own subdomain.
+    const pageFeeds = feeds.forUrl(url)
 
-      if (!pageFeeds) {
-        return []
-      }
-
-      return getFeeds(pageFeeds, { journal: parsed.feed }, parsed.tag)
-    }
-
-    // A journal the users host serves by path keeps its feeds there.
-    if (insanejournal.pages.read(url)?.key === 'usersJournal') {
-      const pageFeeds = feeds.forUrl(url)
-
-      if (!pageFeeds) {
-        return []
-      }
-
-      return getFeeds(pageFeeds, { journal: parsed.username }, parsed.tag)
-    }
-
-    // A journal named on www keeps the page's scheme on its own subdomain.
-    if (parsed.username) {
-      const scheme = new URL(url).protocol.slice(0, -1)
-
-      return getFeeds(feeds, { scheme, journal: parsed.username }, parsed.tag)
-    }
-
-    const journalPageFeeds = feeds.forUrl(url)
-
-    if (!journalPageFeeds) {
+    if (!pageFeeds) {
       return []
     }
 
-    return getFeeds(journalPageFeeds, {}, parsed.tag)
+    if (parsed.kind === 'syndicated') {
+      return getFeeds(pageFeeds, { journal: parsed.feed }, parsed.tag)
+    }
+
+    if (parsed.username) {
+      return getFeeds(pageFeeds, { journal: parsed.username }, parsed.tag)
+    }
+
+    return getFeeds(pageFeeds, {}, parsed.tag)
   },
 
   getFeedHint: feeds.getFeedHint,
