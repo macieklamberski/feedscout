@@ -14,6 +14,7 @@ export type HtmlMethodOptions = {
   // attribute rather than visible text — title, aria-label, or a layer name such as the one Framer
   // emits for the feed icon (<div data-framer-name="RSS Icon">).
   anchorAttributes?: Array<string>
+  jsonLdTypes?: Array<string>
 }
 
 export type HtmlMethodContext = {
