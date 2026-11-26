@@ -253,6 +253,27 @@ describe('generateUrlCombinations', () => {
 
     expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
+
+  it('should skip a base that does not parse', () => {
+    const baseUrls = ['not-a-url', 'https://example.com']
+    const expected: Array<UriEntry> = ['https://example.com/feed.xml']
+
+    expect(generateUrlCombinations(baseUrls, ['/feed.xml'])).toEqual(expected)
+  })
+
+  it('should skip a URI that does not resolve', () => {
+    const feedUris = ['https://exa mple.com/feed.xml', '/rss.xml']
+    const expected: Array<UriEntry> = ['https://example.com/rss.xml']
+
+    expect(generateUrlCombinations(['https://example.com'], feedUris)).toEqual(expected)
+  })
+
+  it('should skip an alternative that does not resolve', () => {
+    const feedUris = [['https://exa mple.com/feed/', '/?feed=rss']]
+    const expected: Array<UriEntry> = [['https://example.com/?feed=rss']]
+
+    expect(generateUrlCombinations(['https://example.com'], feedUris)).toEqual(expected)
+  })
 })
 
 describe('generatePathUrlCombinations', () => {
@@ -322,6 +343,12 @@ describe('generatePathUrlCombinations', () => {
     const expected: Array<string> = []
 
     expect(value).toEqual(expected)
+  })
+
+  it('should return empty array for a base that does not parse', () => {
+    const expected: Array<UriEntry> = []
+
+    expect(generatePathUrlCombinations(['not-a-url'], ['/feed.xml'])).toEqual(expected)
   })
 })
 
@@ -700,9 +727,9 @@ describe('getSubdomainVariants', () => {
     expect(getSubdomainVariants(value, ['blog'])).toEqual(expected)
   })
 
-  it('should throw for invalid base URL', () => {
-    const throwing = () => getSubdomainVariants('not-a-url', ['blog'])
+  it('should return empty array for invalid base URL', () => {
+    const expected: Array<string> = []
 
-    expect(throwing).toThrow(TypeError)
+    expect(getSubdomainVariants('not-a-url', ['blog'])).toEqual(expected)
   })
 })

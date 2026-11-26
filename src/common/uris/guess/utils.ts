@@ -1,10 +1,17 @@
 import { Parser } from 'htmlparser2'
-import { getPathSegments, getRegistrableDomain, isString, parseUrl } from 'trousse'
+import { getPathSegments, getRegistrableDomain, isPresent, isString, parseUrl } from 'trousse'
 import type { UriEntry } from '../../types.js'
 
 const ipAddressRegex = /^\d+\.\d+\.\d+\.\d+$/
 
-const resolveUri = (uri: string, base: string, origin: string, pathname: string): string => {
+type ResolveUriFn = (uri: string) => string | undefined
+
+const resolveUri = (
+  uri: string,
+  base: string,
+  origin: string,
+  pathname: string,
+): string | undefined => {
   if (uri.startsWith('/')) {
     return `${origin}${uri}`
   }
@@ -13,8 +20,32 @@ const resolveUri = (uri: string, base: string, origin: string, pathname: string)
     return `${origin}${pathname}${uri}`
   }
 
-  // biome-ignore lint/plugin/noBareNewUrl: A malformed url throws to the caller.
-  return new URL(uri, base).href
+  return parseUrl(uri, base)?.href
+}
+
+// An entry that does not resolve is skipped, and so is each alternative of one.
+const resolveEntries = (uris: Array<UriEntry>, resolve: ResolveUriFn): Array<UriEntry> => {
+  const entries: Array<UriEntry> = []
+
+  for (const uri of uris) {
+    if (isString(uri)) {
+      const resolved = resolve(uri)
+
+      if (resolved) {
+        entries.push(resolved)
+      }
+
+      continue
+    }
+
+    const alternatives = uri.map((alternative) => resolve(alternative)).filter(isPresent)
+
+    if (uri.length === 0 || alternatives.length > 0) {
+      entries.push(alternatives)
+    }
+  }
+
+  return entries
 }
 
 export const generateUrlCombinations = (
@@ -22,31 +53,26 @@ export const generateUrlCombinations = (
   uris: Array<UriEntry>,
 ): Array<UriEntry> => {
   return baseUrls.flatMap((base) => {
-    // biome-ignore lint/plugin/noBareNewUrl: A malformed url throws to the caller.
-    const parsed = new URL(base)
-    const origin = parsed.origin
-    const pathname = parsed.pathname
+    const parsed = parseUrl(base)
 
-    return uris.map((uri) => {
-      if (isString(uri)) {
-        return resolveUri(uri, base, origin, pathname)
-      }
+    if (!parsed) {
+      return []
+    }
 
-      return uri.map((alternative) => resolveUri(alternative, base, origin, pathname))
-    })
+    const { origin, pathname } = parsed
+
+    return resolveEntries(uris, (uri) => resolveUri(uri, base, origin, pathname))
   })
 }
 
 // Unlike resolveUri, a leading slash anchors at the base's directory instead of the origin:
 // /feed.xml + https://example.com/blog/ → https://example.com/blog/feed.xml.
-const resolvePathUri = (uri: string, base: string): string => {
+const resolvePathUri = (uri: string, base: string): string | undefined => {
   if (uri.startsWith('/')) {
-    // biome-ignore lint/plugin/noBareNewUrl: A malformed url throws to the caller.
-    return new URL(uri.slice(1), base).href
+    return parseUrl(uri.slice(1), base)?.href
   }
 
-  // biome-ignore lint/plugin/noBareNewUrl: A malformed url throws to the caller.
-  return new URL(uri, base).href
+  return parseUrl(uri, base)?.href
 }
 
 // Resolves every URI against each base's directory: query URIs append to the directory
@@ -58,13 +84,7 @@ export const generatePathUrlCombinations = (
   return pathBases.flatMap((base) => {
     const normalizedBase = base.endsWith('/') ? base : `${base}/`
 
-    return uris.map((uri) => {
-      if (isString(uri)) {
-        return resolvePathUri(uri, normalizedBase)
-      }
-
-      return uri.map((alternative) => resolvePathUri(alternative, normalizedBase))
-    })
+    return resolveEntries(uris, (uri) => resolvePathUri(uri, normalizedBase))
   })
 }
 
@@ -156,8 +176,12 @@ export const getWwwCounterpart = (baseUrl: string): string => {
 }
 
 export const getSubdomainVariants = (baseUrl: string, prefixes: Array<string>): Array<string> => {
-  // biome-ignore lint/plugin/noBareNewUrl: A malformed url throws to the caller.
-  const url = new URL(baseUrl)
+  const url = parseUrl(baseUrl)
+
+  if (!url) {
+    return []
+  }
+
   const hostname = url.hostname
 
   // Check if hostname is an IP address (simple check for digits and dots)
