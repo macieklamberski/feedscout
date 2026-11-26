@@ -1,5 +1,5 @@
 import { fluxbb } from 'feedintel'
-import { endsWithAnyOf, getQueryParam, parseUrl } from 'trousse'
+import { endsWithAnyOf, getOrigin, getQueryParam, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getScriptDirectory, hasElementWithId, hasMarker } from '../../common/utils.js'
@@ -65,7 +65,13 @@ export const fluxbbHandler: PlatformHandler = {
       return []
     }
 
-    const root = `${new URL(url).origin}${parsed.boardPath}`
+    const origin = getOrigin(url)
+
+    if (!origin) {
+      return []
+    }
+
+    const root = `${origin}${parsed.boardPath}`
 
     if (parsed.kind === 'forum') {
       return [

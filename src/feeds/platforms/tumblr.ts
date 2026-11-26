@@ -1,5 +1,5 @@
 import { tumblr } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
@@ -44,7 +44,7 @@ export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
   }
 
   // Tagged posts: /tagged/{tag}.
-  const tag = new URL(url).pathname.match(tagRegex)?.[1]
+  const tag = parseUrl(url)?.pathname.match(tagRegex)?.[1]
 
   if (tag) {
     return { kind: 'tag', blog, tag }

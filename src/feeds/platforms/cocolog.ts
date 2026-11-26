@@ -22,7 +22,13 @@ const getCocologPage = (url: string, content: string | undefined): CocologPage |
     return
   }
 
-  const { hostname, pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { hostname, pathname } = parsedUrl
   const blog = pathname.match(blogRegex)?.[1]
 
   if (blog) {

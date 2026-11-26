@@ -13,6 +13,7 @@ const resolveUri = (uri: string, base: string, origin: string, pathname: string)
     return `${origin}${pathname}${uri}`
   }
 
+  // biome-ignore lint/plugin/noBareNewUrl: A malformed url throws to the caller.
   return new URL(uri, base).href
 }
 
@@ -21,6 +22,7 @@ export const generateUrlCombinations = (
   uris: Array<UriEntry>,
 ): Array<UriEntry> => {
   return baseUrls.flatMap((base) => {
+    // biome-ignore lint/plugin/noBareNewUrl: A malformed url throws to the caller.
     const parsed = new URL(base)
     const origin = parsed.origin
     const pathname = parsed.pathname
@@ -39,9 +41,11 @@ export const generateUrlCombinations = (
 // /feed.xml + https://example.com/blog/ → https://example.com/blog/feed.xml.
 const resolvePathUri = (uri: string, base: string): string => {
   if (uri.startsWith('/')) {
+    // biome-ignore lint/plugin/noBareNewUrl: A malformed url throws to the caller.
     return new URL(uri.slice(1), base).href
   }
 
+  // biome-ignore lint/plugin/noBareNewUrl: A malformed url throws to the caller.
   return new URL(uri, base).href
 }
 
@@ -138,6 +142,7 @@ export const extractSectionBaseUrls = (
 }
 
 export const getWwwCounterpart = (baseUrl: string): string => {
+  // biome-ignore lint/plugin/noBareNewUrl: A malformed url throws to the caller.
   const url = new URL(baseUrl)
   const port = url.port ? `:${url.port}` : ''
 
@@ -151,6 +156,7 @@ export const getWwwCounterpart = (baseUrl: string): string => {
 }
 
 export const getSubdomainVariants = (baseUrl: string, prefixes: Array<string>): Array<string> => {
+  // biome-ignore lint/plugin/noBareNewUrl: A malformed url throws to the caller.
   const url = new URL(baseUrl)
   const hostname = url.hostname
 

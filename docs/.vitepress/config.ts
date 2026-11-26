@@ -7,16 +7,21 @@ const mdRegex = /\.md$/
 const trailingSlashRegex = /\/$/
 
 const hostname = 'https://feedscout.dev'
+// biome-ignore lint/plugin/noBareNewUrl: The url is fixed, so this cannot throw.
+const faviconFile = new URL('../public/favicon.svg', import.meta.url)
+// biome-ignore lint/plugin/noBareNewUrl: The url is fixed, so this cannot throw.
+const githubFile = new URL('./github.svg', import.meta.url)
+
 const og = vitepress({
-  site: { hostname, favicon: { file: new URL('../public/favicon.svg', import.meta.url) } },
+  site: { hostname, favicon: { file: faviconFile } },
   card: {
     header: {
       text: 'feedscout',
-      icon: { file: new URL('../public/favicon.svg', import.meta.url) },
+      icon: { file: faviconFile },
     },
     footer: {
       text: 'macieklamberski/feedscout',
-      icon: { file: new URL('./github.svg', import.meta.url) },
+      icon: { file: githubFile },
     },
   },
   style: { theme: { ...dark, accent: '#a2e57b' }, background: { pattern: 'dots' } },

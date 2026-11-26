@@ -1,5 +1,5 @@
 import { audioboom } from 'feedintel'
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -24,7 +24,13 @@ export const parseAudioboomUrl = (url: string): AudioboomUrl | undefined => {
     return
   }
 
-  const { pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { pathname } = parsedUrl
   const playlistSegment = pathname.match(playlistRegex)?.groups?.segment
   const playlistId = playlistSegment?.match(idRegex)?.groups?.id
 

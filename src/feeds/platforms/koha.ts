@@ -1,5 +1,5 @@
 import { koha } from 'feedintel'
-import { getQueryParam, getQueryParamValues, isAnyOf, parseUrl } from 'trousse'
+import { getOrigin, getQueryParam, getQueryParamValues, isAnyOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex, hasMarker } from '../../common/utils.js'
@@ -88,7 +88,12 @@ export const kohaHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
+    const origin = getOrigin(url)
+
+    if (!origin) {
+      return []
+    }
+
     // The table drops one trailing slash from a root, so a root printed with a doubled slash, as
     // `https://example.edu//cgi-bin/koha/`, keeps it.
     const root = `${origin}${parsed.root}/`

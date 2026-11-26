@@ -50,7 +50,13 @@ export const getWeeblyPage = (url: string, content: string | undefined): WeeblyP
   // it links is a blog candidate beside the default /blog. Validation drops the pages that are
   // not blogs.
   const pages = new Set(['blog'])
-  const { hostname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { hostname } = parsedUrl
   const anchors = content ? findElements(content, (element) => element.name === 'a') : []
 
   for (const anchor of anchors) {

@@ -1,5 +1,5 @@
 import { itchio } from 'feedintel'
-import { getAnyOf, isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
+import { getAnyOf, isAnyOf, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -64,7 +64,13 @@ export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
     return
   }
 
-  const { pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { pathname } = parsedUrl
 
   // Subdomain: creator pages ({creator}.itch.io).
   if (!isHostOf(url, mainHosts)) {

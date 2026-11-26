@@ -1,5 +1,5 @@
 import { librivox } from 'feedintel'
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -18,7 +18,7 @@ const feeds = withHintLabels(librivox.feeds)
 export type LibrivoxPage = { audiobookId: string }
 
 const getLibrivoxPage = (url: string, content: string | undefined): LibrivoxPage | undefined => {
-  if (!audiobookRegex.test(new URL(url).pathname)) {
+  if (!audiobookRegex.test(parseUrl(url)?.pathname ?? '')) {
     return
   }
 

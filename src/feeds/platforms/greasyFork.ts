@@ -88,7 +88,13 @@ export const greasyForkHandler: PlatformHandler = {
       return []
     }
 
-    const params = { scheme: 'https', host: `api.${new URL(url).hostname}`, locale: page.locale }
+    const hostname = parseUrl(url)?.hostname
+
+    if (!hostname) {
+      return []
+    }
+
+    const params = { scheme: 'https', host: `api.${hostname}`, locale: page.locale }
 
     if (page.kind === 'user') {
       return [pageFeeds.getFeedEntry('user', { ...params, userId: page.userId })]

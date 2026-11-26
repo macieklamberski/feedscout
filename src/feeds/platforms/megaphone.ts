@@ -1,5 +1,5 @@
 import { megaphone } from 'feedintel'
-import { getQueryParam, isHostOf } from 'trousse'
+import { getQueryParam, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { wordOrHyphenRegex } from '../../common/utils.js'
@@ -20,7 +20,13 @@ const feedUrlRegex = /feeds\.megaphone\.fm\/([\w-]+)/i
 const feeds = withHintLabels(megaphone.feeds)
 
 export const parseMegaphoneUrl = (url: string): MegaphoneUrl | undefined => {
-  const { pathname, searchParams } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { pathname, searchParams } = parsedUrl
 
   // The playlist embed names its show by the feed id in the p parameter.
   if (isHostOf(url, playlistHosts)) {

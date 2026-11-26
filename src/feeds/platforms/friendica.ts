@@ -1,4 +1,5 @@
 import { friendica } from 'feedintel'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -20,7 +21,7 @@ export const isFriendicaHeaders = (headers: Headers): boolean => {
 }
 
 export const parseFriendicaUrl = (url: string): FriendicaUrl | undefined => {
-  const username = new URL(url).pathname.match(profileRegex)?.[1]
+  const username = parseUrl(url)?.pathname.match(profileRegex)?.[1]
 
   if (!username) {
     return

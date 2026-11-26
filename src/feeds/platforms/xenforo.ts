@@ -1,5 +1,5 @@
 import { xenforo } from 'feedintel'
-import { getAnyOf, parseUrl } from 'trousse'
+import { getAnyOf, getOrigin, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -38,8 +38,10 @@ export const isXenforoHtml = (content: string): boolean => {
 const getConfigBasePath = (url: string, content: string | undefined): string => {
   const basePath = content?.match(basePathRegex)?.groups?.basePath
 
+  const pathname = parseUrl(url)?.pathname
+
   // The path counts only when it holds the page.
-  if (!basePath || !`${new URL(url).pathname}/`.startsWith(`${basePath}/`)) {
+  if (!basePath || !pathname || !`${pathname}/`.startsWith(`${basePath}/`)) {
     return ''
   }
 
@@ -100,7 +102,13 @@ export const xenforoHandler: PlatformHandler = {
       return []
     }
 
-    const root = `${new URL(url).origin}${page.basePath}`
+    const origin = getOrigin(url)
+
+    if (!origin) {
+      return []
+    }
+
+    const root = `${origin}${page.basePath}`
 
     if (page.kind === 'forum') {
       return [

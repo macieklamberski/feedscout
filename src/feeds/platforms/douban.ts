@@ -1,5 +1,5 @@
 import { douban } from 'feedintel'
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex } from '../../common/utils.js'
@@ -27,7 +27,13 @@ export const parseDoubanUrl = (url: string): DoubanUrl | undefined => {
     return
   }
 
-  const { pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { pathname } = parsedUrl
   // User page: /people/{user}/
   const username = pathname.match(userRegex)?.[1]
 

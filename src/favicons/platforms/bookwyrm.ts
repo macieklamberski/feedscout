@@ -1,4 +1,4 @@
-import { endsWithAnyOf, isNonEmptyString, parseUrl } from 'trousse'
+import { endsWithAnyOf, getOrigin, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasClass } from '../../common/utils.js'
 import {
@@ -57,7 +57,12 @@ export const bookwyrmEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  const { origin } = new URL(ref.url)
+  const origin = getOrigin(ref.url)
+
+  if (!origin) {
+    return
+  }
+
   const response = await context.fetchFn(`${origin}/user/${ref.id}.json`)
   const data = parseResponseJson(response)
   const iconUrl = data?.icon?.url

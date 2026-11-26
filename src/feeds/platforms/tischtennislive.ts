@@ -38,7 +38,13 @@ export const getTischtennislivePage = (
     return
   }
 
-  const { hostname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { hostname } = parsedUrl
   const link = findElement(content, (element) => {
     if (element.name !== 'a') {
       return false

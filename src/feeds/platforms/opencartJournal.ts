@@ -50,7 +50,13 @@ export const getOpencartJournalPage = (
 
   const base = findElement(content, (element) => element.name === 'base')
   // The store is the base's directory: an empty base would otherwise keep the page's own query.
-  const baseUrl = parseUrl(base?.attribs.href ?? '/', url) ?? new URL('/', url)
+  const baseUrl = parseUrl(base?.attribs.href ?? '/', url) ?? parseUrl('/', url)
+
+  if (!baseUrl) {
+    return
+  }
+
+  // biome-ignore lint/plugin/noBareNewUrl: A malformed href throws, which reports it to onError.
   const storeUrl = new URL('.', baseUrl).href
 
   return { kind: 'store', storeUrl, version }

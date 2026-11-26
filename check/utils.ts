@@ -131,6 +131,7 @@ const parseProxy = (url: string | undefined) => {
   if (!url) {
     return
   }
+  // biome-ignore lint/plugin/noBareNewUrl: A malformed proxy url fails the browser launch.
   const parsed = new URL(url)
   return {
     server: `${parsed.protocol}//${parsed.host}`,

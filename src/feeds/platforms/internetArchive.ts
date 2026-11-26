@@ -1,5 +1,5 @@
 import { internetArchive } from 'feedintel'
-import { getQueryParam, isHostOf } from 'trousse'
+import { getQueryParam, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -23,7 +23,13 @@ const getInternetArchivePage = (
   url: string,
   content: string | undefined,
 ): InternetArchivePage | undefined => {
-  const { pathname, searchParams } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { pathname, searchParams } = parsedUrl
 
   // Collections, accounts and search serve one app shell loading `/offshoot_assets/`, while
   // items serve full HTML without it. Accounts are `/details/@{user}`.

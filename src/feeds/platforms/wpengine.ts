@@ -1,4 +1,5 @@
 import { wpengine } from 'feedintel'
+import { getOrigin } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
 import {
@@ -36,7 +37,13 @@ export const wpengineHandler: PlatformHandler = {
       return []
     }
 
-    return composeWordpressFeeds(new URL(url).origin, parsed)
+    const origin = getOrigin(url)
+
+    if (!origin) {
+      return []
+    }
+
+    return composeWordpressFeeds(origin, parsed)
   },
 
   getFeedHint: (url) => {

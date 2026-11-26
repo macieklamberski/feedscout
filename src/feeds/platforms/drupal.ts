@@ -1,6 +1,6 @@
 import { drupal } from 'feedintel'
 import { DomUtils } from 'htmlparser2'
-import { includesAnyOf, isString } from 'trousse'
+import { getOrigin, includesAnyOf, isString } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -23,8 +23,13 @@ export const isDrupalHeaders = (headers: Headers): boolean => {
 export type DrupalPage = { kind: 'site'; baseUrl: string }
 
 // Drupal 8 and later print the install's base path in the settings JSON of every page.
-export const getDrupalPage = (url: string, content: string | undefined): DrupalPage => {
-  const { origin } = new URL(url)
+export const getDrupalPage = (url: string, content: string | undefined): DrupalPage | undefined => {
+  const origin = getOrigin(url)
+
+  if (!origin) {
+    return
+  }
+
   const script = findElement(content, (element) => {
     return (
       element.name === 'script' &&
@@ -58,6 +63,10 @@ export const drupalHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getDrupalPage(url, content)
+
+    if (!page) {
+      return []
+    }
 
     return [feeds.getFeedEntry('site', { root: page.baseUrl })]
   },

@@ -34,14 +34,20 @@ export const isMybbHtml = (content: string): boolean => {
 
 // MyBB 1.8 prints the board URL as `rootpath`. Every MyBB script sits in the install
 // root, so on an older board the page's directory is the root.
-const getBoardUrl = (url: string, content: string | undefined): string => {
+const getBoardUrl = (url: string, content: string | undefined): string | undefined => {
   const rootPath = content?.match(rootPathRegex)?.[1]
 
   if (rootPath) {
     return rootPath
   }
 
-  const { origin, pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { origin, pathname } = parsedUrl
 
   return `${origin}${pathname.slice(0, pathname.lastIndexOf('/'))}`
 }
@@ -65,7 +71,13 @@ const getBreadcrumbForumId = (content: string | undefined): string | undefined =
 }
 
 const getForumId = (url: string, content: string | undefined): string | undefined => {
-  const { pathname, searchParams } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { pathname, searchParams } = parsedUrl
   const queryId = getQueryParam(searchParams, 'fid')
 
   if (endsWithAnyOf(pathname, '/forumdisplay.php') && queryId && digitsRegex.test(queryId)) {
@@ -84,11 +96,13 @@ const getForumId = (url: string, content: string | undefined): string | undefine
 }
 
 const getMybbPage = (url: string, content: string | undefined): MybbPage | undefined => {
-  if (!parseUrl(url)) {
+  const boardUrl = getBoardUrl(url, content)
+
+  if (!parseUrl(url) || !boardUrl) {
     return
   }
 
-  return { boardUrl: getBoardUrl(url, content), forumId: getForumId(url, content) }
+  return { boardUrl, forumId: getForumId(url, content) }
 }
 
 export const mybbHandler: PlatformHandler = {

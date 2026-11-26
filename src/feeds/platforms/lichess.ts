@@ -1,5 +1,5 @@
 import { lichess } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf, isLocale } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, isLocale, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -22,7 +22,13 @@ export const parseLichessUrl = (url: string): LichessUrl | undefined => {
     return
   }
 
-  const { pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { pathname } = parsedUrl
   const username = pathname.match(userBlogRegex)?.[1]
 
   // User blog and its posts: /@/{user}/blog and /@/{user}/blog/{slug}/{id}.

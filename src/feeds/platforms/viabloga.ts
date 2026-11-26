@@ -1,4 +1,5 @@
 import { viabloga } from 'feedintel'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -21,7 +22,7 @@ export const parseViablogaUrl = (url: string): ViablogaUrl | undefined => {
     return
   }
 
-  const category = categoryRegex.exec(new URL(url).pathname)?.[1]
+  const category = categoryRegex.exec(parseUrl(url)?.pathname ?? '')?.[1]
 
   if (category) {
     return { kind: 'category', category }

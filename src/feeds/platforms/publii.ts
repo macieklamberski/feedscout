@@ -1,4 +1,5 @@
 import { publii } from 'feedintel'
+import { getOrigin } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker, hasMetaContent, isRootOfPage } from '../../common/utils.js'
@@ -45,7 +46,13 @@ export const getPubliiPage = (url: string, content: string | undefined): PubliiP
     return
   }
 
-  return { kind: 'site', siteUrl: new URL(url).origin }
+  const origin = getOrigin(url)
+
+  if (!origin) {
+    return
+  }
+
+  return { kind: 'site', siteUrl: origin }
 }
 
 export const publiiHandler: PlatformHandler = {

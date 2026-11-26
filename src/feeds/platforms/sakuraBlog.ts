@@ -1,4 +1,5 @@
 import { sakuraBlog } from 'feedintel'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -16,7 +17,13 @@ export const parseSakuraBlogUrl = (url: string): SakuraBlogUrl | undefined => {
     return
   }
 
-  return { kind: 'blog', hostname: new URL(url).hostname }
+  const hostname = parseUrl(url)?.hostname
+
+  if (!hostname) {
+    return
+  }
+
+  return { kind: 'blog', hostname }
 }
 
 export const sakuraBlogHandler: PlatformHandler = {

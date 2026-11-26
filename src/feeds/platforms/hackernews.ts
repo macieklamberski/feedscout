@@ -1,5 +1,5 @@
 import { hackernews } from 'feedintel'
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -20,7 +20,7 @@ export const parseHackernewsUrl = (url: string): HackernewsUrl | undefined => {
     return
   }
 
-  if (showRegex.test(new URL(url).pathname)) {
+  if (showRegex.test(parseUrl(url)?.pathname ?? '')) {
     return { kind: 'show' }
   }
 

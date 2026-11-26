@@ -1,5 +1,5 @@
 import { peertube } from 'feedintel'
-import { decodeSegment, getQueryParam, includesAnyOf, parseUrl } from 'trousse'
+import { decodeSegment, getOrigin, getQueryParam, includesAnyOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -24,7 +24,12 @@ export const isPeertubeHeaders = (headers: Headers): boolean => {
 // The podcast feed takes only the numeric channel id, which the channel page carries in its link
 // to that feed. An instance too old to serve the feed links none.
 const getPodcastChannelId = (url: string, content: string | undefined): string | undefined => {
-  const { origin } = new URL(url)
+  const origin = getOrigin(url)
+
+  if (!origin) {
+    return
+  }
+
   const link = findElement(content, (element) => {
     if (element.name !== 'link') {
       return false

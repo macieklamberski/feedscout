@@ -37,7 +37,13 @@ const getGancioPage = (url: string, content: string | undefined): GancioPage | u
   }
 
   const stylesheetUrl = parseUrl(link.attribs.href, url)
-  const { origin, pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { origin, pathname } = parsedUrl
 
   if (!stylesheetUrl || stylesheetUrl.origin !== origin) {
     return

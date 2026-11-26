@@ -1,5 +1,5 @@
 import { wordpress } from 'feedintel'
-import { getQueryParam, isAnyOf, isSubdomainOf } from 'trousse'
+import { getOrigin, getQueryParam, isAnyOf, isSubdomainOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
@@ -72,9 +72,15 @@ const feeds = withHintLabels(wordpress.feeds)
 
 // The page a WordPress URL shows, read from the path, so a WP Engine site reads the same. Only
 // hypotheses.org's post-id paths need the host.
-export const parseWordpressPage = (url: string): WordpressUrl => {
+export const parseWordpressPage = (url: string): WordpressUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
   // A paginated listing, `/page/2/` or `/2024/05/page/2/`, is the listing itself.
-  const pathname = new URL(url).pathname.replace(paginationRegex, '').replace(postEndpointRegex, '')
+  const pathname = parsedUrl.pathname.replace(paginationRegex, '').replace(postEndpointRegex, '')
 
   // hypotheses.org posts are /{post_id}, so a four-digit id is a post, never a year archive.
   if (isSubdomainOf(url, postIdDomains) && postIdRegex.test(pathname)) {
@@ -136,7 +142,12 @@ const getFeedFormat = (
 // The hint of a WordPress feed URL: the feed endpoint comes off the path, or the `?feed=` query
 // is read, and the page left is the one whose feed it is. A WP Engine feed reads the same.
 export const getWordpressFeedHint = (url: string): DiscoverUriHint | undefined => {
-  const parsedUrl = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
   const { origin, pathname } = parsedUrl
   const feedQuery = getQueryParam(parsedUrl, 'feed')
   const isCommentsFeedQuery = pathname === '/' && isAnyOf(feedQuery, commentsFeedQueries)
@@ -155,11 +166,11 @@ export const getWordpressFeedHint = (url: string): DiscoverUriHint | undefined =
   const pagePath = isFeedPath ? pathname.replace(feedEndpointRegex, '') : pathname
   const page = parseWordpressPage(`${origin}${pagePath}`)
 
-  if (page.kind === 'archive') {
+  if (page?.kind === 'archive') {
     return composeHint(page.hintKey, format)
   }
 
-  if (page.kind === 'post') {
+  if (page?.kind === 'post') {
     return composeHint('wordpress:post-comments', format)
   }
 
@@ -229,7 +240,13 @@ export const wordpressHandler: PlatformHandler = {
       return []
     }
 
-    return composeWordpressFeeds(new URL(url).origin, parsed)
+    const origin = getOrigin(url)
+
+    if (!origin) {
+      return []
+    }
+
+    return composeWordpressFeeds(origin, parsed)
   },
 
   getFeedHint: (url) => {

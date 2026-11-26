@@ -42,6 +42,7 @@ const getSmfPage = (url: string, content: string | undefined): SmfPage | undefin
   }
 
   // A guest without cookies gets the script URL with a `PHPSESSID` query appended.
+  // biome-ignore lint/plugin/noBareNewUrl: A malformed href throws, which reports it to onError.
   const { origin, pathname } = new URL(scriptUrl, url)
 
   return { scriptUrl: `${origin}${pathname}`, boardId: getBoardId(url, content) }

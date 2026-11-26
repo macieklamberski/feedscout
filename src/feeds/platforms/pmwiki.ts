@@ -1,5 +1,5 @@
 import { pmwiki } from 'feedintel'
-import { getPathSegments, getQueryParam, parseUrl } from 'trousse'
+import { getOrigin, getPathSegments, getQueryParam, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
@@ -65,7 +65,12 @@ export const pmwikiHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
+    const origin = getOrigin(url)
+
+    if (!origin) {
+      return []
+    }
+
     // The table drops one trailing slash from a root, so a script path ending in one, as `/wiki/`,
     // keeps it.
     const root = `${origin}${parsed.scriptPath}/`

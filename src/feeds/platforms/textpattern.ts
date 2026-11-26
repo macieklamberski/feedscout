@@ -26,7 +26,11 @@ export const isTextpatternHtml = (content: string): boolean => {
 // Textpattern serves its feeds at `{site}/rss` and `{site}/atom`, so the feed link a theme prints
 // names the site root. It counts only on the page's own host, under a root that holds the page.
 const getSiteUrl = (url: string, content: string | undefined): string | undefined => {
-  const parsedUrl = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
 
   const feedLink = findElement(content, (element) => {
     if (element.name !== 'link' || element.attribs.rel !== 'alternate') {
@@ -57,10 +61,18 @@ const getSiteUrl = (url: string, content: string | undefined): string | undefine
 
 // A clean URL names the section first and a category under `/category/`, and a messy one names
 // them in `?s=` and `?c=`.
-export const getTextpatternPage = (url: string, content: string | undefined): TextpatternPage => {
-  const parsedUrl = new URL(url)
+export const getTextpatternPage = (
+  url: string,
+  content: string | undefined,
+): TextpatternPage | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
   const siteUrl = getSiteUrl(url, content) ?? parsedUrl.origin
-  const sitePath = new URL(siteUrl).pathname.replace(trailingSlashRegex, '')
+  const sitePath = parseUrl(siteUrl)?.pathname.replace(trailingSlashRegex, '') ?? ''
   const [route, value] = parsedUrl.pathname.slice(sitePath.length).split('/').filter(Boolean)
   const queryCategory = getQueryParam(parsedUrl, 'c')
   const querySection = getQueryParam(parsedUrl, 's')
@@ -91,6 +103,10 @@ export const textpatternHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getTextpatternPage(url, content)
+
+    if (!page) {
+      return []
+    }
 
     if (page.kind === 'section') {
       const params = { root: page.siteUrl, section: page.section }

@@ -31,6 +31,7 @@ const getLinkHref = (content: string, isWantedId: (id: string) => boolean): stri
 }
 
 const getModuleUrl = (href: string, url: string): string => {
+  // biome-ignore lint/plugin/noBareNewUrl: A malformed href throws, which reports it to onError.
   const { origin, pathname } = new URL(href, url)
 
   return `${origin}${pathname.replace(trailingSlashRegex, '')}`
@@ -55,6 +56,7 @@ export const getWildApricotPage = (
   const feedUrl = getLinkHref(content, (id) => id.endsWith('_blogPostList_rssLink'))
 
   if (feedUrl) {
+    // biome-ignore lint/plugin/noBareNewUrl: A malformed href throws, which reports it to onError.
     return { kind: 'blog', feedUrl: new URL(feedUrl, url).href }
   }
 

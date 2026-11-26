@@ -1,5 +1,5 @@
 import { snac } from 'feedintel'
-import { parseUrl } from 'trousse'
+import { getOrigin, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -51,8 +51,19 @@ export const snacHandler: PlatformHandler = {
       return []
     }
 
-    const userUrl = `${new URL(url).origin}${parsed.path}`
-    const root = new URL('./', userUrl).href
+    const origin = getOrigin(url)
+
+    if (!origin) {
+      return []
+    }
+
+    const userUrl = `${origin}${parsed.path}`
+    const root = parseUrl('./', userUrl)?.href
+
+    if (!root) {
+      return []
+    }
+
     const user = userUrl.slice(root.length)
 
     return [feeds.getFeedEntry('posts', { root, user })]

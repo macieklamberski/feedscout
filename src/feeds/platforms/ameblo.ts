@@ -1,5 +1,5 @@
 import { ameblo } from 'feedintel'
-import { getPathSegments, isHostOf } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -21,7 +21,13 @@ export const parseAmebloUrl = (url: string): AmebloUrl | undefined => {
     return
   }
 
-  const { pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { pathname } = parsedUrl
   const embedUsername = pathname.match(reblogCardRegex)?.[1] ?? pathname.match(imagePageRegex)?.[1]
 
   if (embedUsername) {

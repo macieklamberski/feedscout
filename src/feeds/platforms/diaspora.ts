@@ -1,5 +1,5 @@
 import { diaspora } from 'feedintel'
-import { isAnyOf, startsWithAnyOf } from 'trousse'
+import { isAnyOf, parseUrl, startsWithAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { formatSuffixRegex, hasMarker } from '../../common/utils.js'
@@ -18,7 +18,13 @@ export const isDiasporaHtml = (content: string): boolean => {
 export type DiasporaPage = { username: string }
 
 const getDiasporaPage = (url: string, content: string | undefined): DiasporaPage | undefined => {
-  const { pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { pathname } = parsedUrl
   const { route, segment } = pathname.match(profileRegex)?.groups ?? {}
 
   if (!segment) {
@@ -54,7 +60,7 @@ export const diasporaHandler: PlatformHandler = {
       return false
     }
 
-    return profileRegex.test(new URL(url).pathname)
+    return profileRegex.test(parseUrl(url)?.pathname ?? '')
   },
 
   resolve: (url, content) => {

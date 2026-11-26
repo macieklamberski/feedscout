@@ -3,6 +3,7 @@ import {
   isPresent,
   type NormalizeOptions,
   normalizeUrl,
+  parseUrl,
   stripWww,
   trimUrlValues,
 } from 'trousse'
@@ -103,12 +104,17 @@ export const discoverUrisFromPlatform = async (
     const requestedPageUrl = readPageUrl(requestedUrl)
     const normalizedRequested = normalizeUrl(requestedPageUrl, samePageOptions)
     const normalizedFetched = normalizeUrl(fetchedPageUrl, samePageOptions)
-    const requestedHost = stripWww(new URL(requestedPageUrl).hostname)
-    const fetchedHost = stripWww(new URL(fetchedPageUrl).hostname)
+    const requestedHost = parseUrl(requestedPageUrl)?.hostname
+    const fetchedHost = parseUrl(fetchedPageUrl)?.hostname
 
     // A site that moved to another host still answers its old feed URLs with entries that
     // stopped the day it moved.
-    if (normalizedRequested !== normalizedFetched && requestedHost === fetchedHost) {
+    if (
+      normalizedRequested !== normalizedFetched &&
+      requestedHost &&
+      fetchedHost &&
+      stripWww(requestedHost) === stripWww(fetchedHost)
+    ) {
       candidatePages.push({ url: requestedPageUrl })
     }
   }

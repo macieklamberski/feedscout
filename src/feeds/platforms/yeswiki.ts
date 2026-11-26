@@ -1,5 +1,5 @@
 import { yeswiki } from 'feedintel'
-import { parseJson } from 'trousse'
+import { getOrigin, parseJson } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -97,7 +97,13 @@ export const yeswikiHandler: PlatformHandler = {
 
   resolve: (url, content, headers) => {
     const { installPath, formIds } = getYeswikiPage(content, headers)
-    const root = `${new URL(url).origin}${installPath}`
+    const origin = getOrigin(url)
+
+    if (!origin) {
+      return []
+    }
+
+    const root = `${origin}${installPath}`
 
     return [
       ...formIds.map((formId) => feeds.getFeedEntry('form-entries', { root, formId })),

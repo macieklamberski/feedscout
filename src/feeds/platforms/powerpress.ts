@@ -1,5 +1,5 @@
 import { powerpress } from 'feedintel'
-import { parseUrl } from 'trousse'
+import { getOrigin, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
@@ -38,8 +38,17 @@ const getPinwHomeUrl = (url: string, content: string | undefined): string | unde
   return homeUrl
 }
 
-export const getPowerpressPage = (url: string, content: string | undefined): PowerpressPage => {
-  return { kind: 'site', homeUrl: getPinwHomeUrl(url, content) ?? new URL(url).origin }
+export const getPowerpressPage = (
+  url: string,
+  content: string | undefined,
+): PowerpressPage | undefined => {
+  const homeUrl = getPinwHomeUrl(url, content) ?? getOrigin(url)
+
+  if (!homeUrl) {
+    return
+  }
+
+  return { kind: 'site', homeUrl }
 }
 
 export const powerpressHandler: PlatformHandler = {
@@ -51,7 +60,7 @@ export const powerpressHandler: PlatformHandler = {
     const page = getPowerpressPage(url, content)
     const pageFeeds = feeds.forUrl(url)
 
-    if (!pageFeeds) {
+    if (!page || !pageFeeds) {
       return []
     }
 

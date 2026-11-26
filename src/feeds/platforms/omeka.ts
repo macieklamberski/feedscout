@@ -90,7 +90,13 @@ export const getOmekaPage = (url: string, content: string | undefined): OmekaPag
     return
   }
 
-  const { origin, pathname, searchParams } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { origin, pathname, searchParams } = parsedUrl
   const rootPath = assetRootUrl.pathname.replace(trailingSlashRegex, '')
   const rootUrl = `${origin}${rootPath}`
   const routePath = pathname.slice(rootPath.length)
@@ -173,7 +179,9 @@ export const omekaHandler: PlatformHandler = {
   getFeedHint: (url) => {
     const hint = feeds.getFeedHint(url)
 
-    if (hint?.key !== 'omeka:items' || !hasFilter(new URL(url).searchParams)) {
+    const searchParams = parseUrl(url)?.searchParams
+
+    if (hint?.key !== 'omeka:items' || !searchParams || !hasFilter(searchParams)) {
       return hint
     }
 

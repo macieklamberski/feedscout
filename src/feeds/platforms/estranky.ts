@@ -1,5 +1,5 @@
 import { estranky } from 'feedintel'
-import { getSubdomain, isAnyOf, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
+import { getOrigin, getSubdomain, isAnyOf, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -49,19 +49,20 @@ export const parseEstrankyUrl = (url: string): EstrankyUrl | undefined => {
 // A slice template on a custom domain links the home page slice on the Estranky subdomain.
 // An eOldal slice template links its `eoldal.hu` subdomain, which no longer resolves, so its
 // slices stay on the page's origin.
-const getEstrankyPage = (url: string, content: string | undefined): EstrankyPage => {
-  const { origin } = new URL(url)
+const getEstrankyPage = (url: string, content: string | undefined): EstrankyPage | undefined => {
+  const origin = getOrigin(url)
+
+  if (!origin) {
+    return
+  }
+
   const anchor = findElement(content, (element) => {
     const href = element.attribs.href ?? ''
 
     return element.name === 'a' && element.attribs.rel === 'feedurl' && isSubdomainOf(href, domains)
   })
 
-  if (!anchor?.attribs.href) {
-    return { origin, sliceOrigin: origin }
-  }
-
-  return { origin, sliceOrigin: new URL(anchor.attribs.href).origin }
+  return { origin, sliceOrigin: getOrigin(anchor?.attribs.href) ?? origin }
 }
 
 export const estrankyHandler: PlatformHandler = {
@@ -76,9 +77,14 @@ export const estrankyHandler: PlatformHandler = {
   // A site serves the article feeds, the Web Slice feeds or both, by its template, and answers
   // 404 on a set it lacks. Its `photos.xml` and `comments.xml` links serve the posts feed.
   resolve: (url, content) => {
-    const { origin, sliceOrigin } = getEstrankyPage(url, content)
-    const siteFeeds = feeds.forUrl(origin)
-    const sliceFeeds = feeds.forUrl(sliceOrigin)
+    const page = getEstrankyPage(url, content)
+
+    if (!page) {
+      return []
+    }
+
+    const siteFeeds = feeds.forUrl(page.origin)
+    const sliceFeeds = feeds.forUrl(page.sliceOrigin)
 
     if (!siteFeeds || !sliceFeeds) {
       return []

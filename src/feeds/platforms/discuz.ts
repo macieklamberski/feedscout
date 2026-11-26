@@ -98,7 +98,13 @@ export const discuzHandler: PlatformHandler = {
       return []
     }
 
-    const { origin, pathname } = new URL(url)
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl) {
+      return []
+    }
+
+    const { origin, pathname } = parsedUrl
 
     // Discuz! pages sit in the install directory, such as `/forum/`, beside `forum.php` or
     // `rss.php`, except the archiver, served from `archiver/` inside it. The table drops one

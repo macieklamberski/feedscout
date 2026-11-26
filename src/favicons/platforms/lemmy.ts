@@ -1,4 +1,4 @@
-import { composeQuery, isNonEmptyString } from 'trousse'
+import { composeQuery, getOrigin, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
 import { lemmyHandler as lemmyFeedHandler, parseLemmyUrl } from '../../feeds/platforms/lemmy.js'
@@ -47,7 +47,12 @@ export const lemmyEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  const { origin } = new URL(ref.url)
+  const origin = getOrigin(ref.url)
+
+  if (!origin) {
+    return
+  }
+
   const [kind, name] = ref.id.split('/')
 
   if (kind === 'c') {

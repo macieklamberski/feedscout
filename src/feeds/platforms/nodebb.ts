@@ -1,5 +1,5 @@
 import { nodebb } from 'feedintel'
-import { includesAnyOf, parseUrl } from 'trousse'
+import { getOrigin, includesAnyOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getNumericId, hasMarker } from '../../common/utils.js'
@@ -56,7 +56,13 @@ export const getNodebbPage = (url: string, content: string | undefined): NodebbP
 
   const relativePath = content?.match(relativePathRegex)?.groups?.relativePath ?? ''
 
-  return { ...parsed, siteUrl: `${new URL(url).origin}${relativePath}` }
+  const origin = getOrigin(url)
+
+  if (!origin) {
+    return
+  }
+
+  return { ...parsed, siteUrl: `${origin}${relativePath}` }
 }
 
 export const nodebbHandler: PlatformHandler = {
