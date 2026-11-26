@@ -1,4 +1,5 @@
 import { wildApricot } from 'feedintel'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasClass, hasMarker } from '../../common/utils.js'
@@ -30,9 +31,14 @@ const getLinkHref = (content: string, isWantedId: (id: string) => boolean): stri
   return link?.attribs.href
 }
 
-const getModuleUrl = (href: string, url: string): string => {
-  // biome-ignore lint/plugin/noBareNewUrl: A malformed href throws, which reports it to onError.
-  const { origin, pathname } = new URL(href, url)
+const getModuleUrl = (href: string, url: string): string | undefined => {
+  const moduleUrl = parseUrl(href, url)
+
+  if (!moduleUrl) {
+    return
+  }
+
+  const { origin, pathname } = moduleUrl
 
   return `${origin}${pathname.replace(trailingSlashRegex, '')}`
 }
@@ -50,14 +56,25 @@ export const getWildApricotPage = (
   const blogUrl = getLinkHref(content, (id) => id.endsWith('_blogPostView_title_backLink'))
 
   if (blogUrl) {
-    return { kind: 'post', blogUrl: getModuleUrl(blogUrl, url) }
+    const postBlogUrl = getModuleUrl(blogUrl, url)
+
+    if (!postBlogUrl) {
+      return
+    }
+
+    return { kind: 'post', blogUrl: postBlogUrl }
   }
 
   const feedUrl = getLinkHref(content, (id) => id.endsWith('_blogPostList_rssLink'))
 
   if (feedUrl) {
-    // biome-ignore lint/plugin/noBareNewUrl: A malformed href throws, which reports it to onError.
-    return { kind: 'blog', feedUrl: new URL(feedUrl, url).href }
+    const blogFeedUrl = parseUrl(feedUrl, url)?.href
+
+    if (!blogFeedUrl) {
+      return
+    }
+
+    return { kind: 'blog', feedUrl: blogFeedUrl }
   }
 
   const eventsLink = findElement(content, (element) => {
@@ -65,7 +82,13 @@ export const getWildApricotPage = (
   })
 
   if (eventsLink?.attribs.href) {
-    return { kind: 'events', eventsUrl: getModuleUrl(eventsLink.attribs.href, url) }
+    const eventsUrl = getModuleUrl(eventsLink.attribs.href, url)
+
+    if (!eventsUrl) {
+      return
+    }
+
+    return { kind: 'events', eventsUrl }
   }
 }
 

@@ -46,8 +46,9 @@ export const getPukiwikiPage = (
   const stylesheet = findElement(content, (element) => {
     return element.name === 'link' && stylesheetRegex.test(element.attribs.href ?? '')
   })
-  // biome-ignore lint/plugin/noBareNewUrl: A malformed href throws, which reports it to onError.
-  const stylesheetUrl = stylesheet?.attribs.href ? new URL(stylesheet.attribs.href, url) : undefined
+  const stylesheetUrl = stylesheet?.attribs.href
+    ? parseUrl(stylesheet.attribs.href, url)
+    : undefined
 
   const root =
     stylesheetUrl?.origin === origin ? stylesheetUrl.pathname.match(skinRootRegex)?.[1] : undefined

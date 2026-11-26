@@ -97,8 +97,12 @@ export const getSpipPage = (url: string, content: string | undefined): SpipPage 
     return element.name === 'base' && Boolean(element.attribs.href)
   })
   const baseUrl = parseUrl(base?.attribs.href, parsedUrl) ?? parsedUrl
-  // biome-ignore lint/plugin/noBareNewUrl: A malformed href throws, which reports it to onError.
-  const scriptUrl = new URL('spip.php', baseUrl).href
+  const scriptUrl = parseUrl('spip.php', baseUrl)?.href
+
+  if (!scriptUrl) {
+    return
+  }
+
   const objectId = getUrlObjectId(parsedUrl)
   // SPIP answers a made-up id with an empty feed, and its not-found page marks the root element.
   const notFound = findElement(content, (element) => {

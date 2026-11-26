@@ -142,6 +142,20 @@ describe('vbulletinHandler', () => {
       expect(vbulletinHandler.resolve('not-a-url')).toEqual([])
     })
 
+    it('should return the site feed at the origin for a rollup script src that does not parse', () => {
+      const content = apolytonHtml.replace(
+        'js/header-rollup-575.js',
+        'https://apo lyton.net/js/header-rollup-575.js',
+      )
+
+      expect(vbulletinHandler.resolve('https://apolyton.net/', content)).toEqual([
+        {
+          uri: 'https://apolyton.net/external.php?type=RSS2',
+          hint: { key: 'vbulletin:site', label: 'Site' },
+        },
+      ])
+    })
+
     it('should return the site feed from the root of the core script', () => {
       const value = 'https://www.aquaticquotient.com/forum/forum.php'
 

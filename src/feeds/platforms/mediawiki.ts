@@ -1,5 +1,5 @@
 import { mediawiki } from 'feedintel'
-import { getOrigin } from 'trousse'
+import { getOrigin, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getScriptDirectory, hasMarker } from '../../common/utils.js'
@@ -65,8 +65,13 @@ const getMediawikiPage = (url: string, content: string | undefined): MediawikiPa
     return
   }
 
-  // biome-ignore lint/plugin/noBareNewUrl: A malformed href throws, which reports it to onError.
-  const scriptPath = getScriptDirectory(new URL(rsdHref, url).pathname)
+  const rsdUrl = parseUrl(rsdHref, url)
+
+  if (!rsdUrl) {
+    return
+  }
+
+  const scriptPath = getScriptDirectory(rsdUrl.pathname)
 
   return { scriptRoot: `${origin}${scriptPath}`, pageName: getPageName(content) }
 }

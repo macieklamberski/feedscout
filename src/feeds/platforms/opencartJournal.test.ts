@@ -183,6 +183,12 @@ describe('getOpencartJournalPage', () => {
   it('should return undefined without content', () => {
     expect(getOpencartJournalPage('https://example.com/', undefined)).toBeUndefined()
   })
+
+  it('should return undefined for a base href that takes no relative path', () => {
+    const value = journal3Html.replace('https://example.com/', 'mailto:shop@example.com')
+
+    expect(getOpencartJournalPage('https://example.com/', value)).toBeUndefined()
+  })
 })
 
 describe('opencartJournalHandler', () => {

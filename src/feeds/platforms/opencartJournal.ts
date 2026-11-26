@@ -56,8 +56,11 @@ export const getOpencartJournalPage = (
     return
   }
 
-  // biome-ignore lint/plugin/noBareNewUrl: A malformed href throws, which reports it to onError.
-  const storeUrl = new URL('.', baseUrl).href
+  const storeUrl = parseUrl('.', baseUrl)?.href
+
+  if (!storeUrl) {
+    return
+  }
 
   return { kind: 'store', storeUrl, version }
 }

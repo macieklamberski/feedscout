@@ -1,4 +1,5 @@
 import { smf } from 'feedintel'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker } from '../../common/utils.js'
@@ -42,8 +43,13 @@ const getSmfPage = (url: string, content: string | undefined): SmfPage | undefin
   }
 
   // A guest without cookies gets the script URL with a `PHPSESSID` query appended.
-  // biome-ignore lint/plugin/noBareNewUrl: A malformed href throws, which reports it to onError.
-  const { origin, pathname } = new URL(scriptUrl, url)
+  const parsedScriptUrl = parseUrl(scriptUrl, url)
+
+  if (!parsedScriptUrl) {
+    return
+  }
+
+  const { origin, pathname } = parsedScriptUrl
 
   return { scriptUrl: `${origin}${pathname}`, boardId: getBoardId(url, content) }
 }
