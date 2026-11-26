@@ -83,7 +83,7 @@
     "@types/http-link-header": "^1.0.7",
     "feedintel": "github:macieklamberski/feedintel#174e101",
     "feedsmith": "^3.0.1",
-    "kvalita": "^1.38.0",
+    "kvalita": "^1.41.0",
     "ogier": "^1.8.1",
     "trousse": "^3.16.0",
     "tsdown": "0.23.7",
