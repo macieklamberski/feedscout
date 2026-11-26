@@ -1,4 +1,4 @@
-import { isAnyOf } from 'trousse'
+import { getOrigin, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasClass } from '../../common/utils.js'
 import { parseSourcehutUrl } from '../../feeds/platforms/sourcehut.js'
@@ -54,7 +54,12 @@ export const sourcehutEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  const { origin } = new URL(ref.url)
+  const origin = getOrigin(ref.url)
+
+  if (!origin) {
+    return
+  }
+
   const response = await context.fetchFn(`${origin}/~${ref.id}/`)
 
   return parseAvatar(getResponseText(response))

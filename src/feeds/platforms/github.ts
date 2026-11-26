@@ -1,5 +1,5 @@
 import { github } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -46,7 +46,13 @@ export const parseGithubUrl = (url: string): GithubUrl | undefined => {
     return
   }
 
-  const { pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { pathname } = parsedUrl
   const [routeOrOwner, orgOrRepo, orgRoute] = getPathSegments(url)
   const discussionCategory = pathname.match(discussionCategoryRegex)?.[1]
 

@@ -1,4 +1,4 @@
-import { coerceSingular, composeQuery, isNonEmptyString } from 'trousse'
+import { coerceSingular, composeQuery, getOrigin, isNonEmptyString } from 'trousse'
 import type { FetchFnResponse } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { gitlabHandler as gitlabFeedHandler, parseGitlabUrl } from '../../feeds/platforms/gitlab.js'
@@ -37,7 +37,11 @@ export const gitlabEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  const { origin } = new URL(ref.url)
+  const origin = getOrigin(ref.url)
+
+  if (!origin) {
+    return
+  }
 
   const encodedName = encodeURIComponent(ref.id)
   const userResponse = await context.fetchFn(

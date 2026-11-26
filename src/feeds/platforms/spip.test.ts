@@ -206,6 +206,12 @@ describe('getSpipPage', () => {
   it('should return undefined for an unparsable URL', () => {
     expect(getSpipPage('not-a-url', undefined)).toBeUndefined()
   })
+
+  it('should return undefined for a base href that takes no relative path', () => {
+    const value = '<base href="mailto:site@example.com">'
+
+    expect(getSpipPage('https://example.com/spip.php?article869', value)).toBeUndefined()
+  })
 })
 
 describe('spipHandler', () => {

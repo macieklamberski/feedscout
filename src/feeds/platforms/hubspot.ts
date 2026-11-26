@@ -1,5 +1,13 @@
 import { hubspot } from 'feedintel'
-import { getAnyOf, getPathSegments, isString, parseUrl, resolveUrl, stripWww } from 'trousse'
+import {
+  getAnyOf,
+  getOrigin,
+  getPathSegments,
+  isString,
+  parseUrl,
+  resolveUrl,
+  stripWww,
+} from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -74,7 +82,13 @@ export const getHubspotPage = (
     return
   }
 
-  const { pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { pathname } = parsedUrl
   const blog = blogPath.slice(1)
   const listingPath = pathname.startsWith(`${blogPath}/`) ? pathname.slice(blogPath.length) : ''
   const listingMatch = listingPath.match(listingPathRegex)
@@ -128,7 +142,12 @@ export const hubspotHandler: PlatformHandler = {
   },
 
   resolve: (url, content, headers) => {
-    const { origin } = new URL(url)
+    const origin = getOrigin(url)
+
+    if (!origin) {
+      return []
+    }
+
     const parsed = getHubspotPage(url, content, headers)
     const page = feeds.forUrl(url)
 

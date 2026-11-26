@@ -1,5 +1,5 @@
 import { livejournal } from 'feedintel'
-import { decodeSegment, isHostOf, isSubdomainOf } from 'trousse'
+import { decodeSegment, getOrigin, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { type PlatformFeedTable, withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
@@ -75,7 +75,13 @@ export const parseLivejournalUrl = (url: string): LivejournalUrl | undefined => 
     return
   }
 
-  const { pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { pathname } = parsedUrl
 
   // The www, users and community hosts name a journal only by a user in the path.
   if (isHostOf(url, wwwHosts)) {
@@ -112,7 +118,7 @@ export const parseLivejournalUrl = (url: string): LivejournalUrl | undefined => 
 // name starting or ending with `_` to its path on users.livejournal.com, so its feeds stay there.
 const getJournalRoot = (url: string, username: string | undefined): string | undefined => {
   if (!username) {
-    return new URL(url).origin
+    return getOrigin(url)
   }
 
   const label = username.replaceAll('_', '-')

@@ -48,6 +48,12 @@ describe('mediawikiHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for an RSD href that does not parse', () => {
+      const content = rsdLink.replace('/w/api.php', 'https://exa mple.org/w/api.php')
+
+      expect(mediawikiHandler.resolve('https://example.org/wiki/Atom', content)).toEqual([])
+    })
+
     it('should return the history and recent changes feeds for an article', () => {
       const value = 'https://example.org/wiki/Atom_(web_standard)'
       const content = `

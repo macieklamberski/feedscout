@@ -1,5 +1,5 @@
 import { bearblog } from 'feedintel'
-import { getQueryParam, isHostOf } from 'trousse'
+import { getQueryParam, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
@@ -28,7 +28,7 @@ export const parseBearblogUrl = (url: string): BearblogUrl | undefined => {
   }
 
   // Tag filter via ?q= query param.
-  const tag = getQueryParam(new URL(url).searchParams, 'q')
+  const tag = getQueryParam(parseUrl(url), 'q')
 
   return { kind: 'blog', blog, tag }
 }

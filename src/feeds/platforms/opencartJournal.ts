@@ -50,8 +50,17 @@ export const getOpencartJournalPage = (
 
   const base = findElement(content, (element) => element.name === 'base')
   // The store is the base's directory: an empty base would otherwise keep the page's own query.
-  const baseUrl = parseUrl(base?.attribs.href ?? '/', url) ?? new URL('/', url)
-  const storeUrl = new URL('.', baseUrl).href
+  const baseUrl = parseUrl(base?.attribs.href ?? '/', url) ?? parseUrl('/', url)
+
+  if (!baseUrl) {
+    return
+  }
+
+  const storeUrl = parseUrl('.', baseUrl)?.href
+
+  if (!storeUrl) {
+    return
+  }
 
   return { kind: 'store', storeUrl, version }
 }

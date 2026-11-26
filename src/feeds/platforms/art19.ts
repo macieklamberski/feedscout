@@ -1,5 +1,5 @@
 import { art19 } from 'feedintel'
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { uuidRegex } from '../../common/utils.js'
@@ -19,7 +19,7 @@ export const parseArt19Url = (url: string): Art19Url | undefined => {
     return
   }
 
-  const slug = new URL(url).pathname.match(showPathRegex)?.[1]
+  const slug = parseUrl(url)?.pathname.match(showPathRegex)?.[1]
 
   // A show page also answers under the show's uuid, and rss.art19.com serves a feed only under the
   // slug, which the page alone names.

@@ -1,5 +1,5 @@
 import { substack } from 'feedintel'
-import { escapeRegex, isHostOf, isPresent, parseUrl } from 'trousse'
+import { escapeRegex, getOrigin, isHostOf, isPresent, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain, wordOrHyphenRegex } from '../../common/utils.js'
@@ -132,7 +132,13 @@ export const getSubstackPage = (
   }
 
   if (parsed.kind === 'newsletter') {
-    return { kind: 'newsletter', origin: new URL(url).origin }
+    const origin = getOrigin(url)
+
+    if (!origin) {
+      return
+    }
+
+    return { kind: 'newsletter', origin }
   }
 
   const origin = getPublicationOrigin(content) ?? `https://${parsed.username}.substack.com`

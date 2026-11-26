@@ -53,6 +53,15 @@ describe('smfHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a script URL that does not parse', () => {
+      const content = smfHtml.replace(
+        'https://example.com/forum/index.php',
+        'https://exa mple.com/forum/index.php',
+      )
+
+      expect(smfHandler.resolve('https://example.com/forum/', content)).toEqual([])
+    })
+
     it('should build the site feeds from the script URL', () => {
       expect(smfHandler.resolve('https://example.com/forum/', smfHtml)).toEqual(siteFeeds)
     })

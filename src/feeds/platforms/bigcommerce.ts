@@ -1,5 +1,5 @@
 import { bigcommerce } from 'feedintel'
-import { getQueryParam, isAnyOf } from 'trousse'
+import { getQueryParam, isAnyOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
@@ -32,10 +32,10 @@ const getCategoryId = (content: string | undefined): string | undefined => {
 }
 
 const getBigcommercePage = (url: string, content: string | undefined): BigcommercePage => {
-  const { pathname, searchParams } = new URL(url)
-  const query = getQueryParam(searchParams, 'search_query')
+  const parsedUrl = parseUrl(url)
+  const query = getQueryParam(parsedUrl, 'search_query')
 
-  if (isAnyOf(pathname, '/search.php') && query) {
+  if (isAnyOf(parsedUrl?.pathname, '/search.php') && query) {
     return { kind: 'search', query }
   }
 

@@ -119,6 +119,32 @@ describe('getWildApricotPage', () => {
   it('should return undefined without content', () => {
     expect(getWildApricotPage('https://example.com/', undefined)).toBeUndefined()
   })
+
+  it('should return undefined for a back link that does not parse', () => {
+    const value = `
+      <a
+        id="FunctionalBlock1_ctl00_blogPostView_title_backLink"
+        href="https://exa mple.com/news"
+      >Back to list</a>
+    `
+
+    expect(getWildApricotPage('https://example.com/news/12345678', value)).toBeUndefined()
+  })
+
+  it('should return undefined for a feed link that does not parse', () => {
+    const value = blogHtml.replace('https://example.com/news/RSS', 'https://exa mple.com/news/RSS')
+
+    expect(getWildApricotPage('https://example.com/news/', value)).toBeUndefined()
+  })
+
+  it('should return undefined for an events link that does not parse', () => {
+    const value = eventsCalendarHtml.replace(
+      'https://example.com/Events',
+      'https://exa mple.com/Events',
+    )
+
+    expect(getWildApricotPage('https://example.com/Events/', value)).toBeUndefined()
+  })
 })
 
 describe('wildApricotHandler', () => {

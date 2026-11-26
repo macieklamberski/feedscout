@@ -39,7 +39,13 @@ const getLinkedFeedUrl = (
   content: string | undefined,
   rootUrl: string,
 ): string | undefined => {
-  const { host, pathname } = new URL(rootUrl)
+  const parsedRootUrl = parseUrl(rootUrl)
+
+  if (!parsedRootUrl) {
+    return
+  }
+
+  const { host, pathname } = parsedRootUrl
   const feedPath = `${pathname.replace(trailingSlashRegex, '')}/rss/index/index/`
   const links = findElements(content ?? '', (element) => {
     return element.name === 'link' && element.attribs.rel === 'alternate'
@@ -52,7 +58,13 @@ const getLinkedFeedUrl = (
       continue
     }
 
-    const { host: feedHost, pathname: feedPathname } = new URL(feedUrl)
+    const parsedFeedUrl = parseUrl(feedUrl)
+
+    if (!parsedFeedUrl) {
+      continue
+    }
+
+    const { host: feedHost, pathname: feedPathname } = parsedFeedUrl
 
     if (feedHost === host && startsWithAnyOf(feedPathname, feedPath)) {
       return feedUrl
@@ -72,7 +84,13 @@ export const getOpusPage = (url: string, content: string | undefined): OpusPage 
     return
   }
 
-  const { origin, pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { origin, pathname } = parsedUrl
   const rootPath = assetRootUrl.pathname.replace(trailingSlashRegex, '')
   const searchPath = pathname.slice(rootPath.length).match(searchPathRegex)?.[1]
 

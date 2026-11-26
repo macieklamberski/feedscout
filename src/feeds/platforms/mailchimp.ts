@@ -1,5 +1,5 @@
 import { mailchimp } from 'feedintel'
-import { getQueryParam, isSubdomainOf } from 'trousse'
+import { getQueryParam, isSubdomainOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -23,7 +23,13 @@ export const parseMailchimpUrl = (url: string): MailchimpUrl | undefined => {
     return
   }
 
-  const { pathname, searchParams } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { pathname, searchParams } = parsedUrl
   const userId = getQueryParam(searchParams, 'u')
   const id = getQueryParam(searchParams, 'id')
 

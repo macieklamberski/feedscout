@@ -1,4 +1,4 @@
-import { isHostOf, parseJson } from 'trousse'
+import { isHostOf, parseJson, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -26,7 +26,7 @@ const extractFeedUrlFromContent = (content: string): string | undefined => {
 
 // Podcast pages: /{locale}/podcast/{name}/id{number}, locale and name optional.
 export const parseApplePodcastsUrl = (url: string): ApplePodcastsUrl | undefined => {
-  if (!isHostOf(url, hosts) || !podcastRegex.test(new URL(url).pathname)) {
+  if (!isHostOf(url, hosts) || !podcastRegex.test(parseUrl(url)?.pathname ?? '')) {
     return
   }
 

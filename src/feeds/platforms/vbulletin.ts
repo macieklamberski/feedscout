@@ -85,7 +85,12 @@ const getVbulletin5Page = (url: string, content: string | undefined): VbulletinP
     return element.name === 'base'
   })
   const baseUrl = parseUrl(baseElement?.attribs.href, url) ?? url
-  const rollupScriptUrl = new URL(rollupScriptSrc, baseUrl)
+  const rollupScriptUrl = parseUrl(rollupScriptSrc, baseUrl)
+
+  if (!rollupScriptUrl) {
+    return
+  }
+
   const rollupOrigin = getOrigin(rollupScriptUrl)
 
   if (!rollupOrigin) {

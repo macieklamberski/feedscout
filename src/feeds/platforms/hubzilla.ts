@@ -1,4 +1,5 @@
 import { hubzilla } from 'feedintel'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -17,7 +18,7 @@ export const isHubzillaHtml = (content: string): boolean => {
 }
 
 export const parseHubzillaUrl = (url: string): HubzillaUrl | undefined => {
-  const channel = new URL(url).pathname.match(channelPathRegex)?.[1]
+  const channel = parseUrl(url)?.pathname.match(channelPathRegex)?.[1]
 
   if (!channel) {
     return

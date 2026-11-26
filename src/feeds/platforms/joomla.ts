@@ -67,7 +67,13 @@ export const joomlaHandler: PlatformHandler = {
       return []
     }
 
-    const { origin, searchParams } = new URL(url)
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl) {
+      return []
+    }
+
+    const { origin, searchParams } = parsedUrl
     // The table drops one trailing slash from a root, so a view path ending in one keeps it.
     const params = { root: `${origin}${parsed.path}/`, query: getRoutingQuery(searchParams) }
 

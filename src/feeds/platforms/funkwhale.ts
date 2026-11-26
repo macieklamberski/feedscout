@@ -1,5 +1,5 @@
 import { funkwhale } from 'feedintel'
-import { decodeSegment } from 'trousse'
+import { decodeSegment, getOrigin, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, hasElementWithId, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -19,7 +19,7 @@ export const isFunkwhaleHtml = (content: string): boolean => {
 }
 
 export const parseFunkwhaleUrl = (url: string): FunkwhaleUrl | undefined => {
-  const channel = new URL(url).pathname.match(channelPathRegex)?.[1]
+  const channel = parseUrl(url)?.pathname.match(channelPathRegex)?.[1]
 
   if (!channel) {
     return
@@ -38,7 +38,12 @@ export const funkwhaleHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
+    const origin = getOrigin(url)
+
+    if (!origin) {
+      return []
+    }
+
     const parsed = parseFunkwhaleUrl(url)
 
     if (!parsed) {

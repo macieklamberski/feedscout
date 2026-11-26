@@ -132,6 +132,14 @@ describe('getPukiwikiPage', () => {
 
     expect(getPukiwikiPage(value, undefined)).toEqual(expected)
   })
+
+  it('should keep the page path for a stylesheet href that does not parse', () => {
+    const value = 'http://example.com/wiki/FrontPage/'
+    const content = '<link rel="stylesheet" href="http://exa mple.com/wiki/skin/pukiwiki.css">'
+    const expected: PukiwikiPage = { kind: 'wiki', scriptUrl: 'http://example.com/wiki/FrontPage/' }
+
+    expect(getPukiwikiPage(value, content)).toEqual(expected)
+  })
 })
 
 describe('pukiwikiHandler', () => {

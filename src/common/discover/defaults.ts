@@ -57,6 +57,7 @@ export const defaultResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
   // resolveUrl answers nothing for a URL of another scheme or one that does not parse. URL resolves
   // the first, so discovery can drop a `javascript:` link or a relative link on a `file:` page, and
   // throws on the second, so a malformed URL reaches onError.
+  // biome-ignore lint/plugin/noBareNewUrl: A malformed url throws to the caller.
   return resolveUrl(url, baseUrl) ?? new URL(url, baseUrl).href
 }
 

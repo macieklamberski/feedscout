@@ -30,7 +30,7 @@ const findLayoutSectionId = (content: string | undefined): string | undefined =>
 // The new template answers an unknown section with the club home page, whose canonical is the
 // root, and its feed then serves the club news items.
 const getUrlSectionId = (url: string, content: string | undefined): string | undefined => {
-  const sectionId = getQueryParam(new URL(url).searchParams, 'sid')
+  const sectionId = getQueryParam(parseUrl(url), 'sid')
   const canonical = findElement(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'canonical'
   })?.attribs.href

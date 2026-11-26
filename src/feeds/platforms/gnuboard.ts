@@ -1,5 +1,5 @@
 import { gnuboard } from 'feedintel'
-import { getQueryParam, parseUrl } from 'trousse'
+import { getOrigin, getQueryParam, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getCookieNames, hasMarker } from '../../common/utils.js'
@@ -78,7 +78,13 @@ export const gnuboardHandler: PlatformHandler = {
       return []
     }
 
-    const root = `${new URL(url).origin}${page.root}`
+    const origin = getOrigin(url)
+
+    if (!origin) {
+      return []
+    }
+
+    const root = `${origin}${page.root}`
 
     return [feeds.getFeedEntry('board', { root, board: page.board })]
   },

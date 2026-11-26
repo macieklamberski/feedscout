@@ -1,4 +1,5 @@
 import { mediawiki } from 'feedintel'
+import { getOrigin, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getScriptDirectory, hasMarker } from '../../common/utils.js'
@@ -58,8 +59,19 @@ const getMediawikiPage = (url: string, content: string | undefined): MediawikiPa
   }
 
   // The RSD link is often protocol-relative and names the wiki's canonical server.
-  const { origin } = new URL(url)
-  const scriptPath = getScriptDirectory(new URL(rsdHref, url).pathname)
+  const origin = getOrigin(url)
+
+  if (!origin) {
+    return
+  }
+
+  const rsdUrl = parseUrl(rsdHref, url)
+
+  if (!rsdUrl) {
+    return
+  }
+
+  const scriptPath = getScriptDirectory(rsdUrl.pathname)
 
   return { scriptRoot: `${origin}${scriptPath}`, pageName: getPageName(content) }
 }

@@ -1,5 +1,5 @@
 import { bubblelife } from 'feedintel'
-import { includesAnyOf, isSubdomainOf } from 'trousse'
+import { includesAnyOf, isSubdomainOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
@@ -30,7 +30,7 @@ export const parseBubblelifeUrl = (url: string): BubblelifeUrl | undefined => {
     return
   }
 
-  const { community, libraryId } = new URL(url).pathname.match(communityRegex)?.groups ?? {}
+  const { community, libraryId } = parseUrl(url)?.pathname.match(communityRegex)?.groups ?? {}
 
   if (!community) {
     return

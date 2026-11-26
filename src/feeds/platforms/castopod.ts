@@ -33,7 +33,13 @@ const getCastopodPage = (url: string, content: string | undefined): CastopodPage
     return
   }
 
-  const rootUrl = `${new URL(url).origin}${rootPath}`
+  const origin = getOrigin(url)
+
+  if (!origin) {
+    return
+  }
+
+  const rootUrl = `${origin}${rootPath}`
   const [handleSegment] = getPathSegments(url).slice(getPathSegments(rootUrl).length)
   const handle = decodeSegment(handleSegment)?.match(handleRegex)?.[1]
 

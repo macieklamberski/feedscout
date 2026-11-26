@@ -1,5 +1,5 @@
 import { dokuwiki } from 'feedintel'
-import { parseUrl } from 'trousse'
+import { getOrigin, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
@@ -49,7 +49,12 @@ export const dokuwikiHandler: PlatformHandler = {
   },
 
   resolve: (url, content, headers) => {
-    const { origin } = new URL(url)
+    const origin = getOrigin(url)
+
+    if (!origin) {
+      return []
+    }
+
     const { installPath, namespace } = getDokuwikiPage(url, content, headers)
     const root = `${origin}${installPath}`
 

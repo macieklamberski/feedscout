@@ -1,4 +1,4 @@
-import { isNonEmptyString, parseUrl, startsWithAnyOf } from 'trousse'
+import { getOrigin, isNonEmptyString, parseUrl, startsWithAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent, hasMarker } from '../../common/utils.js'
 import { isPeertubeHeaders, parsePeertubeUrl } from '../../feeds/platforms/peertube.js'
@@ -58,7 +58,12 @@ export const peertubeEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  const { origin } = new URL(ref.url)
+  const origin = getOrigin(ref.url)
+
+  if (!origin) {
+    return
+  }
+
   const [kind, name] = ref.id.split('/')
   const apiPath = apiPaths[kind]
 

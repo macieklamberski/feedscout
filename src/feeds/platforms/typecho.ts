@@ -59,7 +59,13 @@ export const getTypechoPage = (
     return
   }
 
-  const { origin, pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { origin, pathname } = parsedUrl
   // A site can load its theme from a second domain of its own, and the generator tag still names
   // the page as Typecho.
   const rootOrigin = hasMetaContent(content, 'generator', 'Typecho') ? origin : assetUrl.origin

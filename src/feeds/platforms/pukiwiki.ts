@@ -1,5 +1,5 @@
 import { pukiwiki } from 'feedintel'
-import { endsWithAnyOf } from 'trousse'
+import { endsWithAnyOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getCookieNames, hasMarker } from '../../common/utils.js'
@@ -32,12 +32,23 @@ export const isPukiwikiHeaders = (headers: Headers): boolean => {
 // the script. A rewrite install serves pages as paths, where `?cmd=rss` answers with the page
 // itself, so the root comes from the default stylesheet. It names the root only when it sits in a
 // `skin/` directory above the page: wiki farms share a `skin/` elsewhere, and some sites move it.
-export const getPukiwikiPage = (url: string, content: string | undefined): PukiwikiPage => {
-  const { origin, pathname } = new URL(url)
+export const getPukiwikiPage = (
+  url: string,
+  content: string | undefined,
+): PukiwikiPage | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { origin, pathname } = parsedUrl
   const stylesheet = findElement(content, (element) => {
     return element.name === 'link' && stylesheetRegex.test(element.attribs.href ?? '')
   })
-  const stylesheetUrl = stylesheet?.attribs.href ? new URL(stylesheet.attribs.href, url) : undefined
+  const stylesheetUrl = stylesheet?.attribs.href
+    ? parseUrl(stylesheet.attribs.href, url)
+    : undefined
 
   const root =
     stylesheetUrl?.origin === origin ? stylesheetUrl.pathname.match(skinRootRegex)?.[1] : undefined
@@ -58,11 +69,16 @@ export const pukiwikiHandler: PlatformHandler = {
     const page = getPukiwikiPage(url, content)
     const pageFeeds = feeds.forUrl(url)
 
-    if (!pageFeeds) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    const directoryUrl = new URL('./', page.scriptUrl).href
+    const directoryUrl = parseUrl('./', page.scriptUrl)?.href
+
+    if (!directoryUrl) {
+      return []
+    }
+
     const script = page.scriptUrl.slice(directoryUrl.length) || undefined
 
     return [pageFeeds.getFeedEntry('recent-changes', { root: directoryUrl, script })]

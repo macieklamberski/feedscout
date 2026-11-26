@@ -1,5 +1,5 @@
 import { writefreely } from 'feedintel'
-import { getPathSegments, startsWithAnyOf } from 'trousse'
+import { getPathSegments, parseUrl, startsWithAnyOf } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -23,7 +23,13 @@ const blogPathRegex = /^\/(?:[^/]+\/)?$/
 const feeds = withHintLabels(writefreely.feeds)
 
 const getUrlBlogPath = (url: string): string | undefined => {
-  const { pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { pathname } = parsedUrl
   const [blogOrRoute] = getPathSegments(url)
 
   if (!blogOrRoute) {
@@ -87,7 +93,7 @@ const getWritefreelyPage = (
 
   return {
     blogPath: blogPath ?? urlBlogPath,
-    tag: new URL(url).pathname.match(tagPathRegex)?.[1],
+    tag: parseUrl(url)?.pathname.match(tagPathRegex)?.[1],
   }
 }
 

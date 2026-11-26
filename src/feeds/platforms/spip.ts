@@ -97,7 +97,12 @@ export const getSpipPage = (url: string, content: string | undefined): SpipPage 
     return element.name === 'base' && Boolean(element.attribs.href)
   })
   const baseUrl = parseUrl(base?.attribs.href, parsedUrl) ?? parsedUrl
-  const scriptUrl = new URL('spip.php', baseUrl).href
+  const scriptUrl = parseUrl('spip.php', baseUrl)?.href
+
+  if (!scriptUrl) {
+    return
+  }
+
   const objectId = getUrlObjectId(parsedUrl)
   // SPIP answers a made-up id with an empty feed, and its not-found page marks the root element.
   const notFound = findElement(content, (element) => {
@@ -127,7 +132,11 @@ export const spipHandler: PlatformHandler = {
       return []
     }
 
-    const root = new URL('./', page.scriptUrl).href
+    const root = parseUrl('./', page.scriptUrl)?.href
+
+    if (!root) {
+      return []
+    }
 
     // The comments plugin serves this. An install without it answers 404 or 500. The plugin's
     // Atom template is Atom 0.3 with each entry wrapped in an `<item>`, which parses with no

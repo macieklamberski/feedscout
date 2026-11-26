@@ -1,5 +1,5 @@
 import { githubGist } from 'feedintel'
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -30,7 +30,7 @@ export const parseGithubGistUrl = (url: string): GithubGistUrl | undefined => {
   }
 
   // Discover page: /discover (global new gists feed).
-  if (discoverRegex.test(new URL(url).pathname)) {
+  if (discoverRegex.test(parseUrl(url)?.pathname ?? '')) {
     return { kind: 'discover' }
   }
 

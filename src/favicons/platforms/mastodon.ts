@@ -1,4 +1,4 @@
-import { composeQuery, isNonEmptyString } from 'trousse'
+import { composeQuery, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMarker } from '../../common/utils.js'
 import {
@@ -38,7 +38,12 @@ export const mastodonEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  const { hostname } = new URL(ref.url)
+  const hostname = parseUrl(ref.url)?.hostname
+
+  if (!hostname) {
+    return
+  }
+
   const apiUrl = `https://${hostname}/api/v1/accounts/lookup${composeQuery({ acct: ref.id })}`
   const response = await context.fetchFn(apiUrl)
   const data = parseResponseJson(response)

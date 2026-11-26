@@ -1,5 +1,5 @@
 import { csdn } from 'feedintel'
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -19,7 +19,7 @@ export const parseCsdnUrl = (url: string): CsdnUrl | undefined => {
     return
   }
 
-  const username = new URL(url).pathname.match(userRegex)?.[1]
+  const username = parseUrl(url)?.pathname.match(userRegex)?.[1]
 
   if (!username) {
     return

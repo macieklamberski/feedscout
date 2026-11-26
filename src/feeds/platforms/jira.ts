@@ -1,4 +1,5 @@
 import { jira } from 'feedintel'
+import { parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -48,7 +49,13 @@ export type JiraPage = {
 }
 
 const getJiraPage = (url: string, content: string | undefined): JiraPage | undefined => {
-  const { origin, pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { origin, pathname } = parsedUrl
 
   if (confluencePathRegex.test(pathname)) {
     return
@@ -67,7 +74,13 @@ const getJiraPage = (url: string, content: string | undefined): JiraPage | undef
 
 export const jiraHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const { pathname } = new URL(url)
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl) {
+      return false
+    }
+
+    const { pathname } = parsedUrl
 
     if (confluencePathRegex.test(pathname)) {
       return false

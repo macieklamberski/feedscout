@@ -1,5 +1,5 @@
 import { discourse } from 'feedintel'
-import { getAnyOf, getQueryParam, parseUrl } from 'trousse'
+import { getAnyOf, getOrigin, getQueryParam, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -132,7 +132,13 @@ export const getDiscoursePage = (
     return
   }
 
-  return { ...parsed, siteUrl: `${new URL(url).origin}${basePath}` }
+  const origin = getOrigin(url)
+
+  if (!origin) {
+    return
+  }
+
+  return { ...parsed, siteUrl: `${origin}${basePath}` }
 }
 
 export const discourseHandler: PlatformHandler = {
