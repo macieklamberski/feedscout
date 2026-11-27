@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { omitEmpty } from 'trousse'
+import { trimArray } from 'trousse'
 import { discoverUrisFromFeed } from './index.js'
 
 describe('discoverUrisFromFeed', () => {
@@ -16,7 +16,7 @@ describe('discoverUrisFromFeed', () => {
     const value = discoverUrisFromFeed(content, {
       extractUrls: ({ format, feed }) => {
         if (format === 'atom') {
-          return omitEmpty([feed.icon])
+          return trimArray([feed.icon])
         }
         return []
       },
@@ -37,7 +37,7 @@ describe('discoverUrisFromFeed', () => {
     const value = discoverUrisFromFeed(content, {
       extractUrls: ({ format, feed }) => {
         if (format === 'json') {
-          return omitEmpty([feed.favicon, feed.icon])
+          return trimArray([feed.favicon, feed.icon])
         }
         return []
       },
@@ -79,7 +79,7 @@ describe('discoverUrisFromFeed', () => {
     const value = discoverUrisFromFeed(content, {
       extractUrls: ({ format, feed }) => {
         if (format === 'json') {
-          return omitEmpty([feed.favicon, feed.icon])
+          return trimArray([feed.favicon, feed.icon])
         }
 
         return []
@@ -115,7 +115,7 @@ describe('discoverUrisFromFeed', () => {
     const value = discoverUrisFromFeed(content, {
       extractUrls: ({ format, feed }) => {
         if (format === 'json') {
-          return omitEmpty([feed.favicon, feed.icon])
+          return trimArray([feed.favicon, feed.icon])
         }
         return []
       },

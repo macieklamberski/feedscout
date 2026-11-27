@@ -1,5 +1,5 @@
 import { prlog } from 'feedintel'
-import { getPathSegments, isHostOf, isSameText, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, isLooseMatch, parseUrl } from 'trousse'
 import { withHintLabels } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
@@ -47,7 +47,7 @@ export const getPrlogPage = (url: string, content: string | undefined): PrlogPag
   })
   const linked = parsePrlogUrl(link?.attribs.href ?? '')
 
-  if (linked && isSameText(linked.pressroomId, parsed.pressroomId)) {
+  if (linked && isLooseMatch(linked.pressroomId, parsed.pressroomId)) {
     return linked
   }
 
