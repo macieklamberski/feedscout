@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { omitEmpty } from 'trousse'
+import { trimArray } from 'trousse'
 import type { DiscoverUriHint, FetchFn } from '../types.js'
 import { discoverUris } from './index.js'
 import type { PlatformHandler } from './platform/types.js'
@@ -37,7 +37,7 @@ describe('discoverUris', () => {
         options: {
           extractUrls: ({ format, feed }) => {
             if (format === 'json') {
-              return omitEmpty([feed.favicon])
+              return trimArray([feed.favicon])
             }
             return []
           },
@@ -236,7 +236,7 @@ describe('discoverUris', () => {
     expect(value).toEqual({})
   })
 
-  it('should filter undefined entries from feed extractUrls via omitEmpty', async () => {
+  it('should filter undefined entries from feed extractUrls via trimArray', async () => {
     const content = JSON.stringify({
       version: 'https://jsonfeed.org/version/1.1',
       title: 'Example',
@@ -246,7 +246,7 @@ describe('discoverUris', () => {
       feed: {
         content,
         options: {
-          extractUrls: () => omitEmpty([undefined, '/valid']),
+          extractUrls: () => trimArray([undefined, '/valid']),
         },
       },
     })
